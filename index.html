@@ -3,1463 +3,600 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MADFAM AI-Powered Portfolio Builder - Software Specifications</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>MADFAM AI Portfolio Builder - Create Stunning Portfolios in 30 Minutes</title>
+    <meta name="description" content="Transform your LinkedIn, GitHub, and CV into a beautiful portfolio website using AI. No design skills needed. Start free.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
     <style>
-        * {
-            font-family: 'Inter', sans-serif;
-        }
-        .code-font {
-            font-family: 'JetBrains Mono', monospace;
-        }
         .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .fade-in {
-            animation: fadeIn 0.8s ease-in-out;
+        .hover-lift {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+        }
+        .mock-browser {
+            border: 3px solid #e5e7eb;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .mock-browser-bar {
+            background: #f3f4f6;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .mock-browser-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #d1d5db;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .hover-scale {
-            transition: transform 0.3s ease;
+        .fade-in {
+            animation: fadeIn 0.8s ease-out;
         }
-        .hover-scale:hover {
-            transform: scale(1.02);
+        .typing-effect {
+            overflow: hidden;
+            border-right: 2px solid #667eea;
+            white-space: nowrap;
+            animation: typing 3s steps(40, end), blink-caret 0.75s step-end infinite;
         }
-        .section-divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #4f46e5, transparent);
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
         }
-        .metrics-card {
-            background: linear-gradient(145deg, #1f2937, #374151);
-            border: 1px solid #4b5563;
-        }
-        .feature-card {
-            background: linear-gradient(145deg, #111827, #1f2937);
-            border: 1px solid #374151;
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #667eea }
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen">
+<body class="bg-gray-50">
     <!-- Header -->
-    <header class="gradient-bg py-16 relative overflow-hidden">
-        <div class="absolute inset-0 bg-black opacity-30"></div>
-        <div class="container mx-auto px-6 relative z-10">
-            <div class="text-center fade-in">
-                <div class="inline-flex items-center mb-6">
-                    <i class="fas fa-rocket text-4xl text-white mr-4"></i>
-                    <h1 class="text-5xl font-bold text-white">MADFAM</h1>
+    <header class="bg-white shadow-sm fixed w-full top-0 z-50">
+        <nav class="container mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <i class="fas fa-rocket text-2xl text-purple-600"></i>
+                    <span class="text-xl font-bold">MADFAM<span class="text-purple-600">.</span>AI</span>
                 </div>
-                <h2 class="text-3xl font-semibold text-white mb-4">AI-Powered Portfolio Builder</h2>
-                <p class="text-xl text-blue-100 mb-8">Comprehensive Software Specifications Document</p>
-                <div class="flex justify-center space-x-6 text-blue-100">
-                    <span class="flex items-center"><i class="fas fa-calendar mr-2"></i>Version 1.0</span>
-                    <span class="flex items-center"><i class="fas fa-clock mr-2"></i>June 2025</span>
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-gray-600 hover:text-purple-600 transition">Features</a>
+                    <a href="#how-it-works" class="text-gray-600 hover:text-purple-600 transition">How it Works</a>
+                    <a href="#templates" class="text-gray-600 hover:text-purple-600 transition">Templates</a>
+                    <a href="#pricing" class="text-gray-600 hover:text-purple-600 transition">Pricing</a>
+                    <button onclick="showComingSoon()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
+                        Get Started
+                    </button>
                 </div>
+                <button class="md:hidden text-gray-600">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
             </div>
-        </div>
+        </nav>
     </header>
 
-    <!-- Navigation -->
-    <nav class="bg-gray-800 border-b border-gray-700 sticky top-0 z-50">
-        <div class="container mx-auto px-6">
-            <div class="flex space-x-8 overflow-x-auto py-4">
-                <a href="#executive" class="text-blue-400 hover:text-blue-300 whitespace-nowrap transition-colors">Executive Summary</a>
-                <a href="#technical" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Technical Architecture</a>
-                <a href="#ai-features" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">AI Features</a>
-                <a href="#ux-design" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">UX Design</a>
-                <a href="#integrations" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Integrations</a>
-                <a href="#monetization" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Monetization</a>
-                <a href="#roadmap" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Roadmap</a>
-                <a href="#operations" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Operations</a>
-                <a href="#validation" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Validation</a>
-                <a href="#competitive" class="text-gray-300 hover:text-blue-300 whitespace-nowrap transition-colors">Competitive Strategy</a>
+    <!-- Hero Section -->
+    <section class="pt-24 pb-20 px-6">
+        <div class="container mx-auto text-center">
+            <div class="inline-flex items-center bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium mb-8 fade-in">
+                <i class="fas fa-sparkles mr-2"></i>
+                Powered by GPT-4 & Claude AI
+            </div>
+            
+            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 fade-in">
+                Turn Your CV Into a <br>
+                <span class="gradient-text">Stunning Portfolio</span>
+                <br>in 30 Minutes
+            </h1>
+            
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto fade-in">
+                Import from LinkedIn, GitHub, or upload your resume. Our AI transforms your experience into a beautiful, 
+                professional portfolio that gets you hired.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 fade-in">
+                <button onclick="showDemo()" class="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-purple-700 transition hover-lift">
+                    <i class="fas fa-play mr-2"></i>
+                    Watch Demo
+                </button>
+                <button onclick="showComingSoon()" class="border-2 border-purple-600 text-purple-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-purple-50 transition">
+                    Start Free Trial
+                </button>
+            </div>
+            
+            <div class="flex items-center justify-center space-x-8 text-gray-500 fade-in">
+                <div class="flex items-center">
+                    <i class="fas fa-check-circle text-green-500 mr-2"></i>
+                    No credit card required
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-users text-blue-500 mr-2"></i>
+                    Join 10,000+ professionals
+                </div>
+                <div class="flex items-center">
+                    <i class="fas fa-star text-yellow-500 mr-2"></i>
+                    4.9/5 rating
+                </div>
             </div>
         </div>
-    </nav>
+    </section>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-8">
-        <!-- Executive Summary -->
-        <section id="executive" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-chart-line mr-4"></i>Executive Summary & Product Strategy
-            </h2>
+    <!-- Social Proof -->
+    <section class="py-12 bg-gray-100">
+        <div class="container mx-auto px-6">
+            <p class="text-center text-gray-600 mb-8">Trusted by professionals from</p>
+            <div class="flex flex-wrap justify-center items-center gap-12 opacity-60">
+                <i class="fab fa-google text-3xl text-gray-700"></i>
+                <i class="fab fa-microsoft text-3xl text-gray-700"></i>
+                <i class="fab fa-apple text-3xl text-gray-700"></i>
+                <i class="fab fa-amazon text-3xl text-gray-700"></i>
+                <i class="fab fa-facebook text-3xl text-gray-700"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-6">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Everything You Need to <span class="gradient-text">Stand Out</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Our AI-powered platform handles everything from content creation to design, 
+                    so you can focus on what matters.
+                </p>
+            </div>
             
-            <div class="grid md:grid-cols-2 gap-8 mb-12">
-                <div class="feature-card p-8 rounded-xl hover-scale">
-                    <h3 class="text-2xl font-semibold mb-4 text-green-400">Core Value Proposition</h3>
-                    <p class="text-gray-300 mb-4">Transform scattered professional profiles into stunning portfolio websites in under 30 minutes using AI-powered content generation.</p>
-                    <div class="space-y-3">
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-bolt w-6"></i>
-                            <span><strong>Speed:</strong> 30-minute setup vs. 4-8 hours with competitors</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-robot w-6"></i>
-                            <span><strong>AI-First:</strong> Automated content extraction and rewriting</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-brain w-6"></i>
-                            <span><strong>Intelligence:</strong> Context-aware portfolio generation</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-magic w-6"></i>
-                            <span><strong>Zero Design Skills:</strong> AI handles all design decisions</span>
-                        </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-magic text-2xl text-purple-600"></i>
                     </div>
-                </div>
-
-                <div class="feature-card p-8 rounded-xl hover-scale">
-                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Market Penetration Strategy</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-purple-500 pl-4">
-                            <h4 class="font-semibold text-purple-300">Year 1 (2025)</h4>
-                            <p class="text-gray-300">10,000 active users • Focus: Tech, Design, Creative • US, Mexico, Spain, Argentina</p>
-                        </div>
-                        <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="font-semibold text-blue-300">Year 2 (2026)</h4>
-                            <p class="text-gray-300">100,000 active users • Expansion: Consulting, Marketing • EU, Latin America</p>
-                        </div>
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="font-semibold text-green-300">Year 3 (2027)</h4>
-                            <p class="text-gray-300">500,000 active users • API marketplace • Global presence, 10+ languages</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- KPIs Dashboard -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-yellow-400">Success Metrics & KPIs</h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="metrics-card p-6 rounded-lg text-center">
-                        <i class="fas fa-clock text-3xl text-blue-400 mb-3"></i>
-                        <h4 class="font-semibold text-blue-300">Setup Time</h4>
-                        <p class="text-2xl font-bold text-white">&lt;30 min</p>
-                        <p class="text-gray-400 text-sm">Target: 20 min avg</p>
-                    </div>
-                    <div class="metrics-card p-6 rounded-lg text-center">
-                        <i class="fas fa-users text-3xl text-green-400 mb-3"></i>
-                        <h4 class="font-semibold text-green-300">7-day Retention</h4>
-                        <p class="text-2xl font-bold text-white">&gt;60%</p>
-                        <p class="text-gray-400 text-sm">Critical for PMF</p>
-                    </div>
-                    <div class="metrics-card p-6 rounded-lg text-center">
-                        <i class="fas fa-heart text-3xl text-purple-400 mb-3"></i>
-                        <h4 class="font-semibold text-purple-300">NPS Score</h4>
-                        <p class="text-2xl font-bold text-white">&gt;50</p>
-                        <p class="text-gray-400 text-sm">Strong advocacy</p>
-                    </div>
-                    <div class="metrics-card p-6 rounded-lg text-center">
-                        <i class="fas fa-dollar-sign text-3xl text-yellow-400 mb-3"></i>
-                        <h4 class="font-semibold text-yellow-300">Conversion Rate</h4>
-                        <p class="text-2xl font-bold text-white">&gt;15%</p>
-                        <p class="text-gray-400 text-sm">Free to paid</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Risk Assessment -->
-            <div class="bg-gray-800 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-red-400">Risk Assessment & Mitigation</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-red-900 bg-opacity-30 p-6 rounded-lg border border-red-700">
-                        <h4 class="font-semibold text-red-300 mb-3">Technical Risks</h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• API Rate Limiting</li>
-                            <li>• AI Content Quality</li>
-                            <li>• Platform Changes</li>
-                        </ul>
-                    </div>
-                    <div class="bg-yellow-900 bg-opacity-30 p-6 rounded-lg border border-yellow-700">
-                        <h4 class="font-semibold text-yellow-300 mb-3">Market Risks</h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Competitor Feature Parity</li>
-                            <li>• Economic Downturn</li>
-                            <li>• Platform API Restrictions</li>
-                        </ul>
-                    </div>
-                    <div class="bg-green-900 bg-opacity-30 p-6 rounded-lg border border-green-700">
-                        <h4 class="font-semibold text-green-300 mb-3">Mitigation</h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Progressive rollout</li>
-                            <li>• Feature flags</li>
-                            <li>• Multiple data sources</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Technical Architecture -->
-        <section id="technical" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-cogs mr-4"></i>Technical Architecture & Implementation
-            </h2>
-
-            <!-- Tech Stack -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="feature-card p-6 rounded-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-blue-300">Frontend</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <i class="fab fa-react text-blue-400 mr-3"></i>
-                            <span class="text-gray-300">Next.js 14</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-palette text-purple-400 mr-3"></i>
-                            <span class="text-gray-300">Tailwind CSS</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-layer-group text-green-400 mr-3"></i>
-                            <span class="text-gray-300">Shadcn/ui</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="feature-card p-6 rounded-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-green-300">Backend</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-database text-blue-400 mr-3"></i>
-                            <span class="text-gray-300">Supabase</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-robot text-purple-400 mr-3"></i>
-                            <span class="text-gray-300">OpenAI API</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-brain text-orange-400 mr-3"></i>
-                            <span class="text-gray-300">Claude</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="feature-card p-6 rounded-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-purple-300">Infrastructure</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-cloud text-blue-400 mr-3"></i>
-                            <span class="text-gray-300">Vercel</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-network-wired text-green-400 mr-3"></i>
-                            <span class="text-gray-300">CDN Global</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-tachometer-alt text-red-400 mr-3"></i>
-                            <span class="text-gray-300">Redis Cache</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="feature-card p-6 rounded-xl">
-                    <h3 class="text-xl font-semibold mb-4 text-yellow-300">Security</h3>
-                    <div class="space-y-3">
-                        <div class="flex items-center">
-                            <i class="fas fa-lock text-green-400 mr-3"></i>
-                            <span class="text-gray-300">AES-256</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-shield-alt text-blue-400 mr-3"></i>
-                            <span class="text-gray-300">OAuth 2.0</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-certificate text-purple-400 mr-3"></i>
-                            <span class="text-gray-300">TLS 1.3</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Database Schema -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-cyan-400">Database Schema</h3>
-                <div class="code-font bg-gray-900 p-6 rounded-lg border border-gray-700 overflow-x-auto">
-                    <pre class="text-green-400 text-sm"><code>-- Core Tables
-CREATE TABLE users (
-    id UUID PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW(),
-    subscription_tier TEXT DEFAULT 'free',
-    onboarding_completed BOOLEAN DEFAULT FALSE
-);
-
-CREATE TABLE portfolios (
-    id UUID PRIMARY KEY,
-    user_id UUID REFERENCES users(id),
-    slug TEXT UNIQUE NOT NULL,
-    title TEXT,
-    bio_raw TEXT,
-    bio_processed TEXT,
-    template_id TEXT,
-    custom_domain TEXT,
-    published BOOLEAN DEFAULT FALSE,
-    analytics_enabled BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP DEFAULT NOW()
-);
-
-CREATE TABLE projects (
-    id UUID PRIMARY KEY,
-    portfolio_id UUID REFERENCES portfolios(id),
-    title TEXT NOT NULL,
-    description_raw TEXT,
-    description_processed TEXT,
-    technologies TEXT[],
-    image_urls TEXT[],
-    external_url TEXT,
-    display_order INTEGER,
-    created_at TIMESTAMP DEFAULT NOW()
-);</code></pre>
-                </div>
-            </div>
-
-            <!-- Performance Targets -->
-            <div class="bg-gray-800 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-orange-400">Performance & Scalability</h3>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-orange-300">Performance Targets</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Page Load Time</span>
-                                <span class="text-orange-400 font-semibold">&lt;3 seconds</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">API Response</span>
-                                <span class="text-orange-400 font-semibold">&lt;500ms p95</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Concurrent Users</span>
-                                <span class="text-orange-400 font-semibold">10,000+</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-gray-300">Portfolio Generation</span>
-                                <span class="text-orange-400 font-semibold">&lt;30 seconds</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-blue-300">Scaling Strategy</h4>
-                        <ul class="space-y-2 text-gray-300">
-                            <li class="flex items-center"><i class="fas fa-network-wired text-blue-400 mr-3"></i>CDN for static assets</li>
-                            <li class="flex items-center"><i class="fas fa-database text-green-400 mr-3"></i>Database read replicas</li>
-                            <li class="flex items-center"><i class="fas fa-tasks text-purple-400 mr-3"></i>Background job processing</li>
-                            <li class="flex items-center"><i class="fas fa-cubes text-orange-400 mr-3"></i>Kubernetes (Year 2)</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- AI Features -->
-        <section id="ai-features" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-robot mr-4"></i>AI-Powered Feature Specifications
-            </h2>
-
-            <!-- MVP Core Features -->
-            <div class="mb-12">
-                <h3 class="text-2xl font-semibold mb-6 text-green-400">MVP Core Features</h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="feature-card p-6 rounded-xl hover-scale">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-link text-blue-400 text-2xl mr-3"></i>
-                            <h4 class="text-lg font-semibold text-blue-300">Profile Connection</h4>
-                        </div>
-                        <p class="text-gray-300 mb-4">Auto-import from LinkedIn, GitHub, and resume uploads with intelligent field mapping.</p>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>90% extraction success rate</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>&lt;10 second processing</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>95% field mapping accuracy</span>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-xs text-gray-400">
-                            Implementation: Medium (3-4 days)
-                        </div>
-                    </div>
-
-                    <div class="feature-card p-6 rounded-xl hover-scale">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-pen-fancy text-purple-400 text-2xl mr-3"></i>
-                            <h4 class="text-lg font-semibold text-purple-300">AI Bio Rewriter</h4>
-                        </div>
-                        <p class="text-gray-300 mb-4">Transform bland bios into compelling, client-focused narratives with tone customization.</p>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>80% satisfaction first gen</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>&lt;5 second generation</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>70% editing time reduction</span>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-xs text-gray-400">
-                            Implementation: Low (2 days)
-                        </div>
-                    </div>
-
-                    <div class="feature-card p-6 rounded-xl hover-scale">
-                        <div class="flex items-center mb-4">
-                            <i class="fas fa-palette text-yellow-400 text-2xl mr-3"></i>
-                            <h4 class="text-lg font-semibold text-yellow-300">Smart Templates</h4>
-                        </div>
-                        <p class="text-gray-300 mb-4">AI-powered template recommendation based on industry and content analysis.</p>
-                        <div class="space-y-2 text-sm">
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>85% find template &lt;2 min</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>90% publish without changes</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-check w-4 mr-2"></i>
-                                <span>&lt;1 second preview updates</span>
-                            </div>
-                        </div>
-                        <div class="mt-4 text-xs text-gray-400">
-                            Implementation: High (5-6 days)
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AI Processing Pipeline -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-cyan-400">AI Processing Pipeline</h3>
-                <div class="code-font bg-gray-900 p-6 rounded-lg border border-gray-700 overflow-x-auto">
-                    <pre class="text-cyan-400 text-sm"><code>const rewriteBio = async (originalBio, tone, industry) => {
-  const prompt = `
-    Rewrite this professional bio to be more compelling and client-focused.
-    Original: ${originalBio}
-    Tone: ${tone}
-    Industry: ${industry}
-    Guidelines:
-    - Focus on value delivered to clients
-    - Include specific achievements
-    - Keep under 150 words
-    - Use active voice
-  `;
-  
-  return await openai.createCompletion({
-    model: "gpt-4",
-    prompt,
-    max_tokens: 200,
-    temperature: 0.7
-  });
-};</code></pre>
-                </div>
-            </div>
-
-            <!-- Advanced Features -->
-            <div class="bg-gray-800 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-orange-400">Advanced Features (Post-MVP)</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-orange-900 bg-opacity-30 p-6 rounded-lg border border-orange-700">
-                        <h4 class="font-semibold text-orange-300 mb-3 flex items-center">
-                            <i class="fas fa-file-alt mr-3"></i>AI Case Study Generator
-                        </h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Extract project data from screenshots using OCR</li>
-                            <li>• Analyze project context with GPT-4 Vision</li>
-                            <li>• Generate STAR format case studies</li>
-                            <li>• Include measurable outcomes</li>
-                        </ul>
-                    </div>
-                    <div class="bg-purple-900 bg-opacity-30 p-6 rounded-lg border border-purple-700">
-                        <h4 class="font-semibold text-purple-300 mb-3 flex items-center">
-                            <i class="fas fa-quote-right mr-3"></i>Smart Testimonial System
-                        </h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Scrape recommendations from LinkedIn</li>
-                            <li>• Extract key phrases and sentiments</li>
-                            <li>• Reformat for portfolio display</li>
-                            <li>• Request permission system for usage</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- UX Design -->
-        <section id="ux-design" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-paint-brush mr-4"></i>User Experience & Interface Design
-            </h2>
-
-            <!-- Onboarding Flow -->
-            <div class="mb-12">
-                <h3 class="text-2xl font-semibold mb-6 text-green-400">30-Minute Onboarding Journey</h3>
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                    <div class="feature-card p-6 rounded-xl text-center">
-                        <div class="bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">1</div>
-                        <h4 class="font-semibold text-blue-300 mb-2">Welcome</h4>
-                        <p class="text-gray-400 text-sm">Value prop & social proof</p>
-                        <div class="text-xs text-gray-500 mt-2">30 seconds</div>
-                    </div>
-                    <div class="feature-card p-6 rounded-xl text-center">
-                        <div class="bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">2</div>
-                        <h4 class="font-semibold text-green-300 mb-2">Account</h4>
-                        <p class="text-gray-400 text-sm">Quick signup & industry selection</p>
-                        <div class="text-xs text-gray-500 mt-2">1 minute</div>
-                    </div>
-                    <div class="feature-card p-6 rounded-xl text-center">
-                        <div class="bg-purple-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">3</div>
-                        <h4 class="font-semibold text-purple-300 mb-2">Import</h4>
-                        <p class="text-gray-400 text-sm">Connect profiles & upload CV</p>
-                        <div class="text-xs text-gray-500 mt-2">5 minutes</div>
-                    </div>
-                    <div class="feature-card p-6 rounded-xl text-center">
-                        <div class="bg-orange-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">4</div>
-                        <h4 class="font-semibold text-orange-300 mb-2">AI Magic</h4>
-                        <p class="text-gray-400 text-sm">Content enhancement & preview</p>
-                        <div class="text-xs text-gray-500 mt-2">10 minutes</div>
-                    </div>
-                    <div class="feature-card p-6 rounded-xl text-center">
-                        <div class="bg-red-500 text-white rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-4">5</div>
-                        <h4 class="font-semibold text-red-300 mb-2">Publish</h4>
-                        <p class="text-gray-400 text-sm">Template selection & go live</p>
-                        <div class="text-xs text-gray-500 mt-2">10 minutes</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Design Principles -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-cyan-400">Design Principles</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start">
-                            <i class="fas fa-eye text-blue-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-blue-300">Progressive Disclosure</h4>
-                                <p class="text-gray-400 text-sm">Show advanced options only when needed</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-robot text-purple-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-purple-300">AI-First</h4>
-                                <p class="text-gray-400 text-sm">Automation with human override capability</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-bolt text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">Real-Time</h4>
-                                <p class="text-gray-400 text-sm">Instant preview of all changes</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-mobile-alt text-green-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-green-300">Mobile-Responsive</h4>
-                                <p class="text-gray-400 text-sm">Full editing capability on mobile</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-orange-400">Accessibility Standards</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-universal-access w-6 mr-3"></i>
-                            <span>WCAG 2.1 AA compliance minimum</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-keyboard w-6 mr-3"></i>
-                            <span>Full keyboard navigation</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-volume-up w-6 mr-3"></i>
-                            <span>Screen reader optimization</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-adjust w-6 mr-3"></i>
-                            <span>High contrast mode option</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-crosshairs w-6 mr-3"></i>
-                            <span>Focus indicators & ARIA labels</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Editor Interface -->
-            <div class="bg-gray-800 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-pink-400">Editor Interface Components</h3>
-                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="bg-pink-900 bg-opacity-30 p-4 rounded-lg border border-pink-700">
-                        <i class="fas fa-columns text-pink-400 text-2xl mb-3"></i>
-                        <h4 class="font-semibold text-pink-300 mb-2">Split-Screen Editor</h4>
-                        <p class="text-gray-400 text-sm">Live preview alongside editing</p>
-                    </div>
-                    <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg border border-blue-700">
-                        <i class="fas fa-lightbulb text-blue-400 text-2xl mb-3"></i>
-                        <h4 class="font-semibold text-blue-300 mb-2">AI Suggestions</h4>
-                        <p class="text-gray-400 text-sm">Inline accept/reject options</p>
-                    </div>
-                    <div class="bg-green-900 bg-opacity-30 p-4 rounded-lg border border-green-700">
-                        <i class="fas fa-grip-vertical text-green-400 text-2xl mb-3"></i>
-                        <h4 class="font-semibold text-green-300 mb-2">Drag & Drop</h4>
-                        <p class="text-gray-400 text-sm">Intuitive project reordering</p>
-                    </div>
-                    <div class="bg-purple-900 bg-opacity-30 p-4 rounded-lg border border-purple-700">
-                        <i class="fas fa-sliders-h text-purple-400 text-2xl mb-3"></i>
-                        <h4 class="font-semibold text-purple-300 mb-2">Style Controls</h4>
-                        <p class="text-gray-400 text-sm">Global colors & fonts</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Integrations -->
-        <section id="integrations" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-plug mr-4"></i>Integration Requirements
-            </h2>
-
-            <!-- Social Platform APIs -->
-            <div class="grid md:grid-cols-3 gap-6 mb-8">
-                <div class="feature-card p-6 rounded-xl">
-                    <div class="flex items-center mb-4">
-                        <i class="fab fa-linkedin text-blue-500 text-3xl mr-4"></i>
-                        <h3 class="text-xl font-semibold text-blue-300">LinkedIn</h3>
-                    </div>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• OAuth 2.0 authentication</li>
-                        <li>• Profile API for basic info</li>
-                        <li>• Selenium fallback scraping</li>
-                        <li>• Rate limit: 100 req/day/user</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card p-6 rounded-xl">
-                    <div class="flex items-center mb-4">
-                        <i class="fab fa-github text-gray-400 text-3xl mr-4"></i>
-                        <h3 class="text-xl font-semibold text-gray-300">GitHub</h3>
-                    </div>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• GraphQL API for repos</li>
-                        <li>• Pinned repos prioritization</li>
-                        <li>• README extraction</li>
-                        <li>• Contribution graph viz</li>
-                    </ul>
-                </div>
-
-                <div class="feature-card p-6 rounded-xl">
-                    <div class="flex items-center mb-4">
-                        <i class="fab fa-behance text-blue-400 text-3xl mr-4"></i>
-                        <h3 class="text-xl font-semibold text-blue-300">Behance</h3>
-                    </div>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• Public API for projects</li>
-                        <li>• Image optimization pipeline</li>
-                        <li>• Project metadata extraction</li>
-                        <li>• Creative field categorization</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- AI Service Architecture -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-purple-400">AI Service Architecture</h3>
-                <div class="code-font bg-gray-900 p-6 rounded-lg border border-gray-700 overflow-x-auto">
-                    <pre class="text-purple-400 text-sm"><code>class AIContentService {
-  constructor() {
-    this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-      maxRetries: 3,
-    });
-    this.cache = new Redis();
-  }
-
-  async rewriteContent(content, context) {
-    const cacheKey = crypto.createHash('md5')
-      .update(content + JSON.stringify(context))
-      .digest('hex');
-    
-    const cached = await this.cache.get(cacheKey);
-    if (cached) return JSON.parse(cached);
-    
-    const result = await this.openai.chat.completions.create({
-      model: "gpt-4",
-      messages: [/* ... */],
-      temperature: 0.7,
-    });
-    
-    await this.cache.set(cacheKey, JSON.stringify(result), 'EX', 86400);
-    return result;
-  }
-}</code></pre>
-                </div>
-            </div>
-
-            <!-- Payment & Domain Management -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-green-400">Payment Processing</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <i class="fab fa-stripe text-blue-400 text-2xl mr-4"></i>
-                            <div>
-                                <h4 class="font-semibold text-blue-300">Stripe Integration</h4>
-                                <p class="text-gray-400 text-sm">Subscription management & billing</p>
-                            </div>
-                        </div>
-                        <div class="text-gray-300 text-sm space-y-1">
-                            <div>• Usage-based pricing for AI generations</div>
-                            <div>• Webhook handling for payment events</div>
-                            <div>• SCA compliance for EU customers</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-orange-400">Domain Management</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <i class="fas fa-globe text-orange-400 text-2xl mr-4"></i>
-                            <div>
-                                <h4 class="font-semibold text-orange-300">Subdomain System</h4>
-                                <p class="text-gray-400 text-sm">Dynamic routing & SSL</p>
-                            </div>
-                        </div>
-                        <div class="text-gray-300 text-sm space-y-1">
-                            <div>• Wildcard SSL for *.madfam.io</div>
-                            <div>• Cloudflare API integration</div>
-                            <div>• Custom domain CNAME verification</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Monetization -->
-        <section id="monetization" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-chart-line mr-4"></i>Monetization Strategy
-            </h2>
-
-            <!-- Pricing Tiers -->
-            <div class="grid md:grid-cols-3 gap-6 mb-12">
-                <div class="bg-gray-800 border border-gray-600 rounded-xl p-8 hover-scale">
-                    <h3 class="text-2xl font-semibold mb-4 text-green-400">Free Tier</h3>
-                    <div class="text-3xl font-bold mb-6 text-white">$0<span class="text-lg text-gray-400">/month</span></div>
-                    <ul class="space-y-3 text-gray-300 mb-8">
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>1 portfolio</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Basic templates</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>MADFAM subdomain</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>3 AI rewrites/month</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Basic analytics</li>
-                    </ul>
-                </div>
-
-                <div class="bg-gradient-to-br from-blue-600 to-purple-600 border border-blue-500 rounded-xl p-8 hover-scale relative">
-                    <div class="absolute top-4 right-4 bg-yellow-400 text-black px-3 py-1 rounded-full text-sm font-semibold">Popular</div>
-                    <h3 class="text-2xl font-semibold mb-4 text-white">Pro Tier</h3>
-                    <div class="text-3xl font-bold mb-6 text-white">$19<span class="text-lg text-blue-200">/month</span></div>
-                    <ul class="space-y-3 text-blue-100 mb-8">
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>3 portfolios</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>All templates</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Custom domain</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Unlimited AI rewrites</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Advanced analytics</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Priority support</li>
-                    </ul>
-                </div>
-
-                <div class="bg-gray-800 border border-gray-600 rounded-xl p-8 hover-scale">
-                    <h3 class="text-2xl font-semibold mb-4 text-purple-400">Business Tier</h3>
-                    <div class="text-3xl font-bold mb-6 text-white">$49<span class="text-lg text-gray-400">/month</span></div>
-                    <ul class="space-y-3 text-gray-300 mb-8">
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Unlimited portfolios</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>White-label option</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>API access</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Team collaboration</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Custom templates</li>
-                        <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Dedicated support</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Revenue Projections -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-yellow-400">Year 1 Revenue Projections</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-blue-400 mb-2">$3K</div>
-                        <div class="text-gray-400">Month 3 MRR</div>
-                        <div class="text-sm text-gray-500">1,000 users (15% paid)</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-green-400 mb-2">$19K</div>
-                        <div class="text-gray-400">Month 6 MRR</div>
-                        <div class="text-sm text-gray-500">5,000 users (20% paid)</div>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-3xl font-bold text-purple-400 mb-2">$75K</div>
-                        <div class="text-gray-400">Month 12 MRR</div>
-                        <div class="text-sm text-gray-500">15,000 users (25% paid)</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Unit Economics -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-green-400">Unit Economics</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">CAC (Customer Acquisition Cost)</span>
-                            <span class="text-green-400 font-semibold">$45</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">LTV (Lifetime Value)</span>
-                            <span class="text-green-400 font-semibold">$342</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">Payback Period</span>
-                            <span class="text-green-400 font-semibold">2.4 months</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2">
-                            <span class="text-gray-300">LTV:CAC Ratio</span>
-                            <span class="text-green-400 font-semibold">7.6:1</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-blue-400">Cross-Selling Opportunities</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center text-blue-300">
-                            <i class="fas fa-graduation-cap w-6 mr-3"></i>
-                            <span>MADFAM Academy integration (20% discount)</span>
-                        </div>
-                        <div class="flex items-center text-purple-300">
-                            <i class="fas fa-user-tie w-6 mr-3"></i>
-                            <span>Portfolio review service ($99)</span>
-                        </div>
-                        <div class="flex items-center text-green-300">
-                            <i class="fas fa-store w-6 mr-3"></i>
-                            <span>Premium templates marketplace</span>
-                        </div>
-                        <div class="flex items-center text-orange-300">
-                            <i class="fas fa-briefcase w-6 mr-3"></i>
-                            <span>Job board integration add-on</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Development Roadmap -->
-        <section id="roadmap" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-road mr-4"></i>Development Roadmap
-            </h2>
-
-            <!-- MVP Sprint Plan -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-green-400">MVP Sprint Plan (3 Weeks)</h3>
-                <div class="grid md:grid-cols-3 gap-6">
-                    <div class="bg-green-900 bg-opacity-30 p-6 rounded-lg border border-green-700">
-                        <h4 class="font-semibold text-green-300 mb-4 flex items-center">
-                            <i class="fas fa-calendar-week mr-3"></i>Week 1: Infrastructure
-                        </h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Day 1-2: Project setup, auth, database</li>
-                            <li>• Day 3-4: LinkedIn/GitHub integration</li>
-                            <li>• Day 5-7: AI content pipeline</li>
-                        </ul>
-                    </div>
-                    <div class="bg-blue-900 bg-opacity-30 p-6 rounded-lg border border-blue-700">
-                        <h4 class="font-semibold text-blue-300 mb-4 flex items-center">
-                            <i class="fas fa-calendar-week mr-3"></i>Week 2: User Interface
-                        </h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Day 8-9: Onboarding flow</li>
-                            <li>• Day 10-11: Editor interface</li>
-                            <li>• Day 12-14: Template system</li>
-                        </ul>
-                    </div>
-                    <div class="bg-purple-900 bg-opacity-30 p-6 rounded-lg border border-purple-700">
-                        <h4 class="font-semibold text-purple-300 mb-4 flex items-center">
-                            <i class="fas fa-calendar-week mr-3"></i>Week 3: Launch Prep
-                        </h4>
-                        <ul class="space-y-2 text-gray-300 text-sm">
-                            <li>• Day 15-16: Publishing system</li>
-                            <li>• Day 17-18: Payment integration</li>
-                            <li>• Day 19-21: Testing and bug fixes</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Post-MVP Roadmap -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="feature-card p-6 rounded-xl">
-                    <h4 class="font-semibold text-blue-300 mb-4 flex items-center">
-                        <i class="fas fa-calendar-alt mr-3"></i>Month 2
-                    </h4>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• Analytics dashboard</li>
-                        <li>• Email notifications</li>
-                        <li>• SEO optimization tools</li>
-                        <li>• A/B testing framework</li>
-                    </ul>
-                </div>
-                <div class="feature-card p-6 rounded-xl">
-                    <h4 class="font-semibold text-green-300 mb-4 flex items-center">
-                        <i class="fas fa-calendar-alt mr-3"></i>Month 3
-                    </h4>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• Mobile app (React Native)</li>
-                        <li>• Advanced AI features</li>
-                        <li>• Team collaboration</li>
-                        <li>• White-label setup</li>
-                    </ul>
-                </div>
-                <div class="feature-card p-6 rounded-xl">
-                    <h4 class="font-semibold text-purple-300 mb-4 flex items-center">
-                        <i class="fas fa-calendar-alt mr-3"></i>Month 4-6
-                    </h4>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• API marketplace</li>
-                        <li>• Plugin ecosystem</li>
-                        <li>• Enterprise features</li>
-                        <li>• International expansion</li>
-                    </ul>
-                </div>
-                <div class="feature-card p-6 rounded-xl">
-                    <h4 class="font-semibold text-orange-300 mb-4 flex items-center">
-                        <i class="fas fa-calendar-alt mr-3"></i>Year 2+
-                    </h4>
-                    <ul class="space-y-2 text-gray-300 text-sm">
-                        <li>• Multi-region deployment</li>
-                        <li>• Machine learning models</li>
-                        <li>• Platform integrations</li>
-                        <li>• Acquisition targets</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Operations -->
-        <section id="operations" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-cog mr-4"></i>Operational Requirements
-            </h2>
-
-            <!-- Infrastructure Strategy -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-cyan-400">Infrastructure Costs</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">Vercel Pro (Frontend)</span>
-                            <span class="text-cyan-400 font-semibold">$20/month</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">Supabase Pro (Backend)</span>
-                            <span class="text-cyan-400 font-semibold">$25/month</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">Cloudflare (CDN + Domains)</span>
-                            <span class="text-cyan-400 font-semibold">$20/month</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                            <span class="text-gray-300">Redis Cloud (Caching)</span>
-                            <span class="text-cyan-400 font-semibold">$30/month</span>
-                        </div>
-                        <div class="flex justify-between items-center py-2 pt-4 border-t-2 border-cyan-400">
-                            <span class="text-white font-semibold">Total Initial Cost</span>
-                            <span class="text-cyan-400 font-bold text-lg">$95/month</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-orange-400">Scaling Triggers</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center">
-                            <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 text-sm">1K</div>
-                            <div>
-                                <h4 class="font-semibold text-blue-300">1,000 Users</h4>
-                                <p class="text-gray-400 text-sm">Upgrade Supabase tier</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 text-sm">5K</div>
-                            <div>
-                                <h4 class="font-semibold text-green-300">5,000 Users</h4>
-                                <p class="text-gray-400 text-sm">Add Redis cluster</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center">
-                            <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center mr-4 text-sm">10K</div>
-                            <div>
-                                <h4 class="font-semibold text-purple-300">10,000 Users</h4>
-                                <p class="text-gray-400 text-sm">Multi-region deployment</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Support & Compliance -->
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-green-400">Customer Support</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="font-semibold text-green-300">Self-Service</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Interactive onboarding tour</li>
-                                <li>• Video tutorials library</li>
-                                <li>• Searchable knowledge base</li>
-                                <li>• Community forum</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="font-semibold text-blue-300">Support Channels</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• In-app chat (Intercom)</li>
-                                <li>• Email support (24h response)</li>
-                                <li>• Priority support for Pro users</li>
-                                <li>• Weekly office hours</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-red-400">Compliance Framework</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-red-500 pl-4">
-                            <h4 class="font-semibold text-red-300">GDPR Compliance</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Explicit consent for data processing</li>
-                                <li>• Data portability (export all data)</li>
-                                <li>• Right to deletion implementation</li>
-                                <li>• Privacy policy generator</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-yellow-500 pl-4">
-                            <h4 class="font-semibold text-yellow-300">Terms of Service</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Content ownership clarity</li>
-                                <li>• AI-generated content disclaimers</li>
-                                <li>• Liability limitations</li>
-                                <li>• Dispute resolution process</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Validation Strategy -->
-        <section id="validation" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-check-circle mr-4"></i>Validation Strategy
-            </h2>
-
-            <!-- Beta Testing Framework -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-green-400">Pre-Launch Validation</h3>
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="font-semibold text-green-300">Landing Page Test</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Create coming-soon page</li>
-                                <li>• A/B test value propositions</li>
-                                <li>• Collect 500 email signups</li>
-                                <li>• Target: 30% signup rate</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="font-semibold text-blue-300">Prototype Testing</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Build Figma prototype</li>
-                                <li>• Test with 20 freelancers</li>
-                                <li>• Measure time-to-value</li>
-                                <li>• Iterate based on feedback</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-purple-400">Beta Testing Phases</h3>
-                    <div class="space-y-6">
-                        <div class="border-l-4 border-purple-500 pl-4">
-                            <h4 class="font-semibold text-purple-300">Phase 1: Friends & Family</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• 50 users, 2-week testing</li>
-                                <li>• Daily feedback sessions</li>
-                                <li>• Bug bounty program</li>
-                                <li>• Feature request tracking</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-orange-500 pl-4">
-                            <h4 class="font-semibold text-orange-300">Phase 2: Closed Beta</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• 500 users, industry cohorts</li>
-                                <li>• Weekly surveys</li>
-                                <li>• Conversion tracking</li>
-                                <li>• Referral program test</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Success Criteria -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-yellow-400">Success Criteria & Pivot Triggers</h3>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-green-300">Technical Validation</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Uptime during beta</span>
-                                <span class="text-green-400 font-semibold">99.5%</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Average setup time</span>
-                                <span class="text-green-400 font-semibold">&lt;30 min</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Critical bug rate</span>
-                                <span class="text-green-400 font-semibold">&lt;5%</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-gray-300">Feature completion</span>
-                                <span class="text-green-400 font-semibold">90%</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-blue-300">Market Validation</h4>
-                        <div class="space-y-3">
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Weekly active users</span>
-                                <span class="text-blue-400 font-semibold">40%</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">Paid conversion</span>
-                                <span class="text-blue-400 font-semibold">15%</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2 border-b border-gray-700">
-                                <span class="text-gray-300">NPS Score</span>
-                                <span class="text-blue-400 font-semibold">&gt;40</span>
-                            </div>
-                            <div class="flex justify-between items-center py-2">
-                                <span class="text-gray-300">Referral rate</span>
-                                <span class="text-blue-400 font-semibold">30%</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 90-Day Dashboard -->
-            <div class="bg-gray-800 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-orange-400">90-Day Success Metrics Dashboard</h3>
-                <div class="grid md:grid-cols-4 gap-6">
-                    <div class="text-center">
-                        <h4 class="font-semibold text-blue-300 mb-3">Week 1</h4>
-                        <div class="space-y-2">
-                            <div class="text-2xl font-bold text-blue-400">100</div>
-                            <div class="text-gray-400 text-sm">Signups</div>
-                            <div class="text-green-400 text-sm">70% setup completion</div>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="font-semibold text-green-300 mb-3">Month 1</h4>
-                        <div class="space-y-2">
-                            <div class="text-2xl font-bold text-green-400">1,000</div>
-                            <div class="text-gray-400 text-sm">Total Users</div>
-                            <div class="text-green-400 text-sm">$2K MRR</div>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="font-semibold text-purple-300 mb-3">Month 2</h4>
-                        <div class="space-y-2">
-                            <div class="text-2xl font-bold text-purple-400">3,000</div>
-                            <div class="text-gray-400 text-sm">Total Users</div>
-                            <div class="text-purple-400 text-sm">$8.5K MRR</div>
-                        </div>
-                    </div>
-                    <div class="text-center">
-                        <h4 class="font-semibold text-orange-300 mb-3">Month 3</h4>
-                        <div class="space-y-2">
-                            <div class="text-2xl font-bold text-orange-400">6,000</div>
-                            <div class="text-gray-400 text-sm">Total Users</div>
-                            <div class="text-orange-400 text-sm">$17K MRR</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <div class="section-divider mb-16"></div>
-
-        <!-- Competitive Strategy -->
-        <section id="competitive" class="mb-16 fade-in">
-            <h2 class="text-4xl font-bold mb-8 text-blue-400 flex items-center">
-                <i class="fas fa-trophy mr-4"></i>Competitive Strategy
-            </h2>
-
-            <!-- Sustainable Differentiators -->
-            <div class="grid md:grid-cols-2 gap-8 mb-8">
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-green-400">Sustainable Differentiators</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-green-500 pl-4">
-                            <h4 class="font-semibold text-green-300">AI-First Architecture</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Proprietary prompt engineering</li>
-                                <li>• Industry-specific training data</li>
-                                <li>• Continuous model improvement</li>
-                                <li>• User feedback loop integration</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-blue-500 pl-4">
-                            <h4 class="font-semibold text-blue-300">Speed Advantage</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Sub-30-minute setup</li>
-                                <li>• Instant publishing</li>
-                                <li>• Real-time preview</li>
-                                <li>• One-click updates</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-gray-800 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold mb-6 text-purple-400">Competitive Moats</h3>
-                    <div class="space-y-4">
-                        <div class="border-l-4 border-purple-500 pl-4">
-                            <h4 class="font-semibold text-purple-300">Technical Moats</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• Complex integration layer</li>
-                                <li>• Optimized AI pipeline</li>
-                                <li>• Multi-source data fusion</li>
-                                <li>• Performance optimization</li>
-                            </ul>
-                        </div>
-                        <div class="border-l-4 border-orange-500 pl-4">
-                            <h4 class="font-semibold text-orange-300">Business Moats</h4>
-                            <ul class="text-gray-300 text-sm space-y-1">
-                                <li>• SEO from subdomains</li>
-                                <li>• Referral network</li>
-                                <li>• MADFAM ecosystem</li>
-                                <li>• Content marketing engine</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Platform Expansion -->
-            <div class="bg-gray-800 rounded-xl p-8 mb-8">
-                <h3 class="text-2xl font-semibold mb-6 text-cyan-400">Platform Expansion Strategy</h3>
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-blue-300">Year 2: Horizontal Expansion</h4>
-                        <div class="space-y-3">
-                            <div class="flex items-center text-blue-300">
-                                <i class="fas fa-file-alt w-6 mr-3"></i>
-                                <span>Resume builder integration</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-file-invoice w-6 mr-3"></i>
-                                <span>Invoice/proposal generator</span>
-                            </div>
-                            <div class="flex items-center text-purple-300">
-                                <i class="fas fa-user-friends w-6 mr-3"></i>
-                                <span>Client portal features</span>
-                            </div>
-                            <div class="flex items-center text-orange-300">
-                                <i class="fas fa-tasks w-6 mr-3"></i>
-                                <span>Project management lite</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4 text-green-300">Year 3: Vertical Integration</h4>
-                        <div class="space-y-3">
-                            <div class="flex items-center text-blue-300">
-                                <i class="fas fa-briefcase w-6 mr-3"></i>
-                                <span>Job marketplace</span>
-                            </div>
-                            <div class="flex items-center text-green-300">
-                                <i class="fas fa-certificate w-6 mr-3"></i>
-                                <span>Skill assessments</span>
-                            </div>
-                            <div class="flex items-center text-purple-300">
-                                <i class="fas fa-handshake w-6 mr-3"></i>
-                                <span>Client matching</span>
-                            </div>
-                            <div class="flex items-center text-orange-300">
-                                <i class="fas fa-credit-card w-6 mr-3"></i>
-                                <span>Payment processing</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Critical Assumptions -->
-            <div class="bg-red-900 bg-opacity-30 border border-red-700 rounded-xl p-8">
-                <h3 class="text-2xl font-semibold mb-6 text-red-400">Critical Assumptions to Validate</h3>
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">30-Minute Setup</h4>
-                                <p class="text-gray-300 text-sm">Can non-technical users really complete setup in 30 minutes?</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">AI Quality</h4>
-                                <p class="text-gray-300 text-sm">Will AI-generated content meet professional standards?</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">Platform Access</h4>
-                                <p class="text-gray-300 text-sm">Will LinkedIn/GitHub APIs remain accessible?</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="space-y-3">
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">Conversion Rate</h4>
-                                <p class="text-gray-300 text-sm">Will 15% of free users convert to paid?</p>
-                            </div>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-exclamation-triangle text-yellow-400 mt-1 mr-3"></i>
-                            <div>
-                                <h4 class="font-semibold text-yellow-300">Retention</h4>
-                                <p class="text-gray-300 text-sm">Can we maintain &lt;5% monthly churn?</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Conclusion -->
-        <section class="mb-16">
-            <div class="gradient-bg rounded-xl p-12 text-center relative overflow-hidden">
-                <div class="absolute inset-0 bg-black opacity-20"></div>
-                <div class="relative z-10">
-                    <h2 class="text-4xl font-bold text-white mb-6">Next Steps</h2>
-                    <p class="text-xl text-blue-100 mb-8 max-w-4xl mx-auto">
-                        This comprehensive specification provides a roadmap for building the MADFAM AI-Powered Portfolio Builder. 
-                        The focus on AI-driven automation, rapid time-to-value, and seamless user experience positions this product 
-                        to capture significant market share in the growing freelancer economy.
+                    <h3 class="text-xl font-semibold mb-3">AI Content Enhancement</h3>
+                    <p class="text-gray-600">
+                        Our AI rewrites your experience into compelling narratives that highlight your value and achievements.
                     </p>
-                    <div class="grid md:grid-cols-5 gap-4 max-w-4xl mx-auto">
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                            <div class="bg-blue-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-2 text-sm">1</div>
-                            <div class="text-white font-semibold text-sm">Validate with landing page</div>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-link text-2xl text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">One-Click Import</h3>
+                    <p class="text-gray-600">
+                        Connect LinkedIn, GitHub, or upload your CV. We automatically extract and organize everything.
+                    </p>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-palette text-2xl text-green-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Professional Templates</h3>
+                    <p class="text-gray-600">
+                        Industry-specific designs that adapt to your content. No design skills needed.
+                    </p>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-globe text-2xl text-orange-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Custom Domain</h3>
+                    <p class="text-gray-600">
+                        Get a professional URL like yourname.com or use our free subdomain.
+                    </p>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-pink-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-chart-line text-2xl text-pink-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Analytics Dashboard</h3>
+                    <p class="text-gray-600">
+                        Track visitors, see which projects get attention, and optimize your portfolio.
+                    </p>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                    <div class="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
+                        <i class="fas fa-mobile-alt text-2xl text-indigo-600"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Mobile Optimized</h3>
+                    <p class="text-gray-600">
+                        Your portfolio looks perfect on every device. Edit on the go with our mobile editor.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section id="how-it-works" class="py-20 px-6 bg-gray-100">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    From Zero to Portfolio in <span class="gradient-text">3 Simple Steps</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    No technical skills required. Our AI handles everything.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Step 1 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                        1
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Import Your Data</h3>
+                    <p class="text-gray-600">
+                        Connect LinkedIn, GitHub, or upload your CV. Takes less than 2 minutes.
+                    </p>
+                </div>
+                
+                <!-- Step 2 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                        2
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">AI Enhancement</h3>
+                    <p class="text-gray-600">
+                        Our AI rewrites your content, suggests improvements, and picks the perfect template.
+                    </p>
+                </div>
+                
+                <!-- Step 3 -->
+                <div class="text-center">
+                    <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+                        3
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Publish & Share</h3>
+                    <p class="text-gray-600">
+                        Review, customize if needed, and publish. Your portfolio is live instantly.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Mock Browser Preview -->
+            <div class="mt-16 max-w-4xl mx-auto">
+                <div class="mock-browser shadow-2xl">
+                    <div class="mock-browser-bar">
+                        <div class="mock-browser-dot"></div>
+                        <div class="mock-browser-dot"></div>
+                        <div class="mock-browser-dot"></div>
+                        <div class="flex-1 text-center">
+                            <span class="text-sm text-gray-600">https://johndoe.madfam.io</span>
                         </div>
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                            <div class="bg-green-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-2 text-sm">2</div>
-                            <div class="text-white font-semibold text-sm">Build MVP (CV → Portfolio)</div>
+                    </div>
+                    <div class="bg-white p-8">
+                        <div class="text-center mb-8">
+                            <div class="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4"></div>
+                            <h3 class="text-2xl font-bold">John Doe</h3>
+                            <p class="text-gray-600">Full Stack Developer & UI Designer</p>
                         </div>
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                            <div class="bg-purple-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-2 text-sm">3</div>
-                            <div class="text-white font-semibold text-sm">Launch closed beta</div>
-                        </div>
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                            <div class="bg-orange-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-2 text-sm">4</div>
-                            <div class="text-white font-semibold text-sm">Iterate based on feedback</div>
-                        </div>
-                        <div class="bg-white bg-opacity-20 rounded-lg p-4">
-                            <div class="bg-red-500 text-white rounded-full w-8 h-8 flex items-center justify-center mx-auto mb-2 text-sm">5</div>
-                            <div class="text-white font-semibold text-sm">Scale to 1K users</div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-gray-100 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 h-32 rounded-lg"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <!-- Templates Preview -->
+    <section id="templates" class="py-20 px-6">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Beautiful Templates for <span class="gradient-text">Every Professional</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    AI selects the perfect template based on your industry and content
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="group cursor-pointer" onclick="showComingSoon()">
+                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
+                            <span class="text-white font-semibold">Use This Template</span>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold">Minimal Developer</h3>
+                    <p class="text-gray-600 text-sm">Clean, code-focused design</p>
+                </div>
+                
+                <div class="group cursor-pointer" onclick="showComingSoon()">
+                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
+                            <span class="text-white font-semibold">Use This Template</span>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold">Creative Designer</h3>
+                    <p class="text-gray-600 text-sm">Visual, portfolio-centric layout</p>
+                </div>
+                
+                <div class="group cursor-pointer" onclick="showComingSoon()">
+                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                        <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
+                            <span class="text-white font-semibold">Use This Template</span>
+                        </div>
+                    </div>
+                    <h3 class="font-semibold">Business Professional</h3>
+                    <p class="text-gray-600 text-sm">Corporate, achievement-focused</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section id="pricing" class="py-20 px-6 bg-gray-100">
+        <div class="container mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-bold text-gray-900 mb-4">
+                    Simple Pricing, <span class="gradient-text">Powerful Features</span>
+                </h2>
+                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+                    Start free, upgrade when you need more
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Free Plan -->
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Free</h3>
+                    <div class="text-4xl font-bold mb-6">$0<span class="text-lg text-gray-600">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            1 portfolio
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Basic templates
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            MADFAM subdomain
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            3 AI rewrites/month
+                        </li>
+                    </ul>
+                    <button onclick="showComingSoon()" class="w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 transition">
+                        Start Free
+                    </button>
+                </div>
+                
+                <!-- Pro Plan -->
+                <div class="bg-purple-600 text-white p-8 rounded-xl shadow-lg transform scale-105">
+                    <div class="bg-yellow-400 text-purple-900 text-sm font-semibold px-3 py-1 rounded-full inline-block mb-4">
+                        MOST POPULAR
+                    </div>
+                    <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                    <div class="text-4xl font-bold mb-6">$19<span class="text-lg opacity-80">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            3 portfolios
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            All templates
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            Custom domain
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            Unlimited AI rewrites
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check mr-3"></i>
+                            Analytics & SEO tools
+                        </li>
+                    </ul>
+                    <button onclick="showComingSoon()" class="w-full bg-white text-purple-600 py-3 rounded-lg font-medium hover:bg-gray-100 transition">
+                        Start Pro Trial
+                    </button>
+                </div>
+                
+                <!-- Business Plan -->
+                <div class="bg-white p-8 rounded-xl shadow-lg">
+                    <h3 class="text-2xl font-bold mb-2">Business</h3>
+                    <div class="text-4xl font-bold mb-6">$49<span class="text-lg text-gray-600">/month</span></div>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Unlimited portfolios
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            White-label option
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            API access
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Team collaboration
+                        </li>
+                        <li class="flex items-center">
+                            <i class="fas fa-check text-green-500 mr-3"></i>
+                            Priority support
+                        </li>
+                    </ul>
+                    <button onclick="showComingSoon()" class="w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 transition">
+                        Contact Sales
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 px-6 gradient-bg text-white">
+        <div class="container mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">
+                Ready to Build Your Portfolio?
+            </h2>
+            <p class="text-xl mb-8 opacity-90">
+                Join thousands of professionals who've transformed their careers
+            </p>
+            <button onclick="showComingSoon()" class="bg-white text-purple-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-100 transition hover-lift">
+                Get Started Free
+            </button>
+            <p class="mt-4 opacity-80">
+                No credit card required " Setup in 30 minutes
+            </p>
+        </div>
+    </section>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 border-t border-gray-700 py-12">
-        <div class="container mx-auto px-6 text-center">
-            <div class="flex justify-center items-center mb-6">
-                <i class="fas fa-rocket text-2xl text-blue-400 mr-3"></i>
-                <h3 class="text-2xl font-bold text-white">MADFAM AI Portfolio Builder</h3>
+    <footer class="bg-gray-900 text-gray-300 py-12 px-6">
+        <div class="container mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <div class="flex items-center space-x-2 mb-4">
+                        <i class="fas fa-rocket text-2xl text-purple-400"></i>
+                        <span class="text-xl font-bold text-white">MADFAM.AI</span>
+                    </div>
+                    <p class="text-sm">
+                        AI-powered portfolio builder for modern professionals
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Product</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#features" class="hover:text-white transition">Features</a></li>
+                        <li><a href="#templates" class="hover:text-white transition">Templates</a></li>
+                        <li><a href="#pricing" class="hover:text-white transition">Pricing</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">About</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">Blog</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">Careers</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Legal</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">Privacy</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">Terms</a></li>
+                        <li><a href="#" onclick="showComingSoon()" class="hover:text-white transition">GDPR</a></li>
+                    </ul>
+                </div>
             </div>
-            <p class="text-gray-400 mb-4">Comprehensive Software Specifications Document v1.0</p>
-            <p class="text-gray-500 text-sm">
-                The combination of technical innovation, market timing, and integration with MADFAM's existing ecosystem 
-                creates a strong foundation for success in the freelancer economy.
-            </p>
+            
+            <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-sm mb-4 md:mb-0">
+                    � 2025 MADFAM. All rights reserved.
+                </p>
+                <div class="flex space-x-6">
+                    <a href="#" onclick="showComingSoon()" class="hover:text-white transition">
+                        <i class="fab fa-twitter text-xl"></i>
+                    </a>
+                    <a href="#" onclick="showComingSoon()" class="hover:text-white transition">
+                        <i class="fab fa-linkedin text-xl"></i>
+                    </a>
+                    <a href="#" onclick="showComingSoon()" class="hover:text-white transition">
+                        <i class="fab fa-github text-xl"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </footer>
 
+    <!-- Coming Soon Modal -->
+    <div id="coming-soon-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-6 z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full">
+            <div class="text-center">
+                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-rocket text-2xl text-purple-600"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-2">Coming Soon!</h3>
+                <p class="text-gray-600 mb-6">
+                    We're putting the finishing touches on MADFAM AI Portfolio Builder. 
+                    Join our waitlist to be the first to know when we launch!
+                </p>
+                <div class="space-y-3">
+                    <input type="email" placeholder="Enter your email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600">
+                    <button onclick="submitWaitlist()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition">
+                        Join Waitlist
+                    </button>
+                    <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800 transition">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Demo Video Modal -->
+    <div id="demo-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-6 z-50">
+        <div class="bg-white rounded-xl p-8 max-w-4xl w-full">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold">See MADFAM in Action</h3>
+                <button onclick="closeDemoModal()" class="text-gray-600 hover:text-gray-800">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="bg-gray-200 aspect-video rounded-lg flex items-center justify-center">
+                <div class="text-center">
+                    <i class="fas fa-play-circle text-6xl text-gray-400 mb-4"></i>
+                    <p class="text-gray-600">Demo video coming soon</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
     <script>
         // Smooth scrolling for navigation links
-        document.querySelectorAll('nav a[href^="#"]').forEach(anchor => {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
@@ -1472,47 +609,64 @@ CREATE TABLE projects (
             });
         });
 
-        // Update active navigation link on scroll
-        window.addEventListener('scroll', function() {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+        // Modal functions
+        function showComingSoon() {
+            document.getElementById('coming-soon-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('coming-soon-modal').classList.add('hidden');
+        }
+
+        function showDemo() {
+            document.getElementById('demo-modal').classList.remove('hidden');
+        }
+
+        function closeDemoModal() {
+            document.getElementById('demo-modal').classList.add('hidden');
+        }
+
+        function submitWaitlist() {
+            alert('Thank you for joining our waitlist! We\'ll notify you when we launch.');
+            closeModal();
+        }
+
+        // Close modals on outside click
+        window.onclick = function(event) {
+            const comingSoonModal = document.getElementById('coming-soon-modal');
+            const demoModal = document.getElementById('demo-modal');
             
-            let current = '';
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= (sectionTop - 200)) {
-                    current = section.getAttribute('id');
-                }
-            });
+            if (event.target === comingSoonModal) {
+                closeModal();
+            }
+            if (event.target === demoModal) {
+                closeDemoModal();
+            }
+        }
 
-            navLinks.forEach(link => {
-                link.classList.remove('text-blue-400');
-                link.classList.add('text-gray-300');
-                if (link.getAttribute('href') === '#' + current) {
-                    link.classList.remove('text-gray-300');
-                    link.classList.add('text-blue-400');
-                }
-            });
+        // Add scroll effect to header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 50) {
+                header.classList.add('shadow-lg');
+            } else {
+                header.classList.remove('shadow-lg');
+            }
         });
 
-        // Add animation on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -100px 0px'
-        };
+        // Development/Production Detection
+        const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const isProduction = window.location.hostname.includes('madfam.io');
+        
+        if (isDevelopment || isProduction) {
+            console.log('Running in:', isDevelopment ? 'Development' : 'Production');
+            // You can add environment-specific code here
+        }
 
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('fade-in');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('section').forEach(section => {
-            observer.observe(section);
-        });
+        // Add notice about this being a demo
+        if (window.location.hostname.includes('github.io')) {
+            console.log('This is a static demo. Visit madfam.io for the full application.');
+        }
     </script>
 </body>
 </html>

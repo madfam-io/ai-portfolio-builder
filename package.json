@@ -1,0 +1,151 @@
+{
+  "name": "madfam-ai-portfolio-builder",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes",
+  "author": "MADFAM Team",
+  "license": "UNLICENSED",
+  "keywords": ["portfolio", "ai", "nextjs", "saas", "cv", "resume"],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/madfam/ai-portfolio-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/madfam/ai-portfolio-builder/issues"
+  },
+  "homepage": "https://madfam.io",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "prepare": "husky install",
+    "pre-commit": "lint-staged",
+    "commit": "git-cz",
+    "release": "standard-version",
+    "supabase:migrate": "supabase db reset",
+    "supabase:types": "supabase gen types typescript --local > types/supabase.ts",
+    "supabase:reset": "supabase db reset",
+    "setup:git": "./scripts/setup-git.sh"
+  },
+  "dependencies": {
+    "next": "14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^18.4.0",
+    "@commitlint/config-conventional": "^18.4.0",
+    "@types/node": "^20.10.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "commitizen": "^4.3.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "eslint": "^8.56.0",
+    "eslint-config-next": "14.1.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "prettier": "^3.1.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.17.0",
+    "npm": ">=9.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ],
+    "package.json": [
+      "prettier --write"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "commitlint": {
+    "extends": ["@commitlint/config-conventional"],
+    "rules": {
+      "type-enum": [
+        2,
+        "always",
+        [
+          "feat",
+          "fix",
+          "docs",
+          "style",
+          "refactor",
+          "perf",
+          "test",
+          "chore",
+          "ci",
+          "build",
+          "revert"
+        ]
+      ],
+      "scope-enum": [
+        2,
+        "always",
+        [
+          "auth",
+          "editor",
+          "ai",
+          "db",
+          "api",
+          "ui",
+          "deploy",
+          "docs",
+          "config",
+          "deps",
+          "release"
+        ]
+      ],
+      "subject-case": [2, "never", ["start-case", "pascal-case", "upper-case"]],
+      "subject-empty": [2, "never"],
+      "subject-full-stop": [2, "never", "."],
+      "type-case": [2, "always", "lower-case"],
+      "type-empty": [2, "never"]
+    }
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "useTabs": false,
+    "bracketSpacing": true,
+    "arrowParens": "avoid",
+    "endOfLine": "lf"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
