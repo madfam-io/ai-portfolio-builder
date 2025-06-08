@@ -50,6 +50,7 @@
     "dist",
     "coverage",
     "playwright-report",
-    "test-results"
+    "test-results",
+    "components/disabled"
   ]
 }
