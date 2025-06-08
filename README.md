@@ -6,7 +6,7 @@
 
 MADFAM AI Portfolio Builder is a SaaS platform that automates portfolio creation for freelancers, consultants, and creative professionals. By connecting LinkedIn, GitHub, and uploading CVs, users get a professionally designed portfolio website with AI-enhanced content.
 
-> **Current Status**: Foundation Development Phase - Landing page with multilanguage support complete, Docker environment configured, ready for core SaaS features.
+> **Current Status**: Foundation Complete (v0.1.0) - Multilanguage landing page deployed, Docker environment configured, authentication and database implementation in progress.
 
 ### 🎯 Mission
 
@@ -37,26 +37,26 @@ Transform scattered professional profiles into stunning portfolio websites in un
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + Shadcn/ui + React Icons
 - **Internationalization**: React Context with TypeScript
-- **State Management**: Zustand
-- **Forms**: React Hook Form + Zod
-- **Animation**: Framer Motion
+- **State Management**: React Context (Zustand planned)
+- **Forms**: React Hook Form + Zod (planned)
+- **Animation**: Framer Motion (planned)
 
-### Backend
+### Backend (Planned)
 
-- **Database**: Supabase (PostgreSQL)
+- **Database**: PostgreSQL (via Docker for dev, Supabase for production)
 - **Authentication**: Supabase Auth + OAuth 2.0
 - **AI Services**: OpenAI GPT-4, Claude API
 - **File Storage**: Supabase Storage
-- **Cache**: Redis (Upstash)
+- **Cache**: Redis (local for dev, Upstash for production)
 
 ### Infrastructure
 
 - **Development**: Docker Compose (PostgreSQL, Redis, pgAdmin)
 - **Hosting**: Vercel (Next.js optimized, NOT compatible with GitHub Pages)
-- **CDN**: Cloudflare
-- **Monitoring**: Sentry
-- **Analytics**: PostHog
-- **Payments**: Stripe
+- **CDN**: Cloudflare (planned)
+- **Monitoring**: Sentry (planned)
+- **Analytics**: PostHog (planned)
+- **Payments**: Stripe (planned)
 
 > ⚠️ **Note**: This application requires server-side functionality and cannot be deployed to GitHub Pages. See [DEPLOYMENT.md](DEPLOYMENT.md) for deployment options.
 
@@ -88,7 +88,7 @@ Get up and running with a complete development environment in one command:
 
 ```bash
 # Clone the repository
-git clone https://github.com/madfam/ai-portfolio-builder.git
+git clone https://github.com/madfam-io/ai-portfolio-builder.git
 cd ai-portfolio-builder
 
 # Quick start with Docker (includes PostgreSQL, Redis, pgAdmin)
@@ -107,7 +107,7 @@ For traditional local development:
 
 ```bash
 # Clone and setup
-git clone https://github.com/madfam/ai-portfolio-builder.git
+git clone https://github.com/madfam-io/ai-portfolio-builder.git
 cd ai-portfolio-builder
 pnpm install
 
@@ -236,17 +236,16 @@ pnpm format
 pnpm pre-commit
 ```
 
-### Database Management (Future)
+### Database Management
 
 ```bash
-# Generate types from database
-pnpm supabase:types
+# With Docker (current)
+docker-compose -f docker-compose.dev.yml exec db psql -U postgres
 
-# Run migrations
-pnpm supabase:migrate
-
-# Reset database
-pnpm supabase:reset
+# Future Supabase commands
+# pnpm supabase:types     # Generate types from database
+# pnpm supabase:migrate   # Run migrations
+# pnpm supabase:reset     # Reset database
 ```
 
 ## 📊 Performance Targets
@@ -281,57 +280,55 @@ For detailed technical documentation, see the [`docs/`](./docs/) directory:
 - **[Docker Setup](./docs/DOCKER.md)** - Containerized development and production setup
 - **[Deployment](./docs/DEPLOYMENT.md)** - Deployment guides and infrastructure
 - **[Git Workflow](./docs/GIT_WORKFLOW.md)** - Branching strategy and development workflow
+- **[Roadmap](./docs/ROADMAP.md)** - Development roadmap and feature planning
+- **[Issues](./docs/ISSUES.md)** - Active issues, bugs, and task tracking
 - **[AI Guidelines](./CLAUDE.md)** - AI development context and best practices
 
 ## 🆘 Support
 
-- Documentation: [docs.madfam.io](https://docs.madfam.io)
-- Email: support@madfam.io
-- Discord: [Join our community](https://discord.gg/madfam)
+- **Documentation**: See [`docs/`](./docs/) directory
+- **Issues**: Report bugs in [ISSUES.md](./docs/ISSUES.md) or GitHub Issues
+- **Email**: hello@madfam.io
+- **GitHub**: [madfam-io/ai-portfolio-builder](https://github.com/madfam-io/ai-portfolio-builder)
 
-## 🎯 Development Roadmap
+## 🎯 Development Progress
 
-### ✅ Foundation Complete (Current)
+### Current Status
 
-- [x] Project setup and documentation
-- [x] Technology stack alignment
-- [x] Docker development environment
-- [x] Next.js 14 application foundation
-- [x] **Multilanguage support (Spanish/English)**
-- [x] **Professional landing page**
-- [x] **Responsive design with dark mode**
-- [x] **Component-based architecture**
-- [x] **Test-driven development setup**
-- [x] **CI/CD pipeline foundation**
+**Version**: 0.1.0 - Foundation Release  
+**Phase**: Core SaaS Features Development  
+**Focus**: Authentication & Database Setup
 
-### 🚀 Next Phase - Core SaaS Features
+### Key Achievements
 
-- [ ] Authentication system (Supabase Auth)
-- [ ] Database schema and migrations
-- [ ] User dashboard and onboarding
-- [ ] Profile import (LinkedIn, GitHub, CV upload)
-- [ ] AI content generation pipeline (OpenAI/Claude)
-- [ ] Portfolio template system
-- [ ] Portfolio editor interface
-- [ ] Publishing and deployment pipeline
-- [ ] Payment integration (Stripe)
+- ✅ **Multilanguage Support**: Full Spanish/English implementation
+- ✅ **Professional Landing Page**: Responsive design with dark mode
+- ✅ **Development Environment**: Docker setup with PostgreSQL & Redis
+- ✅ **Testing Infrastructure**: Jest, Playwright, and CI/CD pipeline
+- ✅ **Component Architecture**: Modular, reusable components
 
-### 📈 Growth Phase
+### 🚧 Currently In Progress
 
-- [ ] Custom domains and white-label
-- [ ] Analytics dashboard and SEO tools
-- [ ] Team collaboration features
-- [ ] Mobile app (React Native)
-- [ ] API marketplace and integrations
-- [ ] Advanced AI features and personalization
+- Authentication system implementation (Supabase Auth)
+- Database schema design and migrations
+- User dashboard and onboarding flow
+- Fixing test suite issues (see [ISSUES.md](./docs/ISSUES.md))
 
-### 🌍 Scale Phase
+### 📋 Development Resources
 
-- [ ] Multi-region deployment
-- [ ] Enterprise features and SSO
-- [ ] Performance optimization
-- [ ] Additional language support
-- [ ] Marketplace for templates and plugins
+For detailed development planning and tracking:
+
+- **[Development Roadmap](./docs/ROADMAP.md)** - Complete feature roadmap through 2025
+- **[Active Issues](./docs/ISSUES.md)** - Current bugs, tasks, and feature requests
+- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to get involved
+
+### 🎯 Project Goals
+
+1. **30-Minute Portfolio Creation**: From signup to published site
+2. **AI-Powered Content**: Enhance bios and project descriptions automatically
+3. **Professional Templates**: Industry-specific designs with smart recommendations
+4. **Seamless Integration**: Import from LinkedIn, GitHub, and CV uploads
+5. **Custom Domains**: Professional URLs for every portfolio
 
 ---
 
