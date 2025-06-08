@@ -102,7 +102,12 @@ export default function Footer() {
             <a href="#" className="hover:text-white transition">
               <FaLinkedinIn className="text-xl" />
             </a>
-            <a href="#" className="hover:text-white transition">
+            <a
+              href="https://github.com/madfam-io/"
+              className="hover:text-white transition"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <FaGithub className="text-xl" />
             </a>
           </div>
