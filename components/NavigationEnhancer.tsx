@@ -23,36 +23,7 @@ export default function NavigationEnhancer() {
 
     document.body.insertBefore(skipLink, document.body.firstChild);
 
-    // Back to top button functionality
-    const backToTopButton = document.createElement('button');
-    backToTopButton.className = 'back-to-top-button';
-    backToTopButton.setAttribute('aria-label', 'Back to top');
-    backToTopButton.setAttribute('title', 'Back to top');
-    backToTopButton.innerHTML = `
-      <svg class="w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
-      </svg>
-    `;
-
-    let hasShownButton = false;
-
-    // Show/hide back to top button based on scroll position
-    const toggleBackToTopButton = () => {
-      if (window.pageYOffset > 300) {
-        if (!hasShownButton) {
-          backToTopButton.classList.add('back-to-top-pulse');
-          hasShownButton = true;
-          setTimeout(() => {
-            backToTopButton.classList.remove('back-to-top-pulse');
-          }, 2000);
-        }
-        backToTopButton.classList.add('visible');
-      } else {
-        backToTopButton.classList.remove('visible');
-      }
-    };
-
-    // Smooth scroll to top functionality
+    // Smooth scroll to top functionality (for keyboard shortcut)
     const scrollToTop = () => {
       window.scrollTo({
         top: 0,
@@ -64,11 +35,6 @@ export default function NavigationEnhancer() {
         document.querySelector('#main-content') || document.body;
       (mainContent as HTMLElement).focus({ preventScroll: true });
     };
-
-    backToTopButton.addEventListener('click', scrollToTop);
-    window.addEventListener('scroll', toggleBackToTopButton);
-
-    document.body.appendChild(backToTopButton);
 
     // Keyboard navigation enhancement
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -174,13 +140,8 @@ export default function NavigationEnhancer() {
       document.removeEventListener('keydown', handleKeyPress);
       document.removeEventListener('mousedown', handleMouseDown);
       document.removeEventListener('click', handleAnchorClick);
-      window.removeEventListener('scroll', toggleBackToTopButton);
-      backToTopButton.removeEventListener('click', scrollToTop);
       if (skipLink.parentNode) {
         skipLink.parentNode.removeChild(skipLink);
-      }
-      if (backToTopButton.parentNode) {
-        backToTopButton.parentNode.removeChild(backToTopButton);
       }
     };
   }, []);
