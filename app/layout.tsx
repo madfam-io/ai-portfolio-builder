@@ -5,9 +5,10 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'MADFAM AI Portfolio Builder',
+  title:
+    'MADFAM AI Portfolio Builder - Create Stunning Portfolios in 30 Minutes',
   description:
-    'Transform your professional profiles into stunning portfolio websites in under 30 minutes using AI-powered content generation.',
+    'Transform your LinkedIn, GitHub and CV into a beautiful portfolio website using AI. No design skills needed. Start free.',
 };
 
 export default function RootLayout({
@@ -16,8 +17,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="scroll-smooth">
+      <body
+        className={`${inter.className} bg-gray-50 dark:bg-gray-900 transition-colors duration-300`}
+      >
+        {children}
+      </body>
     </html>
   );
 }
