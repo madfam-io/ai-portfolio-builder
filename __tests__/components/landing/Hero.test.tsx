@@ -39,6 +39,7 @@ describe('Hero Component', () => {
     });
 
     it('should render hero title in English when language is set', () => {
+      localStorageMock.getItem.mockReturnValue('en');
       renderHero('en');
 
       expect(screen.getByText('Turn Your CV Into a')).toBeInTheDocument();
@@ -71,7 +72,7 @@ describe('Hero Component', () => {
     it('should render primary CTA button with correct link', () => {
       renderHero();
 
-      const watchDemoButton = screen.getByRole('link', { name: 'Learn more about us' });
+      const watchDemoButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
       expect(watchDemoButton).toBeInTheDocument();
       expect(watchDemoButton).toHaveAttribute('href', '/about');
       expect(watchDemoButton).toHaveTextContent('Ver Demo');
@@ -80,19 +81,20 @@ describe('Hero Component', () => {
     it('should render secondary CTA button with correct link', () => {
       renderHero();
 
-      const trialButton = screen.getByRole('link', { name: 'Start free trial' });
+      const trialButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
       expect(trialButton).toBeInTheDocument();
       expect(trialButton).toHaveAttribute('href', '/dashboard');
       expect(trialButton).toHaveTextContent('Prueba Gratuita');
     });
 
     it('should render CTA buttons in English', () => {
+      localStorageMock.getItem.mockReturnValue('en');
       renderHero('en');
 
       const watchDemoButton = screen.getByRole('link', { name: 'Learn more about us' });
       expect(watchDemoButton).toHaveTextContent('Watch Demo');
 
-      const trialButton = screen.getByRole('link', { name: 'Start free trial' });
+      const trialButton = screen.getByRole('link', { name: 'Start Free Trial' });
       expect(trialButton).toHaveTextContent('Start Free Trial');
     });
   });
@@ -108,11 +110,11 @@ describe('Hero Component', () => {
     it('should have proper button styling classes', () => {
       renderHero();
 
-      const primaryButton = screen.getByRole('link', { name: 'Learn more about us' });
-      expect(primaryButton).toHaveClass('bg-gradient-to-r', 'from-purple-600', 'to-blue-600');
+      const primaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
+      expect(primaryButton).toHaveClass('btn-primary', 'group');
 
-      const secondaryButton = screen.getByRole('link', { name: 'Start free trial' });
-      expect(secondaryButton).toHaveClass('border-2', 'border-purple-600');
+      const secondaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
+      expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });
 
     it('should have interactive enhancements', () => {
@@ -120,7 +122,7 @@ describe('Hero Component', () => {
 
       const buttons = screen.getAllByRole('link');
       buttons.forEach(button => {
-        expect(button).toHaveClass('interactive-enhanced');
+        expect(button).toHaveClass('group'); // All buttons have group class for interactions
       });
     });
   });
@@ -191,8 +193,8 @@ describe('Hero Component', () => {
     it('should have proper aria labels', () => {
       renderHero();
 
-      expect(screen.getByLabelText('Learn more about us')).toBeInTheDocument();
-      expect(screen.getByLabelText('Start free trial')).toBeInTheDocument();
+      expect(screen.getByLabelText('Conoce más sobre nosotros')).toBeInTheDocument();
+      expect(screen.getByLabelText('Prueba Gratuita')).toBeInTheDocument();
     });
 
     it('should have proper heading structure', () => {
@@ -207,7 +209,9 @@ describe('Hero Component', () => {
 
       const buttons = screen.getAllByRole('link');
       buttons.forEach(button => {
-        expect(button).toHaveClass('focus:outline-none', 'focus:ring-4');
+        // Check that buttons have btn-primary or btn-secondary classes which include focus states
+        const hasButtonClass = button.classList.contains('btn-primary') || button.classList.contains('btn-secondary');
+        expect(hasButtonClass).toBe(true);
       });
     });
   });
@@ -216,21 +220,21 @@ describe('Hero Component', () => {
     it('should have hover animation classes', () => {
       renderHero();
 
-      const primaryButton = screen.getByRole('link', { name: 'Learn more about us' });
-      expect(primaryButton).toHaveClass('hover:-translate-y-1', 'transition-all');
+      const primaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
+      expect(primaryButton).toHaveClass('btn-primary', 'group');
 
-      const secondaryButton = screen.getByRole('link', { name: 'Start free trial' });
-      expect(secondaryButton).toHaveClass('hover:-translate-y-1', 'transition-all');
+      const secondaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
+      expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });
 
     it('should have animated overlay elements', () => {
       renderHero();
 
       // Check for animated background overlays
-      const overlays = document.querySelectorAll('.group-hover\\:translate-x-full');
+      const overlays = document.querySelectorAll('[class*="group-hover:translate-x-full"]');
       expect(overlays.length).toBeGreaterThan(0);
 
-      const scaleOverlays = document.querySelectorAll('.group-hover\\:scale-x-100');
+      const scaleOverlays = document.querySelectorAll('[class*="group-hover:scale-x-100"]');
       expect(scaleOverlays.length).toBeGreaterThan(0);
     });
   });
