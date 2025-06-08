@@ -1,6 +1,10 @@
+'use client';
+
 import { FaCheck } from 'react-icons/fa';
+import { useLanguage } from '@/lib/i18n/simple-context';
 
 export default function Pricing() {
+  const { t } = useLanguage();
   return (
     <section
       id="pricing"
@@ -9,13 +13,13 @@ export default function Pricing() {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            <span>Simple Pricing,</span>{' '}
+            <span>{t.pricingTitle}</span>{' '}
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Powerful Features
             </span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Start free, upgrade when you need more
+            {t.pricingSubtitle}
           </p>
         </div>
 

@@ -1,6 +1,10 @@
+'use client';
+
 import { FaRocket, FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
+import { useLanguage } from '@/lib/i18n/simple-context';
 
 export default function Footer() {
+  const { t } = useLanguage();
   return (
     <footer className="bg-gray-900 text-gray-300 py-12 px-6">
       <div className="container mx-auto">
@@ -10,9 +14,7 @@ export default function Footer() {
               <FaRocket className="text-2xl text-purple-400" />
               <span className="text-xl font-bold text-white">MADFAM.AI</span>
             </div>
-            <p className="text-sm">
-              AI-powered portfolio builder for modern professionals
-            </p>
+            <p className="text-sm">{t.footerTagline}</p>
           </div>
 
           <div>

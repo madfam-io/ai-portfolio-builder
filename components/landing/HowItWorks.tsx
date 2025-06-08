@@ -1,4 +1,9 @@
+'use client';
+
+import { useLanguage } from '@/lib/i18n/simple-context';
+
 export default function HowItWorks() {
+  const { t } = useLanguage();
   return (
     <section
       id="how-it-works"
@@ -7,13 +12,13 @@ export default function HowItWorks() {
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            <span>From Zero to Portfolio in</span>{' '}
+            <span>{t.howItWorksTitle}</span>{' '}
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               3 Simple Steps
             </span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            No technical skills required. Our AI handles everything.
+            {t.howItWorksSubtitle}
           </p>
         </div>
 
@@ -23,12 +28,9 @@ export default function HowItWorks() {
               1
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Import Your Data
+              {t.step1Title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Connect LinkedIn, GitHub, or upload your CV. Takes less than 2
-              minutes.
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{t.step1Desc}</p>
           </div>
 
           <div className="text-center">
@@ -36,12 +38,9 @@ export default function HowItWorks() {
               2
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              AI Enhancement
+              {t.step2Title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Our AI rewrites your content, suggests improvements, and picks the
-              perfect template.
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{t.step2Desc}</p>
           </div>
 
           <div className="text-center">
@@ -49,12 +48,9 @@ export default function HowItWorks() {
               3
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Publish & Share
+              {t.step3Title}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Review, customize if needed, and publish. Your portfolio is live
-              instantly.
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{t.step3Desc}</p>
           </div>
         </div>
 

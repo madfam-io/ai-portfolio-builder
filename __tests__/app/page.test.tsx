@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import HomePage from '@/app/page';
+import { LanguageProvider } from '@/lib/i18n/simple-context';
 
 describe('HomePage', () => {
+  const renderWithProvider = (component: React.ReactElement) => {
+    return render(<LanguageProvider>{component}</LanguageProvider>);
+  };
+
   describe('Rendering', () => {
     it('should render the MADFAM.AI logo', () => {
-      render(<HomePage />);
+      renderWithProvider(<HomePage />);
       const logos = screen.getAllByText((_, element) => {
         return element?.textContent === 'MADFAM.AI';
       });
@@ -12,44 +17,44 @@ describe('HomePage', () => {
     });
 
     it('should render the main headline', () => {
-      render(<HomePage />);
-      expect(screen.getByText('Turn Your CV Into a')).toBeInTheDocument();
-      expect(screen.getByText('Stunning Portfolio')).toBeInTheDocument();
-      expect(screen.getByText('in 30 Minutes')).toBeInTheDocument();
+      renderWithProvider(<HomePage />);
+      expect(screen.getByText('Convierte tu CV en un')).toBeInTheDocument();
+      expect(screen.getByText('Portafolio Impresionante')).toBeInTheDocument();
+      expect(screen.getByText('en 30 Minutos')).toBeInTheDocument();
     });
 
     it('should render the hero description', () => {
-      render(<HomePage />);
+      renderWithProvider(<HomePage />);
       expect(
-        screen.getByText(/Import from LinkedIn, GitHub, or upload your resume/)
+        screen.getByText(/Importa desde LinkedIn, GitHub o sube tu currículum/)
       ).toBeInTheDocument();
     });
 
     it('should render call-to-action buttons', () => {
-      render(<HomePage />);
-      expect(screen.getByText('Watch Demo')).toBeInTheDocument();
-      expect(screen.getByText('Start Free Trial')).toBeInTheDocument();
+      renderWithProvider(<HomePage />);
+      expect(screen.getByText('Ver Demo')).toBeInTheDocument();
+      expect(screen.getByText('Prueba Gratuita')).toBeInTheDocument();
     });
 
     it('should render Get Started button in header', () => {
-      render(<HomePage />);
-      const getStartedButtons = screen.getAllByText('Get Started');
+      renderWithProvider(<HomePage />);
+      const getStartedButtons = screen.getAllByText('Comenzar');
       expect(getStartedButtons.length).toBeGreaterThan(0);
     });
   });
 
   describe('Styling and Layout', () => {
     it('should have correct CSS classes for responsive design', () => {
-      render(<HomePage />);
+      renderWithProvider(<HomePage />);
       const heroSection = screen
-        .getByText('Turn Your CV Into a')
+        .getByText('Convierte tu CV en un')
         .closest('section');
       expect(heroSection).toHaveClass('pt-24', 'pb-20', 'px-6');
     });
 
-    it('should have gradient text styling on "Stunning Portfolio"', () => {
-      render(<HomePage />);
-      const gradientText = screen.getByText('Stunning Portfolio');
+    it('should have gradient text styling on "Portafolio Impresionante"', () => {
+      renderWithProvider(<HomePage />);
+      const gradientText = screen.getByText('Portafolio Impresionante');
       expect(gradientText).toHaveClass(
         'bg-gradient-to-r',
         'from-purple-600',
@@ -62,13 +67,13 @@ describe('HomePage', () => {
 
   describe('Accessibility', () => {
     it('should have proper heading hierarchy', () => {
-      render(<HomePage />);
+      renderWithProvider(<HomePage />);
       const mainHeading = screen.getByRole('heading', { level: 1 });
       expect(mainHeading).toBeInTheDocument();
     });
 
     it('should have interactive buttons with proper roles', () => {
-      render(<HomePage />);
+      renderWithProvider(<HomePage />);
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(10); // Multiple buttons throughout the page
     });

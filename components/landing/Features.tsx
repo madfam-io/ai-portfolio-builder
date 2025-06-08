@@ -1,3 +1,5 @@
+'use client';
+
 import {
   FaMagic,
   FaLink,
@@ -6,21 +8,22 @@ import {
   FaChartLine,
   FaMobileAlt,
 } from 'react-icons/fa';
+import { useLanguage } from '@/lib/i18n/simple-context';
 
 export default function Features() {
+  const { t } = useLanguage();
   return (
     <section id="features" className="py-20 px-6">
       <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            <span>Everything You Need to</span>{' '}
+            <span>{t.featuresTitle}</span>{' '}
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
               Stand Out
             </span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-            Our AI-powered platform handles everything from content creation to
-            design, so you can focus on what matters.
+            {t.featuresSubtitle}
           </p>
         </div>
 
@@ -30,11 +33,10 @@ export default function Features() {
               <FaMagic className="text-2xl text-purple-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              AI Content Enhancement
+              {t.aiContentTitle}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Our AI rewrites your experience into compelling narratives that
-              highlight your value and achievements.
+              {t.aiContentDesc}
             </p>
           </div>
 
@@ -43,12 +45,9 @@ export default function Features() {
               <FaLink className="text-2xl text-blue-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              One-Click Import
+              {t.oneClickTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Connect LinkedIn, GitHub, or upload your CV. We automatically
-              extract and organize everything.
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{t.oneClickDesc}</p>
           </div>
 
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
@@ -56,11 +55,10 @@ export default function Features() {
               <FaPalette className="text-2xl text-green-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Professional Templates
+              {t.templatesTitle}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Industry-specific designs that adapt to your content. No design
-              skills needed.
+              {t.templatesDesc}
             </p>
           </div>
 
@@ -69,11 +67,10 @@ export default function Features() {
               <FaGlobe className="text-2xl text-orange-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Custom Domain
+              {t.customDomainTitle}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Get a professional URL like yourname.com or use our free
-              subdomain.
+              {t.customDomainDesc}
             </p>
           </div>
 
@@ -82,11 +79,10 @@ export default function Features() {
               <FaChartLine className="text-2xl text-pink-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Analytics Dashboard
+              {t.analyticsTitle}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">
-              Track visitors, see which projects get attention, and optimize
-              your portfolio.
+              {t.analyticsDesc}
             </p>
           </div>
 
@@ -95,12 +91,9 @@ export default function Features() {
               <FaMobileAlt className="text-2xl text-indigo-600" />
             </div>
             <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
-              Mobile Optimized
+              {t.mobileTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
-              Your portfolio looks perfect on every device. Edit on the go with
-              our mobile editor.
-            </p>
+            <p className="text-gray-600 dark:text-gray-300">{t.mobileDesc}</p>
           </div>
         </div>
       </div>
