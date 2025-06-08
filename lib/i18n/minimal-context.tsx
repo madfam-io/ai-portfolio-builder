@@ -1,10 +1,73 @@
+/**
+ * @fileoverview Internationalization (i18n) system for MADFAM AI Portfolio Builder
+ * 
+ * This module provides a complete multilingual system supporting Spanish (default) and English.
+ * It manages language state, translations, and localStorage persistence for user preferences.
+ * 
+ * Key Features:
+ * - Spanish as default language for first-time visitors
+ * - Complete translation coverage for all user-facing content
+ * - Automatic localStorage persistence of language preference
+ * - TypeScript-safe translation keys with autocomplete
+ * - React Context for global state management
+ * 
+ * Usage:
+ * ```tsx
+ * import { useLanguage } from '@/lib/i18n/minimal-context';
+ * 
+ * export default function MyComponent() {
+ *   const { t, language, setLanguage } = useLanguage();
+ *   
+ *   return (
+ *     <div>
+ *       <h1>{t.heroTitle}</h1>
+ *       <button onClick={() => setLanguage('en')}>
+ *         Switch to English
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ * 
+ * @author MADFAM Development Team
+ * @version 2.0.0 - Complete multilingual implementation
+ */
+
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
 
+/**
+ * Supported languages in the application
+ * - 'es': Spanish (default for MADFAM's Mexican market focus)
+ * - 'en': English (secondary language for international users)
+ */
 type Language = 'es' | 'en';
 
+/**
+ * Complete translation dictionary for all supported languages
+ * 
+ * Structure:
+ * - Each key represents a UI element or content piece
+ * - Keys are organized by section (hero, features, pricing, etc.)
+ * - All translations must be provided for both Spanish and English
+ * 
+ * Translation Key Naming Convention:
+ * - sectionName + ElementType: heroTitle, featuresSubtitle
+ * - actionName: getStarted, startFreeTrial
+ * - descriptive: powerfulFeatures, mostPopular
+ * 
+ * Guidelines:
+ * - Spanish text should be natural and culturally appropriate for Mexico
+ * - English text should be clear and professional for international audience
+ * - Keep translation parity - same meaning in both languages
+ * - Use concise, action-oriented language for buttons and CTAs
+ */
 const translations = {
+  /**
+   * Spanish translations (Default Language)
+   * Target audience: Mexican and Latin American professionals
+   */
   es: {
     features: 'Características',
     howItWorks: 'Cómo Funciona',
@@ -407,21 +470,62 @@ const translations = {
   },
 };
 
+/**
+ * Language context interface providing all i18n functionality
+ */
 interface LanguageContextType {
+  /** Current active language code */
   language: Language;
+  /** Function to change the active language and persist to localStorage */
   setLanguage: (lang: Language) => void;
+  /** Translation object with all text content for the current language */
   t: typeof translations.es;
+  /** Array of all available languages with display names and flags */
   availableLanguages: { code: Language; name: string; flag: string }[];
 }
 
+/**
+ * React Context for managing global language state
+ * Uses null as default to enable graceful fallback when provider is missing
+ */
 const LanguageContext = createContext<LanguageContextType | null>(null);
 
+/**
+ * Custom hook for accessing language functionality throughout the app
+ * 
+ * Features:
+ * - Automatic fallback to Spanish if context is unavailable
+ * - Type-safe access to all translation keys
+ * - Language switching with localStorage persistence
+ * - Available languages list for UI components
+ * 
+ * @returns {LanguageContextType} Language context with translations and controls
+ * 
+ * @example
+ * ```tsx
+ * const { t, language, setLanguage, availableLanguages } = useLanguage();
+ * 
+ * return (
+ *   <div>
+ *     <h1>{t.heroTitle}</h1>
+ *     <p>{t.heroDesc}</p>
+ *     <button onClick={() => setLanguage('en')}>
+ *       Switch to English
+ *     </button>
+ *   </div>
+ * );
+ * ```
+ */
 export const useLanguage = () => {
   const context = useContext(LanguageContext);
+  
+  // Graceful fallback when provider is missing (e.g., in tests or isolated components)
   if (!context) {
     return {
       language: 'es' as Language,
-      setLanguage: () => {},
+      setLanguage: () => {
+        console.warn('useLanguage: No LanguageProvider found. Language switching disabled.');
+      },
       t: translations.es,
       availableLanguages: [
         { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
@@ -432,20 +536,53 @@ export const useLanguage = () => {
   return context;
 };
 
+/**
+ * Language Provider component that wraps the app to provide i18n functionality
+ * 
+ * Features:
+ * - Manages global language state with React hooks
+ * - Persists language preference to localStorage
+ * - Defaults to Spanish for new users (MADFAM's target market)
+ * - Validates saved language to prevent invalid states
+ * - Provides context to all child components
+ * 
+ * Usage:
+ * ```tsx
+ * // Wrap your app or specific sections
+ * <LanguageProvider>
+ *   <App />
+ * </LanguageProvider>
+ * ```
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Child components that need i18n access
+ * @returns {JSX.Element} Context provider with language state
+ */
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  // Language state - defaults to Spanish for MADFAM's Mexican market focus
   const [language, setLanguageState] = useState<Language>('es');
 
-  // Initialize language from localStorage or default to Spanish
+  /**
+   * Initialize language preference from localStorage on component mount
+   * Validates saved language to ensure it's supported
+   * Falls back to Spanish for new users or invalid saved values
+   */
   useEffect(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
       setLanguageState(savedLanguage);
     } else {
-      // Default to Spanish for first-time visitors
+      // Default to Spanish for first-time visitors - aligns with target market
       localStorage.setItem('language', 'es');
     }
   }, []);
 
+  /**
+   * Updates language state and persists choice to localStorage
+   * Ensures language preference survives browser sessions
+   * 
+   * @param {Language} lang - The language code to switch to
+   */
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);

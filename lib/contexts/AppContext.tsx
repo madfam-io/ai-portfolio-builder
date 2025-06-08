@@ -1,18 +1,75 @@
+/**
+ * @fileoverview App Context for managing global application state
+ * 
+ * This module provides centralized state management for app-wide settings including:
+ * - Dark/Light mode with system preference and localStorage persistence
+ * - Currency cycling for international pricing (MXN → USD → EUR)
+ * - Mobile menu state for responsive navigation
+ * 
+ * Key Features:
+ * - Dark mode as default for better UX and modern design
+ * - MXN as default currency (MADFAM's primary market)
+ * - Automatic DOM manipulation for theme switching
+ * - Cycle-based currency switching for easy user experience
+ * 
+ * Usage:
+ * ```tsx
+ * import { useAppContext } from '@/lib/contexts/AppContext';
+ * 
+ * export default function MyComponent() {
+ *   const { isDarkMode, currency, toggleDarkMode, setCurrency } = useAppContext();
+ *   
+ *   return (
+ *     <div>
+ *       <button onClick={toggleDarkMode}>
+ *         {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+ *       </button>
+ *       <button onClick={setCurrency}>
+ *         {currency}
+ *       </button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ * 
+ * @author MADFAM Development Team
+ * @version 2.0.0 - Enhanced currency system and dark mode defaults
+ */
+
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+/**
+ * Application context interface defining all global state and controls
+ */
 interface AppContextType {
+  /** Current theme state - true for dark mode, false for light mode */
   isDarkMode: boolean;
+  /** Current currency for pricing display - cycles through MXN → USD → EUR */
   currency: 'MXN' | 'USD' | 'EUR';
+  /** Function to toggle between dark and light modes */
   toggleDarkMode: () => void;
+  /** Function to cycle to the next currency in the sequence */
   setCurrency: () => void;
+  /** Mobile menu visibility state for responsive navigation */
   isMobileMenuOpen: boolean;
+  /** Function to control mobile menu visibility */
   setMobileMenuOpen: (open: boolean) => void;
 }
 
+/**
+ * React Context for global app state
+ * Uses undefined as default to enable proper error handling in useAppContext
+ */
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
+/**
+ * Currency rotation sequence prioritizing MADFAM's target markets:
+ * 1. MXN (Mexican Peso) - Primary market
+ * 2. USD (US Dollar) - Secondary market 
+ * 3. EUR (Euro) - International market
+ */
 const CURRENCY_CYCLE: Array<'MXN' | 'USD' | 'EUR'> = ['MXN', 'USD', 'EUR'];
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
