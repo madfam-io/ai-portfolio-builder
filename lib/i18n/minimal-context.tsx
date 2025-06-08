@@ -111,7 +111,6 @@ const translations = {
     // Hero section
     poweredByAi: 'Impulsado por GPT-4 & Claude AI',
     learnMoreAboutUs: 'Conoce más sobre nosotros',
-    startFreeTrial: 'Comenzar prueba gratuita',
     
     // Features section
     standOut: 'Destacar',
@@ -312,7 +311,6 @@ const translations = {
     // Hero section
     poweredByAi: 'Powered by GPT-4 & Claude AI',
     learnMoreAboutUs: 'Learn more about us',
-    startFreeTrial: 'Start free trial',
     
     // Features section
     standOut: 'Stand Out',

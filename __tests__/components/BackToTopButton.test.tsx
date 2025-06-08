@@ -24,15 +24,15 @@ describe('BackToTopButton Component', () => {
     it('should not be visible initially when at top of page', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
       expect(button).not.toHaveClass('visible');
     });
 
     it('should become visible when scrolled down more than 300px', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // Simulate scroll
       Object.defineProperty(window, 'pageYOffset', {
         value: 400,
@@ -46,8 +46,8 @@ describe('BackToTopButton Component', () => {
     it('should hide when scrolled back to less than 300px', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // Scroll down first
       Object.defineProperty(window, 'pageYOffset', {
         value: 400,
@@ -68,8 +68,8 @@ describe('BackToTopButton Component', () => {
     it('should toggle visibility at exact 300px threshold', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // At 300px - should not be visible
       Object.defineProperty(window, 'pageYOffset', {
         value: 300,
@@ -93,8 +93,8 @@ describe('BackToTopButton Component', () => {
       const user = userEvent.setup();
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // Make button visible first
       Object.defineProperty(window, 'pageYOffset', {
         value: 500,
@@ -116,19 +116,25 @@ describe('BackToTopButton Component', () => {
   describe('Event Listeners', () => {
     it('should add scroll event listener on mount', () => {
       const addEventListenerSpy = jest.spyOn(window, 'addEventListener');
-      
+
       render(<BackToTopButton />);
 
-      expect(addEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+      expect(addEventListenerSpy).toHaveBeenCalledWith(
+        'scroll',
+        expect.any(Function)
+      );
     });
 
     it('should remove scroll event listener on unmount', () => {
       const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
-      
+
       const { unmount } = render(<BackToTopButton />);
       unmount();
 
-      expect(removeEventListenerSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+      expect(removeEventListenerSpy).toHaveBeenCalledWith(
+        'scroll',
+        expect.any(Function)
+      );
     });
   });
 
@@ -136,23 +142,23 @@ describe('BackToTopButton Component', () => {
     it('should have proper aria-label', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      expect(button).toHaveAttribute('aria-label', 'Back to top');
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+      expect(button).toHaveAttribute('aria-label', 'Volver arriba');
     });
 
     it('should have title attribute', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      expect(button).toHaveAttribute('title', 'Back to top');
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+      expect(button).toHaveAttribute('title', 'Volver arriba');
     });
 
     it('should be keyboard accessible', async () => {
       const user = userEvent.setup();
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // Make button visible
       Object.defineProperty(window, 'pageYOffset', {
         value: 500,
@@ -163,7 +169,7 @@ describe('BackToTopButton Component', () => {
       // Tab to button and press Enter
       await user.tab();
       expect(button).toHaveFocus();
-      
+
       await user.keyboard('{Enter}');
       expect(scrollToMock).toHaveBeenCalled();
     });
@@ -173,14 +179,14 @@ describe('BackToTopButton Component', () => {
     it('should have base button class', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
       expect(button).toHaveClass('back-to-top-button');
     });
 
     it('should contain chevron up icon', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
       const icon = button.querySelector('svg');
       expect(icon).toBeInTheDocument();
       expect(icon).toHaveClass('w-4', 'h-4');
@@ -191,7 +197,7 @@ describe('BackToTopButton Component', () => {
     it('should handle rapid scroll events efficiently', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
 
       // Simulate multiple rapid scroll events
       for (let i = 0; i < 10; i++) {
@@ -211,8 +217,8 @@ describe('BackToTopButton Component', () => {
     it('should handle scroll position of 0', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       Object.defineProperty(window, 'pageYOffset', {
         value: 0,
         writable: true,
@@ -225,8 +231,8 @@ describe('BackToTopButton Component', () => {
     it('should handle very large scroll values', () => {
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       Object.defineProperty(window, 'pageYOffset', {
         value: 999999,
         writable: true,
@@ -240,8 +246,8 @@ describe('BackToTopButton Component', () => {
       const user = userEvent.setup();
       render(<BackToTopButton />);
 
-      const button = screen.getByRole('button', { name: 'Back to top' });
-      
+      const button = screen.getByRole('button', { name: 'Volver arriba' });
+
       // Button is not visible, but still clickable
       await user.click(button);
 
