@@ -2,6 +2,41 @@
 
 ## 📐 System Architecture Overview
 
+### Current Implementation (Foundation Phase)
+
+```mermaid
+graph TB
+    subgraph "Development Environment"
+        A[Docker Compose]
+        B[PostgreSQL Container]
+        C[Redis Container]
+        D[pgAdmin Container]
+    end
+
+    subgraph "Client Layer"
+        E[Next.js 14 Frontend]
+        F[Multilanguage Support]
+        G[Landing Page Components]
+    end
+
+    subgraph "Application Layer"
+        H[React Context - i18n]
+        I[Component Architecture]
+        J[TypeScript Types]
+    end
+
+    E --> F
+    E --> G
+    E --> H
+    E --> I
+    E --> J
+    A --> B
+    A --> C
+    A --> D
+```
+
+### Target Architecture (SaaS Phase)
+
 ```mermaid
 graph TB
     subgraph "Client Layer"
@@ -77,36 +112,53 @@ graph TB
 
 ### Frontend Architecture
 
-**Framework: Next.js 14 (App Router)**
+**Framework: Next.js 14 (App Router)** ✅ _Implemented_
 
 - **Why**: Server Components for better performance, built-in optimization, excellent DX
 - **Alternative considered**: Remix (rejected due to smaller ecosystem)
+- **Current Status**: Landing page with multilanguage support complete
 
-**State Management: Zustand + React Query**
+**Internationalization: React Context** ✅ _Implemented_
 
-- **Why**: Lightweight, TypeScript-first, minimal boilerplate
+- **Why**: Simple, TypeScript-safe, no external dependencies for basic needs
+- **Implementation**: Spanish (default) and English with localStorage persistence
+- **Components**: All landing page components support i18n
+
+**Styling: Tailwind CSS + React Icons** ✅ _Implemented_
+
+- **Why**: Rapid development, consistent design system, zero runtime overhead
+- **Implementation**: Responsive design with dark mode support
+- **Icons**: Professional iconography with React Icons
+
+**State Management: React Context (Current) → Zustand + React Query (Future)**
+
+- **Current**: React Context for i18n state
+- **Future**: Zustand for client state, React Query for server state
 - **Alternative considered**: Redux Toolkit (rejected due to complexity for our needs)
-
-**Styling: Tailwind CSS + Shadcn/ui**
-
-- **Why**: Rapid development, consistent design system, accessible components
-- **Alternative considered**: Styled Components (rejected due to runtime overhead)
 
 ### Backend Architecture
 
-**Database: Supabase (PostgreSQL)**
+**Development Environment: Docker Compose** ✅ _Implemented_
 
-- **Why**: Real-time subscriptions, built-in auth, Row Level Security
+- **Why**: Consistent development environment, all services included
+- **Services**: PostgreSQL, Redis, pgAdmin for database management
+- **Benefits**: One-command setup, isolated environment, production parity
+
+**Database: PostgreSQL (Docker) → Supabase (Production)**
+
+- **Current**: Local PostgreSQL in Docker for development
+- **Future**: Supabase for real-time subscriptions, built-in auth, Row Level Security
 - **Alternative considered**: Prisma + Planetscale (rejected due to lack of real-time)
 
-**Caching: Redis (Upstash)**
+**Caching: Redis (Docker) → Upstash (Production)**
 
-- **Why**: Serverless-friendly, pay-per-request, global replication
+- **Current**: Local Redis container for development
+- **Future**: Upstash for serverless-friendly, pay-per-request, global replication
 - **Alternative considered**: In-memory cache (rejected due to lack of persistence)
 
-**File Storage: Supabase Storage**
+**File Storage: Local (Current) → Supabase Storage (Future)**
 
-- **Why**: Integrated with auth, S3-compatible, CDN included
+- **Future**: Integrated with auth, S3-compatible, CDN included
 - **Alternative considered**: AWS S3 (rejected due to complexity)
 
 ### AI Integration Architecture
@@ -135,52 +187,134 @@ class AIServiceFactory {
 }
 ```
 
-## 📁 Project Structure
+## 📁 Current Project Structure
+
+### ✅ Implemented Components
 
 ```
 ai-portfolio-builder/
 ├── app/                          # Next.js App Router
-│   ├── (auth)/                  # Auth group route
-│   │   ├── login/
-│   │   ├── signup/
-│   │   └── oauth/
-│   ├── (dashboard)/             # Protected routes
-│   │   ├── portfolios/
-│   │   ├── editor/
-│   │   └── settings/
-│   ├── (marketing)/             # Public routes
-│   │   ├── page.tsx            # Landing page
-│   │   ├── pricing/
-│   │   └── templates/
-│   └── api/                     # API routes
-│       ├── auth/
-│       ├── portfolios/
-│       ├── ai/
-│       └── webhooks/
+│   ├── page.tsx                 # ✅ Landing page (multilanguage)
+│   ├── layout.tsx               # ✅ Root layout with i18n provider
+│   ├── globals.css              # ✅ Global styles
+│   └── test/                    # ✅ Test page for debugging
 ├── components/                   # React components
-│   ├── ui/                      # Base UI components
-│   ├── editor/                  # Editor-specific
-│   ├── templates/               # Portfolio templates
-│   └── shared/                  # Shared components
+│   ├── landing/                 # ✅ Landing page components
+│   │   ├── Header.tsx           # ✅ Navigation with language toggle
+│   │   ├── Hero.tsx             # ✅ Main hero section
+│   │   ├── Features.tsx         # ✅ Features showcase
+│   │   ├── HowItWorks.tsx       # ✅ Process explanation
+│   │   ├── Templates.tsx        # ✅ Template previews
+│   │   ├── Pricing.tsx          # ✅ Subscription tiers
+│   │   ├── CTA.tsx              # ✅ Call-to-action section
+│   │   ├── Footer.tsx           # ✅ Footer links
+│   │   └── SocialProof.tsx      # ✅ Trust indicators
+│   └── InteractiveScript.tsx    # ✅ Vanilla JS interactions
 ├── lib/                         # Core libraries
-│   ├── ai/                      # AI service layer
-│   │   ├── providers/
-│   │   ├── prompts/
-│   │   └── utils/
-│   ├── auth/                    # Auth utilities
-│   ├── db/                      # Database layer
-│   │   ├── queries/
-│   │   ├── mutations/
-│   │   └── schemas/
-│   ├── utils/                   # General utilities
-│   └── constants/               # App constants
-├── hooks/                       # Custom React hooks
-├── types/                       # TypeScript types
-├── styles/                      # Global styles
-├── public/                      # Static assets
-└── supabase/                    # Database files
-    ├── migrations/              # SQL migrations
-    └── functions/               # Edge functions
+│   ├── i18n/                    # ✅ Internationalization
+│   │   ├── simple-context.tsx   # ✅ React Context for i18n
+│   │   ├── types.ts             # ✅ Translation types
+│   │   └── translations.ts      # ✅ Spanish/English translations
+│   ├── auth/                    # 🔄 Auth utilities (prepared)
+│   └── utils/                   # ✅ Utility functions
+├── __tests__/                   # ✅ Test files
+│   ├── app/page.test.tsx        # ✅ Landing page tests
+│   └── lib/auth/                # ✅ Auth tests (placeholder)
+├── e2e/                         # ✅ End-to-end tests
+├── scripts/                     # ✅ Build and utility scripts
+│   ├── docker-dev.sh            # ✅ Docker development setup
+│   └── setup-git.sh             # ✅ Git configuration
+├── docs/                        # ✅ Project documentation
+├── docker-compose.dev.yml       # ✅ Development environment
+├── Dockerfile.dev               # ✅ Development container
+└── Configuration files          # ✅ Next.js, TypeScript, ESLint, etc.
+```
+
+### 🎯 Future Structure (SaaS Phase)
+
+```
+ai-portfolio-builder/
+├── app/
+│   ├── (auth)/                  # 🔄 Authentication routes
+│   ├── (dashboard)/             # 🔄 Protected dashboard routes
+│   ├── (marketing)/             # 🔄 Public marketing pages
+│   └── api/                     # 🔄 API routes
+├── components/
+│   ├── ui/                      # 🔄 Shadcn/ui components
+│   ├── editor/                  # 🔄 Portfolio editor components
+│   ├── templates/               # 🔄 Portfolio templates
+│   └── shared/                  # 🔄 Shared components
+├── lib/
+│   ├── ai/                      # 🔄 AI service layer
+│   ├── db/                      # 🔄 Database layer
+│   └── auth/                    # 🔄 Authentication helpers
+├── supabase/                    # 🔄 Database files
+│   ├── migrations/              # 🔄 SQL migrations
+│   └── functions/               # 🔄 Edge functions
+└── types/                       # 🔄 TypeScript type definitions
+```
+
+Legend: ✅ Implemented | 🔄 Planned
+
+## 🌍 Internationalization Architecture
+
+### Current Implementation
+
+```typescript
+// lib/i18n/simple-context.tsx
+interface LanguageContextType {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: typeof translations.es;
+  availableLanguages: { code: Language; name: string; flag: string }[];
+}
+
+// Language persistence and detection
+const LanguageProvider = ({ children }) => {
+  const [language, setLanguageState] = useState<Language>('es');
+
+  useEffect(() => {
+    // Load from localStorage
+    const saved = localStorage.getItem('madfam-language');
+    if (saved && (saved === 'es' || saved === 'en')) {
+      setLanguageState(saved);
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('madfam-language', lang);
+    document.documentElement.lang = lang;
+  };
+};
+```
+
+### Features
+
+- **Default Language**: Spanish (ES) 🇪🇸
+- **Secondary Language**: English (EN) 🇺🇸
+- **Persistence**: localStorage with fallback to default
+- **SSR Compatibility**: Client-side hydration with 'use client' directives
+- **Type Safety**: Full TypeScript support for translation keys
+
+### Component Usage
+
+```typescript
+// Any landing page component
+import { useLanguage } from '@/lib/i18n/simple-context';
+
+export default function Component() {
+  const { t, language, setLanguage } = useLanguage();
+
+  return (
+    <div>
+      <h1>{t.heroTitle}</h1>
+      <button onClick={() => setLanguage('en')}>
+        Switch to English
+      </button>
+    </div>
+  );
+}
 ```
 
 ## 🔄 Data Flow Architecture

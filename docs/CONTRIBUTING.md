@@ -31,9 +31,50 @@ Thank you for your interest in contributing to the MADFAM AI Portfolio Builder! 
 
 ## 🚀 Getting Started
 
+### Quick Setup
+
 1. Fork the repository
 2. Clone your fork: `git clone https://github.com/YOUR_USERNAME/ai-portfolio-builder.git`
 3. Add upstream remote: `git remote add upstream https://github.com/madfam/ai-portfolio-builder.git`
+
+### Choose Your Development Environment
+
+#### 🐳 Docker Setup (Recommended)
+
+Get a complete development environment with one command:
+
+```bash
+cd ai-portfolio-builder
+
+# Start full development environment (PostgreSQL, Redis, pgAdmin)
+./scripts/docker-dev.sh
+
+# Access:
+# 🌐 App: http://localhost:3000 (with multilanguage support)
+# 🗄️ pgAdmin: http://localhost:5050 (admin@madfam.io / admin)
+# 📊 Database: localhost:5432
+# 🔴 Redis: localhost:6379
+```
+
+#### 💻 Local Setup
+
+For traditional local development:
+
+```bash
+cd ai-portfolio-builder
+
+# Install dependencies
+pnpm install
+
+# Setup environment (optional for basic development)
+cp .env.example .env.local
+
+# Start development server
+pnpm dev
+```
+
+### Next Steps
+
 4. Create a feature branch: `git checkout -b feature/your-feature-name`
 5. Make your changes following our guidelines
 6. Push to your fork: `git push origin feature/your-feature-name`
@@ -57,6 +98,30 @@ Examples:
 - `docs/api-authentication`
 
 ### Development Workflow
+
+#### Docker Workflow (Recommended)
+
+1. **Always sync with main**: `git pull upstream main`
+2. **Start Docker environment**: `./scripts/docker-dev.sh`
+3. **Run tests**: `pnpm test`
+4. **Check types**: `pnpm type-check`
+5. **Lint code**: `pnpm lint`
+6. **Format code**: `pnpm format`
+
+Docker Commands:
+
+```bash
+# View all logs
+docker-compose -f docker-compose.dev.yml logs -f
+
+# Stop environment
+docker-compose -f docker-compose.dev.yml down
+
+# Restart just the app
+docker-compose -f docker-compose.dev.yml restart app
+```
+
+#### Local Workflow
 
 1. **Always sync with main**: `git pull upstream main`
 2. **Install dependencies**: `pnpm install`
@@ -103,6 +168,8 @@ function validateEmail(email: string) {
 
 ```tsx
 // Use functional components with TypeScript
+'use client'; // Add for client-side components using hooks
+
 interface ButtonProps {
   onClick: () => void;
   children: React.ReactNode;
@@ -130,6 +197,26 @@ export function Button({
     >
       {children}
     </button>
+  );
+}
+```
+
+### Internationalization
+
+```tsx
+// Use the i18n context for multilanguage support
+import { useLanguage } from '@/lib/i18n/simple-context';
+
+export default function Component() {
+  const { t, language, setLanguage } = useLanguage();
+
+  return (
+    <div>
+      <h1>{t.heroTitle}</h1>
+      <button onClick={() => setLanguage('en')}>
+        {language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+      </button>
+    </div>
   );
 }
 ```
