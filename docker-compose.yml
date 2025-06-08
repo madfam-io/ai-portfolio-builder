@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - NEXT_PUBLIC_APP_URL=http://localhost:3000
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./.env.local:/app/.env.local:ro
+    networks:
+      - app-network
+
+  # PostgreSQL Database (Alternative to Supabase for local dev)
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: portfolio_builder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d
+    networks:
+      - app-network
+
+  # Redis for caching
+  redis:
+    image: redis:7-alpine
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # Supabase Local Stack (Alternative to hosted Supabase)
+  supabase-db:
+    image: supabase/postgres:15.1.0.117
+    ports:
+      - '54322:5432'
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_PORT: 5432
+    volumes:
+      - supabase_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Supabase Studio (Database UI)
+  supabase-studio:
+    image: supabase/studio:20240101-ce42139
+    ports:
+      - '3001:3000'
+    environment:
+      SUPABASE_URL: http://supabase-kong:8000
+      STUDIO_PG_META_URL: http://supabase-meta:8080
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+  # Supabase API Gateway
+  supabase-kong:
+    image: kong:3.1.1
+    ports:
+      - '8000:8000'
+    environment:
+      KONG_DATABASE: 'off'
+      KONG_DECLARATIVE_CONFIG: /var/lib/kong/kong.yml
+    volumes:
+      - ./supabase/config/kong.yml:/var/lib/kong/kong.yml:ro
+    depends_on:
+      - supabase-db
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  supabase_db_data:
+
+networks:
+  app-network:
+    driver: bridge

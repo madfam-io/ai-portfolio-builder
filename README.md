@@ -59,7 +59,7 @@ Transform scattered professional profiles into stunning portfolio websites in un
 
 ## 🔧 Installation
 
-> **Note**: This application is currently in pre-MVP phase. The Next.js application structure is not yet implemented. Follow these steps to set up the development environment:
+> **Note**: This application is currently in pre-MVP phase. The basic Next.js application structure is implemented and ready for development. Choose your preferred setup method:
 
 1. Clone the repository:
 
@@ -114,6 +114,27 @@ pnpm dev
 ```
 
 7. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+### 🐳 Docker Setup (Alternative)
+
+For a containerized development environment with all dependencies:
+
+```bash
+# Quick start with Docker
+pnpm docker:dev
+
+# Or manually
+cp .env.example .env.local
+# Edit .env.local with your API keys
+docker-compose -f docker-compose.dev.yml up -d
+
+# Access:
+# - App: http://localhost:3000
+# - pgAdmin: http://localhost:5050
+# - Database: localhost:5432
+```
+
+See [docs/DOCKER.md](./docs/DOCKER.md) for complete Docker setup guide.
 
 ## 🏗️ Project Structure
 
@@ -219,6 +240,7 @@ For detailed technical documentation, see the [`docs/`](./docs/) directory:
 
 - **[Architecture](./docs/ARCHITECTURE.md)** - System design and technical architecture
 - **[Contributing](./docs/CONTRIBUTING.md)** - Development setup and contribution guidelines
+- **[Docker Setup](./docs/DOCKER.md)** - Containerized development and production setup
 - **[Deployment](./docs/DEPLOYMENT.md)** - Deployment guides and infrastructure
 - **[Git Workflow](./docs/GIT_WORKFLOW.md)** - Branching strategy and development workflow
 - **[AI Guidelines](./CLAUDE.md)** - AI development context and best practices
@@ -236,7 +258,8 @@ For detailed technical documentation, see the [`docs/`](./docs/) directory:
 - [x] Project setup and documentation
 - [x] Technology stack alignment
 - [x] Environment configuration
-- [ ] Next.js application foundation
+- [x] Next.js application foundation
+- [x] Docker development setup
 - [ ] Authentication system (Supabase Auth)
 - [ ] Database schema and migrations
 - [ ] Profile import (LinkedIn, GitHub)

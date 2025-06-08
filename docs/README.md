@@ -8,6 +8,7 @@ This directory contains all project documentation for the MADFAM AI Portfolio Bu
 
 - **[ARCHITECTURE.md](./ARCHITECTURE.md)** - System architecture and technical design
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)** - How to contribute to the project
+- **[DOCKER.md](./DOCKER.md)** - Containerized development and production setup
 
 ### 🚀 Deployment & Operations
 

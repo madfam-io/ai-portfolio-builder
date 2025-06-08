@@ -4,11 +4,10 @@ const nextConfig = {
   swcMinify: true,
   poweredByHeader: false,
   compress: true,
-  
+  output: 'standalone',
+
   // Experimental features
   experimental: {
-    // Enable Server Actions
-    serverActions: true,
     // Optimize package imports
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
   },
@@ -57,7 +56,7 @@ const nextConfig = {
           },
         ],
       },
-    ]
+    ];
   },
 
   // Redirects
@@ -68,26 +67,28 @@ const nextConfig = {
         destination: '/',
         permanent: true,
       },
-    ]
+    ];
   },
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
     // Add custom webpack config here if needed
-    
+
     // Optimize bundle analyzer
     if (process.env.ANALYZE === 'true') {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
       config.plugins.push(
         new BundleAnalyzerPlugin({
           analyzerMode: 'static',
-          reportFilename: isServer ? '../analyze/server.html' : './analyze/client.html',
+          reportFilename: isServer
+            ? '../analyze/server.html'
+            : './analyze/client.html',
           openAnalyzer: false,
         })
-      )
+      );
     }
 
-    return config
+    return config;
   },
 
   // TypeScript configuration
@@ -109,6 +110,6 @@ const nextConfig = {
       fullUrl: true,
     },
   },
-}
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

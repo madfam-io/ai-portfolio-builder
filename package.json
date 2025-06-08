@@ -42,7 +42,15 @@
     "supabase:migrate": "supabase db reset",
     "supabase:types": "supabase gen types typescript --local > types/supabase.ts",
     "supabase:reset": "supabase db reset",
-    "setup:git": "./scripts/setup-git.sh"
+    "setup:git": "./scripts/setup-git.sh",
+    "docker:dev": "./scripts/docker-dev.sh",
+    "docker:prod": "./scripts/docker-prod.sh",
+    "docker:dev:up": "docker-compose -f docker-compose.dev.yml up -d",
+    "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
+    "docker:dev:logs": "docker-compose -f docker-compose.dev.yml logs -f",
+    "docker:prod:up": "docker-compose up -d",
+    "docker:prod:down": "docker-compose down",
+    "docker:prod:logs": "docker-compose logs -f"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
