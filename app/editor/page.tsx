@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/simple-context';
+// import { useLanguage } from '@/lib/i18n/simple-context'; // Not used yet
 import Link from 'next/link';
 import { useState } from 'react';
 import {
@@ -9,12 +9,12 @@ import {
   FaEye,
   FaUpload,
   FaImage,
-  FaText,
+  FaFileAlt,
   FaPlus,
 } from 'react-icons/fa';
 
 export default function Editor() {
-  const { t } = useLanguage();
+  // const { t } = useLanguage(); // Not used yet
   const [portfolioName, setPortfolioName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('modern');
 
@@ -102,7 +102,7 @@ export default function Editor() {
               </h3>
               <div className="space-y-2">
                 <button className="w-full flex items-center p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
-                  <FaText className="mr-3 text-gray-400" />
+                  <FaFileAlt className="mr-3 text-gray-400" />
                   <span className="text-gray-900 dark:text-white">About</span>
                 </button>
                 <button className="w-full flex items-center p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">

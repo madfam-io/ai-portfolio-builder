@@ -1,11 +1,11 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/simple-context';
+// import { useLanguage } from '@/lib/i18n/simple-context'; // Not used yet
 import Link from 'next/link';
 import { FaArrowLeft, FaPlus, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
 
 export default function Dashboard() {
-  const { t } = useLanguage();
+  // const { t } = useLanguage(); // Not used yet
 
   const portfolios = [
     {
