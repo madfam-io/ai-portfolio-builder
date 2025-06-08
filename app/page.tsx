@@ -1,27 +1,34 @@
+'use client';
+
+import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import Header from '@/components/landing/Header';
+import Hero from '@/components/landing/Hero';
+import Features from '@/components/landing/Features';
+import HowItWorks from '@/components/landing/HowItWorks';
+import Templates from '@/components/landing/Templates';
+import Pricing from '@/components/landing/Pricing';
+import SocialProof from '@/components/landing/SocialProof';
+import CTA from '@/components/landing/CTA';
+import Footer from '@/components/landing/Footer';
+import BackToTopButton from '@/components/BackToTopButton';
+
 export default function HomePage() {
   return (
-    <div className="p-8">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">MADFAM.AI Portfolio Builder</h1>
-        
-        <div className="bg-gray-50 rounded-lg p-8 mb-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-900">System Status</h2>
-          <p className="text-gray-700 mb-4">Next.js 13.5.6 is running successfully.</p>
-          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded">
-            ✅ Application is working without hydration errors
-          </div>
-        </div>
-
-        <div className="bg-gray-50 rounded-lg p-8">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-900">Progress</h2>
-          <ul className="space-y-2 text-gray-700">
-            <li>✅ Next.js 13.5.6 running</li>
-            <li>✅ Tailwind CSS working</li>
-            <li>✅ No webpack errors</li>
-            <li>⏳ Ready for React interactivity</li>
-          </ul>
-        </div>
+    <LanguageProvider>
+      <div className="min-h-screen">
+        <Header />
+        <main>
+          <Hero />
+          <SocialProof />
+          <Features />
+          <HowItWorks />
+          <Templates />
+          <Pricing />
+          <CTA />
+        </main>
+        <Footer />
+        <BackToTopButton />
       </div>
-    </div>
+    </LanguageProvider>
   );
 }

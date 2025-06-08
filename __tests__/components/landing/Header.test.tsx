@@ -2,7 +2,8 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Header from '@/components/landing/Header';
-import { LanguageProvider } from '@/lib/i18n';
+import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { AppProvider } from '@/lib/contexts/AppContext';
 import { usePathname } from 'next/navigation';
 
 // Mock next/navigation
@@ -41,9 +42,11 @@ describe('Header Component', () => {
   const renderHeader = (pathname = '/') => {
     (usePathname as jest.Mock).mockReturnValue(pathname);
     return render(
-      <LanguageProvider>
-        <Header />
-      </LanguageProvider>
+      <AppProvider>
+        <LanguageProvider>
+          <Header />
+        </LanguageProvider>
+      </AppProvider>
     );
   };
 

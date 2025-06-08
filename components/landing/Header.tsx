@@ -1,12 +1,14 @@
 'use client';
 
-import { FaRocket, FaDollarSign, FaMoon, FaBars } from 'react-icons/fa';
+import { FaRocket, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useApp } from '@/lib/contexts/AppContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function Header() {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
+  const { isDarkMode, currency, toggleDarkMode, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useApp();
   const pathname = usePathname();
 
   const currentLang = availableLanguages.find(lang => lang.code === language);
@@ -14,6 +16,12 @@ export default function Header() {
 
   // Check if we're on the landing page to show anchor links vs page links
   const isLandingPage = pathname === '/';
+
+  const currencySymbols = {
+    USD: '$',
+    EUR: '€',
+    GBP: '£',
+  };
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm fixed w-full top-0 z-50 transition-colors duration-300">
@@ -98,12 +106,20 @@ export default function Header() {
             )}
 
             <button
-              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1"
-              data-currency-toggle
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1 cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Currency toggle clicked!', {
+                  current: currency,
+                });
+                setCurrency();
+              }}
+              title={`Switch currency (current: ${currency})`}
             >
-              <FaDollarSign className="text-sm" />
-              <span className="text-sm font-medium" data-currency-display>
-                USD
+              <span className="text-sm font-bold">{currencySymbols[currency]}</span>
+              <span className="text-sm font-medium">
+                {currency}
               </span>
             </button>
 
@@ -127,12 +143,18 @@ export default function Header() {
             </button>
 
             <button
-              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition"
-              data-dark-mode-toggle
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Dark mode toggle clicked!', {
+                  current: isDarkMode ? 'dark' : 'light',
+                });
+                toggleDarkMode();
+              }}
+              title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
             >
-              <span data-dark-mode-icon>
-                <FaMoon />
-              </span>
+              {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-600 dark:text-gray-300" />}
             </button>
 
             {isLandingPage ? (
@@ -154,21 +176,27 @@ export default function Header() {
 
           <div className="md:hidden">
             <button
-              className="text-gray-600 dark:text-gray-300 p-2"
-              data-mobile-menu-toggle
+              className="text-gray-600 dark:text-gray-300 p-2 cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Mobile menu toggle clicked!', {
+                  current: isMobileMenuOpen ? 'open' : 'closed',
+                });
+                setMobileMenuOpen(!isMobileMenuOpen);
+              }}
+              title={`${isMobileMenuOpen ? 'Close' : 'Open'} mobile menu`}
             >
-              <span data-mobile-menu-icon>
-                <FaBars className="text-xl" />
-              </span>
+              {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
             </button>
           </div>
         </div>
 
         {/* Mobile Menu */}
         <div
-          className="md:hidden mt-4 pb-4 border-t dark:border-gray-700"
-          style={{ display: 'none' }}
-          data-mobile-menu
+          className={`md:hidden mt-4 pb-4 border-t dark:border-gray-700 transition-all duration-300 ${
+            isMobileMenuOpen ? 'block' : 'hidden'
+          }`}
         >
           <div className="flex flex-col space-y-4 pt-4">
             {isLandingPage ? (
@@ -258,6 +286,38 @@ export default function Header() {
               <span className="flag-icon">{currentLang?.flag}</span>
               <span className="text-sm font-medium">
                 Switch to {otherLang?.name}
+              </span>
+            </button>
+
+            {/* Currency toggle for mobile */}
+            <button
+              className="text-gray-900 dark:text-white hover:text-purple-600 transition flex items-center space-x-2 py-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setCurrency();
+              }}
+              title={`Switch currency (current: ${currency})`}
+            >
+              <span className="text-sm font-bold">{currencySymbols[currency]}</span>
+              <span className="text-sm font-medium">
+                Currency: {currency}
+              </span>
+            </button>
+
+            {/* Dark mode toggle for mobile */}
+            <button
+              className="text-gray-900 dark:text-white hover:text-purple-600 transition flex items-center space-x-2 py-2"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                toggleDarkMode();
+              }}
+              title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+            >
+              {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon />}
+              <span className="text-sm font-medium">
+                {isDarkMode ? 'Light mode' : 'Dark mode'}
               </span>
             </button>
 

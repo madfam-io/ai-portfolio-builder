@@ -1,10 +1,15 @@
 import { render, screen } from '@testing-library/react';
 import HomePage from '@/app/page';
 import { LanguageProvider } from '@/lib/i18n/simple-context';
+import { AppProvider } from '@/lib/contexts/AppContext';
 
 describe('HomePage', () => {
   const renderWithProvider = (component: React.ReactElement) => {
-    return render(<LanguageProvider>{component}</LanguageProvider>);
+    return render(
+      <AppProvider>
+        <LanguageProvider>{component}</LanguageProvider>
+      </AppProvider>
+    );
   };
 
   describe('Rendering', () => {

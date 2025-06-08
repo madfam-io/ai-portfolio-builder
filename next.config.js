@@ -4,10 +4,6 @@ const nextConfig = {
   swcMinify: false,
   poweredByHeader: false,
   
-  experimental: {
-    appDir: true,
-  },
-
   // Development headers to allow webpack eval
   async headers() {
     return [
@@ -23,11 +19,6 @@ const nextConfig = {
     ];
   },
 
-  // Environment variables
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
-  },
-
   // Image optimization
   images: {
     domains: [
@@ -39,10 +30,6 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
 
-  // Development-friendly headers - minimal for now
-  async headers() {
-    return [];
-  },
 
   // Redirects
   async redirects() {
@@ -69,12 +56,6 @@ const nextConfig = {
     ignoreDuringBuilds: false,
   },
 
-  // Logging
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
 };
 
 module.exports = nextConfig;
