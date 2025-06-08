@@ -22,7 +22,8 @@
   },
   "homepage": "https://madfam.io",
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3000",
+    "dev:clean": "pkill -f 'next dev' || true && pnpm dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
