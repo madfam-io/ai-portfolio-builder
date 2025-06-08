@@ -54,6 +54,12 @@ export default function Header() {
                 >
                   {t.pricing}
                 </a>
+                <Link
+                  href="/about"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
+                >
+                  About
+                </Link>
               </>
             ) : (
               // Other pages - show navigation links
@@ -130,12 +136,12 @@ export default function Header() {
             </button>
 
             {isLandingPage ? (
-              <button
+              <Link
+                href="/dashboard"
                 className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
-                data-cta-button
               >
                 {t.getStarted}
-              </button>
+              </Link>
             ) : (
               <Link
                 href="/dashboard"
@@ -192,6 +198,12 @@ export default function Header() {
                 >
                   {t.pricing}
                 </a>
+                <Link
+                  href="/about"
+                  className="text-gray-900 dark:text-white hover:text-purple-600 transition"
+                >
+                  About
+                </Link>
               </>
             ) : (
               // Other pages - show navigation links
@@ -250,12 +262,12 @@ export default function Header() {
             </button>
 
             {isLandingPage ? (
-              <button
-                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
-                data-cta-button
+              <Link
+                href="/dashboard"
+                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-center block"
               >
                 {t.getStarted}
-              </button>
+              </Link>
             ) : (
               <Link
                 href="/dashboard"

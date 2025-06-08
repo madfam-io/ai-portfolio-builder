@@ -29,10 +29,10 @@ export default function Hero() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 px-4">
           {/* Primary CTA Button */}
-          <button
-            className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced"
-            data-demo-button
-            aria-label="Watch demo video"
+          <Link
+            href="/about"
+            className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced block text-center"
+            aria-label="Learn more about us"
           >
             <div className="relative z-10 flex items-center justify-center">
               <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
@@ -40,7 +40,7 @@ export default function Hero() {
             </div>
             {/* Animated background overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-          </button>
+          </Link>
 
           {/* Secondary CTA Button */}
           <Link

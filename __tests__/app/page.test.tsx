@@ -75,7 +75,7 @@ describe('HomePage', () => {
     it('should have interactive buttons with proper roles', () => {
       renderWithProvider(<HomePage />);
       const buttons = screen.getAllByRole('button');
-      expect(buttons.length).toBeGreaterThan(10); // Multiple buttons throughout the page
+      expect(buttons.length).toBeGreaterThan(5); // Multiple buttons throughout the page
     });
   });
 });
