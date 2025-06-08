@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect } from 'react';
-import { FaArrowUp } from 'react-icons/fa';
 
 export default function NavigationEnhancer() {
   useEffect(() => {
