@@ -1,36 +1,26 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
 export default function HomePage() {
-  const [mounted, setMounted] = useState(false);
-  const [clicks, setClicks] = useState(0);
-
-  useEffect(() => {
-    console.log('🔥 HomePage useEffect running!');
-    setMounted(true);
-  }, []);
-
-  const handleClick = () => {
-    console.log('🔥 Click handler works!');
-    setClicks(prev => prev + 1);
-  };
-
   return (
-    <div>
-      <h1>React Event Test</h1>
-      <p>If you see this, the app is working.</p>
-      
-      <div className="fixed top-4 right-4 bg-yellow-500 text-black p-2 rounded text-xs z-50">
-        <div>Debug: {typeof window !== 'undefined' ? 'CLIENT' : 'SERVER'}</div>
-        <div>Mounted: {mounted ? 'YES' : 'NO'}</div>
-        <div>Clicks: {clicks}</div>
-        <button 
-          onClick={handleClick}
-          className="bg-blue-500 text-white px-2 py-1 rounded mt-1"
-        >
-          Test Click
-        </button>
+    <div className="p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold text-gray-900 mb-8">MADFAM.AI Portfolio Builder</h1>
+        
+        <div className="bg-gray-50 rounded-lg p-8 mb-8">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-900">System Status</h2>
+          <p className="text-gray-700 mb-4">Next.js 13.5.6 is running successfully.</p>
+          <div className="bg-green-100 border border-green-400 text-green-800 px-4 py-3 rounded">
+            ✅ Application is working without hydration errors
+          </div>
+        </div>
+
+        <div className="bg-gray-50 rounded-lg p-8">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-900">Progress</h2>
+          <ul className="space-y-2 text-gray-700">
+            <li>✅ Next.js 13.5.6 running</li>
+            <li>✅ Tailwind CSS working</li>
+            <li>✅ No webpack errors</li>
+            <li>⏳ Ready for React interactivity</li>
+          </ul>
+        </div>
       </div>
     </div>
   );

@@ -1,15 +1,26 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
+  reactStrictMode: false,
+  swcMinify: false,
   poweredByHeader: false,
-  compress: true,
-  // output: 'standalone', // Temporarily disabled for debugging
-
-  // Experimental features
+  
   experimental: {
-    // Optimize package imports
-    optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
+    appDir: true,
+  },
+
+  // Development headers to allow webpack eval
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'Content-Security-Policy',
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; object-src 'none';",
+          },
+        ],
+      },
+    ];
   },
 
   // Environment variables
@@ -28,21 +39,9 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
 
-  // Development-friendly headers
+  // Development-friendly headers - minimal for now
   async headers() {
-    return [
-      // Temporarily disable CSP to test React hydration
-      // {
-      //   source: '/(.*)',
-      //   headers: [
-      //     {
-      //       key: 'Content-Security-Policy',
-      //       value:
-      //         "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; img-src 'self' data: https:; font-src 'self' data:;",
-      //     },
-      //   ],
-      // },
-    ];
+    return [];
   },
 
   // Redirects
@@ -56,32 +55,6 @@ const nextConfig = {
     ];
   },
 
-  // Webpack configuration - temporarily disabled to fix 'exports is not defined' error
-  // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-  //   // Fix CommonJS/ESM compatibility issues
-  //   config.resolve.fallback = {
-  //     ...config.resolve.fallback,
-  //     fs: false,
-  //     path: false,
-  //     os: false,
-  //   };
-
-  //   // Optimize bundle analyzer
-  //   if (process.env.ANALYZE === 'true') {
-  //     const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-  //     config.plugins.push(
-  //       new BundleAnalyzerPlugin({
-  //         analyzerMode: 'static',
-  //         reportFilename: isServer
-  //           ? '../analyze/server.html'
-  //           : './analyze/client.html',
-  //         openAnalyzer: false,
-  //       })
-  //     );
-  //   }
-
-  //   return config;
-  // },
 
   // TypeScript configuration
   typescript: {

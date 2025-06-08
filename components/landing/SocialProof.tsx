@@ -7,7 +7,7 @@ import {
   FaAmazon,
   FaFacebookF,
 } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function SocialProof() {
   const { t } = useLanguage();

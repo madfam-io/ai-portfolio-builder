@@ -1,7 +1,7 @@
 'use client';
 
 import { FaRocket, FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function Footer() {
   const { t } = useLanguage();

@@ -1,7 +1,7 @@
 'use client';
 
 import { FaRocket, FaDollarSign, FaMoon, FaBars } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

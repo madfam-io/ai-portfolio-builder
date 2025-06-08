@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function HowItWorks() {
   const { t } = useLanguage();
