@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/simple-context-v2';
+import { useLanguage } from '@/lib/i18n/simple-context';
 
 export default function CTA() {
   const { t } = useLanguage();

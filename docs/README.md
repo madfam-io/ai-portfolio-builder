@@ -15,6 +15,7 @@ This directory contains all project documentation for the MADFAM AI Portfolio Bu
 ### 🚀 Deployment & Operations
 
 - **[DEPLOYMENT.md](./DEPLOYMENT.md)** - Deployment guides and infrastructure
+- **[SPIN_UP_PROTOCOLS.md](./SPIN_UP_PROTOCOLS.md)** - Complete spin up/down procedures for all environments
 - **[GITHUB_PAGES_SETUP.md](./GITHUB_PAGES_SETUP.md)** - GitHub Pages configuration
 
 ### 🔄 Workflow & Processes

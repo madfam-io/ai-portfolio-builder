@@ -89,8 +89,6 @@ export default function InteractiveScript() {
             toggleDarkMode();
           }
           
-          // Language toggle removed - handled by React Context
-          
           // Currency button
           if (e.target.closest('[data-currency-toggle]')) {
             e.preventDefault();
@@ -113,6 +111,8 @@ export default function InteractiveScript() {
             e.preventDefault();
             alert('Sign up flow would start here!');
           }
+          
+          // Don't prevent default for other clicks to allow React handlers
         });
 
         // Initial updates

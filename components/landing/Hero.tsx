@@ -1,7 +1,7 @@
 'use client';
 
 import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/simple-context-v2';
+import { useLanguage } from '@/lib/i18n/simple-context';
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -27,18 +27,31 @@ export default function Hero() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 px-4">
+          {/* Primary CTA Button */}
           <button
-            className="bg-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-medium hover:bg-purple-700 transition transform hover:-translate-y-1 hover:shadow-lg"
+            className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced"
             data-demo-button
+            aria-label="Watch demo video"
           >
-            <FaPlay className="inline mr-2" />
-            <span>{t.watchDemo}</span>
+            <div className="relative z-10 flex items-center justify-center">
+              <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
+              <span>{t.watchDemo}</span>
+            </div>
+            {/* Animated background overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
           </button>
+
+          {/* Secondary CTA Button */}
           <button
-            className="border-2 border-purple-600 text-purple-600 dark:hover:bg-purple-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-medium hover:bg-purple-50 transition"
+            className="group relative border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced"
             data-cta-button
+            aria-label="Start free trial"
           >
-            <span>{t.startFreeTrial}</span>
+            <div className="relative z-10 flex items-center justify-center">
+              <span>{t.startFreeTrial}</span>
+            </div>
+            {/* Background fill animation */}
+            <div className="absolute inset-0 bg-purple-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-lg"></div>
           </button>
         </div>
 

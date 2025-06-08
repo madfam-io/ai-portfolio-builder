@@ -153,9 +153,10 @@
     transform: translateX(0);
   }
   
-  /* Smooth scrolling for anchor links */
+  /* Enhanced smooth scrolling for anchor links */
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 100px; /* Account for fixed header */
   }
   
   /* Focus styles for accessibility */
@@ -192,5 +193,248 @@
   
   .dark ::-webkit-scrollbar-thumb:hover {
     background: #9ca3af;
+  }
+
+  /* Enhanced Navigation UX Styles */
+  .nav-button-enhanced {
+    @apply relative overflow-hidden transition-all duration-200 transform hover:scale-105;
+    @apply focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2;
+  }
+  
+  .nav-button-enhanced::before {
+    content: '';
+    @apply absolute inset-0 bg-purple-600 opacity-0 transition-opacity duration-200;
+    transform: translateX(-100%);
+  }
+  
+  .nav-button-enhanced:hover::before {
+    @apply opacity-10;
+    transform: translateX(0);
+  }
+
+  /* Mobile menu animations */
+  .mobile-menu-item {
+    animation: slideInFromRight 0.3s ease-out forwards;
+    opacity: 0;
+    transform: translateX(20px);
+  }
+
+  @keyframes slideInFromRight {
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  /* Improved click targets for accessibility */
+  .click-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+
+  /* Gradient button enhancements */
+  .gradient-button-enhanced {
+    @apply bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700;
+    @apply shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply transition-all duration-200;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gradient-button-enhanced::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .gradient-button-enhanced:hover::before {
+    left: 100%;
+  }
+
+  /* Active section indicator */
+  .section-indicator {
+    @apply absolute bottom-0 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-purple-600 rounded-full;
+    animation: pulse-dot 2s infinite;
+  }
+
+  @keyframes pulse-dot {
+    0%, 100% {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: translateX(-50%) scale(1.2);
+      opacity: 0.7;
+    }
+  }
+
+  /* Enhanced interactive elements */
+  .interactive-enhanced {
+    @apply transition-all duration-200 cursor-pointer;
+    @apply hover:transform hover:scale-105;
+  }
+
+  /* Better contrast for accessibility */
+  .high-contrast {
+    @apply text-gray-900 dark:text-white;
+    text-shadow: 0 0 1px rgba(0,0,0,0.1);
+  }
+
+  /* Loading states */
+  .nav-loading {
+    @apply animate-pulse bg-gray-200 dark:bg-gray-700 rounded;
+  }
+
+  /* Backdrop blur enhancement */
+  .header-blur {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  /* Skip link styles */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .focus\:not-sr-only:focus {
+    position: static;
+    width: auto;
+    height: auto;
+    padding: 0.5rem 1rem;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
+
+  /* Enhanced keyboard navigation */
+  .user-is-tabbing *:focus {
+    outline: 2px solid #8b5cf6 !important;
+    outline-offset: 2px !important;
+  }
+
+  /* Focus visible for modern browsers */
+  :focus-visible {
+    outline: 2px solid #8b5cf6;
+    outline-offset: 2px;
+  }
+
+  /* Hide focus on mouse interactions */
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  /* Enhanced button focus states */
+  button:focus-visible,
+  a:focus-visible {
+    @apply ring-2 ring-purple-500 ring-offset-2;
+  }
+
+  /* Section focus styles for screen readers */
+  section:focus {
+    outline: none;
+  }
+
+  /* Announce focus changes to screen readers */
+  [aria-live] {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .bg-purple-600,
+    .from-purple-600,
+    .to-blue-600 {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+    
+    .border-purple-600 {
+      border-color: #000 !important;
+    }
+    
+    .text-purple-600 {
+      color: #000 !important;
+    }
+  }
+
+  /* Back to top button enhancements */
+  .back-to-top-button {
+    @apply fixed bottom-6 right-6 w-12 h-12 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg hover:shadow-xl;
+    @apply transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2;
+    @apply z-40 opacity-0 invisible;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .back-to-top-button.visible {
+    @apply opacity-100;
+    visibility: visible;
+  }
+
+  .back-to-top-button:hover {
+    transform: scale(1.1) translateY(-2px);
+  }
+
+  .back-to-top-button:active {
+    transform: scale(0.95);
+  }
+
+  /* Pulse animation for back to top button when first shown */
+  @keyframes backToTopPulse {
+    0% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(147, 51, 234, 0.7);
+    }
+    70% {
+      transform: scale(1.05);
+      box-shadow: 0 0 0 10px rgba(147, 51, 234, 0);
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 rgba(147, 51, 234, 0);
+    }
+  }
+
+  .back-to-top-pulse {
+    animation: backToTopPulse 2s;
+  }
+
+  /* Reduced motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .nav-button-enhanced,
+    .mobile-menu-item,
+    .gradient-button-enhanced,
+    .interactive-enhanced,
+    .back-to-top-button {
+      animation: none !important;
+      transition-duration: 0.01ms !important;
+    }
+    
+    html {
+      scroll-behavior: auto;
+    }
+    
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

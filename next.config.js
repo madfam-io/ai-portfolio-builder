@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false, // Temporarily disabled for debugging
+  reactStrictMode: true,
   swcMinify: true,
   poweredByHeader: false,
   compress: true,
@@ -36,7 +36,8 @@ const nextConfig = {
         headers: [
           {
             key: 'Content-Security-Policy',
-            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';",
+            value:
+              "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; img-src 'self' data: https:; font-src 'self' data:;",
           },
         ],
       },
@@ -63,16 +64,6 @@ const nextConfig = {
       path: false,
       os: false,
     };
-
-    // Add global exports definition for compatibility
-    if (!isServer) {
-      config.plugins.push(
-        new webpack.DefinePlugin({
-          'typeof exports': JSON.stringify('undefined'),
-          'typeof module': JSON.stringify('undefined'),
-        })
-      );
-    }
 
     // Optimize bundle analyzer
     if (process.env.ANALYZE === 'true') {

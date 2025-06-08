@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Language Toggle Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .result { padding: 10px; margin: 10px 0; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; }
+        .error { background-color: #f8d7da; }
+    </style>
+</head>
+<body>
+    <h1>Language Toggle Test</h1>
+    <div id="results"></div>
+
+    <script>
+        const results = document.getElementById('results');
+
+        function addResult(message, success = true) {
+            const div = document.createElement('div');
+            div.className = `result ${success ? 'success' : 'error'}`;
+            div.textContent = message;
+            results.appendChild(div);
+        }
+
+        // Test localStorage
+        try {
+            localStorage.setItem('test', 'value');
+            localStorage.removeItem('test');
+            addResult('✓ localStorage is working');
+        } catch (e) {
+            addResult('✗ localStorage error: ' + e.message, false);
+        }
+
+        // Check current language in localStorage
+        const currentLang = localStorage.getItem('madfam-language');
+        addResult(`Current language in localStorage: ${currentLang || 'not set'}`);
+
+        // Test setting language
+        localStorage.setItem('madfam-language', 'en');
+        addResult('Set language to "en" in localStorage');
+
+        // Verify it was set
+        const newLang = localStorage.getItem('madfam-language');
+        addResult(`Language after setting: ${newLang}`);
+
+        // Add button to test live
+        const button = document.createElement('button');
+        button.textContent = 'Toggle Language in localStorage';
+        button.style.padding = '10px 20px';
+        button.style.marginTop = '20px';
+        button.onclick = () => {
+            const current = localStorage.getItem('madfam-language') || 'es';
+            const next = current === 'es' ? 'en' : 'es';
+            localStorage.setItem('madfam-language', next);
+            addResult(`Toggled language from ${current} to ${next}`);
+            setTimeout(() => {
+                addResult('Reloading page to see changes...');
+                window.location.reload();
+            }, 1000);
+        };
+        results.appendChild(button);
+    </script>
+</body>
+</html>
