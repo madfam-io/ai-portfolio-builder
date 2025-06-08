@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 
 type Language = 'es' | 'en';
 
@@ -59,6 +59,152 @@ const translations = {
     rating: 'calificación 4.9/5',
     trustedBy: 'Utilizado por profesionales de',
     footerTagline: 'Constructor de portafolios impulsado por IA para profesionales modernos',
+    
+    // Pricing section
+    powerfulFeatures: 'Características Poderosas',
+    planFree: 'Gratis',
+    planPro: 'Pro',
+    planBusiness: 'Empresarial',
+    mostPopular: 'MÁS POPULAR',
+    perMonth: '/mes',
+    portfolio1: '1 portafolio',
+    basicTemplates: 'Plantillas básicas',
+    madfamSubdomain: 'Subdominio MADFAM',
+    aiRewrites3: '3 reescrituras IA/mes',
+    portfolios3: '3 portafolios',
+    allTemplates: 'Todas las plantillas',
+    customDomain: 'Dominio personalizado',
+    unlimitedAiRewrites: 'Reescrituras IA ilimitadas',
+    analyticsTools: 'Analíticas y herramientas SEO',
+    unlimitedPortfolios: 'Portafolios ilimitados',
+    whiteLabelOption: 'Opción marca blanca',
+    apiAccess: 'Acceso API',
+    teamCollaboration: 'Colaboración en equipo',
+    prioritySupport: 'Soporte prioritario',
+    startFree: 'Comenzar Gratis',
+    startProTrial: 'Prueba Pro',
+    contactSales: 'Contactar Ventas',
+    
+    // How it works
+    simpleSteps: '3 Pasos Simples',
+    
+    // Back to top
+    backToTop: 'Volver arriba',
+    
+    // Footer
+    footerProduct: 'Producto',
+    footerCompany: 'Empresa',
+    footerFeatures: 'Características',
+    footerTemplates: 'Plantillas',
+    footerPricing: 'Precios',
+    footerApi: 'API',
+    footerAbout: 'Acerca de',
+    footerBlog: 'Blog',
+    footerCareers: 'Empleos',
+    footerContact: 'Contacto',
+    footerLegal: 'Legal',
+    footerPrivacy: 'Privacidad',
+    footerTerms: 'Términos',
+    footerGdpr: 'GDPR',
+    footerCopyright: '© 2025 MADFAM. Todos los derechos reservados.',
+    
+    // Hero section
+    poweredByAi: 'Impulsado por GPT-4 & Claude AI',
+    learnMoreAboutUs: 'Conoce más sobre nosotros',
+    startFreeTrial: 'Comenzar prueba gratuita',
+    
+    // Features section
+    standOut: 'Destacar',
+    
+    // Templates section  
+    everyProfessional: 'Cada Profesional',
+    
+    // Header tooltips
+    switchCurrency: 'Cambiar moneda',
+    current: 'actual',
+    switchTo: 'Cambiar a',
+    
+    // Dashboard Page
+    myPortfolios: 'Mis Portafolios',
+    managePortfolios: 'Gestiona y crea tus portafolios profesionales',
+    createNewPortfolio: 'Crear Nuevo Portafolio',
+    totalPortfolios: 'Total de Portafolios',
+    published: 'Publicados',
+    totalViews: 'Vistas Totales',
+    yourPortfolios: 'Tus Portafolios',
+    portfolioName1: 'Mi Portafolio Profesional',
+    portfolioName2: 'Portafolio Creativo',
+    statusPublished: 'Publicado',
+    statusDraft: 'Borrador',
+    lastModified: 'Modificado',
+    daysAgo: 'hace',
+    weekAgo: 'hace 1 semana',
+    views: 'vistas',
+    noPortfoliosYet: 'Aún no tienes portafolios',
+    createFirstPortfolio: 'Crea tu primer portafolio para comenzar',
+    createPortfolio: 'Crear Portafolio',
+    
+    // About Page
+    aboutTitle: 'Acerca de MADFAM.AI',
+    aboutSubtitle: 'Estamos en una misión de democratizar la creación de portafolios profesionales usando el poder de la inteligencia artificial.',
+    ourMission: 'Nuestra Misión',
+    missionText1: 'Todo profesional merece un portafolio impresionante que muestre sus habilidades y logros. La creación tradicional de portafolios consume tiempo, es costosa y a menudo requiere experiencia en diseño que no todos tienen. Creemos que la IA puede cambiar eso.',
+    missionText2: 'MADFAM.AI transforma tu información profesional existente en hermosos portafolios personalizados en menos de 30 minutos. Ya seas desarrollador, diseñador, consultor o profesional creativo, facilitamos presentar tu mejor trabajo al mundo.',
+    trustedWorldwide: 'Confianza de Profesionales a Nivel Mundial',
+    portfoliosCreated: 'Portafolios Creados',
+    companiesHiring: 'Empresas Contratando',
+    userSatisfaction: 'Satisfacción del Usuario',
+    supportAvailable: 'Soporte Disponible',
+    meetOurTeam: 'Conoce Nuestro Equipo',
+    teamSubtitle: 'Profesionales apasionados construyendo el futuro de la creación de portafolios',
+    alexJohnson: 'Alex Johnson',
+    ceoCfounder: 'CEO y Fundador',
+    alexBio: 'Ex líder técnico en Google con más de 10 años en IA y desarrollo de productos.',
+    sarahChen: 'Sarah Chen',
+    headOfDesign: 'Jefa de Diseño',
+    sarahBio: 'Diseñadora galardonada que ha trabajado con empresas Fortune 500.',
+    marcusRodriguez: 'Marcus Rodriguez',
+    leadEngineer: 'Ingeniero Principal',
+    marcusBio: 'Ingeniero full-stack apasionado por crear hermosas experiencias de usuario.',
+    ourValues: 'Nuestros Valores',
+    excellence: 'Excelencia',
+    excellenceText: 'Nos esforzamos por la perfección en cada portafolio que ayudamos a crear, asegurando calidad que destaque.',
+    accessibility: 'Accesibilidad',
+    accessibilityText: 'La creación de portafolios profesionales debería estar disponible para todos, independientemente de las habilidades técnicas.',
+    empowerment: 'Empoderamiento',
+    empowermentText: 'Creemos en empoderar a los profesionales para mostrar sus talentos y logros únicos.',
+    readyToCreate: '¿Listo para Crear tu Portafolio?',
+    readySubtitle: 'Únete a miles de profesionales que ya han transformado sus carreras con hermosos portafolios impulsados por IA.',
+    getStartedToday: 'Comenzar Hoy',
+    
+    // Editor Page
+    backToDashboard: 'Volver al Panel',
+    portfolioName: 'Nombre del Portafolio',
+    preview: 'Vista Previa',
+    save: 'Guardar',
+    portfolioBuilder: 'Constructor de Portafolios',
+    chooseTemplate: 'Elegir Plantilla',
+    templateModern: 'Moderno',
+    modernDesc: 'Diseño limpio y minimalista',
+    templateCreative: 'Creativo',
+    creativeDesc: 'Diseño audaz y artístico',
+    templateProfessional: 'Profesional',
+    professionalDesc: 'Estilo corporativo',
+    contentSections: 'Secciones de Contenido',
+    about: 'Acerca de',
+    projects: 'Proyectos',
+    experience: 'Experiencia',
+    addSection: 'Agregar Sección',
+    importData: 'Importar Datos',
+    linkedinProfile: 'Perfil de LinkedIn',
+    importProfessionalInfo: 'Importa tu información profesional',
+    githubProjects: 'Proyectos de GitHub',
+    addRepositories: 'Agrega tus repositorios',
+    uploadCvResume: 'Subir CV/Currículum',
+    extractFromPdf: 'Extraer desde PDF',
+    portfolioPreview: 'Vista Previa del Portafolio',
+    portfolioAppearHere: 'Tu portafolio aparecerá aquí mientras lo construyes',
+    addFirstSection: 'Agregar tu Primera Sección',
   },
   en: {
     features: 'Features',
@@ -114,6 +260,152 @@ const translations = {
     rating: '4.9/5 rating',
     trustedBy: 'Trusted by professionals from',
     footerTagline: 'AI-powered portfolio builder for modern professionals',
+    
+    // Pricing section
+    powerfulFeatures: 'Powerful Features',
+    planFree: 'Free',
+    planPro: 'Pro',
+    planBusiness: 'Business',
+    mostPopular: 'MOST POPULAR',
+    perMonth: '/month',
+    portfolio1: '1 portfolio',
+    basicTemplates: 'Basic templates',
+    madfamSubdomain: 'MADFAM subdomain',
+    aiRewrites3: '3 AI rewrites/month',
+    portfolios3: '3 portfolios',
+    allTemplates: 'All templates',
+    customDomain: 'Custom domain',
+    unlimitedAiRewrites: 'Unlimited AI rewrites',
+    analyticsTools: 'Analytics & SEO tools',
+    unlimitedPortfolios: 'Unlimited portfolios',
+    whiteLabelOption: 'White-label option',
+    apiAccess: 'API access',
+    teamCollaboration: 'Team collaboration',
+    prioritySupport: 'Priority support',
+    startFree: 'Start Free',
+    startProTrial: 'Start Pro Trial',
+    contactSales: 'Contact Sales',
+    
+    // How it works
+    simpleSteps: '3 Simple Steps',
+    
+    // Back to top
+    backToTop: 'Back to top',
+    
+    // Footer
+    footerProduct: 'Product',
+    footerCompany: 'Company',
+    footerFeatures: 'Features',
+    footerTemplates: 'Templates',
+    footerPricing: 'Pricing',
+    footerApi: 'API',
+    footerAbout: 'About',
+    footerBlog: 'Blog',
+    footerCareers: 'Careers',
+    footerContact: 'Contact',
+    footerLegal: 'Legal',
+    footerPrivacy: 'Privacy',
+    footerTerms: 'Terms',
+    footerGdpr: 'GDPR',
+    footerCopyright: '© 2025 MADFAM. All rights reserved.',
+    
+    // Hero section
+    poweredByAi: 'Powered by GPT-4 & Claude AI',
+    learnMoreAboutUs: 'Learn more about us',
+    startFreeTrial: 'Start free trial',
+    
+    // Features section
+    standOut: 'Stand Out',
+    
+    // Templates section  
+    everyProfessional: 'Every Professional',
+    
+    // Header tooltips
+    switchCurrency: 'Switch currency',
+    current: 'current',
+    switchTo: 'Switch to',
+    
+    // Dashboard Page
+    myPortfolios: 'My Portfolios',
+    managePortfolios: 'Manage and create your professional portfolios',
+    createNewPortfolio: 'Create New Portfolio',
+    totalPortfolios: 'Total Portfolios',
+    published: 'Published',
+    totalViews: 'Total Views',
+    yourPortfolios: 'Your Portfolios',
+    portfolioName1: 'My Professional Portfolio',
+    portfolioName2: 'Creative Portfolio',
+    statusPublished: 'Published',
+    statusDraft: 'Draft',
+    lastModified: 'Modified',
+    daysAgo: 'days ago',
+    weekAgo: '1 week ago',
+    views: 'views',
+    noPortfoliosYet: 'No portfolios yet',
+    createFirstPortfolio: 'Create your first portfolio to get started',
+    createPortfolio: 'Create Portfolio',
+    
+    // About Page
+    aboutTitle: 'About MADFAM.AI',
+    aboutSubtitle: 'We\'re on a mission to democratize professional portfolio creation using the power of artificial intelligence.',
+    ourMission: 'Our Mission',
+    missionText1: 'Every professional deserves a stunning portfolio that showcases their skills and achievements. Traditional portfolio creation is time-consuming, expensive, and often requires design expertise that not everyone has. We believe AI can change that.',
+    missionText2: 'MADFAM.AI transforms your existing professional information into beautiful, personalized portfolios in under 30 minutes. Whether you\'re a developer, designer, consultant, or creative professional, we make it easy to present your best work to the world.',
+    trustedWorldwide: 'Trusted by Professionals Worldwide',
+    portfoliosCreated: 'Portfolios Created',
+    companiesHiring: 'Companies Hiring',
+    userSatisfaction: 'User Satisfaction',
+    supportAvailable: 'Support Available',
+    meetOurTeam: 'Meet Our Team',
+    teamSubtitle: 'Passionate professionals building the future of portfolio creation',
+    alexJohnson: 'Alex Johnson',
+    ceoCfounder: 'CEO & Founder',
+    alexBio: 'Former tech lead at Google with 10+ years in AI and product development.',
+    sarahChen: 'Sarah Chen',
+    headOfDesign: 'Head of Design',
+    sarahBio: 'Award-winning designer who has worked with Fortune 500 companies.',
+    marcusRodriguez: 'Marcus Rodriguez',
+    leadEngineer: 'Lead Engineer',
+    marcusBio: 'Full-stack engineer passionate about creating beautiful user experiences.',
+    ourValues: 'Our Values',
+    excellence: 'Excellence',
+    excellenceText: 'We strive for perfection in every portfolio we help create, ensuring quality that stands out.',
+    accessibility: 'Accessibility',
+    accessibilityText: 'Professional portfolio creation should be available to everyone, regardless of technical skill.',
+    empowerment: 'Empowerment',
+    empowermentText: 'We believe in empowering professionals to showcase their unique talents and achievements.',
+    readyToCreate: 'Ready to Create Your Portfolio?',
+    readySubtitle: 'Join thousands of professionals who have already transformed their careers with beautiful, AI-powered portfolios.',
+    getStartedToday: 'Get Started Today',
+    
+    // Editor Page
+    backToDashboard: 'Back to Dashboard',
+    portfolioName: 'Portfolio Name',
+    preview: 'Preview',
+    save: 'Save',
+    portfolioBuilder: 'Portfolio Builder',
+    chooseTemplate: 'Choose Template',
+    templateModern: 'Modern',
+    modernDesc: 'Clean and minimalist design',
+    templateCreative: 'Creative',
+    creativeDesc: 'Bold and artistic layout',
+    templateProfessional: 'Professional',
+    professionalDesc: 'Corporate style',
+    contentSections: 'Content Sections',
+    about: 'About',
+    projects: 'Projects',
+    experience: 'Experience',
+    addSection: 'Add Section',
+    importData: 'Import Data',
+    linkedinProfile: 'LinkedIn Profile',
+    importProfessionalInfo: 'Import your professional info',
+    githubProjects: 'GitHub Projects',
+    addRepositories: 'Add your repositories',
+    uploadCvResume: 'Upload CV/Resume',
+    extractFromPdf: 'Extract from PDF',
+    portfolioPreview: 'Portfolio Preview',
+    portfolioAppearHere: 'Your portfolio will appear here as you build it',
+    addFirstSection: 'Add Your First Section',
   },
 };
 
@@ -143,7 +435,23 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  const [language, setLanguage] = useState<Language>('es');
+  const [language, setLanguageState] = useState<Language>('es');
+
+  // Initialize language from localStorage or default to Spanish
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as Language;
+    if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
+      setLanguageState(savedLanguage);
+    } else {
+      // Default to Spanish for first-time visitors
+      localStorage.setItem('language', 'es');
+    }
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+    localStorage.setItem('language', lang);
+  };
 
   const availableLanguages = [
     { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },

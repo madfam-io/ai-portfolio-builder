@@ -18,7 +18,7 @@ export default function Features() {
         <div className="text-center mb-20">
           <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
             <span>{t.featuresTitle}</span>{' '}
-            <span className="gradient-text">Stand Out</span>
+            <span className="gradient-text">{t.standOut}</span>
           </h2>
           <p className="text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-medium">
             {t.featuresSubtitle}

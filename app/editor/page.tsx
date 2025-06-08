@@ -1,7 +1,7 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-// import { useLanguage } from '@/lib/i18n/simple-context'; // Not used yet
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import Link from 'next/link';
 import { useState } from 'react';
 import {
@@ -15,19 +15,19 @@ import {
 } from 'react-icons/fa';
 
 export default function Editor() {
-  // const { t } = useLanguage(); // Not used yet
+  const { t } = useLanguage();
   const [portfolioName, setPortfolioName] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('modern');
 
   const templates = [
-    { id: 'modern', name: 'Modern', preview: 'Clean and minimalist design' },
-    { id: 'creative', name: 'Creative', preview: 'Bold and artistic layout' },
-    { id: 'professional', name: 'Professional', preview: 'Corporate style' },
+    { id: 'modern', name: t.templateModern, preview: t.modernDesc },
+    { id: 'creative', name: t.templateCreative, preview: t.creativeDesc },
+    { id: 'professional', name: t.templateProfessional, preview: t.professionalDesc },
   ];
 
   return (
     <BaseLayout className="!bg-gray-50 dark:!bg-gray-900">
-      {/* Header */}
+      {/* Editor Header */}
       <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -37,11 +37,11 @@ export default function Editor() {
                 className="inline-flex items-center text-purple-600 hover:text-purple-700 mr-8"
               >
                 <FaArrowLeft className="mr-2" />
-                Back to Dashboard
+                {t.backToDashboard}
               </Link>
               <input
                 type="text"
-                placeholder="Portfolio Name"
+                placeholder={t.portfolioName}
                 value={portfolioName}
                 onChange={e => setPortfolioName(e.target.value)}
                 className="text-lg font-medium bg-transparent border-none focus:outline-none text-gray-900 dark:text-white"
@@ -50,11 +50,11 @@ export default function Editor() {
             <div className="flex items-center space-x-4">
               <button className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
                 <FaEye className="mr-2" />
-                Preview
+                {t.preview}
               </button>
               <button className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 <FaSave className="mr-2" />
-                Save
+                {t.save}
               </button>
             </div>
           </div>
@@ -66,13 +66,13 @@ export default function Editor() {
         <div className="w-80 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
           <div className="p-6">
             <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-              Portfolio Builder
+              {t.portfolioBuilder}
             </h2>
 
             {/* Template Selection */}
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Choose Template
+                {t.chooseTemplate}
               </h3>
               <div className="space-y-2">
                 {templates.map(template => (
@@ -99,28 +99,28 @@ export default function Editor() {
             {/* Content Sections */}
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Content Sections
+                {t.contentSections}
               </h3>
               <div className="space-y-2">
                 <button className="w-full flex items-center p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <FaFileAlt className="mr-3 text-gray-400" />
-                  <span className="text-gray-900 dark:text-white">About</span>
+                  <span className="text-gray-900 dark:text-white">{t.about}</span>
                 </button>
                 <button className="w-full flex items-center p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <FaImage className="mr-3 text-gray-400" />
                   <span className="text-gray-900 dark:text-white">
-                    Projects
+                    {t.projects}
                   </span>
                 </button>
                 <button className="w-full flex items-center p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <FaUpload className="mr-3 text-gray-400" />
                   <span className="text-gray-900 dark:text-white">
-                    Experience
+                    {t.experience}
                   </span>
                 </button>
                 <button className="w-full flex items-center justify-center p-3 text-purple-600 border-2 border-dashed border-purple-300 dark:border-purple-600 rounded-lg hover:border-purple-400 dark:hover:border-purple-500 transition-colors">
                   <FaPlus className="mr-2" />
-                  Add Section
+                  {t.addSection}
                 </button>
               </div>
             </div>
@@ -128,31 +128,31 @@ export default function Editor() {
             {/* Import Options */}
             <div>
               <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                Import Data
+                {t.importData}
               </h3>
               <div className="space-y-2">
                 <button className="w-full p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    LinkedIn Profile
+                    {t.linkedinProfile}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Import your professional info
+                    {t.importProfessionalInfo}
                   </div>
                 </button>
                 <button className="w-full p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    GitHub Projects
+                    {t.githubProjects}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Add your repositories
+                    {t.addRepositories}
                   </div>
                 </button>
                 <button className="w-full p-3 text-left rounded-lg border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 transition-colors">
                   <div className="font-medium text-gray-900 dark:text-white">
-                    Upload CV/Resume
+                    {t.uploadCvResume}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Extract from PDF
+                    {t.extractFromPdf}
                   </div>
                 </button>
               </div>
@@ -168,14 +168,14 @@ export default function Editor() {
                 <FaImage className="text-3xl text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                Portfolio Preview
+                {t.portfolioPreview}
               </h3>
               <p className="text-gray-500 dark:text-gray-400 mb-6">
-                Your portfolio will appear here as you build it
+                {t.portfolioAppearHere}
               </p>
               <button className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                 <FaPlus className="mr-2" />
-                Add Your First Section
+                {t.addFirstSection}
               </button>
             </div>
           </div>

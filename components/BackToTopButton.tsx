@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { FaChevronUp } from 'react-icons/fa';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function BackToTopButton() {
+  const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -31,10 +33,10 @@ export default function BackToTopButton() {
     <button
       className={`back-to-top-button ${isVisible ? 'visible' : ''}`}
       onClick={scrollToTop}
-      aria-label="Back to top"
-      title="Back to top"
+      aria-label={t.backToTop}
+      title={t.backToTop}
     >
-      <FaChevronUp className="w-5 h-5" />
+      <FaChevronUp className="w-4 h-4" />
     </button>
   );
 }

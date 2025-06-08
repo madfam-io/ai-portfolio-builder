@@ -11,7 +11,7 @@ export default function Hero() {
       <div className="container mx-auto text-center max-w-7xl">
         <div className="inline-flex items-center bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900 text-purple-700 dark:text-purple-300 px-6 py-3 rounded-full text-base font-semibold mb-10 shadow-lg">
           <FaStar className="mr-3 text-yellow-500" />
-          <span>Powered by GPT-4 & Claude AI</span>
+          <span>{t.poweredByAi}</span>
         </div>
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-gray-900 dark:text-white mb-8 leading-tight">
@@ -29,7 +29,7 @@ export default function Hero() {
           <Link
             href="/about"
             className="btn-primary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center"
-            aria-label="Learn more about us"
+            aria-label={t.learnMoreAboutUs}
           >
             <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
             <span>{t.watchDemo}</span>
@@ -41,7 +41,7 @@ export default function Hero() {
           <Link
             href="/dashboard"
             className="btn-secondary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center relative"
-            aria-label="Start free trial"
+            aria-label={t.startFreeTrial}
           >
             <span className="relative z-10">{t.startFreeTrial}</span>
             {/* Background fill animation */}

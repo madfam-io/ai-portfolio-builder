@@ -1,26 +1,26 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-// import { useLanguage } from '@/lib/i18n/simple-context'; // Not used yet
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import Link from 'next/link';
-import { FaArrowLeft, FaPlus, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
+import { FaPlus, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
 
 export default function Dashboard() {
-  // const { t } = useLanguage(); // Not used yet
+  const { t } = useLanguage();
 
   const portfolios = [
     {
       id: 1,
-      name: 'My Professional Portfolio',
-      status: 'Published',
-      lastModified: '2 days ago',
+      name: t.portfolioName1,
+      status: t.statusPublished,
+      lastModified: `2 ${t.daysAgo}`,
       views: 234,
     },
     {
       id: 2,
-      name: 'Creative Portfolio',
-      status: 'Draft',
-      lastModified: '1 week ago',
+      name: t.portfolioName2,
+      status: t.statusDraft,
+      lastModified: t.weekAgo,
       views: 0,
     },
   ];
@@ -31,18 +31,11 @@ export default function Dashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <Link
-              href="/"
-              className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-4"
-            >
-              <FaArrowLeft className="mr-2" />
-              Back to Home
-            </Link>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              My Portfolios
+              {t.myPortfolios}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
-              Manage and create your professional portfolios
+              {t.managePortfolios}
             </p>
           </div>
           <Link
@@ -50,7 +43,7 @@ export default function Dashboard() {
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <FaPlus className="mr-2" />
-            Create New Portfolio
+            {t.createNewPortfolio}
           </Link>
         </div>
 
@@ -58,7 +51,7 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Total Portfolios
+              {t.totalPortfolios}
             </h3>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
               {portfolios.length}
@@ -66,15 +59,15 @@ export default function Dashboard() {
           </div>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Published
+              {t.published}
             </h3>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-              {portfolios.filter(p => p.status === 'Published').length}
+              {portfolios.filter(p => p.status === t.statusPublished).length}
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              Total Views
+              {t.totalViews}
             </h3>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
               {portfolios.reduce((sum, p) => sum + p.views, 0)}
@@ -86,7 +79,7 @@ export default function Dashboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
           <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-              Your Portfolios
+              {t.yourPortfolios}
             </h2>
           </div>
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -101,8 +94,8 @@ export default function Dashboard() {
                       {portfolio.name}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {portfolio.status} • Modified {portfolio.lastModified} •{' '}
-                      {portfolio.views} views
+                      {portfolio.status} • {t.lastModified} {portfolio.lastModified} •{' '}
+                      {portfolio.views} {t.views}
                     </p>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -129,17 +122,17 @@ export default function Dashboard() {
         {portfolios.length === 0 && (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No portfolios yet
+              {t.noPortfoliosYet}
             </h3>
             <p className="text-gray-500 dark:text-gray-400 mb-6">
-              Create your first portfolio to get started
+              {t.createFirstPortfolio}
             </p>
             <Link
               href="/editor"
               className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <FaPlus className="mr-2" />
-              Create Portfolio
+              {t.createPortfolio}
             </Link>
           </div>
         )}

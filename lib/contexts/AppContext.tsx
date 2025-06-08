@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 interface AppContextType {
   isDarkMode: boolean;
-  currency: 'USD' | 'EUR' | 'GBP';
+  currency: 'MXN' | 'USD' | 'EUR';
   toggleDarkMode: () => void;
   setCurrency: () => void;
   isMobileMenuOpen: boolean;
@@ -13,32 +13,43 @@ interface AppContextType {
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
-const CURRENCY_CYCLE: Array<'USD' | 'EUR' | 'GBP'> = ['USD', 'EUR', 'GBP'];
+const CURRENCY_CYCLE: Array<'MXN' | 'USD' | 'EUR'> = ['MXN', 'USD', 'EUR'];
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [currency, setCurrencyState] = useState<'USD' | 'EUR' | 'GBP'>('USD');
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [currency, setCurrencyState] = useState<'MXN' | 'USD' | 'EUR'>('MXN');
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  // Initialize dark mode from localStorage or system preference
+  // Initialize dark mode from localStorage or default to dark
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const isDarkClass = document.documentElement.classList.contains('dark');
     
-    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
-      setIsDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
+    if (savedTheme === 'light') {
       setIsDarkMode(false);
-      document.documentElement.classList.remove('dark');
+      if (isDarkClass) {
+        document.documentElement.classList.remove('dark');
+      }
+    } else {
+      // Default to dark mode for first-time visitors
+      setIsDarkMode(true);
+      if (!isDarkClass) {
+        document.documentElement.classList.add('dark');
+      }
+      if (!savedTheme) {
+        localStorage.setItem('theme', 'dark');
+      }
     }
   }, []);
 
-  // Initialize currency from localStorage
+  // Initialize currency from localStorage or default to MXN
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currency') as 'USD' | 'EUR' | 'GBP';
+    const savedCurrency = localStorage.getItem('currency') as 'MXN' | 'USD' | 'EUR';
     if (savedCurrency && CURRENCY_CYCLE.includes(savedCurrency)) {
       setCurrencyState(savedCurrency);
+    } else {
+      // Default to MXN for first-time visitors
+      localStorage.setItem('currency', 'MXN');
     }
   }, []);
 
@@ -55,7 +66,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const setCurrency = (newCurrency: 'USD' | 'EUR' | 'GBP') => {
+  const setCurrency = (newCurrency: 'MXN' | 'USD' | 'EUR') => {
     setCurrencyState(newCurrency);
     localStorage.setItem('currency', newCurrency);
   };

@@ -18,73 +18,73 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Product</h4>
+            <h4 className="font-semibold text-white mb-4">{t.footerProduct}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#features" className="hover:text-white transition">
-                  Features
+                  {t.footerFeatures}
                 </a>
               </li>
               <li>
                 <a href="#templates" className="hover:text-white transition">
-                  Templates
+                  {t.footerTemplates}
                 </a>
               </li>
               <li>
                 <a href="#pricing" className="hover:text-white transition">
-                  Pricing
+                  {t.footerPricing}
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition">
-                  API
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition">
-                  Contact
+                  {t.footerApi}
                 </a>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Legal</h4>
+            <h4 className="font-semibold text-white mb-4">{t.footerCompany}</h4>
             <ul className="space-y-2 text-sm">
               <li>
                 <a href="#" className="hover:text-white transition">
-                  Privacy
+                  {t.footerAbout}
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition">
-                  Terms
+                  {t.footerBlog}
                 </a>
               </li>
               <li>
                 <a href="#" className="hover:text-white transition">
-                  GDPR
+                  {t.footerCareers}
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition">
+                  {t.footerContact}
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-white mb-4">{t.footerLegal}</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <a href="#" className="hover:text-white transition">
+                  {t.footerPrivacy}
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition">
+                  {t.footerTerms}
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition">
+                  {t.footerGdpr}
                 </a>
               </li>
             </ul>
@@ -93,7 +93,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm mb-4 md:mb-0">
-            © 2025 MADFAM. All rights reserved.
+            {t.footerCopyright}
           </p>
           <div className="flex justify-center md:justify-end space-x-6">
             <a href="#" className="hover:text-white transition">

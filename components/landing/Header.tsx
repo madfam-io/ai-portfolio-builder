@@ -18,9 +18,9 @@ export default function Header() {
   const isLandingPage = pathname === '/';
 
   const currencySymbols = {
+    MXN: '$',
     USD: '$',
     EUR: '€',
-    GBP: '£',
   };
 
   return (
@@ -115,7 +115,7 @@ export default function Header() {
                 });
                 setCurrency();
               }}
-              title={`Switch currency (current: ${currency})`}
+              title={`${t.switchCurrency} (${t.current}: ${currency})`}
             >
               <span className="text-sm font-bold">{currencySymbols[currency]}</span>
               <span className="text-sm font-medium">
@@ -134,7 +134,7 @@ export default function Header() {
                 });
                 setLanguage(otherLang?.code || 'en');
               }}
-              title={`Switch to ${otherLang?.name}`}
+              title={`${t.switchTo} ${otherLang?.name}`}
             >
               <span className="flag-icon">{currentLang?.flag}</span>
               <span className="text-sm font-medium">
@@ -281,7 +281,7 @@ export default function Header() {
                 });
                 setLanguage(otherLang?.code || 'en');
               }}
-              title={`Switch to ${otherLang?.name}`}
+              title={`${t.switchTo} ${otherLang?.name}`}
             >
               <span className="flag-icon">{currentLang?.flag}</span>
               <span className="text-sm font-medium">

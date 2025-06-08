@@ -14,7 +14,7 @@ export default function HowItWorks() {
           <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
             <span>{t.howItWorksTitle}</span>{' '}
             <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              3 Simple Steps
+              {t.simpleSteps}
             </span>
           </h2>
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">

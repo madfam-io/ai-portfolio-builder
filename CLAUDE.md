@@ -363,3 +363,128 @@ The Docker setup includes PostgreSQL and Redis containers, so external services 
 - Cumulative Layout Shift: < 0.1
 
 Remember: The goal is to create a delightful user experience that converts visitors into paying customers while maintaining code quality and performance.
+
+## 🌍 Multilingual Development Requirements
+
+**CRITICAL**: All user-facing content must support Spanish (default) and English. This SaaS is fully multilingual.
+
+### Mandatory Multilingual Implementation
+
+**Every component** that displays user-facing text must:
+
+1. **Import the translation hook**:
+   ```typescript
+   import { useLanguage } from '@/lib/i18n/minimal-context';
+   
+   export default function MyComponent() {
+     const { t } = useLanguage();
+   ```
+
+2. **Use translation keys** instead of hardcoded strings:
+   ```typescript
+   // ❌ Wrong - hardcoded English
+   <h1>Welcome to Dashboard</h1>
+   
+   // ✅ Correct - translation key
+   <h1>{t.welcomeToDashboard}</h1>
+   ```
+
+3. **Add translation keys** to both Spanish and English in `/lib/i18n/minimal-context.tsx`:
+   ```typescript
+   const translations = {
+     es: {
+       welcomeToDashboard: 'Bienvenido al Panel',
+       // ... other Spanish translations
+     },
+     en: {
+       welcomeToDashboard: 'Welcome to Dashboard',
+       // ... other English translations
+     },
+   };
+   ```
+
+### Development Workflow
+
+When implementing **ANY** new feature:
+
+1. **Plan translations first** - identify all user-facing text
+2. **Add translation keys** to the i18n system for both languages
+3. **Implement components** using translation keys
+4. **Test language switching** to ensure both languages work
+5. **Never commit** hardcoded English or Spanish text
+
+### Components That Need Multilingual Support
+
+- **ALL pages** (`app/**/*.tsx`)
+- **ALL landing components** (`components/landing/**/*.tsx`)
+- **ALL shared components** (`components/shared/**/*.tsx`)
+- **ALL UI components** (`components/ui/**/*.tsx`)
+- **Error messages and alerts**
+- **Form labels and placeholders**
+- **Button text and tooltips**
+- **Navigation items**
+
+### Current Translation Coverage
+
+✅ **Fully Translated**:
+- Landing page (Hero, Features, How it Works, Templates, Pricing, Footer)
+- Header navigation and tooltips
+- About page
+- Dashboard page  
+- Editor page
+- Back to top button
+
+### Translation Key Naming Convention
+
+```typescript
+// Page-specific translations
+aboutTitle: 'About MADFAM.AI',
+dashboardWelcome: 'Welcome to Dashboard',
+editorSave: 'Save',
+
+// Common actions
+save: 'Save',
+cancel: 'Cancel',
+edit: 'Edit',
+delete: 'Delete',
+
+// Status and states
+loading: 'Loading...',
+error: 'Error',
+success: 'Success',
+
+// Navigation
+home: 'Home',
+features: 'Features',
+pricing: 'Pricing',
+```
+
+### Debugging Multilingual Issues
+
+1. **Check console** for missing translation keys
+2. **Test language toggle** in browser
+3. **Verify localStorage** language persistence
+4. **Ensure LanguageProvider** wraps components
+5. **Check default language** is Spanish (t.language === 'es')
+
+### Pre-commit Checklist
+
+Before any commit:
+- [ ] No hardcoded English/Spanish text in user-facing components
+- [ ] All new text has corresponding translation keys
+- [ ] Both Spanish and English translations are complete
+- [ ] Language toggle works on all new pages
+- [ ] Default language is Spanish for first-time visitors
+
+### Testing Multilingual Features
+
+```typescript
+// Test Spanish default
+expect(component).toHaveTextContent('Comenzar Gratis');
+
+// Test English toggle
+fireEvent.click(languageToggle);
+expect(component).toHaveTextContent('Get Started Free');
+```
+
+**Remember**: The user experience must be seamless in both languages. Spanish is the default and primary language.

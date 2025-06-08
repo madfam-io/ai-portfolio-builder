@@ -1,10 +1,9 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-// import { useLanguage } from '@/lib/i18n/simple-context'; // Not used yet
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import Link from 'next/link';
 import {
-  FaArrowLeft,
   FaRocket,
   FaUsers,
   FaStar,
@@ -12,34 +11,34 @@ import {
 } from 'react-icons/fa';
 
 export default function About() {
-  // const { t } = useLanguage(); // Not used yet
+  const { t } = useLanguage();
 
   const team = [
     {
-      name: 'Alex Johnson',
-      role: 'CEO & Founder',
+      name: t.alexJohnson,
+      role: t.ceoCfounder,
       image: '/api/placeholder/150/150',
-      bio: 'Former tech lead at Google with 10+ years in AI and product development.',
+      bio: t.alexBio,
     },
     {
-      name: 'Sarah Chen',
-      role: 'Head of Design',
+      name: t.sarahChen,
+      role: t.headOfDesign,
       image: '/api/placeholder/150/150',
-      bio: 'Award-winning designer who has worked with Fortune 500 companies.',
+      bio: t.sarahBio,
     },
     {
-      name: 'Marcus Rodriguez',
-      role: 'Lead Engineer',
+      name: t.marcusRodriguez,
+      role: t.leadEngineer,
       image: '/api/placeholder/150/150',
-      bio: 'Full-stack engineer passionate about creating beautiful user experiences.',
+      bio: t.marcusBio,
     },
   ];
 
   const stats = [
-    { number: '10,000+', label: 'Portfolios Created' },
-    { number: '500+', label: 'Companies Hiring' },
-    { number: '95%', label: 'User Satisfaction' },
-    { number: '24/7', label: 'Support Available' },
+    { number: '10,000+', label: t.portfoliosCreated },
+    { number: '500+', label: t.companiesHiring },
+    { number: '95%', label: t.userSatisfaction },
+    { number: '24/7', label: t.supportAvailable },
   ];
 
   return (
@@ -47,19 +46,11 @@ export default function About() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         {/* Header */}
         <div className="mb-12">
-          <Link
-            href="/"
-            className="inline-flex items-center text-purple-600 hover:text-purple-700 mb-6"
-          >
-            <FaArrowLeft className="mr-2" />
-            Back to Home
-          </Link>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
-            About MADFAM.AI
+            {t.aboutTitle}
           </h1>
           <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl">
-            We&apos;re on a mission to democratize professional portfolio
-            creation using the power of artificial intelligence.
+            {t.aboutSubtitle}
           </p>
         </div>
 
@@ -69,21 +60,14 @@ export default function About() {
             <div className="flex items-center mb-6">
               <FaRocket className="text-3xl text-purple-600 mr-4" />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Our Mission
+                {t.ourMission}
               </h2>
             </div>
             <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed">
-              Every professional deserves a stunning portfolio that showcases
-              their skills and achievements. Traditional portfolio creation is
-              time-consuming, expensive, and often requires design expertise
-              that not everyone has. We believe AI can change that.
+              {t.missionText1}
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 leading-relaxed mt-4">
-              MADFAM.AI transforms your existing professional information into
-              beautiful, personalized portfolios in under 30 minutes. Whether
-              you&apos;re a developer, designer, consultant, or creative
-              professional, we make it easy to present your best work to the
-              world.
+              {t.missionText2}
             </p>
           </div>
         </div>
@@ -91,7 +75,7 @@ export default function About() {
         {/* Stats Section */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
-            Trusted by Professionals Worldwide
+            {t.trustedWorldwide}
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
@@ -111,10 +95,10 @@ export default function About() {
         <div className="mb-16">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Meet Our Team
+              {t.meetOurTeam}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Passionate professionals building the future of portfolio creation
+              {t.teamSubtitle}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -143,37 +127,34 @@ export default function About() {
         {/* Values Section */}
         <div className="mb-16">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
-            Our Values
+            {t.ourValues}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <FaStar className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Excellence
+                {t.excellence}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                We strive for perfection in every portfolio we help create,
-                ensuring quality that stands out.
+                {t.excellenceText}
               </p>
             </div>
             <div className="text-center">
               <FaUsers className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Accessibility
+                {t.accessibility}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Professional portfolio creation should be available to everyone,
-                regardless of technical skill.
+                {t.accessibilityText}
               </p>
             </div>
             <div className="text-center">
               <FaHeart className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                Empowerment
+                {t.empowerment}
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                We believe in empowering professionals to showcase their unique
-                talents and achievements.
+                {t.empowermentText}
               </p>
             </div>
           </div>
@@ -182,17 +163,16 @@ export default function About() {
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold text-white mb-4">
-            Ready to Create Your Portfolio?
+            {t.readyToCreate}
           </h2>
           <p className="text-purple-100 mb-6 max-w-2xl mx-auto">
-            Join thousands of professionals who have already transformed their
-            careers with beautiful, AI-powered portfolios.
+            {t.readySubtitle}
           </p>
           <Link
             href="/dashboard"
             className="inline-flex items-center px-6 py-3 bg-white text-purple-600 rounded-lg hover:bg-gray-100 transition-colors font-medium"
           >
-            Get Started Today
+            {t.getStartedToday}
           </Link>
         </div>
       </div>

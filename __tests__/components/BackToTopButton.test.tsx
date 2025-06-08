@@ -183,7 +183,7 @@ describe('BackToTopButton Component', () => {
       const button = screen.getByRole('button', { name: 'Back to top' });
       const icon = button.querySelector('svg');
       expect(icon).toBeInTheDocument();
-      expect(icon).toHaveClass('w-5', 'h-5');
+      expect(icon).toHaveClass('w-4', 'h-4');
     });
   });
 

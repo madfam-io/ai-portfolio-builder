@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Pricing from '@/components/landing/Pricing';
 import { LanguageProvider } from '@/lib/i18n';
+import { AppProvider } from '@/lib/contexts/AppContext';
 
 // Mock localStorage
 const localStorageMock = {
@@ -23,9 +24,11 @@ describe('Pricing Component', () => {
       localStorageMock.getItem.mockReturnValue(language);
     }
     return render(
-      <LanguageProvider>
-        <Pricing />
-      </LanguageProvider>
+      <AppProvider>
+        <LanguageProvider>
+          <Pricing />
+        </LanguageProvider>
+      </AppProvider>
     );
   };
 
@@ -65,13 +68,13 @@ describe('Pricing Component', () => {
       expect(prices).toHaveLength(3);
       
       expect(prices[0]).toHaveAttribute('data-price', '0');
-      expect(prices[0]).toHaveTextContent('$0');
+      expect(prices[0]).toHaveTextContent('0');
       
       expect(prices[1]).toHaveAttribute('data-price', '19');
-      expect(prices[1]).toHaveTextContent('$19');
+      expect(prices[1]).toHaveTextContent('$340');
       
       expect(prices[2]).toHaveAttribute('data-price', '49');
-      expect(prices[2]).toHaveTextContent('$49');
+      expect(prices[2]).toHaveTextContent('$875');
     });
 
     it('should render "Most Popular" badge on Pro plan', () => {
@@ -289,10 +292,10 @@ describe('Pricing Component', () => {
   });
 
   describe('Currency Display', () => {
-    it('should display USD currency by default', () => {
+    it('should display MXN currency by default', () => {
       renderPricing();
 
-      const prices = ['$0', '$19', '$49'];
+      const prices = ['0', '$340', '$875'];
       prices.forEach(price => {
         expect(screen.getByText(price)).toBeInTheDocument();
       });

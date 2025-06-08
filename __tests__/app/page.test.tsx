@@ -54,19 +54,13 @@ describe('HomePage', () => {
       const heroSection = screen
         .getByText('Convierte tu CV en un')
         .closest('section');
-      expect(heroSection).toHaveClass('pt-24', 'pb-20', 'px-6');
+      expect(heroSection).toHaveClass('pt-32', 'pb-32', 'px-6');
     });
 
     it('should have gradient text styling on "Portafolio Impresionante"', () => {
       renderWithProvider(<HomePage />);
       const gradientText = screen.getByText('Portafolio Impresionante');
-      expect(gradientText).toHaveClass(
-        'bg-gradient-to-r',
-        'from-purple-600',
-        'to-blue-600',
-        'bg-clip-text',
-        'text-transparent'
-      );
+      expect(gradientText).toHaveClass('gradient-text');
     });
   });
 
