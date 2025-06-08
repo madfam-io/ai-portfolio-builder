@@ -209,7 +209,6 @@ export const LanguageProvider = ({
   children: React.ReactNode;
 }) => {
   const [language, setLanguageState] = useState<Language>('es');
-  const [mounted, setMounted] = useState(false);
 
   const availableLanguages = [
     { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
@@ -217,18 +216,26 @@ export const LanguageProvider = ({
   ];
 
   useEffect(() => {
-    setMounted(true);
-    const saved = localStorage.getItem('madfam-language') as Language;
-    if (saved && (saved === 'es' || saved === 'en')) {
-      setLanguageState(saved);
+    // Load saved language from localStorage
+    try {
+      const saved = localStorage.getItem('madfam-language') as Language;
+      if (saved && (saved === 'es' || saved === 'en')) {
+        setLanguageState(saved);
+        document.documentElement.lang = saved;
+      }
+    } catch (error) {
+      console.warn('Failed to load language from localStorage:', error);
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    if (mounted) {
+
+    try {
       localStorage.setItem('madfam-language', lang);
       document.documentElement.lang = lang;
+    } catch (error) {
+      console.warn('Failed to save language to localStorage:', error);
     }
   };
 

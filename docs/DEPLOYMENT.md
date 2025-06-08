@@ -1,5 +1,18 @@
 # MADFAM AI Portfolio Builder - Deployment Guide
 
+> **Current Status**: Foundation Development Phase - Landing page with multilanguage support complete, Docker environment configured, ready for production deployment.
+
+## 📋 Table of Contents
+
+- [Production Deployment](#production-deployment)
+  - [Vercel (Recommended)](#-vercel-deployment-recommended)
+  - [Alternative Platforms](#-alternative-deployment-platforms)
+- [Docker Deployment](#-docker-deployment)
+- [Environment Configuration](#-environment-variable-configuration)
+- [Custom Domain Setup](#-custom-domain-setup)
+- [Production Checklist](#-production-checklist)
+- [Troubleshooting](#-troubleshooting)
+
 ## ⚠️ Why GitHub Pages Won't Work
 
 GitHub Pages is a static site hosting service that **cannot** run Next.js applications with server-side features. Here's why this application is incompatible:
@@ -7,7 +20,7 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
 ### 1. **Server-Side Rendering (SSR) & API Routes**
 
 - Next.js App Router uses React Server Components that require a Node.js runtime
-- Our `/app/api/*` routes need server execution for:
+- Future `/app/api/*` routes will need server execution for:
   - Database queries to Supabase
   - AI API calls (OpenAI, Claude)
   - Authentication flows
@@ -32,11 +45,83 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
 ```javascript
 // These features require a server:
 - App Router with Server Components
-- API Routes (/app/api/*)
-- Middleware for auth protection
+- Multilanguage support with React Context
 - Dynamic routes with data fetching
-- Server Actions
+- API Routes (/app/api/* - planned)
+- Middleware for auth protection (planned)
+- Server Actions (planned)
 - Streaming SSR
+```
+
+## 🐳 Docker Deployment
+
+For production environments that require containerization, our Docker setup provides a complete isolated environment.
+
+### Production Docker Setup
+
+```bash
+# Clone and setup
+git clone https://github.com/madfam/ai-portfolio-builder.git
+cd ai-portfolio-builder
+
+# Build and run production containers
+./scripts/docker-prod.sh
+
+# Or manually:
+docker-compose up -d --build
+
+# Services will be available at:
+# 🌐 App: http://localhost:3000
+# 🗄️ Database: localhost:5432
+# 🔴 Redis: localhost:6379
+```
+
+### Docker Compose Configuration
+
+```yaml
+# docker-compose.yml (Production)
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_APP_URL=https://app.madfam.io
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: portfolio_builder
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+```
+
+### Docker Environment Variables
+
+```bash
+# .env.production
+NODE_ENV=production
+POSTGRES_PASSWORD=secure_password_here
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 ```
 
 ## 🚀 Vercel Deployment (Recommended)
@@ -47,8 +132,8 @@ Vercel is the recommended platform as it's built by the Next.js team and provide
 
 1. GitHub account with repository access
 2. Vercel account (free tier available)
-3. Environment variables ready
-4. Supabase project configured
+3. Environment variables ready (for future features)
+4. Supabase project configured (for future features)
 
 ### Step-by-Step Deployment
 
@@ -80,38 +165,38 @@ Install Command: pnpm install
 
 #### 4. **Set Environment Variables**
 
-Add these in Vercel's Environment Variables section:
+**Current Status**: For the foundation phase (landing page), no environment variables are required. Add these for future SaaS features:
 
 ```bash
-# Supabase Configuration
+# Basic Application Settings
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+
+# Future: Supabase Configuration (when implementing auth/database)
 NEXT_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# AI Services
+# Future: AI Services (when implementing AI features)
 OPENAI_API_KEY=sk-...
 ANTHROPIC_API_KEY=sk-ant-...
 
-# OAuth Providers
+# Future: OAuth Providers (when implementing social login)
 LINKEDIN_CLIENT_ID=your-client-id
 LINKEDIN_CLIENT_SECRET=your-client-secret
 GITHUB_CLIENT_ID=your-client-id
 GITHUB_CLIENT_SECRET=your-client-secret
 
-# Stripe Payment Processing
+# Future: Stripe Payment Processing (when implementing payments)
 STRIPE_SECRET_KEY=sk_live_...
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Redis Cache (Upstash)
+# Future: Redis Cache (when implementing caching)
 REDIS_URL=redis://default:password@host:port
 REDIS_TOKEN=your-token
 
-# Application URLs
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-NEXT_PUBLIC_SITE_URL=https://your-domain.vercel.app
-
-# Optional: Monitoring
+# Future: Monitoring (when implementing analytics)
 SENTRY_DSN=https://...@sentry.io/...
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
 ```

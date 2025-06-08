@@ -57,8 +57,16 @@ export default function Header() {
             </button>
 
             <button
-              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1"
-              onClick={() => setLanguage(otherLang?.code || 'en')}
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1 cursor-pointer"
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Language toggle clicked!', {
+                  current: language,
+                  switching_to: otherLang?.code,
+                });
+                setLanguage(otherLang?.code || 'en');
+              }}
               title={`Switch to ${otherLang?.name}`}
             >
               <span className="flag-icon">{currentLang?.flag}</span>
@@ -127,6 +135,27 @@ export default function Header() {
             >
               {t.pricing}
             </a>
+
+            {/* Language toggle for mobile */}
+            <button
+              className="text-gray-900 dark:text-white hover:text-purple-600 transition flex items-center space-x-2 py-2"
+              onClick={e => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('Mobile language toggle clicked!', {
+                  current: language,
+                  switching_to: otherLang?.code,
+                });
+                setLanguage(otherLang?.code || 'en');
+              }}
+              title={`Switch to ${otherLang?.name}`}
+            >
+              <span className="flag-icon">{currentLang?.flag}</span>
+              <span className="text-sm font-medium">
+                Switch to {otherLang?.name}
+              </span>
+            </button>
+
             <button
               className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
               data-cta-button

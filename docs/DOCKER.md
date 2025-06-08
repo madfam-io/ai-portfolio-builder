@@ -2,6 +2,8 @@
 
 This guide explains how to run the MADFAM AI Portfolio Builder using Docker for both development and production environments.
 
+> **Current Status**: Foundation Development Phase - Complete Docker environment with PostgreSQL, Redis, and pgAdmin for development and production deployment readiness.
+
 ## 📋 Prerequisites
 
 - [Docker](https://www.docker.com/get-started) (version 20.10 or higher)
@@ -16,19 +18,26 @@ This guide explains how to run the MADFAM AI Portfolio Builder using Docker for 
 git clone https://github.com/madfam/ai-portfolio-builder.git
 cd ai-portfolio-builder
 
-# 2. Set up environment variables
-cp .env.example .env.local
-# Edit .env.local with your API keys
+# 2. Start development environment (one command setup)
+./scripts/docker-dev.sh
 
-# 3. Start development environment
+# Or use npm/pnpm scripts:
 pnpm docker:dev
 
-# 4. Access the application
-# - App: http://localhost:3000
-# - pgAdmin: http://localhost:5050 (admin@madfam.io / admin)
-# - PostgreSQL: localhost:5432
-# - Redis: localhost:6379
+# 3. Access the application
+# 🌐 App: http://localhost:3000 (with multilanguage support)
+# 🗄️ pgAdmin: http://localhost:5050 (admin@madfam.io / admin)
+# 📊 Database: localhost:5432
+# 🔴 Redis: localhost:6379
 ```
+
+**Current Features Available:**
+
+- ✅ Multilanguage landing page (Spanish/English)
+- ✅ Responsive design with dark mode
+- ✅ Component-based architecture
+- ✅ Hot reload development environment
+- ✅ Database and Redis containers ready for future features
 
 ### Production Environment
 
@@ -99,37 +108,45 @@ docker-compose exec app sh
 
 ### Environment Variables
 
-The application requires several environment variables. Copy `.env.example` to `.env.local` and configure:
+**Current Status**: For the foundation phase (landing page), environment variables are optional. The application will run with defaults.
 
 ```env
-# Essential Configuration
+# Basic Development Configuration (Optional)
+NODE_ENV=development
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Future: Database Configuration (when implementing SaaS features)
+DATABASE_URL=postgresql://postgres:postgres@postgres:5432/portfolio_builder
+
+# Future: Redis Configuration (when implementing caching)
+REDIS_URL=redis://redis:6379
+
+# Future: AI Services (when implementing AI features)
+OPENAI_API_KEY=your_openai_api_key
+ANTHROPIC_API_KEY=your_anthropic_api_key
+
+# Future: Supabase Configuration (when implementing auth/database)
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-OPENAI_API_KEY=your_openai_api_key
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-
-# Database (for local development)
-DATABASE_URL=postgresql://postgres:postgres@postgres:5432/portfolio_builder
-
-# Redis
-REDIS_URL=redis://redis:6379
 ```
+
+**Quick Start**: No environment file needed - just run `./scripts/docker-dev.sh`
 
 ### Docker Compose Services
 
-#### Development (`docker-compose.dev.yml`)
+#### Development (`docker-compose.dev.yml`) ✅ Implemented
 
-- `app`: Next.js development server with hot reload
-- `postgres`: PostgreSQL 15 database
-- `redis`: Redis cache
-- `pgadmin`: Database management interface
+- **`app`**: Next.js 14 development server with hot reload and multilanguage support
+- **`postgres`**: PostgreSQL 15 database (ready for future features)
+- **`redis`**: Redis 7 cache (ready for future features)
+- **`pgadmin`**: Database management interface at localhost:5050
 
-#### Production (`docker-compose.yml`)
+#### Production (`docker-compose.yml`) 🔄 Ready
 
-- `app`: Optimized Next.js production build
-- `postgres`: PostgreSQL 15 database
-- `redis`: Redis cache
+- **`app`**: Optimized Next.js production build
+- **`postgres`**: PostgreSQL 15 database with persistence
+- **`redis`**: Redis cache with data persistence
 
 ## 🗃️ Database Management
 
@@ -212,7 +229,16 @@ docker build -t madfam/ai-portfolio-builder .
 # Run tests in container
 docker run --rm madfam/ai-portfolio-builder pnpm test
 
-# Health check
+# Type checking
+docker run --rm madfam/ai-portfolio-builder pnpm type-check
+
+# Linting
+docker run --rm madfam/ai-portfolio-builder pnpm lint
+
+# Health check (foundation phase)
+curl http://localhost:3000
+
+# Future: API health check (when implementing API routes)
 curl http://localhost:3000/api/health
 ```
 

@@ -1,4 +1,5 @@
 import InteractiveScript from '@/components/InteractiveScript';
+import LanguageDebug from '@/components/LanguageDebug';
 import Header from '@/components/landing/Header';
 import Hero from '@/components/landing/Hero';
 import SocialProof from '@/components/landing/SocialProof';
@@ -22,6 +23,7 @@ export default function HomePage() {
       <CTA />
       <Footer />
       <InteractiveScript />
+      <LanguageDebug />
     </div>
   );
 }

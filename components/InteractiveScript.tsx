@@ -5,7 +5,6 @@ export default function InteractiveScript() {
       
       // Initialize state from localStorage
       let darkMode = localStorage.getItem('darkMode') === 'true';
-      let language = localStorage.getItem('language') || 'en';
       let currency = localStorage.getItem('currency') || 'USD';
       let mobileMenuOpen = false;
 
@@ -37,12 +36,7 @@ export default function InteractiveScript() {
         });
       }
 
-      // Language toggle
-      function toggleLanguage() {
-        language = language === 'en' ? 'es' : 'en';
-        localStorage.setItem('language', language);
-        updateLanguageDisplay();
-      }
+      // Language toggle removed - handled by React Context
 
       // Currency toggle
       function toggleCurrency() {
@@ -69,14 +63,7 @@ export default function InteractiveScript() {
         });
       }
 
-      function updateLanguageDisplay() {
-        document.querySelectorAll('[data-lang-display]').forEach(el => {
-          el.textContent = language.toUpperCase();
-        });
-        document.querySelectorAll('[data-lang-flag]').forEach(el => {
-          el.textContent = language === 'es' ? '🇪🇸' : '🇺🇸';
-        });
-      }
+      // Language display removed - handled by React Context
 
       function updateCurrencyDisplay() {
         const symbol = currencySymbols[currency];
@@ -102,11 +89,7 @@ export default function InteractiveScript() {
             toggleDarkMode();
           }
           
-          // Language button
-          if (e.target.closest('[data-lang-toggle]')) {
-            e.preventDefault();
-            toggleLanguage();
-          }
+          // Language toggle removed - handled by React Context
           
           // Currency button
           if (e.target.closest('[data-currency-toggle]')) {
@@ -133,7 +116,6 @@ export default function InteractiveScript() {
         });
 
         // Initial updates
-        updateLanguageDisplay();
         updateCurrencyDisplay();
         
         // Set initial dark mode icon
