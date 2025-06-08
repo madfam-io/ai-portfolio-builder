@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 type Language = 'es' | 'en';
 
@@ -184,88 +184,63 @@ interface LanguageContextType {
   availableLanguages: { code: Language; name: string; flag: string }[];
 }
 
-const LanguageContext = createContext<LanguageContextType | null>(null);
+// Create context with undefined default
+const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
-export const useLanguage = () => {
+export function useLanguage(): LanguageContextType {
   const context = useContext(LanguageContext);
-  if (!context) {
-    // Return default Spanish translations if context is not available
-    return {
-      language: 'es' as Language,
-      setLanguage: () => {},
-      t: translations.es,
-      availableLanguages: [
-        { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
-        { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
-      ],
-    };
+  if (context === undefined) {
+    throw new Error('useLanguage must be used within a LanguageProvider');
   }
   return context;
-};
+}
 
-export const LanguageProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+interface LanguageProviderProps {
+  children: ReactNode;
+}
+
+export function LanguageProvider({ children }: LanguageProviderProps) {
   const [language, setLanguageState] = useState<Language>('es');
+  const [isClient, setIsClient] = useState(false);
 
   const availableLanguages = [
     { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
     { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
   ];
 
+  // Handle client-side mounting
   useEffect(() => {
-    console.log('🔧 LanguageProvider: Initializing...');
+    setIsClient(true);
+    
     // Load saved language from localStorage
-    try {
-      const saved = localStorage.getItem('madfam-language') as Language;
-      console.log('🔧 LanguageProvider: Saved language from localStorage:', saved);
-      if (saved && (saved === 'es' || saved === 'en')) {
-        console.log('🔧 LanguageProvider: Setting language to:', saved);
-        setLanguageState(saved);
-        document.documentElement.lang = saved;
-      } else {
-        console.log('🔧 LanguageProvider: Using default language: es');
-      }
-    } catch (error) {
-      console.warn('Failed to load language from localStorage:', error);
+    const saved = localStorage.getItem('madfam-language') as Language;
+    
+    if (saved === 'es' || saved === 'en') {
+      setLanguageState(saved);
+      document.documentElement.lang = saved;
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
-    console.log('🔧 LanguageProvider: setLanguage called with:', lang);
-    console.log('🔧 LanguageProvider: Current language before change:', language);
+    setLanguageState(lang);
     
-    setLanguageState(prev => {
-      console.log('🔧 LanguageProvider: State changing from', prev, 'to', lang);
-      return lang;
-    });
-
-    try {
+    if (isClient) {
       localStorage.setItem('madfam-language', lang);
       document.documentElement.lang = lang;
-      console.log('🔧 LanguageProvider: localStorage and HTML lang updated to:', lang);
-    } catch (error) {
-      console.warn('Failed to save language to localStorage:', error);
     }
   };
 
-  console.log('🔧 LanguageProvider: Current language state:', language);
-  console.log('🔧 LanguageProvider: Available translations for', language, ':', translations[language] ? 'Found' : 'NOT FOUND');
-
-  const value: LanguageContextType = {
+  // Create stable context value
+  const contextValue: LanguageContextType = {
     language,
     setLanguage,
     t: translations[language],
     availableLanguages,
   };
 
-  console.log('🔧 LanguageProvider: Providing context value:', value);
-
   return (
-    <LanguageContext.Provider value={value}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
-};
+}

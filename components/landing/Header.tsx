@@ -1,7 +1,7 @@
 'use client';
 
 import { FaRocket, FaDollarSign, FaMoon, FaBars } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/simple-context';
+import { useLanguage } from '@/lib/i18n/simple-context-v2';
 
 export default function Header() {
   const { language, setLanguage, t, availableLanguages } = useLanguage();

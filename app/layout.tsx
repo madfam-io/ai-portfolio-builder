@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { LanguageProvider } from '@/lib/i18n/simple-context';
+// import { LanguageProvider } from '@/lib/i18n/simple-context-v2';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -22,7 +22,8 @@ export default function RootLayout({
       <body
         className={`${inter.className} bg-gray-50 dark:bg-gray-900 transition-colors duration-300`}
       >
-        <LanguageProvider>{children}</LanguageProvider>
+        {children}
+        {/* <LanguageProvider>{children}</LanguageProvider> */}
       </body>
     </html>
   );

@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false, // Temporarily disabled for debugging
   swcMinify: true,
   poweredByHeader: false,
   compress: true,
-  output: 'standalone',
+  // output: 'standalone', // Temporarily disabled for debugging
 
   // Experimental features
   experimental: {
@@ -28,31 +28,15 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
 
-  // Security headers
+  // Development-friendly headers
   async headers() {
     return [
       {
         source: '/(.*)',
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-          {
-            key: 'Permissions-Policy',
-            value: 'camera=(), microphone=(), geolocation=()',
+            key: 'Content-Security-Policy',
+            value: "script-src 'self' 'unsafe-eval' 'unsafe-inline'; object-src 'none';",
           },
         ],
       },
@@ -72,7 +56,23 @@ const nextConfig = {
 
   // Webpack configuration
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Add custom webpack config here if needed
+    // Fix CommonJS/ESM compatibility issues
+    config.resolve.fallback = {
+      ...config.resolve.fallback,
+      fs: false,
+      path: false,
+      os: false,
+    };
+
+    // Add global exports definition for compatibility
+    if (!isServer) {
+      config.plugins.push(
+        new webpack.DefinePlugin({
+          'typeof exports': JSON.stringify('undefined'),
+          'typeof module': JSON.stringify('undefined'),
+        })
+      );
+    }
 
     // Optimize bundle analyzer
     if (process.env.ANALYZE === 'true') {

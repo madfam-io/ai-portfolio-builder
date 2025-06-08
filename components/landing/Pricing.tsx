@@ -1,7 +1,7 @@
 'use client';
 
 import { FaCheck } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/simple-context';
+import { useLanguage } from '@/lib/i18n/simple-context-v2';
 
 export default function Pricing() {
   const { t } = useLanguage();

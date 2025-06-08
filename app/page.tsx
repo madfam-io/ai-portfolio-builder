@@ -1,5 +1,8 @@
+import BasicClickTest from '@/components/BasicClickTest';
+import DirectLanguageToggle from '@/components/DirectLanguageToggle';
 import InteractiveScript from '@/components/InteractiveScript';
 import LanguageDebug from '@/components/LanguageDebug';
+import SimpleLanguageTest from '@/components/SimpleLanguageTest';
 import Header from '@/components/landing/Header';
 import Hero from '@/components/landing/Hero';
 import SocialProof from '@/components/landing/SocialProof';
@@ -13,6 +16,8 @@ import Footer from '@/components/landing/Footer';
 export default function HomePage() {
   return (
     <div className="min-h-screen">
+      <BasicClickTest />
+      <DirectLanguageToggle />
       <Header />
       <Hero />
       <SocialProof />
@@ -24,6 +29,7 @@ export default function HomePage() {
       <Footer />
       <InteractiveScript />
       <LanguageDebug />
+      <SimpleLanguageTest />
     </div>
   );
 }
