@@ -100,6 +100,10 @@
                     <a href="#how-it-works" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.howItWorks">Cómo Funciona</a>
                     <a href="#templates" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.templates">Plantillas</a>
                     <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.pricing">Precios</a>
+                    <button id="currencyToggle" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
+                        <i class="fas fa-dollar-sign text-sm"></i>
+                        <span class="text-sm font-medium">MXN</span>
+                    </button>
                     <button id="languageToggle" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
                         <span class="flag-icon">🇪🇸</span>
                         <span class="text-sm font-medium">ES</span>
@@ -113,6 +117,9 @@
                     </button>
                 </div>
                 <div class="md:hidden flex items-center space-x-2">
+                    <button id="currencyToggleMobile" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
+                        <i class="fas fa-dollar-sign text-sm"></i>
+                    </button>
                     <button id="languageToggleMobile" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
                         <span class="flag-icon">🇪🇸</span>
                     </button>
@@ -143,7 +150,11 @@
                         <a href="#how-it-works" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.howItWorks">Cómo Funciona</a>
                         <a href="#templates" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.templates">Plantillas</a>
                         <a href="#pricing" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.pricing">Precios</a>
-                        <div class="flex items-center justify-center space-x-3 py-2">
+                        <div class="flex items-center justify-center space-x-6 py-2">
+                            <button id="currencyToggleMobileMenu" class="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-purple-600 transition">
+                                <i class="fas fa-dollar-sign"></i>
+                                <span data-i18n="nav.currency">Moneda</span>
+                            </button>
                             <button id="languageToggleMobileMenu" class="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-purple-600 transition">
                                 <span class="flag-icon">🇪🇸</span>
                                 <span data-i18n="nav.language">Idioma</span>
@@ -439,7 +450,9 @@
                 <!-- Free Plan -->
                 <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg transition-colors duration-300">
                     <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white" data-i18n="pricing.free.title">Gratis</h3>
-                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$0<span class="text-lg text-gray-600 dark:text-gray-300" data-i18n="pricing.free.price">/mes</span></div>
+                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+                        <span class="currency-symbol">$</span><span class="price-amount" data-usd="0">0</span><span class="text-lg text-gray-600 dark:text-gray-300" data-i18n="pricing.free.price">/mes</span>
+                    </div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
                             <i class="fas fa-check text-green-500 mr-3"></i>
@@ -469,7 +482,9 @@
                         <span data-i18n="pricing.pro.badge">MÁS POPULAR</span>
                     </div>
                     <h3 class="text-2xl font-bold mb-2" data-i18n="pricing.pro.title">Pro</h3>
-                    <div class="text-4xl font-bold mb-6">$19<span class="text-lg opacity-80" data-i18n="pricing.pro.price">/mes</span></div>
+                    <div class="text-4xl font-bold mb-6">
+                        <span class="currency-symbol">$</span><span class="price-amount" data-usd="19">19</span><span class="text-lg opacity-80" data-i18n="pricing.pro.price">/mes</span>
+                    </div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
                             <i class="fas fa-check mr-3"></i>
@@ -500,7 +515,9 @@
                 <!-- Business Plan -->
                 <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg transition-colors duration-300">
                     <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white" data-i18n="pricing.business.title">Negocios</h3>
-                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$49<span class="text-lg text-gray-600 dark:text-gray-300" data-i18n="pricing.business.price">/mes</span></div>
+                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
+                        <span class="currency-symbol">$</span><span class="price-amount" data-usd="49">49</span><span class="text-lg text-gray-600 dark:text-gray-300" data-i18n="pricing.business.price">/mes</span>
+                    </div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
                             <i class="fas fa-check text-green-500 mr-3"></i>
@@ -670,7 +687,8 @@
                     templates: "Plantillas",
                     pricing: "Precios",
                     getStarted: "Comenzar",
-                    language: "Idioma"
+                    language: "Idioma",
+                    currency: "Moneda"
                 },
                 hero: {
                     poweredBy: "Impulsado por GPT-4 y Claude AI",
@@ -845,7 +863,8 @@
                     templates: "Templates",
                     pricing: "Pricing",
                     getStarted: "Get Started",
-                    language: "Language"
+                    language: "Language",
+                    currency: "Currency"
                 },
                 hero: {
                     poweredBy: "Powered by GPT-4 & Claude AI",
@@ -1011,8 +1030,23 @@
             }
         };
         
-        // Current language state
+        // Current language and currency state
         let currentLanguage = 'es'; // Default to Spanish
+        let currentCurrency = 'MXN'; // Default to Mexican Pesos
+        
+        // Exchange rates (approximated, in real app would fetch from API)
+        const exchangeRates = {
+            USD: 1.0,    // Base currency
+            MXN: 20.0,   // 1 USD = 20 MXN (approximate)
+            EUR: 0.85    // 1 USD = 0.85 EUR (approximate)
+        };
+        
+        // Currency symbols and formatting
+        const currencyConfig = {
+            USD: { symbol: '$', decimals: 0 },
+            MXN: { symbol: '$', decimals: 0 },
+            EUR: { symbol: '€', decimals: 0 }
+        };
         
         // Language functionality
         function initLanguage() {
@@ -1081,10 +1115,100 @@
                     element.setAttribute('placeholder', translation);
                 }
             });
+            
+            // Update currency display in mobile menu when language changes
+            const mobileCurrencyToggle = document.getElementById('currencyToggleMobileMenu');
+            if (mobileCurrencyToggle) {
+                const currencyText = mobileCurrencyToggle.querySelector('span:last-child');
+                if (currencyText) {
+                    const baseText = getNestedTranslation(translations[lang], 'nav.currency');
+                    currencyText.textContent = `${baseText} (${currentCurrency})`;
+                }
+            }
         }
         
         function getNestedTranslation(obj, path) {
             return path.split('.').reduce((current, key) => current && current[key], obj);
+        }
+        
+        // Currency functionality
+        function initCurrency() {
+            // Get saved currency or default to MXN
+            currentCurrency = localStorage.getItem('currency') || 'MXN';
+            updateCurrency(currentCurrency);
+            
+            // Add event listeners for currency toggles
+            const currencyToggle = document.getElementById('currencyToggle');
+            const currencyToggleMobile = document.getElementById('currencyToggleMobile');
+            const currencyToggleMobileMenu = document.getElementById('currencyToggleMobileMenu');
+            
+            function toggleCurrency() {
+                // Cycle through currencies: MXN -> USD -> EUR -> MXN
+                const currencies = ['MXN', 'USD', 'EUR'];
+                const currentIndex = currencies.indexOf(currentCurrency);
+                const nextIndex = (currentIndex + 1) % currencies.length;
+                currentCurrency = currencies[nextIndex];
+                
+                updateCurrency(currentCurrency);
+                localStorage.setItem('currency', currentCurrency);
+            }
+            
+            currencyToggle?.addEventListener('click', toggleCurrency);
+            currencyToggleMobile?.addEventListener('click', toggleCurrency);
+            currencyToggleMobileMenu?.addEventListener('click', toggleCurrency);
+        }
+        
+        function updateCurrency(currency) {
+            currentCurrency = currency;
+            
+            // Update currency toggle buttons
+            const currencyToggles = document.querySelectorAll('#currencyToggle, #currencyToggleMobile');
+            currencyToggles.forEach(toggle => {
+                const currencyText = toggle.querySelector('span:not(.fas)');
+                if (currencyText) {
+                    currencyText.textContent = currency;
+                }
+            });
+            
+            // Update mobile menu currency toggle
+            const mobileCurrencyToggle = document.getElementById('currencyToggleMobileMenu');
+            if (mobileCurrencyToggle) {
+                const currencyText = mobileCurrencyToggle.querySelector('span:last-child');
+                if (currencyText) {
+                    // Update with translated text
+                    const baseText = getNestedTranslation(translations[currentLanguage], 'nav.currency');
+                    currencyText.textContent = `${baseText} (${currency})`;
+                }
+            }
+            
+            // Update all price amounts
+            const priceElements = document.querySelectorAll('.price-amount');
+            const currencySymbols = document.querySelectorAll('.currency-symbol');
+            
+            // Update currency symbols
+            currencySymbols.forEach(symbol => {
+                symbol.textContent = currencyConfig[currency].symbol;
+            });
+            
+            // Update price amounts
+            priceElements.forEach(element => {
+                const usdPrice = parseFloat(element.getAttribute('data-usd'));
+                const convertedPrice = convertPrice(usdPrice, currency);
+                element.textContent = formatPrice(convertedPrice, currency);
+            });
+        }
+        
+        function convertPrice(usdAmount, targetCurrency) {
+            if (targetCurrency === 'USD') return usdAmount;
+            return Math.round(usdAmount * exchangeRates[targetCurrency]);
+        }
+        
+        function formatPrice(amount, currency) {
+            const config = currencyConfig[currency];
+            if (config.decimals === 0) {
+                return Math.round(amount).toString();
+            }
+            return amount.toFixed(config.decimals);
         }
         
         // Dark mode functionality
@@ -1206,6 +1330,7 @@
         // Initialize features when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initLanguage();
+            initCurrency();
             initDarkMode();
             initMobileMenu();
         });
