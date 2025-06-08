@@ -2,6 +2,7 @@
 
 import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/simple-context';
+import Link from 'next/link';
 
 export default function Hero() {
   const { t } = useLanguage();
@@ -42,9 +43,9 @@ export default function Hero() {
           </button>
 
           {/* Secondary CTA Button */}
-          <button
-            className="group relative border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced"
-            data-cta-button
+          <Link
+            href="/dashboard"
+            className="group relative border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400 px-8 sm:px-10 py-4 sm:py-5 rounded-xl text-base sm:text-lg font-semibold hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2 min-h-[56px] interactive-enhanced block text-center"
             aria-label="Start free trial"
           >
             <div className="relative z-10 flex items-center justify-center">
@@ -52,7 +53,7 @@ export default function Hero() {
             </div>
             {/* Background fill animation */}
             <div className="absolute inset-0 bg-purple-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-lg"></div>
-          </button>
+          </Link>
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-500 dark:text-gray-400">
