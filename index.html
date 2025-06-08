@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MADFAM AI Portfolio Builder - Create Stunning Portfolios in 30 Minutes</title>
-    <meta name="description" content="Transform your LinkedIn, GitHub, and CV into a beautiful portfolio website using AI. No design skills needed. Start free.">
+    <title data-i18n="meta.title">MADFAM AI Constructor de Portafolios - Crea Portafolios Impresionantes en 30 Minutos</title>
+    <meta name="description" content="Transforma tu LinkedIn, GitHub y CV en un hermoso sitio web de portafolio usando IA. No se necesitan habilidades de diseño. Comienza gratis." data-i18n="meta.description">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -69,29 +74,86 @@
             from, to { border-color: transparent }
             50% { border-color: #667eea }
         }
+        
+        /* Mobile menu styles */
+        .mobile-menu {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
     <!-- Header -->
-    <header class="bg-white shadow-sm fixed w-full top-0 z-50">
+    <header class="bg-white dark:bg-gray-800 shadow-sm fixed w-full top-0 z-50 transition-colors duration-300">
         <nav class="container mx-auto px-6 py-4">
             <div class="flex justify-between items-center">
                 <div class="flex items-center space-x-2">
                     <i class="fas fa-rocket text-2xl text-purple-600"></i>
-                    <span class="text-xl font-bold">MADFAM<span class="text-purple-600">.</span>AI</span>
+                    <span class="text-xl font-bold text-gray-900 dark:text-white">MADFAM<span class="text-purple-600">.</span>AI</span>
                 </div>
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="#features" class="text-gray-600 hover:text-purple-600 transition">Features</a>
-                    <a href="#how-it-works" class="text-gray-600 hover:text-purple-600 transition">How it Works</a>
-                    <a href="#templates" class="text-gray-600 hover:text-purple-600 transition">Templates</a>
-                    <a href="#pricing" class="text-gray-600 hover:text-purple-600 transition">Pricing</a>
-                    <button onclick="showComingSoon()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition">
-                        Get Started
+                    <a href="#features" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.features">Características</a>
+                    <a href="#how-it-works" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.howItWorks">Cómo Funciona</a>
+                    <a href="#templates" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.templates">Plantillas</a>
+                    <a href="#pricing" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition" data-i18n="nav.pricing">Precios</a>
+                    <button id="languageToggle" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
+                        <span class="flag-icon">🇪🇸</span>
+                        <span class="text-sm font-medium">ES</span>
+                    </button>
+                    <button id="darkModeToggle" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <button onclick="showComingSoon()" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition" data-i18n="nav.getStarted">
+                        Comenzar
                     </button>
                 </div>
-                <button class="md:hidden text-gray-600">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
+                <div class="md:hidden flex items-center space-x-2">
+                    <button id="languageToggleMobile" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1">
+                        <span class="flag-icon">🇪🇸</span>
+                    </button>
+                    <button id="darkModeToggleMobile" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <button id="mobileMenuToggle" class="text-gray-600 dark:text-gray-300 p-2">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="mobile-menu fixed top-0 left-0 w-full h-full bg-white dark:bg-gray-800 z-40 md:hidden">
+                <div class="flex flex-col h-full">
+                    <div class="flex justify-between items-center px-6 py-4 border-b dark:border-gray-700">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-rocket text-2xl text-purple-600"></i>
+                            <span class="text-xl font-bold text-gray-900 dark:text-white">MADFAM<span class="text-purple-600">.</span>AI</span>
+                        </div>
+                        <button id="mobileMenuClose" class="text-gray-600 dark:text-gray-300 p-2">
+                            <i class="fas fa-times text-xl"></i>
+                        </button>
+                    </div>
+                    <div class="flex-1 px-6 py-8 space-y-6">
+                        <a href="#features" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.features">Características</a>
+                        <a href="#how-it-works" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.howItWorks">Cómo Funciona</a>
+                        <a href="#templates" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.templates">Plantillas</a>
+                        <a href="#pricing" class="block text-lg text-gray-900 dark:text-white hover:text-purple-600 transition mobile-nav-link" data-i18n="nav.pricing">Precios</a>
+                        <div class="flex items-center justify-center space-x-3 py-2">
+                            <button id="languageToggleMobileMenu" class="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-purple-600 transition">
+                                <span class="flag-icon">🇪🇸</span>
+                                <span data-i18n="nav.language">Idioma</span>
+                            </button>
+                        </div>
+                        <button onclick="showComingSoon()" class="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-lg" data-i18n="nav.getStarted">
+                            Comenzar
+                        </button>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -99,59 +161,59 @@
     <!-- Hero Section -->
     <section class="pt-24 pb-20 px-6">
         <div class="container mx-auto text-center">
-            <div class="inline-flex items-center bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium mb-8 fade-in">
+            <div class="inline-flex items-center bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm font-medium mb-8 fade-in">
                 <i class="fas fa-sparkles mr-2"></i>
-                Powered by GPT-4 & Claude AI
+                <span data-i18n="hero.poweredBy">Impulsado por GPT-4 y Claude AI</span>
             </div>
             
-            <h1 class="text-5xl md:text-6xl font-bold text-gray-900 mb-6 fade-in">
-                Turn Your CV Into a <br>
-                <span class="gradient-text">Stunning Portfolio</span>
-                <br>in 30 Minutes
+            <h1 class="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 fade-in leading-tight">
+                <span data-i18n="hero.title1">Convierte tu CV en un</span> <br class="hidden sm:block">
+                <span class="gradient-text" data-i18n="hero.title2">Portafolio Impresionante</span>
+                <br class="hidden sm:block"><span data-i18n="hero.title3">en 30 Minutos</span>
             </h1>
             
-            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto fade-in">
-                Import from LinkedIn, GitHub, or upload your resume. Our AI transforms your experience into a beautiful, 
-                professional portfolio that gets you hired.
+            <p class="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto fade-in px-4" data-i18n="hero.description">
+                Importa desde LinkedIn, GitHub, o sube tu currículum. Nuestra IA transforma tu experiencia en un hermoso 
+                portafolio profesional que te ayuda a conseguir trabajo.
             </p>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 fade-in">
-                <button onclick="showDemo()" class="bg-purple-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-purple-700 transition hover-lift">
+            <div class="flex flex-col sm:flex-row gap-4 justify-center mb-12 fade-in px-4">
+                <button onclick="showDemo()" class="bg-purple-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-medium hover:bg-purple-700 transition hover-lift">
                     <i class="fas fa-play mr-2"></i>
-                    Watch Demo
+                    <span data-i18n="hero.watchDemo">Ver Demo</span>
                 </button>
-                <button onclick="showComingSoon()" class="border-2 border-purple-600 text-purple-600 px-8 py-4 rounded-lg text-lg font-medium hover:bg-purple-50 transition">
-                    Start Free Trial
+                <button onclick="showComingSoon()" class="border-2 border-purple-600 text-purple-600 dark:hover:bg-purple-900 px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-medium hover:bg-purple-50 transition">
+                    <span data-i18n="hero.startTrial">Comenzar Prueba Gratis</span>
                 </button>
             </div>
             
-            <div class="flex items-center justify-center space-x-8 text-gray-500 fade-in">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8 text-gray-500 dark:text-gray-400 fade-in">
                 <div class="flex items-center">
                     <i class="fas fa-check-circle text-green-500 mr-2"></i>
-                    No credit card required
+                    <span class="text-sm sm:text-base" data-i18n="hero.noCredit">No se requiere tarjeta de crédito</span>
                 </div>
                 <div class="flex items-center">
                     <i class="fas fa-users text-blue-500 mr-2"></i>
-                    Join 10,000+ professionals
+                    <span class="text-sm sm:text-base" data-i18n="hero.professionals">Únete a más de 10,000 profesionales</span>
                 </div>
                 <div class="flex items-center">
                     <i class="fas fa-star text-yellow-500 mr-2"></i>
-                    4.9/5 rating
+                    <span class="text-sm sm:text-base" data-i18n="hero.rating">Calificación 4.9/5</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Social Proof -->
-    <section class="py-12 bg-gray-100">
+    <section class="py-12 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
         <div class="container mx-auto px-6">
-            <p class="text-center text-gray-600 mb-8">Trusted by professionals from</p>
-            <div class="flex flex-wrap justify-center items-center gap-12 opacity-60">
-                <i class="fab fa-google text-3xl text-gray-700"></i>
-                <i class="fab fa-microsoft text-3xl text-gray-700"></i>
-                <i class="fab fa-apple text-3xl text-gray-700"></i>
-                <i class="fab fa-amazon text-3xl text-gray-700"></i>
-                <i class="fab fa-facebook text-3xl text-gray-700"></i>
+            <p class="text-center text-gray-600 dark:text-gray-300 mb-8" data-i18n="social.trustedBy">Confiado por profesionales de</p>
+            <div class="flex flex-wrap justify-center items-center gap-6 sm:gap-12 opacity-60">
+                <i class="fab fa-google text-2xl sm:text-3xl text-gray-700 dark:text-gray-400"></i>
+                <i class="fab fa-microsoft text-2xl sm:text-3xl text-gray-700 dark:text-gray-400"></i>
+                <i class="fab fa-apple text-2xl sm:text-3xl text-gray-700 dark:text-gray-400"></i>
+                <i class="fab fa-amazon text-2xl sm:text-3xl text-gray-700 dark:text-gray-400"></i>
+                <i class="fab fa-facebook text-2xl sm:text-3xl text-gray-700 dark:text-gray-400"></i>
             </div>
         </div>
     </section>
@@ -160,79 +222,79 @@
     <section id="features" class="py-20 px-6">
         <div class="container mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                    Everything You Need to <span class="gradient-text">Stand Out</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span data-i18n="features.title1">Todo lo que Necesitas para</span> <span class="gradient-text" data-i18n="features.title2">Destacar</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Our AI-powered platform handles everything from content creation to design, 
-                    so you can focus on what matters.
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" data-i18n="features.subtitle">
+                    Nuestra plataforma impulsada por IA maneja todo, desde la creación de contenido hasta el diseño, 
+                    para que puedas enfocarte en lo que importa.
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                 <!-- Feature 1 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
                     <div class="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-magic text-2xl text-purple-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">AI Content Enhancement</h3>
-                    <p class="text-gray-600">
-                        Our AI rewrites your experience into compelling narratives that highlight your value and achievements.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature1.title">Mejora de Contenido con IA</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature1.description">
+                        Nuestra IA reescribe tu experiencia en narrativas convincentes que destacan tu valor y logros.
                     </p>
                 </div>
                 
                 <!-- Feature 2 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
-                    <div class="w-14 h-14 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
+                    <div class="w-14 h-14 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-link text-2xl text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">One-Click Import</h3>
-                    <p class="text-gray-600">
-                        Connect LinkedIn, GitHub, or upload your CV. We automatically extract and organize everything.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature2.title">Importación con Un Clic</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature2.description">
+                        Conecta LinkedIn, GitHub, o sube tu CV. Extraemos y organizamos todo automáticamente.
                     </p>
                 </div>
                 
                 <!-- Feature 3 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
-                    <div class="w-14 h-14 bg-green-100 rounded-lg flex items-center justify-center mb-6">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
+                    <div class="w-14 h-14 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-palette text-2xl text-green-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Professional Templates</h3>
-                    <p class="text-gray-600">
-                        Industry-specific designs that adapt to your content. No design skills needed.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature3.title">Plantillas Profesionales</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature3.description">
+                        Diseños específicos por industria que se adaptan a tu contenido. No se necesitan habilidades de diseño.
                     </p>
                 </div>
                 
                 <!-- Feature 4 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
-                    <div class="w-14 h-14 bg-orange-100 rounded-lg flex items-center justify-center mb-6">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
+                    <div class="w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-globe text-2xl text-orange-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Custom Domain</h3>
-                    <p class="text-gray-600">
-                        Get a professional URL like yourname.com or use our free subdomain.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature4.title">Dominio Personalizado</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature4.description">
+                        Obtén una URL profesional como tunombre.com o usa nuestro subdominio gratuito.
                     </p>
                 </div>
                 
                 <!-- Feature 5 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
-                    <div class="w-14 h-14 bg-pink-100 rounded-lg flex items-center justify-center mb-6">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
+                    <div class="w-14 h-14 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-chart-line text-2xl text-pink-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Analytics Dashboard</h3>
-                    <p class="text-gray-600">
-                        Track visitors, see which projects get attention, and optimize your portfolio.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature5.title">Panel de Análisis</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature5.description">
+                        Rastrea visitantes, ve qué proyectos reciben atención y optimiza tu portafolio.
                     </p>
                 </div>
                 
                 <!-- Feature 6 -->
-                <div class="bg-white p-8 rounded-xl shadow-lg hover-lift">
-                    <div class="w-14 h-14 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
+                <div class="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover-lift transition-colors duration-300">
+                    <div class="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
                         <i class="fas fa-mobile-alt text-2xl text-indigo-600"></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Mobile Optimized</h3>
-                    <p class="text-gray-600">
-                        Your portfolio looks perfect on every device. Edit on the go with our mobile editor.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="features.feature6.title">Optimizado para Móvil</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="features.feature6.description">
+                        Tu portafolio se ve perfecto en cada dispositivo. Edita sobre la marcha con nuestro editor móvil.
                     </p>
                 </div>
             </div>
@@ -240,26 +302,26 @@
     </section>
 
     <!-- How It Works -->
-    <section id="how-it-works" class="py-20 px-6 bg-gray-100">
+    <section id="how-it-works" class="py-20 px-6 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
         <div class="container mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                    From Zero to Portfolio in <span class="gradient-text">3 Simple Steps</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span data-i18n="howItWorks.title1">De Cero a Portafolio en</span> <span class="gradient-text" data-i18n="howItWorks.title2">3 Pasos Simples</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    No technical skills required. Our AI handles everything.
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" data-i18n="howItWorks.subtitle">
+                    No se requieren habilidades técnicas. Nuestra IA maneja todo.
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
                 <!-- Step 1 -->
                 <div class="text-center">
                     <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                         1
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Import Your Data</h3>
-                    <p class="text-gray-600">
-                        Connect LinkedIn, GitHub, or upload your CV. Takes less than 2 minutes.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="howItWorks.step1.title">Importa tus Datos</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="howItWorks.step1.description">
+                        Conecta LinkedIn, GitHub, o sube tu CV. Toma menos de 2 minutos.
                     </p>
                 </div>
                 
@@ -268,9 +330,9 @@
                     <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                         2
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">AI Enhancement</h3>
-                    <p class="text-gray-600">
-                        Our AI rewrites your content, suggests improvements, and picks the perfect template.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="howItWorks.step2.title">Mejora con IA</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="howItWorks.step2.description">
+                        Nuestra IA reescribe tu contenido, sugiere mejoras y selecciona la plantilla perfecta.
                     </p>
                 </div>
                 
@@ -279,9 +341,9 @@
                     <div class="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                         3
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Publish & Share</h3>
-                    <p class="text-gray-600">
-                        Review, customize if needed, and publish. Your portfolio is live instantly.
+                    <h3 class="text-xl font-semibold mb-3 text-gray-900 dark:text-white" data-i18n="howItWorks.step3.title">Publica y Comparte</h3>
+                    <p class="text-gray-600 dark:text-gray-300" data-i18n="howItWorks.step3.description">
+                        Revisa, personaliza si es necesario y publica. Tu portafolio está en línea al instante.
                     </p>
                 </div>
             </div>
@@ -297,17 +359,17 @@
                             <span class="text-sm text-gray-600">https://johndoe.madfam.io</span>
                         </div>
                     </div>
-                    <div class="bg-white p-8">
+                    <div class="bg-white dark:bg-gray-700 p-8 transition-colors duration-300">
                         <div class="text-center mb-8">
-                            <div class="w-24 h-24 bg-gray-300 rounded-full mx-auto mb-4"></div>
-                            <h3 class="text-2xl font-bold">John Doe</h3>
-                            <p class="text-gray-600">Full Stack Developer & UI Designer</p>
+                            <div class="w-24 h-24 bg-gray-300 dark:bg-gray-600 rounded-full mx-auto mb-4"></div>
+                            <h3 class="text-2xl font-bold text-gray-900 dark:text-white" data-i18n="howItWorks.demo.name">Juan Pérez</h3>
+                            <p class="text-gray-600 dark:text-gray-300" data-i18n="howItWorks.demo.title">Desarrollador Full Stack y Diseñador UI</p>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
-                            <div class="bg-gray-100 h-32 rounded-lg"></div>
-                            <div class="bg-gray-100 h-32 rounded-lg"></div>
-                            <div class="bg-gray-100 h-32 rounded-lg"></div>
-                            <div class="bg-gray-100 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 dark:bg-gray-600 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 dark:bg-gray-600 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 dark:bg-gray-600 h-32 rounded-lg"></div>
+                            <div class="bg-gray-100 dark:bg-gray-600 h-32 rounded-lg"></div>
                         </div>
                     </div>
                 </div>
@@ -319,65 +381,65 @@
     <section id="templates" class="py-20 px-6">
         <div class="container mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                    Beautiful Templates for <span class="gradient-text">Every Professional</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span data-i18n="templates.title1">Plantillas Hermosas para</span> <span class="gradient-text" data-i18n="templates.title2">Cada Profesional</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    AI selects the perfect template based on your industry and content
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" data-i18n="templates.subtitle">
+                    La IA selecciona la plantilla perfecta basada en tu industria y contenido
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8">
+            <div class="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8">
                 <div class="group cursor-pointer" onclick="showComingSoon()">
-                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                    <div class="bg-gray-200 dark:bg-gray-700 h-64 rounded-lg mb-4 overflow-hidden relative transition-colors duration-300">
                         <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
-                            <span class="text-white font-semibold">Use This Template</span>
+                            <span class="text-white font-semibold" data-i18n="templates.useTemplate">Usar Esta Plantilla</span>
                         </div>
                     </div>
-                    <h3 class="font-semibold">Minimal Developer</h3>
-                    <p class="text-gray-600 text-sm">Clean, code-focused design</p>
+                    <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="templates.template1.name">Desarrollador Minimalista</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm" data-i18n="templates.template1.description">Diseño limpio, enfocado en código</p>
                 </div>
                 
                 <div class="group cursor-pointer" onclick="showComingSoon()">
-                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                    <div class="bg-gray-200 dark:bg-gray-700 h-64 rounded-lg mb-4 overflow-hidden relative transition-colors duration-300">
                         <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
-                            <span class="text-white font-semibold">Use This Template</span>
+                            <span class="text-white font-semibold" data-i18n="templates.useTemplate">Usar Esta Plantilla</span>
                         </div>
                     </div>
-                    <h3 class="font-semibold">Creative Designer</h3>
-                    <p class="text-gray-600 text-sm">Visual, portfolio-centric layout</p>
+                    <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="templates.template2.name">Diseñador Creativo</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm" data-i18n="templates.template2.description">Diseño visual, centrado en portafolio</p>
                 </div>
                 
                 <div class="group cursor-pointer" onclick="showComingSoon()">
-                    <div class="bg-gray-200 h-64 rounded-lg mb-4 overflow-hidden relative">
+                    <div class="bg-gray-200 dark:bg-gray-700 h-64 rounded-lg mb-4 overflow-hidden relative transition-colors duration-300">
                         <div class="absolute inset-0 bg-purple-600 opacity-0 group-hover:opacity-90 transition flex items-center justify-center">
-                            <span class="text-white font-semibold">Use This Template</span>
+                            <span class="text-white font-semibold" data-i18n="templates.useTemplate">Usar Esta Plantilla</span>
                         </div>
                     </div>
-                    <h3 class="font-semibold">Business Professional</h3>
-                    <p class="text-gray-600 text-sm">Corporate, achievement-focused</p>
+                    <h3 class="font-semibold text-gray-900 dark:text-white" data-i18n="templates.template3.name">Profesional de Negocios</h3>
+                    <p class="text-gray-600 dark:text-gray-300 text-sm" data-i18n="templates.template3.description">Corporativo, enfocado en logros</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Pricing -->
-    <section id="pricing" class="py-20 px-6 bg-gray-100">
+    <section id="pricing" class="py-20 px-6 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">
         <div class="container mx-auto">
             <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold text-gray-900 mb-4">
-                    Simple Pricing, <span class="gradient-text">Powerful Features</span>
+                <h2 class="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+                    <span data-i18n="pricing.title1">Precios Simples,</span> <span class="gradient-text" data-i18n="pricing.title2">Características Poderosas</span>
                 </h2>
-                <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-                    Start free, upgrade when you need more
+                <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" data-i18n="pricing.subtitle">
+                    Comienza gratis, actualiza cuando necesites más
                 </p>
             </div>
             
-            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
                 <!-- Free Plan -->
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-2">Free</h3>
-                    <div class="text-4xl font-bold mb-6">$0<span class="text-lg text-gray-600">/month</span></div>
+                <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg transition-colors duration-300">
+                    <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white" data-i18n="pricing.free.title">Gratis</h3>
+                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$0<span class="text-lg text-gray-600 dark:text-gray-300">/month</span></div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
                             <i class="fas fa-check text-green-500 mr-3"></i>
@@ -406,7 +468,7 @@
                     <div class="bg-yellow-400 text-purple-900 text-sm font-semibold px-3 py-1 rounded-full inline-block mb-4">
                         MOST POPULAR
                     </div>
-                    <h3 class="text-2xl font-bold mb-2">Pro</h3>
+                    <h3 class="text-2xl font-bold mb-2" data-i18n="pricing.pro.title">Pro</h3>
                     <div class="text-4xl font-bold mb-6">$19<span class="text-lg opacity-80">/month</span></div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
@@ -436,9 +498,9 @@
                 </div>
                 
                 <!-- Business Plan -->
-                <div class="bg-white p-8 rounded-xl shadow-lg">
-                    <h3 class="text-2xl font-bold mb-2">Business</h3>
-                    <div class="text-4xl font-bold mb-6">$49<span class="text-lg text-gray-600">/month</span></div>
+                <div class="bg-white dark:bg-gray-700 p-8 rounded-xl shadow-lg transition-colors duration-300">
+                    <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white" data-i18n="pricing.business.title">Negocios</h3>
+                    <div class="text-4xl font-bold mb-6 text-gray-900 dark:text-white">$49<span class="text-lg text-gray-600 dark:text-gray-300">/month</span></div>
                     <ul class="space-y-3 mb-8">
                         <li class="flex items-center">
                             <i class="fas fa-check text-green-500 mr-3"></i>
@@ -490,7 +552,7 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 py-12 px-6">
         <div class="container mx-auto">
-            <div class="grid md:grid-cols-4 gap-8 mb-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8">
                 <div>
                     <div class="flex items-center space-x-2 mb-4">
                         <i class="fas fa-rocket text-2xl text-purple-400"></i>
@@ -533,9 +595,9 @@
             
             <div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
                 <p class="text-sm mb-4 md:mb-0">
-                    � 2025 MADFAM. All rights reserved.
+                    � 2025 MADFAM. All rights reserved.
                 </p>
-                <div class="flex space-x-6">
+                <div class="flex justify-center md:justify-end space-x-6">
                     <a href="#" onclick="showComingSoon()" class="hover:text-white transition">
                         <i class="fab fa-twitter text-xl"></i>
                     </a>
@@ -552,22 +614,22 @@
 
     <!-- Coming Soon Modal -->
     <div id="coming-soon-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-6 z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 max-w-md w-full transition-colors duration-300">
             <div class="text-center">
-                <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <div class="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
                     <i class="fas fa-rocket text-2xl text-purple-600"></i>
                 </div>
-                <h3 class="text-2xl font-bold mb-2">Coming Soon!</h3>
-                <p class="text-gray-600 mb-6">
+                <h3 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">Coming Soon!</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-6">
                     We're putting the finishing touches on MADFAM AI Portfolio Builder. 
                     Join our waitlist to be the first to know when we launch!
                 </p>
                 <div class="space-y-3">
-                    <input type="email" placeholder="Enter your email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-purple-600">
+                    <input type="email" placeholder="Enter your email" class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:outline-none focus:border-purple-600">
                     <button onclick="submitWaitlist()" class="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition">
                         Join Waitlist
                     </button>
-                    <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800 transition">
+                    <button onclick="closeModal()" class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 transition">
                         Close
                     </button>
                 </div>
@@ -577,17 +639,17 @@
 
     <!-- Demo Video Modal -->
     <div id="demo-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center p-6 z-50">
-        <div class="bg-white rounded-xl p-8 max-w-4xl w-full">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-8 max-w-4xl w-full transition-colors duration-300">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-2xl font-bold">See MADFAM in Action</h3>
-                <button onclick="closeDemoModal()" class="text-gray-600 hover:text-gray-800">
+                <h3 class="text-2xl font-bold text-gray-900 dark:text-white">See MADFAM in Action</h3>
+                <button onclick="closeDemoModal()" class="text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
-            <div class="bg-gray-200 aspect-video rounded-lg flex items-center justify-center">
+            <div class="bg-gray-200 dark:bg-gray-700 aspect-video rounded-lg flex items-center justify-center transition-colors duration-300">
                 <div class="text-center">
-                    <i class="fas fa-play-circle text-6xl text-gray-400 mb-4"></i>
-                    <p class="text-gray-600">Demo video coming soon</p>
+                    <i class="fas fa-play-circle text-6xl text-gray-400 dark:text-gray-500 mb-4"></i>
+                    <p class="text-gray-600 dark:text-gray-300">Demo video coming soon</p>
                 </div>
             </div>
         </div>
@@ -595,6 +657,349 @@
 
     <!-- JavaScript -->
     <script>
+        // Translation data
+        const translations = {
+            es: {
+                meta: {
+                    title: "MADFAM AI Constructor de Portafolios - Crea Portafolios Impresionantes en 30 Minutos",
+                    description: "Transforma tu LinkedIn, GitHub y CV en un hermoso sitio web de portafolio usando IA. No se necesitan habilidades de diseño. Comienza gratis."
+                },
+                nav: {
+                    features: "Características",
+                    howItWorks: "Cómo Funciona",
+                    templates: "Plantillas",
+                    pricing: "Precios",
+                    getStarted: "Comenzar",
+                    language: "Idioma"
+                },
+                hero: {
+                    poweredBy: "Impulsado por GPT-4 y Claude AI",
+                    title1: "Convierte tu CV en un",
+                    title2: "Portafolio Impresionante",
+                    title3: "en 30 Minutos",
+                    description: "Importa desde LinkedIn, GitHub, o sube tu currículum. Nuestra IA transforma tu experiencia en un hermoso portafolio profesional que te ayuda a conseguir trabajo.",
+                    watchDemo: "Ver Demo",
+                    startTrial: "Comenzar Prueba Gratis",
+                    noCredit: "No se requiere tarjeta de crédito",
+                    professionals: "Únete a más de 10,000 profesionales",
+                    rating: "Calificación 4.9/5"
+                },
+                social: {
+                    trustedBy: "Confiado por profesionales de"
+                },
+                features: {
+                    title1: "Todo lo que Necesitas para",
+                    title2: "Destacar",
+                    subtitle: "Nuestra plataforma impulsada por IA maneja todo, desde la creación de contenido hasta el diseño, para que puedas enfocarte en lo que importa.",
+                    feature1: {
+                        title: "Mejora de Contenido con IA",
+                        description: "Nuestra IA reescribe tu experiencia en narrativas convincentes que destacan tu valor y logros."
+                    },
+                    feature2: {
+                        title: "Importación con Un Clic",
+                        description: "Conecta LinkedIn, GitHub, o sube tu CV. Extraemos y organizamos todo automáticamente."
+                    },
+                    feature3: {
+                        title: "Plantillas Profesionales",
+                        description: "Diseños específicos por industria que se adaptan a tu contenido. No se necesitan habilidades de diseño."
+                    },
+                    feature4: {
+                        title: "Dominio Personalizado",
+                        description: "Obtén una URL profesional como tunombre.com o usa nuestro subdominio gratuito."
+                    },
+                    feature5: {
+                        title: "Panel de Análisis",
+                        description: "Rastrea visitantes, ve qué proyectos reciben atención y optimiza tu portafolio."
+                    },
+                    feature6: {
+                        title: "Optimizado para Móvil",
+                        description: "Tu portafolio se ve perfecto en cada dispositivo. Edita sobre la marcha con nuestro editor móvil."
+                    }
+                },
+                howItWorks: {
+                    title1: "De Cero a Portafolio en",
+                    title2: "3 Pasos Simples",
+                    subtitle: "No se requieren habilidades técnicas. Nuestra IA maneja todo.",
+                    step1: {
+                        title: "Importa tus Datos",
+                        description: "Conecta LinkedIn, GitHub, o sube tu CV. Toma menos de 2 minutos."
+                    },
+                    step2: {
+                        title: "Mejora con IA",
+                        description: "Nuestra IA reescribe tu contenido, sugiere mejoras y selecciona la plantilla perfecta."
+                    },
+                    step3: {
+                        title: "Publica y Comparte",
+                        description: "Revisa, personaliza si es necesario y publica. Tu portafolio está en línea al instante."
+                    },
+                    demo: {
+                        name: "Juan Pérez",
+                        title: "Desarrollador Full Stack y Diseñador UI"
+                    }
+                },
+                templates: {
+                    title1: "Plantillas Hermosas para",
+                    title2: "Cada Profesional",
+                    subtitle: "La IA selecciona la plantilla perfecta basada en tu industria y contenido",
+                    useTemplate: "Usar Esta Plantilla",
+                    template1: {
+                        name: "Desarrollador Minimalista",
+                        description: "Diseño limpio, enfocado en código"
+                    },
+                    template2: {
+                        name: "Diseñador Creativo",
+                        description: "Diseño visual, centrado en portafolio"
+                    },
+                    template3: {
+                        name: "Profesional de Negocios",
+                        description: "Corporativo, enfocado en logros"
+                    }
+                },
+                pricing: {
+                    title1: "Precios Simples,",
+                    title2: "Características Poderosas",
+                    subtitle: "Comienza gratis, actualiza cuando necesites más",
+                    free: {
+                        title: "Gratis"
+                    },
+                    pro: {
+                        title: "Pro"
+                    },
+                    business: {
+                        title: "Negocios"
+                    }
+                }
+            },
+            en: {
+                meta: {
+                    title: "MADFAM AI Portfolio Builder - Create Stunning Portfolios in 30 Minutes",
+                    description: "Transform your LinkedIn, GitHub, and CV into a beautiful portfolio website using AI. No design skills needed. Start free."
+                },
+                nav: {
+                    features: "Features",
+                    howItWorks: "How it Works",
+                    templates: "Templates",
+                    pricing: "Pricing",
+                    getStarted: "Get Started",
+                    language: "Language"
+                },
+                hero: {
+                    poweredBy: "Powered by GPT-4 & Claude AI",
+                    title1: "Turn Your CV Into a",
+                    title2: "Stunning Portfolio",
+                    title3: "in 30 Minutes",
+                    description: "Import from LinkedIn, GitHub, or upload your resume. Our AI transforms your experience into a beautiful, professional portfolio that gets you hired.",
+                    watchDemo: "Watch Demo",
+                    startTrial: "Start Free Trial",
+                    noCredit: "No credit card required",
+                    professionals: "Join 10,000+ professionals",
+                    rating: "4.9/5 rating"
+                },
+                social: {
+                    trustedBy: "Trusted by professionals from"
+                },
+                features: {
+                    title1: "Everything You Need to",
+                    title2: "Stand Out",
+                    subtitle: "Our AI-powered platform handles everything from content creation to design, so you can focus on what matters.",
+                    feature1: {
+                        title: "AI Content Enhancement",
+                        description: "Our AI rewrites your experience into compelling narratives that highlight your value and achievements."
+                    },
+                    feature2: {
+                        title: "One-Click Import",
+                        description: "Connect LinkedIn, GitHub, or upload your CV. We automatically extract and organize everything."
+                    },
+                    feature3: {
+                        title: "Professional Templates",
+                        description: "Industry-specific designs that adapt to your content. No design skills needed."
+                    },
+                    feature4: {
+                        title: "Custom Domain",
+                        description: "Get a professional URL like yourname.com or use our free subdomain."
+                    },
+                    feature5: {
+                        title: "Analytics Dashboard",
+                        description: "Track visitors, see which projects get attention, and optimize your portfolio."
+                    },
+                    feature6: {
+                        title: "Mobile Optimized",
+                        description: "Your portfolio looks perfect on every device. Edit on the go with our mobile editor."
+                    }
+                },
+                howItWorks: {
+                    title1: "From Zero to Portfolio in",
+                    title2: "3 Simple Steps",
+                    subtitle: "No technical skills required. Our AI handles everything.",
+                    step1: {
+                        title: "Import Your Data",
+                        description: "Connect LinkedIn, GitHub, or upload your CV. Takes less than 2 minutes."
+                    },
+                    step2: {
+                        title: "AI Enhancement",
+                        description: "Our AI rewrites your content, suggests improvements, and picks the perfect template."
+                    },
+                    step3: {
+                        title: "Publish & Share",
+                        description: "Review, customize if needed, and publish. Your portfolio is live instantly."
+                    },
+                    demo: {
+                        name: "John Doe",
+                        title: "Full Stack Developer & UI Designer"
+                    }
+                },
+                templates: {
+                    title1: "Beautiful Templates for",
+                    title2: "Every Professional",
+                    subtitle: "AI selects the perfect template based on your industry and content",
+                    useTemplate: "Use This Template",
+                    template1: {
+                        name: "Minimal Developer",
+                        description: "Clean, code-focused design"
+                    },
+                    template2: {
+                        name: "Creative Designer",
+                        description: "Visual, portfolio-centric layout"
+                    },
+                    template3: {
+                        name: "Business Professional",
+                        description: "Corporate, achievement-focused"
+                    }
+                },
+                pricing: {
+                    title1: "Simple Pricing,",
+                    title2: "Powerful Features",
+                    subtitle: "Start free, upgrade when you need more",
+                    free: {
+                        title: "Free"
+                    },
+                    pro: {
+                        title: "Pro"
+                    },
+                    business: {
+                        title: "Business"
+                    }
+                }
+            }
+        };
+        
+        // Current language state
+        let currentLanguage = 'es'; // Default to Spanish
+        
+        // Language functionality
+        function initLanguage() {
+            // Get saved language or default to Spanish
+            currentLanguage = localStorage.getItem('language') || 'es';
+            updateLanguage(currentLanguage);
+            
+            // Add event listeners for language toggles
+            const languageToggle = document.getElementById('languageToggle');
+            const languageToggleMobile = document.getElementById('languageToggleMobile');
+            const languageToggleMobileMenu = document.getElementById('languageToggleMobileMenu');
+            
+            function toggleLanguage() {
+                currentLanguage = currentLanguage === 'es' ? 'en' : 'es';
+                updateLanguage(currentLanguage);
+                localStorage.setItem('language', currentLanguage);
+            }
+            
+            languageToggle?.addEventListener('click', toggleLanguage);
+            languageToggleMobile?.addEventListener('click', toggleLanguage);
+            languageToggleMobileMenu?.addEventListener('click', toggleLanguage);
+        }
+        
+        function updateLanguage(lang) {
+            currentLanguage = lang;
+            
+            // Update language toggle buttons
+            const languageToggles = document.querySelectorAll('#languageToggle, #languageToggleMobile, #languageToggleMobileMenu');
+            languageToggles.forEach(toggle => {
+                const flagIcon = toggle.querySelector('.flag-icon');
+                const langText = toggle.querySelector('span:not(.flag-icon)');
+                
+                if (lang === 'es') {
+                    if (flagIcon) flagIcon.textContent = '🇪🇸';
+                    if (langText) langText.textContent = 'ES';
+                } else {
+                    if (flagIcon) flagIcon.textContent = '🇺🇸';
+                    if (langText) langText.textContent = 'EN';
+                }
+            });
+            
+            // Update all translatable elements
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(element => {
+                const key = element.getAttribute('data-i18n');
+                const translation = getNestedTranslation(translations[lang], key);
+                
+                if (translation) {
+                    if (element.tagName === 'TITLE') {
+                        element.textContent = translation;
+                    } else if (element.tagName === 'META') {
+                        element.setAttribute('content', translation);
+                    } else {
+                        element.textContent = translation;
+                    }
+                }
+            });
+        }
+        
+        function getNestedTranslation(obj, path) {
+            return path.split('.').reduce((current, key) => current && current[key], obj);
+        }
+        
+        // Dark mode functionality
+        function initDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeToggleMobile = document.getElementById('darkModeToggleMobile');
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+            }
+            
+            function toggleDarkMode() {
+                const isDark = document.documentElement.classList.toggle('dark');
+                localStorage.setItem('darkMode', isDark);
+            }
+            
+            darkModeToggle?.addEventListener('click', toggleDarkMode);
+            darkModeToggleMobile?.addEventListener('click', toggleDarkMode);
+        }
+        
+        // Mobile menu functionality
+        function initMobileMenu() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenuClose = document.getElementById('mobileMenuClose');
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+            
+            function openMobileMenu() {
+                mobileMenu.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeMobileMenu() {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
+            }
+            
+            mobileMenuToggle?.addEventListener('click', openMobileMenu);
+            mobileMenuClose?.addEventListener('click', closeMobileMenu);
+            
+            // Close mobile menu when clicking nav links
+            mobileNavLinks.forEach(link => {
+                link.addEventListener('click', closeMobileMenu);
+            });
+            
+            // Close mobile menu on escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeMobileMenu();
+                }
+            });
+        }
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -635,12 +1040,17 @@
         window.onclick = function(event) {
             const comingSoonModal = document.getElementById('coming-soon-modal');
             const demoModal = document.getElementById('demo-modal');
+            const mobileMenu = document.getElementById('mobileMenu');
             
             if (event.target === comingSoonModal) {
                 closeModal();
             }
             if (event.target === demoModal) {
                 closeDemoModal();
+            }
+            if (event.target === mobileMenu) {
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = '';
             }
         }
 
@@ -654,13 +1064,19 @@
             }
         });
 
+        // Initialize features when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initLanguage();
+            initDarkMode();
+            initMobileMenu();
+        });
+
         // Development/Production Detection
         const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const isProduction = window.location.hostname.includes('madfam.io');
         
         if (isDevelopment || isProduction) {
             console.log('Running in:', isDevelopment ? 'Development' : 'Production');
-            // You can add environment-specific code here
         }
 
         // Add notice about this being a demo
