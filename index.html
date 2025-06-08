@@ -449,7 +449,7 @@
                 <div class="mt-4 text-center">
                     <p class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg inline-block transition-colors duration-300" id="currency-note">
                         <i class="fas fa-info-circle mr-2"></i>
-                        <span data-i18n="pricing.currencyNote">Precios mostrados en pesos mexicanos. IVA incluido para México.</span>
+                        <span id="currency-note-text" data-i18n="pricing.currencyNote">Precios mostrados en pesos mexicanos. IVA incluido para México.</span>
                     </p>
                 </div>
             </div>
@@ -1139,6 +1139,9 @@
                     currencyText.textContent = `${baseText} (${currentCurrency})`;
                 }
             }
+            
+            // Update currency note when language changes
+            updateCurrencyNote(currentCurrency);
         }
         
         function getNestedTranslation(obj, path) {
@@ -1229,7 +1232,13 @@
         }
         
         function updateCurrencyNote(currency) {
-            const currencyNoteElement = document.querySelector('[data-i18n="pricing.currencyNote"]');
+            // Find currency note element by ID or current data-i18n attribute
+            let currencyNoteElement = document.getElementById('currency-note-text');
+            if (!currencyNoteElement) {
+                // Fallback: find by any pricing currency note data-i18n
+                currencyNoteElement = document.querySelector('[data-i18n^="pricing.currencyNote"]');
+            }
+            
             if (!currencyNoteElement) return;
             
             let noteKey = 'pricing.currencyNote'; // Default MXN note
