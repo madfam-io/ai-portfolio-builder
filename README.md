@@ -6,6 +6,11 @@
 
 MADFAM AI Portfolio Builder is a SaaS platform that automates portfolio creation for freelancers, consultants, and creative professionals. By connecting LinkedIn, GitHub, and uploading CVs, users get a professionally designed portfolio website with AI-enhanced content.
 
+> **Current Status**: Pre-MVP Development Phase - Technology foundation setup complete, ready for core application development.
+
+### 🎯 Mission
+Transform scattered professional profiles into stunning portfolio websites in under 30 minutes using AI-powered content generation.
+
 ### Key Features
 - **30-Minute Setup**: From signup to published portfolio
 - **AI Content Enhancement**: Automatic bio rewriting and project descriptions
@@ -49,6 +54,8 @@ MADFAM AI Portfolio Builder is a SaaS platform that automates portfolio creation
 
 ## 🔧 Installation
 
+> **Note**: This application is currently in pre-MVP phase. The Next.js application structure is not yet implemented. Follow these steps to set up the development environment:
+
 1. Clone the repository:
 ```bash
 git clone https://github.com/madfam/ai-portfolio-builder.git
@@ -65,32 +72,28 @@ pnpm install
 cp .env.example .env.local
 ```
 
-4. Configure your `.env.local` with required API keys:
+4. Configure your `.env.local` with required API keys (see `.env.example` for all required variables):
 ```env
-# Supabase
+# Essential for development
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-
-# OpenAI
 OPENAI_API_KEY=your_openai_api_key
-
-# OAuth Providers
-LINKEDIN_CLIENT_ID=your_linkedin_client_id
-LINKEDIN_CLIENT_SECRET=your_linkedin_client_secret
-GITHUB_CLIENT_ID=your_github_client_id
-GITHUB_CLIENT_SECRET=your_github_client_secret
-
-# Stripe
-STRIPE_SECRET_KEY=your_stripe_secret_key
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-
-# Redis
-REDIS_URL=your_redis_url
+NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
-5. Run database migrations:
+5. Set up Supabase (when database is implemented):
 ```bash
+# Install Supabase CLI
+npm install -g supabase
+
+# Initialize Supabase
+supabase init
+
+# Start local development
+supabase start
+
+# Run migrations (when available)
 pnpm supabase:migrate
 ```
 
@@ -98,6 +101,8 @@ pnpm supabase:migrate
 ```bash
 pnpm dev
 ```
+
+7. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 🏗️ Project Structure
 
@@ -191,26 +196,34 @@ This project is proprietary software. All rights reserved.
 
 ## 🎯 Roadmap
 
-### MVP (Month 1)
+### MVP (Month 1) - In Progress
 - [x] Project setup and documentation
-- [ ] Authentication system
+- [x] Technology stack alignment
+- [x] Environment configuration
+- [ ] Next.js application foundation
+- [ ] Authentication system (Supabase Auth)
+- [ ] Database schema and migrations
 - [ ] Profile import (LinkedIn, GitHub)
-- [ ] AI content generation
+- [ ] AI content generation pipeline
 - [ ] Template system
+- [ ] Portfolio editor interface
 - [ ] Publishing pipeline
+- [ ] Payment integration (Stripe)
 
 ### Phase 2 (Month 2-3)
 - [ ] Custom domains
 - [ ] Analytics dashboard
 - [ ] Team collaboration
-- [ ] Mobile app
+- [ ] Mobile app (React Native)
 - [ ] API marketplace
+- [ ] Advanced AI features
 
 ### Phase 3 (Month 4-6)
 - [ ] White-label solution
-- [ ] Advanced AI features
 - [ ] International expansion
 - [ ] Enterprise features
+- [ ] Performance optimization
+- [ ] Multi-region deployment
 
 ---
 
