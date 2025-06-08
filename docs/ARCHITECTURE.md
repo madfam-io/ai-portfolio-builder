@@ -8,30 +8,30 @@ graph TB
         A[Next.js Frontend]
         B[Mobile App - React Native]
     end
-    
+
     subgraph "Edge Layer"
         C[Vercel Edge Functions]
         D[Cloudflare CDN]
     end
-    
+
     subgraph "Application Layer"
         E[Next.js API Routes]
         F[Background Jobs - Inngest]
     end
-    
+
     subgraph "Data Layer"
         G[Supabase PostgreSQL]
         H[Redis Cache - Upstash]
         I[Supabase Storage]
     end
-    
+
     subgraph "External Services"
         J[OpenAI API]
         K[LinkedIn API]
         L[GitHub API]
         M[Stripe API]
     end
-    
+
     A --> C
     B --> C
     C --> D
@@ -50,21 +50,25 @@ graph TB
 ## 🏗️ Core Architecture Principles
 
 ### 1. **Separation of Concerns**
+
 - Clear boundaries between presentation, business logic, and data layers
 - Domain-driven design for core business logic
 - Repository pattern for data access
 
 ### 2. **Scalability First**
+
 - Stateless application design
 - Horizontal scaling capability
 - Edge computing for global performance
 
 ### 3. **Security by Design**
+
 - Zero-trust architecture
 - Principle of least privilege
 - End-to-end encryption for sensitive data
 
 ### 4. **Developer Experience**
+
 - Type-safe from database to frontend
 - Consistent error handling
 - Comprehensive logging and monitoring
@@ -74,28 +78,34 @@ graph TB
 ### Frontend Architecture
 
 **Framework: Next.js 14 (App Router)**
+
 - **Why**: Server Components for better performance, built-in optimization, excellent DX
 - **Alternative considered**: Remix (rejected due to smaller ecosystem)
 
 **State Management: Zustand + React Query**
+
 - **Why**: Lightweight, TypeScript-first, minimal boilerplate
 - **Alternative considered**: Redux Toolkit (rejected due to complexity for our needs)
 
 **Styling: Tailwind CSS + Shadcn/ui**
+
 - **Why**: Rapid development, consistent design system, accessible components
 - **Alternative considered**: Styled Components (rejected due to runtime overhead)
 
 ### Backend Architecture
 
 **Database: Supabase (PostgreSQL)**
+
 - **Why**: Real-time subscriptions, built-in auth, Row Level Security
 - **Alternative considered**: Prisma + Planetscale (rejected due to lack of real-time)
 
 **Caching: Redis (Upstash)**
+
 - **Why**: Serverless-friendly, pay-per-request, global replication
 - **Alternative considered**: In-memory cache (rejected due to lack of persistence)
 
 **File Storage: Supabase Storage**
+
 - **Why**: Integrated with auth, S3-compatible, CDN included
 - **Alternative considered**: AWS S3 (rejected due to complexity)
 
@@ -131,22 +141,22 @@ class AIServiceFactory {
 ai-portfolio-builder/
 ├── app/                          # Next.js App Router
 │   ├── (auth)/                  # Auth group route
-│   │   ├── login/              
-│   │   ├── signup/             
-│   │   └── oauth/              
+│   │   ├── login/
+│   │   ├── signup/
+│   │   └── oauth/
 │   ├── (dashboard)/             # Protected routes
-│   │   ├── portfolios/         
-│   │   ├── editor/             
-│   │   └── settings/           
+│   │   ├── portfolios/
+│   │   ├── editor/
+│   │   └── settings/
 │   ├── (marketing)/             # Public routes
 │   │   ├── page.tsx            # Landing page
-│   │   ├── pricing/            
-│   │   └── templates/          
+│   │   ├── pricing/
+│   │   └── templates/
 │   └── api/                     # API routes
-│       ├── auth/               
-│       ├── portfolios/         
-│       ├── ai/                 
-│       └── webhooks/           
+│       ├── auth/
+│       ├── portfolios/
+│       ├── ai/
+│       └── webhooks/
 ├── components/                   # React components
 │   ├── ui/                      # Base UI components
 │   ├── editor/                  # Editor-specific
@@ -154,14 +164,14 @@ ai-portfolio-builder/
 │   └── shared/                  # Shared components
 ├── lib/                         # Core libraries
 │   ├── ai/                      # AI service layer
-│   │   ├── providers/          
-│   │   ├── prompts/            
-│   │   └── utils/              
+│   │   ├── providers/
+│   │   ├── prompts/
+│   │   └── utils/
 │   ├── auth/                    # Auth utilities
 │   ├── db/                      # Database layer
-│   │   ├── queries/            
-│   │   ├── mutations/          
-│   │   └── schemas/            
+│   │   ├── queries/
+│   │   ├── mutations/
+│   │   └── schemas/
 │   ├── utils/                   # General utilities
 │   └── constants/               # App constants
 ├── hooks/                       # Custom React hooks
@@ -185,7 +195,7 @@ sequenceDiagram
     participant AI as AI Service
     participant DB as Database
     participant S as Storage
-    
+
     U->>F: Connect LinkedIn/Upload CV
     F->>A: POST /api/import
     A->>AI: Extract & enhance content
@@ -323,12 +333,14 @@ CREATE POLICY "Public can view published portfolios" ON portfolios
 ### Authentication & Authorization
 
 1. **Multi-layer Authentication**
+
    - Supabase Auth for primary authentication
    - JWT tokens with short expiry (15 minutes)
    - Refresh token rotation
    - OAuth 2.0 for social logins
 
 2. **Authorization Model**
+
    ```typescript
    enum Permission {
      PORTFOLIO_CREATE = 'portfolio.create',
@@ -346,10 +358,7 @@ CREATE POLICY "Public can view published portfolios" ON portfolios
    const roles: Record<string, Role> = {
      free: {
        name: 'Free User',
-       permissions: [
-         Permission.PORTFOLIO_CREATE,
-         Permission.PORTFOLIO_UPDATE,
-       ],
+       permissions: [Permission.PORTFOLIO_CREATE, Permission.PORTFOLIO_UPDATE],
      },
      pro: {
        name: 'Pro User',
@@ -367,11 +376,13 @@ CREATE POLICY "Public can view published portfolios" ON portfolios
 ### Data Security
 
 1. **Encryption**
+
    - AES-256-GCM for sensitive data at rest
    - TLS 1.3 for data in transit
    - API keys encrypted in environment variables
 
 2. **Input Validation**
+
    ```typescript
    import { z } from 'zod';
 
@@ -452,26 +463,30 @@ interface LogContext {
 
 class Logger {
   info(message: string, context: LogContext) {
-    console.log(JSON.stringify({
-      level: 'info',
-      message,
-      timestamp: new Date().toISOString(),
-      ...context,
-    }));
+    console.log(
+      JSON.stringify({
+        level: 'info',
+        message,
+        timestamp: new Date().toISOString(),
+        ...context,
+      })
+    );
   }
 
   error(message: string, error: Error, context: LogContext) {
-    console.error(JSON.stringify({
-      level: 'error',
-      message,
-      error: {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      },
-      timestamp: new Date().toISOString(),
-      ...context,
-    }));
+    console.error(
+      JSON.stringify({
+        level: 'error',
+        message,
+        error: {
+          name: error.name,
+          message: error.message,
+          stack: error.stack,
+        },
+        timestamp: new Date().toISOString(),
+        ...context,
+      })
+    );
   }
 }
 ```
@@ -520,16 +535,19 @@ jobs:
 ## 🎯 Future Architecture Considerations
 
 ### 1. **Microservices Migration** (Year 2)
+
 - Extract AI service as standalone microservice
 - Separate portfolio rendering service
 - Independent analytics service
 
 ### 2. **Multi-Region Deployment** (Year 2)
+
 - Database replication across regions
 - Edge computing for portfolio serving
 - Regional AI model deployment
 
 ### 3. **Event-Driven Architecture** (Year 3)
+
 - Event sourcing for portfolio changes
 - CQRS for read/write separation
 - Real-time collaboration features

@@ -5,6 +5,7 @@
 GitHub Pages is a static site hosting service that **cannot** run Next.js applications with server-side features. Here's why this application is incompatible:
 
 ### 1. **Server-Side Rendering (SSR) & API Routes**
+
 - Next.js App Router uses React Server Components that require a Node.js runtime
 - Our `/app/api/*` routes need server execution for:
   - Database queries to Supabase
@@ -13,6 +14,7 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
   - Payment processing (Stripe)
 
 ### 2. **Dynamic Features Requiring Runtime**
+
 - **Authentication**: Supabase Auth requires server-side session management
 - **Database Operations**: Real-time PostgreSQL queries can't run on static hosting
 - **File Uploads**: Processing CV/resume uploads needs server-side parsing
@@ -20,11 +22,13 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
 - **OAuth Flows**: LinkedIn/GitHub authentication needs server callbacks
 
 ### 3. **Security Requirements**
+
 - API keys and secrets must be kept server-side
 - Row Level Security (RLS) requires server-side database connections
 - Rate limiting and request validation need runtime execution
 
 ### 4. **Next.js Features We Use**
+
 ```javascript
 // These features require a server:
 - App Router with Server Components
@@ -40,6 +44,7 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
 Vercel is the recommended platform as it's built by the Next.js team and provides optimal performance and developer experience.
 
 ### Prerequisites
+
 1. GitHub account with repository access
 2. Vercel account (free tier available)
 3. Environment variables ready
@@ -48,6 +53,7 @@ Vercel is the recommended platform as it's built by the Next.js team and provide
 ### Step-by-Step Deployment
 
 #### 1. **Prepare Your Repository**
+
 ```bash
 # Ensure your code is committed
 git add .
@@ -56,12 +62,14 @@ git push origin main
 ```
 
 #### 2. **Connect to Vercel**
+
 1. Go to [vercel.com](https://vercel.com)
 2. Click "Add New Project"
 3. Import your GitHub repository
 4. Select the `ai-portfolio-builder` repository
 
 #### 3. **Configure Build Settings**
+
 ```yaml
 Framework Preset: Next.js
 Root Directory: ./
@@ -71,6 +79,7 @@ Install Command: pnpm install
 ```
 
 #### 4. **Set Environment Variables**
+
 Add these in Vercel's Environment Variables section:
 
 ```bash
@@ -108,11 +117,13 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_...
 ```
 
 #### 5. **Deploy**
+
 1. Click "Deploy"
 2. Wait for build to complete (typically 2-5 minutes)
 3. Visit your deployment URL
 
 #### 6. **Configure Domain (Optional)**
+
 ```bash
 # In Vercel Dashboard > Settings > Domains
 1. Add your custom domain
@@ -125,14 +136,16 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_...
 ### Vercel-Specific Features
 
 #### Edge Functions Configuration
+
 ```javascript
 // middleware.ts for auth protection
 export const config = {
-  matcher: ['/dashboard/:path*', '/api/:path*']
-}
+  matcher: ['/dashboard/:path*', '/api/:path*'],
+};
 ```
 
 #### Caching Headers
+
 ```javascript
 // app/api/portfolios/[slug]/route.ts
 export async function GET(request: Request) {
@@ -152,12 +165,14 @@ export async function GET(request: Request) {
 Netlify can host Next.js but with reduced functionality compared to Vercel.
 
 #### Limitations on Netlify:
+
 - No support for Next.js 14 App Router streaming
 - Limited middleware support
 - Larger cold start times
 - No built-in image optimization
 
 #### Deployment Steps:
+
 ```bash
 # Install Netlify CLI
 npm install -g netlify-cli
@@ -252,6 +267,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-prod-key
 ### Security Best Practices
 
 1. **Never commit `.env` files**
+
    ```bash
    # .gitignore
    .env
@@ -260,6 +276,7 @@ SUPABASE_SERVICE_ROLE_KEY=your-prod-key
    ```
 
 2. **Use different keys for environments**
+
    - Separate Stripe keys for test/production
    - Different Supabase projects
    - Isolated OAuth applications
@@ -274,21 +291,25 @@ SUPABASE_SERVICE_ROLE_KEY=your-prod-key
 ### DNS Configuration
 
 #### For apex domain (madfam.io):
+
 ```
 A     @     76.76.21.21     (Vercel IP)
 AAAA  @     2606:4700::6810:84e5  (Vercel IPv6)
 ```
 
 #### For subdomain (app.madfam.io):
+
 ```
 CNAME app   cname.vercel-dns.com
 ```
 
 ### SSL Certificate
+
 - Vercel: Automatic Let's Encrypt
 - Other platforms: May require manual setup
 
 ### Email Configuration (for custom domains)
+
 ```
 MX    @     10 mx1.emailservice.com
 MX    @     20 mx2.emailservice.com
@@ -300,6 +321,7 @@ TXT   @     "v=spf1 include:emailservice.com ~all"
 ### Pre-Deployment
 
 - [ ] **Code Quality**
+
   ```bash
   pnpm test          # All tests passing
   pnpm type-check    # No TypeScript errors
@@ -308,16 +330,18 @@ TXT   @     "v=spf1 include:emailservice.com ~all"
   ```
 
 - [ ] **Environment Variables**
+
   - [ ] All required variables set
   - [ ] Production API keys configured
   - [ ] OAuth redirect URLs updated
   - [ ] Webhook endpoints configured
 
 - [ ] **Database**
+
   ```bash
   # Run production migrations
   pnpm supabase migration run --db-url $PRODUCTION_DB_URL
-  
+
   # Verify RLS policies
   pnpm supabase test db
   ```
@@ -331,6 +355,7 @@ TXT   @     "v=spf1 include:emailservice.com ~all"
 ### Post-Deployment
 
 - [ ] **Functional Testing**
+
   - [ ] User registration/login works
   - [ ] OAuth flows complete successfully
   - [ ] Portfolio generation functions
@@ -338,10 +363,11 @@ TXT   @     "v=spf1 include:emailservice.com ~all"
   - [ ] File uploads working
 
 - [ ] **Performance Verification**
+
   ```bash
   # Run Lighthouse audit
   lighthouse https://your-app.vercel.app --view
-  
+
   # Target scores:
   # Performance: > 90
   # Accessibility: > 95
@@ -350,6 +376,7 @@ TXT   @     "v=spf1 include:emailservice.com ~all"
   ```
 
 - [ ] **Monitoring Setup**
+
   - [ ] Error tracking (Sentry) receiving events
   - [ ] Analytics (PostHog) tracking users
   - [ ] Uptime monitoring configured
@@ -369,7 +396,7 @@ module.exports = {
   poweredByHeader: false,
   compress: true,
   generateEtags: true,
-  
+
   // Security headers
   async headers() {
     return [
@@ -378,25 +405,25 @@ module.exports = {
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY'
+            value: 'DENY',
           },
           {
             key: 'X-Content-Type-Options',
-            value: 'nosniff'
+            value: 'nosniff',
           },
           {
             key: 'X-XSS-Protection',
-            value: '1; mode=block'
+            value: '1; mode=block',
           },
           {
             key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin'
-          }
-        ]
-      }
-    ]
-  }
-}
+            value: 'strict-origin-when-cross-origin',
+          },
+        ],
+      },
+    ];
+  },
+};
 ```
 
 ## 🆘 Troubleshooting
@@ -404,6 +431,7 @@ module.exports = {
 ### Common Deployment Issues
 
 #### Build Failures
+
 ```bash
 # Error: Cannot find module
 Solution: Clear cache and rebuild
@@ -415,6 +443,7 @@ Solution: Verify all variables are set in platform dashboard
 ```
 
 #### Runtime Errors
+
 ```bash
 # 500 Internal Server Error
 1. Check function logs in platform dashboard
@@ -429,6 +458,7 @@ Solution: Verify all variables are set in platform dashboard
 ```
 
 #### Performance Issues
+
 ```bash
 # Slow initial load
 1. Enable Vercel Edge Functions

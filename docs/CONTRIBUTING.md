@@ -51,6 +51,7 @@ Thank you for your interest in contributing to the MADFAM AI Portfolio Builder! 
 - `chore/` - Maintenance tasks
 
 Examples:
+
 - `feature/github-import`
 - `fix/auth-redirect-loop`
 - `docs/api-authentication`
@@ -109,11 +110,11 @@ interface ButtonProps {
   disabled?: boolean;
 }
 
-export function Button({ 
-  onClick, 
-  children, 
+export function Button({
+  onClick,
+  children,
   variant = 'primary',
-  disabled = false 
+  disabled = false,
 }: ButtonProps) {
   return (
     <button
@@ -122,7 +123,8 @@ export function Button({
       className={cn(
         'px-4 py-2 rounded-lg font-medium transition-colors',
         variant === 'primary' && 'bg-blue-600 text-white hover:bg-blue-700',
-        variant === 'secondary' && 'bg-gray-200 text-gray-900 hover:bg-gray-300',
+        variant === 'secondary' &&
+          'bg-gray-200 text-gray-900 hover:bg-gray-300',
         disabled && 'opacity-50 cursor-not-allowed'
       )}
     >
@@ -155,6 +157,7 @@ components/
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
 
 ### Format
+
 ```
 <type>(<scope>): <subject>
 
@@ -164,6 +167,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 ```
 
 ### Types
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -174,6 +178,7 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore`: Maintenance tasks
 
 ### Examples
+
 ```
 feat(auth): add LinkedIn OAuth integration
 
@@ -211,20 +216,24 @@ Added proper dependency tracking to useEffect.
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] E2E tests pass
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -257,7 +266,7 @@ describe('Button', () => {
   it('calls onClick when clicked', () => {
     const handleClick = jest.fn();
     render(<Button onClick={handleClick}>Click me</Button>);
-    
+
     fireEvent.click(screen.getByText('Click me'));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -278,14 +287,14 @@ import { usePortfolio } from './usePortfolio';
 
 describe('usePortfolio', () => {
   it('fetches portfolio data successfully', async () => {
-    const { result, waitForNextUpdate } = renderHook(() => 
+    const { result, waitForNextUpdate } = renderHook(() =>
       usePortfolio('test-user-id')
     );
 
     expect(result.current.loading).toBe(true);
-    
+
     await waitForNextUpdate();
-    
+
     expect(result.current.loading).toBe(false);
     expect(result.current.portfolio).toBeDefined();
   });
@@ -300,15 +309,15 @@ import { test, expect } from '@playwright/test';
 test('user can create portfolio', async ({ page }) => {
   // Navigate to signup
   await page.goto('/signup');
-  
+
   // Fill form
   await page.fill('[name="email"]', 'test@example.com');
   await page.fill('[name="password"]', 'SecurePass123!');
   await page.click('button[type="submit"]');
-  
+
   // Verify redirect to onboarding
   await expect(page).toHaveURL('/onboarding');
-  
+
   // Complete onboarding
   await page.click('text=Connect LinkedIn');
   // ... continue test
@@ -364,6 +373,7 @@ Document all API endpoints in the following format:
 ### Bug Reports
 
 Include:
+
 1. Clear description of the issue
 2. Steps to reproduce
 3. Expected behavior
@@ -374,6 +384,7 @@ Include:
 ### Feature Requests
 
 Include:
+
 1. Problem statement
 2. Proposed solution
 3. Alternative solutions considered
@@ -389,6 +400,7 @@ Include:
 ## 🏆 Recognition
 
 Contributors will be:
+
 - Listed in CONTRIBUTORS.md
 - Mentioned in release notes
 - Invited to contributor-only events

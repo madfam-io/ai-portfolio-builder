@@ -9,9 +9,11 @@ MADFAM AI Portfolio Builder is a SaaS platform that automates portfolio creation
 > **Current Status**: Pre-MVP Development Phase - Technology foundation setup complete, ready for core application development.
 
 ### 🎯 Mission
+
 Transform scattered professional profiles into stunning portfolio websites in under 30 minutes using AI-powered content generation.
 
 ### Key Features
+
 - **30-Minute Setup**: From signup to published portfolio
 - **AI Content Enhancement**: Automatic bio rewriting and project descriptions
 - **Multi-Source Import**: LinkedIn, GitHub, CV/Resume integration
@@ -22,6 +24,7 @@ Transform scattered professional profiles into stunning portfolio websites in un
 ## 🛠️ Tech Stack
 
 ### Frontend
+
 - **Framework**: Next.js 14 (App Router)
 - **Styling**: Tailwind CSS + Shadcn/ui
 - **State Management**: Zustand
@@ -29,6 +32,7 @@ Transform scattered professional profiles into stunning portfolio websites in un
 - **Animation**: Framer Motion
 
 ### Backend
+
 - **Database**: Supabase (PostgreSQL)
 - **Authentication**: Supabase Auth + OAuth 2.0
 - **AI Services**: OpenAI GPT-4, Claude API
@@ -36,6 +40,7 @@ Transform scattered professional profiles into stunning portfolio websites in un
 - **Cache**: Redis (Upstash)
 
 ### Infrastructure
+
 - **Hosting**: Vercel (Next.js optimized, NOT compatible with GitHub Pages)
 - **CDN**: Cloudflare
 - **Monitoring**: Sentry
@@ -57,22 +62,26 @@ Transform scattered professional profiles into stunning portfolio websites in un
 > **Note**: This application is currently in pre-MVP phase. The Next.js application structure is not yet implemented. Follow these steps to set up the development environment:
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/madfam/ai-portfolio-builder.git
 cd ai-portfolio-builder
 ```
 
 2. Install dependencies:
+
 ```bash
 pnpm install
 ```
 
 3. Set up environment variables:
+
 ```bash
 cp .env.example .env.local
 ```
 
 4. Configure your `.env.local` with required API keys (see `.env.example` for all required variables):
+
 ```env
 # Essential for development
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
@@ -83,6 +92,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 5. Set up Supabase (when database is implemented):
+
 ```bash
 # Install Supabase CLI
 npm install -g supabase
@@ -98,6 +108,7 @@ pnpm supabase:migrate
 ```
 
 6. Start the development server:
+
 ```bash
 pnpm dev
 ```
@@ -124,12 +135,24 @@ ai-portfolio-builder/
 ├── hooks/                 # Custom React hooks
 ├── types/                 # TypeScript type definitions
 ├── public/               # Static assets
-└── supabase/            # Database migrations & schemas
+├── supabase/             # Database migrations & schemas
+├── __tests__/            # Test files and utilities
+├── e2e/                  # End-to-end tests
+├── scripts/              # Build and utility scripts
+├── docs/                 # Project documentation
+│   ├── ARCHITECTURE.md   # System architecture
+│   ├── CONTRIBUTING.md   # Contribution guidelines
+│   ├── DEPLOYMENT.md     # Deployment guides
+│   └── GIT_WORKFLOW.md   # Git workflow
+├── .archive/             # Legacy and archived files
+├── .husky/               # Git hooks
+└── Configuration files   # Next.js, TypeScript, ESLint, etc.
 ```
 
 ## 🚦 Development Workflow
 
 ### Running Tests
+
 ```bash
 # Unit tests
 pnpm test
@@ -142,6 +165,7 @@ pnpm type-check
 ```
 
 ### Code Quality
+
 ```bash
 # Linting
 pnpm lint
@@ -154,6 +178,7 @@ pnpm pre-commit
 ```
 
 ### Database Management
+
 ```bash
 # Generate types from database
 pnpm supabase:types
@@ -188,6 +213,16 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduc
 
 This project is proprietary software. All rights reserved.
 
+## 📚 Documentation
+
+For detailed technical documentation, see the [`docs/`](./docs/) directory:
+
+- **[Architecture](./docs/ARCHITECTURE.md)** - System design and technical architecture
+- **[Contributing](./docs/CONTRIBUTING.md)** - Development setup and contribution guidelines
+- **[Deployment](./docs/DEPLOYMENT.md)** - Deployment guides and infrastructure
+- **[Git Workflow](./docs/GIT_WORKFLOW.md)** - Branching strategy and development workflow
+- **[AI Guidelines](./CLAUDE.md)** - AI development context and best practices
+
 ## 🆘 Support
 
 - Documentation: [docs.madfam.io](https://docs.madfam.io)
@@ -197,6 +232,7 @@ This project is proprietary software. All rights reserved.
 ## 🎯 Roadmap
 
 ### MVP (Month 1) - In Progress
+
 - [x] Project setup and documentation
 - [x] Technology stack alignment
 - [x] Environment configuration
@@ -211,6 +247,7 @@ This project is proprietary software. All rights reserved.
 - [ ] Payment integration (Stripe)
 
 ### Phase 2 (Month 2-3)
+
 - [ ] Custom domains
 - [ ] Analytics dashboard
 - [ ] Team collaboration
@@ -219,6 +256,7 @@ This project is proprietary software. All rights reserved.
 - [ ] Advanced AI features
 
 ### Phase 3 (Month 4-6)
+
 - [ ] White-label solution
 - [ ] International expansion
 - [ ] Enterprise features

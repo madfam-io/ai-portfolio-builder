@@ -25,24 +25,28 @@ main (production)
 ### Branch Types
 
 #### `main`
+
 - **Purpose**: Production-ready code
 - **Protection**: Requires PR + review + CI passing
 - **Auto-deploy**: To production environment
 - **Naming**: `main`
 
-#### `develop` 
+#### `develop`
+
 - **Purpose**: Integration branch for features
 - **Protection**: Requires PR + CI passing
 - **Auto-deploy**: To development environment
 - **Naming**: `develop`
 
 #### `staging`
+
 - **Purpose**: Pre-production testing
 - **Protection**: Requires PR + review
 - **Auto-deploy**: To staging environment
 - **Naming**: `staging`
 
 #### Feature Branches
+
 - **Purpose**: Individual features/fixes
 - **Lifetime**: Short-lived (1-7 days)
 - **Naming**: `feature/description`, `fix/bug-name`, `docs/update-name`
@@ -87,18 +91,18 @@ hotfix/v1.0.1
 
 ### Commit Types
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `feat` | New feature | `feat(auth): add LinkedIn OAuth integration` |
-| `fix` | Bug fix | `fix(editor): resolve preview refresh issue` |
-| `docs` | Documentation | `docs(api): add authentication endpoints` |
-| `style` | Code formatting | `style(components): fix eslint warnings` |
-| `refactor` | Code refactoring | `refactor(ai): extract prompt templates` |
-| `perf` | Performance improvement | `perf(db): optimize portfolio queries` |
-| `test` | Adding tests | `test(auth): add OAuth flow tests` |
-| `chore` | Maintenance | `chore(deps): update next.js to 14.1.0` |
-| `ci` | CI/CD changes | `ci(github): add automated testing workflow` |
-| `build` | Build system | `build(webpack): optimize bundle size` |
+| Type       | Description             | Example                                      |
+| ---------- | ----------------------- | -------------------------------------------- |
+| `feat`     | New feature             | `feat(auth): add LinkedIn OAuth integration` |
+| `fix`      | Bug fix                 | `fix(editor): resolve preview refresh issue` |
+| `docs`     | Documentation           | `docs(api): add authentication endpoints`    |
+| `style`    | Code formatting         | `style(components): fix eslint warnings`     |
+| `refactor` | Code refactoring        | `refactor(ai): extract prompt templates`     |
+| `perf`     | Performance improvement | `perf(db): optimize portfolio queries`       |
+| `test`     | Adding tests            | `test(auth): add OAuth flow tests`           |
+| `chore`    | Maintenance             | `chore(deps): update next.js to 14.1.0`      |
+| `ci`       | CI/CD changes           | `ci(github): add automated testing workflow` |
+| `build`    | Build system            | `build(webpack): optimize bundle size`       |
 
 ### Scope Examples
 
@@ -173,9 +177,11 @@ feat: add OAuth
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] 🚀 New feature
 - [ ] 🐛 Bug fix
 - [ ] 📚 Documentation update
@@ -186,15 +192,18 @@ Brief description of changes
 - [ ] 🔧 CI/CD changes
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] Integration tests pass
 - [ ] E2E tests pass
 - [ ] Manual testing completed
 
 ## Screenshots (if applicable)
+
 <!-- Add screenshots for UI changes -->
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -203,6 +212,7 @@ Brief description of changes
 - [ ] Bundle size impact assessed
 
 ## Related Issues
+
 Closes #123
 Related to #456
 ```
@@ -253,16 +263,9 @@ npx husky add .husky/pre-commit "npx lint-staged"
 // package.json
 {
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md,yml,yaml}": [
-      "prettier --write"
-    ],
-    "*.{js,jsx,ts,tsx,json,md}": [
-      "git add"
-    ]
+    "*.{js,jsx,ts,tsx}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx,json,md}": ["git add"]
   }
 }
 ```
@@ -285,6 +288,7 @@ echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitl
 ### Version Strategy
 
 Follow [Semantic Versioning](https://semver.org/):
+
 - **MAJOR** (1.0.0): Breaking changes
 - **MINOR** (0.1.0): New features (backward compatible)
 - **PATCH** (0.0.1): Bug fixes
@@ -316,19 +320,23 @@ git push origin v1.0.0
 ## [1.0.0] - 2025-01-15
 
 ### Added
+
 - LinkedIn OAuth integration
 - AI-powered bio rewriting
 - Template recommendation system
 
 ### Changed
+
 - Improved editor performance
 - Updated pricing tiers
 
 ### Fixed
+
 - Mobile responsive issues
 - Authentication redirect loop
 
 ### Breaking Changes
+
 - API endpoint structure changed
 ```
 
