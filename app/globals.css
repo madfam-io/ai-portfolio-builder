@@ -63,77 +63,169 @@
   * {
     @apply border-border;
   }
+  
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+  
   body {
-    @apply bg-background text-foreground;
     font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
     font-feature-settings: 'cv11', 'ss01';
     font-variation-settings: 'opsz' 32;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-weight: 400;
+    line-height: 1.6;
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: -0.025em;
     line-height: 1.2;
+    margin: 0;
   }
   
   h1 {
-    font-size: 2.25rem;
-    font-weight: 700;
+    font-size: 3.5rem;
+    font-weight: 800;
     letter-spacing: -0.05em;
+    line-height: 1.1;
   }
   
   h2 {
-    font-size: 1.875rem;
-    font-weight: 600;
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
   }
   
   h3 {
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+  
+  h4 {
     font-size: 1.5rem;
     font-weight: 600;
   }
   
   p {
     line-height: 1.75;
-    color: inherit;
+    margin: 0;
+    font-weight: 400;
   }
   
+  strong, b {
+    font-weight: 700;
+  }
+  
+  /* Responsive typography */
   @media (max-width: 768px) {
     h1 {
-      font-size: 1.875rem;
+      font-size: 2.5rem;
     }
     
     h2 {
-      font-size: 1.5rem;
+      font-size: 2rem;
     }
     
     h3 {
+      font-size: 1.5rem;
+    }
+    
+    h4 {
       font-size: 1.25rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    h1 {
+      font-size: 2rem;
+    }
+    
+    h2 {
+      font-size: 1.75rem;
+    }
+    
+    h3 {
+      font-size: 1.375rem;
     }
   }
 }
 
 /* Custom styles for MADFAM AI Portfolio Builder */
 @layer utilities {
+  /* Enhanced gradients */
   .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
   }
   
   .gradient-text {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 50%, #06b6d4 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
   }
   
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+  
+  /* Enhanced button styles */
+  .btn-primary {
+    @apply bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700;
+    @apply text-white font-semibold px-8 py-4 rounded-xl;
+    @apply shadow-lg hover:shadow-xl transform hover:-translate-y-1;
+    @apply transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2;
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-secondary {
+    @apply border-2 border-purple-600 text-purple-600 dark:text-purple-400 dark:border-purple-400;
+    @apply font-semibold px-8 py-4 rounded-xl;
+    @apply hover:bg-purple-600 hover:text-white dark:hover:bg-purple-600 dark:hover:text-white;
+    @apply transition-all duration-300 transform hover:-translate-y-1 hover:shadow-lg;
+    @apply focus:outline-none focus:ring-4 focus:ring-purple-500 focus:ring-offset-2;
+  }
+  
+  /* Improved hover effects */
   .hover-lift {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
   
   .hover-lift:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(139, 92, 246, 0.15);
+  }
+  
+  /* Card styles */
+  .card {
+    @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl;
+    @apply border border-gray-100 dark:border-gray-700;
+    @apply transition-all duration-300 transform hover:-translate-y-1;
+    @apply p-8;
+  }
+  
+  .card-feature {
+    @apply bg-white dark:bg-gray-800 rounded-2xl p-8;
+    @apply border border-gray-100 dark:border-gray-700;
+    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply transform hover:-translate-y-2;
+    @apply relative overflow-hidden;
+  }
+  
+  .card-feature::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5;
+    @apply opacity-0 transition-opacity duration-300;
+  }
+  
+  .card-feature:hover::before {
+    @apply opacity-100;
   }
   
   .mock-browser {

@@ -13,87 +13,89 @@ import { useLanguage } from '@/lib/i18n/minimal-context';
 export default function Features() {
   const { t } = useLanguage();
   return (
-    <section id="features" className="py-20 px-6">
-      <div className="container mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+    <section id="features" className="py-24 px-6 bg-white dark:bg-gray-900">
+      <div className="container mx-auto max-w-7xl">
+        <div className="text-center mb-20">
+          <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
             <span>{t.featuresTitle}</span>{' '}
-            <span className="bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Stand Out
-            </span>
+            <span className="gradient-text">Stand Out</span>
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+          <p className="text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto font-medium">
             {t.featuresSubtitle}
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-purple-100 rounded-lg flex items-center justify-center mb-6">
-              <FaMagic className="text-2xl text-purple-600" />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaMagic className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.aiContentTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {t.aiContentDesc}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center mb-6">
-              <FaLink className="text-2xl text-blue-600" />
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaLink className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.oneClickTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">{t.oneClickDesc}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              {t.oneClickDesc}
+            </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center mb-6">
-              <FaPalette className="text-2xl text-green-600" />
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaPalette className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.templatesTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {t.templatesDesc}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center mb-6">
-              <FaGlobe className="text-2xl text-orange-600" />
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaGlobe className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.customDomainTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {t.customDomainDesc}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center mb-6">
-              <FaChartLine className="text-2xl text-pink-600" />
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaChartLine className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.analyticsTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {t.analyticsDesc}
             </p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-            <div className="w-14 h-14 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center mb-6">
-              <FaMobileAlt className="text-2xl text-indigo-600" />
+          <div className="card-feature group">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
+              <FaMobileAlt className="text-2xl text-white" />
             </div>
-            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+            <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.mobileTitle}
             </h3>
-            <p className="text-gray-600 dark:text-gray-300">{t.mobileDesc}</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+              {t.mobileDesc}
+            </p>
           </div>
         </div>
       </div>

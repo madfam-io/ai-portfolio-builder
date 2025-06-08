@@ -1,6 +1,5 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import Pricing from '@/components/landing/Pricing';
 import { LanguageProvider } from '@/lib/i18n';
 
