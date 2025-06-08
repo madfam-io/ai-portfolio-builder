@@ -444,6 +444,14 @@
                 <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto" data-i18n="pricing.subtitle">
                     Comienza gratis, actualiza cuando necesites más
                 </p>
+                
+                <!-- Currency Note -->
+                <div class="mt-4 text-center">
+                    <p class="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-4 py-2 rounded-lg inline-block transition-colors duration-300" id="currency-note">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span data-i18n="pricing.currencyNote">Precios mostrados en pesos mexicanos. IVA incluido para México.</span>
+                    </p>
+                </div>
             </div>
             
             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
@@ -777,6 +785,9 @@
                     title1: "Precios Simples,",
                     title2: "Características Poderosas",
                     subtitle: "Comienza gratis, actualiza cuando necesites más",
+                    currencyNote: "Precios mostrados en pesos mexicanos. IVA incluido para México.",
+                    currencyNoteUSD: "Precios mostrados en dólares estadounidenses.",
+                    currencyNoteEUR: "Precios mostrados en euros.",
                     free: {
                         title: "Gratis",
                         price: "/mes",
@@ -953,6 +964,9 @@
                     title1: "Simple Pricing,",
                     title2: "Powerful Features",
                     subtitle: "Start free, upgrade when you need more",
+                    currencyNote: "Prices shown in Mexican pesos. VAT included for Mexico.",
+                    currencyNoteUSD: "Prices shown in US dollars.",
+                    currencyNoteEUR: "Prices shown in euros.",
                     free: {
                         title: "Free",
                         price: "/month",
@@ -1196,6 +1210,9 @@
                 const convertedPrice = convertPrice(usdPrice, currency);
                 element.textContent = formatPrice(convertedPrice, currency);
             });
+            
+            // Update currency note
+            updateCurrencyNote(currency);
         }
         
         function convertPrice(usdAmount, targetCurrency) {
@@ -1209,6 +1226,26 @@
                 return Math.round(amount).toString();
             }
             return amount.toFixed(config.decimals);
+        }
+        
+        function updateCurrencyNote(currency) {
+            const currencyNoteElement = document.querySelector('[data-i18n="pricing.currencyNote"]');
+            if (!currencyNoteElement) return;
+            
+            let noteKey = 'pricing.currencyNote'; // Default MXN note
+            
+            if (currency === 'USD') {
+                noteKey = 'pricing.currencyNoteUSD';
+            } else if (currency === 'EUR') {
+                noteKey = 'pricing.currencyNoteEUR';
+            }
+            
+            const translation = getNestedTranslation(translations[currentLanguage], noteKey);
+            if (translation) {
+                currencyNoteElement.textContent = translation;
+                // Update the data-i18n attribute for future language changes
+                currencyNoteElement.setAttribute('data-i18n', noteKey);
+            }
         }
         
         // Dark mode functionality
