@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/simple-context';
+import { useLanguage } from '@/lib/i18n';
 import Link from 'next/link';
 
 export default function CTA() {

@@ -31,16 +31,17 @@ const nextConfig = {
   // Development-friendly headers
   async headers() {
     return [
-      {
-        source: '/(.*)',
-        headers: [
-          {
-            key: 'Content-Security-Policy',
-            value:
-              "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; img-src 'self' data: https:; font-src 'self' data:;",
-          },
-        ],
-      },
+      // Temporarily disable CSP to test React hydration
+      // {
+      //   source: '/(.*)',
+      //   headers: [
+      //     {
+      //       key: 'Content-Security-Policy',
+      //       value:
+      //         "script-src 'self' 'unsafe-eval' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; img-src 'self' data: https:; font-src 'self' data:;",
+      //     },
+      //   ],
+      // },
     ];
   },
 
@@ -55,32 +56,32 @@ const nextConfig = {
     ];
   },
 
-  // Webpack configuration
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
-    // Fix CommonJS/ESM compatibility issues
-    config.resolve.fallback = {
-      ...config.resolve.fallback,
-      fs: false,
-      path: false,
-      os: false,
-    };
+  // Webpack configuration - temporarily disabled to fix 'exports is not defined' error
+  // webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  //   // Fix CommonJS/ESM compatibility issues
+  //   config.resolve.fallback = {
+  //     ...config.resolve.fallback,
+  //     fs: false,
+  //     path: false,
+  //     os: false,
+  //   };
 
-    // Optimize bundle analyzer
-    if (process.env.ANALYZE === 'true') {
-      const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-      config.plugins.push(
-        new BundleAnalyzerPlugin({
-          analyzerMode: 'static',
-          reportFilename: isServer
-            ? '../analyze/server.html'
-            : './analyze/client.html',
-          openAnalyzer: false,
-        })
-      );
-    }
+  //   // Optimize bundle analyzer
+  //   if (process.env.ANALYZE === 'true') {
+  //     const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
+  //     config.plugins.push(
+  //       new BundleAnalyzerPlugin({
+  //         analyzerMode: 'static',
+  //         reportFilename: isServer
+  //           ? '../analyze/server.html'
+  //           : './analyze/client.html',
+  //         openAnalyzer: false,
+  //       })
+  //     );
+  //   }
 
-    return config;
-  },
+  //   return config;
+  // },
 
   // TypeScript configuration
   typescript: {

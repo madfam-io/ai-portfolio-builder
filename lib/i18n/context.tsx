@@ -44,15 +44,20 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
   // Load language from localStorage on mount
   useEffect(() => {
     if (isClient) {
-      const savedLanguage = localStorage.getItem('madfam-language') as Language;
-      if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
-        setLanguageState(savedLanguage);
-      } else {
-        // Detect browser language, default to Spanish
-        const browserLang = navigator.language.split('-')[0];
-        const detectedLang = browserLang === 'en' ? 'en' : 'es';
-        setLanguageState(detectedLang);
-        localStorage.setItem('madfam-language', detectedLang);
+      try {
+        const savedLanguage = localStorage.getItem('madfam-language') as Language;
+        if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
+          setLanguageState(savedLanguage);
+        } else {
+          // Detect browser language, default to Spanish
+          const browserLang = typeof navigator !== 'undefined' ? navigator.language.split('-')[0] : 'es';
+          const detectedLang = browserLang === 'en' ? 'en' : 'es';
+          setLanguageState(detectedLang);
+          localStorage.setItem('madfam-language', detectedLang);
+        }
+      } catch (error) {
+        console.warn('Language detection failed, using default:', error);
+        setLanguageState('es');
       }
     }
   }, [isClient]);
@@ -79,6 +84,8 @@ export const LanguageProvider = ({ children }: LanguageProviderProps) => {
     t: translations[language],
     availableLanguages,
   };
+
+  // console.log('🔧 Context providing value:', { language, isClient, t: !!translations[language] });
 
   return (
     <LanguageContext.Provider value={value}>

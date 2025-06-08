@@ -1,7 +1,7 @@
 'use client';
 
 import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/simple-context';
+import { useLanguage } from '@/lib/i18n';
 import Link from 'next/link';
 
 export default function Hero() {

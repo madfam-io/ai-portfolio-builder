@@ -8,7 +8,7 @@ import {
   FaChartLine,
   FaMobileAlt,
 } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/simple-context';
+import { useLanguage } from '@/lib/i18n';
 
 export default function Features() {
   const { t } = useLanguage();

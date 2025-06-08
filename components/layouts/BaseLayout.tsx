@@ -1,11 +1,11 @@
 'use client';
 
 import { ReactNode } from 'react';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
-import NavigationEnhancer from '@/components/NavigationEnhancer';
-import BackToTopButton from '@/components/BackToTopButton';
-import { LanguageProvider } from '@/lib/i18n/simple-context';
+// import Header from '@/components/landing/Header';
+// import Footer from '@/components/landing/Footer';
+// import NavigationEnhancer from '@/components/NavigationEnhancer';
+// import BackToTopButton from '@/components/BackToTopButton';
+// import { MinimalLanguageProvider } from '@/lib/i18n/minimal-context';
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -17,14 +17,9 @@ export default function BaseLayout({
   className = '',
 }: BaseLayoutProps) {
   return (
-    <LanguageProvider>
-      <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${className}`}>
-        <Header />
-        <main className="relative">{children}</main>
-        <Footer />
-        <NavigationEnhancer />
-        <BackToTopButton />
-      </div>
-    </LanguageProvider>
+    <div className={`min-h-screen bg-gray-50 dark:bg-gray-900 ${className}`}>
+      {children}
+      {/* <BackToTopButton /> */}
+    </div>
   );
 }
