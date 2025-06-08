@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Run lint-staged for code formatting and linting
+pnpm lint-staged
+
+# Run type check
+echo "🔍 Running TypeScript type check..."
+pnpm type-check
+
+# Run all tests to ensure nothing is broken
+echo "🧪 Running tests..."
+pnpm test
+
+echo "✅ Pre-commit checks passed!"
