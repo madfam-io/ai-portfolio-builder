@@ -17,29 +17,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial user
-    getCurrentUser().then(({ data, error }) => {
-      if (!error && data.user) {
-        setUser(data.user);
+    // Check if Supabase is configured
+    const checkAuth = async () => {
+      try {
+        // Get initial user
+        const { data, error } = await getCurrentUser();
+        if (!error && data.user) {
+          setUser(data.user);
+        }
+        setLoading(false);
+
+        // Listen for auth changes
+        const {
+          data: { subscription },
+        } = onAuthStateChange((_event, session) => {
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
+
+        return () => subscription.unsubscribe();
+      } catch (error) {
+        // Supabase not configured - skip auth functionality
+        console.warn('Authentication service not available:', error);
+        setUser(null);
+        setLoading(false);
+        return () => {}; // No cleanup needed
       }
-      setLoading(false);
-    });
+    };
 
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
+    const cleanup = checkAuth();
+    return () => {
+      cleanup.then(fn => fn && fn());
+    };
   }, []);
 
   const signOut = async () => {
-    const { signOut: authSignOut } = await import('@/lib/auth/auth');
-    await authSignOut();
-    setUser(null);
+    try {
+      const { signOut: authSignOut } = await import('@/lib/auth/auth');
+      await authSignOut();
+      setUser(null);
+    } catch (error) {
+      console.warn('Sign out failed - auth service not available:', error);
+      setUser(null); // Still clear the user state
+    }
   };
 
   const value = {

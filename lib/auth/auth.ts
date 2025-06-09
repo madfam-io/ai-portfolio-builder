@@ -8,20 +8,37 @@ import type {
 } from '@supabase/supabase-js';
 
 // Create Supabase client factory function for better testability
-function createSupabaseClient(): SupabaseClient {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+function createSupabaseClient(): SupabaseClient | null {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('Supabase environment variables not configured. Authentication disabled.');
+    return null;
+  }
+  
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
 // Default client instance
 let supabaseInstance: SupabaseClient | null = null;
+let supabaseInitialized = false;
 
-function getSupabaseClient(): SupabaseClient {
-  if (!supabaseInstance) {
+function getSupabaseClient(): SupabaseClient | null {
+  if (!supabaseInitialized) {
     supabaseInstance = createSupabaseClient();
+    supabaseInitialized = true;
   }
   return supabaseInstance;
+}
+
+// Helper function to ensure Supabase is configured
+function requireSupabaseClient(): SupabaseClient {
+  const client = getSupabaseClient();
+  if (!client) {
+    throw new Error('Authentication service not configured. Please set up Supabase environment variables.');
+  }
+  return client;
 }
 
 // For testing: allow setting a mock client
@@ -95,6 +112,8 @@ export async function signUp(
   password: string,
   fullName?: string
 ): Promise<AuthResponse> {
+  const supabase = requireSupabaseClient();
+
   // Client-side validation
   if (!isValidEmail(email)) {
     throw new Error('Invalid email format');
@@ -125,7 +144,6 @@ export async function signUp(
     };
   }
 
-  const supabase = getSupabaseClient();
   const response = await supabase.auth.signUp(signUpData);
   return response;
 }
@@ -137,7 +155,7 @@ export async function signIn(
   email: string,
   password: string
 ): Promise<AuthResponse> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -153,12 +171,12 @@ export async function signInWithOAuth(
   provider: OAuthProvider,
   redirectTo?: string
 ): Promise<{ data: { url: string | null } | null; error: AuthError | null }> {
+  const supabase = requireSupabaseClient();
+  
   const defaultRedirectTo =
     typeof window !== 'undefined'
       ? `${window.location.origin}/auth/callback`
       : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`;
-
-  const supabase = getSupabaseClient();
   const response = await supabase.auth.signInWithOAuth({
     provider,
     options: {
@@ -173,7 +191,7 @@ export async function signInWithOAuth(
  * Sign out the current user
  */
 export async function signOut(): Promise<{ error: AuthError | null }> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.signOut();
   return response;
 }
@@ -185,7 +203,7 @@ export async function getCurrentUser(): Promise<{
   data: { user: User | null };
   error: AuthError | null;
 }> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.getUser();
   return response;
 }
@@ -197,7 +215,7 @@ export async function getCurrentSession(): Promise<{
   data: { session: Session | null };
   error: AuthError | null;
 }> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.getSession();
   return response;
 }
@@ -208,7 +226,7 @@ export async function getCurrentSession(): Promise<{
 export function onAuthStateChange(
   callback: (event: string, session: Session | null) => void
 ) {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   return supabase.auth.onAuthStateChange(callback);
 }
 
@@ -216,7 +234,7 @@ export function onAuthStateChange(
  * Refresh the current session
  */
 export async function refreshSession(): Promise<AuthResponse> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.refreshSession();
   return response;
 }
@@ -234,7 +252,7 @@ export async function resetPassword(email: string): Promise<{ error: AuthError |
       ? `${window.location.origin}/auth/reset-password`
       : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password`;
 
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: defaultRedirectTo,
   });
@@ -252,7 +270,7 @@ export async function updatePassword(
     throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
   }
 
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.updateUser({ password });
   return response;
 }
@@ -263,7 +281,7 @@ export async function updatePassword(
 export async function updateUserMetadata(
   metadata: Record<string, any>
 ): Promise<{ error: AuthError | null }> {
-  const supabase = getSupabaseClient();
+  const supabase = requireSupabaseClient();
   const response = await supabase.auth.updateUser({ data: metadata });
   return response;
 }
