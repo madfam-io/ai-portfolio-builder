@@ -20,7 +20,7 @@ const nextConfig = {
                     "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS
                     "img-src 'self' data: https: blob:",
                     "font-src 'self' data:",
-                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co",
                     "frame-src 'none'",
                     "object-src 'none'",
                     "base-uri 'self'",
@@ -28,7 +28,7 @@ const nextConfig = {
                     "frame-ancestors 'none'",
                     'upgrade-insecure-requests',
                   ].join('; ')
-                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https: blob:;",
+                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co; img-src 'self' data: https: blob:;",
           },
           // Additional security headers
           {
