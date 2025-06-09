@@ -2,7 +2,7 @@
 const nextConfig = {
   reactStrictMode: false,
   poweredByHeader: false,
-  
+
   // Security headers
   async headers() {
     return [
@@ -12,22 +12,23 @@ const nextConfig = {
           // Strict Content Security Policy for production security
           {
             key: 'Content-Security-Policy',
-            value: process.env.NODE_ENV === 'production' 
-              ? [
-                  "default-src 'self'",
-                  "script-src 'self' 'nonce-[random]'", 
-                  "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS
-                  "img-src 'self' data: https: blob:",
-                  "font-src 'self' data:",
-                  "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
-                  "frame-src 'none'",
-                  "object-src 'none'",
-                  "base-uri 'self'",
-                  "form-action 'self'",
-                  "frame-ancestors 'none'",
-                  "upgrade-insecure-requests"
-                ].join('; ')
-              : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https: blob:;"
+            value:
+              process.env.NODE_ENV === 'production'
+                ? [
+                    "default-src 'self'",
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+                    "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS
+                    "img-src 'self' data: https: blob:",
+                    "font-src 'self' data:",
+                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
+                    "frame-src 'none'",
+                    "object-src 'none'",
+                    "base-uri 'self'",
+                    "form-action 'self'",
+                    "frame-ancestors 'none'",
+                    'upgrade-insecure-requests',
+                  ].join('; ')
+                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data: https: blob:;",
           },
           // Additional security headers
           {
@@ -70,7 +71,6 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
 
-
   // Redirects
   async redirects() {
     return [
@@ -81,7 +81,6 @@ const nextConfig = {
       },
     ];
   },
-
 
   // TypeScript configuration
   typescript: {
@@ -95,7 +94,6 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
   },
-
 };
 
 module.exports = nextConfig;
