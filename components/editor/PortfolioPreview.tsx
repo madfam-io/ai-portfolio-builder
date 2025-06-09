@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Portfolio } from '@/types/portfolio';
 import {
   FiMail,
@@ -84,13 +85,14 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
               {portfolio.projects.map(project => (
                 <div
                   key={project.id}
-                  className="aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden"
+                  className="relative aspect-square bg-gray-200 dark:bg-gray-700 rounded-lg overflow-hidden"
                 >
                   {project.imageUrl ? (
-                    <img
+                    <Image
                       src={project.imageUrl}
                       alt={project.title}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-500">
@@ -154,11 +156,14 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
         }`}
       >
         {portfolio.avatarUrl && (
-          <img
-            src={portfolio.avatarUrl}
-            alt={portfolio.name}
-            className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
-          />
+          <div className="relative w-24 h-24 mx-auto mb-4">
+            <Image
+              src={portfolio.avatarUrl}
+              alt={portfolio.name}
+              fill
+              className="rounded-full object-cover"
+            />
+          </div>
         )}
 
         <h1
@@ -311,11 +316,14 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
                     }`}
                   >
                     {project.imageUrl && (
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-full h-48 object-cover"
-                      />
+                      <div className="relative w-full h-48">
+                        <Image
+                          src={project.imageUrl}
+                          alt={project.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
                     )}
                     <div className="p-4">
                       <h3 className="text-lg font-semibold mb-2">
