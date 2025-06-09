@@ -39,6 +39,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { AuthProvider } from './AuthContext';
 
 /**
  * Application context interface defining all global state and controls
@@ -146,7 +147,13 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     setMobileMenuOpen,
   };
 
-  return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
+  return (
+    <AppContext.Provider value={value}>
+      <AuthProvider>
+        {children}
+      </AuthProvider>
+    </AppContext.Provider>
+  );
 }
 
 export function useApp() {

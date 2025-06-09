@@ -105,6 +105,75 @@ export interface TranslationKeys {
   api: string;
   rightsReserved: string;
 
+  // Authentication
+  signIn: string;
+  signUp: string;
+  email: string;
+  password: string;
+  fullName: string;
+  confirmPassword: string;
+  forgotPassword: string;
+  resetPassword: string;
+  signOut: string;
+  or: string;
+  orContinueWith: string;
+  createNewAccount: string;
+  alreadyHaveAccount: string;
+  signingIn: string;
+  signingUp: string;
+  sendingReset: string;
+  resettingPassword: string;
+
+  // Dashboard
+  hello: string;
+  myPortfolios: string;
+  managePortfolios: string;
+  createNewPortfolio: string;
+  createPortfolio: string;
+  createFirstPortfolio: string;
+  totalPortfolios: string;
+  published: string;
+  totalViews: string;
+  yourPortfolios: string;
+  noPortfoliosYet: string;
+  statusPublished: string;
+  statusDraft: string;
+  lastModified: string;
+  views: string;
+  daysAgo: string;
+  weekAgo: string;
+  loadingDashboard: string;
+  portfolioName1: string;
+  portfolioName2: string;
+
+  // Editor
+  portfolioBuilder: string;
+  chooseTemplate: string;
+  templateModern: string;
+  templateCreative: string;
+  templateProfessional: string;
+  modernDesc: string;
+  creativeDesc: string;
+  professionalDesc: string;
+  contentSections: string;
+  addSection: string;
+  importData: string;
+  linkedinProfile: string;
+  importProfessionalInfo: string;
+  githubProjects: string;
+  addRepositories: string;
+  uploadCvResume: string;
+  extractFromPdf: string;
+  portfolioPreview: string;
+  portfolioAppearHere: string;
+  addFirstSection: string;
+  backToDashboard: string;
+  portfolioName: string;
+  preview: string;
+  save: string;
+  projects: string;
+  experience: string;
+
   // Common
   noCreditCard: string;
   joinProfessionals: string;
