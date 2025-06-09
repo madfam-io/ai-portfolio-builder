@@ -26,13 +26,11 @@ const recommendTemplateSchema = z.object({
   }).optional().default({}),
 });
 
-type RecommendTemplateRequest = z.infer<typeof recommendTemplateSchema>;
-
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       return NextResponse.json(
@@ -133,7 +131,7 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       return NextResponse.json(

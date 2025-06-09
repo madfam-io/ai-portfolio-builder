@@ -21,13 +21,11 @@ const optimizeProjectSchema = z.object({
   }).optional().default({}),
 });
 
-type OptimizeProjectRequest = z.infer<typeof optimizeProjectSchema>;
-
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       return NextResponse.json(
@@ -137,7 +135,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const supabase = await createClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     
     if (!user) {
       return NextResponse.json(
