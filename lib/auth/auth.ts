@@ -4,6 +4,7 @@ import type {
   User,
   Session,
   SupabaseClient,
+  AuthError,
 } from '@supabase/supabase-js';
 
 // Create Supabase client factory function for better testability
@@ -103,7 +104,15 @@ export async function signUp(
     throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
   }
 
-  const signUpData: any = {
+  const signUpData: {
+    email: string;
+    password: string;
+    options?: {
+      data: {
+        full_name: string;
+      };
+    };
+  } = {
     email,
     password,
   };
@@ -143,7 +152,7 @@ export async function signIn(
 export async function signInWithOAuth(
   provider: OAuthProvider,
   redirectTo?: string
-): Promise<{ data: { url: string | null } | null; error: any }> {
+): Promise<{ data: { url: string | null } | null; error: AuthError | null }> {
   const defaultRedirectTo =
     typeof window !== 'undefined'
       ? `${window.location.origin}/auth/callback`
@@ -163,7 +172,7 @@ export async function signInWithOAuth(
 /**
  * Sign out the current user
  */
-export async function signOut(): Promise<{ error: any }> {
+export async function signOut(): Promise<{ error: AuthError | null }> {
   const supabase = getSupabaseClient();
   const response = await supabase.auth.signOut();
   return response;
@@ -174,7 +183,7 @@ export async function signOut(): Promise<{ error: any }> {
  */
 export async function getCurrentUser(): Promise<{
   data: { user: User | null };
-  error: any;
+  error: AuthError | null;
 }> {
   const supabase = getSupabaseClient();
   const response = await supabase.auth.getUser();
@@ -186,7 +195,7 @@ export async function getCurrentUser(): Promise<{
  */
 export async function getCurrentSession(): Promise<{
   data: { session: Session | null };
-  error: any;
+  error: AuthError | null;
 }> {
   const supabase = getSupabaseClient();
   const response = await supabase.auth.getSession();
@@ -215,7 +224,7 @@ export async function refreshSession(): Promise<AuthResponse> {
 /**
  * Send a password reset email
  */
-export async function resetPassword(email: string): Promise<{ error: any }> {
+export async function resetPassword(email: string): Promise<{ error: AuthError | null }> {
   if (!isValidEmail(email)) {
     throw new Error('Invalid email format');
   }
@@ -238,7 +247,7 @@ export async function resetPassword(email: string): Promise<{ error: any }> {
  */
 export async function updatePassword(
   password: string
-): Promise<{ error: any }> {
+): Promise<{ error: AuthError | null }> {
   if (!isValidPassword(password)) {
     throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
   }
@@ -253,7 +262,7 @@ export async function updatePassword(
  */
 export async function updateUserMetadata(
   metadata: Record<string, any>
-): Promise<{ error: any }> {
+): Promise<{ error: AuthError | null }> {
   const supabase = getSupabaseClient();
   const response = await supabase.auth.updateUser({ data: metadata });
   return response;

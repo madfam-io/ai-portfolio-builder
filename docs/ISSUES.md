@@ -1,53 +1,55 @@
-# 🐛 MADFAM AI Portfolio Builder - Issue Tracker
+# 🐛 PRISMA by MADFAM - Issue Tracker
 
 > Last Updated: January 2025
 
-This document tracks active issues, bugs, and tasks. For the full roadmap, see [ROADMAP.md](./ROADMAP.md).
+This document tracks active issues, bugs, and tasks for the PRISMA project. For the full roadmap, see [ROADMAP.md](./ROADMAP.md).
 
 ## 🔴 Critical Issues
 
-### #001 - Test Suite Failing Due to LanguageProvider
+### #001 - Test Suite Updates for PRISMA Rebrand
 
-**Type**: Bug  
+**Type**: Enhancement  
 **Priority**: High  
-**Status**: Open  
-**Assigned**: Unassigned
+**Status**: ✅ Resolved  
+**Assigned**: Completed
 
-**Description**: Unit tests are failing because components are not wrapped with LanguageProvider in test environment.
+**Description**: Update all test suites to reflect PRISMA branding, authentication changes, and current feature set.
 
-**Error Message**:
+**Changes Made**:
 
-```
-useLanguage must be used within a LanguageProvider
-```
+- ✅ Updated authentication tests for 12-character password requirements
+- ✅ Fixed pricing component tests to use Link components instead of buttons
+- ✅ Updated Header component tests for PRISMA branding and Mexican/US flags
+- ✅ Fixed language context imports to use minimal-context
+- ✅ Updated translation expectations to match current PRISMA messaging
 
-**Files Affected**:
-
-- `__tests__/app/page.test.tsx`
-- `__tests__/utils/test-utils.tsx`
-
-**Proposed Solution**:
-
-- Update test-utils.tsx to wrap components with LanguageProvider
-- Ensure all component tests use the custom render function
+**Test Results**: 
+- Before: 58 failed tests, 83 passed
+- After: 43 failed tests, 99 passed
+- ✅ **16 additional tests now passing**
 
 ---
 
 ## 🟡 High Priority Issues
 
-### #002 - Hydration Mismatch with Language Toggle
+### #002 - Remaining Test Suite Issues
 
 **Type**: Bug  
-**Priority**: High  
+**Priority**: Medium  
 **Status**: In Progress  
-**Assigned**: Unassigned
+**Assigned**: Development Team
 
-**Description**: Occasional hydration errors when switching languages, particularly on first load.
+**Description**: Some tests still need updates for mobile menu behavior and language toggle expectations.
 
-**Steps to Reproduce**:
+**Remaining Issues**:
 
-1. Load page in Spanish
-2. Quickly toggle to English before full hydration
+1. Header component mobile menu tests need updating for new UI structure
+2. Language toggle tests expect different mobile/desktop behavior counts
+3. Some tests still reference old translation keys
+
+**Files Affected**:
+- `__tests__/components/landing/Header.test.tsx`
+- Mobile menu icon detection tests
 3. Check console for hydration warnings
 
 **Files Affected**:

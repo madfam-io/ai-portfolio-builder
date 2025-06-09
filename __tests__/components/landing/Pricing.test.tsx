@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Pricing from '@/components/landing/Pricing';
-import { LanguageProvider } from '@/lib/i18n';
+import { LanguageProvider } from '@/lib/i18n/minimal-context';
 import { AppProvider } from '@/lib/contexts/AppContext';
 
 // Mock localStorage
@@ -36,7 +36,7 @@ describe('Pricing Component', () => {
     it('should render section title in Spanish by default', () => {
       renderPricing();
 
-      expect(screen.getByText('Precios Simples,')).toBeInTheDocument();
+      expect(screen.getByText('Accede hoy.')).toBeInTheDocument();
       expect(screen.getByText('Características Poderosas')).toBeInTheDocument();
     });
 
@@ -44,22 +44,22 @@ describe('Pricing Component', () => {
       localStorageMock.getItem.mockReturnValue('en');
       renderPricing('en');
 
-      expect(screen.getByText('Simple Pricing,')).toBeInTheDocument();
+      expect(screen.getByText('Access today.')).toBeInTheDocument();
       expect(screen.getByText('Powerful Features')).toBeInTheDocument();
     });
 
     it('should render section subtitle', () => {
       renderPricing();
 
-      expect(screen.getByText('Comienza gratis, actualiza cuando necesites más')).toBeInTheDocument();
+      expect(screen.getByText('Impresiona mañana.')).toBeInTheDocument();
     });
 
     it('should render all three pricing plans', () => {
       renderPricing();
 
       expect(screen.getByRole('heading', { name: 'Gratis' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Pro' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { name: 'Empresarial' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'PRO' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'PRISMA+' })).toBeInTheDocument();
     });
 
     it('should render pricing for each plan', () => {
@@ -83,7 +83,7 @@ describe('Pricing Component', () => {
 
       expect(screen.getByText('1 portafolio')).toBeInTheDocument();
       expect(screen.getByText('Plantillas básicas')).toBeInTheDocument();
-      expect(screen.getByText('Subdominio MADFAM')).toBeInTheDocument();
+      expect(screen.getByText('Subdominio PRISMA')).toBeInTheDocument();
       expect(screen.getByText('3 reescrituras IA/mes')).toBeInTheDocument();
     });
 
@@ -115,36 +115,49 @@ describe('Pricing Component', () => {
     });
   });
 
-  describe('CTA Buttons', () => {
-    it('should render correct CTA buttons', () => {
+  describe('CTA Links', () => {
+    it('should render correct CTA links', () => {
       renderPricing();
 
-      expect(screen.getByRole('button', { name: 'Comenzar Gratis' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Prueba Pro' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Contactar Ventas' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Comenzar Gratis' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Prueba Pro' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Contactar Ventas' })).toBeInTheDocument();
     });
 
-    it('should have different button styles for each plan', () => {
+    it('should have correct href attributes for each plan', () => {
       renderPricing();
 
-      const freeButton = screen.getByRole('button', { name: 'Comenzar Gratis' });
-      expect(freeButton).toHaveClass('border-2', 'border-purple-600', 'text-purple-600');
+      const freeLink = screen.getByRole('link', { name: 'Comenzar Gratis' });
+      expect(freeLink).toHaveAttribute('href', '/auth/signup?plan=free');
 
-      const proButton = screen.getByRole('button', { name: 'Prueba Pro' });
-      expect(proButton).toHaveClass('bg-white', 'text-purple-600');
+      const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
+      expect(proLink).toHaveAttribute('href', '/auth/signup?plan=pro');
 
-      const businessButton = screen.getByRole('button', { name: 'Contactar Ventas' });
-      expect(businessButton).toHaveClass('border-2', 'border-purple-600', 'text-purple-600');
+      const businessLink = screen.getByRole('link', { name: 'Contactar Ventas' });
+      expect(businessLink).toHaveAttribute('href', '/contact?plan=business');
     });
 
-    it('should have hover effects on buttons', () => {
+    it('should have different link styles for each plan', () => {
       renderPricing();
 
-      const freeButton = screen.getByRole('button', { name: 'Comenzar Gratis' });
-      expect(freeButton).toHaveClass('hover:bg-purple-50');
+      const freeLink = screen.getByRole('link', { name: 'Comenzar Gratis' });
+      expect(freeLink).toHaveClass('border-2', 'border-purple-600', 'text-purple-600');
 
-      const proButton = screen.getByRole('button', { name: 'Prueba Pro' });
-      expect(proButton).toHaveClass('hover:bg-gray-100');
+      const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
+      expect(proLink).toHaveClass('bg-white', 'text-purple-600');
+
+      const businessLink = screen.getByRole('link', { name: 'Contactar Ventas' });
+      expect(businessLink).toHaveClass('border-2', 'border-purple-600', 'text-purple-600');
+    });
+
+    it('should have hover effects on links', () => {
+      renderPricing();
+
+      const freeLink = screen.getByRole('link', { name: 'Comenzar Gratis' });
+      expect(freeLink).toHaveClass('hover:bg-purple-50');
+
+      const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
+      expect(proLink).toHaveClass('hover:bg-gray-100');
     });
   });
 
@@ -192,7 +205,7 @@ describe('Pricing Component', () => {
       const freeCard = screen.getByRole('heading', { name: 'Gratis' }).closest('div');
       expect(freeCard).toHaveClass('dark:bg-gray-700');
 
-      const businessCard = screen.getByRole('heading', { name: 'Empresarial' }).closest('div');
+      const businessCard = screen.getByRole('heading', { name: 'PRISMA+' }).closest('div');
       expect(businessCard).toHaveClass('dark:bg-gray-700');
     });
 
@@ -201,7 +214,7 @@ describe('Pricing Component', () => {
 
       const headings = [
         screen.getByRole('heading', { name: 'Gratis' }),
-        screen.getByRole('heading', { name: 'Empresarial' })
+        screen.getByRole('heading', { name: 'PRISMA+' })
       ];
 
       headings.forEach(heading => {
@@ -229,14 +242,14 @@ describe('Pricing Component', () => {
       expect(section).toHaveAttribute('id', 'pricing');
     });
 
-    it('should have accessible button labels', () => {
+    it('should have accessible link labels', () => {
       renderPricing();
 
-      const buttons = screen.getAllByRole('button');
-      expect(buttons).toHaveLength(3);
+      const links = screen.getAllByRole('link');
+      expect(links).toHaveLength(3);
       
-      buttons.forEach(button => {
-        expect(button).toHaveAccessibleName();
+      links.forEach(link => {
+        expect(link).toHaveAccessibleName();
       });
     });
   });
@@ -275,12 +288,12 @@ describe('Pricing Component', () => {
       expect(cards.length).toBeGreaterThan(1);
     });
 
-    it('should have button transitions', () => {
+    it('should have link transitions', () => {
       renderPricing();
 
-      const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
-        expect(button).toHaveClass('transition');
+      const links = screen.getAllByRole('link');
+      links.forEach(link => {
+        expect(link).toHaveClass('transition');
       });
     });
   });

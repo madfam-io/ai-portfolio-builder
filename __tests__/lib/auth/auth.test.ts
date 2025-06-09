@@ -52,7 +52,7 @@ describe('Authentication Service', () => {
     it('should successfully sign up a new user', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'password123';
+      const password = 'Password123!';
       const fullName = 'Test User';
 
       const mockResponse = {
@@ -85,7 +85,7 @@ describe('Authentication Service', () => {
     it('should handle sign up errors', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'password123';
+      const password = 'Password123!';
       const errorMessage = 'User already registered';
 
       const mockResponse = {
@@ -121,7 +121,7 @@ describe('Authentication Service', () => {
 
       // Act & Assert
       await expect(signUp(email, shortPassword)).rejects.toThrow(
-        'Password must be at least 8 characters'
+        'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
       );
     });
   });
@@ -130,7 +130,7 @@ describe('Authentication Service', () => {
     it('should successfully sign in a user', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'password123';
+      const password = 'Password123!';
 
       const mockResponse = {
         data: {

@@ -54,9 +54,9 @@ describe('Header Component', () => {
     it('should render the logo and brand name', () => {
       renderHeader();
 
-      expect(screen.getByText(/MADFAM/)).toBeInTheDocument();
-      expect(screen.getByText('.').closest('span')).toHaveClass('text-purple-600');
-      expect(screen.getByText(/AI/)).toBeInTheDocument();
+      expect(screen.getByText('PRISMA')).toBeInTheDocument();
+      expect(screen.getByText('by MADFAM')).toBeInTheDocument();
+      expect(screen.getByAltText('PRISMA Logo')).toBeInTheDocument();
     });
 
     it('should render navigation links in Spanish by default', () => {
@@ -87,7 +87,7 @@ describe('Header Component', () => {
       
       // Language toggle
       expect(screen.getAllByText('ES')).toHaveLength(1);
-      expect(screen.getAllByText('🇪🇸')).toHaveLength(1);
+      expect(screen.getAllByText('🇲🇽')).toHaveLength(1);
       
       // Dark mode toggle - look for moon/sun icons
       const darkModeToggles = document.querySelectorAll('svg');
@@ -152,12 +152,15 @@ describe('Header Component', () => {
       renderHeader();
 
       // Click mobile menu toggle to open menu - look for bars icon
-      const mobileMenuToggle = document.querySelector('.fa-bars')?.closest('button') as HTMLElement;
-      await user.click(mobileMenuToggle);
+      const mobileMenuToggle = document.querySelector('.fa-bars')?.closest('button');
+      if (!mobileMenuToggle) throw new Error('Mobile menu toggle not found');
+      await user.click(mobileMenuToggle as HTMLElement);
 
       // Click mobile language toggle
       const langToggles = screen.getAllByTitle(/English/);
-      await user.click(langToggles[1]); // Mobile toggle
+      const mobileToggle = langToggles[1];
+      if (!mobileToggle) throw new Error('Mobile language toggle not found');
+      await user.click(mobileToggle); // Mobile toggle
 
       // Should switch to English
       await waitFor(() => {
@@ -247,7 +250,7 @@ describe('Header Component', () => {
 
       // Find the desktop navigation container (not mobile)
       const navItems = screen.getAllByText('Características');
-      const desktopNav = navItems[0].closest('.hidden');
+      const desktopNav = navItems[0]?.closest('.hidden');
       expect(desktopNav).toHaveClass('hidden', 'md:flex');
     });
 
@@ -271,7 +274,7 @@ describe('Header Component', () => {
       renderHeader();
 
       // Logo link should have proper navigation
-      const logoLink = screen.getByRole('link', { name: /MADFAM.*AI/i });
+      const logoLink = screen.getByRole('link', { name: /PRISMA/i });
       expect(logoLink).toHaveAttribute('href', '/');
 
       // Language toggle should have title

@@ -249,6 +249,7 @@ describe('Features Component', () => {
       // Check first few cards for structure
       for (let i = 0; i < Math.min(3, cards.length); i++) {
         const card = cards[i];
+        if (!card) continue; // Skip if card is undefined
         
         // Each card should have an icon container
         const iconContainer = card.querySelector('.w-14');
@@ -257,12 +258,16 @@ describe('Features Component', () => {
         // Each card should have a title
         const title = card.querySelector('h3');
         expect(title).toBeInTheDocument();
-        expect(title).toHaveClass('text-xl', 'font-semibold', 'mb-3');
+        if (title) {
+          expect(title).toHaveClass('text-xl', 'font-semibold', 'mb-3');
+        }
 
         // Each card should have a description
         const description = card.querySelector('p');
         expect(description).toBeInTheDocument();
-        expect(description).toHaveClass('text-gray-600', 'dark:text-gray-300');
+        if (description) {
+          expect(description).toHaveClass('text-gray-600', 'dark:text-gray-300');
+        }
       }
     });
   });

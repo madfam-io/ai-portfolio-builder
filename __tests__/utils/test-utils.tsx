@@ -141,7 +141,7 @@ export const createMockApiResponse = <T,>(data: T, status = 200) => ({
 });
 
 // Helper to create mock fetch responses
-export const mockFetch = (response: any, status = 200) => {
+export const mockFetch = (response: unknown, status = 200) => {
   global.fetch = jest.fn().mockResolvedValue({
     ok: status >= 200 && status < 300,
     status,

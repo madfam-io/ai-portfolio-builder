@@ -22,7 +22,7 @@
   "bugs": {
     "url": "https://github.com/madfam/ai-portfolio-builder/issues"
   },
-  "homepage": "https://madfam.io",
+  "homepage": "https://prisma.madfam.io",
   "scripts": {
     "dev": "next dev -p 3000",
     "dev:clean": "pkill -f 'next dev' || true && pnpm dev",
