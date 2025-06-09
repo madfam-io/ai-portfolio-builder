@@ -50,13 +50,13 @@ describe('Hero Component', () => {
     it('should render hero description', () => {
       renderHero();
 
-      expect(screen.getByText(/Importa desde LinkedIn, GitHub o sube tu currículum/)).toBeInTheDocument();
+      expect(screen.getByText(/Nuestros modelos de IA de código abierto/)).toBeInTheDocument();
     });
 
     it('should render AI badge', () => {
       renderHero();
 
-      expect(screen.getByText('Powered by GPT-4 & Claude AI')).toBeInTheDocument();
+      expect(screen.getByText('Impulsado por Llama 3.1 & Mistral AI')).toBeInTheDocument();
     });
 
     it('should render trust indicators', () => {
@@ -110,10 +110,10 @@ describe('Hero Component', () => {
     it('should have proper button styling classes', () => {
       renderHero();
 
-      const primaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
+      const primaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
       expect(primaryButton).toHaveClass('btn-primary', 'group');
 
-      const secondaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
+      const secondaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
       expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });
 
@@ -153,8 +153,8 @@ describe('Hero Component', () => {
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveClass('text-4xl', 'sm:text-5xl', 'md:text-6xl');
 
-      const description = screen.getByText(/Importa desde LinkedIn/);
-      expect(description).toHaveClass('text-lg', 'sm:text-xl');
+      const description = screen.getByText(/Nuestros modelos de IA de código abierto/);
+      expect(description).toHaveClass('text-xl', 'sm:text-2xl');
     });
 
     it('should have responsive button layout', () => {
@@ -178,13 +178,13 @@ describe('Hero Component', () => {
     it('should have dark mode classes', () => {
       renderHero();
 
-      const badge = screen.getByText('Powered by GPT-4 & Claude AI').parentElement;
+      const badge = screen.getByText('Impulsado por Llama 3.1 & Mistral AI').parentElement;
       expect(badge).toHaveClass('dark:bg-purple-900', 'dark:text-purple-300');
 
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveClass('dark:text-white');
 
-      const description = screen.getByText(/Importa desde LinkedIn/);
+      const description = screen.getByText(/Nuestros modelos de IA de código abierto/);
       expect(description).toHaveClass('dark:text-gray-300');
     });
   });
@@ -220,10 +220,10 @@ describe('Hero Component', () => {
     it('should have hover animation classes', () => {
       renderHero();
 
-      const primaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
+      const primaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
       expect(primaryButton).toHaveClass('btn-primary', 'group');
 
-      const secondaryButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
+      const secondaryButton = screen.getByRole('link', { name: 'Conoce más sobre nosotros' });
       expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });
 

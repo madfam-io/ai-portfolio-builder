@@ -191,6 +191,21 @@ export const translations: Translations = {
     projects: 'Proyectos',
     experience: 'Experiencia',
 
+    // Editor Additional
+    portfolioEditor: 'Editor de Portafolio',
+    saving: 'Guardando...',
+    publish: 'Publicar',
+    unpublish: 'Despublicar',
+    basicInfo: 'Información Básica',
+    name: 'Nombre',
+    title: 'Título',
+    bio: 'Biografía',
+    customize: 'Personalizar',
+    template: 'Plantilla',
+    addExperience: 'Agregar Experiencia',
+    addProject: 'Agregar Proyecto',
+    skills: 'Habilidades',
+
     // Common
     noCreditCard: 'No se requiere tarjeta de crédito',
     joinProfessionals: 'Únete a 10,000+ profesionales',
@@ -383,6 +398,21 @@ export const translations: Translations = {
     save: 'Save',
     projects: 'Projects',
     experience: 'Experience',
+
+    // Editor Additional
+    portfolioEditor: 'Portfolio Editor',
+    saving: 'Saving...',
+    publish: 'Publish',
+    unpublish: 'Unpublish',
+    basicInfo: 'Basic Information',
+    name: 'Name',
+    title: 'Title',
+    bio: 'Bio',
+    customize: 'Customize',
+    template: 'Template',
+    addExperience: 'Add Experience',
+    addProject: 'Add Project',
+    skills: 'Skills',
 
     // Common
     noCreditCard: 'No credit card required',

@@ -75,19 +75,21 @@ pnpm test:watch            # Watch mode
 
 1. **Bio Enhancement Pipeline**
 
-   - Use GPT-4 for bio rewriting
+   - Use Llama 3.1 8B for bio rewriting
    - Max 150 words output
    - Focus on value proposition and achievements
    - Professional tone by default
 
 2. **Project Description Enhancement**
 
+   - Use Mistral 7B for optimization
    - Extract key outcomes and metrics
    - Use STAR format (Situation, Task, Action, Result)
    - Highlight technologies and skills
    - Keep under 100 words per project
 
 3. **Template Recommendation**
+   - Use CodeLlama for analysis
    - Analyze industry and content type
    - Consider visual vs text-heavy portfolios
    - Match template style to professional tone
@@ -307,7 +309,7 @@ describe('Portfolio API', () => {
 
 **Priority 2: AI Content Enhancement**
 
-- [ ] OpenAI GPT-4 integration for bio enhancement
+- [x] Open-source AI integration (Llama 3.1 & Mistral) for bio enhancement
 - [ ] Project description optimization algorithms  
 - [ ] Template recommendation based on user profile and industry
 - [ ] Content quality scoring and suggestions
@@ -362,7 +364,7 @@ describe('Portfolio API', () => {
 ### Short Term Goals (Month 1)
 
 1. **Functional portfolio editor** with basic template system
-2. **AI bio enhancement** integration with OpenAI/Claude
+2. **AI bio enhancement** integration with open-source models (Llama 3.1 & Mistral)
 3. **File upload system** for images and CV parsing
 4. **Basic portfolio publishing** with unique URLs
 
@@ -428,8 +430,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
 
 # AI Services (Content Generation)
-OPENAI_API_KEY=
-ANTHROPIC_API_KEY= # Optional, for Claude
+HUGGINGFACE_API_KEY=
+# Note: Using open-source models via HuggingFace for cost-effective AI processing
 
 # OAuth (Social Login)
 LINKEDIN_CLIENT_ID=

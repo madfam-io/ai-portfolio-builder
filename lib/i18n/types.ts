@@ -174,6 +174,21 @@ export interface TranslationKeys {
   projects: string;
   experience: string;
 
+  // Editor Additional
+  portfolioEditor: string;
+  saving: string;
+  publish: string;
+  unpublish: string;
+  basicInfo: string;
+  name: string;
+  title: string;
+  bio: string;
+  customize: string;
+  template: string;
+  addExperience: string;
+  addProject: string;
+  skills: string;
+
   // Common
   noCreditCard: string;
   joinProfessionals: string;

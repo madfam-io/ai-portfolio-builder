@@ -22,7 +22,7 @@ GitHub Pages is a static site hosting service that **cannot** run Next.js applic
 - Next.js App Router uses React Server Components that require a Node.js runtime
 - Future `/app/api/*` routes will need server execution for:
   - Database queries to Supabase
-  - AI API calls (OpenAI, Claude)
+  - AI API calls (HuggingFace, open-source models)
   - Authentication flows
   - Payment processing (Stripe)
 

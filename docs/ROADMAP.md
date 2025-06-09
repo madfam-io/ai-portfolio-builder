@@ -79,7 +79,7 @@ Create a SaaS platform that enables professionals to generate stunning portfolio
 
 ### 🤖 AI Content Enhancement
 
-- [ ] OpenAI GPT-4 integration for bio enhancement
+- [x] Open-source AI integration (Llama 3.1 & Mistral) for bio enhancement
 - [ ] Project description optimization algorithms
 - [ ] Template recommendation based on user profile
 - [ ] Content quality scoring and suggestions
@@ -108,7 +108,7 @@ Create a SaaS platform that enables professionals to generate stunning portfolio
 
 ### 🤖 AI Enhancement Pipeline
 
-- [ ] OpenAI GPT-4 integration
+- [x] Open-source AI integration (Llama 3.1 & Mistral)
 - [ ] Bio enhancement endpoint
 - [ ] Project description generation
 - [ ] Skills extraction

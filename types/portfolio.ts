@@ -188,6 +188,7 @@ export interface UpdatePortfolioDTO {
   customization?: TemplateCustomization;
   aiSettings?: AIEnhancementSettings;
   status?: PortfolioStatus;
+  publishedAt?: Date;
 }
 
 // AI enhancement request/response types

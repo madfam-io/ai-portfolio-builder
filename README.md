@@ -138,7 +138,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 | Feature | Priority | Status | ETA |
 |---------|----------|--------|-----|
 | 🎨 Portfolio Editor Interface | High | 🚧 In Progress | Q1 2025 |
-| 🤖 AI Content Enhancement (GPT-4) | High | 📋 Planned | Q1 2025 |
+| 🤖 AI Content Enhancement (Llama 3.1 & Mistral) | High | ✅ Complete | Q1 2025 |
 | 📥 Profile Import (LinkedIn/GitHub) | Medium | 📋 Planned | Q1 2025 |
 | 🎭 Template System Expansion | Medium | 📋 Planned | Q2 2025 |
 | 🌐 Publishing Pipeline | High | 📋 Planned | Q2 2025 |

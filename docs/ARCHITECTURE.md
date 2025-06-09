@@ -78,7 +78,7 @@ graph TB
     end
 
     subgraph "External Services"
-        J[OpenAI API]
+        J[HuggingFace API]
         K[LinkedIn API]
         L[GitHub API]
         M[Stripe API]
@@ -205,17 +205,17 @@ interface AIProvider {
   suggestTemplate(input: ProfileData): Promise<TemplateRecommendation>;
 }
 
-class OpenAIProvider implements AIProvider {
-  // Implementation
+class HuggingFaceProvider implements AIProvider {
+  // Implementation using Llama 3.1 & Mistral models
 }
 
-class ClaudeProvider implements AIProvider {
-  // Implementation
+class LocalAIProvider implements AIProvider {
+  // Implementation for local model deployment
 }
 
 // Factory pattern for provider selection
 class AIServiceFactory {
-  static getProvider(type: 'openai' | 'claude'): AIProvider {
+  static getProvider(type: 'huggingface' | 'local'): AIProvider {
     // Return appropriate provider
   }
 }
@@ -1008,7 +1008,7 @@ jobs:
 - [ ] **Database Schema**: Supabase tables + RLS policies
 - [ ] **User Dashboard**: Protected dashboard with onboarding
 - [ ] **Profile Import**: LinkedIn/GitHub/CV upload integration
-- [ ] **AI Bio Enhancement**: OpenAI integration for content
+- [x] **AI Bio Enhancement**: HuggingFace integration for content (Llama 3.1 & Mistral)
 - [ ] **Template System**: 3 professional templates
 - [ ] **Portfolio Editor**: Drag-and-drop interface
 - [ ] **Publishing Pipeline**: Static site generation

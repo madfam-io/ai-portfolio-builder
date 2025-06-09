@@ -56,6 +56,10 @@ interface BaseLayoutProps {
    * @example "!bg-gray-50 dark:!bg-gray-900" for editor pages
    */
   className?: string;
+  /** Whether to show the header (default: true) */
+  showHeader?: boolean;
+  /** Whether to show the footer (default: true) */
+  showFooter?: boolean;
 }
 
 /**
@@ -74,13 +78,15 @@ interface BaseLayoutProps {
 export default function BaseLayout({
   children,
   className = '',
+  showHeader = true,
+  showFooter = true,
 }: BaseLayoutProps) {
   return (
     <LanguageProvider>
       <AuthProvider>
         <div className={`min-h-screen bg-white dark:bg-gray-900 ${className}`}>
           {/* Main navigation header with i18n and app controls */}
-          <Header />
+          {showHeader && <Header />}
           
           {/* Main content area - semantic HTML for accessibility */}
           <main>
@@ -88,7 +94,7 @@ export default function BaseLayout({
           </main>
           
           {/* Consistent footer across all pages */}
-          <Footer />
+          {showFooter && <Footer />}
           
           {/* Accessibility enhancement for long pages */}
           <BackToTopButton />
