@@ -9,36 +9,41 @@ const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
  * Rate limiting function
  * Implements sliding window rate limiting
  */
-function checkRateLimit(identifier: string, maxRequests: number = 10, windowMs: number = 900000): boolean {
+function checkRateLimit(
+  identifier: string,
+  maxRequests: number = 10,
+  windowMs: number = 900000
+): boolean {
   const now = Date.now();
   const record = rateLimitStore.get(identifier);
-  
+
   // Clean up expired entries periodically
-  if (Math.random() < 0.01) { // 1% chance to cleanup
+  if (Math.random() < 0.01) {
+    // 1% chance to cleanup
     for (const [key, value] of rateLimitStore.entries()) {
       if (value.resetTime < now) {
         rateLimitStore.delete(key);
       }
     }
   }
-  
+
   if (!record || record.resetTime < now) {
     // Create new record or reset expired one
     rateLimitStore.set(identifier, { count: 1, resetTime: now + windowMs });
     return true;
   }
-  
+
   if (record.count >= maxRequests) {
     return false; // Rate limit exceeded
   }
-  
+
   record.count++;
   return true;
 }
 
 /**
  * Middleware for handling authentication, route protection, and rate limiting
- * 
+ *
  * This middleware:
  * 1. Implements rate limiting for auth endpoints
  * 2. Creates a Supabase client for server-side auth
@@ -49,33 +54,41 @@ function checkRateLimit(identifier: string, maxRequests: number = 10, windowMs: 
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  
+
   // Apply rate limiting to authentication endpoints
-  const authEndpoints = ['/auth/signin', '/auth/signup', '/auth/reset-password'];
-  const isAuthEndpoint = authEndpoints.some(endpoint => pathname.startsWith(endpoint));
-  
+  const authEndpoints = [
+    '/auth/signin',
+    '/auth/signup',
+    '/auth/reset-password',
+  ];
+  const isAuthEndpoint = authEndpoints.some(endpoint =>
+    pathname.startsWith(endpoint)
+  );
+
   if (isAuthEndpoint) {
     // Use IP address for rate limiting (with forwarded IP support)
-    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
-               req.headers.get('x-real-ip') || 
-               req.headers.get('cf-connecting-ip') || // Cloudflare
-               'unknown';
-    
+    const ip =
+      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      req.headers.get('x-real-ip') ||
+      req.headers.get('cf-connecting-ip') || // Cloudflare
+      'unknown';
+
     const identifier = `auth:${ip}`;
-    
-    if (!checkRateLimit(identifier, 5, 900000)) { // 5 requests per 15 minutes for auth
+
+    if (!checkRateLimit(identifier, 5, 900000)) {
+      // 5 requests per 15 minutes for auth
       console.warn(`Rate limit exceeded for IP: ${ip} on ${pathname}`);
       return new NextResponse(
-        JSON.stringify({ 
+        JSON.stringify({
           error: 'Too many requests. Please try again later.',
-          retryAfter: '15 minutes'
+          retryAfter: '15 minutes',
         }),
-        { 
+        {
           status: 429,
           headers: {
             'Content-Type': 'application/json',
             'Retry-After': '900', // 15 minutes
-          }
+          },
         }
       );
     }
@@ -87,73 +100,84 @@ export async function middleware(req: NextRequest) {
     },
   });
 
+  // Check if Supabase environment variables are configured
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  // If Supabase is not configured, skip authentication checks (development mode)
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn(
+      'Supabase environment variables not configured. Authentication middleware disabled.'
+    );
+    return response;
+  }
+
   // Create a Supabase client configured to use cookies
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return req.cookies.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          req.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value,
-            ...options,
-          });
-        },
-        remove(name: string, options: CookieOptions) {
-          req.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-          response = NextResponse.next({
-            request: {
-              headers: req.headers,
-            },
-          });
-          response.cookies.set({
-            name,
-            value: '',
-            ...options,
-          });
-        },
+  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+    cookies: {
+      get(name: string) {
+        return req.cookies.get(name)?.value;
       },
-    }
-  );
+      set(name: string, value: string, options: CookieOptions) {
+        req.cookies.set({
+          name,
+          value,
+          ...options,
+        });
+        response = NextResponse.next({
+          request: {
+            headers: req.headers,
+          },
+        });
+        response.cookies.set({
+          name,
+          value,
+          ...options,
+        });
+      },
+      remove(name: string, options: CookieOptions) {
+        req.cookies.set({
+          name,
+          value: '',
+          ...options,
+        });
+        response = NextResponse.next({
+          request: {
+            headers: req.headers,
+          },
+        });
+        response.cookies.set({
+          name,
+          value: '',
+          ...options,
+        });
+      },
+    },
+  });
 
   // Refresh session if expired - required for Server Components
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  let session = null;
+  try {
+    const { data } = await supabase.auth.getSession();
+    session = data.session;
+  } catch (error) {
+    console.warn('Error getting session:', error);
+    // Continue without session if there's an error
+  }
 
   // Protected routes that require authentication
   const protectedRoutes = ['/dashboard', '/editor', '/profile'];
-  
+
   // Auth routes that should redirect to dashboard if already authenticated
   const authRoutes = ['/auth/signin', '/auth/signup'];
 
   // Check if current path is a protected route
-  const isProtectedRoute = protectedRoutes.some(route => 
+  const isProtectedRoute = protectedRoutes.some(route =>
     pathname.startsWith(route)
   );
 
   // Check if current path is an auth route
-  const isAuthRoute = authRoutes.some(route => 
-    pathname.startsWith(route)
-  );
+  const isAuthRoute = authRoutes.some(route => pathname.startsWith(route));
 
   // If user is not authenticated and trying to access protected route
   if (isProtectedRoute && !session) {
@@ -167,7 +191,10 @@ export async function middleware(req: NextRequest) {
   if (isAuthRoute && session) {
     // Check if there's a redirectTo parameter
     const redirectTo = req.nextUrl.searchParams.get('redirectTo');
-    if (redirectTo && protectedRoutes.some(route => redirectTo.startsWith(route))) {
+    if (
+      redirectTo &&
+      protectedRoutes.some(route => redirectTo.startsWith(route))
+    ) {
       return NextResponse.redirect(new URL(redirectTo, req.url));
     }
     return NextResponse.redirect(new URL('/dashboard', req.url));
@@ -178,11 +205,11 @@ export async function middleware(req: NextRequest) {
 
 /**
  * Configuration for which routes should run this middleware
- * 
+ *
  * This matcher ensures the middleware only runs on:
  * - Protected routes (/dashboard, /editor)
  * - Auth routes (/auth/signin, /auth/signup, /auth/callback, /auth/reset-password)
- * 
+ *
  * It excludes:
  * - Static assets (_next/static, favicon.ico, etc.)
  * - API routes (already handled separately)
