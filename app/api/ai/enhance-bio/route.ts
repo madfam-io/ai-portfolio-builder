@@ -141,7 +141,7 @@ export async function POST(request: NextRequest) {
 /**
  * Get enhancement history for user
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
     if (!supabase) {
