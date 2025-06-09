@@ -9,25 +9,26 @@ const nextConfig = {
       {
         source: '/(.*)',
         headers: [
-          // Content Security Policy - permissive for Next.js compatibility
-          // Note: In production, consider implementing a stricter CSP with proper nonce generation
+          // Content Security Policy - adjusted for Next.js on Vercel
           {
             key: 'Content-Security-Policy',
-            value: [
-              "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-              "style-src 'self' 'unsafe-inline'",
-              "img-src 'self' data: https: http: blob:",
-              "font-src 'self' data: https: http:",
-              "connect-src 'self' https: http: wss: ws:",
-              "media-src 'self' https: http:",
-              "object-src 'none'",
-              "base-uri 'self'",
-              "form-action 'self' https:",
-              "frame-ancestors 'self'",
-              "block-all-mixed-content",
-              "upgrade-insecure-requests"
-            ].join('; ')
+            value:
+              process.env.NODE_ENV === 'production'
+                ? [
+                    "default-src 'self'",
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http:", // Allow inline scripts for Next.js
+                    "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS
+                    "img-src 'self' data: https: blob:",
+                    "font-src 'self' data:",
+                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co https://*.vercel.app",
+                    "frame-src 'none'",
+                    "object-src 'none'",
+                    "base-uri 'self'",
+                    "form-action 'self'",
+                    "frame-ancestors 'none'",
+                    'upgrade-insecure-requests',
+                  ].join('; ')
+                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co; img-src 'self' data: https: blob:;",
           },
           // Additional security headers
           {
