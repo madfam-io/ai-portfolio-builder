@@ -27,17 +27,6 @@ export function PortfolioEditor({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [activeSection, setActiveSection] = useState('basic');
 
-  // Auto-save functionality
-  useEffect(() => {
-    if (!autoSave) return;
-
-    const timeoutId = setTimeout(() => {
-      handleSave();
-    }, 3000);
-
-    return () => clearTimeout(timeoutId);
-  }, [editedPortfolio, autoSave, handleSave]);
-
   // Validation
   const validatePortfolio = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
@@ -85,6 +74,17 @@ export function PortfolioEditor({
       console.error('Failed to save portfolio:', error);
     }
   }, [editedPortfolio, onSave, validatePortfolio]);
+
+  // Auto-save functionality
+  useEffect(() => {
+    if (!autoSave) return;
+
+    const timeoutId = setTimeout(() => {
+      handleSave();
+    }, 3000);
+
+    return () => clearTimeout(timeoutId);
+  }, [editedPortfolio, autoSave, handleSave]);
 
   // Update functions
   const updateBasicInfo = (field: keyof Portfolio, value: any) => {

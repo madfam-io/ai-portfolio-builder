@@ -4,7 +4,7 @@
  */
 
 import { z } from 'zod';
-import { TemplateType, PortfolioStatus } from '@/types/portfolio';
+// Types are defined inline in the schemas below
 
 // Template type validation
 const templateTypeSchema = z.enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business']);

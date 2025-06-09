@@ -6,7 +6,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { 
-  updatePortfolioSchema, 
   validateUpdatePortfolio,
   sanitizePortfolioData 
 } from '@/lib/validations/portfolio';
@@ -23,12 +22,18 @@ interface RouteParams {
  * GET /api/portfolios/[id]
  * Retrieves a specific portfolio by ID
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = params;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      );
+    }
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -94,7 +99,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const { id } = params;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      );
+    }
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -229,12 +240,18 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
  * DELETE /api/portfolios/[id]
  * Deletes a specific portfolio by ID
  */
-export async function DELETE(request: NextRequest, { params }: RouteParams) {
+export async function DELETE(_request: NextRequest, { params }: RouteParams) {
   try {
     const { id } = params;
 
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      );
+    }
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();

@@ -6,12 +6,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { 
-  createPortfolioSchema, 
   validateCreatePortfolio,
   validatePortfolioQuery,
   sanitizePortfolioData 
 } from '@/lib/validations/portfolio';
-import { CreatePortfolioDTO, Portfolio } from '@/types/portfolio';
+import { Portfolio } from '@/types/portfolio';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -79,7 +78,7 @@ export async function GET(request: NextRequest) {
     query = query.range(from, to);
 
     // Execute query
-    const { data: portfolios, error: fetchError, count } = await query;
+    const { data: portfolios, error: fetchError } = await query;
 
     if (fetchError) {
       console.error('Database error fetching portfolios:', fetchError);
@@ -121,7 +120,13 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     // Create Supabase client
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 500 }
+      );
+    }
 
     // Check authentication
     const { data: { user }, error: authError } = await supabase.auth.getUser();

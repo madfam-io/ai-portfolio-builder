@@ -79,7 +79,7 @@ export class HuggingFaceService implements AIService {
       
       return {
         title: enhanced.title || title,
-        description: enhanced.description,
+        description: enhanced.description || description,
         technologies,
         highlights: enhanced.highlights || [],
         metrics: enhanced.metrics || [],
@@ -134,7 +134,6 @@ export class HuggingFaceService implements AIService {
   async scoreContent(content: string, type: string): Promise<QualityScore> {
     try {
       // Basic quality metrics
-      const wordCount = content.split(' ').length;
       const readability = this.calculateReadabilityScore(content);
       const professionalism = this.calculateProfessionalismScore(content);
       const impact = this.calculateImpactScore(content);
@@ -358,7 +357,7 @@ export class HuggingFaceService implements AIService {
       let score = 0.3; // Base score
       
       // Title matching
-      if (rule.keywords.some(keyword => 
+      if (rule.keywords.some((keyword: string) => 
         profile.title.toLowerCase().includes(keyword.toLowerCase())
       )) {
         score += 0.4;
@@ -366,7 +365,7 @@ export class HuggingFaceService implements AIService {
       
       // Skills matching
       const skillMatches = profile.skills.filter(skill =>
-        rule.keywords.some(keyword =>
+        rule.keywords.some((keyword: string) =>
           skill.toLowerCase().includes(keyword.toLowerCase())
         )
       ).length;
@@ -455,7 +454,7 @@ export class HuggingFaceService implements AIService {
   }
 
   private generateImprovementSuggestions(
-    overall: number,
+    _overall: number,
     scores: { readability: number; professionalism: number; impact: number; completeness: number }
   ): string[] {
     const suggestions = [];

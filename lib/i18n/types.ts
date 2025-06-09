@@ -13,8 +13,10 @@ export interface TranslationKeys {
   heroTitle2: string;
   heroTitle3: string;
   heroDesc: string;
+  poweredByAi: string;
   watchDemo: string;
   startFreeTrial: string;
+  learnMoreAboutUs: string;
 
   // Social Proof
   trustedBy: string;

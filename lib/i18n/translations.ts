@@ -14,9 +14,11 @@ export const translations: Translations = {
     heroTitle2: 'Portafolio Impresionante',
     heroTitle3: 'en 30 Minutos',
     heroDesc:
-      'Importa desde LinkedIn, GitHub o sube tu currículum. Nuestra IA transforma tu experiencia en un portafolio profesional y hermoso que te ayuda a conseguir trabajo.',
+      'Importa desde LinkedIn, GitHub o sube tu currículum. Nuestros modelos de IA de código abierto (Llama 3.1 & Mistral) transforman tu experiencia en un portafolio profesional y hermoso que te ayuda a conseguir trabajo.',
+    poweredByAi: 'Impulsado por Llama 3.1 & Mistral AI',
     watchDemo: 'Ver Demo',
     startFreeTrial: 'Prueba Gratuita',
+    learnMoreAboutUs: 'Conoce más sobre nosotros',
 
     // Social Proof
     trustedBy: 'Utilizado por profesionales de',
@@ -138,9 +140,11 @@ export const translations: Translations = {
     heroTitle2: 'Stunning Portfolio',
     heroTitle3: 'in 30 Minutes',
     heroDesc:
-      'Import from LinkedIn, GitHub, or upload your resume. Our AI transforms your experience into a beautiful, professional portfolio that gets you hired.',
+      'Import from LinkedIn, GitHub, or upload your resume. Our open-source AI models (Llama 3.1 & Mistral) transform your experience into a beautiful, professional portfolio that gets you hired.',
+    poweredByAi: 'Powered by Llama 3.1 & Mistral AI',
     watchDemo: 'Watch Demo',
     startFreeTrial: 'Start Free Trial',
+    learnMoreAboutUs: 'Learn more about us',
 
     // Social Proof
     trustedBy: 'Trusted by professionals from',
