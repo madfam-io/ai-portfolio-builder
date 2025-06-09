@@ -312,7 +312,7 @@ function getRecommendedCustomizations(template: string, profile: UserProfile) {
 }
 
 function calculateStyleBonus(template: string, preferredStyle: string): number {
-  const styleMatches = {
+  const styleMatches: Record<string, Record<string, number>> = {
     minimal: { minimal: 0.1, professional: 0.05 },
     developer: { minimal: 0.05, modern: 0.1, professional: 0.1 },
     designer: { creative: 0.15, modern: 0.1 },
@@ -320,7 +320,7 @@ function calculateStyleBonus(template: string, preferredStyle: string): number {
     creative: { creative: 0.15, modern: 0.1 },
   };
   
-  return styleMatches[template as keyof typeof styleMatches]?.[preferredStyle as keyof any] || 0;
+  return styleMatches[template]?.[preferredStyle] || 0;
 }
 
 /**
