@@ -22,6 +22,8 @@ export interface SocialLinks {
   instagram?: string;
   youtube?: string;
   website?: string;
+  dribbble?: string;
+  behance?: string;
   custom?: Array<{
     label: string;
     url: string;

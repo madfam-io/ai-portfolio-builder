@@ -1,10 +1,10 @@
-# PRISMA v1.0.0 - Architecture Documentation
+# PRISMA v0.0.1-alpha - Architecture Documentation
 
 **PRISMA by MADFAM**: AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes
 
 ## 📐 System Architecture Overview
 
-### Current Implementation (PRISMA v1.0.0 - Foundation Complete)
+### Current Implementation (PRISMA v0.0.1-alpha - Foundation Complete)
 
 **Status**: ✅ Production-ready multilanguage landing page with geolocation detection
 
@@ -205,18 +205,26 @@ interface AIProvider {
   suggestTemplate(input: ProfileData): Promise<TemplateRecommendation>;
 }
 
+class DeepSeekProvider implements AIProvider {
+  // Primary provider using DeepSeek reasoning models
+  // Cost-effective: ~$0.0003 per request vs $0.30 OpenAI (97% savings)
+  // Advanced reasoning capabilities for content enhancement
+}
+
 class HuggingFaceProvider implements AIProvider {
-  // Implementation using Llama 3.1 & Mistral models
+  // Fallback provider using Llama 3.1 & Mistral models
+  // Open-source alternative for redundancy
 }
 
 class LocalAIProvider implements AIProvider {
   // Implementation for local model deployment
 }
 
-// Factory pattern for provider selection
+// Factory pattern for provider selection with failover
 class AIServiceFactory {
-  static getProvider(type: 'huggingface' | 'local'): AIProvider {
-    // Return appropriate provider
+  static getProvider(type: 'deepseek' | 'huggingface' | 'local'): AIProvider {
+    // Return appropriate provider with automatic failover
+    // Priority: DeepSeek (primary) → HuggingFace (fallback) → Local (development)
   }
 }
 ```
@@ -332,14 +340,51 @@ Legend: ✅ Implemented | 🔄 Planned
 
 // Spanish-speaking countries (21 countries)
 const SPANISH_SPEAKING_COUNTRIES = [
-  'AR', 'BO', 'CL', 'CO', 'CR', 'CU', 'DO', 'EC', 'SV', 'GQ',
-  'GT', 'HN', 'MX', 'NI', 'PA', 'PY', 'PE', 'PR', 'ES', 'UY', 'VE'
+  'AR',
+  'BO',
+  'CL',
+  'CO',
+  'CR',
+  'CU',
+  'DO',
+  'EC',
+  'SV',
+  'GQ',
+  'GT',
+  'HN',
+  'MX',
+  'NI',
+  'PA',
+  'PY',
+  'PE',
+  'PR',
+  'ES',
+  'UY',
+  'VE',
 ];
 
 // English-speaking countries (20 countries)
 const ENGLISH_SPEAKING_COUNTRIES = [
-  'US', 'CA', 'GB', 'AU', 'NZ', 'IE', 'ZA', 'IN', 'SG', 'MY',
-  'PH', 'NG', 'KE', 'GH', 'JM', 'TT', 'BB', 'BS', 'BZ', 'GY'
+  'US',
+  'CA',
+  'GB',
+  'AU',
+  'NZ',
+  'IE',
+  'ZA',
+  'IN',
+  'SG',
+  'MY',
+  'PH',
+  'NG',
+  'KE',
+  'GH',
+  'JM',
+  'TT',
+  'BB',
+  'BS',
+  'BZ',
+  'GY',
 ];
 
 // Detection methods (in order of priority)
@@ -354,16 +399,19 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
 ### Detection Methods
 
 1. **IP Geolocation** (Primary)
+
    - Uses ipapi.co for country detection
    - 1000 requests/day free tier
    - Most accurate location-based detection
 
 2. **Timezone Detection** (Fallback)
+
    - Browser `Intl.DateTimeFormat().resolvedOptions().timeZone`
    - Maps common timezones to countries
    - Works offline, privacy-friendly
 
 3. **Browser Language** (Secondary)
+
    - `navigator.language` and `navigator.languages`
    - User's explicit language preferences
    - Reliable for user intent
@@ -489,7 +537,7 @@ flowchart LR
 ├── Header.tsx           // Navigation with geo-aware language toggle
 ├── Hero.tsx             // PRISMA-branded hero section
 ├── Features.tsx         // AI-focused features (6 key features)
-├── HowItWorks.tsx       // 3-step process explanation
+├── HowItWorks.tsx       // 4-step process explanation
 ├── Templates.tsx        // Professional template previews
 ├── Pricing.tsx          // SaaS subscription tiers
 ├── SocialProof.tsx      // Trust indicators and testimonials
@@ -690,15 +738,21 @@ const securityHeaders = [
       "base-uri 'self'",
       "form-action 'self'",
       "frame-ancestors 'none'",
-      "upgrade-insecure-requests"
-    ].join('; ')
+      'upgrade-insecure-requests',
+    ].join('; '),
   },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'X-XSS-Protection', value: '1; mode=block' },
-  { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=()' },
-  { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' }
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), payment=()',
+  },
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=31536000; includeSubDomains',
+  },
 ];
 ```
 
@@ -804,7 +858,7 @@ const securityHeaders = [
   "description": "PRISMA by MADFAM - AI-powered portfolio builder",
   "homepage": "https://prisma.madfam.io",
   "packageManager": "pnpm@10.11.1",
-  
+
   // Key dependencies:
   "dependencies": {
     "next": "15.3.3",
@@ -1008,7 +1062,7 @@ jobs:
 - [ ] **Database Schema**: Supabase tables + RLS policies
 - [ ] **User Dashboard**: Protected dashboard with onboarding
 - [ ] **Profile Import**: LinkedIn/GitHub/CV upload integration
-- [x] **AI Bio Enhancement**: HuggingFace integration for content (Llama 3.1 & Mistral)
+- [x] **AI Bio Enhancement**: DeepSeek primary + HuggingFace fallback (Llama 3.1 & Mistral)
 - [ ] **Template System**: 3 professional templates
 - [ ] **Portfolio Editor**: Drag-and-drop interface
 - [ ] **Publishing Pipeline**: Static site generation
@@ -1018,7 +1072,7 @@ jobs:
 ### 🔮 v3.0.0 - Advanced Features (Future)
 
 - [ ] **Custom Domains**: yourname.com integration
-- [ ] **Advanced AI**: Multiple AI providers + templates
+- [x] **Advanced AI**: Multiple AI providers (DeepSeek primary) + templates
 - [ ] **Team Collaboration**: Shared portfolios and feedback
 - [ ] **White-label**: Custom branding for agencies
 - [ ] **Mobile App**: React Native iOS/Android

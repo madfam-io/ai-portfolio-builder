@@ -122,8 +122,8 @@ DATABASE_URL=postgresql://postgres:postgres@postgres:5432/portfolio_builder
 REDIS_URL=redis://redis:6379
 
 # Future: AI Services (when implementing AI features)
-OPENAI_API_KEY=your_openai_api_key
-ANTHROPIC_API_KEY=your_anthropic_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
+HUGGINGFACE_API_KEY=your_huggingface_token
 
 # Future: Supabase Configuration (when implementing auth/database)
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url

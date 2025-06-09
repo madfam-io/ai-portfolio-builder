@@ -32,7 +32,7 @@
  * ```
  *
  * @author MADFAM Development Team
- * @version 3.0.0 - Geolocation-based language detection
+ * @version 0.0.1-alpha - Geolocation-based language detection
  */
 
 'use client';
@@ -122,7 +122,7 @@ const translations = {
       'Plantillas profesionales que se adaptan a tu industria y estilo.',
     step4Title: '4. Publica y comparte tu portafolio',
     step4Desc: 'Tu sitio profesional está listo para impresionar en minutos.',
-    templatesSecTitle: 'Para Cada Profesional',
+    templatesSecTitle: 'Plantillas Diseñadas para',
     templatesSecSubtitle:
       'Diseños específicos que hablan el idioma de tu industria',
     useTemplate: 'Ver Ejemplo',
@@ -180,7 +180,7 @@ const translations = {
     contactSales: 'Contactar Ventas',
 
     // How it works
-    simpleSteps: '3 Pasos Simples',
+    simpleSteps: '4 Pasos Simples',
 
     // Back to top
     backToTop: 'Volver arriba',
@@ -210,7 +210,7 @@ const translations = {
     standOut: 'Destacar',
 
     // Templates section
-    everyProfessional: 'Cada Profesional',
+    everyProfessional: 'Cada Industria',
 
     // Header tooltips
     switchCurrency: 'Cambiar moneda',
@@ -403,6 +403,37 @@ const translations = {
     deleteItem: 'Eliminar',
     editItem: 'Editar',
     publish: 'Publicar',
+    // AI Enhancement
+    enhance: 'Mejorar',
+    enhancing: 'Mejorando...',
+    enhanced: '¡Mejorado!',
+    enhanceBioWithAI: 'Mejorar biografía con IA',
+    enhanceProjectWithAI: 'Mejorar proyecto con IA',
+    selectModelFor: 'Seleccionar modelo para',
+    recommended: 'Recomendado',
+    close: 'Cerrar',
+    saving: 'Guardando...',
+    // Error messages
+    aiEnhancementRequiresAuth:
+      'Debes iniciar sesión para usar la mejora con IA',
+    aiQuotaExceeded: 'Has alcanzado el límite de mejoras con IA',
+    aiEnhancementFailed: 'Error al mejorar con IA, intenta de nuevo',
+    // Editor sections
+    portfolioEditor: 'Editor de Portafolio',
+    basicInfo: 'Información Básica',
+    preview: 'Vista Previa',
+    customize: 'Personalizar',
+    template: 'Plantilla',
+    addExperience: 'Agregar Experiencia',
+    addProject: 'Agregar Proyecto',
+
+    // Template descriptions
+    developerTemplateDesc:
+      'Perfecto para mostrar proyectos técnicos y repositorios de GitHub',
+    designerTemplateDesc:
+      'Diseño creativo con galería visual de portafolio y métricas sociales',
+    consultantTemplateDesc:
+      'Enfoque profesional de negocios con métricas y estudios de caso',
   },
   en: {
     features: 'Features',
@@ -449,7 +480,7 @@ const translations = {
     step3Desc: 'Professional templates that adapt to your industry and style.',
     step4Title: '4. Publish and share your portfolio',
     step4Desc: 'Your professional site is ready to impress in minutes.',
-    templatesSecTitle: 'For Every Professional',
+    templatesSecTitle: 'Templates Built for',
     templatesSecSubtitle: 'Specific designs that speak your industry language',
     useTemplate: 'See Example',
     minimalDev: 'Developers',
@@ -507,7 +538,7 @@ const translations = {
     contactSales: 'Contact Sales',
 
     // How it works
-    simpleSteps: '3 Simple Steps',
+    simpleSteps: '4 Simple Steps',
 
     // Back to top
     backToTop: 'Back to top',
@@ -537,7 +568,7 @@ const translations = {
     standOut: 'Stand Out',
 
     // Templates section
-    everyProfessional: 'Every Professional',
+    everyProfessional: 'Every Industry',
 
     // Header tooltips
     switchCurrency: 'Switch currency',
@@ -728,6 +759,36 @@ const translations = {
     deleteItem: 'Delete',
     editItem: 'Edit',
     publish: 'Publish',
+    // AI Enhancement
+    enhance: 'Enhance',
+    enhancing: 'Enhancing...',
+    enhanced: 'Enhanced!',
+    enhanceBioWithAI: 'Enhance bio with AI',
+    enhanceProjectWithAI: 'Enhance project with AI',
+    selectModelFor: 'Select model for',
+    recommended: 'Recommended',
+    close: 'Close',
+    saving: 'Saving...',
+    // Error messages
+    aiEnhancementRequiresAuth: 'You must sign in to use AI enhancement',
+    aiQuotaExceeded: 'You have reached your AI enhancement limit',
+    aiEnhancementFailed: 'AI enhancement failed, please try again',
+    // Editor sections
+    portfolioEditor: 'Portfolio Editor',
+    basicInfo: 'Basic Information',
+    preview: 'Preview',
+    customize: 'Customize',
+    template: 'Template',
+    addExperience: 'Add Experience',
+    addProject: 'Add Project',
+
+    // Template descriptions
+    developerTemplateDesc:
+      'Perfect for showcasing technical projects and GitHub repositories',
+    designerTemplateDesc:
+      'Creative layout with visual portfolio grid and social metrics',
+    consultantTemplateDesc:
+      'Professional business focus with metrics and case studies',
   },
 };
 

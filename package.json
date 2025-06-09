@@ -1,6 +1,6 @@
 {
   "name": "prisma-portfolio-builder",
-  "version": "1.0.0",
+  "version": "0.0.1-alpha",
   "private": true,
   "description": "PRISMA by MADFAM - AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes",
   "author": "MADFAM Team",

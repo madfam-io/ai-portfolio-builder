@@ -11,12 +11,14 @@ import type {
 function createSupabaseClient(): SupabaseClient | null {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables not configured. Authentication disabled.');
+    console.warn(
+      'Supabase environment variables not configured. Authentication disabled.'
+    );
     return null;
   }
-  
+
   return createClient(supabaseUrl, supabaseAnonKey);
 }
 
@@ -36,7 +38,9 @@ function getSupabaseClient(): SupabaseClient | null {
 function requireSupabaseClient(): SupabaseClient {
   const client = getSupabaseClient();
   if (!client) {
-    throw new Error('Authentication service not configured. Please set up Supabase environment variables.');
+    throw new Error(
+      'Authentication service not configured. Please set up Supabase environment variables.'
+    );
   }
   return client;
 }
@@ -44,11 +48,13 @@ function requireSupabaseClient(): SupabaseClient {
 // For testing: allow setting a mock client
 export function setSupabaseClient(client: SupabaseClient): void {
   supabaseInstance = client;
+  supabaseInitialized = true;
 }
 
 // For testing: reset to default client
 export function resetSupabaseClient(): void {
   supabaseInstance = null;
+  supabaseInitialized = false;
 }
 
 // Types for authentication
@@ -74,13 +80,13 @@ function isValidEmail(email: string): boolean {
 function isValidPassword(password: string): boolean {
   // Minimum 12 characters for strong security
   if (password.length < 12) return false;
-  
+
   // Require at least one of each character type
   const hasUppercase = /[A-Z]/.test(password);
   const hasLowercase = /[a-z]/.test(password);
   const hasNumbers = /\d/.test(password);
   const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-  
+
   // Check for common weak patterns
   const commonPatterns = [
     /123456/,
@@ -88,16 +94,24 @@ function isValidPassword(password: string): boolean {
     /qwerty/i,
     /(.)\1{2,}/, // Repeated characters (3+ times)
   ];
-  
+
   const hasWeakPattern = commonPatterns.some(pattern => pattern.test(password));
-  
-  return hasUppercase && hasLowercase && hasNumbers && hasSpecialChar && !hasWeakPattern;
+
+  return (
+    hasUppercase &&
+    hasLowercase &&
+    hasNumbers &&
+    hasSpecialChar &&
+    !hasWeakPattern
+  );
 }
 
 /**
  * Get password strength rating
  */
-export function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
+export function getPasswordStrength(
+  password: string
+): 'weak' | 'medium' | 'strong' {
   if (password.length < 8) return 'weak';
   if (password.length < 12) return 'medium';
   if (!isValidPassword(password)) return 'medium';
@@ -120,7 +134,9 @@ export async function signUp(
   }
 
   if (!isValidPassword(password)) {
-    throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
+    throw new Error(
+      'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
+    );
   }
 
   const signUpData: {
@@ -172,7 +188,7 @@ export async function signInWithOAuth(
   redirectTo?: string
 ): Promise<{ data: { url: string | null } | null; error: AuthError | null }> {
   const supabase = requireSupabaseClient();
-  
+
   const defaultRedirectTo =
     typeof window !== 'undefined'
       ? `${window.location.origin}/auth/callback`
@@ -242,7 +258,9 @@ export async function refreshSession(): Promise<AuthResponse> {
 /**
  * Send a password reset email
  */
-export async function resetPassword(email: string): Promise<{ error: AuthError | null }> {
+export async function resetPassword(
+  email: string
+): Promise<{ error: AuthError | null }> {
   if (!isValidEmail(email)) {
     throw new Error('Invalid email format');
   }
@@ -267,7 +285,9 @@ export async function updatePassword(
   password: string
 ): Promise<{ error: AuthError | null }> {
   if (!isValidPassword(password)) {
-    throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
+    throw new Error(
+      'Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters'
+    );
   }
 
   const supabase = requireSupabaseClient();

@@ -27,6 +27,7 @@ export const translations: Translations = {
     featuresTitle: 'Todo lo que Necesitas para',
     featuresSubtitle:
       'Nuestra plataforma impulsada por IA maneja todo, desde la creación de contenido hasta el diseño, para que puedas enfocarte en lo que importa.',
+    standOut: 'Destacar',
     aiContentTitle: 'Mejora de Contenido con IA',
     aiContentDesc:
       'Nuestra IA reescribe tu experiencia en narrativas convincentes que destacan tu valor y logros.',
@@ -50,14 +51,18 @@ export const translations: Translations = {
     howItWorksTitle: 'De Cero a Portafolio en',
     howItWorksSubtitle:
       'No se requieren habilidades técnicas. Nuestra IA maneja todo.',
+    simpleSteps: '4 Pasos Simples',
     step1Title: 'Importa tus Datos',
     step1Desc:
       'Conecta LinkedIn, GitHub o sube tu CV. Toma menos de 2 minutos.',
     step2Title: 'Mejora con IA',
     step2Desc:
       'Nuestra IA reescribe tu contenido, sugiere mejoras y elige la plantilla perfecta.',
-    step3Title: 'Publica y Comparte',
+    step3Title: 'Personaliza el Diseño',
     step3Desc:
+      'Ajusta colores, fuentes y disposición para que refleje tu estilo personal.',
+    step4Title: 'Publica y Comparte',
+    step4Desc:
       'Revisa, personaliza si es necesario y publica. Tu portafolio está en vivo al instante.',
 
     // Templates Section
@@ -237,6 +242,7 @@ export const translations: Translations = {
     featuresTitle: 'Everything You Need to',
     featuresSubtitle:
       'Our AI-powered platform handles everything from content creation to design, so you can focus on what matters.',
+    standOut: 'Stand Out',
     aiContentTitle: 'AI Content Enhancement',
     aiContentDesc:
       'Our AI rewrites your experience into compelling narratives that highlight your value and achievements.',
@@ -260,14 +266,18 @@ export const translations: Translations = {
     howItWorksTitle: 'From Zero to Portfolio in',
     howItWorksSubtitle:
       'No technical skills required. Our AI handles everything.',
+    simpleSteps: '4 Simple Steps',
     step1Title: 'Import Your Data',
     step1Desc:
       'Connect LinkedIn, GitHub, or upload your CV. Takes less than 2 minutes.',
     step2Title: 'AI Enhancement',
     step2Desc:
       'Our AI rewrites your content, suggests improvements, and picks the perfect template.',
-    step3Title: 'Publish & Share',
+    step3Title: 'Customize Design',
     step3Desc:
+      'Adjust colors, fonts, and layout to reflect your personal style.',
+    step4Title: 'Publish & Share',
+    step4Desc:
       'Review, customize if needed, and publish. Your portfolio is live instantly.',
 
     // Templates Section

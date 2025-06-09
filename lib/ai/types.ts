@@ -94,7 +94,7 @@ export interface AIService {
   ): Promise<ProjectEnhancement>;
   recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation>;
   scoreContent(content: string, type: string): Promise<QualityScore>;
-  
+
   // Health and monitoring
   healthCheck(): Promise<boolean>;
   getUsageStats(): Promise<{
@@ -105,16 +105,17 @@ export interface AIService {
   }>;
 }
 
-// Model provider types
-export type AIProvider = 'huggingface' | 'replicate' | 'modal' | 'local';
+// Model provider types - unified through HuggingFace
+export type AIProvider = 'huggingface';
 
 // Enhancement request options
 export interface EnhancementOptions {
   provider?: AIProvider;
-  model?: string;
+  selectedModel?: string;
   maxRetries?: number;
   fallbackModel?: string;
   cacheKey?: string;
+  autoSelectBestModel?: boolean;
 }
 
 // Error types

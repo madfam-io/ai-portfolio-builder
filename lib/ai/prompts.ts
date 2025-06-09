@@ -37,13 +37,15 @@ Enhanced Bio:`,
     examples: [
       {
         input: "I'm a web developer who likes to code and solve problems.",
-        output: "Full-stack developer with 3+ years creating scalable web applications that solve real business challenges. Passionate about clean code architecture and delivering user-centric solutions that drive measurable results."
+        output:
+          'Full-stack developer with 3+ years creating scalable web applications that solve real business challenges. Passionate about clean code architecture and delivering user-centric solutions that drive measurable results.',
       },
       {
-        input: "Designer with experience in UI/UX and branding.",
-        output: "Creative UI/UX designer specializing in user-centered design that increases conversion rates by 25%+ across digital platforms. Expert in translating complex business requirements into intuitive, accessible interfaces that users love."
-      }
-    ]
+        input: 'Designer with experience in UI/UX and branding.',
+        output:
+          'Creative UI/UX designer specializing in user-centered design that increases conversion rates by 25%+ across digital platforms. Expert in translating complex business requirements into intuitive, accessible interfaces that users love.',
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -83,7 +85,7 @@ Optimize this project description to showcase technical expertise and business i
 
     examples: [
       {
-        input: "Built an e-commerce website using React and Node.js",
+        input: 'Built an e-commerce website using React and Node.js',
         output: `{
   "description": "Developed a full-stack e-commerce platform handling 10k+ monthly transactions, built with React frontend and Node.js backend. Implemented secure payment processing, real-time inventory management, and personalized product recommendations that increased average order value by 30%.",
   "highlights": ["10k+ monthly transactions", "30% increase in AOV", "Real-time inventory system"],
@@ -94,9 +96,9 @@ Optimize this project description to showcase technical expertise and business i
     "action": "Developed React/Node.js app with payment processing and recommendations",
     "result": "Achieved 10k+ monthly transactions with 30% higher order values"
   }
-}`
-      }
-    ]
+}`,
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -126,16 +128,17 @@ Extract and categorize skills demonstrated in this role:`,
 
     examples: [
       {
-        input: "Led development team of 5 engineers building microservices with React, Node.js, and AWS",
+        input:
+          'Led development team of 5 engineers building microservices with React, Node.js, and AWS',
         output: `[
   {"name": "React", "category": "Frontend", "level": "expert"},
   {"name": "Node.js", "category": "Backend", "level": "expert"},
   {"name": "AWS", "category": "Cloud", "level": "advanced"},
   {"name": "Team Leadership", "category": "Management", "level": "advanced"},
   {"name": "Microservices", "category": "Architecture", "level": "advanced"}
-]`
-      }
-    ]
+]`,
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -171,10 +174,11 @@ Recommend the best template and explain why:`,
 
     examples: [
       {
-        input: "Frontend Developer, 5 years experience, React/Vue specialist",
-        output: "Recommended: 'developer' - Clean code-focused layout perfect for showcasing technical projects, GitHub repositories, and development skills. The structured format highlights programming expertise while maintaining professional credibility with potential employers."
-      }
-    ]
+        input: 'Frontend Developer, 5 years experience, React/Vue specialist',
+        output:
+          "Recommended: 'developer' - Clean code-focused layout perfect for showcasing technical projects, GitHub repositories, and development skills. The structured format highlights programming expertise while maintaining professional credibility with potential employers.",
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -203,7 +207,8 @@ Analyze this content and provide:
 
     examples: [
       {
-        input: "I built some websites and apps. I know JavaScript and other stuff.",
+        input:
+          'I built some websites and apps. I know JavaScript and other stuff.',
         output: `Scores:
 - Readability: 60 (simple but vague)
 - Professionalism: 45 (too casual, lacks detail)
@@ -214,9 +219,9 @@ Overall: 44
 Improvements:
 1. Add specific technologies and frameworks used
 2. Include quantifiable results (users, performance gains, etc.)
-3. Use more professional language and active voice`
-      }
-    ]
+3. Use more professional language and active voice`,
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -244,12 +249,13 @@ Extract and format key achievements:`,
 
     examples: [
       {
-        input: "Managed the development team and improved our deployment process, which made things faster.",
+        input:
+          'Managed the development team and improved our deployment process, which made things faster.',
         output: `• Led cross-functional development team of 8 engineers to deliver products 40% faster
 • Redesigned deployment pipeline, reducing release time from 4 hours to 45 minutes
-• Implemented automated testing protocols, decreasing production bugs by 60%`
-      }
-    ]
+• Implemented automated testing protocols, decreasing production bugs by 60%`,
+      },
+    ],
   } as PromptTemplate,
 
   /**
@@ -276,16 +282,39 @@ Optimize this content for the target industry:`,
 
     examples: [
       {
-        input: "Built secure applications with good performance",
-        output: "Developed enterprise-grade applications with SOC 2 compliance, implementing OAuth 2.0 authentication and achieving 99.9% uptime with sub-200ms response times across distributed microservices architecture."
-      }
-    ]
+        input: 'Built secure applications with good performance',
+        output:
+          'Developed enterprise-grade applications with SOC 2 compliance, implementing OAuth 2.0 authentication and achieving 99.9% uptime with sub-200ms response times across distributed microservices architecture.',
+      },
+    ],
   } as PromptTemplate,
 };
 
 /**
  * Dynamic prompt builder for custom scenarios
  */
+// Export specific prompt constants for service imports
+export const BIO_PROMPTS = {
+  enhance:
+    promptTemplates.bioEnhancement.system +
+    '\n\n' +
+    promptTemplates.bioEnhancement.user,
+};
+
+export const PROJECT_PROMPTS = {
+  optimize:
+    promptTemplates.projectOptimization.system +
+    '\n\n' +
+    promptTemplates.projectOptimization.user,
+};
+
+export const TEMPLATE_PROMPTS = {
+  recommend:
+    promptTemplates.templateRecommendation.system +
+    '\n\n' +
+    promptTemplates.templateRecommendation.user,
+};
+
 export class PromptBuilder {
   static buildBioPrompt(
     bio: string,
@@ -297,13 +326,16 @@ export class PromptBuilder {
     }
   ): string {
     const template = promptTemplates.bioEnhancement;
-    return template.system + '\n\n' + 
-           template.user
-             .replace('{bio}', bio)
-             .replace('{title}', context.title)
-             .replace('{skills}', context.skills.join(', '))
-             .replace('{tone}', context.tone)
-             .replace('{length}', context.targetLength);
+    return (
+      template.system +
+      '\n\n' +
+      template.user
+        .replace('{bio}', bio)
+        .replace('{title}', context.title)
+        .replace('{skills}', context.skills.join(', '))
+        .replace('{tone}', context.tone)
+        .replace('{length}', context.targetLength)
+    );
   }
 
   static buildProjectPrompt(
@@ -312,19 +344,25 @@ export class PromptBuilder {
     technologies: string[]
   ): string {
     const template = promptTemplates.projectOptimization;
-    return template.system + '\n\n' + 
-           template.user
-             .replace('{title}', title)
-             .replace('{description}', description)
-             .replace('{technologies}', technologies.join(', '));
+    return (
+      template.system +
+      '\n\n' +
+      template.user
+        .replace('{title}', title)
+        .replace('{description}', description)
+        .replace('{technologies}', technologies.join(', '))
+    );
   }
 
   static buildQualityPrompt(content: string, contentType: string): string {
     const template = promptTemplates.qualityAssessment;
-    return template.system + '\n\n' + 
-           template.user
-             .replace('{content}', content)
-             .replace('{contentType}', contentType);
+    return (
+      template.system +
+      '\n\n' +
+      template.user
+        .replace('{content}', content)
+        .replace('{contentType}', contentType)
+    );
   }
 }
 
@@ -344,7 +382,7 @@ export class PromptValidator {
     if (prompt.length > this.MAX_PROMPT_LENGTH) {
       return {
         valid: false,
-        error: `Prompt too long: ${prompt.length} chars (max: ${this.MAX_PROMPT_LENGTH})`
+        error: `Prompt too long: ${prompt.length} chars (max: ${this.MAX_PROMPT_LENGTH})`,
       };
     }
 
@@ -352,7 +390,7 @@ export class PromptValidator {
       if (pattern.test(prompt)) {
         return {
           valid: false,
-          error: 'Prompt contains forbidden patterns'
+          error: 'Prompt contains forbidden patterns',
         };
       }
     }

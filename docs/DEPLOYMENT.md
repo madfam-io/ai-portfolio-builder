@@ -178,8 +178,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
 # Future: AI Services (when implementing AI features)
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
+DEEPSEEK_API_KEY=your-deepseek-api-key
+HUGGINGFACE_API_KEY=your-huggingface-token
 
 # Future: OAuth Providers (when implementing social login)
 LINKEDIN_CLIENT_ID=your-client-id

@@ -52,7 +52,7 @@ describe('Authentication Service', () => {
     it('should successfully sign up a new user', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'Password123!';
+      const password = 'SecureTest123!';
       const fullName = 'Test User';
 
       const mockResponse = {
@@ -85,7 +85,7 @@ describe('Authentication Service', () => {
     it('should handle sign up errors', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'Password123!';
+      const password = 'SecureTest123!';
       const errorMessage = 'User already registered';
 
       const mockResponse = {
@@ -130,7 +130,7 @@ describe('Authentication Service', () => {
     it('should successfully sign in a user', async () => {
       // Arrange
       const email = 'test@example.com';
-      const password = 'Password123!';
+      const password = 'SecureTest123!';
 
       const mockResponse = {
         data: {

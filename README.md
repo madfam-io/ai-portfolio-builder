@@ -4,7 +4,7 @@
 
 **AI-Powered Portfolio Builder for Modern Professionals**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/madfam-io/ai-portfolio-builder/releases)
+[![Version](https://img.shields.io/badge/version-0.0.1--alpha-orange.svg)](https://github.com/madfam-io/ai-portfolio-builder/releases)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](#-license)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://typescriptlang.org/)
@@ -95,6 +95,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <td width="50%">
 
 #### 🌍 **Intelligent Geolocation System**
+
 - **Smart Language Detection**: Automatic selection based on IP, timezone, browser
 - **Cultural Adaptation**: 🇲🇽 Mexican flag for Spanish, 🇺🇸 US flag for English
 - **Multi-Currency Support**: Auto-detect MXN/USD/EUR with real-time pricing
@@ -104,6 +105,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <td width="50%">
 
 #### 🔐 **Enterprise-Grade Authentication**
+
 - **Supabase Integration**: Production-ready auth infrastructure
 - **OAuth Providers**: LinkedIn, GitHub social login
 - **Enhanced Security**: 12-character passwords with complexity validation
@@ -115,6 +117,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <td>
 
 #### 🎨 **Professional PRISMA Interface**
+
 - **Brand Identity**: Complete rebrand with professional logo system
 - **Responsive Design**: Mobile-first with dark mode support
 - **Performance Optimized**: <3s load times, 90+ Lighthouse score
@@ -124,6 +127,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <td>
 
 #### 🐳 **Development Excellence**
+
 - **Docker Environment**: PostgreSQL + Redis + pgAdmin containerized
 - **Testing Suite**: Jest + React Testing Library + Playwright
 - **Code Quality**: ESLint + Prettier + Husky pre-commit hooks
@@ -135,13 +139,13 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 
 ### 🚧 **Next Sprint Features (In Development)**
 
-| Feature | Priority | Status | ETA |
-|---------|----------|--------|-----|
-| 🎨 Portfolio Editor Interface | High | 🚧 In Progress | Q1 2025 |
-| 🤖 AI Content Enhancement (Llama 3.1 & Mistral) | High | ✅ Complete | Q1 2025 |
-| 📥 Profile Import (LinkedIn/GitHub) | Medium | 📋 Planned | Q1 2025 |
-| 🎭 Template System Expansion | Medium | 📋 Planned | Q2 2025 |
-| 🌐 Publishing Pipeline | High | 📋 Planned | Q2 2025 |
+| Feature                                                   | Priority | Status         | ETA     |
+| --------------------------------------------------------- | -------- | -------------- | ------- |
+| 🎨 Portfolio Editor Interface                             | High     | 🚧 In Progress | Q1 2025 |
+| 🤖 AI Content Enhancement (DeepSeek, Llama 3.1 & Mistral) | High     | ✅ Complete    | Q1 2025 |
+| 📥 Profile Import (LinkedIn/GitHub)                       | Medium   | 📋 Planned     | Q1 2025 |
+| 🎭 Template System Expansion                              | Medium   | 📋 Planned     | Q2 2025 |
+| 🌐 Publishing Pipeline                                    | High     | 📋 Planned     | Q2 2025 |
 
 > 🗺️ **See complete feature roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md) | **Track progress**: [**ISSUES.md**](./docs/ISSUES.md)
 
@@ -185,19 +189,19 @@ Frontend:
   Icons: React Icons 5.5
   State: React Context + Custom Hooks
   Forms: React Hook Form + Zod Validation
-  
+
 Backend:
   Database: PostgreSQL 14 (Supabase Cloud + Docker Local)
   Authentication: Supabase Auth + OAuth 2.0
   Cache: Redis (Docker Local + Upstash Cloud)
   API: Next.js API Routes + Server Actions
-  
+
 DevOps:
   Containerization: Docker + Docker Compose
   Testing: Jest + React Testing Library + Playwright
   Code Quality: ESLint + Prettier + Husky
   CI/CD: GitHub Actions
-  
+
 Security:
   Password: 12-char minimum + complexity validation
   Sessions: Supabase secure session management
@@ -224,6 +228,7 @@ Security:
 <td width="50%" align="center">
 
 ### 🐳 **Docker Development**
+
 **Recommended for full-stack development**
 
 ```bash
@@ -233,7 +238,7 @@ Security:
 # Everything included:
 # ✅ App: http://localhost:3000
 # ✅ Database: PostgreSQL
-# ✅ Cache: Redis  
+# ✅ Cache: Redis
 # ✅ Admin: pgAdmin
 ```
 
@@ -241,6 +246,7 @@ Security:
 <td width="50%" align="center">
 
 ### 💻 **Local Development**
+
 **Perfect for frontend-only work**
 
 ```bash
@@ -266,8 +272,9 @@ pnpm dev
 <summary><strong>🔧 Complete Docker Setup Guide</strong></summary>
 
 ### **Prerequisites**
+
 - Docker Desktop installed and running
-- Docker Compose v2.22+ 
+- Docker Compose v2.22+
 
 ### **Quick Start**
 
@@ -285,12 +292,12 @@ docker-compose -f docker-compose.dev.yml ps
 
 ### **Available Services**
 
-| Service | URL | Credentials | Purpose |
-|---------|-----|-------------|---------|
-| **PRISMA App** | http://localhost:3000 | N/A | Main application |
-| **pgAdmin** | http://localhost:5050 | admin@prisma.io / admin | Database management |
-| **PostgreSQL** | localhost:5432 | postgres / password | Primary database |
-| **Redis** | localhost:6379 | N/A | Caching layer |
+| Service        | URL                   | Credentials             | Purpose             |
+| -------------- | --------------------- | ----------------------- | ------------------- |
+| **PRISMA App** | http://localhost:3000 | N/A                     | Main application    |
+| **pgAdmin**    | http://localhost:5050 | admin@prisma.io / admin | Database management |
+| **PostgreSQL** | localhost:5432        | postgres / password     | Primary database    |
+| **Redis**      | localhost:6379        | N/A                     | Caching layer       |
 
 ### **Docker Commands**
 
@@ -321,6 +328,7 @@ docker-compose -f docker-compose.dev.yml down -v
 <summary><strong>⚙️ Local Setup Instructions</strong></summary>
 
 ### **Prerequisites**
+
 - Node.js 18.17.0+
 - pnpm 8.0.0+
 
@@ -383,6 +391,7 @@ pnpm test:e2e        # E2E tests
 <td width="33%" align="center">
 
 #### **Unit Tests**
+
 **Jest + React Testing Library**
 
 ```bash
@@ -398,6 +407,7 @@ pnpm test:coverage
 <td width="33%" align="center">
 
 #### **E2E Tests**
+
 **Playwright**
 
 ```bash
@@ -412,6 +422,7 @@ pnpm test:e2e:ui
 <td width="33%" align="center">
 
 #### **Type Safety**
+
 **TypeScript Strict Mode**
 
 ```bash
@@ -445,13 +456,13 @@ Progress:    ✅ 16 additional tests passing (recent improvements)
 
 ### **Test Categories**
 
-| Category | Status | Coverage |
-|----------|--------|----------|
-| Authentication | ✅ Passing | 95% |
-| Landing Page Components | ✅ Mostly Passing | 85% |
-| Language Detection | ✅ Passing | 90% |
-| Mobile Menu | ⏳ Pending Updates | 60% |
-| E2E Flows | ✅ Passing | 80% |
+| Category                | Status             | Coverage |
+| ----------------------- | ------------------ | -------- |
+| Authentication          | ✅ Passing         | 95%      |
+| Landing Page Components | ✅ Mostly Passing  | 85%      |
+| Language Detection      | ✅ Passing         | 90%      |
+| Mobile Menu             | ⏳ Pending Updates | 60%      |
+| E2E Flows               | ✅ Passing         | 80%      |
 
 > 📖 **Testing guidelines**: [**Testing Documentation**](./docs/CONTRIBUTING.md#testing)
 
@@ -556,6 +567,7 @@ ai-portfolio-builder/
 <td width="50%">
 
 #### **🎯 Intelligent Detection**
+
 - **Geolocation**: IP-based country detection
 - **Fallbacks**: Timezone → Browser → Spanish default
 - **Persistence**: localStorage + user preferences
@@ -565,6 +577,7 @@ ai-portfolio-builder/
 <td width="50%">
 
 #### **🌎 Market Focus**
+
 - **Primary**: Spanish 🇲🇽 (Mexico/LATAM)
 - **Secondary**: English 🇺🇸 (International)
 - **Currency**: Auto MXN/USD/EUR detection
@@ -584,29 +597,29 @@ ai-portfolio-builder/
 export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
   // 1. IP Geolocation (ipapi.co)
   const countryCode = await detectCountryFromIP();
-  
+
   // 2. Timezone Detection (fallback)
   const timezoneCountry = detectCountryFromTimezone();
-  
+
   // 3. Browser Language (fallback)
   const browserLang = detectBrowserLanguage();
-  
+
   // 4. Default: Spanish (MADFAM's primary market)
   return {
     language: determineLanguage(countryCode, timezoneCountry, browserLang),
     country: countryCode,
     flag: getCountryFlag(countryCode),
-    currency: getCurrency(countryCode)
+    currency: getCurrency(countryCode),
   };
 }
 ```
 
 ### **Supported Regions**
 
-| Region | Language | Flag | Currency | Countries |
-|--------|----------|------|----------|-----------|
-| **LATAM** | Spanish | 🇲🇽 | MXN | Mexico, Colombia, Argentina, etc. |
-| **International** | English | 🇺🇸 | USD/EUR | USA, Canada, UK, EU, etc. |
+| Region            | Language | Flag | Currency | Countries                         |
+| ----------------- | -------- | ---- | -------- | --------------------------------- |
+| **LATAM**         | Spanish  | 🇲🇽   | MXN      | Mexico, Colombia, Argentina, etc. |
+| **International** | English  | 🇺🇸   | USD/EUR  | USA, Canada, UK, EU, etc.         |
 
 ### **Translation System**
 
@@ -616,7 +629,7 @@ import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function Component() {
   const { t, language, setLanguage, detectedCountry } = useLanguage();
-  
+
   return (
     <div>
       <h1>{t.heroTitle}</h1>
@@ -645,6 +658,7 @@ export default function Component() {
 <td width="50%">
 
 #### **🛡️ Security Features**
+
 - **12-Character Passwords**: With complexity requirements
 - **OAuth Integration**: LinkedIn, GitHub social login
 - **Session Management**: Secure JWT with Supabase
@@ -654,6 +668,7 @@ export default function Component() {
 <td width="50%">
 
 #### **🔧 Implementation**
+
 - **Provider**: Supabase Auth
 - **Database**: PostgreSQL with RLS
 - **Encryption**: AES-256 at rest
@@ -670,7 +685,8 @@ export default function Component() {
 
 ```typescript
 // lib/auth/auth.ts
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
+const PASSWORD_REGEX =
+  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
 
 export function isValidPassword(password: string): boolean {
   return PASSWORD_REGEX.test(password);
@@ -685,13 +701,13 @@ const OAUTH_PROVIDERS = {
   linkedin_oidc: {
     name: 'LinkedIn',
     icon: 'FaLinkedin',
-    scope: 'r_liteprofile r_emailaddress'
+    scope: 'r_liteprofile r_emailaddress',
   },
   github: {
     name: 'GitHub',
     icon: 'FaGithub',
-    scope: 'user:email read:user'
-  }
+    scope: 'user:email read:user',
+  },
 };
 ```
 
@@ -725,6 +741,7 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **⚡ Speed**
+
 - **LCP**: <2.5s
 - **FID**: <100ms
 - **CLS**: <0.1
@@ -734,6 +751,7 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **🎯 Targets**
+
 - **Page Load**: <3s
 - **API Response**: <500ms
 - **Portfolio Gen**: <30s
@@ -743,6 +761,7 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **📦 Bundle**
+
 - **JS**: <200KB gzipped
 - **CSS**: <50KB gzipped
 - **Images**: WebP + optimization
@@ -752,6 +771,7 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **🔍 Monitoring**
+
 - **Testing**: Automated
 - **Errors**: Tracked
 - **Performance**: Monitored
@@ -776,6 +796,7 @@ export function middleware(request: NextRequest) {
 <td width="50%">
 
 #### **🏗️ Technical Documentation**
+
 - **[Architecture Guide](./docs/ARCHITECTURE.md)** - System design & patterns
 - **[Docker Setup](./docs/DOCKER.md)** - Containerized development
 - **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment
@@ -785,6 +806,7 @@ export function middleware(request: NextRequest) {
 <td width="50%">
 
 #### **🚀 Development Resources**
+
 - **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute
 - **[Git Workflow](./docs/GIT_WORKFLOW.md)** - Branching strategy
 - **[Development Roadmap](./docs/ROADMAP.md)** - Feature timeline
@@ -796,6 +818,7 @@ export function middleware(request: NextRequest) {
 <td>
 
 #### **🤖 AI Development**
+
 - **[CLAUDE.md](./CLAUDE.md)** - AI assistant context
 - **[Testing Guidelines](./docs/CONTRIBUTING.md#testing)** - Test strategies
 - **[Code Standards](./docs/CONTRIBUTING.md#code-style)** - Style guide
@@ -804,6 +827,7 @@ export function middleware(request: NextRequest) {
 <td>
 
 #### **📊 Project Management**
+
 - **[Sprint Planning](./docs/ROADMAP.md#current-sprint)** - Current focus
 - **[Progress Tracking](./docs/ISSUES.md)** - Development status
 - **[Release Notes](./docs/ROADMAP.md#changelog)** - Version history
@@ -827,8 +851,9 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **✅ Phase 1**
+
 **PRISMA Foundation**
-*Completed*
+_Completed_
 
 - PRISMA rebrand
 - Geolocation detection
@@ -839,8 +864,9 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **🚧 Phase 2**
+
 **Portfolio Builder**
-*In Progress*
+_In Progress_
 
 - Editor interface
 - AI content enhancement
@@ -851,8 +877,9 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **📋 Phase 3**
+
 **Publishing & Scale**
-*Q2 2025*
+_Q2 2025_
 
 - Publishing pipeline
 - Custom domains
@@ -863,8 +890,9 @@ export function middleware(request: NextRequest) {
 <td width="25%" align="center">
 
 #### **🚀 Phase 4**
+
 **Advanced Features**
-*Q3 2025*
+_Q3 2025_
 
 - Team collaboration
 - White-label options
@@ -877,12 +905,12 @@ export function middleware(request: NextRequest) {
 
 ### **Current Sprint Focus**
 
-| Feature | Priority | Status | Timeline |
-|---------|----------|--------|----------|
-| 🎨 Portfolio Editor Interface | **High** | 🚧 Active Development | Q1 2025 |
-| 🤖 AI Content Enhancement | **High** | 📋 Design Phase | Q1 2025 |
-| 📥 Profile Import (LinkedIn/GitHub) | **Medium** | 📋 Planned | Q1 2025 |
-| 🎭 Template System Expansion | **Medium** | 📋 Planned | Q2 2025 |
+| Feature                              | Priority   | Status                | Timeline |
+| ------------------------------------ | ---------- | --------------------- | -------- |
+| 🎨 Portfolio Editor Interface        | **High**   | 🚧 Active Development | Q1 2025  |
+| 🤖 AI Content Enhancement (DeepSeek) | **High**   | ✅ Complete           | Q1 2025  |
+| 📥 Profile Import (LinkedIn/GitHub)  | **Medium** | 📋 Planned            | Q1 2025  |
+| 🎭 Template System Expansion         | **Medium** | 📋 Planned            | Q2 2025  |
 
 > 📖 **Complete roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md) | **Track issues**: [**ISSUES.md**](./docs/ISSUES.md)
 
@@ -1018,12 +1046,12 @@ This project is proprietary software. Unauthorized copying, modification, distri
 
 ### **Response Times**
 
-| Type | Response Time | Channel |
-|------|---------------|---------|
-| **🚨 Critical Issues** | <24 hours | Email |
-| **🐛 Bug Reports** | <48 hours | GitHub Issues |
-| **💡 Feature Requests** | <1 week | GitHub Issues |
-| **❓ General Questions** | <72 hours | Email |
+| Type                     | Response Time | Channel       |
+| ------------------------ | ------------- | ------------- |
+| **🚨 Critical Issues**   | <24 hours     | Email         |
+| **🐛 Bug Reports**       | <48 hours     | GitHub Issues |
+| **💡 Feature Requests**  | <1 week       | GitHub Issues |
+| **❓ General Questions** | <72 hours     | Email         |
 
 ---
 

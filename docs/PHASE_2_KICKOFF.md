@@ -132,8 +132,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
 # AI Services
-OPENAI_API_KEY=your_openai_key
-ANTHROPIC_API_KEY=your_claude_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
+HUGGINGFACE_API_KEY=your_huggingface_token
 
 # OAuth
 GOOGLE_CLIENT_ID=your_google_client_id
