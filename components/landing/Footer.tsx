@@ -1,112 +1,136 @@
 'use client';
 
-import { FaRocket, FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
+import { FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/minimal-context';
+import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   const { t } = useLanguage();
   return (
-    <footer className="bg-gray-900 text-gray-300 py-12 px-6">
+    <footer className="bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 py-12 px-6 transition-colors duration-300">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <FaRocket className="text-2xl text-purple-400" />
-              <span className="text-xl font-bold text-white">MADFAM.AI</span>
+              <Image 
+                src="/prisma-logo.png" 
+                alt="PRISMA Logo" 
+                width={24} 
+                height={24} 
+                className="w-6 h-6" 
+              />
+              <div className="flex flex-col">
+                <span className="text-lg font-bold text-gray-900 dark:text-white leading-tight">PRISMA</span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">by MADFAM</span>
+              </div>
             </div>
-            <p className="text-sm">{t.footerTagline}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">{t.footerTagline}</p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">{t.footerProduct}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerProduct}</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#features" className="hover:text-white transition">
+                <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerFeatures}
                 </a>
               </li>
               <li>
-                <a href="#templates" className="hover:text-white transition">
+                <a href="#templates" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerTemplates}
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="hover:text-white transition">
+                <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerPricing}
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/api" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerApi}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">{t.footerCompany}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerCompany}</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerAbout}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/blog" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerBlog}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/careers" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerCareers}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerContact}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">{t.footerLegal}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerLegal}</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerPrivacy}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerTerms}
-                </a>
+                </Link>
               </li>
               <li>
-                <a href="#" className="hover:text-white transition">
+                <Link href="/gdpr" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
                   {t.footerGdpr}
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm mb-4 md:mb-0">
+        <div className="border-t border-gray-300 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+          <p className="text-sm mb-4 md:mb-0 text-gray-600 dark:text-gray-300">
             {t.footerCopyright}
           </p>
           <div className="flex justify-center md:justify-end space-x-6">
-            <a href="#" className="hover:text-white transition">
+            <a 
+              href="https://twitter.com/madfam_io" 
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow MADFAM on Twitter"
+            >
               <FaTwitter className="text-xl" />
             </a>
-            <a href="#" className="hover:text-white transition">
+            <a 
+              href="https://linkedin.com/company/madfam" 
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Follow MADFAM on LinkedIn"
+            >
               <FaLinkedinIn className="text-xl" />
             </a>
             <a
               href="https://github.com/madfam-io/"
-              className="hover:text-white transition"
+              className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
               target="_blank"
               rel="noopener noreferrer"
+              aria-label="View MADFAM on GitHub"
             >
               <FaGithub className="text-xl" />
             </a>
