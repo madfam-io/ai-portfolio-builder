@@ -1,6 +1,13 @@
 'use client';
 
-import { FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import {
+  FaMoon,
+  FaSun,
+  FaBars,
+  FaTimes,
+  FaUser,
+  FaSignOutAlt,
+} from 'react-icons/fa';
 import Image from 'next/image';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { useApp } from '@/lib/contexts/AppContext';
@@ -11,7 +18,14 @@ import { useState } from 'react';
 
 export default function Header() {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
-  const { isDarkMode, currency, toggleDarkMode, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useApp();
+  const {
+    isDarkMode,
+    currency,
+    toggleDarkMode,
+    setCurrency,
+    isMobileMenuOpen,
+    setMobileMenuOpen,
+  } = useApp();
   const { user, loading, signOut } = useAuth();
   const pathname = usePathname();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -33,10 +47,10 @@ export default function Header() {
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
           <Link href="/" className="flex items-center space-x-3">
-            <Image 
-              src="/prisma-logo.png" 
-              alt="PRISMA Logo" 
-              width={32} 
+            <Image
+              src="/prisma-logo.png"
+              alt="PRISMA Logo"
+              width={32}
               height={32}
               className="w-8 h-8"
             />
@@ -84,6 +98,12 @@ export default function Header() {
                 >
                   About
                 </Link>
+                <Link
+                  href="/portfolio-editor-demo"
+                  className="text-purple-600 dark:text-purple-400 hover:text-purple-700 transition font-medium"
+                >
+                  Editor Demo
+                </Link>
               </>
             ) : (
               // Other pages - show navigation links
@@ -123,7 +143,7 @@ export default function Header() {
 
             <button
               className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition flex items-center space-x-1 cursor-pointer"
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Currency toggle clicked!', {
@@ -133,10 +153,10 @@ export default function Header() {
               }}
               title={`${t.switchCurrency} (${t.current}: ${currency})`}
             >
-              <span className="text-sm font-bold">{currencySymbols[currency]}</span>
-              <span className="text-sm font-medium">
-                {currency}
+              <span className="text-sm font-bold">
+                {currencySymbols[currency]}
               </span>
+              <span className="text-sm font-medium">{currency}</span>
             </button>
 
             <button
@@ -160,7 +180,7 @@ export default function Header() {
 
             <button
               className="text-gray-600 dark:text-gray-300 hover:text-purple-600 p-2 transition cursor-pointer"
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Dark mode toggle clicked!', {
@@ -170,7 +190,11 @@ export default function Header() {
               }}
               title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
             >
-              {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-600 dark:text-gray-300" />}
+              {isDarkMode ? (
+                <FaSun className="text-yellow-500" />
+              ) : (
+                <FaMoon className="text-gray-600 dark:text-gray-300" />
+              )}
             </button>
 
             {/* Auth Section */}
@@ -184,10 +208,12 @@ export default function Header() {
                 >
                   <FaUser className="text-lg" />
                   <span className="text-sm font-medium">
-                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    {user.user_metadata?.full_name ||
+                      user.email?.split('@')[0] ||
+                      'User'}
                   </span>
                 </button>
-                
+
                 {userMenuOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
                     <Link
@@ -246,7 +272,7 @@ export default function Header() {
           <div className="md:hidden">
             <button
               className="text-gray-600 dark:text-gray-300 p-2 cursor-pointer"
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log('Mobile menu toggle clicked!', {
@@ -256,7 +282,11 @@ export default function Header() {
               }}
               title={`${isMobileMenuOpen ? 'Close' : 'Open'} mobile menu`}
             >
-              {isMobileMenuOpen ? <FaTimes className="text-xl" /> : <FaBars className="text-xl" />}
+              {isMobileMenuOpen ? (
+                <FaTimes className="text-xl" />
+              ) : (
+                <FaBars className="text-xl" />
+              )}
             </button>
           </div>
         </div>
@@ -361,23 +391,23 @@ export default function Header() {
             {/* Currency toggle for mobile */}
             <button
               className="text-gray-900 dark:text-white hover:text-purple-600 transition flex items-center space-x-2 py-2"
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 setCurrency();
               }}
               title={`Switch currency (current: ${currency})`}
             >
-              <span className="text-sm font-bold">{currencySymbols[currency]}</span>
-              <span className="text-sm font-medium">
-                Currency: {currency}
+              <span className="text-sm font-bold">
+                {currencySymbols[currency]}
               </span>
+              <span className="text-sm font-medium">Currency: {currency}</span>
             </button>
 
             {/* Dark mode toggle for mobile */}
             <button
               className="text-gray-900 dark:text-white hover:text-purple-600 transition flex items-center space-x-2 py-2"
-              onClick={(e) => {
+              onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
                 toggleDarkMode();
@@ -396,7 +426,11 @@ export default function Header() {
             ) : user ? (
               <div className="space-y-3">
                 <div className="text-gray-900 dark:text-white font-medium border-t pt-3">
-                  {t.hello}, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
+                  {t.hello},{' '}
+                  {user.user_metadata?.full_name ||
+                    user.email?.split('@')[0] ||
+                    'User'}
+                  !
                 </div>
                 <Link
                   href="/dashboard"
