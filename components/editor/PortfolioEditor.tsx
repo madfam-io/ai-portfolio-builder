@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Portfolio, Skill } from '@/types/portfolio';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { PortfolioPreview } from './PortfolioPreview';
@@ -36,10 +36,10 @@ export function PortfolioEditor({
     }, 3000);
 
     return () => clearTimeout(timeoutId);
-  }, [editedPortfolio, autoSave]);
+  }, [editedPortfolio, autoSave, handleSave]);
 
   // Validation
-  const validatePortfolio = (): boolean => {
+  const validatePortfolio = useCallback((): boolean => {
     const newErrors: Record<string, string> = {};
 
     if (!editedPortfolio.name) {
@@ -61,7 +61,7 @@ export function PortfolioEditor({
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
+  }, [editedPortfolio]);
 
   const isValidUrl = (url: string): boolean => {
     try {
@@ -73,7 +73,7 @@ export function PortfolioEditor({
   };
 
   // Save functionality
-  const handleSave = async () => {
+  const handleSave = useCallback(async () => {
     if (!validatePortfolio()) return;
 
     setIsSaving(true);
@@ -84,7 +84,7 @@ export function PortfolioEditor({
       setIsSaving(false);
       console.error('Failed to save portfolio:', error);
     }
-  };
+  }, [editedPortfolio, onSave, validatePortfolio]);
 
   // Update functions
   const updateBasicInfo = (field: keyof Portfolio, value: any) => {

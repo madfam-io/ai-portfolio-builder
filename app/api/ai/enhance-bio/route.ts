@@ -37,8 +37,6 @@ const enhanceBioSchema = z.object({
   }),
 });
 
-type EnhanceBioRequest = z.infer<typeof enhanceBioSchema>;
-
 export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate user
