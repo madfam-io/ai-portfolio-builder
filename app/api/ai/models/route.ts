@@ -3,8 +3,7 @@
  * Manages available AI models and user preferences
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { NextResponse } from 'next/server';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 
 /**

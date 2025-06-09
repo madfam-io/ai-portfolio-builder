@@ -342,13 +342,24 @@ describe('PortfolioPreview', () => {
 
   describe('Responsive Design', () => {
     it('should render mobile layout on small screens', () => {
-      // Mock window.matchMedia for mobile
-      window.matchMedia = jest.fn().mockImplementation(query => ({
-        matches: query === '(max-width: 768px)',
-        media: query,
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-      }));
+      // Mock window.innerWidth for mobile
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 600, // Mobile width
+      });
+
+      // Mock window.addEventListener
+      const mockAddEventListener = jest.fn();
+      const mockRemoveEventListener = jest.fn();
+      Object.defineProperty(window, 'addEventListener', {
+        writable: true,
+        value: mockAddEventListener,
+      });
+      Object.defineProperty(window, 'removeEventListener', {
+        writable: true,
+        value: mockRemoveEventListener,
+      });
 
       render(<PortfolioPreview portfolio={mockPortfolio} />);
 
@@ -357,12 +368,12 @@ describe('PortfolioPreview', () => {
     });
 
     it('should stack sections vertically on mobile', () => {
-      window.matchMedia = jest.fn().mockImplementation(query => ({
-        matches: query === '(max-width: 768px)',
-        media: query,
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-      }));
+      // Mock window.innerWidth for mobile
+      Object.defineProperty(window, 'innerWidth', {
+        writable: true,
+        configurable: true,
+        value: 600, // Mobile width
+      });
 
       render(<PortfolioPreview portfolio={mockPortfolio} />);
 

@@ -125,6 +125,14 @@ export default function Header() {
                   Editor
                 </Link>
                 <Link
+                  href="/analytics"
+                  className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
+                    pathname === '/analytics' ? 'text-purple-600' : ''
+                  }`}
+                >
+                  Analytics
+                </Link>
+                <Link
                   href="/about"
                   className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
                     pathname === '/about' ? 'text-purple-600' : ''

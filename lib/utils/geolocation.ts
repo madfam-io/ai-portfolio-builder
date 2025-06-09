@@ -131,7 +131,11 @@ async function detectCountryFromIP(): Promise<string | null> {
       }
     }
   } catch (error) {
-    console.debug('IP geolocation detection failed:', error);
+    // IP geolocation failed - this is expected in many environments
+    // Only log in development to avoid console noise
+    if (process.env.NODE_ENV === 'development') {
+      console.debug('IP geolocation detection failed:', error);
+    }
   }
   
   return null;
@@ -182,7 +186,7 @@ function detectCountryFromTimezone(): string | null {
     
     return timezoneCountryMap[timezone] || null;
   } catch (error) {
-    console.debug('Timezone detection failed:', error);
+    // Timezone detection failed - this is expected in some environments
     return null;
   }
 }
@@ -213,7 +217,7 @@ function detectLanguageFromBrowser(): 'es' | 'en' | null {
     
     return null;
   } catch (error) {
-    console.debug('Browser language detection failed:', error);
+    // Browser language detection failed - this is expected in some environments
     return null;
   }
 }
@@ -281,7 +285,7 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
       };
     }
   } catch (error) {
-    console.debug('IP detection failed, trying timezone detection');
+    // IP detection failed, trying timezone detection
   }
   
   // Method 2: Fallback to timezone detection

@@ -24,10 +24,8 @@
 import React from 'react';
 import { Portfolio } from '@/types/portfolio';
 import {
-  FiLinkedin,
   FiMail,
   FiPhone,
-  FiMapPin,
   FiTrendingUp,
   FiTarget,
   FiUsers,

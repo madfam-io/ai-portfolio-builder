@@ -27,13 +27,12 @@ import { Portfolio } from '@/types/portfolio';
 import {
   FiInstagram,
   FiDribbble,
-  FiBehance,
-  FiMail,
   FiExternalLink,
   FiEye,
   FiHeart,
   FiAward,
 } from 'react-icons/fi';
+import { FaBehance } from 'react-icons/fa';
 
 /**
  * Props interface for the Designer Template component
@@ -342,7 +341,7 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-4 bg-white/10 rounded-full hover:bg-white/20 transition-all transform hover:scale-110"
               >
-                <FiBehance className="w-6 h-6" />
+                <FaBehance className="w-6 h-6" />
               </a>
             )}
           </div>

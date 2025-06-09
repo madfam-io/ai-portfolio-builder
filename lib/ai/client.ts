@@ -349,11 +349,11 @@ export const AIUtils = {
     experience: any[]
   ): 'entry' | 'mid' | 'senior' | 'lead' {
     const totalYears = experience.reduce((total, exp) => {
-      const startYear = new Date(exp.startDate).getFullYear();
-      const endYear = exp.current
-        ? new Date().getFullYear()
-        : new Date(exp.endDate).getFullYear();
-      return total + (endYear - startYear);
+      return total + this.calculateYearsExperience(
+        exp.startDate,
+        exp.endDate,
+        exp.current
+      );
     }, 0);
 
     if (totalYears >= 8) return 'lead';

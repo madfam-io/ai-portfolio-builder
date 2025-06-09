@@ -412,20 +412,30 @@ const translations = {
     selectModelFor: 'Seleccionar modelo para',
     recommended: 'Recomendado',
     close: 'Cerrar',
-    saving: 'Guardando...',
     // Error messages
     aiEnhancementRequiresAuth:
       'Debes iniciar sesión para usar la mejora con IA',
     aiQuotaExceeded: 'Has alcanzado el límite de mejoras con IA',
     aiEnhancementFailed: 'Error al mejorar con IA, intenta de nuevo',
-    // Editor sections
-    portfolioEditor: 'Editor de Portafolio',
-    basicInfo: 'Información Básica',
-    preview: 'Vista Previa',
-    customize: 'Personalizar',
-    template: 'Plantilla',
-    addExperience: 'Agregar Experiencia',
-    addProject: 'Agregar Proyecto',
+
+    // Analytics
+    analytics: 'Analíticas',
+    analyticsDashboard: 'Panel de Analíticas',
+    githubAnalytics: 'Analíticas de GitHub',
+    connectGitHub: 'Conectar GitHub',
+    repositories: 'Repositorios',
+    commits: 'Commits',
+    pullRequests: 'Pull Requests',
+    contributors: 'Contribuidores',
+    linesOfCode: 'Líneas de Código',
+    codeMetrics: 'Métricas de Código',
+    syncRepositories: 'Sincronizar Repositorios',
+    repositoryAnalytics: 'Analíticas del Repositorio',
+    topContributors: 'Top Contribuidores',
+    mostActiveRepository: 'Repositorio Más Activo',
+    commitsOverTime: 'Commits en el Tiempo',
+    pullRequestTrends: 'Tendencias de Pull Requests',
+    githubIntegrationRequired: 'Integración con GitHub requerida',
 
     // Template descriptions
     developerTemplateDesc:
@@ -768,19 +778,29 @@ const translations = {
     selectModelFor: 'Select model for',
     recommended: 'Recommended',
     close: 'Close',
-    saving: 'Saving...',
     // Error messages
     aiEnhancementRequiresAuth: 'You must sign in to use AI enhancement',
     aiQuotaExceeded: 'You have reached your AI enhancement limit',
     aiEnhancementFailed: 'AI enhancement failed, please try again',
-    // Editor sections
-    portfolioEditor: 'Portfolio Editor',
-    basicInfo: 'Basic Information',
-    preview: 'Preview',
-    customize: 'Customize',
-    template: 'Template',
-    addExperience: 'Add Experience',
-    addProject: 'Add Project',
+
+    // Analytics
+    analytics: 'Analytics',
+    analyticsDashboard: 'Analytics Dashboard',
+    githubAnalytics: 'GitHub Analytics',
+    connectGitHub: 'Connect GitHub',
+    repositories: 'Repositories',
+    commits: 'Commits',
+    pullRequests: 'Pull Requests',
+    contributors: 'Contributors',
+    linesOfCode: 'Lines of Code',
+    codeMetrics: 'Code Metrics',
+    syncRepositories: 'Sync Repositories',
+    repositoryAnalytics: 'Repository Analytics',
+    topContributors: 'Top Contributors',
+    mostActiveRepository: 'Most Active Repository',
+    commitsOverTime: 'Commits Over Time',
+    pullRequestTrends: 'Pull Request Trends',
+    githubIntegrationRequired: 'GitHub integration required',
 
     // Template descriptions
     developerTemplateDesc:
@@ -929,7 +949,7 @@ export const LanguageProvider = ({
             const detection = await detectUserLanguage();
             setDetectedCountry(detection);
           } catch (error) {
-            console.debug('Geolocation detection failed for UI:', error);
+            // Geolocation detection failed for UI - this is expected
             // Use sync detection as fallback
             const syncDetection = detectUserLanguageSync();
             setDetectedCountry(syncDetection);
@@ -946,11 +966,9 @@ export const LanguageProvider = ({
         setLanguageState(detection.language);
         localStorage.setItem('language', detection.language);
 
-        console.debug(
-          `Language auto-detected: ${detection.language} (${detection.method}, confident: ${detection.confident})`
-        );
+        // Language auto-detected successfully
       } catch (error) {
-        console.debug('Language detection failed, using fallback:', error);
+        // Language detection failed, using fallback
 
         // Fallback to sync detection
         const syncDetection = detectUserLanguageSync();
@@ -975,7 +993,7 @@ export const LanguageProvider = ({
     setLanguageState(lang);
     localStorage.setItem('language', lang);
 
-    console.debug(`Language manually changed to: ${lang}`);
+    // Language manually changed
   };
 
   // Generate available languages with appropriate flags

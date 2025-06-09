@@ -68,7 +68,7 @@ function EditorContent() {
       );
       if (saved) {
         setPortfolio(saved);
-        console.log('Portfolio saved successfully');
+        // Portfolio saved successfully
       }
     } catch (error) {
       console.error('Failed to save portfolio:', error);
@@ -84,7 +84,7 @@ function EditorContent() {
       const published = await portfolioService.publishPortfolio(portfolio.id);
       if (published) {
         setPortfolio(published);
-        console.log('Portfolio published successfully');
+        // Portfolio published successfully
       }
     } catch (error) {
       console.error('Failed to publish portfolio:', error);

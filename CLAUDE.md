@@ -26,6 +26,7 @@ This document provides essential context for AI assistants working on the PRISMA
 - **Docker Development Environment**: Complete containerized setup with PostgreSQL, Redis, and pgAdmin
 - **Component Architecture**: Modular, reusable components with TypeScript and comprehensive testing
 - **Updated Testing Suite**: Jest unit tests, React Testing Library, and Playwright E2E tests updated for PRISMA
+- **GitHub Analytics Feature (Phase 1 MVP)**: Enterprise-grade repository analytics with OAuth integration, dashboard visualizations, and comprehensive metrics
 
 ## 📋 Key Development Commands
 
@@ -453,11 +454,11 @@ SUPABASE_SERVICE_ROLE_KEY=
 HUGGINGFACE_API_KEY=
 # Note: Unified HuggingFace connection for all AI models with user selection
 
-# OAuth (Social Login)
+# OAuth (Social Login & GitHub Analytics)
 LINKEDIN_CLIENT_ID=
 LINKEDIN_CLIENT_SECRET=
-GITHUB_CLIENT_ID=
-GITHUB_CLIENT_SECRET=
+GITHUB_CLIENT_ID=        # Required for GitHub Analytics feature
+GITHUB_CLIENT_SECRET=    # Required for GitHub Analytics feature
 
 # Stripe (Payments)
 STRIPE_SECRET_KEY=
@@ -473,6 +474,26 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 ### Docker Environment
 
 The Docker setup includes PostgreSQL and Redis containers, so external services are only needed for production features.
+
+### GitHub Analytics Setup
+
+To enable the GitHub Analytics feature:
+
+1. **Create GitHub OAuth App**:
+   - Go to GitHub → Settings → Developer settings → OAuth Apps
+   - Create new app with callback URL: `{NEXT_PUBLIC_APP_URL}/api/integrations/github/callback`
+   - Copy Client ID and Secret to environment variables
+
+2. **Apply Database Migration**:
+   ```bash
+   # The migration is automatically applied with Docker setup
+   # For manual setup: supabase db push
+   ```
+
+3. **Access Analytics**:
+   - Navigate to `/analytics` in the application
+   - Click "Connect GitHub" to authorize
+   - Sync repositories and view analytics dashboard
 
 ## 📈 Performance Budgets
 

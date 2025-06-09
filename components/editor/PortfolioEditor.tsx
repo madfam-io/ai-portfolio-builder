@@ -38,10 +38,9 @@ import {
   FiTrash2,
   FiSettings,
   FiCode,
-  FiPalette,
   FiBriefcase,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import { FaPalette } from 'react-icons/fa';
 
 /**
  * Props interface for the PortfolioEditor component
@@ -301,7 +300,7 @@ export function PortfolioEditor({
       position: exp.position,
       yearsExperience: calculateYearsExperience(
         exp.startDate,
-        exp.endDate,
+        exp.endDate || null,
         exp.current
       ),
     })),
@@ -718,7 +717,7 @@ export function PortfolioEditor({
                         >
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 rounded-lg flex items-center justify-center">
-                              <FiPalette className="w-5 h-5 text-pink-600" />
+                              <FaPalette className="w-5 h-5 text-pink-600" />
                             </div>
                             <div>
                               <h3 className="font-medium text-gray-900 dark:text-white">

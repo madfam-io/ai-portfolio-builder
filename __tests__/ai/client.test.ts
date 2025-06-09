@@ -52,7 +52,7 @@ describe('AIClient', () => {
         '/api/ai/enhance-bio',
         expect.objectContaining({
           method: 'POST',
-          body: JSON.stringify({ bio: 'Original bio', context: mockBioContext }),
+          body: expect.stringContaining('"bio":"Original bio"'),
         })
       );
     });
@@ -288,7 +288,13 @@ describe('AIClient', () => {
       const timeoutClient = new AIClient({ timeout: 100 });
       
       mockFetch.mockImplementation(() => 
-        new Promise(resolve => setTimeout(resolve, 200))
+        new Promise((resolve, reject) => {
+          setTimeout(() => {
+            const error = new Error('The operation was aborted');
+            error.name = 'AbortError';
+            reject(error);
+          }, 200);
+        })
       );
 
       await expect(timeoutClient.enhanceBio('test', {

@@ -72,6 +72,7 @@ export interface Project {
   description: string;
   imageUrl?: string;
   projectUrl?: string;
+  liveUrl?: string;
   githubUrl?: string;
   technologies: string[];
   highlights: string[];

@@ -28,7 +28,6 @@ import {
   FiLinkedin,
   FiTwitter,
   FiMail,
-  FiMapPin,
   FiExternalLink,
   FiCode,
   FiDownload,
@@ -180,7 +179,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                   key={project.id}
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all group"
                 >
-                  {project.image && (
+                  {project.imageUrl && (
                     <div className="h-48 bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
                       <FiCode className="w-12 h-12 text-white" />
                     </div>
