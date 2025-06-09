@@ -1,17 +1,19 @@
 {
-  "name": "madfam-ai-portfolio-builder",
-  "version": "0.1.0",
+  "name": "prisma-portfolio-builder",
+  "version": "1.0.0",
   "private": true,
-  "description": "AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes",
+  "description": "PRISMA by MADFAM - AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes",
   "author": "MADFAM Team",
   "license": "UNLICENSED",
   "keywords": [
+    "prisma",
     "portfolio",
     "ai",
     "nextjs",
     "saas",
     "cv",
-    "resume"
+    "resume",
+    "madfam"
   ],
   "repository": {
     "type": "git",

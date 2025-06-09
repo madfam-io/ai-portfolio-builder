@@ -1,6 +1,6 @@
 # CLAUDE.md - AI Development Context
 
-This document provides essential context for AI assistants working on the MADFAM AI Portfolio Builder project.
+This document provides essential context for AI assistants working on the PRISMA by MADFAM AI Portfolio Builder project.
 
 ## 🎯 Project Overview
 

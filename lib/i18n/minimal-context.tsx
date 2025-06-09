@@ -121,7 +121,7 @@ const translations = {
     joinProfessionals: 'Únete a 10,000+ profesionales',
     rating: 'calificación 4.9/5',
     trustedBy: 'Utilizado por profesionales de',
-    footerTagline: 'Constructor de portafolios impulsado por IA para profesionales modernos',
+    footerTagline: 'PRISMA - Constructor de portafolios impulsado por IA para profesionales modernos',
     
     // Pricing section
     powerfulFeatures: 'Características Poderosas',
@@ -169,7 +169,7 @@ const translations = {
     footerPrivacy: 'Privacidad',
     footerTerms: 'Términos',
     footerGdpr: 'GDPR',
-    footerCopyright: '© 2025 MADFAM. Todos los derechos reservados.',
+    footerCopyright: '© 2025 PRISMA by MADFAM. Todos los derechos reservados.',
     
     // Hero section
     poweredByAi: 'Impulsado por GPT-4 & Claude AI',
@@ -207,11 +207,11 @@ const translations = {
     createPortfolio: 'Crear Portafolio',
     
     // About Page
-    aboutTitle: 'Acerca de MADFAM.AI',
+    aboutTitle: 'Acerca de PRISMA',
     aboutSubtitle: 'Estamos en una misión de democratizar la creación de portafolios profesionales usando el poder de la inteligencia artificial.',
     ourMission: 'Nuestra Misión',
     missionText1: 'Todo profesional merece un portafolio impresionante que muestre sus habilidades y logros. La creación tradicional de portafolios consume tiempo, es costosa y a menudo requiere experiencia en diseño que no todos tienen. Creemos que la IA puede cambiar eso.',
-    missionText2: 'MADFAM.AI transforma tu información profesional existente en hermosos portafolios personalizados en menos de 30 minutos. Ya seas desarrollador, diseñador, consultor o profesional creativo, facilitamos presentar tu mejor trabajo al mundo.',
+    missionText2: 'PRISMA transforma tu información profesional existente en hermosos portafolios personalizados en menos de 30 minutos. Ya seas desarrollador, diseñador, consultor o profesional creativo, facilitamos presentar tu mejor trabajo al mundo.',
     trustedWorldwide: 'Confianza de Profesionales a Nivel Mundial',
     portfoliosCreated: 'Portafolios Creados',
     companiesHiring: 'Empresas Contratando',
@@ -376,7 +376,7 @@ const translations = {
     joinProfessionals: 'Join 10,000+ professionals',
     rating: '4.9/5 rating',
     trustedBy: 'Trusted by professionals from',
-    footerTagline: 'AI-powered portfolio builder for modern professionals',
+    footerTagline: 'PRISMA - AI-powered portfolio builder for modern professionals',
     
     // Pricing section
     powerfulFeatures: 'Powerful Features',
@@ -424,7 +424,7 @@ const translations = {
     footerPrivacy: 'Privacy',
     footerTerms: 'Terms',
     footerGdpr: 'GDPR',
-    footerCopyright: '© 2025 MADFAM. All rights reserved.',
+    footerCopyright: '© 2025 PRISMA by MADFAM. All rights reserved.',
     
     // Hero section
     poweredByAi: 'Powered by GPT-4 & Claude AI',
@@ -462,11 +462,11 @@ const translations = {
     createPortfolio: 'Create Portfolio',
     
     // About Page
-    aboutTitle: 'About MADFAM.AI',
+    aboutTitle: 'About PRISMA',
     aboutSubtitle: 'We\'re on a mission to democratize professional portfolio creation using the power of artificial intelligence.',
     ourMission: 'Our Mission',
     missionText1: 'Every professional deserves a stunning portfolio that showcases their skills and achievements. Traditional portfolio creation is time-consuming, expensive, and often requires design expertise that not everyone has. We believe AI can change that.',
-    missionText2: 'MADFAM.AI transforms your existing professional information into beautiful, personalized portfolios in under 30 minutes. Whether you\'re a developer, designer, consultant, or creative professional, we make it easy to present your best work to the world.',
+    missionText2: 'PRISMA transforms your existing professional information into beautiful, personalized portfolios in under 30 minutes. Whether you\'re a developer, designer, consultant, or creative professional, we make it easy to present your best work to the world.',
     trustedWorldwide: 'Trusted by Professionals Worldwide',
     portfoliosCreated: 'Portfolios Created',
     companiesHiring: 'Companies Hiring',

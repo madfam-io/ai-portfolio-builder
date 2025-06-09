@@ -1,6 +1,7 @@
 'use client';
 
-import { FaRocket, FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import Image from 'next/image';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { useApp } from '@/lib/contexts/AppContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
@@ -31,11 +32,22 @@ export default function Header() {
     <header className="bg-white dark:bg-gray-800 shadow-sm fixed w-full top-0 z-50 transition-colors duration-300">
       <nav className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <Link href="/" className="flex items-center space-x-2">
-            <FaRocket className="text-2xl text-purple-600" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">
-              MADFAM<span className="text-purple-600">.</span>AI
-            </span>
+          <Link href="/" className="flex items-center space-x-3">
+            <Image 
+              src="/prisma-logo.png" 
+              alt="PRISMA Logo" 
+              width={32} 
+              height={32}
+              className="w-8 h-8"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+                PRISMA
+              </span>
+              <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
+                by MADFAM
+              </span>
+            </div>
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">

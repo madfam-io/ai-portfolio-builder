@@ -18,10 +18,16 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'MADFAM AI Portfolio Builder',
-  description: 'Transform your CV into a beautiful portfolio website using AI.',
+  title: 'PRISMA by MADFAM - AI Portfolio Builder',
+  description: 'Transform your CV into a stunning portfolio website using AI. Create professional portfolios in under 30 minutes.',
   icons: {
     icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
+  openGraph: {
+    title: 'PRISMA by MADFAM - AI Portfolio Builder',
+    description: 'Transform your CV into a stunning portfolio website using AI',
+    images: ['/prisma-logo.png'],
   },
 };
 

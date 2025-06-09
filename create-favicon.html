@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PRISMA Favicon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        button { padding: 10px 20px; margin: 5px; background: #6366f1; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>PRISMA Favicon Generator</h1>
+    <p>This will generate favicon files from the PRISMA logo</p>
+    
+    <input type="file" id="imageInput" accept=".png,.jpg,.jpeg" />
+    <br><br>
+    
+    <div id="canvases"></div>
+    
+    <script>
+        const sizes = [
+            { name: 'favicon-16x16.png', size: 16 },
+            { name: 'favicon-32x32.png', size: 32 },
+            { name: 'apple-touch-icon.png', size: 180 },
+            { name: 'android-chrome-192x192.png', size: 192 },
+            { name: 'android-chrome-512x512.png', size: 512 }
+        ];
+        
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    generateFavicons(img);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        function generateFavicons(img) {
+            const container = document.getElementById('canvases');
+            container.innerHTML = '';
+            
+            sizes.forEach(({name, size}) => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                
+                const ctx = canvas.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                // Draw image scaled to canvas size
+                ctx.drawImage(img, 0, 0, size, size);
+                
+                // Create download link
+                const div = document.createElement('div');
+                div.style.display = 'inline-block';
+                div.style.margin = '10px';
+                div.style.textAlign = 'center';
+                
+                const label = document.createElement('div');
+                label.textContent = name + ' (' + size + 'x' + size + ')';
+                label.style.fontSize = '12px';
+                label.style.marginBottom = '5px';
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.textContent = 'Download';
+                downloadBtn.onclick = function() {
+                    const link = document.createElement('a');
+                    link.download = name;
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                };
+                
+                div.appendChild(label);
+                div.appendChild(canvas);
+                div.appendChild(document.createElement('br'));
+                div.appendChild(downloadBtn);
+                
+                container.appendChild(div);
+            });
+        }
+        
+        // Auto-load the PRISMA logo if available
+        window.addEventListener('load', function() {
+            const img = new Image();
+            img.onload = function() {
+                generateFavicons(img);
+            };
+            img.onerror = function() {
+                console.log('Could not load PRISMA logo automatically');
+            };
+            img.src = '/prisma-logo.png';
+        });
+    </script>
+</body>
+</html>
