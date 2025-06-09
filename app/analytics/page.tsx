@@ -25,9 +25,6 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
 } from 'recharts';
 import {
   FiGithub,
@@ -36,13 +33,11 @@ import {
   FiUsers,
   FiCode,
   FiRefreshCw,
-  FiSettings,
   FiTrendingUp,
-  FiCalendar,
   FiExternalLink,
   FiAlertCircle,
 } from 'react-icons/fi';
-import type { AnalyticsDashboardData, Repository } from '@/types/analytics';
+import type { AnalyticsDashboardData } from '@/types/analytics';
 
 // Dashboard state type
 interface DashboardState {
@@ -70,7 +65,7 @@ export default function AnalyticsPage() {
     syncing: false,
   });
 
-  const [selectedRepo, setSelectedRepo] = useState<string>('all');
+  // const [selectedRepo, setSelectedRepo] = useState<string>('all');
 
   // Check for OAuth callback messages
   useEffect(() => {
@@ -96,7 +91,7 @@ export default function AnalyticsPage() {
     if (!searchParams.get('connected') && !searchParams.get('error')) {
       fetchDashboardData();
     }
-  }, []);
+  }, [searchParams]);
 
   /**
    * Get user-friendly error message
@@ -219,7 +214,7 @@ export default function AnalyticsPage() {
     danger: '#ef4444',
   };
 
-  const pieColors = [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.warning, chartColors.danger];
+  // const pieColors = [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.warning, chartColors.danger];
 
   // Loading state
   if (dashboard.loading) {

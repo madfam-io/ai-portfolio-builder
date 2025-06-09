@@ -10,20 +10,17 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import {
   LineChart,
   Line,
-  BarChart,
-  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -57,7 +54,7 @@ interface RepoState {
  * Repository Analytics Detail Page
  */
 export default function RepositoryAnalyticsPage() {
-  const { t } = useLanguage();
+  // const { t } = useLanguage();
   const router = useRouter();
   const params = useParams();
   const repositoryId = params.id as string;
@@ -70,17 +67,10 @@ export default function RepositoryAnalyticsPage() {
     syncing: false,
   });
 
-  // Fetch repository analytics on mount
-  useEffect(() => {
-    if (repositoryId) {
-      fetchRepositoryAnalytics();
-    }
-  }, [repositoryId]);
-
   /**
    * Fetch repository analytics data
    */
-  const fetchRepositoryAnalytics = async () => {
+  const fetchRepositoryAnalytics = useCallback(async () => {
     try {
       setRepo(prev => ({ ...prev, loading: true, error: null }));
 
@@ -112,7 +102,14 @@ export default function RepositoryAnalyticsPage() {
         error: error.message,
       }));
     }
-  };
+  }, [repositoryId]);
+
+  // Fetch repository analytics on mount
+  useEffect(() => {
+    if (repositoryId) {
+      fetchRepositoryAnalytics();
+    }
+  }, [repositoryId, fetchRepositoryAnalytics]);
 
   /**
    * Sync repository data
@@ -425,7 +422,7 @@ export default function RepositoryAnalyticsPage() {
                     fill="#8884d8"
                     dataKey="percentage"
                   >
-                    {data.languages.map((entry, index) => (
+                    {data.languages.map((_, index) => (
                       <Cell 
                         key={`cell-${index}`} 
                         fill={[chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.warning, chartColors.danger][index % 5]} 
