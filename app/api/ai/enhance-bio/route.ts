@@ -41,6 +41,13 @@ export async function POST(request: NextRequest) {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
+    
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -137,6 +144,13 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
+    
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -187,6 +201,10 @@ async function logAIUsage(
 ) {
   try {
     const supabase = await createClient();
+    if (!supabase) {
+      console.error('Failed to create Supabase client for logging');
+      return;
+    }
 
     await supabase.from('ai_usage_logs').insert({
       user_id: userId,
