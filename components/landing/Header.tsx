@@ -1,15 +1,19 @@
 'use client';
 
-import { FaRocket, FaMoon, FaSun, FaBars, FaTimes } from 'react-icons/fa';
+import { FaRocket, FaMoon, FaSun, FaBars, FaTimes, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { useApp } from '@/lib/contexts/AppContext';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 export default function Header() {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
   const { isDarkMode, currency, toggleDarkMode, setCurrency, isMobileMenuOpen, setMobileMenuOpen } = useApp();
+  const { user, loading, signOut } = useAuth();
   const pathname = usePathname();
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
 
   const currentLang = availableLanguages.find(lang => lang.code === language);
   const otherLang = availableLanguages.find(lang => lang.code !== language);
@@ -157,20 +161,73 @@ export default function Header() {
               {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon className="text-gray-600 dark:text-gray-300" />}
             </button>
 
-            {isLandingPage ? (
-              <Link
-                href="/dashboard"
-                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
-              >
-                {t.getStarted}
-              </Link>
+            {/* Auth Section */}
+            {loading ? (
+              <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+            ) : user ? (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
+                >
+                  <FaUser className="text-lg" />
+                  <span className="text-sm font-medium">
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </button>
+                
+                {userMenuOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg py-1 z-50">
+                    <Link
+                      href="/dashboard"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Dashboard
+                    </Link>
+                    <Link
+                      href="/editor"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Editor
+                    </Link>
+                    <Link
+                      href="/profile"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      <FaUser className="inline mr-2" />
+                      Profile
+                    </Link>
+                    <button
+                      onClick={() => {
+                        signOut();
+                        setUserMenuOpen(false);
+                      }}
+                      className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    >
+                      <FaSignOutAlt className="inline mr-2" />
+                      {t.signOut}
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <Link
-                href="/dashboard"
-                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
-              >
-                Dashboard
-              </Link>
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/auth/signin"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
+                >
+                  {t.signIn}
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition"
+                >
+                  {t.getStarted}
+                </Link>
+              </div>
             )}
           </div>
 
@@ -321,20 +378,46 @@ export default function Header() {
               </span>
             </button>
 
-            {isLandingPage ? (
-              <Link
-                href="/dashboard"
-                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-center block"
-              >
-                {t.getStarted}
-              </Link>
+            {/* Mobile Auth Section */}
+            {loading ? (
+              <div className="w-full h-10 rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse"></div>
+            ) : user ? (
+              <div className="space-y-3">
+                <div className="text-gray-900 dark:text-white font-medium border-t pt-3">
+                  {t.hello}, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="block w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-center"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={() => {
+                    signOut();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-gray-900 dark:text-white hover:text-purple-600 transition text-center py-2"
+                >
+                  <FaSignOutAlt className="inline mr-2" />
+                  {t.signOut}
+                </button>
+              </div>
             ) : (
-              <Link
-                href="/dashboard"
-                className="w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-center block"
-              >
-                Dashboard
-              </Link>
+              <div className="space-y-3 border-t pt-3">
+                <Link
+                  href="/auth/signin"
+                  className="block w-full text-center text-gray-900 dark:text-white hover:text-purple-600 transition py-2"
+                >
+                  {t.signIn}
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="block w-full bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition text-center"
+                >
+                  {t.getStarted}
+                </Link>
+              </div>
             )}
           </div>
         </div>

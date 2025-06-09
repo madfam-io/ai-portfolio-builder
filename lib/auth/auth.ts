@@ -45,7 +45,7 @@ export interface SignInCredentials {
   password: string;
 }
 
-export type OAuthProvider = 'github' | 'linkedin_oidc';
+export type OAuthProvider = 'google' | 'github' | 'linkedin_oidc';
 
 // Validation helpers
 function isValidEmail(email: string): boolean {

@@ -1,29 +1,88 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';
-import { FaPlus, FaEdit, FaEye, FaTrash } from 'react-icons/fa';
+import { useRouter } from 'next/navigation';
+import { FaPlus, FaEdit, FaEye, FaTrash, FaSpinner } from 'react-icons/fa';
+
+// Mock portfolio type - will be replaced with real database schema
+interface Portfolio {
+  id: string;
+  name: string;
+  status: 'published' | 'draft';
+  lastModified: string;
+  views: number;
+  user_id: string;
+}
 
 export default function Dashboard() {
   const { t } = useLanguage();
+  const { user, loading: authLoading } = useAuth();
+  const router = useRouter();
+  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const portfolios = [
+  // Mock portfolios data - will be replaced with real API calls
+  const mockPortfolios: Portfolio[] = user ? [
     {
-      id: 1,
+      id: '1',
       name: t.portfolioName1,
-      status: t.statusPublished,
+      status: 'published',
       lastModified: `2 ${t.daysAgo}`,
       views: 234,
+      user_id: user.id,
     },
     {
-      id: 2,
+      id: '2',
       name: t.portfolioName2,
-      status: t.statusDraft,
+      status: 'draft',
       lastModified: t.weekAgo,
       views: 0,
+      user_id: user.id,
     },
-  ];
+  ] : [];
+
+  useEffect(() => {
+    // If user is not authenticated, redirect to sign in
+    if (!authLoading && !user) {
+      router.push('/auth/signin');
+      return;
+    }
+
+    // Load user's portfolios (mock data for now)
+    if (user) {
+      setLoading(true);
+      // Simulate API call
+      setTimeout(() => {
+        setPortfolios(mockPortfolios);
+        setLoading(false);
+      }, 1000);
+    }
+  }, [user, authLoading, router]);
+
+  // Show loading spinner while checking authentication or loading data
+  if (authLoading || loading) {
+    return (
+      <BaseLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <FaSpinner className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">
+              {t.loadingDashboard}
+            </p>
+          </div>
+        </div>
+      </BaseLayout>
+    );
+  }
+
+  // If not authenticated (shouldn't reach here due to redirect, but just in case)
+  if (!user) {
+    return null;
+  }
 
   return (
     <BaseLayout>
@@ -32,8 +91,11 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {t.myPortfolios}
+              {t.hello}, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
             </h1>
+            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mt-2">
+              {t.myPortfolios}
+            </h2>
             <p className="text-gray-600 dark:text-gray-400 mt-1">
               {t.managePortfolios}
             </p>
@@ -62,7 +124,7 @@ export default function Dashboard() {
               {t.published}
             </h3>
             <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-              {portfolios.filter(p => p.status === t.statusPublished).length}
+              {portfolios.filter(p => p.status === 'published').length}
             </p>
           </div>
           <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
@@ -94,7 +156,7 @@ export default function Dashboard() {
                       {portfolio.name}
                     </h3>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {portfolio.status} • {t.lastModified} {portfolio.lastModified} •{' '}
+                      {portfolio.status === 'published' ? t.statusPublished : t.statusDraft} • {t.lastModified} {portfolio.lastModified} •{' '}
                       {portfolio.views} {t.views}
                     </p>
                   </div>

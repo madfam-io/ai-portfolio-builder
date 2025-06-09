@@ -42,6 +42,7 @@ import Header from '@/components/landing/Header';
 import Footer from '@/components/landing/Footer';
 import BackToTopButton from '@/components/BackToTopButton';
 import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { AuthProvider } from '@/lib/contexts/AuthContext';
 
 /**
  * Props interface for BaseLayout component
@@ -76,21 +77,23 @@ export default function BaseLayout({
 }: BaseLayoutProps) {
   return (
     <LanguageProvider>
-      <div className={`min-h-screen bg-white dark:bg-gray-900 ${className}`}>
-        {/* Main navigation header with i18n and app controls */}
-        <Header />
-        
-        {/* Main content area - semantic HTML for accessibility */}
-        <main>
-          {children}
-        </main>
-        
-        {/* Consistent footer across all pages */}
-        <Footer />
-        
-        {/* Accessibility enhancement for long pages */}
-        <BackToTopButton />
-      </div>
+      <AuthProvider>
+        <div className={`min-h-screen bg-white dark:bg-gray-900 ${className}`}>
+          {/* Main navigation header with i18n and app controls */}
+          <Header />
+          
+          {/* Main content area - semantic HTML for accessibility */}
+          <main>
+            {children}
+          </main>
+          
+          {/* Consistent footer across all pages */}
+          <Footer />
+          
+          {/* Accessibility enhancement for long pages */}
+          <BackToTopButton />
+        </div>
+      </AuthProvider>
     </LanguageProvider>
   );
 }
