@@ -22,7 +22,7 @@ export default function HowItWorks() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
           <div className="text-center">
             <div className="w-20 h-20 bg-purple-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
               1
@@ -51,6 +51,16 @@ export default function HowItWorks() {
               {t.step3Title}
             </h3>
             <p className="text-gray-600 dark:text-gray-300">{t.step3Desc}</p>
+          </div>
+
+          <div className="text-center">
+            <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-6">
+              4
+            </div>
+            <h3 className="text-xl font-semibold mb-3 text-gray-900 dark:text-white">
+              {t.step4Title}
+            </h3>
+            <p className="text-gray-600 dark:text-gray-300">{t.step4Desc}</p>
           </div>
         </div>
 
