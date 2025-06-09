@@ -276,10 +276,38 @@ function getTemplateFeatures(template: string): string[] {
 }
 
 function getRecommendedCustomizations(template: string, profile: UserProfile) {
-  return {
+  const baseConfig = {
     primaryColor: profile.hasDesignWork ? '#6366f1' : '#1f2937',
     headerStyle: profile.experienceLevel === 'senior' || profile.experienceLevel === 'lead' ? 'professional' : 'minimal',
     sectionOrder: profile.projectCount > 3 ? ['about', 'projects', 'experience', 'skills'] : ['about', 'experience', 'skills', 'projects'],
+  };
+
+  // Template-specific customizations
+  const templateCustomizations = {
+    developer: {
+      primaryColor: '#1e40af',
+      sectionOrder: ['about', 'experience', 'projects', 'skills'],
+    },
+    designer: {
+      primaryColor: '#7c3aed',
+      sectionOrder: ['about', 'projects', 'experience', 'skills'],
+    },
+    consultant: {
+      primaryColor: '#059669',
+      headerStyle: 'professional',
+    },
+    creative: {
+      primaryColor: '#dc2626',
+    },
+    minimal: {
+      primaryColor: '#374151',
+      headerStyle: 'minimal',
+    },
+  };
+
+  return {
+    ...baseConfig,
+    ...templateCustomizations[template as keyof typeof templateCustomizations],
   };
 }
 
