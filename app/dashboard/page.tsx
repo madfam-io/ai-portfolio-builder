@@ -61,7 +61,7 @@ export default function Dashboard() {
         setLoading(false);
       }, 1000);
     }
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, mockPortfolios]);
 
   // Show loading spinner while checking authentication or loading data
   if (authLoading || loading) {

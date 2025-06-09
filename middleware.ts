@@ -2,17 +2,84 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Rate limiting storage (in production, use Redis or external storage)
+const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
+
 /**
- * Middleware for handling authentication and route protection
+ * Rate limiting function
+ * Implements sliding window rate limiting
+ */
+function checkRateLimit(identifier: string, maxRequests: number = 10, windowMs: number = 900000): boolean {
+  const now = Date.now();
+  const record = rateLimitStore.get(identifier);
+  
+  // Clean up expired entries periodically
+  if (Math.random() < 0.01) { // 1% chance to cleanup
+    for (const [key, value] of rateLimitStore.entries()) {
+      if (value.resetTime < now) {
+        rateLimitStore.delete(key);
+      }
+    }
+  }
+  
+  if (!record || record.resetTime < now) {
+    // Create new record or reset expired one
+    rateLimitStore.set(identifier, { count: 1, resetTime: now + windowMs });
+    return true;
+  }
+  
+  if (record.count >= maxRequests) {
+    return false; // Rate limit exceeded
+  }
+  
+  record.count++;
+  return true;
+}
+
+/**
+ * Middleware for handling authentication, route protection, and rate limiting
  * 
  * This middleware:
- * 1. Creates a Supabase client for server-side auth
- * 2. Refreshes the session if needed
- * 3. Protects dashboard and editor routes
- * 4. Redirects unauthenticated users to sign in
- * 5. Redirects authenticated users away from auth pages
+ * 1. Implements rate limiting for auth endpoints
+ * 2. Creates a Supabase client for server-side auth
+ * 3. Refreshes the session if needed
+ * 4. Protects dashboard and editor routes
+ * 5. Redirects unauthenticated users to sign in
+ * 6. Redirects authenticated users away from auth pages
  */
 export async function middleware(req: NextRequest) {
+  const { pathname } = req.nextUrl;
+  
+  // Apply rate limiting to authentication endpoints
+  const authEndpoints = ['/auth/signin', '/auth/signup', '/auth/reset-password'];
+  const isAuthEndpoint = authEndpoints.some(endpoint => pathname.startsWith(endpoint));
+  
+  if (isAuthEndpoint) {
+    // Use IP address for rate limiting (with forwarded IP support)
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 
+               req.headers.get('x-real-ip') || 
+               req.headers.get('cf-connecting-ip') || // Cloudflare
+               'unknown';
+    
+    const identifier = `auth:${ip}`;
+    
+    if (!checkRateLimit(identifier, 5, 900000)) { // 5 requests per 15 minutes for auth
+      console.warn(`Rate limit exceeded for IP: ${ip} on ${pathname}`);
+      return new NextResponse(
+        JSON.stringify({ 
+          error: 'Too many requests. Please try again later.',
+          retryAfter: '15 minutes'
+        }),
+        { 
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': '900', // 15 minutes
+          }
+        }
+      );
+    }
+  }
   // Create a response that we can modify
   let response = NextResponse.next({
     request: {
@@ -71,8 +138,6 @@ export async function middleware(req: NextRequest) {
   const {
     data: { session },
   } = await supabase.auth.getSession();
-
-  const { pathname } = req.nextUrl;
 
   // Protected routes that require authentication
   const protectedRoutes = ['/dashboard', '/editor', '/profile'];

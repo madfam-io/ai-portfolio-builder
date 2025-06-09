@@ -91,17 +91,13 @@ export default function SignUpPage() {
                 </svg>
               </div>
               <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-                {language === 'es' ? '¡Cuenta Creada!' : 'Account Created!'}
+                {t.accountCreated}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-                {language === 'es' 
-                  ? 'Hemos enviado un enlace de confirmación a tu correo electrónico.' 
-                  : 'We sent a confirmation link to your email address.'}
+                {t.confirmEmailSent}
               </p>
               <p className="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-                {language === 'es' 
-                  ? 'Por favor revisa tu bandeja de entrada y haz clic en el enlace para activar tu cuenta.' 
-                  : 'Please check your inbox and click the link to activate your account.'}
+                {t.checkInboxMessage}
               </p>
               <div className="mt-6">
                 <Link

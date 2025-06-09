@@ -54,7 +54,36 @@ function isValidEmail(email: string): boolean {
 }
 
 function isValidPassword(password: string): boolean {
-  return password.length >= 8;
+  // Minimum 12 characters for strong security
+  if (password.length < 12) return false;
+  
+  // Require at least one of each character type
+  const hasUppercase = /[A-Z]/.test(password);
+  const hasLowercase = /[a-z]/.test(password);
+  const hasNumbers = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  
+  // Check for common weak patterns
+  const commonPatterns = [
+    /123456/,
+    /password/i,
+    /qwerty/i,
+    /(.)\1{2,}/, // Repeated characters (3+ times)
+  ];
+  
+  const hasWeakPattern = commonPatterns.some(pattern => pattern.test(password));
+  
+  return hasUppercase && hasLowercase && hasNumbers && hasSpecialChar && !hasWeakPattern;
+}
+
+/**
+ * Get password strength rating
+ */
+export function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
+  if (password.length < 8) return 'weak';
+  if (password.length < 12) return 'medium';
+  if (!isValidPassword(password)) return 'medium';
+  return 'strong';
 }
 
 /**
@@ -71,7 +100,7 @@ export async function signUp(
   }
 
   if (!isValidPassword(password)) {
-    throw new Error('Password must be at least 8 characters');
+    throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
   }
 
   const signUpData: any = {
@@ -118,7 +147,7 @@ export async function signInWithOAuth(
   const defaultRedirectTo =
     typeof window !== 'undefined'
       ? `${window.location.origin}/auth/callback`
-      : 'http://localhost:3000/auth/callback';
+      : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/callback`;
 
   const supabase = getSupabaseClient();
   const response = await supabase.auth.signInWithOAuth({
@@ -194,7 +223,7 @@ export async function resetPassword(email: string): Promise<{ error: any }> {
   const defaultRedirectTo =
     typeof window !== 'undefined'
       ? `${window.location.origin}/auth/reset-password`
-      : 'http://localhost:3000/auth/reset-password';
+      : `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/auth/reset-password`;
 
   const supabase = getSupabaseClient();
   const response = await supabase.auth.resetPasswordForEmail(email, {
@@ -211,7 +240,7 @@ export async function updatePassword(
   password: string
 ): Promise<{ error: any }> {
   if (!isValidPassword(password)) {
-    throw new Error('Password must be at least 8 characters');
+    throw new Error('Password must be at least 12 characters with uppercase, lowercase, numbers, and special characters');
   }
 
   const supabase = getSupabaseClient();

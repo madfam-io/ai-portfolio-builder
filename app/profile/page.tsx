@@ -24,7 +24,7 @@ export default function ProfilePage() {
   const [website, setWebsite] = useState('');
 
   // Password change state
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
