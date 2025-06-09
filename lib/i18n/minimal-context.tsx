@@ -203,7 +203,7 @@ const translations = {
     footerCopyright: '© 2025 PRISMA by MADFAM. Todos los derechos reservados.',
 
     // Hero section
-    poweredByAi: 'Impulsado por GPT-4 & Claude AI',
+    poweredByAi: 'Impulsado por Llama 3.1 & Mistral AI',
     learnMoreAboutUs: 'Conoce más sobre nosotros',
 
     // Features section
@@ -530,7 +530,7 @@ const translations = {
     footerCopyright: '© 2025 PRISMA by MADFAM. All rights reserved.',
 
     // Hero section
-    poweredByAi: 'Powered by GPT-4 & Claude AI',
+    poweredByAi: 'Powered by Llama 3.1 & Mistral AI',
     learnMoreAboutUs: 'Learn more about us',
 
     // Features section
