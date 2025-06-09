@@ -5,7 +5,9 @@
  * It manages language state, translations, and localStorage persistence for user preferences.
  * 
  * Key Features:
- * - Spanish as default language for first-time visitors
+ * - Automatic language detection based on user's geographic location
+ * - Spanish as default for Spanish-speaking countries (primary market)
+ * - English as default for English-speaking countries (international expansion)
  * - Complete translation coverage for all user-facing content
  * - Automatic localStorage persistence of language preference
  * - TypeScript-safe translation keys with autocomplete
@@ -16,13 +18,13 @@
  * import { useLanguage } from '@/lib/i18n/minimal-context';
  * 
  * export default function MyComponent() {
- *   const { t, language, setLanguage } = useLanguage();
+ *   const { t, language, setLanguage, detectedCountry } = useLanguage();
  *   
  *   return (
  *     <div>
  *       <h1>{t.heroTitle}</h1>
  *       <button onClick={() => setLanguage('en')}>
- *         Switch to English
+ *         Switch to English {detectedCountry?.flag}
  *       </button>
  *     </div>
  *   );
@@ -30,12 +32,13 @@
  * ```
  * 
  * @author MADFAM Development Team
- * @version 2.0.0 - Complete multilingual implementation
+ * @version 3.0.0 - Geolocation-based language detection
  */
 
 'use client';
 
 import { createContext, useContext, useState, useEffect } from 'react';
+import { detectUserLanguage, detectUserLanguageSync, type LanguageDetectionResult } from '@/lib/utils/geolocation';
 
 /**
  * Supported languages in the application
@@ -638,6 +641,10 @@ interface LanguageContextType {
   t: typeof translations.es;
   /** Array of all available languages with display names and flags */
   availableLanguages: { code: Language; name: string; flag: string }[];
+  /** Detected country information from geolocation */
+  detectedCountry: LanguageDetectionResult | null;
+  /** Whether geolocation detection is in progress */
+  isDetecting: boolean;
 }
 
 /**
@@ -684,9 +691,11 @@ export const useLanguage = () => {
       },
       t: translations.es,
       availableLanguages: [
-        { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
+        { code: 'es' as Language, name: 'Español', flag: '🇲🇽' },
         { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
       ],
+      detectedCountry: null,
+      isDetecting: false,
     };
   }
   return context;
@@ -696,11 +705,13 @@ export const useLanguage = () => {
  * Language Provider component that wraps the app to provide i18n functionality
  * 
  * Features:
+ * - Automatic language detection based on user's geographic location
  * - Manages global language state with React hooks
  * - Persists language preference to localStorage
- * - Defaults to Spanish for new users (MADFAM's target market)
+ * - Defaults based on detected country (Spanish for LATAM, English for others)
  * - Validates saved language to prevent invalid states
  * - Provides context to all child components
+ * - Includes geolocation detection result for UI components
  * 
  * Usage:
  * ```tsx
@@ -715,38 +726,101 @@ export const useLanguage = () => {
  * @returns {JSX.Element} Context provider with language state
  */
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  // Language state - defaults to Spanish for MADFAM's Mexican market focus
+  // Language state - will be set based on geolocation detection
   const [language, setLanguageState] = useState<Language>('es');
+  
+  // Geolocation detection state
+  const [detectedCountry, setDetectedCountry] = useState<LanguageDetectionResult | null>(null);
+  const [isDetecting, setIsDetecting] = useState(true);
 
   /**
-   * Initialize language preference from localStorage on component mount
-   * Validates saved language to ensure it's supported
-   * Falls back to Spanish for new users or invalid saved values
+   * Initialize language preference with geolocation detection
+   * Priority order:
+   * 1. Saved language preference (user has explicitly chosen)
+   * 2. Geolocation detection (automatic based on location)
+   * 3. Spanish fallback (MADFAM's primary market)
    */
   useEffect(() => {
-    const savedLanguage = localStorage.getItem('language') as Language;
-    if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
-      setLanguageState(savedLanguage);
-    } else {
-      // Default to Spanish for first-time visitors - aligns with target market
-      localStorage.setItem('language', 'es');
-    }
+    const initializeLanguage = async () => {
+      try {
+        // Check if user has a saved language preference
+        const savedLanguage = localStorage.getItem('language') as Language;
+        
+        if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
+          // User has explicitly chosen a language - respect their choice
+          setLanguageState(savedLanguage);
+          setIsDetecting(false);
+          
+          // Still detect country for UI purposes (flags, etc.)
+          try {
+            const detection = await detectUserLanguage();
+            setDetectedCountry(detection);
+          } catch (error) {
+            console.debug('Geolocation detection failed for UI:', error);
+            // Use sync detection as fallback
+            const syncDetection = detectUserLanguageSync();
+            setDetectedCountry(syncDetection);
+          }
+          
+          return;
+        }
+
+        // No saved preference - detect based on geolocation
+        const detection = await detectUserLanguage();
+        setDetectedCountry(detection);
+        
+        // Set language based on detection
+        setLanguageState(detection.language);
+        localStorage.setItem('language', detection.language);
+        
+        console.debug(`Language auto-detected: ${detection.language} (${detection.method}, confident: ${detection.confident})`);
+        
+      } catch (error) {
+        console.debug('Language detection failed, using fallback:', error);
+        
+        // Fallback to sync detection
+        const syncDetection = detectUserLanguageSync();
+        setDetectedCountry(syncDetection);
+        setLanguageState(syncDetection.language);
+        localStorage.setItem('language', syncDetection.language);
+        
+      } finally {
+        setIsDetecting(false);
+      }
+    };
+
+    initializeLanguage();
   }, []);
 
   /**
    * Updates language state and persists choice to localStorage
-   * Ensures language preference survives browser sessions
+   * When user explicitly changes language, this overrides geolocation detection
    * 
    * @param {Language} lang - The language code to switch to
    */
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     localStorage.setItem('language', lang);
+    
+    console.debug(`Language manually changed to: ${lang}`);
   };
 
+  // Generate available languages with appropriate flags
   const availableLanguages = [
-    { code: 'es' as Language, name: 'Español', flag: '🇪🇸' },
-    { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
+    { 
+      code: 'es' as Language, 
+      name: 'Español', 
+      flag: detectedCountry?.countryCode && detectedCountry.language === 'es' 
+        ? detectedCountry.flag 
+        : '🇲🇽' 
+    },
+    { 
+      code: 'en' as Language, 
+      name: 'English', 
+      flag: detectedCountry?.countryCode && detectedCountry.language === 'en' 
+        ? detectedCountry.flag 
+        : '🇺🇸' 
+    },
   ];
 
   const value: LanguageContextType = {
@@ -754,6 +828,8 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
     setLanguage,
     t: translations[language],
     availableLanguages,
+    detectedCountry,
+    isDetecting,
   };
 
   return (
