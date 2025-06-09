@@ -27,23 +27,23 @@ export default function Hero() {
         <div className="flex flex-col sm:flex-row gap-6 justify-center mb-16 px-4">
           {/* Primary CTA Button */}
           <Link
-            href="/about"
+            href="/dashboard"
             className="btn-primary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center"
-            aria-label={t.learnMoreAboutUs}
+            aria-label={t.startFreeTrial}
           >
             <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
-            <span>{t.watchDemo}</span>
+            <span>{t.startFreeTrial}</span>
             {/* Animated background overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
           </Link>
 
           {/* Secondary CTA Button */}
           <Link
-            href="/dashboard"
+            href="/about"
             className="btn-secondary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center relative"
-            aria-label={t.startFreeTrial}
+            aria-label={t.learnMoreAboutUs}
           >
-            <span className="relative z-10">{t.startFreeTrial}</span>
+            <span className="relative z-10">{t.watchDemo}</span>
             {/* Background fill animation */}
             <div className="absolute inset-0 bg-purple-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-xl"></div>
           </Link>

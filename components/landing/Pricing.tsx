@@ -3,6 +3,7 @@
 import { FaCheck } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { useApp } from '@/lib/contexts/AppContext';
+import Link from 'next/link';
 
 // Currency exchange rates (MXN as base)
 const EXCHANGE_RATES = {
@@ -84,9 +85,12 @@ export default function Pricing() {
                 <span>{t.aiRewrites3}</span>
               </li>
             </ul>
-            <button className="w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 transition">
+            <Link 
+              href="/auth/signup?plan=free" 
+              className="block w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 dark:hover:bg-purple-900 transition text-center"
+            >
               {t.startFree}
-            </button>
+            </Link>
           </div>
 
           {/* Pro Plan */}
@@ -121,9 +125,12 @@ export default function Pricing() {
                 <span>{t.analyticsTools}</span>
               </li>
             </ul>
-            <button className="w-full bg-white text-purple-600 py-3 rounded-lg font-medium hover:bg-gray-100 transition">
+            <Link 
+              href="/auth/signup?plan=pro" 
+              className="block w-full bg-white text-purple-600 py-3 rounded-lg font-medium hover:bg-gray-100 transition text-center"
+            >
               {t.startProTrial}
-            </button>
+            </Link>
           </div>
 
           {/* Business Plan */}
@@ -159,9 +166,12 @@ export default function Pricing() {
                 <span>{t.prioritySupport}</span>
               </li>
             </ul>
-            <button className="w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 transition">
+            <Link 
+              href="/contact?plan=business" 
+              className="block w-full border-2 border-purple-600 text-purple-600 dark:text-purple-400 py-3 rounded-lg font-medium hover:bg-purple-50 dark:hover:bg-purple-900 transition text-center"
+            >
               {t.contactSales}
-            </button>
+            </Link>
           </div>
         </div>
       </div>

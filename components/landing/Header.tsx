@@ -112,12 +112,12 @@ export default function Header() {
                 >
                   About
                 </Link>
-                <a
-                  href="#pricing"
+                <Link
+                  href="/#pricing"
                   className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
                 >
                   Pricing
-                </a>
+                </Link>
               </>
             )}
 
