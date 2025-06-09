@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Portfolio, TemplateType } from '@/types/portfolio';
+import { Portfolio } from '@/types/portfolio';
 import {
   FiMail,
   FiPhone,

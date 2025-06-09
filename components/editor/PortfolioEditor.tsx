@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Portfolio, Experience, Skill } from '@/types/portfolio';
+import { Portfolio, Skill } from '@/types/portfolio';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { PortfolioPreview } from './PortfolioPreview';
 import { FiSave, FiEye, FiEyeOff, FiPlus, FiTrash2 } from 'react-icons/fi';
@@ -91,13 +91,6 @@ export function PortfolioEditor({
     setEditedPortfolio(prev => ({ ...prev, [field]: value }));
   };
 
-  const updateContact = (field: keyof Portfolio['contact'], value: string) => {
-    setEditedPortfolio(prev => ({
-      ...prev,
-      contact: { ...prev.contact, [field]: value },
-    }));
-  };
-
   const updateSocial = (field: keyof Portfolio['social'], value: string) => {
     setEditedPortfolio(prev => ({
       ...prev,
@@ -106,13 +99,6 @@ export function PortfolioEditor({
   };
 
   // Experience management
-  const addExperience = (experience: Experience) => {
-    setEditedPortfolio(prev => ({
-      ...prev,
-      experience: [...prev.experience, experience],
-    }));
-  };
-
   const deleteExperience = (id: string) => {
     setEditedPortfolio(prev => ({
       ...prev,
@@ -121,12 +107,6 @@ export function PortfolioEditor({
   };
 
   // Project management
-  const addProject = (project: Project) => {
-    setEditedPortfolio(prev => ({
-      ...prev,
-      projects: [...prev.projects, project],
-    }));
-  };
 
   const toggleProjectFeatured = (id: string) => {
     setEditedPortfolio(prev => ({
