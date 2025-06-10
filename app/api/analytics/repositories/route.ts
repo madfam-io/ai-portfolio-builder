@@ -3,7 +3,7 @@
  * Manages repository sync and retrieval for analytics
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { logger } from '@/lib/utils/logger';
@@ -11,7 +11,7 @@ import { logger } from '@/lib/utils/logger';
 /**
  * Get user's repositories for analytics
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = createClient();
     
@@ -64,7 +64,7 @@ export async function GET(request: NextRequest) {
 /**
  * Sync repositories from GitHub
  */
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     const supabase = createClient();
     

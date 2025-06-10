@@ -17,7 +17,7 @@ interface RouteParams {
 /**
  * Get analytics for a specific repository
  */
-export async function GET(request: NextRequest, { params }: RouteParams) {
+export async function GET(_: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
     
@@ -78,7 +78,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 /**
  * Sync specific repository data
  */
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(_: NextRequest, { params }: RouteParams) {
   try {
     const supabase = createClient();
     
