@@ -362,7 +362,7 @@ describe('PortfolioPreview', () => {
         value: mockRemoveEventListener,
       });
 
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio} mode="mobile" />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('mobile-layout');

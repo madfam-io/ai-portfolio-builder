@@ -54,12 +54,13 @@ describe('Pricing Component', () => {
       expect(screen.getByText('Impresiona mañana.')).toBeInTheDocument();
     });
 
-    it('should render all three pricing plans', () => {
+    it('should render all four pricing plans', () => {
       renderPricing();
 
       expect(screen.getByRole('heading', { name: 'Gratis' })).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: 'PRO' })).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: 'PRISMA+' })).toBeInTheDocument();
+      expect(screen.getByRole('heading', { name: 'Enterprise' })).toBeInTheDocument();
     });
 
     it('should render pricing for each plan', () => {
@@ -68,6 +69,7 @@ describe('Pricing Component', () => {
       expect(screen.getByText('0')).toBeInTheDocument();
       expect(screen.getByText('$340')).toBeInTheDocument();
       expect(screen.getByText('$875')).toBeInTheDocument();
+      expect(screen.getByText('$1750')).toBeInTheDocument();
     });
 
     it('should render "Most Popular" badge on Pro plan', () => {
@@ -107,11 +109,22 @@ describe('Pricing Component', () => {
       expect(screen.getByText('Soporte prioritario')).toBeInTheDocument();
     });
 
+    it('should render features for Enterprise plan', () => {
+      renderPricing();
+
+      expect(screen.getByText('Todo en Business +')).toBeInTheDocument();
+      expect(screen.getByText('Soluciones de marca blanca')).toBeInTheDocument();
+      expect(screen.getByText('Gerente de cuenta dedicado')).toBeInTheDocument();
+      expect(screen.getByText('Integraciones personalizadas')).toBeInTheDocument();
+      expect(screen.getByText('Soporte prioritario 24/7')).toBeInTheDocument();
+      expect(screen.getByText('Garantías SLA')).toBeInTheDocument();
+    });
+
     it('should render check icons for all features', () => {
       renderPricing();
 
       const checkIcons = document.querySelectorAll('svg');
-      expect(checkIcons.length).toBeGreaterThanOrEqual(14); // All feature items
+      expect(checkIcons.length).toBeGreaterThanOrEqual(20); // All feature items across 4 plans
     });
   });
 
@@ -121,7 +134,10 @@ describe('Pricing Component', () => {
 
       expect(screen.getByRole('link', { name: 'Comenzar Gratis' })).toBeInTheDocument();
       expect(screen.getByRole('link', { name: 'Prueba Pro' })).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: 'Contactar Ventas' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Iniciar Prueba Business' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Contactar Equipo de Ventas' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Iniciar Prueba Enterprise' })).toBeInTheDocument();
+      expect(screen.getByRole('link', { name: 'Solicitar Cotización Personalizada' })).toBeInTheDocument();
     });
 
     it('should have correct href attributes for each plan', () => {
@@ -133,8 +149,17 @@ describe('Pricing Component', () => {
       const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
       expect(proLink).toHaveAttribute('href', '/auth/signup?plan=pro');
 
-      const businessLink = screen.getByRole('link', { name: 'Contactar Ventas' });
-      expect(businessLink).toHaveAttribute('href', '/contact?plan=business');
+      const businessLink = screen.getByRole('link', { name: 'Iniciar Prueba Business' });
+      expect(businessLink).toHaveAttribute('href', '/auth/signup?plan=business');
+
+      const businessContactLink = screen.getByRole('link', { name: 'Contactar Equipo de Ventas' });
+      expect(businessContactLink).toHaveAttribute('href', '/contact?plan=business');
+
+      const enterpriseLink = screen.getByRole('link', { name: 'Iniciar Prueba Enterprise' });
+      expect(enterpriseLink).toHaveAttribute('href', '/auth/signup?plan=enterprise');
+
+      const enterpriseContactLink = screen.getByRole('link', { name: 'Solicitar Cotización Personalizada' });
+      expect(enterpriseContactLink).toHaveAttribute('href', '/contact?plan=enterprise');
     });
 
     it('should have different link styles for each plan', () => {
@@ -146,8 +171,11 @@ describe('Pricing Component', () => {
       const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
       expect(proLink).toHaveClass('bg-white', 'text-purple-600');
 
-      const businessLink = screen.getByRole('link', { name: 'Contactar Ventas' });
-      expect(businessLink).toHaveClass('border-2', 'border-purple-600', 'text-purple-600');
+      const businessLink = screen.getByRole('link', { name: 'Iniciar Prueba Business' });
+      expect(businessLink).toHaveClass('bg-purple-600', 'text-white');
+
+      const enterpriseLink = screen.getByRole('link', { name: 'Iniciar Prueba Enterprise' });
+      expect(enterpriseLink).toHaveClass('bg-yellow-400', 'text-gray-900');
     });
 
     it('should have hover effects on links', () => {
@@ -158,6 +186,12 @@ describe('Pricing Component', () => {
 
       const proLink = screen.getByRole('link', { name: 'Prueba Pro' });
       expect(proLink).toHaveClass('hover:bg-gray-100');
+
+      const businessLink = screen.getByRole('link', { name: 'Iniciar Prueba Business' });
+      expect(businessLink).toHaveClass('hover:bg-purple-700');
+
+      const enterpriseLink = screen.getByRole('link', { name: 'Iniciar Prueba Enterprise' });
+      expect(enterpriseLink).toHaveClass('hover:bg-yellow-300');
     });
   });
 
@@ -173,7 +207,7 @@ describe('Pricing Component', () => {
       renderPricing();
 
       const grid = screen.getByRole('heading', { name: 'Gratis' }).closest('.grid');
-      expect(grid).toHaveClass('grid', 'sm:grid-cols-2', 'lg:grid-cols-3', 'gap-6', 'md:gap-8');
+      expect(grid).toHaveClass('grid', 'sm:grid-cols-2', 'lg:grid-cols-4', 'gap-6', 'md:gap-8');
     });
 
     it('should have elevated Pro plan card', () => {
@@ -231,7 +265,7 @@ describe('Pricing Component', () => {
       expect(mainHeading).toBeInTheDocument();
 
       const planHeadings = screen.getAllByRole('heading', { level: 3 });
-      expect(planHeadings).toHaveLength(3);
+      expect(planHeadings).toHaveLength(4);
     });
 
     it('should have section landmark with id', () => {
@@ -246,7 +280,7 @@ describe('Pricing Component', () => {
       renderPricing();
 
       const links = screen.getAllByRole('link');
-      expect(links).toHaveLength(3);
+      expect(links).toHaveLength(6);
       
       links.forEach(link => {
         expect(link).toHaveAccessibleName();
@@ -259,7 +293,7 @@ describe('Pricing Component', () => {
       renderPricing();
 
       const grid = document.querySelector('.grid');
-      expect(grid).toHaveClass('sm:grid-cols-2', 'lg:grid-cols-3');
+      expect(grid).toHaveClass('sm:grid-cols-2', 'lg:grid-cols-4');
     });
 
     it('should have responsive spacing', () => {
@@ -273,7 +307,7 @@ describe('Pricing Component', () => {
       renderPricing();
 
       const grid = document.querySelector('.grid');
-      expect(grid).toHaveClass('max-w-5xl', 'mx-auto');
+      expect(grid).toHaveClass('max-w-6xl', 'mx-auto');
     });
   });
 
@@ -312,7 +346,7 @@ describe('Pricing Component', () => {
       renderPricing();
 
       const monthLabels = screen.getAllByText('/mes');
-      expect(monthLabels).toHaveLength(3); // All plans show /mes including Free plan
+      expect(monthLabels).toHaveLength(4); // All plans show /mes including Free plan
     });
   });
 });

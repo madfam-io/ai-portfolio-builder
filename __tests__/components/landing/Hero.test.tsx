@@ -90,21 +90,21 @@ describe('Hero Component', () => {
     it('should render primary CTA button with correct link', () => {
       renderHero();
 
-      const watchDemoButton = screen.getByRole('link', {
-        name: 'Conoce más sobre nosotros',
+      const startTrialButton = screen.getByRole('link', {
+        name: 'Prueba Gratuita',
       });
-      expect(watchDemoButton).toBeInTheDocument();
-      expect(watchDemoButton).toHaveAttribute('href', '/about');
-      expect(watchDemoButton).toHaveTextContent('Ver Demo');
+      expect(startTrialButton).toBeInTheDocument();
+      expect(startTrialButton).toHaveAttribute('href', '/dashboard');
+      expect(startTrialButton).toHaveTextContent('Prueba Gratuita');
     });
 
     it('should render secondary CTA button with correct link', () => {
       renderHero();
 
-      const trialButton = screen.getByRole('link', { name: 'Prueba Gratuita' });
-      expect(trialButton).toBeInTheDocument();
-      expect(trialButton).toHaveAttribute('href', '/dashboard');
-      expect(trialButton).toHaveTextContent('Prueba Gratuita');
+      const watchDemoButton = screen.getByRole('link', { name: 'Ver Demo' });
+      expect(watchDemoButton).toBeInTheDocument();
+      expect(watchDemoButton).toHaveAttribute('href', '/demo');
+      expect(watchDemoButton).toHaveTextContent('Ver Demo');
     });
 
     it('should render CTA buttons in English', () => {
@@ -116,7 +116,7 @@ describe('Hero Component', () => {
       expect(trialButton).toHaveTextContent('Start Free Trial');
 
       const watchDemoButton = screen.getByRole('link', {
-        name: 'Learn more about us',
+        name: 'Watch Demo',
       });
       expect(watchDemoButton).toHaveTextContent('Watch Demo');
     });
@@ -141,7 +141,7 @@ describe('Hero Component', () => {
       expect(primaryButton).toHaveClass('btn-primary', 'group');
 
       const secondaryButton = screen.getByRole('link', {
-        name: 'Conoce más sobre nosotros',
+        name: 'Ver Demo',
       });
       expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });
@@ -195,7 +195,7 @@ describe('Hero Component', () => {
       renderHero();
 
       const buttonContainer = screen.getByRole('link', {
-        name: 'Conoce más sobre nosotros',
+        name: 'Ver Demo',
       }).parentElement;
       expect(buttonContainer).toHaveClass('flex', 'flex-col', 'sm:flex-row');
     });
@@ -238,7 +238,7 @@ describe('Hero Component', () => {
       renderHero();
 
       expect(
-        screen.getByLabelText('Conoce más sobre nosotros')
+        screen.getByLabelText('Ver Demo')
       ).toBeInTheDocument();
       expect(screen.getByLabelText('Prueba Gratuita')).toBeInTheDocument();
     });
@@ -274,7 +274,7 @@ describe('Hero Component', () => {
       expect(primaryButton).toHaveClass('btn-primary', 'group');
 
       const secondaryButton = screen.getByRole('link', {
-        name: 'Conoce más sobre nosotros',
+        name: 'Ver Demo',
       });
       expect(secondaryButton).toHaveClass('btn-secondary', 'group');
     });

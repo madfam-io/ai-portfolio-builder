@@ -69,13 +69,21 @@ describe('Header Component', () => {
       expect(screen.getAllByText('About')).toHaveLength(2);
     });
 
-    it('should render CTA button in Spanish by default', () => {
+    it('should render CTA button in Spanish by default', async () => {
       renderHeader();
 
-      const ctaButtons = screen.getAllByRole('link', { name: 'Comenzar' });
+      // Wait for auth loading to complete
+      await waitFor(
+        () => {
+          expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+        },
+        { timeout: 3000 }
+      );
+
+      const ctaButtons = screen.getAllByRole('link', { name: 'Empezar Gratis' });
       expect(ctaButtons.length).toBeGreaterThan(0);
       ctaButtons.forEach(button => {
-        expect(button).toHaveAttribute('href', '/dashboard');
+        expect(button).toHaveAttribute('href', '/auth/signup');
       });
     });
 
@@ -87,7 +95,7 @@ describe('Header Component', () => {
       
       // Language toggle
       expect(screen.getAllByText('ES')).toHaveLength(1);
-      expect(screen.getAllByText('🇲🇽')).toHaveLength(1);
+      expect(screen.getAllByText('🇲🇽')).toHaveLength(2); // Desktop and mobile versions
       
       // Dark mode toggle - look for moon/sun icons
       const darkModeToggles = document.querySelectorAll('svg');
@@ -117,7 +125,7 @@ describe('Header Component', () => {
       expect(screen.getAllByText('ES')).toHaveLength(1);
 
       // Click language toggle - look for button with title containing "English"
-      const langToggle = screen.getByTitle(/English/);
+      const langToggle = screen.getByTitle('Cambiar a English');
       await user.click(langToggle);
 
       // Should switch to English
