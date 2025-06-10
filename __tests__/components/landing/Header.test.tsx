@@ -134,7 +134,9 @@ describe('Header Component', () => {
         /Cambiar a English|Switch to English/
       );
       expect(langToggles.length).toBeGreaterThan(0);
-      await user.click(langToggles[0]);
+      if (langToggles[0]) {
+        await user.click(langToggles[0]);
+      }
 
       // Should switch to English
       await waitFor(() => {

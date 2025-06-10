@@ -176,7 +176,9 @@ describe('TemplateSelector', () => {
 
     // Get all Web Development buttons and click the filter one
     const webDevButtons = screen.getAllByText('Web Development');
-    fireEvent.click(webDevButtons[0]);
+    if (webDevButtons[0]) {
+      fireEvent.click(webDevButtons[0]);
+    }
 
     expect(screen.getByText('Developer')).toBeInTheDocument();
     expect(screen.queryByText('Designer')).not.toBeInTheDocument();
@@ -190,7 +192,9 @@ describe('TemplateSelector', () => {
 
     // Click an industry filter first
     const webDevButtons = screen.getAllByText('Web Development');
-    fireEvent.click(webDevButtons[0]);
+    if (webDevButtons[0]) {
+      fireEvent.click(webDevButtons[0]);
+    }
 
     // Then click All Industries to reset
     fireEvent.click(allIndustriesButton);
@@ -250,7 +254,9 @@ describe('TemplateSelector', () => {
     // Get all Graphic Design buttons (from filter and from template industry tags)
     const graphicDesignButtons = screen.getAllByText('Graphic Design');
     // Click the filter button (first one in the industry filter section)
-    fireEvent.click(graphicDesignButtons[0]);
+    if (graphicDesignButtons[0]) {
+      fireEvent.click(graphicDesignButtons[0]);
+    }
 
     // Since Graphic Design is only in the Designer template,
     // only Designer should be visible
