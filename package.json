@@ -17,10 +17,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/madfam/ai-portfolio-builder.git"
+    "url": "https://github.com/aldoruizluna/labspace/ai-portfolio-builder.git"
   },
   "bugs": {
-    "url": "https://github.com/madfam/ai-portfolio-builder/issues"
+    "url": "https://github.com/aldoruizluna/labspace/ai-portfolio-builder/issues"
   },
   "homepage": "https://prisma.madfam.io",
   "scripts": {
