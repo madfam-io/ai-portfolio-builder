@@ -6,6 +6,7 @@
  */
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { 
   FiUsers, 
@@ -174,9 +175,11 @@ export default function AdminUserDashboard() {
               </div>
 
               <div className="flex items-center space-x-2">
-                <img
+                <Image
                   src={user?.avatarUrl || '/default-avatar.png'}
-                  alt={user?.name}
+                  alt={user?.name || 'User avatar'}
+                  width={32}
+                  height={32}
                   className="w-8 h-8 rounded-full"
                 />
                 <span className="text-sm font-medium text-gray-700 dark:text-gray-300">

@@ -18,6 +18,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io'),
   title: 'PRISMA by MADFAM - AI Portfolio Builder',
   description: 'Transform your CV into a stunning portfolio website using AI. Create professional portfolios in under 30 minutes.',
   icons: {
