@@ -15,9 +15,19 @@ import {
 
 interface PortfolioPreviewProps {
   portfolio: Portfolio;
+  mode?: 'desktop' | 'tablet' | 'mobile';
+  activeSection?: string;
+  onSectionClick?: (section: string) => void;
+  isInteractive?: boolean;
 }
 
-export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
+export function PortfolioPreview({
+  portfolio,
+  mode = 'desktop',
+  activeSection,
+  onSectionClick,
+  isInteractive = true,
+}: PortfolioPreviewProps) {
   // Apply custom CSS variables
   const customStyles = {
     '--primary-color': portfolio.customization.primaryColor || '#1a73e8',
@@ -28,20 +38,44 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
       : undefined,
   } as React.CSSProperties;
 
-  // Determine if we're on mobile for responsive behavior
-  const [isMobile, setIsMobile] = React.useState(false);
+  // Use the mode prop to determine layout
+  const isMobile = mode === 'mobile';
+  const isTablet = mode === 'tablet';
+  const isDesktop = mode === 'desktop';
 
-  React.useEffect(() => {
-    const checkMobile = () => {
-      if (typeof window !== 'undefined') {
-        setIsMobile(window.innerWidth <= 768);
-      }
-    };
+  // Get container classes based on preview mode
+  const getContainerClasses = () => {
+    if (mode === 'mobile') {
+      return 'max-w-sm mx-auto';
+    }
+    if (mode === 'tablet') {
+      return 'max-w-2xl mx-auto';
+    }
+    return 'max-w-4xl mx-auto';
+  };
 
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  // Handle section clicks for editor interaction
+  const handleSectionClick = (sectionId: string) => {
+    if (isInteractive && onSectionClick) {
+      onSectionClick(sectionId);
+    }
+  };
+
+  // Get section classes for highlighting active section
+  const getSectionClasses = (sectionId: string) => {
+    const baseClasses = isInteractive
+      ? 'cursor-pointer transition-all duration-200'
+      : '';
+    const activeClasses =
+      activeSection === sectionId && isInteractive
+        ? 'ring-2 ring-blue-500 ring-opacity-50 bg-blue-50 dark:bg-blue-900/20'
+        : '';
+    const hoverClasses = isInteractive
+      ? 'hover:bg-gray-50 dark:hover:bg-gray-800/50'
+      : '';
+
+    return `${baseClasses} ${activeClasses} ${hoverClasses} rounded-lg p-2 -m-2`;
+  };
 
   // Filter out empty sections and respect hidden sections
   const hiddenSections = portfolio.customization.hiddenSections || [];
@@ -143,9 +177,9 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
   return (
     <div
       data-testid="portfolio-container"
-      className={`w-full max-w-4xl mx-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 ${
+      className={`w-full ${getContainerClasses()} bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 ${
         isMobile ? 'mobile-layout' : ''
-      }`}
+      } ${isTablet ? 'tablet-layout' : ''} ${isDesktop ? 'desktop-layout' : ''}`}
       style={customStyles}
     >
       {/* Header */}
@@ -233,7 +267,12 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
       <main className="px-6 pb-8 space-y-8">
         {/* About Section */}
         {hasContent.about && (
-          <section id="about-section" data-testid="about-section">
+          <section
+            id="about-section"
+            data-testid="about-section"
+            className={getSectionClasses('about')}
+            onClick={() => handleSectionClick('about')}
+          >
             <h2 className="text-2xl font-bold mb-4">About</h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               {portfolio.bio}
@@ -243,7 +282,12 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
 
         {/* Experience Section */}
         {hasContent.experience && (
-          <section id="experience-section" data-testid="experience-section">
+          <section
+            id="experience-section"
+            data-testid="experience-section"
+            className={getSectionClasses('experience')}
+            onClick={() => handleSectionClick('experience')}
+          >
             <h2 className="text-2xl font-bold mb-4">Experience</h2>
             <div className="space-y-6">
               {portfolio.experience
@@ -293,11 +337,22 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
 
         {/* Projects Section */}
         {hasContent.projects && (
-          <section id="projects-section" data-testid="projects-section">
+          <section
+            id="projects-section"
+            data-testid="projects-section"
+            className={getSectionClasses('projects')}
+            onClick={() => handleSectionClick('projects')}
+          >
             <h2 className="text-2xl font-bold mb-4">Projects</h2>
             <div
               data-testid="projects-grid"
-              className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2'}`}
+              className={`grid gap-6 ${
+                isMobile
+                  ? 'grid-cols-1'
+                  : isTablet
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1 md:grid-cols-2'
+              }`}
             >
               {portfolio.projects
                 .sort(
@@ -385,7 +440,12 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
 
         {/* Skills Section */}
         {hasContent.skills && (
-          <section id="skills-section" data-testid="skills-section">
+          <section
+            id="skills-section"
+            data-testid="skills-section"
+            className={getSectionClasses('skills')}
+            onClick={() => handleSectionClick('skills')}
+          >
             <h2 className="text-2xl font-bold mb-4">Skills</h2>
             {Object.entries(
               portfolio.skills.reduce(
@@ -434,7 +494,12 @@ export function PortfolioPreview({ portfolio }: PortfolioPreviewProps) {
 
         {/* Education Section */}
         {hasContent.education && (
-          <section id="education-section" data-testid="education-section">
+          <section
+            id="education-section"
+            data-testid="education-section"
+            className={getSectionClasses('education')}
+            onClick={() => handleSectionClick('education')}
+          >
             <h2 className="text-2xl font-bold mb-4">Education</h2>
             <div className="space-y-4">
               {portfolio.education.map(edu => (

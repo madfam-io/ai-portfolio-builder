@@ -1,5 +1,6 @@
 /**
  * Portfolio-related type definitions for PRISMA
+ * Enhanced with comprehensive types for the full SaaS implementation
  */
 
 // Template types based on industry
@@ -9,10 +10,43 @@ export type TemplateType =
   | 'consultant'
   | 'educator'
   | 'creative'
-  | 'business';
+  | 'business'
+  | 'minimal'
+  | 'modern';
 
 // Portfolio status
 export type PortfolioStatus = 'draft' | 'published' | 'archived';
+
+// Section types for dynamic content
+export type SectionType =
+  | 'hero'
+  | 'about'
+  | 'experience'
+  | 'education'
+  | 'projects'
+  | 'skills'
+  | 'testimonials'
+  | 'contact'
+  | 'custom';
+
+// Employment types
+export type EmploymentType =
+  | 'full-time'
+  | 'part-time'
+  | 'contract'
+  | 'freelance'
+  | 'internship';
+
+// Skill categories
+export type SkillCategory =
+  | 'technical'
+  | 'soft'
+  | 'language'
+  | 'tool'
+  | 'framework';
+
+// Layout types for sections
+export type LayoutType = 'default' | 'grid' | 'timeline' | 'cards' | 'minimal';
 
 // Social media links
 export interface SocialLinks {
@@ -103,10 +137,17 @@ export interface TemplateCustomization {
   primaryColor?: string;
   secondaryColor?: string;
   accentColor?: string;
+  backgroundColor?: string;
+  textColor?: string;
   fontFamily?: string;
+  fontSize?: 'small' | 'medium' | 'large';
+  spacing?: 'compact' | 'normal' | 'relaxed';
+  borderRadius?: 'none' | 'small' | 'medium' | 'large';
   headerStyle?: 'minimal' | 'bold' | 'creative';
   sectionOrder?: string[]; // Array of section IDs in custom order
   hiddenSections?: string[]; // Array of section IDs to hide
+  darkMode?: boolean;
+  customCSS?: string;
 }
 
 // AI enhancement settings
@@ -246,4 +287,165 @@ export interface TemplateRecommendationResponse {
     template: TemplateType;
     score: number;
   }>;
+}
+
+// Portfolio Section - for dynamic content management
+export interface PortfolioSection {
+  id: string;
+  portfolioId: string;
+  type: SectionType;
+  title?: string;
+  subtitle?: string;
+  content: Record<string, any>;
+  isVisible: boolean;
+  orderIndex: number;
+  layout?: LayoutType;
+  styles?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+// Enhanced Project interface with more details
+export interface EnhancedProject extends Project {
+  shortDescription?: string;
+  role?: string;
+  demoUrl?: string;
+  images?: string[];
+  challenges?: string;
+  solutions?: string;
+  impact?: string;
+  startDate?: Date;
+  endDate?: Date;
+  isCurrent?: boolean;
+  aiEnhanced?: boolean;
+  aiEnhancementDate?: Date;
+}
+
+// Enhanced Experience interface
+export interface EnhancedExperience extends Experience {
+  location?: string;
+  employmentType?: EmploymentType;
+  responsibilities?: string[];
+  achievements?: string[];
+  aiEnhanced?: boolean;
+  aiEnhancementDate?: Date;
+}
+
+// Portfolio Analytics
+export interface PortfolioAnalytics {
+  id: string;
+  portfolioId: string;
+  date: Date;
+  views: number;
+  uniqueVisitors: number;
+  averageTimeOnPage?: number;
+  bounceRate?: number;
+  referrers?: Record<string, number>;
+  devices?: Record<string, number>;
+  browsers?: Record<string, number>;
+  countries?: Record<string, number>;
+  clicks?: Record<string, number>;
+  createdAt: Date;
+}
+
+// Editor State Management
+export interface PortfolioEditorState {
+  portfolio: Portfolio;
+  isDirty: boolean;
+  isSaving: boolean;
+  lastSaved?: Date;
+  activeSection?: string;
+  previewMode: 'desktop' | 'tablet' | 'mobile';
+  errors?: Record<string, string>;
+  history: PortfolioHistoryEntry[];
+  historyIndex: number;
+}
+
+export interface PortfolioHistoryEntry {
+  timestamp: Date;
+  action: string;
+  state: Partial<Portfolio>;
+}
+
+// Publishing Options
+export interface PublishOptions {
+  subdomain?: string;
+  customDomain?: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    ogImage?: string;
+  };
+  analytics?: {
+    googleAnalyticsId?: string;
+    facebookPixelId?: string;
+  };
+}
+
+// Template Configuration
+export interface TemplateConfig {
+  id: TemplateType;
+  name: string;
+  description: string;
+  thumbnail: string;
+  features: string[];
+  sections: SectionType[];
+  defaultTheme: TemplateCustomization;
+  industries: string[];
+  premium?: boolean;
+}
+
+// Section Content Types
+export interface AboutSectionContent {
+  heading?: string;
+  content: string;
+  image?: string;
+  highlights?: string[];
+}
+
+export interface ContactSectionContent {
+  heading?: string;
+  subheading?: string;
+  showEmail?: boolean;
+  showPhone?: boolean;
+  showLocation?: boolean;
+  showSocialLinks?: boolean;
+  contactForm?: boolean;
+}
+
+export interface CustomSectionContent {
+  heading?: string;
+  content: string;
+  layout?: 'text' | 'html' | 'markdown';
+  media?: {
+    type: 'image' | 'video' | 'embed';
+    url: string;
+    caption?: string;
+  }[];
+}
+
+// Form validation schemas (for use with Zod)
+export interface PortfolioValidationRules {
+  name: { min: 1; max: 100 };
+  title: { min: 1; max: 200 };
+  bio: { min: 0; max: 2000 };
+  subdomain: { pattern: RegExp; min: 3; max: 63 };
+  skills: { max: 50 };
+  projects: { max: 50 };
+  experiences: { max: 20 };
+}
+
+// SEO Metadata
+export interface SEOMetadata {
+  title: string;
+  description: string;
+  keywords: string[];
+  ogImage?: string;
+  ogTitle?: string;
+  ogDescription?: string;
+  twitterCard?: 'summary' | 'summary_large_image';
+  twitterCreator?: string;
+  canonicalUrl?: string;
+  robots?: string;
 }

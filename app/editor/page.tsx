@@ -3,7 +3,7 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { PortfolioEditor } from '@/components/editor/PortfolioEditor';
+import PortfolioEditor from '@/components/editor/PortfolioEditor';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import { Portfolio } from '@/types/portfolio';
 import { portfolioService } from '@/lib/services/portfolioService';
@@ -182,10 +182,10 @@ function EditorContent() {
       showFooter={false}
     >
       <PortfolioEditor
-        portfolio={portfolio}
+        portfolioId={portfolio.id}
+        userId={portfolio.userId}
         onSave={handleSave}
         onPublish={handlePublish}
-        autoSave={true}
       />
     </BaseLayout>
   );

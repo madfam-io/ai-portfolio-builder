@@ -1,6 +1,17 @@
 'use client';
 
-import { Portfolio, CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
+import {
+  Portfolio,
+  CreatePortfolioDTO,
+  UpdatePortfolioDTO,
+  Project,
+  Experience,
+  Education,
+  Skill,
+  EnhancedProject,
+  EnhancedExperience,
+  TemplateCustomization,
+} from '@/types/portfolio';
 
 // Mock data for development
 const mockPortfolios: Portfolio[] = [
@@ -30,7 +41,8 @@ const mockPortfolios: Portfolio[] = [
         position: 'Senior Full Stack Developer',
         startDate: '2021-01',
         current: true,
-        description: 'Leading development of modern web applications using React and Node.js',
+        description:
+          'Leading development of modern web applications using React and Node.js',
         highlights: [
           'Led a team of 4 developers',
           'Improved application performance by 40%',
@@ -45,7 +57,8 @@ const mockPortfolios: Portfolio[] = [
         startDate: '2019-03',
         endDate: '2020-12',
         current: false,
-        description: 'Developed responsive web applications and mobile interfaces',
+        description:
+          'Developed responsive web applications and mobile interfaces',
         highlights: [
           'Built from scratch a customer portal',
           'Reduced loading time by 60%',
@@ -62,14 +75,15 @@ const mockPortfolios: Portfolio[] = [
         startDate: '2015-09',
         endDate: '2019-06',
         current: false,
-        achievements: ['Magna Cum Laude', 'Dean\'s List'],
+        achievements: ['Magna Cum Laude', "Dean's List"],
       },
     ],
     projects: [
       {
         id: 'proj-1',
         title: 'E-commerce Platform',
-        description: 'A full-featured e-commerce platform built with React and Node.js',
+        description:
+          'A full-featured e-commerce platform built with React and Node.js',
         technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe'],
         highlights: [
           'Supports multiple payment methods',
@@ -84,7 +98,8 @@ const mockPortfolios: Portfolio[] = [
       {
         id: 'proj-2',
         title: 'Task Management App',
-        description: 'A collaborative task management application with real-time updates',
+        description:
+          'A collaborative task management application with real-time updates',
         technologies: ['Vue.js', 'Firebase', 'Vuetify'],
         highlights: [
           'Real-time collaboration',
@@ -98,9 +113,21 @@ const mockPortfolios: Portfolio[] = [
       },
     ],
     skills: [
-      { name: 'JavaScript', level: 'expert', category: 'Programming Languages' },
-      { name: 'TypeScript', level: 'advanced', category: 'Programming Languages' },
-      { name: 'Python', level: 'intermediate', category: 'Programming Languages' },
+      {
+        name: 'JavaScript',
+        level: 'expert',
+        category: 'Programming Languages',
+      },
+      {
+        name: 'TypeScript',
+        level: 'advanced',
+        category: 'Programming Languages',
+      },
+      {
+        name: 'Python',
+        level: 'intermediate',
+        category: 'Programming Languages',
+      },
       { name: 'React', level: 'expert', category: 'Frontend' },
       { name: 'Vue.js', level: 'advanced', category: 'Frontend' },
       { name: 'Node.js', level: 'advanced', category: 'Backend' },
@@ -125,7 +152,14 @@ const mockPortfolios: Portfolio[] = [
       accentColor: '#ea4335',
       fontFamily: 'Inter',
       headerStyle: 'minimal',
-      sectionOrder: ['about', 'experience', 'projects', 'skills', 'education', 'certifications'],
+      sectionOrder: [
+        'about',
+        'experience',
+        'projects',
+        'skills',
+        'education',
+        'certifications',
+      ],
       hiddenSections: [],
     },
     aiSettings: {
@@ -178,7 +212,9 @@ export class PortfolioService {
   /**
    * Create a new portfolio
    */
-  async createPortfolio(data: CreatePortfolioDTO & { userId: string }): Promise<Portfolio> {
+  async createPortfolio(
+    data: CreatePortfolioDTO & { userId: string }
+  ): Promise<Portfolio> {
     await this.delay(500);
 
     const newPortfolio: Portfolio = {
@@ -204,7 +240,14 @@ export class PortfolioService {
         accentColor: '#ea4335',
         fontFamily: 'Inter',
         headerStyle: 'minimal',
-        sectionOrder: ['about', 'experience', 'projects', 'skills', 'education', 'certifications'],
+        sectionOrder: [
+          'about',
+          'experience',
+          'projects',
+          'skills',
+          'education',
+          'certifications',
+        ],
         hiddenSections: [],
       },
       aiSettings: {
@@ -228,7 +271,10 @@ export class PortfolioService {
   /**
    * Update an existing portfolio
    */
-  async updatePortfolio(id: string, data: UpdatePortfolioDTO): Promise<Portfolio | null> {
+  async updatePortfolio(
+    id: string,
+    data: UpdatePortfolioDTO
+  ): Promise<Portfolio | null> {
     await this.delay(400);
 
     const index = this.portfolios.findIndex(p => p.id === id);
@@ -236,7 +282,7 @@ export class PortfolioService {
 
     const current = this.portfolios[index];
     if (!current) return null;
-    
+
     // Build updated portfolio with type safety
     const updated: Portfolio = {
       id: current.id,
@@ -292,7 +338,7 @@ export class PortfolioService {
 
     const current = this.portfolios[index];
     if (!current) return null;
-    
+
     const updated: Portfolio = {
       id: current.id,
       userId: current.userId,
@@ -361,7 +407,11 @@ export class PortfolioService {
   /**
    * Clone a portfolio
    */
-  async clonePortfolio(id: string, newName: string, userId: string): Promise<Portfolio | null> {
+  async clonePortfolio(
+    id: string,
+    newName: string,
+    userId: string
+  ): Promise<Portfolio | null> {
     const original = await this.getPortfolio(id);
     if (!original) return null;
 
@@ -389,13 +439,14 @@ export class PortfolioService {
     await this.delay(300);
 
     const userPortfolios = this.portfolios.filter(p => p.userId === userId);
-    
+
     if (!query.trim()) return userPortfolios;
 
-    return userPortfolios.filter(portfolio => 
-      portfolio.name.toLowerCase().includes(query.toLowerCase()) ||
-      portfolio.title.toLowerCase().includes(query.toLowerCase()) ||
-      portfolio.bio.toLowerCase().includes(query.toLowerCase())
+    return userPortfolios.filter(
+      portfolio =>
+        portfolio.name.toLowerCase().includes(query.toLowerCase()) ||
+        portfolio.title.toLowerCase().includes(query.toLowerCase()) ||
+        portfolio.bio.toLowerCase().includes(query.toLowerCase())
     );
   }
 
@@ -407,9 +458,452 @@ export class PortfolioService {
       .toLowerCase()
       .replace(/[^a-z0-9]/g, '')
       .substring(0, 20);
-    
+
     const timestamp = Date.now().toString().slice(-4);
     return `${base}${timestamp}`;
+  }
+
+  /**
+   * Add or update a project
+   */
+  async upsertProject(
+    portfolioId: string,
+    project: Partial<EnhancedProject>
+  ): Promise<EnhancedProject | null> {
+    await this.delay(300);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return null;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return null;
+
+    const newProject: Project = {
+      id: project.id || `proj-${Date.now()}`,
+      title: project.title || '',
+      description: project.description || '',
+      imageUrl: project.imageUrl,
+      projectUrl: project.projectUrl,
+      liveUrl: project.liveUrl,
+      githubUrl: project.githubUrl,
+      technologies: project.technologies || [],
+      highlights: project.highlights || [],
+      featured: project.featured || false,
+      order: project.order || 0,
+    };
+
+    const existingIndex = portfolio.projects.findIndex(
+      p => p.id === newProject.id
+    );
+    if (existingIndex >= 0) {
+      portfolio.projects[existingIndex] = newProject;
+    } else {
+      portfolio.projects.push(newProject);
+    }
+
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return {
+      ...newProject,
+      shortDescription: project.shortDescription,
+      role: project.role,
+      demoUrl: project.demoUrl,
+      images: project.images,
+      challenges: project.challenges,
+      solutions: project.solutions,
+      impact: project.impact,
+      startDate: project.startDate,
+      endDate: project.endDate,
+      isCurrent: project.isCurrent,
+      aiEnhanced: project.aiEnhanced,
+      aiEnhancementDate: project.aiEnhancementDate,
+    };
+  }
+
+  /**
+   * Delete a project
+   */
+  async deleteProject(
+    portfolioId: string,
+    projectId: string
+  ): Promise<boolean> {
+    await this.delay(200);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return false;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return false;
+
+    const projectIndex = portfolio.projects.findIndex(p => p.id === projectId);
+    if (projectIndex === -1) return false;
+
+    portfolio.projects.splice(projectIndex, 1);
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return true;
+  }
+
+  /**
+   * Add or update experience
+   */
+  async upsertExperience(
+    portfolioId: string,
+    experience: Partial<EnhancedExperience>
+  ): Promise<EnhancedExperience | null> {
+    await this.delay(300);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return null;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return null;
+
+    const newExperience: Experience = {
+      id: experience.id || `exp-${Date.now()}`,
+      company: experience.company || '',
+      position: experience.position || '',
+      startDate: experience.startDate || '',
+      endDate: experience.endDate,
+      current: experience.current || false,
+      description: experience.description || '',
+      highlights: experience.highlights || [],
+      technologies: experience.technologies || [],
+    };
+
+    const existingIndex = portfolio.experience.findIndex(
+      e => e.id === newExperience.id
+    );
+    if (existingIndex >= 0) {
+      portfolio.experience[existingIndex] = newExperience;
+    } else {
+      portfolio.experience.push(newExperience);
+    }
+
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return {
+      ...newExperience,
+      employmentType: experience.employmentType,
+      responsibilities: experience.responsibilities,
+      achievements: experience.achievements,
+      aiEnhanced: experience.aiEnhanced,
+      aiEnhancementDate: experience.aiEnhancementDate,
+    };
+  }
+
+  /**
+   * Delete an experience
+   */
+  async deleteExperience(
+    portfolioId: string,
+    experienceId: string
+  ): Promise<boolean> {
+    await this.delay(200);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return false;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return false;
+
+    const experienceIndex = portfolio.experience.findIndex(
+      e => e.id === experienceId
+    );
+    if (experienceIndex === -1) return false;
+
+    portfolio.experience.splice(experienceIndex, 1);
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return true;
+  }
+
+  /**
+   * Add or update education
+   */
+  async upsertEducation(
+    portfolioId: string,
+    education: Partial<Education>
+  ): Promise<Education | null> {
+    await this.delay(300);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return null;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return null;
+
+    const newEducation: Education = {
+      id: education.id || `edu-${Date.now()}`,
+      institution: education.institution || '',
+      degree: education.degree || '',
+      field: education.field || '',
+      startDate: education.startDate || '',
+      endDate: education.endDate,
+      current: education.current || false,
+      description: education.description,
+      achievements: education.achievements || [],
+    };
+
+    const existingIndex = portfolio.education.findIndex(
+      e => e.id === newEducation.id
+    );
+    if (existingIndex >= 0) {
+      portfolio.education[existingIndex] = newEducation;
+    } else {
+      portfolio.education.push(newEducation);
+    }
+
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return newEducation;
+  }
+
+  /**
+   * Add or update skill
+   */
+  async upsertSkill(
+    portfolioId: string,
+    skill: Partial<Skill>
+  ): Promise<Skill | null> {
+    await this.delay(200);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return null;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return null;
+
+    const newSkill: Skill = {
+      name: skill.name || '',
+      level: skill.level,
+      category: skill.category,
+    };
+
+    const existingIndex = portfolio.skills.findIndex(
+      s => s.name === newSkill.name
+    );
+    if (existingIndex >= 0) {
+      portfolio.skills[existingIndex] = newSkill;
+    } else {
+      portfolio.skills.push(newSkill);
+    }
+
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return newSkill;
+  }
+
+  /**
+   * Delete a skill
+   */
+  async deleteSkill(portfolioId: string, skillName: string): Promise<boolean> {
+    await this.delay(200);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return false;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return false;
+
+    const skillIndex = portfolio.skills.findIndex(s => s.name === skillName);
+    if (skillIndex === -1) return false;
+
+    portfolio.skills.splice(skillIndex, 1);
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return true;
+  }
+
+  /**
+   * Check subdomain availability
+   */
+  async checkSubdomainAvailability(subdomain: string): Promise<boolean> {
+    await this.delay(100);
+
+    const existing = this.portfolios.find(p => p.subdomain === subdomain);
+    return !existing;
+  }
+
+  /**
+   * Update portfolio subdomain
+   */
+  async updateSubdomain(
+    portfolioId: string,
+    subdomain: string
+  ): Promise<boolean> {
+    await this.delay(200);
+
+    // Check availability first
+    const isAvailable = await this.checkSubdomainAvailability(subdomain);
+    if (!isAvailable) return false;
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return false;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return false;
+
+    portfolio.subdomain = subdomain;
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return true;
+  }
+
+  /**
+   * Get portfolio by subdomain (for public viewing)
+   */
+  async getPortfolioBySubdomain(subdomain: string): Promise<Portfolio | null> {
+    await this.delay(200);
+
+    const portfolio = this.portfolios.find(
+      p => p.subdomain === subdomain && p.status === 'published'
+    );
+
+    if (portfolio) {
+      // Increment view count
+      portfolio.views = (portfolio.views || 0) + 1;
+      portfolio.lastViewedAt = new Date();
+    }
+
+    return portfolio || null;
+  }
+
+  /**
+   * Update portfolio template and preserve data
+   */
+  async updateTemplate(
+    portfolioId: string,
+    template: string
+  ): Promise<Portfolio | null> {
+    await this.delay(300);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return null;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return null;
+
+    // Update template while preserving existing data
+    portfolio.template = template as any;
+    const defaultTheme = this.getDefaultThemeForTemplate(template);
+    portfolio.customization = {
+      ...portfolio.customization,
+      ...(defaultTheme || {}),
+    };
+    portfolio.updatedAt = new Date();
+
+    this.portfolios[portfolioIndex] = portfolio;
+    return portfolio;
+  }
+
+  /**
+   * Reorder items (projects, experiences, etc.)
+   */
+  async reorderItems(
+    portfolioId: string,
+    itemType: 'projects' | 'experience' | 'education' | 'skills',
+    itemIds: string[]
+  ): Promise<boolean> {
+    await this.delay(200);
+
+    const portfolioIndex = this.portfolios.findIndex(p => p.id === portfolioId);
+    if (portfolioIndex === -1) return false;
+
+    const portfolio = this.portfolios[portfolioIndex];
+    if (!portfolio) return false;
+
+    if (itemType === 'projects') {
+      const reorderedProjects = itemIds
+        .map(id => portfolio.projects.find(p => p.id === id))
+        .filter(Boolean) as Project[];
+
+      // Update order property
+      reorderedProjects.forEach((project, index) => {
+        project.order = index;
+      });
+
+      portfolio.projects = reorderedProjects;
+    }
+
+    portfolio.updatedAt = new Date();
+    this.portfolios[portfolioIndex] = portfolio;
+
+    return true;
+  }
+
+  /**
+   * Auto-save portfolio changes
+   */
+  async autoSave(
+    portfolioId: string,
+    changes: Partial<UpdatePortfolioDTO>
+  ): Promise<boolean> {
+    // Don't show delay for auto-save to feel instant
+    const portfolio = await this.updatePortfolio(portfolioId, changes);
+    return !!portfolio;
+  }
+
+  /**
+   * Get template-specific default theme
+   */
+  private getDefaultThemeForTemplate(
+    template: string
+  ): Partial<TemplateCustomization> {
+    const themes: Record<string, Partial<TemplateCustomization>> = {
+      developer: {
+        primaryColor: '#6366f1',
+        secondaryColor: '#8b5cf6',
+        accentColor: '#10b981',
+        fontFamily: 'Inter',
+        darkMode: true,
+      },
+      designer: {
+        primaryColor: '#ec4899',
+        secondaryColor: '#f97316',
+        accentColor: '#8b5cf6',
+        fontFamily: 'Poppins',
+        darkMode: false,
+      },
+      business: {
+        primaryColor: '#3b82f6',
+        secondaryColor: '#1e40af',
+        accentColor: '#10b981',
+        fontFamily: 'Open Sans',
+        darkMode: false,
+      },
+      consultant: {
+        primaryColor: '#059669',
+        secondaryColor: '#0d9488',
+        accentColor: '#0ea5e9',
+        fontFamily: 'Inter',
+        darkMode: false,
+      },
+      creative: {
+        primaryColor: '#7c3aed',
+        secondaryColor: '#c026d3',
+        accentColor: '#f59e0b',
+        fontFamily: 'Poppins',
+        darkMode: false,
+      },
+      educator: {
+        primaryColor: '#dc2626',
+        secondaryColor: '#ea580c',
+        accentColor: '#059669',
+        fontFamily: 'Open Sans',
+        darkMode: false,
+      },
+    };
+
+    return themes[template] ?? themes.developer ?? {};
   }
 
   /**
