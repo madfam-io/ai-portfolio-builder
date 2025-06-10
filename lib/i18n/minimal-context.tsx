@@ -444,6 +444,241 @@ const translations = {
       'Diseño creativo con galería visual de portafolio y métricas sociales',
     consultantTemplateDesc:
       'Enfoque profesional de negocios con métricas y estudios de caso',
+
+    // API Page
+    apiPageSubtitle:
+      'Integra las capacidades de generación de portafolios de PRISMA en tus aplicaciones con nuestra API RESTful completa.',
+    apiRestfulTitle: 'API RESTful',
+    apiRestfulDesc:
+      'Endpoints REST simples e intuitivos para crear, gestionar y personalizar portafolios programáticamente.',
+    apiAuthTitle: 'Autenticación API',
+    apiAuthDesc:
+      'Autenticación segura con clave API, limitación de velocidad y análisis de uso para todas las necesidades de integración.',
+    apiDocsTitle: 'Documentación Completa',
+    apiDocsDesc:
+      'Documentación completa con ejemplos de código, SDKs y explorador de API interactivo.',
+    apiEnterpriseTitle: 'Listo para Empresas',
+    apiEnterpriseDesc:
+      'Listo para producción con SLA de 99.9% uptime, soporte de webhooks y canales de soporte dedicados.',
+    apiComingSoon: 'API Próximamente',
+    apiWaitlistDesc:
+      'Nuestra API está actualmente en desarrollo. Únete a la lista de espera para obtener acceso temprano y beneficios exclusivos para desarrolladores.',
+    apiJoinWaitlist: 'Unirse a Lista de Espera API',
+    apiPerfectFor: 'Perfecto para',
+    apiHrPlatforms: 'Plataformas de RRHH',
+    apiHrDesc:
+      'Genera portafolios para candidatos automáticamente desde datos de currículum.',
+    apiFreelanceMarketplaces: 'Mercados de Freelancers',
+    apiFreelanceDesc:
+      'Ayuda a freelancers a crear portafolios profesionales para ganar más clientes.',
+    apiEducationalInstitutions: 'Instituciones Educativas',
+    apiEducationalDesc:
+      'Permite a estudiantes mostrar su trabajo y proyectos profesionalmente.',
+
+    // Blog Page
+    blogPageTitle: 'Blog de PRISMA',
+    blogSubtitle:
+      'Perspectivas, consejos y estrategias para ayudarte a crear portafolios destacados y avanzar en tu carrera profesional.',
+    blogAllPosts: 'Todas las Publicaciones',
+    blogDesign: 'Diseño',
+    blogTechnology: 'Tecnología',
+    blogBusiness: 'Negocios',
+    blogCareerTips: 'Consejos de Carrera',
+    blogCaseStudies: 'Casos de Estudio',
+    blogReadMore: 'Leer Más',
+    blogStayUpdated: 'Mantente Actualizado',
+    blogNewsletterDesc:
+      'Recibe los últimos consejos de portafolios, perspectivas de la industria y actualizaciones de PRISMA en tu bandeja de entrada.',
+    blogEmailPlaceholder: 'Ingresa tu correo electrónico',
+    blogSubscribe: 'Suscribirse',
+
+    // Careers Page
+    careersPageTitle: 'Únete al Equipo PRISMA',
+    careersSubtitle:
+      'Ayúdanos a revolucionar cómo los profesionales muestran su trabajo. Construye el futuro de la creación de portafolios con herramientas impulsadas por IA.',
+    careersWhyMadfam: '¿Por qué MADFAM?',
+    careersWhyDesc:
+      'Estamos en una misión de democratizar el éxito profesional a través de la tecnología.',
+    careersRemoteTitle: 'Cultura Remota Primero',
+    careersRemoteDesc:
+      'Trabaja desde cualquier lugar con horarios flexibles y comunicación asíncrona.',
+    careersBenefitsTitle: 'Beneficios Integrales',
+    careersBenefitsDesc:
+      'Seguro médico, dental, visual más apoyo de salud mental.',
+    careersGrowthTitle: 'Oportunidades de Crecimiento',
+    careersGrowthDesc:
+      'Presupuesto de aprendizaje, asistencia a conferencias y desarrollo de carrera.',
+    careersInclusiveTitle: 'Equipo Inclusivo',
+    careersInclusiveDesc:
+      'Ambiente diverso y colaborativo donde la voz de todos importa.',
+    careersOpenPositions: 'Posiciones Abiertas',
+    careersApplyNow: 'Aplicar Ahora',
+    careersKeyRequirements: 'Requisitos Clave:',
+    careersNoMatch: '¿No ves una coincidencia perfecta?',
+    careersNoMatchDesc:
+      'Siempre estamos buscando individuos talentosos que compartan nuestra pasión por la innovación y la excelencia.',
+    careersSendResume: 'Envíanos Tu Currículum',
+
+    // GDPR Page
+    gdprPageTitle: 'Cumplimiento GDPR',
+    gdprSubtitle:
+      'Tus derechos de protección de datos bajo el Reglamento General de Protección de Datos (GDPR) y cómo PRISMA respeta tu privacidad.',
+    gdprCommitment: 'Nuestro Compromiso con Tu Privacidad',
+    gdprCommitmentDesc:
+      'MADFAM está comprometido a proteger tus datos personales y respetar tus derechos de privacidad. Cumplimos con los requisitos del GDPR e implementamos medidas técnicas y organizacionales apropiadas para salvaguardar tu información.',
+    gdprContactDpo: 'Contactar Nuestro DPO',
+    gdprYourRights: 'Tus Derechos de Protección de Datos',
+    gdprRightToInfo: 'Derecho a la Información',
+    gdprRightToInfoDesc:
+      'Tienes derecho a saber qué datos personales recopilamos, cómo los usamos y con quién los compartimos.',
+    gdprRightToRect: 'Derecho de Rectificación',
+    gdprRightToRectDesc:
+      'Puedes solicitar correcciones a cualquier dato personal inexacto o incompleto que tengamos sobre ti.',
+    gdprRightToErase: 'Derecho de Supresión',
+    gdprRightToEraseDesc:
+      'Puedes solicitar la eliminación de tus datos personales cuando ya no sea necesario o retires el consentimiento.',
+    gdprRightToPort: 'Derecho a la Portabilidad de Datos',
+    gdprRightToPortDesc:
+      'Puedes solicitar una copia de tus datos personales en un formato estructurado y legible por máquina.',
+    gdprRightToObject: 'Derecho de Oposición',
+    gdprRightToObjectDesc:
+      'Puedes oponerte al procesamiento de tus datos personales para marketing directo u otros intereses legítimos.',
+    gdprRightToRestrict: 'Derecho a Restringir el Procesamiento',
+    gdprRightToRestrictDesc:
+      'Puedes solicitar limitación del procesamiento bajo ciertas circunstancias mientras verificamos o corregimos datos.',
+    gdprWhatWeCollect: 'Qué Datos Recopilamos',
+    gdprAccountInfo: 'Información de Cuenta',
+    gdprAccountInfoDesc:
+      'Nombre, dirección de correo electrónico, contraseña (cifrada) e información de perfil que proporcionas.',
+    gdprPortfolioData: 'Datos de Portafolio',
+    gdprPortfolioDataDesc:
+      'Contenido que creas, subes o generas usando nuestra plataforma incluyendo texto, imágenes e información de proyectos.',
+    gdprUsageAnalytics: 'Análisis de Uso',
+    gdprUsageAnalyticsDesc:
+      'Datos agregados y anonimizados sobre cómo usas nuestra plataforma para mejorar nuestros servicios.',
+    gdprTechnicalData: 'Datos Técnicos',
+    gdprTechnicalDataDesc:
+      'Dirección IP, tipo de navegador, información del dispositivo y cookies para seguridad y funcionalidad.',
+    gdprLegalBasis: 'Base Legal para el Procesamiento',
+    gdprContractPerf: 'Ejecución del Contrato',
+    gdprContractPerfDesc:
+      'Procesamiento necesario para proporcionar nuestros servicios de creación de portafolios como se describe en nuestros Términos de Servicio.',
+    gdprLegitInterest: 'Interés Legítimo',
+    gdprLegitInterestDesc:
+      'Mejorar nuestros servicios, medidas de seguridad y proporcionar atención al cliente.',
+    gdprConsent: 'Consentimiento',
+    gdprConsentDesc:
+      'Comunicaciones de marketing, análisis opcionales e integraciones de terceros que apruebas explícitamente.',
+    gdprExerciseRights: 'Ejercer Tus Derechos',
+    gdprExerciseDesc:
+      'Para ejercer cualquiera de tus derechos GDPR, por favor contáctanos. Responderemos dentro de 30 días y podemos requerir verificación de identidad.',
+    gdprSubmitRequest: 'Enviar Solicitud GDPR',
+    gdprManageProfile: 'Gestionar Datos en Perfil',
+
+    // Contact Page
+    contactPageTitle: 'Contactar PRISMA',
+    contactSubtitle:
+      '¿Tienes preguntas? ¿Necesitas soporte? ¿Quieres discutir oportunidades de negocio? Estamos aquí para ayudar.',
+    contactSendMessage: 'Envíanos un mensaje',
+    contactMessageSent: '¡Mensaje Enviado!',
+    contactThankYou:
+      'Gracias por contactarnos. Te responderemos dentro de 24 horas.',
+    contactFullName: 'Nombre Completo *',
+    contactEmailAddress: 'Dirección de Correo Electrónico *',
+    contactSubject: 'Asunto *',
+    contactMessage: 'Mensaje *',
+    contactInquiryType: 'Tipo de Consulta',
+    contactGeneral: 'Consulta General',
+    contactSupport: 'Soporte Técnico',
+    contactBusinessSales: 'Negocios y Ventas',
+    contactCareers: 'Oportunidades de Carrera',
+    contactGdpr: 'Protección de Datos (GDPR)',
+    contactPress: 'Prensa y Medios',
+    contactSending: 'Enviando...',
+    contactSendButton: 'Enviar Mensaje',
+    contactGetInTouch: 'Ponte en Contacto',
+    contactGeneralInquiries: 'Consultas Generales',
+    contactBusinessSalesLabel: 'Negocios y Ventas',
+    contactSupportLabel: 'Soporte',
+    contactOffice: 'Oficina',
+    contactMadfamHq: 'Sede de MADFAM',
+    contactOfficeDesc:
+      'Ciudad de México, México\nConstruyendo el futuro de los portafolios profesionales',
+    contactResponseTime: 'Tiempo de Respuesta',
+    contactGeneralTime: 'Consultas Generales:',
+    contactTechnicalTime: 'Soporte Técnico:',
+    contactBusinessTime: 'Consultas de Negocios:',
+    contactTime24h: '24 horas',
+    contactTime48h: '4-8 horas',
+    contactTimeSameDay: 'Mismo día',
+    contactQuickQuestion:
+      '¿Tienes una pregunta rápida? Revisa nuestro FAQ primero.',
+    contactViewFaq: 'Ver FAQ',
+
+    // Demo Page
+    demoPageTitle: 'Ver PRISMA en Acción',
+    demoSubtitle:
+      'Mira cómo PRISMA transforma un simple currículum en un portafolio profesional impresionante en menos de 5 minutos.',
+    demoTryInteractive: 'Probar Demo Interactivo',
+    demoWatchVideo: 'Ver Demo en Video',
+    demoVideoComingSoon: 'Video Demo Próximamente',
+    demoVideoComingSoonDesc: 'Mientras tanto, prueba nuestro demo interactivo',
+    demoLaunchInteractive: 'Lanzar Demo Interactivo',
+    demoPortfolioCreation: 'Demo de Creación de Portafolio',
+    demoCompleteProcess: 'Ve el proceso completo de currículum a portafolio',
+    demoStepByStep: '5 minutos • Recorrido paso a paso',
+    demoHowItWorks: 'Cómo Funciona',
+    demoStep1Title: 'Sube tu Currículum',
+    demoStep1Desc:
+      'Simplemente sube tu CV o currículum existente en formato PDF',
+    demoStep1Duration: '30 segundos',
+    demoStep2Title: 'Mejora con IA',
+    demoStep2Desc:
+      'Nuestra IA analiza y mejora tu contenido para máximo impacto',
+    demoStep2Duration: '2 minutos',
+    demoStep3Title: 'Elige Plantilla',
+    demoStep3Desc:
+      'Selecciona de plantillas profesionales adaptadas a tu industria',
+    demoStep3Duration: '1 minuto',
+    demoStep4Title: 'Personaliza y Publica',
+    demoStep4Desc: 'Haz ajustes finales y publica tu portafolio impresionante',
+    demoStep4Duration: '2 minutos',
+    demoLiveExample: 'Ejemplo de Portafolio en Vivo',
+    demoWhatYouGet: 'Lo que Obtienes',
+    demoFeature1: 'Optimización de contenido impulsada por IA',
+    demoFeature2: 'Plantillas específicas de industria',
+    demoFeature3: 'Diseño responsivo para móviles',
+    demoFeature4: 'Soporte de dominio personalizado',
+    demoFeature5: 'Optimización SEO',
+    demoFeature6: 'Panel de análisis',
+    demoReadyToCreate: '¿Listo para Crear tu Portafolio?',
+    demoReadySubtitle:
+      'Únete a miles de profesionales que han transformado sus carreras con PRISMA.',
+    demoStartFreeTrial: 'Iniciar Prueba Gratuita',
+    demoTryDemo: 'Probar Demo Interactivo',
+
+    // Pricing Component
+    pricingLimitedOffer:
+      '🎉 Tiempo Limitado: ¡Obtén 50% de descuento en tus primeros 3 meses en planes Pro y Business!',
+    pricingOfferExpires: 'La oferta expira el 31 de diciembre de 2024',
+    pricingMostPowerful: 'MÁS PODEROSO',
+    pricingEverythingInBusiness: 'Todo en Business +',
+    pricingWhiteLabelSolutions: 'Soluciones de marca blanca',
+    pricingDedicatedManager: 'Gerente de cuenta dedicado',
+    pricingCustomIntegrations: 'Integraciones personalizadas',
+    pricing24Support: 'Soporte prioritario 24/7',
+    pricingSlaGuarantees: 'Garantías SLA',
+    pricingStartBusinessTrial: 'Iniciar Prueba Business',
+    pricingContactSalesTeam: 'Contactar Equipo de Ventas',
+    pricingStartEnterpriseTrial: 'Iniciar Prueba Enterprise',
+    pricingRequestQuote: 'Solicitar Cotización Personalizada',
+    pricingSecurePayment: '🔒 Pago seguro',
+    pricingNoHiddenFees: '💳 Sin tarifas ocultas',
+    pricingCancelAnytime: '🔄 Cancela en cualquier momento',
+    pricingMoneyBack: '✓ Garantía de devolución de 14 días',
+    pricingNoSetupFees: '✓ Sin tarifas de configuración',
+    pricingFreeMigration: '✓ Soporte de migración gratuito',
+    planEnterprise: 'Enterprise',
   },
   en: {
     features: 'Features',
@@ -809,6 +1044,239 @@ const translations = {
       'Creative layout with visual portfolio grid and social metrics',
     consultantTemplateDesc:
       'Professional business focus with metrics and case studies',
+
+    // API Page
+    apiPageSubtitle:
+      "Integrate PRISMA's portfolio generation capabilities into your applications with our comprehensive RESTful API.",
+    apiRestfulTitle: 'RESTful API',
+    apiRestfulDesc:
+      'Simple, intuitive REST endpoints for creating, managing, and customizing portfolios programmatically.',
+    apiAuthTitle: 'API Authentication',
+    apiAuthDesc:
+      'Secure API key authentication with rate limiting and usage analytics for all integration needs.',
+    apiDocsTitle: 'Comprehensive Docs',
+    apiDocsDesc:
+      'Complete documentation with code examples, SDKs, and interactive API explorer.',
+    apiEnterpriseTitle: 'Enterprise Ready',
+    apiEnterpriseDesc:
+      'Production-ready with 99.9% uptime SLA, webhook support, and dedicated support channels.',
+    apiComingSoon: 'API Coming Soon',
+    apiWaitlistDesc:
+      'Our API is currently in development. Join the waitlist to get early access and exclusive developer benefits.',
+    apiJoinWaitlist: 'Join API Waitlist',
+    apiPerfectFor: 'Perfect for',
+    apiHrPlatforms: 'HR Platforms',
+    apiHrDesc:
+      'Generate portfolios for candidates automatically from resume data.',
+    apiFreelanceMarketplaces: 'Freelance Marketplaces',
+    apiFreelanceDesc:
+      'Help freelancers create professional portfolios to win more clients.',
+    apiEducationalInstitutions: 'Educational Institutions',
+    apiEducationalDesc:
+      'Enable students to showcase their work and projects professionally.',
+
+    // Blog Page
+    blogPageTitle: 'PRISMA Blog',
+    blogSubtitle:
+      'Insights, tips, and strategies to help you create outstanding portfolios and advance your professional career.',
+    blogAllPosts: 'All Posts',
+    blogDesign: 'Design',
+    blogTechnology: 'Technology',
+    blogBusiness: 'Business',
+    blogCareerTips: 'Career Tips',
+    blogCaseStudies: 'Case Studies',
+    blogReadMore: 'Read More',
+    blogStayUpdated: 'Stay Updated',
+    blogNewsletterDesc:
+      'Get the latest portfolio tips, industry insights, and PRISMA updates delivered to your inbox.',
+    blogEmailPlaceholder: 'Enter your email',
+    blogSubscribe: 'Subscribe',
+
+    // Careers Page
+    careersPageTitle: 'Join the PRISMA Team',
+    careersSubtitle:
+      'Help us revolutionize how professionals showcase their work. Build the future of portfolio creation with AI-powered tools.',
+    careersWhyMadfam: 'Why MADFAM?',
+    careersWhyDesc:
+      "We're on a mission to democratize professional success through technology.",
+    careersRemoteTitle: 'Remote-First Culture',
+    careersRemoteDesc:
+      'Work from anywhere with flexible hours and async communication.',
+    careersBenefitsTitle: 'Comprehensive Benefits',
+    careersBenefitsDesc:
+      'Health, dental, vision insurance plus mental health support.',
+    careersGrowthTitle: 'Growth Opportunities',
+    careersGrowthDesc:
+      'Learning budget, conference attendance, and career development.',
+    careersInclusiveTitle: 'Inclusive Team',
+    careersInclusiveDesc:
+      "Diverse, collaborative environment where everyone's voice matters.",
+    careersOpenPositions: 'Open Positions',
+    careersApplyNow: 'Apply Now',
+    careersKeyRequirements: 'Key Requirements:',
+    careersNoMatch: "Don't see a perfect match?",
+    careersNoMatchDesc:
+      "We're always looking for talented individuals who share our passion for innovation and excellence.",
+    careersSendResume: 'Send Us Your Resume',
+
+    // GDPR Page
+    gdprPageTitle: 'GDPR Compliance',
+    gdprSubtitle:
+      'Your data protection rights under the General Data Protection Regulation (GDPR) and how PRISMA respects your privacy.',
+    gdprCommitment: 'Our Commitment to Your Privacy',
+    gdprCommitmentDesc:
+      'MADFAM is committed to protecting your personal data and respecting your privacy rights. We comply with GDPR requirements and implement appropriate technical and organizational measures to safeguard your information.',
+    gdprContactDpo: 'Contact Our DPO',
+    gdprYourRights: 'Your Data Protection Rights',
+    gdprRightToInfo: 'Right to Information',
+    gdprRightToInfoDesc:
+      'You have the right to know what personal data we collect, how we use it, and who we share it with.',
+    gdprRightToRect: 'Right to Rectification',
+    gdprRightToRectDesc:
+      'You can request corrections to any inaccurate or incomplete personal data we hold about you.',
+    gdprRightToErase: 'Right to Erasure',
+    gdprRightToEraseDesc:
+      "You can request deletion of your personal data when it's no longer necessary or you withdraw consent.",
+    gdprRightToPort: 'Right to Data Portability',
+    gdprRightToPortDesc:
+      'You can request a copy of your personal data in a structured, machine-readable format.',
+    gdprRightToObject: 'Right to Object',
+    gdprRightToObjectDesc:
+      'You can object to processing of your personal data for direct marketing or other legitimate interests.',
+    gdprRightToRestrict: 'Right to Restrict Processing',
+    gdprRightToRestrictDesc:
+      'You can request limitation of processing under certain circumstances while we verify or correct data.',
+    gdprWhatWeCollect: 'What Data We Collect',
+    gdprAccountInfo: 'Account Information',
+    gdprAccountInfoDesc:
+      'Name, email address, password (encrypted), and profile information you provide.',
+    gdprPortfolioData: 'Portfolio Data',
+    gdprPortfolioDataDesc:
+      'Content you create, upload, or generate using our platform including text, images, and project information.',
+    gdprUsageAnalytics: 'Usage Analytics',
+    gdprUsageAnalyticsDesc:
+      'Aggregated, anonymized data about how you use our platform to improve our services.',
+    gdprTechnicalData: 'Technical Data',
+    gdprTechnicalDataDesc:
+      'IP address, browser type, device information, and cookies for security and functionality.',
+    gdprLegalBasis: 'Legal Basis for Processing',
+    gdprContractPerf: 'Contract Performance',
+    gdprContractPerfDesc:
+      'Processing necessary to provide our portfolio creation services as outlined in our Terms of Service.',
+    gdprLegitInterest: 'Legitimate Interest',
+    gdprLegitInterestDesc:
+      'Improving our services, security measures, and providing customer support.',
+    gdprConsent: 'Consent',
+    gdprConsentDesc:
+      'Marketing communications, optional analytics, and third-party integrations you explicitly approve.',
+    gdprExerciseRights: 'Exercise Your Rights',
+    gdprExerciseDesc:
+      'To exercise any of your GDPR rights, please contact us. We will respond within 30 days and may require identity verification.',
+    gdprSubmitRequest: 'Submit GDPR Request',
+    gdprManageProfile: 'Manage Data in Profile',
+
+    // Contact Page
+    contactPageTitle: 'Contact PRISMA',
+    contactSubtitle:
+      "Have questions? Need support? Want to discuss business opportunities? We're here to help.",
+    contactSendMessage: 'Send us a message',
+    contactMessageSent: 'Message Sent!',
+    contactThankYou:
+      "Thank you for contacting us. We'll get back to you within 24 hours.",
+    contactFullName: 'Full Name *',
+    contactEmailAddress: 'Email Address *',
+    contactSubject: 'Subject *',
+    contactMessage: 'Message *',
+    contactInquiryType: 'Inquiry Type',
+    contactGeneral: 'General Inquiry',
+    contactSupport: 'Technical Support',
+    contactBusinessSales: 'Business & Sales',
+    contactCareers: 'Career Opportunities',
+    contactGdpr: 'Data Protection (GDPR)',
+    contactPress: 'Press & Media',
+    contactSending: 'Sending...',
+    contactSendButton: 'Send Message',
+    contactGetInTouch: 'Get in Touch',
+    contactGeneralInquiries: 'General Inquiries',
+    contactBusinessSalesLabel: 'Business & Sales',
+    contactSupportLabel: 'Support',
+    contactOffice: 'Office',
+    contactMadfamHq: 'MADFAM HQ',
+    contactOfficeDesc:
+      'Mexico City, Mexico\nBuilding the future of professional portfolios',
+    contactResponseTime: 'Response Time',
+    contactGeneralTime: 'General Inquiries:',
+    contactTechnicalTime: 'Technical Support:',
+    contactBusinessTime: 'Business Inquiries:',
+    contactTime24h: '24 hours',
+    contactTime48h: '4-8 hours',
+    contactTimeSameDay: 'Same day',
+    contactQuickQuestion: 'Have a quick question? Check our FAQ first.',
+    contactViewFaq: 'View FAQ',
+
+    // Demo Page
+    demoPageTitle: 'See PRISMA in Action',
+    demoSubtitle:
+      'Watch how PRISMA transforms a simple resume into a stunning professional portfolio in under 5 minutes.',
+    demoTryInteractive: 'Try Interactive Demo',
+    demoWatchVideo: 'Watch Video Demo',
+    demoVideoComingSoon: 'Demo Video Coming Soon',
+    demoVideoComingSoonDesc: 'In the meantime, try our interactive demo',
+    demoLaunchInteractive: 'Launch Interactive Demo',
+    demoPortfolioCreation: 'Portfolio Creation Demo',
+    demoCompleteProcess: 'See the complete process from resume to portfolio',
+    demoStepByStep: '5 minutes • Step-by-step walkthrough',
+    demoHowItWorks: 'How It Works',
+    demoStep1Title: 'Upload Your Resume',
+    demoStep1Desc: 'Simply upload your existing CV or resume in PDF format',
+    demoStep1Duration: '30 seconds',
+    demoStep2Title: 'AI Enhancement',
+    demoStep2Desc:
+      'Our AI analyzes and enhances your content for maximum impact',
+    demoStep2Duration: '2 minutes',
+    demoStep3Title: 'Choose Template',
+    demoStep3Desc:
+      'Select from professional templates tailored to your industry',
+    demoStep3Duration: '1 minute',
+    demoStep4Title: 'Customize & Publish',
+    demoStep4Desc: 'Make final adjustments and publish your stunning portfolio',
+    demoStep4Duration: '2 minutes',
+    demoLiveExample: 'Live Portfolio Example',
+    demoWhatYouGet: 'What You Get',
+    demoFeature1: 'AI-powered content optimization',
+    demoFeature2: 'Industry-specific templates',
+    demoFeature3: 'Mobile-responsive design',
+    demoFeature4: 'Custom domain support',
+    demoFeature5: 'SEO optimization',
+    demoFeature6: 'Analytics dashboard',
+    demoReadyToCreate: 'Ready to Create Your Portfolio?',
+    demoReadySubtitle:
+      'Join thousands of professionals who have transformed their careers with PRISMA.',
+    demoStartFreeTrial: 'Start Free Trial',
+    demoTryDemo: 'Try Interactive Demo',
+
+    // Pricing Component
+    pricingLimitedOffer:
+      '🎉 Limited Time: Get 50% off your first 3 months on Pro and Business plans!',
+    pricingOfferExpires: 'Offer expires December 31st, 2024',
+    pricingMostPowerful: 'MOST POWERFUL',
+    pricingEverythingInBusiness: 'Everything in Business +',
+    pricingWhiteLabelSolutions: 'White-label solutions',
+    pricingDedicatedManager: 'Dedicated account manager',
+    pricingCustomIntegrations: 'Custom integrations',
+    pricing24Support: '24/7 priority support',
+    pricingSlaGuarantees: 'SLA guarantees',
+    pricingStartBusinessTrial: 'Start Business Trial',
+    pricingContactSalesTeam: 'Contact Sales Team',
+    pricingStartEnterpriseTrial: 'Start Enterprise Trial',
+    pricingRequestQuote: 'Request Custom Quote',
+    pricingSecurePayment: '🔒 Secure payment',
+    pricingNoHiddenFees: '💳 No hidden fees',
+    pricingCancelAnytime: '🔄 Cancel anytime',
+    pricingMoneyBack: '✓ 14-day money-back guarantee',
+    pricingNoSetupFees: '✓ No setup fees',
+    pricingFreeMigration: '✓ Free migration support',
+    planEnterprise: 'Enterprise',
   },
 };
 

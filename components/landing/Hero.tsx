@@ -39,9 +39,9 @@ export default function Hero() {
 
           {/* Secondary CTA Button */}
           <Link
-            href="/about"
+            href="/demo"
             className="btn-secondary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center relative"
-            aria-label={t.learnMoreAboutUs}
+            aria-label={t.watchDemo}
           >
             <span className="relative z-10">{t.watchDemo}</span>
             {/* Background fill animation */}

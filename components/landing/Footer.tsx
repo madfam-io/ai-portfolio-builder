@@ -13,41 +13,61 @@ export default function Footer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <Image 
-                src="/prisma-logo.png" 
-                alt="PRISMA Logo" 
-                width={24} 
-                height={24} 
-                className="w-6 h-6" 
+              <Image
+                src="/prisma-logo.png"
+                alt="PRISMA Logo"
+                width={24}
+                height={24}
+                className="w-6 h-6"
               />
               <div className="flex flex-col">
-                <span className="text-lg font-bold text-gray-900 dark:text-white leading-tight">PRISMA</span>
-                <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">by MADFAM</span>
+                <span className="text-lg font-bold text-gray-900 dark:text-white leading-tight">
+                  PRISMA
+                </span>
+                <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">
+                  by MADFAM
+                </span>
               </div>
             </div>
-            <p className="text-sm text-gray-600 dark:text-gray-300">{t.footerTagline}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-300">
+              {t.footerTagline}
+            </p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerProduct}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
+              {t.footerProduct}
+            </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <a href="#features" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <a
+                  href="#features"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerFeatures}
                 </a>
               </li>
               <li>
-                <a href="#templates" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <a
+                  href="#templates"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerTemplates}
                 </a>
               </li>
               <li>
-                <a href="#pricing" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <a
+                  href="#pricing"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerPricing}
                 </a>
               </li>
               <li>
-                <Link href="/api" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/api"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerApi}
                 </Link>
               </li>
@@ -55,25 +75,39 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerCompany}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
+              {t.footerCompany}
+            </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/about" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/about"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerAbout}
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/blog"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerBlog}
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/careers"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerCareers}
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/contact"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerContact}
                 </Link>
               </li>
@@ -81,20 +115,31 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">{t.footerLegal}</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white mb-4">
+              {t.footerLegal}
+            </h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/privacy"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerPrivacy}
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/terms"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerTerms}
                 </Link>
               </li>
               <li>
-                <Link href="/gdpr" className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                <Link
+                  href="/gdpr"
+                  className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+                >
                   {t.footerGdpr}
                 </Link>
               </li>
@@ -107,30 +152,30 @@ export default function Footer() {
             {t.footerCopyright}
           </p>
           <div className="flex justify-center md:justify-end space-x-6">
-            <a 
-              href="https://twitter.com/madfam_io" 
+            <a
+              href="https://twitter.com/prisma_ai"
               className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Follow MADFAM on Twitter"
+              aria-label="Follow PRISMA on Twitter"
             >
               <FaTwitter className="text-xl" />
             </a>
-            <a 
-              href="https://linkedin.com/company/madfam" 
+            <a
+              href="https://linkedin.com/company/prisma-by-madfam"
               className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="Follow MADFAM on LinkedIn"
+              aria-label="Follow PRISMA on LinkedIn"
             >
               <FaLinkedinIn className="text-xl" />
             </a>
             <a
-              href="https://github.com/madfam-io/"
+              href="https://github.com/aldoruizluna/ai-portfolio-builder"
               className="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="View MADFAM on GitHub"
+              aria-label="View PRISMA on GitHub"
             >
               <FaGithub className="text-xl" />
             </a>

@@ -28,17 +28,27 @@ function EditorContent() {
         setError(null);
 
         if (!portfolioId) {
-          // Create a new portfolio
+          // Check for template selection from landing page
+          const selectedTemplate = searchParams.get('template') || 
+                                 (typeof window !== 'undefined' ? localStorage.getItem('selectedTemplate') : null) || 
+                                 'developer';
+          
+          // Clear the stored template after use
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('selectedTemplate');
+          }
+
+          // Create a new portfolio with selected template
           const newPortfolio = await portfolioService.createPortfolio({
             name: 'Nuevo Portafolio',
             title: 'Profesional',
             bio: '',
-            template: 'developer',
+            template: selectedTemplate as 'developer' | 'creative' | 'business' | 'educator',
             userId: 'user-1', // Mock user ID
           });
           setPortfolio(newPortfolio);
-          // Update URL with new portfolio ID
-          router.replace(`/editor?id=${newPortfolio.id}`);
+          // Update URL with new portfolio ID, preserving template parameter
+          router.replace(`/editor?id=${newPortfolio.id}&template=${selectedTemplate}`);
         } else {
           // Load existing portfolio
           const existingPortfolio = await portfolioService.getPortfolio(portfolioId);
@@ -57,7 +67,7 @@ function EditorContent() {
     }
 
     loadPortfolio();
-  }, [portfolioId, router]);
+  }, [portfolioId, router, searchParams]);
 
   // Save portfolio handler
   const handleSave = async (updatedPortfolio: Portfolio) => {

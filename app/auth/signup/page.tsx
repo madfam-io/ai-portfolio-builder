@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signUp, signInWithOAuth } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/minimal-context';
@@ -14,8 +14,28 @@ export default function SignUpPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const { t } = useLanguage();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Extract plan from URL parameters
+  useEffect(() => {
+    const plan = searchParams.get('plan');
+    if (plan) {
+      setSelectedPlan(plan);
+    }
+  }, [searchParams]);
+
+  const getPlanDisplayName = (plan: string) => {
+    switch (plan) {
+      case 'free': return t.planFree;
+      case 'pro': return t.planPro;
+      case 'business': return t.planBusiness;
+      case 'enterprise': return t.planEnterprise;
+      default: return plan;
+    }
+  };
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +55,9 @@ export default function SignUpPage() {
 
       if (data.user) {
         if (data.user.email_confirmed_at) {
-          // Email already confirmed, redirect to dashboard
-          router.push('/dashboard');
+          // Email already confirmed, redirect to dashboard with plan info
+          const redirectUrl = selectedPlan ? `/dashboard?plan=${selectedPlan}` : '/dashboard';
+          router.push(redirectUrl);
         } else {
           // Show success message for email confirmation
           setSuccess(true);
@@ -122,10 +143,19 @@ export default function SignUpPage() {
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
               {t.signUp}
             </h2>
+            {selectedPlan && (
+              <div className="mt-4 text-center">
+                <div className="inline-flex items-center px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-lg">
+                  <span className="text-sm font-medium">
+                    {t.planFree === getPlanDisplayName(selectedPlan) ? t.startFree : `${t.startProTrial} - ${getPlanDisplayName(selectedPlan)}`}
+                  </span>
+                </div>
+              </div>
+            )}
             <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
               {t.or}{' '}
               <Link
-                href="/auth/signin"
+                href={`/auth/signin${selectedPlan ? `?plan=${selectedPlan}` : ''}`}
                 className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
               >
                 {t.signInToAccount}
