@@ -1,19 +1,5 @@
-import { PortfolioService, portfolioService } from '@/lib/services/portfolioService';
-import { Portfolio, CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
-
-// Mock delay for testing
-jest.mock('@/lib/services/portfolioService', () => {
-  const actual = jest.requireActual('@/lib/services/portfolioService');
-  return {
-    ...actual,
-    PortfolioService: class extends actual.PortfolioService {
-      private delay(ms: number): Promise<void> {
-        // Skip delay in tests
-        return Promise.resolve();
-      }
-    },
-  };
-});
+import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
+import { PortfolioService } from '@/lib/services/portfolioService';
 
 const mockCreatePortfolioData: CreatePortfolioDTO & { userId: string } = {
   userId: 'user-1',
@@ -96,11 +82,12 @@ describe('PortfolioService', () => {
 
       const userPortfolios = await service.getUserPortfolios('user-1');
       expect(userPortfolios).toHaveLength(1);
-      expect(userPortfolios[0].userId).toBe('user-1');
+      expect(userPortfolios[0]?.userId).toBe('user-1');
     });
 
     it('should return empty array for user with no portfolios', async () => {
-      const userPortfolios = await service.getUserPortfolios('nonexistent-user');
+      const userPortfolios =
+        await service.getUserPortfolios('nonexistent-user');
       expect(userPortfolios).toEqual([]);
     });
   });
@@ -124,7 +111,10 @@ describe('PortfolioService', () => {
   describe('updatePortfolio', () => {
     it('should update existing portfolio', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
-      const updated = await service.updatePortfolio(created.id, mockUpdatePortfolioData);
+      const updated = await service.updatePortfolio(
+        created.id,
+        mockUpdatePortfolioData
+      );
 
       expect(updated).toBeDefined();
       expect(updated?.name).toBe(mockUpdatePortfolioData.name);
@@ -134,13 +124,18 @@ describe('PortfolioService', () => {
     });
 
     it('should return null for nonexistent portfolio', async () => {
-      const updated = await service.updatePortfolio('nonexistent-id', mockUpdatePortfolioData);
+      const updated = await service.updatePortfolio(
+        'nonexistent-id',
+        mockUpdatePortfolioData
+      );
       expect(updated).toBeNull();
     });
 
     it('should preserve unmodified fields', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
-      const updated = await service.updatePortfolio(created.id, { name: 'New Name' });
+      const updated = await service.updatePortfolio(created.id, {
+        name: 'New Name',
+      });
 
       expect(updated?.name).toBe('New Name');
       expect(updated?.title).toBe(created.title);
@@ -196,7 +191,11 @@ describe('PortfolioService', () => {
   describe('clonePortfolio', () => {
     it('should clone existing portfolio', async () => {
       const original = await service.createPortfolio(mockCreatePortfolioData);
-      const cloned = await service.clonePortfolio(original.id, 'Cloned Portfolio', 'user-2');
+      const cloned = await service.clonePortfolio(
+        original.id,
+        'Cloned Portfolio',
+        'user-2'
+      );
 
       expect(cloned).toBeDefined();
       expect(cloned?.name).toBe('Cloned Portfolio');
@@ -208,7 +207,11 @@ describe('PortfolioService', () => {
     });
 
     it('should return null for nonexistent portfolio', async () => {
-      const cloned = await service.clonePortfolio('nonexistent-id', 'Cloned Portfolio', 'user-1');
+      const cloned = await service.clonePortfolio(
+        'nonexistent-id',
+        'Cloned Portfolio',
+        'user-1'
+      );
       expect(cloned).toBeNull();
     });
   });
@@ -236,13 +239,13 @@ describe('PortfolioService', () => {
     it('should search by portfolio name', async () => {
       const results = await service.searchPortfolios('React', 'user-1');
       expect(results).toHaveLength(1);
-      expect(results[0].name).toContain('React');
+      expect(results[0]?.name).toContain('React');
     });
 
     it('should search by portfolio title', async () => {
       const results = await service.searchPortfolios('Frontend', 'user-1');
       expect(results).toHaveLength(1);
-      expect(results[0].title).toContain('Frontend');
+      expect(results[0]?.title).toContain('Frontend');
     });
 
     it('should return all portfolios for empty query', async () => {
@@ -262,20 +265,27 @@ describe('PortfolioService', () => {
     });
 
     it('should return empty array for no matches', async () => {
-      const results = await service.searchPortfolios('NonexistentTerm', 'user-1');
+      const results = await service.searchPortfolios(
+        'NonexistentTerm',
+        'user-1'
+      );
       expect(results).toEqual([]);
     });
   });
 
   describe('checkSubdomainAvailability', () => {
     it('should return true for available subdomain', async () => {
-      const available = await service.checkSubdomainAvailability('available-subdomain');
+      const available = await service.checkSubdomainAvailability(
+        'available-subdomain'
+      );
       expect(available).toBe(true);
     });
 
     it('should return false for taken subdomain', async () => {
       const portfolio = await service.createPortfolio(mockCreatePortfolioData);
-      const available = await service.checkSubdomainAvailability(portfolio.subdomain!);
+      const available = await service.checkSubdomainAvailability(
+        portfolio.subdomain!
+      );
       expect(available).toBe(false);
     });
   });
@@ -283,10 +293,13 @@ describe('PortfolioService', () => {
   describe('updateSubdomain', () => {
     it('should update subdomain for existing portfolio', async () => {
       const portfolio = await service.createPortfolio(mockCreatePortfolioData);
-      const success = await service.updateSubdomain(portfolio.id, 'new-subdomain');
-      
+      const success = await service.updateSubdomain(
+        portfolio.id,
+        'new-subdomain'
+      );
+
       expect(success).toBe(true);
-      
+
       const updated = await service.getPortfolio(portfolio.id);
       expect(updated?.subdomain).toBe('new-subdomain');
     });
@@ -298,12 +311,18 @@ describe('PortfolioService', () => {
         name: 'Another Portfolio',
       });
 
-      const success = await service.updateSubdomain(portfolio2.id, portfolio1.subdomain!);
+      const success = await service.updateSubdomain(
+        portfolio2.id,
+        portfolio1.subdomain!
+      );
       expect(success).toBe(false);
     });
 
     it('should return false for nonexistent portfolio', async () => {
-      const success = await service.updateSubdomain('nonexistent-id', 'new-subdomain');
+      const success = await service.updateSubdomain(
+        'nonexistent-id',
+        'new-subdomain'
+      );
       expect(success).toBe(false);
     });
   });
@@ -312,26 +331,34 @@ describe('PortfolioService', () => {
     it('should return published portfolio by subdomain', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
       await service.publishPortfolio(created.id);
-      
-      const retrieved = await service.getPortfolioBySubdomain(created.subdomain!);
+
+      const retrieved = await service.getPortfolioBySubdomain(
+        created.subdomain!
+      );
       expect(retrieved).toBeDefined();
       expect(retrieved?.id).toBe(created.id);
     });
 
     it('should not return draft portfolio by subdomain', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
-      
-      const retrieved = await service.getPortfolioBySubdomain(created.subdomain!);
+
+      const retrieved = await service.getPortfolioBySubdomain(
+        created.subdomain!
+      );
       expect(retrieved).toBeNull();
     });
 
     it('should increment view count', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
       await service.publishPortfolio(created.id);
-      
-      const retrieved1 = await service.getPortfolioBySubdomain(created.subdomain!);
-      const retrieved2 = await service.getPortfolioBySubdomain(created.subdomain!);
-      
+
+      const retrieved1 = await service.getPortfolioBySubdomain(
+        created.subdomain!
+      );
+      const retrieved2 = await service.getPortfolioBySubdomain(
+        created.subdomain!
+      );
+
       expect(retrieved2?.views).toBe((retrieved1?.views || 0) + 1);
     });
   });
@@ -339,16 +366,20 @@ describe('PortfolioService', () => {
   describe('autoSave', () => {
     it('should auto-save portfolio changes', async () => {
       const created = await service.createPortfolio(mockCreatePortfolioData);
-      const success = await service.autoSave(created.id, { name: 'Auto-saved Name' });
-      
+      const success = await service.autoSave(created.id, {
+        name: 'Auto-saved Name',
+      });
+
       expect(success).toBe(true);
-      
+
       const updated = await service.getPortfolio(created.id);
       expect(updated?.name).toBe('Auto-saved Name');
     });
 
     it('should return false for nonexistent portfolio', async () => {
-      const success = await service.autoSave('nonexistent-id', { name: 'New Name' });
+      const success = await service.autoSave('nonexistent-id', {
+        name: 'New Name',
+      });
       expect(success).toBe(false);
     });
   });
@@ -442,7 +473,10 @@ describe('PortfolioService', () => {
         startDate: '2023-01',
       });
 
-      const deleted = await service.deleteExperience(portfolioId, experience?.id!);
+      const deleted = await service.deleteExperience(
+        portfolioId,
+        experience?.id!
+      );
       expect(deleted).toBe(true);
 
       const portfolio = await service.getPortfolio(portfolioId);

@@ -87,18 +87,6 @@ export default function PortfolioEditor({
     editorState.isDirty
   );
 
-  // Load portfolio data
-  useEffect(() => {
-    loadPortfolio();
-  }, [loadPortfolio]);
-
-  // Auto-save when portfolio changes
-  useEffect(() => {
-    if (editorState.isDirty && debouncedPortfolio.id) {
-      handleAutoSave();
-    }
-  }, [debouncedPortfolio, editorState.isDirty, handleAutoSave]);
-
   const loadPortfolio = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -131,6 +119,11 @@ export default function PortfolioEditor({
     }
   }, [portfolioId, userId, pushToHistory]);
 
+  // Load portfolio data
+  useEffect(() => {
+    loadPortfolio();
+  }, [loadPortfolio]);
+
   const handleAutoSave = useCallback(async () => {
     if (!editorState.isDirty || editorState.isSaving) return;
 
@@ -157,6 +150,13 @@ export default function PortfolioEditor({
     editorState.portfolio,
     autoSave,
   ]);
+
+  // Auto-save when portfolio changes
+  useEffect(() => {
+    if (editorState.isDirty && debouncedPortfolio.id) {
+      handleAutoSave();
+    }
+  }, [debouncedPortfolio, editorState.isDirty, handleAutoSave]);
 
   const updatePortfolio = useCallback(
     (updates: Partial<Portfolio>, action?: string) => {

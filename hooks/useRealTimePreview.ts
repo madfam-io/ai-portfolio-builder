@@ -229,7 +229,7 @@ export function useRealTimePreview({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${portfolio.hero?.name || portfolio.title} - Portfolio</title>
+  <title>${portfolio.name || portfolio.title} - Portfolio</title>
   <style>
     /* Include Tailwind CSS or custom styles here */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -241,7 +241,7 @@ export function useRealTimePreview({
 </body>
 </html>
     `.trim();
-  }, [portfolio.hero?.name, portfolio.title]);
+  }, [portfolio.name, portfolio.title]);
 
   const getPreviewUrl = useCallback((): string | null => {
     // Generate shareable preview URL

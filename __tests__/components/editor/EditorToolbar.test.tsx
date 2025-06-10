@@ -31,8 +31,7 @@ describe('EditorToolbar', () => {
 
     it('should render all template options', () => {
       render(<EditorToolbar {...defaultProps} />);
-      const select = screen.getByDisplayValue('Developer');
-      
+
       // Check if all options are available
       expect(screen.getByText('Developer')).toBeInTheDocument();
       expect(screen.getByText('Designer')).toBeInTheDocument();
@@ -47,15 +46,17 @@ describe('EditorToolbar', () => {
       render(
         <EditorToolbar {...defaultProps} onTemplateChange={onTemplateChange} />
       );
-      
+
       const select = screen.getByDisplayValue('Developer');
       fireEvent.change(select, { target: { value: 'designer' } });
-      
+
       expect(onTemplateChange).toHaveBeenCalledWith('designer');
     });
 
     it('should display different templates correctly', () => {
-      const { rerender } = render(<EditorToolbar {...defaultProps} template="designer" />);
+      const { rerender } = render(
+        <EditorToolbar {...defaultProps} template="designer" />
+      );
       expect(screen.getByDisplayValue('Designer')).toBeInTheDocument();
 
       rerender(<EditorToolbar {...defaultProps} template="consultant" />);
@@ -69,7 +70,7 @@ describe('EditorToolbar', () => {
   describe('Preview Mode Controls', () => {
     it('should render all preview mode buttons', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       expect(screen.getByText('Desktop')).toBeInTheDocument();
       expect(screen.getByText('Tablet')).toBeInTheDocument();
       expect(screen.getByText('Mobile')).toBeInTheDocument();
@@ -77,19 +78,31 @@ describe('EditorToolbar', () => {
 
     it('should highlight active preview mode', () => {
       render(<EditorToolbar {...defaultProps} previewMode="desktop" />);
-      
+
       const desktopButton = screen.getByText('Desktop');
-      expect(desktopButton.closest('button')).toHaveClass('bg-white', 'text-gray-900', 'shadow-sm');
+      expect(desktopButton.closest('button')).toHaveClass(
+        'bg-white',
+        'text-gray-900',
+        'shadow-sm'
+      );
     });
 
     it('should not highlight inactive preview modes', () => {
       render(<EditorToolbar {...defaultProps} previewMode="desktop" />);
-      
+
       const tabletButton = screen.getByText('Tablet');
       const mobileButton = screen.getByText('Mobile');
-      
-      expect(tabletButton.closest('button')).not.toHaveClass('bg-white', 'text-gray-900', 'shadow-sm');
-      expect(mobileButton.closest('button')).not.toHaveClass('bg-white', 'text-gray-900', 'shadow-sm');
+
+      expect(tabletButton.closest('button')).not.toHaveClass(
+        'bg-white',
+        'text-gray-900',
+        'shadow-sm'
+      );
+      expect(mobileButton.closest('button')).not.toHaveClass(
+        'bg-white',
+        'text-gray-900',
+        'shadow-sm'
+      );
     });
 
     it('should call onPreviewModeChange when desktop is clicked', () => {
@@ -101,10 +114,10 @@ describe('EditorToolbar', () => {
           onPreviewModeChange={onPreviewModeChange}
         />
       );
-      
+
       const desktopButton = screen.getByText('Desktop');
       fireEvent.click(desktopButton);
-      
+
       expect(onPreviewModeChange).toHaveBeenCalledWith('desktop');
     });
 
@@ -116,10 +129,10 @@ describe('EditorToolbar', () => {
           onPreviewModeChange={onPreviewModeChange}
         />
       );
-      
+
       const tabletButton = screen.getByText('Tablet');
       fireEvent.click(tabletButton);
-      
+
       expect(onPreviewModeChange).toHaveBeenCalledWith('tablet');
     });
 
@@ -131,25 +144,33 @@ describe('EditorToolbar', () => {
           onPreviewModeChange={onPreviewModeChange}
         />
       );
-      
+
       const mobileButton = screen.getByText('Mobile');
       fireEvent.click(mobileButton);
-      
+
       expect(onPreviewModeChange).toHaveBeenCalledWith('mobile');
     });
 
     it('should highlight tablet mode correctly', () => {
       render(<EditorToolbar {...defaultProps} previewMode="tablet" />);
-      
+
       const tabletButton = screen.getByText('Tablet');
-      expect(tabletButton.closest('button')).toHaveClass('bg-white', 'text-gray-900', 'shadow-sm');
+      expect(tabletButton.closest('button')).toHaveClass(
+        'bg-white',
+        'text-gray-900',
+        'shadow-sm'
+      );
     });
 
     it('should highlight mobile mode correctly', () => {
       render(<EditorToolbar {...defaultProps} previewMode="mobile" />);
-      
+
       const mobileButton = screen.getByText('Mobile');
-      expect(mobileButton.closest('button')).toHaveClass('bg-white', 'text-gray-900', 'shadow-sm');
+      expect(mobileButton.closest('button')).toHaveClass(
+        'bg-white',
+        'text-gray-900',
+        'shadow-sm'
+      );
     });
   });
 
@@ -169,10 +190,10 @@ describe('EditorToolbar', () => {
       render(
         <EditorToolbar {...defaultProps} onTogglePreview={onTogglePreview} />
       );
-      
+
       const toggleButton = screen.getByText('Show Preview');
       fireEvent.click(toggleButton);
-      
+
       expect(onTogglePreview).toHaveBeenCalledTimes(1);
     });
 
@@ -185,10 +206,10 @@ describe('EditorToolbar', () => {
           onTogglePreview={onTogglePreview}
         />
       );
-      
+
       const toggleButton = screen.getByText('Hide Preview');
       fireEvent.click(toggleButton);
-      
+
       expect(onTogglePreview).toHaveBeenCalledTimes(1);
     });
   });
@@ -196,25 +217,27 @@ describe('EditorToolbar', () => {
   describe('Icons', () => {
     it('should render preview mode icons', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       // Icons should be present (testing via parent elements)
       const desktopButton = screen.getByText('Desktop').parentElement;
       const tabletButton = screen.getByText('Tablet').parentElement;
       const mobileButton = screen.getByText('Mobile').parentElement;
-      
+
       expect(desktopButton).toBeInTheDocument();
       expect(tabletButton).toBeInTheDocument();
       expect(mobileButton).toBeInTheDocument();
     });
 
     it('should render preview toggle icons', () => {
-      const { rerender } = render(<EditorToolbar {...defaultProps} showPreview={false} />);
-      
+      const { rerender } = render(
+        <EditorToolbar {...defaultProps} showPreview={false} />
+      );
+
       const showButton = screen.getByText('Show Preview').parentElement;
       expect(showButton).toBeInTheDocument();
-      
+
       rerender(<EditorToolbar {...defaultProps} showPreview={true} />);
-      
+
       const hideButton = screen.getByText('Hide Preview').parentElement;
       expect(hideButton).toBeInTheDocument();
     });
@@ -223,7 +246,7 @@ describe('EditorToolbar', () => {
   describe('Layout and Styling', () => {
     it('should have proper layout structure', () => {
       const { container } = render(<EditorToolbar {...defaultProps} />);
-      
+
       // Check if main container has proper styling - get the outermost div
       const toolbar = container.firstChild;
       expect(toolbar).toHaveClass('bg-white', 'border-b', 'border-gray-200');
@@ -231,39 +254,47 @@ describe('EditorToolbar', () => {
 
     it('should have responsive preview mode controls styling', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       // Find the container with preview controls
       const desktopButton = screen.getByText('Desktop');
-      const previewControlsContainer = desktopButton.closest('div[class*="bg-gray-100"]');
+      const previewControlsContainer = desktopButton.closest(
+        'div[class*="bg-gray-100"]'
+      );
       expect(previewControlsContainer).toHaveClass('bg-gray-100', 'rounded-lg');
     });
 
     it('should apply hover effects on buttons', () => {
       render(<EditorToolbar {...defaultProps} previewMode="tablet" />);
-      
+
       const desktopButton = screen.getByText('Desktop');
-      expect(desktopButton.closest('button')).toHaveClass('hover:text-gray-900');
+      expect(desktopButton.closest('button')).toHaveClass(
+        'hover:text-gray-900'
+      );
     });
 
     it('should apply template selector styling', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       const select = screen.getByDisplayValue('Developer');
       expect(select).toHaveClass('border', 'border-gray-200', 'rounded-lg');
     });
 
     it('should apply preview toggle button styling', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       const toggleButton = screen.getByText('Show Preview');
-      expect(toggleButton.closest('button')).toHaveClass('border', 'border-gray-200', 'rounded-lg');
+      expect(toggleButton.closest('button')).toHaveClass(
+        'border',
+        'border-gray-200',
+        'rounded-lg'
+      );
     });
   });
 
   describe('Accessibility', () => {
     it('should have proper button labels', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       expect(screen.getByText('Desktop')).toBeInTheDocument();
       expect(screen.getByText('Tablet')).toBeInTheDocument();
       expect(screen.getByText('Mobile')).toBeInTheDocument();
@@ -277,9 +308,13 @@ describe('EditorToolbar', () => {
 
     it('should be keyboard accessible', () => {
       render(<EditorToolbar {...defaultProps} />);
-      
+
       const select = screen.getByDisplayValue('Developer');
-      expect(select).toHaveClass('focus:outline-none', 'focus:ring-2', 'focus:ring-blue-500');
+      expect(select).toHaveClass(
+        'focus:outline-none',
+        'focus:ring-2',
+        'focus:ring-blue-500'
+      );
     });
   });
 });

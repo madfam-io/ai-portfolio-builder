@@ -1,9 +1,9 @@
 /**
  * @fileoverview Analytics Dashboard Page
- * 
+ *
  * Main analytics dashboard for GitHub repository insights.
  * Provides overview metrics, repository selection, and visualizations.
- * 
+ *
  * @author PRISMA Development Team
  * @version 0.0.1-alpha - Phase 1 MVP
  */
@@ -13,18 +13,8 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import {
-  LineChart,
-  Line,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from 'recharts';
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { usePerformanceTracking } from '@/lib/utils/performance';
 import {
   FiGithub,
   FiActivity,
@@ -53,7 +43,8 @@ interface DashboardState {
 function AnalyticsDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+  usePerformanceTracking('AnalyticsDashboard');
+
   // State management
   const [dashboard, setDashboard] = useState<DashboardState>({
     data: null,
@@ -99,7 +90,8 @@ function AnalyticsDashboard() {
       oauth_denied: 'GitHub authorization was denied. Please try again.',
       invalid_callback: 'Invalid OAuth callback. Please try again.',
       invalid_state: 'Invalid OAuth state. Please try again.',
-      token_exchange_failed: 'Failed to exchange OAuth token. Please try again.',
+      token_exchange_failed:
+        'Failed to exchange OAuth token. Please try again.',
       user_fetch_failed: 'Failed to fetch GitHub user information.',
       integration_store_failed: 'Failed to store GitHub integration.',
       callback_failed: 'OAuth callback failed. Please try again.',
@@ -241,7 +233,8 @@ function AnalyticsDashboard() {
               Connect GitHub
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              Connect your GitHub account to analyze your repositories and get insights into your development metrics.
+              Connect your GitHub account to analyze your repositories and get
+              insights into your development metrics.
             </p>
             <button
               onClick={connectGitHub}
@@ -305,7 +298,9 @@ function AnalyticsDashboard() {
                   disabled={dashboard.syncing}
                   className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
                 >
-                  <FiRefreshCw className={`mr-2 ${dashboard.syncing ? 'animate-spin' : ''}`} />
+                  <FiRefreshCw
+                    className={`mr-2 ${dashboard.syncing ? 'animate-spin' : ''}`}
+                  />
                   {dashboard.syncing ? 'Syncing...' : 'Sync'}
                 </button>
               </div>
@@ -320,7 +315,9 @@ function AnalyticsDashboard() {
                   <FiCode className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Repositories</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Repositories
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.overview.totalRepositories}
                   </p>
@@ -334,7 +331,9 @@ function AnalyticsDashboard() {
                   <FiActivity className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Commits</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Commits
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.overview.totalCommits.toLocaleString()}
                   </p>
@@ -348,7 +347,9 @@ function AnalyticsDashboard() {
                   <FiGitPullRequest className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Pull Requests</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Pull Requests
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.overview.totalPullRequests}
                   </p>
@@ -362,7 +363,9 @@ function AnalyticsDashboard() {
                   <FiUsers className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Contributors</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Contributors
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.overview.totalContributors}
                   </p>
@@ -376,7 +379,9 @@ function AnalyticsDashboard() {
                   <FiTrendingUp className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Lines of Code</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Lines of Code
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {(data.overview.totalLinesOfCode / 1000).toFixed(1)}K
                   </p>
@@ -385,47 +390,51 @@ function AnalyticsDashboard() {
             </div>
           </div>
 
-          {/* Charts Grid */}
+          {/* Charts Grid - Lazy Loaded for Performance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Commits Trend */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Commits Over Time
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={data.trends.commitsPerDay}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="count" 
-                    stroke={chartColors.primary} 
-                    strokeWidth={2}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
+            {/* Commits Trend Chart */}
+            <LazyWrapper
+              component={() => import('@/components/analytics/CommitsChart')}
+              componentProps={{
+                data: data.trends.commitsPerDay,
+                chartColors,
+              }}
+              fallback={
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
+                  <div className="text-center">
+                    <FiRefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Loading commits chart...
+                    </p>
+                  </div>
+                </div>
+              }
+            />
 
-            {/* Pull Requests Trend */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Pull Requests by Week
-              </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data.trends.pullRequestsPerWeek}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="week" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="opened" fill={chartColors.primary} name="Opened" />
-                  <Bar dataKey="merged" fill={chartColors.accent} name="Merged" />
-                  <Bar dataKey="closed" fill={chartColors.warning} name="Closed" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+            {/* Pull Requests Chart */}
+            <LazyWrapper
+              component={() =>
+                import('@/components/analytics/PullRequestsChart')
+              }
+              componentProps={{
+                data: data.trends.pullRequestsPerWeek,
+                chartColors: {
+                  primary: chartColors.primary,
+                  accent: chartColors.accent,
+                  warning: chartColors.warning,
+                },
+              }}
+              fallback={
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
+                  <div className="text-center">
+                    <FiRefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">
+                      Loading pull requests chart...
+                    </p>
+                  </div>
+                </div>
+              }
+            />
           </div>
 
           {/* Repositories and Contributors */}
@@ -436,7 +445,7 @@ function AnalyticsDashboard() {
                 Your Repositories
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {data.repositories.slice(0, 10).map((repo) => (
+                {data.repositories.slice(0, 10).map(repo => (
                   <div
                     key={repo.id}
                     className="flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -466,7 +475,9 @@ function AnalyticsDashboard() {
                       </div>
                     </div>
                     <button
-                      onClick={() => router.push(`/analytics/repository/${repo.id}`)}
+                      onClick={() =>
+                        router.push(`/analytics/repository/${repo.id}`)
+                      }
                       className="p-2 text-gray-500 hover:text-purple-600 transition-colors"
                     >
                       <FiExternalLink className="w-4 h-4" />
@@ -492,7 +503,8 @@ function AnalyticsDashboard() {
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {contributor.contributor.name || contributor.contributor.login}
+                        {contributor.contributor.name ||
+                          contributor.contributor.login}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {contributor.commitCount} commits
@@ -523,15 +535,24 @@ function AnalyticsDashboard() {
                       {data.overview.mostActiveRepository.commitCount} commits
                     </span>
                     <span>
-                      ⭐ {data.overview.mostActiveRepository.repository.stargazersCount}
+                      ⭐{' '}
+                      {
+                        data.overview.mostActiveRepository.repository
+                          .stargazersCount
+                      }
                     </span>
                     <span>
-                      🍴 {data.overview.mostActiveRepository.repository.forksCount}
+                      🍴{' '}
+                      {data.overview.mostActiveRepository.repository.forksCount}
                     </span>
                   </div>
                 </div>
                 <button
-                  onClick={() => router.push(`/analytics/repository/${data.overview.mostActiveRepository!.repository.id}`)}
+                  onClick={() =>
+                    router.push(
+                      `/analytics/repository/${data.overview.mostActiveRepository!.repository.id}`
+                    )
+                  }
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   View Details
@@ -550,14 +571,18 @@ function AnalyticsDashboard() {
  */
 export default function AnalyticsPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading analytics...</p>
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600 dark:text-gray-400">
+              Loading analytics...
+            </p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <AnalyticsDashboard />
     </Suspense>
   );

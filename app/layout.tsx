@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { AppProvider } from '@/lib/contexts/AppContext';
+import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -18,9 +19,12 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io'
+  ),
   title: 'PRISMA by MADFAM - AI Portfolio Builder',
-  description: 'Transform your CV into a stunning portfolio website using AI. Create professional portfolios in under 30 minutes.',
+  description:
+    'Transform your CV into a stunning portfolio website using AI. Create professional portfolios in under 30 minutes.',
   icons: {
     icon: '/favicon.ico',
     apple: '/apple-touch-icon.png',
@@ -65,11 +69,17 @@ export default function RootLayout({
         className={`${inter.className} font-sans dark:bg-gray-900 bg-white`}
         suppressHydrationWarning={true}
       >
-        <AppProvider>
-          <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-            {children}
-          </div>
-        </AppProvider>
+        <GlobalErrorBoundary
+          showDetails={process.env.NODE_ENV === 'development'}
+          allowRetry={true}
+          maxRetries={3}
+        >
+          <AppProvider>
+            <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+              {children}
+            </div>
+          </AppProvider>
+        </GlobalErrorBoundary>
       </body>
     </html>
   );
