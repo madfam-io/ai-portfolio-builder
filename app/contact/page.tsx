@@ -52,7 +52,7 @@ export default function ContactPage() {
         subject: t.contactGeneralInquiry || 'General Inquiry',
       }));
     }
-  }, []);
+  }, [t.contactBusinessPlanInquiry, t.contactJobApplication, t.contactGDPRRequest, t.contactGeneralInquiry]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
