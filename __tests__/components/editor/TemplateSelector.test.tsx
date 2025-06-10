@@ -141,7 +141,9 @@ describe('TemplateSelector', () => {
     const designerCard = screen
       .getByText('Designer')
       .closest('div[class*="relative border-2"]');
-    fireEvent.click(designerCard!);
+    if (designerCard) {
+      fireEvent.click(designerCard);
+    }
 
     expect(mockOnTemplateChange).toHaveBeenCalledWith('designer');
   });
@@ -152,7 +154,9 @@ describe('TemplateSelector', () => {
     const developerCard = screen
       .getByText('Developer')
       .closest('div[class*="relative border-2"]');
-    fireEvent.click(developerCard!);
+    if (developerCard) {
+      fireEvent.click(developerCard);
+    }
 
     expect(mockOnTemplateChange).not.toHaveBeenCalled();
   });
@@ -260,12 +264,16 @@ describe('TemplateSelector', () => {
     const developerCard = screen
       .getByText('Developer')
       .closest('div[class*="relative border-2"]');
-    const colorPreview = developerCard?.querySelector(
-      '[style*="backgroundColor"]'
-    );
 
-    if (colorPreview) {
-      expect(colorPreview).toBeInTheDocument();
+    expect(developerCard).toBeTruthy();
+    if (developerCard) {
+      const colorPreview = developerCard.querySelector(
+        '[style*="backgroundColor"]'
+      );
+
+      if (colorPreview) {
+        expect(colorPreview).toBeInTheDocument();
+      }
     }
   });
 

@@ -10,6 +10,16 @@ import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { Portfolio } from '@/types/portfolio';
 
 describe('useRealTimePreview', () => {
+  let querySelectorSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    querySelectorSpy = jest.spyOn(document, 'querySelector');
+  });
+
+  afterEach(() => {
+    querySelectorSpy.mockRestore();
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'test-portfolio-123',
     userId: 'test-user-456',
@@ -136,6 +146,11 @@ describe('useRealTimePreview', () => {
   });
 
   it('captures preview screenshot', async () => {
+    // Mock the DOM query selector to return a mock element
+    const mockElement = document.createElement('div');
+    mockElement.setAttribute('data-preview-container', '');
+    querySelectorSpy.mockReturnValue(mockElement);
+
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -149,6 +164,17 @@ describe('useRealTimePreview', () => {
   });
 
   it('exports preview HTML', () => {
+    // Mock the DOM query selector to return a mock element with outerHTML
+    const mockElement = document.createElement('div');
+    mockElement.setAttribute('data-preview-container', '');
+    mockElement.innerHTML = '<div>Mock preview content</div>';
+    Object.defineProperty(mockElement, 'outerHTML', {
+      value:
+        '<div data-preview-container=""><div>Mock preview content</div></div>',
+      writable: true,
+    });
+    querySelectorSpy.mockReturnValue(mockElement);
+
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );

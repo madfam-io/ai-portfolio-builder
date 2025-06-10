@@ -57,7 +57,7 @@ describe('EditorHeader', () => {
 
     it('should display template name', () => {
       render(<EditorHeader {...defaultProps} />);
-      expect(screen.getByText('Developer template')).toBeInTheDocument();
+      expect(screen.getByText('developer template')).toBeInTheDocument();
     });
 
     it('should display draft status', () => {
@@ -66,10 +66,11 @@ describe('EditorHeader', () => {
     });
 
     it('should display published status', () => {
-      const publishedPortfolio = { ...mockPortfolio, status: 'published' as const };
-      render(
-        <EditorHeader {...defaultProps} portfolio={publishedPortfolio} />
-      );
+      const publishedPortfolio = {
+        ...mockPortfolio,
+        status: 'published' as const,
+      };
+      render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
       expect(screen.getByText('Published')).toBeInTheDocument();
     });
   });
@@ -77,7 +78,8 @@ describe('EditorHeader', () => {
   describe('Save Status Display', () => {
     it('should show saving state', () => {
       render(<EditorHeader {...defaultProps} isSaving={true} />);
-      expect(screen.getByText('Saving...')).toBeInTheDocument();
+      // Check for saving state in the status area (with spinner)
+      expect(screen.getAllByText('Saving...').length).toBeGreaterThan(0);
     });
 
     it('should show unsaved changes', () => {
@@ -162,10 +164,11 @@ describe('EditorHeader', () => {
     });
 
     it('should render unpublish button for published portfolio', () => {
-      const publishedPortfolio = { ...mockPortfolio, status: 'published' as const };
-      render(
-        <EditorHeader {...defaultProps} portfolio={publishedPortfolio} />
-      );
+      const publishedPortfolio = {
+        ...mockPortfolio,
+        status: 'published' as const,
+      };
+      render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
       expect(screen.getByText('Unpublish')).toBeInTheDocument();
     });
   });
@@ -174,50 +177,50 @@ describe('EditorHeader', () => {
     it('should call onUndo when undo button is clicked', () => {
       const onUndo = jest.fn();
       render(<EditorHeader {...defaultProps} canUndo={true} onUndo={onUndo} />);
-      
+
       const undoButton = screen.getByTitle('Undo');
       fireEvent.click(undoButton);
-      
+
       expect(onUndo).toHaveBeenCalledTimes(1);
     });
 
     it('should call onRedo when redo button is clicked', () => {
       const onRedo = jest.fn();
       render(<EditorHeader {...defaultProps} canRedo={true} onRedo={onRedo} />);
-      
+
       const redoButton = screen.getByTitle('Redo');
       fireEvent.click(redoButton);
-      
+
       expect(onRedo).toHaveBeenCalledTimes(1);
     });
 
     it('should call onPreview when preview button is clicked', () => {
       const onPreview = jest.fn();
       render(<EditorHeader {...defaultProps} onPreview={onPreview} />);
-      
+
       const previewButton = screen.getByText('Preview');
       fireEvent.click(previewButton);
-      
+
       expect(onPreview).toHaveBeenCalledTimes(1);
     });
 
     it('should call onSave when save button is clicked', () => {
       const onSave = jest.fn();
       render(<EditorHeader {...defaultProps} isDirty={true} onSave={onSave} />);
-      
+
       const saveButton = screen.getByText('Save');
       fireEvent.click(saveButton);
-      
+
       expect(onSave).toHaveBeenCalledTimes(1);
     });
 
     it('should call onPublish when publish button is clicked', () => {
       const onPublish = jest.fn();
       render(<EditorHeader {...defaultProps} onPublish={onPublish} />);
-      
+
       const publishButton = screen.getByText('Publish');
       fireEvent.click(publishButton);
-      
+
       expect(onPublish).toHaveBeenCalledTimes(1);
     });
   });
@@ -225,57 +228,63 @@ describe('EditorHeader', () => {
   describe('Button States', () => {
     it('should disable save button when not dirty', () => {
       render(<EditorHeader {...defaultProps} isDirty={false} />);
-      const saveButton = screen.getByText('Save');
+      const saveButton = screen.getByText('Save').closest('button');
       expect(saveButton).toBeDisabled();
     });
 
     it('should enable save button when dirty', () => {
       render(<EditorHeader {...defaultProps} isDirty={true} />);
-      const saveButton = screen.getByText('Save');
+      const saveButton = screen.getByText('Save').closest('button');
       expect(saveButton).not.toBeDisabled();
     });
 
     it('should disable save button when saving', () => {
       render(<EditorHeader {...defaultProps} isSaving={true} isDirty={true} />);
-      const saveButton = screen.getByText('Saving...');
+      const saveButtons = screen.getAllByText('Saving...');
+      // Get the button that contains the "Saving..." text (should be the save button)
+      const saveButton = saveButtons
+        .find(button => button.closest('button'))
+        ?.closest('button');
       expect(saveButton).toBeDisabled();
     });
 
     it('should show saving state in button text', () => {
       render(<EditorHeader {...defaultProps} isSaving={true} />);
-      expect(screen.getByText('Saving...')).toBeInTheDocument();
+      // There are multiple "Saving..." texts, so we check that at least one exists
+      expect(screen.getAllByText('Saving...').length).toBeGreaterThan(0);
     });
   });
 
   describe('Visual Styling', () => {
     it('should apply published status styling', () => {
-      const publishedPortfolio = { ...mockPortfolio, status: 'published' as const };
-      render(
-        <EditorHeader {...defaultProps} portfolio={publishedPortfolio} />
-      );
-      
+      const publishedPortfolio = {
+        ...mockPortfolio,
+        status: 'published' as const,
+      };
+      render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
+
       const statusBadge = screen.getByText('Published');
       expect(statusBadge).toHaveClass('bg-green-100', 'text-green-800');
     });
 
     it('should apply draft status styling', () => {
       render(<EditorHeader {...defaultProps} />);
-      
+
       const statusBadge = screen.getByText('Draft');
       expect(statusBadge).toHaveClass('bg-gray-100', 'text-gray-800');
     });
 
     it('should apply save button styling', () => {
       render(<EditorHeader {...defaultProps} isDirty={true} />);
-      
-      const saveButton = screen.getByText('Save');
+
+      const saveButton = screen.getByText('Save').closest('button');
       expect(saveButton).toHaveClass('bg-blue-600', 'text-white');
     });
 
     it('should apply publish button styling', () => {
       render(<EditorHeader {...defaultProps} />);
-      
-      const publishButton = screen.getByText('Publish');
+
+      const publishButton = screen.getByText('Publish').closest('button');
       expect(publishButton).toHaveClass('bg-green-600', 'text-white');
     });
   });

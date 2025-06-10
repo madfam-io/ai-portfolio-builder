@@ -331,7 +331,7 @@ describe('/api/ai/enhance-bio', () => {
       });
 
       // Make logging fail
-      mockSupabase.from().insert.mockRejectedValue(new Error('Logging failed'));
+      mockFromMethods.insert.mockRejectedValue(new Error('Logging failed'));
 
       const request = new NextRequest(
         'http://localhost:3000/api/ai/enhance-bio',

@@ -355,11 +355,14 @@ describe('PortfolioService', () => {
       const retrieved1 = await service.getPortfolioBySubdomain(
         created.subdomain!
       );
+      const firstViewCount = retrieved1?.views || 0;
+
       const retrieved2 = await service.getPortfolioBySubdomain(
         created.subdomain!
       );
+      const secondViewCount = retrieved2?.views || 0;
 
-      expect(retrieved2?.views).toBe((retrieved1?.views || 0) + 1);
+      expect(secondViewCount).toBe(firstViewCount + 1);
     });
   });
 

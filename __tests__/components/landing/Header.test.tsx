@@ -72,15 +72,20 @@ describe('Header Component', () => {
     it('should render CTA button in Spanish by default', async () => {
       renderHeader();
 
-      // Wait for auth loading to complete
+      // Wait for auth loading to complete and check that the CTA button appears
       await waitFor(
         () => {
-          expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+          // Look for any element containing "Empezar Gratis" text
+          const ctaElements = screen.queryAllByText('Empezar Gratis');
+          expect(ctaElements.length).toBeGreaterThan(0);
         },
         { timeout: 3000 }
       );
 
-      const ctaButtons = screen.getAllByRole('link', { name: 'Empezar Gratis' });
+      // Verify the CTA links exist
+      const ctaButtons = screen.getAllByRole('link', {
+        name: 'Empezar Gratis',
+      });
       expect(ctaButtons.length).toBeGreaterThan(0);
       ctaButtons.forEach(button => {
         expect(button).toHaveAttribute('href', '/auth/signup');
@@ -92,11 +97,11 @@ describe('Header Component', () => {
 
       // Currency toggle - looking for MXN since that's the default
       expect(screen.getAllByText('MXN')).toHaveLength(1); // Only desktop visible in test
-      
+
       // Language toggle
       expect(screen.getAllByText('ES')).toHaveLength(1);
       expect(screen.getAllByText('🇲🇽')).toHaveLength(2); // Desktop and mobile versions
-      
+
       // Dark mode toggle - look for moon/sun icons
       const darkModeToggles = document.querySelectorAll('svg');
       expect(darkModeToggles.length).toBeGreaterThan(0);
@@ -108,7 +113,7 @@ describe('Header Component', () => {
       // Look for the mobile menu container with md:hidden class
       const mobileMenuContainer = document.querySelector('.md\\:hidden');
       expect(mobileMenuContainer).toBeInTheDocument();
-      
+
       // Look for menu button - check if mobile container has a button
       const mobileButton = mobileMenuContainer?.querySelector('button');
       expect(mobileButton).toBeInTheDocument();
@@ -124,9 +129,12 @@ describe('Header Component', () => {
       expect(screen.getAllByText('Características')).toHaveLength(2);
       expect(screen.getAllByText('ES')).toHaveLength(1);
 
-      // Click language toggle - look for button with title containing "English"
-      const langToggle = screen.getByTitle('Cambiar a English');
-      await user.click(langToggle);
+      // Click language toggle - get all buttons with title containing "Switch to English" and click the first one
+      const langToggles = screen.getAllByTitle(
+        /Cambiar a English|Switch to English/
+      );
+      expect(langToggles.length).toBeGreaterThan(0);
+      await user.click(langToggles[0]);
 
       // Should switch to English
       await waitFor(() => {
@@ -183,17 +191,23 @@ describe('Header Component', () => {
     it('should show anchor links on landing page', () => {
       renderHeader('/');
 
-      const featuresLinks = screen.getAllByRole('link', { name: 'Características' });
+      const featuresLinks = screen.getAllByRole('link', {
+        name: 'Características',
+      });
       featuresLinks.forEach(link => {
         expect(link).toHaveAttribute('href', '#features');
       });
 
-      const howItWorksLinks = screen.getAllByRole('link', { name: 'Cómo Funciona' });
+      const howItWorksLinks = screen.getAllByRole('link', {
+        name: 'Cómo Funciona',
+      });
       howItWorksLinks.forEach(link => {
         expect(link).toHaveAttribute('href', '#how-it-works');
       });
 
-      const templatesLinks = screen.getAllByRole('link', { name: 'Plantillas' });
+      const templatesLinks = screen.getAllByRole('link', {
+        name: 'Plantillas',
+      });
       templatesLinks.forEach(link => {
         expect(link).toHaveAttribute('href', '#templates');
       });
@@ -212,7 +226,9 @@ describe('Header Component', () => {
       dashboardLinks.forEach(link => {
         expect(link).toHaveAttribute('href', '/dashboard');
         // Check if any dashboard link has active state
-        const hasActiveState = dashboardLinks.some(l => l.classList.contains('text-purple-600'));
+        const hasActiveState = dashboardLinks.some(l =>
+          l.classList.contains('text-purple-600')
+        );
         expect(hasActiveState).toBe(true);
       });
 
@@ -235,7 +251,9 @@ describe('Header Component', () => {
       const editorLinks = screen.getAllByRole('link', { name: 'Editor' });
       expect(editorLinks.length).toBeGreaterThan(0);
       // Check if any editor link has active state
-      const hasActiveState = editorLinks.some(l => l.classList.contains('text-purple-600'));
+      const hasActiveState = editorLinks.some(l =>
+        l.classList.contains('text-purple-600')
+      );
       expect(hasActiveState).toBe(true);
 
       const dashboardLinks = screen.getAllByRole('link', { name: 'Dashboard' });
@@ -246,10 +264,14 @@ describe('Header Component', () => {
       renderHeader('/about');
 
       // Should not have "Get Started" button
-      expect(screen.queryByRole('link', { name: 'Comenzar' })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole('link', { name: 'Comenzar' })
+      ).not.toBeInTheDocument();
 
       // Should have "Dashboard" button
-      const dashboardButtons = screen.getAllByRole('link', { name: 'Dashboard' });
+      const dashboardButtons = screen.getAllByRole('link', {
+        name: 'Dashboard',
+      });
       expect(dashboardButtons.length).toBeGreaterThan(0);
     });
   });
@@ -315,14 +337,17 @@ describe('Header Component', () => {
       const header = screen.getByRole('banner');
       expect(header).toHaveClass('dark:bg-gray-800');
 
-      const navLinks = screen.getAllByRole('link').filter(link => 
-        link.textContent?.includes('Características') ||
-        link.textContent?.includes('Cómo Funciona')
-      );
-      
+      const navLinks = screen
+        .getAllByRole('link')
+        .filter(
+          link =>
+            link.textContent?.includes('Características') ||
+            link.textContent?.includes('Cómo Funciona')
+        );
+
       expect(navLinks.length).toBeGreaterThan(0);
       // Check that at least some nav links have dark mode classes
-      const hasDarkModeClasses = navLinks.some(link => 
+      const hasDarkModeClasses = navLinks.some(link =>
         link.classList.contains('dark:text-gray-300')
       );
       expect(hasDarkModeClasses).toBe(true);

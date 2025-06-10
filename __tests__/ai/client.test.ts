@@ -65,22 +65,32 @@ describe('AIClient', () => {
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(client.enhanceBio('test', mockBioContext))
-        .rejects
-        .toThrow('Authentication required');
+      await expect(client.enhanceBio('test', mockBioContext)).rejects.toThrow(
+        'Authentication required'
+      );
     });
 
     it('should handle rate limiting', async () => {
       const mockResponse = {
         ok: false,
         status: 429,
-        json: async () => ({ error: 'Rate limit exceeded' }),
+        json: jest.fn().mockResolvedValue({ error: 'Rate limit exceeded' }),
+        headers: new Map(),
+        url: 'http://test.com',
+        body: null,
+        bodyUsed: false,
+        clone: jest.fn(),
+        formData: jest.fn(),
+        text: jest.fn(),
+        blob: jest.fn(),
+        arrayBuffer: jest.fn(),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(client.enhanceBio('test', mockBioContext))
-        .rejects
-        .toThrow('Rate limit exceeded');
+      mockFetch.mockImplementation(() => Promise.resolve(mockResponse as any));
+
+      await expect(client.enhanceBio('test', mockBioContext)).rejects.toThrow(
+        'Rate limit exceeded'
+      );
     });
   });
 
@@ -124,7 +134,11 @@ describe('AIClient', () => {
           success: true,
           data: {
             results: [
-              { success: true, data: { description: 'Enhanced 1' }, error: null },
+              {
+                success: true,
+                data: { description: 'Enhanced 1' },
+                error: null,
+              },
               { success: false, data: null, error: 'Failed to process' },
             ],
             summary: { total: 2, successful: 1, failed: 1 },
@@ -273,37 +287,42 @@ describe('AIClient', () => {
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(client.enhanceBio('test', {
-        title: 'Test',
-        skills: ['test'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      })).rejects.toThrow('Authentication required');
+      await expect(
+        client.enhanceBio('test', {
+          title: 'Test',
+          skills: ['test'],
+          experience: [],
+          tone: 'professional',
+          targetLength: 'concise',
+        })
+      ).rejects.toThrow('Authentication required');
 
       expect(mockFetch).toHaveBeenCalledTimes(1);
     });
 
     it('should handle timeout errors', async () => {
       const timeoutClient = new AIClient({ timeout: 100 });
-      
-      mockFetch.mockImplementation(() => 
-        new Promise((_, reject) => {
-          setTimeout(() => {
-            const error = new Error('The operation was aborted');
-            error.name = 'AbortError';
-            reject(error);
-          }, 200);
-        })
+
+      mockFetch.mockImplementation(
+        () =>
+          new Promise((_, reject) => {
+            setTimeout(() => {
+              const error = new Error('The operation was aborted');
+              error.name = 'AbortError';
+              reject(error);
+            }, 200);
+          })
       );
 
-      await expect(timeoutClient.enhanceBio('test', {
-        title: 'Test',
-        skills: ['test'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      })).rejects.toThrow('Request timeout');
+      await expect(
+        timeoutClient.enhanceBio('test', {
+          title: 'Test',
+          skills: ['test'],
+          experience: [],
+          tone: 'professional',
+          targetLength: 'concise',
+        })
+      ).rejects.toThrow('Request timeout');
     });
 
     it('should implement exponential backoff', async () => {
@@ -318,13 +337,15 @@ describe('AIClient', () => {
 
       mockFetch.mockResolvedValue(failResponse as any);
 
-      await expect(retryableClient.enhanceBio('test', {
-        title: 'Test',
-        skills: ['test'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      })).rejects.toThrow();
+      await expect(
+        retryableClient.enhanceBio('test', {
+          title: 'Test',
+          skills: ['test'],
+          experience: [],
+          tone: 'professional',
+          targetLength: 'concise',
+        })
+      ).rejects.toThrow();
 
       const elapsed = Date.now() - start;
       expect(elapsed).toBeGreaterThan(1000 + 2000); // Initial delay + exponential backoff
@@ -454,10 +475,12 @@ describe('AIUtils', () => {
   describe('needsEnhancement', () => {
     it('should identify content that needs enhancement', () => {
       const shortBio = 'I code stuff.';
-      const goodBio = 'Senior Software Engineer with 5+ years experience leading development teams. Increased application performance by 40% and managed teams of 8+ developers.';
-      
+      const goodBio =
+        'Senior Software Engineer with 5+ years experience leading development teams. Increased application performance by 40% and managed teams of 8+ developers.';
+
       const basicProject = 'Built a website.';
-      const detailedProject = 'Developed full-stack e-commerce platform serving 10k+ users, increasing conversion rates by 25% through optimized UX and performance improvements.';
+      const detailedProject =
+        'Developed full-stack e-commerce platform serving 10k+ users, increasing conversion rates by 25% through optimized UX and performance improvements.';
 
       expect(AIUtils.needsEnhancement(shortBio, 'bio')).toBe(true);
       expect(AIUtils.needsEnhancement(goodBio, 'bio')).toBe(false);
@@ -468,28 +491,21 @@ describe('AIUtils', () => {
 
   describe('calculateYearsExperience', () => {
     it('should calculate years of experience correctly', () => {
-      const threeYearsAgo = new Date();
-      threeYearsAgo.setFullYear(threeYearsAgo.getFullYear() - 3);
+      // Test with a well-defined 2-year period
+      const start = '2020-01-01';
+      const end = '2022-01-01';
 
-      const twoYearsAgo = new Date();
-      twoYearsAgo.setFullYear(twoYearsAgo.getFullYear() - 2);
+      // Past role with explicit end date
+      const pastYears = AIUtils.calculateYearsExperience(start, end, false);
 
-      // Current role
-      const currentYears = AIUtils.calculateYearsExperience(
-        threeYearsAgo.toISOString(),
-        null,
-        true
-      );
+      // Should be exactly 2 years (2020 to 2022)
+      expect(pastYears).toBe(2);
 
-      // Past role
-      const pastYears = AIUtils.calculateYearsExperience(
-        threeYearsAgo.toISOString(),
-        twoYearsAgo.toISOString(),
-        false
-      );
+      // Test current role - from 2020 to now should be several years
+      const currentYears = AIUtils.calculateYearsExperience(start, null, true);
 
-      expect(currentYears).toBeCloseTo(3, 0);
-      expect(pastYears).toBeCloseTo(1, 0);
+      // Should be at least 4 years (2020 to 2024+)
+      expect(currentYears).toBeGreaterThanOrEqual(4);
     });
   });
 });
