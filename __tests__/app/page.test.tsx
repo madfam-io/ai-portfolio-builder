@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import HomePage from '@/app/page';
-import { LanguageProvider } from '@/lib/i18n/simple-context';
+import { LanguageProvider } from '@/lib/i18n/minimal-context';
 import { AppProvider } from '@/lib/contexts/AppContext';
 
 describe('HomePage', () => {

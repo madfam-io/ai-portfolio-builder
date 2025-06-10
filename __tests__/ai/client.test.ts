@@ -142,8 +142,8 @@ describe('AIClient', () => {
 
       expect(result.summary.total).toBe(2);
       expect(result.summary.successful).toBe(1);
-      expect(result.results[0].success).toBe(true);
-      expect(result.results[1].success).toBe(false);
+      expect(result.results[0]?.success).toBe(true);
+      expect(result.results[1]?.success).toBe(false);
     });
   });
 
@@ -204,7 +204,7 @@ describe('AIClient', () => {
       const result = await client.getTemplates();
 
       expect(result.templates).toHaveProperty('developer');
-      expect(result.templates.developer.name).toBe('Developer');
+      expect(result.templates.developer?.name).toBe('Developer');
     });
   });
 
@@ -233,7 +233,7 @@ describe('AIClient', () => {
 
       expect(result.history).toHaveLength(1);
       expect(result.totalEnhancements).toBe(1);
-      expect(result.history[0].operation_type).toBe('bio_enhancement');
+      expect(result.history[0]?.operation_type).toBe('bio_enhancement');
     });
   });
 
@@ -288,7 +288,7 @@ describe('AIClient', () => {
       const timeoutClient = new AIClient({ timeout: 100 });
       
       mockFetch.mockImplementation(() => 
-        new Promise((resolve, reject) => {
+        new Promise((_, reject) => {
           setTimeout(() => {
             const error = new Error('The operation was aborted');
             error.name = 'AbortError';

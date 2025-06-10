@@ -120,7 +120,10 @@ export class GitHubAnalyticsClient {
    * Initialize the client with a user's GitHub integration
    */
   async initialize(userId: string): Promise<void> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     // Fetch user's GitHub integration
     const { data: integration, error } = await supabase
@@ -181,7 +184,10 @@ export class GitHubAnalyticsClient {
 
       // Update rate limit in database
       if (this.integration) {
-        const supabase = createClient();
+        const supabase = await createClient();
+        if (!supabase) {
+          throw new Error('Database connection not available');
+        }
         await supabase
           .from('github_integrations')
           .update({
@@ -436,12 +442,12 @@ export class GitHubAnalyticsClient {
         id: '', // Will be set by database
         githubId: data.id,
         login: data.login,
-        name: data.name,
-        email: data.email,
-        avatarUrl: data.avatar_url,
-        company: data.company,
-        location: data.location,
-        bio: data.bio,
+        name: data.name || undefined,
+        email: data.email || undefined,
+        avatarUrl: data.avatar_url || undefined,
+        company: data.company || undefined,
+        location: data.location || undefined,
+        bio: data.bio || undefined,
         publicRepos: data.public_repos,
         followers: data.followers,
         following: data.following,

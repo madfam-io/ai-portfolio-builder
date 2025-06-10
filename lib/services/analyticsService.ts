@@ -15,12 +15,9 @@ import type {
   Repository,
   CodeMetrics,
   PullRequest,
-  Contributor,
-  RepositoryContributor,
   CommitAnalytics,
   AnalyticsDashboardData,
   RepositoryAnalytics,
-  GitHubIntegration,
 } from '@/types/analytics';
 
 /**
@@ -49,7 +46,11 @@ export class AnalyticsService {
    * Sync repositories from GitHub
    */
   async syncRepositories(): Promise<Repository[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     try {
       // Get GitHub integration
@@ -110,7 +111,10 @@ export class AnalyticsService {
    * Get user's repositories
    */
   async getRepositories(): Promise<Repository[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     const { data, error } = await supabase
       .from('repositories')
@@ -131,7 +135,10 @@ export class AnalyticsService {
    * Get repository by ID
    */
   async getRepository(repositoryId: string): Promise<Repository | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     const { data, error } = await supabase
       .from('repositories')
@@ -153,7 +160,10 @@ export class AnalyticsService {
    * Sync repository metrics
    */
   async syncRepositoryMetrics(repositoryId: string): Promise<CodeMetrics> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     // Get repository details
     const repository = await this.getRepository(repositoryId);
@@ -226,7 +236,10 @@ export class AnalyticsService {
    * Sync pull requests for a repository
    */
   async syncPullRequests(repositoryId: string): Promise<PullRequest[]> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     // Get repository details
     const repository = await this.getRepository(repositoryId);
@@ -283,7 +296,10 @@ export class AnalyticsService {
    * Sync contributors for a repository
    */
   async syncContributors(repositoryId: string): Promise<void> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     // Get repository details
     const repository = await this.getRepository(repositoryId);
@@ -350,7 +366,10 @@ export class AnalyticsService {
    * Sync commit analytics for a repository
    */
   async syncCommitAnalytics(repositoryId: string, days = 30): Promise<void> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     // Get repository details
     const repository = await this.getRepository(repositoryId);
@@ -431,7 +450,10 @@ export class AnalyticsService {
    * Get analytics dashboard data
    */
   async getDashboardData(): Promise<AnalyticsDashboardData> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     try {
       // Fetch all user repositories
@@ -563,7 +585,10 @@ export class AnalyticsService {
    * Get repository analytics
    */
   async getRepositoryAnalytics(repositoryId: string): Promise<RepositoryAnalytics | null> {
-    const supabase = createClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new Error('Database connection not available');
+    }
     
     const repository = await this.getRepository(repositoryId);
     if (!repository) return null;
@@ -644,7 +669,7 @@ export class AnalyticsService {
       return {
         repository,
         metrics: {
-          current: currentMetrics,
+          current: currentMetrics || null,
           history: metrics,
         },
         contributors: contributorData?.map((rc: any) => ({

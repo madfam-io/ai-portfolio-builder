@@ -340,8 +340,7 @@ describe('/api/ai/enhance-bio', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio');
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -357,8 +356,7 @@ describe('/api/ai/enhance-bio', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio');
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(401);
@@ -377,8 +375,7 @@ describe('/api/ai/enhance-bio', () => {
         error: new Error('Database error'),
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio');
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -397,8 +394,7 @@ describe('/api/ai/enhance-bio', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio');
-      const response = await GET(request);
+      const response = await GET();
       const data = await response.json();
 
       expect(response.status).toBe(200);

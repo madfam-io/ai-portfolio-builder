@@ -19,7 +19,14 @@ interface RouteParams {
  */
 export async function GET(_: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
+    
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 503 }
+      );
+    }
     
     // Check if user is authenticated
     const {
@@ -63,13 +70,13 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
       success: true,
       data: analytics,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to fetch repository analytics', { 
       repositoryId: params.id, 
-      error 
+      error: error.message || 'Unknown error'
     });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'An unexpected error occurred' },
       { status: 500 }
     );
   }
@@ -78,9 +85,16 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 /**
  * Sync specific repository data
  */
-export async function POST(_: NextRequest, { params }: RouteParams) {
+export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
+    
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 503 }
+      );
+    }
     
     // Check if user is authenticated
     const {
@@ -138,9 +152,9 @@ export async function POST(_: NextRequest, { params }: RouteParams) {
       try {
         await analyticsService.syncRepositoryMetrics(repositoryId);
         results.synced.push('metrics');
-      } catch (error) {
-        logger.error('Failed to sync metrics', { repositoryId, error });
-        results.errors.push({ type: 'metrics', error: error.message });
+      } catch (error: any) {
+        logger.error('Failed to sync metrics', { repositoryId, error: error.message || 'Unknown error' });
+        results.errors.push({ type: 'metrics', error: error.message || 'An unexpected error occurred' });
       }
     }
 
@@ -149,9 +163,9 @@ export async function POST(_: NextRequest, { params }: RouteParams) {
       try {
         await analyticsService.syncPullRequests(repositoryId);
         results.synced.push('pull_requests');
-      } catch (error) {
-        logger.error('Failed to sync pull requests', { repositoryId, error });
-        results.errors.push({ type: 'pull_requests', error: error.message });
+      } catch (error: any) {
+        logger.error('Failed to sync pull requests', { repositoryId, error: error.message || 'Unknown error' });
+        results.errors.push({ type: 'pull_requests', error: error.message || 'An unexpected error occurred' });
       }
     }
 
@@ -160,9 +174,9 @@ export async function POST(_: NextRequest, { params }: RouteParams) {
       try {
         await analyticsService.syncContributors(repositoryId);
         results.synced.push('contributors');
-      } catch (error) {
-        logger.error('Failed to sync contributors', { repositoryId, error });
-        results.errors.push({ type: 'contributors', error: error.message });
+      } catch (error: any) {
+        logger.error('Failed to sync contributors', { repositoryId, error: error.message || 'Unknown error' });
+        results.errors.push({ type: 'contributors', error: error.message || 'An unexpected error occurred' });
       }
     }
 
@@ -171,9 +185,9 @@ export async function POST(_: NextRequest, { params }: RouteParams) {
       try {
         await analyticsService.syncCommitAnalytics(repositoryId);
         results.synced.push('commits');
-      } catch (error) {
-        logger.error('Failed to sync commits', { repositoryId, error });
-        results.errors.push({ type: 'commits', error: error.message });
+      } catch (error: any) {
+        logger.error('Failed to sync commits', { repositoryId, error: error.message || 'Unknown error' });
+        results.errors.push({ type: 'commits', error: error.message || 'An unexpected error occurred' });
       }
     }
 
@@ -181,13 +195,13 @@ export async function POST(_: NextRequest, { params }: RouteParams) {
       success: true,
       data: results,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to sync repository', { 
       repositoryId: params.id, 
-      error 
+      error: error.message || 'Unknown error'
     });
     return NextResponse.json(
-      { error: 'Internal server error' },
+      { error: error.message || 'An unexpected error occurred' },
       { status: 500 }
     );
   }

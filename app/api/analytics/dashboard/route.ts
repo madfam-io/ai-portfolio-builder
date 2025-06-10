@@ -13,7 +13,14 @@ import { logger } from '@/lib/utils/logger';
  */
 export async function GET() {
   try {
-    const supabase = createClient();
+    const supabase = await createClient();
+    
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 503 }
+      );
+    }
     
     // Check if user is authenticated
     const {
