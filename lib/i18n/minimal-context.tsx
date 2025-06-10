@@ -615,6 +615,11 @@ const translations = {
     contactQuickQuestion:
       '¿Tienes una pregunta rápida? Revisa nuestro FAQ primero.',
     contactViewFaq: 'Ver FAQ',
+    contactFullNamePlaceholder: 'Tu nombre completo',
+    contactEmailPlaceholder: 'tu.correo@ejemplo.com',
+    contactSubjectPlaceholder: 'Breve descripción de tu consulta',
+    contactMessagePlaceholder:
+      'Por favor proporciona detalles sobre tu consulta...',
 
     // Demo Page
     demoPageTitle: 'Ver PRISMA en Acción',
@@ -1394,6 +1399,10 @@ const translations = {
     contactTimeSameDay: 'Same day',
     contactQuickQuestion: 'Have a quick question? Check our FAQ first.',
     contactViewFaq: 'View FAQ',
+    contactFullNamePlaceholder: 'Your full name',
+    contactEmailPlaceholder: 'your.email@example.com',
+    contactSubjectPlaceholder: 'Brief description of your inquiry',
+    contactMessagePlaceholder: 'Please provide details about your inquiry...',
 
     // Demo Page
     demoPageTitle: 'See PRISMA in Action',
@@ -1446,8 +1455,9 @@ const translations = {
       const day = deadline.getDate();
       const year = deadline.getFullYear();
       // Add ordinal suffix
-      const suffix = [11, 12, 13].includes(day) ? 'th' : 
-        ['st', 'nd', 'rd'][(day - 1) % 10] || 'th';
+      const suffix = [11, 12, 13].includes(day)
+        ? 'th'
+        : ['st', 'nd', 'rd'][(day - 1) % 10] || 'th';
       return `Offer expires ${monthName} ${day}${suffix}, ${year}`;
     })(),
     pricingMostPowerful: 'MOST POWERFUL',

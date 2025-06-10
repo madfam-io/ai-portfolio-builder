@@ -99,7 +99,7 @@ export default function Header() {
                   About
                 </Link>
                 <Link
-                  href="/portfolio-editor-demo"
+                  href="/demo/interactive"
                   className="text-purple-600 dark:text-purple-400 hover:text-purple-700 transition font-medium"
                 >
                   Editor Demo
@@ -337,6 +337,12 @@ export default function Header() {
                 >
                   About
                 </Link>
+                <Link
+                  href="/demo/interactive"
+                  className="text-purple-600 dark:text-purple-400 hover:text-purple-700 transition font-medium"
+                >
+                  Editor Demo
+                </Link>
               </>
             ) : (
               // Other pages - show navigation links
@@ -432,9 +438,7 @@ export default function Header() {
             ) : user ? (
               <div className="space-y-3">
                 <div className="text-gray-900 dark:text-white font-medium border-t pt-3">
-                  {t.hello},{' '}
-                  {user.name || user.email?.split('@')[0] || 'User'}
-                  !
+                  {t.hello}, {user.name || user.email?.split('@')[0] || 'User'}!
                 </div>
                 <Link
                   href="/dashboard"

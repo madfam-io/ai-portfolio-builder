@@ -1,8 +1,7 @@
 'use client';
 
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/minimal-context';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
 import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
 import Link from 'next/link';
 
@@ -12,35 +11,43 @@ export default function BlogPage() {
   const featuredPosts = [
     {
       id: 1,
-      title: '10 Portfolio Design Trends That Will Dominate 2024',
+      title:
+        t.blogPost1Title ||
+        '10 Portfolio Design Trends That Will Dominate 2024',
       excerpt:
+        t.blogPost1Excerpt ||
         'Discover the latest design trends that will make your portfolio stand out from the competition and attract more opportunities.',
-      author: 'MADFAM Design Team',
+      author: t.blogPost1Author || 'MADFAM Design Team',
       date: '2024-01-15',
-      category: 'Design',
-      readTime: '5 min read',
+      category: t.blogDesign || 'Design',
+      readTime: t.blogPost1ReadTime || '5 min read',
       image: '/blog/portfolio-trends-2024.jpg',
     },
     {
       id: 2,
-      title: 'How AI is Revolutionizing Professional Portfolios',
+      title:
+        t.blogPost2Title || 'How AI is Revolutionizing Professional Portfolios',
       excerpt:
+        t.blogPost2Excerpt ||
         'Learn how artificial intelligence is transforming the way professionals create, optimize, and manage their online portfolios.',
-      author: 'Dr. Sarah Johnson',
+      author: t.blogPost2Author || 'Dr. Sarah Johnson',
       date: '2024-01-10',
-      category: 'Technology',
-      readTime: '7 min read',
+      category: t.blogTechnology || 'Technology',
+      readTime: t.blogPost2ReadTime || '7 min read',
       image: '/blog/ai-portfolios.jpg',
     },
     {
       id: 3,
-      title: 'From LinkedIn to Portfolio: Converting Connections to Clients',
+      title:
+        t.blogPost3Title ||
+        'From LinkedIn to Portfolio: Converting Connections to Clients',
       excerpt:
+        t.blogPost3Excerpt ||
         'Master the art of turning your LinkedIn network into a powerful client acquisition engine using your professional portfolio.',
-      author: 'Marcus Rodriguez',
+      author: t.blogPost3Author || 'Marcus Rodriguez',
       date: '2024-01-05',
-      category: 'Business',
-      readTime: '6 min read',
+      category: t.blogBusiness || 'Business',
+      readTime: t.blogPost3ReadTime || '6 min read',
       image: '/blog/linkedin-portfolio.jpg',
     },
   ];
@@ -55,11 +62,9 @@ export default function BlogPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-
-      <main className="pt-32 pb-20 px-6">
-        <div className="container mx-auto max-w-6xl">
+    <BaseLayout>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -153,9 +158,7 @@ export default function BlogPage() {
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </BaseLayout>
   );
 }

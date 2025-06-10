@@ -1,8 +1,7 @@
 'use client';
 
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/minimal-context';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
 import {
   FaEnvelope,
   FaMapMarkerAlt,
@@ -32,25 +31,25 @@ export default function ContactPage() {
       setFormData(prev => ({
         ...prev,
         inquiryType: 'business',
-        subject: 'Business Plan Inquiry',
+        subject: t.contactBusinessPlanInquiry || 'Business Plan Inquiry',
       }));
     } else if (urlParams.get('position')) {
       setFormData(prev => ({
         ...prev,
         inquiryType: 'careers',
-        subject: `Job Application - Position ${urlParams.get('position')}`,
+        subject: `${t.contactJobApplication || 'Job Application - Position'} ${urlParams.get('position')}`,
       }));
     } else if (urlParams.get('gdpr')) {
       setFormData(prev => ({
         ...prev,
         inquiryType: 'gdpr',
-        subject: 'GDPR Request',
+        subject: t.contactGDPRRequest || 'GDPR Request',
       }));
     } else if (urlParams.get('general')) {
       setFormData(prev => ({
         ...prev,
         inquiryType: 'general',
-        subject: 'General Inquiry',
+        subject: t.contactGeneralInquiry || 'General Inquiry',
       }));
     }
   }, []);
@@ -91,11 +90,9 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-
-      <main className="pt-32 pb-20 px-6">
-        <div className="container mx-auto max-w-6xl">
+    <BaseLayout>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -110,18 +107,17 @@ export default function ContactPage() {
             {/* Contact Form */}
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
               <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                Send us a message
+                {t.contactSendMessage}
               </h2>
 
               {submitted ? (
                 <div className="text-center py-8">
                   <FaPaperPlane className="text-4xl text-green-500 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                    Message Sent!
+                    {t.contactMessageSent}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300">
-                    Thank you for contacting us. We&apos;ll get back to you
-                    within 24 hours.
+                    {t.contactThankYou}
                   </p>
                 </div>
               ) : (
@@ -129,7 +125,7 @@ export default function ContactPage() {
                   <div className="grid md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Full Name *
+                        {t.contactFullName}
                       </label>
                       <input
                         type="text"
@@ -138,13 +134,16 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="Your full name"
+                        placeholder={
+                          t.contactFullNamePlaceholder ||
+                          t.contactFullName.replace(' *', '')
+                        }
                       />
                     </div>
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                        Email Address *
+                        {t.contactEmailAddress}
                       </label>
                       <input
                         type="email"
@@ -153,14 +152,16 @@ export default function ContactPage() {
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                        placeholder="your.email@example.com"
+                        placeholder={
+                          t.contactEmailPlaceholder || 'email@example.com'
+                        }
                       />
                     </div>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Inquiry Type
+                      {t.contactInquiryType}
                     </label>
                     <select
                       name="inquiryType"
@@ -168,18 +169,18 @@ export default function ContactPage() {
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                     >
-                      <option value="general">General Inquiry</option>
-                      <option value="support">Technical Support</option>
-                      <option value="business">Business & Sales</option>
-                      <option value="careers">Career Opportunities</option>
-                      <option value="gdpr">Data Protection (GDPR)</option>
-                      <option value="press">Press & Media</option>
+                      <option value="general">{t.contactGeneral}</option>
+                      <option value="support">{t.contactSupport}</option>
+                      <option value="business">{t.contactBusinessSales}</option>
+                      <option value="careers">{t.contactCareers}</option>
+                      <option value="gdpr">{t.contactGdpr}</option>
+                      <option value="press">{t.contactPress}</option>
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Subject *
+                      {t.contactSubject}
                     </label>
                     <input
                       type="text"
@@ -188,13 +189,16 @@ export default function ContactPage() {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Brief description of your inquiry"
+                      placeholder={
+                        t.contactSubjectPlaceholder ||
+                        t.contactSubject.replace(' *', '')
+                      }
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Message *
+                      {t.contactMessage}
                     </label>
                     <textarea
                       name="message"
@@ -203,7 +207,10 @@ export default function ContactPage() {
                       required
                       rows={6}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
-                      placeholder="Please provide details about your inquiry..."
+                      placeholder={
+                        t.contactMessagePlaceholder ||
+                        t.contactMessage.replace(' *', '')
+                      }
                     />
                   </div>
 
@@ -215,12 +222,12 @@ export default function ContactPage() {
                     {isSubmitting ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Sending...
+                        {t.contactSending}
                       </>
                     ) : (
                       <>
                         <FaPaperPlane />
-                        Send Message
+                        {t.contactSendButton}
                       </>
                     )}
                   </button>
@@ -233,7 +240,7 @@ export default function ContactPage() {
               {/* Quick Contact */}
               <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                  Get in Touch
+                  {t.contactGetInTouch}
                 </h2>
 
                 <div className="space-y-4">
@@ -241,7 +248,7 @@ export default function ContactPage() {
                     <FaEnvelope className="text-purple-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
-                        General Inquiries
+                        {t.contactGeneralInquiries}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300">
                         hello@madfam.io
@@ -253,7 +260,7 @@ export default function ContactPage() {
                     <FaUserTie className="text-blue-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
-                        Business & Sales
+                        {t.contactBusinessSalesLabel}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300">
                         business@madfam.io
@@ -265,7 +272,7 @@ export default function ContactPage() {
                     <FaBusinessTime className="text-green-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
-                        Support
+                        {t.contactSupportLabel}
                       </h3>
                       <p className="text-gray-600 dark:text-gray-300">
                         support@madfam.io
@@ -278,18 +285,21 @@ export default function ContactPage() {
               {/* Office Info */}
               <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-                  Office
+                  {t.contactOffice}
                 </h2>
                 <div className="flex items-start gap-4">
                   <FaMapMarkerAlt className="text-red-600 text-xl mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">
-                      MADFAM HQ
+                      {t.contactMadfamHq}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      Mexico City, Mexico
-                      <br />
-                      Building the future of professional portfolios
+                      {t.contactOfficeDesc.split('\n').map((line, index) => (
+                        <span key={index}>
+                          {line}
+                          {index === 0 && <br />}
+                        </span>
+                      ))}
                     </p>
                   </div>
                 </div>
@@ -297,19 +307,23 @@ export default function ContactPage() {
 
               {/* Response Time */}
               <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-xl">
-                <h2 className="text-2xl font-bold mb-4">Response Time</h2>
+                <h2 className="text-2xl font-bold mb-4">
+                  {t.contactResponseTime}
+                </h2>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span>General Inquiries:</span>
-                    <span className="font-semibold">24 hours</span>
+                    <span>{t.contactGeneralTime}</span>
+                    <span className="font-semibold">{t.contactTime24h}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Technical Support:</span>
-                    <span className="font-semibold">4-8 hours</span>
+                    <span>{t.contactTechnicalTime}</span>
+                    <span className="font-semibold">{t.contactTime48h}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span>Business Inquiries:</span>
-                    <span className="font-semibold">Same day</span>
+                    <span>{t.contactBusinessTime}</span>
+                    <span className="font-semibold">
+                      {t.contactTimeSameDay}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -317,21 +331,19 @@ export default function ContactPage() {
               {/* FAQ Link */}
               <div className="text-center">
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Have a quick question? Check our FAQ first.
+                  {t.contactQuickQuestion}
                 </p>
                 <Link
                   href="/faq"
                   className="inline-block border-2 border-purple-600 text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-purple-50 dark:hover:bg-purple-900 transition"
                 >
-                  View FAQ
+                  {t.contactViewFaq}
                 </Link>
               </div>
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </BaseLayout>
   );
 }

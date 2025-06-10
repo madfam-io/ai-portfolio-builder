@@ -1,8 +1,7 @@
 'use client';
 
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/minimal-context';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
 import {
   FaShieldAlt,
   FaUser,
@@ -50,11 +49,9 @@ export default function GDPRPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-
-      <main className="pt-32 pb-20 px-6">
-        <div className="container mx-auto max-w-4xl">
+    <BaseLayout>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-4xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
@@ -104,47 +101,47 @@ export default function GDPRPage() {
           {/* Data We Collect */}
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg mb-12">
             <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              What Data We Collect
+              {t.gdprWhatDataTitle || 'What Data We Collect'}
             </h2>
 
             <div className="space-y-4">
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Account Information
+                  {t.gdprAccountInfoTitle || 'Account Information'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Name, email address, password (encrypted), and profile
-                  information you provide.
+                  {t.gdprAccountInfoDesc ||
+                    'Name, email address, password (encrypted), and profile information you provide.'}
                 </p>
               </div>
 
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Portfolio Data
+                  {t.gdprPortfolioDataTitle || 'Portfolio Data'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Content you create, upload, or generate using our platform
-                  including text, images, and project information.
+                  {t.gdprPortfolioDataDesc ||
+                    'Content you create, upload, or generate using our platform including text, images, and project information.'}
                 </p>
               </div>
 
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Usage Analytics
+                  {t.gdprUsageAnalyticsTitle || 'Usage Analytics'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Aggregated, anonymized data about how you use our platform to
-                  improve our services.
+                  {t.gdprUsageAnalyticsDesc ||
+                    'Aggregated, anonymized data about how you use our platform to improve our services.'}
                 </p>
               </div>
 
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Technical Data
+                  {t.gdprTechnicalDataTitle || 'Technical Data'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  IP address, browser type, device information, and cookies for
-                  security and functionality.
+                  {t.gdprTechnicalDataDesc ||
+                    'IP address, browser type, device information, and cookies for security and functionality.'}
                 </p>
               </div>
             </div>
@@ -153,37 +150,37 @@ export default function GDPRPage() {
           {/* Legal Basis */}
           <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg mb-12">
             <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-              Legal Basis for Processing
+              {t.gdprLegalBasisTitle || 'Legal Basis for Processing'}
             </h2>
 
             <div className="space-y-4">
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Contract Performance
+                  {t.gdprContractTitle || 'Contract Performance'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Processing necessary to provide our portfolio creation
-                  services as outlined in our Terms of Service.
+                  {t.gdprContractDesc ||
+                    'Processing necessary to provide our portfolio creation services as outlined in our Terms of Service.'}
                 </p>
               </div>
 
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Legitimate Interest
+                  {t.gdprLegitimateTitle || 'Legitimate Interest'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Improving our services, security measures, and providing
-                  customer support.
+                  {t.gdprLegitimateDesc ||
+                    'Improving our services, security measures, and providing customer support.'}
                 </p>
               </div>
 
               <div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-2">
-                  Consent
+                  {t.gdprConsentTitle || 'Consent'}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Marketing communications, optional analytics, and third-party
-                  integrations you explicitly approve.
+                  {t.gdprConsentDesc ||
+                    'Marketing communications, optional analytics, and third-party integrations you explicitly approve.'}
                 </p>
               </div>
             </div>
@@ -192,31 +189,29 @@ export default function GDPRPage() {
           {/* Exercise Your Rights */}
           <div className="text-center bg-gray-100 dark:bg-gray-800 p-8 rounded-xl">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-              Exercise Your Rights
+              {t.gdprExerciseTitle || 'Exercise Your Rights'}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              To exercise any of your GDPR rights, please contact us. We will
-              respond within 30 days and may require identity verification.
+              {t.gdprExerciseDesc ||
+                'To exercise any of your GDPR rights, please contact us. We will respond within 30 days and may require identity verification.'}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact?gdpr=true"
                 className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition"
               >
-                Submit GDPR Request
+                {t.gdprSubmitRequest || 'Submit GDPR Request'}
               </Link>
               <Link
                 href="/profile"
                 className="border-2 border-purple-600 text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-purple-50 dark:hover:bg-purple-900 transition"
               >
-                Manage Data in Profile
+                {t.gdprManageData || 'Manage Data in Profile'}
               </Link>
             </div>
           </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </BaseLayout>
   );
 }

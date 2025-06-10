@@ -1,53 +1,133 @@
-import { Metadata } from 'next';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Terms of Service - PRISMA by MADFAM',
-  description: 'Terms of service and user agreement for PRISMA portfolio builder.',
-};
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 
 export default function TermsPage() {
+  const { t } = useLanguage();
+
   return (
-    <div className="container mx-auto px-6 py-20">
-      <div className="max-w-4xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
-          Terms of Service
-        </h1>
-        
-        <div className="prose prose-lg dark:prose-invert max-w-none">
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Last updated: {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
-          </p>
-          
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              Acceptance of Terms
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              By accessing and using PRISMA, you accept and agree to be bound by the terms 
-              and provision of this agreement.
-            </p>
-          </section>
+    <BaseLayout>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+        <div className="max-w-4xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
+            {t.termsPageTitle}
+          </h1>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              Use License
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Permission is granted to temporarily use PRISMA for personal and commercial 
-              portfolio creation purposes.
+          <div className="prose prose-lg dark:prose-invert max-w-none">
+            <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+              {t.termsLastUpdated}
             </p>
-          </section>
 
-          <section className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              Contact Information
-            </h2>
-            <p className="text-gray-600 dark:text-gray-300">
-              For questions about these Terms, please contact us at legal@madfam.io
-            </p>
-          </section>
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsAcceptanceTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsAcceptanceText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsUseLicenseTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsUseLicenseText}
+              </p>
+              <ul className="list-disc pl-6 text-gray-600 dark:text-gray-300 space-y-2">
+                <li>{t.termsUseLicenseItem1}</li>
+                <li>{t.termsUseLicenseItem2}</li>
+                <li>{t.termsUseLicenseItem3}</li>
+                <li>{t.termsUseLicenseItem4}</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsAccountTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsAccountText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsContentTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsContentText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsProhibitedTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsProhibitedText}
+              </p>
+              <ul className="list-disc pl-6 text-gray-600 dark:text-gray-300 space-y-2">
+                <li>{t.termsProhibitedItem1}</li>
+                <li>{t.termsProhibitedItem2}</li>
+                <li>{t.termsProhibitedItem3}</li>
+                <li>{t.termsProhibitedItem4}</li>
+                <li>{t.termsProhibitedItem5}</li>
+              </ul>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsPaymentTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsPaymentText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsTerminationTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsTerminationText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsDisclaimerTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsDisclaimerText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsChangesTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300 mb-4">
+                {t.termsChangesText}
+              </p>
+            </section>
+
+            <section className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
+                {t.termsContactTitle}
+              </h2>
+              <p className="text-gray-600 dark:text-gray-300">
+                {t.termsContactText}
+              </p>
+              <div className="mt-4 space-y-2 text-gray-600 dark:text-gray-300">
+                <p>Email: legal@madfam.io</p>
+                <p>{t.termsContactAddress}</p>
+              </div>
+            </section>
+          </div>
         </div>
       </div>
-    </div>
+    </BaseLayout>
   );
 }
