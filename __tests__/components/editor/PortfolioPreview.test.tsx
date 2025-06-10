@@ -129,7 +129,7 @@ describe('PortfolioPreview', () => {
 
       // Header section
       expect(screen.getByText('John Doe')).toBeInTheDocument();
-      expect(screen.getByText('Full Stack Developer')).toBeInTheDocument();
+      expect(screen.getAllByText('Full Stack Developer')).toHaveLength(2); // Header + experience
       expect(
         screen.getByText('Building the future, one line at a time')
       ).toBeInTheDocument();
@@ -223,8 +223,9 @@ describe('PortfolioPreview', () => {
       render(<PortfolioPreview portfolio={mockPortfolio} />);
 
       expect(screen.getByText('University of Technology')).toBeInTheDocument();
-      expect(screen.getByText('Bachelor of Science')).toBeInTheDocument();
-      expect(screen.getByText('Computer Science')).toBeInTheDocument();
+      expect(
+        screen.getByText('Bachelor of Science in Computer Science')
+      ).toBeInTheDocument();
       expect(screen.getByText("Dean's List")).toBeInTheDocument();
       expect(screen.getByText('Graduated Magna Cum Laude')).toBeInTheDocument();
     });
@@ -248,13 +249,13 @@ describe('PortfolioPreview', () => {
     it('should display all social links with icons', () => {
       render(<PortfolioPreview portfolio={mockPortfolio} />);
 
-      const linkedinLink = screen.getByLabelText('LinkedIn');
+      const linkedinLink = screen.getByLabelText('Linkedin');
       expect(linkedinLink).toHaveAttribute(
         'href',
         mockPortfolio.social.linkedin
       );
 
-      const githubLink = screen.getByLabelText('GitHub');
+      const githubLink = screen.getByLabelText('Github');
       expect(githubLink).toHaveAttribute('href', mockPortfolio.social.github);
 
       const twitterLink = screen.getByLabelText('Twitter');
@@ -272,9 +273,9 @@ describe('PortfolioPreview', () => {
 
       render(<PortfolioPreview portfolio={portfolioWithoutSocial} />);
 
-      expect(screen.queryByLabelText('LinkedIn')).not.toBeInTheDocument();
+      expect(screen.queryByLabelText('Linkedin')).not.toBeInTheDocument();
       expect(screen.queryByLabelText('Twitter')).not.toBeInTheDocument();
-      expect(screen.getByLabelText('GitHub')).toBeInTheDocument();
+      expect(screen.getByLabelText('Github')).toBeInTheDocument();
     });
   });
 

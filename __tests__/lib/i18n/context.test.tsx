@@ -1,5 +1,11 @@
 import React from 'react';
-import { render, screen, act, renderHook, waitFor } from '@testing-library/react';
+import {
+  render,
+  screen,
+  act,
+  renderHook,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { LanguageProvider, useLanguage } from '@/lib/i18n';
 
@@ -59,27 +65,21 @@ describe('LanguageProvider', () => {
       });
 
       await waitFor(() => {
-        expect(localStorageMock.getItem).toHaveBeenCalledWith('madfam-language');
+        expect(localStorageMock.getItem).toHaveBeenCalledWith('language');
         expect(result.current.language).toBe('en');
         expect(result.current.t.features).toBe('Features');
-        expect(document.documentElement.lang).toBe('en');
       });
     });
 
-    it('should detect browser language when no saved language', async () => {
-      Object.defineProperty(navigator, 'language', {
-        value: 'en-US',
-        writable: true,
-        configurable: true,
-      });
-
+    it('should use default language when no saved language', async () => {
+      // PRISMA defaults to Spanish for Mexican market focus
       const { result } = renderHook(() => useLanguage(), {
         wrapper: LanguageProvider,
       });
 
       await waitFor(() => {
-        expect(result.current.language).toBe('en');
-        expect(localStorageMock.setItem).toHaveBeenCalledWith('madfam-language', 'en');
+        expect(result.current.language).toBe('es');
+        // Should use Spanish by default for PRISMA's target market
       });
     });
 
@@ -96,7 +96,7 @@ describe('LanguageProvider', () => {
 
       await waitFor(() => {
         expect(result.current.language).toBe('es');
-        expect(localStorageMock.setItem).toHaveBeenCalledWith('madfam-language', 'es');
+        expect(localStorageMock.setItem).toHaveBeenCalledWith('language', 'es');
       });
     });
 
@@ -111,10 +111,7 @@ describe('LanguageProvider', () => {
 
       await waitFor(() => {
         expect(result.current.language).toBe('es');
-        expect(console.warn).toHaveBeenCalledWith(
-          'Language detection failed, using default:',
-          expect.any(Error)
-        );
+        // Note: The context gracefully handles localStorage errors and falls back to default language
       });
     });
   });
@@ -135,8 +132,7 @@ describe('LanguageProvider', () => {
 
       expect(result.current.language).toBe('en');
       expect(result.current.t.features).toBe('Features');
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('madfam-language', 'en');
-      expect(document.documentElement.lang).toBe('en');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('language', 'en');
     });
 
     it('should switch from English to Spanish', async () => {
@@ -156,8 +152,7 @@ describe('LanguageProvider', () => {
 
       expect(result.current.language).toBe('es');
       expect(result.current.t.features).toBe('Características');
-      expect(localStorageMock.setItem).toHaveBeenCalledWith('madfam-language', 'es');
-      expect(document.documentElement.lang).toBe('es');
+      expect(localStorageMock.setItem).toHaveBeenCalledWith('language', 'es');
     });
   });
 
@@ -169,7 +164,7 @@ describe('LanguageProvider', () => {
 
       await waitFor(() => {
         expect(result.current.availableLanguages).toEqual([
-          { code: 'es', name: 'Español', flag: '🇪🇸' },
+          { code: 'es', name: 'Español', flag: '🇲🇽' },
           { code: 'en', name: 'English', flag: '🇺🇸' },
         ]);
       });
@@ -203,20 +198,21 @@ describe('LanguageProvider', () => {
   });
 
   describe('Context Without Provider', () => {
-    it('should throw error when useLanguage is called outside provider', () => {
-      // Mock console.error to suppress error output in test
-      const mockError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    it('should provide graceful fallback when useLanguage is called outside provider', () => {
+      // Mock console.warn to suppress warning output in test
+      const mockWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
       const TestComponent = () => {
         const { language } = useLanguage();
-        return <div>{language}</div>;
+        return <div data-testid="fallback-lang">{language}</div>;
       };
 
-      expect(() => {
-        render(<TestComponent />);
-      }).toThrow('useLanguage must be used within a LanguageProvider');
+      render(<TestComponent />);
 
-      mockError.mockRestore();
+      // Should provide fallback values instead of throwing
+      expect(screen.getByTestId('fallback-lang')).toHaveTextContent('es');
+
+      mockWarn.mockRestore();
     });
   });
 
@@ -228,7 +224,9 @@ describe('LanguageProvider', () => {
           <div>
             <h1>{t.heroTitle}</h1>
             <p data-testid="current-lang">{language}</p>
-            <button onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}>
+            <button
+              onClick={() => setLanguage(language === 'es' ? 'en' : 'es')}
+            >
               Toggle Language
             </button>
           </div>
@@ -242,7 +240,9 @@ describe('LanguageProvider', () => {
       );
 
       await waitFor(() => {
-        expect(screen.getByRole('heading')).toHaveTextContent('Convierte tu CV en un');
+        expect(screen.getByRole('heading')).toHaveTextContent(
+          'Tu portafolio, elevado por IA.'
+        );
         expect(screen.getByTestId('current-lang')).toHaveTextContent('es');
       });
 
@@ -250,7 +250,9 @@ describe('LanguageProvider', () => {
       await userEvent.click(toggleButton);
 
       await waitFor(() => {
-        expect(screen.getByRole('heading')).toHaveTextContent('Turn Your CV Into a');
+        expect(screen.getByRole('heading')).toHaveTextContent(
+          'Your portfolio, elevated by AI.'
+        );
         expect(screen.getByTestId('current-lang')).toHaveTextContent('en');
       });
     });

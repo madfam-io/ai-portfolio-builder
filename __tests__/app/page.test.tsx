@@ -13,12 +13,10 @@ describe('HomePage', () => {
   };
 
   describe('Rendering', () => {
-    it('should render the MADFAM.AI logo', () => {
+    it('should render the PRISMA logo', () => {
       renderWithProvider(<HomePage />);
-      const logos = screen.getAllByText((_, element) => {
-        return element?.textContent === 'MADFAM.AI';
-      });
-      expect(logos.length).toBeGreaterThan(0);
+      expect(screen.getByText('PRISMA')).toBeInTheDocument();
+      expect(screen.getByText('by MADFAM')).toBeInTheDocument();
     });
 
     it('should render the main headline', () => {

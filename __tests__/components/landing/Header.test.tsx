@@ -101,9 +101,9 @@ describe('Header Component', () => {
       const mobileMenuContainer = document.querySelector('.md\\:hidden');
       expect(mobileMenuContainer).toBeInTheDocument();
       
-      // Look for bars icon (mobile menu button)
-      const barsIcon = document.querySelector('.fa-bars');
-      expect(barsIcon).toBeInTheDocument();
+      // Look for menu button - check if mobile container has a button
+      const mobileButton = mobileMenuContainer?.querySelector('button');
+      expect(mobileButton).toBeInTheDocument();
     });
   });
 
@@ -114,7 +114,7 @@ describe('Header Component', () => {
 
       // Initially in Spanish
       expect(screen.getAllByText('Características')).toHaveLength(2);
-      expect(screen.getAllByText('ES')).toHaveLength(2);
+      expect(screen.getAllByText('ES')).toHaveLength(1);
 
       // Click language toggle - look for button with title containing "English"
       const langToggle = screen.getByTitle(/English/);
@@ -123,7 +123,7 @@ describe('Header Component', () => {
       // Should switch to English
       await waitFor(() => {
         expect(screen.getAllByText('Features')).toHaveLength(2);
-        expect(screen.getAllByText('EN')).toHaveLength(2);
+        expect(screen.getAllByText('EN')).toHaveLength(1);
       });
     });
 
@@ -134,7 +134,7 @@ describe('Header Component', () => {
 
       // Initially in English
       expect(screen.getAllByText('Features')).toHaveLength(2);
-      expect(screen.getAllByText('EN')).toHaveLength(2);
+      expect(screen.getAllByText('EN')).toHaveLength(1);
 
       // Click language toggle - look for button with title containing "Español"
       const langToggle = screen.getByTitle(/Español/);
@@ -143,7 +143,7 @@ describe('Header Component', () => {
       // Should switch to Spanish
       await waitFor(() => {
         expect(screen.getAllByText('Características')).toHaveLength(2);
-        expect(screen.getAllByText('ES')).toHaveLength(2);
+        expect(screen.getAllByText('ES')).toHaveLength(1);
       });
     });
 
@@ -151,8 +151,9 @@ describe('Header Component', () => {
       const user = userEvent.setup();
       renderHeader();
 
-      // Click mobile menu toggle to open menu - look for bars icon
-      const mobileMenuToggle = document.querySelector('.fa-bars')?.closest('button');
+      // Click mobile menu toggle to open menu
+      const mobileMenuContainer = document.querySelector('.md\\:hidden');
+      const mobileMenuToggle = mobileMenuContainer?.querySelector('button');
       if (!mobileMenuToggle) throw new Error('Mobile menu toggle not found');
       await user.click(mobileMenuToggle as HTMLElement);
 
