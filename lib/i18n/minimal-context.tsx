@@ -43,6 +43,7 @@ import {
   detectUserLanguageSync,
   type LanguageDetectionResult,
 } from '@/lib/utils/geolocation';
+import { getDynamicTranslations } from './dateHelpers';
 
 /**
  * Supported languages in the application
@@ -200,7 +201,7 @@ const translations = {
     footerPrivacy: 'Privacidad',
     footerTerms: 'Términos',
     footerGdpr: 'GDPR',
-    footerCopyright: '© 2025 PRISMA by MADFAM. Todos los derechos reservados.',
+    footerCopyright: `© ${new Date().getFullYear()} PRISMA by MADFAM. Todos los derechos reservados.`,
 
     // Hero section
     poweredByAi: 'Impulsado por Llama 3.1 & Mistral AI',
@@ -660,7 +661,14 @@ const translations = {
     // Pricing Component
     pricingLimitedOffer:
       '🎉 Tiempo Limitado: ¡Obtén 50% de descuento en tus primeros 3 meses en planes Pro y Business!',
-    pricingOfferExpires: 'La oferta expira el 31 de diciembre de 2024',
+    pricingOfferExpires: (() => {
+      const deadline = new Date();
+      deadline.setMonth(deadline.getMonth() + 6);
+      const day = deadline.getDate();
+      const month = deadline.toLocaleString('es-ES', { month: 'long' });
+      const year = deadline.getFullYear();
+      return `La oferta expira el ${day} de ${month} de ${year}`;
+    })(),
     pricingMostPowerful: 'MÁS PODEROSO',
     pricingEverythingInBusiness: 'Todo en Business +',
     pricingWhiteLabelSolutions: 'Soluciones de marca blanca',
@@ -830,7 +838,13 @@ const translations = {
 
     // Terms of Service Page
     termsPageTitle: 'Términos de Servicio',
-    termsLastUpdated: 'Última actualización: Enero 2025',
+    termsLastUpdated: (() => {
+      const date = new Date();
+      const month = date.toLocaleString('es-ES', { month: 'long' });
+      const year = date.getFullYear();
+      const capitalizedMonth = month.charAt(0).toUpperCase() + month.slice(1);
+      return `Última actualización: ${capitalizedMonth} ${year}`;
+    })(),
     termsAcceptanceTitle: 'Aceptación de Términos',
     termsAcceptanceText:
       'Al acceder y usar PRISMA, aceptas estar sujeto a estos Términos de Servicio.',
@@ -970,7 +984,7 @@ const translations = {
     footerPrivacy: 'Privacy',
     footerTerms: 'Terms',
     footerGdpr: 'GDPR',
-    footerCopyright: '© 2025 PRISMA by MADFAM. All rights reserved.',
+    footerCopyright: `© ${new Date().getFullYear()} PRISMA by MADFAM. All rights reserved.`,
 
     // Hero section
     poweredByAi: 'Powered by Llama 3.1 & Mistral AI',
@@ -1425,7 +1439,17 @@ const translations = {
     // Pricing Component
     pricingLimitedOffer:
       '🎉 Limited Time: Get 50% off your first 3 months on Pro and Business plans!',
-    pricingOfferExpires: 'Offer expires December 31st, 2024',
+    pricingOfferExpires: (() => {
+      const deadline = new Date();
+      deadline.setMonth(deadline.getMonth() + 6);
+      const monthName = deadline.toLocaleString('en-US', { month: 'long' });
+      const day = deadline.getDate();
+      const year = deadline.getFullYear();
+      // Add ordinal suffix
+      const suffix = [11, 12, 13].includes(day) ? 'th' : 
+        ['st', 'nd', 'rd'][(day - 1) % 10] || 'th';
+      return `Offer expires ${monthName} ${day}${suffix}, ${year}`;
+    })(),
     pricingMostPowerful: 'MOST POWERFUL',
     pricingEverythingInBusiness: 'Everything in Business +',
     pricingWhiteLabelSolutions: 'White-label solutions',
@@ -1593,7 +1617,12 @@ const translations = {
 
     // Terms of Service Page
     termsPageTitle: 'Terms of Service',
-    termsLastUpdated: 'Last updated: January 2025',
+    termsLastUpdated: (() => {
+      const date = new Date();
+      const month = date.toLocaleString('en-US', { month: 'long' });
+      const year = date.getFullYear();
+      return `Last updated: ${month} ${year}`;
+    })(),
     termsAcceptanceTitle: 'Acceptance of Terms',
     termsAcceptanceText:
       'By accessing and using PRISMA, you agree to be bound by these Terms of Service.',
