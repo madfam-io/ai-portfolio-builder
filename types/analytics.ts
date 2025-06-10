@@ -250,7 +250,7 @@ export interface AnalyticsDashboardData {
 export interface RepositoryAnalytics {
   repository: Repository;
   metrics: {
-    current: CodeMetrics;
+    current: CodeMetrics | null;
     history: CodeMetrics[];
   };
   contributors: Array<{

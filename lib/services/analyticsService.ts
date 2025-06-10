@@ -383,9 +383,13 @@ export class AnalyticsService {
       startDate.setDate(startDate.getDate() - days);
 
       // Fetch commits from GitHub
+      if (!repository.owner || !repository.name) {
+        throw new Error('Repository owner or name is missing');
+      }
+      
       const commits = await this.githubClient.fetchCommits(
-        repository.owner,
-        repository.name,
+        repository.owner!,
+        repository.name!,
         { since: startDate, until: endDate }
       );
 
@@ -393,9 +397,12 @@ export class AnalyticsService {
       const commitsByDate = new Map<string, any[]>();
       
       commits.forEach(commit => {
-        const date = new Date(commit.commit.author.date)
-          .toISOString()
-          .split('T')[0];
+        const authorDate = commit.commit.author.date;
+        if (!authorDate) return;
+        
+        const isoDate = new Date(authorDate).toISOString();
+        const date = isoDate.split('T')[0];
+        if (!date) return;
         
         if (!commitsByDate.has(date)) {
           commitsByDate.set(date, []);
