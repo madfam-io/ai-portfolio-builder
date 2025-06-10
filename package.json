@@ -24,7 +24,6 @@
   },
   "homepage": "https://prisma.madfam.io",
   "scripts": {
-    "preinstall": "node scripts/check-node-version.js",
     "dev": "next dev -p 3000",
     "dev:clean": "pkill -f 'next dev' || true && pnpm dev",
     "build": "next build",
@@ -49,6 +48,7 @@
     "setup:git": "./scripts/setup-git.sh",
     "docker:dev": "./scripts/docker-dev.sh",
     "docker:prod": "./scripts/docker-prod.sh",
+    "check:node": "node scripts/check-node-version.js",
     "docker:dev:up": "docker-compose -f docker-compose.dev.yml up -d",
     "docker:dev:down": "docker-compose -f docker-compose.dev.yml down",
     "docker:dev:logs": "docker-compose -f docker-compose.dev.yml logs -f",
