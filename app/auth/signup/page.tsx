@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { signUp, signInWithOAuth } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import BaseLayout from '@/components/layouts/BaseLayout';
 
-export default function SignUpPage() {
+function SignUpContent() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -29,11 +29,16 @@ export default function SignUpPage() {
 
   const getPlanDisplayName = (plan: string) => {
     switch (plan) {
-      case 'free': return t.planFree;
-      case 'pro': return t.planPro;
-      case 'business': return t.planBusiness;
-      case 'enterprise': return t.planEnterprise;
-      default: return plan;
+      case 'free':
+        return t.planFree;
+      case 'pro':
+        return t.planPro;
+      case 'business':
+        return t.planBusiness;
+      case 'enterprise':
+        return t.planEnterprise;
+      default:
+        return plan;
     }
   };
 
@@ -47,7 +52,7 @@ export default function SignUpPage() {
 
     try {
       const { data, error } = await signUp(email, password, fullName);
-      
+
       if (error) {
         setError(error.message);
         return;
@@ -56,7 +61,9 @@ export default function SignUpPage() {
       if (data.user) {
         if (data.user.email_confirmed_at) {
           // Email already confirmed, redirect to dashboard with plan info
-          const redirectUrl = selectedPlan ? `/dashboard?plan=${selectedPlan}` : '/dashboard';
+          const redirectUrl = selectedPlan
+            ? `/dashboard?plan=${selectedPlan}`
+            : '/dashboard';
           router.push(redirectUrl);
         } else {
           // Show success message for email confirmation
@@ -74,7 +81,7 @@ export default function SignUpPage() {
     try {
       setLoading(true);
       const { data, error } = await signInWithOAuth(provider);
-      
+
       if (error) {
         setError(error.message);
         return;
@@ -147,7 +154,9 @@ export default function SignUpPage() {
               <div className="mt-4 text-center">
                 <div className="inline-flex items-center px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 rounded-lg">
                   <span className="text-sm font-medium">
-                    {t.planFree === getPlanDisplayName(selectedPlan) ? t.startFree : `${t.startProTrial} - ${getPlanDisplayName(selectedPlan)}`}
+                    {t.planFree === getPlanDisplayName(selectedPlan)
+                      ? t.startFree
+                      : `${t.startProTrial} - ${getPlanDisplayName(selectedPlan)}`}
                   </span>
                 </div>
               </div>
@@ -176,7 +185,7 @@ export default function SignUpPage() {
                   autoComplete="name"
                   required
                   value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
+                  onChange={e => setFullName(e.target.value)}
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.fullName}
                 />
@@ -192,7 +201,7 @@ export default function SignUpPage() {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.email}
                 />
@@ -208,7 +217,7 @@ export default function SignUpPage() {
                   autoComplete="new-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.passwordMinLength}
                 />
@@ -216,9 +225,7 @@ export default function SignUpPage() {
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm text-center">
-                {error}
-              </div>
+              <div className="text-red-600 text-sm text-center">{error}</div>
             )}
 
             <div>
@@ -276,5 +283,13 @@ export default function SignUpPage() {
         </div>
       </div>
     </BaseLayout>
+  );
+}
+
+export default function SignUpPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignUpContent />
+    </Suspense>
   );
 }

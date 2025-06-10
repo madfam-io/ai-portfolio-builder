@@ -29,10 +29,13 @@ function EditorContent() {
 
         if (!portfolioId) {
           // Check for template selection from landing page
-          const selectedTemplate = searchParams.get('template') || 
-                                 (typeof window !== 'undefined' ? localStorage.getItem('selectedTemplate') : null) || 
-                                 'developer';
-          
+          const selectedTemplate =
+            searchParams.get('template') ||
+            (typeof window !== 'undefined'
+              ? localStorage.getItem('selectedTemplate')
+              : null) ||
+            'developer';
+
           // Clear the stored template after use
           if (typeof window !== 'undefined') {
             localStorage.removeItem('selectedTemplate');
@@ -43,15 +46,22 @@ function EditorContent() {
             name: 'Nuevo Portafolio',
             title: 'Profesional',
             bio: '',
-            template: selectedTemplate as 'developer' | 'creative' | 'business' | 'educator',
+            template: selectedTemplate as
+              | 'developer'
+              | 'creative'
+              | 'business'
+              | 'educator',
             userId: 'user-1', // Mock user ID
           });
           setPortfolio(newPortfolio);
           // Update URL with new portfolio ID, preserving template parameter
-          router.replace(`/editor?id=${newPortfolio.id}&template=${selectedTemplate}`);
+          router.replace(
+            `/editor?id=${newPortfolio.id}&template=${selectedTemplate}`
+          );
         } else {
           // Load existing portfolio
-          const existingPortfolio = await portfolioService.getPortfolio(portfolioId);
+          const existingPortfolio =
+            await portfolioService.getPortfolio(portfolioId);
           if (!existingPortfolio) {
             setError('Portfolio not found');
             return;
@@ -166,7 +176,7 @@ function EditorContent() {
 
   // Main editor interface
   return (
-    <BaseLayout 
+    <BaseLayout
       className="!bg-gray-50 dark:!bg-gray-900"
       showHeader={false}
       showFooter={false}

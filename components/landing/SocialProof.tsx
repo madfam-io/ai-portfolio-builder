@@ -19,18 +19,26 @@ export default function SocialProof() {
         <div className="text-center mb-12">
           <div className="flex flex-col sm:flex-row justify-center items-center gap-8 mb-8">
             <div className="flex items-center gap-2">
-              <span className="text-2xl font-bold text-purple-600">10,000+</span>
-              <span className="text-gray-600 dark:text-gray-300">{t.joinProfessionals}</span>
+              <span className="text-2xl font-bold text-purple-600">
+                10,000+
+              </span>
+              <span className="text-gray-600 dark:text-gray-300">
+                {t.joinProfessionals}
+              </span>
             </div>
             <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((star) => (
+              {[1, 2, 3, 4, 5].map(star => (
                 <FaStar key={star} className="text-yellow-400 text-lg" />
               ))}
-              <span className="ml-2 text-gray-600 dark:text-gray-300">{t.rating}</span>
+              <span className="ml-2 text-gray-600 dark:text-gray-300">
+                {t.rating}
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="text-green-600 font-semibold">✓</span>
-              <span className="text-gray-600 dark:text-gray-300">{t.gdprCompliant}</span>
+              <span className="text-gray-600 dark:text-gray-300">
+                {t.gdprCompliant}
+              </span>
             </div>
           </div>
         </div>
@@ -43,7 +51,7 @@ export default function SocialProof() {
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg">
               <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5].map(star => (
                   <FaStar key={star} className="text-yellow-400" />
                 ))}
               </div>
@@ -56,7 +64,7 @@ export default function SocialProof() {
             </div>
             <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg">
               <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
+                {[1, 2, 3, 4, 5].map(star => (
                   <FaStar key={star} className="text-yellow-400" />
                 ))}
               </div>
@@ -72,9 +80,7 @@ export default function SocialProof() {
 
         {/* Trust Signals */}
         <div className="text-center mb-8">
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
-            {t.trustedBy}
-          </p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">{t.trustedBy}</p>
           <div className="flex flex-wrap justify-center items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
             <span>{t.gdprCompliant}</span>
             <span className="mx-2">•</span>

@@ -67,12 +67,8 @@ export default function GDPRPage() {
 
           {/* Quick Summary */}
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-xl mb-12">
-            <h2 className="text-2xl font-bold mb-4">
-              {t.gdprCommitment}
-            </h2>
-            <p className="text-lg opacity-90 mb-4">
-              {t.gdprCommitmentDesc}
-            </p>
+            <h2 className="text-2xl font-bold mb-4">{t.gdprCommitment}</h2>
+            <p className="text-lg opacity-90 mb-4">{t.gdprCommitmentDesc}</p>
             <Link
               href="/contact?gdpr=true"
               className="inline-block bg-white text-purple-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition"
