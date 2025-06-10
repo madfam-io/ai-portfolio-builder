@@ -216,9 +216,7 @@ export default function Header() {
                 >
                   <FaUser className="text-lg" />
                   <span className="text-sm font-medium">
-                    {user.user_metadata?.full_name ||
-                      user.email?.split('@')[0] ||
-                      'User'}
+                    {user.name || user.email?.split('@')[0] || 'User'}
                   </span>
                 </button>
 
@@ -435,9 +433,7 @@ export default function Header() {
               <div className="space-y-3">
                 <div className="text-gray-900 dark:text-white font-medium border-t pt-3">
                   {t.hello},{' '}
-                  {user.user_metadata?.full_name ||
-                    user.email?.split('@')[0] ||
-                    'User'}
+                  {user.name || user.email?.split('@')[0] || 'User'}
                   !
                 </div>
                 <Link

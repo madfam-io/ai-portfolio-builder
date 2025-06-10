@@ -42,14 +42,10 @@ export default function ProfilePage() {
 
     if (user) {
       // Pre-fill form with existing user data
-      setFullName(user.user_metadata?.full_name || '');
+      setFullName(user.name || '');
       setEmail(user.email || '');
-      setBio(user.user_metadata?.bio || '');
-      setCompany(user.user_metadata?.company || '');
-      setRole(user.user_metadata?.role || '');
-      setLinkedin(user.user_metadata?.linkedin || '');
-      setGithub(user.user_metadata?.github || '');
-      setWebsite(user.user_metadata?.website || '');
+      // Other fields will start empty since we don't have user_metadata in our type
+      // In a real implementation, these would come from the database profile
     }
   }, [user, authLoading, router]);
 

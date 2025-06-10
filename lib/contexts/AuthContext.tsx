@@ -20,8 +20,7 @@ import {
   User, 
   SubscriptionPlan, 
   AdminPermission,
-  SessionData,
-  UserAccountType 
+  SessionData
 } from '@/types/auth';
 import { 
   hasPermission, 
@@ -180,13 +179,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Authentication methods (mock implementations for now)
    */
-  const signIn = useCallback(async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, _password: string) => {
     // This would use the existing auth system
     console.log('Sign in:', email);
     // Implementation would go here
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string, name: string) => {
+  const signUp = useCallback(async (email: string, _password: string, name: string) => {
     console.log('Sign up:', email, name);
     // Implementation would go here
   }, []);

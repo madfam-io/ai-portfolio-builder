@@ -7,17 +7,15 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { useLanguage } from '@/lib/i18n/minimal-context';
 import { 
   FiUsers, 
   FiSettings, 
-  FiBarChart3, 
   FiEye, 
   FiShield, 
   FiUser,
   FiToggleLeft,
   FiToggleRight,
-  FiCrown,
+  FiStar,
   FiDollarSign,
   FiActivity,
   FiAlertTriangle,
@@ -39,7 +37,6 @@ export default function AdminUserDashboard() {
     usageStats
   } = useAuth();
   
-  const { t } = useLanguage();
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   if (!isAdmin) {
@@ -216,7 +213,7 @@ export default function AdminUserDashboard() {
                     {systemStats.activeSubscriptions.toLocaleString()}
                   </p>
                 </div>
-                <FiCrown className="text-2xl text-yellow-600" />
+                <FiStar className="text-2xl text-yellow-600" />
               </div>
             </div>
 

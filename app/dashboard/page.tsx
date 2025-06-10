@@ -141,7 +141,7 @@ export default function Dashboard() {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {t.hello}, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
+              {t.hello}, {user.email?.split('@')[0] || 'User'}!
             </h1>
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mt-2">
               {t.myPortfolios}

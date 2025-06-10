@@ -10,7 +10,7 @@
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import {
@@ -48,9 +48,9 @@ interface DashboardState {
 }
 
 /**
- * Analytics Dashboard Component
+ * Analytics Dashboard Component with Search Params
  */
-export default function AnalyticsPage() {
+function AnalyticsDashboard() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -542,5 +542,23 @@ export default function AnalyticsPage() {
         </div>
       </div>
     </BaseLayout>
+  );
+}
+
+/**
+ * Main Analytics Page with Suspense wrapper
+ */
+export default function AnalyticsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">Loading analytics...</p>
+        </div>
+      </div>
+    }>
+      <AnalyticsDashboard />
+    </Suspense>
   );
 }
