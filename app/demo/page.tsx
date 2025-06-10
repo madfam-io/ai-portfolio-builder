@@ -71,7 +71,7 @@ export default function DemoPage() {
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
-                href="/editor"
+                href="/demo/interactive"
                 className="btn-primary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center"
               >
                 <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
@@ -100,7 +100,7 @@ export default function DemoPage() {
                       In the meantime, try our interactive demo
                     </p>
                     <Link
-                      href="/editor"
+                      href="/demo/interactive"
                       className="inline-block mt-4 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
                     >
                       Launch Interactive Demo
@@ -272,7 +272,7 @@ export default function DemoPage() {
                 <FaArrowRight />
               </Link>
               <Link
-                href="/editor"
+                href="/demo/interactive"
                 className="border-2 border-white text-white px-8 py-4 rounded-lg font-medium hover:bg-white hover:text-purple-600 transition"
               >
                 Try Interactive Demo
