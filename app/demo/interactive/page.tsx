@@ -6,6 +6,7 @@ import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import {
   FiArrowLeft,
   FiBookOpen,
@@ -16,6 +17,7 @@ import {
 import Link from 'next/link';
 
 export default function InteractiveDemoPage() {
+  const { t } = useLanguage();
   usePerformanceTracking('InteractiveDemoPage');
 
   const [currentStep, setCurrentStep] = useState<
@@ -124,13 +126,13 @@ export default function InteractiveDemoPage() {
               className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
               <FiArrowLeft className="w-5 h-5" />
-              <span>Back to Demo</span>
+              <span>{t.demoBackToDemo}</span>
             </Link>
 
             <div className="flex items-center space-x-2">
               <FiBookOpen className="w-5 h-5 text-purple-600" />
               <span className="font-semibold text-gray-900 dark:text-white">
-                PRISMA Interactive Demo
+                {t.demoPrismaInteractiveDemo}
               </span>
             </div>
           </div>
@@ -144,7 +146,7 @@ export default function InteractiveDemoPage() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
             >
-              1. Template
+              1. {t.demoTemplate}
             </div>
             <div
               className={`px-3 py-1 rounded-full text-sm ${
@@ -153,7 +155,7 @@ export default function InteractiveDemoPage() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
             >
-              2. Edit
+              2. {t.demoEdit}
             </div>
             <div
               className={`px-3 py-1 rounded-full text-sm ${
@@ -162,7 +164,7 @@ export default function InteractiveDemoPage() {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
             >
-              3. Preview
+              3. {t.demoPreview}
             </div>
           </div>
 
@@ -170,7 +172,7 @@ export default function InteractiveDemoPage() {
             <button
               onClick={handleRefresh}
               className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-              title="Reset Demo"
+              title={t.demoResetDemo}
             >
               <FiSettings className="w-5 h-5" />
             </button>
@@ -179,7 +181,7 @@ export default function InteractiveDemoPage() {
               className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
             >
               <FiSave className="w-4 h-4" />
-              <span>Create Account</span>
+              <span>{t.demoCreateAccount}</span>
             </Link>
           </div>
         </div>
@@ -190,12 +192,10 @@ export default function InteractiveDemoPage() {
           <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-                Choose Your Template
+                {t.demoChooseYourTemplate}
               </h1>
               <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Start by selecting a template that matches your profession and
-                style. Each template is optimized for specific industries and
-                career paths.
+                {t.demoStartBySelecting}
               </p>
             </div>
 
@@ -215,7 +215,7 @@ export default function InteractiveDemoPage() {
                   <div className="text-center">
                     <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                     <p className="text-gray-600 dark:text-gray-400">
-                      Loading templates...
+                      {t.demoLoadingTemplates}
                     </p>
                   </div>
                 </div>
@@ -228,7 +228,7 @@ export default function InteractiveDemoPage() {
                 disabled={isLoading}
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Continue to Editor
+                {t.demoContinueToEditor}
               </button>
             </div>
           </div>
@@ -241,20 +241,20 @@ export default function InteractiveDemoPage() {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Edit Portfolio
+                    {t.demoEditPortfolio}
                   </h2>
                   <div className="flex space-x-2">
                     <button
                       onClick={handlePreviousStep}
                       className="px-3 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                     >
-                      Back
+                      {t.demoBack}
                     </button>
                     <button
                       onClick={handleNextStep}
                       className="px-3 py-2 text-sm bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                     >
-                      Preview
+                      {t.demoPreview}
                     </button>
                   </div>
                 </div>
@@ -262,25 +262,22 @@ export default function InteractiveDemoPage() {
                 <div className="space-y-6">
                   <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
                     <h3 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
-                      Interactive Demo Mode
+                      {t.demoInteractiveDemoMode}
                     </h3>
                     <p className="text-yellow-700 dark:text-yellow-300 text-sm">
-                      This is a preview of the portfolio editor. In the full
-                      version, you&apos;ll have complete control over all
-                      sections, AI enhancement features, and real-time
-                      collaboration.
+                      {t.demoThisIsPreview}
                     </p>
                   </div>
 
                   <div className="grid gap-6">
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        Basic Information
+                        {t.demoBasicInformation}
                       </h3>
                       <div className="space-y-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Name
+                            {t.demoName}
                           </label>
                           <input
                             type="text"
@@ -296,7 +293,7 @@ export default function InteractiveDemoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Title
+                            {t.demoTitle}
                           </label>
                           <input
                             type="text"
@@ -312,7 +309,7 @@ export default function InteractiveDemoPage() {
                         </div>
                         <div>
                           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                            Bio
+                            {t.demoBio}
                           </label>
                           <textarea
                             value={portfolio.bio}
@@ -331,50 +328,49 @@ export default function InteractiveDemoPage() {
 
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        Template Selection
+                        {t.demoTemplateSelection}
                       </h3>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                        You&apos;ve selected the{' '}
-                        <strong>{portfolio.template}</strong> template. In the
-                        full editor, you can switch between templates and see
-                        live previews.
+                        {t.demoYouveSelected}{' '}
+                        <strong>{portfolio.template}</strong> template.{' '}
+                        {t.demoInFullEditor}
                       </p>
                       <button
                         onClick={() => setCurrentStep('template')}
                         className="px-4 py-2 bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 rounded-lg hover:bg-purple-200 dark:hover:bg-purple-800 transition-colors"
                       >
-                        Change Template
+                        {t.demoChangeTemplate}
                       </button>
                     </div>
 
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                        Available in Full Version
+                        {t.demoAvailableInFullVersion}
                       </h3>
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>AI Bio Enhancement</span>
+                          <span>{t.demoAiBioEnhancement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>Project Management</span>
+                          <span>{t.demoProjectManagement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>Skills & Experience</span>
+                          <span>{t.demoSkillsExperience}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>Custom Sections</span>
+                          <span>{t.demoCustomSections}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>LinkedIn Import</span>
+                          <span>{t.demoLinkedinImport}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
                           <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                          <span>GitHub Integration</span>
+                          <span>{t.demoGithubIntegration}</span>
                         </div>
                       </div>
                     </div>
@@ -404,7 +400,7 @@ export default function InteractiveDemoPage() {
                           <div className="text-center">
                             <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                             <p className="text-gray-600 dark:text-gray-400">
-                              Loading preview...
+                              {t.demoLoadingPreview}
                             </p>
                           </div>
                         </div>
@@ -448,7 +444,7 @@ export default function InteractiveDemoPage() {
                   <div className="flex items-center justify-center">
                     <FiRefreshCw className="animate-spin text-lg text-purple-600 mr-2" />
                     <span className="text-gray-600 dark:text-gray-400">
-                      Loading controls...
+                      {t.demoLoadingControls}
                     </span>
                   </div>
                 </div>
@@ -495,7 +491,7 @@ export default function InteractiveDemoPage() {
                           <div className="text-center">
                             <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                             <p className="text-gray-600 dark:text-gray-400">
-                              Loading preview...
+                              {t.demoLoadingPreview}
                             </p>
                           </div>
                         </div>
@@ -513,18 +509,18 @@ export default function InteractiveDemoPage() {
                   onClick={handlePreviousStep}
                   className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                 >
-                  Back to Editor
+                  {t.demoBackToEditor}
                 </button>
 
                 <div className="text-center">
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    Love what you see? Create your own portfolio!
+                    {t.demoLoveWhatYouSee}
                   </p>
                   <Link
                     href="/auth/signup"
                     className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
                   >
-                    Get Started - Free Trial
+                    {t.demoGetStartedFreeTrial}
                   </Link>
                 </div>
 
@@ -532,7 +528,7 @@ export default function InteractiveDemoPage() {
                   onClick={handleShare}
                   className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
                 >
-                  Share Demo
+                  {t.demoShareDemo}
                 </button>
               </div>
             </div>

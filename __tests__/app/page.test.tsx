@@ -16,20 +16,24 @@ describe('HomePage', () => {
     it('should render the PRISMA logo', () => {
       renderWithProvider(<HomePage />);
       expect(screen.getAllByText('PRISMA')).toHaveLength(2); // Desktop and mobile
-      expect(screen.getByText('by MADFAM')).toBeInTheDocument();
+      expect(screen.getAllByText('by MADFAM')).toHaveLength(2); // Desktop and mobile
     });
 
     it('should render the main headline', () => {
       renderWithProvider(<HomePage />);
-      expect(screen.getByText('Convierte tu CV en un')).toBeInTheDocument();
-      expect(screen.getByText('Portafolio Impresionante')).toBeInTheDocument();
-      expect(screen.getByText('en 30 Minutos')).toBeInTheDocument();
+      expect(
+        screen.getByText('Tu portafolio, elevado por IA.')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Conecta tus perfiles. Mejora tu historia.')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Publica en minutos.')).toBeInTheDocument();
     });
 
     it('should render the hero description', () => {
       renderWithProvider(<HomePage />);
       expect(
-        screen.getByText(/Importa desde LinkedIn, GitHub o sube tu currículum/)
+        screen.getByText(/Presenta tu talento con estilo profesional/)
       ).toBeInTheDocument();
     });
 
@@ -41,8 +45,11 @@ describe('HomePage', () => {
 
     it('should render Get Started button in header', () => {
       renderWithProvider(<HomePage />);
-      const getStartedButtons = screen.getAllByText('Comenzar');
-      expect(getStartedButtons.length).toBeGreaterThan(0);
+      // The header shows "Empezar Gratis" when user is not logged in
+      const getStartedButton = screen.getByRole('link', {
+        name: 'Empezar Gratis',
+      });
+      expect(getStartedButton).toBeInTheDocument();
     });
   });
 
@@ -50,14 +57,16 @@ describe('HomePage', () => {
     it('should have correct CSS classes for responsive design', () => {
       renderWithProvider(<HomePage />);
       const heroSection = screen
-        .getByText('Convierte tu CV en un')
+        .getByText('Tu portafolio, elevado por IA.')
         .closest('section');
       expect(heroSection).toHaveClass('pt-32', 'pb-32', 'px-6');
     });
 
-    it('should have gradient text styling on "Portafolio Impresionante"', () => {
+    it('should have gradient text styling on hero title 2', () => {
       renderWithProvider(<HomePage />);
-      const gradientText = screen.getByText('Portafolio Impresionante');
+      const gradientText = screen.getByText(
+        'Conecta tus perfiles. Mejora tu historia.'
+      );
       expect(gradientText).toHaveClass('gradient-text');
     });
   });

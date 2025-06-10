@@ -103,7 +103,7 @@ const translations = {
     customDomainTitle: 'Subdominio o dominio propio',
     customDomainDesc:
       'Hazlo tuyo. Usa un subdominio de PRISMA o conecta tu marca personal.',
-    analyticsTitle: 'Publica en 30 minutos',
+    publishTitle: 'Publica en 30 minutos',
     analyticsDesc:
       'Desde tu CV o LinkedIn hasta un sitio web funcional en menos de media hora.',
     mobileTitle: 'Para quien es PRISMA',
@@ -679,6 +679,173 @@ const translations = {
     pricingNoSetupFees: '✓ Sin tarifas de configuración',
     pricingFreeMigration: '✓ Soporte de migración gratuito',
     planEnterprise: 'Enterprise',
+
+    // Interactive Demo Page
+    demoBackToDemo: 'Volver al Demo',
+    demoPrismaInteractiveDemo: 'Demo Interactivo de PRISMA',
+    demoTemplate: 'Plantilla',
+    demoEdit: 'Editar',
+    demoPreview: 'Vista Previa',
+    demoResetDemo: 'Restablecer Demo',
+    demoCreateAccount: 'Crear Cuenta',
+    demoChooseYourTemplate: 'Elige tu Plantilla',
+    demoStartBySelecting:
+      'Comienza seleccionando una plantilla que coincida con tu profesión y estilo. Cada plantilla está optimizada para industrias específicas y trayectorias profesionales.',
+    demoContinueToEditor: 'Continuar al Editor',
+    demoEditPortfolio: 'Editar Portafolio',
+    demoBack: 'Atrás',
+    demoInteractiveDemoMode: 'Modo Demo Interactivo',
+    demoThisIsPreview:
+      'Esta es una vista previa del editor de portafolios. En la versión completa, tendrás control total sobre todas las secciones, funciones de mejora con IA y colaboración en tiempo real.',
+    demoBasicInformation: 'Información Básica',
+    demoName: 'Nombre',
+    demoTitle: 'Título',
+    demoBio: 'Biografía',
+    demoTemplateSelection: 'Selección de Plantilla',
+    demoYouveSelected: 'Has seleccionado la plantilla',
+    demoInFullEditor:
+      'En el editor completo, puedes cambiar entre plantillas y ver vistas previas en vivo.',
+    demoChangeTemplate: 'Cambiar Plantilla',
+    demoAvailableInFullVersion: 'Disponible en la Versión Completa',
+    demoAiBioEnhancement: 'Mejora de Biografía con IA',
+    demoProjectManagement: 'Gestión de Proyectos',
+    demoSkillsExperience: 'Habilidades y Experiencia',
+    demoCustomSections: 'Secciones Personalizadas',
+    demoLinkedinImport: 'Importación de LinkedIn',
+    demoGithubIntegration: 'Integración con GitHub',
+    demoLoadingTemplates: 'Cargando plantillas...',
+    demoLoadingPreview: 'Cargando vista previa...',
+    demoLoadingControls: 'Cargando controles...',
+    demoBackToEditor: 'Volver al Editor',
+    demoLoveWhatYouSee: '¿Te gusta lo que ves? ¡Crea tu propio portafolio!',
+    demoGetStartedFreeTrial: 'Comenzar - Prueba Gratuita',
+    demoShareDemo: 'Compartir Demo',
+
+    // Analytics Dashboard
+    analyticsTitle: 'Panel de Analíticas',
+    analyticsSubtitle:
+      'Perspectivas de repositorios de GitHub y métricas de desarrollo',
+    analyticsSyncing: 'Sincronizando...',
+    analyticsSync: 'Sincronizar',
+    analyticsConnectGithub: 'Conectar GitHub',
+    analyticsConnectYourGithub:
+      'Conecta tu cuenta de GitHub para analizar tus repositorios y obtener perspectivas detalladas de desarrollo.',
+    analyticsConnectWithGithub: 'Conectar con GitHub',
+    analyticsError: 'Error',
+    analyticsLoadingDashboard: 'Cargando panel de analíticas...',
+    analyticsTryAgain: 'Intentar de Nuevo',
+    analyticsRepositories: 'Repositorios',
+    analyticsCommits: 'Commits',
+    analyticsPullRequests: 'Pull Requests',
+    analyticsContributors: 'Contribuidores',
+    analyticsLinesOfCode: 'Líneas de Código',
+    analyticsLoadingCommitsChart: 'Cargando gráfico de commits...',
+    analyticsLoadingPullRequestsChart: 'Cargando gráfico de pull requests...',
+    analyticsYourRepositories: 'Tus Repositorios',
+    analyticsPrivate: 'Privado',
+    analyticsNoDescription: 'Sin descripción',
+    analyticsTopContributors: 'Top Contribuidores',
+    analyticsMostActiveRepository: 'Repositorio Más Activo',
+    analyticsViewDetails: 'Ver Detalles',
+    analyticsGithubAuthDenied:
+      'La autorización de GitHub fue denegada. Por favor, intenta de nuevo.',
+    analyticsInvalidCallback:
+      'Callback OAuth inválido. Por favor, intenta conectar GitHub nuevamente.',
+    analyticsFailedTokenExchange:
+      'Error al intercambiar el token OAuth. Por favor, intenta de nuevo.',
+
+    // Template Components
+    templateGetInTouch: 'Ponerse en Contacto',
+    templateDownloadCv: 'Descargar CV',
+    templateTechnicalSkills: 'Habilidades Técnicas',
+    templateFeaturedProjects: 'Proyectos Destacados',
+    templateLiveDemo: 'Demo en Vivo',
+    templateCode: 'Código',
+    templateExperience: 'Experiencia',
+    templatePresent: 'Presente',
+    templateLetsWorkTogether: 'Trabajemos Juntos',
+    templateAlwaysInterested:
+      'Siempre estoy interesado en nuevas oportunidades y proyectos emocionantes.',
+
+    // Admin Dashboard
+    adminAccessDenied: 'Acceso Denegado',
+    adminNoPermission:
+      'No tienes permiso para acceder a esta área administrativa.',
+    adminUserView: 'Vista de Usuario',
+    adminAdminView: 'Vista de Administrador',
+    adminSwitchToUserView: 'Cambiar a Vista de Usuario',
+    adminSwitchToAdminView: 'Cambiar a Vista de Administrador',
+    adminImpersonatingUser: 'Suplantando Usuario',
+    adminTotalUsers: 'Total de Usuarios',
+    adminActiveSubscriptions: 'Suscripciones Activas',
+    adminMonthlyRevenue: 'Ingresos Mensuales',
+    adminPortfoliosCreated: 'Portafolios Creados',
+    adminUserManagement: 'Gestión de Usuarios',
+    adminManageUsers:
+      'Gestiona cuentas de usuarios, suscripciones y configuraciones del sistema.',
+    adminUser: 'Usuario',
+    adminSubscription: 'Suscripción',
+    adminStatus: 'Estado',
+    adminPortfolios: 'Portafolios',
+    adminLastActive: 'Última Actividad',
+    adminActions: 'Acciones',
+    adminViewAs: 'Ver Como',
+    adminStop: 'Detener',
+    adminWelcomeBack: '¡Bienvenido de nuevo, {name}!',
+    adminCurrentlyViewing:
+      'Actualmente estás viendo PRISMA desde la perspectiva de un usuario.',
+    adminPortfoliosCreatedStat: 'Portafolios Creados',
+    adminAiEnhancementsUsed: 'Mejoras de IA Utilizadas',
+    adminMonthlyViews: 'Vistas Mensuales',
+    adminStatusActive: 'activo',
+    adminStatusSuspended: 'suspendido',
+    adminPlanFree: 'GRATIS',
+    adminPlanPro: 'PRO',
+    adminPlanBusiness: 'BUSINESS',
+
+    // Error Boundary
+    errorSomethingWentWrong: 'Algo salió mal',
+    errorDetails: 'Detalles del Error',
+    errorMessage: 'Mensaje:',
+    errorStack: 'Stack:',
+    errorTryAgain: 'Intentar de Nuevo',
+    errorGoToHomepage: 'Ir a la Página Principal',
+    errorReportBug: 'Reportar Error',
+    errorId: 'ID del Error:',
+    errorConnectivityIssue:
+      'Parece haber un problema de conectividad. Por favor, verifica tu conexión a internet.',
+    errorSessionExpired:
+      'Tu sesión ha expirado. Por favor, inicia sesión nuevamente.',
+    errorNoPermission: 'No tienes permiso para acceder a este recurso.',
+    errorDataIssue:
+      'Hubo un problema con los datos. Por favor, intenta refrescar la página.',
+    errorServerIssue:
+      'Nuestros servidores están experimentando problemas. Por favor, intenta de nuevo en unos momentos.',
+    errorUnexpected:
+      'Ocurrió un error inesperado. Nuestro equipo ha sido notificado.',
+    errorSectionFailedToLoad: 'La sección falló al cargar',
+    errorLoadingSection:
+      'Ocurrió un error al cargar esta sección. Por favor, intenta de nuevo.',
+    errorTryAgainButton: 'intentar de nuevo',
+
+    // Terms of Service Page
+    termsPageTitle: 'Términos de Servicio',
+    termsLastUpdated: 'Última actualización: Enero 2025',
+    termsAcceptanceTitle: 'Aceptación de Términos',
+    termsAcceptanceText:
+      'Al acceder y usar PRISMA, aceptas estar sujeto a estos Términos de Servicio.',
+    termsUseLicenseTitle: 'Licencia de Uso',
+    termsUseLicenseText:
+      'Se otorga permiso para usar temporalmente nuestro servicio para uso personal y comercial.',
+    termsContactInfoTitle: 'Información de Contacto',
+    termsContactInfoText:
+      'Para preguntas sobre estos Términos, por favor contáctanos.',
+
+    // Privacy Policy Page
+    privacyPageTitle: 'Política de Privacidad',
+    privacyInfoWeCollect: 'Información que Recopilamos',
+    privacyHowWeUse: 'Cómo Usamos tu Información',
+    privacyContactUs: 'Contáctanos',
   },
   en: {
     features: 'Features',
@@ -707,7 +874,7 @@ const translations = {
     customDomainTitle: 'Subdomain or own domain',
     customDomainDesc:
       'Make it yours. Use a PRISMA subdomain or connect your personal brand.',
-    analyticsTitle: 'Publish in 30 minutes',
+    publishTitle: 'Publish in 30 minutes',
     analyticsDesc:
       'From your CV or LinkedIn to a functional website in less than half an hour.',
     mobileTitle: 'Who PRISMA is for',
@@ -1277,6 +1444,170 @@ const translations = {
     pricingNoSetupFees: '✓ No setup fees',
     pricingFreeMigration: '✓ Free migration support',
     planEnterprise: 'Enterprise',
+
+    // Interactive Demo Page
+    demoBackToDemo: 'Back to Demo',
+    demoPrismaInteractiveDemo: 'PRISMA Interactive Demo',
+    demoTemplate: 'Template',
+    demoEdit: 'Edit',
+    demoPreview: 'Preview',
+    demoResetDemo: 'Reset Demo',
+    demoCreateAccount: 'Create Account',
+    demoChooseYourTemplate: 'Choose Your Template',
+    demoStartBySelecting:
+      'Start by selecting a template that matches your profession and style. Each template is optimized for specific industries and career paths.',
+    demoContinueToEditor: 'Continue to Editor',
+    demoEditPortfolio: 'Edit Portfolio',
+    demoBack: 'Back',
+    demoInteractiveDemoMode: 'Interactive Demo Mode',
+    demoThisIsPreview:
+      "This is a preview of the portfolio editor. In the full version, you'll have complete control over all sections, AI enhancement features, and real-time collaboration.",
+    demoBasicInformation: 'Basic Information',
+    demoName: 'Name',
+    demoTitle: 'Title',
+    demoBio: 'Bio',
+    demoTemplateSelection: 'Template Selection',
+    demoYouveSelected: "You've selected the",
+    demoInFullEditor:
+      'In the full editor, you can switch between templates and see live previews.',
+    demoChangeTemplate: 'Change Template',
+    demoAvailableInFullVersion: 'Available in Full Version',
+    demoAiBioEnhancement: 'AI Bio Enhancement',
+    demoProjectManagement: 'Project Management',
+    demoSkillsExperience: 'Skills & Experience',
+    demoCustomSections: 'Custom Sections',
+    demoLinkedinImport: 'LinkedIn Import',
+    demoGithubIntegration: 'GitHub Integration',
+    demoLoadingTemplates: 'Loading templates...',
+    demoLoadingPreview: 'Loading preview...',
+    demoLoadingControls: 'Loading controls...',
+    demoBackToEditor: 'Back to Editor',
+    demoLoveWhatYouSee: 'Love what you see? Create your own portfolio!',
+    demoGetStartedFreeTrial: 'Get Started - Free Trial',
+    demoShareDemo: 'Share Demo',
+
+    // Analytics Dashboard
+    analyticsTitle: 'Analytics Dashboard',
+    analyticsSubtitle: 'GitHub repository insights and development metrics',
+    analyticsSyncing: 'Syncing...',
+    analyticsSync: 'Sync',
+    analyticsConnectGithub: 'Connect GitHub',
+    analyticsConnectYourGithub:
+      'Connect your GitHub account to analyze your repositories and get detailed development insights.',
+    analyticsConnectWithGithub: 'Connect with GitHub',
+    analyticsError: 'Error',
+    analyticsLoadingDashboard: 'Loading analytics dashboard...',
+    analyticsTryAgain: 'Try Again',
+    analyticsRepositories: 'Repositories',
+    analyticsCommits: 'Commits',
+    analyticsPullRequests: 'Pull Requests',
+    analyticsContributors: 'Contributors',
+    analyticsLinesOfCode: 'Lines of Code',
+    analyticsLoadingCommitsChart: 'Loading commits chart...',
+    analyticsLoadingPullRequestsChart: 'Loading pull requests chart...',
+    analyticsYourRepositories: 'Your Repositories',
+    analyticsPrivate: 'Private',
+    analyticsNoDescription: 'No description',
+    analyticsTopContributors: 'Top Contributors',
+    analyticsMostActiveRepository: 'Most Active Repository',
+    analyticsViewDetails: 'View Details',
+    analyticsGithubAuthDenied:
+      'GitHub authorization was denied. Please try again.',
+    analyticsInvalidCallback:
+      'Invalid OAuth callback. Please try connecting GitHub again.',
+    analyticsFailedTokenExchange:
+      'Failed to exchange OAuth token. Please try again.',
+
+    // Template Components
+    templateGetInTouch: 'Get In Touch',
+    templateDownloadCv: 'Download CV',
+    templateTechnicalSkills: 'Technical Skills',
+    templateFeaturedProjects: 'Featured Projects',
+    templateLiveDemo: 'Live Demo',
+    templateCode: 'Code',
+    templateExperience: 'Experience',
+    templatePresent: 'Present',
+    templateLetsWorkTogether: "Let's Work Together",
+    templateAlwaysInterested:
+      "I'm always interested in new opportunities and exciting projects.",
+
+    // Admin Dashboard
+    adminAccessDenied: 'Access Denied',
+    adminNoPermission:
+      "You don't have permission to access this administrative area.",
+    adminUserView: 'User View',
+    adminAdminView: 'Admin View',
+    adminSwitchToUserView: 'Switch to User View',
+    adminSwitchToAdminView: 'Switch to Admin View',
+    adminImpersonatingUser: 'Impersonating User',
+    adminTotalUsers: 'Total Users',
+    adminActiveSubscriptions: 'Active Subscriptions',
+    adminMonthlyRevenue: 'Monthly Revenue',
+    adminPortfoliosCreated: 'Portfolios Created',
+    adminUserManagement: 'User Management',
+    adminManageUsers:
+      'Manage user accounts, subscriptions, and system settings.',
+    adminUser: 'User',
+    adminSubscription: 'Subscription',
+    adminStatus: 'Status',
+    adminPortfolios: 'Portfolios',
+    adminLastActive: 'Last Active',
+    adminActions: 'Actions',
+    adminViewAs: 'View As',
+    adminStop: 'Stop',
+    adminWelcomeBack: 'Welcome back, {name}!',
+    adminCurrentlyViewing:
+      "You're currently viewing PRISMA from a user's perspective.",
+    adminPortfoliosCreatedStat: 'Portfolios Created',
+    adminAiEnhancementsUsed: 'AI Enhancements Used',
+    adminMonthlyViews: 'Monthly Views',
+    adminStatusActive: 'active',
+    adminStatusSuspended: 'suspended',
+    adminPlanFree: 'FREE',
+    adminPlanPro: 'PRO',
+    adminPlanBusiness: 'BUSINESS',
+
+    // Error Boundary
+    errorSomethingWentWrong: 'Something went wrong',
+    errorDetails: 'Error Details',
+    errorMessage: 'Message:',
+    errorStack: 'Stack:',
+    errorTryAgain: 'Try Again',
+    errorGoToHomepage: 'Go to Homepage',
+    errorReportBug: 'Report Bug',
+    errorId: 'Error ID:',
+    errorConnectivityIssue:
+      'There seems to be a connectivity issue. Please check your internet connection.',
+    errorSessionExpired: 'Your session has expired. Please sign in again.',
+    errorNoPermission: "You don't have permission to access this resource.",
+    errorDataIssue:
+      'There was an issue with the data. Please try refreshing the page.',
+    errorServerIssue:
+      'Our servers are currently experiencing issues. Please try again in a few moments.',
+    errorUnexpected:
+      'An unexpected error occurred. Our team has been notified.',
+    errorSectionFailedToLoad: 'Section failed to load',
+    errorLoadingSection:
+      'An error occurred while loading this section. Please try again.',
+    errorTryAgainButton: 'try again',
+
+    // Terms of Service Page
+    termsPageTitle: 'Terms of Service',
+    termsLastUpdated: 'Last updated: January 2025',
+    termsAcceptanceTitle: 'Acceptance of Terms',
+    termsAcceptanceText:
+      'By accessing and using PRISMA, you agree to be bound by these Terms of Service.',
+    termsUseLicenseTitle: 'Use License',
+    termsUseLicenseText:
+      'Permission is granted to temporarily use our service for personal and commercial use.',
+    termsContactInfoTitle: 'Contact Information',
+    termsContactInfoText: 'For questions about these Terms, please contact us.',
+
+    // Privacy Policy Page
+    privacyPageTitle: 'Privacy Policy',
+    privacyInfoWeCollect: 'Information We Collect',
+    privacyHowWeUse: 'How We Use Your Information',
+    privacyContactUs: 'Contact Us',
   },
 };
 
