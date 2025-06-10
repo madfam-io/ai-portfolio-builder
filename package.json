@@ -141,15 +141,6 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "**/__tests__/**/*.test.{js,jsx,ts,tsx}": [
-      "jest --findRelatedTests"
-    ],
-    "**/__tests__/**/*.spec.{js,jsx,ts,tsx}": [
-      "jest --findRelatedTests"
-    ],
-    "**/lib/**/*.{js,jsx,ts,tsx}": [
-      "jest --findRelatedTests"
-    ],
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ],

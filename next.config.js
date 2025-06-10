@@ -94,6 +94,20 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: false,
   },
+
+  // Webpack configuration
+  webpack: (config, { isServer }) => {
+    // Suppress specific warnings
+    config.ignoreWarnings = [
+      // Ignore the critical dependency warning from Supabase realtime-js
+      {
+        module: /@supabase[\\/]realtime-js/,
+        message: /Critical dependency/,
+      },
+    ];
+
+    return config;
+  },
 };
 
 module.exports = nextConfig;

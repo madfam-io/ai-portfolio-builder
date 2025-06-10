@@ -90,16 +90,16 @@ export default function PortfolioEditor({
   // Load portfolio data
   useEffect(() => {
     loadPortfolio();
-  }, [portfolioId]);
+  }, [loadPortfolio]);
 
   // Auto-save when portfolio changes
   useEffect(() => {
     if (editorState.isDirty && debouncedPortfolio.id) {
       handleAutoSave();
     }
-  }, [debouncedPortfolio, editorState.isDirty]);
+  }, [debouncedPortfolio, editorState.isDirty, handleAutoSave]);
 
-  const loadPortfolio = async () => {
+  const loadPortfolio = useCallback(async () => {
     try {
       setIsLoading(true);
       setError(null);
@@ -129,7 +129,7 @@ export default function PortfolioEditor({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [portfolioId, userId, pushToHistory]);
 
   const handleAutoSave = useCallback(async () => {
     if (!editorState.isDirty || editorState.isSaving) return;

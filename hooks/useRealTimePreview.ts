@@ -1,6 +1,6 @@
 /**
  * @fileoverview Real-Time Preview Hook
- * 
+ *
  * Manages real-time preview functionality for the portfolio editor,
  * including preview modes, section highlighting, and responsive design testing.
  */
@@ -33,26 +33,30 @@ interface UseRealTimePreviewReturn {
     height: string;
     scale: number;
   };
-  
+
   // Preview mode controls
   setPreviewMode: (mode: PreviewMode) => void;
   setPreviewState: (state: PreviewState) => void;
   toggleFullscreen: () => void;
-  
+
   // Section controls
   setActiveSection: (section: SectionType | null) => void;
   highlightSection: (section: SectionType | null) => void;
   scrollToSection: (section: SectionType) => void;
-  
+
   // Visual controls
   setZoomLevel: (zoom: number) => void;
   toggleSectionBorders: () => void;
   toggleInteractiveElements: () => void;
-  
+
   // Responsive testing
-  getResponsiveBreakpoints: () => { name: string; width: number; height: number }[];
+  getResponsiveBreakpoints: () => {
+    name: string;
+    width: number;
+    height: number;
+  }[];
   testResponsiveBreakpoint: (width: number, height: number) => void;
-  
+
   // Preview utilities
   capturePreviewScreenshot: () => Promise<string | null>;
   exportPreviewHTML: () => string;
@@ -80,7 +84,6 @@ export function useRealTimePreview({
   portfolio,
   onPreviewChange,
 }: UseRealTimePreviewOptions): UseRealTimePreviewReturn {
-  
   const [previewConfig, setPreviewConfig] = useState<PreviewConfig>({
     mode: 'desktop',
     state: 'editing',
@@ -96,14 +99,13 @@ export function useRealTimePreview({
     height: number;
   } | null>(null);
 
-
   // Calculate preview dimensions based on mode and zoom
   const previewDimensions = useMemo(() => {
-    const baseDimensions = customDimensions 
-      ? { 
-          width: `${customDimensions.width}px`, 
-          height: `${customDimensions.height}px`, 
-          scale: 1 
+    const baseDimensions = customDimensions
+      ? {
+          width: `${customDimensions.width}px`,
+          height: `${customDimensions.height}px`,
+          scale: 1,
         }
       : PREVIEW_DIMENSIONS[previewConfig.mode];
 
@@ -144,18 +146,23 @@ export function useRealTimePreview({
     setPreviewConfig(prev => ({ ...prev, highlightedSection: section }));
   }, []);
 
-  const scrollToSection = useCallback((section: SectionType) => {
-    // This would trigger a scroll event in the preview component
-    const sectionElement = document.querySelector(`[data-section="${section}"]`);
-    if (sectionElement) {
-      sectionElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start',
-        inline: 'nearest' 
-      });
-    }
-    setActiveSection(section);
-  }, [setActiveSection]);
+  const scrollToSection = useCallback(
+    (section: SectionType) => {
+      // This would trigger a scroll event in the preview component
+      const sectionElement = document.querySelector(
+        `[data-section="${section}"]`
+      );
+      if (sectionElement) {
+        sectionElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+          inline: 'nearest',
+        });
+      }
+      setActiveSection(section);
+    },
+    [setActiveSection]
+  );
 
   // Visual controls
   const setZoomLevel = useCallback((zoom: number) => {
@@ -164,11 +171,17 @@ export function useRealTimePreview({
   }, []);
 
   const toggleSectionBorders = useCallback(() => {
-    setPreviewConfig(prev => ({ ...prev, showSectionBorders: !prev.showSectionBorders }));
+    setPreviewConfig(prev => ({
+      ...prev,
+      showSectionBorders: !prev.showSectionBorders,
+    }));
   }, []);
 
   const toggleInteractiveElements = useCallback(() => {
-    setPreviewConfig(prev => ({ ...prev, showInteractiveElements: !prev.showInteractiveElements }));
+    setPreviewConfig(prev => ({
+      ...prev,
+      showInteractiveElements: !prev.showInteractiveElements,
+    }));
   }, []);
 
   // Responsive testing
@@ -176,13 +189,18 @@ export function useRealTimePreview({
     return RESPONSIVE_BREAKPOINTS;
   }, []);
 
-  const testResponsiveBreakpoint = useCallback((width: number, height: number) => {
-    setCustomDimensions({ width, height });
-    setPreviewConfig(prev => ({ ...prev, mode: 'desktop' })); // Use desktop mode for custom dimensions
-  }, []);
+  const testResponsiveBreakpoint = useCallback(
+    (width: number, height: number) => {
+      setCustomDimensions({ width, height });
+      setPreviewConfig(prev => ({ ...prev, mode: 'desktop' })); // Use desktop mode for custom dimensions
+    },
+    []
+  );
 
   // Preview utilities
-  const capturePreviewScreenshot = useCallback(async (): Promise<string | null> => {
+  const capturePreviewScreenshot = useCallback(async (): Promise<
+    string | null
+  > => {
     try {
       // This would use html2canvas or similar library to capture the preview
       const previewElement = document.querySelector('[data-preview-container]');
@@ -203,7 +221,7 @@ export function useRealTimePreview({
 
     // Extract the HTML and inline the styles
     const html = previewElement.outerHTML;
-    
+
     // Add meta tags and responsive styling
     return `
 <!DOCTYPE html>
@@ -211,7 +229,7 @@ export function useRealTimePreview({
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${portfolio.name} - Portfolio</title>
+  <title>${portfolio.hero?.name || portfolio.title} - Portfolio</title>
   <style>
     /* Include Tailwind CSS or custom styles here */
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -223,7 +241,7 @@ export function useRealTimePreview({
 </body>
 </html>
     `.trim();
-  }, [portfolio.name]);
+  }, [portfolio.hero?.name, portfolio.title]);
 
   const getPreviewUrl = useCallback((): string | null => {
     // Generate shareable preview URL
