@@ -14,11 +14,11 @@ Create a SaaS platform that enables professionals to generate stunning portfolio
 
 **Phase**: PRISMA Foundation Complete ✅ → Portfolio Builder & AI Integration 🚧  
 **Sprint**: Editor Interface & AI Content Enhancement  
-**Version**: 0.0.1-alpha (PRISMA Foundation Release)
+**Version**: 0.1.0-beta (PRISMA Foundation Complete)
 
 ---
 
-## ✅ Completed Features (v0.0.1-alpha)
+## ✅ Completed Features (v0.1.0-beta)
 
 ### 🌍 Intelligent Language Detection & Localization
 
@@ -78,6 +78,41 @@ Create a SaaS platform that enables professionals to generate stunning portfolio
 - [x] Documentation structure
 - [x] Git workflow established
 
+### 🔐 Dual-User Admin System (NEW in v0.1.0-beta)
+
+- [x] Complete role-based access control (RBAC) system
+- [x] Customer account types with 4 subscription tiers (Free, Pro, Business, Enterprise)
+- [x] Admin role hierarchy with 6 privilege levels (Viewer → Architect)
+- [x] 20+ granular permissions organized by domain
+- [x] Admin mode switching functionality for seamless view transitions
+- [x] User impersonation for customer support capabilities
+- [x] Permission-based UI/API authorization system
+- [x] TypeScript type safety for authentication and authorization
+- [x] Comprehensive admin dashboard with user management interface
+
+### 📊 GitHub Analytics Integration (NEW in v0.1.0-beta)
+
+- [x] Enterprise-grade GitHub repository analytics
+- [x] GitHub OAuth integration with secure authentication
+- [x] Repository synchronization and metrics collection
+- [x] Code metrics analysis (LOC, language distribution, file counts)
+- [x] Commit analytics with activity trends and contributor insights
+- [x] Pull request metrics (cycle time, lead time, merge rates)
+- [x] Interactive dashboard with Recharts visualizations
+- [x] Repository detail views with deep-dive analytics
+- [x] Intelligent GitHub API rate limit handling
+- [x] Multilingual support (Spanish/English)
+
+### 🤖 AI Content Enhancement (Enhanced in v0.1.0-beta)
+
+- [x] Unified HuggingFace approach replacing multi-provider architecture
+- [x] Llama 3.1 8B for bio enhancement with professional optimization
+- [x] Mistral 7B for project description enhancement using STAR format
+- [x] Template recommendation based on user profile analysis
+- [x] Multi-dimensional quality scoring (readability, professionalism, impact)
+- [x] Cost-effective architecture (~$0.0003 per enhancement)
+- [x] Comprehensive error handling and service availability monitoring
+
 ---
 
 ## 🚧 In Progress
@@ -90,14 +125,6 @@ Create a SaaS platform that enables professionals to generate stunning portfolio
 - [ ] PRISMA subdomain generation
 - [ ] Industry-specific template expansion
 
-### 🤖 AI Content Enhancement
-
-- [x] DeepSeek AI integration with advanced reasoning capabilities
-- [x] Open-source AI integration (Llama 3.1 & Mistral) as fallback services
-- [x] Bio enhancement with quality scoring and suggestions
-- [x] Project description optimization with STAR format
-- [x] Template recommendation based on user profile analysis
-- [x] Multi-dimensional content quality scoring (0-100 scale)
 - [x] Mock development environment for seamless DevX
 
 ---
@@ -293,6 +320,17 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on:
 
 ## 📝 Changelog
 
+### v0.1.0-beta (January 2025) - **CURRENT**
+
+- **PRISMA Foundation Complete**: Production-ready multilingual platform
+- **Dual-User Admin System**: Complete RBAC with 6 admin roles and customer tiers
+- **GitHub Analytics Integration**: Enterprise-grade repository analytics with OAuth
+- **AI Content Enhancement**: Unified HuggingFace approach (Llama 3.1 & Mistral)
+- **Admin Mode Switching**: Seamless transitions between user and admin views
+- **User Impersonation**: Customer support capabilities for troubleshooting
+- **Complete Documentation**: Comprehensive system architecture and feature docs
+- **TypeScript Safety**: Strict typing throughout authentication and authorization
+
 ### v0.0.1-alpha (January 2025)
 
 - PRISMA Foundation Alpha Release
@@ -303,13 +341,10 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on:
 - Comprehensive testing suite updated for PRISMA
 - Professional landing page with industry-specific templates
 - Docker development environment with PostgreSQL and Redis
-- Professional portfolio templates (Developer, Designer, Consultant)
-- Portfolio editor with AI enhancement capabilities
-- Template system integration
 
 ### Future Releases
 
-**v0.1.0-beta** (Target: Q2 2025)
+**v0.2.0-beta** (Target: Q2 2025)
 
 - External API integrations (Supabase, HuggingFace, OAuth)
 - Full portfolio builder functionality

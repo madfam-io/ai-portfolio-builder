@@ -165,27 +165,29 @@ Install Command: pnpm install
 
 #### 4. **Set Environment Variables**
 
-**Current Status**: For the foundation phase (landing page), no environment variables are required. Add these for future SaaS features:
+**Current Status (v0.1.0-beta)**: Environment variables are required for GitHub Analytics and AI features. Configure these for full functionality:
 
 ```bash
 # Basic Application Settings
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
 
+# ✅ IMPLEMENTED: AI Services (HuggingFace Integration)
+HUGGINGFACE_API_KEY=your-huggingface-token  # Required for AI content enhancement
+
+# ✅ IMPLEMENTED: GitHub Analytics (OAuth Integration)
+GITHUB_CLIENT_ID=your-github-oauth-app-client-id        # Required for GitHub Analytics
+GITHUB_CLIENT_SECRET=your-github-oauth-app-client-secret # Required for GitHub Analytics
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-oauth-app-client-id # Public client ID
+
 # Future: Supabase Configuration (when implementing auth/database)
 NEXT_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Future: AI Services (when implementing AI features)
-DEEPSEEK_API_KEY=your-deepseek-api-key
-HUGGINGFACE_API_KEY=your-huggingface-token
-
-# Future: OAuth Providers (when implementing social login)
+# Future: OAuth Providers (additional social login)
 LINKEDIN_CLIENT_ID=your-client-id
 LINKEDIN_CLIENT_SECRET=your-client-secret
-GITHUB_CLIENT_ID=your-client-id
-GITHUB_CLIENT_SECRET=your-client-secret
 
 # Future: Stripe Payment Processing (when implementing payments)
 STRIPE_SECRET_KEY=sk_live_...
@@ -200,6 +202,42 @@ REDIS_TOKEN=your-token
 SENTRY_DSN=https://...@sentry.io/...
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
 ```
+
+#### GitHub OAuth App Setup
+
+For GitHub Analytics to work, you need to create a GitHub OAuth App:
+
+1. **Go to GitHub Developer Settings**:
+   - Visit: https://github.com/settings/developers
+   - Click "New OAuth App"
+
+2. **Configure OAuth App**:
+   ```
+   Application name: PRISMA by MADFAM
+   Homepage URL: https://your-domain.vercel.app
+   Authorization callback URL: https://your-domain.vercel.app/api/auth/github/callback
+   ```
+
+3. **Copy Credentials**:
+   - Client ID → `GITHUB_CLIENT_ID` & `NEXT_PUBLIC_GITHUB_CLIENT_ID`
+   - Client Secret → `GITHUB_CLIENT_SECRET`
+
+#### HuggingFace API Token Setup
+
+For AI content enhancement:
+
+1. **Go to HuggingFace Settings**:
+   - Visit: https://huggingface.co/settings/tokens
+   - Click "New token"
+
+2. **Create Token**:
+   ```
+   Name: PRISMA AI Enhancement
+   Type: Read
+   ```
+
+3. **Copy Token**:
+   - Token → `HUGGINGFACE_API_KEY`
 
 #### 5. **Deploy**
 

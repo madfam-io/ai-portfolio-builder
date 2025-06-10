@@ -1,10 +1,10 @@
-# PRISMA v0.0.1-alpha - Architecture Documentation
+# PRISMA v0.1.0-beta - Architecture Documentation
 
 **PRISMA by MADFAM**: AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes
 
 ## 📐 System Architecture Overview
 
-### Current Implementation (PRISMA v0.0.1-alpha - Foundation Complete)
+### Current Implementation (PRISMA v0.1.0-beta - Foundation Complete + Admin System)
 
 **Status**: ✅ Production-ready multilanguage landing page with geolocation detection
 
@@ -1009,7 +1009,7 @@ class Logger {
 
 ## 📊 GitHub Analytics Feature
 
-**Status**: ✅ Phase 1 MVP Complete (v0.0.1-alpha)
+**Status**: ✅ Phase 1 MVP Complete (v0.1.0-beta)
 
 ### Feature Overview
 
@@ -1108,6 +1108,111 @@ POST   /api/analytics/repositories/[id]   // Sync repository data
 - **Custom Reports**: PDF/CSV exports, scheduled reports
 - **Performance Optimization**: Redis caching, background job processing
 
+## 🔐 Dual-User Admin System
+
+**Status**: ✅ Complete (v0.1.0-beta)
+
+### System Overview
+
+PRISMA implements a comprehensive dual-user privilege system supporting both customer SaaS accounts and internal admin roles with hierarchical access control.
+
+### Architecture Components
+
+```mermaid
+graph TB
+    subgraph "User Types"
+        A[Customer Accounts]
+        B[Admin Accounts]
+    end
+
+    subgraph "Customer Features"
+        C[Free Plan]
+        D[Pro Plan - $29/mo]
+        E[Business Plan - $79/mo]
+        F[Enterprise Plan - $299/mo]
+    end
+
+    subgraph "Admin Hierarchy"
+        G[Viewer - View Only]
+        H[Support - Customer Help]
+        I[Moderator - Content Management]
+        J[Manager - Full User Management]
+        K[Developer - System Config]
+        L[Architect - Full Access]
+    end
+
+    subgraph "Admin Features"
+        M[Mode Switching]
+        N[User Impersonation]
+        O[Permission-Based UI]
+        P[Audit Logging]
+    end
+
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+    B --> G
+    B --> H
+    B --> I
+    B --> J
+    B --> K
+    B --> L
+    B --> M
+    B --> N
+    B --> O
+    B --> P
+```
+
+### Admin Role Hierarchy
+
+| Role | Level | Description | Key Permissions |
+|------|-------|-------------|----------------|
+| **Viewer** | 1 | View-only access | `users:read`, `analytics:read` |
+| **Support** | 2 | Customer support | `impersonation:users`, `support:tickets` |
+| **Moderator** | 3 | Content management | `portfolios:moderate`, `users:suspend` |
+| **Manager** | 4 | Full user management | `users:create`, `billing:refund` |
+| **Developer** | 5 | System configuration | `system:configure`, `analytics:export` |
+| **Architect** | 6 | Full system access | All permissions including `system:deploy` |
+
+### Permission System
+
+```typescript
+// 20+ granular permissions organized by domain
+type AdminPermission = 
+  // User Management
+  | 'users:read' | 'users:create' | 'users:update' | 'users:delete' | 'users:suspend'
+  // Content Management  
+  | 'portfolios:read' | 'portfolios:moderate' | 'portfolios:delete' | 'templates:manage'
+  // Subscription Management
+  | 'subscriptions:read' | 'subscriptions:modify' | 'billing:read' | 'billing:refund'
+  // System Management
+  | 'analytics:read' | 'analytics:export' | 'system:configure' | 'system:deploy' | 'system:logs'
+  // Support
+  | 'support:tickets' | 'support:escalate' | 'impersonation:users';
+```
+
+### Admin Mode Switching
+
+Admins can seamlessly switch between:
+- **User View**: Experience PRISMA as a customer would
+- **Admin View**: Access administrative features and dashboards
+
+### User Impersonation
+
+Support and management roles can impersonate users for:
+- Customer support troubleshooting
+- User experience testing
+- Issue reproduction and debugging
+
+### Security Features
+
+- **Role-Based Access Control**: Granular permission checking
+- **Admin Mode Sessions**: Separate session state for admin operations
+- **Audit Trail**: Complete logging of admin actions
+- **Permission Validation**: UI and API-level authorization
+- **Session Security**: Secure admin mode switching
+
 ## 🔄 CI/CD Pipeline
 
 ```yaml
@@ -1143,9 +1248,9 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
 ```
 
-## 🎯 PRISMA v1.0.0 → v2.0.0 Roadmap
+## 🎯 PRISMA v0.1.0-beta → v0.2.0-beta Roadmap
 
-### ✅ v1.0.0 - Foundation Complete (Current)
+### ✅ v0.1.0-beta - Foundation Complete (Current)
 
 - [x] **Multilanguage Landing Page**: Spanish (default) + English
 - [x] **Geolocation Detection**: Automatic language based on location
@@ -1156,21 +1261,22 @@ jobs:
 - [x] **Performance Optimization**: Next.js 15 + TypeScript strict
 - [x] **Security Headers**: Production-ready CSP and security
 - [x] **Component Architecture**: Scalable, modular structure
+- [x] **Dual-User Admin System**: Complete RBAC with 6 admin roles and customer tiers
+- [x] **GitHub Analytics**: Enterprise-grade repository analytics with OAuth integration
+- [x] **AI Bio Enhancement**: Unified HuggingFace approach (Llama 3.1 & Mistral)
 
-### 🎯 v2.0.0 - Core SaaS Features (Next Sprint)
+### 🎯 v0.2.0-beta - Core SaaS Features (Next Sprint)
 
 - [ ] **User Authentication**: Complete OAuth + email/password
 - [ ] **Database Schema**: Supabase tables + RLS policies
 - [ ] **User Dashboard**: Protected dashboard with onboarding
 - [ ] **Profile Import**: LinkedIn/GitHub/CV upload integration
-- [x] **AI Bio Enhancement**: DeepSeek primary + HuggingFace fallback (Llama 3.1 & Mistral)
 - [ ] **Template System**: 3 professional templates
 - [ ] **Portfolio Editor**: Drag-and-drop interface
 - [ ] **Publishing Pipeline**: Static site generation
 - [ ] **Stripe Integration**: Subscription billing
-- [x] **GitHub Analytics**: Enterprise-grade repository analytics with OAuth integration
 
-### 🔮 v3.0.0 - Advanced Features (Future)
+### 🔮 v0.3.0-beta - Advanced Features (Future)
 
 - [ ] **Custom Domains**: yourname.com integration
 - [x] **Advanced AI**: Multiple AI providers (DeepSeek primary) + templates
@@ -1181,11 +1287,11 @@ jobs:
 
 ### Technical Evolution
 
-1. **v1.0.0**: Monolithic Next.js app (current)
-2. **v2.0.0**: Next.js + Supabase + AI services
-3. **v3.0.0**: Microservices architecture
-4. **v4.0.0**: Multi-region deployment
-5. **v5.0.0**: Event-driven real-time collaboration
+1. **v0.1.0-beta**: Monolithic Next.js app (current)
+2. **v0.2.0-beta**: Next.js + Supabase + AI services
+3. **v0.3.0-beta**: Microservices architecture
+4. **v1.0.0-stable**: Multi-region deployment
+5. **v2.0.0-stable**: Event-driven real-time collaboration
 
 ## 📊 Key Metrics & Goals
 
@@ -1216,4 +1322,4 @@ jobs:
 
 ---
 
-**PRISMA v1.0.0** is designed to scale from MVP to millions of users while maintaining code quality, performance, and developer experience. The architecture supports rapid iteration and international expansion.
+**PRISMA v0.1.0-beta** is designed to scale from MVP to millions of users while maintaining code quality, performance, and developer experience. The architecture supports rapid iteration and international expansion.

@@ -4,7 +4,7 @@
 
 **AI-Powered Portfolio Builder for Modern Professionals**
 
-[![Version](https://img.shields.io/badge/version-0.0.1--alpha-orange.svg)](https://github.com/madfam-io/ai-portfolio-builder/releases)
+[![Version](https://img.shields.io/badge/version-0.1.0--beta-blue.svg)](https://github.com/madfam-io/ai-portfolio-builder/releases)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](#-license)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://typescriptlang.org/)
@@ -62,7 +62,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <table>
 <tr>
 <td><strong>Version</strong></td>
-<td><code>1.0.0 - PRISMA Foundation</code></td>
+<td><code>0.1.0-beta - PRISMA Foundation Complete</code></td>
 </tr>
 <tr>
 <td><strong>Phase</strong></td>
@@ -88,7 +88,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 
 ## ✨ Features
 
-### 🌟 **Core Features (v1.0.0 - COMPLETED)**
+### 🌟 **Core Features (v0.1.0-beta - COMPLETED)**
 
 <table>
 <tr>
@@ -137,16 +137,43 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 </tr>
 </table>
 
+### ✅ **Recently Completed (NEW in v0.1.0-beta)**
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔐 **Dual-User Admin System**
+
+- **Role-Based Access Control**: 6 hierarchical admin levels (Viewer → Architect)
+- **Customer Tiers**: Free, Pro ($29), Business ($79), Enterprise ($299)
+- **Admin Mode Switching**: Seamless user/admin view transitions
+- **User Impersonation**: Customer support troubleshooting capabilities
+- **20+ Granular Permissions**: Domain-organized authorization system
+
+</td>
+<td width="50%">
+
+#### 📊 **GitHub Analytics Integration**
+
+- **Enterprise-Grade Analytics**: Repository insights and metrics
+- **GitHub OAuth Integration**: Secure authentication and data sync
+- **Code Metrics**: LOC, language distribution, commit analytics
+- **PR Analytics**: Cycle time, lead time, merge rate analysis
+- **Interactive Dashboard**: Recharts visualizations with PRISMA theming
+
+</td>
+</tr>
+</table>
+
 ### 🚧 **Next Sprint Features (In Development)**
 
-| Feature                                                   | Priority | Status         | ETA     |
-| --------------------------------------------------------- | -------- | -------------- | ------- |
-| 🎨 Portfolio Editor Interface                             | High     | 🚧 In Progress | Q1 2025 |
-| 🤖 AI Content Enhancement (DeepSeek, Llama 3.1 & Mistral) | High     | ✅ Complete    | Q1 2025 |
-| 📊 GitHub Analytics Dashboard (Enterprise-grade)          | High     | ✅ Complete    | Q1 2025 |
-| 📥 Profile Import (LinkedIn/GitHub)                       | Medium   | 📋 Planned     | Q1 2025 |
-| 🎭 Template System Expansion                              | Medium   | 📋 Planned     | Q2 2025 |
-| 🌐 Publishing Pipeline                                    | High     | 📋 Planned     | Q2 2025 |
+| Feature                                    | Priority | Status         | ETA     |
+| ------------------------------------------ | -------- | -------------- | ------- |
+| 🎨 Portfolio Editor Interface              | High     | 📋 Planned     | Q2 2025 |
+| 📥 Profile Import (LinkedIn/GitHub)        | Medium   | 📋 Planned     | Q2 2025 |
+| 🎭 Template System Expansion               | Medium   | 📋 Planned     | Q2 2025 |
+| 🌐 Publishing Pipeline                     | High     | 📋 Planned     | Q2 2025 |
 
 > 🗺️ **See complete feature roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md) | **Track progress**: [**ISSUES.md**](./docs/ISSUES.md)
 

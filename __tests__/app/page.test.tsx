@@ -15,7 +15,7 @@ describe('HomePage', () => {
   describe('Rendering', () => {
     it('should render the PRISMA logo', () => {
       renderWithProvider(<HomePage />);
-      expect(screen.getByText('PRISMA')).toBeInTheDocument();
+      expect(screen.getAllByText('PRISMA')).toHaveLength(2); // Desktop and mobile
       expect(screen.getByText('by MADFAM')).toBeInTheDocument();
     });
 

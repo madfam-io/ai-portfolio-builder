@@ -137,8 +137,8 @@ describe('Header Component', () => {
       expect(screen.getAllByText('EN')).toHaveLength(1);
 
       // Click language toggle - look for button with title containing "Español"
-      const langToggle = screen.getByTitle(/Español/);
-      await user.click(langToggle);
+      const langToggles = screen.getAllByTitle(/Español/);
+      await user.click(langToggles[0]);
 
       // Should switch to Spanish
       await waitFor(() => {
