@@ -11,6 +11,7 @@
 import { Octokit } from '@octokit/rest';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { decryptAccessToken, hasEncryptedTokens, hasLegacyTokens } from './tokenManager';
 import type {
   GitHubIntegration,
   Repository,
@@ -139,9 +140,25 @@ export class GitHubAnalyticsClient {
 
     this.integration = integration as GitHubIntegration;
     
+    // Get the access token (handle both encrypted and legacy formats)
+    let accessToken: string | null = null;
+    
+    if (hasEncryptedTokens(integration)) {
+      // New encrypted format
+      accessToken = decryptAccessToken(integration);
+    } else if (hasLegacyTokens(integration)) {
+      // Legacy unencrypted format
+      accessToken = integration.access_token;
+      logger.warn('Using legacy unencrypted token - migration required');
+    }
+    
+    if (!accessToken) {
+      throw new Error('Failed to retrieve access token');
+    }
+    
     // Initialize Octokit with access token
     this.octokit = new Octokit({
-      auth: integration.access_token,
+      auth: accessToken,
       throttle: {
         onRateLimit: (retryAfter: number, options: any) => {
           logger.warn(

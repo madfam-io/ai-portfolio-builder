@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { encrypt } from '@/lib/utils/crypto';
 
 /**
  * Handle GitHub OAuth callback
@@ -92,15 +93,25 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Store GitHub integration
+    // Encrypt the access token before storage
+    const encryptedToken = encrypt(tokenData.access_token);
+    const encryptedRefreshToken = tokenData.refresh_token 
+      ? encrypt(tokenData.refresh_token)
+      : null;
+
+    // Store GitHub integration with encrypted tokens
     const { error: integrationError } = await supabase
       .from('github_integrations')
       .upsert({
         user_id: user.id,
         github_user_id: githubUser.id,
         github_username: githubUser.login,
-        access_token: tokenData.access_token, // TODO: Encrypt in production
-        refresh_token: tokenData.refresh_token || null,
+        encrypted_access_token: encryptedToken.encrypted,
+        access_token_iv: encryptedToken.iv,
+        access_token_tag: encryptedToken.tag,
+        encrypted_refresh_token: encryptedRefreshToken?.encrypted || null,
+        refresh_token_iv: encryptedRefreshToken?.iv || null,
+        refresh_token_tag: encryptedRefreshToken?.tag || null,
         status: 'active',
         permissions: {},
         scope: tokenData.scope,

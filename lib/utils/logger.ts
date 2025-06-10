@@ -1,67 +1,189 @@
 /**
- * @fileoverview Conditional logging utility for PRISMA
+ * @fileoverview Structured logging utility for PRISMA
  * 
- * Provides conditional logging that respects environment settings
- * and avoids console pollution in production builds.
+ * Provides structured logging with context support, error serialization,
+ * and production-ready features. In production, logs can be sent to
+ * external services like Sentry, LogRocket, or DataDog.
  * 
  * @author PRISMA Development Team
- * @version 0.0.1-alpha
+ * @version 1.0.0
  */
 
 type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
+interface LogContext {
+  userId?: string;
+  requestId?: string;
+  sessionId?: string;
+  feature?: string;
+  action?: string;
+  metadata?: Record<string, any>;
+  [key: string]: any;
+}
+
+interface LogEntry {
+  timestamp: string;
+  level: LogLevel;
+  message: string;
+  context?: LogContext;
+  error?: {
+    message: string;
+    stack?: string;
+    code?: string;
+  };
+}
+
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
+  private isTest = process.env.NODE_ENV === 'test';
   private debugEnabled = this.isDevelopment || process.env.ENABLE_DEBUG === 'true';
+  private serviceName = 'prisma-portfolio-builder';
+
+  /**
+   * Format log entry for output
+   */
+  private formatLogEntry(entry: LogEntry): string {
+    if (this.isDevelopment) {
+      // Human-readable format for development
+      const prefix = `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`;
+      const contextStr = entry.context ? ` | ${JSON.stringify(entry.context)}` : '';
+      const errorStr = entry.error ? `\nError: ${entry.error.message}\n${entry.error.stack || ''}` : '';
+      return `${prefix}${contextStr}${errorStr}`;
+    } else {
+      // JSON format for production (easier to parse by log aggregators)
+      return JSON.stringify({
+        ...entry,
+        service: this.serviceName,
+        environment: process.env.NODE_ENV,
+      });
+    }
+  }
+
+  /**
+   * Send log to external service in production
+   */
+  private sendToExternalService(entry: LogEntry): void {
+    // In production, send to logging service
+    // Example: Sentry, LogRocket, DataDog, etc.
+    if (!this.isDevelopment && !this.isTest) {
+      // TODO: Implement external logging service integration
+      // Example with Sentry:
+      // if (entry.level === 'error' && entry.error) {
+      //   Sentry.captureException(new Error(entry.error.message), {
+      //     contexts: { log: entry.context },
+      //   });
+      // }
+    }
+  }
+
+  /**
+   * Core logging method
+   */
+  private log(level: LogLevel, message: string, context?: LogContext | Error): void {
+    // Skip debug logs in production unless explicitly enabled
+    if (level === 'debug' && !this.debugEnabled) {
+      return;
+    }
+
+    // Skip all logs in test environment to keep test output clean
+    if (this.isTest && process.env.SHOW_LOGS !== 'true') {
+      return;
+    }
+
+    const entry: LogEntry = {
+      timestamp: new Date().toISOString(),
+      level,
+      message,
+    };
+
+    // Handle Error objects
+    if (context instanceof Error) {
+      entry.error = {
+        message: context.message,
+        stack: context.stack,
+        code: (context as any).code,
+      };
+    } else if (context) {
+      entry.context = context;
+    }
+
+    // Format and output
+    const formatted = this.formatLogEntry(entry);
+    
+    // Use appropriate console method
+    switch (level) {
+      case 'debug':
+        console.debug(formatted);
+        break;
+      case 'info':
+        console.info(formatted);
+        break;
+      case 'warn':
+        console.warn(formatted);
+        break;
+      case 'error':
+        console.error(formatted);
+        break;
+    }
+
+    // Send to external service
+    this.sendToExternalService(entry);
+  }
 
   /**
    * Debug logging - only in development or when explicitly enabled
    */
-  debug(message: string, ...args: any[]): void {
-    if (this.debugEnabled) {
-      console.debug(`[PRISMA Debug] ${message}`, ...args);
-    }
+  debug(message: string, context?: LogContext): void {
+    this.log('debug', message, context);
   }
 
   /**
    * Info logging - development and production
    */
-  info(message: string, ...args: any[]): void {
-    console.info(`[PRISMA] ${message}`, ...args);
+  info(message: string, context?: LogContext): void {
+    this.log('info', message, context);
   }
 
   /**
    * Warning logging - always enabled
    */
-  warn(message: string, ...args: any[]): void {
-    console.warn(`[PRISMA Warning] ${message}`, ...args);
+  warn(message: string, context?: LogContext): void {
+    this.log('warn', message, context);
   }
 
   /**
    * Error logging - always enabled
    */
-  error(message: string, ...args: any[]): void {
-    console.error(`[PRISMA Error] ${message}`, ...args);
+  error(message: string, error?: Error | LogContext, context?: LogContext): void {
+    if (error instanceof Error) {
+      this.log('error', message, error);
+    } else {
+      this.log('error', message, error || context);
+    }
   }
 
   /**
-   * Conditional logging based on level
+   * Create a child logger with persistent context
    */
-  log(level: LogLevel, message: string, ...args: any[]): void {
-    switch (level) {
-      case 'debug':
-        this.debug(message, ...args);
-        break;
-      case 'info':
-        this.info(message, ...args);
-        break;
-      case 'warn':
-        this.warn(message, ...args);
-        break;
-      case 'error':
-        this.error(message, ...args);
-        break;
-    }
+  child(context: LogContext): Logger {
+    const parent = this;
+    return {
+      debug: (message: string, additionalContext?: LogContext) => 
+        parent.debug(message, { ...context, ...additionalContext }),
+      info: (message: string, additionalContext?: LogContext) => 
+        parent.info(message, { ...context, ...additionalContext }),
+      warn: (message: string, additionalContext?: LogContext) => 
+        parent.warn(message, { ...context, ...additionalContext }),
+      error: (message: string, error?: Error | LogContext, additionalContext?: LogContext) => {
+        if (error instanceof Error) {
+          parent.error(message, error, { ...context, ...additionalContext });
+        } else {
+          parent.error(message, { ...context, ...error, ...additionalContext });
+        }
+      },
+      child: (additionalContext: LogContext) => 
+        parent.child({ ...context, ...additionalContext }),
+    } as Logger;
   }
 }
 
