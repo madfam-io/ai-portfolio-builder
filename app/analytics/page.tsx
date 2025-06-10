@@ -13,7 +13,6 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
 import {
   LineChart,
   Line,
@@ -52,7 +51,6 @@ interface DashboardState {
  * Analytics Dashboard Component
  */
 export default function AnalyticsPage() {
-  const { t } = useLanguage();
   const router = useRouter();
   const searchParams = useSearchParams();
   

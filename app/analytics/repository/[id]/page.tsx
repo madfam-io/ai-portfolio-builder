@@ -13,7 +13,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
 import {
   LineChart,
   Line,
@@ -54,7 +53,6 @@ interface RepoState {
  * Repository Analytics Detail Page
  */
 export default function RepositoryAnalyticsPage() {
-  // const { t } = useLanguage();
   const router = useRouter();
   const params = useParams();
   const repositoryId = params.id as string;
