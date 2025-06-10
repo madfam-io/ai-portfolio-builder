@@ -56,9 +56,6 @@ dependencies:
   '@tanstack/react-query':
     specifier: ^5.17.0
     version: 5.80.6(react@18.2.0)
-  '@types/uuid':
-    specifier: ^10.0.0
-    version: 10.0.0
   '@vercel/analytics':
     specifier: ^1.1.1
     version: 1.5.0(next@15.3.3)(react@18.2.0)
@@ -163,6 +160,9 @@ devDependencies:
   '@types/react-dom':
     specifier: ^18.2.0
     version: 18.3.7(@types/react@18.3.23)
+  '@types/uuid':
+    specifier: ^10.0.0
+    version: 10.0.0
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.13.0
     version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.57.1)(typescript@5.8.3)
@@ -226,6 +226,9 @@ devDependencies:
   typescript:
     specifier: ^5.3.0
     version: 5.8.3
+  undici:
+    specifier: ^7.10.0
+    version: 7.10.0
 
 packages:
   /@adobe/css-tools@4.4.3:
@@ -3847,7 +3850,7 @@ packages:
       {
         integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==,
       }
-    dev: false
+    dev: true
 
   /@types/ws@8.18.1:
     resolution:
@@ -13407,6 +13410,14 @@ packages:
       {
         integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==,
       }
+
+  /undici@7.10.0:
+    resolution:
+      {
+        integrity: sha512-u5otvFBOBZvmdjWLVW+5DAc9Nkq8f24g0O9oY7qw2JVIF1VocIFoyz9JFkuVOS2j41AufeO0xnlweJ2RLT8nGw==,
+      }
+    engines: { node: '>=20.18.1' }
+    dev: true
 
   /universal-github-app-jwt@1.2.0:
     resolution:

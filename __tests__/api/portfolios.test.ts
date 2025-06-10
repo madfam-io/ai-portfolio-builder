@@ -5,63 +5,45 @@
 
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/portfolios/route';
-import { Portfolio, CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
+import {
+  GET as getPortfolioById,
+  PUT as updatePortfolioById,
+  DELETE as deletePortfolioById,
+} from '@/app/api/portfolios/[id]/route';
+import {
+  Portfolio,
+  CreatePortfolioDTO,
+  UpdatePortfolioDTO,
+} from '@/types/portfolio';
 
-// Mock the missing functions that were removed
-const getPortfolioById = jest.fn();
-const updatePortfolioById = jest.fn();
-const deletePortfolioById = jest.fn();
-
-// Mock Supabase
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(),
-    },
-    from: jest.fn(() => ({
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          single: jest.fn(),
-          order: jest.fn(() => ({
-            eq: jest.fn(() => ({
-              data: [],
-              error: null,
-            })),
-          })),
-        })),
-        order: jest.fn(() => ({
-          eq: jest.fn(() => ({
-            data: [],
-            error: null,
-          })),
-        })),
-      })),
-      insert: jest.fn(() => ({
-        select: jest.fn(() => ({
-          single: jest.fn(() => ({
-            data: null,
-            error: null,
-          })),
-        })),
-      })),
-      update: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          select: jest.fn(() => ({
-            single: jest.fn(() => ({
-              data: null,
-              error: null,
-            })),
-          })),
-        })),
-      })),
-      delete: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          data: null,
-          error: null,
-        })),
-      })),
-    })),
+// Mock Supabase with proper async function structure
+const mockFromMethods = {
+  select: jest.fn().mockReturnThis(),
+  insert: jest.fn().mockReturnThis(),
+  update: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  neq: jest.fn().mockReturnThis(),
+  like: jest.fn().mockReturnThis(),
+  or: jest.fn().mockReturnThis(),
+  order: jest.fn().mockReturnThis(),
+  range: jest.fn().mockReturnThis(),
+  limit: jest.fn().mockReturnThis(),
+  single: jest.fn(() => ({
+    data: null,
+    error: null,
   })),
+};
+
+const mockSupabase = {
+  auth: {
+    getUser: jest.fn(),
+  },
+  from: jest.fn(() => mockFromMethods),
+};
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Test data
@@ -112,7 +94,7 @@ const mockPortfolio: Portfolio = {
       endDate: '2020-05',
       current: false,
       description: 'Focus on software engineering and algorithms',
-      achievements: ['Magna Cum Laude', 'Dean\'s List'],
+      achievements: ['Magna Cum Laude', "Dean's List"],
     },
   ],
   projects: [
@@ -185,6 +167,29 @@ const updatePortfolioDTO: UpdatePortfolioDTO = {
 describe('Portfolio API Routes', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Reset mock implementations
+    mockSupabase.auth.getUser.mockReset();
+    mockFromMethods.single.mockReset();
+    mockFromMethods.select.mockReset();
+    mockFromMethods.insert.mockReset();
+    mockFromMethods.update.mockReset();
+    mockFromMethods.delete.mockReset();
+    mockFromMethods.eq.mockReset();
+    mockFromMethods.order.mockReset();
+    mockFromMethods.range.mockReset();
+
+    // Restore chain-ability
+    mockFromMethods.select.mockReturnThis();
+    mockFromMethods.insert.mockReturnThis();
+    mockFromMethods.update.mockReturnThis();
+    mockFromMethods.delete.mockReturnThis();
+    mockFromMethods.eq.mockReturnThis();
+    mockFromMethods.neq.mockReturnThis();
+    mockFromMethods.like.mockReturnThis();
+    mockFromMethods.or.mockReturnThis();
+    mockFromMethods.order.mockReturnThis();
+    mockFromMethods.range.mockReturnThis();
+    mockFromMethods.limit.mockReturnThis();
   });
 
   describe('GET /api/portfolios', () => {
@@ -224,9 +229,13 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      supabase.from().select().order().eq.mockImplementation(() => {
-        throw new Error('Database error');
-      });
+      supabase
+        .from()
+        .select()
+        .order()
+        .eq.mockImplementation(() => {
+          throw new Error('Database error');
+        });
 
       const request = new NextRequest('http://localhost:3000/api/portfolios');
       const response = await GET(request);
@@ -242,10 +251,14 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      supabase.from().insert().select().single.mockResolvedValue({
-        data: { ...mockPortfolio, ...createPortfolioDTO },
-        error: null,
-      });
+      supabase
+        .from()
+        .insert()
+        .select()
+        .single.mockResolvedValue({
+          data: { ...mockPortfolio, ...createPortfolioDTO },
+          error: null,
+        });
 
       const request = new NextRequest('http://localhost:3000/api/portfolios', {
         method: 'POST',
@@ -312,8 +325,12 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123');
-      const response = await getPortfolioById(request, { params: { id: 'portfolio-123' } });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123'
+      );
+      const response = await getPortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -326,18 +343,26 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      supabase.from().select().eq().single.mockResolvedValue({
-        data: null,
-        error: { code: 'PGRST116' }, // Not found error
-      });
+      supabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: { code: 'PGRST116' }, // Not found error
+        });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/nonexistent');
-      const response = await getPortfolioById(request, { params: { id: 'nonexistent' } });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/nonexistent'
+      );
+      const response = await getPortfolioById(request, {
+        params: { id: 'nonexistent' },
+      });
 
       expect(response.status).toBe(404);
     });
 
-    it('should return 403 when user tries to access another user\'s portfolio', async () => {
+    it("should return 403 when user tries to access another user's portfolio", async () => {
       const supabase = require('@/lib/supabase/server').createClient();
       supabase.auth.getUser.mockResolvedValue({
         data: { user: { id: 'different-user' } },
@@ -348,8 +373,12 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123');
-      const response = await getPortfolioById(request, { params: { id: 'portfolio-123' } });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123'
+      );
+      const response = await getPortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
 
       expect(response.status).toBe(403);
     });
@@ -362,26 +391,36 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      
+
       // First call to check ownership
       supabase.from().select().eq().single.mockResolvedValueOnce({
         data: mockPortfolio,
         error: null,
       });
-      
+
       // Second call for update
-      supabase.from().update().eq().select().single.mockResolvedValue({
-        data: { ...mockPortfolio, ...updatePortfolioDTO },
-        error: null,
-      });
+      supabase
+        .from()
+        .update()
+        .eq()
+        .select()
+        .single.mockResolvedValue({
+          data: { ...mockPortfolio, ...updatePortfolioDTO },
+          error: null,
+        });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123', {
-        method: 'PUT',
-        body: JSON.stringify(updatePortfolioDTO),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          body: JSON.stringify(updatePortfolioDTO),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
-      const response = await updatePortfolioById(request, { params: { id: 'portfolio-123' } });
+      const response = await updatePortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -394,18 +433,27 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      supabase.from().select().eq().single.mockResolvedValue({
-        data: null,
-        error: { code: 'PGRST116' },
-      });
+      supabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: { code: 'PGRST116' },
+        });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/nonexistent', {
-        method: 'PUT',
-        body: JSON.stringify(updatePortfolioDTO),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/nonexistent',
+        {
+          method: 'PUT',
+          body: JSON.stringify(updatePortfolioDTO),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
-      const response = await updatePortfolioById(request, { params: { id: 'nonexistent' } });
+      const response = await updatePortfolioById(request, {
+        params: { id: 'nonexistent' },
+      });
 
       expect(response.status).toBe(404);
     });
@@ -423,13 +471,18 @@ describe('Portfolio API Routes', () => {
 
       const invalidUpdate = { status: 'invalid-status' };
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123', {
-        method: 'PUT',
-        body: JSON.stringify(invalidUpdate),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          body: JSON.stringify(invalidUpdate),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
-      const response = await updatePortfolioById(request, { params: { id: 'portfolio-123' } });
+      const response = await updatePortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
 
       expect(response.status).toBe(400);
     });
@@ -442,24 +495,29 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      
+
       // Check ownership
       supabase.from().select().eq().single.mockResolvedValueOnce({
         data: mockPortfolio,
         error: null,
       });
-      
+
       // Delete operation
       supabase.from().delete().eq.mockResolvedValue({
         data: null,
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deletePortfolioById(request, { params: { id: 'portfolio-123' } });
+      const response = await deletePortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
 
       expect(response.status).toBe(204);
     });
@@ -470,21 +528,30 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
-      supabase.from().select().eq().single.mockResolvedValue({
-        data: null,
-        error: { code: 'PGRST116' },
-      });
+      supabase
+        .from()
+        .select()
+        .eq()
+        .single.mockResolvedValue({
+          data: null,
+          error: { code: 'PGRST116' },
+        });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/nonexistent', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/nonexistent',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deletePortfolioById(request, { params: { id: 'nonexistent' } });
+      const response = await deletePortfolioById(request, {
+        params: { id: 'nonexistent' },
+      });
 
       expect(response.status).toBe(404);
     });
 
-    it('should return 403 when user tries to delete another user\'s portfolio', async () => {
+    it("should return 403 when user tries to delete another user's portfolio", async () => {
       const supabase = require('@/lib/supabase/server').createClient();
       supabase.auth.getUser.mockResolvedValue({
         data: { user: { id: 'different-user' } },
@@ -495,11 +562,16 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/portfolios/portfolio-123', {
-        method: 'DELETE',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/portfolios/portfolio-123',
+        {
+          method: 'DELETE',
+        }
+      );
 
-      const response = await deletePortfolioById(request, { params: { id: 'portfolio-123' } });
+      const response = await deletePortfolioById(request, {
+        params: { id: 'portfolio-123' },
+      });
 
       expect(response.status).toBe(403);
     });
@@ -563,7 +635,7 @@ describe('Portfolio API Routes', () => {
       });
 
       const response = await POST(request);
-      
+
       // Should still succeed but data should be sanitized
       expect(response.status).toBe(201);
     });

@@ -1,4 +1,37 @@
-import '@testing-library/jest-dom'
+import '@testing-library/jest-dom';
+
+// Polyfill for Next.js 15 Request/Response in Node environment
+import { TextEncoder, TextDecoder } from 'util';
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// Add ReadableStream polyfill
+if (typeof globalThis.ReadableStream === 'undefined') {
+  const {
+    ReadableStream,
+    WritableStream,
+    TransformStream,
+  } = require('stream/web');
+  globalThis.ReadableStream = ReadableStream;
+  globalThis.WritableStream = WritableStream;
+  globalThis.TransformStream = TransformStream;
+}
+
+// Add MessagePort polyfill
+if (typeof globalThis.MessagePort === 'undefined') {
+  const { MessagePort, MessageChannel } = require('worker_threads');
+  globalThis.MessagePort = MessagePort;
+  globalThis.MessageChannel = MessageChannel;
+}
+
+// Add Request/Response polyfills
+if (typeof globalThis.Request === 'undefined') {
+  const { Request, Response, Headers, FormData } = require('undici');
+  globalThis.Request = Request;
+  globalThis.Response = Response;
+  globalThis.Headers = Headers;
+  globalThis.FormData = FormData;
+}
 
 // Mock Next.js router
 jest.mock('next/router', () => ({
@@ -20,9 +53,9 @@ jest.mock('next/router', () => ({
         emit: jest.fn(),
       },
       isFallback: false,
-    }
+    };
   },
-}))
+}));
 
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
@@ -34,15 +67,15 @@ jest.mock('next/navigation', () => ({
       forward: jest.fn(),
       refresh: jest.fn(),
       prefetch: jest.fn(),
-    }
+    };
   },
   useSearchParams() {
-    return new URLSearchParams()
+    return new URLSearchParams();
   },
   usePathname() {
-    return '/'
+    return '/';
   },
-}))
+}));
 
 // Mock environment variables
 process.env = {
@@ -51,7 +84,7 @@ process.env = {
   NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
   NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
   NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
-}
+};
 
 // Mock Supabase client
 jest.mock('@supabase/supabase-js', () => ({
@@ -82,7 +115,7 @@ jest.mock('@supabase/supabase-js', () => ({
       })),
     },
   })),
-}))
+}));
 
 // Mock OpenAI
 jest.mock('openai', () => ({
@@ -93,7 +126,7 @@ jest.mock('openai', () => ({
       },
     },
   })),
-}))
+}));
 
 // Mock Stripe
 jest.mock('stripe', () => ({
@@ -116,7 +149,7 @@ jest.mock('stripe', () => ({
       list: jest.fn(),
     },
   })),
-}))
+}));
 
 // Mock React Query
 jest.mock('@tanstack/react-query', () => ({
@@ -125,7 +158,7 @@ jest.mock('@tanstack/react-query', () => ({
   useQueryClient: jest.fn(),
   QueryClient: jest.fn(),
   QueryClientProvider: ({ children }) => children,
-}))
+}));
 
 // Mock Framer Motion
 jest.mock('framer-motion', () => ({
@@ -137,10 +170,10 @@ jest.mock('framer-motion', () => ({
     article: 'article',
   },
   AnimatePresence: ({ children }) => children,
-}))
+}));
 
 // Mock file reading for testing
-global.fetch = jest.fn()
+global.fetch = jest.fn();
 
 // Setup window.matchMedia mock
 Object.defineProperty(window, 'matchMedia', {
@@ -155,21 +188,21 @@ Object.defineProperty(window, 'matchMedia', {
     removeEventListener: jest.fn(),
     dispatchEvent: jest.fn(),
   })),
-})
+});
 
 // Mock IntersectionObserver
 global.IntersectionObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
   observe: jest.fn(),
   unobserve: jest.fn(),
   disconnect: jest.fn(),
-}))
+}));
 
 // Mock console methods to reduce noise in tests
 global.console = {
@@ -178,4 +211,4 @@ global.console = {
   error: jest.fn(),
   warn: jest.fn(),
   log: jest.fn(),
-}
+};

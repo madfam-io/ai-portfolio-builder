@@ -8,33 +8,36 @@ import { POST, GET } from '@/app/api/ai/enhance-bio/route';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 
 // Mock Supabase
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn(),
-    },
-    from: jest.fn(() => ({
-      insert: jest.fn(() => ({
-        data: null,
-        error: null,
-      })),
-      select: jest.fn(() => ({
-        eq: jest.fn(() => ({
-          order: jest.fn(() => ({
-            limit: jest.fn(() => ({
-              data: [],
-              error: null,
-            })),
-          })),
-        })),
-      })),
-    })),
+const mockFromMethods = {
+  insert: jest.fn(() => ({
+    data: null,
+    error: null,
   })),
+  select: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  order: jest.fn().mockReturnThis(),
+  limit: jest.fn(() => ({
+    data: [],
+    error: null,
+  })),
+};
+
+const mockSupabase = {
+  auth: {
+    getUser: jest.fn(),
+  },
+  from: jest.fn(() => mockFromMethods),
+};
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Mock HuggingFace Service
 jest.mock('@/lib/ai/huggingface-service');
-const MockHuggingFaceService = HuggingFaceService as jest.MockedClass<typeof HuggingFaceService>;
+const MockHuggingFaceService = HuggingFaceService as jest.MockedClass<
+  typeof HuggingFaceService
+>;
 
 describe('/api/ai/enhance-bio', () => {
   const mockUser = {
@@ -60,7 +63,8 @@ describe('/api/ai/enhance-bio', () => {
   };
 
   const mockEnhancedContent = {
-    content: 'Experienced Software Engineer with 3+ years developing scalable web applications using JavaScript, React, and Node.js. Led technical initiatives at Tech Corp, delivering high-quality solutions that drive business growth.',
+    content:
+      'Experienced Software Engineer with 3+ years developing scalable web applications using JavaScript, React, and Node.js. Led technical initiatives at Tech Corp, delivering high-quality solutions that drive business growth.',
     confidence: 0.85,
     suggestions: ['Consider adding specific metrics or achievements'],
     wordCount: 28,
@@ -68,31 +72,38 @@ describe('/api/ai/enhance-bio', () => {
     enhancementType: 'bio' as const,
   };
 
+  // Create mock service instance
+  const mockService = {
+    healthCheck: jest.fn(),
+    enhanceBio: jest.fn(),
+  };
+
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    // Setup default mock implementations
-    const mockService = {
-      healthCheck: jest.fn().mockResolvedValue(true),
-      enhanceBio: jest.fn().mockResolvedValue(mockEnhancedContent),
-    };
-    
+
+    // Reset mock implementations to defaults
+    mockService.healthCheck.mockResolvedValue(true);
+    mockService.enhanceBio.mockResolvedValue(mockEnhancedContent);
+
     MockHuggingFaceService.mockImplementation(() => mockService as any);
   });
 
   describe('POST /api/ai/enhance-bio', () => {
     it('should enhance bio successfully for authenticated user', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Setup authenticated user
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -102,21 +113,26 @@ describe('/api/ai/enhance-bio', () => {
       expect(data.data.content).toBe(mockEnhancedContent.content);
       expect(data.data.confidence).toBe(0.85);
       expect(data.metadata.originalLength).toBe(validRequest.bio.length);
-      expect(data.metadata.enhancedLength).toBe(mockEnhancedContent.content.length);
+      expect(data.metadata.enhancedLength).toBe(
+        mockEnhancedContent.content.length
+      );
     });
 
     it('should return 401 for unauthenticated user', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -126,8 +142,8 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should validate request body and return 400 for invalid data', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
@@ -142,11 +158,14 @@ describe('/api/ai/enhance-bio', () => {
         },
       };
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(invalidRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(invalidRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -157,20 +176,23 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should return 503 when AI service is unhealthy', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      const mockService = MockHuggingFaceService.mock.instances[0] as any;
+      // Setup service to be unhealthy
       mockService.healthCheck.mockResolvedValue(false);
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -180,34 +202,39 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle AI service quota exceeded error', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
       const quotaError = new Error('Quota exceeded');
       quotaError.name = 'QuotaExceededError';
-      
-      const mockService = MockHuggingFaceService.mock.instances[0] as any;
+
+      // Setup service error
       mockService.enhanceBio.mockRejectedValue(quotaError);
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
 
       expect(response.status).toBe(429);
-      expect(data.error).toBe('AI service quota exceeded. Please try again later.');
+      expect(data.error).toBe(
+        'AI service quota exceeded. Please try again later.'
+      );
     });
 
     it('should handle AI service errors with retry information', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
@@ -215,15 +242,18 @@ describe('/api/ai/enhance-bio', () => {
       const aiError = new Error('Model unavailable');
       aiError.name = 'AIServiceError';
       (aiError as any).retryable = true;
-      
-      const mockService = MockHuggingFaceService.mock.instances[0] as any;
+
+      // Setup service error
       mockService.enhanceBio.mockRejectedValue(aiError);
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -234,20 +264,23 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle unknown errors gracefully', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      const mockService = MockHuggingFaceService.mock.instances[0] as any;
+      // Setup service error
       mockService.enhanceBio.mockRejectedValue(new Error('Unknown error'));
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -257,22 +290,25 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should log AI usage for successful requests', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       await POST(request);
 
-      expect(supabase.from).toHaveBeenCalledWith('ai_usage_logs');
-      expect(supabase.from().insert).toHaveBeenCalledWith(
+      expect(mockSupabase.from).toHaveBeenCalledWith('ai_usage_logs');
+      expect(mockFromMethods.insert).toHaveBeenCalledWith(
         expect.objectContaining({
           user_id: mockUser.id,
           operation_type: 'bio_enhancement',
@@ -288,20 +324,23 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should continue operation even if logging fails', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
-      
-      // Make logging fail
-      supabase.from().insert.mockRejectedValue(new Error('Logging failed'));
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(validRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      // Make logging fail
+      mockSupabase.from().insert.mockRejectedValue(new Error('Logging failed'));
+
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(validRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -314,8 +353,8 @@ describe('/api/ai/enhance-bio', () => {
 
   describe('GET /api/ai/enhance-bio', () => {
     it('should return enhancement history for authenticated user', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
@@ -335,12 +374,15 @@ describe('/api/ai/enhance-bio', () => {
         },
       ];
 
-      supabase.from().select().eq().order().limit.mockReturnValue({
+      mockFromMethods.limit.mockReturnValue({
         data: mockHistory,
         error: null,
       });
 
-      const response = await GET();
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio'
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -350,13 +392,16 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should return 401 for unauthenticated user', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: null },
         error: null,
       });
 
-      const response = await GET();
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio'
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(401);
@@ -364,18 +409,21 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle database errors', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      supabase.from().select().eq().order().limit.mockReturnValue({
+      mockFromMethods.limit.mockReturnValue({
         data: null,
         error: new Error('Database error'),
       });
 
-      const response = await GET();
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio'
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(500);
@@ -383,18 +431,21 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle empty history gracefully', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      supabase.from().select().eq().order().limit.mockReturnValue({
+      mockFromMethods.limit.mockReturnValue({
         data: [],
         error: null,
       });
 
-      const response = await GET();
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio'
+      );
+      const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
@@ -405,8 +456,8 @@ describe('/api/ai/enhance-bio', () => {
 
   describe('Request validation edge cases', () => {
     it('should handle bio that is too long', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
@@ -417,11 +468,14 @@ describe('/api/ai/enhance-bio', () => {
         bio: longBio,
       };
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(invalidRequest),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(invalidRequest),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -431,8 +485,8 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle missing context fields gracefully', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
@@ -446,11 +500,14 @@ describe('/api/ai/enhance-bio', () => {
         },
       };
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: JSON.stringify(requestWithDefaults),
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: JSON.stringify(requestWithDefaults),
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -460,17 +517,20 @@ describe('/api/ai/enhance-bio', () => {
     });
 
     it('should handle malformed JSON', async () => {
-      const supabase = require('@/lib/supabase/server').createClient();
-      supabase.auth.getUser.mockResolvedValue({
+      // Use mockSupabase directly
+      mockSupabase.auth.getUser.mockResolvedValue({
         data: { user: mockUser },
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/ai/enhance-bio', {
-        method: 'POST',
-        body: 'invalid json{',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/ai/enhance-bio',
+        {
+          method: 'POST',
+          body: 'invalid json{',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const response = await POST(request);
 
