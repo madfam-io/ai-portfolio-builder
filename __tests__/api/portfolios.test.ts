@@ -52,6 +52,7 @@ const mockUser = {
   email: 'test@example.com',
 };
 
+// Mock portfolio as it would be returned from the API
 const mockPortfolio: Portfolio = {
   id: 'portfolio-123',
   userId: 'user-123',
@@ -147,6 +148,51 @@ const mockPortfolio: Portfolio = {
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-15'),
   publishedAt: new Date('2024-01-10'),
+};
+
+// Mock portfolio as it would be stored in the database
+const mockDbPortfolio = {
+  id: 'portfolio-123',
+  user_id: 'user-123',
+  name: 'John Doe Portfolio',
+  title: 'Full Stack Developer',
+  bio: 'Experienced developer with a passion for creating amazing applications.',
+  tagline: 'Building the future, one line of code at a time',
+  avatar_url: 'https://example.com/avatar.jpg',
+  contact: {
+    email: 'john@example.com',
+    phone: '+1234567890',
+    location: 'San Francisco, CA',
+    availability: 'Available for freelance',
+  },
+  social: {
+    linkedin: 'https://linkedin.com/in/johndoe',
+    github: 'https://github.com/johndoe',
+    twitter: 'https://twitter.com/johndoe',
+    website: 'https://johndoe.dev',
+  },
+  experience: mockPortfolio.experience,
+  education: mockPortfolio.education,
+  projects: mockPortfolio.projects,
+  skills: mockPortfolio.skills,
+  certifications: mockPortfolio.certifications,
+  template: 'developer',
+  customization: mockPortfolio.customization,
+  ai_settings: {
+    enhanceBio: true,
+    enhanceProjectDescriptions: true,
+    generateSkillsFromExperience: false,
+    tone: 'professional',
+    targetLength: 'concise',
+  },
+  status: 'published',
+  subdomain: 'johndoe',
+  custom_domain: null,
+  views: 150,
+  created_at: '2024-01-01T00:00:00Z',
+  updated_at: '2024-01-15T00:00:00Z',
+  published_at: '2024-01-10T00:00:00Z',
+  last_viewed_at: null,
 };
 
 const createPortfolioDTO: CreatePortfolioDTO = {
@@ -251,12 +297,24 @@ describe('Portfolio API Routes', () => {
         data: { user: mockUser },
         error: null,
       });
+      // Mock the database response for created portfolio
+      const createdDbPortfolio = {
+        ...mockDbPortfolio,
+        id: 'new-portfolio-id',
+        name: createPortfolioDTO.name,
+        title: createPortfolioDTO.title,
+        bio: createPortfolioDTO.bio,
+        template: createPortfolioDTO.template,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
       supabase
         .from()
         .insert()
         .select()
         .single.mockResolvedValue({
-          data: { ...mockPortfolio, ...createPortfolioDTO },
+          data: createdDbPortfolio,
           error: null,
         });
 
@@ -321,7 +379,7 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
       supabase.from().select().eq().single.mockResolvedValue({
-        data: mockPortfolio,
+        data: mockDbPortfolio,
         error: null,
       });
 
@@ -369,7 +427,7 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
       supabase.from().select().eq().single.mockResolvedValue({
-        data: mockPortfolio, // Portfolio belongs to 'user-123'
+        data: mockDbPortfolio, // Portfolio belongs to 'user_123' in database
         error: null,
       });
 
@@ -394,18 +452,27 @@ describe('Portfolio API Routes', () => {
 
       // First call to check ownership
       supabase.from().select().eq().single.mockResolvedValueOnce({
-        data: mockPortfolio,
+        data: mockDbPortfolio,
         error: null,
       });
 
-      // Second call for update
+      // Second call for update - return database format
+      const updatedDbPortfolio = {
+        ...mockDbPortfolio,
+        name: updatePortfolioDTO.name,
+        title: updatePortfolioDTO.title,
+        bio: updatePortfolioDTO.bio,
+        status: updatePortfolioDTO.status,
+        updated_at: new Date().toISOString(),
+      };
+      
       supabase
         .from()
         .update()
         .eq()
         .select()
         .single.mockResolvedValue({
-          data: { ...mockPortfolio, ...updatePortfolioDTO },
+          data: updatedDbPortfolio,
           error: null,
         });
 
@@ -465,7 +532,7 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
       supabase.from().select().eq().single.mockResolvedValue({
-        data: mockPortfolio,
+        data: mockDbPortfolio,
         error: null,
       });
 
@@ -498,15 +565,25 @@ describe('Portfolio API Routes', () => {
 
       // Check ownership
       supabase.from().select().eq().single.mockResolvedValueOnce({
-        data: mockPortfolio,
+        data: mockDbPortfolio,
         error: null,
       });
 
-      // Delete operation
-      supabase.from().delete().eq.mockResolvedValue({
-        data: null,
-        error: null,
-      });
+      // Delete operation - setup the chain for the delete call
+      // The route will call from('portfolios').delete().eq('id', id)
+      // We need to ensure the delete chain returns properly
+      const deleteChain = {
+        eq: jest.fn().mockResolvedValue({
+          data: null,
+          error: null,
+        }),
+      };
+      
+      // Mock the second from() call for delete
+      supabase.from.mockImplementationOnce(() => ({
+        ...mockFromMethods,
+        delete: jest.fn().mockReturnValue(deleteChain),
+      }));
 
       const request = new NextRequest(
         'http://localhost:3000/api/portfolios/portfolio-123',
@@ -558,7 +635,7 @@ describe('Portfolio API Routes', () => {
         error: null,
       });
       supabase.from().select().eq().single.mockResolvedValue({
-        data: mockPortfolio,
+        data: mockDbPortfolio,
         error: null,
       });
 
