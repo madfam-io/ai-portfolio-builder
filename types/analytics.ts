@@ -175,6 +175,54 @@ export interface GitHubActivity {
   created_at: string;
 }
 
+// Missing type definitions
+export interface GitHubUserObject {
+  id: number;
+  login: string;
+  avatar_url?: string;
+}
+
+export interface Commit {
+  sha: string;
+  author: {
+    name: string;
+    email: string;
+    date: string;
+  };
+  message: string;
+  url: string;
+}
+
+export interface AnalyticsMetrics {
+  totalRepositories: number;
+  totalCommits: number;
+  totalPullRequests: number;
+  totalContributors: number;
+  totalLinesOfCode: number;
+  averageCommitsPerDay: number;
+  activeDaysPercentage: number;
+}
+
+export interface RepositoryMetrics {
+  commitCount: number;
+  pullRequestCount: number;
+  contributorCount: number;
+  issueCount: number;
+  starCount: number;
+  forkCount: number;
+  linesOfCode: number;
+  primaryLanguage?: string;
+}
+
+export interface ContributorMetrics {
+  totalCommits: number;
+  totalPullRequests: number;
+  totalRepositories: number;
+  totalAdditions: number;
+  totalDeletions: number;
+  averageCommitsPerMonth: number;
+}
+
 // Cache data types
 export type DashboardCacheData = {
   metrics: AnalyticsMetrics;
