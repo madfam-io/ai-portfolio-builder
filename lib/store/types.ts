@@ -1,0 +1,155 @@
+/**
+ * Global Store Types
+ * Centralized type definitions for all Zustand stores
+ */
+
+import { User } from '@supabase/supabase-js';
+import { Portfolio } from '@/types/portfolio';
+
+// Auth Store Types
+export interface AuthState {
+  user: User | null;
+  session: any | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  error: string | null;
+}
+
+export interface AuthActions {
+  setUser: (user: User | null) => void;
+  setSession: (session: any | null) => void;
+  setLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  signOut: () => Promise<void>;
+  resetAuth: () => void;
+}
+
+// Portfolio Store Types
+export interface PortfolioState {
+  portfolios: Portfolio[];
+  currentPortfolio: Portfolio | null;
+  isEditing: boolean;
+  isSaving: boolean;
+  isLoading: boolean;
+  error: string | null;
+  lastSaved: Date | null;
+}
+
+export interface PortfolioActions {
+  setPortfolios: (portfolios: Portfolio[]) => void;
+  setCurrentPortfolio: (portfolio: Portfolio | null) => void;
+  setEditing: (isEditing: boolean) => void;
+  setSaving: (isSaving: boolean) => void;
+  setLoading: (isLoading: boolean) => void;
+  setError: (error: string | null) => void;
+  loadPortfolios: () => Promise<void>;
+  loadPortfolio: (id: string) => Promise<void>;
+  createPortfolio: (data: Partial<Portfolio>) => Promise<Portfolio>;
+  updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<void>;
+  deletePortfolio: (id: string) => Promise<void>;
+  savePortfolio: () => Promise<void>;
+  resetPortfolios: () => void;
+}
+
+// UI Store Types
+export interface Toast {
+  id: string;
+  title: string;
+  description?: string;
+  type: 'success' | 'error' | 'warning' | 'info';
+  duration?: number;
+}
+
+export interface Modal {
+  id: string;
+  component: React.ComponentType<any>;
+  props?: any;
+}
+
+export interface UIState {
+  theme: 'light' | 'dark' | 'system';
+  sidebarOpen: boolean;
+  modals: Modal[];
+  toasts: Toast[];
+  globalLoading: boolean;
+  loadingMessage: string | null;
+}
+
+export interface UIActions {
+  setTheme: (theme: 'light' | 'dark' | 'system') => void;
+  toggleSidebar: () => void;
+  setSidebarOpen: (open: boolean) => void;
+  openModal: (modal: Modal) => void;
+  closeModal: (id: string) => void;
+  closeAllModals: () => void;
+  showToast: (toast: Omit<Toast, 'id'>) => void;
+  removeToast: (id: string) => void;
+  clearToasts: () => void;
+  setGlobalLoading: (loading: boolean, message?: string | null) => void;
+}
+
+// AI Store Types
+export interface AIModel {
+  id: string;
+  name: string;
+  provider: 'huggingface' | 'openai' | 'anthropic';
+  capabilities: string[];
+  costPerRequest: number;
+  qualityRating: number;
+  speedRating: number;
+}
+
+export interface AIEnhancement {
+  id: string;
+  type: 'bio' | 'project' | 'template';
+  originalText: string;
+  enhancedText: string;
+  model: string;
+  timestamp: Date;
+  quality: number;
+}
+
+export interface AIState {
+  selectedModels: {
+    bio: string;
+    project: string;
+    template: string;
+  };
+  availableModels: AIModel[];
+  enhancementHistory: AIEnhancement[];
+  quotaUsed: number;
+  quotaLimit: number;
+  isProcessing: boolean;
+  error: string | null;
+}
+
+export interface AIActions {
+  setSelectedModel: (type: 'bio' | 'project' | 'template', modelId: string) => void;
+  setAvailableModels: (models: AIModel[]) => void;
+  addEnhancement: (enhancement: AIEnhancement) => void;
+  clearHistory: () => void;
+  setQuota: (used: number, limit: number) => void;
+  setProcessing: (isProcessing: boolean) => void;
+  setError: (error: string | null) => void;
+  enhanceBio: (text: string) => Promise<string>;
+  enhanceProject: (text: string) => Promise<string>;
+  recommendTemplate: (data: any) => Promise<any>;
+  loadModels: () => Promise<void>;
+}
+
+// Combined Store Type
+export interface RootState {
+  auth: AuthState & AuthActions;
+  portfolio: PortfolioState & PortfolioActions;
+  ui: UIState & UIActions;
+  ai: AIState & AIActions;
+}
+
+// Persist Config Type
+export interface PersistConfig {
+  name: string;
+  version: number;
+  partialize?: (state: any) => any;
+}

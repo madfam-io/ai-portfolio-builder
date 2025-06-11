@@ -3,22 +3,33 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { rateLimitMiddleware } from './middleware/rate-limiter';
 import { csrfMiddleware } from './middleware/csrf';
+import { apiVersionMiddleware } from './middleware/api-version';
 import { logger } from '@/lib/utils/logger';
 
 /**
- * Middleware for handling authentication, route protection, rate limiting, and CSRF
+ * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning
  *
  * This middleware:
  * 1. Implements Redis-based rate limiting for all endpoints
  * 2. Implements CSRF protection for state-changing operations
- * 3. Creates a Supabase client for server-side auth
- * 4. Refreshes the session if needed
- * 5. Protects dashboard and editor routes
- * 6. Redirects unauthenticated users to sign in
- * 7. Redirects authenticated users away from auth pages
+ * 3. Implements API versioning with automatic redirection and deprecation warnings
+ * 4. Creates a Supabase client for server-side auth
+ * 5. Refreshes the session if needed
+ * 6. Protects dashboard and editor routes
+ * 7. Redirects unauthenticated users to sign in
+ * 8. Redirects authenticated users away from auth pages
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Apply API versioning middleware first
+  if (pathname.startsWith('/api/')) {
+    const versionResponse = await apiVersionMiddleware(req);
+    // If version middleware returns a response (redirect or error), return it
+    if (versionResponse.status !== 200 || versionResponse.headers.get('location')) {
+      return versionResponse;
+    }
+  }
 
   // Apply rate limiting to all API routes
   if (pathname.startsWith('/api/')) {

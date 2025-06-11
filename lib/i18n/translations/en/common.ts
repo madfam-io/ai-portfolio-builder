@@ -114,6 +114,40 @@ export default {
   noResults: 'No results found',
   resultsFor: 'Results for',
 
+  // Common actions
+  add: 'Add',
+  remove: 'Remove',
+  retrying: 'Retrying...',
+
+  // Empty states
+  emptyStates: {
+    noResults: 'No results found',
+    noSearchResults: 'No search results',
+    noSearchResultsDescription: 'Try adjusting your search terms or filters',
+    noPortfolios: 'No portfolios yet',
+    noPortfoliosDescription: 'Create your first portfolio to get started',
+    createFirstPortfolio: 'Create Your First Portfolio',
+    noProjects: 'No projects added',
+    noProjectsDescription: 'Add your first project to showcase your work',
+    addFirstProject: 'Add Your First Project',
+    noData: 'No data available',
+    noDataDescription: 'There is no data to display at this time',
+    noAnalyticsData: 'No analytics data',
+    noAnalyticsDataDescription: 'Analytics data will appear once you have activity',
+    noUsers: 'No users found',
+    noUsersDescription: 'No users match your current filters',
+    noProducts: 'No products found',
+    noProductsDescription: 'No products match your current filters',
+    uploadTitle: 'Upload Files',
+    uploadDescription: 'Drag and drop files here or click to browse',
+    maxSize: 'Max size',
+    noImages: 'No images uploaded',
+    noImagesDescription: 'Upload images to enhance your portfolio',
+    uploadImage: 'Upload Image',
+    noItems: 'No {type} found',
+    noItemsDescription: 'Start by adding your first {type}',
+  },
+
   // Pagination
   page: 'Page',
   of: 'of',

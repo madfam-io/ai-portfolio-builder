@@ -4,6 +4,7 @@ import './globals.css';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { StoreProvider } from '@/lib/store/provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -50,12 +51,28 @@ export default function RootLayout({
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('theme');
-                  if (theme === 'light') {
-                    document.documentElement.classList.remove('dark');
+                  // Check UI store for theme preference
+                  var uiStore = localStorage.getItem('ui-store');
+                  var theme = 'dark'; // default
+                  
+                  if (uiStore) {
+                    try {
+                      var parsed = JSON.parse(uiStore);
+                      if (parsed.state && parsed.state.theme) {
+                        theme = parsed.state.theme;
+                      }
+                    } catch (e) {}
+                  }
+                  
+                  // Apply theme
+                  var root = document.documentElement;
+                  root.classList.remove('light', 'dark');
+                  
+                  if (theme === 'system') {
+                    var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                    root.classList.add(systemTheme);
                   } else {
-                    // Default to dark mode
-                    document.documentElement.classList.add('dark');
+                    root.classList.add(theme);
                   }
                 } catch (e) {
                   // Default to dark mode if localStorage is not available
@@ -77,9 +94,11 @@ export default function RootLayout({
         >
           <AppProvider>
             <LanguageProvider>
-              <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-                {children}
-              </div>
+              <StoreProvider>
+                <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                  {children}
+                </div>
+              </StoreProvider>
             </LanguageProvider>
           </AppProvider>
         </GlobalErrorBoundary>

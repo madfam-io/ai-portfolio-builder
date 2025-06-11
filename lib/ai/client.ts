@@ -1,6 +1,9 @@
 /**
  * AI Service Client
  * Frontend client for interacting with AI enhancement APIs
+ * 
+ * @version 1.0.0
+ * Now uses versioned API endpoints
  */
 
 import {
@@ -10,6 +13,7 @@ import {
   UserProfile,
   EnhancedContent,
 } from './types';
+import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
 
 export interface AIClientConfig {
   baseUrl?: string;
@@ -44,28 +48,29 @@ export class AIClient {
    * Get available models from HuggingFace
    */
   async getAvailableModels(): Promise<any[]> {
-    return this.makeRequest('/api/ai/models', {
-      method: 'GET',
-    });
+    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.models);
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
    * Get current model selection
    */
   async getModelSelection(): Promise<Record<string, string>> {
-    return this.makeRequest('/api/ai/models/selection', {
-      method: 'GET',
-    });
+    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.modelSelection);
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
    * Update model preferences
    */
   async updateModelSelection(taskType: string, modelId: string): Promise<void> {
-    await this.makeRequest('/api/ai/models/selection', {
-      method: 'PUT',
-      body: JSON.stringify({ taskType, modelId }),
-    });
+    const { error } = await apiClient.put(
+      API_ENDPOINTS.ai.modelSelection,
+      { taskType, modelId }
+    );
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
 
     // Update local cache
     this.userModelPreferences[taskType] = modelId;
@@ -75,15 +80,17 @@ export class AIClient {
    * Enhance bio content using AI
    */
   async enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent> {
-    return this.makeRequest('/api/ai/enhance-bio', {
-      method: 'POST',
-      body: JSON.stringify({
+    const { data, error } = await apiClient.post(
+      API_ENDPOINTS.ai.enhanceBio,
+      {
         bio,
         context,
         selectedModel: this.userModelPreferences.bio,
         autoUpdate: this.autoUpdateModels,
-      }),
-    });
+      }
+    );
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
@@ -100,17 +107,19 @@ export class AIClient {
       emphasize?: 'technical' | 'business' | 'creative';
     }
   ): Promise<ProjectEnhancement> {
-    return this.makeRequest('/api/ai/optimize-project', {
-      method: 'POST',
-      body: JSON.stringify({
+    const { data, error } = await apiClient.post(
+      API_ENDPOINTS.ai.optimizeProject,
+      {
         title,
         description,
         technologies,
         context,
         selectedModel: this.userModelPreferences.project,
         autoUpdate: this.autoUpdateModels,
-      }),
-    });
+      }
+    );
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
@@ -134,10 +143,12 @@ export class AIClient {
       failed: number;
     };
   }> {
-    return this.makeRequest('/api/ai/optimize-project', {
-      method: 'PUT',
-      body: JSON.stringify({ projects }),
-    });
+    const { data, error } = await apiClient.put(
+      API_ENDPOINTS.ai.optimizeProject,
+      { projects }
+    );
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
@@ -151,15 +162,17 @@ export class AIClient {
       priority?: 'simplicity' | 'visual_impact' | 'content_heavy';
     }
   ): Promise<TemplateRecommendation> {
-    return this.makeRequest('/api/ai/recommend-template', {
-      method: 'POST',
-      body: JSON.stringify({
+    const { data, error } = await apiClient.post(
+      API_ENDPOINTS.ai.recommendTemplate,
+      {
         profile,
         preferences,
         selectedModel: this.userModelPreferences.template,
         autoUpdate: this.autoUpdateModels,
-      }),
-    });
+      }
+    );
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
@@ -178,9 +191,9 @@ export class AIClient {
       }
     >;
   }> {
-    return this.makeRequest('/api/ai/recommend-template', {
-      method: 'GET',
-    });
+    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.recommendTemplate);
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
@@ -195,91 +208,16 @@ export class AIClient {
     }>;
     totalEnhancements: number;
   }> {
-    return this.makeRequest('/api/ai/enhance-bio', {
-      method: 'GET',
-    });
+    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.enhanceBio);
+    if (error) throw new AIClientError(error, 'REQUEST_FAILED');
+    return data;
   }
 
   /**
-   * Make HTTP request with retry logic and error handling
+   * Note: makeRequest method removed in favor of versioned API client
+   * All API calls now use the centralized apiClient from @/lib/api/client
+   * which handles versioning, retries, and error handling automatically
    */
-  private async makeRequest(
-    endpoint: string,
-    options: RequestInit,
-    attempt: number = 1
-  ): Promise<any> {
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
-
-      const response = await fetch(`${this.baseUrl}${endpoint}`, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...options.headers,
-        },
-        signal: controller.signal,
-      });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-
-        // Handle specific error cases
-        if (response.status === 401) {
-          throw new AIClientError(
-            'Authentication required',
-            'UNAUTHORIZED',
-            false
-          );
-        }
-
-        if (response.status === 429) {
-          throw new AIClientError('Rate limit exceeded', 'RATE_LIMITED', true);
-        }
-
-        if (response.status === 503) {
-          throw new AIClientError(
-            'Service temporarily unavailable',
-            'SERVICE_UNAVAILABLE',
-            true
-          );
-        }
-
-        throw new AIClientError(
-          errorData.error || `Request failed with status ${response.status}`,
-          'REQUEST_FAILED',
-          response.status >= 500
-        );
-      }
-
-      const data = await response.json();
-      return data.data || data;
-    } catch (error: any) {
-      // Handle network errors and timeouts
-      if (error.name === 'AbortError') {
-        throw new AIClientError('Request timeout', 'TIMEOUT', true);
-      }
-
-      if (error instanceof AIClientError) {
-        // Retry for retryable errors
-        if (error.retryable && attempt < this.retries) {
-          const delay = Math.pow(2, attempt) * 1000; // Exponential backoff
-          await new Promise(resolve => setTimeout(resolve, delay));
-          return this.makeRequest(endpoint, options, attempt + 1);
-        }
-        throw error;
-      }
-
-      // Generic network error
-      throw new AIClientError(
-        'Network error occurred',
-        'NETWORK_ERROR',
-        attempt < this.retries
-      );
-    }
-  }
 }
 
 /**

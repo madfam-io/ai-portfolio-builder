@@ -4,66 +4,147 @@
  */
 
 export default {
-  // Error boundary
-  errorSomethingWentWrong: 'Something went wrong',
-  errorDetails: 'Error Details',
-  errorMessage: 'Message:',
-  errorStack: 'Stack:',
-  errorTryAgain: 'Try Again',
-  errorGoToHomepage: 'Go to Homepage',
-  errorReportBug: 'Report Bug',
-  errorId: 'Error ID:',
+  // General error actions
+  tryAgain: 'Try Again',
+  retry: 'Retry',
+  goBack: 'Go Back',
+  goToHomepage: 'Go to Homepage',
+  reloadPage: 'Reload Page',
+  reportBug: 'Report Bug',
+  requestAccess: 'Request Access',
+  clearSearch: 'Clear Search',
+  showDetails: 'Show Details',
+  technicalDetails: 'Technical Details',
+  correctErrors: 'Correct Errors',
+  errorId: 'Error ID',
 
-  // Specific error types
-  errorConnectivityIssue:
-    'There seems to be a connectivity issue. Please check your internet connection.',
-  errorSessionExpired: 'Your session has expired. Please sign in again.',
-  errorNoPermission: "You don't have permission to access this resource.",
-  errorDataIssue:
-    'There was a problem with the data. Please try refreshing the page.',
-  errorServerIssue:
-    'Our servers are experiencing issues. Please try again in a few moments.',
-  errorUnexpected: 'An unexpected error occurred. Our team has been notified.',
+  // Root error boundary
+  rootErrorTitle: 'Something went wrong',
+  persistentError: 'If this problem persists, please contact our support team.',
 
-  // Section errors
-  errorSectionFailedToLoad: 'Section failed to load',
-  errorLoadingSection:
-    'An error occurred while loading this section. Please try again.',
-  errorTryAgainButton: 'try again',
+  // Page errors
+  pageError: 'Page Error',
+  sectionError: 'Section Error',
+  widgetError: 'Widget Error',
+  widgetErrorDescription: 'This component failed to load properly.',
+
+  // Generic errors
+  error: 'Error',
+  genericError: 'An unexpected error occurred.',
+  
+  // Network errors
+  networkErrorTitle: 'Connection Problem',
+  networkErrorDescription: 'Unable to connect to our servers. Please check your internet connection and try again.',
+  timeoutErrorTitle: 'Request Timeout',
+  timeoutErrorDescription: 'The request took too long to complete. Please try again.',
+
+  // Authentication errors
+  authErrorTitle: 'Authentication Required',
+  authErrorDescription: 'Your session has expired. Please sign in again to continue.',
+
+  // Permission errors
+  permissionErrorTitle: 'Access Denied',
+  permissionErrorDescription: 'You don\'t have permission to access this resource.',
+  permissionErrorDescriptionResource: 'You don\'t have permission to access {resource}.',
+  permissionResource: 'You need permission to access {resource}.',
+  permissionActionResource: 'You need permission to {action} {resource}.',
+  permissionGeneric: 'You don\'t have the necessary permissions for this action.',
+  accessDenied: 'Access Denied',
+  requiredRole: 'Required Role',
+  privileges: 'privileges',
+
+  // Validation errors
+  validationErrorTitle: 'Invalid Input',
+  validationErrorDescription: 'Please correct the errors below and try again.',
+
+  // Server errors
+  serverErrorTitle: 'Server Error',
+  serverErrorDescription: 'Our servers are experiencing issues. Please try again in a few moments.',
+
+  // Not found errors
+  notFoundTitle: 'Not Found',
+  notFoundDescription: 'The page or resource you\'re looking for doesn\'t exist.',
+  notFound: 'not found',
+  pageNotFoundTitle: 'Page Not Found',
+  pageNotFoundDescription: 'The page you\'re looking for doesn\'t exist. It may have been moved, deleted, or you entered the wrong URL.',
+  resourceNotFoundDescription: 'The {type} you\'re looking for could not be found.',
+
+  // Search errors
+  noSearchResults: 'No Results Found',
+  noSearchResultsFor: 'No results found for',
+  searchSuggestions: 'Try these suggestions',
+
+  // Route errors
+  invalidRoute: 'Invalid Route',
+  isNotValid: 'is not a valid route',
+  validOptions: 'Valid options',
+
+  // Unknown errors
+  unknownErrorTitle: 'Unexpected Error',
+  unknownErrorDescription: 'Something unexpected happened. Our team has been notified.',
+
+  // Maximum retries
+  maxRetriesReached: 'Maximum retry attempts reached.',
+
+  // Offline errors
+  offlineTitle: 'You\'re Offline',
+  offlineDescription: 'Please check your internet connection and try again.',
+  offlineMode: 'Offline Mode',
+  offlineModeDescription: 'Some features may be limited.',
+  offlineBanner: 'You\'re currently offline. Some features may not be available.',
+  offlineContent: 'Content Unavailable Offline',
+  offlineContentDescription: 'This content requires an internet connection.',
+  offlineCapabilities: 'While offline, you can:',
+  offlineViewCached: 'View previously loaded content',
+  offlineEditLocal: 'Edit portfolios locally',
+  offlineSyncLater: 'Changes will sync when reconnected',
+
+  // Help and support
+  needHelp: 'Need Help?',
+  contactSupport: 'Contact our support team',
+  checkAccount: 'Check your account settings',
+  reviewPermissions: 'Review your permissions',
+  helpfulLinks: 'Helpful Links',
+
+  // Permission denied specific
+  permissionDeniedTitle: 'Permission Denied',
+  permissionDeniedResource: 'You don\'t have permission to access {resource}.',
 
   // API errors
-  errorApiTimeout: 'Request timed out. Please try again.',
-  errorApiNotFound: 'The requested resource was not found.',
-  errorApiUnauthorized: 'You are not authorized to perform this action.',
-  errorApiForbidden: 'Access to this resource is forbidden.',
-  errorApiServerError: 'Server error. Please try again later.',
-  errorApiValidation: 'Validation error. Please check your input.',
+  apiTimeout: 'Request timed out. Please try again.',
+  apiNotFound: 'The requested resource was not found.',
+  apiUnauthorized: 'You are not authorized to perform this action.',
+  apiForbidden: 'Access to this resource is forbidden.',
+  apiServerError: 'Server error. Please try again later.',
+  apiValidation: 'Validation error. Please check your input.',
 
   // Form errors
-  errorFieldRequired: 'This field is required',
-  errorInvalidEmail: 'Please enter a valid email address',
-  errorPasswordTooShort: 'Password must be at least 12 characters',
-  errorPasswordMismatch: 'Passwords do not match',
-  errorInvalidUrl: 'Please enter a valid URL',
-  errorFileTooLarge: 'File size must be less than 10MB',
-  errorInvalidFileType: 'Invalid file type. Please upload a valid file.',
+  fieldRequired: 'This field is required',
+  invalidEmail: 'Please enter a valid email address',
+  passwordTooShort: 'Password must be at least 12 characters',
+  passwordMismatch: 'Passwords do not match',
+  invalidUrl: 'Please enter a valid URL',
+  fileTooLarge: 'File size must be less than 10MB',
+  invalidFileType: 'Invalid file type. Please upload a valid file.',
 
   // Auth errors
-  errorInvalidCredentials: 'Invalid email or password',
-  errorAccountExists: 'An account with this email already exists',
-  errorAccountNotFound: 'No account found with this email',
-  errorEmailNotVerified: 'Please verify your email before signing in',
-  errorTooManyAttempts: 'Too many attempts. Please try again later.',
+  invalidCredentials: 'Invalid email or password',
+  accountExists: 'An account with this email already exists',
+  accountNotFound: 'No account found with this email',
+  emailNotVerified: 'Please verify your email before signing in',
+  tooManyAttempts: 'Too many attempts. Please try again later.',
 
   // Portfolio errors
-  errorPortfolioNotFound: 'Portfolio not found',
-  errorPortfolioSaveFailed: 'Failed to save portfolio. Please try again.',
-  errorPortfolioDeleteFailed: 'Failed to delete portfolio. Please try again.',
-  errorPortfolioPublishFailed: 'Failed to publish portfolio. Please try again.',
+  portfolioNotFound: 'Portfolio not found',
+  portfolioSaveFailed: 'Failed to save portfolio. Please try again.',
+  portfolioDeleteFailed: 'Failed to delete portfolio. Please try again.',
+  portfolioPublishFailed: 'Failed to publish portfolio. Please try again.',
 
   // Payment errors
-  errorPaymentFailed: 'Payment failed. Please check your payment details.',
-  errorSubscriptionExpired:
-    'Your subscription has expired. Please renew to continue.',
-  errorPlanLimitReached: 'You have reached the limit for your current plan.',
+  paymentFailed: 'Payment failed. Please check your payment details.',
+  subscriptionExpired: 'Your subscription has expired. Please renew to continue.',
+  planLimitReached: 'You have reached the limit for your current plan.',
+
+  // Empty states
+  noTableData: 'No data available',
 } as const;
