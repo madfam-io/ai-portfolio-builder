@@ -11,7 +11,6 @@ import {
   Save,
   X,
   Calendar,
-  MapPin,
   Briefcase,
   GraduationCap,
   Code,
@@ -221,12 +220,6 @@ function ItemCard({
                 <Calendar className="h-3.5 w-3.5" />
                 {expItem.startDate} - {expItem.endDate || t.present}
               </span>
-              {expItem.location && (
-                <span className="flex items-center gap-1">
-                  <MapPin className="h-3.5 w-3.5" />
-                  {expItem.location}
-                </span>
-              )}
             </div>
             {expItem.description && (
               <p className="text-sm text-gray-700 mt-2 line-clamp-2">
