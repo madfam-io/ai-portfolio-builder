@@ -50,7 +50,7 @@ export default function InteractiveDemoPage() {
     testResponsiveBreakpoint,
   } = useRealTimePreview({
     portfolio,
-    onPreviewChange: config => {
+    onPreviewChange: _config => {
       // Preview config change handled by state - no logging needed for development demo
     },
   });
