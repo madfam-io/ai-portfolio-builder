@@ -19,13 +19,15 @@ Complete API documentation for the PRISMA AI Portfolio Builder platform.
 
 ### Base URL
 
-- **Development**: `http://localhost:3000/api`
-- **Production**: `https://prisma.madfam.io/api`
+- **Development**: `http://localhost:3000/api/v1`
+- **Production**: `https://prisma.madfam.io/api/v1`
 
 ### API Versioning
 
-- **Current Version**: v1 (implicit)
-- **Future**: `/api/v2/...` when breaking changes are introduced
+- **Current Version**: v1 (explicit versioning)
+- **Endpoint Structure**: `/api/v1/{resource}`
+- **Deprecation Policy**: 6 months notice before version sunset
+- **Version Headers**: `API-Version: v1` supported for future compatibility
 
 ### Response Format
 
@@ -33,11 +35,26 @@ All API responses follow this structure:
 
 ```typescript
 interface APIResponse<T> {
-  success: boolean;
-  data?: T;
-  error?: string;
-  timestamp: string;
-  requestId: string;
+  data?: T;           // Success response data
+  error?: string;     // Error message if request failed
+  message?: string;   // Success message
+  timestamp?: string; // ISO timestamp
+  version?: string;   // API version used
+}
+
+// Success Response
+{
+  "data": { ... },
+  "message": "Portfolio created successfully",
+  "timestamp": "2025-01-11T10:30:00Z",
+  "version": "v1"
+}
+
+// Error Response
+{
+  "error": "Portfolio not found",
+  "timestamp": "2025-01-11T10:30:00Z",
+  "version": "v1"
 }
 ```
 
@@ -84,7 +101,7 @@ All `/api/*` routes except public endpoints require authentication.
 
 ### Bio Enhancement
 
-#### POST `/api/ai/enhance-bio`
+#### POST `/api/v1/ai/enhance-bio`
 
 Enhance professional bio using AI with customizable models and context.
 
@@ -131,7 +148,7 @@ Enhance professional bio using AI with customizable models and context.
 **Example**:
 
 ```bash
-curl -X POST http://localhost:3000/api/ai/enhance-bio \
+curl -X POST http://localhost:3000/api/v1/ai/enhance-bio \
   -H "Content-Type: application/json" \
   -d '{
     "bio": "I am a software developer with 5 years of experience.",
@@ -295,7 +312,7 @@ Update user's model preferences.
 
 ### Portfolio CRUD Operations
 
-#### GET `/api/portfolios`
+#### GET `/api/v1/portfolios`
 
 Get user's portfolios with pagination and filtering.
 
@@ -334,7 +351,7 @@ Get user's portfolios with pagination and filtering.
 }
 ```
 
-#### POST `/api/portfolios`
+#### POST `/api/v1/portfolios`
 
 Create a new portfolio.
 
@@ -388,21 +405,21 @@ Create a new portfolio.
 }
 ```
 
-#### GET `/api/portfolios/[id]`
+#### GET `/api/v1/portfolios/[id]`
 
 Get specific portfolio by ID.
 
-#### PUT `/api/portfolios/[id]`
+#### PUT `/api/v1/portfolios/[id]`
 
 Update portfolio (partial updates supported).
 
-#### DELETE `/api/portfolios/[id]`
+#### DELETE `/api/v1/portfolios/[id]`
 
 Delete portfolio (soft delete).
 
 ### Portfolio Publishing
 
-#### POST `/api/portfolios/[id]/publish`
+#### POST `/api/v1/portfolios/[id]/publish`
 
 Publish portfolio to subdomain.
 
@@ -415,7 +432,7 @@ Publish portfolio to subdomain.
 }
 ```
 
-#### POST `/api/portfolios/[id]/unpublish`
+#### POST `/api/v1/portfolios/[id]/unpublish`
 
 Unpublish portfolio.
 
