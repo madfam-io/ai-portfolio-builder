@@ -242,11 +242,6 @@ function ItemCard({
                 <Calendar className="h-3.5 w-3.5" />
                 {eduItem.startDate} - {eduItem.endDate || t.present}
               </span>
-              {eduItem.gpa && (
-                <span>
-                  {t.gpaLabel || 'GPA'}: {eduItem.gpa}
-                </span>
-              )}
             </div>
           </>
         );
@@ -289,22 +284,26 @@ function ItemCard({
           <div className="flex items-center justify-between">
             <h4 className="font-medium">{skillItem.name}</h4>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-500 capitalize">
-                {skillItem.level}
-              </span>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map(level => (
-                  <div
-                    key={level}
-                    className={cn(
-                      'h-2 w-2 rounded-full',
-                      level <= getSkillLevel(item.level)
-                        ? 'bg-blue-500'
-                        : 'bg-gray-200'
-                    )}
-                  />
-                ))}
-              </div>
+              {skillItem.level && (
+                <span className="text-sm text-gray-500 capitalize">
+                  {skillItem.level}
+                </span>
+              )}
+              {skillItem.level && (
+                <div className="flex gap-0.5">
+                  {[1, 2, 3, 4, 5].map(level => (
+                    <div
+                      key={level}
+                      className={cn(
+                        'h-2 w-2 rounded-full',
+                        level <= getSkillLevel(skillItem.level)
+                          ? 'bg-blue-500'
+                          : 'bg-gray-200'
+                      )}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         );
@@ -407,7 +406,8 @@ function EditForm({
 }
 
 // Helper functions
-function getSkillLevel(level: string): number {
+function getSkillLevel(level: string | undefined): number {
+  if (!level) return 3; // Default to intermediate
   const levels: Record<string, number> = {
     beginner: 1,
     intermediate: 3,
