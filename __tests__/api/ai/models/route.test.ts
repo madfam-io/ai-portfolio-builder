@@ -8,35 +8,30 @@ import { GET } from '@/app/api/ai/models/route';
 // Mock HuggingFace service
 jest.mock('@/lib/ai/huggingface-service', () => ({
   HuggingFaceService: jest.fn().mockImplementation(() => ({
-    getAvailableModels: jest.fn().mockResolvedValue({
-      bio: [
-        {
-          id: 'meta-llama/Llama-3.1-8B-Instruct',
-          name: 'Llama 3.1 8B Instruct',
-          description: 'High quality text generation',
-          performance: { quality: 90, speed: 85, cost: 7 },
-          status: 'available',
-        },
-      ],
-      project: [
-        {
-          id: 'microsoft/Phi-3.5-mini-instruct',
-          name: 'Phi-3.5 Mini Instruct',
-          description: 'Fast and efficient model',
-          performance: { quality: 80, speed: 95, cost: 3 },
-          status: 'available',
-        },
-      ],
-      template: [
-        {
-          id: 'meta-llama/Llama-3.1-8B-Instruct',
-          name: 'Llama 3.1 8B Instruct',
-          description: 'Best for template recommendations',
-          performance: { quality: 90, speed: 85, cost: 7 },
-          status: 'available',
-        },
-      ],
-    }),
+    getAvailableModels: jest.fn().mockResolvedValue([
+      {
+        id: 'meta-llama/Llama-3.1-8B-Instruct',
+        name: 'Llama 3.1 8B Instruct',
+        provider: 'Meta',
+        capabilities: ['bio', 'project', 'template'],
+        costPerRequest: 0.0003,
+        averageLatency: 2500,
+        qualityRating: 0.92,
+        isRecommended: true,
+        status: 'active',
+      },
+      {
+        id: 'microsoft/Phi-3.5-mini-instruct',
+        name: 'Phi-3.5 Mini Instruct',
+        provider: 'Microsoft',
+        capabilities: ['bio', 'project'],
+        costPerRequest: 0.0001,
+        averageLatency: 1800,
+        qualityRating: 0.85,
+        isRecommended: false,
+        status: 'active',
+      },
+    ]),
   })),
 }));
 
@@ -53,10 +48,11 @@ describe('AI Models API Route', () => {
       expect(response.status).toBe(200);
       const data = await response.json();
 
-      expect(data.models).toBeDefined();
-      expect(data.models.bio).toHaveLength(1);
-      expect(data.models.project).toHaveLength(1);
-      expect(data.models.template).toHaveLength(1);
+      expect(data.success).toBe(true);
+      expect(data.data.models).toBeDefined();
+      expect(Array.isArray(data.data.models)).toBe(true);
+      expect(data.data.models).toHaveLength(2);
+      expect(data.data.totalModels).toBe(2);
     });
 
     test('returns model details with performance metrics', async () => {
@@ -64,18 +60,18 @@ describe('AI Models API Route', () => {
       const response = await GET(request);
 
       const data = await response.json();
-      const bioModel = data.models.bio[0];
+      const firstModel = data.data.models[0];
 
-      expect(bioModel).toMatchObject({
+      expect(firstModel).toMatchObject({
         id: expect.any(String),
         name: expect.any(String),
-        description: expect.any(String),
-        performance: {
-          quality: expect.any(Number),
-          speed: expect.any(Number),
-          cost: expect.any(Number),
-        },
-        status: 'available',
+        provider: expect.any(String),
+        capabilities: expect.any(Array),
+        costPerRequest: expect.any(Number),
+        averageLatency: expect.any(Number),
+        qualityRating: expect.any(Number),
+        isRecommended: expect.any(Boolean),
+        status: 'active',
       });
     });
 
@@ -85,9 +81,8 @@ describe('AI Models API Route', () => {
 
       const data = await response.json();
 
-      expect(data.metadata).toBeDefined();
-      expect(data.metadata.timestamp).toBeDefined();
-      expect(data.metadata.version).toBeDefined();
+      expect(data.data.lastUpdated).toBeDefined();
+      expect(data.data.totalModels).toBeDefined();
     });
 
     test('handles service errors gracefully', async () => {
@@ -103,9 +98,12 @@ describe('AI Models API Route', () => {
       const request = new NextRequest('http://localhost:3000/api/ai/models');
       const response = await GET(request);
 
-      expect(response.status).toBe(500);
+      // The API returns fallback models when there's an error
+      expect(response.status).toBe(200);
       const data = await response.json();
-      expect(data.error).toBeDefined();
+      expect(data.success).toBe(true);
+      expect(data.data.models).toBeDefined();
+      expect(Array.isArray(data.data.models)).toBe(true);
     });
   });
 });

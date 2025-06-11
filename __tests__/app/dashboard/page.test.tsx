@@ -48,9 +48,52 @@ jest.mock('@/components/layouts/BaseLayout', () => ({
   ),
 }));
 
+// Mock AuthContext
+jest.mock('@/lib/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: { id: 'user-1', email: 'test@example.com' },
+    loading: false,
+    error: null,
+  }),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
+
+// Mock portfolio service
+jest.mock('@/lib/services/portfolioService', () => ({
+  portfolioService: {
+    getUserPortfolios: jest.fn().mockResolvedValue([
+      {
+        id: '1',
+        userId: 'user-1',
+        name: 'John Doe',
+        title: 'Software Developer',
+        bio: 'Experienced developer',
+        contact: { email: 'john@example.com' },
+        social: {},
+        experience: [],
+        education: [],
+        projects: [],
+        skills: [],
+        certifications: [],
+        template: 'developer',
+        customization: {},
+        status: 'published',
+        subdomain: 'johndoe',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]),
+    deletePortfolio: jest.fn().mockResolvedValue(true),
+  },
+}));
+
 describe('Dashboard Page', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    // Clear localStorage to ensure consistent test environment
+    localStorage.clear();
 
     // Default to authenticated user
     mockSupabase.auth.getUser.mockResolvedValue({

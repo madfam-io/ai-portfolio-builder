@@ -8,18 +8,27 @@ import HowItWorks from '@/components/landing/HowItWorks';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('HowItWorks Component', () => {
+  beforeEach(() => {
+    // Clear localStorage to ensure consistent test environment
+    localStorage.clear();
+  });
+
   describe('Content Rendering', () => {
     test('renders section title in Spanish by default', async () => {
       renderWithLanguage(<HowItWorks />);
 
-      const title = await screen.findByText(/cómo funciona/i);
+      const title = await screen.findByText(
+        /Del CV al portafolio en 3 simples pasos/i
+      );
       expect(title).toBeInTheDocument();
     });
 
     test('renders section title in English', async () => {
       renderWithLanguage(<HowItWorks />, { initialLanguage: 'en' });
 
-      const title = await screen.findByText(/how it works/i);
+      const title = await screen.findByText(
+        /From CV to portfolio in 3 simple steps/i
+      );
       expect(title).toBeInTheDocument();
     });
 

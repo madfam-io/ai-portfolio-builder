@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { screen } from '@testing-library/react';
-import DesignerTemplate from '@/components/templates/DesignerTemplate';
+import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 import { Portfolio } from '@/types/portfolio';
 

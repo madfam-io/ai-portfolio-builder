@@ -62,8 +62,9 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
 
   return (
     <div
-      className="min-h-screen bg-white dark:bg-gray-900"
+      className="min-h-screen bg-white dark:bg-gray-900 print:text-black"
       style={customStyles}
+      data-testid="portfolio-container"
     >
       {/* Professional Header - Executive presentation with key metrics */}
       <header className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-white">

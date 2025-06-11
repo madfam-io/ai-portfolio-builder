@@ -212,3 +212,75 @@ global.console = {
   warn: jest.fn(),
   log: jest.fn(),
 };
+
+// Mock AppContext before importing any components
+jest.mock('@/lib/contexts/AppContext', () => ({
+  useApp: () => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+    isMobileMenuOpen: false,
+    setMobileMenuOpen: jest.fn(),
+    currency: 'MXN',
+    setCurrency: jest.fn(),
+  }),
+  useAppContext: () => ({
+    isDarkMode: false,
+    toggleDarkMode: jest.fn(),
+    isMobileMenuOpen: false,
+    setMobileMenuOpen: jest.fn(),
+    currency: 'MXN',
+    setCurrency: jest.fn(),
+  }),
+  AppProvider: ({ children }) => children,
+}));
+
+// Mock AuthContext
+jest.mock('@/lib/contexts/AuthContext', () => ({
+  useAuth: () => ({
+    user: null,
+    loading: false,
+    error: null,
+    signIn: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+  }),
+  AuthProvider: ({ children }) => children,
+}));
+
+// Mock language context with comprehensive test setup
+const {
+  useTestLanguage,
+  TestLanguageProvider,
+} = require('./__tests__/utils/comprehensive-test-setup');
+
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: require('./__tests__/utils/comprehensive-test-setup')
+    .useTestLanguage,
+  LanguageProvider: require('./__tests__/utils/comprehensive-test-setup')
+    .TestLanguageProvider,
+}));
+
+jest.mock('@/lib/i18n/minimal-context', () => ({
+  useLanguage: require('./__tests__/utils/comprehensive-test-setup')
+    .useTestLanguage,
+  LanguageProvider: require('./__tests__/utils/comprehensive-test-setup')
+    .TestLanguageProvider,
+}));
+
+// Clear localStorage before each test suite to ensure consistent language detection
+beforeEach(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+
+  // Set navigator.language to Spanish by default for tests
+  Object.defineProperty(navigator, 'language', {
+    value: 'es-ES',
+    writable: true,
+    configurable: true,
+  });
+});
+
+// Reset all mocks after each test
+afterEach(() => {
+  jest.clearAllMocks();
+});

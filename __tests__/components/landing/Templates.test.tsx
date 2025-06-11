@@ -8,18 +8,27 @@ import Templates from '@/components/landing/Templates';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Templates Component', () => {
+  beforeEach(() => {
+    // Clear localStorage to ensure consistent test environment
+    localStorage.clear();
+  });
+
   describe('Content Rendering', () => {
     test('renders section title in Spanish by default', async () => {
       renderWithLanguage(<Templates />);
 
-      const title = await screen.findByText(/plantillas/i);
+      const title = await screen.findByText(
+        /Plantillas para cada profesional/i
+      );
       expect(title).toBeInTheDocument();
     });
 
     test('renders section title in English', async () => {
       renderWithLanguage(<Templates />, { initialLanguage: 'en' });
 
-      const title = await screen.findByText(/templates/i);
+      const title = await screen.findByText(
+        /Templates for every professional/i
+      );
       expect(title).toBeInTheDocument();
     });
 

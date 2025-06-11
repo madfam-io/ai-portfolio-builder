@@ -133,7 +133,7 @@ describe('Sign In Page', () => {
     test('has proper page heading', () => {
       renderWithLanguage(<SignInPage />);
 
-      const heading = screen.getByRole('heading', { level: 1 });
+      const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toBeInTheDocument();
     });
   });

@@ -8,18 +8,23 @@ import Features from '@/components/landing/Features';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Features Component', () => {
+  beforeEach(() => {
+    // Clear localStorage to ensure consistent test environment
+    localStorage.clear();
+  });
+
   describe('Content Rendering', () => {
     test('renders section title in Spanish by default', async () => {
       renderWithLanguage(<Features />);
 
-      const title = await screen.findByText(/qué hace prisma/i);
+      const title = await screen.findByText(/Qué hace PRISMA/i);
       expect(title).toBeInTheDocument();
     });
 
     test('renders section title in English', async () => {
       renderWithLanguage(<Features />, { initialLanguage: 'en' });
 
-      const title = await screen.findByText(/what prisma does/i);
+      const title = await screen.findByText(/What PRISMA does/i);
       expect(title).toBeInTheDocument();
     });
 

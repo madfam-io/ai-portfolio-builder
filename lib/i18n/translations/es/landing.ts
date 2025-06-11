@@ -67,6 +67,11 @@ const landing = {
   step3Desc:
     'Personaliza los detalles y publica tu portafolio con dominio personalizado.',
 
+  step4Number: '04',
+  step4Title: 'Listo para el mundo',
+  step4Desc:
+    'Tu portafolio profesional está en línea y optimizado para destacar.',
+
   // Templates Section
   templatesTitle2: 'Plantillas para cada profesional',
   templatesSubtitle:

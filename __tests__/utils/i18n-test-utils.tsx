@@ -18,10 +18,14 @@ const mockAppContextValue = {
   toggleDarkMode: jest.fn(),
   isMobileMenuOpen: false,
   setIsMobileMenuOpen: jest.fn(),
+  currency: 'MXN' as const,
+  setCurrency: jest.fn(),
 };
 
+// Mock AppContext
 jest.mock('@/lib/contexts/AppContext', () => ({
   useApp: () => mockAppContextValue,
+  useAppContext: () => mockAppContextValue,
   AppProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 

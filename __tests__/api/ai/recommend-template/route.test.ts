@@ -27,23 +27,24 @@ jest.mock('@/lib/supabase/server', () => ({
 jest.mock('@/lib/ai/huggingface-service', () => ({
   HuggingFaceService: jest.fn().mockImplementation(() => ({
     recommendTemplate: jest.fn().mockResolvedValue({
-      recommendation: 'developer',
+      recommendedTemplate: 'developer',
       confidence: 0.92,
       reasoning:
         'Based on your technical background and project focus, the developer template best showcases your skills.',
       alternatives: [
         {
           template: 'creative',
-          confidence: 0.75,
-          reason: 'Good for highlighting visual projects',
+          score: 0.75,
+          reasons: ['Good for highlighting visual projects'],
         },
         {
           template: 'business',
-          confidence: 0.6,
-          reason: 'Professional layout for consulting work',
+          score: 0.6,
+          reasons: ['Professional layout for consulting work'],
         },
       ],
     }),
+    healthCheck: jest.fn().mockResolvedValue(true),
   })),
 }));
 
@@ -75,15 +76,19 @@ describe('Recommend Template API Route', () => {
       );
 
       request.json = jest.fn().mockResolvedValue({
-        bio: 'Full-stack developer with 5 years experience',
-        industry: 'Technology',
-        experience: 'senior',
-        projectTypes: ['web apps', 'mobile apps'],
-        preferences: {
-          visual: false,
-          minimal: true,
+        profile: {
+          title: 'Full Stack Developer',
+          skills: ['JavaScript', 'React', 'Node.js'],
+          projectCount: 5,
+          hasDesignWork: false,
+          industry: 'Technology',
+          experienceLevel: 'senior',
         },
-        modelId: 'meta-llama/Llama-3.1-8B-Instruct',
+        preferences: {
+          style: 'minimal',
+          targetAudience: 'employers',
+          priority: 'simplicity',
+        },
       });
 
       const response = await POST(request);
@@ -91,10 +96,12 @@ describe('Recommend Template API Route', () => {
       expect(response.status).toBe(200);
       const data = await response.json();
 
-      expect(data.recommendation).toBe('developer');
-      expect(data.confidence).toBe(0.92);
-      expect(data.reasoning).toContain('technical background');
-      expect(data.alternatives).toHaveLength(2);
+      expect(data.success).toBe(true);
+      expect(data.data.recommendedTemplate).toBe('developer');
+      expect(data.data.confidence).toBeGreaterThan(0.9);
+      expect(data.data.reasoning).toBeDefined();
+      expect(data.data.alternatives).toHaveLength(2);
+      expect(data.data.features).toBeDefined();
     });
 
     test('includes alternative recommendations', async () => {
@@ -106,20 +113,26 @@ describe('Recommend Template API Route', () => {
       );
 
       request.json = jest.fn().mockResolvedValue({
-        bio: 'Designer and developer',
-        industry: 'Creative',
-        experience: 'mid',
-        projectTypes: ['design', 'development'],
+        profile: {
+          title: 'Designer & Developer',
+          skills: ['UI/UX', 'JavaScript', 'Figma'],
+          projectCount: 8,
+          hasDesignWork: true,
+          industry: 'Creative',
+          experienceLevel: 'mid',
+        },
       });
 
       const response = await POST(request);
       const data = await response.json();
 
-      expect(data.alternatives).toBeDefined();
-      expect(data.alternatives[0]).toMatchObject({
+      expect(data.data.alternatives).toBeDefined();
+      expect(data.data.alternatives[0]).toMatchObject({
         template: expect.any(String),
-        confidence: expect.any(Number),
-        reason: expect.any(String),
+        score: expect.any(Number),
+        reasons: expect.any(Array),
+        reasoning: expect.any(String),
+        features: expect.any(Array),
       });
     });
 
@@ -132,14 +145,19 @@ describe('Recommend Template API Route', () => {
       );
 
       request.json = jest.fn().mockResolvedValue({
-        bio: 'Professional',
-        industry: 'Business',
-        modelId: 'meta-llama/Llama-3.1-8B-Instruct',
+        profile: {
+          title: 'Business Professional',
+          skills: ['Management', 'Strategy'],
+          projectCount: 3,
+          hasDesignWork: false,
+          industry: 'Business',
+          experienceLevel: 'senior',
+        },
       });
 
       await POST(request);
 
-      expect(mockSupabase.from).toHaveBeenCalledWith('ai_usage');
+      expect(mockSupabase.from).toHaveBeenCalledWith('ai_usage_logs');
       expect(mockSupabase.from().insert).toHaveBeenCalled();
     });
 

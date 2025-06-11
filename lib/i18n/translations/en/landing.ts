@@ -61,6 +61,11 @@ const landing = {
   step3Desc:
     'Customize the details and publish your portfolio with custom domain.',
 
+  step4Number: '04',
+  step4Title: 'Ready for the world',
+  step4Desc:
+    'Your professional portfolio is online and optimized to stand out.',
+
   // Templates Section
   templatesTitle2: 'Templates for every professional',
   templatesSubtitle:

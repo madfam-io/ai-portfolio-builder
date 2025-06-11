@@ -5,6 +5,9 @@
 import { portfolioService } from '@/lib/services/portfolioService';
 import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
 
+// Note: portfolioService is a mock implementation that doesn't use Supabase
+// No mocking needed
+
 describe('Portfolio Service', () => {
   describe('Portfolio CRUD Operations', () => {
     test('creates a new portfolio', async () => {
