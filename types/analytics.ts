@@ -166,7 +166,7 @@ export interface CommitAnalytics {
 export interface GitHubActivity {
   id: string;
   type: 'commit' | 'pull_request' | 'issue' | 'release' | 'push';
-  actor: GitHubUserObject;
+  actor: ActivityActor;
   repository: {
     name: string;
     full_name: string;
@@ -176,7 +176,7 @@ export interface GitHubActivity {
 }
 
 // Missing type definitions
-export interface GitHubUserObject {
+export interface ActivityActor {
   id: number;
   login: string;
   avatar_url?: string;
