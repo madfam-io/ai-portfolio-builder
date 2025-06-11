@@ -1,353 +1,336 @@
-# MADFAM AI Portfolio Builder - Deployment Guide
+# 🚀 PRISMA Deployment Guide
 
-> **Current Status**: Foundation Development Phase - Landing page with multilanguage support complete, Docker environment configured, ready for production deployment.
+Complete guide for deploying the PRISMA AI Portfolio Builder to production environments.
 
 ## 📋 Table of Contents
 
-- [Production Deployment](#production-deployment)
-  - [Vercel (Recommended)](#-vercel-deployment-recommended)
-  - [Alternative Platforms](#-alternative-deployment-platforms)
-- [Docker Deployment](#-docker-deployment)
-- [Environment Configuration](#-environment-variable-configuration)
-- [Custom Domain Setup](#-custom-domain-setup)
-- [Production Checklist](#-production-checklist)
-- [Troubleshooting](#-troubleshooting)
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Vercel Deployment (Recommended)](#vercel-deployment-recommended)
+4. [Docker Deployment](#docker-deployment)
+5. [Alternative Platforms](#alternative-platforms)
+6. [Environment Configuration](#environment-configuration)
+7. [Database Setup](#database-setup)
+8. [Security Checklist](#security-checklist)
+9. [Monitoring & Maintenance](#monitoring--maintenance)
+10. [Troubleshooting](#troubleshooting)
 
-## ⚠️ Why GitHub Pages Won't Work
+## 🎯 Overview
 
-GitHub Pages is a static site hosting service that **cannot** run Next.js applications with server-side features. Here's why this application is incompatible:
+PRISMA is built with Next.js 15 and requires a Node.js runtime environment. The application uses server-side rendering and API routes, making it incompatible with static hosting solutions like GitHub Pages.
 
-### 1. **Server-Side Rendering (SSR) & API Routes**
+### Why Static Hosting Won't Work
 
-- Next.js App Router uses React Server Components that require a Node.js runtime
-- Future `/app/api/*` routes will need server execution for:
-  - Database queries to Supabase
-  - AI API calls (HuggingFace, open-source models)
-  - Authentication flows
-  - Payment processing (Stripe)
+- **Server-Side Rendering**: React Server Components require Node.js runtime
+- **API Routes**: Backend functionality in `/app/api/*` needs server execution
+- **Database Operations**: Real-time PostgreSQL queries via Supabase
+- **AI Integration**: Server-side API calls to HuggingFace and other services
+- **Authentication**: OAuth flows and session management
+- **Security**: API keys and secrets must remain server-side
 
-### 2. **Dynamic Features Requiring Runtime**
+### Supported Deployment Options
 
-- **Authentication**: Supabase Auth requires server-side session management
-- **Database Operations**: Real-time PostgreSQL queries can't run on static hosting
-- **File Uploads**: Processing CV/resume uploads needs server-side parsing
-- **AI Integration**: API calls to OpenAI/Claude require secure server-side execution
-- **OAuth Flows**: LinkedIn/GitHub authentication needs server callbacks
+✅ **Vercel** (Recommended) - Optimized for Next.js
+✅ **Docker** - Full control with containerization
+✅ **Railway** - Simple deployment with databases
+✅ **Render** - Docker-based with auto-scaling
+✅ **DigitalOcean App Platform** - Managed container service
+❌ **GitHub Pages** - Static hosting only
+❌ **Netlify** - Limited Next.js 15 support
 
-### 3. **Security Requirements**
+## 📋 Prerequisites
 
-- API keys and secrets must be kept server-side
-- Row Level Security (RLS) requires server-side database connections
-- Rate limiting and request validation need runtime execution
+### Required Services
 
-### 4. **Next.js Features We Use**
+1. **Supabase Project** (Database & Auth)
 
-```javascript
-// These features require a server:
-- App Router with Server Components
-- Multilanguage support with React Context
-- Dynamic routes with data fetching
-- API Routes (/app/api/* - planned)
-- Middleware for auth protection (planned)
-- Server Actions (planned)
-- Streaming SSR
-```
+   - PostgreSQL database
+   - Authentication service
+   - Row Level Security (RLS)
 
-## 🐳 Docker Deployment
+2. **HuggingFace Account** (AI Features)
 
-For production environments that require containerization, our Docker setup provides a complete isolated environment.
+   - API token for model access
+   - Inference API access
 
-### Production Docker Setup
+3. **GitHub OAuth App** (Analytics Feature)
 
-```bash
-# Clone and setup
-git clone https://github.com/madfam/ai-portfolio-builder.git
-cd ai-portfolio-builder
+   - OAuth application
+   - Client ID and secret
 
-# Build and run production containers
-./scripts/docker-prod.sh
+4. **Domain Name** (Production)
+   - Custom domain or subdomain
+   - SSL certificate (automated)
 
-# Or manually:
-docker-compose up -d --build
+### Development Requirements
 
-# Services will be available at:
-# 🌐 App: http://localhost:3000
-# 🗄️ Database: localhost:5432
-# 🔴 Redis: localhost:6379
-```
+- Node.js 18.17.0+
+- Docker Desktop (for local development)
+- Git with conventional commits
 
-### Docker Compose Configuration
+## 🌐 Vercel Deployment (Recommended)
 
-```yaml
-# docker-compose.yml (Production)
-version: '3.8'
+Vercel provides the best Next.js 15 support with zero-config deployment and automatic optimizations.
 
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - '3000:3000'
-    environment:
-      - NODE_ENV=production
-      - NEXT_PUBLIC_APP_URL=https://app.madfam.io
-    depends_on:
-      - postgres
-      - redis
-
-  postgres:
-    image: postgres:15-alpine
-    environment:
-      POSTGRES_DB: portfolio_builder
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-  redis:
-    image: redis:7-alpine
-    volumes:
-      - redis_data:/data
-
-volumes:
-  postgres_data:
-  redis_data:
-```
-
-### Docker Environment Variables
+### Step 1: Prepare Repository
 
 ```bash
-# .env.production
-NODE_ENV=production
-POSTGRES_PASSWORD=secure_password_here
-NEXT_PUBLIC_APP_URL=https://your-domain.com
-```
-
-## 🚀 Vercel Deployment (Recommended)
-
-Vercel is the recommended platform as it's built by the Next.js team and provides optimal performance and developer experience.
-
-### Prerequisites
-
-1. GitHub account with repository access
-2. Vercel account (free tier available)
-3. Environment variables ready (for future features)
-4. Supabase project configured (for future features)
-
-### Step-by-Step Deployment
-
-#### 1. **Prepare Your Repository**
-
-```bash
-# Ensure your code is committed
+# Ensure clean repository state
 git add .
-git commit -m "Prepare for deployment"
+git commit -m "feat: prepare for production deployment"
 git push origin main
 ```
 
-#### 2. **Connect to Vercel**
+### Step 2: Vercel Setup
 
-1. Go to [vercel.com](https://vercel.com)
-2. Click "Add New Project"
-3. Import your GitHub repository
-4. Select the `ai-portfolio-builder` repository
+1. **Create Vercel Account**
 
-#### 3. **Configure Build Settings**
+   - Go to [vercel.com](https://vercel.com)
+   - Sign up with GitHub account
 
-```yaml
-Framework Preset: Next.js
-Root Directory: ./
-Build Command: pnpm build
-Output Directory: .next
-Install Command: pnpm install
-```
+2. **Import Project**
 
-#### 4. **Set Environment Variables**
+   - Click "Add New Project"
+   - Import from GitHub
+   - Select `ai-portfolio-builder` repository
 
-**Current Status (v0.1.0-beta)**: Environment variables are required for GitHub Analytics and AI features. Configure these for full functionality:
+3. **Configure Build Settings**
+   ```
+   Framework Preset: Next.js
+   Root Directory: ./
+   Build Command: pnpm build
+   Output Directory: .next
+   Install Command: pnpm install
+   Node.js Version: 18.x
+   ```
+
+### Step 3: Environment Variables
+
+Add these environment variables in Vercel Dashboard → Settings → Environment Variables:
+
+#### Core Application
 
 ```bash
-# Basic Application Settings
 NODE_ENV=production
 NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
+```
 
-# ✅ IMPLEMENTED: AI Services (HuggingFace Integration)
-HUGGINGFACE_API_KEY=your-huggingface-token  # Required for AI content enhancement
+#### Database (Supabase)
 
-# ✅ IMPLEMENTED: GitHub Analytics (OAuth Integration)
-GITHUB_CLIENT_ID=your-github-oauth-app-client-id        # Required for GitHub Analytics
-GITHUB_CLIENT_SECRET=your-github-oauth-app-client-secret # Required for GitHub Analytics
-NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-oauth-app-client-id # Public client ID
-
-# Future: Supabase Configuration (when implementing auth/database)
-NEXT_PUBLIC_SUPABASE_URL=https://[PROJECT_ID].supabase.co
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://[project-id].supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
 
-# Future: OAuth Providers (additional social login)
-LINKEDIN_CLIENT_ID=your-client-id
-LINKEDIN_CLIENT_SECRET=your-client-secret
+#### AI Services
 
-# Future: Stripe Payment Processing (when implementing payments)
-STRIPE_SECRET_KEY=sk_live_...
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
+```bash
+HUGGINGFACE_API_KEY=your-huggingface-token
+```
 
-# Future: Redis Cache (when implementing caching)
-REDIS_URL=redis://default:password@host:port
-REDIS_TOKEN=your-token
+#### GitHub Analytics
 
-# Future: Monitoring (when implementing analytics)
+```bash
+GITHUB_CLIENT_ID=your-github-oauth-client-id
+GITHUB_CLIENT_SECRET=your-github-oauth-client-secret
+NEXT_PUBLIC_GITHUB_CLIENT_ID=your-github-oauth-client-id
+```
+
+#### Optional: Monitoring
+
+```bash
 SENTRY_DSN=https://...@sentry.io/...
 NEXT_PUBLIC_POSTHOG_KEY=phc_...
 ```
 
-#### GitHub OAuth App Setup
-
-For GitHub Analytics to work, you need to create a GitHub OAuth App:
-
-1. **Go to GitHub Developer Settings**:
-   - Visit: https://github.com/settings/developers
-   - Click "New OAuth App"
-
-2. **Configure OAuth App**:
-   ```
-   Application name: PRISMA by MADFAM
-   Homepage URL: https://your-domain.vercel.app
-   Authorization callback URL: https://your-domain.vercel.app/api/auth/github/callback
-   ```
-
-3. **Copy Credentials**:
-   - Client ID → `GITHUB_CLIENT_ID` & `NEXT_PUBLIC_GITHUB_CLIENT_ID`
-   - Client Secret → `GITHUB_CLIENT_SECRET`
-
-#### HuggingFace API Token Setup
-
-For AI content enhancement:
-
-1. **Go to HuggingFace Settings**:
-   - Visit: https://huggingface.co/settings/tokens
-   - Click "New token"
-
-2. **Create Token**:
-   ```
-   Name: PRISMA AI Enhancement
-   Type: Read
-   ```
-
-3. **Copy Token**:
-   - Token → `HUGGINGFACE_API_KEY`
-
-#### 5. **Deploy**
-
-1. Click "Deploy"
-2. Wait for build to complete (typically 2-5 minutes)
-3. Visit your deployment URL
-
-#### 6. **Configure Domain (Optional)**
+### Step 4: Deploy
 
 ```bash
-# In Vercel Dashboard > Settings > Domains
-1. Add your custom domain
-2. Update DNS records:
-   - A Record: 76.76.21.21
-   - CNAME: cname.vercel-dns.com
-3. Enable HTTPS (automatic)
+# Deploy automatically triggers on push to main
+git push origin main
+
+# Or deploy manually from Vercel dashboard
 ```
 
-### Vercel-Specific Features
+### Step 5: Custom Domain (Optional)
 
-#### Edge Functions Configuration
+1. **Add Domain in Vercel**
 
-```javascript
-// middleware.ts for auth protection
-export const config = {
-  matcher: ['/dashboard/:path*', '/api/:path*'],
-};
-```
+   - Go to Settings → Domains
+   - Add your custom domain
 
-#### Caching Headers
+2. **Configure DNS**
 
-```javascript
-// app/api/portfolios/[slug]/route.ts
-export async function GET(request: Request) {
-  // Enable edge caching
-  return new Response(data, {
-    headers: {
-      'Cache-Control': 's-maxage=60, stale-while-revalidate'
-    }
-  })
-}
-```
+   ```
+   # A Record
+   Type: A
+   Name: @
+   Value: 76.76.21.21
 
-## 🔄 Alternative Deployment Platforms
+   # CNAME Record
+   Type: CNAME
+   Name: www
+   Value: cname.vercel-dns.com
+   ```
 
-### Netlify (With Limitations)
+3. **SSL Certificate**
+   - Automatically provisioned by Vercel
+   - Let's Encrypt certificates
+   - Auto-renewal
 
-Netlify can host Next.js but with reduced functionality compared to Vercel.
+## 🐳 Docker Deployment
 
-#### Limitations on Netlify:
+For full control and custom hosting environments.
 
-- No support for Next.js 14 App Router streaming
-- Limited middleware support
-- Larger cold start times
-- No built-in image optimization
-
-#### Deployment Steps:
+### Docker Production Setup
 
 ```bash
-# Install Netlify CLI
-npm install -g netlify-cli
+# Build production image
+docker build -t prisma-portfolio-builder .
 
-# Build configuration (netlify.toml)
-[build]
-  command = "pnpm build"
-  publish = ".next"
-
-[functions]
-  directory = "netlify/functions"
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs"
-
-# Deploy
-netlify deploy --prod
+# Run with environment variables
+docker run -p 3000:3000 \
+  -e NODE_ENV=production \
+  -e NEXT_PUBLIC_SUPABASE_URL=your-url \
+  -e HUGGINGFACE_API_KEY=your-key \
+  prisma-portfolio-builder
 ```
+
+### Docker Compose Production
+
+```yaml
+# docker-compose.prod.yml
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000'
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_APP_URL: https://your-domain.com
+      NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_URL}
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPABASE_ANON_KEY}
+      SUPABASE_SERVICE_ROLE_KEY: ${SUPABASE_SERVICE_ROLE_KEY}
+      HUGGINGFACE_API_KEY: ${HUGGINGFACE_API_KEY}
+      GITHUB_CLIENT_ID: ${GITHUB_CLIENT_ID}
+      GITHUB_CLIENT_SECRET: ${GITHUB_CLIENT_SECRET}
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/health']
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+    restart: unless-stopped
+```
+
+### Production Dockerfile
+
+```dockerfile
+# Dockerfile.prod
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
+
+COPY package.json pnpm-lock.yaml* ./
+RUN corepack enable pnpm && pnpm i --frozen-lockfile
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build application
+RUN corepack enable pnpm && pnpm build
+
+# Production image
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 3000
+
+ENV PORT 3000
+ENV HOSTNAME "0.0.0.0"
+
+CMD ["node", "server.js"]
+```
+
+## 🏗️ Alternative Platforms
 
 ### Railway
 
-Railway provides full Node.js runtime support with integrated PostgreSQL.
+Simple deployment with managed databases:
 
 ```bash
 # Install Railway CLI
 npm install -g @railway/cli
 
-# Login and initialize
+# Login and deploy
 railway login
 railway init
-
-# Add environment variables
-railway variables set NEXT_PUBLIC_SUPABASE_URL=...
-
-# Deploy
 railway up
+```
+
+**Railway Configuration**:
+
+```json
+{
+  "build": {
+    "builder": "NIXPACKS",
+    "buildCommand": "pnpm install && pnpm build"
+  },
+  "deploy": {
+    "startCommand": "pnpm start",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
 ```
 
 ### Render
 
-Render offers Docker-based deployments with automatic SSL.
+Docker-based deployment:
 
 ```yaml
 # render.yaml
 services:
   - type: web
-    name: ai-portfolio-builder
+    name: prisma-app
     env: node
     plan: starter
     buildCommand: pnpm install && pnpm build
     startCommand: pnpm start
+    healthCheckPath: /api/health
     envVars:
+      - key: NODE_ENV
+        value: production
       - key: NODE_VERSION
         value: 18.17.0
 ```
@@ -355,254 +338,411 @@ services:
 ### DigitalOcean App Platform
 
 ```yaml
-# app.yaml
-name: ai-portfolio-builder
+# .do/app.yaml
+name: prisma-portfolio-builder
 region: nyc
+
 services:
   - name: web
+    source_dir: /
     github:
       repo: your-username/ai-portfolio-builder
       branch: main
     build_command: pnpm install && pnpm build
     run_command: pnpm start
-    http_port: 3000
+    environment_slug: node-js
     instance_count: 1
     instance_size_slug: basic-xxs
+    http_port: 3000
+    health_check:
+      http_path: /api/health
     envs:
       - key: NODE_ENV
         value: production
+        type: GENERAL
 ```
 
-## 🔧 Environment Variable Configuration
+## 🔧 Environment Configuration
 
-### Development vs Production
+### Environment Variables Reference
+
+#### Required Variables
 
 ```bash
-# .env.local (Development)
-NEXT_PUBLIC_APP_URL=http://localhost:3000
-SUPABASE_SERVICE_ROLE_KEY=your-dev-key
+# Application
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.com
 
-# Production (Set in platform dashboard)
-NEXT_PUBLIC_APP_URL=https://app.madfam.io
-SUPABASE_SERVICE_ROLE_KEY=your-prod-key
+# Database
+NEXT_PUBLIC_SUPABASE_URL=https://[project].supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...
+SUPABASE_SERVICE_ROLE_KEY=eyJ...
+
+# AI Services
+HUGGINGFACE_API_KEY=hf_...
+
+# GitHub Integration
+GITHUB_CLIENT_ID=your_github_oauth_client_id
+GITHUB_CLIENT_SECRET=your_github_oauth_client_secret
 ```
 
-### Security Best Practices
+#### Optional Variables
 
-1. **Never commit `.env` files**
+```bash
+# Monitoring & Analytics
+SENTRY_DSN=https://...@sentry.io/...
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+
+# Email (future)
+SMTP_HOST=smtp.resend.com
+SMTP_USER=resend
+SMTP_PASS=re_...
+
+# Payment (future)
+STRIPE_SECRET_KEY=sk_live_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Redis (if using external)
+REDIS_URL=redis://default:password@host:port
+```
+
+### Environment Security
+
+```bash
+# Development (.env.local)
+NODE_ENV=development
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+
+# Production (Platform Dashboard)
+NODE_ENV=production
+NEXT_PUBLIC_APP_URL=https://your-domain.com
+
+# Never commit these files
+.env
+.env.local
+.env.production
+```
+
+## 🗄️ Database Setup
+
+### Supabase Configuration
+
+1. **Create Supabase Project**
 
    ```bash
-   # .gitignore
-   .env
-   .env.local
-   .env.production
+   # Go to https://supabase.com
+   # Create new project
+   # Copy connection details
    ```
 
-2. **Use different keys for environments**
+2. **Run Migrations**
 
-   - Separate Stripe keys for test/production
-   - Different Supabase projects
-   - Isolated OAuth applications
+   ```sql
+   -- Apply database schema
+   -- Located in /supabase/migrations/
+   -- Automatically applied via Supabase Dashboard
+   ```
 
-3. **Rotate keys regularly**
-   - Set up key rotation reminders
-   - Use secret management tools
-   - Monitor for exposed credentials
+3. **Configure Row Level Security**
 
-## 🌐 Custom Domain Setup
+   ```sql
+   -- Enable RLS on all tables
+   ALTER TABLE portfolios ENABLE ROW LEVEL SECURITY;
+   ALTER TABLE github_integrations ENABLE ROW LEVEL SECURITY;
 
-### DNS Configuration
+   -- Create policies
+   CREATE POLICY "Users can view own portfolios"
+   ON portfolios FOR SELECT
+   USING (auth.uid() = user_id);
+   ```
 
-#### For apex domain (madfam.io):
+4. **Set Up Authentication**
+   ```bash
+   # In Supabase Dashboard → Authentication → Settings
+   - Enable email confirmations
+   - Configure OAuth providers (GitHub)
+   - Set redirect URLs
+   ```
 
-```
-A     @     76.76.21.21     (Vercel IP)
-AAAA  @     2606:4700::6810:84e5  (Vercel IPv6)
-```
+### Database Performance
 
-#### For subdomain (app.madfam.io):
-
-```
-CNAME app   cname.vercel-dns.com
-```
-
-### SSL Certificate
-
-- Vercel: Automatic Let's Encrypt
-- Other platforms: May require manual setup
-
-### Email Configuration (for custom domains)
-
-```
-MX    @     10 mx1.emailservice.com
-MX    @     20 mx2.emailservice.com
-TXT   @     "v=spf1 include:emailservice.com ~all"
+```sql
+-- Add indexes for better performance
+CREATE INDEX idx_portfolios_user_id ON portfolios(user_id);
+CREATE INDEX idx_portfolios_status ON portfolios(status);
+CREATE INDEX idx_github_repos_user_id ON repositories(user_id);
 ```
 
-## ✅ Production Checklist
+## 🔒 Security Checklist
 
-### Pre-Deployment
-
-- [ ] **Code Quality**
-
-  ```bash
-  pnpm test          # All tests passing
-  pnpm type-check    # No TypeScript errors
-  pnpm lint          # No linting issues
-  pnpm build         # Build succeeds locally
-  ```
+### Pre-Deployment Security
 
 - [ ] **Environment Variables**
 
-  - [ ] All required variables set
-  - [ ] Production API keys configured
-  - [ ] OAuth redirect URLs updated
-  - [ ] Webhook endpoints configured
+  - [ ] All secrets in environment variables, not code
+  - [ ] Different keys for development/production
+  - [ ] No hardcoded credentials
 
-- [ ] **Database**
+- [ ] **API Security**
 
-  ```bash
-  # Run production migrations
-  pnpm supabase migration run --db-url $PRODUCTION_DB_URL
+  - [ ] Authentication required on protected routes
+  - [ ] Input validation with Zod schemas
+  - [ ] Rate limiting on sensitive endpoints
+  - [ ] CORS properly configured
 
-  # Verify RLS policies
-  pnpm supabase test db
-  ```
+- [ ] **Database Security**
 
-- [ ] **Security**
-  - [ ] API rate limiting configured
-  - [ ] CORS settings reviewed
-  - [ ] CSP headers implemented
-  - [ ] Secrets rotated from development
+  - [ ] Row Level Security enabled
+  - [ ] Proper access policies
+  - [ ] No direct database access from client
+  - [ ] SQL injection protection (via Supabase)
 
-### Post-Deployment
+- [ ] **Headers & CSP**
+  - [ ] Security headers configured
+  - [ ] Content Security Policy active
+  - [ ] HTTPS enforcement
+  - [ ] XSS protection enabled
 
-- [ ] **Functional Testing**
+### Production Security Headers
 
-  - [ ] User registration/login works
-  - [ ] OAuth flows complete successfully
-  - [ ] Portfolio generation functions
-  - [ ] Payment processing active
-  - [ ] File uploads working
-
-- [ ] **Performance Verification**
-
-  ```bash
-  # Run Lighthouse audit
-  lighthouse https://your-app.vercel.app --view
-
-  # Target scores:
-  # Performance: > 90
-  # Accessibility: > 95
-  # Best Practices: > 95
-  # SEO: > 90
-  ```
-
-- [ ] **Monitoring Setup**
-
-  - [ ] Error tracking (Sentry) receiving events
-  - [ ] Analytics (PostHog) tracking users
-  - [ ] Uptime monitoring configured
-  - [ ] Log aggregation working
-
-- [ ] **Backup Verification**
-  - [ ] Database backups scheduled
-  - [ ] Backup restoration tested
-  - [ ] Disaster recovery plan documented
-
-### Production Configuration
-
-```javascript
-// next.config.js - Production optimizations
-module.exports = {
-  reactStrictMode: true,
-  poweredByHeader: false,
-  compress: true,
-  generateEtags: true,
-
-  // Security headers
-  async headers() {
-    return [
-      {
-        source: '/:path*',
-        headers: [
-          {
-            key: 'X-Frame-Options',
-            value: 'DENY',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
-        ],
-      },
-    ];
+```typescript
+// next.config.js
+const securityHeaders = [
+  {
+    key: 'X-Frame-Options',
+    value: 'DENY',
   },
-};
+  {
+    key: 'X-Content-Type-Options',
+    value: 'nosniff',
+  },
+  {
+    key: 'Referrer-Policy',
+    value: 'strict-origin-when-cross-origin',
+  },
+  {
+    key: 'X-XSS-Protection',
+    value: '1; mode=block',
+  },
+  {
+    key: 'Content-Security-Policy',
+    value: [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-eval' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https: blob:",
+      "font-src 'self' data:",
+      "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.huggingface.co",
+      "frame-src 'none'",
+      "object-src 'none'",
+    ].join('; '),
+  },
+];
 ```
 
-## 🆘 Troubleshooting
+## 📊 Monitoring & Maintenance
+
+### Health Checks
+
+```typescript
+// app/api/health/route.ts
+export async function GET() {
+  try {
+    // Check database connection
+    const { data, error } = await supabase
+      .from('portfolios')
+      .select('count')
+      .limit(1);
+
+    if (error) throw error;
+
+    return Response.json({
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      version: process.env.npm_package_version,
+      database: 'connected',
+      uptime: process.uptime(),
+    });
+  } catch (error) {
+    return Response.json(
+      {
+        status: 'unhealthy',
+        error: error.message,
+      },
+      { status: 500 }
+    );
+  }
+}
+```
+
+### Logging Setup
+
+```typescript
+// lib/logger.ts
+import winston from 'winston';
+
+export const logger = winston.createLogger({
+  level: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json()
+  ),
+  transports: [
+    new winston.transports.Console(),
+    ...(process.env.NODE_ENV === 'production'
+      ? [
+          new winston.transports.File({
+            filename: 'error.log',
+            level: 'error',
+          }),
+          new winston.transports.File({ filename: 'combined.log' }),
+        ]
+      : []),
+  ],
+});
+```
+
+### Performance Monitoring
+
+```typescript
+// lib/monitoring.ts
+import * as Sentry from '@sentry/nextjs';
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  environment: process.env.NODE_ENV,
+  tracesSampleRate: 0.1,
+  beforeSend(event) {
+    // Filter out sensitive data
+    return event;
+  },
+});
+
+// Performance tracking
+export function trackPerformance(name: string, fn: Function) {
+  const start = Date.now();
+  const result = fn();
+  const duration = Date.now() - start;
+
+  logger.info('Performance metric', {
+    operation: name,
+    duration,
+    timestamp: new Date().toISOString(),
+  });
+
+  return result;
+}
+```
+
+### Backup Strategy
+
+```bash
+# Database backups (Supabase automatically handles this)
+# Point-in-time recovery available
+
+# Application backups
+# Source code in Git
+# Environment variables documented
+# Infrastructure as code
+```
+
+## 🔧 Troubleshooting
 
 ### Common Deployment Issues
 
 #### Build Failures
 
-```bash
-# Error: Cannot find module
-Solution: Clear cache and rebuild
-- Vercel: Redeploy with "Use existing Build Cache" unchecked
-- Check package.json for missing dependencies
+**Problem**: `pnpm build` fails
 
-# Error: Environment variable not found
-Solution: Verify all variables are set in platform dashboard
+```bash
+# Solution 1: Clear cache
+rm -rf .next node_modules
+pnpm install
+pnpm build
+
+# Solution 2: Check TypeScript errors
+pnpm type-check
+```
+
+**Problem**: Environment variable not found
+
+```bash
+# Solution: Verify all required variables are set
+# Check platform-specific environment variable syntax
 ```
 
 #### Runtime Errors
 
-```bash
-# 500 Internal Server Error
-1. Check function logs in platform dashboard
-2. Verify database connection
-3. Ensure API keys are valid
-4. Check for missing await statements
+**Problem**: 500 Internal Server Error
 
-# CORS errors
-1. Update CORS configuration in next.config.js
-2. Verify API routes include proper headers
-3. Check OAuth redirect URLs match production domain
+```bash
+# Check application logs
+# Verify database connection
+# Confirm API keys are valid
+# Check external service availability
+```
+
+**Problem**: Database connection issues
+
+```bash
+# Verify Supabase URL and keys
+# Check network connectivity
+# Confirm database is running
+# Review connection pool settings
 ```
 
 #### Performance Issues
 
-```bash
-# Slow initial load
-1. Enable Vercel Edge Functions
-2. Implement proper caching strategies
-3. Optimize images with next/image
-4. Use dynamic imports for large components
+**Problem**: Slow page loads
 
-# Database timeouts
-1. Add connection pooling
-2. Optimize queries with indexes
-3. Implement caching layer
-4. Consider database scaling options
+```bash
+# Check bundle size
+pnpm analyze
+
+# Optimize images
+# Implement proper caching
+# Use CDN for static assets
 ```
 
-## 📚 Additional Resources
+**Problem**: High memory usage
 
-- [Next.js Deployment Documentation](https://nextjs.org/docs/deployment)
-- [Vercel Documentation](https://vercel.com/docs)
-- [Supabase Production Checklist](https://supabase.com/docs/guides/platform/production-checklist)
-- [Web.dev Performance Guide](https://web.dev/performance)
+```bash
+# Monitor memory consumption
+# Check for memory leaks
+# Optimize database queries
+# Implement proper cleanup
+```
+
+### Debugging Tools
+
+```bash
+# Check deployment logs
+vercel logs your-deployment-url
+
+# Monitor performance
+lighthouse https://your-domain.com
+
+# Test API endpoints
+curl -I https://your-domain.com/api/health
+
+# Database performance
+# Use Supabase Dashboard → Performance
+```
+
+### Rollback Strategy
+
+```bash
+# Vercel: Previous deployment rollback
+vercel rollback your-deployment-url
+
+# Docker: Revert to previous image
+docker pull prisma-portfolio-builder:previous-tag
+docker-compose up -d
+
+# Database: Use Supabase point-in-time recovery if needed
+```
 
 ---
 
-For deployment support, contact the development team or refer to our internal documentation.
+This deployment guide covers all aspects of getting PRISMA into production. For development setup, see our [Development Guide](./DEVELOPMENT.md), and for security details, check the [Security Guide](./SECURITY.md).

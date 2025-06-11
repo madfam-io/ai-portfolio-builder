@@ -196,7 +196,7 @@ export default function CareersPage() {
           {/* No Perfect Match */}
           <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-              {t.careersNoMatchTitle || "Don't see a perfect match?"}
+              {t.careersNoMatch || "Don't see a perfect match?"}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
               {t.careersNoMatchDesc ||

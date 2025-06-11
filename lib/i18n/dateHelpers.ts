@@ -2,12 +2,11 @@
  * Helper functions for dynamic date generation in translations
  */
 
-import { 
-  getCurrentYear, 
+import {
+  getCurrentYear,
   getPromotionalDeadline,
   getLastUpdatedDate,
   getLastUpdatedDateSpanish,
-  getCopyrightText 
 } from '@/lib/utils/date';
 
 /**
@@ -16,7 +15,7 @@ import {
 export function getDynamicTranslations() {
   const currentYear = getCurrentYear();
   const promoDeadline = getPromotionalDeadline(6); // 6 months from now
-  
+
   return {
     es: {
       footerCopyright: `© ${currentYear} PRISMA by MADFAM. Todos los derechos reservados.`,
@@ -27,6 +26,6 @@ export function getDynamicTranslations() {
       footerCopyright: `© ${currentYear} PRISMA by MADFAM. All rights reserved.`,
       pricingOfferExpires: `Offer expires ${promoDeadline.en}`,
       termsLastUpdated: `Last updated: ${getLastUpdatedDate()}`,
-    }
+    },
   };
 }

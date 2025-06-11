@@ -4,6 +4,7 @@ import { FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
 import { useLanguage } from '@/lib/i18n/minimal-context';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getCurrentYear } from '@/lib/utils/date';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -149,7 +150,7 @@ export default function Footer() {
 
         <div className="border-t border-gray-300 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm mb-4 md:mb-0 text-gray-600 dark:text-gray-300">
-            {t.footerCopyright}
+            © {getCurrentYear()} PRISMA by MADFAM. {t.footerAllRightsReserved}
           </p>
           <div className="flex justify-center md:justify-end space-x-6">
             <a
