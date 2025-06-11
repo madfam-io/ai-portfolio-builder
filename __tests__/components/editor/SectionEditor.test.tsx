@@ -4,8 +4,8 @@
 
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { SectionEditor } from '@/components/editor/SectionEditor';
-import { DragDropProvider } from '@/components/editor/DragDropContext';
+import SectionEditor from '@/components/editor/SectionEditor';
+import DragDropProvider from '@/components/editor/DragDropContext';
 import type { Portfolio } from '@/types/portfolio';
 
 // Mock the language context

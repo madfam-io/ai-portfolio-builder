@@ -24,12 +24,6 @@ interface RepositoriesApiResponse {
   error?: string;
   requiresAuth?: boolean;
 }
-
-interface RepoMetricsApiResponse {
-  metrics?: any;
-  error?: string;
-  requiresAuth?: boolean;
-}
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';

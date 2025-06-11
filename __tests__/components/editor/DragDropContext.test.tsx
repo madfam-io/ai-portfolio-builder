@@ -5,7 +5,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DragDropProvider } from '@/components/editor/DragDropContext';
+import DragDropProvider from '@/components/editor/DragDropContext';
 import { DraggableItem } from '@/components/editor/DraggableItem';
 
 // Mock react-beautiful-dnd
