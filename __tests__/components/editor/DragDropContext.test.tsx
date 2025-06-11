@@ -1,16 +1,16 @@
 /**
- * Tests for DragDropContext component
+ * Tests for DragDropProvider component
  */
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { DragDropContext } from '@/components/editor/DragDropContext';
+import { DragDropProvider } from '@/components/editor/DragDropContext';
 import { DraggableItem } from '@/components/editor/DraggableItem';
 
 // Mock react-beautiful-dnd
 jest.mock('react-beautiful-dnd', () => ({
-  DragDropContext: ({ children, onDragEnd }: any) => (
+  DragDropProvider: ({ children, onDragEnd }: any) => (
     <div
       data-testid="drag-drop-context"
       onClick={() =>
@@ -34,7 +34,7 @@ jest.mock('react-beautiful-dnd', () => ({
       })}
     </div>
   ),
-  Draggable: ({ children, draggableId, index }: any) => (
+  Draggable: ({ children, draggableId }: any) => (
     <div data-testid={`draggable-${draggableId}`}>
       {children(
         {
@@ -48,7 +48,7 @@ jest.mock('react-beautiful-dnd', () => ({
   ),
 }));
 
-describe('DragDropContext', () => {
+describe('DragDropProvider', () => {
   const mockItems = [
     { id: '1', content: 'Item 1', order: 0 },
     { id: '2', content: 'Item 2', order: 1 },
@@ -64,9 +64,9 @@ describe('DragDropContext', () => {
   describe('Basic Rendering', () => {
     it('should render drag drop context', () => {
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
-          {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        <DragDropProvider>
+          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+        </DragDropProvider>
       );
 
       expect(screen.getByTestId('drag-drop-context')).toBeInTheDocument();
@@ -74,9 +74,9 @@ describe('DragDropContext', () => {
 
     it('should render all items', () => {
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
-          {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        <DragDropProvider>
+          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+        </DragDropProvider>
       );
 
       expect(screen.getByText('Item 1')).toBeInTheDocument();
@@ -86,13 +86,9 @@ describe('DragDropContext', () => {
 
     it('should render with custom droppable ID', () => {
       render(
-        <DragDropContext
-          items={mockItems}
-          onReorder={mockOnReorder}
-          droppableId="custom-list"
-        >
-          {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        <DragDropProvider>
+          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+        </DragDropProvider>
       );
 
       expect(screen.getByTestId('droppable-custom-list')).toBeInTheDocument();
@@ -104,9 +100,9 @@ describe('DragDropContext', () => {
       const user = userEvent.setup();
 
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
-          {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        <DragDropProvider>
+          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+        </DragDropProvider>
       );
 
       // Simulate drag by clicking (mocked behavior)
@@ -123,21 +119,21 @@ describe('DragDropContext', () => {
       const onDragEnd = jest.fn();
 
       render(
-        <DragDropContext items={mockItems} onReorder={onDragEnd}>
+        <DragDropProvider items={mockItems} onReorder={onDragEnd}>
           {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       // Mock same position drop
-      const mockDragDropContext = screen.getByTestId('drag-drop-context');
-      mockDragDropContext.onclick = () =>
+      const mockDragDropProvider = screen.getByTestId('drag-drop-context');
+      mockDragDropProvider.onclick = () =>
         onDragEnd({
           destination: { index: 0 },
           source: { index: 0 },
           draggableId: 'item-1',
         });
 
-      mockDragDropContext.click();
+      mockDragDropProvider.click();
 
       // Should not call onReorder if position hasn't changed
       expect(onDragEnd).not.toHaveBeenCalled();
@@ -147,14 +143,14 @@ describe('DragDropContext', () => {
   describe('Custom Rendering', () => {
     it('should render custom item components', () => {
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
+        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
           {item => (
             <div key={item.id} className="custom-item">
               <span>{item.content}</span>
               <button>Edit</button>
             </div>
           )}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       const customItems = screen.getAllByRole('button', { name: 'Edit' });
@@ -167,9 +163,9 @@ describe('DragDropContext', () => {
       ));
 
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
+        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
           {renderItem}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       expect(renderItem).toHaveBeenCalledTimes(3);
@@ -182,13 +178,13 @@ describe('DragDropContext', () => {
   describe('Empty State', () => {
     it('should render empty state when no items', () => {
       render(
-        <DragDropContext
+        <DragDropProvider
           items={[]}
           onReorder={mockOnReorder}
           emptyState={<div>No items to display</div>}
         >
           {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       expect(screen.getByText('No items to display')).toBeInTheDocument();
@@ -196,9 +192,9 @@ describe('DragDropContext', () => {
 
     it('should render default empty state', () => {
       render(
-        <DragDropContext items={[]} onReorder={mockOnReorder}>
+        <DragDropProvider items={[]} onReorder={mockOnReorder}>
           {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       expect(screen.getByText(/no items/i)).toBeInTheDocument();
@@ -208,13 +204,13 @@ describe('DragDropContext', () => {
   describe('Disabled State', () => {
     it('should disable drag and drop when disabled prop is true', () => {
       render(
-        <DragDropContext
+        <DragDropProvider
           items={mockItems}
           onReorder={mockOnReorder}
           disabled={true}
         >
           {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       const context = screen.getByTestId('drag-drop-context');
@@ -225,9 +221,9 @@ describe('DragDropContext', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA attributes', () => {
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
-          {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        <DragDropProvider>
+          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+        </DragDropProvider>
       );
 
       const droppable = screen.getByTestId('droppable-items');
@@ -236,13 +232,13 @@ describe('DragDropContext', () => {
 
     it('should announce drag operations to screen readers', () => {
       render(
-        <DragDropContext
+        <DragDropProvider
           items={mockItems}
           onReorder={mockOnReorder}
           announceItem={item => `${item.content} grabbed`}
         >
           {item => <div key={item.id}>{item.content}</div>}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       // Check for screen reader announcements
@@ -258,18 +254,18 @@ describe('DragDropContext', () => {
       ));
 
       const { rerender } = render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
+        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
           {renderItem}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       const initialCallCount = renderItem.mock.calls.length;
 
       // Re-render with same props
       rerender(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
+        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
           {renderItem}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       // Should not call render function again with same items
@@ -280,13 +276,13 @@ describe('DragDropContext', () => {
   describe('Integration with DraggableItem', () => {
     it('should work with DraggableItem component', () => {
       render(
-        <DragDropContext items={mockItems} onReorder={mockOnReorder}>
+        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
           {(item, index) => (
             <DraggableItem key={item.id} id={item.id} index={index}>
               <div>{item.content}</div>
             </DraggableItem>
           )}
-        </DragDropContext>
+        </DragDropProvider>
       );
 
       // Check that draggable items are rendered

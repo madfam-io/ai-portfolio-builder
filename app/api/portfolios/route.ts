@@ -96,7 +96,7 @@ export async function GET(request: NextRequest) {
     const { data: portfolios, error: fetchError } = await query;
 
     if (fetchError) {
-      console.error('Database error fetching portfolios:', fetchError);
+      logger.error('Database error fetching portfolios', fetchError instanceof Error ? fetchError : { error: fetchError });
       return NextResponse.json(
         { error: 'Failed to fetch portfolios' },
         { status: 500 }
@@ -119,7 +119,7 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Unexpected error in GET /api/portfolios:', error);
+    logger.error('Unexpected error in GET /api/portfolios', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error('Database error creating portfolio:', insertError);
+      logger.error('Database error creating portfolio', insertError instanceof Error ? insertError : { error: insertError });
 
       // Handle specific errors
       if (insertError.code === '23505') {

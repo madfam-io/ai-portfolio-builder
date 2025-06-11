@@ -11,6 +11,25 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
+
+// API Response Interfaces
+interface DashboardApiResponse {
+  data?: any;
+  error?: string;
+  requiresAuth?: boolean;
+}
+
+interface RepositoriesApiResponse {
+  repositories?: any[];
+  error?: string;
+  requiresAuth?: boolean;
+}
+
+interface RepoMetricsApiResponse {
+  metrics?: any;
+  error?: string;
+  requiresAuth?: boolean;
+}
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
@@ -107,7 +126,7 @@ function AnalyticsDashboard() {
       setDashboard(prev => ({ ...prev, loading: true, error: null }));
 
       const response = await fetch('/api/analytics/dashboard');
-      const result = await response.json();
+      const result: DashboardApiResponse = await response.json();
 
       if (!response.ok) {
         if (result.requiresAuth) {
@@ -144,7 +163,7 @@ function AnalyticsDashboard() {
   const connectGitHub = async () => {
     try {
       const response = await fetch('/api/integrations/github/auth');
-      const result = await response.json();
+      const result: { error?: string; url?: string } = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to initiate GitHub OAuth');
@@ -175,7 +194,7 @@ function AnalyticsDashboard() {
         body: JSON.stringify({ force }),
       });
 
-      const result = await response.json();
+      const result: RepositoriesApiResponse = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error || 'Failed to sync repositories');

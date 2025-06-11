@@ -154,7 +154,7 @@ export class HuggingFaceService implements AIService {
 
       return result;
     } catch (error) {
-      console.error('Bio enhancement failed:', error);
+      logger.error('Bio enhancement failed', error as Error);
       throw this.handleError(error, 'bio enhancement');
     }
   }
@@ -189,7 +189,7 @@ export class HuggingFaceService implements AIService {
         },
       };
     } catch (error) {
-      console.error('Project optimization failed:', error);
+      logger.error('Project optimization failed', error as Error);
       throw this.handleError(error, 'project optimization');
     }
   }
@@ -224,7 +224,7 @@ export class HuggingFaceService implements AIService {
           })),
       };
     } catch (error) {
-      console.error('Template recommendation failed:', error);
+      logger.error('Template recommendation failed', error as Error);
       throw this.handleError(error, 'template recommendation');
     }
   }
@@ -258,7 +258,7 @@ export class HuggingFaceService implements AIService {
         }),
       };
     } catch (error) {
-      console.error('Content scoring failed:', error);
+      logger.error('Content scoring failed', error as Error);
       return {
         overall: 50,
         readability: 50,
@@ -316,7 +316,7 @@ export class HuggingFaceService implements AIService {
       const updatedModels = await this.fetchLatestModels();
       this.availableModels = updatedModels;
     } catch (error) {
-      console.warn('Failed to refresh available models, using cached data');
+      logger.warn('Failed to refresh available models, using cached data');
     }
   }
 

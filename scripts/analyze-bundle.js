@@ -11,6 +11,21 @@ const path = require('path');
 
 console.log('🔍 Analyzing bundle sizes...\n');
 
+// Check if bundle analyzer is installed
+const bundleAnalyzerPath = path.join(process.cwd(), 'node_modules', '@next', 'bundle-analyzer');
+if (!fs.existsSync(bundleAnalyzerPath)) {
+  console.log('📦 Installing @next/bundle-analyzer...');
+  try {
+    execSync('pnpm add -D @next/bundle-analyzer', { stdio: 'inherit' });
+    console.log('✅ Bundle analyzer installed successfully!\n');
+  } catch (error) {
+    console.error('❌ Failed to install bundle analyzer:', error.message);
+    console.log('\n🔧 Manual installation required:');
+    console.log('   pnpm add -D @next/bundle-analyzer');
+    process.exit(1);
+  }
+}
+
 // Build with bundle analyzer
 try {
   console.log('Building production bundle with analysis...');

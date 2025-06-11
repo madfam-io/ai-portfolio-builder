@@ -8,6 +8,7 @@ import { Portfolio } from '@/types/portfolio';
 // Removed portfolioService import - will use API calls instead
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { logger } from '@/lib/utils/logger';
 import {
   FaPlus,
   FaEdit,
@@ -52,7 +53,7 @@ export default function Dashboard() {
       const { data: userPortfolios } = await response.json();
       setPortfolios(userPortfolios);
     } catch (err) {
-      console.error('Failed to load portfolios:', err);
+      logger.error('Failed to load portfolios', err instanceof Error ? err : { error: err });
       setError('Failed to load portfolios');
     } finally {
       setLoading(false);
@@ -75,7 +76,7 @@ export default function Dashboard() {
         throw new Error('Failed to delete portfolio');
       }
     } catch (err) {
-      console.error('Failed to delete portfolio:', err);
+      logger.error('Failed to delete portfolio', err instanceof Error ? err : { error: err });
       alert('Failed to delete portfolio');
     }
   };

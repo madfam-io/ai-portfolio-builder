@@ -64,7 +64,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         );
       }
 
-      console.error('Database error fetching portfolio:', fetchError);
+      logger.error('Database error fetching portfolio', fetchError instanceof Error ? fetchError : { error: fetchError });
       return NextResponse.json(
         { error: 'Failed to fetch portfolio' },
         { status: 500 }
@@ -86,7 +86,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       portfolio: responsePortfolio,
     });
   } catch (error) {
-    console.error('Unexpected error in GET /api/portfolios/[id]:', error);
+    logger.error('Unexpected error in GET /api/portfolios/[id]', error instanceof Error ? error : { error });
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -209,7 +209,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError) {
-      console.error('Database error updating portfolio:', updateError);
+      logger.error('Database error updating portfolio', updateError instanceof Error ? updateError : { error: updateError });
 
       // Handle specific errors
       if (updateError.code === '23505') {

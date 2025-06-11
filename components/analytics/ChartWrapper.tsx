@@ -20,10 +20,10 @@ const ChartLoader = ({ height = 300 }: { height?: number }) => (
   </div>
 );
 
-export function ChartWrapper({ children, height }: ChartWrapperProps) {
+export const ChartWrapper = React.memo(function ChartWrapper({ children, height }: ChartWrapperProps) {
   return (
     <Suspense fallback={<ChartLoader height={height} />}>
       {children}
     </Suspense>
   );
-}
+});

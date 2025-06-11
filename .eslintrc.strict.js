@@ -1,6 +1,12 @@
 module.exports = {
   extends: ['next/core-web-vitals', 'prettier'],
   parser: '@typescript-eslint/parser',
+  parserOptions: {
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
+    ecmaVersion: 2021,
+    sourceType: 'module',
+  },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
     // Error Prevention

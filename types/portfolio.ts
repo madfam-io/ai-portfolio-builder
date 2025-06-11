@@ -204,6 +204,70 @@ export interface Portfolio {
   publishedAt?: Date;
 }
 
+// Import data interfaces
+export interface LinkedInImportData {
+  profile?: {
+    firstName?: string;
+    lastName?: string;
+    headline?: string;
+    summary?: string;
+    profilePicture?: string;
+    location?: string;
+  };
+  positions?: Array<{
+    title: string;
+    companyName: string;
+    location?: string;
+    startDate?: string;
+    endDate?: string;
+    description?: string;
+  }>;
+  educations?: Array<{
+    schoolName: string;
+    degreeName?: string;
+    fieldOfStudy?: string;
+    startDate?: string;
+    endDate?: string;
+  }>;
+  skills?: Array<{
+    name: string;
+  }>;
+}
+
+export interface GitHubImportData {
+  user?: {
+    login: string;
+    name?: string;
+    bio?: string;
+    avatar_url?: string;
+    location?: string;
+    blog?: string;
+    company?: string;
+  };
+  repositories?: Array<{
+    name: string;
+    description?: string;
+    html_url: string;
+    language?: string;
+    topics?: string[];
+    stargazers_count: number;
+    updated_at: string;
+  }>;
+}
+
+export interface CVImportData {
+  text?: string;
+  sections?: {
+    contact?: Record<string, string>;
+    experience?: Array<Record<string, string>>;
+    education?: Array<Record<string, string>>;
+    skills?: string[];
+    projects?: Array<Record<string, string>>;
+  };
+}
+
+export type ImportData = LinkedInImportData | GitHubImportData | CVImportData | Record<string, unknown>;
+
 // Portfolio creation DTO
 export interface CreatePortfolioDTO {
   name: string;
@@ -211,7 +275,7 @@ export interface CreatePortfolioDTO {
   bio?: string;
   template: TemplateType;
   importSource?: 'linkedin' | 'github' | 'manual' | 'cv';
-  importData?: any; // Raw import data to be processed
+  importData?: ImportData; // Properly typed import data
 }
 
 // Portfolio update DTO

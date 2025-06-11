@@ -16,6 +16,7 @@ import {
 import { cn } from '@/components/ui/utils';
 import { Portfolio } from '@/types/portfolio';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 
 interface RealTimePreviewProps {
   portfolio: Portfolio;
@@ -24,7 +25,7 @@ interface RealTimePreviewProps {
   onDeviceChange?: (device: 'desktop' | 'tablet' | 'mobile') => void;
 }
 
-export function RealTimePreview({
+export const RealTimePreview = React.memo(function RealTimePreview({
   portfolio,
   template,
   className,
@@ -79,8 +80,13 @@ export function RealTimePreview({
   };
 
   return (
-    <div className={cn('flex flex-col h-full bg-gray-50', className)}>
-      {/* Preview Toolbar */}
+    <WidgetErrorBoundary 
+      widgetName="RealTimePreview"
+      compact={false}
+      isolate={true}
+    >
+      <div className={cn('flex flex-col h-full bg-gray-50', className)}>
+        {/* Preview Toolbar */}
       <div className="bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -257,6 +263,7 @@ export function RealTimePreview({
           background-size: 50px 50px;
         }
       `}</style>
-    </div>
+      </div>
+    </WidgetErrorBoundary>
   );
-}
+});

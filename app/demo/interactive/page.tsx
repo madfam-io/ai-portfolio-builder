@@ -51,7 +51,7 @@ export default function InteractiveDemoPage() {
   } = useRealTimePreview({
     portfolio,
     onPreviewChange: config => {
-      console.log('Preview config changed:', config);
+      // Preview config change handled by state - no logging needed for development demo
     },
   });
 

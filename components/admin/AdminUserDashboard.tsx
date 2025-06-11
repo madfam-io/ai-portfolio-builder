@@ -9,6 +9,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
 import {
   FiUsers,
   FiSettings,
@@ -64,7 +65,7 @@ export default function AdminUserDashboard() {
         await switchToAdminMode();
       }
     } catch (error) {
-      console.error('Failed to switch mode:', error);
+      logger.error('Failed to switch admin mode', error as Error);
     }
   };
 
@@ -78,7 +79,7 @@ export default function AdminUserDashboard() {
         setSelectedUser(userId);
       }
     } catch (error) {
-      console.error('Failed to impersonate user:', error);
+      logger.error('Failed to impersonate user', error as Error);
     }
   };
 

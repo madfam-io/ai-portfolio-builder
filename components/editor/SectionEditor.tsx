@@ -20,7 +20,11 @@ import {
 import { DraggableItem } from './DraggableItem';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/components/ui/utils';
-import type { Portfolio } from '@/types/portfolio';
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import type { Portfolio, Experience, Education, Project, Skill, Certification } from '@/types/portfolio';
+
+// Union type for portfolio section items
+type PortfolioSectionItem = Experience | Education | Project | Skill | Certification;
 
 interface SectionEditorProps {
   portfolio: Portfolio;
@@ -33,7 +37,7 @@ interface SectionEditorProps {
   onChange: (updates: Partial<Portfolio>) => void;
 }
 
-export function SectionEditor({
+export const SectionEditor = React.memo(function SectionEditor({
   portfolio,
   section,
   onChange,
@@ -91,7 +95,7 @@ export function SectionEditor({
     setIsAdding(false);
   };
 
-  const handleSave = (item: any, index?: number) => {
+  const handleSave = (item: PortfolioSectionItem, index?: number) => {
     const items = [...(portfolio[section] || [])];
 
     if (index !== undefined) {
@@ -117,8 +121,13 @@ export function SectionEditor({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Section Header */}
+    <WidgetErrorBoundary 
+      widgetName={`SectionEditor-${section}`}
+      compact={false}
+      isolate={true}
+    >
+      <div className="space-y-4">
+        {/* Section Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           {getSectionIcon()}
@@ -143,9 +152,9 @@ export function SectionEditor({
             key={`${section}-${index}`}
             item={{
               id: `${section}-${index}`,
-              type: section.slice(0, -1) as any,
+              type: section.slice(0, -1) as 'section' | 'project' | 'experience' | 'education' | 'skill',
               index,
-              data: item,
+              data: item as any, // TODO: Define proper types for portfolio items
             }}
             onReorder={handleReorder}
             disabled={editingIndex === index}
@@ -177,11 +186,13 @@ export function SectionEditor({
           />
         )}
       </div>
-    </div>
+      </div>
+    </WidgetErrorBoundary>
   );
-}
+});
 
 // Item Card Component
+
 function ItemCard({
   section,
   item,
@@ -189,7 +200,7 @@ function ItemCard({
   onDelete,
 }: {
   section: string;
-  item: any;
+  item: PortfolioSectionItem;
   onEdit: () => void;
   onDelete: () => void;
 }) {
@@ -305,15 +316,15 @@ function ItemCard({
         return (
           <>
             <div>
-              <h4 className="font-semibold">{item.name}</h4>
-              <p className="text-sm text-gray-600">{item.issuer}</p>
+              <h4 className="font-semibold">{'name' in item ? item.name : ''}</h4>
+              <p className="text-sm text-gray-600">{'issuer' in item ? item.issuer : ''}</p>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {item.date}
+                {'issueDate' in item ? item.issueDate : ''}
               </span>
-              {item.expiryDate && (
+              {'expiryDate' in item && item.expiryDate && (
                 <span>
                   {t.expires || 'Expires'}: {item.expiryDate}
                 </span>
@@ -358,12 +369,12 @@ function EditForm({
   onCancel,
 }: {
   section: string;
-  item?: any;
-  onSave: (item: any) => void;
+  item?: PortfolioSectionItem;
+  onSave: (item: PortfolioSectionItem) => void;
   onCancel: () => void;
 }) {
   const { t } = useLanguage();
-  const [formData, _setFormData] = useState(item || getEmptyItem(section));
+  const [formData, _setFormData] = useState<PortfolioSectionItem>(item || getEmptyItem(section));
 
   // Form implementation would go here...
   // This is a simplified version
@@ -408,38 +419,55 @@ function getSkillLevel(level: string): number {
   return levels[level] || 3;
 }
 
-function getEmptyItem(section: string) {
+function getEmptyItem(section: string): PortfolioSectionItem {
+  const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  
   switch (section) {
     case 'experience':
       return {
+        id: generateId(),
         position: '',
         company: '',
         startDate: '',
         endDate: '',
+        current: false,
         description: '',
-        location: '',
-      };
+      } as Experience;
     case 'education':
       return {
+        id: generateId(),
         degree: '',
+        field: '',
         institution: '',
         startDate: '',
         endDate: '',
-        gpa: '',
-      };
+        current: false,
+        description: '',
+      } as Education;
     case 'projects':
       return {
+        id: generateId(),
         title: '',
         description: '',
         technologies: [],
-        url: '',
-        github: '',
-      };
+      } as Project;
     case 'skills':
-      return { name: '', level: 'intermediate', category: '' };
+      return { 
+        name: '', 
+        level: 'intermediate' as const, 
+        category: '' 
+      } as Skill;
     case 'certifications':
-      return { name: '', issuer: '', date: '', url: '', expiryDate: '' };
+      return { 
+        id: generateId(),
+        name: '', 
+        issuer: '', 
+        issueDate: '' 
+      } as Certification;
     default:
-      return {};
+      return {} as PortfolioSectionItem;
   }
 }
+
+// Default export for Next.js compatibility
+export default SectionEditor;

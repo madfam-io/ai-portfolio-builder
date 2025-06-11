@@ -58,7 +58,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -74,7 +74,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -93,7 +93,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -110,7 +110,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -127,7 +127,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -142,7 +142,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -160,7 +160,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -187,7 +187,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -216,7 +216,7 @@ describe('RealTimePreview', () => {
       const { rerender } = render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -256,7 +256,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -279,7 +279,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -300,7 +300,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -327,7 +327,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -353,7 +353,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -368,7 +368,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -390,7 +390,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -411,7 +411,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -434,7 +434,7 @@ describe('RealTimePreview', () => {
       render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -457,7 +457,7 @@ describe('RealTimePreview', () => {
       const { rerender } = render(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -466,7 +466,7 @@ describe('RealTimePreview', () => {
       rerender(
         <RealTimePreview
           portfolio={mockPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 

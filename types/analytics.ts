@@ -162,6 +162,42 @@ export interface CommitAnalytics {
   createdAt: Date;
 }
 
+// GitHub Activity types
+export interface GitHubActivity {
+  id: string;
+  type: 'commit' | 'pull_request' | 'issue' | 'release' | 'push';
+  actor: GitHubUserObject;
+  repository: {
+    name: string;
+    full_name: string;
+  };
+  payload: Record<string, unknown>;
+  created_at: string;
+}
+
+// Cache data types
+export type DashboardCacheData = {
+  metrics: AnalyticsMetrics;
+  repositories: Repository[];
+  recentActivity: GitHubActivity[];
+};
+
+export type RepositoryCacheData = {
+  repository: Repository;
+  commits: Commit[];
+  pullRequests: PullRequest[];
+  contributors: RepositoryContributor[];
+  metrics: RepositoryMetrics;
+};
+
+export type ContributorCacheData = {
+  contributor: Contributor;
+  repositories: Repository[];
+  metrics: ContributorMetrics;
+};
+
+export type AnalyticsCacheData = DashboardCacheData | RepositoryCacheData | ContributorCacheData;
+
 /**
  * Analytics cache entry
  */
@@ -170,7 +206,7 @@ export interface AnalyticsCache {
   cacheKey: string;
   cacheType: 'dashboard' | 'repository' | 'contributor';
   repositoryId?: string;
-  data: any;
+  data: AnalyticsCacheData;
   expiresAt: Date;
   createdAt: Date;
 }
@@ -335,15 +371,84 @@ export interface AnalyticsExportRequest {
   includeCharts?: boolean; // For PDF
 }
 
+// GitHub API object interfaces
+export interface GitHubRepositoryObject {
+  id: number;
+  name: string;
+  full_name: string;
+  owner: {
+    login: string;
+    id: number;
+    avatar_url: string;
+  };
+  description?: string;
+  private: boolean;
+  html_url: string;
+  clone_url: string;
+  default_branch: string;
+  language?: string;
+  topics?: string[];
+  stargazers_count: number;
+  watchers_count: number;
+  forks_count: number;
+  open_issues_count: number;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+}
+
+export interface GitHubPullRequestObject {
+  id: number;
+  number: number;
+  title: string;
+  body?: string;
+  state: 'open' | 'closed';
+  merged: boolean;
+  user: {
+    login: string;
+    id: number;
+    avatar_url: string;
+  };
+  head: {
+    ref: string;
+    sha: string;
+  };
+  base: {
+    ref: string;
+    sha: string;
+  };
+  created_at: string;
+  updated_at: string;
+  closed_at?: string;
+  merged_at?: string;
+  html_url: string;
+}
+
+export interface GitHubUserObject {
+  login: string;
+  id: number;
+  avatar_url: string;
+  html_url: string;
+  type: 'User' | 'Bot';
+}
+
+export interface GitHubInstallationObject {
+  id: number;
+  account: GitHubUserObject;
+  app_id: number;
+  target_type: string;
+  permissions: Record<string, string>;
+}
+
 /**
  * Analytics webhook payload
  */
 export interface GitHubWebhookPayload {
   action: string;
-  repository?: any; // GitHub repository object
-  pull_request?: any; // GitHub PR object
-  sender?: any; // GitHub user object
-  installation?: any; // GitHub App installation
+  repository?: GitHubRepositoryObject;
+  pull_request?: GitHubPullRequestObject;
+  sender?: GitHubUserObject;
+  installation?: GitHubInstallationObject;
 }
 
 /**
@@ -362,6 +467,6 @@ export interface RateLimitInfo {
 export interface AnalyticsError {
   code: string;
   message: string;
-  details?: any;
+  details?: Record<string, unknown>;
   timestamp: Date;
 }

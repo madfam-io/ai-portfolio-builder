@@ -6,6 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { logger } from '@/lib/utils/logger';
 import { z } from 'zod';
 
 // Request validation schema
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Bio enhancement failed:', error);
+    logger.error('Bio enhancement failed', error instanceof Error ? error : { error });
 
     // Handle specific AI service errors
     if (error.name === 'AIServiceError') {
@@ -183,7 +184,7 @@ export async function GET() {
       },
     });
   } catch (error) {
-    console.error('Failed to fetch enhancement history:', error);
+    logger.error('Failed to fetch enhancement history', error instanceof Error ? error : { error });
     return NextResponse.json(
       { error: 'Failed to fetch history' },
       { status: 500 }
@@ -202,7 +203,7 @@ async function logAIUsage(
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      logger.error('Failed to create Supabase client for logging');
       return;
     }
 
@@ -213,7 +214,7 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log AI usage:', error);
+    logger.error('Failed to log AI usage', error instanceof Error ? error : { error });
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

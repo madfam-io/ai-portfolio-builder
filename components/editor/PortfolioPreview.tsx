@@ -21,7 +21,7 @@ interface PortfolioPreviewProps {
   isInteractive?: boolean;
 }
 
-export function PortfolioPreview({
+export const PortfolioPreview = React.memo(function PortfolioPreview({
   portfolio,
   mode = 'desktop',
   activeSection,
@@ -601,4 +601,4 @@ export function PortfolioPreview({
       </main>
     </div>
   );
-}
+});

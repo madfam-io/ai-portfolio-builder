@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { cn } from '@/components/ui/utils';
 import { GripVertical } from 'lucide-react';
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import {
   DragItem,
   handleDragStart,
@@ -22,7 +23,7 @@ interface DraggableItemProps {
   disabled?: boolean;
 }
 
-export function DraggableItem({
+export const DraggableItem = React.memo(function DraggableItem({
   item,
   onReorder,
   children,
@@ -68,35 +69,41 @@ export function DraggableItem({
   };
 
   return (
-    <div
-      draggable={!disabled}
-      onDragStart={handleDragStartWrapper}
-      onDragEnd={handleDragEnd}
-      onDragOver={handleDragOver}
-      onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDropWrapper}
-      className={cn(
-        'group relative transition-all duration-200',
-        isDragging && 'opacity-50',
-        isDragOver && 'ring-2 ring-blue-500 ring-offset-2',
-        disabled && 'cursor-default',
-        !disabled && 'cursor-move',
-        className
-      )}
+    <WidgetErrorBoundary 
+      widgetName="DraggableItem"
+      compact={true}
+      isolate={true}
     >
-      {showHandle && !disabled && (
-        <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity p-1">
-          <GripVertical className="h-5 w-5 text-gray-400" />
-        </div>
-      )}
+      <div
+        draggable={!disabled}
+        onDragStart={handleDragStartWrapper}
+        onDragEnd={handleDragEnd}
+        onDragOver={handleDragOver}
+        onDragEnter={handleDragEnter}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDropWrapper}
+        className={cn(
+          'group relative transition-all duration-200',
+          isDragging && 'opacity-50',
+          isDragOver && 'ring-2 ring-blue-500 ring-offset-2',
+          disabled && 'cursor-default',
+          !disabled && 'cursor-move',
+          className
+        )}
+      >
+        {showHandle && !disabled && (
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full opacity-0 group-hover:opacity-100 transition-opacity p-1">
+            <GripVertical className="h-5 w-5 text-gray-400" />
+          </div>
+        )}
 
-      {/* Drop indicator */}
-      {isDragOver && (
-        <div className="absolute inset-x-0 -top-1 h-0.5 bg-blue-500 animate-pulse" />
-      )}
+        {/* Drop indicator */}
+        {isDragOver && (
+          <div className="absolute inset-x-0 -top-1 h-0.5 bg-blue-500 animate-pulse" />
+        )}
 
-      {children}
-    </div>
+        {children}
+      </div>
+    </WidgetErrorBoundary>
   );
-}
+});

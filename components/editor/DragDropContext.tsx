@@ -4,12 +4,24 @@
  */
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { logger } from '@/lib/utils/logger';
+
+interface DragItemData {
+  title?: string;
+  name?: string;
+  position?: string;
+  company?: string;
+  degree?: string;
+  institution?: string;
+  [key: string]: unknown;
+}
 
 export interface DragItem {
   id: string;
   type: 'section' | 'project' | 'experience' | 'education' | 'skill';
   index: number;
-  data?: any;
+  data?: DragItemData;
 }
 
 interface DragDropContextType {
@@ -26,7 +38,10 @@ const DragDropContext = createContext<DragDropContextType | undefined>(
   undefined
 );
 
-export function DragDropProvider({ children }: { children: ReactNode }) {
+// Export the context for testing
+export { DragDropContext };
+
+function DragDropProvider({ children }: { children: ReactNode }) {
   const [draggedItem, setDraggedItem] = useState<DragItem | null>(null);
   const [dropTarget, setDropTarget] = useState<{
     id: string;
@@ -36,17 +51,23 @@ export function DragDropProvider({ children }: { children: ReactNode }) {
   const isDragging = draggedItem !== null;
 
   return (
-    <DragDropContext.Provider
-      value={{
-        draggedItem,
-        setDraggedItem,
-        dropTarget,
-        setDropTarget,
-        isDragging,
-      }}
+    <WidgetErrorBoundary 
+      widgetName="DragDropProvider"
+      compact={true}
+      isolate={true}
     >
-      {children}
-    </DragDropContext.Provider>
+      <DragDropContext.Provider
+        value={{
+          draggedItem,
+          setDraggedItem,
+          dropTarget,
+          setDropTarget,
+          isDragging,
+        }}
+      >
+        {children}
+      </DragDropContext.Provider>
+    </WidgetErrorBoundary>
   );
 }
 
@@ -66,7 +87,7 @@ export function handleDragStart(e: React.DragEvent, item: DragItem) {
   // Add custom drag image if needed
   const dragImage = document.createElement('div');
   dragImage.className = 'drag-preview';
-  dragImage.textContent = item.data?.title || 'Moving...';
+  dragImage.textContent = item.data?.title || 'Moving';
   document.body.appendChild(dragImage);
   e.dataTransfer.setDragImage(dragImage, 0, 0);
 
@@ -108,6 +129,9 @@ export function handleDrop(
       onReorder(item.index, newIndex);
     }
   } catch (error) {
-    console.error('Drop error:', error);
+    logger.error('Drag and drop operation failed', error as Error);
   }
 }
+
+// Default export for Next.js compatibility
+export default DragDropProvider;

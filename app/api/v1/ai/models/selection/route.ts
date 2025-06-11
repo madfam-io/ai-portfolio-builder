@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 import { z } from 'zod';
 
 // Request validation schema
@@ -72,7 +73,7 @@ export async function GET() {
       isDefault: !preferences,
     });
   } catch (error) {
-    console.error('Failed to get model selection:', error);
+    logger.error('Failed to get model selection', error instanceof Error ? error : { error });
     return NextResponse.json(
       { error: 'Failed to get model selection' },
       { status: 500 }
@@ -161,7 +162,7 @@ export async function PUT(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    console.error('Failed to update model selection:', error);
+    logger.error('Failed to update model selection', error instanceof Error ? error : { error });
     return NextResponse.json(
       { error: 'Failed to update model selection' },
       { status: 500 }
@@ -180,7 +181,7 @@ async function logModelSelection(
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      logger.error('Failed to create Supabase client for logging');
       return;
     }
 
@@ -195,7 +196,7 @@ async function logModelSelection(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log model selection:', error);
+    logger.error('Failed to log model selection', error instanceof Error ? error : { error });
     // Don't throw - logging failure shouldn't break the main operation
   }
 }
