@@ -1,681 +1,289 @@
-// @ts-nocheck
+/**
+ * PortfolioEditor test suite - final version
+ */
+
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
-import { Portfolio, TemplateType } from '@/types/portfolio';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { portfolioService } from '@/lib/services/portfolioService';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
-// Mock the language context
-jest.mock('@/lib/i18n/refactored-context');
-
-// Mock the portfolio service
+// Mock portfolioService
 jest.mock('@/lib/services/portfolioService', () => ({
   portfolioService: {
     getPortfolio: jest.fn(),
     updatePortfolio: jest.fn(),
     publishPortfolio: jest.fn(),
     unpublishPortfolio: jest.fn(),
-    autoSave: jest.fn(),
     updateTemplate: jest.fn(),
   },
 }));
 
-// Mock the custom hooks
+// Mock hooks
 jest.mock('@/hooks/useDebounce', () => ({
   useDebounce: jest.fn(value => value),
 }));
 
 jest.mock('@/hooks/useAutoSave', () => ({
-  useAutoSave: jest.fn(() => ({
+  useAutoSave: () => ({
     autoSave: jest.fn(),
     lastSaved: new Date(),
-  })),
+  }),
 }));
 
 jest.mock('@/hooks/useEditorHistory', () => ({
-  useEditorHistory: jest.fn(() => ({
+  useEditorHistory: () => ({
     pushToHistory: jest.fn(),
     undo: jest.fn(),
     redo: jest.fn(),
     canUndo: false,
     canRedo: false,
-  })),
+  }),
 }));
 
-// Mock portfolio data
-const mockPortfolio: Portfolio = {
+const { portfolioService } = require('@/lib/services/portfolioService');
+
+const mockPortfolio = {
   id: '1',
   userId: 'user-1',
-  name: 'John Doe',
-  title: 'Full Stack Developer',
-  bio: 'Experienced developer with a passion for creating scalable applications.',
-  tagline: 'Building the future, one line at a time',
-  avatarUrl: '/avatar.jpg',
+  name: 'Test Portfolio',
+  title: 'Software Engineer',
+  bio: 'Test bio',
+  tagline: '',
+  avatarUrl: '',
   contact: {
-    email: 'john@example.com',
-    phone: '+1234567890',
-    location: 'San Francisco, CA',
-    availability: 'Available for freelance',
+    email: 'test@example.com',
+    phone: '',
+    location: '',
+    availability: '',
   },
-  social: {
-    linkedin: 'https://linkedin.com/in/johndoe',
-    github: 'https://github.com/johndoe',
-    twitter: 'https://twitter.com/johndoe',
-  },
-  experience: [
-    {
-      id: 'exp-1',
-      company: 'Tech Corp',
-      position: 'Senior Developer',
-      startDate: '2020-01',
-      current: true,
-      description: 'Leading development of cloud-native applications',
-      highlights: ['Led team of 5 developers', 'Increased performance by 40%'],
-      technologies: ['React', 'Node.js', 'AWS'],
-    },
-  ],
-  education: [
-    {
-      id: 'edu-1',
-      institution: 'University of Technology',
-      degree: 'Bachelor of Science',
-      field: 'Computer Science',
-      startDate: '2016-09',
-      endDate: '2020-05',
-      current: false,
-    },
-  ],
-  projects: [
-    {
-      id: 'proj-1',
-      title: 'E-commerce Platform',
-      description: 'Built a scalable e-commerce solution',
-      technologies: ['React', 'Node.js', 'MongoDB'],
-      highlights: ['100k+ active users', 'Real-time inventory'],
-      featured: true,
-      order: 1,
-    },
-  ],
-  skills: [
-    { name: 'JavaScript', level: 'expert', category: 'Programming' },
-    { name: 'React', level: 'advanced', category: 'Frontend' },
-    { name: 'Node.js', level: 'advanced', category: 'Backend' },
-  ],
-  certifications: [
-    {
-      id: 'cert-1',
-      name: 'AWS Certified Developer',
-      issuer: 'Amazon Web Services',
-      issueDate: '2022-01',
-      credentialId: 'ABC123',
-    },
-  ],
-  template: 'developer' as TemplateType,
-  customization: {
-    primaryColor: '#1a73e8',
-    fontFamily: 'Inter',
+  social: {},
+  experience: [],
+  education: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  template: 'developer',
+  customization: {},
+  aiSettings: {
+    enhanceBio: false,
+    enhanceProjectDescriptions: false,
+    generateSkillsFromExperience: false,
+    tone: 'professional',
+    targetLength: 'medium',
   },
   status: 'draft',
-  createdAt: new Date('2024-01-01'),
-  updatedAt: new Date('2024-01-01'),
+  subdomain: 'test',
+  views: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
-const mockTranslations = {
-  portfolioEditor: 'Portfolio Editor',
-  preview: 'Preview',
-  save: 'Save',
-  publish: 'Publish',
-  basicInfo: 'Basic Information',
-  name: 'Name',
-  title: 'Title',
-  bio: 'Bio',
-  experience: 'Experience',
-  education: 'Education',
-  projects: 'Projects',
-  skills: 'Skills',
-  addExperience: 'Add Experience',
-  addEducation: 'Add Education',
-  addProject: 'Add Project',
-  template: 'Template',
-  customize: 'Customize',
-  enhanceWithAI: 'Enhance with AI',
-  saving: 'Saving...',
-  saved: 'Saved',
-  publishPortfolio: 'Publish Portfolio',
-  unpublish: 'Unpublish',
-  deleteItem: 'Delete',
-  editItem: 'Edit',
-};
-
-describe.skip('PortfolioEditor', () => {
-  const mockOnSave = jest.fn();
-  const mockOnPublish = jest.fn();
-  const user = userEvent.setup();
-
+describe('PortfolioEditor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (useLanguage as jest.Mock).mockReturnValue({
-      t: mockTranslations,
-      language: 'en',
-    });
-
-    // Mock portfolio service methods
-    (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
-      mockPortfolio
-    );
-    (portfolioService.updatePortfolio as jest.Mock).mockResolvedValue(
-      mockPortfolio
-    );
-    (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue({
-      ...mockPortfolio,
-      status: 'published',
-    });
-    (portfolioService.autoSave as jest.Mock).mockResolvedValue(true);
+    portfolioService.getPortfolio.mockResolvedValue(mockPortfolio);
+    portfolioService.updatePortfolio.mockResolvedValue(mockPortfolio);
   });
 
-  describe('Rendering', () => {
-    it('should render the portfolio editor with all sections', async () => {
-      render(
-        <PortfolioEditor
-          portfolioId="1"
-          userId="user-1"
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
+  describe('Loading State', () => {
+    test('shows loading state initially', () => {
+      portfolioService.getPortfolio.mockImplementation(
+        () =>
+          new Promise(resolve => setTimeout(() => resolve(mockPortfolio), 100))
       );
 
-      // Wait for portfolio to load
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+
+      // Should show loading indicator
+      expect(screen.getByRole('status')).toBeInTheDocument();
+    });
+
+    test('loads portfolio data', async () => {
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+
       await waitFor(() => {
         expect(portfolioService.getPortfolio).toHaveBeenCalledWith('1');
       });
 
-      // Check main sections in the sidebar
+      // Should display portfolio data
       await waitFor(() => {
-        expect(screen.getByText('Edit Portfolio')).toBeInTheDocument();
-        expect(screen.getByText('Hero Section')).toBeInTheDocument();
-        expect(screen.getByText('Experience')).toBeInTheDocument();
-        expect(screen.getByText('Projects')).toBeInTheDocument();
-        expect(screen.getByText('Skills')).toBeInTheDocument();
+        expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
       });
-    });
-
-    it('should display portfolio data in form fields', () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      expect(screen.getByDisplayValue('John Doe')).toBeInTheDocument();
-      expect(
-        screen.getByDisplayValue('Full Stack Developer')
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText(
-          'Experienced developer with a passion for creating scalable applications.'
-        )
-      ).toBeInTheDocument();
-    });
-
-    it('should show preview pane', () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      expect(screen.getByText('Preview')).toBeInTheDocument();
-      // Preview should show the portfolio content
-      expect(
-        screen.getByText('John Doe', { selector: '.preview-name' })
-      ).toBeInTheDocument();
     });
   });
 
-  describe('Basic Information Editing', () => {
-    it('should update name field', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
+  describe('Basic Editing', () => {
+    test('updates portfolio name', async () => {
+      const user = userEvent.setup();
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
 
-      const nameInput = screen.getByLabelText('Name');
+      // Wait for portfolio to load
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
+      });
+
+      const nameInput = screen.getByDisplayValue('Test Portfolio');
       await user.clear(nameInput);
-      await user.type(nameInput, 'Jane Smith');
+      await user.type(nameInput, 'Updated Portfolio Name');
 
-      expect(nameInput).toHaveValue('Jane Smith');
-    });
-
-    it('should update bio with character count', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const bioTextarea = screen.getByLabelText('Bio');
-      await user.clear(bioTextarea);
-      await user.type(bioTextarea, 'New bio text');
-
-      expect(bioTextarea).toHaveValue('New bio text');
-      expect(screen.getByText('12 / 500')).toBeInTheDocument(); // Character count
-    });
-  });
-
-  describe('Experience Section', () => {
-    it('should display existing experience items', () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      expect(screen.getByText('Tech Corp')).toBeInTheDocument();
-      expect(screen.getByText('Senior Developer')).toBeInTheDocument();
-    });
-
-    it('should add new experience item', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const addButton = screen.getByText('Add Experience');
-      await user.click(addButton);
-
-      // Modal should appear
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
-
-      // Fill in the form
-      await user.type(screen.getByLabelText('Company'), 'New Company');
-      await user.type(screen.getByLabelText('Position'), 'Developer');
-      await user.type(screen.getByLabelText('Start Date'), '2023-01');
-
-      // Save
-      await user.click(screen.getByText('Add'));
-
-      // Should see the new item
       await waitFor(() => {
-        expect(screen.getByText('New Company')).toBeInTheDocument();
+        expect(portfolioService.updatePortfolio).toHaveBeenCalledWith(
+          '1',
+          expect.objectContaining({ name: 'Updated Portfolio Name' })
+        );
       });
     });
 
-    it('should delete experience item', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const deleteButton = screen.getByLabelText('Delete experience item');
-      await user.click(deleteButton);
-
-      // Confirm deletion
-      await user.click(screen.getByText('Confirm'));
+    test('updates portfolio bio', async () => {
+      const user = userEvent.setup();
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
 
       await waitFor(() => {
-        expect(screen.queryByText('Tech Corp')).not.toBeInTheDocument();
+        expect(screen.getByDisplayValue('Test bio')).toBeInTheDocument();
+      });
+
+      const bioInput = screen.getByDisplayValue('Test bio');
+      await user.clear(bioInput);
+      await user.type(bioInput, 'Updated bio content');
+
+      await waitFor(() => {
+        expect(portfolioService.updatePortfolio).toHaveBeenCalledWith(
+          '1',
+          expect.objectContaining({ bio: 'Updated bio content' })
+        );
       });
     });
   });
 
-  describe('Projects Section', () => {
-    it('should reorder projects', async () => {
-      const multipleProjects = {
+  describe('Publishing', () => {
+    test('publishes draft portfolio', async () => {
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByRole('button', { name: /publicar/i })
+        ).toBeInTheDocument();
+      });
+
+      portfolioService.publishPortfolio.mockResolvedValue({
         ...mockPortfolio,
-        projects: [
-          ...mockPortfolio.projects,
-          {
-            id: 'proj-2',
-            title: 'Mobile App',
-            description: 'Native mobile application',
-            technologies: ['React Native'],
-            highlights: [],
-            featured: false,
-            order: 2,
-          },
-        ],
-      };
+        status: 'published',
+      });
 
-      render(
-        <PortfolioEditor
-          portfolio={multipleProjects}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      // Implement drag and drop test
-      const firstProject = screen.getByText('E-commerce Platform');
-      const secondProject = screen.getByText('Mobile App');
-
-      // Simulate drag and drop (simplified for testing)
-      fireEvent.dragStart(firstProject);
-      fireEvent.dragOver(secondProject);
-      fireEvent.drop(secondProject);
-
-      // Order should be swapped
-      const projects = screen.getAllByTestId('project-item');
-      expect(projects[0]).toHaveTextContent('Mobile App');
-      expect(projects[1]).toHaveTextContent('E-commerce Platform');
-    });
-
-    it('should mark project as featured', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const featuredToggle = screen.getByLabelText('Mark as featured');
-      await user.click(featuredToggle);
-
-      expect(featuredToggle).toBeChecked();
-    });
-  });
-
-  describe('Skills Management', () => {
-    it('should add new skill', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const skillInput = screen.getByPlaceholderText('Add a skill');
-      await user.type(skillInput, 'Python{enter}');
+      fireEvent.click(screen.getByRole('button', { name: /publicar/i }));
 
       await waitFor(() => {
-        expect(screen.getByText('Python')).toBeInTheDocument();
+        expect(portfolioService.publishPortfolio).toHaveBeenCalledWith('1');
       });
     });
 
-    it('should remove skill', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
+    test('unpublishes published portfolio', async () => {
+      const publishedPortfolio = { ...mockPortfolio, status: 'published' };
+      portfolioService.getPortfolio.mockResolvedValue(publishedPortfolio);
 
-      const removeButton = screen.getByLabelText('Remove JavaScript');
-      await user.click(removeButton);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
 
       await waitFor(() => {
-        expect(screen.queryByText('JavaScript')).not.toBeInTheDocument();
+        expect(
+          screen.getByRole('button', { name: /despublicar/i })
+        ).toBeInTheDocument();
       });
-    });
 
-    it('should categorize skills', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      // Skills should be grouped by category
-      expect(screen.getByText('Programming')).toBeInTheDocument();
-      expect(screen.getByText('Frontend')).toBeInTheDocument();
-      expect(screen.getByText('Backend')).toBeInTheDocument();
-    });
-  });
-
-  describe('Template Customization', () => {
-    it('should change template', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const templateSelect = screen.getByLabelText('Template');
-      await user.selectOptions(templateSelect, 'designer');
-
-      expect(templateSelect).toHaveValue('designer');
-      // Preview should update
-      expect(screen.getByTestId('preview-template')).toHaveClass(
-        'template-designer'
-      );
-    });
-
-    it('should customize colors', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const colorPicker = screen.getByLabelText('Primary Color');
-      fireEvent.change(colorPicker, { target: { value: '#ff0000' } });
-
-      // Preview should reflect color change
-      expect(screen.getByTestId('preview-container')).toHaveStyle({
-        '--primary-color': '#ff0000',
+      portfolioService.unpublishPortfolio.mockResolvedValue({
+        ...publishedPortfolio,
+        status: 'draft',
       });
-    });
-  });
 
-  describe('AI Enhancement', () => {
-    it('should show AI enhancement button for bio', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const enhanceButton = screen.getByLabelText('Enhance bio with AI');
-      expect(enhanceButton).toBeInTheDocument();
-
-      await user.click(enhanceButton);
-      expect(screen.getByText('Enhancing...')).toBeInTheDocument();
-    });
-
-    it('should show AI suggestions for projects', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const suggestButton = screen.getByLabelText(
-        'Get AI suggestions for project'
-      );
-      await user.click(suggestButton);
+      fireEvent.click(screen.getByRole('button', { name: /despublicar/i }));
 
       await waitFor(() => {
-        expect(screen.getByText('Suggested highlights:')).toBeInTheDocument();
+        expect(portfolioService.unpublishPortfolio).toHaveBeenCalledWith('1');
       });
     });
   });
 
-  describe('Save and Publish', () => {
-    it('should save portfolio changes', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
+  describe('Error Handling', () => {
+    test('shows error when portfolio fails to load', async () => {
+      portfolioService.getPortfolio.mockRejectedValue(
+        new Error('Failed to load')
       );
 
-      // Make a change
-      const nameInput = screen.getByLabelText('Name');
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+
+      await waitFor(() => {
+        expect(screen.getByText(/error/i)).toBeInTheDocument();
+      });
+    });
+
+    test('handles update errors gracefully', async () => {
+      const user = userEvent.setup();
+      portfolioService.updatePortfolio.mockRejectedValueOnce(
+        new Error('Update failed')
+      );
+
+      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
+      });
+
+      const nameInput = screen.getByDisplayValue('Test Portfolio');
+      await user.clear(nameInput);
+      await user.type(nameInput, 'New Name');
+
+      // Should attempt update but handle error gracefully
+      await waitFor(() => {
+        expect(portfolioService.updatePortfolio).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Callbacks', () => {
+    test('calls onUpdate callback when portfolio is updated', async () => {
+      const mockOnUpdate = jest.fn();
+      const user = userEvent.setup();
+
+      renderWithLanguage(
+        <PortfolioEditor portfolioId="1" onUpdate={mockOnUpdate} />
+      );
+
+      await waitFor(() => {
+        expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
+      });
+
+      const nameInput = screen.getByDisplayValue('Test Portfolio');
       await user.clear(nameInput);
       await user.type(nameInput, 'Updated Name');
 
-      // Save
-      const saveButton = screen.getByText('Save');
-      await user.click(saveButton);
-
-      expect(mockOnSave).toHaveBeenCalledWith(
-        expect.objectContaining({
-          name: 'Updated Name',
-        })
-      );
-
-      // Should show saving state
-      expect(screen.getByText('Saving...')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockOnUpdate).toHaveBeenCalled();
+      });
     });
 
-    it('should publish portfolio', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
+    test('calls onPublish callback when portfolio is published', async () => {
+      const mockOnPublish = jest.fn();
+
+      renderWithLanguage(
+        <PortfolioEditor portfolioId="1" onPublish={mockOnPublish} />
       );
-
-      const publishButton = screen.getByText('Publish');
-      await user.click(publishButton);
-
-      // Confirmation dialog
-      expect(screen.getByText('Publish Portfolio')).toBeInTheDocument();
-      await user.click(screen.getByText('Confirm'));
-
-      expect(mockOnPublish).toHaveBeenCalled();
-    });
-
-    it('should auto-save after changes', async () => {
-      jest.useFakeTimers();
-
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-          autoSave={true}
-        />
-      );
-
-      // Make a change
-      const bioTextarea = screen.getByLabelText('Bio');
-      await user.type(bioTextarea, ' Additional text');
-
-      // Fast-forward time
-      jest.advanceTimersByTime(3000); // 3 second debounce
 
       await waitFor(() => {
-        expect(mockOnSave).toHaveBeenCalled();
+        expect(
+          screen.getByRole('button', { name: /publicar/i })
+        ).toBeInTheDocument();
       });
 
-      jest.useRealTimers();
-    });
-  });
+      portfolioService.publishPortfolio.mockResolvedValue({
+        ...mockPortfolio,
+        status: 'published',
+      });
 
-  describe('Real-time Preview', () => {
-    it('should update preview as user types', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
+      fireEvent.click(screen.getByRole('button', { name: /publicar/i }));
 
-      const nameInput = screen.getByLabelText('Name');
-      await user.clear(nameInput);
-      await user.type(nameInput, 'Live Update');
-
-      // Preview should update immediately
-      const previewName = screen.getByTestId('preview-name');
-      expect(previewName).toHaveTextContent('Live Update');
-    });
-
-    it('should toggle preview visibility', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const toggleButton = screen.getByLabelText('Toggle preview');
-      const preview = screen.getByTestId('preview-pane');
-
-      expect(preview).toBeVisible();
-
-      await user.click(toggleButton);
-      expect(preview).not.toBeVisible();
-
-      await user.click(toggleButton);
-      expect(preview).toBeVisible();
-    });
-  });
-
-  describe('Validation', () => {
-    it('should validate required fields', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      // Clear required field
-      const nameInput = screen.getByLabelText('Name');
-      await user.clear(nameInput);
-
-      // Try to save
-      const saveButton = screen.getByText('Save');
-      await user.click(saveButton);
-
-      expect(screen.getByText('Name is required')).toBeInTheDocument();
-      expect(mockOnSave).not.toHaveBeenCalled();
-    });
-
-    it('should validate URLs', async () => {
-      render(
-        <PortfolioEditor
-          portfolio={mockPortfolio}
-          onSave={mockOnSave}
-          onPublish={mockOnPublish}
-        />
-      );
-
-      const linkedinInput = screen.getByLabelText('LinkedIn URL');
-      await user.clear(linkedinInput);
-      await user.type(linkedinInput, 'not-a-url');
-
-      const saveButton = screen.getByText('Save');
-      await user.click(saveButton);
-
-      expect(screen.getByText('Please enter a valid URL')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockOnPublish).toHaveBeenCalled();
+      });
     });
   });
 });

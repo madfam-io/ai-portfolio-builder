@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn, signInWithOAuth } from '@/lib/auth/auth';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import { useLanguage } from '@/lib/i18n/minimal-context';
 import BaseLayout from '@/components/layouts/BaseLayout';
 
 export default function SignInPage() {

@@ -119,19 +119,22 @@ export function LanguageProvider({
     if (typeof window !== 'undefined' && !hasInitialized) {
       setHasInitialized(true);
       try {
-        const savedLanguage = localStorage.getItem('language') as Language | null;
-        if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
+        const savedLanguage = localStorage.getItem(
+          'language'
+        ) as Language | null;
+        if (
+          savedLanguage &&
+          (savedLanguage === 'es' || savedLanguage === 'en')
+        ) {
           setLanguageState(savedLanguage);
           setTranslations(flattenTranslations(getTranslations(savedLanguage)));
         } else if (!savedLanguage) {
-          // Only check browser language if no saved preference and not in test environment
-          if (process.env.NODE_ENV !== 'test') {
-            const browserLang = navigator.language?.toLowerCase();
-            const detectedLang = browserLang?.startsWith('en') ? 'en' : 'es';
-            setLanguageState(detectedLang);
-            setTranslations(flattenTranslations(getTranslations(detectedLang)));
-            localStorage.setItem('language', detectedLang);
-          }
+          // Check browser language if no saved preference
+          const browserLang = navigator.language?.toLowerCase();
+          const detectedLang = browserLang?.startsWith('en') ? 'en' : 'es';
+          setLanguageState(detectedLang);
+          setTranslations(flattenTranslations(getTranslations(detectedLang)));
+          localStorage.setItem('language', detectedLang);
         }
       } catch (error) {
         // Handle localStorage errors gracefully
