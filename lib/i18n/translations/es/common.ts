@@ -67,6 +67,9 @@ const common = {
   profile: 'Perfil',
   settings: 'Configuración',
   logout: 'Cerrar sesión',
+
+  // UI Elements
+  backToTop: 'Volver arriba',
 };
 
 export default common;

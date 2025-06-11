@@ -7,7 +7,7 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { LanguageProvider, useLanguage } from '@/lib/i18n';
+import { LanguageProvider, useLanguage } from '@/lib/i18n/refactored-context';
 
 // Mock localStorage
 const localStorageMock = {

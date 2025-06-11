@@ -15,6 +15,7 @@ const landing = {
 
   // Features Section
   featuresTitle: 'Qué hace PRISMA',
+  standOut: 'Destacar',
   featuresSubtitle:
     'Hecho para profesionales que saben que su presencia digital importa.',
 
@@ -27,16 +28,20 @@ const landing = {
     'Importa datos desde LinkedIn, GitHub y otros formatos con un clic.',
   templatesTitle: 'Diseños que impactan',
   templatesDesc:
-    'Plantillas profesionales que adaptan tu contenido y tu industria.',
-  customDomainTitle: 'Tu marca personal',
+    'Plantillas profesionales listas para destacar en cualquier dispositivo.',
+  customDomainTitle: 'Subdominio o dominio propio',
   customDomainDesc:
-    'Publicación instantánea en tu dominio o un subdominio personalizado.',
+    'Hazlo tuyo. Usa un subdominio de PRISMA o conecta tu marca personal.',
   seoTitle: 'Visible en Google',
   seoDesc:
     'Optimización integrada para destacar en los resultados de búsqueda.',
   analyticsTitle: 'Métricas en tiempo real',
   analyticsDesc:
-    'Seguimiento de visitas, descargas y rendimiento de tu portafolio.',
+    'Desde tu CV o LinkedIn hasta un sitio web funcional en menos de media hora.',
+  publishTitle: 'Publica en 30 minutos',
+  mobileTitle: 'Para quien es PRISMA',
+  mobileDesc:
+    'Freelancers, desarrolladores, consultores y creativos que quieren impresionar.',
 
   // How it Works Section
   howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
@@ -74,8 +79,10 @@ const landing = {
   darkMode: 'Modo oscuro',
 
   // Pricing Section
-  pricingTitle: 'Planes que crecen contigo',
-  pricingSubtitle: 'Empieza gratis y mejora cuando lo necesites.',
+  pricingTitle: 'Accede hoy.',
+  powerfulFeatures: 'Características Poderosas',
+  pricingSubtitle: 'Impresiona mañana.',
+  perMonth: '/mes',
 
   // Pricing periods
   monthly: 'Mensual',
@@ -84,6 +91,10 @@ const landing = {
 
   // Plan names
   freePlan: 'GRATIS',
+  planFree: 'Gratis',
+  planPro: 'PRO',
+  planBusiness: 'PRISMA+',
+  planEnterprise: 'Enterprise',
   proPlan: 'PRO',
   businessPlan: 'BUSINESS',
 
@@ -116,11 +127,37 @@ const landing = {
   teamCollaboration: 'Colaboración en equipo',
   apiAccess: 'Acceso API',
 
+  // Pricing features
+  portfolio1: '1 portafolio',
+  portfolios3: '3 portafolios',
+  madfamSubdomain: 'Subdominio MADFAM',
+  aiRewrites3: '3 reescrituras con IA',
+  unlimitedAiRewrites: 'Reescrituras IA ilimitadas',
+  analyticsTools: 'Herramientas de análisis',
+  whiteLabelOption: 'Opción de marca blanca',
+  pricingLimitedOffer: '¡Oferta limitada! 50% de descuento en tu primer año',
+  pricingOfferExpires: 'La oferta expira pronto',
+  startProTrial: 'Prueba Pro',
+  pricingStartBusinessTrial: 'Iniciar Prueba Business',
+  pricingContactSalesTeam: 'Contactar equipo de ventas',
+  pricingMostPowerful: 'Más Poderoso',
+  pricingEverythingInBusiness: 'Todo en Business +',
+  pricingWhiteLabelSolutions: 'Soluciones de marca blanca',
+  pricingDedicatedManager: 'Gerente dedicado',
+  pricingCustomIntegrations: 'Integraciones personalizadas',
+  pricing24Support: 'Soporte 24/7',
+  pricingSlaGuarantees: 'Garantías SLA',
+  pricingStartEnterpriseTrial: 'Iniciar Prueba Enterprise',
+  pricingRequestQuote: 'Solicitar cotización',
+  pricingSecurePayment: 'Pago seguro',
+  pricingNoHiddenFees: 'Sin tarifas ocultas',
+  pricingCancelAnytime: 'Cancela en cualquier momento',
+
   // Pricing CTAs
-  startFree: 'Empezar Gratis',
+  startFree: 'Comenzar Gratis',
   choosePlan: 'Elegir Plan',
   choosePopular: 'Elegir Popular',
-  mostPopular: 'Más Popular',
+  mostPopular: 'MÁS POPULAR',
   recommended: 'Recomendado',
 
   // CTA Section
@@ -148,7 +185,9 @@ const landing = {
   footerTerms: 'Términos',
   footerContact: 'Contacto',
   footerCareers: 'Carreras',
+  footerGdpr: 'GDPR',
   footerRights: 'Todos los derechos reservados.',
+  footerAllRightsReserved: 'Todos los derechos reservados.',
   footerMadeWith: 'Hecho con',
   footerIn: 'en',
   footerLocation: 'Ciudad de México',

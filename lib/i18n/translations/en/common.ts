@@ -137,4 +137,7 @@ export default {
   privacyPolicy: 'Privacy Policy',
   termsOfService: 'Terms of Service',
   cookiePolicy: 'Cookie Policy',
+
+  // UI Elements
+  backToTop: 'Back to top',
 } as const;

@@ -15,6 +15,7 @@ const landing = {
 
   // Features Section
   featuresTitle: 'What PRISMA does',
+  standOut: 'Stand Out',
   featuresSubtitle:
     'Built for professionals who know their digital presence matters.',
 
@@ -26,12 +27,15 @@ const landing = {
     'Import data from LinkedIn, GitHub and other formats with one click.',
   templatesTitle: 'Designs that impact',
   templatesDesc: 'Professional templates that adapt your content and industry.',
-  customDomainTitle: 'Your personal brand',
+  customDomainTitle: 'Subdomain or own domain',
   customDomainDesc: 'Instant publishing on your domain or a custom subdomain.',
   seoTitle: 'Visible on Google',
   seoDesc: 'Built-in optimization to stand out in search results.',
   analyticsTitle: 'Real-time metrics',
   analyticsDesc: 'Track visits, downloads and performance of your portfolio.',
+  publishTitle: 'Publish in 30 minutes',
+  mobileTitle: 'Who PRISMA is for',
+  mobileDesc: 'Responsive designs that look perfect on any device.',
 
   // How it Works Section
   howItWorksTitle: 'From CV to portfolio in 3 simple steps',
@@ -69,8 +73,10 @@ const landing = {
   darkMode: 'Dark mode',
 
   // Pricing Section
-  pricingTitle: 'Plans that grow with you',
-  pricingSubtitle: 'Start free and upgrade when you need it.',
+  pricingTitle: 'Access today.',
+  powerfulFeatures: 'Powerful Features',
+  pricingSubtitle: 'Impress tomorrow.',
+  perMonth: '/month',
 
   // Pricing periods
   monthly: 'Monthly',
@@ -79,6 +85,10 @@ const landing = {
 
   // Plan names
   freePlan: 'FREE',
+  planFree: 'Free',
+  planPro: 'PRO',
+  planBusiness: 'PRISMA+',
+  planEnterprise: 'Enterprise',
   proPlan: 'PRO',
   businessPlan: 'BUSINESS',
 
@@ -110,6 +120,32 @@ const landing = {
   advancedAnalytics: 'Advanced analytics',
   teamCollaboration: 'Team collaboration',
   apiAccess: 'API access',
+
+  // Pricing features
+  portfolio1: '1 portfolio',
+  portfolios3: '3 portfolios',
+  madfamSubdomain: 'MADFAM subdomain',
+  aiRewrites3: '3 AI rewrites',
+  unlimitedAiRewrites: 'Unlimited AI rewrites',
+  analyticsTools: 'Analytics tools',
+  whiteLabelOption: 'White label option',
+  pricingLimitedOffer: 'Limited time! 50% off your first year',
+  pricingOfferExpires: 'Offer expires soon',
+  startProTrial: 'Start PRO trial',
+  pricingStartBusinessTrial: 'Start Business trial',
+  pricingContactSalesTeam: 'Contact sales team',
+  pricingMostPowerful: 'Most Powerful',
+  pricingEverythingInBusiness: 'Everything in Business +',
+  pricingWhiteLabelSolutions: 'White-label solutions',
+  pricingDedicatedManager: 'Dedicated manager',
+  pricingCustomIntegrations: 'Custom integrations',
+  pricing24Support: '24/7 support',
+  pricingSlaGuarantees: 'SLA guarantees',
+  pricingStartEnterpriseTrial: 'Start Enterprise trial',
+  pricingRequestQuote: 'Request quote',
+  pricingSecurePayment: 'Secure payment',
+  pricingNoHiddenFees: 'No hidden fees',
+  pricingCancelAnytime: 'Cancel anytime',
 
   // Pricing CTAs
   startFree: 'Start Free',
@@ -143,7 +179,9 @@ const landing = {
   footerTerms: 'Terms',
   footerContact: 'Contact',
   footerCareers: 'Careers',
+  footerGdpr: 'GDPR',
   footerRights: 'All rights reserved.',
+  footerAllRightsReserved: 'All rights reserved.',
   footerMadeWith: 'Made with',
   footerIn: 'in',
   footerLocation: 'Mexico City',
