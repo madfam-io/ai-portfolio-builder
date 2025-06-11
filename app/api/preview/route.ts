@@ -12,6 +12,7 @@ import {
   previewBodySchema,
   createValidationError,
 } from '@/lib/validations/api';
+import type { Portfolio } from '@/types/portfolio';
 
 // Template imports
 import { renderDeveloperTemplate } from '@/lib/templates/developer';
@@ -145,18 +146,35 @@ export async function POST(request: NextRequest) {
 
     const { portfolio, template } = validationResult.data;
 
+    // Ensure portfolio has required fields for rendering
+    const portfolioForRender = {
+      ...portfolio,
+      id: portfolio.id || 'preview', // Provide default ID for preview
+      userId: portfolio.userId || 'preview-user',
+      experience: portfolio.experience || [],
+      education: portfolio.education || [],
+      projects: portfolio.projects || [],
+      skills: portfolio.skills || [],
+      certifications: portfolio.certifications || [],
+      contact: portfolio.contact || {},
+      social: portfolio.social || {},
+      template: portfolio.template || template || 'developer',
+      customization: portfolio.customization || {},
+      status: portfolio.status || 'draft',
+    } as Portfolio;
+
     // Generate HTML based on template
     let html = '';
     switch (template) {
       case 'designer':
-        html = renderDesignerTemplate(portfolio);
+        html = renderDesignerTemplate(portfolioForRender);
         break;
       case 'consultant':
-        html = renderConsultantTemplate(portfolio);
+        html = renderConsultantTemplate(portfolioForRender);
         break;
       case 'developer':
       default:
-        html = renderDeveloperTemplate(portfolio);
+        html = renderDeveloperTemplate(portfolioForRender);
         break;
     }
 
