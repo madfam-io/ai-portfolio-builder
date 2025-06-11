@@ -1,112 +1,152 @@
 /**
- * @fileoverview Landing page English translations
+ * @fileoverview English translations for landing page sections
  * @module i18n/translations/en/landing
  */
 
-export default {
-  // Hero section
-  heroTitle: 'Turn Your CV Into a',
-  heroHighlight: 'Professional Portfolio',
-  heroTitleEnd: 'in Minutes',
-  heroSubtitle:
-    'Create stunning portfolios with AI assistance. No coding required.',
-  heroDemo: 'See Demo',
-  heroCTA: 'Start Building Free',
-  heroTrusted: 'Trusted by 10,000+ professionals',
+const landing = {
+  // Hero Section
+  heroTitle: 'Your portfolio, elevated by AI.',
+  heroTitle2: 'Connect your profiles. Enhance your story.',
+  heroTitle3: 'Publish in minutes.',
+  heroDesc:
+    'Showcase your talent with professional style, without writing a line of code. Connect your LinkedIn, GitHub or CV and launch your portfolio with artificial intelligence.',
+  watchDemo: 'Watch Demo',
+  startFreeTrial: 'Free Trial',
 
-  // Features section
-  features: 'Features',
-  featuresTitle: 'Everything You Need to',
-  featuresTitleHighlight: 'Stand Out',
+  // Features Section
+  featuresTitle: 'What PRISMA does',
   featuresSubtitle:
-    'Build a portfolio that showcases your best work and attracts opportunities',
+    'Built for professionals who know their digital presence matters.',
 
   // Feature items
-  feature1Title: 'AI-Powered Content',
-  feature1Description:
-    'Let our AI enhance your bio and project descriptions for maximum impact',
-  feature2Title: 'Professional Templates',
-  feature2Description:
-    'Choose from beautiful templates designed for different industries',
-  feature3Title: 'One-Click Publishing',
-  feature3Description:
-    'Get a professional URL and share your portfolio instantly',
-  feature4Title: 'LinkedIn Integration',
-  feature4Description:
-    'Import your profile and transform it into a stunning portfolio',
-  feature5Title: 'Real-time Analytics',
-  feature5Description: 'Track views and engagement to optimize your portfolio',
-  feature6Title: 'Custom Domains',
-  feature6Description: 'Use your own domain name for a professional touch',
+  aiContentTitle: 'AI that understands your profile',
+  aiContentDesc: 'Rewrites your bio and projects with clarity and persuasion.',
+  oneClickTitle: 'Smart connection',
+  oneClickDesc:
+    'Import data from LinkedIn, GitHub and other formats with one click.',
+  templatesTitle: 'Designs that impact',
+  templatesDesc: 'Professional templates that adapt your content and industry.',
+  customDomainTitle: 'Your personal brand',
+  customDomainDesc: 'Instant publishing on your domain or a custom subdomain.',
+  seoTitle: 'Visible on Google',
+  seoDesc: 'Built-in optimization to stand out in search results.',
+  analyticsTitle: 'Real-time metrics',
+  analyticsDesc: 'Track visits, downloads and performance of your portfolio.',
 
-  // How it works
-  howItWorks: 'How it Works',
-  howItWorksTitle: 'Your Portfolio in',
-  howItWorksTitleHighlight: '3 Simple Steps',
-  howItWorksSubtitle: 'From CV to professional portfolio in minutes',
+  // How it Works Section
+  howItWorksTitle: 'From CV to portfolio in 3 simple steps',
+  howItWorksSubtitle: 'No code. No design. Just results.',
 
-  step1Number: '1',
-  step1Title: 'Upload Your CV',
-  step1Description: 'Import from LinkedIn or upload your CV',
+  // Steps
+  step1Number: '01',
+  step1Title: 'Connect your profiles',
+  step1Desc:
+    'Upload your CV or connect LinkedIn/GitHub. PRISMA extracts your professional information.',
 
-  step2Number: '2',
-  step2Title: 'Choose & Customize',
-  step2Description: 'Pick a template and let AI enhance your content',
+  step2Number: '02',
+  step2Title: 'Enhance with AI',
+  step2Desc:
+    'Our AI optimizes your content, suggests improvements and recommends the best template.',
 
-  step3Number: '3',
-  step3Title: 'Publish & Share',
-  step3Description: 'Get your personalized URL and go live instantly',
+  step3Number: '03',
+  step3Title: 'Publish instantly',
+  step3Desc:
+    'Customize the details and publish your portfolio with custom domain.',
 
-  // Templates section
-  templatesTitle: 'Templates for',
-  templatesTitleHighlight: 'Every Professional',
+  // Templates Section
+  templatesTitle2: 'Templates for every professional',
   templatesSubtitle:
-    'Professionally designed templates that adapt to your style',
-  viewAllTemplates: 'View All Templates',
+    'Modern and responsive designs that adapt to your industry.',
 
-  // Template categories
-  templateDeveloper: 'Developer',
-  templateDesigner: 'Designer',
-  templateConsultant: 'Consultant',
-  templateCreative: 'Creative',
-  templateBusiness: 'Business',
-  templateEducator: 'Educator',
+  // Template types
+  developerTemplate: 'Developer',
+  designerTemplate: 'Designer',
+  consultantTemplate: 'Consultant',
+  viewAllTemplates: 'View all templates',
 
-  // Pricing section
-  pricingTitle: 'Simple, Transparent Pricing',
-  pricingSubtitle: 'Choose the plan that fits your needs',
-  pricingMonthly: 'Monthly',
-  pricingYearly: 'Yearly',
-  pricingSave: 'Save 20%',
+  // Template features
+  mobileOptimized: 'Mobile optimized',
+  darkMode: 'Dark mode',
 
-  // Pricing plans
-  planFree: 'Free',
-  planPro: 'Pro',
-  planBusiness: 'Business',
+  // Pricing Section
+  pricingTitle: 'Plans that grow with you',
+  pricingSubtitle: 'Start free and upgrade when you need it.',
 
-  // Pricing features
-  planFeature1: 'portfolios',
-  planFeature2: 'AI enhancements per month',
-  planFeature3: 'Professional templates',
-  planFeature4: 'Custom domain',
-  planFeature5: 'Analytics & insights',
-  planFeature6: 'Priority support',
-  planFeature7: 'Remove PRISMA branding',
-  planFeature8: 'Team collaboration',
+  // Pricing periods
+  monthly: 'Monthly',
+  annually: 'Annually',
+  save: 'Save',
 
-  // CTA
-  ctaReady: 'Ready to Build Your Portfolio?',
-  ctaJoin: 'Join thousands of professionals already using PRISMA',
-  ctaButton: 'Get Started Free',
+  // Plan names
+  freePlan: 'FREE',
+  proPlan: 'PRO',
+  businessPlan: 'BUSINESS',
+
+  // Plan descriptions
+  freePlanDesc: 'To start your digital presence',
+  proPlanDesc: 'For serious professionals',
+  businessPlanDesc: 'For teams and agencies',
+
+  // Plan features
+  portfolio: 'portfolio',
+  portfolios: 'portfolios',
+  unlimitedPortfolios: 'Unlimited portfolios',
+  basicTemplates: 'Basic templates',
+  allTemplates: 'All templates',
+  premiumTemplates: 'Premium + custom templates',
+  monthlyVisits: 'visits/month',
+  unlimitedVisits: 'Unlimited visits',
+  basicAI: 'Basic AI',
+  advancedAI: 'Advanced AI',
+  aiPoweredInsights: 'AI + advanced insights',
+  subdomainHosting: 'PRISMA subdomain',
+  customDomain: 'Custom domain',
+  multipleCustomDomains: 'Multiple custom domains',
+  communitySupport: 'Community support',
+  prioritySupport: 'Priority support',
+  dedicatedSupport: 'Dedicated support + onboarding',
+  noAnalytics: 'No analytics',
+  basicAnalytics: 'Basic analytics',
+  advancedAnalytics: 'Advanced analytics',
+  teamCollaboration: 'Team collaboration',
+  apiAccess: 'API access',
+
+  // Pricing CTAs
+  startFree: 'Start Free',
+  choosePlan: 'Choose Plan',
+  choosePopular: 'Choose Popular',
+  mostPopular: 'Most Popular',
+  recommended: 'Recommended',
+
+  // CTA Section
+  ctaTitle: 'Turn your CV into a portfolio',
+  ctaTitle2: 'that gets results.',
+  ctaButton: 'Start Free Now!',
 
   // Social Proof
-  testimonialTitle: 'Loved by Professionals',
-  rating: '4.9 out of 5 stars',
-  reviews: 'reviews',
+  trustedBy: 'Trusted by',
+  professionals: 'professionals',
+  companiesHiring: 'Companies hiring through PRISMA',
 
-  // Stats
-  statPortfolios: 'Portfolios Created',
-  statProfessionals: 'Active Professionals',
-  statTemplates: 'Template Designs',
-  statCountries: 'Countries',
-} as const;
+  // Footer
+  footerTagline: 'Create professional portfolios with AI in minutes',
+  footerProduct: 'Product',
+  footerCompany: 'Company',
+  footerLegal: 'Legal',
+  footerFeatures: 'Features',
+  footerTemplates: 'Templates',
+  footerPricing: 'Pricing',
+  footerApi: 'API',
+  footerBlog: 'Blog',
+  footerAbout: 'About',
+  footerPrivacy: 'Privacy',
+  footerTerms: 'Terms',
+  footerContact: 'Contact',
+  footerCareers: 'Careers',
+  footerRights: 'All rights reserved.',
+  footerMadeWith: 'Made with',
+  footerIn: 'in',
+  footerLocation: 'Mexico City',
+};
+
+export default landing;

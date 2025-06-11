@@ -43,7 +43,7 @@ const mockSupabase = {
 };
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
+  createClient: jest.fn(() => mockSupabase),
 }));
 
 // Test data

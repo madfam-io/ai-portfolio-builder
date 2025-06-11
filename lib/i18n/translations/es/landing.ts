@@ -134,6 +134,14 @@ const landing = {
   companiesHiring: 'Empresas que contratan a través de PRISMA',
 
   // Footer
+  footerTagline: 'Crea portafolios profesionales con IA en minutos',
+  footerProduct: 'Producto',
+  footerCompany: 'Empresa',
+  footerLegal: 'Legal',
+  footerFeatures: 'Características',
+  footerTemplates: 'Plantillas',
+  footerPricing: 'Precios',
+  footerApi: 'API',
   footerBlog: 'Blog',
   footerAbout: 'Acerca de',
   footerPrivacy: 'Privacidad',
