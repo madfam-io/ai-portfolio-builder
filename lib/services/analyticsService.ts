@@ -1,9 +1,9 @@
 /**
  * @fileoverview Analytics Service
- * 
+ *
  * Service layer for GitHub analytics operations.
  * Handles data fetching, processing, and caching.
- * 
+ *
  * @author PRISMA Development Team
  * @version 0.0.1-alpha
  */
@@ -22,7 +22,7 @@ import type {
 
 /**
  * Analytics Service
- * 
+ *
  * Provides high-level methods for analytics operations.
  * Coordinates between GitHub API, database, and cache layers.
  */
@@ -47,11 +47,11 @@ export class AnalyticsService {
    */
   async syncRepositories(): Promise<Repository[]> {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     try {
       // Get GitHub integration
       const { data: integration } = await supabase
@@ -66,11 +66,9 @@ export class AnalyticsService {
 
       // Fetch repositories from GitHub
       const githubRepos = await this.githubClient.fetchRepositories();
-      
-      const repositories: Repository[] = [];
 
-      // Upsert repositories to database
-      for (const githubRepo of githubRepos) {
+      // Upsert repositories to database in parallel
+      const repositoryPromises = githubRepos.map(async githubRepo => {
         const repoData = GitHubAnalyticsClient.transformRepository(
           githubRepo,
           this.userId,
@@ -88,11 +86,16 @@ export class AnalyticsService {
 
         if (error) {
           logger.error('Failed to upsert repository', { error, repoData });
-          continue;
+          return null;
         }
 
-        repositories.push(repo as Repository);
-      }
+        return repo as Repository;
+      });
+
+      const repositoryResults = await Promise.all(repositoryPromises);
+      const repositories = repositoryResults.filter(
+        (repo): repo is Repository => repo !== null
+      );
 
       // Update integration last synced time
       await supabase
@@ -115,7 +118,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     const { data, error } = await supabase
       .from('repositories')
       .select('*')
@@ -139,7 +142,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     const { data, error } = await supabase
       .from('repositories')
       .select('*')
@@ -164,7 +167,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     // Get repository details
     const repository = await this.getRepository(repositoryId);
     if (!repository) {
@@ -179,12 +182,15 @@ export class AnalyticsService {
       );
 
       // Calculate total lines of code
-      const locTotal = Object.values(languages).reduce((sum, lines) => sum + lines, 0);
+      const locTotal = Object.values(languages).reduce(
+        (sum, lines) => sum + lines,
+        0
+      );
 
       // Fetch recent commits for activity metrics
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      
+
       const commits = await this.githubClient.fetchCommits(
         repository.owner,
         repository.name,
@@ -200,7 +206,7 @@ export class AnalyticsService {
 
       // Create or update today's metrics
       const today = new Date().toISOString().split('T')[0];
-      
+
       const metricsData = {
         repository_id: repositoryId,
         metric_date: today,
@@ -227,7 +233,10 @@ export class AnalyticsService {
 
       return metrics as CodeMetrics;
     } catch (error) {
-      logger.error('Failed to sync repository metrics', { repositoryId, error });
+      logger.error('Failed to sync repository metrics', {
+        repositoryId,
+        error,
+      });
       throw error;
     }
   }
@@ -240,7 +249,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     // Get repository details
     const repository = await this.getRepository(repositoryId);
     if (!repository) {
@@ -300,7 +309,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     // Get repository details
     const repository = await this.getRepository(repositoryId);
     if (!repository) {
@@ -317,7 +326,9 @@ export class AnalyticsService {
       // Process each contributor
       for (const githubContributor of githubContributors) {
         // Fetch detailed user info
-        const userDetails = await this.githubClient.fetchUser(githubContributor.login);
+        const userDetails = await this.githubClient.fetchUser(
+          githubContributor.login
+        );
 
         // Upsert contributor
         const { data: contributor, error: contributorError } = await supabase
@@ -346,15 +357,13 @@ export class AnalyticsService {
         }
 
         // Link contributor to repository
-        await supabase
-          .from('repository_contributors')
-          .upsert({
-            repository_id: repositoryId,
-            contributor_id: contributor.id,
-            commit_count: githubContributor.contributions,
-            is_active: true,
-            updated_at: new Date().toISOString(),
-          });
+        await supabase.from('repository_contributors').upsert({
+          repository_id: repositoryId,
+          contributor_id: contributor.id,
+          commit_count: githubContributor.contributions,
+          is_active: true,
+          updated_at: new Date().toISOString(),
+        });
       }
     } catch (error) {
       logger.error('Failed to sync contributors', { repositoryId, error });
@@ -370,7 +379,7 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     // Get repository details
     const repository = await this.getRepository(repositoryId);
     if (!repository) {
@@ -386,7 +395,7 @@ export class AnalyticsService {
       if (!repository.owner || !repository.name) {
         throw new Error('Repository owner or name is missing');
       }
-      
+
       const commits = await this.githubClient.fetchCommits(
         repository.owner!,
         repository.name!,
@@ -395,15 +404,15 @@ export class AnalyticsService {
 
       // Group commits by date
       const commitsByDate = new Map<string, any[]>();
-      
+
       commits.forEach(commit => {
         const authorDate = commit.commit.author.date;
         if (!authorDate) return;
-        
+
         const isoDate = new Date(authorDate).toISOString();
         const date = isoDate.split('T')[0];
         if (!date) return;
-        
+
         if (!commitsByDate.has(date)) {
           commitsByDate.set(date, []);
         }
@@ -431,21 +440,20 @@ export class AnalyticsService {
           const hour = new Date(commit.commit.author.date).getHours();
           hourCounts.set(hour, (hourCounts.get(hour) || 0) + 1);
         });
-        
-        const peakHour = Array.from(hourCounts.entries())
-          .sort((a, b) => b[1] - a[1])[0]?.[0];
 
-        await supabase
-          .from('commit_analytics')
-          .upsert({
-            repository_id: repositoryId,
-            commit_date: date,
-            commit_count: dateCommits.length,
-            unique_authors: uniqueAuthors.size,
-            additions,
-            deletions,
-            peak_hour: peakHour,
-          });
+        const peakHour = Array.from(hourCounts.entries()).sort(
+          (a, b) => b[1] - a[1]
+        )[0]?.[0];
+
+        await supabase.from('commit_analytics').upsert({
+          repository_id: repositoryId,
+          commit_date: date,
+          commit_count: dateCommits.length,
+          unique_authors: uniqueAuthors.size,
+          additions,
+          deletions,
+          peak_hour: peakHour,
+        });
       }
     } catch (error) {
       logger.error('Failed to sync commit analytics', { repositoryId, error });
@@ -461,38 +469,49 @@ export class AnalyticsService {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     try {
       // Fetch all user repositories
       const repositories = await this.getRepositories();
-      
+
       // Fetch aggregated metrics
       const { data: metricsData } = await supabase
         .from('code_metrics')
         .select('*')
-        .in('repository_id', repositories.map(r => r.id))
+        .in(
+          'repository_id',
+          repositories.map(r => r.id)
+        )
         .order('metric_date', { ascending: false });
 
-      const metrics = metricsData as CodeMetrics[] || [];
+      const metrics = (metricsData as CodeMetrics[]) || [];
 
       // Fetch recent pull requests
       const { data: prData } = await supabase
         .from('pull_requests')
         .select('*')
-        .in('repository_id', repositories.map(r => r.id))
+        .in(
+          'repository_id',
+          repositories.map(r => r.id)
+        )
         .order('created_at', { ascending: false })
         .limit(10);
 
-      const pullRequests = prData as PullRequest[] || [];
+      const pullRequests = (prData as PullRequest[]) || [];
 
       // Fetch top contributors
       const { data: contributorData } = await supabase
         .from('repository_contributors')
-        .select(`
+        .select(
+          `
           *,
           contributor:contributors(*)
-        `)
-        .in('repository_id', repositories.map(r => r.id))
+        `
+        )
+        .in(
+          'repository_id',
+          repositories.map(r => r.id)
+        )
         .order('commit_count', { ascending: false })
         .limit(5);
 
@@ -500,17 +519,29 @@ export class AnalyticsService {
       const { data: commitData } = await supabase
         .from('commit_analytics')
         .select('*')
-        .in('repository_id', repositories.map(r => r.id))
-        .gte('commit_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+        .in(
+          'repository_id',
+          repositories.map(r => r.id)
+        )
+        .gte(
+          'commit_date',
+          new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+            .toISOString()
+            .split('T')[0]
+        )
         .order('commit_date', { ascending: true });
 
-      const commitAnalytics = commitData as CommitAnalytics[] || [];
+      const commitAnalytics = (commitData as CommitAnalytics[]) || [];
 
       // Calculate overview stats
       const totalLOC = metrics.reduce((sum, m) => sum + (m.locTotal || 0), 0);
-      const totalCommits = metrics.reduce((sum, m) => sum + (m.commitCount || 0), 0);
+      const totalCommits = metrics.reduce(
+        (sum, m) => sum + (m.commitCount || 0),
+        0
+      );
       const totalContributors = new Set(
-        contributorData?.map((rc: any) => rc.contributor?.id).filter(Boolean) || []
+        contributorData?.map((rc: any) => rc.contributor?.id).filter(Boolean) ||
+          []
       ).size;
 
       // Find most active repository
@@ -519,33 +550,39 @@ export class AnalyticsService {
         const current = repoActivity.get(m.repositoryId) || 0;
         repoActivity.set(m.repositoryId, current + (m.commitCount || 0));
       });
-      
-      const mostActiveRepoId = Array.from(repoActivity.entries())
-        .sort((a, b) => b[1] - a[1])[0]?.[0];
-      
-      const mostActiveRepository = repositories.find(r => r.id === mostActiveRepoId);
 
-      // Group commits by day
-      const commitsPerDay = commitAnalytics.reduce((acc, ca) => {
-        const existing = acc.find(item => item.date === ca.commitDate);
-        if (existing) {
-          existing.count += ca.commitCount;
-        } else {
-          acc.push({ date: ca.commitDate, count: ca.commitCount });
-        }
-        return acc;
-      }, [] as Array<{ date: string; count: number }>);
+      const mostActiveRepoId = Array.from(repoActivity.entries()).sort(
+        (a, b) => b[1] - a[1]
+      )[0]?.[0];
+
+      const mostActiveRepository = repositories.find(
+        r => r.id === mostActiveRepoId
+      );
+
+      // Group commits by day using Map for O(n) performance
+      const commitsByDayMap = new Map<string, number>();
+      commitAnalytics.forEach(ca => {
+        const currentCount = commitsByDayMap.get(ca.commitDate) || 0;
+        commitsByDayMap.set(ca.commitDate, currentCount + ca.commitCount);
+      });
+
+      const commitsPerDay = Array.from(commitsByDayMap.entries())
+        .map(([date, count]) => ({ date, count }))
+        .sort((a, b) => a.date.localeCompare(b.date));
 
       // Group PRs by week
-      const prsByWeek = new Map<string, { opened: number; merged: number; closed: number }>();
+      const prsByWeek = new Map<
+        string,
+        { opened: number; merged: number; closed: number }
+      >();
       pullRequests.forEach(pr => {
         if (!pr.createdAt) return;
-        
+
         const week = getWeekString(new Date(pr.createdAt));
         if (!prsByWeek.has(week)) {
           prsByWeek.set(week, { opened: 0, merged: 0, closed: 0 });
         }
-        
+
         const weekData = prsByWeek.get(week)!;
         weekData.opened++;
         if (pr.state === 'merged') weekData.merged++;
@@ -564,14 +601,17 @@ export class AnalyticsService {
           totalPullRequests: pullRequests.length,
           totalContributors,
           totalLinesOfCode: totalLOC,
-          mostActiveRepository: mostActiveRepository ? {
-            repository: mostActiveRepository,
-            commitCount: repoActivity.get(mostActiveRepoId!) || 0,
-          } : undefined,
-          topContributors: contributorData?.slice(0, 5).map((rc: any) => ({
-            contributor: rc.contributor,
-            commitCount: rc.commit_count,
-          })) || [],
+          mostActiveRepository: mostActiveRepository
+            ? {
+                repository: mostActiveRepository,
+                commitCount: repoActivity.get(mostActiveRepoId!) || 0,
+              }
+            : undefined,
+          topContributors:
+            contributorData?.slice(0, 5).map((rc: any) => ({
+              contributor: rc.contributor,
+              commitCount: rc.commit_count,
+            })) || [],
         },
         recentActivity: {
           commits: commitAnalytics.slice(0, 7),
@@ -591,12 +631,14 @@ export class AnalyticsService {
   /**
    * Get repository analytics
    */
-  async getRepositoryAnalytics(repositoryId: string): Promise<RepositoryAnalytics | null> {
+  async getRepositoryAnalytics(
+    repositoryId: string
+  ): Promise<RepositoryAnalytics | null> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     const repository = await this.getRepository(repositoryId);
     if (!repository) return null;
 
@@ -609,16 +651,18 @@ export class AnalyticsService {
         .order('metric_date', { ascending: false })
         .limit(30);
 
-      const metrics = metricsData as CodeMetrics[] || [];
+      const metrics = (metricsData as CodeMetrics[]) || [];
       const currentMetrics = metrics[0];
 
       // Fetch contributors
       const { data: contributorData } = await supabase
         .from('repository_contributors')
-        .select(`
+        .select(
+          `
           *,
           contributor:contributors(*)
-        `)
+        `
+        )
         .eq('repository_id', repositoryId)
         .order('commit_count', { ascending: false });
 
@@ -630,19 +674,24 @@ export class AnalyticsService {
         .order('created_at', { ascending: false })
         .limit(20);
 
-      const pullRequests = prData as PullRequest[] || [];
+      const pullRequests = (prData as PullRequest[]) || [];
 
       // Calculate PR stats
       const mergedPRs = pullRequests.filter(pr => pr.state === 'merged');
-      const avgCycleTime = mergedPRs.length > 0
-        ? mergedPRs.reduce((sum, pr) => sum + (pr.cycleTimeHours || 0), 0) / mergedPRs.length
-        : 0;
-      const avgLeadTime = mergedPRs.length > 0
-        ? mergedPRs.reduce((sum, pr) => sum + (pr.leadTimeHours || 0), 0) / mergedPRs.length
-        : 0;
-      const mergeRate = pullRequests.length > 0
-        ? (mergedPRs.length / pullRequests.length) * 100
-        : 0;
+      const avgCycleTime =
+        mergedPRs.length > 0
+          ? mergedPRs.reduce((sum, pr) => sum + (pr.cycleTimeHours || 0), 0) /
+            mergedPRs.length
+          : 0;
+      const avgLeadTime =
+        mergedPRs.length > 0
+          ? mergedPRs.reduce((sum, pr) => sum + (pr.leadTimeHours || 0), 0) /
+            mergedPRs.length
+          : 0;
+      const mergeRate =
+        pullRequests.length > 0
+          ? (mergedPRs.length / pullRequests.length) * 100
+          : 0;
 
       // Fetch commit analytics
       const { data: commitData } = await supabase
@@ -652,12 +701,12 @@ export class AnalyticsService {
         .order('commit_date', { ascending: false })
         .limit(30);
 
-      const commitAnalytics = commitData as CommitAnalytics[] || [];
+      const commitAnalytics = (commitData as CommitAnalytics[]) || [];
 
       // Calculate commit patterns
       const commitsByHour = new Array(24).fill(0);
       const commitsByAuthor = new Map<string, number>();
-      
+
       commitAnalytics.forEach(ca => {
         if (ca.peakHour !== null && ca.peakHour !== undefined) {
           commitsByHour[ca.peakHour] += ca.commitCount;
@@ -666,12 +715,17 @@ export class AnalyticsService {
 
       // Calculate languages breakdown
       const languages = currentMetrics?.locByLanguage || {};
-      const totalLines = Object.values(languages).reduce((sum, lines) => sum + lines, 0);
-      const languageBreakdown = Object.entries(languages).map(([language, lines]) => ({
-        language,
-        lines,
-        percentage: totalLines > 0 ? (lines / totalLines) * 100 : 0,
-      }));
+      const totalLines = Object.values(languages).reduce(
+        (sum, lines) => sum + lines,
+        0
+      );
+      const languageBreakdown = Object.entries(languages).map(
+        ([language, lines]) => ({
+          language,
+          lines,
+          percentage: totalLines > 0 ? (lines / totalLines) * 100 : 0,
+        })
+      );
 
       return {
         repository,
@@ -679,10 +733,11 @@ export class AnalyticsService {
           current: currentMetrics || null,
           history: metrics,
         },
-        contributors: contributorData?.map((rc: any) => ({
-          contributor: rc.contributor,
-          stats: rc,
-        })) || [],
+        contributors:
+          contributorData?.map((rc: any) => ({
+            contributor: rc.contributor,
+            stats: rc,
+          })) || [],
         pullRequests: {
           recent: pullRequests,
           stats: {
@@ -695,15 +750,20 @@ export class AnalyticsService {
         commits: {
           byDay: commitAnalytics,
           byHour: commitsByHour.map((count, hour) => ({ hour, count })),
-          byAuthor: Array.from(commitsByAuthor.entries()).map(([author, count]) => ({
-            author,
-            count,
-          })),
+          byAuthor: Array.from(commitsByAuthor.entries()).map(
+            ([author, count]) => ({
+              author,
+              count,
+            })
+          ),
         },
         languages: languageBreakdown,
       };
     } catch (error) {
-      logger.error('Failed to get repository analytics', { repositoryId, error });
+      logger.error('Failed to get repository analytics', {
+        repositoryId,
+        error,
+      });
       throw error;
     }
   }
@@ -715,7 +775,9 @@ export class AnalyticsService {
 function getWeekString(date: Date): string {
   const year = date.getFullYear();
   const firstDayOfYear = new Date(year, 0, 1);
-  const days = Math.floor((date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000));
+  const days = Math.floor(
+    (date.getTime() - firstDayOfYear.getTime()) / (24 * 60 * 60 * 1000)
+  );
   const weekNumber = Math.ceil((days + firstDayOfYear.getDay() + 1) / 7);
   return `${year}-W${weekNumber.toString().padStart(2, '0')}`;
 }

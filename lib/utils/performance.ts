@@ -17,6 +17,7 @@
  */
 
 import React from 'react';
+import { logger } from '@/lib/utils/logger';
 
 // Performance metric interfaces
 export interface PerformanceMetrics {

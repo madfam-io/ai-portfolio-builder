@@ -4,6 +4,7 @@
  */
 
 import crypto from 'crypto';
+import { logger } from '@/lib/utils/logger';
 
 const algorithm = 'aes-256-gcm';
 
@@ -13,12 +14,12 @@ const algorithm = 'aes-256-gcm';
  */
 function getEncryptionKey(): Buffer {
   const envKey = process.env.ENCRYPTION_KEY;
-  
+
   if (!envKey) {
-    console.warn(
-      'WARNING: ENCRYPTION_KEY not found in environment variables. ' +
-      'Using a random key which will change on restart. ' +
-      'Set ENCRYPTION_KEY in production!'
+    logger.warn(
+      'ENCRYPTION_KEY not found in environment variables. ' +
+        'Using a random key which will change on restart. ' +
+        'Set ENCRYPTION_KEY in production!'
     );
     // In development, use a deterministic key based on a seed
     // This prevents data loss during development
@@ -28,7 +29,7 @@ function getEncryptionKey(): Buffer {
     // In production, this should never happen
     throw new Error('ENCRYPTION_KEY must be set in production environment');
   }
-  
+
   // Convert hex string to buffer
   return Buffer.from(envKey, 'hex');
 }
@@ -46,12 +47,12 @@ export function encrypt(text: string): {
   const key = getEncryptionKey();
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, key, iv);
-  
+
   let encrypted = cipher.update(text, 'utf8', 'hex');
   encrypted += cipher.final('hex');
-  
+
   const tag = cipher.getAuthTag();
-  
+
   return {
     encrypted,
     iv: iv.toString('hex'),
@@ -75,12 +76,12 @@ export function decrypt(encryptedData: {
     key,
     Buffer.from(encryptedData.iv, 'hex')
   );
-  
+
   decipher.setAuthTag(Buffer.from(encryptedData.tag, 'hex'));
-  
+
   let decrypted = decipher.update(encryptedData.encrypted, 'hex', 'utf8');
   decrypted += decipher.final('utf8');
-  
+
   return decrypted;
 }
 
@@ -105,7 +106,7 @@ export function safeEncrypt(text: string): {
   try {
     return encrypt(text);
   } catch (error) {
-    console.error('Encryption failed:', error);
+    logger.error('Encryption failed', { error });
     return null;
   }
 }
@@ -123,7 +124,7 @@ export function safeDecrypt(encryptedData: {
   try {
     return decrypt(encryptedData);
   } catch (error) {
-    console.error('Decryption failed:', error);
+    logger.error('Decryption failed', { error });
     return null;
   }
 }

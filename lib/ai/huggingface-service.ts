@@ -18,6 +18,7 @@ import {
 } from './types';
 import { promptTemplates } from './prompts';
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
 import crypto from 'crypto';
 
 // Available models with live capabilities
@@ -52,7 +53,7 @@ export class HuggingFaceService implements AIService {
     this.selectedModels = userModelPreferences || {};
 
     if (!this.apiKey) {
-      console.warn(
+      logger.warn(
         'Hugging Face API key not provided. Service will operate in demo mode.'
       );
     }
@@ -67,7 +68,7 @@ export class HuggingFaceService implements AIService {
   private generateCacheKey(
     type: string,
     content: string,
-    context?: any
+    context?: BioContext | Record<string, unknown>
   ): string {
     const hash = crypto
       .createHash('md5')
@@ -127,7 +128,7 @@ export class HuggingFaceService implements AIService {
       const cacheKey = this.generateCacheKey('bio', bio, context);
       const cached = await cache.get<EnhancedContent>(cacheKey);
       if (cached) {
-        console.log('Bio enhancement cache hit');
+        logger.debug('Bio enhancement cache hit');
         return cached;
       }
 

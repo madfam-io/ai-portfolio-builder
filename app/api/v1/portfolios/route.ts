@@ -1,7 +1,7 @@
 /**
  * Portfolio API Routes v1 - Main CRUD operations
  * Handles portfolio listing and creation
- * 
+ *
  * @version 1.0.0
  * @endpoint /api/v1/portfolios
  */
@@ -16,7 +16,16 @@ import {
 import { Portfolio } from '@/types/portfolio';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/utils/logger';
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/versioning';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/versioning';
+import {
+  transformDbPortfolioToApi,
+  transformApiPortfolioToDb,
+  transformDbPortfoliosToApi,
+} from '@/lib/utils/portfolio-transformer';
 
 /**
  * GET /api/v1/portfolios
@@ -48,7 +57,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     if (!queryValidation.success) {
       return apiError('Invalid query parameters', {
         status: 400,
-        data: { details: queryValidation.error.issues }
+        data: { details: queryValidation.error.issues },
       });
     }
 
@@ -144,7 +153,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     if (!validation.success) {
       return apiError('Invalid portfolio data', {
         status: 400,
-        data: { details: validation.error.issues }
+        data: { details: validation.error.issues },
       });
     }
 
@@ -230,7 +239,9 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       // Handle specific errors
       if (insertError.code === '23505') {
         // Unique constraint violation
-        return apiError('A portfolio with this subdomain already exists', { status: 409 });
+        return apiError('A portfolio with this subdomain already exists', {
+          status: 409,
+        });
       }
 
       return apiError('Failed to create portfolio', { status: 500 });
@@ -258,43 +269,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
   }
 });
 
-/**
- * Transforms database portfolio object to API format
- * Converts snake_case to camelCase and adjusts field names
- */
-function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
-  return {
-    id: dbPortfolio.id,
-    userId: dbPortfolio.user_id,
-    name: dbPortfolio.name,
-    title: dbPortfolio.title,
-    bio: dbPortfolio.bio,
-    tagline: dbPortfolio.tagline,
-    avatarUrl: dbPortfolio.avatar_url,
-    contact: dbPortfolio.contact || {},
-    social: dbPortfolio.social || {},
-    experience: dbPortfolio.experience || [],
-    education: dbPortfolio.education || [],
-    projects: dbPortfolio.projects || [],
-    skills: dbPortfolio.skills || [],
-    certifications: dbPortfolio.certifications || [],
-    template: dbPortfolio.template,
-    customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings,
-    status: dbPortfolio.status,
-    subdomain: dbPortfolio.subdomain,
-    customDomain: dbPortfolio.custom_domain,
-    views: dbPortfolio.views,
-    lastViewedAt: dbPortfolio.last_viewed_at
-      ? new Date(dbPortfolio.last_viewed_at)
-      : undefined,
-    createdAt: new Date(dbPortfolio.created_at),
-    updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at
-      ? new Date(dbPortfolio.published_at)
-      : undefined,
-  };
-}
+// Transformation functions moved to lib/utils/portfolio-transformer.ts
 
 /**
  * Transforms API portfolio object to database format

@@ -1,4 +1,6 @@
 import { API_VERSION_CONFIG } from '@/middleware/api-version';
+import { getCSRFHeaders } from '@/lib/utils/csrf-client';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * API client configuration
@@ -16,18 +18,21 @@ export interface ApiClientConfig {
 const defaultConfig: ApiClientConfig = {
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || '',
   version: API_VERSION_CONFIG.currentVersion,
-  credentials: 'same-origin'
+  credentials: 'same-origin',
 };
 
 /**
  * Create a versioned API URL
  */
-export function createApiUrl(endpoint: string, config: ApiClientConfig = {}): string {
+export function createApiUrl(
+  endpoint: string,
+  config: ApiClientConfig = {}
+): string {
   const { baseUrl, version } = { ...defaultConfig, ...config };
-  
+
   // Remove leading slash from endpoint if present
   const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
-  
+
   // Build the versioned URL
   return `${baseUrl}/api/${version}/${cleanEndpoint}`;
 }
@@ -35,7 +40,7 @@ export function createApiUrl(endpoint: string, config: ApiClientConfig = {}): st
 /**
  * Versioned fetch wrapper
  */
-export async function apiFetch<T = any>(
+export async function apiFetch<T = unknown>(
   endpoint: string,
   options: RequestInit & { config?: ApiClientConfig } = {}
 ): Promise<{
@@ -46,46 +51,63 @@ export async function apiFetch<T = any>(
 }> {
   const { config, ...fetchOptions } = options;
   const url = createApiUrl(endpoint, config);
-  
+
   try {
+    // Get CSRF headers for state-changing requests
+    const csrfHeaders = getCSRFHeaders({
+      'Content-Type': 'application/json',
+      ...config?.headers,
+      ...fetchOptions.headers,
+    });
+
     const response = await fetch(url, {
       ...fetchOptions,
       credentials: config?.credentials || defaultConfig.credentials,
-      headers: {
-        'Content-Type': 'application/json',
-        ...config?.headers,
-        ...fetchOptions.headers
-      }
+      headers: csrfHeaders,
     });
-    
+
     const contentType = response.headers.get('content-type');
-    let data: any;
-    
+    let data: unknown;
+
     if (contentType?.includes('application/json')) {
       data = await response.json();
     } else {
       data = await response.text();
     }
-    
+
     if (!response.ok) {
+      const errorData = data as {
+        error?: string;
+        message?: string;
+        data?: unknown;
+      };
       return {
-        error: data?.error || data?.message || `HTTP ${response.status}: ${response.statusText}`,
+        error:
+          errorData?.error ||
+          errorData?.message ||
+          `HTTP ${response.status}: ${response.statusText}`,
         status: response.status,
-        headers: response.headers
+        headers: response.headers,
       };
     }
-    
+
+    const responseData = data as { data?: T } | T;
     return {
-      data: data?.data || data,
+      data:
+        responseData &&
+        typeof responseData === 'object' &&
+        'data' in responseData
+          ? responseData.data
+          : (responseData as T),
       status: response.status,
-      headers: response.headers
+      headers: response.headers,
     };
   } catch (error) {
-    console.error('API Fetch Error:', error);
+    logger.error('API Fetch Error:', { error });
     return {
       error: error instanceof Error ? error.message : 'Network error',
       status: 0,
-      headers: new Headers()
+      headers: new Headers(),
     };
   }
 }
@@ -99,7 +121,7 @@ export const apiClient = {
    */
   get: <T = any>(endpoint: string, config?: ApiClientConfig) =>
     apiFetch<T>(endpoint, { method: 'GET', config }),
-  
+
   /**
    * POST request
    */
@@ -107,9 +129,9 @@ export const apiClient = {
     apiFetch<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
-      config
+      config,
     }),
-  
+
   /**
    * PUT request
    */
@@ -117,9 +139,9 @@ export const apiClient = {
     apiFetch<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
-      config
+      config,
     }),
-  
+
   /**
    * PATCH request
    */
@@ -127,14 +149,14 @@ export const apiClient = {
     apiFetch<T>(endpoint, {
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,
-      config
+      config,
     }),
-  
+
   /**
    * DELETE request
    */
   delete: <T = any>(endpoint: string, config?: ApiClientConfig) =>
-    apiFetch<T>(endpoint, { method: 'DELETE', config })
+    apiFetch<T>(endpoint, { method: 'DELETE', config }),
 };
 
 /**
@@ -147,32 +169,32 @@ export const API_ENDPOINTS = {
     models: 'ai/models',
     modelSelection: 'ai/models/selection',
     optimizeProject: 'ai/optimize-project',
-    recommendTemplate: 'ai/recommend-template'
+    recommendTemplate: 'ai/recommend-template',
   },
-  
+
   // Analytics endpoints
   analytics: {
     dashboard: 'analytics/dashboard',
     repositories: 'analytics/repositories',
-    repository: (id: string) => `analytics/repositories/${id}`
+    repository: (id: string) => `analytics/repositories/${id}`,
   },
-  
+
   // Integration endpoints
   integrations: {
     github: {
       auth: 'integrations/github/auth',
-      callback: 'integrations/github/callback'
-    }
+      callback: 'integrations/github/callback',
+    },
   },
-  
+
   // Portfolio endpoints
   portfolios: {
     list: 'portfolios',
     create: 'portfolios',
     get: (id: string) => `portfolios/${id}`,
     update: (id: string) => `portfolios/${id}`,
-    delete: (id: string) => `portfolios/${id}`
-  }
+    delete: (id: string) => `portfolios/${id}`,
+  },
 };
 
 /**
@@ -182,6 +204,6 @@ export function useApiClient(config?: ApiClientConfig) {
   return {
     client: apiClient,
     endpoints: API_ENDPOINTS,
-    createUrl: (endpoint: string) => createApiUrl(endpoint, config)
+    createUrl: (endpoint: string) => createApiUrl(endpoint, config),
   };
 }

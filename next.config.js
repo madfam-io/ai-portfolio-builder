@@ -94,8 +94,8 @@ const nextConfig = {
 
   // TypeScript configuration
   typescript: {
-    // Temporarily disable type checking for Vercel deployment
-    ignoreBuildErrors: true,
+    // Enable type checking for production builds
+    ignoreBuildErrors: false,
   },
 
   // ESLint configuration

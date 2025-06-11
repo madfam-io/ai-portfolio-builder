@@ -13,6 +13,11 @@ import {
 import { Portfolio } from '@/types/portfolio';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/utils/logger';
+import {
+  transformDbPortfolioToApi,
+  transformApiPortfolioToDb,
+  transformDbPortfoliosToApi,
+} from '@/lib/utils/portfolio-transformer';
 
 /**
  * GET /api/portfolios
@@ -287,85 +292,6 @@ export async function POST(request: NextRequest) {
   }
 }
 
-/**
- * Transforms database portfolio object to API format
- * Converts snake_case to camelCase and adjusts field names
- */
-function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
-  return {
-    id: dbPortfolio.id,
-    userId: dbPortfolio.user_id,
-    name: dbPortfolio.name,
-    title: dbPortfolio.title,
-    bio: dbPortfolio.bio,
-    tagline: dbPortfolio.tagline,
-    avatarUrl: dbPortfolio.avatar_url,
-    contact: dbPortfolio.contact || {},
-    social: dbPortfolio.social || {},
-    experience: dbPortfolio.experience || [],
-    education: dbPortfolio.education || [],
-    projects: dbPortfolio.projects || [],
-    skills: dbPortfolio.skills || [],
-    certifications: dbPortfolio.certifications || [],
-    template: dbPortfolio.template,
-    customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings,
-    status: dbPortfolio.status,
-    subdomain: dbPortfolio.subdomain,
-    customDomain: dbPortfolio.custom_domain,
-    views: dbPortfolio.views,
-    lastViewedAt: dbPortfolio.last_viewed_at
-      ? new Date(dbPortfolio.last_viewed_at)
-      : undefined,
-    createdAt: new Date(dbPortfolio.created_at),
-    updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at
-      ? new Date(dbPortfolio.published_at)
-      : undefined,
-  };
-}
-
-/**
- * Transforms API portfolio object to database format
- * Converts camelCase to snake_case and adjusts field names
- */
-export function transformApiPortfolioToDb(
-  apiPortfolio: Partial<Portfolio>
-): any {
-  const dbData: any = {};
-
-  if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
-  if (apiPortfolio.name) dbData.name = apiPortfolio.name;
-  if (apiPortfolio.title) dbData.title = apiPortfolio.title;
-  if (apiPortfolio.bio !== undefined) dbData.bio = apiPortfolio.bio;
-  if (apiPortfolio.tagline !== undefined) dbData.tagline = apiPortfolio.tagline;
-  if (apiPortfolio.avatarUrl !== undefined)
-    dbData.avatar_url = apiPortfolio.avatarUrl;
-  if (apiPortfolio.contact) dbData.contact = apiPortfolio.contact;
-  if (apiPortfolio.social) dbData.social = apiPortfolio.social;
-  if (apiPortfolio.experience) dbData.experience = apiPortfolio.experience;
-  if (apiPortfolio.education) dbData.education = apiPortfolio.education;
-  if (apiPortfolio.projects) dbData.projects = apiPortfolio.projects;
-  if (apiPortfolio.skills) dbData.skills = apiPortfolio.skills;
-  if (apiPortfolio.certifications)
-    dbData.certifications = apiPortfolio.certifications;
-  if (apiPortfolio.template) dbData.template = apiPortfolio.template;
-  if (apiPortfolio.customization)
-    dbData.customization = apiPortfolio.customization;
-  if (apiPortfolio.aiSettings) dbData.ai_settings = apiPortfolio.aiSettings;
-  if (apiPortfolio.status) dbData.status = apiPortfolio.status;
-  if (apiPortfolio.subdomain !== undefined)
-    dbData.subdomain = apiPortfolio.subdomain;
-  if (apiPortfolio.customDomain !== undefined)
-    dbData.custom_domain = apiPortfolio.customDomain;
-  if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
-  if (apiPortfolio.lastViewedAt)
-    dbData.last_viewed_at = apiPortfolio.lastViewedAt.toISOString();
-  if (apiPortfolio.publishedAt)
-    dbData.published_at = apiPortfolio.publishedAt.toISOString();
-
-  // Always update the updated_at timestamp
-  dbData.updated_at = new Date().toISOString();
-
-  return dbData;
-}
+// Transformation functions moved to lib/utils/portfolio-transformer.ts
+// Re-export for backward compatibility
+export { transformApiPortfolioToDb } from '@/lib/utils/portfolio-transformer';

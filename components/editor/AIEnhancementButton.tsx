@@ -6,11 +6,19 @@ import { FiLoader } from 'react-icons/fi';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';
+import { getErrorMessage } from '@/types/errors';
+import { logger } from '@/lib/utils/logger';
+
+interface ProjectContext {
+  title?: string;
+  description?: string;
+  technologies?: string[];
+}
 
 interface AIEnhancementButtonProps {
   type: 'bio' | 'project';
   content: string;
-  context?: BioContext | any;
+  context?: BioContext | ProjectContext;
   onEnhanced: (enhancedContent: string, suggestions?: string[]) => void;
   className?: string;
   disabled?: boolean;
@@ -43,11 +51,11 @@ export function AIEnhancementButton({
         setLastEnhanced(result.content);
       } else if (type === 'project') {
         // For project enhancement, we need title, description, and technologies
-        const {
-          title = '',
-          description = content,
-          technologies = [],
-        } = context || {};
+        const projectContext = context as ProjectContext;
+        const title = projectContext?.title || '';
+        const description = projectContext?.description || content;
+        const technologies = projectContext?.technologies || [];
+
         const result = await aiClient.optimizeProject(
           title,
           description,
@@ -56,13 +64,14 @@ export function AIEnhancementButton({
         onEnhanced(result.description, result.highlights);
         setLastEnhanced(result.description);
       }
-    } catch (error: any) {
-      console.error('AI enhancement failed:', error);
+    } catch (error) {
+      const errorMsg = getErrorMessage(error);
+      logger.error('AI enhancement failed', { error: errorMsg, type, content });
 
       // Show user-friendly error message
-      const errorMessage = error.message?.includes('Authentication')
+      const errorMessage = errorMsg.includes('Authentication')
         ? t.aiEnhancementRequiresAuth
-        : error.message?.includes('quota')
+        : errorMsg.includes('quota')
           ? t.aiQuotaExceeded
           : t.aiEnhancementFailed;
 

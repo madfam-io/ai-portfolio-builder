@@ -1,7 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-// import { rateLimitMiddleware } from './middleware/rate-limiter'; // Temporarily disabled
+import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
 import { csrfMiddleware } from './middleware/csrf';
 import { apiVersionMiddleware } from './middleware/api-version';
 import { logger } from '@/lib/utils/logger';
@@ -26,19 +26,21 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/api/')) {
     const versionResponse = await apiVersionMiddleware(req);
     // If version middleware returns a response (redirect or error), return it
-    if (versionResponse.status !== 200 || versionResponse.headers.get('location')) {
+    if (
+      versionResponse.status !== 200 ||
+      versionResponse.headers.get('location')
+    ) {
       return versionResponse;
     }
   }
 
-  // Apply rate limiting to all API routes (temporarily disabled for Vercel deployment)
-  // TODO: Re-enable rate limiting after fixing Redis module compatibility
-  // if (pathname.startsWith('/api/')) {
-  //   const rateLimitResponse = await rateLimitMiddleware(req);
-  //   if (rateLimitResponse) {
-  //     return rateLimitResponse;
-  //   }
-  // }
+  // Apply edge-compatible rate limiting to all API routes
+  if (pathname.startsWith('/api/')) {
+    const rateLimitResponse = edgeRateLimitMiddleware(req);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+  }
 
   // Apply CSRF protection to API routes
   if (pathname.startsWith('/api/')) {
