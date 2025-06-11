@@ -3,6 +3,7 @@
  * Reduces initial bundle size by loading templates on demand
  */
 
+import React from 'react';
 import dynamic from 'next/dynamic';
 import { ComponentType } from 'react';
 import { Portfolio } from '@/types/portfolio';
@@ -65,7 +66,9 @@ export const LAZY_TEMPLATES: Record<string, ComponentType<TemplateProps>> = {
 };
 
 // Helper function to get lazy template by name
-export function getLazyTemplate(templateName: string): ComponentType<TemplateProps> | null {
+export function getLazyTemplate(
+  templateName: string
+): ComponentType<TemplateProps> | null {
   return LAZY_TEMPLATES[templateName] || null;
 }
 
@@ -84,10 +87,10 @@ export function preloadTemplate(templateName: string): Promise<void> {
 }
 
 // Preload all templates (useful for editor initialization)
-export function preloadAllTemplates(): Promise<void[]> {
+export function preloadAllTemplates(): Promise<void> {
   return Promise.all([
     preloadTemplate('developer'),
     preloadTemplate('designer'),
     preloadTemplate('consultant'),
-  ]);
+  ]).then(() => {});
 }

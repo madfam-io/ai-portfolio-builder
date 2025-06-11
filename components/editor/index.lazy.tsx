@@ -3,6 +3,7 @@
  * Only loads editor components when needed by authenticated users
  */
 
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 // Loading component for editor
@@ -22,10 +23,7 @@ const EditorLoader = () => (
 
 // Lazy load main editor components
 export const PortfolioEditor = dynamic(
-  () =>
-    import('./PortfolioEditor').then(mod => ({
-      default: mod.PortfolioEditor,
-    })),
+  () => import('./PortfolioEditor'),
   {
     loading: EditorLoader,
     ssr: false,
@@ -83,13 +81,13 @@ export const AIEnhancementButton = dynamic(
 );
 
 // Preload editor components (useful when navigating to editor)
-export function preloadEditorComponents(): Promise<void[]> {
+export function preloadEditorComponents(): Promise<void> {
   return Promise.all([
     import('./PortfolioEditor'),
     import('./PortfolioPreview'),
     import('./EditorSidebar'),
     import('./EditorToolbar'),
-  ]);
+  ]).then(() => {});
 }
 
 // Export regular components for backward compatibility

@@ -153,11 +153,53 @@ jest.mock('@supabase/supabase-js', () => ({
 
 // Mock React Query
 jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(),
-  useMutation: jest.fn(),
-  useQueryClient: jest.fn(),
-  QueryClient: jest.fn(),
+  useQuery: jest.fn(() => ({
+    data: undefined,
+    error: null,
+    isLoading: false,
+    isError: false,
+    isSuccess: true,
+  })),
+  useMutation: jest.fn(() => ({
+    mutate: jest.fn(),
+    mutateAsync: jest.fn(),
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+    error: null,
+    data: undefined,
+  })),
+  useQueryClient: jest.fn(() => ({
+    invalidateQueries: jest.fn(),
+    setQueryData: jest.fn(),
+  })),
+  QueryClient: jest.fn(() => ({
+    invalidateQueries: jest.fn(),
+    setQueryData: jest.fn(),
+  })),
   QueryClientProvider: ({ children }) => children,
+}));
+
+// Mock Redis
+jest.mock('redis', () => ({
+  createClient: jest.fn().mockReturnValue({
+    connect: jest.fn().mockResolvedValue(undefined),
+    get: jest.fn().mockResolvedValue(null),
+    setEx: jest.fn().mockResolvedValue('OK'),
+    del: jest.fn().mockResolvedValue(1),
+    keys: jest.fn().mockResolvedValue([]),
+    quit: jest.fn().mockResolvedValue('OK'),
+    on: jest.fn(),
+  }),
+}));
+
+// Mock crypto module
+jest.mock('crypto', () => ({
+  randomBytes: jest.fn(size => Buffer.alloc(size, 0)),
+  createHash: jest.fn().mockReturnValue({
+    update: jest.fn().mockReturnThis(),
+    digest: jest.fn().mockReturnValue('mock-hash-12345678'),
+  }),
 }));
 
 // Mock Framer Motion

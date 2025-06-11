@@ -198,7 +198,7 @@ if (typeof window === 'undefined') {
  */
 export function Cacheable(keyPrefix: string, ttl?: number) {
   return function (
-    target: any,
+    _target: any,
     propertyName: string,
     descriptor: PropertyDescriptor
   ) {

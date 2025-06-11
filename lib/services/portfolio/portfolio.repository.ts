@@ -31,6 +31,13 @@ export class PortfolioRepository {
   /**
    * Get all portfolios for a user
    */
+  async findAll(userId: string): Promise<Portfolio[]> {
+    return this.findByUserId(userId);
+  }
+
+  /**
+   * Get all portfolios for a user
+   */
   async findByUserId(userId: string): Promise<Portfolio[]> {
     try {
       if (this.useMockData) {
@@ -247,6 +254,13 @@ export class PortfolioRepository {
   /**
    * Check subdomain availability
    */
+  async checkSubdomainAvailability(subdomain: string): Promise<boolean> {
+    return this.isSubdomainAvailable(subdomain);
+  }
+
+  /**
+   * Check subdomain availability
+   */
   async isSubdomainAvailable(subdomain: string): Promise<boolean> {
     try {
       if (this.useMockData) {
@@ -268,6 +282,37 @@ export class PortfolioRepository {
       return !data;
     } catch (error) {
       logger.error('Repository error in isSubdomainAvailable:', error as Error);
+      throw error;
+    }
+  }
+
+  /**
+   * Find published portfolios for a user
+   */
+  async findPublished(userId: string): Promise<Portfolio[]> {
+    try {
+      if (this.useMockData) {
+        return getMockPortfolios().filter(
+          p => p.userId === userId && p.publishedAt !== null
+        );
+      }
+
+      const client = await this.getClient();
+      const { data, error } = await client
+        .from('portfolios')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('published', true)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        logger.error('Error fetching published portfolios:', error);
+        throw error;
+      }
+
+      return data ? data.map(PortfolioMapper.fromDatabase) : [];
+    } catch (error) {
+      logger.error('Repository error in findPublished:', error as Error);
       throw error;
     }
   }

@@ -8,17 +8,36 @@ import { createClient } from '@/lib/supabase/server';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { z } from 'zod';
 
+// Simple AI usage logging function - defined at the bottom of file to avoid duplication
+
 // Request validation schema
 const optimizeProjectSchema = z.object({
-  title: z.string().min(1, 'Project title is required').max(100, 'Title too long'),
-  description: z.string().min(10, 'Description must be at least 10 characters').max(2000, 'Description too long'),
-  technologies: z.array(z.string()).min(1, 'At least one technology is required'),
-  context: z.object({
-    industry: z.string().optional(),
-    projectType: z.enum(['web', 'mobile', 'desktop', 'api', 'ai/ml', 'other']).optional(),
-    targetAudience: z.enum(['employers', 'clients', 'collaborators']).default('employers'),
-    emphasize: z.enum(['technical', 'business', 'creative']).default('technical'),
-  }).optional().default({}),
+  title: z
+    .string()
+    .min(1, 'Project title is required')
+    .max(100, 'Title too long'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .max(2000, 'Description too long'),
+  technologies: z
+    .array(z.string())
+    .min(1, 'At least one technology is required'),
+  context: z
+    .object({
+      industry: z.string().optional(),
+      projectType: z
+        .enum(['web', 'mobile', 'desktop', 'api', 'ai/ml', 'other'])
+        .optional(),
+      targetAudience: z
+        .enum(['employers', 'clients', 'collaborators'])
+        .default('employers'),
+      emphasize: z
+        .enum(['technical', 'business', 'creative'])
+        .default('technical'),
+    })
+    .optional()
+    .default({}),
 });
 
 export async function POST(request: NextRequest) {
@@ -31,9 +50,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -44,12 +65,12 @@ export async function POST(request: NextRequest) {
     // 2. Validate request body
     const body = await request.json();
     const validationResult = optimizeProjectSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors 
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -59,7 +80,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Initialize AI service
     const aiService = new HuggingFaceService();
-    
+
     // 4. Check service health
     const isHealthy = await aiService.healthCheck();
     if (!isHealthy) {
@@ -103,19 +124,18 @@ export async function POST(request: NextRequest) {
         optimizedLength: optimizedProject.description.length,
         improvementSuggestions: qualityScore.suggestions,
         processingTime: new Date().toISOString(),
-      }
+      },
     });
-
   } catch (error: any) {
     console.error('Project optimization failed:', error);
 
     // Handle specific AI service errors
     if (error.name === 'AIServiceError') {
       return NextResponse.json(
-        { 
-          error: 'AI processing failed', 
+        {
+          error: 'AI processing failed',
           message: error.message,
-          retryable: error.retryable 
+          retryable: error.retryable,
         },
         { status: error.retryable ? 503 : 500 }
       );
@@ -148,9 +168,11 @@ export async function PUT(request: NextRequest) {
         { status: 500 }
       );
     }
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -176,18 +198,20 @@ export async function PUT(request: NextRequest) {
     }
 
     // Validate each project
-    const validationResults = projects.map(project => 
+    const validationResults = projects.map(project =>
       optimizeProjectSchema.safeParse(project)
     );
 
-    const hasValidationErrors = validationResults.some(result => !result.success);
+    const hasValidationErrors = validationResults.some(
+      result => !result.success
+    );
     if (hasValidationErrors) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid project data',
           details: validationResults
             .filter(result => !result.success)
-            .map(result => result.error?.errors)
+            .map(result => result.error?.errors),
         },
         { status: 400 }
       );
@@ -195,7 +219,7 @@ export async function PUT(request: NextRequest) {
 
     // Initialize AI service
     const aiService = new HuggingFaceService();
-    
+
     // Check service health
     const isHealthy = await aiService.healthCheck();
     if (!isHealthy) {
@@ -209,9 +233,9 @@ export async function PUT(request: NextRequest) {
     const optimizedProjects = await Promise.allSettled(
       validationResults.map(async (result, index) => {
         if (!result.success) return null;
-        
+
         const { title, description, technologies } = result.data;
-        
+
         const optimized = await aiService.optimizeProjectDescription(
           title,
           description,
@@ -235,8 +259,10 @@ export async function PUT(request: NextRequest) {
     // Log batch usage
     await logAIUsage(user.id, 'batch_project_optimization', {
       projectCount: projects.length,
-      successCount: optimizedProjects.filter(p => p.status === 'fulfilled').length,
-      failureCount: optimizedProjects.filter(p => p.status === 'rejected').length,
+      successCount: optimizedProjects.filter(p => p.status === 'fulfilled')
+        .length,
+      failureCount: optimizedProjects.filter(p => p.status === 'rejected')
+        .length,
     });
 
     // Return results
@@ -250,12 +276,12 @@ export async function PUT(request: NextRequest) {
         })),
         summary: {
           total: projects.length,
-          successful: optimizedProjects.filter(p => p.status === 'fulfilled').length,
+          successful: optimizedProjects.filter(p => p.status === 'fulfilled')
+            .length,
           failed: optimizedProjects.filter(p => p.status === 'rejected').length,
-        }
-      }
+        },
+      },
     });
-
   } catch (error: any) {
     console.error('Batch project optimization failed:', error);
     return NextResponse.json(
@@ -269,8 +295,8 @@ export async function PUT(request: NextRequest) {
  * Log AI usage for analytics and billing
  */
 async function logAIUsage(
-  userId: string, 
-  operationType: string, 
+  userId: string,
+  operationType: string,
   metadata: Record<string, any>
 ) {
   try {
@@ -279,15 +305,13 @@ async function logAIUsage(
       console.error('Failed to create Supabase client for logging');
       return;
     }
-    
-    await supabase
-      .from('ai_usage_logs')
-      .insert({
-        user_id: userId,
-        operation_type: operationType,
-        metadata,
-        created_at: new Date().toISOString(),
-      });
+
+    await supabase.from('ai_usage_logs').insert({
+      user_id: userId,
+      operation_type: operationType,
+      metadata,
+      created_at: new Date().toISOString(),
+    });
   } catch (error) {
     console.error('Failed to log AI usage:', error);
     // Don't throw - logging failure shouldn't break the main operation

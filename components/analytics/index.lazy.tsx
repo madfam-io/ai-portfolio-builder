@@ -3,6 +3,7 @@
  * Splits heavy chart dependencies (Recharts) from main bundle
  */
 
+import React from 'react';
 import dynamic from 'next/dynamic';
 
 // Loading component for charts
@@ -14,26 +15,20 @@ const ChartLoader = () => (
 );
 
 // Lazy load chart components - Recharts is a heavy dependency (~300KB)
-export const CommitsChart = dynamic(
-  () => import('./CommitsChart'),
-  {
-    loading: ChartLoader,
-    ssr: false,
-  }
-);
+export const CommitsChart = dynamic(() => import('./CommitsChart'), {
+  loading: ChartLoader,
+  ssr: false,
+});
 
-export const PullRequestsChart = dynamic(
-  () => import('./PullRequestsChart'),
-  {
-    loading: ChartLoader,
-    ssr: false,
-  }
-);
+export const PullRequestsChart = dynamic(() => import('./PullRequestsChart'), {
+  loading: ChartLoader,
+  ssr: false,
+});
 
 // Preload analytics components
-export function preloadAnalyticsComponents(): Promise<void[]> {
+export function preloadAnalyticsComponents(): Promise<void> {
   return Promise.all([
     import('./CommitsChart'),
     import('./PullRequestsChart'),
-  ]);
+  ]).then(() => {});
 }

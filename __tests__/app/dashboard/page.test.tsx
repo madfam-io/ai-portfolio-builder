@@ -19,16 +19,19 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock Supabase client
+const mockFrom = {
+  select: jest.fn().mockReturnThis(),
+  eq: jest.fn().mockReturnThis(),
+  order: jest.fn().mockReturnThis(),
+  delete: jest.fn().mockReturnThis(),
+};
+
 const mockSupabase = {
   auth: {
     getUser: jest.fn(),
     signOut: jest.fn(),
   },
-  from: jest.fn().mockReturnValue({
-    select: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    order: jest.fn().mockReturnThis(),
-  }),
+  from: jest.fn().mockReturnValue(mockFrom),
 };
 
 jest.mock('@/lib/supabase/client', () => ({
@@ -110,7 +113,7 @@ describe('Dashboard Page', () => {
     });
 
     // Default portfolio data
-    mockSupabase.from().order.mockResolvedValue({
+    mockFrom.order.mockResolvedValue({
       data: [
         {
           id: '1',
@@ -205,7 +208,7 @@ describe('Dashboard Page', () => {
 
   describe('Empty State', () => {
     test('shows empty state when no portfolios', async () => {
-      mockSupabase.from().order.mockResolvedValue({
+      mockFrom.order.mockResolvedValue({
         data: [],
         error: null,
       });
@@ -239,8 +242,8 @@ describe('Dashboard Page', () => {
 
     test('handles portfolio deletion', async () => {
       const user = userEvent.setup();
-      mockSupabase.from().delete = jest.fn().mockReturnThis();
-      mockSupabase.from().eq = jest.fn().mockResolvedValue({ error: null });
+      mockFrom.delete = jest.fn().mockReturnThis();
+      mockFrom.eq = jest.fn().mockResolvedValue({ error: null });
 
       renderWithLanguage(<DashboardPage />);
 
@@ -257,7 +260,7 @@ describe('Dashboard Page', () => {
       });
       await user.click(confirmButton);
 
-      expect(mockSupabase.from().delete).toHaveBeenCalled();
+      expect(mockFrom.delete).toHaveBeenCalled();
     });
   });
 
@@ -289,7 +292,7 @@ describe('Dashboard Page', () => {
 
   describe('Error Handling', () => {
     test('displays error when portfolio fetch fails', async () => {
-      mockSupabase.from().order.mockResolvedValue({
+      mockFrom.order.mockResolvedValue({
         data: null,
         error: { message: 'Failed to fetch portfolios' },
       });

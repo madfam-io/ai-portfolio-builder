@@ -161,6 +161,123 @@ export class PerformanceMonitor {
 // Global performance monitor instance
 export const perfMonitor = new PerformanceMonitor();
 
+// Performance stats storage
+const performanceStats: Record<string, {
+  count: number;
+  totalDuration: number;
+  minDuration: number;
+  maxDuration: number;
+  averageDuration: number;
+}> = {};
+
+/**
+ * Measure async operation performance
+ */
+export async function measureAsyncOperation<T>(
+  operationName: string,
+  operation: () => Promise<T>
+): Promise<T> {
+  const startTime = performance.now();
+  
+  try {
+    const result = await operation();
+    const duration = performance.now() - startTime;
+    
+    // Update stats
+    if (!performanceStats[operationName]) {
+      performanceStats[operationName] = {
+        count: 0,
+        totalDuration: 0,
+        minDuration: Infinity,
+        maxDuration: 0,
+        averageDuration: 0,
+      };
+    }
+    
+    const stats = performanceStats[operationName];
+    stats.count++;
+    stats.totalDuration += duration;
+    stats.minDuration = Math.min(stats.minDuration, duration);
+    stats.maxDuration = Math.max(stats.maxDuration, duration);
+    stats.averageDuration = stats.totalDuration / stats.count;
+    
+    return result;
+  } catch (error) {
+    const duration = performance.now() - startTime;
+    
+    // Still track failed operations
+    if (!performanceStats[operationName]) {
+      performanceStats[operationName] = {
+        count: 0,
+        totalDuration: 0,
+        minDuration: Infinity,
+        maxDuration: 0,
+        averageDuration: 0,
+      };
+    }
+    
+    const stats = performanceStats[operationName];
+    stats.count++;
+    stats.totalDuration += duration;
+    
+    throw error;
+  }
+}
+
+/**
+ * Track API call performance
+ */
+export async function trackApiCall(
+  endpoint: string,
+  options?: RequestInit
+): Promise<Response> {
+  const operationName = `api_${endpoint}`;
+  const startTime = performance.now();
+  
+  try {
+    const response = await fetch(endpoint, options);
+    const duration = performance.now() - startTime;
+    
+    if (!response.ok) {
+      logger.error('API call failed', {
+        endpoint,
+        status: response.status,
+        statusText: response.statusText,
+        duration,
+      });
+    }
+    
+    // Track in stats
+    await measureAsyncOperation(operationName, async () => response);
+    
+    return response;
+  } catch (error) {
+    const duration = performance.now() - startTime;
+    logger.error('API call error', {
+      endpoint,
+      error,
+      duration,
+    });
+    throw error;
+  }
+}
+
+/**
+ * Get performance statistics
+ */
+export function getPerformanceStats() {
+  return { ...performanceStats };
+}
+
+/**
+ * Reset performance statistics
+ */
+export function resetStats(): void {
+  Object.keys(performanceStats).forEach(key => {
+    delete performanceStats[key];
+  });
+}
+
 /**
  * Hook for component render tracking
  */
