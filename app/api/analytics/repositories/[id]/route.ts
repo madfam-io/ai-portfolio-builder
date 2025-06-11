@@ -7,6 +7,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { logger } from '@/lib/utils/logger';
+import { 
+  repositoryParamsSchema, 
+  syncOptionsSchema 
+} from '@/lib/validations/api';
 
 interface RouteParams {
   params: {
@@ -19,6 +23,19 @@ interface RouteParams {
  */
 export async function GET(_: NextRequest, { params }: RouteParams) {
   try {
+    // Validate repository ID
+    const paramsValidation = repositoryParamsSchema.safeParse({ id: params.id });
+    
+    if (!paramsValidation.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid repository ID format',
+          details: paramsValidation.error.format()
+        },
+        { status: 400 }
+      );
+    }
+    
     const supabase = await createClient();
     
     if (!supabase) {
@@ -41,7 +58,7 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const repositoryId = params.id;
+    const { id: repositoryId } = paramsValidation.data;
     const analyticsService = new AnalyticsService(user.id);
     
     try {
@@ -87,6 +104,19 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
+    // Validate repository ID
+    const paramsValidation = repositoryParamsSchema.safeParse({ id: params.id });
+    
+    if (!paramsValidation.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid repository ID format',
+          details: paramsValidation.error.format()
+        },
+        { status: 400 }
+      );
+    }
+    
     const supabase = await createClient();
     
     if (!supabase) {
@@ -109,14 +139,28 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       );
     }
 
-    const repositoryId = params.id;
+    const { id: repositoryId } = paramsValidation.data;
+    
+    // Parse and validate request body
     const body = await request.json().catch(() => ({}));
+    const bodyValidation = syncOptionsSchema.safeParse(body);
+    
+    if (!bodyValidation.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid sync options',
+          details: bodyValidation.error.format()
+        },
+        { status: 400 }
+      );
+    }
+    
     const { 
-      syncMetrics = true, 
-      syncPullRequests = true, 
-      syncContributors = true,
-      syncCommits = true 
-    } = body;
+      syncMetrics, 
+      syncPullRequests, 
+      syncContributors,
+      syncCommits 
+    } = bodyValidation.data;
 
     const analyticsService = new AnalyticsService(user.id);
     

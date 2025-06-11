@@ -7,6 +7,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { logger } from '@/lib/utils/logger';
+import { syncRepositoriesSchema } from '@/lib/validations/api';
 
 /**
  * Get user's repositories for analytics
@@ -109,9 +110,21 @@ export async function POST(request: Request) {
       throw error;
     }
 
-    // Parse request body for options
+    // Parse and validate request body
     const body = await request.json().catch(() => ({}));
-    const { force = false } = body;
+    const validationResult = syncRepositoriesSchema.safeParse(body);
+    
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid request body', 
+          details: validationResult.error.format() 
+        },
+        { status: 400 }
+      );
+    }
+    
+    const { force } = validationResult.data;
 
     // Check if we should force sync or if enough time has passed
     const { data: integration } = await supabase

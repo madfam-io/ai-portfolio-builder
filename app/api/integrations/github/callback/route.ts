@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { encrypt } from '@/lib/utils/crypto';
+import { githubCallbackSchema } from '@/lib/validations/api';
 
 /**
  * Handle GitHub OAuth callback
@@ -14,21 +15,32 @@ import { encrypt } from '@/lib/utils/crypto';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const code = searchParams.get('code');
-    const state = searchParams.get('state');
-    const error = searchParams.get('error');
+    
+    // Validate OAuth callback parameters
+    const validationResult = githubCallbackSchema.safeParse({
+      code: searchParams.get('code') || '',
+      state: searchParams.get('state') || '',
+      error: searchParams.get('error'),
+      error_description: searchParams.get('error_description'),
+    });
+
+    // Handle validation or OAuth errors
+    if (!validationResult.success) {
+      logger.error('Invalid GitHub OAuth callback parameters', { 
+        errors: validationResult.error.format() 
+      });
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_callback`
+      );
+    }
+
+    const { code, state, error } = validationResult.data;
 
     // Handle OAuth errors
     if (error) {
       logger.error('GitHub OAuth error', { error });
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=oauth_denied`
-      );
-    }
-
-    if (!code || !state) {
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_callback`
       );
     }
 

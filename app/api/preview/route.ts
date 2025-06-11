@@ -7,6 +7,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { logger } from '@/lib/utils/logger';
+import {
+  previewQuerySchema,
+  previewBodySchema,
+  createValidationError,
+} from '@/lib/validations/api';
 
 // Template imports
 import { renderDeveloperTemplate } from '@/lib/templates/developer';
@@ -16,15 +21,21 @@ import { renderConsultantTemplate } from '@/lib/templates/consultant';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const portfolioId = searchParams.get('portfolioId');
-    const template = searchParams.get('template') || 'developer';
+    
+    // Validate query parameters
+    const validationResult = previewQuerySchema.safeParse({
+      portfolioId: searchParams.get('portfolioId'),
+      template: searchParams.get('template'),
+    });
 
-    if (!portfolioId) {
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Portfolio ID is required' },
+        createValidationError(validationResult.error),
         { status: 400 }
       );
     }
+
+    const { portfolioId, template } = validationResult.data;
 
     // Get portfolio data from database or from request body
     const supabase = await createClient();
@@ -120,14 +131,19 @@ export async function GET(request: NextRequest) {
 // POST endpoint for receiving portfolio updates
 export async function POST(request: NextRequest) {
   try {
-    const { portfolio, template } = await request.json();
+    const body = await request.json();
+    
+    // Validate request body
+    const validationResult = previewBodySchema.safeParse(body);
 
-    if (!portfolio) {
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Portfolio data is required' },
+        createValidationError(validationResult.error),
         { status: 400 }
       );
     }
+
+    const { portfolio, template } = validationResult.data;
 
     // Generate HTML based on template
     let html = '';
