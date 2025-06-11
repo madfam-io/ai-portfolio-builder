@@ -3,6 +3,7 @@ import { render, RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
+import { setupI18nTestEnvironment } from './i18n-test-helpers';
 
 // Mock Supabase client for testing
 export const mockSupabaseClient = {
@@ -57,6 +58,9 @@ export function renderWithProviders(
   options: CustomRenderOptions = {}
 ) {
   const { queryClient = createTestQueryClient(), ...renderOptions } = options;
+  
+  // Setup i18n test environment with Spanish as default
+  setupI18nTestEnvironment('es');
 
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (

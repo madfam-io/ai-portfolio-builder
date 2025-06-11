@@ -9,8 +9,28 @@ jest.mock('@/lib/utils/date', () => ({
   getCurrentYear: jest.fn(),
 }));
 
+// Mock localStorage to ensure Spanish is the default language
+const localStorageMock = {
+  getItem: jest.fn(() => 'es'),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+  length: 0,
+  key: jest.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+  writable: true,
+});
+
+// Mock navigator.language to return Spanish
+Object.defineProperty(window.navigator, 'language', {
+  value: 'es-ES',
+  configurable: true,
+});
+
 const renderWithProvider = (component: React.ReactElement) => {
-  return render(<LanguageProvider>{component}</LanguageProvider>);
+  return render(<LanguageProvider initialLanguage="es">{component}</LanguageProvider>);
 };
 
 describe('Footer', () => {
