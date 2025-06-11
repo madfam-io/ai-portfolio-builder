@@ -6,6 +6,7 @@ import {
 } from '@/types/portfolio';
 import { PortfolioRepository } from './portfolio.repository';
 import { logger } from '@/lib/utils/logger';
+import { cache, CACHE_KEYS, Cacheable } from '@/lib/cache/redis-cache';
 
 /**
  * Portfolio service for managing portfolio business logic
@@ -39,7 +40,24 @@ export class PortfolioService {
   async getPortfolio(id: string): Promise<Portfolio | null> {
     try {
       logger.info('Fetching portfolio', { portfolioId: id });
-      return await this.repository.findById(id);
+      
+      // Check cache first
+      const cacheKey = `${CACHE_KEYS.PORTFOLIO}${id}`;
+      const cached = await cache.get<Portfolio>(cacheKey);
+      if (cached) {
+        logger.debug('Portfolio cache hit', { portfolioId: id });
+        return cached;
+      }
+      
+      // Fetch from database
+      const portfolio = await this.repository.findById(id);
+      
+      // Cache the result
+      if (portfolio) {
+        await cache.set(cacheKey, portfolio, 300); // 5 minutes
+      }
+      
+      return portfolio;
     } catch (error) {
       logger.error('Failed to fetch portfolio', error as Error, {
         portfolioId: id,
@@ -80,8 +98,16 @@ export class PortfolioService {
     try {
       logger.info('Updating portfolio', { portfolioId: id });
       const portfolio = await this.repository.update(id, data);
+      
       if (portfolio) {
         logger.info('Portfolio updated successfully', { portfolioId: id });
+        
+        // Invalidate cache
+        const cacheKey = `${CACHE_KEYS.PORTFOLIO}${id}`;
+        await cache.del(cacheKey);
+        
+        // Also invalidate user portfolios cache
+        await cache.clearPattern(`${CACHE_KEYS.PORTFOLIO}user:${portfolio.userId}:*`);
       } else {
         logger.warn('Portfolio not found for update', { portfolioId: id });
       }

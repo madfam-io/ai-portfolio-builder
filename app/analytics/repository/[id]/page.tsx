@@ -10,21 +10,9 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-} from 'recharts';
 import {
   FiArrowLeft,
   FiGithub,
@@ -40,6 +28,18 @@ import {
   FiClock,
 } from 'react-icons/fi';
 import type { RepositoryAnalytics } from '@/types/analytics';
+
+// Lazy load Recharts components to reduce bundle size
+const LineChart = lazy(() => import('recharts').then(mod => ({ default: mod.LineChart })));
+const Line = lazy(() => import('recharts').then(mod => ({ default: mod.Line })));
+const XAxis = lazy(() => import('recharts').then(mod => ({ default: mod.XAxis })));
+const YAxis = lazy(() => import('recharts').then(mod => ({ default: mod.YAxis })));
+const CartesianGrid = lazy(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })));
+const Tooltip = lazy(() => import('recharts').then(mod => ({ default: mod.Tooltip })));
+const ResponsiveContainer = lazy(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })));
+const PieChart = lazy(() => import('recharts').then(mod => ({ default: mod.PieChart })));
+const Pie = lazy(() => import('recharts').then(mod => ({ default: mod.Pie })));
+const Cell = lazy(() => import('recharts').then(mod => ({ default: mod.Cell })));
 
 // Component state type
 interface RepoState {

@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
+
+// Load bundle analyzer if ANALYZE env is set
+const withBundleAnalyzer = process.env.ANALYZE === 'true' 
+  ? require('@next/bundle-analyzer')({
+      enabled: true,
+      openAnalyzer: false,
+    })
+  : (config) => config;
+
 const nextConfig = {
   reactStrictMode: false,
   poweredByHeader: false,
@@ -110,4 +119,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withBundleAnalyzer(nextConfig);

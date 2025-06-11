@@ -3,12 +3,13 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import PortfolioEditor from '@/components/editor/PortfolioEditor';
+import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
 import { portfolioService } from '@/lib/services/portfolioService';
 import Link from 'next/link';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
+import { preloadEditorComponents } from '@/components/editor/index.lazy';
 
 function EditorContent() {
   const { t } = useLanguage();
@@ -19,6 +20,11 @@ function EditorContent() {
   const [portfolio, setPortfolio] = useState<Portfolio | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Preload editor components when page loads
+  useEffect(() => {
+    preloadEditorComponents();
+  }, []);
 
   // Load portfolio data
   useEffect(() => {

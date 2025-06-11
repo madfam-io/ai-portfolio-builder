@@ -17,6 +17,8 @@ import {
   ModelResponse,
 } from './types';
 import { promptTemplates } from './prompts';
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import crypto from 'crypto';
 
 // Available models with live capabilities
 export interface AvailableModel {
@@ -57,6 +59,22 @@ export class HuggingFaceService implements AIService {
 
     // Initialize available models
     this.loadAvailableModels();
+  }
+
+  /**
+   * Generate cache key for AI requests
+   */
+  private generateCacheKey(
+    type: string,
+    content: string,
+    context?: any
+  ): string {
+    const hash = crypto
+      .createHash('md5')
+      .update(JSON.stringify({ content, context }))
+      .digest('hex')
+      .substring(0, 8);
+    return `${CACHE_KEYS.AI_RESULT}${type}:${hash}`;
   }
 
   /**
@@ -105,6 +123,14 @@ export class HuggingFaceService implements AIService {
    */
   async enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent> {
     try {
+      // Check cache first
+      const cacheKey = this.generateCacheKey('bio', bio, context);
+      const cached = await cache.get<EnhancedContent>(cacheKey);
+      if (cached) {
+        console.log('Bio enhancement cache hit');
+        return cached;
+      }
+
       const modelId =
         this.selectedModels.bio || this.getRecommendedModel('bio');
       const prompt = this.buildBioPrompt(bio, context);
@@ -113,7 +139,7 @@ export class HuggingFaceService implements AIService {
       const enhancedBio = this.extractBioFromResponse(response.content);
       const qualityScore = await this.scoreContent(enhancedBio, 'bio');
 
-      return {
+      const result: EnhancedContent = {
         content: enhancedBio,
         confidence: this.calculateConfidence(response, qualityScore),
         suggestions: this.generateBioSuggestions(bio, enhancedBio),
@@ -121,6 +147,11 @@ export class HuggingFaceService implements AIService {
         qualityScore: qualityScore.overall,
         enhancementType: 'bio',
       };
+
+      // Cache the result for 1 hour
+      await cache.set(cacheKey, result, 3600);
+
+      return result;
     } catch (error) {
       console.error('Bio enhancement failed:', error);
       throw this.handleError(error, 'bio enhancement');
