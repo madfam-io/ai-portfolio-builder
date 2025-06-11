@@ -209,47 +209,49 @@ function ItemCard({
   const renderContent = () => {
     switch (section) {
       case 'experience':
+        const expItem = item as Experience;
         return (
           <>
             <div>
-              <h4 className="font-semibold">{item.position}</h4>
-              <p className="text-sm text-gray-600">{item.company}</p>
+              <h4 className="font-semibold">{expItem.position}</h4>
+              <p className="text-sm text-gray-600">{expItem.company}</p>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {item.startDate} - {item.endDate || t.present}
+                {expItem.startDate} - {expItem.endDate || t.present}
               </span>
-              {item.location && (
+              {expItem.location && (
                 <span className="flex items-center gap-1">
                   <MapPin className="h-3.5 w-3.5" />
-                  {item.location}
+                  {expItem.location}
                 </span>
               )}
             </div>
-            {item.description && (
+            {expItem.description && (
               <p className="text-sm text-gray-700 mt-2 line-clamp-2">
-                {item.description}
+                {expItem.description}
               </p>
             )}
           </>
         );
 
       case 'education':
+        const eduItem = item as Education;
         return (
           <>
             <div>
-              <h4 className="font-semibold">{item.degree}</h4>
-              <p className="text-sm text-gray-600">{item.institution}</p>
+              <h4 className="font-semibold">{eduItem.degree}</h4>
+              <p className="text-sm text-gray-600">{eduItem.institution}</p>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {item.startDate} - {item.endDate || t.present}
+                {eduItem.startDate} - {eduItem.endDate || t.present}
               </span>
-              {item.gpa && (
+              {eduItem.gpa && (
                 <span>
-                  {t.gpaLabel || 'GPA'}: {item.gpa}
+                  {t.gpaLabel || 'GPA'}: {eduItem.gpa}
                 </span>
               )}
             </div>
@@ -257,19 +259,20 @@ function ItemCard({
         );
 
       case 'projects':
+        const projItem = item as Project;
         return (
           <>
             <div>
-              <h4 className="font-semibold">{item.title}</h4>
-              {item.description && (
+              <h4 className="font-semibold">{projItem.title}</h4>
+              {projItem.description && (
                 <p className="text-sm text-gray-700 mt-1 line-clamp-2">
-                  {item.description}
+                  {projItem.description}
                 </p>
               )}
             </div>
-            {item.technologies && item.technologies.length > 0 && (
+            {projItem.technologies && projItem.technologies.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-2">
-                {item.technologies.slice(0, 5).map((tech: string) => (
+                {projItem.technologies.slice(0, 5).map((tech: string) => (
                   <span
                     key={tech}
                     className="px-2 py-0.5 text-xs bg-gray-100 text-gray-700 rounded"
@@ -277,9 +280,9 @@ function ItemCard({
                     {tech}
                   </span>
                 ))}
-                {item.technologies.length > 5 && (
+                {projItem.technologies.length > 5 && (
                   <span className="text-xs text-gray-500">
-                    +{item.technologies.length - 5}
+                    +{projItem.technologies.length - 5}
                   </span>
                 )}
               </div>
@@ -288,12 +291,13 @@ function ItemCard({
         );
 
       case 'skills':
+        const skillItem = item as Skill;
         return (
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">{item.name}</h4>
+            <h4 className="font-medium">{skillItem.name}</h4>
             <div className="flex items-center gap-2">
               <span className="text-sm text-gray-500 capitalize">
-                {item.level}
+                {skillItem.level}
               </span>
               <div className="flex gap-0.5">
                 {[1, 2, 3, 4, 5].map(level => (
@@ -313,20 +317,21 @@ function ItemCard({
         );
 
       case 'certifications':
+        const certItem = item as Certification;
         return (
           <>
             <div>
-              <h4 className="font-semibold">{'name' in item ? item.name : ''}</h4>
-              <p className="text-sm text-gray-600">{'issuer' in item ? item.issuer : ''}</p>
+              <h4 className="font-semibold">{certItem.name}</h4>
+              <p className="text-sm text-gray-600">{certItem.issuer}</p>
             </div>
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3.5 w-3.5" />
-                {'issueDate' in item ? item.issueDate : ''}
+                {certItem.issueDate}
               </span>
-              {'expiryDate' in item && item.expiryDate && (
+              {certItem.expiryDate && (
                 <span>
-                  {t.expires || 'Expires'}: {item.expiryDate}
+                  {t.expires || 'Expires'}: {certItem.expiryDate}
                 </span>
               )}
             </div>
