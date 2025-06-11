@@ -17,7 +17,7 @@ import { RootState } from './types';
  */
 export const useRootStore = create<RootState>()(
   devtools(
-    (set, get) => ({
+    (_set, _get) => ({
       // Auth store
       auth: {
         ...useAuthStore.getState(),
@@ -48,13 +48,13 @@ export const useRootStore = create<RootState>()(
     }),
     {
       name: 'root-store',
-    },
-  ),
+    }
+  )
 );
 
 // Subscribe to individual store changes and update root store
-useAuthStore.subscribe((state) => {
-  useRootStore.setState((rootState) => ({
+useAuthStore.subscribe(state => {
+  useRootStore.setState(rootState => ({
     ...rootState,
     auth: {
       ...state,
@@ -64,32 +64,32 @@ useAuthStore.subscribe((state) => {
   }));
 });
 
-usePortfolioStore.subscribe((state) => {
-  useRootStore.setState((rootState) => ({
+usePortfolioStore.subscribe(state => {
+  useRootStore.setState(rootState => ({
     ...rootState,
     portfolio: state,
   }));
 });
 
-useUIStore.subscribe((state) => {
-  useRootStore.setState((rootState) => ({
+useUIStore.subscribe(state => {
+  useRootStore.setState(rootState => ({
     ...rootState,
     ui: state,
   }));
 });
 
-useAIStore.subscribe((state) => {
-  useRootStore.setState((rootState) => ({
+useAIStore.subscribe(state => {
+  useRootStore.setState(rootState => ({
     ...rootState,
     ai: state,
   }));
 });
 
 // Export convenience methods for accessing root store slices
-export const useAuth = () => useRootStore((state) => state.auth);
-export const usePortfolio = () => useRootStore((state) => state.portfolio);
-export const useUI = () => useRootStore((state) => state.ui);
-export const useAI = () => useRootStore((state) => state.ai);
+export const useAuth = () => useRootStore(state => state.auth);
+export const usePortfolio = () => useRootStore(state => state.portfolio);
+export const useUI = () => useRootStore(state => state.ui);
+export const useAI = () => useRootStore(state => state.ai);
 
 // Export for direct access outside of React components
 export const getRootStore = () => useRootStore.getState();

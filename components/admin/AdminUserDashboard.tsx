@@ -8,11 +8,12 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { 
-  FiUsers, 
-  FiSettings, 
-  FiEye, 
-  FiShield, 
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import {
+  FiUsers,
+  FiSettings,
+  FiEye,
+  FiShield,
   FiUser,
   FiToggleLeft,
   FiToggleRight,
@@ -20,14 +21,14 @@ import {
   FiDollarSign,
   FiActivity,
   FiAlertTriangle,
-  FiCheck
+  FiCheck,
 } from 'react-icons/fi';
 
 export default function AdminUserDashboard() {
-  const { 
-    user, 
-    isAdmin, 
-    isInAdminMode, 
+  const {
+    user,
+    isAdmin,
+    isInAdminMode,
     isImpersonating,
     permissionLevel,
     canAccess,
@@ -35,9 +36,10 @@ export default function AdminUserDashboard() {
     switchToUserMode,
     impersonateUser,
     stopImpersonation,
-    usageStats
+    usageStats,
   } = useAuth();
-  
+  const { t } = useLanguage();
+
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
 
   if (!isAdmin) {
@@ -45,10 +47,10 @@ export default function AdminUserDashboard() {
       <div className="p-6 text-center">
         <FiShield className="mx-auto mb-4 text-6xl text-red-500" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Access Denied
+          {t.adminAccessDenied}
         </h2>
         <p className="text-gray-600 dark:text-gray-400">
-          You don&apos;t have permission to access the admin dashboard.
+          {t.adminNoPermission}
         </p>
       </div>
     );
@@ -128,7 +130,7 @@ export default function AdminUserDashboard() {
               <FiShield className="text-2xl text-blue-600" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                  PRISMA Admin Dashboard
+                  {t.adminDashboard}
                 </h1>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
                   {permissionLevel}
@@ -142,7 +144,7 @@ export default function AdminUserDashboard() {
                 <div className="flex items-center space-x-2 bg-yellow-100 dark:bg-yellow-900 px-3 py-1 rounded-lg">
                   <FiEye className="text-yellow-600 dark:text-yellow-400" />
                   <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
-                    Impersonating User
+                    {t.adminImpersonatingUser}
                   </span>
                   <button
                     onClick={() => handleImpersonation('')}
@@ -155,13 +157,19 @@ export default function AdminUserDashboard() {
 
               {/* Mode Switch */}
               <div className="flex items-center space-x-2">
-                <span className={`text-sm ${!isInAdminMode ? 'font-bold text-blue-600' : 'text-gray-600'}`}>
-                  User View
+                <span
+                  className={`text-sm ${!isInAdminMode ? 'font-bold text-blue-600' : 'text-gray-600'}`}
+                >
+                  {t.adminUserView}
                 </span>
                 <button
                   onClick={handleModeSwitch}
                   className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  title={isInAdminMode ? 'Switch to User View' : 'Switch to Admin View'}
+                  title={
+                    isInAdminMode
+                      ? t.adminSwitchToUserView
+                      : t.adminSwitchToAdminView
+                  }
                 >
                   {isInAdminMode ? (
                     <FiToggleRight className="text-2xl text-blue-600" />
@@ -169,8 +177,10 @@ export default function AdminUserDashboard() {
                     <FiToggleLeft className="text-2xl text-gray-400" />
                   )}
                 </button>
-                <span className={`text-sm ${isInAdminMode ? 'font-bold text-blue-600' : 'text-gray-600'}`}>
-                  Admin View
+                <span
+                  className={`text-sm ${isInAdminMode ? 'font-bold text-blue-600' : 'text-gray-600'}`}
+                >
+                  {t.adminAdminView}
                 </span>
               </div>
 
@@ -199,7 +209,9 @@ export default function AdminUserDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Users</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {t.adminTotalUsers}
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     {systemStats.totalUsers.toLocaleString()}
                   </p>
@@ -211,7 +223,9 @@ export default function AdminUserDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Subscriptions</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {t.adminActiveSubscriptions}
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     {systemStats.activeSubscriptions.toLocaleString()}
                   </p>
@@ -223,7 +237,9 @@ export default function AdminUserDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Monthly Revenue</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {t.adminMonthlyRevenue}
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     ${systemStats.monthlyRevenue.toLocaleString()}
                   </p>
@@ -235,7 +251,9 @@ export default function AdminUserDashboard() {
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Portfolios Created</p>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                    {t.adminPortfoliosCreated}
+                  </p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                     {systemStats.portfoliosCreated.toLocaleString()}
                   </p>
@@ -249,10 +267,10 @@ export default function AdminUserDashboard() {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
             <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                User Management
+                {t.adminUserManagement}
               </h2>
               <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                Manage user accounts, subscriptions, and permissions
+                {t.adminManageUsers}
               </p>
             </div>
 
@@ -261,28 +279,31 @@ export default function AdminUserDashboard() {
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      User
+                      {t.adminUser}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Subscription
+                      {t.adminSubscription}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Status
+                      {t.adminStatus}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Portfolios
+                      {t.adminPortfolios}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Last Active
+                      {t.adminLastActive}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                      Actions
+                      {t.adminActions}
                     </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                  {mockUsers.map((user) => (
-                    <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
+                  {mockUsers.map(user => (
+                    <tr
+                      key={user.id}
+                      className="hover:bg-gray-50 dark:hover:bg-gray-700"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
@@ -301,13 +322,15 @@ export default function AdminUserDashboard() {
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                          user.subscriptionPlan === 'business' 
-                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-                            : user.subscriptionPlan === 'pro'
-                            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-                            : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                        }`}>
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                            user.subscriptionPlan === 'business'
+                              ? 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+                              : user.subscriptionPlan === 'pro'
+                                ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                                : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                          }`}
+                        >
                           {user.subscriptionPlan.toUpperCase()}
                         </span>
                       </td>
@@ -318,11 +341,13 @@ export default function AdminUserDashboard() {
                           ) : (
                             <FiAlertTriangle className="text-red-500 mr-2" />
                           )}
-                          <span className={`text-sm ${
-                            user.status === 'active' 
-                              ? 'text-green-600 dark:text-green-400'
-                              : 'text-red-600 dark:text-red-400'
-                          }`}>
+                          <span
+                            className={`text-sm ${
+                              user.status === 'active'
+                                ? 'text-green-600 dark:text-green-400'
+                                : 'text-red-600 dark:text-red-400'
+                            }`}
+                          >
                             {user.status}
                           </span>
                         </div>
@@ -343,7 +368,9 @@ export default function AdminUserDashboard() {
                                 : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800'
                             }`}
                           >
-                            {selectedUser === user.id ? 'Stop' : 'View As'}
+                            {selectedUser === user.id
+                              ? t.adminStop
+                              : t.adminViewAs}
                           </button>
                         )}
                         <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
@@ -362,18 +389,18 @@ export default function AdminUserDashboard() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              Welcome back, {user?.name}!
+              {t.adminWelcomeBack?.replace('{name}', user?.name || '') ||
+                `Welcome back, ${user?.name}!`}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              You&apos;re currently viewing PRISMA from a user perspective. 
-              Switch to Admin View to access administrative features.
+              {t.adminCurrentlyViewing} {t.adminSwitchToAdminView}.
             </p>
 
             {/* User Stats */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Portfolios Created
+                  {t.adminPortfoliosCreatedStat}
                 </h3>
                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {usageStats.portfoliosCreated}
@@ -381,7 +408,7 @@ export default function AdminUserDashboard() {
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  AI Enhancements Used
+                  {t.adminAiEnhancementsUsed}
                 </h3>
                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {usageStats.aiEnhancementsUsed}
@@ -389,7 +416,7 @@ export default function AdminUserDashboard() {
               </div>
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">
-                  Monthly Views
+                  {t.adminMonthlyViews}
                 </h3>
                 <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                   {usageStats.monthlyViews}

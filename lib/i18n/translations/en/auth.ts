@@ -65,4 +65,31 @@ export default {
 
   // Misc
   or: 'Or',
+
+  // Authentication callback
+  authenticationSuccessful: 'Authentication successful',
+  authenticationFailed: 'Authentication failed',
+  redirectingToDashboard: 'Redirecting to dashboard...',
+  processingAuthentication: 'Processing authentication...',
+  invalidAuthenticationState: 'Invalid authentication state',
+  sessionExpired: 'Session expired',
+  pleaseLoginAgain: 'Please login again',
+  completingAuthentication: 'Completing authentication...',
+  authenticationSuccessfulRedirecting:
+    'Authentication successful! Redirecting...',
+  authenticationFailedTitle: 'Authentication Failed',
+  tryAgain: 'Try Again',
+
+  // OAuth messages
+  connectingWithProvider: 'Connecting with provider...',
+  authorizationDenied: 'Authorization denied',
+  authorizationCancelled: 'Authorization cancelled',
+  oauthError: 'OAuth error',
+
+  // Account states
+  accountLocked: 'Account locked',
+  accountSuspended: 'Account suspended',
+  accountNotVerified: 'Account not verified',
+  emailNotVerified: 'Email not verified',
+  pleaseVerifyEmail: 'Please verify your email',
 } as const;

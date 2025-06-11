@@ -1,7 +1,7 @@
 /**
  * AI Service Client
  * Frontend client for interacting with AI enhancement APIs
- * 
+ *
  * @version 1.0.0
  * Now uses versioned API endpoints
  */
@@ -30,16 +30,10 @@ export interface AIClientConfig {
 }
 
 export class AIClient {
-  private baseUrl: string;
-  private timeout: number;
-  private retries: number;
   private userModelPreferences: Record<string, string>;
   private autoUpdateModels: boolean;
 
   constructor(config: AIClientConfig = {}) {
-    this.baseUrl = config.baseUrl || '';
-    this.timeout = config.timeout || 30000; // 30 seconds
-    this.retries = config.retries || 3;
     this.userModelPreferences = config.userModelPreferences || {};
     this.autoUpdateModels = config.autoUpdateModels ?? true;
   }
@@ -57,7 +51,9 @@ export class AIClient {
    * Get current model selection
    */
   async getModelSelection(): Promise<Record<string, string>> {
-    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.modelSelection);
+    const { data, error } = await apiClient.get(
+      API_ENDPOINTS.ai.modelSelection
+    );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
     return data;
   }
@@ -66,10 +62,10 @@ export class AIClient {
    * Update model preferences
    */
   async updateModelSelection(taskType: string, modelId: string): Promise<void> {
-    const { error } = await apiClient.put(
-      API_ENDPOINTS.ai.modelSelection,
-      { taskType, modelId }
-    );
+    const { error } = await apiClient.put(API_ENDPOINTS.ai.modelSelection, {
+      taskType,
+      modelId,
+    });
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
 
     // Update local cache
@@ -80,15 +76,12 @@ export class AIClient {
    * Enhance bio content using AI
    */
   async enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent> {
-    const { data, error } = await apiClient.post(
-      API_ENDPOINTS.ai.enhanceBio,
-      {
-        bio,
-        context,
-        selectedModel: this.userModelPreferences.bio,
-        autoUpdate: this.autoUpdateModels,
-      }
-    );
+    const { data, error } = await apiClient.post(API_ENDPOINTS.ai.enhanceBio, {
+      bio,
+      context,
+      selectedModel: this.userModelPreferences.bio,
+      autoUpdate: this.autoUpdateModels,
+    });
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
     return data;
   }
@@ -191,7 +184,9 @@ export class AIClient {
       }
     >;
   }> {
-    const { data, error } = await apiClient.get(API_ENDPOINTS.ai.recommendTemplate);
+    const { data, error } = await apiClient.get(
+      API_ENDPOINTS.ai.recommendTemplate
+    );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
     return data;
   }
@@ -287,10 +282,9 @@ export const AIUtils = {
     experience: any[]
   ): 'entry' | 'mid' | 'senior' | 'lead' {
     const totalYears = experience.reduce((total, exp) => {
-      return total + this.calculateYearsExperience(
-        exp.startDate,
-        exp.endDate,
-        exp.current
+      return (
+        total +
+        this.calculateYearsExperience(exp.startDate, exp.endDate, exp.current)
       );
     }, 0);
 

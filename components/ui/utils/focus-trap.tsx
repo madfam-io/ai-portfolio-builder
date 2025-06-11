@@ -14,7 +14,11 @@ interface FocusTrapProps {
  *   <Modal />
  * </FocusTrap>
  */
-export function FocusTrap({ children, active = true, className }: FocusTrapProps) {
+export function FocusTrap({
+  children,
+  active = true,
+  className,
+}: FocusTrapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -49,13 +53,13 @@ export function FocusTrap({ children, active = true, className }: FocusTrapProps
 
       // Shift + Tab
       if (e.shiftKey) {
-        if (activeElement === firstElement) {
+        if (activeElement === firstElement && lastElement) {
           e.preventDefault();
           lastElement.focus();
         }
       } else {
         // Tab
-        if (activeElement === lastElement) {
+        if (activeElement === lastElement && firstElement) {
           e.preventDefault();
           firstElement.focus();
         }
@@ -64,7 +68,7 @@ export function FocusTrap({ children, active = true, className }: FocusTrapProps
 
     // Focus first element
     const focusableElements = getFocusableElements();
-    if (focusableElements.length > 0) {
+    if (focusableElements.length > 0 && focusableElements[0]) {
       focusableElements[0].focus();
     }
 

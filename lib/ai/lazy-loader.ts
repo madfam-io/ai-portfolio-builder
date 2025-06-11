@@ -8,7 +8,6 @@ import { logger } from '@/lib/utils/logger';
 
 // Cache for loaded services
 let huggingFaceService: any = null;
-let deepSeekService: any = null;
 
 /**
  * Lazy load HuggingFace service
@@ -16,22 +15,10 @@ let deepSeekService: any = null;
 async function getHuggingFaceService() {
   if (!huggingFaceService) {
     logger.info('Loading HuggingFace service...');
-    const serviceModule = await import('./huggingface-service');
-    huggingFaceService = serviceModule.huggingFaceService;
+    const { HuggingFaceService } = await import('./huggingface-service');
+    huggingFaceService = new HuggingFaceService();
   }
   return huggingFaceService;
-}
-
-/**
- * Lazy load DeepSeek service
- */
-async function getDeepSeekService() {
-  if (!deepSeekService) {
-    logger.info('Loading DeepSeek service...');
-    const serviceModule = await import('./deepseek-service');
-    deepSeekService = serviceModule.deepSeekService;
-  }
-  return deepSeekService;
 }
 
 /**
@@ -87,11 +74,7 @@ export async function getAvailableModelsLazy(task?: string) {
  * Preload AI services (useful for predictive loading)
  */
 export async function preloadAIServices(): Promise<void> {
-  await Promise.all([
-    getHuggingFaceService(),
-    // Only preload DeepSeek if needed
-    // getDeepSeekService(),
-  ]);
+  await getHuggingFaceService();
 }
 
 /**
@@ -99,6 +82,5 @@ export async function preloadAIServices(): Promise<void> {
  */
 export function clearAIServiceCache(): void {
   huggingFaceService = null;
-  deepSeekService = null;
   logger.info('AI service cache cleared');
 }

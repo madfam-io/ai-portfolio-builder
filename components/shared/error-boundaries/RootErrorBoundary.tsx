@@ -1,6 +1,6 @@
 /**
  * @fileoverview Root Error Boundary
- * 
+ *
  * The top-level error boundary for the entire PRISMA application.
  * Provides comprehensive error handling with monitoring integration.
  */
@@ -10,7 +10,11 @@
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { FiAlertTriangle, FiRefreshCw, FiHome, FiMail } from 'react-icons/fi';
 import { logger } from '@/lib/utils/logger';
-import { serializeError, getUserFriendlyMessage, getErrorContext } from '@/lib/utils/error-handling/error-utils';
+import {
+  serializeError,
+  getUserFriendlyMessage,
+  getErrorContext,
+} from '@/lib/utils/error-handling/error-utils';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
 interface RootErrorBoundaryProps {
@@ -46,9 +50,11 @@ export class RootErrorBoundary extends Component<
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<RootErrorBoundaryState> {
+  static getDerivedStateFromError(
+    error: Error
+  ): Partial<RootErrorBoundaryState> {
     const errorId = `root_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    
+
     return {
       hasError: true,
       error,
@@ -59,7 +65,7 @@ export class RootErrorBoundary extends Component<
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const { errorId } = this.state;
     const errorContext = getErrorContext();
-    
+
     // Log to monitoring service
     logger.error('Root Error Boundary Caught Error', {
       errorId,
@@ -157,15 +163,17 @@ Please describe what you were doing when this error occurred:
     const { hasError, error, errorId, retryCount, isRecovering } = this.state;
 
     if (hasError && !isRecovering) {
-      return <RootErrorFallback
-        error={error}
-        errorId={errorId}
-        retryCount={retryCount}
-        onRetry={this.handleRetry}
-        onHardReload={this.handleHardReload}
-        onGoHome={this.handleGoHome}
-        onReportBug={this.handleReportBug}
-      />;
+      return (
+        <RootErrorFallback
+          error={error}
+          errorId={errorId}
+          retryCount={retryCount}
+          onRetry={this.handleRetry}
+          onHardReload={this.handleHardReload}
+          onGoHome={this.handleGoHome}
+          onReportBug={this.handleReportBug}
+        />
+      );
     }
 
     return this.props.children;
@@ -211,13 +219,15 @@ function RootErrorFallback({
           {/* Error Message */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {t.errors.rootErrorTitle}
+              {(t.errors as any)?.rootErrorTitle ||
+                'Oops! Something went wrong'}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               {userMessage}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              {t.errors.errorId}: <span className="font-mono">{errorId}</span>
+              {(t.errors as any)?.errorId || 'Error ID'}:{' '}
+              <span className="font-mono">{errorId}</span>
             </p>
           </div>
 
@@ -225,7 +235,7 @@ function RootErrorFallback({
           {isDevelopment && error && (
             <details className="mb-8 bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               <summary className="cursor-pointer font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {t.errors.technicalDetails}
+                {(t.errors as any)?.technicalDetails || 'Technical Details'}
               </summary>
               <div className="space-y-4 mt-4">
                 <div>
@@ -258,7 +268,7 @@ function RootErrorFallback({
                 className="w-full flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <FiRefreshCw className="w-5 h-5" />
-                {t.errors.tryAgain}
+                {(t.errors as any)?.tryAgain || 'Try Again'}
                 {retryCount > 0 && ` (${retryCount}/3)`}
               </button>
             )}
@@ -269,7 +279,7 @@ function RootErrorFallback({
                 className="w-full flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <FiRefreshCw className="w-5 h-5" />
-                {t.errors.reloadPage}
+                {(t.errors as any)?.reloadPage || 'Reload Page'}
               </button>
             )}
 
@@ -278,7 +288,7 @@ function RootErrorFallback({
               className="w-full flex items-center justify-center gap-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <FiHome className="w-5 h-5" />
-              {t.errors.goToHomepage}
+              {(t.errors as any)?.goToHomepage || 'Go to Homepage'}
             </button>
 
             <button
@@ -286,14 +296,15 @@ function RootErrorFallback({
               className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
             >
               <FiMail className="w-5 h-5" />
-              {t.errors.reportBug}
+              {(t.errors as any)?.reportBug || 'Report Bug'}
             </button>
           </div>
 
           {/* Help Text */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {t.errors.persistentError}
+              {(t.errors as any)?.persistentError ||
+                'If the error persists, please contact support'}
             </p>
           </div>
         </div>

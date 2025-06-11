@@ -7,7 +7,6 @@ import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import { PortfolioState, PortfolioActions } from './types';
-import { Portfolio } from '@/types/portfolio';
 import { portfolioService } from '@/lib/services/portfolioService';
 
 const initialState: PortfolioState = {
@@ -27,51 +26,51 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
         ...initialState,
 
         // Basic setters
-        setPortfolios: (portfolios) =>
-          set((state) => {
+        setPortfolios: portfolios =>
+          set(state => {
             state.portfolios = portfolios;
           }),
 
-        setCurrentPortfolio: (portfolio) =>
-          set((state) => {
+        setCurrentPortfolio: portfolio =>
+          set(state => {
             state.currentPortfolio = portfolio;
           }),
 
-        setEditing: (isEditing) =>
-          set((state) => {
+        setEditing: isEditing =>
+          set(state => {
             state.isEditing = isEditing;
           }),
 
-        setSaving: (isSaving) =>
-          set((state) => {
+        setSaving: isSaving =>
+          set(state => {
             state.isSaving = isSaving;
           }),
 
-        setLoading: (isLoading) =>
-          set((state) => {
+        setLoading: isLoading =>
+          set(state => {
             state.isLoading = isLoading;
           }),
 
-        setError: (error) =>
-          set((state) => {
+        setError: error =>
+          set(state => {
             state.error = error;
           }),
 
         // Portfolio operations
-        loadPortfolios: async () => {
-          set((state) => {
+        loadPortfolios: async (userId: string) => {
+          set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            const portfolios = await portfolioService.getAllPortfolios();
-            set((state) => {
+            const portfolios = await portfolioService.getUserPortfolios(userId);
+            set(state => {
               state.portfolios = portfolios;
               state.isLoading = false;
             });
           } catch (error: any) {
-            set((state) => {
+            set(state => {
               state.error = error.message || 'Failed to load portfolios';
               state.isLoading = false;
             });
@@ -79,20 +78,20 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           }
         },
 
-        loadPortfolio: async (id) => {
-          set((state) => {
+        loadPortfolio: async id => {
+          set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            const portfolio = await portfolioService.getPortfolioById(id);
-            set((state) => {
+            const portfolio = await portfolioService.getPortfolio(id);
+            set(state => {
               state.currentPortfolio = portfolio;
               state.isLoading = false;
             });
           } catch (error: any) {
-            set((state) => {
+            set(state => {
               state.error = error.message || 'Failed to load portfolio';
               state.isLoading = false;
             });
@@ -100,15 +99,23 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           }
         },
 
-        createPortfolio: async (data) => {
-          set((state) => {
+        createPortfolio: async (data, userId) => {
+          set(state => {
             state.isSaving = true;
             state.error = null;
           });
 
           try {
-            const portfolio = await portfolioService.createPortfolio(data);
-            set((state) => {
+            const createData = {
+              name: data.name || 'Untitled Portfolio',
+              title: data.title || '',
+              bio: data.bio || '',
+              template: data.template || 'developer',
+              userId,
+            };
+            const portfolio =
+              await portfolioService.createPortfolio(createData);
+            set(state => {
               state.portfolios.push(portfolio);
               state.currentPortfolio = portfolio;
               state.isSaving = false;
@@ -116,7 +123,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             });
             return portfolio;
           } catch (error: any) {
-            set((state) => {
+            set(state => {
               state.error = error.message || 'Failed to create portfolio';
               state.isSaving = false;
             });
@@ -125,26 +132,28 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
         },
 
         updatePortfolio: async (id, data) => {
-          set((state) => {
+          set(state => {
             state.isSaving = true;
             state.error = null;
           });
 
           try {
             const updated = await portfolioService.updatePortfolio(id, data);
-            set((state) => {
-              const index = state.portfolios.findIndex((p) => p.id === id);
-              if (index !== -1) {
-                state.portfolios[index] = updated;
-              }
-              if (state.currentPortfolio?.id === id) {
-                state.currentPortfolio = updated;
-              }
-              state.isSaving = false;
-              state.lastSaved = new Date();
-            });
+            if (updated) {
+              set(state => {
+                const index = state.portfolios.findIndex(p => p.id === id);
+                if (index !== -1) {
+                  state.portfolios[index] = updated;
+                }
+                if (state.currentPortfolio?.id === id) {
+                  state.currentPortfolio = updated;
+                }
+                state.isSaving = false;
+                state.lastSaved = new Date();
+              });
+            }
           } catch (error: any) {
-            set((state) => {
+            set(state => {
               state.error = error.message || 'Failed to update portfolio';
               state.isSaving = false;
             });
@@ -152,23 +161,23 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           }
         },
 
-        deletePortfolio: async (id) => {
-          set((state) => {
+        deletePortfolio: async id => {
+          set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
             await portfolioService.deletePortfolio(id);
-            set((state) => {
-              state.portfolios = state.portfolios.filter((p) => p.id !== id);
+            set(state => {
+              state.portfolios = state.portfolios.filter(p => p.id !== id);
               if (state.currentPortfolio?.id === id) {
                 state.currentPortfolio = null;
               }
               state.isLoading = false;
             });
           } catch (error: any) {
-            set((state) => {
+            set(state => {
               state.error = error.message || 'Failed to delete portfolio';
               state.isLoading = false;
             });
@@ -186,19 +195,19 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
         },
 
         resetPortfolios: () => set(() => initialState),
-      })),
+      }))
     ),
     {
       name: 'portfolio-store',
-    },
-  ),
+    }
+  )
 );
 
 // Selectors
 export const selectPortfolios = (state: PortfolioState & PortfolioActions) =>
   state.portfolios;
 export const selectCurrentPortfolio = (
-  state: PortfolioState & PortfolioActions,
+  state: PortfolioState & PortfolioActions
 ) => state.currentPortfolio;
 export const selectIsEditing = (state: PortfolioState & PortfolioActions) =>
   state.isEditing;

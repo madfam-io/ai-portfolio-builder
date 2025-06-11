@@ -1,6 +1,6 @@
 /**
  * @fileoverview Error Handling Utilities
- * 
+ *
  * Core utilities for error serialization, type detection,
  * and user-friendly error message generation.
  */
@@ -16,14 +16,17 @@ export function serializeError(error: unknown): Record<string, any> {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      cause: error.cause,
+      cause: (error as any).cause,
       // Include any custom properties
-      ...Object.getOwnPropertyNames(error).reduce((acc, key) => {
-        if (!['name', 'message', 'stack', 'cause'].includes(key)) {
-          acc[key] = (error as any)[key];
-        }
-        return acc;
-      }, {} as Record<string, any>),
+      ...Object.getOwnPropertyNames(error).reduce(
+        (acc, key) => {
+          if (!['name', 'message', 'stack', 'cause'].includes(key)) {
+            acc[key] = (error as any)[key];
+          }
+          return acc;
+        },
+        {} as Record<string, any>
+      ),
     };
   }
 
@@ -159,10 +162,12 @@ export function getUserFriendlyMessage(error: unknown): string {
   const errorMessage = getErrorMessage(error);
 
   const friendlyMessages: Record<ErrorType, (msg: string) => string> = {
-    network: () => 'Unable to connect. Please check your internet connection and try again.',
-    authentication: () => 'Your session has expired. Please sign in again to continue.',
-    permission: () => 'You don\'t have permission to perform this action.',
-    validation: (msg) => {
+    network: () =>
+      'Unable to connect. Please check your internet connection and try again.',
+    authentication: () =>
+      'Your session has expired. Please sign in again to continue.',
+    permission: () => "You don't have permission to perform this action.",
+    validation: msg => {
       // Try to extract field name from validation error
       const fieldMatch = msg.match(/field[:\s]+(\w+)/i);
       if (fieldMatch) {
@@ -170,7 +175,8 @@ export function getUserFriendlyMessage(error: unknown): string {
       }
       return 'Please check your input and try again.';
     },
-    server: () => 'Our servers are experiencing issues. Please try again later.',
+    server: () =>
+      'Our servers are experiencing issues. Please try again later.',
     notFound: () => 'The requested resource could not be found.',
     unknown: () => 'Something went wrong. Please try again.',
   };
@@ -184,12 +190,16 @@ export function getUserFriendlyMessage(error: unknown): string {
 export function getErrorContext() {
   const context: Record<string, any> = {
     timestamp: new Date().toISOString(),
-    userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+    userAgent:
+      typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
     url: typeof window !== 'undefined' ? window.location.href : 'unknown',
-    viewport: typeof window !== 'undefined' ? {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    } : null,
+    viewport:
+      typeof window !== 'undefined'
+        ? {
+            width: window.innerWidth,
+            height: window.innerHeight,
+          }
+        : null,
   };
 
   // Add user context if available
@@ -210,7 +220,7 @@ export function createContextualError(
 ): Error {
   const error = new Error(message);
   error.name = type.charAt(0).toUpperCase() + type.slice(1) + 'Error';
-  
+
   if (context) {
     Object.assign(error, { context });
   }
@@ -224,7 +234,7 @@ export function createContextualError(
 export function isRetryableError(error: unknown): boolean {
   const errorType = getErrorType(error);
   const retryableTypes: ErrorType[] = ['network', 'server'];
-  
+
   if (retryableTypes.includes(errorType)) {
     return true;
   }

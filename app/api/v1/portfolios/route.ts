@@ -21,11 +21,7 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/versioning';
-import {
-  transformDbPortfolioToApi,
-  transformApiPortfolioToDb,
-  transformDbPortfoliosToApi,
-} from '@/lib/utils/portfolio-transformer';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
 /**
  * GET /api/v1/portfolios
@@ -120,7 +116,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
       },
     });
   } catch (error) {
-    logger.error('Unexpected error in GET /api/v1/portfolios:', error);
+    logger.error('Unexpected error in GET /api/v1/portfolios:', error as Error);
     return apiError('Internal server error', { status: 500 });
   }
 });

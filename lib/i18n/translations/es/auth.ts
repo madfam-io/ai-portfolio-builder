@@ -67,4 +67,31 @@ export default {
 
   // Misc
   or: 'O',
+
+  // Authentication callback
+  authenticationSuccessful: 'Autenticación exitosa',
+  authenticationFailed: 'Autenticación fallida',
+  redirectingToDashboard: 'Redirigiendo al panel...',
+  processingAuthentication: 'Procesando autenticación...',
+  invalidAuthenticationState: 'Estado de autenticación inválido',
+  sessionExpired: 'Sesión expirada',
+  pleaseLoginAgain: 'Por favor, inicia sesión nuevamente',
+  completingAuthentication: 'Completando autenticación...',
+  authenticationSuccessfulRedirecting:
+    '¡Autenticación exitosa! Redirigiendo...',
+  authenticationFailedTitle: 'Fallo en la Autenticación',
+  tryAgain: 'Intentar de Nuevo',
+
+  // OAuth messages
+  connectingWithProvider: 'Conectando con proveedor...',
+  authorizationDenied: 'Autorización denegada',
+  authorizationCancelled: 'Autorización cancelada',
+  oauthError: 'Error de OAuth',
+
+  // Account states
+  accountLocked: 'Cuenta bloqueada',
+  accountSuspended: 'Cuenta suspendida',
+  accountNotVerified: 'Cuenta no verificada',
+  emailNotVerified: 'Correo electrónico no verificado',
+  pleaseVerifyEmail: 'Por favor, verifica tu correo electrónico',
 } as const;

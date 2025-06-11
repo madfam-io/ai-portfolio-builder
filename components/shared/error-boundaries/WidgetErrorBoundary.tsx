@@ -1,6 +1,6 @@
 /**
  * @fileoverview Widget Error Boundary
- * 
+ *
  * Component-level error boundary for handling widget/component-specific errors.
  * Provides granular error handling for individual UI components.
  */
@@ -49,7 +49,9 @@ export class WidgetErrorBoundary extends Component<
     };
   }
 
-  static getDerivedStateFromError(error: Error): Partial<WidgetErrorBoundaryState> {
+  static getDerivedStateFromError(
+    error: Error
+  ): Partial<WidgetErrorBoundaryState> {
     return {
       hasError: true,
       error,
@@ -65,7 +67,7 @@ export class WidgetErrorBoundary extends Component<
       const hasChanged = props.resetKeys.some(
         (key, index) => key !== state.lastResetKeys![index]
       );
-      
+
       if (hasChanged) {
         return {
           hasError: false,
@@ -90,7 +92,7 @@ export class WidgetErrorBoundary extends Component<
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     const { widgetName, isolate } = this.props;
-    
+
     // Log widget error
     logger.warn('Widget Error Boundary Caught Error', {
       widgetName,
@@ -129,22 +131,26 @@ export class WidgetErrorBoundary extends Component<
       }
 
       if (compact) {
-        return <CompactErrorFallback
+        return (
+          <CompactErrorFallback
+            widgetName={widgetName}
+            error={error}
+            errorCount={errorCount}
+            onRetry={this.handleRetry}
+            showError={showError}
+          />
+        );
+      }
+
+      return (
+        <StandardErrorFallback
           widgetName={widgetName}
           error={error}
           errorCount={errorCount}
           onRetry={this.handleRetry}
           showError={showError}
-        />;
-      }
-
-      return <StandardErrorFallback
-        widgetName={widgetName}
-        error={error}
-        errorCount={errorCount}
-        onRetry={this.handleRetry}
-        showError={showError}
-      />;
+        />
+      );
     }
 
     return children;
@@ -155,7 +161,7 @@ export class WidgetErrorBoundary extends Component<
  * Compact Error Fallback for small widgets
  */
 function CompactErrorFallback({
-  widgetName,
+  widgetName: _widgetName,
   error,
   errorCount,
   onRetry,
@@ -174,7 +180,7 @@ function CompactErrorFallback({
       <div className="text-center">
         <FiAlertCircle className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-          {t.errors.widgetError}
+          {(t.errors as any)?.widgetError || 'Widget Error'}
         </p>
         {showError && error && (
           <p className="text-xs text-gray-500 dark:text-gray-500 mb-2 font-mono">
@@ -187,7 +193,7 @@ function CompactErrorFallback({
             className="text-xs text-purple-600 dark:text-purple-400 hover:underline inline-flex items-center gap-1"
           >
             <FiRefreshCw className="w-3 h-3" />
-            {t.errors.retry}
+            {(t.errors as any)?.retry || 'Retry'}
           </button>
         )}
       </div>
@@ -219,16 +225,19 @@ function StandardErrorFallback({
         <FiAlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-1">
-            {widgetName ? `${widgetName} ${t.errors.error}` : t.errors.widgetError}
+            {widgetName
+              ? `${widgetName} ${(t.errors as any)?.error || 'Error'}`
+              : (t.errors as any)?.widgetError || 'Widget Error'}
           </h4>
           <p className="text-sm text-yellow-700 dark:text-yellow-300 mb-2">
-            {t.errors.widgetErrorDescription}
+            {(t.errors as any)?.widgetErrorDescription ||
+              'Something went wrong with this component'}
           </p>
-          
+
           {showError && error && (
             <details className="mb-2">
               <summary className="cursor-pointer text-xs text-yellow-600 dark:text-yellow-400 hover:underline">
-                {t.errors.showDetails}
+                {(t.errors as any)?.showDetails || 'Show Details'}
               </summary>
               <pre className="mt-1 text-xs bg-yellow-100 dark:bg-yellow-900/30 p-2 rounded overflow-x-auto">
                 {error.message}
@@ -242,13 +251,14 @@ function StandardErrorFallback({
               className="inline-flex items-center gap-1 text-sm bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-200 px-3 py-1 rounded hover:bg-yellow-200 dark:hover:bg-yellow-700 transition-colors"
             >
               <FiRefreshCw className="w-3 h-3" />
-              {t.errors.tryAgain}
+              {(t.errors as any)?.tryAgain || 'Try Again'}
             </button>
           )}
-          
+
           {errorCount >= 3 && (
             <p className="text-xs text-yellow-600 dark:text-yellow-400">
-              {t.errors.maxRetriesReached}
+              {(t.errors as any)?.maxRetriesReached ||
+                'Maximum retries reached'}
             </p>
           )}
         </div>

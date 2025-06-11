@@ -6,7 +6,7 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { UIState, UIActions, Toast, Modal } from './types';
+import { UIState, UIActions, Toast } from './types';
 
 const initialState: UIState = {
   theme: 'system',
@@ -25,16 +25,18 @@ export const useUIStore = create<UIState & UIActions>()(
           ...initialState,
 
           // Theme management
-          setTheme: (theme) =>
-            set((state) => {
+          setTheme: theme =>
+            set(state => {
               state.theme = theme;
               // Apply theme to document
               if (typeof window !== 'undefined') {
                 const root = document.documentElement;
                 root.classList.remove('light', 'dark');
-                
+
                 if (theme === 'system') {
-                  const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+                  const systemTheme = window.matchMedia(
+                    '(prefers-color-scheme: dark)'
+                  ).matches
                     ? 'dark'
                     : 'light';
                   root.classList.add(systemTheme);
@@ -46,38 +48,38 @@ export const useUIStore = create<UIState & UIActions>()(
 
           // Sidebar management
           toggleSidebar: () =>
-            set((state) => {
+            set(state => {
               state.sidebarOpen = !state.sidebarOpen;
             }),
 
-          setSidebarOpen: (open) =>
-            set((state) => {
+          setSidebarOpen: open =>
+            set(state => {
               state.sidebarOpen = open;
             }),
 
           // Modal management
-          openModal: (modal) =>
-            set((state) => {
+          openModal: modal =>
+            set(state => {
               // Check if modal already exists
-              const exists = state.modals.some((m) => m.id === modal.id);
+              const exists = state.modals.some(m => m.id === modal.id);
               if (!exists) {
                 state.modals.push(modal);
               }
             }),
 
-          closeModal: (id) =>
-            set((state) => {
-              state.modals = state.modals.filter((m) => m.id !== id);
+          closeModal: id =>
+            set(state => {
+              state.modals = state.modals.filter(m => m.id !== id);
             }),
 
           closeAllModals: () =>
-            set((state) => {
+            set(state => {
               state.modals = [];
             }),
 
           // Toast management
-          showToast: (toast) =>
-            set((state) => {
+          showToast: toast =>
+            set(state => {
               const id = `toast-${Date.now()}-${Math.random()}`;
               const newToast: Toast = {
                 id,
@@ -94,19 +96,19 @@ export const useUIStore = create<UIState & UIActions>()(
               }
             }),
 
-          removeToast: (id) =>
-            set((state) => {
-              state.toasts = state.toasts.filter((t) => t.id !== id);
+          removeToast: id =>
+            set(state => {
+              state.toasts = state.toasts.filter(t => t.id !== id);
             }),
 
           clearToasts: () =>
-            set((state) => {
+            set(state => {
               state.toasts = [];
             }),
 
           // Loading state management
           setGlobalLoading: (loading, message = null) =>
-            set((state) => {
+            set(state => {
               state.globalLoading = loading;
               state.loadingMessage = message;
             }),
@@ -114,14 +116,14 @@ export const useUIStore = create<UIState & UIActions>()(
         {
           name: 'ui-store',
           // Only persist theme preference
-          partialize: (state) => ({ theme: state.theme }),
-        },
-      ),
+          partialize: state => ({ theme: state.theme }),
+        }
+      )
     ),
     {
       name: 'ui-store',
-    },
-  ),
+    }
+  )
 );
 
 // Selectors

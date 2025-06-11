@@ -61,12 +61,14 @@ const common = {
   add: 'Agregar',
   remove: 'Eliminar',
   retrying: 'Reintentando...',
+  tryAgain: 'Intentar de Nuevo',
 
   // Empty states
   emptyStates: {
     noResults: 'No se encontraron resultados',
     noSearchResults: 'No hay resultados de búsqueda',
-    noSearchResultsDescription: 'Intenta ajustar tus términos de búsqueda o filtros',
+    noSearchResultsDescription:
+      'Intenta ajustar tus términos de búsqueda o filtros',
     noPortfolios: 'Aún no hay portafolios',
     noPortfoliosDescription: 'Crea tu primer portafolio para comenzar',
     createFirstPortfolio: 'Crear Tu Primer Portafolio',
@@ -76,13 +78,15 @@ const common = {
     noData: 'No hay datos disponibles',
     noDataDescription: 'No hay datos para mostrar en este momento',
     noAnalyticsData: 'No hay datos de análisis',
-    noAnalyticsDataDescription: 'Los datos de análisis aparecerán una vez que tengas actividad',
+    noAnalyticsDataDescription:
+      'Los datos de análisis aparecerán una vez que tengas actividad',
     noUsers: 'No se encontraron usuarios',
     noUsersDescription: 'Ningún usuario coincide con tus filtros actuales',
     noProducts: 'No se encontraron productos',
     noProductsDescription: 'Ningún producto coincide con tus filtros actuales',
     uploadTitle: 'Subir Archivos',
-    uploadDescription: 'Arrastra y suelta archivos aquí o haz clic para navegar',
+    uploadDescription:
+      'Arrastra y suelta archivos aquí o haz clic para navegar',
     maxSize: 'Tamaño máximo',
     noImages: 'No se han subido imágenes',
     noImagesDescription: 'Sube imágenes para mejorar tu portafolio',

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
 
 export async function POST(
-  request: NextRequest,
+  _request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {

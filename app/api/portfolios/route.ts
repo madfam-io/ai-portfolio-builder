@@ -10,14 +10,9 @@ import {
   validatePortfolioQuery,
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
-import { Portfolio } from '@/types/portfolio';
 import { v4 as uuidv4 } from 'uuid';
 import { logger } from '@/lib/utils/logger';
-import {
-  transformDbPortfolioToApi,
-  transformApiPortfolioToDb,
-  transformDbPortfoliosToApi,
-} from '@/lib/utils/portfolio-transformer';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
 /**
  * GET /api/portfolios
@@ -293,5 +288,3 @@ export async function POST(request: NextRequest) {
 }
 
 // Transformation functions moved to lib/utils/portfolio-transformer.ts
-// Re-export for backward compatibility
-export { transformApiPortfolioToDb } from '@/lib/utils/portfolio-transformer';

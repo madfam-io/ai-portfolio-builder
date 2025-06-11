@@ -1,6 +1,6 @@
 /**
  * @fileoverview Error Boundary Usage Examples
- * 
+ *
  * Demonstrates how to use the various error boundaries and fallback components
  * throughout the PRISMA application.
  */
@@ -12,12 +12,11 @@ import { RootErrorBoundary } from './RootErrorBoundary';
 import { RouteErrorBoundary } from './RouteErrorBoundary';
 import { WidgetErrorBoundary } from './WidgetErrorBoundary';
 import {
-  FullPageLoader,
   InlineLoader,
   CardSkeleton,
   NoPortfoliosState,
   ErrorState,
-  OfflineIndicator
+  OfflineIndicator,
 } from '../fallbacks';
 
 /**
@@ -27,7 +26,11 @@ function BuggyComponent({ shouldError }: { shouldError: boolean }) {
   if (shouldError) {
     throw new Error('Test error for demonstration purposes');
   }
-  return <div className="p-4 bg-green-100 rounded">✅ Component working normally</div>;
+  return (
+    <div className="p-4 bg-green-100 rounded">
+      ✅ Component working normally
+    </div>
+  );
 }
 
 /**
@@ -39,7 +42,9 @@ function LoadingComponent({ isLoading }: { isLoading: boolean }) {
   }
   return (
     <div className="space-y-4">
-      <div className="p-4 bg-blue-100 rounded">📦 Content loaded successfully</div>
+      <div className="p-4 bg-blue-100 rounded">
+        📦 Content loaded successfully
+      </div>
       <div className="p-4 bg-blue-100 rounded">📦 More content here</div>
       <div className="p-4 bg-blue-100 rounded">📦 Even more content</div>
     </div>
@@ -124,7 +129,8 @@ export default function ErrorBoundaryExample() {
       <section className="space-y-4">
         <h2 className="text-2xl font-semibold">1. Root Error Boundary</h2>
         <p className="text-gray-600 dark:text-gray-400">
-          Catches all uncaught errors in the component tree with full-page fallback
+          Catches all uncaught errors in the component tree with full-page
+          fallback
         </p>
         <RootErrorBoundary>
           <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border">
@@ -228,21 +234,28 @@ export default function ErrorBoundaryExample() {
         <div className="space-y-4 text-sm">
           <div>
             <h3 className="font-medium">Root Error Boundary</h3>
-            <p>Wrap your entire app or major sections. Provides full-page error handling.</p>
+            <p>
+              Wrap your entire app or major sections. Provides full-page error
+              handling.
+            </p>
             <code className="block mt-1 bg-gray-100 dark:bg-gray-800 p-2 rounded">
               {`<RootErrorBoundary><App /></RootErrorBoundary>`}
             </code>
           </div>
           <div>
             <h3 className="font-medium">Route Error Boundary</h3>
-            <p>Wrap individual pages or routes. Provides inline error handling.</p>
+            <p>
+              Wrap individual pages or routes. Provides inline error handling.
+            </p>
             <code className="block mt-1 bg-gray-100 dark:bg-gray-800 p-2 rounded">
               {`<RouteErrorBoundary routeName="Dashboard"><Page /></RouteErrorBoundary>`}
             </code>
           </div>
           <div>
             <h3 className="font-medium">Widget Error Boundary</h3>
-            <p>Wrap individual components. Provides granular error isolation.</p>
+            <p>
+              Wrap individual components. Provides granular error isolation.
+            </p>
             <code className="block mt-1 bg-gray-100 dark:bg-gray-800 p-2 rounded">
               {`<WidgetErrorBoundary widgetName="Chart"><Chart /></WidgetErrorBoundary>`}
             </code>

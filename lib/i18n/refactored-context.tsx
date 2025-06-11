@@ -78,7 +78,9 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
  * Get translations for a specific language
  */
 function getTranslations(language: Language): TranslationNamespace {
-  return language === 'es' ? esTranslations : enTranslations;
+  return (language === 'es'
+    ? esTranslations
+    : enTranslations) as any as TranslationNamespace;
 }
 
 /**

@@ -6,9 +6,8 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { AIState, AIActions, AIModel, AIEnhancement } from './types';
-import { enhanceBio, optimizeProjectDescription } from '@/lib/ai/client';
-import { HuggingFaceClient } from '@/lib/ai/huggingface-service';
+import { AIState, AIActions, AIEnhancement } from './types';
+import { aiClient } from '@/lib/ai/client';
 
 const initialState: AIState = {
   selectedModels: {
@@ -33,87 +32,96 @@ export const useAIStore = create<AIState & AIActions>()(
 
           // Model management
           setSelectedModel: (type, modelId) =>
-            set((state) => {
+            set(state => {
               state.selectedModels[type] = modelId;
             }),
 
-          setAvailableModels: (models) =>
-            set((state) => {
+          setAvailableModels: models =>
+            set(state => {
               state.availableModels = models;
             }),
 
           // Enhancement history
-          addEnhancement: (enhancement) =>
-            set((state) => {
+          addEnhancement: enhancement =>
+            set(state => {
               state.enhancementHistory.unshift(enhancement);
               // Keep only last 50 enhancements
               if (state.enhancementHistory.length > 50) {
-                state.enhancementHistory = state.enhancementHistory.slice(0, 50);
+                state.enhancementHistory = state.enhancementHistory.slice(
+                  0,
+                  50
+                );
               }
             }),
 
           clearHistory: () =>
-            set((state) => {
+            set(state => {
               state.enhancementHistory = [];
             }),
 
           // Quota management
           setQuota: (used, limit) =>
-            set((state) => {
+            set(state => {
               state.quotaUsed = used;
               state.quotaLimit = limit;
             }),
 
           // State management
-          setProcessing: (isProcessing) =>
-            set((state) => {
+          setProcessing: isProcessing =>
+            set(state => {
               state.isProcessing = isProcessing;
             }),
 
-          setError: (error) =>
-            set((state) => {
+          setError: error =>
+            set(state => {
               state.error = error;
             }),
 
           // AI operations
-          enhanceBio: async (text) => {
+          enhanceBio: async text => {
             const { selectedModels, quotaUsed, quotaLimit } = get();
-            
+
             if (quotaUsed >= quotaLimit) {
               throw new Error('AI enhancement quota exceeded');
             }
 
-            set((state) => {
+            set(state => {
               state.isProcessing = true;
               state.error = null;
             });
 
             try {
-              const enhanced = await enhanceBio(text, {
+              // Update client preferences before enhancing
+              aiClient.updateModelSelection('bio', selectedModels.bio);
+
+              const enhanced = await aiClient.enhanceBio(text, {
+                title: '',
+                skills: [],
+                experience: [],
                 tone: 'professional',
                 industry: 'tech',
-                modelId: selectedModels.bio,
+                targetLength: 'concise',
               });
 
               const enhancement: AIEnhancement = {
                 id: `enhancement-${Date.now()}`,
                 type: 'bio',
                 originalText: text,
-                enhancedText: enhanced.enhancedBio,
+                enhancedText: enhanced.content,
                 model: selectedModels.bio,
                 timestamp: new Date(),
                 quality: enhanced.qualityScore || 0.8,
               };
 
-              set((state) => {
+              set(state => {
                 state.enhancementHistory.unshift(enhancement);
                 state.quotaUsed += 1;
                 state.isProcessing = false;
               });
 
-              return enhanced.enhancedBio;
+              return enhanced.content;
             } catch (error: any) {
-              set((state) => {
+              set(state => {
                 state.error = error.message || 'Enhancement failed';
                 state.isProcessing = false;
               });
@@ -121,42 +129,47 @@ export const useAIStore = create<AIState & AIActions>()(
             }
           },
 
-          enhanceProject: async (text) => {
+          enhanceProject: async text => {
             const { selectedModels, quotaUsed, quotaLimit } = get();
-            
+
             if (quotaUsed >= quotaLimit) {
               throw new Error('AI enhancement quota exceeded');
             }
 
-            set((state) => {
+            set(state => {
               state.isProcessing = true;
               state.error = null;
             });
 
             try {
-              const enhanced = await optimizeProjectDescription(text, {
-                modelId: selectedModels.project,
-              });
+              // Update client preferences before enhancing
+              aiClient.updateModelSelection('project', selectedModels.project);
+
+              const enhanced = await aiClient.optimizeProject(
+                'Project',
+                text,
+                []
+              );
 
               const enhancement: AIEnhancement = {
                 id: `enhancement-${Date.now()}`,
                 type: 'project',
                 originalText: text,
-                enhancedText: enhanced.optimizedDescription,
+                enhancedText: enhanced.description,
                 model: selectedModels.project,
                 timestamp: new Date(),
-                quality: enhanced.qualityScore || 0.8,
+                quality: 0.8,
               };
 
-              set((state) => {
+              set(state => {
                 state.enhancementHistory.unshift(enhancement);
                 state.quotaUsed += 1;
                 state.isProcessing = false;
               });
 
-              return enhanced.optimizedDescription;
+              return enhanced.description;
             } catch (error: any) {
-              set((state) => {
+              set(state => {
                 state.error = error.message || 'Enhancement failed';
                 state.isProcessing = false;
               });
@@ -164,33 +177,35 @@ export const useAIStore = create<AIState & AIActions>()(
             }
           },
 
-          recommendTemplate: async (data) => {
+          recommendTemplate: async data => {
             const { selectedModels, quotaUsed, quotaLimit } = get();
-            
+
             if (quotaUsed >= quotaLimit) {
               throw new Error('AI enhancement quota exceeded');
             }
 
-            set((state) => {
+            set(state => {
               state.isProcessing = true;
               state.error = null;
             });
 
             try {
-              const client = new HuggingFaceClient();
-              const recommendation = await client.recommendTemplate(
-                data,
-                selectedModels.template,
+              // Update client preferences before recommending
+              aiClient.updateModelSelection(
+                'template',
+                selectedModels.template
               );
 
-              set((state) => {
+              const recommendation = await aiClient.recommendTemplate(data);
+
+              set(state => {
                 state.quotaUsed += 1;
                 state.isProcessing = false;
               });
 
               return recommendation;
             } catch (error: any) {
-              set((state) => {
+              set(state => {
                 state.error = error.message || 'Recommendation failed';
                 state.isProcessing = false;
               });
@@ -199,7 +214,7 @@ export const useAIStore = create<AIState & AIActions>()(
           },
 
           loadModels: async () => {
-            set((state) => {
+            set(state => {
               state.isProcessing = true;
               state.error = null;
             });
@@ -209,12 +224,12 @@ export const useAIStore = create<AIState & AIActions>()(
               const response = await fetch('/api/ai/models');
               const models = await response.json();
 
-              set((state) => {
+              set(state => {
                 state.availableModels = models;
                 state.isProcessing = false;
               });
             } catch (error: any) {
-              set((state) => {
+              set(state => {
                 state.error = error.message || 'Failed to load models';
                 state.isProcessing = false;
               });
@@ -225,18 +240,18 @@ export const useAIStore = create<AIState & AIActions>()(
         {
           name: 'ai-store',
           // Persist model preferences and quota
-          partialize: (state) => ({
+          partialize: state => ({
             selectedModels: state.selectedModels,
             quotaUsed: state.quotaUsed,
             quotaLimit: state.quotaLimit,
           }),
-        },
-      ),
+        }
+      )
     ),
     {
       name: 'ai-store',
-    },
-  ),
+    }
+  )
 );
 
 // Selectors

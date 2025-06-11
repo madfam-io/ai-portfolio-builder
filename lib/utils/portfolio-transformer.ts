@@ -81,13 +81,14 @@ export function transformApiPortfolioToDb(
   // Transform fields using mapping
   Object.entries(apiPortfolio).forEach(([key, value]) => {
     if (key in fieldMapping && value !== undefined) {
-      const dbKey = fieldMapping[key];
-
-      // Convert dates to ISO strings
-      if (value instanceof Date) {
-        dbData[dbKey] = value.toISOString();
-      } else {
-        dbData[dbKey] = value;
+      const dbKey = fieldMapping[key as keyof typeof fieldMapping];
+      if (dbKey) {
+        // Convert dates to ISO strings
+        if (value instanceof Date) {
+          dbData[dbKey] = value.toISOString();
+        } else {
+          dbData[dbKey] = value;
+        }
       }
     }
   });
@@ -135,7 +136,7 @@ export function sanitizePortfolioData(
 
   allowedFields.forEach(field => {
     if (field in data) {
-      sanitized[field as keyof Portfolio] = data[field as keyof Portfolio];
+      (sanitized as any)[field] = (data as any)[field];
     }
   });
 

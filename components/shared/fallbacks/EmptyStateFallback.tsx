@@ -1,6 +1,6 @@
 /**
  * @fileoverview Empty State Fallback Components
- * 
+ *
  * Provides user-friendly empty state displays when no data is available.
  * Includes call-to-action prompts and helpful guidance.
  */
@@ -8,17 +8,16 @@
 'use client';
 
 import React from 'react';
-import { 
-  FiInbox, 
-  FiSearch, 
-  FiPlus, 
-  FiUpload, 
+import {
+  FiInbox,
+  FiSearch,
+  FiUpload,
   FiDatabase,
   FiFileText,
   FiUsers,
   FiFolder,
   FiImage,
-  FiShoppingBag
+  FiShoppingBag,
 } from 'react-icons/fi';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -49,23 +48,21 @@ export function EmptyState({
   className = '',
 }: EmptyStateProps) {
   return (
-    <div className={`flex flex-col items-center justify-center py-12 px-4 ${className}`}>
-      {icon && (
-        <div className="mb-4">
-          {icon}
-        </div>
-      )}
-      
+    <div
+      className={`flex flex-col items-center justify-center py-12 px-4 ${className}`}
+    >
+      {icon && <div className="mb-4">{icon}</div>}
+
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 text-center">
         {title}
       </h3>
-      
+
       {description && (
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center max-w-sm">
           {description}
         </p>
       )}
-      
+
       {(action || secondaryAction) && (
         <div className="flex flex-col sm:flex-row gap-3">
           {action && (
@@ -76,7 +73,7 @@ export function EmptyState({
               {action.label}
             </button>
           )}
-          
+
           {secondaryAction && (
             <button
               onClick={secondaryAction.onClick}
@@ -97,7 +94,7 @@ export function EmptyState({
 export function NoResultsState({
   searchTerm,
   onClearSearch,
-  suggestions,
+  suggestions: _suggestions,
 }: {
   searchTerm?: string;
   onClearSearch?: () => void;
@@ -112,16 +109,24 @@ export function NoResultsState({
           <FiSearch className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
-      title={searchTerm ? t.emptyStates.noSearchResults : t.emptyStates.noResults}
+      title={
+        searchTerm
+          ? (t.emptyStates as any)?.noSearchResults || 'No search results'
+          : (t.emptyStates as any)?.noResults || 'No results'
+      }
       description={
         searchTerm
-          ? t.emptyStates.noSearchResultsDescription.replace('{term}', searchTerm)
-          : t.emptyStates.noResultsDescription
+          ? (
+              (t.emptyStates as any)?.noSearchResultsDescription ||
+              'No results found for "{term}"'
+            ).replace('{term}', searchTerm)
+          : (t.emptyStates as any)?.noResultsDescription ||
+            'No results to display'
       }
       action={
         onClearSearch
           ? {
-              label: t.emptyStates.clearSearch,
+              label: (t.emptyStates as any)?.clearSearch || 'Clear search',
               onClick: onClearSearch,
             }
           : undefined
@@ -147,10 +152,15 @@ export function NoPortfoliosState({
           <FiFileText className="w-10 h-10 text-purple-600 dark:text-purple-400" />
         </div>
       }
-      title={t.emptyStates.noPortfolios}
-      description={t.emptyStates.noPortfoliosDescription}
+      title={(t.emptyStates as any)?.noPortfolios || 'No portfolios yet'}
+      description={
+        (t.emptyStates as any)?.noPortfoliosDescription ||
+        'Create your first portfolio to get started'
+      }
       action={{
-        label: t.emptyStates.createFirstPortfolio,
+        label:
+          (t.emptyStates as any)?.createFirstPortfolio ||
+          'Create First Portfolio',
         onClick: onCreatePortfolio,
       }}
     />
@@ -174,10 +184,13 @@ export function NoProjectsState({
           <FiFolder className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </div>
       }
-      title={t.emptyStates.noProjects}
-      description={t.emptyStates.noProjectsDescription}
+      title={(t.emptyStates as any)?.noProjects || 'No projects yet'}
+      description={
+        (t.emptyStates as any)?.noProjectsDescription ||
+        'Add your first project to showcase your work'
+      }
       action={{
-        label: t.emptyStates.addFirstProject,
+        label: (t.emptyStates as any)?.addFirstProject || 'Add First Project',
         onClick: onAddProject,
       }}
     />
@@ -197,23 +210,33 @@ export function NoDataState({
   const configs = {
     generic: {
       icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: t.emptyStates.noData,
-      description: t.emptyStates.noDataDescription,
+      title: (t.emptyStates as any)?.noData || 'No data available',
+      description:
+        (t.emptyStates as any)?.noDataDescription ||
+        'There is no data to display at this time',
     },
     analytics: {
       icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: t.emptyStates.noAnalyticsData,
-      description: t.emptyStates.noAnalyticsDataDescription,
+      title: (t.emptyStates as any)?.noAnalyticsData || 'No analytics data',
+      description:
+        (t.emptyStates as any)?.noAnalyticsDataDescription ||
+        'Analytics data will appear here once available',
     },
     users: {
       icon: <FiUsers className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: t.emptyStates.noUsers,
-      description: t.emptyStates.noUsersDescription,
+      title: (t.emptyStates as any)?.noUsers || 'No users found',
+      description:
+        (t.emptyStates as any)?.noUsersDescription ||
+        'No users match your criteria',
     },
     products: {
-      icon: <FiShoppingBag className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: t.emptyStates.noProducts,
-      description: t.emptyStates.noProductsDescription,
+      icon: (
+        <FiShoppingBag className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+      ),
+      title: (t.emptyStates as any)?.noProducts || 'No products found',
+      description:
+        (t.emptyStates as any)?.noProductsDescription ||
+        'No products are available',
     },
   };
 
@@ -257,11 +280,12 @@ export function UploadEmptyState({
             <FiUpload className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
         }
-        title={t.emptyStates.uploadTitle}
+        title={(t.emptyStates as any)?.uploadTitle || 'Upload files'}
         description={
           acceptedFormats
-            ? `${t.emptyStates.uploadDescription} ${acceptedFormats.join(', ')}${maxSize ? ` (${t.emptyStates.maxSize} ${maxSize})` : ''}`
-            : t.emptyStates.uploadDescription
+            ? `${(t.emptyStates as any)?.uploadDescription || 'Upload your files'} ${acceptedFormats.join(', ')}${maxSize ? ` (${(t.emptyStates as any)?.maxSize || 'Max size'} ${maxSize})` : ''}`
+            : (t.emptyStates as any)?.uploadDescription ||
+              'Drag and drop files here or click to browse'
         }
       />
     </div>
@@ -271,11 +295,7 @@ export function UploadEmptyState({
 /**
  * No Images Empty State
  */
-export function NoImagesState({
-  onAddImage,
-}: {
-  onAddImage: () => void;
-}) {
+export function NoImagesState({ onAddImage }: { onAddImage: () => void }) {
   const { t } = useLanguage();
 
   return (
@@ -285,10 +305,13 @@ export function NoImagesState({
           <FiImage className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
-      title={t.emptyStates.noImages}
-      description={t.emptyStates.noImagesDescription}
+      title={(t.emptyStates as any)?.noImages || 'No images uploaded'}
+      description={
+        (t.emptyStates as any)?.noImagesDescription ||
+        'Upload images to get started'
+      }
       action={{
-        label: t.emptyStates.uploadImage,
+        label: (t.emptyStates as any)?.uploadImage || 'Upload Image',
         onClick: onAddImage,
       }}
     />
@@ -314,10 +337,16 @@ export function EmptyListState({
           <FiInbox className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
-      title={t.emptyStates.noItems.replace('{type}', itemType)}
-      description={t.emptyStates.noItemsDescription.replace('{type}', itemType)}
+      title={((t.emptyStates as any)?.noItems || 'No {type} found').replace(
+        '{type}',
+        itemType
+      )}
+      description={(
+        (t.emptyStates as any)?.noItemsDescription ||
+        'Add your first {type} to get started'
+      ).replace('{type}', itemType)}
       action={{
-        label: `${t.common.add} ${itemType}`,
+        label: `${(t.common as any)?.add || 'Add'} ${itemType}`,
         onClick: onAdd,
       }}
     />
@@ -345,7 +374,11 @@ export function EmptyTableState({
               <FiInbox className="w-6 h-6 text-gray-400 dark:text-gray-500" />
             </div>
           }
-          title={message || t.emptyStates.noTableData}
+          title={
+            message ||
+            (t.emptyStates as any)?.noTableData ||
+            'No data available'
+          }
         />
       </td>
     </tr>

@@ -7,9 +7,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
-        secondary: 'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
-        destructive: 'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
+        default:
+          'border-transparent bg-primary text-primary-foreground hover:bg-primary/80',
+        secondary:
+          'border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80',
+        destructive:
+          'border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80',
         outline: 'text-foreground border border-input',
         success: 'border-transparent bg-success text-success-foreground',
         warning: 'border-transparent bg-warning text-warning-foreground',
@@ -50,15 +53,15 @@ export interface BadgeProps
 
 /**
  * Badge component for status indicators and labels
- * 
+ *
  * @example
  * ```tsx
  * <Badge>New</Badge>
- * 
+ *
  * <Badge variant="success" leftIcon={<CheckIcon />}>
  *   Published
  * </Badge>
- * 
+ *
  * <Badge variant="outline" interactive onClick={handleClick}>
  *   Click me
  * </Badge>
@@ -79,12 +82,12 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
     ref
   ) => {
     const Component = interactive && props.onClick ? 'button' : 'div';
-    
+
     return (
       <Component
         ref={ref as any}
         className={cn(badgeVariants({ variant, size, interactive }), className)}
-        {...props}
+        {...(props as any)}
       >
         {leftIcon && (
           <span className="mr-1 h-3 w-3" aria-hidden="true">

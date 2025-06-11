@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { act, renderHook } from '@testing-library/react';
+import { act } from '@testing-library/react';
 import { StoreApi } from 'zustand';
 
 /**
@@ -16,25 +16,23 @@ export function createMockStore<T>(initialState: T): StoreApi<T> {
 
   return {
     getState: () => state,
-    setState: (partial, replace) => {
-      const nextState = typeof partial === 'function' 
-        ? partial(state)
-        : partial;
-      
+    setState: (partial: any, replace?: any) => {
+      const nextState =
+        typeof partial === 'function' ? partial(state) : partial;
+
       const prevState = state;
-      state = replace 
-        ? (nextState as T)
-        : Object.assign({}, state, nextState);
-      
-      listeners.forEach((listener) => listener(state, prevState));
+      state = replace ? (nextState as T) : Object.assign({}, state, nextState);
+
+      listeners.forEach(listener => listener(state, prevState));
     },
-    subscribe: (listener) => {
+    subscribe: listener => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
     destroy: () => {
       listeners.clear();
     },
+    getInitialState: () => initialState,
   };
 }
 
@@ -44,26 +42,26 @@ export function createMockStore<T>(initialState: T): StoreApi<T> {
 export async function waitForStoreUpdate<T>(
   store: StoreApi<T>,
   predicate: (state: T) => boolean,
-  timeout = 5000,
+  timeout = 5000
 ): Promise<T> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
-    
+
     const checkState = () => {
       const state = store.getState();
       if (predicate(state)) {
         resolve(state);
         return;
       }
-      
+
       if (Date.now() - startTime > timeout) {
         reject(new Error('Store update timeout'));
         return;
       }
-      
+
       setTimeout(checkState, 10);
     };
-    
+
     checkState();
   });
 }
@@ -74,18 +72,18 @@ export async function waitForStoreUpdate<T>(
 export async function testStoreAction<T, R>(
   store: StoreApi<T>,
   action: (state: T) => R | Promise<R>,
-  expectedChanges?: Partial<T>,
+  expectedChanges?: Partial<T>
 ): Promise<R> {
   const result = await act(async () => {
     const state = store.getState();
     return await action(state);
   });
-  
+
   if (expectedChanges) {
     const newState = store.getState();
     expect(newState).toMatchObject(expectedChanges);
   }
-  
+
   return result;
 }
 
@@ -95,12 +93,12 @@ export async function testStoreAction<T, R>(
 export function createStoreWrapper(stores: Record<string, any>) {
   return function StoreWrapper({ children }: { children: React.ReactNode }) {
     // Initialize stores if needed
-    Object.values(stores).forEach((store) => {
+    Object.values(stores).forEach(store => {
       if (typeof store.getState === 'function') {
         // Store is already initialized
       }
     });
-    
+
     return <>{children}</>;
   };
 }
@@ -109,7 +107,7 @@ export function createStoreWrapper(stores: Record<string, any>) {
  * Reset all stores to initial state
  */
 export function resetStores(...stores: Array<{ getState: () => any }>) {
-  stores.forEach((store) => {
+  stores.forEach(store => {
     const state = store.getState();
     if (typeof state.reset === 'function') {
       state.reset();
@@ -213,34 +211,22 @@ export const generateTestPortfolio = (overrides = {}) => ({
 
 /**
  * Store testing example
+ * @example
+ * describe('ExampleStore', () => {
+ *   beforeEach(() => {
+ *     // Reset store before each test
+ *     const { reset } = useExampleStore.getState();
+ *     reset();
+ *   });
+ *
+ *   it('should update state correctly', async () => {
+ *     const { result } = renderHook(() => useExampleStore());
+ *
+ *     act(() => {
+ *       result.current.updateField('value');
+ *     });
+ *
+ *     expect(result.current.field).toBe('value');
+ *   });
+ * });
  */
-export const exampleStoreTest = () => {
-  describe('ExampleStore', () => {
-    beforeEach(() => {
-      // Reset store before each test
-      const { reset } = useExampleStore.getState();
-      reset();
-    });
-
-    it('should update state correctly', async () => {
-      const { result } = renderHook(() => useExampleStore());
-      
-      act(() => {
-        result.current.updateField('value');
-      });
-      
-      expect(result.current.field).toBe('value');
-    });
-
-    it('should handle async actions', async () => {
-      const { result } = renderHook(() => useExampleStore());
-      
-      await act(async () => {
-        await result.current.asyncAction();
-      });
-      
-      expect(result.current.loading).toBe(false);
-      expect(result.current.data).toBeDefined();
-    });
-  });
-};

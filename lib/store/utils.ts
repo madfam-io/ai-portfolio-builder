@@ -17,28 +17,29 @@ export function createAsyncAction<T extends any[], R>(
     errorMessage?: string;
     onSuccess?: (result: R) => void;
     onError?: (error: Error) => void;
-  },
+  }
 ) {
   return async (...args: T): Promise<R> => {
-    const { ui } = await import('./root-store').then((m) => m.getRootStore());
-    
+    const { ui } = await import('./root-store').then(m => m.getRootStore());
+
     if (options?.loadingMessage) {
       ui.setGlobalLoading(true, options.loadingMessage);
     }
 
     try {
       const result = await action(...args);
-      
+
       if (options?.successMessage) {
         showSuccessToast(options.successMessage);
       }
-      
+
       options?.onSuccess?.(result);
       return result;
     } catch (error: any) {
-      const errorMessage = options?.errorMessage || error.message || 'Operation failed';
+      const errorMessage =
+        options?.errorMessage || error.message || 'Operation failed';
       showErrorToast('Error', errorMessage);
-      
+
       options?.onError?.(error);
       throw error;
     } finally {
@@ -66,45 +67,55 @@ export interface LoadingActions {
 }
 
 export const createLoadingSlice = <T extends object>(
-  initialState?: Partial<LoadingState>,
-): StateCreator<T & LoadingState & LoadingActions, [], [], LoadingState & LoadingActions> => {
+  initialState?: Partial<LoadingState>
+): StateCreator<
+  T & LoadingState & LoadingActions,
+  [],
+  [],
+  LoadingState & LoadingActions
+> => {
   return (set, get) => ({
     isLoading: false,
     loadingKey: null,
     loadingKeys: new Set(),
     ...initialState,
 
-    startLoading: (key) =>
+    startLoading: key =>
+      set((state: any) => ({
+        ...state,
+        isLoading: true,
+        loadingKey: key || state.loadingKey,
+        loadingKeys: key
+          ? new Set([...state.loadingKeys, key])
+          : state.loadingKeys,
+      })),
+
+    stopLoading: key =>
       set((state: any) => {
+        const newLoadingKeys = new Set(state.loadingKeys);
         if (key) {
-          state.loadingKeys.add(key);
-          state.loadingKey = key;
+          newLoadingKeys.delete(key);
         }
-        state.isLoading = true;
+        return {
+          ...state,
+          loadingKeys: newLoadingKeys,
+          loadingKey: state.loadingKey === key ? null : state.loadingKey,
+          isLoading: newLoadingKeys.size > 0,
+        };
       }),
 
-    stopLoading: (key) =>
-      set((state: any) => {
-        if (key) {
-          state.loadingKeys.delete(key);
-          if (state.loadingKey === key) {
-            state.loadingKey = null;
-          }
-        }
-        state.isLoading = state.loadingKeys.size > 0;
-      }),
-
-    isLoadingKey: (key) => {
+    isLoadingKey: key => {
       const state = get() as any;
       return state.loadingKeys.has(key);
     },
 
     resetLoading: () =>
-      set((state: any) => {
-        state.isLoading = false;
-        state.loadingKey = null;
-        state.loadingKeys.clear();
-      }),
+      set((state: any) => ({
+        ...state,
+        isLoading: false,
+        loadingKey: null,
+        loadingKeys: new Set(),
+      })),
   });
 };
 
@@ -124,8 +135,13 @@ export interface ErrorActions {
 }
 
 export const createErrorSlice = <T extends object>(
-  initialState?: Partial<ErrorState>,
-): StateCreator<T & ErrorState & ErrorActions, [], [], ErrorState & ErrorActions> => {
+  initialState?: Partial<ErrorState>
+): StateCreator<
+  T & ErrorState & ErrorActions,
+  [],
+  [],
+  ErrorState & ErrorActions
+> => {
   return (set, get) => ({
     error: null,
     errors: new Map(),
@@ -133,29 +149,38 @@ export const createErrorSlice = <T extends object>(
 
     setError: (error, key) =>
       set((state: any) => {
+        const newErrors = new Map(state.errors);
         if (key) {
-          state.errors.set(key, error || '');
-        } else {
-          state.error = error;
+          newErrors.set(key, error || '');
         }
+        return {
+          ...state,
+          error: key ? state.error : error,
+          errors: newErrors,
+        };
       }),
 
-    clearError: (key) =>
+    clearError: key =>
       set((state: any) => {
+        const newErrors = new Map(state.errors);
         if (key) {
-          state.errors.delete(key);
-        } else {
-          state.error = null;
+          newErrors.delete(key);
         }
+        return {
+          ...state,
+          error: key ? state.error : null,
+          errors: newErrors,
+        };
       }),
 
     clearAllErrors: () =>
-      set((state: any) => {
-        state.error = null;
-        state.errors.clear();
-      }),
+      set((state: any) => ({
+        ...state,
+        error: null,
+        errors: new Map(),
+      })),
 
-    hasError: (key) => {
+    hasError: key => {
       const state = get() as any;
       if (key) {
         return state.errors.has(key);
@@ -171,14 +196,14 @@ export const createErrorSlice = <T extends object>(
 export function createOptimisticUpdate<T, R>(
   optimisticUpdate: (state: T) => void,
   actualUpdate: () => Promise<R>,
-  rollback: (state: T, error: Error) => void,
+  rollback: (state: T, error: Error) => void
 ) {
   return async (
     set: StoreApi<T>['setState'],
-    get: StoreApi<T>['getState'],
+    _get: StoreApi<T>['getState']
   ): Promise<R> => {
     // Apply optimistic update
-    set((state) => {
+    set(state => {
       optimisticUpdate(state);
       return state;
     });
@@ -189,7 +214,7 @@ export function createOptimisticUpdate<T, R>(
       return result;
     } catch (error: any) {
       // Rollback on error
-      set((state) => {
+      set(state => {
         rollback(state, error);
         return state;
       });
@@ -203,7 +228,7 @@ export function createOptimisticUpdate<T, R>(
  */
 export function createDebouncedAction<T extends any[], R>(
   action: (...args: T) => R | Promise<R>,
-  delay: number = 300,
+  delay: number = 300
 ) {
   let timeoutId: NodeJS.Timeout | null = null;
 
@@ -229,9 +254,9 @@ export function createDebouncedAction<T extends any[], R>(
  * Store reset helper
  */
 export function createResetAction<T extends object>(
-  initialState: T,
+  initialState: T
 ): StateCreator<T & { reset: () => void }, [], [], { reset: () => void }> {
-  return (set) => ({
+  return set => ({
     reset: () => set(() => initialState),
   });
 }

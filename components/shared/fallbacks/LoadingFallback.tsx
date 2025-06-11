@@ -1,6 +1,6 @@
 /**
  * @fileoverview Loading Fallback Components
- * 
+ *
  * Comprehensive loading states and skeleton screens for the PRISMA platform.
  * Provides consistent loading experiences across different UI patterns.
  */
@@ -24,9 +24,11 @@ export function FullPageLoader({
   const { t } = useLanguage();
 
   return (
-    <div className={`min-h-screen flex items-center justify-center ${
-      transparent ? 'bg-transparent' : 'bg-gray-50 dark:bg-gray-900'
-    }`}>
+    <div
+      className={`min-h-screen flex items-center justify-center ${
+        transparent ? 'bg-transparent' : 'bg-gray-50 dark:bg-gray-900'
+      }`}
+    >
       <div className="text-center">
         <div className="relative inline-flex">
           <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
@@ -35,7 +37,7 @@ export function FullPageLoader({
           <div className="absolute inset-0 rounded-full bg-purple-600/20 animate-ping" />
         </div>
         <p className="mt-4 text-gray-600 dark:text-gray-400">
-          {message || t.common.loading}
+          {message || (t.common as any)?.loading || 'Loading...'}
         </p>
       </div>
     </div>
@@ -54,8 +56,8 @@ export function InlineLoader({
   color?: 'purple' | 'gray' | 'white';
   message?: string;
 }) {
-  const { t } = useLanguage();
-  
+  const { t: _t } = useLanguage();
+
   const sizeClasses = {
     sm: 'w-4 h-4',
     md: 'w-6 h-6',
@@ -70,11 +72,11 @@ export function InlineLoader({
 
   return (
     <div className="inline-flex items-center gap-2">
-      <FiLoader className={`${sizeClasses[size]} ${colorClasses[color]} animate-spin`} />
+      <FiLoader
+        className={`${sizeClasses[size]} ${colorClasses[color]} animate-spin`}
+      />
       {message && (
-        <span className={`text-sm ${colorClasses[color]}`}>
-          {message}
-        </span>
+        <span className={`text-sm ${colorClasses[color]}`}>{message}</span>
       )}
     </div>
   );
@@ -99,7 +101,11 @@ export function ButtonLoader({
   if (loading) {
     return (
       <button disabled className={`${className} opacity-60 cursor-not-allowed`}>
-        <InlineLoader size="sm" color="white" message={loadingText || t.common.loading} />
+        <InlineLoader
+          size="sm"
+          color="white"
+          message={loadingText || (t.common as any)?.loading || 'Loading...'}
+        />
       </button>
     );
   }
@@ -183,11 +189,7 @@ export function TableSkeleton({
 /**
  * Form Skeleton Loader
  */
-export function FormSkeleton({
-  fields = 4,
-}: {
-  fields?: number;
-}) {
+export function FormSkeleton({ fields = 4 }: { fields?: number }) {
   return (
     <div className="space-y-6">
       {Array.from({ length: fields }).map((_, index) => (
@@ -242,7 +244,9 @@ export function ImageSkeleton({
   rounded?: string;
 }) {
   return (
-    <div className={`${width} ${height} bg-gray-200 dark:bg-gray-700 ${rounded} animate-pulse`} />
+    <div
+      className={`${width} ${height} bg-gray-200 dark:bg-gray-700 ${rounded} animate-pulse`}
+    />
   );
 }
 
@@ -264,11 +268,7 @@ export function ProfileSkeleton() {
 /**
  * Dashboard Stats Skeleton
  */
-export function StatsSkeleton({
-  count = 4,
-}: {
-  count?: number;
-}) {
+export function StatsSkeleton({ count = 4 }: { count?: number }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {Array.from({ length: count }).map((_, index) => (
@@ -337,7 +337,10 @@ export function ContentLoader({
       return (
         <div className="space-y-4">
           {Array.from({ length: repeat }).map((_, index) => (
-            <div key={index} className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+            <div
+              key={index}
+              className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm"
+            >
               <ProfileSkeleton />
             </div>
           ))}

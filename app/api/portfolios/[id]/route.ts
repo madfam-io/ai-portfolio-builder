@@ -10,7 +10,7 @@ import {
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 import { Portfolio } from '@/types/portfolio';
-import { transformApiPortfolioToDb } from '../route';
+import { transformApiPortfolioToDb } from '@/lib/utils/portfolio-transformer';
 import { logger } from '@/lib/utils/logger';
 
 interface RouteParams {

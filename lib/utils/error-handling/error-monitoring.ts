@@ -1,17 +1,17 @@
 /**
  * @fileoverview Error Monitoring Service
- * 
+ *
  * Provides error monitoring and reporting capabilities
  * with integration points for external services.
  */
 
 import { logger } from '@/lib/utils/logger';
-import { 
-  ErrorReport, 
-  ErrorType, 
-  ErrorSeverity, 
+import {
+  ErrorReport,
+  ErrorType,
+  ErrorSeverity,
   ErrorHandler,
-  ErrorFilter 
+  ErrorFilter,
 } from './error-types';
 import { serializeError, getErrorType, getErrorContext } from './error-utils';
 
@@ -72,7 +72,7 @@ class ErrorMonitoringService {
     if (typeof window === 'undefined') return;
 
     // Unhandled promise rejections
-    window.addEventListener('unhandledrejection', (event) => {
+    window.addEventListener('unhandledrejection', event => {
       this.captureError(
         new Error(`Unhandled Promise Rejection: ${event.reason}`),
         { unhandled: true, promise: true }
@@ -80,7 +80,7 @@ class ErrorMonitoringService {
     });
 
     // Global error handler
-    window.addEventListener('error', (event) => {
+    window.addEventListener('error', event => {
       this.captureError(event.error || new Error(event.message), {
         unhandled: true,
         global: true,
@@ -96,7 +96,7 @@ class ErrorMonitoringService {
     context?: Record<string, any>
   ): Promise<string | null> {
     if (!this.config.enabled) {
-      logger.error('Error captured (monitoring disabled):', error);
+      logger.error('Error captured (monitoring disabled):', error as Error);
       return null;
     }
 
@@ -106,9 +106,7 @@ class ErrorMonitoringService {
     }
 
     // Convert to Error object if needed
-    const errorObj = error instanceof Error 
-      ? error 
-      : new Error(String(error));
+    const errorObj = error instanceof Error ? error : new Error(String(error));
 
     // Apply filters
     if (this.config.filters?.some(filter => !filter(errorObj))) {
@@ -119,7 +117,7 @@ class ErrorMonitoringService {
     const report = this.createErrorReport(errorObj, context);
 
     // Apply beforeSend transform
-    const finalReport = this.config.beforeSend 
+    const finalReport = this.config.beforeSend
       ? this.config.beforeSend(report)
       : report;
 
@@ -158,10 +156,10 @@ class ErrorMonitoringService {
       message: error.message,
       stack: error.stack,
       context: {
-        ...getErrorContext(),
+        ...(getErrorContext() || {}),
         environment: this.config.environment,
-        ...context,
-      },
+        ...(context || {}),
+      } as any,
       metadata: serializeError(error),
     };
   }
@@ -169,10 +167,7 @@ class ErrorMonitoringService {
   /**
    * Calculate error severity
    */
-  private calculateSeverity(
-    error: Error,
-    type: ErrorType
-  ): ErrorSeverity {
+  private calculateSeverity(error: Error, type: ErrorType): ErrorSeverity {
     // Critical errors
     if (
       type === 'authentication' ||
@@ -193,10 +188,7 @@ class ErrorMonitoringService {
     }
 
     // Medium severity
-    if (
-      type === 'validation' ||
-      type === 'notFound'
-    ) {
+    if (type === 'validation' || type === 'notFound') {
       return 'medium';
     }
 
@@ -217,7 +209,7 @@ class ErrorMonitoringService {
       try {
         await handler(error, context);
       } catch (handlerError) {
-        logger.error('Error handler failed:', handlerError);
+        logger.error('Error handler failed:', handlerError as Error);
       }
     }
   }
@@ -227,7 +219,7 @@ class ErrorMonitoringService {
    */
   private async sendReport(report: ErrorReport): Promise<void> {
     if (!this.config.endpoint) {
-      logger.log('Error report (no endpoint configured):', report);
+      logger.info('Error report (no endpoint configured):', { report });
       return;
     }
 
@@ -237,7 +229,7 @@ class ErrorMonitoringService {
         headers: {
           'Content-Type': 'application/json',
           ...(this.config.apiKey && {
-            'Authorization': `Bearer ${this.config.apiKey}`,
+            Authorization: `Bearer ${this.config.apiKey}`,
           }),
         },
         body: JSON.stringify(report),
@@ -247,9 +239,9 @@ class ErrorMonitoringService {
         throw new Error(`Failed to send error report: ${response.status}`);
       }
 
-      logger.log('Error report sent:', report.id);
+      logger.info('Error report sent:', { reportId: report.id });
     } catch (error) {
-      logger.error('Failed to send error report:', error);
+      logger.error('Failed to send error report:', error as Error);
       this.queueReport(report);
     }
   }
@@ -259,7 +251,7 @@ class ErrorMonitoringService {
    */
   private queueReport(report: ErrorReport): void {
     this.queue.push(report);
-    
+
     // Limit queue size
     if (this.queue.length > 100) {
       this.queue.shift();
@@ -331,7 +323,7 @@ export const errorMonitoring = new ErrorMonitoringService({
   endpoint: process.env.NEXT_PUBLIC_ERROR_MONITORING_ENDPOINT,
   apiKey: process.env.NEXT_PUBLIC_ERROR_MONITORING_API_KEY,
   sampleRate: 1.0,
-  beforeSend: (report) => {
+  beforeSend: report => {
     // Filter out sensitive data
     if (report.context.userId) {
       report.context.userId = 'REDACTED';
@@ -373,9 +365,7 @@ export const commonFilters = {
       'moz-extension://',
       'safari-extension://',
     ];
-    return !thirdPartyPatterns.some(pattern => 
-      error.stack?.includes(pattern)
-    );
+    return !thirdPartyPatterns.some(pattern => error.stack?.includes(pattern));
   },
 };
 

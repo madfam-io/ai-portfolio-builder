@@ -9,19 +9,18 @@ import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
 import { useUIStore } from './ui-store';
 import { useAIStore } from './ai-store';
-import { useRootStore, useAuth, usePortfolio, useUI, useAI } from './root-store';
 
 /**
  * Hook for authenticated user data with loading state
  */
 export function useUser() {
   const { user, isLoading, isAuthenticated } = useAuthStore(
-    (state) => ({
+    state => ({
       user: state.user,
       isLoading: state.isLoading,
       isAuthenticated: state.isAuthenticated,
     }),
-    shallow,
+    shallow
   );
 
   return {
@@ -43,45 +42,50 @@ export function useCurrentPortfolio() {
     updatePortfolio,
     setCurrentPortfolio,
   } = usePortfolioStore(
-    (state) => ({
+    state => ({
       currentPortfolio: state.currentPortfolio,
       isEditing: state.isEditing,
       isSaving: state.isSaving,
       updatePortfolio: state.updatePortfolio,
       setCurrentPortfolio: state.setCurrentPortfolio,
     }),
-    shallow,
+    shallow
   );
 
   const updateField = useCallback(
     (field: string, value: any) => {
       if (!currentPortfolio) return;
-      
+
       setCurrentPortfolio({
         ...currentPortfolio,
         [field]: value,
       });
     },
-    [currentPortfolio, setCurrentPortfolio],
+    [currentPortfolio, setCurrentPortfolio]
   );
 
   const updateNestedField = useCallback(
     (path: string, value: any) => {
       if (!currentPortfolio) return;
-      
+
       const keys = path.split('.');
       const updated = { ...currentPortfolio };
       let current: any = updated;
-      
+
       for (let i = 0; i < keys.length - 1; i++) {
-        current[keys[i]] = { ...current[keys[i]] };
-        current = current[keys[i]];
+        const key = keys[i];
+        if (!key) continue;
+        current[key] = { ...current[key] };
+        current = current[key];
       }
-      
-      current[keys[keys.length - 1]] = value;
+
+      const lastKey = keys[keys.length - 1];
+      if (lastKey) {
+        current[lastKey] = value;
+      }
       setCurrentPortfolio(updated);
     },
-    [currentPortfolio, setCurrentPortfolio],
+    [currentPortfolio, setCurrentPortfolio]
   );
 
   return {
@@ -90,7 +94,9 @@ export function useCurrentPortfolio() {
     isSaving,
     updateField,
     updateNestedField,
-    save: () => currentPortfolio && updatePortfolio(currentPortfolio.id, currentPortfolio),
+    save: () =>
+      currentPortfolio &&
+      updatePortfolio(currentPortfolio.id, currentPortfolio),
   };
 }
 
@@ -99,20 +105,21 @@ export function useCurrentPortfolio() {
  */
 export function useTheme() {
   const { theme, setTheme } = useUIStore(
-    (state) => ({
+    state => ({
       theme: state.theme,
       setTheme: state.setTheme,
     }),
-    shallow,
+    shallow
   );
 
   // Apply theme on mount and when it changes
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove('light', 'dark');
-    
+
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
         ? 'dark'
         : 'light';
       root.classList.add(systemTheme);
@@ -165,7 +172,7 @@ export function useAIModels() {
     setSelectedModel,
     loadModels,
   } = useAIStore(
-    (state) => ({
+    state => ({
       selectedModels: state.selectedModels,
       availableModels: state.availableModels,
       quotaUsed: state.quotaUsed,
@@ -173,7 +180,7 @@ export function useAIModels() {
       setSelectedModel: state.setSelectedModel,
       loadModels: state.loadModels,
     }),
-    shallow,
+    shallow
   );
 
   // Load models on mount
@@ -206,21 +213,21 @@ export function useAIModels() {
  */
 export function useModal(modalId: string) {
   const { modals, openModal, closeModal } = useUIStore(
-    (state) => ({
+    state => ({
       modals: state.modals,
       openModal: state.openModal,
       closeModal: state.closeModal,
     }),
-    shallow,
+    shallow
   );
 
-  const isOpen = modals.some((m) => m.id === modalId);
+  const isOpen = modals.some(m => m.id === modalId);
 
   const open = useCallback(
     (component: React.ComponentType<any>, props?: any) => {
       openModal({ id: modalId, component, props });
     },
-    [modalId, openModal],
+    [modalId, openModal]
   );
 
   const close = useCallback(() => {
@@ -239,13 +246,13 @@ export function useModal(modalId: string) {
  */
 export function useToasts() {
   const { toasts, showToast, removeToast, clearToasts } = useUIStore(
-    (state) => ({
+    state => ({
       toasts: state.toasts,
       showToast: state.showToast,
       removeToast: state.removeToast,
       clearToasts: state.clearToasts,
     }),
-    shallow,
+    shallow
   );
 
   return {
@@ -269,19 +276,16 @@ export function useToasts() {
  */
 export function useGlobalLoading() {
   const { globalLoading, loadingMessage, setGlobalLoading } = useUIStore(
-    (state) => ({
+    state => ({
       globalLoading: state.globalLoading,
       loadingMessage: state.loadingMessage,
       setGlobalLoading: state.setGlobalLoading,
     }),
-    shallow,
+    shallow
   );
 
   const withLoading = useCallback(
-    async <T,>(
-      action: () => Promise<T>,
-      message?: string,
-    ): Promise<T> => {
+    async <T>(action: () => Promise<T>, message?: string): Promise<T> => {
       setGlobalLoading(true, message);
       try {
         return await action();
@@ -289,7 +293,7 @@ export function useGlobalLoading() {
         setGlobalLoading(false);
       }
     },
-    [setGlobalLoading],
+    [setGlobalLoading]
   );
 
   return {
@@ -308,32 +312,34 @@ export function usePortfolios(options?: {
   sort?: (a: any, b: any) => number;
 }) {
   const { portfolios, isLoading, loadPortfolios } = usePortfolioStore(
-    (state) => ({
+    state => ({
       portfolios: state.portfolios,
       isLoading: state.isLoading,
       loadPortfolios: state.loadPortfolios,
     }),
-    shallow,
+    shallow
   );
+
+  const { user } = useAuthStore(state => ({ user: state.user }), shallow);
 
   // Load portfolios on mount
   useEffect(() => {
-    if (portfolios.length === 0 && !isLoading) {
-      loadPortfolios().catch(console.error);
+    if (portfolios.length === 0 && !isLoading && user?.id) {
+      loadPortfolios(user.id).catch(console.error);
     }
-  }, [portfolios.length, isLoading, loadPortfolios]);
+  }, [portfolios.length, isLoading, loadPortfolios, user?.id]);
 
   const filteredAndSorted = useMemo(() => {
     let result = [...portfolios];
-    
+
     if (options?.filter) {
       result = result.filter(options.filter);
     }
-    
+
     if (options?.sort) {
       result.sort(options.sort);
     }
-    
+
     return result;
   }, [portfolios, options?.filter, options?.sort]);
 

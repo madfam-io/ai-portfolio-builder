@@ -19,47 +19,56 @@ export function StoreProvider({ children }: StoreProviderProps) {
   const { setTheme } = useUIStore();
 
   useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
     // Initialize auth state
     const initAuth = async () => {
       try {
         const supabase = createClient();
-        
+        if (!supabase) {
+          // No Supabase client available, skip auth initialization
+          setLoading(false);
+          return;
+        }
+
         // Get initial session
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session) {
           setSession(session);
           setUser(session.user);
         }
-        
+
         setLoading(false);
 
         // Listen for auth changes
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(
-          async (event, session) => {
-            setSession(session);
-            setUser(session?.user || null);
-            
-            // Handle specific auth events
-            switch (event) {
-              case 'SIGNED_IN':
-                console.log('User signed in');
-                break;
-              case 'SIGNED_OUT':
-                console.log('User signed out');
-                // Reset stores handled in auth store
-                break;
-              case 'TOKEN_REFRESHED':
-                console.log('Token refreshed');
-                break;
-              case 'USER_UPDATED':
-                console.log('User updated');
-                break;
-            }
-          }
-        );
+        const {
+          data: { subscription },
+        } = supabase.auth.onAuthStateChange(async (event, session) => {
+          setSession(session);
+          setUser(session?.user || null);
 
-        return () => {
+          // Handle specific auth events
+          switch (event) {
+            case 'SIGNED_IN':
+              console.log('User signed in');
+              break;
+            case 'SIGNED_OUT':
+              console.log('User signed out');
+              // Reset stores handled in auth store
+              break;
+            case 'TOKEN_REFRESHED':
+              console.log('Token refreshed');
+              break;
+            case 'USER_UPDATED':
+              console.log('User updated');
+              break;
+          }
+        });
+
+        unsubscribe = () => {
           subscription.unsubscribe();
         };
       } catch (error) {
@@ -69,6 +78,12 @@ export function StoreProvider({ children }: StoreProviderProps) {
     };
 
     initAuth();
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [setUser, setSession, setLoading]);
 
   useEffect(() => {
@@ -88,9 +103,10 @@ export function StoreProvider({ children }: StoreProviderProps) {
     // Apply initial theme
     const root = document.documentElement;
     const theme = useUIStore.getState().theme;
-    
+
     if (theme === 'system') {
-      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+        .matches
         ? 'dark'
         : 'light';
       root.classList.add(systemTheme);
@@ -104,13 +120,13 @@ export function StoreProvider({ children }: StoreProviderProps) {
 
 // Export a hook to ensure provider is used
 export function useStoreProvider() {
-  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  
+  const isAuthenticated = useAuthStore(state => state.isAuthenticated);
+
   if (typeof window !== 'undefined' && !isAuthenticated) {
     console.warn(
       'StoreProvider should wrap your app to ensure proper store initialization'
     );
   }
-  
+
   return isAuthenticated;
 }

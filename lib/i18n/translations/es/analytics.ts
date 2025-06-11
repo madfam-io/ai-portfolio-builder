@@ -45,6 +45,60 @@ export default {
   loadingCommitsChart: 'Cargando gráfico de commits...',
   loadingPullRequestsChart: 'Cargando gráfico de pull requests...',
 
+  // Repository detail page
+  loading: 'Cargando...',
+  loadingRepository: 'Cargando repositorio...',
+  loadingAnalytics: 'Cargando analíticas del repositorio...',
+  errorLoadingRepository: 'Error al cargar repositorio',
+  backToAnalytics: 'Volver a Analíticas',
+  noDescriptionAvailable: 'Sin descripción disponible',
+  viewOnGitHub: 'Ver en GitHub',
+  syncData: 'Sincronizar Datos',
+  lastUpdated: 'Última actualización',
+  stars: 'Estrellas',
+  forks: 'Bifurcaciones',
+  watchers: 'Observadores',
+  issues: 'Problemas',
+  language: 'Lenguaje',
+  createdAt: 'Creado el',
+  updatedAt: 'Actualizado el',
+  homepage: 'Página principal',
+  topics: 'Temas',
+  license: 'Licencia',
+  visibility: 'Visibilidad',
+  public: 'Público',
+
+  // Metrics details
+  totalCommits: 'Total de Commits',
+  totalLOC: 'Total LOC',
+  commitsLast30Days: 'Commits (30d)',
+  recentPRs: 'PRs Recientes',
+  totalPullRequests: 'Total de Pull Requests',
+  openIssues: 'Problemas Abiertos',
+  closedIssues: 'Problemas Cerrados',
+  averageCommitsPerDay: 'Promedio de Commits/Día',
+  contributorActivity: 'Actividad de Contribuidores',
+
+  // Chart labels
+  commitsPerMonth: 'Commits por Mes',
+  pullRequestsPerMonth: 'Pull Requests por Mes',
+  issuesOverTime: 'Problemas en el Tiempo',
+  codeFrequency: 'Frecuencia de Código',
+  commitActivity: 'Actividad de Commits',
+  languageDistribution: 'Distribución de Lenguajes',
+  recentPullRequests: 'Pull Requests Recientes',
+
+  // Device dimensions
+  desktop: 'Escritorio',
+  tablet: 'Tableta',
+  mobile: 'Móvil',
+
+  // Time periods
+  lastWeek: 'Última Semana',
+  lastMonth: 'Último Mes',
+  lastYear: 'Último Año',
+  allTime: 'Todo el Tiempo',
+
   // Errors
   githubIntegrationRequired: 'Integración con GitHub requerida',
   githubAuthDenied:
@@ -55,4 +109,29 @@ export default {
     'Error al intercambiar el token OAuth. Por favor, intenta de nuevo.',
   error: 'Error',
   tryAgain: 'Intentar de Nuevo',
+  notFound: 'No encontrado',
+  repositoryNotFound: 'Repositorio no encontrado',
+  failedToFetchAnalytics: 'Error al obtener analíticas del repositorio',
+  failedToSync: 'Error al sincronizar repositorio',
+
+  // Pull Request Metrics
+  pullRequestMetrics: 'Métricas de Pull Requests',
+  avgCycleTime: 'Tiempo de Ciclo Prom.',
+  avgLeadTime: 'Tiempo de Entrega Prom.',
+  mergeRate: 'Tasa de Fusión',
+  timeToReview: 'Tiempo de Revisión',
+
+  // Pull Request States
+  merged: 'fusionado',
+  open: 'abierto',
+  closed: 'cerrado',
+
+  // Contributors
+  by: 'por',
+  commitsWithChanges: 'commits',
+
+  // Formatting
+  notAvailable: 'N/D',
+  pullRequestNumber: '#{number}',
+  codeChanges: '+{additions} -{deletions}',
 } as const;

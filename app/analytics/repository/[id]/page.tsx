@@ -1,18 +1,19 @@
 /**
  * @fileoverview Repository Analytics Detail Page
- * 
+ *
  * Detailed analytics view for a specific GitHub repository.
  * Shows code metrics, contributor insights, and historical trends.
- * 
+ *
  * @author PRISMA Development Team
  * @version 0.0.1-alpha - Phase 1 MVP
  */
 
 'use client';
 
-import React, { useState, useEffect, useCallback, lazy } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   FiArrowLeft,
   FiGithub,
@@ -29,17 +30,19 @@ import {
 } from 'react-icons/fi';
 import type { RepositoryAnalytics } from '@/types/analytics';
 
-// Lazy load Recharts components to reduce bundle size
-const LineChart = lazy(() => import('recharts').then(mod => ({ default: mod.LineChart })));
-const Line = lazy(() => import('recharts').then(mod => ({ default: mod.Line })));
-const XAxis = lazy(() => import('recharts').then(mod => ({ default: mod.XAxis })));
-const YAxis = lazy(() => import('recharts').then(mod => ({ default: mod.YAxis })));
-const CartesianGrid = lazy(() => import('recharts').then(mod => ({ default: mod.CartesianGrid })));
-const Tooltip = lazy(() => import('recharts').then(mod => ({ default: mod.Tooltip })));
-const ResponsiveContainer = lazy(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })));
-const PieChart = lazy(() => import('recharts').then(mod => ({ default: mod.PieChart })));
-const Pie = lazy(() => import('recharts').then(mod => ({ default: mod.Pie as any })));
-const Cell = lazy(() => import('recharts').then(mod => ({ default: mod.Cell as any })));
+// Import Recharts components directly - they'll be code-split by Next.js
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+} from 'recharts';
 
 // Component state type
 interface RepoState {
@@ -56,7 +59,8 @@ export default function RepositoryAnalyticsPage() {
   const router = useRouter();
   const params = useParams();
   const repositoryId = params.id as string;
-  
+  const { t } = useLanguage();
+
   // State management
   const [repo, setRepo] = useState<RepoState>({
     data: null,
@@ -72,7 +76,9 @@ export default function RepositoryAnalyticsPage() {
     try {
       setRepo(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await fetch(`/api/analytics/repositories/${repositoryId}`);
+      const response = await fetch(
+        `/api/analytics/repositories/${repositoryId}`
+      );
       const result = await response.json();
 
       if (!response.ok) {
@@ -80,11 +86,11 @@ export default function RepositoryAnalyticsPage() {
           setRepo(prev => ({
             ...prev,
             loading: false,
-            error: 'Repository not found',
+            error: t.repositoryNotFound as string,
           }));
           return;
         }
-        throw new Error(result.error || 'Failed to fetch repository analytics');
+        throw new Error(result.error || (t.failedToFetchAnalytics as string));
       }
 
       setRepo(prev => ({
@@ -100,7 +106,7 @@ export default function RepositoryAnalyticsPage() {
         error: error.message,
       }));
     }
-  }, [repositoryId]);
+  }, [repositoryId, t]);
 
   // Fetch repository analytics on mount
   useEffect(() => {
@@ -116,23 +122,26 @@ export default function RepositoryAnalyticsPage() {
     try {
       setRepo(prev => ({ ...prev, syncing: true }));
 
-      const response = await fetch(`/api/analytics/repositories/${repositoryId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          syncMetrics: true,
-          syncPullRequests: true,
-          syncContributors: true,
-          syncCommits: true,
-        }),
-      });
+      const response = await fetch(
+        `/api/analytics/repositories/${repositoryId}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            syncMetrics: true,
+            syncPullRequests: true,
+            syncContributors: true,
+            syncCommits: true,
+          }),
+        }
+      );
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to sync repository');
+        throw new Error(result.error || (t.failedToSync as string));
       }
 
       // Refresh data after sync
@@ -166,7 +175,7 @@ export default function RepositoryAnalyticsPage() {
           <div className="text-center">
             <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
-              Loading repository analytics...
+              {t.loadingAnalytics}
             </p>
           </div>
         </div>
@@ -182,7 +191,7 @@ export default function RepositoryAnalyticsPage() {
           <div className="text-center max-w-md">
             <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-              Error
+              {t.error}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
               {repo.error}
@@ -193,14 +202,14 @@ export default function RepositoryAnalyticsPage() {
                 className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
               >
                 <FiArrowLeft className="mr-2" />
-                Back to Analytics
+                {t.backToAnalytics}
               </button>
               <button
                 onClick={fetchRepositoryAnalytics}
                 className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
                 <FiRefreshCw className="mr-2" />
-                Try Again
+                {t.tryAgain}
               </button>
             </div>
           </div>
@@ -232,15 +241,15 @@ export default function RepositoryAnalyticsPage() {
               </h1>
               {repository.visibility === 'private' && (
                 <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">
-                  Private
+                  {t.private}
                 </span>
               )}
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  {repository.description || 'No description available'}
+                  {repository.description || t.noDescriptionAvailable}
                 </p>
                 <div className="flex items-center gap-6 text-sm text-gray-500">
                   {repository.language && (
@@ -271,7 +280,7 @@ export default function RepositoryAnalyticsPage() {
                   className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
                 >
                   <FiGithub className="mr-2" />
-                  View on GitHub
+                  {t.viewOnGitHub}
                   <FiExternalLink className="ml-2 w-3 h-3" />
                 </a>
                 <button
@@ -279,8 +288,10 @@ export default function RepositoryAnalyticsPage() {
                   disabled={repo.syncing}
                   className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
                 >
-                  <FiRefreshCw className={`mr-2 ${repo.syncing ? 'animate-spin' : ''}`} />
-                  {repo.syncing ? 'Syncing...' : 'Sync Data'}
+                  <FiRefreshCw
+                    className={`mr-2 ${repo.syncing ? 'animate-spin' : ''}`}
+                  />
+                  {repo.syncing ? t.syncing : t.syncData}
                 </button>
               </div>
             </div>
@@ -294,9 +305,12 @@ export default function RepositoryAnalyticsPage() {
                   <FiCode className="w-6 h-6 text-purple-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Total LOC</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.totalLOC}
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.metrics.current?.locTotal?.toLocaleString() || 'N/A'}
+                    {data.metrics.current?.locTotal?.toLocaleString() ||
+                      t.notAvailable}
                   </p>
                 </div>
               </div>
@@ -308,7 +322,9 @@ export default function RepositoryAnalyticsPage() {
                   <FiActivity className="w-6 h-6 text-blue-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Commits (30d)</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.commitsLast30Days}
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.metrics.current?.commitsLast30Days || 0}
                   </p>
@@ -322,7 +338,9 @@ export default function RepositoryAnalyticsPage() {
                   <FiGitPullRequest className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Recent PRs</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.recentPRs}
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.pullRequests.recent.length}
                   </p>
@@ -336,7 +354,9 @@ export default function RepositoryAnalyticsPage() {
                   <FiUsers className="w-6 h-6 text-yellow-600" />
                 </div>
                 <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Contributors</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.contributors}
+                  </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.contributors.length}
                   </p>
@@ -349,32 +369,43 @@ export default function RepositoryAnalyticsPage() {
           {data.pullRequests.stats && (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Pull Request Metrics
+                {t.pullRequestMetrics}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div className="text-center">
                   <p className="text-2xl font-bold text-purple-600">
                     {data.pullRequests.stats.averageCycleTime.toFixed(1)}h
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Avg Cycle Time</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.avgCycleTime}
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-blue-600">
                     {data.pullRequests.stats.averageLeadTime.toFixed(1)}h
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Avg Lead Time</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.avgLeadTime}
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-green-600">
                     {data.pullRequests.stats.mergeRate.toFixed(1)}%
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Merge Rate</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.mergeRate}
+                  </p>
                 </div>
                 <div className="text-center">
                   <p className="text-2xl font-bold text-yellow-600">
-                    {data.pullRequests.stats.averageTimeToFirstReview.toFixed(1)}h
+                    {data.pullRequests.stats.averageTimeToFirstReview.toFixed(
+                      1
+                    )}
+                    h
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Time to Review</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t.timeToReview}
+                  </p>
                 </div>
               </div>
             </div>
@@ -385,7 +416,7 @@ export default function RepositoryAnalyticsPage() {
             {/* Commit Activity */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Commit Activity
+                {t.commitActivity}
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data.commits.byDay}>
@@ -393,10 +424,10 @@ export default function RepositoryAnalyticsPage() {
                   <XAxis dataKey="commitDate" />
                   <YAxis />
                   <Tooltip />
-                  <Line 
-                    type="monotone" 
-                    dataKey="commitCount" 
-                    stroke={chartColors.primary} 
+                  <Line
+                    type="monotone"
+                    dataKey="commitCount"
+                    stroke={chartColors.primary}
                     strokeWidth={2}
                   />
                 </LineChart>
@@ -406,7 +437,7 @@ export default function RepositoryAnalyticsPage() {
             {/* Language Breakdown */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Language Distribution
+                {t.languageDistribution}
               </h3>
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -415,15 +446,25 @@ export default function RepositoryAnalyticsPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }) => `${name} ${percentage.toFixed(1)}%`}
+                    label={({ name, percentage }: any) =>
+                      `${name} ${percentage.toFixed(1)}%`
+                    }
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="percentage"
                   >
                     {data.languages.map((_, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={[chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.warning, chartColors.danger][index % 5]} 
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          [
+                            chartColors.primary,
+                            chartColors.secondary,
+                            chartColors.accent,
+                            chartColors.warning,
+                            chartColors.danger,
+                          ][index % 5]
+                        }
                       />
                     ))}
                   </Pie>
@@ -438,7 +479,7 @@ export default function RepositoryAnalyticsPage() {
             {/* Contributors */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Top Contributors
+                {t.topContributors}
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {data.contributors.slice(0, 10).map((contrib, index) => (
@@ -454,7 +495,17 @@ export default function RepositoryAnalyticsPage() {
                         {contrib.contributor.name || contrib.contributor.login}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {contrib.stats.commitCount} commits, +{contrib.stats.additions} -{contrib.stats.deletions}
+                        {contrib.stats.commitCount} {t.commitsWithChanges},{' '}
+                        {t.codeChanges
+                          ?.replace(
+                            '{additions}',
+                            contrib.stats.additions.toString()
+                          )
+                          .replace(
+                            '{deletions}',
+                            contrib.stats.deletions.toString()
+                          ) ||
+                          `+${contrib.stats.additions} -${contrib.stats.deletions}`}
                       </p>
                     </div>
                   </div>
@@ -465,10 +516,10 @@ export default function RepositoryAnalyticsPage() {
             {/* Recent Pull Requests */}
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Recent Pull Requests
+                {t.recentPullRequests}
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {data.pullRequests.recent.slice(0, 10).map((pr) => (
+                {data.pullRequests.recent.slice(0, 10).map(pr => (
                   <div
                     key={pr.id}
                     className="p-3 border rounded-lg dark:border-gray-700"
@@ -476,13 +527,26 @@ export default function RepositoryAnalyticsPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <p className="font-medium text-gray-900 dark:text-white text-sm">
-                          #{pr.number}: {pr.title}
+                          {t.pullRequestNumber?.replace(
+                            '{number}',
+                            pr.number.toString()
+                          ) || `#${pr.number}`}
+                          : {pr.title}
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                          by {pr.authorLogin} • {pr.state}
+                          {t.by} {pr.authorLogin} •{' '}
+                          {t[pr.state as 'merged' | 'open' | 'closed'] ||
+                            pr.state}
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
-                          <span>+{pr.additions} -{pr.deletions}</span>
+                          <span>
+                            {t.codeChanges
+                              ?.replace('{additions}', pr.additions.toString())
+                              .replace(
+                                '{deletions}',
+                                pr.deletions.toString()
+                              ) || `+${pr.additions} -${pr.deletions}`}
+                          </span>
                           {pr.cycleTimeHours && (
                             <span className="flex items-center gap-1">
                               <FiClock className="w-3 h-3" />
@@ -491,13 +555,15 @@ export default function RepositoryAnalyticsPage() {
                           )}
                         </div>
                       </div>
-                      <span className={`px-2 py-1 text-xs rounded ${
-                        pr.state === 'merged' 
-                          ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
-                          : pr.state === 'open'
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-                          : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                      }`}>
+                      <span
+                        className={`px-2 py-1 text-xs rounded ${
+                          pr.state === 'merged'
+                            ? 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400'
+                            : pr.state === 'open'
+                              ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+                              : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
+                        }`}
+                      >
                         {pr.state}
                       </span>
                     </div>

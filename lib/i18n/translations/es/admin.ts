@@ -51,4 +51,35 @@ export default {
   adminPlanFree: 'GRATIS',
   adminPlanPro: 'PRO',
   adminPlanBusiness: 'BUSINESS',
+
+  // Admin dashboard
+  adminDashboard: 'Panel de Administración',
+  adminPanel: 'Panel de Admin',
+  adminOverview: 'Resumen',
+  systemStatus: 'Estado del Sistema',
+
+  // User details
+  userId: 'ID de Usuario',
+  email: 'Correo Electrónico',
+  registeredDate: 'Fecha de Registro',
+  lastLogin: 'Último Inicio de Sesión',
+  accountType: 'Tipo de Cuenta',
+
+  // System actions
+  exportData: 'Exportar Datos',
+  importData: 'Importar Datos',
+  systemSettings: 'Configuración del Sistema',
+  maintenanceMode: 'Modo de Mantenimiento',
+
+  // Reports
+  reports: 'Reportes',
+  userActivityReport: 'Reporte de Actividad de Usuarios',
+  revenueReport: 'Reporte de Ingresos',
+  usageReport: 'Reporte de Uso',
+  generateReport: 'Generar Reporte',
+
+  // Notifications
+  systemNotification: 'Notificación del Sistema',
+  sendNotification: 'Enviar Notificación',
+  notificationsSent: 'Notificaciones Enviadas',
 } as const;

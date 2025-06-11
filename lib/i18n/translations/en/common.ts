@@ -118,6 +118,7 @@ export default {
   add: 'Add',
   remove: 'Remove',
   retrying: 'Retrying...',
+  tryAgain: 'Try Again',
 
   // Empty states
   emptyStates: {
@@ -133,7 +134,8 @@ export default {
     noData: 'No data available',
     noDataDescription: 'There is no data to display at this time',
     noAnalyticsData: 'No analytics data',
-    noAnalyticsDataDescription: 'Analytics data will appear once you have activity',
+    noAnalyticsDataDescription:
+      'Analytics data will appear once you have activity',
     noUsers: 'No users found',
     noUsersDescription: 'No users match your current filters',
     noProducts: 'No products found',

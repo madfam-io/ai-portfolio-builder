@@ -50,4 +50,35 @@ export default {
   adminPlanFree: 'FREE',
   adminPlanPro: 'PRO',
   adminPlanBusiness: 'BUSINESS',
+
+  // Admin dashboard
+  adminDashboard: 'Admin Dashboard',
+  adminPanel: 'Admin Panel',
+  adminOverview: 'Overview',
+  systemStatus: 'System Status',
+
+  // User details
+  userId: 'User ID',
+  email: 'Email',
+  registeredDate: 'Registered Date',
+  lastLogin: 'Last Login',
+  accountType: 'Account Type',
+
+  // System actions
+  exportData: 'Export Data',
+  importData: 'Import Data',
+  systemSettings: 'System Settings',
+  maintenanceMode: 'Maintenance Mode',
+
+  // Reports
+  reports: 'Reports',
+  userActivityReport: 'User Activity Report',
+  revenueReport: 'Revenue Report',
+  usageReport: 'Usage Report',
+  generateReport: 'Generate Report',
+
+  // Notifications
+  systemNotification: 'System Notification',
+  sendNotification: 'Send Notification',
+  notificationsSent: 'Notifications Sent',
 } as const;

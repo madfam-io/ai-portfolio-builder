@@ -44,9 +44,12 @@ export interface PortfolioActions {
   setSaving: (isSaving: boolean) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
-  loadPortfolios: () => Promise<void>;
+  loadPortfolios: (userId: string) => Promise<void>;
   loadPortfolio: (id: string) => Promise<void>;
-  createPortfolio: (data: Partial<Portfolio>) => Promise<Portfolio>;
+  createPortfolio: (
+    data: Partial<Portfolio>,
+    userId: string
+  ) => Promise<Portfolio>;
   updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<void>;
   deletePortfolio: (id: string) => Promise<void>;
   savePortfolio: () => Promise<void>;
@@ -126,7 +129,10 @@ export interface AIState {
 }
 
 export interface AIActions {
-  setSelectedModel: (type: 'bio' | 'project' | 'template', modelId: string) => void;
+  setSelectedModel: (
+    type: 'bio' | 'project' | 'template',
+    modelId: string
+  ) => void;
   setAvailableModels: (models: AIModel[]) => void;
   addEnhancement: (enhancement: AIEnhancement) => void;
   clearHistory: () => void;

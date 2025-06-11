@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -29,7 +28,11 @@ const EXEMPT_ROUTES = [
  * Generate a cryptographically secure CSRF token
  */
 function generateCSRFToken(): string {
-  return crypto.randomBytes(CSRF_TOKEN_LENGTH).toString('hex');
+  const buffer = new Uint8Array(CSRF_TOKEN_LENGTH);
+  crypto.getRandomValues(buffer);
+  return Array.from(buffer)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 /**

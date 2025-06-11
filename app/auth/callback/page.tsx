@@ -3,19 +3,25 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '@/lib/auth/auth';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
 export default function AuthCallbackPage() {
-  const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading');
+  const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
+    'loading'
+  );
   const [error, setError] = useState<string>('');
   const router = useRouter();
+  const { t } = useLanguage();
 
   useEffect(() => {
     const handleAuthCallback = async () => {
       try {
         // Get URL hash and search params
-        const hashParams = new URLSearchParams(window.location.hash.substring(1));
+        const hashParams = new URLSearchParams(
+          window.location.hash.substring(1)
+        );
         const searchParams = new URLSearchParams(window.location.search);
-        
+
         // Check for error in URL
         const errorParam = hashParams.get('error') || searchParams.get('error');
         if (errorParam) {
@@ -26,7 +32,7 @@ export default function AuthCallbackPage() {
 
         // Get current user session
         const { data, error } = await getCurrentUser();
-        
+
         if (error) {
           setError(error.message);
           setStatus('error');
@@ -44,20 +50,26 @@ export default function AuthCallbackPage() {
           router.push('/auth/signin');
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Authentication failed');
+        setError(
+          err instanceof Error
+            ? err.message
+            : t.authenticationFailed || 'Authentication failed'
+        );
         setStatus('error');
       }
     };
 
     handleAuthCallback();
-  }, [router]);
+  }, [router, t]);
 
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Completing authentication...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            {t.completingAuthentication}
+          </p>
         </div>
       </div>
     );
@@ -82,7 +94,9 @@ export default function AuthCallbackPage() {
               />
             </svg>
           </div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">Authentication successful! Redirecting...</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-400">
+            {t.authenticationSuccessfulRedirecting}
+          </p>
         </div>
       </div>
     );
@@ -107,14 +121,14 @@ export default function AuthCallbackPage() {
           </svg>
         </div>
         <h2 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
-          Authentication Failed
+          {t.authenticationFailedTitle}
         </h2>
         <p className="mt-2 text-gray-600 dark:text-gray-400">{error}</p>
         <button
           onClick={() => router.push('/auth/signin')}
           className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
-          Try Again
+          {t.tryAgain}
         </button>
       </div>
     </div>

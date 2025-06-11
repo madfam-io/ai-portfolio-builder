@@ -3,7 +3,10 @@ import { NextRequest, NextResponse } from 'next/server';
 export interface ApiVersionConfig {
   currentVersion: string;
   supportedVersions: string[];
-  deprecatedVersions: Map<string, { deprecatedAt: Date; sunsetDate: Date; message: string }>;
+  deprecatedVersions: Map<
+    string,
+    { deprecatedAt: Date; sunsetDate: Date; message: string }
+  >;
 }
 
 // API Version Configuration
@@ -12,7 +15,7 @@ export const API_VERSION_CONFIG: ApiVersionConfig = {
   supportedVersions: ['v1'],
   deprecatedVersions: new Map([
     // Example: ['v0', { deprecatedAt: new Date('2025-01-01'), sunsetDate: new Date('2025-06-01'), message: 'Please upgrade to v1' }]
-  ])
+  ]),
 };
 
 /**
@@ -20,7 +23,7 @@ export const API_VERSION_CONFIG: ApiVersionConfig = {
  */
 export function extractApiVersion(pathname: string): string | null {
   const match = pathname.match(/^\/api\/(v\d+)\//);
-  return match ? match[1] : null;
+  return match && match[1] ? match[1] : null;
 }
 
 /**
@@ -50,7 +53,7 @@ export function getDeprecationInfo(version: string) {
  */
 export async function apiVersionMiddleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  
+
   // Only process API routes
   if (!pathname.startsWith('/api/')) {
     return NextResponse.next();
@@ -58,10 +61,13 @@ export async function apiVersionMiddleware(request: NextRequest) {
 
   // Extract version from URL
   const version = extractApiVersion(pathname);
-  
+
   // If no version specified, redirect to current version
-  if (!version && pathname === '/api/' || pathname.match(/^\/api\/[^v]/)) {
-    const newPathname = pathname.replace('/api/', `/api/${API_VERSION_CONFIG.currentVersion}/`);
+  if ((!version && pathname === '/api/') || pathname.match(/^\/api\/[^v]/)) {
+    const newPathname = pathname.replace(
+      '/api/',
+      `/api/${API_VERSION_CONFIG.currentVersion}/`
+    );
     return NextResponse.redirect(new URL(newPathname, request.url));
   }
 
@@ -69,9 +75,18 @@ export async function apiVersionMiddleware(request: NextRequest) {
   const response = NextResponse.next();
 
   // Add API version headers
-  response.headers.set('X-API-Version', version || API_VERSION_CONFIG.currentVersion);
-  response.headers.set('X-API-Current-Version', API_VERSION_CONFIG.currentVersion);
-  response.headers.set('X-API-Supported-Versions', API_VERSION_CONFIG.supportedVersions.join(', '));
+  response.headers.set(
+    'X-API-Version',
+    version || API_VERSION_CONFIG.currentVersion
+  );
+  response.headers.set(
+    'X-API-Current-Version',
+    API_VERSION_CONFIG.currentVersion
+  );
+  response.headers.set(
+    'X-API-Supported-Versions',
+    API_VERSION_CONFIG.supportedVersions.join(', ')
+  );
 
   // Check if version is supported
   if (version && !isVersionSupported(version)) {
@@ -79,11 +94,11 @@ export async function apiVersionMiddleware(request: NextRequest) {
       {
         error: 'Unsupported API Version',
         message: `API version ${version} is not supported. Supported versions: ${API_VERSION_CONFIG.supportedVersions.join(', ')}`,
-        currentVersion: API_VERSION_CONFIG.currentVersion
+        currentVersion: API_VERSION_CONFIG.currentVersion,
       },
-      { 
+      {
         status: 400,
-        headers: response.headers
+        headers: response.headers,
       }
     );
   }
@@ -92,10 +107,19 @@ export async function apiVersionMiddleware(request: NextRequest) {
   if (version && isVersionDeprecated(version)) {
     const deprecationInfo = getDeprecationInfo(version);
     if (deprecationInfo) {
-      response.headers.set('X-API-Deprecation-Warning', deprecationInfo.message);
-      response.headers.set('X-API-Sunset-Date', deprecationInfo.sunsetDate.toISOString());
+      response.headers.set(
+        'X-API-Deprecation-Warning',
+        deprecationInfo.message
+      );
+      response.headers.set(
+        'X-API-Sunset-Date',
+        deprecationInfo.sunsetDate.toISOString()
+      );
       response.headers.set('Sunset', deprecationInfo.sunsetDate.toUTCString());
-      response.headers.set('Deprecation', `date="${deprecationInfo.deprecatedAt.toISOString()}"`);
+      response.headers.set(
+        'Deprecation',
+        `date="${deprecationInfo.deprecatedAt.toISOString()}"`
+      );
     }
   }
 
@@ -113,14 +137,18 @@ export function createVersionedResponse<T>(
     version?: string;
   }
 ): NextResponse {
-  const { status = 200, headers = {}, version = API_VERSION_CONFIG.currentVersion } = options || {};
-  
+  const {
+    status = 200,
+    headers = {},
+    version = API_VERSION_CONFIG.currentVersion,
+  } = options || {};
+
   const response = NextResponse.json(data, { status, headers });
-  
+
   // Add standard API version headers
   response.headers.set('X-API-Version', version);
   response.headers.set('X-API-Response-Time', new Date().toISOString());
-  
+
   return response;
 }
 
@@ -135,32 +163,34 @@ export function withApiVersion<T extends (...args: any[]) => any>(
   }
 ): T {
   return (async (...args: Parameters<T>) => {
-    const [request] = args as [NextRequest];
-    const version = extractApiVersion(request.nextUrl.pathname) || API_VERSION_CONFIG.currentVersion;
-    
+    const [request] = args as unknown as [NextRequest];
+    const version =
+      extractApiVersion(request.nextUrl.pathname) ||
+      API_VERSION_CONFIG.currentVersion;
+
     // Version validation
     if (options?.minVersion && version < options.minVersion) {
       return NextResponse.json(
         {
           error: 'Version Too Low',
           message: `This endpoint requires API version ${options.minVersion} or higher. You are using ${version}.`,
-          currentVersion: API_VERSION_CONFIG.currentVersion
+          currentVersion: API_VERSION_CONFIG.currentVersion,
         },
         { status: 400 }
       );
     }
-    
+
     if (options?.maxVersion && version > options.maxVersion) {
       return NextResponse.json(
         {
           error: 'Version Too High',
           message: `This endpoint supports API version ${options.maxVersion} or lower. You are using ${version}.`,
-          currentVersion: API_VERSION_CONFIG.currentVersion
+          currentVersion: API_VERSION_CONFIG.currentVersion,
         },
         { status: 400 }
       );
     }
-    
+
     // Call the original handler with version context
     return handler(...args, { apiVersion: version });
   }) as T;
