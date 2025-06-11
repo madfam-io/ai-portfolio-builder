@@ -11,7 +11,7 @@ import type {
 } from '@/lib/i18n/refactored-types';
 
 // Mock translations for testing
-const mockEsTranslations = {
+const mockEsTranslations: any = {
   common: {
     loading: 'Cargando...',
     error: 'Error',
@@ -65,7 +65,7 @@ const mockEsTranslations = {
   },
 };
 
-const mockEnTranslations = {
+const mockEnTranslations: any = {
   common: {
     loading: 'Loading...',
     error: 'Error',
@@ -145,7 +145,7 @@ export function TestLanguageProvider({
   const [language, setLanguage] = useState<Language>(initialLanguage);
 
   // Get translations based on current language
-  const getTranslations = (lang: Language): TranslationNamespace => {
+  const getTranslations = (lang: Language): any => {
     return lang === 'es' ? mockEsTranslations : mockEnTranslations;
   };
 
@@ -154,9 +154,13 @@ export function TestLanguageProvider({
   // Flatten translations to match the expected format
   const flattenedTranslations: FlattenedTranslations = {};
   Object.entries(translations).forEach(([, values]) => {
-    Object.entries(values).forEach(([key, value]) => {
-      flattenedTranslations[key] = value as string;
-    });
+    if (values && typeof values === 'object') {
+      Object.entries(values).forEach(([key, value]) => {
+        if (typeof value === 'string') {
+          flattenedTranslations[key] = value;
+        }
+      });
+    }
   });
 
   const value: TestLanguageContextValue = {

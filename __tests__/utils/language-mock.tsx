@@ -24,6 +24,9 @@ const mockLanguageContext = {
   isLoaded: true,
 };
 
+// Create a mock context
+const MockLanguageContext = React.createContext(mockLanguageContext);
+
 // Mock the language hook
 export const mockUseLanguage = (language: 'es' | 'en' = 'es') => {
   const translations = language === 'es' ? esTranslations : enTranslations;
@@ -50,8 +53,8 @@ export const MockLanguageProvider = ({
 }) => {
   const translations =
     initialLanguage === 'es' ? esTranslations : enTranslations;
-  const value = {
-    language: initialLanguage,
+  const contextValue: typeof mockLanguageContext = {
+    language: initialLanguage as 'es',
     setLanguage: jest.fn(),
     t: flattenTranslations(translations),
     availableLanguages: mockLanguageContext.availableLanguages,
@@ -63,14 +66,11 @@ export const MockLanguageProvider = ({
   };
 
   return (
-    <LanguageContext.Provider value={value}>
+    <MockLanguageContext.Provider value={contextValue}>
       {children}
-    </LanguageContext.Provider>
+    </MockLanguageContext.Provider>
   );
 };
-
-// Create the context (imported from the actual implementation)
-import { LanguageContext } from '@/lib/i18n/refactored-context';
 
 // Export a setup function to mock the language module
 export function setupLanguageMocks() {

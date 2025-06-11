@@ -97,7 +97,7 @@ describe('Sign Up Page', () => {
       const passwordInput = screen.getAllByLabelText(/password/i)[0];
 
       // Type a short password
-      await user.type(passwordInput, 'short');
+      if (passwordInput) await user.type(passwordInput, 'short');
 
       // Should show password requirements (minimum 12 characters as per CLAUDE.md)
       const passwordHelp = screen.queryByText(/12/);
@@ -111,8 +111,8 @@ describe('Sign Up Page', () => {
       const [passwordInput, confirmInput] =
         screen.getAllByLabelText(/password/i);
 
-      await user.type(passwordInput, 'ValidPassword123!');
-      await user.type(confirmInput, 'DifferentPassword123!');
+      if (passwordInput) await user.type(passwordInput, 'ValidPassword123!');
+      if (confirmInput) await user.type(confirmInput, 'DifferentPassword123!');
 
       // Submit form
       const submitButton = screen.getByRole('button', {

@@ -5,21 +5,20 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { DeveloperTemplate } from '@/components/templates/DeveloperTemplate';
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
 import { Portfolio } from '@/types/portfolio';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
-// Mock portfolio data
 const mockPortfolio: Portfolio = {
-  id: '1',
-  userId: 'user-123',
+  id: 'portfolio-1',
+  userId: 'user-1',
   name: 'John Doe',
   title: 'Full Stack Developer',
-  bio: 'Experienced developer with a passion for creating scalable web applications.',
-  tagline: 'Building the future, one line at a time',
-  avatar_url: 'https://example.com/avatar.jpg',
+  bio: 'Experienced developer with a passion for creating scalable web applications and contributing to open source projects.',
+  tagline: 'Building the future, one commit at a time',
+  avatarUrl: 'https://example.com/avatar.jpg',
   contact: {
     email: 'john@example.com',
-    phone: '+1234567890',
+    phone: '+1 (555) 123-4567',
     location: 'San Francisco, CA',
   },
   social: {
@@ -29,61 +28,86 @@ const mockPortfolio: Portfolio = {
   },
   experience: [
     {
+      id: 'exp-1',
       company: 'Tech Corp',
       position: 'Senior Developer',
       startDate: '2020-01',
-      endDate: null,
+      endDate: undefined,
       current: true,
       description: 'Leading development of microservices architecture',
+      highlights: [
+        'Reduced deployment time by 50%',
+        'Led team of 4 developers',
+      ],
+      technologies: ['React', 'Node.js', 'AWS'],
     },
   ],
   education: [
     {
+      id: 'edu-1',
       institution: 'University of Technology',
       degree: 'BS Computer Science',
       field: 'Computer Science',
-      startDate: '2016',
-      endDate: '2020',
+      startDate: '2016-09',
+      endDate: '2020-05',
+      current: false,
       description: 'Graduated with honors',
+      achievements: ["Dean's List", 'ACM Programming Competition Winner'],
     },
   ],
   projects: [
     {
+      id: 'proj-1',
       title: 'E-commerce Platform',
       description:
         'Built a scalable e-commerce platform using React and Node.js',
       technologies: ['React', 'Node.js', 'MongoDB'],
-      link: 'https://github.com/johndoe/ecommerce',
-      image: 'https://example.com/project1.jpg',
+      githubUrl: 'https://github.com/johndoe/ecommerce',
+      liveUrl: 'https://example-store.com',
+      imageUrl: 'https://example.com/project1.jpg',
+      highlights: ['100k+ monthly active users', 'Featured on ProductHunt'],
+      featured: true,
+      order: 0,
     },
   ],
   skills: [
-    { name: 'JavaScript', level: 90 },
-    { name: 'React', level: 85 },
-    { name: 'Node.js', level: 80 },
-    { name: 'Python', level: 75 },
+    { name: 'JavaScript', level: 'expert' },
+    { name: 'React', level: 'expert' },
+    { name: 'Node.js', level: 'advanced' },
+    { name: 'Python', level: 'advanced' },
   ],
   certifications: [
     {
+      id: 'cert-1',
       name: 'AWS Certified Developer',
       issuer: 'Amazon Web Services',
-      date: '2023-01',
-      url: 'https://aws.amazon.com/certification/',
+      issueDate: '2023-01',
+      credentialUrl: 'https://aws.amazon.com/certification/',
     },
   ],
   template: 'developer',
   customization: {
     primaryColor: '#1a73e8',
     secondaryColor: '#34a853',
-    font: 'Inter',
-    layout: 'modern',
+    fontFamily: 'Inter',
+    headerStyle: 'minimal',
+    sectionOrder: [],
+    hiddenSections: [],
   },
-  published: true,
+  status: 'published',
   subdomain: 'johndoe',
-  customDomain: null,
-  metadata: {},
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  customDomain: undefined,
+  views: 0,
+  aiSettings: {
+    enhanceBio: true,
+    enhanceProjectDescriptions: true,
+    generateSkillsFromExperience: false,
+    tone: 'professional',
+    targetLength: 'concise',
+  },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  publishedAt: new Date(),
 };
 
 describe('DeveloperTemplate Component', () => {
@@ -121,34 +145,16 @@ describe('DeveloperTemplate Component', () => {
       expect(screen.getByText('Python')).toBeInTheDocument();
     });
 
-    test('displays skill levels as progress bars', () => {
+    test('displays skill levels with badges', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const progressBars = screen.getAllByRole('progressbar');
-      expect(progressBars.length).toBeGreaterThanOrEqual(4);
-    });
-  });
-
-  describe('Experience Section', () => {
-    test('shows work experience', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
-
-      expect(screen.getByText('Tech Corp')).toBeInTheDocument();
-      expect(screen.getByText('Senior Developer')).toBeInTheDocument();
-      expect(
-        screen.getByText(/Leading development of microservices/)
-      ).toBeInTheDocument();
-    });
-
-    test('indicates current position', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
-
-      expect(screen.getByText(/current|presente/i)).toBeInTheDocument();
+      expect(screen.getAllByText('expert')).toHaveLength(2);
+      expect(screen.getAllByText('advanced')).toHaveLength(2);
     });
   });
 
   describe('Projects Section', () => {
-    test('displays project cards', () => {
+    test('renders project cards', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
@@ -157,34 +163,83 @@ describe('DeveloperTemplate Component', () => {
       ).toBeInTheDocument();
     });
 
-    test('shows project technologies', () => {
+    test('displays project technologies', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const techTags = screen.getAllByText(/React|Node.js|MongoDB/);
-      expect(techTags.length).toBeGreaterThan(0);
+      expect(screen.getByText('React')).toBeInTheDocument();
+      expect(screen.getByText('Node.js')).toBeInTheDocument();
+      expect(screen.getByText('MongoDB')).toBeInTheDocument();
     });
 
-    test('includes project links', () => {
+    test('shows project links', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const projectLink = screen.getByRole('link', {
-        name: /view project|ver proyecto/i,
-      });
-      expect(projectLink).toHaveAttribute(
+      const githubLink = screen.getByRole('link', { name: /github/i });
+      expect(githubLink).toHaveAttribute(
         'href',
         'https://github.com/johndoe/ecommerce'
       );
     });
   });
 
-  describe('Social Links', () => {
-    test('renders social media links', () => {
+  describe('Experience Section', () => {
+    test('displays work experience', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const githubLink = screen.getByRole('link', { name: /github/i });
-      const linkedinLink = screen.getByRole('link', { name: /linkedin/i });
+      expect(screen.getByText('Senior Developer')).toBeInTheDocument();
+      expect(screen.getByText('Tech Corp')).toBeInTheDocument();
+      expect(screen.getByText(/current|presente/i)).toBeInTheDocument();
+    });
 
+    test('shows experience highlights', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      expect(
+        screen.getByText('Reduced deployment time by 50%')
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Education Section', () => {
+    test('displays education details', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      expect(screen.getByText('University of Technology')).toBeInTheDocument();
+      expect(screen.getByText('BS Computer Science')).toBeInTheDocument();
+    });
+
+    test('shows graduation year', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      expect(screen.getByText(/2020/)).toBeInTheDocument();
+    });
+  });
+
+  describe('Certifications Section', () => {
+    test('displays certifications', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      expect(screen.getByText('AWS Certified Developer')).toBeInTheDocument();
+      expect(screen.getByText('Amazon Web Services')).toBeInTheDocument();
+    });
+  });
+
+  describe('Social Links', () => {
+    test('renders GitHub profile link', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      const githubLink = screen.getByRole('link', {
+        name: /github|profile/i,
+      });
       expect(githubLink).toHaveAttribute('href', 'https://github.com/johndoe');
+    });
+
+    test('renders LinkedIn profile link', () => {
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+
+      const linkedinLink = screen.getByRole('link', {
+        name: /linkedin/i,
+      });
       expect(linkedinLink).toHaveAttribute(
         'href',
         'https://linkedin.com/in/johndoe'
@@ -192,33 +247,31 @@ describe('DeveloperTemplate Component', () => {
     });
   });
 
-  describe('Customization', () => {
-    test('applies custom colors', () => {
+  describe('Responsive Design', () => {
+    test('applies responsive classes', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
       const container = screen.getByTestId('portfolio-container');
-      const styles = window.getComputedStyle(container);
-
-      expect(styles.getPropertyValue('--primary-color')).toBe('#1a73e8');
+      expect(container).toHaveClass('container');
     });
   });
 
   describe('Empty States', () => {
-    test('handles missing projects gracefully', () => {
-      const portfolioWithoutProjects = {
+    test('handles missing social links gracefully', () => {
+      const portfolioWithoutSocial = {
         ...mockPortfolio,
-        projects: [],
+        social: {},
       };
 
       renderWithLanguage(
-        <DeveloperTemplate portfolio={portfolioWithoutProjects} />
+        <DeveloperTemplate portfolio={portfolioWithoutSocial} />
       );
 
-      // Should not crash and display other sections
+      // Should still render other sections
       expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    test('handles missing skills', () => {
+    test('handles empty skills array', () => {
       const portfolioWithoutSkills = {
         ...mockPortfolio,
         skills: [],
@@ -229,37 +282,23 @@ describe('DeveloperTemplate Component', () => {
       );
 
       // Should still render other sections
-      expect(screen.getByText('Tech Corp')).toBeInTheDocument();
-    });
-  });
-
-  describe('Responsive Design', () => {
-    test('renders in mobile view', () => {
-      global.innerWidth = 375;
-      global.innerHeight = 667;
-
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
-
       expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
   });
 
-  describe('Accessibility', () => {
-    test('has proper heading hierarchy', () => {
+  describe('Custom Styling', () => {
+    test('applies custom primary color', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const h1 = screen.getByRole('heading', { level: 1 });
-      expect(h1).toHaveTextContent('John Doe');
-
-      const h2s = screen.getAllByRole('heading', { level: 2 });
-      expect(h2s.length).toBeGreaterThan(0);
+      const container = screen.getByTestId('portfolio-container');
+      expect(container).toHaveStyle({ '--primary-color': '#1a73e8' });
     });
 
-    test('has proper alt text for images', () => {
+    test('applies custom font family', () => {
       renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
 
-      const avatar = screen.getByAltText(/John Doe/i);
-      expect(avatar).toBeInTheDocument();
+      const container = screen.getByTestId('portfolio-container');
+      expect(container).toHaveClass('font-sans');
     });
   });
 });

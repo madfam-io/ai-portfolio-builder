@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
@@ -93,14 +93,14 @@ describe('PortfolioEditor', () => {
           new Promise(resolve => setTimeout(() => resolve(mockPortfolio), 100))
       );
 
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       // Should show loading indicator
       expect(screen.getByRole('status')).toBeInTheDocument();
     });
 
     test('loads portfolio data', async () => {
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(portfolioService.getPortfolio).toHaveBeenCalledWith('1');
@@ -116,7 +116,7 @@ describe('PortfolioEditor', () => {
   describe('Basic Editing', () => {
     test('updates portfolio name', async () => {
       const user = userEvent.setup();
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       // Wait for portfolio to load
       await waitFor(() => {
@@ -137,7 +137,7 @@ describe('PortfolioEditor', () => {
 
     test('updates portfolio bio', async () => {
       const user = userEvent.setup();
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(screen.getByDisplayValue('Test bio')).toBeInTheDocument();
@@ -158,7 +158,7 @@ describe('PortfolioEditor', () => {
 
   describe('Publishing', () => {
     test('publishes draft portfolio', async () => {
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(
@@ -182,7 +182,7 @@ describe('PortfolioEditor', () => {
       const publishedPortfolio = { ...mockPortfolio, status: 'published' };
       portfolioService.getPortfolio.mockResolvedValue(publishedPortfolio);
 
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(
@@ -209,7 +209,7 @@ describe('PortfolioEditor', () => {
         new Error('Failed to load')
       );
 
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(screen.getByText(/error/i)).toBeInTheDocument();
@@ -222,7 +222,7 @@ describe('PortfolioEditor', () => {
         new Error('Update failed')
       );
 
-      renderWithLanguage(<PortfolioEditor portfolioId="1" />);
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
@@ -244,9 +244,7 @@ describe('PortfolioEditor', () => {
       const mockOnUpdate = jest.fn();
       const user = userEvent.setup();
 
-      renderWithLanguage(
-        <PortfolioEditor portfolioId="1" onUpdate={mockOnUpdate} />
-      );
+      renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
         expect(screen.getByDisplayValue('Test Portfolio')).toBeInTheDocument();
@@ -265,7 +263,11 @@ describe('PortfolioEditor', () => {
       const mockOnPublish = jest.fn();
 
       renderWithLanguage(
-        <PortfolioEditor portfolioId="1" onPublish={mockOnPublish} />
+        <PortfolioEditor
+          portfolioId="1"
+          userId="user-1"
+          onPublish={mockOnPublish}
+        />
       );
 
       await waitFor(() => {

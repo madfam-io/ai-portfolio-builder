@@ -5,12 +5,13 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { 
+import {
   validateUpdatePortfolio,
-  sanitizePortfolioData 
+  sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 import { Portfolio } from '@/types/portfolio';
 import { transformApiPortfolioToDb } from '../route';
+import { logger } from '@/lib/utils/logger';
 
 interface RouteParams {
   params: {
@@ -36,7 +37,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     }
 
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -52,7 +56,8 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (fetchError) {
-      if (fetchError.code === 'PGRST116') { // Not found
+      if (fetchError.code === 'PGRST116') {
+        // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
           { status: 404 }
@@ -80,7 +85,6 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({
       portfolio: responsePortfolio,
     });
-
   } catch (error) {
     console.error('Unexpected error in GET /api/portfolios/[id]:', error);
     return NextResponse.json(
@@ -108,7 +112,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -124,14 +131,19 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (fetchError) {
-      if (fetchError.code === 'PGRST116') { // Not found
+      if (fetchError.code === 'PGRST116') {
+        // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
           { status: 404 }
         );
       }
 
-      console.error('Database error checking portfolio ownership:', fetchError);
+      logger.error(
+        'Database error checking portfolio ownership',
+        fetchError as Error,
+        { portfolioId: id }
+      );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
         { status: 500 }
@@ -178,7 +190,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     // Handle status change to published
-    if (sanitizedData.status === 'published' && existingPortfolio.status !== 'published') {
+    if (
+      sanitizedData.status === 'published' &&
+      existingPortfolio.status !== 'published'
+    ) {
       sanitizedData.publishedAt = new Date();
     }
 
@@ -195,9 +210,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     if (updateError) {
       console.error('Database error updating portfolio:', updateError);
-      
+
       // Handle specific errors
-      if (updateError.code === '23505') { // Unique constraint violation
+      if (updateError.code === '23505') {
+        // Unique constraint violation
         return NextResponse.json(
           { error: 'Subdomain already exists' },
           { status: 409 }
@@ -217,10 +233,13 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       portfolio: responsePortfolio,
       message: 'Portfolio updated successfully',
     });
-
   } catch (error) {
-    console.error('Unexpected error in PUT /api/portfolios/[id]:', error);
-    
+    logger.error(
+      'Unexpected error in PUT /api/portfolios/[id]',
+      error as Error,
+      { portfolioId: params.id }
+    );
+
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return NextResponse.json(
@@ -254,7 +273,10 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
     }
 
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -270,14 +292,19 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (fetchError) {
-      if (fetchError.code === 'PGRST116') { // Not found
+      if (fetchError.code === 'PGRST116') {
+        // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
           { status: 404 }
         );
       }
 
-      console.error('Database error checking portfolio ownership:', fetchError);
+      logger.error(
+        'Database error checking portfolio ownership',
+        fetchError as Error,
+        { portfolioId: id }
+      );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
         { status: 500 }
@@ -299,7 +326,9 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
       .eq('id', id);
 
     if (deleteError) {
-      console.error('Database error deleting portfolio:', deleteError);
+      logger.error('Database error deleting portfolio', deleteError as Error, {
+        portfolioId: id,
+      });
       return NextResponse.json(
         { error: 'Failed to delete portfolio' },
         { status: 500 }
@@ -313,9 +342,12 @@ export async function DELETE(_request: NextRequest, { params }: RouteParams) {
         'X-Portfolio-Deleted': existingPortfolio.name,
       },
     });
-
   } catch (error) {
-    console.error('Unexpected error in DELETE /api/portfolios/[id]:', error);
+    logger.error(
+      'Unexpected error in DELETE /api/portfolios/[id]',
+      error as Error,
+      { portfolioId: params.id }
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -350,9 +382,13 @@ function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
     subdomain: dbPortfolio.subdomain,
     customDomain: dbPortfolio.custom_domain,
     views: dbPortfolio.views,
-    lastViewedAt: dbPortfolio.last_viewed_at ? new Date(dbPortfolio.last_viewed_at) : undefined,
+    lastViewedAt: dbPortfolio.last_viewed_at
+      ? new Date(dbPortfolio.last_viewed_at)
+      : undefined,
     createdAt: new Date(dbPortfolio.created_at),
     updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at ? new Date(dbPortfolio.published_at) : undefined,
+    publishedAt: dbPortfolio.published_at
+      ? new Date(dbPortfolio.published_at)
+      : undefined,
   };
 }

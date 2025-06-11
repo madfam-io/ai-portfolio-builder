@@ -5,13 +5,14 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { 
+import {
   validateCreatePortfolio,
   validatePortfolioQuery,
-  sanitizePortfolioData 
+  sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 import { Portfolio } from '@/types/portfolio';
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * GET /api/portfolios
@@ -30,7 +31,10 @@ export async function GET(request: NextRequest) {
     }
 
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -45,12 +49,21 @@ export async function GET(request: NextRequest) {
 
     if (!queryValidation.success) {
       return NextResponse.json(
-        { error: 'Invalid query parameters', details: queryValidation.error.issues },
+        {
+          error: 'Invalid query parameters',
+          details: queryValidation.error.issues,
+        },
         { status: 400 }
       );
     }
 
-    const { page = 1, limit = 10, status, template, search } = queryValidation.data;
+    const {
+      page = 1,
+      limit = 10,
+      status,
+      template,
+      search,
+    } = queryValidation.data;
 
     // Build query
     let query = supabase
@@ -69,7 +82,9 @@ export async function GET(request: NextRequest) {
     }
 
     if (search) {
-      query = query.or(`name.ilike.%${search}%,title.ilike.%${search}%,bio.ilike.%${search}%`);
+      query = query.or(
+        `name.ilike.%${search}%,title.ilike.%${search}%,bio.ilike.%${search}%`
+      );
     }
 
     // Apply pagination
@@ -103,7 +118,6 @@ export async function GET(request: NextRequest) {
         totalPages: Math.ceil((totalCount || 0) / limit),
       },
     });
-
   } catch (error) {
     console.error('Unexpected error in GET /api/portfolios:', error);
     return NextResponse.json(
@@ -129,7 +143,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Check authentication
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
@@ -168,12 +185,12 @@ export async function POST(request: NextRequest) {
       const existingSubdomains = existingPortfolios.map(p => p.subdomain);
       let counter = 1;
       let uniqueSubdomain = subdomain;
-      
+
       while (existingSubdomains.includes(uniqueSubdomain)) {
         uniqueSubdomain = `${subdomain}-${counter}`;
         counter++;
       }
-      
+
       subdomain = uniqueSubdomain;
     }
 
@@ -226,9 +243,10 @@ export async function POST(request: NextRequest) {
 
     if (insertError) {
       console.error('Database error creating portfolio:', insertError);
-      
+
       // Handle specific errors
-      if (insertError.code === '23505') { // Unique constraint violation
+      if (insertError.code === '23505') {
+        // Unique constraint violation
         return NextResponse.json(
           { error: 'A portfolio with this subdomain already exists' },
           { status: 409 }
@@ -245,16 +263,15 @@ export async function POST(request: NextRequest) {
     const responsePortfolio = transformDbPortfolioToApi(portfolio);
 
     return NextResponse.json(
-      { 
+      {
         portfolio: responsePortfolio,
-        message: 'Portfolio created successfully' 
+        message: 'Portfolio created successfully',
       },
       { status: 201 }
     );
-
   } catch (error) {
-    console.error('Unexpected error in POST /api/portfolios:', error);
-    
+    logger.error('Unexpected error in POST /api/portfolios', error as Error);
+
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return NextResponse.json(
@@ -297,10 +314,14 @@ function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
     subdomain: dbPortfolio.subdomain,
     customDomain: dbPortfolio.custom_domain,
     views: dbPortfolio.views,
-    lastViewedAt: dbPortfolio.last_viewed_at ? new Date(dbPortfolio.last_viewed_at) : undefined,
+    lastViewedAt: dbPortfolio.last_viewed_at
+      ? new Date(dbPortfolio.last_viewed_at)
+      : undefined,
     createdAt: new Date(dbPortfolio.created_at),
     updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at ? new Date(dbPortfolio.published_at) : undefined,
+    publishedAt: dbPortfolio.published_at
+      ? new Date(dbPortfolio.published_at)
+      : undefined,
   };
 }
 
@@ -308,7 +329,9 @@ function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
  * Transforms API portfolio object to database format
  * Converts camelCase to snake_case and adjusts field names
  */
-export function transformApiPortfolioToDb(apiPortfolio: Partial<Portfolio>): any {
+export function transformApiPortfolioToDb(
+  apiPortfolio: Partial<Portfolio>
+): any {
   const dbData: any = {};
 
   if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
@@ -316,23 +339,30 @@ export function transformApiPortfolioToDb(apiPortfolio: Partial<Portfolio>): any
   if (apiPortfolio.title) dbData.title = apiPortfolio.title;
   if (apiPortfolio.bio !== undefined) dbData.bio = apiPortfolio.bio;
   if (apiPortfolio.tagline !== undefined) dbData.tagline = apiPortfolio.tagline;
-  if (apiPortfolio.avatarUrl !== undefined) dbData.avatar_url = apiPortfolio.avatarUrl;
+  if (apiPortfolio.avatarUrl !== undefined)
+    dbData.avatar_url = apiPortfolio.avatarUrl;
   if (apiPortfolio.contact) dbData.contact = apiPortfolio.contact;
   if (apiPortfolio.social) dbData.social = apiPortfolio.social;
   if (apiPortfolio.experience) dbData.experience = apiPortfolio.experience;
   if (apiPortfolio.education) dbData.education = apiPortfolio.education;
   if (apiPortfolio.projects) dbData.projects = apiPortfolio.projects;
   if (apiPortfolio.skills) dbData.skills = apiPortfolio.skills;
-  if (apiPortfolio.certifications) dbData.certifications = apiPortfolio.certifications;
+  if (apiPortfolio.certifications)
+    dbData.certifications = apiPortfolio.certifications;
   if (apiPortfolio.template) dbData.template = apiPortfolio.template;
-  if (apiPortfolio.customization) dbData.customization = apiPortfolio.customization;
+  if (apiPortfolio.customization)
+    dbData.customization = apiPortfolio.customization;
   if (apiPortfolio.aiSettings) dbData.ai_settings = apiPortfolio.aiSettings;
   if (apiPortfolio.status) dbData.status = apiPortfolio.status;
-  if (apiPortfolio.subdomain !== undefined) dbData.subdomain = apiPortfolio.subdomain;
-  if (apiPortfolio.customDomain !== undefined) dbData.custom_domain = apiPortfolio.customDomain;
+  if (apiPortfolio.subdomain !== undefined)
+    dbData.subdomain = apiPortfolio.subdomain;
+  if (apiPortfolio.customDomain !== undefined)
+    dbData.custom_domain = apiPortfolio.customDomain;
   if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
-  if (apiPortfolio.lastViewedAt) dbData.last_viewed_at = apiPortfolio.lastViewedAt.toISOString();
-  if (apiPortfolio.publishedAt) dbData.published_at = apiPortfolio.publishedAt.toISOString();
+  if (apiPortfolio.lastViewedAt)
+    dbData.last_viewed_at = apiPortfolio.lastViewedAt.toISOString();
+  if (apiPortfolio.publishedAt)
+    dbData.published_at = apiPortfolio.publishedAt.toISOString();
 
   // Always update the updated_at timestamp
   dbData.updated_at = new Date().toISOString();

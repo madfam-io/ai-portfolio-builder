@@ -358,7 +358,7 @@ export function PortfolioPreview({
                 .sort(
                   (a, b) =>
                     (b.featured ? 1 : 0) - (a.featured ? 1 : 0) ||
-                    a.order - b.order
+                    (a.order || 0) - (b.order || 0)
                 )
                 .map(project => (
                   <div
@@ -388,7 +388,7 @@ export function PortfolioPreview({
                         {project.description}
                       </p>
 
-                      {project.highlights.length > 0 && (
+                      {project.highlights && project.highlights.length > 0 && (
                         <ul className="list-disc list-inside text-sm text-gray-600 dark:text-gray-400 mb-3">
                           {project.highlights.map((highlight, index) => (
                             <li key={index}>{highlight}</li>

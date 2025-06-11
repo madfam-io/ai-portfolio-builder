@@ -2,7 +2,6 @@
  * AI Models API route test suite
  */
 
-import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/ai/models/route';
 
 // Mock HuggingFace service
@@ -42,8 +41,7 @@ describe('AI Models API Route', () => {
 
   describe('GET /api/ai/models', () => {
     test('returns available models for all tasks', async () => {
-      const request = new NextRequest('http://localhost:3000/api/ai/models');
-      const response = await GET(request);
+      const response = await GET();
 
       expect(response.status).toBe(200);
       const data = await response.json();
@@ -56,8 +54,7 @@ describe('AI Models API Route', () => {
     });
 
     test('returns model details with performance metrics', async () => {
-      const request = new NextRequest('http://localhost:3000/api/ai/models');
-      const response = await GET(request);
+      const response = await GET();
 
       const data = await response.json();
       const firstModel = data.data.models[0];
@@ -76,8 +73,7 @@ describe('AI Models API Route', () => {
     });
 
     test('includes metadata in response', async () => {
-      const request = new NextRequest('http://localhost:3000/api/ai/models');
-      const response = await GET(request);
+      const response = await GET();
 
       const data = await response.json();
 
@@ -95,8 +91,7 @@ describe('AI Models API Route', () => {
           .mockRejectedValue(new Error('Service unavailable')),
       }));
 
-      const request = new NextRequest('http://localhost:3000/api/ai/models');
-      const response = await GET(request);
+      const response = await GET();
 
       // The API returns fallback models when there's an error
       expect(response.status).toBe(200);

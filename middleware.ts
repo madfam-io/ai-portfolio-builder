@@ -1,96 +1,38 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-
-// Rate limiting storage (in production, use Redis or external storage)
-const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
-
-/**
- * Rate limiting function
- * Implements sliding window rate limiting
- */
-function checkRateLimit(
-  identifier: string,
-  maxRequests: number = 10,
-  windowMs: number = 900000
-): boolean {
-  const now = Date.now();
-  const record = rateLimitStore.get(identifier);
-
-  // Clean up expired entries periodically
-  if (Math.random() < 0.01) {
-    // 1% chance to cleanup
-    for (const [key, value] of rateLimitStore.entries()) {
-      if (value.resetTime < now) {
-        rateLimitStore.delete(key);
-      }
-    }
-  }
-
-  if (!record || record.resetTime < now) {
-    // Create new record or reset expired one
-    rateLimitStore.set(identifier, { count: 1, resetTime: now + windowMs });
-    return true;
-  }
-
-  if (record.count >= maxRequests) {
-    return false; // Rate limit exceeded
-  }
-
-  record.count++;
-  return true;
-}
+import { rateLimitMiddleware } from './middleware/rate-limiter';
+import { csrfMiddleware } from './middleware/csrf';
+import { logger } from '@/lib/utils/logger';
 
 /**
- * Middleware for handling authentication, route protection, and rate limiting
+ * Middleware for handling authentication, route protection, rate limiting, and CSRF
  *
  * This middleware:
- * 1. Implements rate limiting for auth endpoints
- * 2. Creates a Supabase client for server-side auth
- * 3. Refreshes the session if needed
- * 4. Protects dashboard and editor routes
- * 5. Redirects unauthenticated users to sign in
- * 6. Redirects authenticated users away from auth pages
+ * 1. Implements Redis-based rate limiting for all endpoints
+ * 2. Implements CSRF protection for state-changing operations
+ * 3. Creates a Supabase client for server-side auth
+ * 4. Refreshes the session if needed
+ * 5. Protects dashboard and editor routes
+ * 6. Redirects unauthenticated users to sign in
+ * 7. Redirects authenticated users away from auth pages
  */
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Apply rate limiting to authentication endpoints
-  const authEndpoints = [
-    '/auth/signin',
-    '/auth/signup',
-    '/auth/reset-password',
-  ];
-  const isAuthEndpoint = authEndpoints.some(endpoint =>
-    pathname.startsWith(endpoint)
-  );
+  // Apply rate limiting to all API routes
+  if (pathname.startsWith('/api/')) {
+    const rateLimitResponse = await rateLimitMiddleware(req);
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+  }
 
-  if (isAuthEndpoint) {
-    // Use IP address for rate limiting (with forwarded IP support)
-    const ip =
-      req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-      req.headers.get('x-real-ip') ||
-      req.headers.get('cf-connecting-ip') || // Cloudflare
-      'unknown';
-
-    const identifier = `auth:${ip}`;
-
-    if (!checkRateLimit(identifier, 5, 900000)) {
-      // 5 requests per 15 minutes for auth
-      console.warn(`Rate limit exceeded for IP: ${ip} on ${pathname}`);
-      return new NextResponse(
-        JSON.stringify({
-          error: 'Too many requests. Please try again later.',
-          retryAfter: '15 minutes',
-        }),
-        {
-          status: 429,
-          headers: {
-            'Content-Type': 'application/json',
-            'Retry-After': '900', // 15 minutes
-          },
-        }
-      );
+  // Apply CSRF protection to API routes
+  if (pathname.startsWith('/api/')) {
+    const csrfResponse = csrfMiddleware(req);
+    if (csrfResponse) {
+      return csrfResponse;
     }
   }
   // Create a response that we can modify
@@ -106,7 +48,7 @@ export async function middleware(req: NextRequest) {
 
   // If Supabase is not configured, skip authentication checks (development mode)
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn(
+    logger.warn(
       'Supabase environment variables not configured. Authentication middleware disabled.'
     );
     return response;
@@ -161,7 +103,7 @@ export async function middleware(req: NextRequest) {
     const { data } = await supabase.auth.getSession();
     session = data.session;
   } catch (error) {
-    console.warn('Error getting session:', error);
+    logger.warn('Error getting session', error as Error);
     // Continue without session if there's an error
   }
 
@@ -217,6 +159,8 @@ export async function middleware(req: NextRequest) {
  */
 export const config = {
   matcher: [
+    // API routes (for rate limiting and CSRF)
+    '/api/:path*',
     // Protected routes
     '/dashboard/:path*',
     '/editor/:path*',

@@ -309,7 +309,7 @@ export const TestLanguageProvider = ({
       { code: 'es' as Language, name: 'Español', flag: '🇲🇽' },
       { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
     ],
-    getNamespace: (namespace: string) => ({}),
+    getNamespace: () => ({}),
     isLoaded: true,
   };
 

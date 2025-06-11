@@ -117,39 +117,39 @@ jest.mock('@supabase/supabase-js', () => ({
   })),
 }));
 
-// Mock OpenAI
-jest.mock('openai', () => ({
-  OpenAI: jest.fn().mockImplementation(() => ({
-    chat: {
-      completions: {
-        create: jest.fn(),
-      },
-    },
-  })),
-}));
+// Mock OpenAI - Commented out as we use HuggingFace instead
+// jest.mock('openai', () => ({
+//   OpenAI: jest.fn().mockImplementation(() => ({
+//     chat: {
+//       completions: {
+//         create: jest.fn(),
+//       },
+//     },
+//   })),
+// }));
 
-// Mock Stripe
-jest.mock('stripe', () => ({
-  __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    customers: {
-      create: jest.fn(),
-      retrieve: jest.fn(),
-    },
-    subscriptions: {
-      create: jest.fn(),
-      retrieve: jest.fn(),
-      update: jest.fn(),
-      cancel: jest.fn(),
-    },
-    products: {
-      list: jest.fn(),
-    },
-    prices: {
-      list: jest.fn(),
-    },
-  })),
-}));
+// Mock Stripe - Commented out until Stripe is implemented
+// jest.mock('stripe', () => ({
+//   __esModule: true,
+//   default: jest.fn().mockImplementation(() => ({
+//     customers: {
+//       create: jest.fn(),
+//       retrieve: jest.fn(),
+//     },
+//     subscriptions: {
+//       create: jest.fn(),
+//       retrieve: jest.fn(),
+//       update: jest.fn(),
+//       cancel: jest.fn(),
+//     },
+//     products: {
+//       list: jest.fn(),
+//     },
+//     prices: {
+//       list: jest.fn(),
+//     },
+//   })),
+// }));
 
 // Mock React Query
 jest.mock('@tanstack/react-query', () => ({

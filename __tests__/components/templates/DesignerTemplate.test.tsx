@@ -5,91 +5,116 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
 import { Portfolio } from '@/types/portfolio';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
-// Mock portfolio data for designer
 const mockPortfolio: Portfolio = {
-  id: '2',
-  userId: 'user-456',
+  id: 'portfolio-2',
+  userId: 'user-2',
   name: 'Jane Smith',
   title: 'Creative Designer',
-  bio: 'Award-winning designer specializing in brand identity and user experience design.',
+  bio: 'Award-winning designer with a passion for creating beautiful, user-centered experiences. Specializing in brand identity, UI/UX design, and creative direction.',
   tagline: 'Bringing ideas to life through design',
-  avatar_url: 'https://example.com/designer-avatar.jpg',
+  avatarUrl: 'https://example.com/jane-avatar.jpg',
   contact: {
     email: 'jane@designstudio.com',
-    phone: '+1987654321',
+    phone: '+1 (555) 987-6543',
     location: 'New York, NY',
   },
   social: {
+    linkedin: 'https://linkedin.com/in/janesmith',
     behance: 'https://behance.net/janesmith',
     dribbble: 'https://dribbble.com/janesmith',
-    instagram: 'https://instagram.com/janesmith.design',
   },
   experience: [
     {
+      id: 'exp-1',
       company: 'Design Studio',
       position: 'Lead Designer',
       startDate: '2019-03',
-      endDate: null,
+      endDate: undefined,
       current: true,
       description: 'Leading creative direction for major brand campaigns',
+      highlights: [
+        'Led team of 5 designers',
+        'Increased client satisfaction by 40%',
+      ],
     },
   ],
   education: [
     {
+      id: 'edu-1',
       institution: 'Art Institute',
       degree: 'MFA',
       field: 'Graphic Design',
-      startDate: '2014',
-      endDate: '2016',
+      startDate: '2014-09',
+      endDate: '2016-05',
+      current: false,
       description: 'Master of Fine Arts in Graphic Design',
     },
   ],
   projects: [
     {
+      id: 'proj-1',
       title: 'Brand Redesign',
       description: 'Complete brand identity redesign for Fortune 500 company',
       technologies: ['Illustrator', 'Photoshop', 'Figma'],
-      link: 'https://portfolio.com/brand-redesign',
-      image: 'https://example.com/brand-project.jpg',
+      liveUrl: 'https://portfolio.com/brand-redesign',
+      imageUrl: 'https://example.com/brand-project.jpg',
+      highlights: ['Increased brand recognition by 60%'],
+      featured: true,
+      order: 0,
     },
     {
+      id: 'proj-2',
       title: 'Mobile App UI',
       description: 'User interface design for award-winning mobile application',
       technologies: ['Figma', 'Principle', 'After Effects'],
-      link: 'https://portfolio.com/mobile-ui',
-      image: 'https://example.com/mobile-project.jpg',
+      liveUrl: 'https://portfolio.com/mobile-ui',
+      imageUrl: 'https://example.com/mobile-project.jpg',
+      highlights: ['Won Best Design Award 2023'],
+      featured: true,
+      order: 1,
     },
   ],
   skills: [
-    { name: 'UI/UX Design', level: 95 },
-    { name: 'Brand Identity', level: 90 },
-    { name: 'Typography', level: 85 },
-    { name: 'Motion Design', level: 80 },
+    { name: 'UI/UX Design', level: 'expert' },
+    { name: 'Brand Identity', level: 'expert' },
+    { name: 'Typography', level: 'advanced' },
+    { name: 'Motion Design', level: 'advanced' },
   ],
   certifications: [
     {
+      id: 'cert-1',
       name: 'Google UX Design Certificate',
       issuer: 'Google',
-      date: '2022-06',
-      url: 'https://grow.google/certificates/ux-design/',
+      issueDate: '2022-06',
+      credentialUrl: 'https://grow.google/certificates/ux-design/',
     },
   ],
   template: 'designer',
   customization: {
     primaryColor: '#ff6b6b',
     secondaryColor: '#4ecdc4',
-    font: 'Playfair Display',
-    layout: 'creative',
+    fontFamily: 'Playfair Display',
+    headerStyle: 'creative',
+    sectionOrder: [],
+    hiddenSections: [],
   },
-  published: true,
+  status: 'published',
   subdomain: 'janesmith',
   customDomain: 'janesmith.design',
-  metadata: {},
-  createdAt: new Date().toISOString(),
-  updatedAt: new Date().toISOString(),
+  views: 0,
+  aiSettings: {
+    enhanceBio: true,
+    enhanceProjectDescriptions: true,
+    generateSkillsFromExperience: false,
+    tone: 'creative',
+    targetLength: 'detailed',
+  },
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  publishedAt: new Date(),
 };
 
 describe('DesignerTemplate Component', () => {
@@ -131,89 +156,77 @@ describe('DesignerTemplate Component', () => {
       expect(screen.getByText('Mobile App UI')).toBeInTheDocument();
     });
 
-    test('shows project descriptions', () => {
+    test('shows project technologies as tags', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
-      expect(
-        screen.getByText(/Complete brand identity redesign/)
-      ).toBeInTheDocument();
-      expect(screen.getByText(/User interface design/)).toBeInTheDocument();
+      expect(screen.getByText('Figma')).toBeInTheDocument();
+      expect(screen.getByText('Photoshop')).toBeInTheDocument();
     });
   });
 
-  describe('Creative Skills Display', () => {
-    test('renders skills with visual representations', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
-
-      expect(screen.getByText('UI/UX Design')).toBeInTheDocument();
-      expect(screen.getByText('Brand Identity')).toBeInTheDocument();
-      expect(screen.getByText('Typography')).toBeInTheDocument();
-    });
-
-    test('displays skill levels creatively', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
-
-      // Should have creative skill displays (circles, bars, etc)
-      const skillElements = screen.getAllByTestId(/skill-level/i);
-      expect(skillElements.length).toBeGreaterThanOrEqual(4);
-    });
-  });
-
-  describe('Social Media Integration', () => {
-    test('shows design platform links', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
-
-      const behanceLink = screen.getByRole('link', { name: /behance/i });
-      const dribbbleLink = screen.getByRole('link', { name: /dribbble/i });
-      const instagramLink = screen.getByRole('link', { name: /instagram/i });
-
-      expect(behanceLink).toHaveAttribute(
-        'href',
-        'https://behance.net/janesmith'
-      );
-      expect(dribbbleLink).toHaveAttribute(
-        'href',
-        'https://dribbble.com/janesmith'
-      );
-      expect(instagramLink).toHaveAttribute(
-        'href',
-        'https://instagram.com/janesmith.design'
-      );
-    });
-  });
-
-  describe('Visual Layout', () => {
-    test('applies creative color scheme', () => {
+  describe('Visual Elements', () => {
+    test('applies custom color scheme', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
       const container = screen.getByTestId('portfolio-container');
-      const styles = window.getComputedStyle(container);
-
-      expect(styles.getPropertyValue('--primary-color')).toBe('#ff6b6b');
-      expect(styles.getPropertyValue('--secondary-color')).toBe('#4ecdc4');
+      expect(container).toHaveStyle({ '--primary-color': '#ff6b6b' });
     });
 
     test('uses creative typography', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
-      const heading = screen.getByRole('heading', { level: 1 });
-      const styles = window.getComputedStyle(heading);
-
-      expect(styles.fontFamily).toContain('Playfair Display');
+      const header = screen.getByRole('heading', { level: 1 });
+      expect(header).toHaveClass('font-display');
     });
   });
 
-  describe('Experience Timeline', () => {
-    test('shows work experience in visual timeline', () => {
+  describe('Skills Visualization', () => {
+    test('displays skills with visual indicators', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
-      expect(screen.getByText('Design Studio')).toBeInTheDocument();
-      expect(screen.getByText('Lead Designer')).toBeInTheDocument();
+      expect(screen.getByText('UI/UX Design')).toBeInTheDocument();
+      expect(screen.getByText('expert')).toBeInTheDocument();
+    });
+
+    test('shows skill categories', () => {
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+
+      const skillsSection = screen.getByTestId('skills-section');
+      expect(skillsSection).toContainElement(
+        screen.getByText('Brand Identity')
+      );
+    });
+  });
+
+  describe('Contact Section', () => {
+    test('displays creative contact layout', () => {
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+
+      expect(screen.getByText('jane@designstudio.com')).toBeInTheDocument();
+      expect(screen.getByText('New York, NY')).toBeInTheDocument();
+    });
+
+    test('shows social media links with icons', () => {
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+
+      expect(screen.getByRole('link', { name: /behance/i })).toHaveAttribute(
+        'href',
+        'https://behance.net/janesmith'
+      );
+    });
+  });
+
+  describe('Responsive Design', () => {
+    test('adapts layout for mobile devices', () => {
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+
+      const container = screen.getByTestId('portfolio-container');
+      expect(container).toHaveClass('md:grid');
     });
   });
 
   describe('Empty States', () => {
-    test('handles portfolio without projects gracefully', () => {
+    test('handles missing projects gracefully', () => {
       const portfolioWithoutProjects = {
         ...mockPortfolio,
         projects: [],
@@ -223,50 +236,43 @@ describe('DesignerTemplate Component', () => {
         <DesignerTemplate portfolio={portfolioWithoutProjects} />
       );
 
-      // Should show message or alternate content
+      // Should still render other sections
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
     });
-  });
 
-  describe('Responsive Design', () => {
-    test('adapts gallery layout for mobile', () => {
-      global.innerWidth = 375;
-      global.innerHeight = 667;
+    test('handles missing social links', () => {
+      const portfolioWithoutSocial = {
+        ...mockPortfolio,
+        social: {},
+      };
 
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(
+        <DesignerTemplate portfolio={portfolioWithoutSocial} />
+      );
 
-      // Gallery should still be accessible
-      expect(screen.getByText('Brand Redesign')).toBeInTheDocument();
+      // Should still render contact info
+      expect(screen.getByText('jane@designstudio.com')).toBeInTheDocument();
     });
   });
 
-  describe('Accessibility', () => {
-    test('provides alt text for all images', () => {
+  describe('Certifications Display', () => {
+    test('shows certifications with issuer', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
-      const images = screen.getAllByRole('img');
-      images.forEach(img => {
-        expect(img).toHaveAttribute('alt');
-      });
-    });
-
-    test('has keyboard navigable gallery', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
-
-      const galleryItems = screen.getAllByRole('link', {
-        name: /view project/i,
-      });
-      galleryItems.forEach(item => {
-        expect(item).toHaveAttribute('tabIndex');
-      });
+      expect(
+        screen.getByText('Google UX Design Certificate')
+      ).toBeInTheDocument();
+      expect(screen.getByText('Google')).toBeInTheDocument();
     });
   });
 
-  describe('Custom Domain Display', () => {
-    test('shows custom domain when available', () => {
+  describe('Experience Timeline', () => {
+    test('displays current position', () => {
       renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
 
-      expect(screen.getByText('janesmith.design')).toBeInTheDocument();
+      expect(screen.getByText('Lead Designer')).toBeInTheDocument();
+      expect(screen.getByText('Design Studio')).toBeInTheDocument();
+      expect(screen.getByText(/current|presente/i)).toBeInTheDocument();
     });
   });
 });

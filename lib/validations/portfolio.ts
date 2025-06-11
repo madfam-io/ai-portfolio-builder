@@ -4,44 +4,88 @@
  */
 
 import { z } from 'zod';
-// Types are defined inline in the schemas below
+import DOMPurify from 'isomorphic-dompurify';
+
+// Regular expressions
+const SUBDOMAIN_REGEX = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX =
+  /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{4,6}$/;
+const HEX_COLOR_REGEX = /^#[0-9A-F]{6}$/i;
+const DATE_REGEX = /^\d{4}-\d{2}$/; // YYYY-MM format
 
 // Template type validation
-const templateTypeSchema = z.enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business']);
+const templateTypeSchema = z.enum([
+  'developer',
+  'designer',
+  'consultant',
+  'educator',
+  'creative',
+  'business',
+]);
 
 // Portfolio status validation
 const portfolioStatusSchema = z.enum(['draft', 'published', 'archived']);
 
+// Skill level validation
+const skillLevelSchema = z.enum([
+  'beginner',
+  'intermediate',
+  'advanced',
+  'expert',
+]);
+
 // Social links validation
-const socialLinksSchema = z.object({
-  linkedin: z.string().url().optional().or(z.literal('')),
-  github: z.string().url().optional().or(z.literal('')),
-  twitter: z.string().url().optional().or(z.literal('')),
-  instagram: z.string().url().optional().or(z.literal('')),
-  youtube: z.string().url().optional().or(z.literal('')),
-  website: z.string().url().optional().or(z.literal('')),
-  custom: z.array(z.object({
-    label: z.string().min(1).max(50),
-    url: z.string().url(),
-    icon: z.string().optional(),
-  })).optional(),
-}).optional();
+const socialLinksSchema = z
+  .object({
+    linkedin: z.string().url().optional().or(z.literal('')),
+    github: z.string().url().optional().or(z.literal('')),
+    twitter: z.string().url().optional().or(z.literal('')),
+    instagram: z.string().url().optional().or(z.literal('')),
+    youtube: z.string().url().optional().or(z.literal('')),
+    website: z.string().url().optional().or(z.literal('')),
+    dribbble: z.string().url().optional().or(z.literal('')),
+    behance: z.string().url().optional().or(z.literal('')),
+    custom: z
+      .array(
+        z.object({
+          label: z.string().min(1).max(50),
+          url: z.string().url(),
+          icon: z.string().optional(),
+        })
+      )
+      .optional(),
+  })
+  .optional();
 
 // Contact info validation
-const contactInfoSchema = z.object({
-  email: z.string().email().optional().or(z.literal('')),
-  phone: z.string().max(20).optional().or(z.literal('')),
-  location: z.string().max(100).optional().or(z.literal('')),
-  availability: z.string().max(200).optional().or(z.literal('')),
-}).optional();
+const contactInfoSchema = z
+  .object({
+    email: z
+      .string()
+      .regex(EMAIL_REGEX, 'Invalid email format')
+      .optional()
+      .or(z.literal('')),
+    phone: z
+      .string()
+      .regex(PHONE_REGEX, 'Invalid phone format')
+      .optional()
+      .or(z.literal('')),
+    location: z.string().max(100).optional().or(z.literal('')),
+    availability: z.string().max(200).optional().or(z.literal('')),
+  })
+  .optional();
 
 // Experience validation
 const experienceSchema = z.object({
   id: z.string(),
   company: z.string().min(1).max(100),
   position: z.string().min(1).max(100),
-  startDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format'),
-  endDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format').optional(),
+  startDate: z.string().regex(DATE_REGEX, 'Date must be in YYYY-MM format'),
+  endDate: z
+    .string()
+    .regex(DATE_REGEX, 'Date must be in YYYY-MM format')
+    .optional(),
   current: z.boolean(),
   description: z.string().min(1).max(1000),
   highlights: z.array(z.string().max(200)).optional(),
@@ -54,9 +98,12 @@ const educationSchema = z.object({
   institution: z.string().min(1).max(100),
   degree: z.string().min(1).max(100),
   field: z.string().min(1).max(100),
-  startDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format'),
-  endDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format').optional(),
-  current: z.boolean(),
+  startDate: z.string().regex(DATE_REGEX, 'Date must be in YYYY-MM format'),
+  endDate: z
+    .string()
+    .regex(DATE_REGEX, 'Date must be in YYYY-MM format')
+    .optional(),
+  current: z.boolean().optional(),
   description: z.string().max(500).optional(),
   achievements: z.array(z.string().max(200)).optional(),
 });
@@ -65,70 +112,74 @@ const educationSchema = z.object({
 const projectSchema = z.object({
   id: z.string(),
   title: z.string().min(1).max(100),
-  description: z.string().min(1).max(500),
+  description: z.string().min(1).max(1000),
   imageUrl: z.string().url().optional(),
   projectUrl: z.string().url().optional(),
+  liveUrl: z.string().url().optional(),
   githubUrl: z.string().url().optional(),
   technologies: z.array(z.string().max(50)),
-  highlights: z.array(z.string().max(200)),
-  featured: z.boolean(),
-  order: z.number().min(0),
+  highlights: z.array(z.string().max(200)).optional(),
+  featured: z.boolean().optional(),
+  order: z.number().optional(),
 });
 
-// Skills validation
+// Skill validation
 const skillSchema = z.object({
   name: z.string().min(1).max(50),
-  level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+  level: skillLevelSchema.optional(),
   category: z.string().max(50).optional(),
 });
 
-// Certifications validation
+// Certification validation
 const certificationSchema = z.object({
   id: z.string(),
   name: z.string().min(1).max(100),
   issuer: z.string().min(1).max(100),
-  issueDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format'),
-  expiryDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format').optional(),
+  issueDate: z.string().regex(DATE_REGEX, 'Date must be in YYYY-MM format'),
+  expiryDate: z
+    .string()
+    .regex(DATE_REGEX, 'Date must be in YYYY-MM format')
+    .optional(),
   credentialId: z.string().max(100).optional(),
   credentialUrl: z.string().url().optional(),
 });
 
 // Template customization validation
-const templateCustomizationSchema = z.object({
-  primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color').optional(),
-  secondaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color').optional(),
-  accentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/, 'Must be a valid hex color').optional(),
-  fontFamily: z.string().max(50).optional(),
-  headerStyle: z.enum(['minimal', 'bold', 'creative']).optional(),
-  sectionOrder: z.array(z.string()).optional(),
-  hiddenSections: z.array(z.string()).optional(),
-}).optional();
+const templateCustomizationSchema = z
+  .object({
+    primaryColor: z.string().regex(HEX_COLOR_REGEX).optional(),
+    secondaryColor: z.string().regex(HEX_COLOR_REGEX).optional(),
+    accentColor: z.string().regex(HEX_COLOR_REGEX).optional(),
+    fontFamily: z.string().max(50).optional(),
+    fontSize: z.enum(['small', 'medium', 'large']).optional(),
+    darkMode: z.boolean().optional(),
+    headerStyle: z.enum(['minimal', 'classic', 'modern', 'bold']).optional(),
+    sectionOrder: z.array(z.string()).optional(),
+    hiddenSections: z.array(z.string()).optional(),
+    customCSS: z.string().max(5000).optional(),
+  })
+  .optional();
 
-// AI enhancement settings validation
-const aiEnhancementSettingsSchema = z.object({
-  enhanceBio: z.boolean(),
-  enhanceProjectDescriptions: z.boolean(),
-  generateSkillsFromExperience: z.boolean(),
-  tone: z.enum(['professional', 'casual', 'creative']),
-  targetLength: z.enum(['concise', 'detailed', 'comprehensive']),
-}).optional();
+// AI settings validation
+const aiSettingsSchema = z
+  .object({
+    enhanceBio: z.boolean().optional(),
+    enhanceProjectDescriptions: z.boolean().optional(),
+    generateSkillsFromExperience: z.boolean().optional(),
+    tone: z.enum(['professional', 'casual', 'creative', 'academic']).optional(),
+    targetLength: z.enum(['concise', 'balanced', 'detailed']).optional(),
+  })
+  .optional();
 
-// Create portfolio DTO validation
-export const createPortfolioSchema = z.object({
-  name: z.string().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
-  title: z.string().min(1, 'Title is required').max(100, 'Title must be less than 100 characters'),
-  bio: z.string().max(500, 'Bio must be less than 500 characters').optional(),
-  tagline: z.string().max(200, 'Tagline must be less than 200 characters').optional(),
-  template: templateTypeSchema,
-  importSource: z.enum(['linkedin', 'github', 'manual', 'cv']).optional(),
-  importData: z.any().optional(), // Raw import data to be processed
-});
-
-// Update portfolio DTO validation
-export const updatePortfolioSchema = z.object({
-  name: z.string().min(1).max(100).optional(),
-  title: z.string().min(1).max(100).optional(),
-  bio: z.string().max(500).optional(),
+/**
+ * Portfolio validation schema for complete portfolio object
+ */
+export const portfolioSchema = z.object({
+  id: z.string().uuid(),
+  userId: z.string().uuid(),
+  name: z.string().min(1).max(100),
+  title: z.string().min(1).max(100),
+  bio: z.string().max(1000).optional(),
   tagline: z.string().max(200).optional(),
   avatarUrl: z.string().url().optional(),
   contact: contactInfoSchema,
@@ -138,35 +189,14 @@ export const updatePortfolioSchema = z.object({
   projects: z.array(projectSchema).optional(),
   skills: z.array(skillSchema).optional(),
   certifications: z.array(certificationSchema).optional(),
-  template: templateTypeSchema.optional(),
-  customization: templateCustomizationSchema,
-  aiSettings: aiEnhancementSettingsSchema,
-  status: portfolioStatusSchema.optional(),
-  subdomain: z.string().min(3).max(50).regex(/^[a-z0-9-]+$/, 'Subdomain must contain only lowercase letters, numbers, and hyphens').optional(),
-  customDomain: z.string().max(100).optional(),
-});
-
-// Full portfolio validation (for complete portfolio objects)
-export const portfolioSchema = z.object({
-  id: z.string(),
-  userId: z.string(),
-  name: z.string().min(1).max(100),
-  title: z.string().min(1).max(100),
-  bio: z.string().max(500),
-  tagline: z.string().max(200).optional(),
-  avatarUrl: z.string().url().optional(),
-  contact: contactInfoSchema.default({}),
-  social: socialLinksSchema.default({}),
-  experience: z.array(experienceSchema).default([]),
-  education: z.array(educationSchema).default([]),
-  projects: z.array(projectSchema).default([]),
-  skills: z.array(skillSchema).default([]),
-  certifications: z.array(certificationSchema).default([]),
   template: templateTypeSchema,
-  customization: templateCustomizationSchema.default({}),
-  aiSettings: aiEnhancementSettingsSchema,
+  customization: templateCustomizationSchema,
+  aiSettings: aiSettingsSchema,
   status: portfolioStatusSchema,
-  subdomain: z.string().optional(),
+  subdomain: z
+    .string()
+    .regex(SUBDOMAIN_REGEX, 'Invalid subdomain format')
+    .optional(),
   customDomain: z.string().optional(),
   views: z.number().min(0).optional(),
   lastViewedAt: z.date().optional(),
@@ -175,60 +205,117 @@ export const portfolioSchema = z.object({
   publishedAt: z.date().optional(),
 });
 
-// Query parameters validation
-export const portfolioQuerySchema = z.object({
-  page: z.string().regex(/^\d+$/).transform(Number).optional(),
-  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
-  status: portfolioStatusSchema.optional(),
-  template: templateTypeSchema.optional(),
-  search: z.string().max(100).optional(),
+/**
+ * Schema for creating a new portfolio
+ */
+export const createPortfolioSchema = z.object({
+  name: z.string().min(1, 'Name is required').max(100),
+  title: z.string().min(1, 'Title is required').max(100),
+  bio: z.string().max(1000).optional(),
+  template: templateTypeSchema,
 });
 
-// Types derived from schemas
-export type CreatePortfolioInput = z.infer<typeof createPortfolioSchema>;
-export type UpdatePortfolioInput = z.infer<typeof updatePortfolioSchema>;
-export type PortfolioQueryInput = z.infer<typeof portfolioQuerySchema>;
+/**
+ * Schema for updating an existing portfolio
+ */
+export const updatePortfolioSchema = portfolioSchema.partial().omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
-// Utility functions for validation
-export const validateCreatePortfolio = (data: unknown) => {
+/**
+ * Schema for portfolio query parameters
+ */
+export const portfolioQuerySchema = z.object({
+  status: portfolioStatusSchema.optional(),
+  template: templateTypeSchema.optional(),
+  limit: z.string().regex(/^\d+$/).transform(Number).optional(),
+  offset: z.string().regex(/^\d+$/).transform(Number).optional(),
+  sort: z.enum(['createdAt', 'updatedAt', 'name', 'views']).optional(),
+  order: z.enum(['asc', 'desc']).optional(),
+  page: z.string().regex(/^\d+$/).transform(Number).optional(),
+  search: z.string().optional(),
+});
+
+/**
+ * Validate create portfolio data
+ */
+export function validateCreatePortfolio(data: unknown) {
   return createPortfolioSchema.safeParse(data);
-};
+}
 
-export const validateUpdatePortfolio = (data: unknown) => {
+/**
+ * Validate update portfolio data
+ */
+export function validateUpdatePortfolio(data: unknown) {
   return updatePortfolioSchema.safeParse(data);
-};
+}
 
-export const validatePortfolioQuery = (data: unknown) => {
+/**
+ * Validate portfolio query parameters
+ */
+export function validatePortfolioQuery(data: unknown) {
   return portfolioQuerySchema.safeParse(data);
-};
+}
 
-// Data sanitization helpers
-export const sanitizeString = (input: string): string => {
-  // Remove potential XSS vectors
-  return input
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/on\w+\s*=/gi, '')
-    .trim();
-};
+/**
+ * Sanitize portfolio data to prevent XSS attacks
+ */
+export function sanitizePortfolioData<T extends Record<string, any>>(
+  data: T
+): T {
+  const sanitized = { ...data } as any;
 
-export const sanitizePortfolioData = (data: any): any => {
-  if (typeof data === 'string') {
-    return sanitizeString(data);
-  }
-  
-  if (Array.isArray(data)) {
-    return data.map(sanitizePortfolioData);
-  }
-  
-  if (data && typeof data === 'object') {
-    const sanitized: any = {};
-    for (const [key, value] of Object.entries(data)) {
-      sanitized[key] = sanitizePortfolioData(value);
+  // List of fields that should be sanitized
+  const textFields = ['name', 'title', 'bio', 'tagline', 'description'];
+  const arrayTextFields = ['highlights', 'achievements'];
+
+  // Sanitize text fields
+  for (const field of textFields) {
+    if (field in sanitized && typeof sanitized[field] === 'string') {
+      sanitized[field] = DOMPurify.sanitize(sanitized[field], {
+        ALLOWED_TAGS: [],
+        ALLOWED_ATTR: [],
+      });
     }
-    return sanitized;
   }
-  
-  return data;
-};
+
+  // Sanitize array text fields
+  for (const field of arrayTextFields) {
+    if (field in sanitized && Array.isArray(sanitized[field])) {
+      sanitized[field] = sanitized[field].map((item: any) =>
+        typeof item === 'string'
+          ? DOMPurify.sanitize(item, {
+              ALLOWED_TAGS: [],
+              ALLOWED_ATTR: [],
+            })
+          : item
+      );
+    }
+  }
+
+  // Recursively sanitize nested objects
+  for (const key in sanitized) {
+    if (
+      sanitized[key] &&
+      typeof sanitized[key] === 'object' &&
+      !Array.isArray(sanitized[key]) &&
+      key !== 'createdAt' &&
+      key !== 'updatedAt' &&
+      key !== 'publishedAt' &&
+      key !== 'lastViewedAt'
+    ) {
+      sanitized[key] = sanitizePortfolioData(sanitized[key]);
+    }
+  }
+
+  return sanitized as T;
+}
+
+// Re-export types from schemas
+export type Portfolio = z.infer<typeof portfolioSchema>;
+export type CreatePortfolioDTO = z.infer<typeof createPortfolioSchema>;
+export type UpdatePortfolioDTO = z.infer<typeof updatePortfolioSchema>;
+export type PortfolioQuery = z.infer<typeof portfolioQuerySchema>;

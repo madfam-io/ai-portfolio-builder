@@ -72,7 +72,7 @@ const mockPortfolio: Portfolio = {
       description:
         'Led $10M digital transformation for retail giant, resulting in 30% efficiency gain',
       technologies: ['Strategy', 'Change Management', 'Process Design'],
-      projectUrl: null,
+      projectUrl: undefined,
       imageUrl: 'https://example.com/transformation.jpg',
       highlights: [],
       featured: false,
@@ -83,7 +83,7 @@ const mockPortfolio: Portfolio = {
       title: 'Supply Chain Optimization',
       description: 'Redesigned supply chain operations saving $5M annually',
       technologies: ['Analytics', 'Operations', 'Lean Six Sigma'],
-      projectUrl: null,
+      projectUrl: undefined,
       imageUrl: 'https://example.com/supply-chain.jpg',
       highlights: [],
       featured: false,
@@ -318,9 +318,6 @@ describe('ConsultantTemplate Component', () => {
     test('provides print-optimized view', () => {
       renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
 
-      const printButton = screen.queryByRole('button', {
-        name: /print|imprimir/i,
-      });
       // May or may not have print button, but layout should be print-friendly
       expect(screen.getByTestId('portfolio-container')).toHaveClass(
         'print:text-black'
@@ -353,7 +350,7 @@ describe('ConsultantTemplate Component', () => {
       expect(articles.length).toBeGreaterThan(0);
 
       // Navigation may not be present in portfolio templates
-      const nav = screen.queryByRole('navigation');
+      // Navigation should still work
       // It's okay if there's no navigation in a portfolio template
     });
   });

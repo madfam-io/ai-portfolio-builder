@@ -94,7 +94,7 @@ export interface Education {
   field: string;
   startDate: string;
   endDate?: string;
-  current: boolean;
+  current?: boolean;
   description?: string;
   achievements?: string[];
 }
@@ -109,9 +109,9 @@ export interface Project {
   liveUrl?: string;
   githubUrl?: string;
   technologies: string[];
-  highlights: string[];
-  featured: boolean;
-  order: number;
+  highlights?: string[];
+  featured?: boolean;
+  order?: number;
 }
 
 // Skills
@@ -143,7 +143,7 @@ export interface TemplateCustomization {
   fontSize?: 'small' | 'medium' | 'large';
   spacing?: 'compact' | 'normal' | 'relaxed';
   borderRadius?: 'none' | 'small' | 'medium' | 'large';
-  headerStyle?: 'minimal' | 'bold' | 'creative';
+  headerStyle?: 'minimal' | 'bold' | 'creative' | 'classic' | 'modern';
   sectionOrder?: string[]; // Array of section IDs in custom order
   hiddenSections?: string[]; // Array of section IDs to hide
   darkMode?: boolean;
@@ -152,11 +152,11 @@ export interface TemplateCustomization {
 
 // AI enhancement settings
 export interface AIEnhancementSettings {
-  enhanceBio: boolean;
-  enhanceProjectDescriptions: boolean;
-  generateSkillsFromExperience: boolean;
-  tone: 'professional' | 'casual' | 'creative';
-  targetLength: 'concise' | 'detailed' | 'comprehensive';
+  enhanceBio?: boolean;
+  enhanceProjectDescriptions?: boolean;
+  generateSkillsFromExperience?: boolean;
+  tone?: 'professional' | 'casual' | 'creative' | 'academic';
+  targetLength?: 'concise' | 'detailed' | 'comprehensive' | 'balanced';
 }
 
 // Main Portfolio interface
@@ -232,6 +232,7 @@ export interface UpdatePortfolioDTO {
   customization?: TemplateCustomization;
   aiSettings?: AIEnhancementSettings;
   status?: PortfolioStatus;
+  subdomain?: string;
   publishedAt?: Date;
 }
 

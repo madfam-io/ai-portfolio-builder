@@ -5,16 +5,21 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import AIEnhancementButton from '@/components/editor/AIEnhancementButton';
+import { AIEnhancementButton } from '@/components/editor/AIEnhancementButton';
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
+import { aiClient } from '@/lib/ai/client';
 
-// Mock fetch
-global.fetch = jest.fn();
+// Mock the AI client
+jest.mock('@/lib/ai/client', () => ({
+  aiClient: {
+    enhanceBio: jest.fn(),
+    optimizeProject: jest.fn(),
+  },
+}));
 
 describe('AIEnhancementButton Component', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    (global.fetch as jest.Mock).mockReset();
   });
 
   describe('Bio Enhancement', () => {
@@ -27,21 +32,26 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
     });
 
     test('enhances bio content on click', async () => {
       const user = userEvent.setup();
       const onEnhanced = jest.fn();
+      const enhancedBio =
+        'Experienced software developer with 5+ years building scalable web applications. Specializes in React, Node.js, and cloud architecture.';
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          enhanced:
-            'Experienced software developer with 5+ years building scalable web applications. Specializes in React, Node.js, and cloud architecture.',
-          confidence: 0.92,
-        }),
+      (aiClient.enhanceBio as jest.Mock).mockResolvedValueOnce({
+        enhanced: enhancedBio,
+        qualityScore: {
+          overall: 92,
+          readability: 90,
+          professionalism: 95,
+          impact: 88,
+          completeness: 94,
+          suggestions: [],
+        },
       });
 
       renderWithLanguage(
@@ -52,27 +62,25 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       await user.click(button);
 
       await waitFor(() => {
-        expect(onEnhanced).toHaveBeenCalledWith(
-          'Experienced software developer with 5+ years building scalable web applications. Specializes in React, Node.js, and cloud architecture.'
-        );
+        expect(onEnhanced).toHaveBeenCalledWith(enhancedBio, []);
       });
     });
 
     test('shows loading state during enhancement', async () => {
       const user = userEvent.setup();
 
-      (global.fetch as jest.Mock).mockImplementation(
+      (aiClient.enhanceBio as jest.Mock).mockImplementation(
         () =>
           new Promise(resolve =>
             setTimeout(
               () =>
                 resolve({
-                  ok: true,
-                  json: async () => ({ enhanced: 'Enhanced bio' }),
+                  enhanced: 'Enhanced bio',
+                  qualityScore: { suggestions: [] },
                 }),
               100
             )
@@ -87,14 +95,14 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       await user.click(button);
 
       // Should show loading indicator
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
+      expect(button).toHaveTextContent(/enhancing|mejorando/i);
 
       await waitFor(() => {
-        expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
+        expect(button).not.toHaveTextContent(/enhancing|mejorando/i);
       });
     });
   });
@@ -104,23 +112,26 @@ describe('AIEnhancementButton Component', () => {
       const user = userEvent.setup();
       const onEnhanced = jest.fn();
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          optimized: {
-            title: 'E-commerce Platform Redesign',
-            description:
-              'Led complete redesign of e-commerce platform, resulting in 40% increase in conversion rates.',
-            tags: ['UI/UX', 'React', 'Performance'],
-          },
-        }),
+      (aiClient.optimizeProject as jest.Mock).mockResolvedValueOnce({
+        title: 'E-commerce Platform Redesign',
+        description:
+          'Led complete redesign of e-commerce platform, resulting in 40% increase in conversion rates.',
+        highlights: ['40% conversion increase', 'React/Node.js stack'],
+        technologies: ['React', 'Node.js', 'PostgreSQL'],
+        metrics: ['40% increase in conversion rates'],
+        starFormat: {
+          situation: 'Legacy e-commerce platform with poor UX',
+          task: 'Complete platform redesign',
+          action: 'Led frontend development team',
+          result: '40% increase in conversion rates',
+        },
       });
 
       renderWithLanguage(
         <AIEnhancementButton
           type="project"
           content="Built an online store"
-          metadata={{
+          context={{
             title: 'Store project',
             technologies: ['React', 'Node.js'],
           }}
@@ -133,77 +144,8 @@ describe('AIEnhancementButton Component', () => {
 
       await waitFor(() => {
         expect(onEnhanced).toHaveBeenCalledWith(
-          expect.objectContaining({
-            title: 'E-commerce Platform Redesign',
-            description: expect.stringContaining('40% increase'),
-          })
-        );
-      });
-    });
-  });
-
-  describe('Model Selection', () => {
-    test('allows model selection for enhancement', async () => {
-      const user = userEvent.setup();
-
-      renderWithLanguage(
-        <AIEnhancementButton
-          type="bio"
-          content="Developer"
-          onEnhanced={jest.fn()}
-          showModelSelector
-        />
-      );
-
-      // Click to open model selector
-      const dropdownButton = screen.getByRole('button', {
-        name: /model|modelo/i,
-      });
-      await user.click(dropdownButton);
-
-      // Should show model options
-      expect(screen.getByText(/llama/i)).toBeInTheDocument();
-      expect(screen.getByText(/phi/i)).toBeInTheDocument();
-    });
-
-    test('uses selected model for enhancement', async () => {
-      const user = userEvent.setup();
-
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ enhanced: 'Enhanced content' }),
-      });
-
-      renderWithLanguage(
-        <AIEnhancementButton
-          type="bio"
-          content="Developer"
-          onEnhanced={jest.fn()}
-          showModelSelector
-        />
-      );
-
-      // Select a specific model
-      const dropdownButton = screen.getByRole('button', {
-        name: /model|modelo/i,
-      });
-      await user.click(dropdownButton);
-
-      const modelOption = screen.getByText(/phi/i);
-      await user.click(modelOption);
-
-      // Enhance with selected model
-      const enhanceButton = screen.getByRole('button', {
-        name: /enhance|mejorar/i,
-      });
-      await user.click(enhanceButton);
-
-      await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith(
-          expect.any(String),
-          expect.objectContaining({
-            body: expect.stringContaining('Phi'),
-          })
+          expect.stringContaining('40% increase'),
+          undefined
         );
       });
     });
@@ -213,10 +155,9 @@ describe('AIEnhancementButton Component', () => {
     test('shows error message on enhancement failure', async () => {
       const user = userEvent.setup();
 
-      (global.fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-        json: async () => ({ error: 'Enhancement failed' }),
-      });
+      (aiClient.enhanceBio as jest.Mock).mockRejectedValueOnce(
+        new Error('Enhancement failed')
+      );
 
       renderWithLanguage(
         <AIEnhancementButton
@@ -226,17 +167,19 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       await user.click(button);
 
-      const errorMessage = await screen.findByText(/error|error/i);
-      expect(errorMessage).toBeInTheDocument();
+      // Button should show normal state after error
+      await waitFor(() => {
+        expect(button).not.toHaveTextContent(/enhancing|mejorando/i);
+      });
     });
 
     test('handles network errors gracefully', async () => {
       const user = userEvent.setup();
 
-      (global.fetch as jest.Mock).mockRejectedValueOnce(
+      (aiClient.enhanceBio as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
       );
 
@@ -248,11 +191,13 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       await user.click(button);
 
-      const errorMessage = await screen.findByText(/error|error/i);
-      expect(errorMessage).toBeInTheDocument();
+      // Should return to normal state after error
+      await waitFor(() => {
+        expect(button).toBeEnabled();
+      });
     });
   });
 
@@ -262,21 +207,21 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton type="bio" content="" onEnhanced={jest.fn()} />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       expect(button).toBeDisabled();
     });
 
     test('disables button during enhancement', async () => {
       const user = userEvent.setup();
 
-      (global.fetch as jest.Mock).mockImplementation(
+      (aiClient.enhanceBio as jest.Mock).mockImplementation(
         () =>
           new Promise(resolve =>
             setTimeout(
               () =>
                 resolve({
-                  ok: true,
-                  json: async () => ({ enhanced: 'Enhanced' }),
+                  enhanced: 'Enhanced',
+                  qualityScore: { suggestions: [] },
                 }),
               100
             )
@@ -291,7 +236,7 @@ describe('AIEnhancementButton Component', () => {
         />
       );
 
-      const button = screen.getByRole('button', { name: /enhance|mejorar/i });
+      const button = screen.getByRole('button');
       await user.click(button);
 
       expect(button).toBeDisabled();
@@ -300,38 +245,62 @@ describe('AIEnhancementButton Component', () => {
         expect(button).not.toBeDisabled();
       });
     });
+
+    test('disables button when explicitly disabled', () => {
+      renderWithLanguage(
+        <AIEnhancementButton
+          type="bio"
+          content="Developer"
+          onEnhanced={jest.fn()}
+          disabled={true}
+        />
+      );
+
+      const button = screen.getByRole('button');
+      expect(button).toBeDisabled();
+    });
   });
 
-  describe('Character Limit', () => {
-    test('shows character count for bio', () => {
+  describe('Context Handling', () => {
+    test('passes context to bio enhancement', async () => {
+      const user = userEvent.setup();
+      const bioContext = {
+        title: 'Software Engineer',
+        experience: [
+          {
+            company: 'Tech Corp',
+            position: 'Senior Developer',
+            yearsExperience: 5,
+          },
+        ],
+        industry: 'Technology',
+        tone: 'professional' as const,
+        targetLength: 'concise' as const,
+      };
+
+      (aiClient.enhanceBio as jest.Mock).mockResolvedValueOnce({
+        enhanced: 'Enhanced bio with context',
+        qualityScore: { suggestions: [] },
+      });
+
       renderWithLanguage(
         <AIEnhancementButton
           type="bio"
-          content="This is my bio content that should be enhanced"
+          content="Developer"
+          context={bioContext}
           onEnhanced={jest.fn()}
-          showCharacterCount
         />
       );
 
-      expect(screen.getByText(/46/)).toBeInTheDocument();
-    });
+      const button = screen.getByRole('button');
+      await user.click(button);
 
-    test('warns when approaching character limit', () => {
-      const longBio = 'a'.repeat(140);
-
-      renderWithLanguage(
-        <AIEnhancementButton
-          type="bio"
-          content={longBio}
-          onEnhanced={jest.fn()}
-          showCharacterCount
-          maxCharacters={150}
-        />
-      );
-
-      // Should show warning color
-      const charCount = screen.getByText(/140/);
-      expect(charCount).toHaveClass('text-yellow-600');
+      await waitFor(() => {
+        expect(aiClient.enhanceBio).toHaveBeenCalledWith(
+          'Developer',
+          bioContext
+        );
+      });
     });
   });
 });

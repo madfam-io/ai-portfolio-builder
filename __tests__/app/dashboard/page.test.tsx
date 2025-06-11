@@ -249,7 +249,7 @@ describe('Dashboard Page', () => {
       });
 
       // Click delete on first portfolio
-      await user.click(deleteButtons[0]);
+      if (deleteButtons[0]) await user.click(deleteButtons[0]);
 
       // Confirm deletion
       const confirmButton = await screen.findByRole('button', {

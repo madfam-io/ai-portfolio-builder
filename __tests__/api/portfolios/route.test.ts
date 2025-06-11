@@ -7,7 +7,6 @@ import { GET, POST } from '@/app/api/portfolios/route';
 import {
   validateCreatePortfolio,
   validatePortfolioQuery,
-  sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 
 // Mock validation functions

@@ -148,7 +148,7 @@ export function createMockSupabaseClient() {
         data: { subscription: { unsubscribe: jest.fn() } },
       })),
     },
-    from: jest.fn((table: string) => ({
+    from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
