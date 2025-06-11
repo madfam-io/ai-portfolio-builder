@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Footer from '@/components/landing/Footer';
-import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';
 
 // Mock the date utils

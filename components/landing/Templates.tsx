@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import Link from 'next/link';
 
 export default function Templates() {

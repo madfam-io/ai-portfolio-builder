@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Header from '@/components/landing/Header';
-import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { usePathname } from 'next/navigation';
 

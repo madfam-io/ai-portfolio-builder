@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { FaChevronUp } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
 export default function BackToTopButton() {
   const { t } = useLanguage();

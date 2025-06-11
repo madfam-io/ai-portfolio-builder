@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { AppProvider } from '@/lib/contexts/AppContext';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
 
 const inter = Inter({
@@ -75,9 +76,11 @@ export default function RootLayout({
           maxRetries={3}
         >
           <AppProvider>
-            <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-              {children}
-            </div>
+            <LanguageProvider>
+              <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                {children}
+              </div>
+            </LanguageProvider>
           </AppProvider>
         </GlobalErrorBoundary>
       </body>

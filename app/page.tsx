@@ -1,6 +1,6 @@
 'use client';
 
-import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import Header from '@/components/landing/Header';
 import Hero from '@/components/landing/Hero';
 import Features from '@/components/landing/Features';

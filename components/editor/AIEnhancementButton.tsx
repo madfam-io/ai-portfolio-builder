@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { HiSparkles, HiOutlineSparkles } from 'react-icons/hi';
 import { FiLoader } from 'react-icons/fi';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';
 

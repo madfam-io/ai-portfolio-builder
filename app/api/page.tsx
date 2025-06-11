@@ -1,6 +1,6 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import Header from '@/components/landing/Header';
 import Footer from '@/components/landing/Footer';
 import { FaCode, FaKey, FaBook, FaShieldAlt } from 'react-icons/fa';

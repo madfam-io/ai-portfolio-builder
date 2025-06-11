@@ -6,7 +6,7 @@
  */
 
 // Mock the minimal context
-jest.mock('@/lib/i18n/minimal-context', () => ({
+jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     t: {},
     language: 'es',

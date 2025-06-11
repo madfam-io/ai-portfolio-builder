@@ -4,7 +4,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
 import { portfolioService } from '@/lib/services/portfolioService';
 import Link from 'next/link';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import Hero from '@/components/landing/Hero';
-import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 // Mock localStorage
 const localStorageMock = {
@@ -237,9 +237,7 @@ describe('Hero Component', () => {
     it('should have proper aria labels', () => {
       renderHero();
 
-      expect(
-        screen.getByLabelText('Ver Demo')
-      ).toBeInTheDocument();
+      expect(screen.getByLabelText('Ver Demo')).toBeInTheDocument();
       expect(screen.getByLabelText('Prueba Gratuita')).toBeInTheDocument();
     });
 

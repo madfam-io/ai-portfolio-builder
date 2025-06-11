@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { resetPassword } from '@/lib/auth/auth';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import BaseLayout from '@/components/layouts/BaseLayout';
 
 export default function ResetPasswordPage() {
@@ -22,7 +22,7 @@ export default function ResetPasswordPage() {
 
     try {
       const { error } = await resetPassword(email);
-      
+
       if (error) {
         setError(error.message);
         return;
@@ -106,16 +106,14 @@ export default function ResetPasswordPage() {
                 autoComplete="email"
                 required
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={e => setEmail(e.target.value)}
                 className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 placeholder={t.email}
               />
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm text-center">
-                {error}
-              </div>
+              <div className="text-red-600 text-sm text-center">{error}</div>
             )}
 
             <div>

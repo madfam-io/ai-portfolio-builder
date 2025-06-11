@@ -2,13 +2,20 @@
 
 import { useState, useEffect } from 'react';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Portfolio } from '@/types/portfolio';
 import { portfolioService } from '@/lib/services/portfolioService';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FaPlus, FaEdit, FaEye, FaTrash, FaSpinner, FaGlobe } from 'react-icons/fa';
+import {
+  FaPlus,
+  FaEdit,
+  FaEye,
+  FaTrash,
+  FaSpinner,
+  FaGlobe,
+} from 'react-icons/fa';
 
 export default function Dashboard() {
   const { t } = useLanguage();
@@ -64,8 +71,9 @@ export default function Dashboard() {
   };
 
   const getStatusBadge = (status: Portfolio['status']) => {
-    const baseClasses = "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium";
-    
+    const baseClasses =
+      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
+
     switch (status) {
       case 'published':
         return `${baseClasses} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200`;
@@ -80,13 +88,15 @@ export default function Dashboard() {
 
   const formatDate = (date: Date) => {
     const now = new Date();
-    const diffInDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
-    
+    const diffInDays = Math.floor(
+      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
     if (diffInDays === 0) return 'Today';
     if (diffInDays === 1) return 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} ${t.daysAgo}`;
     if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${t.weekAgo}`;
-    
+
     return date.toLocaleDateString();
   };
 
@@ -208,7 +218,9 @@ export default function Dashboard() {
                           {portfolio.name}
                         </h3>
                         <span className={getStatusBadge(portfolio.status)}>
-                          {portfolio.status === 'published' ? t.statusPublished : t.statusDraft}
+                          {portfolio.status === 'published'
+                            ? t.statusPublished
+                            : t.statusDraft}
                         </span>
                       </div>
                       <p className="text-sm text-gray-500 dark:text-gray-400">

@@ -9,7 +9,7 @@ import {
   FaSignOutAlt,
 } from 'react-icons/fa';
 import Image from 'next/image';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useApp } from '@/lib/contexts/AppContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import Link from 'next/link';

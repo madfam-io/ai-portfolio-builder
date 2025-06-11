@@ -6,7 +6,7 @@ import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   FiArrowLeft,
   FiBookOpen,

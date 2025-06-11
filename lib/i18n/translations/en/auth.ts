@@ -1,0 +1,68 @@
+/**
+ * @fileoverview Authentication English translations
+ * @module i18n/translations/en/auth
+ */
+
+export default {
+  // Sign in/up
+  signIn: 'Sign In',
+  signUp: 'Sign Up',
+  signOut: 'Sign Out',
+
+  // Form fields
+  email: 'Email',
+  password: 'Password',
+  confirmPassword: 'Confirm Password',
+  fullName: 'Full Name',
+
+  // Password reset
+  forgotPassword: 'Forgot Password?',
+  resetPassword: 'Reset Password',
+  sendResetLink: 'Send Reset Link',
+  backToSignIn: 'Back to Sign In',
+  resetPasswordMessage:
+    "Enter your email and we'll send you a link to reset your password.",
+
+  // Social auth
+  orContinueWith: 'Or continue with',
+  orSignUpWith: 'Or sign up with',
+
+  // Account status
+  createNewAccount: 'create a new account',
+  signInToAccount: 'sign in to your existing account',
+  haveAccount: 'Already have an account?',
+  noAccount: "Don't have an account?",
+
+  // Loading states
+  signingIn: 'Signing in...',
+  creatingAccount: 'Creating account...',
+  sending: 'Sending...',
+
+  // Success messages
+  accountCreated: 'Account Created!',
+  confirmEmailSent: "We've sent a confirmation link to your email.",
+  checkInboxMessage:
+    'Please check your inbox and click the link to activate your account.',
+  emailSent: 'Email Sent!',
+  resetEmailSent: "We've sent a password reset link to your email.",
+  checkInboxReset:
+    'Please check your inbox and click the link to reset your password.',
+
+  // Validation
+  passwordMinLength:
+    'Password (min. 12 characters with upper, lower, numbers and symbols)',
+  passwordMinLength8: 'Password must be at least 8 characters',
+  passwordsDoNotMatch: 'Passwords do not match',
+  emailCannotBeChanged: 'Email cannot be changed',
+
+  // Navigation
+  goToSignIn: 'Go to Sign In',
+
+  // Welcome
+  hello: 'Hello',
+  welcomeBack: 'Welcome back!',
+  loadingDashboard: 'Loading your dashboard...',
+
+  // Misc
+  or: 'Or',
+} as const;

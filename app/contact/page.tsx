@@ -1,7 +1,7 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   FaEnvelope,
   FaMapMarkerAlt,
@@ -52,7 +52,12 @@ export default function ContactPage() {
         subject: t.contactGeneralInquiry || 'General Inquiry',
       }));
     }
-  }, [t.contactBusinessPlanInquiry, t.contactJobApplication, t.contactGDPRRequest, t.contactGeneralInquiry]);
+  }, [
+    t.contactBusinessPlanInquiry,
+    t.contactJobApplication,
+    t.contactGDPRRequest,
+    t.contactGeneralInquiry,
+  ]);
 
   const handleInputChange = (
     e: React.ChangeEvent<
@@ -136,7 +141,8 @@ export default function ContactPage() {
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                         placeholder={
                           t.contactFullNamePlaceholder ||
-                          t.contactFullName.replace(' *', '')
+                          t.contactFullName?.replace(' *', '') ||
+                          'Your full name'
                         }
                       />
                     </div>
@@ -191,7 +197,8 @@ export default function ContactPage() {
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                       placeholder={
                         t.contactSubjectPlaceholder ||
-                        t.contactSubject.replace(' *', '')
+                        t.contactSubject?.replace(' *', '') ||
+                        'Subject'
                       }
                     />
                   </div>
@@ -209,7 +216,8 @@ export default function ContactPage() {
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                       placeholder={
                         t.contactMessagePlaceholder ||
-                        t.contactMessage.replace(' *', '')
+                        t.contactMessage?.replace(' *', '') ||
+                        'Message'
                       }
                     />
                   </div>
@@ -294,12 +302,14 @@ export default function ContactPage() {
                       {t.contactMadfamHq}
                     </h3>
                     <p className="text-gray-600 dark:text-gray-300">
-                      {t.contactOfficeDesc.split('\n').map((line, index) => (
-                        <span key={index}>
-                          {line}
-                          {index === 0 && <br />}
-                        </span>
-                      ))}
+                      {(t.contactOfficeDesc || 'Mexico City, Mexico')
+                        .split('\n')
+                        .map((line: string, index: number) => (
+                          <span key={index}>
+                            {line}
+                            {index === 0 && <br />}
+                          </span>
+                        ))}
                     </p>
                   </div>
                 </div>

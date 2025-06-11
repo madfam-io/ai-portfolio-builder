@@ -1,14 +1,9 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import Link from 'next/link';
-import {
-  FaRocket,
-  FaUsers,
-  FaStar,
-  FaHeart,
-} from 'react-icons/fa';
+import { FaRocket, FaUsers, FaStar, FaHeart } from 'react-icons/fa';
 
 export default function About() {
   const { t } = useLanguage();

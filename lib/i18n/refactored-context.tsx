@@ -25,6 +25,14 @@ import type {
 } from './refactored-types';
 
 /**
+ * Available language configuration
+ */
+const availableLanguages = [
+  { code: 'es' as Language, name: 'Español', flag: '🇲🇽' },
+  { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
+];
+
+/**
  * Language context value interface
  */
 interface LanguageContextValue {
@@ -42,6 +50,11 @@ interface LanguageContextValue {
    * Flattened translations for the current language
    */
   t: FlattenedTranslations;
+
+  /**
+   * Available languages configuration
+   */
+  availableLanguages: typeof availableLanguages;
 
   /**
    * Function to get a specific namespace translations
@@ -139,6 +152,7 @@ export function LanguageProvider({
     language,
     setLanguage,
     t: translations,
+    availableLanguages,
     getNamespace,
     isLoaded,
   };

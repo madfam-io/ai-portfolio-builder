@@ -3,11 +3,7 @@
  * @module services/portfolio/types
  */
 
-import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
-} from '@/types/portfolio';
+import type { Portfolio } from '@/types/portfolio';
 
 /**
  * Portfolio service configuration options

@@ -3,10 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { updateUserMetadata, updatePassword } from '@/lib/auth/auth';
-import { FaUser, FaEnvelope, FaLock, FaSave, FaSpinner, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+import {
+  FaUser,
+  FaEnvelope,
+  FaLock,
+  FaSave,
+  FaSpinner,
+  FaCheckCircle,
+  FaExclamationCircle,
+} from 'react-icons/fa';
 
 export default function ProfilePage() {
   const { t } = useLanguage();
@@ -67,13 +75,13 @@ export default function ProfilePage() {
       };
 
       const { error } = await updateUserMetadata(metadata);
-      
+
       if (error) {
         setError(error.message);
         return;
       }
 
-      setSuccess(t.profileUpdated);
+      setSuccess(t.profileUpdated || 'Profile updated successfully');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -88,26 +96,28 @@ export default function ProfilePage() {
     setSuccess(null);
 
     if (newPassword !== confirmPassword) {
-      setError(t.passwordsDoNotMatch);
+      setError(t.passwordsDoNotMatch || 'Passwords do not match');
       setLoading(false);
       return;
     }
 
     if (newPassword.length < 8) {
-      setError(t.passwordMinLength8);
+      setError(
+        t.passwordMinLength8 || 'Password must be at least 8 characters'
+      );
       setLoading(false);
       return;
     }
 
     try {
       const { error } = await updatePassword(newPassword);
-      
+
       if (error) {
         setError(error.message);
         return;
       }
 
-      setSuccess(t.passwordUpdated);
+      setSuccess(t.passwordUpdated || 'Password updated successfully');
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
@@ -197,20 +207,26 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.fullName}
                   </label>
                   <input
                     type="text"
                     id="fullName"
                     value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
+                    onChange={e => setFullName(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     <FaEnvelope className="inline mr-1" />
                     {t.email}
                   </label>
@@ -227,41 +243,50 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="bio"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.bio}
                   </label>
                   <textarea
                     id="bio"
                     rows={3}
                     value={bio}
-                    onChange={(e) => setBio(e.target.value)}
+                    onChange={e => setBio(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder={t.tellUsAboutYourself}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="company"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.company}
                   </label>
                   <input
                     type="text"
                     id="company"
                     value={company}
-                    onChange={(e) => setCompany(e.target.value)}
+                    onChange={e => setCompany(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.role}
                   </label>
                   <input
                     type="text"
                     id="role"
                     value={role}
-                    onChange={(e) => setRole(e.target.value)}
+                    onChange={e => setRole(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
@@ -273,42 +298,51 @@ export default function ProfilePage() {
 
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <div>
-                  <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="linkedin"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     LinkedIn
                   </label>
                   <input
                     type="url"
                     id="linkedin"
                     value={linkedin}
-                    onChange={(e) => setLinkedin(e.target.value)}
+                    onChange={e => setLinkedin(e.target.value)}
                     placeholder="https://linkedin.com/in/username"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="github" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="github"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     GitHub
                   </label>
                   <input
                     type="url"
                     id="github"
                     value={github}
-                    onChange={(e) => setGithub(e.target.value)}
+                    onChange={e => setGithub(e.target.value)}
                     placeholder="https://github.com/username"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>
 
                 <div className="sm:col-span-2">
-                  <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="website"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.website}
                   </label>
                   <input
                     type="url"
                     id="website"
                     value={website}
-                    onChange={(e) => setWebsite(e.target.value)}
+                    onChange={e => setWebsite(e.target.value)}
                     placeholder="https://example.com"
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
@@ -348,28 +382,34 @@ export default function ProfilePage() {
 
               <div className="space-y-6">
                 <div>
-                  <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="newPassword"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.newPassword}
                   </label>
                   <input
                     type="password"
                     id="newPassword"
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={e => setNewPassword(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                     placeholder={t.passwordMinLength}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="confirmPassword"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                  >
                     {t.confirmNewPassword}
                   </label>
                   <input
                     type="password"
                     id="confirmPassword"
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={e => setConfirmPassword(e.target.value)}
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                   />
                 </div>

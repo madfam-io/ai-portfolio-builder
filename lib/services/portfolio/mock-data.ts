@@ -108,45 +108,36 @@ export const mockDeveloperPortfolio: Portfolio = {
   ],
   skills: [
     {
-      id: 'skill-1',
       name: 'JavaScript',
       category: 'language',
       level: 'expert',
     },
     {
-      id: 'skill-2',
       name: 'TypeScript',
       category: 'language',
       level: 'advanced',
     },
-    { id: 'skill-3', name: 'React', category: 'framework', level: 'expert' },
+    { name: 'React', category: 'framework', level: 'expert' },
     {
-      id: 'skill-4',
       name: 'Node.js',
       category: 'framework',
       level: 'advanced',
     },
-    { id: 'skill-5', name: 'AWS', category: 'tool', level: 'intermediate' },
+    { name: 'AWS', category: 'tool', level: 'intermediate' },
   ],
-  template: {
-    id: 'developer',
+  certifications: [],
+  template: 'developer',
+  customization: {
     primaryColor: '#6366f1',
     fontFamily: 'Inter',
-    darkMode: true,
   },
-  seo: {
-    title: 'John Doe - Full Stack Developer Portfolio',
-    description:
-      'Experienced Full Stack Developer specializing in React and Node.js',
-    keywords: ['full stack developer', 'react developer', 'node.js developer'],
-  },
+  status: 'published',
   customDomain: 'johndoe.dev',
-  isPublished: true,
-  publishedAt: '2024-01-15T10:00:00Z',
-  createdAt: '2024-01-10T10:00:00Z',
-  updatedAt: '2024-01-15T10:00:00Z',
-  viewCount: 150,
-  lastViewedAt: '2024-01-20T15:30:00Z',
+  publishedAt: new Date('2024-01-15T10:00:00Z'),
+  createdAt: new Date('2024-01-10T10:00:00Z'),
+  updatedAt: new Date('2024-01-15T10:00:00Z'),
+  views: 150,
+  lastViewedAt: new Date('2024-01-20T15:30:00Z'),
 };
 
 /**
@@ -212,32 +203,26 @@ export const mockDesignerPortfolio: Portfolio = {
     },
   ],
   skills: [
-    { id: 'skill-6', name: 'UI Design', category: 'design', level: 'expert' },
+    { name: 'UI Design', category: 'design', level: 'expert' },
     {
-      id: 'skill-7',
       name: 'UX Research',
       category: 'design',
       level: 'advanced',
     },
-    { id: 'skill-8', name: 'Figma', category: 'tool', level: 'expert' },
+    { name: 'Figma', category: 'tool', level: 'expert' },
   ],
-  template: {
-    id: 'designer',
+  certifications: [],
+  template: 'designer',
+  customization: {
     primaryColor: '#ec4899',
     fontFamily: 'Poppins',
-    darkMode: false,
   },
-  seo: {
-    title: 'Jane Smith - UI/UX Designer Portfolio',
-    description: 'Creative UI/UX Designer with 7+ years of experience',
-    keywords: ['ui designer', 'ux designer', 'product designer'],
-  },
-  isPublished: true,
-  publishedAt: '2024-01-12T10:00:00Z',
-  createdAt: '2024-01-08T10:00:00Z',
-  updatedAt: '2024-01-12T10:00:00Z',
-  viewCount: 230,
-  lastViewedAt: '2024-01-20T18:45:00Z',
+  status: 'published',
+  publishedAt: new Date('2024-01-12T10:00:00Z'),
+  createdAt: new Date('2024-01-08T10:00:00Z'),
+  updatedAt: new Date('2024-01-12T10:00:00Z'),
+  views: 230,
+  lastViewedAt: new Date('2024-01-20T18:45:00Z'),
 };
 
 /**

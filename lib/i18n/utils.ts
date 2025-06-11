@@ -32,10 +32,10 @@ export function flattenTranslations(
   const flattened: FlattenedTranslations = {};
 
   // Iterate through each namespace
-  Object.entries(translations).forEach(([namespace, values]) => {
+  Object.entries(translations).forEach(([, values]) => {
     // Add each translation to the flattened object
     Object.entries(values).forEach(([key, value]) => {
-      flattened[key] = value;
+      flattened[key] = value as string;
     });
   });
 
@@ -112,6 +112,8 @@ export function validateTranslations(
   // Check each key exists in both languages
   allKeys.forEach(path => {
     const [namespace, key] = path.split('.');
+
+    if (!namespace || !key) return;
 
     // Check Spanish
     if (!esTranslations[namespace as keyof TranslationNamespace]?.[key]) {

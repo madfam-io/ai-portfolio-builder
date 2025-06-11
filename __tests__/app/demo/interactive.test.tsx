@@ -8,7 +8,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import InteractiveDemoPage from '@/app/demo/interactive/page';
-import { LanguageProvider } from '@/lib/i18n/minimal-context';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 // Mock the dependencies that are not available in test environment
 jest.mock('@/lib/utils/performance', () => ({

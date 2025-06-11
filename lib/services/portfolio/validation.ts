@@ -167,9 +167,9 @@ export function validateCreatePortfolio(
   }
 
   // Template must be specified
-  if (!data.template?.id) {
+  if (!data.template) {
     errors.push({
-      field: 'template.id',
+      field: 'template',
       message: 'Template selection is required',
       code: 'REQUIRED_FIELD',
     });
@@ -270,14 +270,32 @@ export function sanitizePortfolioData<T extends Partial<Portfolio>>(
 
   // Sanitize social links
   if (sanitized.social) {
-    Object.keys(sanitized.social).forEach(key => {
-      const socialKey = key as keyof typeof sanitized.social;
-      if (sanitized.social![socialKey]) {
-        sanitized.social![socialKey] = sanitizeUrl(
-          sanitized.social![socialKey]!
-        );
+    // Sanitize string URL fields
+    const urlFields: (keyof typeof sanitized.social)[] = [
+      'linkedin',
+      'github',
+      'twitter',
+      'instagram',
+      'youtube',
+      'website',
+      'dribbble',
+      'behance',
+    ];
+
+    urlFields.forEach(field => {
+      const value = sanitized.social![field as keyof typeof sanitized.social];
+      if (typeof value === 'string') {
+        (sanitized.social as any)[field] = sanitizeUrl(value);
       }
     });
+
+    // Handle custom array separately if it exists
+    if (sanitized.social.custom && Array.isArray(sanitized.social.custom)) {
+      sanitized.social.custom = sanitized.social.custom.map(link => ({
+        ...link,
+        url: sanitizeUrl(link.url),
+      }));
+    }
   }
 
   return sanitized;

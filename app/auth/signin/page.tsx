@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { signIn, signInWithOAuth } from '@/lib/auth/auth';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import BaseLayout from '@/components/layouts/BaseLayout';
 
 export default function SignInPage() {
@@ -24,7 +24,7 @@ export default function SignInPage() {
 
     try {
       const { data, error } = await signIn(email, password);
-      
+
       if (error) {
         setError(error.message);
         return;
@@ -44,7 +44,7 @@ export default function SignInPage() {
     try {
       setLoading(true);
       const { data, error } = await signInWithOAuth(provider);
-      
+
       if (error) {
         setError(error.message);
         return;
@@ -92,7 +92,7 @@ export default function SignInPage() {
                   autoComplete="email"
                   required
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={e => setEmail(e.target.value)}
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.email}
                 />
@@ -108,7 +108,7 @@ export default function SignInPage() {
                   autoComplete="current-password"
                   required
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={e => setPassword(e.target.value)}
                   className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.password}
                 />
@@ -116,9 +116,7 @@ export default function SignInPage() {
             </div>
 
             {error && (
-              <div className="text-red-600 text-sm text-center">
-                {error}
-              </div>
+              <div className="text-red-600 text-sm text-center">{error}</div>
             )}
 
             <div className="flex items-center justify-between">

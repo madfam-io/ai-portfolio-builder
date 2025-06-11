@@ -1,7 +1,7 @@
 'use client';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
 import Link from 'next/link';
 

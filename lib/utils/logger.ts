@@ -1,10 +1,10 @@
 /**
  * @fileoverview Structured logging utility for PRISMA
- * 
+ *
  * Provides structured logging with context support, error serialization,
  * and production-ready features. In production, logs can be sent to
  * external services like Sentry, LogRocket, or DataDog.
- * 
+ *
  * @author PRISMA Development Team
  * @version 1.0.0
  */
@@ -36,7 +36,8 @@ interface LogEntry {
 class Logger {
   private isDevelopment = process.env.NODE_ENV === 'development';
   private isTest = process.env.NODE_ENV === 'test';
-  private debugEnabled = this.isDevelopment || process.env.ENABLE_DEBUG === 'true';
+  private debugEnabled =
+    this.isDevelopment || process.env.ENABLE_DEBUG === 'true';
   private serviceName = 'prisma-portfolio-builder';
 
   /**
@@ -46,8 +47,12 @@ class Logger {
     if (this.isDevelopment) {
       // Human-readable format for development
       const prefix = `[${entry.timestamp}] [${entry.level.toUpperCase()}] ${entry.message}`;
-      const contextStr = entry.context ? ` | ${JSON.stringify(entry.context)}` : '';
-      const errorStr = entry.error ? `\nError: ${entry.error.message}\n${entry.error.stack || ''}` : '';
+      const contextStr = entry.context
+        ? ` | ${JSON.stringify(entry.context)}`
+        : '';
+      const errorStr = entry.error
+        ? `\nError: ${entry.error.message}\n${entry.error.stack || ''}`
+        : '';
       return `${prefix}${contextStr}${errorStr}`;
     } else {
       // JSON format for production (easier to parse by log aggregators)
@@ -63,6 +68,8 @@ class Logger {
    * Send log to external service in production
    */
   private sendToExternalService(entry: LogEntry): void {
+    // Silence unused parameter warning until implementation
+    void entry;
     // In production, send to logging service
     // Example: Sentry, LogRocket, DataDog, etc.
     if (!this.isDevelopment && !this.isTest) {
@@ -79,7 +86,11 @@ class Logger {
   /**
    * Core logging method
    */
-  private log(level: LogLevel, message: string, context?: LogContext | Error): void {
+  private log(
+    level: LogLevel,
+    message: string,
+    context?: LogContext | Error
+  ): void {
     // Skip debug logs in production unless explicitly enabled
     if (level === 'debug' && !this.debugEnabled) {
       return;
@@ -109,7 +120,7 @@ class Logger {
 
     // Format and output
     const formatted = this.formatLogEntry(entry);
-    
+
     // Use appropriate console method
     switch (level) {
       case 'debug':
@@ -154,7 +165,11 @@ class Logger {
   /**
    * Error logging - always enabled
    */
-  error(message: string, error?: Error | LogContext, context?: LogContext): void {
+  error(
+    message: string,
+    error?: Error | LogContext,
+    context?: LogContext
+  ): void {
     if (error instanceof Error) {
       this.log('error', message, error);
     } else {
@@ -168,20 +183,24 @@ class Logger {
   child(context: LogContext): Logger {
     const parent = this;
     return {
-      debug: (message: string, additionalContext?: LogContext) => 
+      debug: (message: string, additionalContext?: LogContext) =>
         parent.debug(message, { ...context, ...additionalContext }),
-      info: (message: string, additionalContext?: LogContext) => 
+      info: (message: string, additionalContext?: LogContext) =>
         parent.info(message, { ...context, ...additionalContext }),
-      warn: (message: string, additionalContext?: LogContext) => 
+      warn: (message: string, additionalContext?: LogContext) =>
         parent.warn(message, { ...context, ...additionalContext }),
-      error: (message: string, error?: Error | LogContext, additionalContext?: LogContext) => {
+      error: (
+        message: string,
+        error?: Error | LogContext,
+        additionalContext?: LogContext
+      ) => {
         if (error instanceof Error) {
           parent.error(message, error, { ...context, ...additionalContext });
         } else {
           parent.error(message, { ...context, ...error, ...additionalContext });
         }
       },
-      child: (additionalContext: LogContext) => 
+      child: (additionalContext: LogContext) =>
         parent.child({ ...context, ...additionalContext }),
     } as Logger;
   }

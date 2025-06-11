@@ -4,11 +4,11 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
 import { Portfolio, TemplateType } from '@/types/portfolio';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { portfolioService } from '@/lib/services/portfolioService';
 
 // Mock the language context
-jest.mock('@/lib/i18n/minimal-context');
+jest.mock('@/lib/i18n/refactored-context');
 
 // Mock the portfolio service
 jest.mock('@/lib/services/portfolioService', () => ({

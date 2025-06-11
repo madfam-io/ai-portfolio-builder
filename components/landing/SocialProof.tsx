@@ -8,7 +8,7 @@ import {
   FaFacebookF,
   FaStar,
 } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
 export default function SocialProof() {
   const { t } = useLanguage();
