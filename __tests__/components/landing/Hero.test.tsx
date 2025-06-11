@@ -77,12 +77,12 @@ describe('Hero Component', () => {
       renderHero();
 
       expect(
-        screen.getByText('No se requiere tarjeta de crédito')
+        screen.getByText('Sin tarjeta de crédito')
       ).toBeInTheDocument();
       expect(
         screen.getByText('Únete a 10,000+ profesionales')
       ).toBeInTheDocument();
-      expect(screen.getByText('calificación 4.9/5')).toBeInTheDocument();
+      expect(screen.getByText('4.9/5 Calificación')).toBeInTheDocument();
     });
   });
 
@@ -111,9 +111,9 @@ describe('Hero Component', () => {
       renderHero('en');
 
       const trialButton = screen.getByRole('link', {
-        name: 'Start Free Trial',
+        name: 'Free Trial',
       });
-      expect(trialButton).toHaveTextContent('Start Free Trial');
+      expect(trialButton).toHaveTextContent('Free Trial');
 
       const watchDemoButton = screen.getByRole('link', {
         name: 'Watch Demo',
@@ -170,7 +170,7 @@ describe('Hero Component', () => {
       expect(badge.parentElement?.querySelector('svg')).toBeInTheDocument();
 
       const noCreditCard = screen.getByText(
-        'No se requiere tarjeta de crédito'
+        'Sin tarjeta de crédito'
       );
       expect(
         noCreditCard.parentElement?.querySelector('svg')

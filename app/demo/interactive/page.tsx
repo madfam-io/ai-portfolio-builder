@@ -276,10 +276,14 @@ export default function InteractiveDemoPage() {
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label 
+                            htmlFor="portfolio-name"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                          >
                             {t.demoName}
                           </label>
                           <input
+                            id="portfolio-name"
                             type="text"
                             value={portfolio.name}
                             onChange={e =>
@@ -292,10 +296,14 @@ export default function InteractiveDemoPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label 
+                            htmlFor="portfolio-title"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                          >
                             {t.demoTitle}
                           </label>
                           <input
+                            id="portfolio-title"
                             type="text"
                             value={portfolio.title}
                             onChange={e =>
@@ -308,10 +316,14 @@ export default function InteractiveDemoPage() {
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          <label 
+                            htmlFor="portfolio-bio"
+                            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                          >
                             {t.demoBio}
                           </label>
                           <textarea
+                            id="portfolio-bio"
                             value={portfolio.bio}
                             onChange={e =>
                               handlePortfolioChange({

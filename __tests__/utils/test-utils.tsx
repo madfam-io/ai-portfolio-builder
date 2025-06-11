@@ -2,6 +2,7 @@ import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'next-themes';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 // Mock Supabase client for testing
 export const mockSupabaseClient = {
@@ -61,7 +62,9 @@ export function renderWithProviders(
     return (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+          <LanguageProvider initialLanguage="es">
+            {children}
+          </LanguageProvider>
         </ThemeProvider>
       </QueryClientProvider>
     );

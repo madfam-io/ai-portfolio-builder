@@ -349,10 +349,12 @@ describe('Interactive Demo Page', () => {
       });
       expect(continueButton).toBeInTheDocument();
 
-      const createAccountButton = screen.getByRole('button', {
-        name: 'Crear Cuenta',
+      // Create Account is a link, not a button
+      const createAccountLink = screen.getByRole('link', {
+        name: /Crear Cuenta/i,
       });
-      expect(createAccountButton).toBeInTheDocument();
+      expect(createAccountLink).toBeInTheDocument();
+      expect(createAccountLink).toHaveAttribute('href', '/auth/signup');
     });
   });
 

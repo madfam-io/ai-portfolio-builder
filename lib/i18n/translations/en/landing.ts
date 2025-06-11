@@ -12,6 +12,10 @@ const landing = {
     'Showcase your talent with professional style, without writing a line of code. Connect your LinkedIn, GitHub or CV and launch your portfolio with artificial intelligence.',
   watchDemo: 'Watch Demo',
   startFreeTrial: 'Free Trial',
+  poweredByAi: 'Powered by Llama 3.1 & Mistral AI',
+  noCreditCard: 'No credit card required',
+  joinProfessionals: 'Join 10,000+ professionals',
+  rating: '4.9/5 Rating',
 
   // Features Section
   featuresTitle: 'What PRISMA does',

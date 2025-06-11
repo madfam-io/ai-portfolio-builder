@@ -12,6 +12,10 @@ const landing = {
     'Presenta tu talento con estilo profesional, sin escribir una línea de código. Conecta tu LinkedIn, GitHub o CV y lanza tu portafolio con inteligencia artificial.',
   watchDemo: 'Ver Demo',
   startFreeTrial: 'Prueba Gratuita',
+  poweredByAi: 'Impulsado por Llama 3.1 & Mistral AI',
+  noCreditCard: 'Sin tarjeta de crédito',
+  joinProfessionals: 'Únete a 10,000+ profesionales',
+  rating: '4.9/5 Calificación',
 
   // Features Section
   featuresTitle: 'Qué hace PRISMA',
@@ -130,7 +134,7 @@ const landing = {
   // Pricing features
   portfolio1: '1 portafolio',
   portfolios3: '3 portafolios',
-  madfamSubdomain: 'Subdominio MADFAM',
+  madfamSubdomain: 'Subdominio PRISMA',
   aiRewrites3: '3 reescrituras con IA',
   unlimitedAiRewrites: 'Reescrituras IA ilimitadas',
   analyticsTools: 'Herramientas de análisis',
@@ -139,7 +143,7 @@ const landing = {
   pricingOfferExpires: 'La oferta expira pronto',
   startProTrial: 'Prueba Pro',
   pricingStartBusinessTrial: 'Iniciar Prueba Business',
-  pricingContactSalesTeam: 'Contactar equipo de ventas',
+  pricingContactSalesTeam: 'Contactar Equipo de Ventas',
   pricingMostPowerful: 'Más Poderoso',
   pricingEverythingInBusiness: 'Todo en Business +',
   pricingWhiteLabelSolutions: 'Soluciones de marca blanca',
@@ -148,7 +152,7 @@ const landing = {
   pricing24Support: 'Soporte 24/7',
   pricingSlaGuarantees: 'Garantías SLA',
   pricingStartEnterpriseTrial: 'Iniciar Prueba Enterprise',
-  pricingRequestQuote: 'Solicitar cotización',
+  pricingRequestQuote: 'Solicitar Cotización Personalizada',
   pricingSecurePayment: 'Pago seguro',
   pricingNoHiddenFees: 'Sin tarifas ocultas',
   pricingCancelAnytime: 'Cancela en cualquier momento',

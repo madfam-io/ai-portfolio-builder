@@ -116,10 +116,22 @@ export function LanguageProvider({
   // Load language preference from localStorage on mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const savedLanguage = localStorage.getItem('language') as Language | null;
-      if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
-        setLanguageState(savedLanguage);
-        setTranslations(flattenTranslations(getTranslations(savedLanguage)));
+      try {
+        const savedLanguage = localStorage.getItem('language') as Language | null;
+        if (savedLanguage && (savedLanguage === 'es' || savedLanguage === 'en')) {
+          setLanguageState(savedLanguage);
+          setTranslations(flattenTranslations(getTranslations(savedLanguage)));
+        } else {
+          // Check browser language if no saved preference
+          const browserLang = navigator.language?.toLowerCase();
+          const detectedLang = browserLang?.startsWith('en') ? 'en' : 'es';
+          setLanguageState(detectedLang);
+          setTranslations(flattenTranslations(getTranslations(detectedLang)));
+          localStorage.setItem('language', detectedLang);
+        }
+      } catch (error) {
+        // Handle localStorage errors gracefully
+        console.warn('Failed to access localStorage:', error);
       }
       setIsLoaded(true);
     }
@@ -134,7 +146,11 @@ export function LanguageProvider({
 
     // Persist language preference
     if (typeof window !== 'undefined') {
-      localStorage.setItem('language', newLanguage);
+      try {
+        localStorage.setItem('language', newLanguage);
+      } catch (error) {
+        console.warn('Failed to save language preference:', error);
+      }
     }
   };
 
@@ -189,7 +205,16 @@ export function useLanguage(): LanguageContextValue {
   const context = useContext(LanguageContext);
 
   if (!context) {
-    throw new Error('useLanguage must be used within a LanguageProvider');
+    // Provide graceful fallback when used outside provider
+    console.warn('useLanguage called outside LanguageProvider, using fallback');
+    return {
+      language: 'es',
+      setLanguage: () => {},
+      t: flattenTranslations(getTranslations('es')),
+      availableLanguages,
+      getNamespace: () => ({}),
+      isLoaded: true,
+    };
   }
 
   return context;
