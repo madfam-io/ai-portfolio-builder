@@ -71,6 +71,9 @@ dependencies:
   framer-motion:
     specifier: ^10.18.0
     version: 10.18.0(react-dom@18.2.0)(react@18.2.0)
+  immer:
+    specifier: ^10.1.1
+    version: 10.1.1
   isomorphic-dompurify:
     specifier: ^2.25.0
     version: 2.25.0
@@ -121,7 +124,7 @@ dependencies:
     version: 3.25.56
   zustand:
     specifier: ^4.5.7
-    version: 4.5.7(@types/react@18.3.23)(react@18.2.0)
+    version: 4.5.7(@types/react@18.3.23)(immer@10.1.1)(react@18.2.0)
 
 devDependencies:
   '@commitlint/cli':
@@ -6265,6 +6268,10 @@ packages:
     engines: {node: '>= 4'}
     dev: true
 
+  /immer@10.1.1:
+    resolution: {integrity: sha512-s2MPrmjovJcoMaHtx6K11Ra7oD05NT97w1IC5zpMkT6Atjr7H8LjaDd81iIxUYpMKSRRNMJE703M1Fhr/TctHw==}
+    dev: false
+
   /import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
     engines: {node: '>=6'}
@@ -10312,7 +10319,7 @@ packages:
     resolution: {integrity: sha512-rd6eEF3BTNvQnR2e2wwolfTmUTnp70aUTqr0oaGbHifzC3BKJsoV+Gat8vxUMR1hwOKBs6El+qWehrHbCpW6SQ==}
     dev: false
 
-  /zustand@4.5.7(@types/react@18.3.23)(react@18.2.0):
+  /zustand@4.5.7(@types/react@18.3.23)(immer@10.1.1)(react@18.2.0):
     resolution: {integrity: sha512-CHOUy7mu3lbD6o6LJLfllpjkzhHXSBlX8B9+qPddUsIfeF5S/UZ5q0kmCsnRqT1UHFQZchNFDDzMbQsuesHWlw==}
     engines: {node: '>=12.7.0'}
     peerDependencies:
@@ -10328,6 +10335,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 18.3.23
+      immer: 10.1.1
       react: 18.2.0
       use-sync-external-store: 1.5.0(react@18.2.0)
     dev: false

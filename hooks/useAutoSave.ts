@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { Portfolio } from '@/types/portfolio';
-import { portfolioService } from '@/lib/services/portfolioService';
+// Removed portfolioService import - will use API calls instead
 
 /**
  * Custom hook for auto-saving portfolio changes
@@ -28,22 +28,30 @@ export function useAutoSave(
       try {
         isAutoSavingRef.current = true;
 
-        const success = await portfolioService.autoSave(portfolioId, {
-          name: portfolioData.name,
-          title: portfolioData.title,
-          bio: portfolioData.bio,
-          tagline: portfolioData.tagline,
-          avatarUrl: portfolioData.avatarUrl,
-          contact: portfolioData.contact,
-          social: portfolioData.social,
-          experience: portfolioData.experience,
-          education: portfolioData.education,
-          projects: portfolioData.projects,
-          skills: portfolioData.skills,
-          certifications: portfolioData.certifications,
-          customization: portfolioData.customization,
-          aiSettings: portfolioData.aiSettings,
+        const response = await fetch(`/api/v1/portfolios/${portfolioId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: portfolioData.name,
+            title: portfolioData.title,
+            bio: portfolioData.bio,
+            tagline: portfolioData.tagline,
+            avatarUrl: portfolioData.avatarUrl,
+            contact: portfolioData.contact,
+            social: portfolioData.social,
+            experience: portfolioData.experience,
+            education: portfolioData.education,
+            projects: portfolioData.projects,
+            skills: portfolioData.skills,
+            certifications: portfolioData.certifications,
+            customization: portfolioData.customization,
+            aiSettings: portfolioData.aiSettings,
+          }),
         });
+
+        const success = response.ok;
 
         if (success) {
           setLastSaved(new Date());

@@ -26,7 +26,7 @@ import {
   TemplateType,
   SectionType,
 } from '@/types/portfolio';
-import { portfolioService } from '@/lib/services/portfolioService';
+// Removed portfolioService import - will use API calls instead
 import { PortfolioPreview } from './PortfolioPreview';
 import { EditorSidebar } from './EditorSidebar';
 import { EditorHeader } from './EditorHeader';
@@ -92,7 +92,11 @@ export default function PortfolioEditor({
       setIsLoading(true);
       setError(null);
 
-      const portfolio = await portfolioService.getPortfolio(portfolioId);
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch portfolio');
+      }
+      const { data: portfolio } = await response.json();
 
       if (!portfolio) {
         throw new Error('Portfolio not found');
@@ -186,9 +190,19 @@ export default function PortfolioEditor({
     try {
       setEditorState(prev => ({ ...prev, isSaving: true }));
 
-      const updated = await portfolioService.updatePortfolio(portfolioId, {
-        ...editorState.portfolio,
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editorState.portfolio),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to save portfolio');
+      }
+
+      const { data: updated } = await response.json();
 
       if (updated) {
         setEditorState(prev => ({
@@ -213,7 +227,18 @@ export default function PortfolioEditor({
       // Save changes first
       await handleManualSave();
 
-      const published = await portfolioService.publishPortfolio(portfolioId);
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}/publish`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to publish portfolio');
+      }
+
+      const { data: published } = await response.json();
 
       if (published) {
         setEditorState(prev => ({
@@ -236,10 +261,19 @@ export default function PortfolioEditor({
 
   const handleTemplateChange = async (template: TemplateType) => {
     try {
-      const updated = await portfolioService.updateTemplate(
-        portfolioId,
-        template
-      );
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ template }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update template');
+      }
+
+      const { data: updated } = await response.json();
 
       if (updated) {
         updatePortfolio(updated, `change_template_${template}`);

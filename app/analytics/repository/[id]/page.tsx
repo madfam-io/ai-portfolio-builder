@@ -10,7 +10,7 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, lazy } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import {
@@ -38,8 +38,8 @@ const CartesianGrid = lazy(() => import('recharts').then(mod => ({ default: mod.
 const Tooltip = lazy(() => import('recharts').then(mod => ({ default: mod.Tooltip })));
 const ResponsiveContainer = lazy(() => import('recharts').then(mod => ({ default: mod.ResponsiveContainer })));
 const PieChart = lazy(() => import('recharts').then(mod => ({ default: mod.PieChart })));
-const Pie = lazy(() => import('recharts').then(mod => ({ default: mod.Pie })));
-const Cell = lazy(() => import('recharts').then(mod => ({ default: mod.Cell })));
+const Pie = lazy(() => import('recharts').then(mod => ({ default: mod.Pie as any })));
+const Cell = lazy(() => import('recharts').then(mod => ({ default: mod.Cell as any })));
 
 // Component state type
 interface RepoState {

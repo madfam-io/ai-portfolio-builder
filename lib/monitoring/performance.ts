@@ -282,10 +282,10 @@ export function resetStats(): void {
  * Hook for component render tracking
  */
 export function useRenderTracking(componentName: string): void {
-  if (process.env.NODE_ENV === 'development') {
-    const renderCount = useRef(0);
-    
-    useEffect(() => {
+  const renderCount = useRef(0);
+  
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
       renderCount.current += 1;
       
       if (renderCount.current > 10) {
@@ -294,8 +294,8 @@ export function useRenderTracking(componentName: string): void {
           renderCount: renderCount.current,
         });
       }
-    });
-  }
+    }
+  });
 }
 
 // Import for Next.js types

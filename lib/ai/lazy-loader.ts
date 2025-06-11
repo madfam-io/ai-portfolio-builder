@@ -16,8 +16,8 @@ let deepSeekService: any = null;
 async function getHuggingFaceService() {
   if (!huggingFaceService) {
     logger.info('Loading HuggingFace service...');
-    const module = await import('./huggingface-service');
-    huggingFaceService = module.huggingFaceService;
+    const serviceModule = await import('./huggingface-service');
+    huggingFaceService = serviceModule.huggingFaceService;
   }
   return huggingFaceService;
 }
@@ -28,8 +28,8 @@ async function getHuggingFaceService() {
 async function getDeepSeekService() {
   if (!deepSeekService) {
     logger.info('Loading DeepSeek service...');
-    const module = await import('./deepseek-service');
-    deepSeekService = module.deepSeekService;
+    const serviceModule = await import('./deepseek-service');
+    deepSeekService = serviceModule.deepSeekService;
   }
   return deepSeekService;
 }
