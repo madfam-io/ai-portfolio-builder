@@ -5,7 +5,7 @@ import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { Portfolio } from '@/types/portfolio';
-import { portfolioService } from '@/lib/services/portfolioService';
+// Removed portfolioService import - will use API calls instead
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -43,8 +43,13 @@ export default function Dashboard() {
     try {
       setLoading(true);
       setError(null);
-      // Use mock user ID for development
-      const userPortfolios = await portfolioService.getUserPortfolios('user-1');
+
+      const response = await fetch('/api/v1/portfolios');
+      if (!response.ok) {
+        throw new Error('Failed to fetch portfolios');
+      }
+
+      const { data: userPortfolios } = await response.json();
       setPortfolios(userPortfolios);
     } catch (err) {
       console.error('Failed to load portfolios:', err);
@@ -60,9 +65,14 @@ export default function Dashboard() {
     }
 
     try {
-      const success = await portfolioService.deletePortfolio(portfolioId);
-      if (success) {
+      const response = await fetch(`/api/v1/portfolios/${portfolioId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
         setPortfolios(prev => prev.filter(p => p.id !== portfolioId));
+      } else {
+        throw new Error('Failed to delete portfolio');
       }
     } catch (err) {
       console.error('Failed to delete portfolio:', err);

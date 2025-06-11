@@ -6,7 +6,7 @@ import BaseLayout from '@/components/layouts/BaseLayout';
 import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
-import { portfolioService } from '@/lib/services/portfolioService';
+// Removed server-side service import - will use API calls instead
 import Link from 'next/link';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import { preloadEditorComponents } from '@/components/editor/index.lazy';
@@ -48,17 +48,24 @@ function EditorContent() {
           }
 
           // Create a new portfolio with selected template
-          const newPortfolio = await portfolioService.createPortfolio({
-            name: 'Nuevo Portafolio',
-            title: 'Profesional',
-            bio: '',
-            template: selectedTemplate as
-              | 'developer'
-              | 'creative'
-              | 'business'
-              | 'educator',
-            userId: 'user-1', // Mock user ID
+          const response = await fetch('/api/v1/portfolios', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              name: 'Nuevo Portafolio',
+              title: 'Profesional',
+              bio: '',
+              template: selectedTemplate,
+            }),
           });
+
+          if (!response.ok) {
+            throw new Error('Failed to create portfolio');
+          }
+
+          const { data: newPortfolio } = await response.json();
           setPortfolio(newPortfolio);
           // Update URL with new portfolio ID, preserving template parameter
           router.replace(
@@ -66,12 +73,12 @@ function EditorContent() {
           );
         } else {
           // Load existing portfolio
-          const existingPortfolio =
-            await portfolioService.getPortfolio(portfolioId);
-          if (!existingPortfolio) {
+          const response = await fetch(`/api/v1/portfolios/${portfolioId}`);
+          if (!response.ok) {
             setError('Portfolio not found');
             return;
           }
+          const { data: existingPortfolio } = await response.json();
           setPortfolio(existingPortfolio);
         }
       } catch (err) {
@@ -88,14 +95,23 @@ function EditorContent() {
   // Save portfolio handler
   const handleSave = async (updatedPortfolio: Portfolio) => {
     try {
-      const saved = await portfolioService.updatePortfolio(
-        updatedPortfolio.id,
-        updatedPortfolio
+      const response = await fetch(
+        `/api/v1/portfolios/${updatedPortfolio.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedPortfolio),
+        }
       );
-      if (saved) {
-        setPortfolio(saved);
-        // Portfolio saved successfully
+
+      if (!response.ok) {
+        throw new Error('Failed to save portfolio');
       }
+
+      const { data: saved } = await response.json();
+      setPortfolio(saved);
     } catch (error) {
       console.error('Failed to save portfolio:', error);
       throw error; // Re-throw to let the editor handle the error
@@ -107,11 +123,22 @@ function EditorContent() {
     if (!portfolio) return;
 
     try {
-      const published = await portfolioService.publishPortfolio(portfolio.id);
-      if (published) {
-        setPortfolio(published);
-        // Portfolio published successfully
+      const response = await fetch(
+        `/api/v1/portfolios/${portfolio.id}/publish`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to publish portfolio');
       }
+
+      const { data: published } = await response.json();
+      setPortfolio(published);
     } catch (error) {
       console.error('Failed to publish portfolio:', error);
     }

@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 
 // Load bundle analyzer if ANALYZE env is set
-const withBundleAnalyzer = process.env.ANALYZE === 'true' 
-  ? require('@next/bundle-analyzer')({
-      enabled: true,
-      openAnalyzer: false,
-    })
-  : (config) => config;
+const withBundleAnalyzer =
+  process.env.ANALYZE === 'true'
+    ? require('@next/bundle-analyzer')({
+        enabled: true,
+        openAnalyzer: false,
+      })
+    : config => config;
 
 const nextConfig = {
   reactStrictMode: false,
@@ -114,6 +115,36 @@ const nextConfig = {
         message: /Critical dependency/,
       },
     ];
+
+    // Handle Node.js modules for Redis and other server-only dependencies
+    if (!isServer) {
+      // Client-side: externalize Node.js modules
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+      };
+
+      // Exclude Redis and other server-only modules from client bundle
+      config.externals = config.externals || [];
+      config.externals.push({
+        redis: 'redis',
+        'node:crypto': 'node:crypto',
+        'node:net': 'node:net',
+        'node:tls': 'node:tls',
+        ioredis: 'ioredis',
+      });
+    }
 
     return config;
   },
