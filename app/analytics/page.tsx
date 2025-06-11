@@ -164,7 +164,7 @@ function AnalyticsDashboard() {
       }
 
       // Redirect to GitHub OAuth
-      window.location.href = result.authUrl;
+      window.location.href = result.url!;
     } catch (error: any) {
       setDashboard(prev => ({
         ...prev,
