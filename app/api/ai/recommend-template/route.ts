@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { UserProfile } from '@/lib/ai/types';
+import { UserProfile, AIServiceError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     // Log template recommendation error using structured logging
 
     // Handle specific AI service errors
-    if (error instanceof Error && error.name === 'AIServiceError') {
+    if (error instanceof AIServiceError) {
       return NextResponse.json(
         {
           error: 'AI processing failed',

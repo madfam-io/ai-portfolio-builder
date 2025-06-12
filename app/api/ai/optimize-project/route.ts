@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { createClient } from '@/lib/supabase/server';
+import { AIServiceError } from '@/lib/ai/types';
 
 // Simple AI usage logging function - defined at the bottom of file to avoid duplication
 
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     // Log project optimization error using structured logging
 
     // Handle specific AI service errors
-    if (error instanceof Error && error.name === 'AIServiceError') {
+    if (error instanceof AIServiceError) {
       return NextResponse.json(
         {
           error: 'AI processing failed',
