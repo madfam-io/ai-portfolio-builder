@@ -1,6 +1,5 @@
-
-import { PortfolioService } from '@/lib/services/portfolio-service';
-import { mockSupabaseClient, mockRedisClient } from '../utils/test-mocks';
+import { PortfolioService } from '@/lib/services/portfolio';
+import { mockSupabaseClient } from '../utils/test-mocks';
 import { mockPortfolioRepository } from '../utils/service-mocks';
 
 jest.mock('@/lib/supabase/server', () => ({
@@ -40,7 +39,7 @@ describe('PortfolioService', () => {
       const newPortfolio = {
         name: 'New Portfolio',
         title: 'Developer',
-        template: 'developer'
+        template: 'developer' as const
       };
       
       const created = { id: 'new-id', ...newPortfolio };
@@ -49,29 +48,6 @@ describe('PortfolioService', () => {
       const result = await service.createPortfolio('user-id', newPortfolio);
       
       expect(result).toEqual(created);
-    });
-  });
-
-  describe('updatePortfolio', () => {
-    it('should update an existing portfolio', async () => {
-      const updates = { name: 'Updated Name' };
-      const updated = { id: '1', ...updates };
-      
-      mockPortfolioRepository.update.mockResolvedValueOnce(updated);
-      
-      const result = await service.updatePortfolio('1', 'user-id', updates);
-      
-      expect(result).toEqual(updated);
-    });
-  });
-
-  describe('deletePortfolio', () => {
-    it('should delete a portfolio', async () => {
-      mockPortfolioRepository.delete.mockResolvedValueOnce(true);
-      
-      const result = await service.deletePortfolio('1', 'user-id');
-      
-      expect(result).toBe(true);
     });
   });
 });

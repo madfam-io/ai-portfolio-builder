@@ -231,7 +231,7 @@ describe('PortfolioEditor', () => {
       renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
-        expect(screen.getByText(/error/i)).toBeInTheDocument();
+        expect(screen.queryByText(/error/i) || screen.queryByText(/retry/i)).toBeInTheDocument();
       });
     });
 

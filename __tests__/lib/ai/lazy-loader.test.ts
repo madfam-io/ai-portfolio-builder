@@ -1,9 +1,9 @@
-
+import React from 'react';
 import { lazyLoad } from '@/lib/ai/lazy-loader';
 
 describe('Lazy Loader', () => {
   it('should lazy load a module', async () => {
-    const TestComponent = () => <div>Test Component</div>;
+    const TestComponent = () => React.createElement('div', null, 'Test Component');
     const mockModule = { default: TestComponent };
     
     const loader = () => Promise.resolve(mockModule);

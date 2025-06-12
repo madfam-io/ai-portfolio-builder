@@ -1,12 +1,13 @@
-
 import { renderHook, act } from '@testing-library/react';
 import { useAuthStore } from '@/lib/store/auth-store';
 
 describe('Auth Store', () => {
   beforeEach(() => {
-    const { result } = renderHook(() => useAuthStore());
-    act(() => {
-      result.current.signOut();
+    // Reset store
+    useAuthStore.setState({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false
     });
   });
 
@@ -21,7 +22,7 @@ describe('Auth Store', () => {
   });
 
   describe('Authentication', () => {
-    it('should sign in user', async () => {
+    it('should set user', () => {
       const { result } = renderHook(() => useAuthStore());
       
       const user = {
@@ -38,7 +39,7 @@ describe('Auth Store', () => {
       expect(result.current.isAuthenticated).toBe(true);
     });
 
-    it('should sign out user', () => {
+    it('should sign out', () => {
       const { result } = renderHook(() => useAuthStore());
       
       act(() => {
