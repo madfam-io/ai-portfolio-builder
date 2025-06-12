@@ -87,17 +87,17 @@ function getClientId(request: NextRequest): string {
  */
 function getConfigForPath(path: string): RateLimitConfig {
   if (path.startsWith('/api/auth/')) {
-    return defaultConfigs.auth || defaultRateLimitConfig;
+    return defaultConfigs.auth;
   }
   if (
     path.startsWith('/api/ai/') ||
     path.includes('/enhance') ||
     path.includes('/optimize')
   ) {
-    return defaultConfigs.ai || defaultRateLimitConfig;
+    return defaultConfigs.ai;
   }
   if (path.startsWith('/api/')) {
-    return defaultConfigs.api || defaultRateLimitConfig;
+    return defaultConfigs.api;
   }
 
   // No rate limiting for non-API routes
