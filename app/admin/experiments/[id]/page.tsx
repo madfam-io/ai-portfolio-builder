@@ -182,11 +182,13 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       // Calculate experiment results
       if (experimentData && processedVariants.length > 0) {
         const results = calculateExperimentResults(processedVariants);
-        setAnalyticsData({
-          experiment: experimentData,
-          results,
-          timeline: generateTimeline(processedVariants, timeRange),
-        });
+        if (results) {
+          setAnalyticsData({
+            experiment: experimentData,
+            results,
+            timeline: generateTimeline(processedVariants, timeRange),
+          });
+        }
       }
     } catch (error) {
       logger.error('Failed to fetch experiment data', error as Error);
