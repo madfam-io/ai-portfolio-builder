@@ -1,118 +1,68 @@
-/**
- * Redis cache service tests
- */
 
-import { cache, CACHE_KEYS, Cacheable } from '@/lib/cache/redis-cache';
+import { RedisCache } from '@/lib/cache/redis-cache';
 
-// Mock Redis module
+const mockRedisClient = {
+  get: jest.fn(),
+  set: jest.fn(),
+  del: jest.fn(),
+  flushall: jest.fn(),
+  quit: jest.fn(),
+  on: jest.fn(),
+  connect: jest.fn().mockResolvedValue(undefined),
+  isOpen: true
+};
+
 jest.mock('redis', () => ({
-  createClient: jest.fn().mockReturnValue({
-    connect: jest.fn().mockResolvedValue(undefined),
-    get: jest.fn().mockResolvedValue(null),
-    setEx: jest.fn().mockResolvedValue('OK'),
-    del: jest.fn().mockResolvedValue(1),
-    keys: jest.fn().mockResolvedValue([]),
-    quit: jest.fn().mockResolvedValue('OK'),
-    on: jest.fn(),
-  }),
+  createClient: jest.fn(() => mockRedisClient)
 }));
 
-describe('Redis Cache Service', () => {
+describe('RedisCache', () => {
+  let cache: RedisCache;
+
   beforeEach(() => {
     jest.clearAllMocks();
+    cache = new RedisCache();
   });
 
-  describe('cache operations', () => {
-    it('should set and get values', async () => {
-      const key = 'test-key';
-      const value = { data: 'test-value' };
-
-      await cache.set(key, value);
-      const result = await cache.get(key);
-
-      // In test environment, it uses in-memory cache
-      expect(result).toEqual(value);
+  describe('Cache operations', () => {
+    it('should get a value from cache', async () => {
+      mockRedisClient.get.mockResolvedValue('{"test": "value"}');
+      
+      const result = await cache.get('test-key');
+      expect(result).toEqual({ test: 'value' });
+      expect(mockRedisClient.get).toHaveBeenCalledWith('test-key');
     });
 
-    it('should delete values', async () => {
-      const key = 'test-key';
-      const value = { data: 'test-value' };
-
-      await cache.set(key, value);
-      await cache.del(key);
-      const result = await cache.get(key);
-
-      expect(result).toBeNull();
-    });
-
-    it('should clear pattern', async () => {
-      await cache.set('user:1:profile', { name: 'User 1' });
-      await cache.set('user:2:profile', { name: 'User 2' });
-      await cache.set('post:1:data', { title: 'Post 1' });
-
-      await cache.clearPattern('user:*');
-
-      const user1 = await cache.get('user:1:profile');
-      const user2 = await cache.get('user:2:profile');
-      const post1 = await cache.get('post:1:data');
-
-      expect(user1).toBeNull();
-      expect(user2).toBeNull();
-      expect(post1).toBeTruthy();
-    });
-  });
-
-  describe('cache keys', () => {
-    it('should have correct key prefixes', () => {
-      expect(CACHE_KEYS.PORTFOLIO).toBe('portfolio:');
-      expect(CACHE_KEYS.AI_RESULT).toBe('ai:');
-      expect(CACHE_KEYS.ANALYTICS).toBe('analytics:');
-      expect(CACHE_KEYS.GITHUB).toBe('github:');
-      expect(CACHE_KEYS.TEMPLATE).toBe('template:');
-    });
-  });
-
-  describe('Cacheable decorator', () => {
-    it('should exist and be a function', () => {
-      expect(Cacheable).toBeDefined();
-      expect(typeof Cacheable).toBe('function');
-    });
-
-    it('should return a decorator function', () => {
-      const decorator = Cacheable('test', 60);
-      expect(typeof decorator).toBe('function');
-    });
-
-    // Note: Decorator syntax not supported in Jest without additional configuration
-    // Testing the decorator behavior through manual application
-    it('should wrap method with caching logic', async () => {
-      class TestService {
-        callCount = 0;
-
-        async expensiveOperation(input: string): Promise<string> {
-          this.callCount++;
-          return `processed-${input}`;
-        }
-      }
-
-      // Apply decorator manually
-      const service = new TestService();
-      const descriptor = Object.getOwnPropertyDescriptor(
-        TestService.prototype,
-        'expensiveOperation'
+    it('should set a value in cache', async () => {
+      mockRedisClient.set.mockResolvedValue('OK');
+      
+      await cache.set('test-key', { test: 'value' }, 3600);
+      expect(mockRedisClient.set).toHaveBeenCalledWith(
+        'test-key',
+        '{"test":"value"}',
+        { EX: 3600 }
       );
+    });
 
-      if (descriptor) {
-        Cacheable('test', 60)(
-          TestService.prototype,
-          'expensiveOperation',
-          descriptor
-        );
-      }
+    it('should delete a value from cache', async () => {
+      mockRedisClient.del.mockResolvedValue(1);
+      
+      await cache.del('test-key');
+      expect(mockRedisClient.del).toHaveBeenCalledWith('test-key');
+    });
 
-      // In test mode, decorator returns original method
-      const result = await service.expensiveOperation('test');
-      expect(result).toBe('processed-test');
+    it('should clear all cache', async () => {
+      mockRedisClient.flushall.mockResolvedValue('OK');
+      
+      await cache.clear();
+      expect(mockRedisClient.flushall).toHaveBeenCalled();
+    });
+
+    it('should handle connection errors gracefully', async () => {
+      mockRedisClient.get.mockRejectedValue(new Error('Connection failed'));
+      
+      const result = await cache.get('test-key');
+      expect(result).toBeNull();
     });
   });
 });

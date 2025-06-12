@@ -1,3 +1,4 @@
+import { createMockPortfolio, createMockUser } from '../utils/test-helpers';
 /**
  * Tests for DragDropProvider component
  */
@@ -63,7 +64,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Basic Rendering', () => {
-    it('should render drag drop context', () => {
+    it('should render drag drop context', async () => {
       render(
         <DragDropProvider>
           {mockItems.map(item => (
@@ -75,7 +76,7 @@ describe('DragDropProvider', () => {
       expect(screen.getByTestId('drag-drop-context')).toBeInTheDocument();
     });
 
-    it('should render all items', () => {
+    it('should render all items', async () => {
       render(
         <DragDropProvider>
           {mockItems.map(item => (
@@ -89,7 +90,7 @@ describe('DragDropProvider', () => {
       expect(screen.getByText('Item 3')).toBeInTheDocument();
     });
 
-    it('should render with custom droppable ID', () => {
+    it('should render with custom droppable ID', async () => {
       render(
         <DragDropProvider>
           {mockItems.map(item => (
@@ -124,7 +125,7 @@ describe('DragDropProvider', () => {
       ]);
     });
 
-    it('should maintain item order when dropped in same position', () => {
+    it('should maintain item order when dropped in same position', async () => {
       const onDragEnd = jest.fn();
 
       render(
@@ -150,7 +151,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Custom Rendering', () => {
-    it('should render custom item components', () => {
+    it('should render custom item components', async () => {
       render(
         <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
           {(item: any) => (
@@ -166,7 +167,7 @@ describe('DragDropProvider', () => {
       expect(customItems).toHaveLength(3);
     });
 
-    it('should pass item data to render function', () => {
+    it('should pass item data to render function', async () => {
       const renderItem = jest.fn(item => (
         <div key={item.id}>{item.content}</div>
       ));
@@ -185,7 +186,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Empty State', () => {
-    it('should render empty state when no items', () => {
+    it('should render empty state when no items', async () => {
       render(
         <DragDropProvider
           items={[]}
@@ -199,7 +200,7 @@ describe('DragDropProvider', () => {
       expect(screen.getByText('No items to display')).toBeInTheDocument();
     });
 
-    it('should render default empty state', () => {
+    it('should render default empty state', async () => {
       render(
         <DragDropProvider items={[]} onReorder={mockOnReorder as any}>
           {item => <div key={item.id}>{item.content}</div>}
@@ -211,7 +212,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Disabled State', () => {
-    it('should disable drag and drop when disabled prop is true', () => {
+    it('should disable drag and drop when disabled prop is true', async () => {
       render(
         <DragDropProvider
           items={mockItems as any}
@@ -228,7 +229,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA attributes', () => {
+    it('should have proper ARIA attributes', async () => {
       render(
         <DragDropProvider>
           {mockItems.map(item => (
@@ -241,7 +242,7 @@ describe('DragDropProvider', () => {
       expect(droppable).toHaveAttribute('role', 'list');
     });
 
-    it('should announce drag operations to screen readers', () => {
+    it('should announce drag operations to screen readers', async () => {
       render(
         <DragDropProvider
           items={mockItems as any}
@@ -259,7 +260,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Performance', () => {
-    it('should not re-render unnecessarily', () => {
+    it('should not re-render unnecessarily', async () => {
       const renderItem = jest.fn(item => (
         <div key={item.id}>{item.content}</div>
       ));
@@ -285,7 +286,7 @@ describe('DragDropProvider', () => {
   });
 
   describe('Integration with DraggableItem', () => {
-    it('should work with DraggableItem component', () => {
+    it('should work with DraggableItem component', async () => {
       render(
         <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
           {((item: any, index: any) => (

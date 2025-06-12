@@ -1,3 +1,4 @@
+import { createMockPortfolio, createMockUser } from '../utils/test-helpers';
 
 // Mock hooks
 jest.mock('@/hooks/useDebounce', () => ({
@@ -100,12 +101,12 @@ const mockPortfolio = {
 describe('PortfolioEditor', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    portfolioService.getPortfolio.mockResolvedValue(mockPortfolio);
-    portfolioService.updatePortfolio.mockResolvedValue(mockPortfolio);
+    portfolioService.getPortfolio.mockResolvedValueOnce(mockPortfolio);
+    portfolioService.updatePortfolio.mockResolvedValueOnce(mockPortfolio);
   });
 
   describe('Loading State', () => {
-    test('shows loading state initially', () => {
+    test('shows loading state initially', async () => {
       portfolioService.getPortfolio.mockImplementation(
         () =>
           new Promise(resolve => setTimeout(() => resolve(mockPortfolio), 100))
@@ -184,7 +185,7 @@ describe('PortfolioEditor', () => {
         ).toBeInTheDocument();
       });
 
-      portfolioService.publishPortfolio.mockResolvedValue({
+      portfolioService.publishPortfolio.mockResolvedValueOnce({
         ...mockPortfolio,
         status: 'published',
       });
@@ -198,7 +199,7 @@ describe('PortfolioEditor', () => {
 
     test('unpublishes published portfolio', async () => {
       const publishedPortfolio = { ...mockPortfolio, status: 'published' };
-      portfolioService.getPortfolio.mockResolvedValue(publishedPortfolio);
+      portfolioService.getPortfolio.mockResolvedValueOnce(publishedPortfolio);
 
       renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
@@ -208,7 +209,7 @@ describe('PortfolioEditor', () => {
         ).toBeInTheDocument();
       });
 
-      portfolioService.unpublishPortfolio.mockResolvedValue({
+      portfolioService.unpublishPortfolio.mockResolvedValueOnce({
         ...publishedPortfolio,
         status: 'draft',
       });
@@ -294,7 +295,7 @@ describe('PortfolioEditor', () => {
         ).toBeInTheDocument();
       });
 
-      portfolioService.publishPortfolio.mockResolvedValue({
+      portfolioService.publishPortfolio.mockResolvedValueOnce({
         ...mockPortfolio,
         status: 'published',
       });

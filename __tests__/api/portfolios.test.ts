@@ -1,3 +1,32 @@
+
+const mockSupabaseClient = {
+  from: jest.fn().mockReturnValue({
+    select: jest.fn().mockReturnValue({
+      eq: jest.fn().mockReturnValue({
+        single: jest.fn().mockResolvedValue({ data: null, error: null })
+      })
+    }),
+    insert: jest.fn().mockResolvedValue({ data: null, error: null }),
+    update: jest.fn().mockReturnValue({
+      eq: jest.fn().mockResolvedValue({ data: null, error: null })
+    }),
+    delete: jest.fn().mockReturnValue({
+      eq: jest.fn().mockResolvedValue({ data: null, error: null })
+    })
+  }),
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ 
+      data: { user: { id: 'test-user-id' } }, 
+      error: null 
+    })
+  }
+};
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => mockSupabaseClient)
+}));
+
+import { createMockPortfolio, createMockUser } from '../utils/test-helpers';
 /**
  * Refactored Portfolio API test suite - optimized for performance
  */
@@ -73,14 +102,14 @@ const testData = {
 
 // Helper functions to reduce repetition
 const setupAuth = (user: any = testData.user) => {
-  mockSupabase.auth.getUser.mockResolvedValue({
+  mockSupabase.auth.getUser.mockResolvedValueOnce({
     data: { user },
     error: null,
   });
 };
 
 const setupAuthError = () => {
-  mockSupabase.auth.getUser.mockResolvedValue({
+  mockSupabase.auth.getUser.mockResolvedValueOnce({
     data: { user: null },
     error: null,
   });
@@ -121,7 +150,7 @@ describe('Portfolio API Routes - Optimized', () => {
       setupAuth();
 
       const createdPortfolio = { ...testData.portfolio, ...testData.createDto };
-      mockFromMethods.single.mockResolvedValue({
+      mockFromMethods.single.mockResolvedValueOnce({
         data: createdPortfolio,
         error: null,
       });
@@ -158,7 +187,7 @@ describe('Portfolio API Routes - Optimized', () => {
     describe('GET', () => {
       test('returns portfolio when authorized', async () => {
         setupAuth();
-        mockFromMethods.single.mockResolvedValue({
+        mockFromMethods.single.mockResolvedValueOnce({
           data: testData.portfolio,
           error: null,
         });
@@ -173,7 +202,7 @@ describe('Portfolio API Routes - Optimized', () => {
 
       test('returns 403 for unauthorized access', async () => {
         setupAuth({ id: 'different-user' });
-        mockFromMethods.single.mockResolvedValue({
+        mockFromMethods.single.mockResolvedValueOnce({
           data: testData.portfolio,
           error: null,
         });
@@ -228,7 +257,7 @@ describe('Portfolio API Routes - Optimized', () => {
 
         // Setup delete chain
         const deleteChain = {
-          eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+          eq: jest.fn().mockResolvedValueOnce({ data: null, error: null }),
         };
 
         mockSupabase.from.mockImplementationOnce(() => ({
@@ -264,7 +293,7 @@ describe('Portfolio API Routes - Optimized', () => {
 
     test('handles not found errors', async () => {
       setupAuth();
-      mockFromMethods.single.mockResolvedValue({
+      mockFromMethods.single.mockResolvedValueOnce({
         data: null,
         error: { code: 'PGRST116' },
       });
