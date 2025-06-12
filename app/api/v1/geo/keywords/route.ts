@@ -364,7 +364,7 @@ function getTrendingKeywordsByIndustry(industry: string): string[] {
     ],
   };
 
-  return trendingByIndustry[industry.toLowerCase()] || trendingByIndustry.technology;
+  return trendingByIndustry[industry.toLowerCase()] ?? trendingByIndustry.technology;
 }
 
 /**
