@@ -2,7 +2,7 @@ import React from 'react';
 import './globals.css';
 import { Inter } from 'next/font/google';
 
-import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { GlobalErrorBoundary } from '@/components/shared/error-boundaries/GlobalErrorBoundary';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';

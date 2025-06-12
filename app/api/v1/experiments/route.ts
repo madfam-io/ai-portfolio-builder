@@ -9,6 +9,7 @@ import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { authenticateUser, hasPermission, unauthorizedResponse, forbiddenResponse } from '@/lib/api/middleware/auth';
 
 import type { CreateExperimentRequest } from '@/types/experiments';
 
@@ -53,6 +54,17 @@ const createExperimentSchema = z.object({
  */
 export async function GET(request: NextRequest) {
   try {
+    // Authenticate user
+    const user = await authenticateUser(request);
+    if (!user) {
+      return unauthorizedResponse();
+    }
+
+    // Check permissions
+    if (!hasPermission(user, 'experiments:view')) {
+      return forbiddenResponse();
+    }
+
     const supabase = await createClient();
 
     if (!supabase) {
@@ -141,6 +153,17 @@ export async function GET(request: NextRequest) {
  */
 export async function POST(request: NextRequest) {
   try {
+    // Authenticate user
+    const user = await authenticateUser(request);
+    if (!user) {
+      return unauthorizedResponse();
+    }
+
+    // Check permissions
+    if (!hasPermission(user, 'experiments:manage')) {
+      return forbiddenResponse();
+    }
+
     const supabase = await createClient();
 
     if (!supabase) {
@@ -149,12 +172,6 @@ export async function POST(request: NextRequest) {
         { status: 503 }
       );
     }
-
-    // TODO: Add authentication check
-    // const { user } = await supabase.auth.getUser();
-    // if (!user || !hasPermission(user, 'experiments:manage')) {
-    //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    // }
 
     const body = await request.json();
     const validatedData = createExperimentSchema.parse(
@@ -187,7 +204,7 @@ export async function POST(request: NextRequest) {
         secondary_metrics: validatedData.secondaryMetrics || [],
         start_date: validatedData.startDate,
         end_date: validatedData.endDate,
-        created_by: 'system', // TODO: Use actual user ID
+        created_by: user.id,
       })
       .select()
       .single();

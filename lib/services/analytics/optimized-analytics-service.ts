@@ -5,19 +5,26 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
 
 import type { Repository, PullRequest, Contributor } from '@/types/analytics';
 
-// TODO: Create GitHub analytics client
-// import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
-
 export class OptimizedAnalyticsService {
   private userId: string;
-  // private githubClient: GitHubAnalyticsClient;
+  private githubClient: GitHubAnalyticsClient | null = null;
 
-  constructor(userId: string, githubClient?: any) {
+  constructor(userId: string) {
     this.userId = userId;
-    // this.githubClient = githubClient;
+  }
+
+  /**
+   * Initialize GitHub client lazily
+   */
+  private async getGitHubClient(): Promise<GitHubAnalyticsClient> {
+    if (!this.githubClient) {
+      this.githubClient = await GitHubAnalyticsClient.fromUserId(this.userId);
+    }
+    return this.githubClient;
   }
 
   /**
@@ -41,18 +48,28 @@ export class OptimizedAnalyticsService {
         throw new Error('No GitHub integration found');
       }
 
-      // TODO: Implement GitHub client
       // Fetch repositories from GitHub
-      // const githubRepos = await this.githubClient.fetchRepositories();
-
-      // Mock data for now
-      const githubRepos: any[] = [];
+      const githubClient = await this.getGitHubClient();
+      const githubRepos = await githubClient.fetchRepositories();
 
       // Transform all repositories at once
-      const repoData = githubRepos.map((githubRepo: any) => ({
-        // TODO: Implement proper transformation
-        id: githubRepo.id,
+      const repoData = githubRepos.map((githubRepo) => ({
+        github_id: githubRepo.id.toString(),
         name: githubRepo.name,
+        full_name: githubRepo.full_name,
+        description: githubRepo.description,
+        private: githubRepo.private,
+        fork: githubRepo.fork,
+        created_at: githubRepo.created_at,
+        updated_at: githubRepo.updated_at,
+        pushed_at: githubRepo.pushed_at,
+        size: githubRepo.size,
+        stargazers_count: githubRepo.stargazers_count,
+        watchers_count: githubRepo.watchers_count,
+        language: githubRepo.language,
+        forks_count: githubRepo.forks_count,
+        open_issues_count: githubRepo.open_issues_count,
+        default_branch: githubRepo.default_branch,
         user_id: this.userId,
         github_integration_id: integration.id,
         last_synced_at: new Date().toISOString(),
@@ -99,29 +116,26 @@ export class OptimizedAnalyticsService {
 
     try {
       // Fetch all pull requests from GitHub
-      const githubPRs = await this.githubClient.fetchPullRequests(
-        repository.owner,
-        repository.name,
-        { state: 'all' }
-      );
-
-      // Fetch detailed info for all PRs in parallel
-      const detailedPRPromises = githubPRs.map(pr =>
-        this.githubClient.fetchPullRequestDetails(
-          repository.owner,
-          repository.name,
-          pr.number
-        )
-      );
-
-      const detailedPRs = await Promise.all(detailedPRPromises);
+      const githubClient = await this.getGitHubClient();
+      const [owner, repo] = repository.full_name.split('/');
+      const githubPRs = await githubClient.fetchPullRequests(owner, repo);
 
       // Transform all PRs at once
-      const prData = detailedPRs.map((detailedPR: any) => ({
-        // TODO: Implement proper PR transformation
-        id: detailedPR.id,
+      const prData = githubPRs.map((pr) => ({
+        github_id: pr.id.toString(),
         repository_id: repositoryId,
-        // Add other required fields
+        number: pr.number,
+        title: pr.title,
+        state: pr.state,
+        created_at: pr.created_at,
+        updated_at: pr.updated_at,
+        closed_at: pr.closed_at,
+        merged_at: pr.merged_at,
+        author_login: pr.user.login,
+        author_avatar_url: pr.user.avatar_url,
+        additions: pr.additions,
+        deletions: pr.deletions,
+        changed_files: pr.changed_files,
       }));
 
       // Batch upsert all pull requests
@@ -158,32 +172,17 @@ export class OptimizedAnalyticsService {
 
     try {
       // Fetch contributors from GitHub
-      const githubContributors = await this.githubClient.fetchContributors(
-        repository.owner,
-        repository.name
-      );
-
-      // Fetch detailed user info for all contributors in parallel
-      const userDetailsPromises = githubContributors.map(contributor =>
-        this.githubClient.fetchUser(contributor.login)
-      );
-
-      const userDetailsList = await Promise.all(userDetailsPromises);
+      const githubClient = await this.getGitHubClient();
+      const [owner, repo] = repository.full_name.split('/');
+      const githubContributors = await githubClient.fetchContributors(owner, repo);
 
       // Prepare contributor data
-      const contributorData = userDetailsList.map(userDetails => ({
-        github_id: userDetails.githubId,
-        login: userDetails.login,
-        name: userDetails.name,
-        email: userDetails.email,
-        avatar_url: userDetails.avatarUrl,
-        company: userDetails.company,
-        location: userDetails.location,
-        bio: userDetails.bio,
-        public_repos: userDetails.publicRepos,
-        followers: userDetails.followers,
-        following: userDetails.following,
-        github_created_at: userDetails.githubCreatedAt,
+      const contributorData = githubContributors.map(contributor => ({
+        github_id: contributor.id.toString(),
+        username: contributor.login,
+        avatar_url: contributor.avatar_url,
+        profile_url: `https://github.com/${contributor.login}`,
+        type: contributor.type,
         last_seen_at: new Date().toISOString(),
       }));
 
@@ -318,12 +317,27 @@ export class OptimizedAnalyticsService {
   }
 
   /**
-   * Get top contributors with single query
+   * Get top contributors across all user repositories
    */
-  async getTopContributors(): Promise<Contributor[]> {
+  async getTopContributors(repositoryIds?: string[]): Promise<Contributor[]> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
+    }
+
+    // If no repository IDs provided, fetch all user repositories
+    let repoIds = repositoryIds;
+    if (!repoIds || repoIds.length === 0) {
+      const { data: repos } = await supabase
+        .from('repositories')
+        .select('id')
+        .eq('user_id', this.userId);
+      
+      repoIds = repos?.map(r => r.id) || [];
+    }
+
+    if (repoIds.length === 0) {
+      return [];
     }
 
     const { data, error } = await supabase
@@ -331,10 +345,17 @@ export class OptimizedAnalyticsService {
       .select(
         `
         commit_count,
-        contributors (*)
+        contributor_id,
+        contributors (
+          id,
+          github_id,
+          username,
+          avatar_url,
+          profile_url
+        )
       `
       )
-      .in('repository_id', [])  // TODO: Fix this query properly
+      .in('repository_id', repoIds)
       .order('commit_count', { ascending: false })
       .limit(10);
 
@@ -343,7 +364,15 @@ export class OptimizedAnalyticsService {
       throw error;
     }
 
-    return data.map(d => d.contributors).flat() as Contributor[];
+    // Transform to proper Contributor type
+    return (data || []).map(item => ({
+      id: item.contributors.id,
+      github_id: item.contributors.github_id,
+      username: item.contributors.username,
+      avatar_url: item.contributors.avatar_url,
+      profile_url: item.contributors.profile_url,
+      commit_count: item.commit_count,
+    })) as Contributor[];
   }
 
   /**
