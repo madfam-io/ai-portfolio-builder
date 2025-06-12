@@ -33,12 +33,12 @@ export function AIEnhancementButton({
   onEnhanced,
   className = '',
   disabled = false,
-}: AIEnhancementButtonProps) {
+}: AIEnhancementButtonProps): React.ReactElement {
   const { t } = useLanguage();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [lastEnhanced, setLastEnhanced] = useState<string | null>(null);
 
-  const handleEnhance = async () => {
+  const handleEnhance = async (): Promise<void> => {
     if (!content.trim() || isEnhancing || disabled) return;
 
     setIsEnhancing(true);
@@ -78,7 +78,7 @@ export function AIEnhancementButton({
           : t.aiEnhancementFailed;
 
       // Show toast notification
-      showToast.error(errorMessage);
+      showToast.error(errorMessage || 'Enhancement failed');
     } finally {
       setIsEnhancing(false);
     }
@@ -125,6 +125,16 @@ export function AIEnhancementButton({
 }
 
 // Model Selection Modal Component
+interface AIModel {
+  id: string;
+  name: string;
+  capabilities: string[];
+  costPerRequest: number;
+  avgResponseTime: number;
+  qualityRating: number;
+  isRecommended?: boolean;
+}
+
 interface ModelSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -139,9 +149,9 @@ export function ModelSelectionModal({
   taskType,
   currentModel,
   onModelChange,
-}: ModelSelectionModalProps) {
+}: ModelSelectionModalProps): React.ReactElement | null {
   const { t } = useLanguage();
-  const [availableModels, setAvailableModels] = useState<any[]>([]);
+  const [availableModels, setAvailableModels] = useState<AIModel[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadAvailableModels = React.useCallback(async () => {
@@ -162,7 +172,7 @@ export function ModelSelectionModal({
     }
   }, [isOpen, loadAvailableModels]);
 
-  const handleModelSelect = async (modelId: string) => {
+  const handleModelSelect = async (modelId: string): Promise<void> => {
     try {
       await aiClient.updateModelSelection(taskType, modelId);
       onModelChange(modelId);
@@ -214,7 +224,7 @@ export function ModelSelectionModal({
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {model.id}
                     </p>
-                    {model.isRecommended && (
+                    {model.isRecommended === true && (
                       <span className="inline-block mt-1 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
                         {t.recommended || 'Recommended'}
                       </span>

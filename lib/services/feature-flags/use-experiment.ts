@@ -10,6 +10,7 @@
 import { usePathname } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 
+import { logger } from '@/lib/utils/logger';
 import type {
   GetActiveExperimentResponse,
   ComponentConfig,
@@ -67,7 +68,7 @@ export function useExperiment(): ExperimentContext {
             variantId: data.variantId,
             variantName: data.variantName,
             components: data.components,
-            themeOverrides: data.themeOverrides,
+            themeOverrides: data.themeOverrides as Record<string, string | number | boolean>,
             isLoading: false,
           });
         } else {

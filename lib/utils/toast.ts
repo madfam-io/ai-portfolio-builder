@@ -3,6 +3,7 @@
  * Provides a simple API for showing notifications without using alert()
  */
 
+import React from 'react';
 import toast from 'react-hot-toast';
 
 interface ToastOptions {
@@ -55,7 +56,18 @@ export const showToast = {
   },
 
   custom: (message: React.ReactNode, options?: ToastOptions) => {
-    toast.custom(message, { ...defaultOptions, ...options });
+    if (message === undefined || message === null) {
+      return;
+    }
+    // react-hot-toast custom method accepts ReactNode directly
+    // We need to ensure it's a valid renderable type
+    if (typeof message === 'number' || typeof message === 'bigint') {
+      toast.custom(String(message), { ...defaultOptions, ...options });
+    } else {
+      // Type assertion is necessary due to react-hot-toast types
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.custom(message as any, { ...defaultOptions, ...options });
+    }
   },
 };
 
