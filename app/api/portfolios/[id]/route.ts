@@ -15,7 +15,6 @@ import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
-import { Portfolio } from '@/types/portfolio';
 
 interface RouteParams {
   params: {
@@ -353,40 +352,3 @@ export async function DELETE(
   }
 }
 
-/**
- * Transforms database portfolio object to API format
- * Converts snake_case to camelCase and adjusts field names
- */
-function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
-  return {
-    id: dbPortfolio.id,
-    userId: dbPortfolio.user_id,
-    name: dbPortfolio.name,
-    title: dbPortfolio.title,
-    bio: dbPortfolio.bio,
-    tagline: dbPortfolio.tagline,
-    avatarUrl: dbPortfolio.avatar_url,
-    contact: dbPortfolio.contact || {},
-    social: dbPortfolio.social || {},
-    experience: dbPortfolio.experience || [],
-    education: dbPortfolio.education || [],
-    projects: dbPortfolio.projects || [],
-    skills: dbPortfolio.skills || [],
-    certifications: dbPortfolio.certifications || [],
-    template: dbPortfolio.template,
-    customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings,
-    status: dbPortfolio.status,
-    subdomain: dbPortfolio.subdomain,
-    customDomain: dbPortfolio.custom_domain,
-    views: dbPortfolio.views,
-    lastViewedAt: dbPortfolio.last_viewed_at
-      ? new Date(dbPortfolio.last_viewed_at)
-      : undefined,
-    createdAt: new Date(dbPortfolio.created_at),
-    updatedAt: new Date(dbPortfolio.updated_at),
-    publishedAt: dbPortfolio.published_at
-      ? new Date(dbPortfolio.published_at)
-      : undefined,
-  };
-}
