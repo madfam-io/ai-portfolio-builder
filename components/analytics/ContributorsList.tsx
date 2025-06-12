@@ -1,3 +1,10 @@
+/**
+ * @fileoverview ContributorsList Component
+ *
+ * Displays a ranked list of top contributors
+ * with commit counts and visual ranking
+ */
+
 'use client';
 
 import type { TopContributor } from '@/lib/types/analytics';

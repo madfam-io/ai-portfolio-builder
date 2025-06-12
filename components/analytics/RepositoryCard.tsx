@@ -1,3 +1,10 @@
+/**
+ * @fileoverview RepositoryCard Component
+ *
+ * Individual repository card with detailed information
+ * including description, metadata, and topics
+ */
+
 'use client';
 
 import { RepositoryMetadata } from './RepositoryMetadata';

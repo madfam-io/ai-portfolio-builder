@@ -1,3 +1,10 @@
+/**
+ * @fileoverview StatsCard Component
+ *
+ * Reusable stats card component for displaying metrics
+ * with icon, label, and value in a consistent format
+ */
+
 'use client';
 
 import { ReactNode } from 'react';

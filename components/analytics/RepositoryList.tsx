@@ -1,3 +1,10 @@
+/**
+ * @fileoverview RepositoryList Component
+ *
+ * Displays a list of GitHub repositories with metadata
+ * and navigation to detailed repository analytics
+ */
+
 'use client';
 
 import { useRouter } from 'next/navigation';

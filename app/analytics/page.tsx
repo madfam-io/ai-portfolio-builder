@@ -1,3 +1,10 @@
+/**
+ * @fileoverview Analytics Dashboard Page
+ *
+ * Main analytics dashboard for GitHub repository insights.
+ * Provides overview metrics, repository selection, and visualizations.
+ */
+
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -42,12 +49,16 @@ interface DashboardState {
   syncing: boolean;
 }
 
+/**
+ * Analytics Dashboard Component
+ * Handles GitHub integration, data fetching, and visualization
+ */
 function AnalyticsDashboard(): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
   usePerformanceTracking('AnalyticsDashboard');
 
-  // State management
+  // Dashboard state management
   const [dashboard, setDashboard] = useState<DashboardState>({
     data: null,
     loading: true,
@@ -108,6 +119,7 @@ function AnalyticsDashboard(): React.ReactElement {
 
   /**
    * Fetch dashboard data from API
+   * Handles authentication state and error cases
    */
   const fetchDashboardData = async (): Promise<void> => {
     try {
@@ -117,6 +129,7 @@ function AnalyticsDashboard(): React.ReactElement {
       const result: DashboardApiResponse = await response.json();
 
       if (!response.ok) {
+        // Check if user needs to authenticate with GitHub
         if (result.requiresAuth === true) {
           setDashboard(prev => ({
             ...prev,
@@ -207,12 +220,13 @@ function AnalyticsDashboard(): React.ReactElement {
   /**
    * Colors for charts
    */
+  // Chart color theme - consistent with brand colors
   const chartColors = {
-    primary: '#8b5cf6', // Purple theme
-    secondary: '#06b6d4',
-    accent: '#10b981',
-    warning: '#f59e0b',
-    danger: '#ef4444',
+    primary: '#8b5cf6', // Purple - main brand color
+    secondary: '#06b6d4', // Cyan - secondary accent
+    accent: '#10b981', // Green - positive metrics
+    warning: '#f59e0b', // Amber - warnings
+    danger: '#ef4444', // Red - errors/critical
   };
 
   // Loading state

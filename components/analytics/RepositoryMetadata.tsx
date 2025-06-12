@@ -1,3 +1,10 @@
+/**
+ * @fileoverview RepositoryMetadata Component
+ *
+ * Displays repository metadata including language, stars,
+ * forks, commits, and last update time with visual indicators
+ */
+
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
@@ -50,6 +57,11 @@ export function RepositoryMetadata({
   );
 }
 
+/**
+ * Get the GitHub language color for visual consistency
+ * @param language - Programming language name
+ * @returns Hex color code for the language
+ */
 function getLanguageColor(language: string): string {
   const colors: Record<string, string> = {
     TypeScript: '#3178c6',
@@ -70,5 +82,5 @@ function getLanguageColor(language: string): string {
     Vue: '#41b883',
     React: '#61dafb',
   };
-  return colors[language] ?? '#8b949e';
+  return colors[language] ?? '#8b949e'; // Default gray for unknown languages
 }
