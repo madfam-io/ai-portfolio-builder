@@ -174,3 +174,35 @@ export interface ModelResponse {
     responseTime: number;
   };
 }
+
+// GEO Enhancement request
+export interface GEOEnhancementRequest {
+  content: string;
+  contentType: 'bio' | 'project' | 'experience' | 'skill';
+  geoSettings: {
+    primaryKeyword: string;
+    secondaryKeywords: string[];
+    targetAudience: 'employers' | 'clients' | 'collaborators';
+    industry: string;
+    contentGoals: string[];
+    enableStructuredData?: boolean;
+    enableKeywordOptimization?: boolean;
+  };
+}
+
+// GEO Enhancement response
+export interface GEOEnhancementResponse {
+  enhancedContent: string;
+  metadata: {
+    title: string;
+    metaDescription: string;
+    keywords: string[];
+  };
+  geoScore: {
+    overall: number;
+    keyword: number;
+    readability: number;
+    structure: number;
+  };
+  suggestions: string[];
+}
