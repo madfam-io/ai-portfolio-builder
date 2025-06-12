@@ -71,7 +71,7 @@ export async function GET(): Promise<Response> {
     return NextResponse.json({
       success: true,
       data: modelSelection,
-      isDefault: !preferences,
+      isDefault: preferences === null || preferences === undefined,
     });
   } catch (error) {
     logger.error(
@@ -165,7 +165,7 @@ export async function PUT(request: NextRequest): Promise<Response> {
         preferences: updatedPreferences,
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       'Failed to update model selection',
       error instanceof Error ? error : { error }

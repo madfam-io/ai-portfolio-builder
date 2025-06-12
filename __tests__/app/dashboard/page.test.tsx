@@ -11,7 +11,7 @@ jest.mock('@/lib/contexts/AuthContext', () => ({
 }));
 
 // Mock next/navigation
-const mockPush = jest.fn();
+const mockPush = jest.fn() as jest.Mock;
 const mockRouter = {
   push: mockPush,
   replace: jest.fn(),
@@ -140,7 +140,7 @@ mockUseAuth.mockReturnValue({
 });
 
 // Mock fetch for API calls
-const mockFetch = jest.fn();
+const mockFetch = jest.fn() as jest.Mock;
 global.fetch = mockFetch;
 
 describe('Dashboard Page', () => {
@@ -170,6 +170,14 @@ describe('Dashboard Page', () => {
   ];
 
   beforeEach(() => {
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    };
+    global.localStorage = localStorageMock as any;
     jest.clearAllMocks();
     mockPush.mockClear();
 
@@ -346,7 +354,11 @@ describe('Dashboard Page', () => {
       const deleteButtons = await screen.findAllByTitle('Delete portfolio');
 
       // Click delete on first portfolio
-      await user.click(deleteButtons[0]);
+      const firstDeleteButton = deleteButtons[0];
+      if (!firstDeleteButton) {
+        throw new Error('No delete button found');
+      }
+      await user.click(firstDeleteButton);
 
       expect(window.confirm).toHaveBeenCalled();
       expect(mockFetch).toHaveBeenCalledWith('/api/v1/portfolios/1', {

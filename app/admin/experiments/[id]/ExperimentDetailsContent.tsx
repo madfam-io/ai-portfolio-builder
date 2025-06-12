@@ -17,6 +17,7 @@ import {
 
 import ConversionChart from '@/components/admin/experiments/ConversionChart';
 import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
+
 import { VariantTableRow } from './VariantTableRow';
 
 import type {
@@ -283,7 +284,9 @@ export function ExperimentDetailsContent({
                       key={result.variantId}
                       result={result}
                       variant={variant}
-                      isWinner={result.variantId === analyticsData.results.winner}
+                      isWinner={
+                        result.variantId === analyticsData.results.winner
+                      }
                     />
                   );
                 })}

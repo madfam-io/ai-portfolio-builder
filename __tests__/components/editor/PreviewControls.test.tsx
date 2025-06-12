@@ -11,12 +11,12 @@ import React from 'react';
 import { PreviewControls } from '@/components/editor/PreviewControls';
 
 describe('PreviewControls', () => {
-  const mockOnPreviewModeChange = jest.fn();
-  const mockOnZoomChange = jest.fn();
-  const mockOnToggleFullscreen = jest.fn();
-  const mockOnToggleSectionBorders = jest.fn();
-  const mockOnToggleInteractiveElements = jest.fn();
-  const mockOnRefresh = jest.fn();
+  const mockOnPreviewModeChange = jest.fn() as jest.Mock;
+  const mockOnZoomChange = jest.fn() as jest.Mock;
+  const mockOnToggleFullscreen = jest.fn() as jest.Mock;
+  const mockOnToggleSectionBorders = jest.fn() as jest.Mock;
+  const mockOnToggleInteractiveElements = jest.fn() as jest.Mock;
+  const mockOnRefresh = jest.fn() as jest.Mock;
 
   const defaultProps = {
     previewMode: 'desktop' as const,

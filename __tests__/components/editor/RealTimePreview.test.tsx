@@ -1,3 +1,19 @@
+
+// Mock hooks
+jest.mock('@/hooks/useDebounce', () => ({
+  useDebounce: (value: any) => value,
+}));
+
+jest.mock('@/hooks/useRealTimePreview', () => ({
+  useRealTimePreview: () => ({
+    isConnected: true,
+    isLoading: false,
+    error: null,
+    previewUrl: 'http://localhost:3000/preview/123',
+    updatePreview: jest.fn(),
+    reconnect: jest.fn(),
+  }),
+}));
 /**
  * Tests for RealTimePreview component
  */
@@ -48,7 +64,7 @@ describe('RealTimePreview', () => {
     updatedAt: new Date(),
   };
 
-  const mockOnTemplateChange = jest.fn();
+  const mockOnTemplateChange = jest.fn() as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -57,7 +73,7 @@ describe('RealTimePreview', () => {
   describe('Basic Rendering', () => {
     it('should render preview iframe', () => {
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const iframe = screen.getByTitle('Portfolio Preview');
@@ -70,7 +86,7 @@ describe('RealTimePreview', () => {
 
     it('should render device selector', () => {
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(
@@ -86,7 +102,7 @@ describe('RealTimePreview', () => {
 
     it('should render template selector', () => {
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const templateSelector = screen.getByLabelText(/template/i);
@@ -100,7 +116,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const tabletButton = screen.getByRole('button', { name: /tablet/i });
@@ -114,7 +130,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const mobileButton = screen.getByRole('button', { name: /mobile/i });
@@ -126,7 +142,7 @@ describe('RealTimePreview', () => {
 
     it('should maintain aspect ratio in different views', () => {
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const iframe = screen.getByTitle('Portfolio Preview');
@@ -141,7 +157,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const templateSelector = screen.getByLabelText(/template/i);
@@ -152,7 +168,7 @@ describe('RealTimePreview', () => {
 
     it('should update preview when template changes', async () => {
       const { useRealTimePreview } = require('@/hooks/useRealTimePreview');
-      const mockUpdatePreview = jest.fn();
+      const mockUpdatePreview = jest.fn() as jest.Mock;
       useRealTimePreview.mockReturnValue({
         isConnected: true,
         isLoading: false,
@@ -165,7 +181,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const templateSelector = screen.getByLabelText(/template/i);
@@ -180,7 +196,7 @@ describe('RealTimePreview', () => {
   describe('Real-Time Updates', () => {
     it('should update preview when portfolio data changes', async () => {
       const { useRealTimePreview } = require('@/hooks/useRealTimePreview');
-      const mockUpdatePreview = jest.fn();
+      const mockUpdatePreview = jest.fn() as jest.Mock;
       useRealTimePreview.mockReturnValue({
         isConnected: true,
         isLoading: false,
@@ -191,7 +207,7 @@ describe('RealTimePreview', () => {
       });
 
       const { rerender } = render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const updatedPortfolio = {
@@ -202,7 +218,7 @@ describe('RealTimePreview', () => {
       rerender(
         <RealTimePreview
           portfolio={updatedPortfolio}
-          onTemplateChange={mockOnTemplateChange}
+          template="developer"
         />
       );
 
@@ -217,7 +233,7 @@ describe('RealTimePreview', () => {
       useDebounce.mockReturnValue(debouncedValue);
 
       const { useRealTimePreview } = require('@/hooks/useRealTimePreview');
-      const mockUpdatePreview = jest.fn();
+      const mockUpdatePreview = jest.fn() as jest.Mock;
       useRealTimePreview.mockReturnValue({
         isConnected: true,
         isLoading: false,
@@ -228,7 +244,7 @@ describe('RealTimePreview', () => {
       });
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(useDebounce).toHaveBeenCalledWith(mockPortfolio, 500);
@@ -248,7 +264,7 @@ describe('RealTimePreview', () => {
       });
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(screen.getByText(/loading preview/i)).toBeInTheDocument();
@@ -266,7 +282,7 @@ describe('RealTimePreview', () => {
       });
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(screen.getByText(/disconnected/i)).toBeInTheDocument();
@@ -277,7 +293,7 @@ describe('RealTimePreview', () => {
 
     it('should handle reconnection', async () => {
       const { useRealTimePreview } = require('@/hooks/useRealTimePreview');
-      const mockReconnect = jest.fn();
+      const mockReconnect = jest.fn() as jest.Mock;
       useRealTimePreview.mockReturnValue({
         isConnected: false,
         isLoading: false,
@@ -290,7 +306,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const reconnectButton = screen.getByRole('button', {
@@ -313,7 +329,7 @@ describe('RealTimePreview', () => {
       });
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(screen.getByText(/failed to connect/i)).toBeInTheDocument();
@@ -325,7 +341,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const refreshButton = screen.getByRole('button', { name: /refresh/i });
@@ -344,7 +360,7 @@ describe('RealTimePreview', () => {
       window.open = jest.fn();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const newWindowButton = screen.getByRole('button', {
@@ -362,7 +378,7 @@ describe('RealTimePreview', () => {
       const user = userEvent.setup();
 
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const fullscreenButton = screen.getByRole('button', {
@@ -382,7 +398,7 @@ describe('RealTimePreview', () => {
   describe('Accessibility', () => {
     it('should have proper ARIA labels', () => {
       render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       expect(screen.getByLabelText(/device preview/i)).toBeInTheDocument();
@@ -402,13 +418,13 @@ describe('RealTimePreview', () => {
       useRealTimePreview.mockReturnValue(mockHook);
 
       const { rerender } = render(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       // Change to disconnected
       mockHook.isConnected = false;
       rerender(
-        <RealTimePreview portfolio={mockPortfolio} template="developer" />
+        <RealTimePreview portfolio={mockPortfolio as any} template="developer" />
       );
 
       const statusAnnouncement = screen.getByRole('status');

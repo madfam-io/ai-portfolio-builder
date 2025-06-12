@@ -7,7 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { AIServiceError, QuotaExceededError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Simple AI usage logging function - defined at the bottom of file to avoid duplication
 
@@ -127,11 +129,14 @@ export async function POST(request: NextRequest): Promise<Response> {
         processingTime: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
-    console.error('Project optimization failed:', error);
+  } catch (error) {
+    logger.error(
+      'Project optimization failed',
+      error instanceof Error ? error : { error }
+    );
 
     // Handle specific AI service errors
-    if (error.name === 'AIServiceError') {
+    if (error instanceof AIServiceError) {
       return NextResponse.json(
         {
           error: 'AI processing failed',
@@ -142,7 +147,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    if (error.name === 'QuotaExceededError') {
+    if (error instanceof QuotaExceededError) {
       return NextResponse.json(
         { error: 'AI service quota exceeded. Please try again later.' },
         { status: 429 }
@@ -283,8 +288,11 @@ export async function PUT(request: NextRequest): Promise<Response> {
         },
       },
     });
-  } catch (error: any) {
-    console.error('Batch project optimization failed:', error);
+  } catch (error) {
+    logger.error(
+      'Batch project optimization failed',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -298,12 +306,12 @@ export async function PUT(request: NextRequest): Promise<Response> {
 async function logAIUsage(
   userId: string,
   operationType: string,
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 ): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      logger.error('Failed to create Supabase client for logging');
       return;
     }
 
@@ -314,7 +322,10 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log AI usage:', error);
+    logger.error(
+      'Failed to log AI usage',
+      error instanceof Error ? error : { error }
+    );
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

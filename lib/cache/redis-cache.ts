@@ -3,7 +3,7 @@
  * Provides caching layer for expensive operations
  */
 
-import Redis from 'redis';
+import * as redis from 'redis';
 
 import { logger } from '@/lib/utils/logger';
 
@@ -57,7 +57,7 @@ class InMemoryCache {
  * Redis cache service
  */
 class CacheService {
-  private client: Redis.RedisClientType | null = null;
+  private client: redis.RedisClientType | null = null;
   private fallback: InMemoryCache = new InMemoryCache();
   private connected = false;
 
@@ -71,7 +71,7 @@ class CacheService {
     }
 
     try {
-      this.client = Redis.createClient({
+      this.client = redis.createClient({
         url: process.env.REDIS_URL,
         socket: {
           reconnectStrategy: retries => {

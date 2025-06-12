@@ -122,20 +122,20 @@ const mockPortfolio: Portfolio = {
 describe('DesignerTemplate Component', () => {
   describe('Content Rendering', () => {
     test('renders designer name and title with creative styling', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
       expect(screen.getByText('Creative Designer')).toBeInTheDocument();
     });
 
     test('displays creative bio section', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/Award-winning designer/)).toBeInTheDocument();
     });
 
     test('shows tagline prominently', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('Bringing ideas to life through design')
@@ -145,21 +145,21 @@ describe('DesignerTemplate Component', () => {
 
   describe('Portfolio Gallery', () => {
     test('renders project gallery with images', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       const projectImages = screen.getAllByRole('img', { name: /project/i });
       expect(projectImages.length).toBeGreaterThanOrEqual(2);
     });
 
     test('displays project titles on hover', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Brand Redesign')).toBeInTheDocument();
       expect(screen.getByText('Mobile App UI')).toBeInTheDocument();
     });
 
     test('shows project technologies as tags', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Figma')).toBeInTheDocument();
       expect(screen.getByText('Photoshop')).toBeInTheDocument();
@@ -168,14 +168,14 @@ describe('DesignerTemplate Component', () => {
 
   describe('Visual Elements', () => {
     test('applies custom color scheme', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveStyle({ '--primary-color': '#ff6b6b' });
     });
 
     test('uses creative typography', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       const header = screen.getByRole('heading', { level: 1 });
       expect(header).toHaveClass('font-display');
@@ -184,14 +184,14 @@ describe('DesignerTemplate Component', () => {
 
   describe('Skills Visualization', () => {
     test('displays skills with visual indicators', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('UI/UX Design')).toBeInTheDocument();
       expect(screen.getByText('expert')).toBeInTheDocument();
     });
 
     test('shows skill categories', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       const skillsSection = screen.getByTestId('skills-section');
       expect(skillsSection).toContainElement(
@@ -202,14 +202,14 @@ describe('DesignerTemplate Component', () => {
 
   describe('Contact Section', () => {
     test('displays creative contact layout', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('jane@designstudio.com')).toBeInTheDocument();
       expect(screen.getByText('New York, NY')).toBeInTheDocument();
     });
 
     test('shows social media links with icons', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByRole('link', { name: /behance/i })).toHaveAttribute(
         'href',
@@ -220,7 +220,7 @@ describe('DesignerTemplate Component', () => {
 
   describe('Responsive Design', () => {
     test('adapts layout for mobile devices', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('md:grid');
@@ -259,7 +259,7 @@ describe('DesignerTemplate Component', () => {
 
   describe('Certifications Display', () => {
     test('shows certifications with issuer', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('Google UX Design Certificate')
@@ -270,7 +270,7 @@ describe('DesignerTemplate Component', () => {
 
   describe('Experience Timeline', () => {
     test('displays current position', () => {
-      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DesignerTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Lead Designer')).toBeInTheDocument();
       expect(screen.getByText('Design Studio')).toBeInTheDocument();

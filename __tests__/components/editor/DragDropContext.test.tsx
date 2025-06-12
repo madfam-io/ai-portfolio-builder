@@ -56,7 +56,7 @@ describe('DragDropProvider', () => {
     { id: '3', content: 'Item 3', order: 2 },
   ];
 
-  const mockOnReorder = jest.fn();
+  const mockOnReorder = jest.fn() as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -128,8 +128,8 @@ describe('DragDropProvider', () => {
       const onDragEnd = jest.fn();
 
       render(
-        <DragDropProvider items={mockItems} onReorder={onDragEnd}>
-          {item => <div key={item.id}>{item.content}</div>}
+        <DragDropProvider items={mockItems as any} onReorder={onDragEnd}>
+          {((item: any) => <div key={item.id}>{item.content}</div>) as any}
         </DragDropProvider>
       );
 
@@ -152,13 +152,13 @@ describe('DragDropProvider', () => {
   describe('Custom Rendering', () => {
     it('should render custom item components', () => {
       render(
-        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
-          {item => (
+        <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
+          {(item: any) => (
             <div key={item.id} className="custom-item">
               <span>{item.content}</span>
               <button>Edit</button>
             </div>
-          )}
+          ) as any}
         </DragDropProvider>
       );
 
@@ -172,8 +172,8 @@ describe('DragDropProvider', () => {
       ));
 
       render(
-        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
-          {renderItem}
+        <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
+          {renderItem as any}
         </DragDropProvider>
       );
 
@@ -189,7 +189,7 @@ describe('DragDropProvider', () => {
       render(
         <DragDropProvider
           items={[]}
-          onReorder={mockOnReorder}
+          onReorder={mockOnReorder as any}
           emptyState={<div>No items to display</div>}
         >
           {item => <div key={item.id}>{item.content}</div>}
@@ -201,7 +201,7 @@ describe('DragDropProvider', () => {
 
     it('should render default empty state', () => {
       render(
-        <DragDropProvider items={[]} onReorder={mockOnReorder}>
+        <DragDropProvider items={[]} onReorder={mockOnReorder as any}>
           {item => <div key={item.id}>{item.content}</div>}
         </DragDropProvider>
       );
@@ -214,8 +214,8 @@ describe('DragDropProvider', () => {
     it('should disable drag and drop when disabled prop is true', () => {
       render(
         <DragDropProvider
-          items={mockItems}
-          onReorder={mockOnReorder}
+          items={mockItems as any}
+          onReorder={mockOnReorder as any}
           disabled={true}
         >
           {item => <div key={item.id}>{item.content}</div>}
@@ -244,8 +244,8 @@ describe('DragDropProvider', () => {
     it('should announce drag operations to screen readers', () => {
       render(
         <DragDropProvider
-          items={mockItems}
-          onReorder={mockOnReorder}
+          items={mockItems as any}
+          onReorder={mockOnReorder as any}
           announceItem={item => `${item.content} grabbed`}
         >
           {item => <div key={item.id}>{item.content}</div>}
@@ -265,8 +265,8 @@ describe('DragDropProvider', () => {
       ));
 
       const { rerender } = render(
-        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
-          {renderItem}
+        <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
+          {renderItem as any}
         </DragDropProvider>
       );
 
@@ -274,8 +274,8 @@ describe('DragDropProvider', () => {
 
       // Re-render with same props
       rerender(
-        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
-          {renderItem}
+        <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
+          {renderItem as any}
         </DragDropProvider>
       );
 
@@ -287,12 +287,12 @@ describe('DragDropProvider', () => {
   describe('Integration with DraggableItem', () => {
     it('should work with DraggableItem component', () => {
       render(
-        <DragDropProvider items={mockItems} onReorder={mockOnReorder}>
-          {(item, index) => (
-            <DraggableItem key={item.id} id={item.id} index={index}>
+        <DragDropProvider items={mockItems as any} onReorder={mockOnReorder as any}>
+          {((item: any, index: any) => (
+            <DraggableItem key={item.id} index={index}>
               <div>{item.content}</div>
             </DraggableItem>
-          )}
+          )) as any}
         </DragDropProvider>
       );
 

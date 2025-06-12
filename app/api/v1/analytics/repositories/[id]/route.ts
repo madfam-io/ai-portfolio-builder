@@ -47,8 +47,11 @@ export async function GET(
 
     try {
       await analyticsService.initialize();
-    } catch (error: any) {
-      if (error.message.includes('No active GitHub integration')) {
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes('No active GitHub integration')
+      ) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },
           { status: 400 }
@@ -72,13 +75,14 @@ export async function GET(
       success: true,
       data: analytics,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to fetch repository analytics', {
       repositoryId: params.id,
-      error: error.message || 'Unknown error',
+      error: errorMessage,
     });
     return NextResponse.json(
-      { error: error.message || 'An unexpected error occurred' },
+      { error: errorMessage || 'An unexpected error occurred' },
       { status: 500 }
     );
   }
@@ -124,8 +128,11 @@ export async function POST(
 
     try {
       await analyticsService.initialize();
-    } catch (error: any) {
-      if (error.message.includes('No active GitHub integration')) {
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message.includes('No active GitHub integration')
+      ) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },
           { status: 400 }
@@ -143,7 +150,15 @@ export async function POST(
       );
     }
 
-    const results: any = {
+    const results: {
+      repositoryId: string;
+      synced: string[];
+      errors: Array<{
+        type: string;
+        error: string;
+      }>;
+      timestamp?: string;
+    } = {
       repositoryId,
       synced: [],
       errors: [],
@@ -154,14 +169,15 @@ export async function POST(
       try {
         await analyticsService.syncRepositoryMetrics(repositoryId);
         results.synced.push('metrics');
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync metrics', {
           repositoryId,
-          error: error.message || 'Unknown error',
+          error: errorMessage,
         });
         results.errors.push({
           type: 'metrics',
-          error: error.message || 'An unexpected error occurred',
+          error: errorMessage || 'An unexpected error occurred',
         });
       }
     }
@@ -171,14 +187,15 @@ export async function POST(
       try {
         await analyticsService.syncPullRequests(repositoryId);
         results.synced.push('pull_requests');
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync pull requests', {
           repositoryId,
-          error: error.message || 'Unknown error',
+          error: errorMessage,
         });
         results.errors.push({
           type: 'pull_requests',
-          error: error.message || 'An unexpected error occurred',
+          error: errorMessage || 'An unexpected error occurred',
         });
       }
     }
@@ -188,14 +205,15 @@ export async function POST(
       try {
         await analyticsService.syncContributors(repositoryId);
         results.synced.push('contributors');
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync contributors', {
           repositoryId,
-          error: error.message || 'Unknown error',
+          error: errorMessage,
         });
         results.errors.push({
           type: 'contributors',
-          error: error.message || 'An unexpected error occurred',
+          error: errorMessage || 'An unexpected error occurred',
         });
       }
     }
@@ -205,14 +223,15 @@ export async function POST(
       try {
         await analyticsService.syncCommitAnalytics(repositoryId);
         results.synced.push('commits');
-      } catch (error: any) {
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync commits', {
           repositoryId,
-          error: error.message || 'Unknown error',
+          error: errorMessage,
         });
         results.errors.push({
           type: 'commits',
-          error: error.message || 'An unexpected error occurred',
+          error: errorMessage || 'An unexpected error occurred',
         });
       }
     }
@@ -221,13 +240,14 @@ export async function POST(
       success: true,
       data: results,
     });
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to sync repository', {
       repositoryId: params.id,
-      error: error.message || 'Unknown error',
+      error: errorMessage,
     });
     return NextResponse.json(
-      { error: error.message || 'An unexpected error occurred' },
+      { error: errorMessage || 'An unexpected error occurred' },
       { status: 500 }
     );
   }

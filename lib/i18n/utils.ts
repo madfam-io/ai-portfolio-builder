@@ -31,12 +31,31 @@ export function flattenTranslations(
 ): FlattenedTranslations {
   const flattened: FlattenedTranslations = {};
 
+  // Helper function to recursively flatten objects
+  function flattenObject(obj: any, prefix = ''): void {
+    Object.entries(obj).forEach(([key, value]) => {
+      const newKey = prefix ? `${prefix}.${key}` : key;
+
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        !Array.isArray(value)
+      ) {
+        // Recursively flatten nested objects
+        flattenObject(value, newKey);
+      } else if (typeof value === 'string') {
+        // Only add string values to flattened object
+        flattened[newKey] = value;
+      }
+    });
+  }
+
   // Iterate through each namespace
   Object.entries(translations).forEach(([, values]) => {
-    // Add each translation to the flattened object
-    Object.entries(values).forEach(([key, value]) => {
-      flattened[key] = value as string;
-    });
+    // For each namespace, flatten its contents
+    if (typeof values === 'object' && values !== null) {
+      flattenObject(values);
+    }
   });
 
   return flattened;

@@ -11,6 +11,14 @@ import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Templates Component', () => {
   beforeEach(() => {
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    };
+    global.localStorage = localStorageMock as any;
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
   });

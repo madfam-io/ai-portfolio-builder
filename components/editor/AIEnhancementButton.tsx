@@ -62,12 +62,15 @@ function getEnhancementErrorMessage(
   t: Record<string, string>
 ): string {
   if (errorMsg.includes('Authentication')) {
-    return t.aiEnhancementRequiresAuth;
+    return (
+      t.aiEnhancementRequiresAuth ||
+      'Authentication required for AI enhancement'
+    );
   }
   if (errorMsg.includes('quota')) {
-    return t.aiQuotaExceeded;
+    return t.aiQuotaExceeded || 'AI quota exceeded';
   }
-  return t.aiEnhancementFailed;
+  return t.aiEnhancementFailed || 'AI enhancement failed';
 }
 
 // Helper function to get button styling

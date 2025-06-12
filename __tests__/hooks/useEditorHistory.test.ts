@@ -33,7 +33,7 @@ const mockInitialState: PortfolioEditorState = {
 
 describe('useEditorHistory', () => {
   it('should initialize with no undo/redo capability', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
 
     const { result } = renderHook(() =>
       useEditorHistory(mockInitialState, mockSetState)
@@ -44,7 +44,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should have correct undo/redo capability based on state', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
 
     // Test with no history - should not allow undo/redo
     const { result: result1 } = renderHook(() =>
@@ -96,7 +96,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should call setState when pushing to history', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
 
     const { result } = renderHook(() =>
       useEditorHistory(mockInitialState, mockSetState)
@@ -122,7 +122,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should limit history to 50 entries', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
     const stateWithFullHistory = {
       ...mockInitialState,
       history: Array(50)
@@ -152,7 +152,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should handle undo operation', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
     const stateWithHistory = {
       ...mockInitialState,
       portfolio: {
@@ -198,7 +198,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should handle redo operation', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
     const stateWithHistory = {
       ...mockInitialState,
       history: [
@@ -234,7 +234,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should not undo when no history available', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
 
     const { result } = renderHook(() =>
       useEditorHistory(mockInitialState, mockSetState)
@@ -253,7 +253,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should not redo when no future history available', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
     const stateWithHistory = {
       ...mockInitialState,
       history: [
@@ -283,7 +283,7 @@ describe('useEditorHistory', () => {
   });
 
   it('should clear future history when pushing after undo', () => {
-    const mockSetState = jest.fn();
+    const mockSetState = jest.fn() as jest.Mock;
     const stateWithHistory = {
       ...mockInitialState,
       history: [

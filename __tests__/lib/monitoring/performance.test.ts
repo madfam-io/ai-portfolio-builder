@@ -66,8 +66,8 @@ describe('Performance Monitoring', () => {
 
       const result = await measureAsyncOperation('test-operation', operation);
 
-      expect(result).toBe('result');
-      expect(operation).toHaveBeenCalled();
+      expect(result!).toBe('result');
+      expect(operation!).toHaveBeenCalled();
 
       const stats = getPerformanceStats();
       expect(stats['test-operation']).toBeDefined();

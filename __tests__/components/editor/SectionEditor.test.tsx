@@ -48,7 +48,6 @@ jest.mock('@/components/editor/DraggableItem', () => ({
 const mockPortfolio: Partial<Portfolio> = {
   experience: [
     {
-      id: '1',
       position: 'Software Engineer',
       company: 'Tech Corp',
       startDate: '2020-01',
@@ -59,17 +58,15 @@ const mockPortfolio: Partial<Portfolio> = {
   ],
   projects: [
     {
-      id: '1',
       title: 'Awesome Project',
       description: 'A really cool project',
       technologies: ['React', 'TypeScript'],
-      url: 'https://example.com',
+      link: 'https://example.com',
       github: 'https://github.com/example/project',
     },
   ],
   skills: [
     {
-      id: '1',
       name: 'JavaScript',
       level: 'advanced',
       category: 'technical',
@@ -77,7 +74,7 @@ const mockPortfolio: Partial<Portfolio> = {
   ],
 };
 
-const mockOnChange = jest.fn();
+const mockOnChange = jest.fn() as jest.Mock;
 
 const renderSectionEditor = (section: any, portfolio = mockPortfolio) => {
   return render(
@@ -85,7 +82,7 @@ const renderSectionEditor = (section: any, portfolio = mockPortfolio) => {
       <SectionEditor
         portfolio={portfolio as Portfolio}
         section={section}
-        onChange={mockOnChange}
+        onChange={mockOnChange as any}
       />
     </DragDropProvider>
   );

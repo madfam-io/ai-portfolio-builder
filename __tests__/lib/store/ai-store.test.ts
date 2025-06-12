@@ -13,7 +13,7 @@ describe('AI Store', () => {
     const { result } = renderHook(() => useAIStore());
     act(() => {
       result.current.clearHistory();
-      result.current.resetPreferences();
+      result.current.resetModelPreferences();
     });
   });
 
@@ -21,7 +21,7 @@ describe('AI Store', () => {
     it('should have correct initial state', () => {
       const { result } = renderHook(() => useAIStore());
 
-      expect(result.current.preferences).toEqual({
+      expect(result.current.modelPreferences).toEqual({
         bioModel: 'meta-llama/Llama-3.1-8B-Instruct',
         projectModel: 'microsoft/Phi-3.5-mini-instruct',
         templateModel: 'meta-llama/Llama-3.1-8B-Instruct',
@@ -29,10 +29,10 @@ describe('AI Store', () => {
         targetLength: 'concise',
         autoEnhance: false,
       });
-      expect(result.current.history).toEqual([]);
+      expect(result.current.enhancementHistory).toEqual([]);
       expect(result.current.isProcessing).toBe(false);
-      expect(result.current.currentTask).toBeNull();
-      expect(result.current.usage).toEqual({
+      expect(result.current.currentEnhancement).toBeNull();
+      expect(result.current.usageStats).toEqual({
         bioEnhancements: 0,
         projectOptimizations: 0,
         templateRecommendations: 0,
@@ -49,7 +49,7 @@ describe('AI Store', () => {
         result.current.setBioModel('mistralai/Mistral-7B-Instruct-v0.3');
       });
 
-      expect(result.current.preferences.bioModel).toBe(
+      expect(result.current.modelPreferences.bioModel).toBe(
         'mistralai/Mistral-7B-Instruct-v0.3'
       );
     });
@@ -63,7 +63,7 @@ describe('AI Store', () => {
         );
       });
 
-      expect(result.current.preferences.projectModel).toBe(
+      expect(result.current.modelPreferences.projectModel).toBe(
         'deepseek-ai/deepseek-coder-6.7b-instruct'
       );
     });
@@ -75,7 +75,7 @@ describe('AI Store', () => {
         result.current.setTemplateModel('mistralai/Mistral-7B-Instruct-v0.3');
       });
 
-      expect(result.current.preferences.templateModel).toBe(
+      expect(result.current.modelPreferences.templateModel).toBe(
         'mistralai/Mistral-7B-Instruct-v0.3'
       );
     });
@@ -89,13 +89,13 @@ describe('AI Store', () => {
         result.current.setTone('casual');
       });
 
-      expect(result.current.preferences.tone).toBe('casual');
+      expect(result.current.modelPreferences.tone).toBe('casual');
 
       act(() => {
         result.current.setTone('formal');
       });
 
-      expect(result.current.preferences.tone).toBe('formal');
+      expect(result.current.modelPreferences.tone).toBe('formal');
     });
 
     it('should update target length preference', () => {
@@ -105,31 +105,31 @@ describe('AI Store', () => {
         result.current.setTargetLength('detailed');
       });
 
-      expect(result.current.preferences.targetLength).toBe('detailed');
+      expect(result.current.modelPreferences.targetLength).toBe('detailed');
 
       act(() => {
         result.current.setTargetLength('brief');
       });
 
-      expect(result.current.preferences.targetLength).toBe('brief');
+      expect(result.current.modelPreferences.targetLength).toBe('brief');
     });
 
     it('should toggle auto enhance', () => {
       const { result } = renderHook(() => useAIStore());
 
-      expect(result.current.preferences.autoEnhance).toBe(false);
+      expect(result.current.modelPreferences.autoEnhance).toBe(false);
 
       act(() => {
         result.current.toggleAutoEnhance();
       });
 
-      expect(result.current.preferences.autoEnhance).toBe(true);
+      expect(result.current.modelPreferences.autoEnhance).toBe(true);
 
       act(() => {
         result.current.toggleAutoEnhance();
       });
 
-      expect(result.current.preferences.autoEnhance).toBe(false);
+      expect(result.current.modelPreferences.autoEnhance).toBe(false);
     });
 
     it('should update all preferences at once', () => {
@@ -148,7 +148,7 @@ describe('AI Store', () => {
         result.current.updatePreferences(newPreferences);
       });
 
-      expect(result.current.preferences).toEqual(newPreferences);
+      expect(result.current.modelPreferences).toEqual(newPreferences);
     });
 
     it('should reset preferences to defaults', () => {
@@ -160,16 +160,16 @@ describe('AI Store', () => {
         result.current.toggleAutoEnhance();
       });
 
-      expect(result.current.preferences.tone).toBe('casual');
-      expect(result.current.preferences.autoEnhance).toBe(true);
+      expect(result.current.modelPreferences.tone).toBe('casual');
+      expect(result.current.modelPreferences.autoEnhance).toBe(true);
 
       // Reset
       act(() => {
-        result.current.resetPreferences();
+        result.current.resetModelPreferences();
       });
 
-      expect(result.current.preferences.tone).toBe('professional');
-      expect(result.current.preferences.autoEnhance).toBe(false);
+      expect(result.current.modelPreferences.tone).toBe('professional');
+      expect(result.current.modelPreferences.autoEnhance).toBe(false);
     });
   });
 
@@ -192,8 +192,8 @@ describe('AI Store', () => {
         result.current.addToHistory(enhancement);
       });
 
-      expect(result.current.history).toHaveLength(1);
-      expect(result.current.history[0]).toEqual(enhancement);
+      expect(result.current.enhancementHistory).toHaveLength(1);
+      expect(result.current.enhancementHistory[0]).toEqual(enhancement);
     });
 
     it('should add multiple items to history', () => {
@@ -221,7 +221,7 @@ describe('AI Store', () => {
         });
       });
 
-      expect(result.current.history).toHaveLength(2);
+      expect(result.current.enhancementHistory).toHaveLength(2);
     });
 
     it('should remove item from history', () => {
@@ -249,14 +249,14 @@ describe('AI Store', () => {
         });
       });
 
-      expect(result.current.history).toHaveLength(2);
+      expect(result.current.enhancementHistory).toHaveLength(2);
 
       act(() => {
         result.current.removeFromHistory('1');
       });
 
-      expect(result.current.history).toHaveLength(1);
-      expect(result.current.history[0].id).toBe('2');
+      expect(result.current.enhancementHistory).toHaveLength(1);
+      expect(result.current.enhancementHistory[0].id).toBe('2');
     });
 
     it('should clear all history', () => {
@@ -284,13 +284,13 @@ describe('AI Store', () => {
         });
       });
 
-      expect(result.current.history).toHaveLength(2);
+      expect(result.current.enhancementHistory).toHaveLength(2);
 
       act(() => {
         result.current.clearHistory();
       });
 
-      expect(result.current.history).toEqual([]);
+      expect(result.current.enhancementHistory).toEqual([]);
     });
 
     it('should get history by type', () => {
@@ -360,19 +360,19 @@ describe('AI Store', () => {
     it('should set current task', () => {
       const { result } = renderHook(() => useAIStore());
 
-      expect(result.current.currentTask).toBeNull();
+      expect(result.current.currentEnhancement).toBeNull();
 
       act(() => {
         result.current.setCurrentTask('Enhancing bio...');
       });
 
-      expect(result.current.currentTask).toBe('Enhancing bio...');
+      expect(result.current.currentEnhancement).toBe('Enhancing bio...');
 
       act(() => {
         result.current.setCurrentTask(null);
       });
 
-      expect(result.current.currentTask).toBeNull();
+      expect(result.current.currentEnhancement).toBeNull();
     });
   });
 
@@ -380,14 +380,14 @@ describe('AI Store', () => {
     it('should track bio enhancement usage', () => {
       const { result } = renderHook(() => useAIStore());
 
-      expect(result.current.usage.bioEnhancements).toBe(0);
+      expect(result.current.usageStats.bioEnhancements).toBe(0);
 
       act(() => {
         result.current.incrementUsage('bioEnhancements', 0.001);
       });
 
-      expect(result.current.usage.bioEnhancements).toBe(1);
-      expect(result.current.usage.totalCost).toBe(0.001);
+      expect(result.current.usageStats.bioEnhancements).toBe(1);
+      expect(result.current.usageStats.totalCost).toBe(0.001);
     });
 
     it('should track project optimization usage', () => {
@@ -397,8 +397,8 @@ describe('AI Store', () => {
         result.current.incrementUsage('projectOptimizations', 0.002);
       });
 
-      expect(result.current.usage.projectOptimizations).toBe(1);
-      expect(result.current.usage.totalCost).toBe(0.002);
+      expect(result.current.usageStats.projectOptimizations).toBe(1);
+      expect(result.current.usageStats.totalCost).toBe(0.002);
     });
 
     it('should track template recommendation usage', () => {
@@ -408,8 +408,8 @@ describe('AI Store', () => {
         result.current.incrementUsage('templateRecommendations', 0.0005);
       });
 
-      expect(result.current.usage.templateRecommendations).toBe(1);
-      expect(result.current.usage.totalCost).toBe(0.0005);
+      expect(result.current.usageStats.templateRecommendations).toBe(1);
+      expect(result.current.usageStats.totalCost).toBe(0.0005);
     });
 
     it('should accumulate total cost', () => {
@@ -421,10 +421,10 @@ describe('AI Store', () => {
         result.current.incrementUsage('templateRecommendations', 0.0005);
       });
 
-      expect(result.current.usage.totalCost).toBe(0.0035);
-      expect(result.current.usage.bioEnhancements).toBe(1);
-      expect(result.current.usage.projectOptimizations).toBe(1);
-      expect(result.current.usage.templateRecommendations).toBe(1);
+      expect(result.current.usageStats.totalCost).toBe(0.0035);
+      expect(result.current.usageStats.bioEnhancements).toBe(1);
+      expect(result.current.usageStats.projectOptimizations).toBe(1);
+      expect(result.current.usageStats.templateRecommendations).toBe(1);
     });
 
     it('should reset usage stats', () => {
@@ -435,13 +435,13 @@ describe('AI Store', () => {
         result.current.incrementUsage('projectOptimizations', 0.002);
       });
 
-      expect(result.current.usage.totalCost).toBeGreaterThan(0);
+      expect(result.current.usageStats.totalCost).toBeGreaterThan(0);
 
       act(() => {
         result.current.resetUsage();
       });
 
-      expect(result.current.usage).toEqual({
+      expect(result.current.usageStats).toEqual({
         bioEnhancements: 0,
         projectOptimizations: 0,
         templateRecommendations: 0,

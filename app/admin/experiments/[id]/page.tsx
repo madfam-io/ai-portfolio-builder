@@ -13,11 +13,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
-import { logger } from '@/lib/utils/logger';
 import {
   calculateExperimentResults,
   generateTimeline,
 } from '@/lib/utils/experiments/calculate-results';
+import { logger } from '@/lib/utils/logger';
 
 import { ExperimentDetailsContent } from './ExperimentDetailsContent';
 
@@ -169,7 +169,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
             (Date.now() - new Date(experimentData.createdAt).getTime()) /
               (1000 * 60 * 60 * 24)
           );
-          
+
           setAnalyticsData({
             experiment: experimentData,
             results,
@@ -202,7 +202,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       }
       const { error } = await supabase
         .from('landing_page_experiments')
-        .update({ status: newStatus as ExperimentStatus, updated_at: new Date().toISOString() })
+        .update({
+          status: newStatus as ExperimentStatus,
+          updated_at: new Date().toISOString(),
+        })
         .eq('id', experimentId);
 
       if (error) throw error;

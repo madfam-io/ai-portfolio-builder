@@ -1,3 +1,19 @@
+
+// Mock hooks
+jest.mock('@/hooks/useDebounce', () => ({
+  useDebounce: (value: any) => value,
+}));
+
+jest.mock('@/hooks/useRealTimePreview', () => ({
+  useRealTimePreview: () => ({
+    isConnected: true,
+    isLoading: false,
+    error: null,
+    previewUrl: 'http://localhost:3000/preview/123',
+    updatePreview: jest.fn(),
+    reconnect: jest.fn(),
+  }),
+}));
 /**
  * PortfolioEditor test suite - final version
  */
@@ -243,7 +259,7 @@ describe('PortfolioEditor', () => {
 
   describe('Callbacks', () => {
     test('calls onUpdate callback when portfolio is updated', async () => {
-      const mockOnUpdate = jest.fn();
+      const mockOnUpdate = jest.fn() as jest.Mock;
       const user = userEvent.setup();
 
       renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
@@ -262,13 +278,13 @@ describe('PortfolioEditor', () => {
     });
 
     test('calls onPublish callback when portfolio is published', async () => {
-      const mockOnPublish = jest.fn();
+      const mockOnPublish = jest.fn() as jest.Mock;
 
       renderWithLanguage(
         <PortfolioEditor
           portfolioId="1"
           userId="user-1"
-          onPublish={mockOnPublish}
+          onPublish={mockOnPublish as any}
         />
       );
 

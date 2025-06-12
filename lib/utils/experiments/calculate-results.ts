@@ -71,8 +71,7 @@ export function calculateExperimentResults(
         conversionRate + margin,
       ] as [number, number],
       uplift,
-      pValue:
-        variant.id === control.id ? 1 : calculatePValue(control, variant),
+      pValue: variant.id === control.id ? 1 : calculatePValue(control, variant),
     };
   });
 
@@ -111,7 +110,8 @@ export function generateTimeline(
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
 
-  const timeline: Array<{ date: Date; visitors: number; conversions: number }> = [];
+  const timeline: Array<{ date: Date; visitors: number; conversions: number }> =
+    [];
   const currentDate = new Date(startDate);
 
   while (currentDate <= new Date()) {

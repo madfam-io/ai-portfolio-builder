@@ -87,7 +87,7 @@ import { TemplateSelector } from '@/components/editor/TemplateSelector';
 import { TemplateType } from '@/types/portfolio';
 
 describe('TemplateSelector', () => {
-  const mockOnTemplateChange = jest.fn();
+  const mockOnTemplateChange = jest.fn() as jest.Mock;
   const defaultProps = {
     currentTemplate: 'developer' as TemplateType,
     onTemplateChange: mockOnTemplateChange,

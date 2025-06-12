@@ -9,7 +9,7 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { Portfolio } from '@/types/portfolio';
 
 // Mock fetch
-const mockFetch = jest.fn();
+const mockFetch = jest.fn() as jest.Mock;
 global.fetch = mockFetch;
 
 describe('Portfolio Store', () => {
@@ -62,8 +62,8 @@ describe('Portfolio Store', () => {
     // Reset store state
     const { result } = renderHook(() => usePortfolioStore());
     act(() => {
-      result.current.clearPortfolios();
-      result.current.setSelectedPortfolio(null);
+      result.current.resetPortfolios();
+      result.current.setCurrentPortfolio(null);
     });
 
     jest.clearAllMocks();

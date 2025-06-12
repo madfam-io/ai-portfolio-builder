@@ -66,7 +66,9 @@ export default function InteractiveDemoPage(): React.ReactElement {
     },
   });
 
-  const handleTemplateChange = async (template: TemplateType): Promise<void> => {
+  const handleTemplateChange = async (
+    template: TemplateType
+  ): Promise<void> => {
     setIsLoading(true);
     setSelectedTemplate(template);
 
@@ -128,7 +130,7 @@ export default function InteractiveDemoPage(): React.ReactElement {
 • GitHub Pages - Deploy-ready static site
 
 Your portfolio would be downloaded as: ${portfolio.name.toLowerCase().replace(/\s+/g, '-')}-portfolio.pdf`;
-    
+
     showToast.custom(
       <div className="max-w-md">
         <h3 className="font-semibold mb-2">Export Options</h3>
@@ -154,7 +156,7 @@ Social preview includes:
 • Open Graph images
 • Twitter cards
 • SEO optimization`;
-    
+
     showToast.custom(
       <div className="max-w-md">
         <h3 className="font-semibold mb-2">Share Your Portfolio</h3>

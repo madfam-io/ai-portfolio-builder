@@ -30,7 +30,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Software developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 
@@ -94,7 +94,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 
@@ -166,7 +166,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 
@@ -190,7 +190,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 
@@ -207,7 +207,7 @@ describe('AIEnhancementButton Component', () => {
   describe('Disabled State', () => {
     test('disables button when no content provided', () => {
       renderWithLanguage(
-        <AIEnhancementButton type="bio" content="" onEnhanced={jest.fn()} />
+        <AIEnhancementButton type="bio" content="" onEnhanced={jest.fn() as any} />
       );
 
       const button = screen.getByRole('button');
@@ -235,7 +235,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 
@@ -254,7 +254,7 @@ describe('AIEnhancementButton Component', () => {
         <AIEnhancementButton
           type="bio"
           content="Developer"
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
           disabled={true}
         />
       );
@@ -291,7 +291,7 @@ describe('AIEnhancementButton Component', () => {
           type="bio"
           content="Developer"
           context={bioContext}
-          onEnhanced={jest.fn()}
+          onEnhanced={jest.fn() as any}
         />
       );
 

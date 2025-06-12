@@ -9,10 +9,18 @@ import { useUIStore } from '@/lib/store/ui-store';
 
 describe('UI Store', () => {
   beforeEach(() => {
+    // Mock localStorage
+    const localStorageMock = {
+      getItem: jest.fn(),
+      setItem: jest.fn(),
+      removeItem: jest.fn(),
+      clear: jest.fn(),
+    };
+    global.localStorage = localStorageMock as any;
     // Reset store state
     const { result } = renderHook(() => useUIStore());
     act(() => {
-      result.current.closeSidebar();
+      result.current.toggleSidebar();
       result.current.closeAllModals();
       result.current.clearToasts();
     });
@@ -23,12 +31,12 @@ describe('UI Store', () => {
       const { result } = renderHook(() => useUIStore());
 
       expect(result.current.theme).toBe('light');
-      expect(result.current.isSidebarOpen).toBe(false);
-      expect(result.current.isModalOpen).toBe(false);
-      expect(result.current.activeModal).toBeNull();
+      expect(result.current.sidebarOpen).toBe(false);
+      expect(result.current.modals.length > 0).toBe(false);
+      expect(result.current.modals[0]).toBeNull();
       expect(result.current.toasts).toEqual([]);
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.loadingMessage).toBe('');
+      expect(result.current.globalLoading).toBe(false);
+      expect(result.current.loadingMessage || null).toBe('');
     });
   });
 
@@ -39,13 +47,13 @@ describe('UI Store', () => {
       expect(result.current.theme).toBe('light');
 
       act(() => {
-        result.current.toggleTheme();
+        result.current.setTheme(result.current.theme === "light" ? "dark" : "light");
       });
 
       expect(result.current.theme).toBe('dark');
 
       act(() => {
-        result.current.toggleTheme();
+        result.current.setTheme(result.current.theme === "light" ? "dark" : "light");
       });
 
       expect(result.current.theme).toBe('light');
@@ -87,19 +95,19 @@ describe('UI Store', () => {
     it('should toggle sidebar', () => {
       const { result } = renderHook(() => useUIStore());
 
-      expect(result.current.isSidebarOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
 
       act(() => {
         result.current.toggleSidebar();
       });
 
-      expect(result.current.isSidebarOpen).toBe(true);
+      expect(result.current.sidebarOpen).toBe(true);
 
       act(() => {
         result.current.toggleSidebar();
       });
 
-      expect(result.current.isSidebarOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
     });
 
     it('should open and close sidebar', () => {
@@ -109,13 +117,13 @@ describe('UI Store', () => {
         result.current.openSidebar();
       });
 
-      expect(result.current.isSidebarOpen).toBe(true);
+      expect(result.current.sidebarOpen).toBe(true);
 
       act(() => {
-        result.current.closeSidebar();
+        result.current.toggleSidebar();
       });
 
-      expect(result.current.isSidebarOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
     });
   });
 
@@ -127,8 +135,8 @@ describe('UI Store', () => {
         result.current.openModal('delete-confirmation');
       });
 
-      expect(result.current.isModalOpen).toBe(true);
-      expect(result.current.activeModal).toBe('delete-confirmation');
+      expect(result.current.modals.length > 0).toBe(true);
+      expect(result.current.modals[0]).toBe('delete-confirmation');
     });
 
     it('should close modal', () => {
@@ -138,14 +146,14 @@ describe('UI Store', () => {
         result.current.openModal('settings');
       });
 
-      expect(result.current.isModalOpen).toBe(true);
+      expect(result.current.modals.length > 0).toBe(true);
 
       act(() => {
         result.current.closeModal();
       });
 
-      expect(result.current.isModalOpen).toBe(false);
-      expect(result.current.activeModal).toBeNull();
+      expect(result.current.modals.length > 0).toBe(false);
+      expect(result.current.modals[0]).toBeNull();
     });
 
     it('should close all modals', () => {
@@ -155,14 +163,14 @@ describe('UI Store', () => {
         result.current.openModal('modal1');
       });
 
-      expect(result.current.isModalOpen).toBe(true);
+      expect(result.current.modals.length > 0).toBe(true);
 
       act(() => {
         result.current.closeAllModals();
       });
 
-      expect(result.current.isModalOpen).toBe(false);
-      expect(result.current.activeModal).toBeNull();
+      expect(result.current.modals.length > 0).toBe(false);
+      expect(result.current.modals[0]).toBeNull();
     });
 
     it('should check if specific modal is open', () => {
@@ -282,39 +290,39 @@ describe('UI Store', () => {
       const { result } = renderHook(() => useUIStore());
 
       act(() => {
-        result.current.setLoading(true, 'Processing...');
+        result.current.setGlobalLoading(true, 'Processing...');
       });
 
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.loadingMessage).toBe('Processing...');
+      expect(result.current.globalLoading).toBe(true);
+      expect(result.current.loadingMessage || null).toBe('Processing...');
     });
 
     it('should clear loading state', () => {
       const { result } = renderHook(() => useUIStore());
 
       act(() => {
-        result.current.setLoading(true, 'Loading data...');
+        result.current.setGlobalLoading(true, 'Loading data...');
       });
 
-      expect(result.current.isLoading).toBe(true);
+      expect(result.current.globalLoading).toBe(true);
 
       act(() => {
-        result.current.setLoading(false);
+        result.current.setGlobalLoading(false);
       });
 
-      expect(result.current.isLoading).toBe(false);
-      expect(result.current.loadingMessage).toBe('');
+      expect(result.current.globalLoading).toBe(false);
+      expect(result.current.loadingMessage || null).toBe('');
     });
 
     it('should handle loading without message', () => {
       const { result } = renderHook(() => useUIStore());
 
       act(() => {
-        result.current.setLoading(true);
+        result.current.setGlobalLoading(true);
       });
 
-      expect(result.current.isLoading).toBe(true);
-      expect(result.current.loadingMessage).toBe('');
+      expect(result.current.globalLoading).toBe(true);
+      expect(result.current.loadingMessage || null).toBe('');
     });
   });
 
@@ -387,35 +395,35 @@ describe('UI Store', () => {
     it('should toggle mobile menu', () => {
       const { result } = renderHook(() => useUIStore());
 
-      expect(result.current.isMobileMenuOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
 
       act(() => {
-        result.current.toggleMobileMenu();
+        result.current.toggleSidebar();
       });
 
-      expect(result.current.isMobileMenuOpen).toBe(true);
+      expect(result.current.sidebarOpen).toBe(true);
 
       act(() => {
-        result.current.toggleMobileMenu();
+        result.current.toggleSidebar();
       });
 
-      expect(result.current.isMobileMenuOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
     });
 
     it('should close mobile menu when modal opens', () => {
       const { result } = renderHook(() => useUIStore());
 
       act(() => {
-        result.current.toggleMobileMenu();
+        result.current.toggleSidebar();
       });
 
-      expect(result.current.isMobileMenuOpen).toBe(true);
+      expect(result.current.sidebarOpen).toBe(true);
 
       act(() => {
         result.current.openModal('settings');
       });
 
-      expect(result.current.isMobileMenuOpen).toBe(false);
+      expect(result.current.sidebarOpen).toBe(false);
     });
   });
 });

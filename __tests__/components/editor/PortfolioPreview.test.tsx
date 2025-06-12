@@ -1,3 +1,19 @@
+
+// Mock hooks
+jest.mock('@/hooks/useDebounce', () => ({
+  useDebounce: (value: any) => value,
+}));
+
+jest.mock('@/hooks/useRealTimePreview', () => ({
+  useRealTimePreview: () => ({
+    isConnected: true,
+    isLoading: false,
+    error: null,
+    previewUrl: 'http://localhost:3000/preview/123',
+    updatePreview: jest.fn(),
+    reconnect: jest.fn(),
+  }),
+}));
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 
@@ -126,7 +142,7 @@ const mockPortfolio: Portfolio = {
 describe('PortfolioPreview', () => {
   describe('Template Rendering', () => {
     it('should render developer template correctly', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       // Header section
       expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -169,14 +185,14 @@ describe('PortfolioPreview', () => {
 
   describe('Content Sections', () => {
     it('should display about section with bio', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('About')).toBeInTheDocument();
       expect(screen.getByText(mockPortfolio.bio)).toBeInTheDocument();
     });
 
     it('should display all experience items chronologically', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const experienceSection = screen.getByTestId('experience-section');
       expect(experienceSection).toBeInTheDocument();
@@ -189,7 +205,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should display featured projects prominently', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const featuredProject = screen.getByTestId('featured-project');
       expect(featuredProject).toHaveTextContent('E-commerce Platform');
@@ -200,7 +216,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should group skills by category', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Programming')).toBeInTheDocument();
       expect(screen.getByText('Frontend')).toBeInTheDocument();
@@ -210,7 +226,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should display skill levels visually', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const jsSkill = screen.getByTestId('skill-JavaScript');
       expect(jsSkill).toHaveAttribute('data-level', 'expert');
@@ -221,7 +237,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should display education with achievements', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('University of Technology')).toBeInTheDocument();
       expect(
@@ -232,7 +248,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should display certifications with links', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const certLink = screen.getByRole('link', {
         name: /AWS Certified Developer/i,
@@ -248,7 +264,7 @@ describe('PortfolioPreview', () => {
 
   describe('Social Links', () => {
     it('should display all social links with icons', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const linkedinLink = screen.getByLabelText('Linkedin');
       expect(linkedinLink).toHaveAttribute(
@@ -282,7 +298,7 @@ describe('PortfolioPreview', () => {
 
   describe('Customization', () => {
     it('should apply custom colors', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveStyle({
@@ -293,7 +309,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should apply custom font family', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveStyle({
@@ -302,14 +318,14 @@ describe('PortfolioPreview', () => {
     });
 
     it('should apply header style', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const header = screen.getByTestId('portfolio-header');
       expect(header).toHaveClass('header-bold');
     });
 
     it('should respect custom section order', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const sections = screen.getAllByTestId(/section$/);
       const sectionIds = sections.map(section => section.getAttribute('id'));
@@ -352,8 +368,8 @@ describe('PortfolioPreview', () => {
       });
 
       // Mock window.addEventListener
-      const mockAddEventListener = jest.fn();
-      const mockRemoveEventListener = jest.fn();
+      const mockAddEventListener = jest.fn() as jest.Mock;
+      const mockRemoveEventListener = jest.fn() as jest.Mock;
       Object.defineProperty(window, 'addEventListener', {
         writable: true,
         value: mockAddEventListener,
@@ -363,7 +379,7 @@ describe('PortfolioPreview', () => {
         value: mockRemoveEventListener,
       });
 
-      render(<PortfolioPreview portfolio={mockPortfolio} mode="mobile" />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} mode="mobile" />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('mobile-layout');
@@ -377,7 +393,7 @@ describe('PortfolioPreview', () => {
         value: 600, // Mobile width
       });
 
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const projectGrid = screen.getByTestId('projects-grid');
       expect(projectGrid).toHaveClass('grid-cols-1');
@@ -438,7 +454,7 @@ describe('PortfolioPreview', () => {
 
   describe('Accessibility', () => {
     it('should have proper heading hierarchy', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const h1 = screen.getByRole('heading', { level: 1 });
       expect(h1).toHaveTextContent('John Doe');
@@ -450,7 +466,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should have proper ARIA labels for interactive elements', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       const emailLink = screen.getByLabelText('Email John Doe');
       expect(emailLink).toHaveAttribute('href', 'mailto:john@example.com');
@@ -462,7 +478,7 @@ describe('PortfolioPreview', () => {
     });
 
     it('should have proper contrast ratios', () => {
-      render(<PortfolioPreview portfolio={mockPortfolio} />);
+      render(<PortfolioPreview portfolio={mockPortfolio as any} />);
 
       // This would typically be tested with axe-core or similar
       // For now, we ensure contrast classes are applied

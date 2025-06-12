@@ -142,14 +142,14 @@ const mockPortfolio: Portfolio = {
 describe('ConsultantTemplate Component', () => {
   describe('Professional Header', () => {
     test('renders consultant name and title professionally', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Michael Johnson')).toBeInTheDocument();
       expect(screen.getByText('Business Consultant')).toBeInTheDocument();
     });
 
     test('displays professional tagline', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText(/Driving business excellence/)
@@ -157,7 +157,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('shows professional contact information', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('michael@consultingfirm.com')
@@ -168,7 +168,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Executive Summary', () => {
     test('presents bio as executive summary', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       const bio = screen.getByText(
         /Strategic business consultant with 10\+ years/
@@ -177,7 +177,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('highlights years of experience', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/10\+ years/)).toBeInTheDocument();
     });
@@ -185,7 +185,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Professional Experience', () => {
     test('displays experience in reverse chronological order', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       const experiences = screen.getAllByRole('article');
       expect(experiences.length).toBeGreaterThanOrEqual(2);
@@ -198,7 +198,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('shows duration for each position', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       // Should show date ranges
       expect(screen.getByText(/2018/)).toBeInTheDocument();
@@ -208,7 +208,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Case Studies / Projects', () => {
     test('presents projects as case studies', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('Digital Transformation Initiative')
@@ -217,7 +217,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('highlights project impact and ROI', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/\$10M/)).toBeInTheDocument();
       expect(screen.getByText(/30% efficiency gain/)).toBeInTheDocument();
@@ -225,7 +225,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('shows methodologies used', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/Change Management/)).toBeInTheDocument();
       expect(screen.getByText(/Lean Six Sigma/)).toBeInTheDocument();
@@ -234,7 +234,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Core Competencies', () => {
     test('displays skills as core competencies', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Strategic Planning')).toBeInTheDocument();
       expect(screen.getByText('Change Management')).toBeInTheDocument();
@@ -242,7 +242,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test.skip('shows expertise levels professionally', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       // TODO: Add expertise-level testids to ConsultantTemplate
       // Should display expertise levels (dots, bars, or percentages)
@@ -253,14 +253,14 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Certifications & Credentials', () => {
     test('prominently displays professional certifications', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('PMP Certification')).toBeInTheDocument();
       expect(screen.getByText('Lean Six Sigma Black Belt')).toBeInTheDocument();
     });
 
     test('shows certification issuers', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('Project Management Institute')
@@ -272,7 +272,7 @@ describe('ConsultantTemplate Component', () => {
   // TODO: Implement industries and specializations in ConsultantTemplate
   describe.skip('Industries & Specializations', () => {
     test('displays industry expertise when available', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/Retail/)).toBeInTheDocument();
       expect(screen.getByText(/Manufacturing/)).toBeInTheDocument();
@@ -280,7 +280,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('shows areas of specialization', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/Digital Transformation/)).toBeInTheDocument();
       expect(screen.getByText(/Process Optimization/)).toBeInTheDocument();
@@ -289,7 +289,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Professional Styling', () => {
     test('applies conservative color scheme', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       const styles = window.getComputedStyle(container);
@@ -298,7 +298,7 @@ describe('ConsultantTemplate Component', () => {
     });
 
     test('uses professional typography', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       const heading = screen.getByRole('heading', { level: 1 });
       const styles = window.getComputedStyle(heading);
@@ -309,7 +309,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Education Section', () => {
     test('displays educational credentials', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Harvard Business School')).toBeInTheDocument();
       expect(screen.getByText('MBA')).toBeInTheDocument();
@@ -318,7 +318,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Print-Friendly Layout', () => {
     test('provides print-optimized view', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       // May or may not have print button, but layout should be print-friendly
       expect(screen.getByTestId('portfolio-container')).toHaveClass(
@@ -345,7 +345,7 @@ describe('ConsultantTemplate Component', () => {
 
   describe('Accessibility', () => {
     test('uses semantic HTML for better screen reader support', () => {
-      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<ConsultantTemplate portfolio={mockPortfolio as any} />);
 
       // Should use proper article tags for experience
       const articles = screen.getAllByRole('article');

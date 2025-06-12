@@ -197,7 +197,10 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Update variant
-  const updateVariant = (index: number, updates: Partial<VariantConfig>): void => {
+  const updateVariant = (
+    index: number,
+    updates: Partial<VariantConfig>
+  ): void => {
     const newVariants = [...variants];
     const currentVariant = newVariants[index];
     if (!currentVariant) return;
@@ -237,7 +240,10 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Remove component from variant
-  const removeComponent = (variantIndex: number, componentIndex: number): void => {
+  const removeComponent = (
+    variantIndex: number,
+    componentIndex: number
+  ): void => {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
@@ -312,12 +318,13 @@ export default function CreateExperimentPage(): React.ReactElement {
           isControl: index === 0,
           trafficPercentage: Math.floor(100 / template.variants.length),
           components: v.components || [],
-          themeOverrides: v.themeOverrides != null
-            ? ({ ...v.themeOverrides } as Record<
-                string,
-                string | number | boolean
-              >)
-            : {},
+          themeOverrides:
+            v.themeOverrides != null
+              ? ({ ...v.themeOverrides } as Record<
+                  string,
+                  string | number | boolean
+                >)
+              : {},
         })
       );
       setVariants(newVariants);

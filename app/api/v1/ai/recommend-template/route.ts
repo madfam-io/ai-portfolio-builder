@@ -7,8 +7,12 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { UserProfile } from '@/lib/ai/types';
+import {
+  UserProfile,
+  AIServiceError,
+} from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Request validation schema
 const recommendTemplateSchema = z.object({
@@ -120,11 +124,14 @@ export async function POST(request: NextRequest): Promise<Response> {
         processingTime: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
-    console.error('Template recommendation failed:', error);
+  } catch (error) {
+    logger.error(
+      'Template recommendation failed',
+      error instanceof Error ? error : { error }
+    );
 
     // Handle specific AI service errors
-    if (error.name === 'AIServiceError') {
+    if (error instanceof AIServiceError) {
       return NextResponse.json(
         {
           error: 'AI processing failed',
@@ -265,7 +272,10 @@ export async function GET(): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Failed to fetch templates:', error);
+    logger.error(
+      'Failed to fetch templates',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Failed to fetch templates' },
       { status: 500 }
@@ -276,26 +286,24 @@ export async function GET(): Promise<Response> {
 /**
  * Enhance AI recommendation with additional business logic
  */
-async function enhanceRecommendation(
+function enhanceRecommendation(
   aiRecommendation: any,
   profile: UserProfile,
-  preferences: any
-): Promise<void> {
+  preferences: Record<string, unknown>
+): any {
   // Apply business rules and preferences
-  const enhancedAlternatives = aiRecommendation.alternatives.map(
-    (alt: any) => ({
-      ...alt,
-      reasoning: generateReasoningForTemplate(alt.template, profile),
-      preview: `/templates/${alt.template}-preview.jpg`,
-      features: getTemplateFeatures(alt.template),
-    })
-  );
+  const enhancedAlternatives = aiRecommendation.alternatives.map((alt: any) => ({
+    ...alt,
+    reasoning: generateReasoningForTemplate(alt.template, profile),
+    preview: `/templates/${alt.template}-preview.jpg`,
+    features: getTemplateFeatures(alt.template),
+  }));
 
   // Add style preference adjustments
   if (preferences.style) {
     const styleBonus = calculateStyleBonus(
       aiRecommendation.recommendedTemplate,
-      preferences.style
+      preferences.style as string
     );
     aiRecommendation.confidence = Math.min(
       0.95,
@@ -357,7 +365,10 @@ function getTemplateFeatures(template: string): string[] {
   return featuresMap[template as keyof typeof featuresMap] || [];
 }
 
-function getRecommendedCustomizations(template: string, profile: UserProfile) {
+function getRecommendedCustomizations(
+  template: string,
+  profile: UserProfile
+): any {
   const baseConfig = {
     primaryColor: profile.hasDesignWork ? '#6366f1' : '#1f2937',
     headerStyle:
@@ -417,12 +428,12 @@ function calculateStyleBonus(template: string, preferredStyle: string): number {
 async function logAIUsage(
   userId: string,
   operationType: string,
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 ): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      logger.error('Failed to create Supabase client for logging');
       return;
     }
 
@@ -433,7 +444,10 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log AI usage:', error);
+    logger.error(
+      'Failed to log AI usage',
+      error instanceof Error ? error : { error }
+    );
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

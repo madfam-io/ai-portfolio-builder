@@ -30,7 +30,7 @@ describe('Auth Store', () => {
     // Reset store state
     const { result } = renderHook(() => useAuthStore());
     act(() => {
-      result.current.logout();
+      result.current.signOut();
     });
 
     jest.clearAllMocks();
@@ -167,7 +167,7 @@ describe('Auth Store', () => {
   });
 
   describe('Logout', () => {
-    it('should logout successfully', async () => {
+    it('should signOut successfully', async () => {
       mockSupabase.auth.signOut.mockResolvedValueOnce({ error: null });
 
       const { result } = renderHook(() => useAuthStore());
@@ -184,7 +184,7 @@ describe('Auth Store', () => {
       expect(result.current.isAuthenticated).toBe(true);
 
       await act(async () => {
-        await result.current.logout();
+        await result.current.signOut();
       });
 
       expect(result.current.user).toBeNull();
@@ -193,7 +193,7 @@ describe('Auth Store', () => {
       expect(mockSupabase.auth.signOut).toHaveBeenCalled();
     });
 
-    it('should handle logout error gracefully', async () => {
+    it('should handle signOut error gracefully', async () => {
       mockSupabase.auth.signOut.mockResolvedValueOnce({
         error: { message: 'Logout failed' },
       });
@@ -209,7 +209,7 @@ describe('Auth Store', () => {
       });
 
       await act(async () => {
-        await result.current.logout();
+        await result.current.signOut();
       });
 
       // Should still clear local state even if API call fails
@@ -308,7 +308,7 @@ describe('Auth Store', () => {
       expect(result.current.preferences).toEqual(preferences);
     });
 
-    it('should reset preferences on logout', async () => {
+    it('should reset preferences on signOut', async () => {
       mockSupabase.auth.signOut.mockResolvedValueOnce({ error: null });
 
       const { result } = renderHook(() => useAuthStore());
@@ -320,7 +320,7 @@ describe('Auth Store', () => {
       expect(result.current.preferences.theme).toBe('dark');
 
       await act(async () => {
-        await result.current.logout();
+        await result.current.signOut();
       });
 
       expect(result.current.preferences).toEqual({});

@@ -115,14 +115,14 @@ const mockPortfolio: Portfolio = {
 describe('DeveloperTemplate Component', () => {
   describe('Content Rendering', () => {
     test('renders developer name and title', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Full Stack Developer')).toBeInTheDocument();
     });
 
     test('displays bio section', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText(/Experienced developer with a passion/)
@@ -130,7 +130,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('shows contact information', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('john@example.com')).toBeInTheDocument();
       expect(screen.getByText('San Francisco, CA')).toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Skills Section', () => {
     test('renders skill bars with levels', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('JavaScript')).toBeInTheDocument();
       expect(screen.getByText('React')).toBeInTheDocument();
@@ -148,7 +148,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('displays skill levels with badges', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getAllByText('expert')).toHaveLength(2);
       expect(screen.getAllByText('advanced')).toHaveLength(2);
@@ -157,7 +157,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Projects Section', () => {
     test('renders project cards', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
       expect(
@@ -166,7 +166,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('displays project technologies', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('React')).toBeInTheDocument();
       expect(screen.getByText('Node.js')).toBeInTheDocument();
@@ -174,7 +174,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('shows project links', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const githubLink = screen.getByRole('link', { name: /github/i });
       expect(githubLink).toHaveAttribute(
@@ -186,7 +186,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Experience Section', () => {
     test('displays work experience', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('Senior Developer')).toBeInTheDocument();
       expect(screen.getByText('Tech Corp')).toBeInTheDocument();
@@ -194,7 +194,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('shows experience highlights', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(
         screen.getByText('Reduced deployment time by 50%')
@@ -204,14 +204,14 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Education Section', () => {
     test('displays education details', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('University of Technology')).toBeInTheDocument();
       expect(screen.getByText('BS Computer Science')).toBeInTheDocument();
     });
 
     test('shows graduation year', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText(/2020/)).toBeInTheDocument();
     });
@@ -219,7 +219,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Certifications Section', () => {
     test('displays certifications', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       expect(screen.getByText('AWS Certified Developer')).toBeInTheDocument();
       expect(screen.getByText('Amazon Web Services')).toBeInTheDocument();
@@ -228,7 +228,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Social Links', () => {
     test('renders GitHub profile link', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const githubLink = screen.getByRole('link', {
         name: /github|profile/i,
@@ -237,7 +237,7 @@ describe('DeveloperTemplate Component', () => {
     });
 
     test('renders LinkedIn profile link', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const linkedinLink = screen.getByRole('link', {
         name: /linkedin/i,
@@ -251,7 +251,7 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Responsive Design', () => {
     test('applies responsive classes', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('container');
@@ -290,14 +290,14 @@ describe('DeveloperTemplate Component', () => {
 
   describe('Custom Styling', () => {
     test('applies custom primary color', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveStyle({ '--primary-color': '#1a73e8' });
     });
 
     test('applies custom font family', () => {
-      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio} />);
+      renderWithLanguage(<DeveloperTemplate portfolio={mockPortfolio as any} />);
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('font-sans');

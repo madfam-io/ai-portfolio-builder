@@ -68,7 +68,10 @@ export function useExperiment(): ExperimentContext {
             variantId: data.variantId,
             variantName: data.variantName,
             components: data.components,
-            themeOverrides: data.themeOverrides as Record<string, string | number | boolean>,
+            themeOverrides: data.themeOverrides as Record<
+              string,
+              string | number | boolean
+            >,
             isLoading: false,
           });
         } else {
@@ -99,8 +102,15 @@ export function useExperiment(): ExperimentContext {
  * Hook for tracking experiment events
  */
 export function useExperimentTracking(): {
-  trackClick: (element: string, additionalData?: Record<string, string | number | boolean>) => Promise<void>;
-  trackConversion: (conversionType: string, value?: number, metadata?: Record<string, string | number | boolean>) => Promise<void>;
+  trackClick: (
+    element: string,
+    additionalData?: Record<string, string | number | boolean>
+  ) => Promise<void>;
+  trackConversion: (
+    conversionType: string,
+    value?: number,
+    metadata?: Record<string, string | number | boolean>
+  ) => Promise<void>;
   trackEngagement: (metrics: Record<string, number>) => Promise<void>;
 } {
   const { experimentId, variantId } = useExperiment();
@@ -109,7 +119,10 @@ export function useExperimentTracking(): {
    * Track a click event
    */
   const trackClick = useCallback(
-    async (element: string, additionalData?: Record<string, string | number | boolean>) => {
+    async (
+      element: string,
+      additionalData?: Record<string, string | number | boolean>
+    ) => {
       if (!experimentId || !variantId) return;
 
       try {
@@ -226,7 +239,10 @@ export function useComponentVariant(componentType: string): {
 /**
  * Hook to get theme overrides from experiment
  */
-export function useExperimentTheme(): Record<string, string | number | boolean> {
+export function useExperimentTheme(): Record<
+  string,
+  string | number | boolean
+> {
   const { themeOverrides } = useExperiment();
 
   useEffect(() => {

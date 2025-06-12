@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 import {
   apiVersionMiddleware,
   extractApiVersion,
   isVersionSupported,
-  isVersionDeprecated,
   API_VERSION_CONFIG,
   createVersionedResponse,
 } from '@/middleware/api-version';

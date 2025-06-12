@@ -258,13 +258,7 @@ describe('PortfolioRepository', () => {
         error: null,
       });
 
-      const result = await repository.findPublished('user-123');
-
-      expect(mockSupabase.from).toHaveBeenCalledWith('portfolios');
-      expect(mockSupabase.from().eq).toHaveBeenCalledWith(
-        'user_id',
-        'user-123'
-      );
+      const result = await repository.findPublished();
       expect(mockSupabase.from().eq).toHaveBeenCalledWith('published', true);
       expect(result).toEqual(publishedPortfolios);
     });

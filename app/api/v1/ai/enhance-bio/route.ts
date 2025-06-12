@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { AIServiceError, QuotaExceededError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
@@ -110,14 +111,14 @@ export async function POST(request: NextRequest): Promise<Response> {
         processingTime: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     logger.error(
       'Bio enhancement failed',
       error instanceof Error ? error : { error }
     );
 
     // Handle specific AI service errors
-    if (error.name === 'AIServiceError') {
+    if (error instanceof AIServiceError) {
       return NextResponse.json(
         {
           error: 'AI processing failed',
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    if (error.name === 'QuotaExceededError') {
+    if (error instanceof QuotaExceededError) {
       return NextResponse.json(
         { error: 'AI service quota exceeded. Please try again later.' },
         { status: 429 }
@@ -205,7 +206,7 @@ export async function GET(): Promise<Response> {
 async function logAIUsage(
   userId: string,
   operationType: string,
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 ): Promise<void> {
   try {
     const supabase = await createClient();
