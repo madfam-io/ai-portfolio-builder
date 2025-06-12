@@ -51,6 +51,13 @@
     "coverage",
     "playwright-report",
     "test-results",
-    "components/disabled"
+    "components/disabled",
+    "scripts",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
+    "__tests__",
+    "e2e"
   ]
 }
