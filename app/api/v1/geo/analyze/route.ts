@@ -62,8 +62,11 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     // 5. Add target keywords if provided
     if (targetKeywords && targetKeywords.length > 0) {
-      analysis.keywords.primaryKeyword = targetKeywords[0];
-      analysis.keywords.secondaryKeywords = targetKeywords.slice(1);
+      const primaryKeyword = targetKeywords[0];
+      if (primaryKeyword) {
+        analysis.keywords.primaryKeyword = primaryKeyword;
+        analysis.keywords.secondaryKeywords = targetKeywords.slice(1);
+      }
     }
 
     // 6. Generate optimization suggestions

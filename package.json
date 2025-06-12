@@ -56,7 +56,13 @@
     "docker:dev:logs": "docker-compose -f docker-compose.dev.yml logs -f",
     "docker:prod:up": "docker-compose up -d",
     "docker:prod:down": "docker-compose down",
-    "docker:prod:logs": "docker-compose logs -f"
+    "docker:prod:logs": "docker-compose logs -f",
+    "seed": "tsx scripts/seed-database.ts",
+    "seed:minimal": "tsx scripts/seed-database.ts --mode minimal",
+    "seed:demo": "tsx scripts/seed-database.ts --mode demo", 
+    "seed:full": "tsx scripts/seed-database.ts --mode full",
+    "seed:status": "tsx scripts/seed-database.ts --status",
+    "seed:reset": "tsx scripts/seed-database.ts --reset"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -133,6 +139,7 @@
     "standard-version": "^9.5.0",
     "supabase": "^1.226.4",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "undici": "^7.10.0"
   },
