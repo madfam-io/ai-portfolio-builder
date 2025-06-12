@@ -16,7 +16,7 @@ interface RateLimitConfig {
 }
 
 // Default configurations for different endpoint types
-const defaultConfigs: Record<string, RateLimitConfig> = {
+const defaultConfigs = {
   api: {
     windowMs: 60 * 1000, // 1 minute
     max: 100, // 100 requests per minute
@@ -32,7 +32,7 @@ const defaultConfigs: Record<string, RateLimitConfig> = {
     max: 10, // 10 AI requests per minute
     message: 'AI rate limit exceeded, please try again later.',
   },
-};
+} as const satisfies Record<string, RateLimitConfig>;
 
 // In-memory store for rate limit data
 // In production, this should be replaced with a distributed store
