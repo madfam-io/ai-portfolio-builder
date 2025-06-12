@@ -17,6 +17,34 @@ const nextConfig = {
   async headers() {
     return [
       {
+        source: '/api/(.*)',
+        headers: [
+          // CORS headers for API routes
+          {
+            key: 'Access-Control-Allow-Origin',
+            value: process.env.NODE_ENV === 'production' 
+              ? (process.env.CORS_ALLOWED_ORIGINS || 'https://prisma.madfam.io')
+              : '*'
+          },
+          {
+            key: 'Access-Control-Allow-Methods',
+            value: 'GET, POST, PUT, DELETE, OPTIONS'
+          },
+          {
+            key: 'Access-Control-Allow-Headers',
+            value: 'Content-Type, Authorization, X-CSRF-Token, X-API-Version'
+          },
+          {
+            key: 'Access-Control-Allow-Credentials',
+            value: 'true'
+          },
+          {
+            key: 'Access-Control-Max-Age',
+            value: '86400' // 24 hours
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           // Strict Content Security Policy for production security

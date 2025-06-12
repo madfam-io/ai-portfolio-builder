@@ -7,12 +7,22 @@ import React from 'react';
 
 import Features from '@/components/landing/Features';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+import { renderWithLanguage, createMockUseLanguage } from '../../utils/i18n-test-utils';
+
+// Mock the useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: jest.fn(),
+}));
+
+const mockUseLanguage = require('@/lib/i18n/refactored-context').useLanguage;
 
 describe('Features Component', () => {
   beforeEach(() => {
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
+    
+    // Setup default mock
+    mockUseLanguage.mockReturnValue(createMockUseLanguage('es'));
   });
 
   describe('Content Rendering', () => {
@@ -24,6 +34,7 @@ describe('Features Component', () => {
     });
 
     test('renders section title in English', async () => {
+      mockUseLanguage.mockReturnValue(createMockUseLanguage('en'));
       renderWithLanguage(<Features />, { initialLanguage: 'en' });
 
       const title = await screen.findByText(/What PRISMA does/i);

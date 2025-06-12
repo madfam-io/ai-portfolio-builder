@@ -212,7 +212,7 @@ export const RealTimePreview = React.memo(function RealTimePreview({
               {/* Preview Content */}
               <iframe
                 ref={iframeRef}
-                src={`/api/preview?portfolioId=${portfolio.id}&template=${template}`}
+                src={`/api/v1/preview?portfolioId=${portfolio.id}&template=${template}`}
                 className={cn(
                   'w-full h-full bg-white',
                   device === 'mobile' && 'rounded-2xl'
