@@ -41,6 +41,8 @@ import {
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
+import { RepositoryStats } from '@/components/analytics/RepositoryStats';
 import type { RepositoryAnalytics } from '@/types/analytics';
 
 // Component state type
@@ -221,7 +223,20 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
     );
   }
 
-  if (!repo.data) return null;
+  if (!repo.data) {
+    return (
+      <BaseLayout>
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <p className="text-gray-600 dark:text-gray-400">
+              Loading repository data...
+            </p>
+          </div>
+        </div>
+      </BaseLayout>
+    );
+  }
 
   const data = repo.data;
   const repository = data.repository;
@@ -230,79 +245,13 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
     <BaseLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Header */}
-          <div className="mb-8">
-            <div className="flex items-center gap-4 mb-4">
-              <button
-                onClick={() => router.push('/analytics')}
-                className="p-2 text-gray-600 hover:text-purple-600 transition-colors"
-              >
-                <FiArrowLeft className="w-5 h-5" />
-              </button>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {repository.name}
-              </h1>
-              {repository.visibility === 'private' && (
-                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 text-sm rounded-full">
-                  {t.private}
-                </span>
-              )}
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  {repository.description !== null &&
-                  repository.description !== ''
-                    ? repository.description
-                    : t.noDescriptionAvailable}
-                </p>
-                <div className="flex items-center gap-6 text-sm text-gray-500">
-                  {repository.language !== null &&
-                    repository.language !== '' && (
-                      <span className="flex items-center gap-1">
-                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                        {repository.language}
-                      </span>
-                    )}
-                  <span className="flex items-center gap-1">
-                    <FiStar className="w-3 h-3" />
-                    {repository.stargazersCount}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiGitBranch className="w-3 h-3" />
-                    {repository.forksCount}
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <FiEye className="w-3 h-3" />
-                    {repository.watchersCount}
-                  </span>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <a
-                  href={`https://github.com/${repository.fullName}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-colors"
-                >
-                  <FiGithub className="mr-2" />
-                  {t.viewOnGitHub}
-                  <FiExternalLink className="ml-2 w-3 h-3" />
-                </a>
-                <button
-                  onClick={syncRepository}
-                  disabled={repo.syncing}
-                  className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
-                >
-                  <FiRefreshCw
-                    className={`mr-2 ${repo.syncing ? 'animate-spin' : ''}`}
-                  />
-                  {repo.syncing ? t.syncing : t.syncData}
-                </button>
-              </div>
-            </div>
-          </div>
+          {/* Repository Header */}
+          <RepositoryHeader
+            repository={repository}
+            syncing={repo.syncing}
+            onSync={syncRepository}
+            backText={t.backToAnalytics || 'Back to Analytics'}
+          />
 
           {/* Metrics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
