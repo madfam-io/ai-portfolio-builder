@@ -14,16 +14,11 @@ import { useRouter, useParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   FiArrowLeft,
-  FiGithub,
   FiActivity,
   FiGitPullRequest,
   FiUsers,
   FiCode,
   FiRefreshCw,
-  FiExternalLink,
-  FiStar,
-  FiGitBranch,
-  FiEye,
   FiClock,
 } from 'react-icons/fi';
 import {
