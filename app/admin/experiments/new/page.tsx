@@ -308,7 +308,7 @@ export default function CreateExperimentPage(): React.ReactElement {
           isControl: index === 0,
           trafficPercentage: Math.floor(100 / template.variants.length),
           components: v.components || [],
-          themeOverrides: v.themeOverrides || {},
+          themeOverrides: v.themeOverrides ? { ...v.themeOverrides } as Record<string, string | number | boolean> : {},
         })
       );
       setVariants(newVariants);
