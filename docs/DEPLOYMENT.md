@@ -221,10 +221,10 @@ docker run -p 3000:3000 \
   prisma-portfolio-builder
 ```
 
-### Docker Compose Production
+### Docker Compose Production (Example)
 
 ```yaml
-# docker-compose.prod.yml
+# docker-compose.prod.yml (create this file)
 version: '3.8'
 
 services:
@@ -254,17 +254,17 @@ services:
       - '80:80'
       - '443:443'
     volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-      - ./ssl:/etc/nginx/ssl
+      - ./nginx.conf:/etc/nginx/nginx.conf # Create nginx.conf
+      - ./ssl:/etc/nginx/ssl # Add SSL certificates
     depends_on:
       - app
     restart: unless-stopped
 ```
 
-### Production Dockerfile
+### Production Dockerfile (Example)
 
 ```dockerfile
-# Dockerfile.prod
+# Dockerfile.prod (create this file)
 FROM node:18-alpine AS base
 
 # Install dependencies only when needed
@@ -343,7 +343,7 @@ railway up
 Docker-based deployment:
 
 ```yaml
-# render.yaml
+# render.yaml (create this file)
 services:
   - type: web
     name: prisma-app

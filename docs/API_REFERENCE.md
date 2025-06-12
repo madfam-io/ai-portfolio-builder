@@ -94,8 +94,8 @@ All `/api/*` routes except public endpoints require authentication.
 **Public Endpoints**:
 
 - `GET /api/health`
-- `POST /api/auth/*`
-- `GET /api/ai/models` (limited info)
+- `GET /api/health`
+- `GET /api/v1/ai/models` (limited info)
 
 ## 🤖 AI Enhancement APIs
 
@@ -162,7 +162,7 @@ curl -X POST http://localhost:3000/api/v1/ai/enhance-bio \
 
 ### Project Optimization
 
-#### POST `/api/ai/optimize-project`
+#### POST `/api/v1/ai/optimize-project`
 
 Optimize project descriptions using STAR methodology.
 
@@ -208,7 +208,7 @@ Optimize project descriptions using STAR methodology.
 
 ### Template Recommendation
 
-#### POST `/api/ai/recommend-template`
+#### POST `/api/v1/ai/recommend-template`
 
 Get AI-powered template recommendations based on user profile.
 
@@ -260,7 +260,7 @@ Get AI-powered template recommendations based on user profile.
 
 ### Model Management
 
-#### GET `/api/ai/models`
+#### GET `/api/v1/ai/models`
 
 Get available AI models and their capabilities.
 
@@ -291,11 +291,11 @@ Get available AI models and their capabilities.
 }
 ```
 
-#### GET `/api/ai/models/selection`
+#### GET `/api/v1/ai/models/selection`
 
 Get user's current model selections.
 
-#### PUT `/api/ai/models/selection`
+#### PUT `/api/v1/ai/models/selection`
 
 Update user's model preferences.
 
@@ -431,10 +431,6 @@ Publish portfolio to subdomain.
   customDomain?: string; // Custom domain (premium feature)
 }
 ```
-
-#### POST `/api/v1/portfolios/[id]/unpublish`
-
-Unpublish portfolio.
 
 ## 📊 GitHub Analytics APIs
 

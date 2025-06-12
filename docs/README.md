@@ -2,7 +2,7 @@
 
 Welcome to the complete documentation for **PRISMA by MADFAM** - the AI-powered portfolio builder that transforms CVs into stunning websites in under 30 minutes.
 
-**Current Version**: v0.1.1-beta | **Status**: Production-Ready Foundation
+**Current Version**: v0.2.0-beta | **Status**: Enterprise Architecture Complete
 
 ## 🚀 Quick Start
 
