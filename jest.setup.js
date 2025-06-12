@@ -7,45 +7,27 @@ global.TextDecoder = TextDecoder;
 
 // Mock IntersectionObserver before any components use it
 // Define the mock before importing anything that might use it
-if (typeof window !== 'undefined') {
-  window.IntersectionObserver = jest
-    .fn()
-    .mockImplementation((callback, options) => {
-      const instance = {
-        callback,
-        options,
-        observe: jest.fn(),
-        unobserve: jest.fn(),
-        disconnect: jest.fn(),
-        takeRecords: jest.fn(() => []),
-        root: options?.root || null,
-        rootMargin: options?.rootMargin || '0px',
-        thresholds: Array.isArray(options?.threshold)
-          ? options.threshold
-          : [options?.threshold || 0],
-      };
-      return instance;
-    });
+class MockIntersectionObserver {
+  constructor(callback, options) {
+    this.callback = callback;
+    this.options = options;
+    this.observe = jest.fn();
+    this.unobserve = jest.fn();
+    this.disconnect = jest.fn();
+    this.takeRecords = jest.fn(() => []);
+    this.root = options?.root || null;
+    this.rootMargin = options?.rootMargin || '0px';
+    this.thresholds = Array.isArray(options?.threshold)
+      ? options.threshold
+      : [options?.threshold || 0];
+  }
 }
 
-global.IntersectionObserver =
-  window.IntersectionObserver ||
-  jest.fn().mockImplementation((callback, options) => {
-    const instance = {
-      callback,
-      options,
-      observe: jest.fn(),
-      unobserve: jest.fn(),
-      disconnect: jest.fn(),
-      takeRecords: jest.fn(() => []),
-      root: options?.root || null,
-      rootMargin: options?.rootMargin || '0px',
-      thresholds: Array.isArray(options?.threshold)
-        ? options.threshold
-        : [options?.threshold || 0],
-    };
-    return instance;
-  });
+// Apply to both window and global
+if (typeof window !== 'undefined') {
+  window.IntersectionObserver = MockIntersectionObserver;
+}
+global.IntersectionObserver = MockIntersectionObserver;
 
 // Add ReadableStream polyfill
 if (typeof globalThis.ReadableStream === 'undefined') {
@@ -397,26 +379,94 @@ jest.mock('@/lib/contexts/AuthContext', () => ({
 }));
 
 // Mock language context with comprehensive test setup
-const {
-  useTestLanguage,
-  TestLanguageProvider,
-} = require('./__tests__/utils/comprehensive-test-setup');
+jest.mock('@/lib/i18n/refactored-context', () => {
+  const React = require('react');
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
-  useLanguage: require('./__tests__/utils/comprehensive-test-setup')
-    .useTestLanguage,
-  LanguageProvider: require('./__tests__/utils/comprehensive-test-setup')
-    .TestLanguageProvider,
-}));
+  // Inline mock to avoid circular dependency issues
+  return {
+    useLanguage: () => ({
+      language: 'es',
+      setLanguage: jest.fn(),
+      t: {
+        // Common translations
+        loading: 'Cargando...',
+        error: 'Error',
+        success: 'Éxito',
+        save: 'Guardar',
+        cancel: 'Cancelar',
+        hello: 'Hola',
+        // Dashboard translations
+        loadingDashboard: 'Cargando tu panel...',
+        myPortfolios: 'Mis Portafolios',
+        managePortfolios: 'Gestiona y crea tus portafolios profesionales',
+        createNewPortfolio: 'Crear Nuevo Portafolio',
+        createPortfolio: 'Crear Portafolio',
+        totalPortfolios: 'Total de Portafolios',
+        published: 'Publicados',
+        totalViews: 'Vistas Totales',
+        yourPortfolios: 'Tus Portafolios',
+        statusPublished: 'Publicado',
+        statusDraft: 'Borrador',
+        lastModified: 'Modificado',
+        daysAgo: 'hace',
+        weekAgo: 'hace 1 semana',
+        views: 'vistas',
+        noPortfoliosYet: 'Aún no tienes portafolios',
+        createFirstPortfolio: 'Crea tu primer portafolio para comenzar',
+        // Add more translations as needed by tests
+      },
+      availableLanguages: [
+        { code: 'es', name: 'Español', flag: '🇲🇽' },
+        { code: 'en', name: 'English', flag: '🇺🇸' },
+      ],
+      getNamespace: () => ({}),
+      isLoaded: true,
+    }),
+    LanguageProvider: ({ children }) => children,
+  };
+});
 
-jest.mock('@/lib/i18n/minimal-context', () => ({
-  useLanguage: require('./__tests__/utils/comprehensive-test-setup')
-    .useTestLanguage,
-  LanguageProvider: require('./__tests__/utils/comprehensive-test-setup')
-    .TestLanguageProvider,
-}));
+jest.mock('@/lib/i18n/minimal-context', () => {
+  return {
+    useLanguage: () => ({
+      language: 'es',
+      setLanguage: jest.fn(),
+      t: {
+        loading: 'Cargando...',
+        error: 'Error',
+        success: 'Éxito',
+        save: 'Guardar',
+        cancel: 'Cancelar',
+        // Add more translations as needed by tests
+      },
+      availableLanguages: [
+        { code: 'es', name: 'Español', flag: '🇲🇽' },
+        { code: 'en', name: 'English', flag: '🇺🇸' },
+      ],
+      getNamespace: () => ({}),
+      isLoaded: true,
+    }),
+    LanguageProvider: ({ children }) => children,
+  };
+});
 
 // IntersectionObserver already mocked at the top of the file
+
+// Mock feature flags and experiments
+jest.mock('@/lib/services/feature-flags/use-experiment', () => ({
+  useExperiment: () => ({
+    components: [],
+    isLoading: false,
+    error: null,
+  }),
+  useExperimentTheme: () => {},
+  useExperimentTracking: () => ({
+    trackClick: jest.fn(),
+    trackView: jest.fn(),
+    trackConversion: jest.fn(),
+  }),
+  sortComponentsByOrder: components => components,
+}));
 
 // Clear localStorage before each test suite to ensure consistent language detection
 beforeEach(() => {

@@ -291,8 +291,20 @@ export const mockAuthContextValue = {
   signOut: jest.fn(),
 };
 
+// Language context type
+interface LanguageContextValue {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: typeof mockTranslations.es | typeof mockTranslations.en;
+  availableLanguages: Array<{ code: Language; name: string; flag: string }>;
+  getNamespace: () => Record<string, never>;
+  isLoaded: boolean;
+}
+
 // Create mock context - MUST be defined before it's used
-const MockLanguageContext = React.createContext<any>(null);
+const MockLanguageContext = React.createContext<LanguageContextValue | null>(
+  null
+);
 
 // Language Context Provider for tests
 export const TestLanguageProvider = ({
@@ -325,9 +337,9 @@ export const TestLanguageProvider = ({
 };
 
 // Mock hook
-export const useTestLanguage = () => {
+export const useTestLanguage = (): LanguageContextValue => {
   const context = React.useContext(MockLanguageContext);
-  if (!context) {
+  if (context === null) {
     return {
       language: 'es' as Language,
       setLanguage: jest.fn(),
@@ -366,7 +378,7 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
 export function renderWithProviders(
   ui: React.ReactElement,
   options?: CustomRenderOptions
-) {
+): ReturnType<typeof rtlRender> {
   const { initialLanguage = 'es', ...renderOptions } = options || {};
 
   return rtlRender(ui, {

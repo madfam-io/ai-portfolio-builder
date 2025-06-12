@@ -38,15 +38,28 @@ const defaultConfigs: Record<string, RateLimitConfig> = {
 // In production, this should be replaced with a distributed store
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-// Cleanup old entries periodically
-setInterval(() => {
+// Cleanup function that runs on each request
+function cleanupExpiredEntries(): void {
   const now = Date.now();
+  const maxSize = 10000; // Prevent unbounded growth
+
+  // Clean up expired entries
   for (const [key, value] of rateLimitStore.entries()) {
     if (value.resetTime < now) {
       rateLimitStore.delete(key);
     }
   }
-}, 60 * 1000); // Clean up every minute
+
+  // If still too large, remove oldest entries
+  if (rateLimitStore.size > maxSize) {
+    const entries = Array.from(rateLimitStore.entries()).sort(
+      (a, b) => a[1].resetTime - b[1].resetTime
+    );
+
+    const toRemove = entries.slice(0, entries.length - maxSize);
+    toRemove.forEach(([key]) => rateLimitStore.delete(key));
+  }
+}
 
 /**
  * Get client identifier from request
@@ -74,17 +87,17 @@ function getClientId(request: NextRequest): string {
  */
 function getConfigForPath(path: string): RateLimitConfig {
   if (path.startsWith('/api/auth/')) {
-    return defaultConfigs.auth!;
+    return defaultConfigs.auth || defaultRateLimitConfig;
   }
   if (
     path.startsWith('/api/ai/') ||
     path.includes('/enhance') ||
     path.includes('/optimize')
   ) {
-    return defaultConfigs.ai!;
+    return defaultConfigs.ai || defaultRateLimitConfig;
   }
   if (path.startsWith('/api/')) {
-    return defaultConfigs.api!;
+    return defaultConfigs.api || defaultRateLimitConfig;
   }
 
   // No rate limiting for non-API routes
@@ -109,6 +122,11 @@ export function edgeRateLimitMiddleware(
 
   const clientId = getClientId(request);
   const now = Date.now();
+
+  // Run cleanup occasionally (1% of requests)
+  if (Math.random() < 0.01) {
+    cleanupExpiredEntries();
+  }
 
   // Get or create rate limit data
   let rateLimitData = rateLimitStore.get(clientId);

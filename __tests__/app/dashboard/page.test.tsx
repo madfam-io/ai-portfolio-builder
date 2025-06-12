@@ -27,7 +27,7 @@ jest.mock('next/navigation', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: function Image(props: any) {
-    // eslint-disable-next-line @next/next/no-img-element
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img {...props} />;
   },
 }));
@@ -58,24 +58,85 @@ import userEvent from '@testing-library/user-event';
 import React from 'react';
 
 import DashboardPage from '@/app/dashboard/page';
+import { useAuth } from '@/lib/contexts/AuthContext';
 
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
-import { useAuth } from '@/lib/contexts/AuthContext';
 
 // Get the mocked function
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
-// Create test user
-const mockUser = { id: 'user-1', email: 'test@example.com' };
+// Create test user with all required User type properties
+const mockUser = {
+  id: 'user-1',
+  email: 'test@example.com',
+  name: 'Test User',
+  accountType: 'customer' as const,
+  status: 'active' as const,
+  createdAt: new Date('2025-01-01'),
+  updatedAt: new Date('2025-01-01'),
+  language: 'es' as const,
+  featureFlags: {},
+  customerProfile: {
+    subscriptionPlan: 'free' as const,
+    subscriptionStatus: 'active' as const,
+    subscriptionStartDate: new Date('2025-01-01'),
+    portfoliosCreated: 0,
+    aiEnhancementsUsed: 1,
+    monthlyPortfolioViews: 0,
+    maxPortfolios: 1,
+    maxAiEnhancements: 3,
+    customDomainEnabled: false,
+    analyticsEnabled: false,
+    prioritySupport: false,
+  },
+};
 
 // Default mock implementation
 mockUseAuth.mockReturnValue({
-  user: mockUser,
+  // Authentication state
   loading: false,
-  error: null,
+  user: mockUser,
+  supabaseUser: null,
+  session: null,
+
+  // User type and permissions
+  isAdmin: false,
+  isInAdminMode: false,
+  isImpersonating: false,
+  permissions: [],
+  subscriptionPlan: 'free',
+  permissionLevel: 'Customer',
+
+  // Authentication methods
   signIn: jest.fn(),
   signUp: jest.fn(),
   signOut: jest.fn(),
+  resetPassword: jest.fn(),
+
+  // Admin functionality
+  switchToAdminMode: jest.fn(),
+  switchToUserMode: jest.fn(),
+  impersonateUser: jest.fn(),
+  stopImpersonation: jest.fn(),
+
+  // Permission checking
+  canAccess: jest.fn(() => false),
+  canAccessFeature: jest.fn(() => false),
+  hasReachedLimit: jest.fn(() => false),
+
+  // Profile management
+  updateProfile: jest.fn(),
+  upgradeSubscription: jest.fn(),
+  refreshUser: jest.fn(),
+
+  // Subscription info
+  isSubscriptionActive: true,
+  daysUntilExpiration: null,
+  usageStats: {
+    portfoliosCreated: 0,
+    aiEnhancementsUsed: 1,
+    monthlyViews: 0,
+  },
 });
 
 // Mock fetch for API calls
@@ -118,17 +179,55 @@ describe('Dashboard Page', () => {
     // Default mock for successful portfolio fetch
     mockFetch.mockResolvedValue({
       ok: true,
-      json: async () => ({ data: mockPortfolios }),
+      json: () => Promise.resolve({ data: mockPortfolios }),
     });
 
     // Reset auth context to default state
     mockUseAuth.mockReturnValue({
-      user: mockUser,
+      // Authentication state
       loading: false,
-      error: null,
+      user: mockUser,
+      supabaseUser: null,
+      session: null,
+
+      // User type and permissions
+      isAdmin: false,
+      isInAdminMode: false,
+      isImpersonating: false,
+      permissions: [],
+      subscriptionPlan: 'free',
+      permissionLevel: 'Customer',
+
+      // Authentication methods
       signIn: jest.fn(),
       signUp: jest.fn(),
       signOut: jest.fn(),
+      resetPassword: jest.fn(),
+
+      // Admin functionality
+      switchToAdminMode: jest.fn(),
+      switchToUserMode: jest.fn(),
+      impersonateUser: jest.fn(),
+      stopImpersonation: jest.fn(),
+
+      // Permission checking
+      canAccess: jest.fn(() => false),
+      canAccessFeature: jest.fn(() => false),
+      hasReachedLimit: jest.fn(() => false),
+
+      // Profile management
+      updateProfile: jest.fn(),
+      upgradeSubscription: jest.fn(),
+      refreshUser: jest.fn(),
+
+      // Subscription info
+      isSubscriptionActive: true,
+      daysUntilExpiration: null,
+      usageStats: {
+        portfoliosCreated: 0,
+        aiEnhancementsUsed: 1,
+        monthlyViews: 0,
+      },
     });
   });
 
@@ -136,27 +235,28 @@ describe('Dashboard Page', () => {
     test('renders dashboard header', async () => {
       renderWithLanguage(<DashboardPage />);
 
-      // Check for user greeting with email
-      const heading = await screen.findByText(/hello.*test/i);
+      // Check for user greeting - dashboard shows "Hola, test!"
+      const heading = await screen.findByText(/hola.*test/i);
       expect(heading).toBeInTheDocument();
     });
 
     test('displays user greeting', async () => {
       renderWithLanguage(<DashboardPage />);
 
-      // Should show hello message with email prefix
-      const greeting = await screen.findByText(/hello.*test/i);
+      // Should show hello message with email prefix - "Hola, test!"
+      const greeting = await screen.findByText(/hola.*test/i);
       expect(greeting).toBeInTheDocument();
     });
 
     test('shows create portfolio button', async () => {
       renderWithLanguage(<DashboardPage />);
 
-      const createButton = await screen.findByRole('link', {
-        name: /create.*portfolio|crear.*portafolio/i,
-      });
+      // Look for "Crear Nuevo Portafolio" button
+      const createButton = await screen.findByText(/crear nuevo portafolio/i);
       expect(createButton).toBeInTheDocument();
-      expect(createButton).toHaveAttribute('href', '/editor');
+      const createLink = createButton.closest('a');
+      expect(createLink).not.toBeNull();
+      expect(createLink!).toHaveAttribute('href', '/editor');
     });
   });
 
@@ -172,12 +272,11 @@ describe('Dashboard Page', () => {
     test('shows portfolio status', async () => {
       renderWithLanguage(<DashboardPage />);
 
-      // Should indicate published status
+      // Should indicate portfolio status - "Publicado" or "Borrador"
       await waitFor(() => {
-        const elements = screen.getAllByText(
-          /published|publicado|draft|borrador/i
-        );
-        expect(elements.length).toBeGreaterThan(0);
+        const published = screen.getAllByText(/publicado/i);
+        const draft = screen.getAllByText(/borrador/i);
+        expect(published.length + draft.length).toBeGreaterThan(0);
       });
     });
 
@@ -195,12 +294,9 @@ describe('Dashboard Page', () => {
       // Wait for portfolios to load
       await screen.findByText('My Portfolio');
 
-      // Should have edit links for each portfolio
-      const editLinks = await screen.findAllByRole('link', {
-        name: /edit portfolio/i,
-      });
-
-      expect(editLinks.length).toBe(2);
+      // Should have edit links for each portfolio (they use icon buttons)
+      const editLinks = await screen.findAllByTitle('Edit portfolio');
+      expect(editLinks).toHaveLength(2);
       expect(editLinks[0]).toHaveAttribute('href', '/editor?id=1');
     });
   });
@@ -210,14 +306,14 @@ describe('Dashboard Page', () => {
       // Mock empty portfolio response
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ data: [] }),
+        json: () => Promise.resolve({ data: [] }),
       });
 
       renderWithLanguage(<DashboardPage />);
 
-      // Should show empty state message
+      // Should show empty state message - "Aún no tienes portafolios"
       const emptyMessage = await screen.findByText(
-        /no portfolios yet|no tienes portafolios/i
+        /aún no tienes portafolios/i
       );
       expect(emptyMessage).toBeInTheDocument();
     });
@@ -234,11 +330,11 @@ describe('Dashboard Page', () => {
       mockFetch
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ data: mockPortfolios }),
+          json: () => Promise.resolve({ data: mockPortfolios }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
+          json: () => Promise.resolve({ success: true }),
         });
 
       renderWithLanguage(<DashboardPage />);
@@ -246,9 +342,8 @@ describe('Dashboard Page', () => {
       // Wait for portfolios to load
       await screen.findByText('My Portfolio');
 
-      const deleteButtons = await screen.findAllByRole('button', {
-        name: /delete portfolio/i,
-      });
+      // Find delete buttons by title attribute
+      const deleteButtons = await screen.findAllByTitle('Delete portfolio');
 
       // Click delete on first portfolio
       await user.click(deleteButtons[0]);
@@ -264,12 +359,50 @@ describe('Dashboard Page', () => {
     test('redirects to login when not authenticated', async () => {
       // Mock no user
       mockUseAuth.mockReturnValue({
-        user: null,
+        // Authentication state
         loading: false,
-        error: null,
+        user: null,
+        supabaseUser: null,
+        session: null,
+
+        // User type and permissions
+        isAdmin: false,
+        isInAdminMode: false,
+        isImpersonating: false,
+        permissions: [],
+        subscriptionPlan: undefined,
+        permissionLevel: 'Unknown',
+
+        // Authentication methods
         signIn: jest.fn(),
         signUp: jest.fn(),
         signOut: jest.fn(),
+        resetPassword: jest.fn(),
+
+        // Admin functionality
+        switchToAdminMode: jest.fn(),
+        switchToUserMode: jest.fn(),
+        impersonateUser: jest.fn(),
+        stopImpersonation: jest.fn(),
+
+        // Permission checking
+        canAccess: jest.fn(() => false),
+        canAccessFeature: jest.fn(() => false),
+        hasReachedLimit: jest.fn(() => true),
+
+        // Profile management
+        updateProfile: jest.fn(),
+        upgradeSubscription: jest.fn(),
+        refreshUser: jest.fn(),
+
+        // Subscription info
+        isSubscriptionActive: false,
+        daysUntilExpiration: null,
+        usageStats: {
+          portfoliosCreated: 0,
+          aiEnhancementsUsed: 0,
+          monthlyViews: 0,
+        },
       });
 
       renderWithLanguage(<DashboardPage />);
@@ -283,18 +416,56 @@ describe('Dashboard Page', () => {
   describe('Loading State', () => {
     test('shows loading indicator initially', () => {
       mockUseAuth.mockReturnValue({
-        user: null,
+        // Authentication state
         loading: true,
-        error: null,
+        user: null,
+        supabaseUser: null,
+        session: null,
+
+        // User type and permissions
+        isAdmin: false,
+        isInAdminMode: false,
+        isImpersonating: false,
+        permissions: [],
+        subscriptionPlan: undefined,
+        permissionLevel: 'Unknown',
+
+        // Authentication methods
         signIn: jest.fn(),
         signUp: jest.fn(),
         signOut: jest.fn(),
+        resetPassword: jest.fn(),
+
+        // Admin functionality
+        switchToAdminMode: jest.fn(),
+        switchToUserMode: jest.fn(),
+        impersonateUser: jest.fn(),
+        stopImpersonation: jest.fn(),
+
+        // Permission checking
+        canAccess: jest.fn(() => false),
+        canAccessFeature: jest.fn(() => false),
+        hasReachedLimit: jest.fn(() => true),
+
+        // Profile management
+        updateProfile: jest.fn(),
+        upgradeSubscription: jest.fn(),
+        refreshUser: jest.fn(),
+
+        // Subscription info
+        isSubscriptionActive: false,
+        daysUntilExpiration: null,
+        usageStats: {
+          portfoliosCreated: 0,
+          aiEnhancementsUsed: 0,
+          monthlyViews: 0,
+        },
       });
 
       renderWithLanguage(<DashboardPage />);
 
-      // Check for loading spinner
-      const loading = screen.getByText(/loading.*dashboard|cargando/i);
+      // Check for loading text - "Cargando tu panel..."
+      const loading = screen.getByText(/cargando tu panel/i);
       expect(loading).toBeInTheDocument();
     });
   });
@@ -304,20 +475,19 @@ describe('Dashboard Page', () => {
       // Mock failed fetch
       mockFetch.mockResolvedValueOnce({
         ok: false,
-        json: async () => ({ error: 'Failed to fetch portfolios' }),
+        json: () => Promise.resolve({ error: 'Failed to fetch portfolios' }),
       });
 
       renderWithLanguage(<DashboardPage />);
 
+      // Error shows the actual error message
       const errorMessage = await screen.findByText(
         /Failed to load portfolios/i
       );
       expect(errorMessage).toBeInTheDocument();
 
       // Should show Try Again button
-      const retryButton = await screen.findByRole('button', {
-        name: /try again/i,
-      });
+      const retryButton = await screen.findByText(/Try Again/i);
       expect(retryButton).toBeInTheDocument();
     });
   });

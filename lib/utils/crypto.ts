@@ -22,6 +22,9 @@ function getEncryptionKey(): Buffer {
   if (!envKey) {
     // In production, this should never happen
     if (process.env.NODE_ENV === 'production') {
+      logger.error(
+        'CRITICAL: ENCRYPTION_KEY not set in production environment'
+      );
       throw new Error('ENCRYPTION_KEY must be set in production environment');
     }
 
