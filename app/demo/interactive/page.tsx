@@ -66,7 +66,7 @@ export default function InteractiveDemoPage(): React.ReactElement {
     },
   });
 
-  const handleTemplateChange = async (template: TemplateType) => {
+  const handleTemplateChange = async (template: TemplateType): Promise<void> => {
     setIsLoading(true);
     setSelectedTemplate(template);
 
@@ -78,11 +78,11 @@ export default function InteractiveDemoPage(): React.ReactElement {
     setIsLoading(false);
   };
 
-  const handlePortfolioChange = (updatedPortfolio: Portfolio) => {
+  const handlePortfolioChange = (updatedPortfolio: Portfolio): void => {
     setPortfolio(updatedPortfolio);
   };
 
-  const handleNextStep = () => {
+  const handleNextStep = (): void => {
     switch (currentStep) {
       case 'template':
         setCurrentStep('ai-enhance');
@@ -99,7 +99,7 @@ export default function InteractiveDemoPage(): React.ReactElement {
     }
   };
 
-  const handlePreviousStep = () => {
+  const handlePreviousStep = (): void => {
     switch (currentStep) {
       case 'ai-enhance':
         setCurrentStep('template');
@@ -113,12 +113,12 @@ export default function InteractiveDemoPage(): React.ReactElement {
     }
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = (): void => {
     const refreshedPortfolio = generateSamplePortfolio(portfolio.template);
     setPortfolio(refreshedPortfolio);
   };
 
-  const handleExport = () => {
+  const handleExport = (): void => {
     // Demo export functionality with simulated download
     const exportOptions = `Export Options Available in Full Version:
 • PDF Export - Professional PDF with custom styling
@@ -138,7 +138,7 @@ Your portfolio would be downloaded as: ${portfolio.name.toLowerCase().replace(/\
     );
   };
 
-  const handleShare = () => {
+  const handleShare = (): void => {
     // Demo share functionality with rich options
     const shareUrl = `https://${portfolio.name.toLowerCase().replace(/\s+/g, '')}.prisma.madfam.io`;
     const shareOptions = `Share Your Portfolio:
@@ -623,7 +623,11 @@ Social preview includes:
                                   const updatedSkills = [...portfolio.skills];
                                   updatedSkills[index] = {
                                     ...skill,
-                                    level: e.target.value as any,
+                                    level: e.target.value as
+                                      | 'beginner'
+                                      | 'intermediate'
+                                      | 'advanced'
+                                      | 'expert',
                                   };
                                   handlePortfolioChange({
                                     ...portfolio,

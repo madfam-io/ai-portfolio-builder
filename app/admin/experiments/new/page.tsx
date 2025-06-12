@@ -97,7 +97,7 @@ export default function CreateExperimentPage(): React.ReactElement {
 
   // Load component library and templates
   useEffect(() => {
-    const loadData = async () => {
+    const loadData = async (): Promise<void> => {
       try {
         const supabase = createClient();
         if (!supabase) {
@@ -116,7 +116,9 @@ export default function CreateExperimentPage(): React.ReactElement {
           .order('type, variant_name');
 
         if (componentsError) throw componentsError;
-        setComponentLibrary(components || []);
+        if (components != null) {
+          setComponentLibrary(components);
+        }
 
         // Load experiment templates
         const { data: templateData, error: templatesError } = await supabase
@@ -126,7 +128,9 @@ export default function CreateExperimentPage(): React.ReactElement {
           .order('usage_count', { ascending: false });
 
         if (templatesError) throw templatesError;
-        setTemplates(templateData || []);
+        if (templateData != null) {
+          setTemplates(templateData);
+        }
       } catch (error) {
         logger.error('Failed to load component library', error as Error);
       }
@@ -171,7 +175,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Add new variant
-  const addVariant = () => {
+  const addVariant = (): void => {
     const newVariant: VariantConfig = {
       name: `Variant ${String.fromCharCode(65 + variants.length - 1)}`,
       isControl: false,
@@ -183,7 +187,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Remove variant
-  const removeVariant = (index: number) => {
+  const removeVariant = (index: number): void => {
     if (variants.length <= 2) return; // Keep at least 2 variants
     const newVariants = variants.filter((_, i) => i !== index);
     setVariants(newVariants);
@@ -193,7 +197,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Update variant
-  const updateVariant = (index: number, updates: Partial<VariantConfig>) => {
+  const updateVariant = (index: number, updates: Partial<VariantConfig>): void => {
     const newVariants = [...variants];
     const currentVariant = newVariants[index];
     if (!currentVariant) return;
@@ -211,7 +215,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Add component to variant
-  const addComponent = (component: ComponentLibraryItem) => {
+  const addComponent = (component: ComponentLibraryItem): void => {
     const selectedVariant = variants[selectedVariantIndex];
     if (!selectedVariant) return;
 
@@ -220,7 +224,7 @@ export default function CreateExperimentPage(): React.ReactElement {
       variant: component.variantName,
       order: selectedVariant.components.length + 1,
       visible: true,
-      props: component.defaultProps || {},
+      props: component.defaultProps != null ? component.defaultProps : {},
     };
 
     const newVariants = [...variants];
@@ -233,7 +237,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Remove component from variant
-  const removeComponent = (variantIndex: number, componentIndex: number) => {
+  const removeComponent = (variantIndex: number, componentIndex: number): void => {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
@@ -251,7 +255,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     variantIndex: number,
     componentIndex: number,
     direction: 'up' | 'down'
-  ) => {
+  ): void => {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
@@ -279,7 +283,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   const toggleComponentVisibility = (
     variantIndex: number,
     componentIndex: number
-  ) => {
+  ): void => {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
@@ -294,21 +298,26 @@ export default function CreateExperimentPage(): React.ReactElement {
   // Update component props - removed as unused
 
   // Apply template
-  const applyTemplate = (template: ExperimentTemplate) => {
+  const applyTemplate = (template: ExperimentTemplate): void => {
     setExperimentName(template.name);
     setDescription(template.description || '');
     setHypothesis(template.hypothesisTemplate || '');
     setPrimaryMetric(template.primaryMetric);
 
     // Apply variant configurations
-    if (template.variants && template.variants.length > 0) {
+    if (template.variants != null && template.variants.length > 0) {
       const newVariants: VariantConfig[] = template.variants.map(
         (v, index) => ({
           name: v.name,
           isControl: index === 0,
           trafficPercentage: Math.floor(100 / template.variants.length),
           components: v.components || [],
-          themeOverrides: v.themeOverrides ? { ...v.themeOverrides } as Record<string, string | number | boolean> : {},
+          themeOverrides: v.themeOverrides != null
+            ? ({ ...v.themeOverrides } as Record<
+                string,
+                string | number | boolean
+              >)
+            : {},
         })
       );
       setVariants(newVariants);
@@ -316,7 +325,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   };
 
   // Create experiment
-  const handleCreateExperiment = async () => {
+  const handleCreateExperiment = async (): Promise<void> => {
     if (!validateForm()) return;
 
     setLoading(true);

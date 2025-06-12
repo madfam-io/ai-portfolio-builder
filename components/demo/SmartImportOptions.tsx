@@ -13,8 +13,37 @@ import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { ResumeParser } from '@/components/integrations/ResumeParser';
 
+interface ImportedData {
+  name?: string;
+  bio?: string;
+  projects?: Array<{
+    title: string;
+    description: string;
+    url?: string;
+    technologies?: string[];
+  }>;
+  skills?: Array<{
+    name: string;
+    level?: string;
+  }>;
+  experience?: Array<{
+    company: string;
+    position: string;
+    startDate: string;
+    endDate?: string;
+    description: string;
+  }>;
+  education?: Array<{
+    institution: string;
+    degree: string;
+    field: string;
+    startDate: string;
+    endDate?: string;
+  }>;
+}
+
 interface SmartImportOptionsProps {
-  onDataImport?: (source: string, data: any) => void;
+  onDataImport?: (source: string, data: ImportedData) => void;
   isDemo?: boolean;
   className?: string;
 }
@@ -23,7 +52,7 @@ export function SmartImportOptions({
   onDataImport,
   isDemo = true,
   className = '',
-}: SmartImportOptionsProps) {
+}: SmartImportOptionsProps): React.ReactElement {
   const [activeImport, setActiveImport] = useState<
     'linkedin' | 'github' | 'resume' | null
   >(null);
@@ -77,14 +106,14 @@ export function SmartImportOptions({
     },
   ];
 
-  const handleImportComplete = (source: string, data: any) => {
+  const handleImportComplete = (source: string, data: ImportedData): void => {
     setCompletedImports(prev => new Set([...prev, source]));
     if (onDataImport) {
       onDataImport(source, data);
     }
   };
 
-  const handleBackToOptions = () => {
+  const handleBackToOptions = (): void => {
     setActiveImport(null);
   };
 
@@ -177,7 +206,11 @@ export function SmartImportOptions({
               className={`relative bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 cursor-pointer group hover:shadow-xl ${
                 isCompleted ? 'ring-2 ring-green-500' : ''
               }`}
-              onClick={() => setActiveImport(option.id as any)}
+              onClick={() =>
+                setActiveImport(
+                  option.id as 'linkedin' | 'github' | 'resume'
+                )
+              }
             >
               {isCompleted && (
                 <div className="absolute top-0 right-0 bg-green-500 text-white p-2 rounded-bl-lg">

@@ -73,7 +73,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
 
   // Fetch experiments
   useEffect(() => {
-    const fetchExperiments = async () => {
+    const fetchExperiments = async (): Promise<void> => {
       try {
         const supabase = createClient();
         if (!supabase) {
@@ -101,7 +101,9 @@ export default function AdminExperimentsPage(): React.ReactElement {
           .order('created_at', { ascending: false });
 
         if (error) throw error;
-        setExperiments(data || []);
+        if (data != null) {
+          setExperiments(data);
+        }
       } catch (error) {
         logger.error('Failed to fetch experiments', error as Error);
       } finally {
@@ -152,7 +154,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
   const handleStatusChange = async (
     experimentId: string,
     newStatus: ExperimentStatus
-  ) => {
+  ): Promise<void> => {
     try {
       const supabase = createClient();
       if (!supabase) {

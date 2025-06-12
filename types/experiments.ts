@@ -363,3 +363,20 @@ export interface VisitorAssignment {
   variantId: string;
   assignedAt: Date;
 }
+
+/**
+ * Detailed variant with analytics data
+ */
+export interface DetailedVariant extends LandingPageVariant {
+  analytics: {
+    totalClicks: number;
+    uniqueVisitors: number;
+    averageTimeOnPage: number;
+    bounceRate: number;
+    conversionsByDay: Array<{
+      date: string;
+      conversions: number;
+      visitors: number;
+    }>;
+  };
+}
