@@ -77,23 +77,23 @@ export interface GEOSettings {
   primaryKeyword: string;
   secondaryKeywords: string[];
   negativeKeywords?: string[]; // Keywords to avoid
-  
+
   // Content goals
   targetAudience: 'employers' | 'clients' | 'collaborators' | 'general';
   contentGoals: ('inform' | 'convert' | 'engage' | 'rank')[];
   industry: string;
-  
+
   // Optimization preferences
   tone: 'professional' | 'casual' | 'creative' | 'academic' | 'technical';
   readabilityLevel: 'simple' | 'moderate' | 'advanced';
   contentLength: 'concise' | 'detailed' | 'comprehensive';
-  
+
   // Technical settings
   enableStructuredData: boolean;
   enableInternalLinking: boolean;
   enableKeywordOptimization: boolean;
   keywordDensityTarget: number; // Percentage (e.g., 1.5)
-  
+
   // Platform-specific optimization
   optimizeFor: ('google' | 'bing' | 'social' | 'voice' | 'ai-engines')[];
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-
 import {
   FaMagic,
   FaLink,
@@ -16,10 +15,17 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 export default function Features(): React.ReactElement {
   const { t } = useLanguage();
   return (
-    <section id="features" className="py-24 px-6 bg-white dark:bg-gray-900" aria-labelledby="features-heading">
+    <section
+      id="features"
+      className="py-24 px-6 bg-white dark:bg-gray-900"
+      aria-labelledby="features-heading"
+    >
       <div className="container mx-auto max-w-7xl">
         <div className="text-center mb-20">
-          <h2 id="features-heading" className="text-5xl font-bold text-gray-900 dark:text-white mb-6">
+          <h2
+            id="features-heading"
+            className="text-5xl font-bold text-gray-900 dark:text-white mb-6"
+          >
             <span>{t.featuresTitle}</span>{' '}
             <span className="gradient-text">{t.standOut}</span>
           </h2>

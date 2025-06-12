@@ -1,6 +1,6 @@
 /**
  * Component Gallery Modal
- * 
+ *
  * Visual gallery for browsing and selecting landing page components
  * to add to experiment variants.
  */
@@ -8,7 +8,10 @@
 import React, { useState } from 'react';
 import { FiX, FiSearch, FiFilter, FiEye, FiPlus, FiStar } from 'react-icons/fi';
 
-import type { ComponentLibraryItem, LandingComponentType } from '@/types/experiments';
+import type {
+  ComponentLibraryItem,
+  LandingComponentType,
+} from '@/types/experiments';
 
 interface ComponentGalleryProps {
   components: ComponentLibraryItem[];
@@ -19,36 +22,47 @@ interface ComponentGalleryProps {
 export default function ComponentGallery({
   components,
   onSelect,
-  onClose
+  onClose,
 }: ComponentGalleryProps): React.ReactElement {
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedType, setSelectedType] = useState<LandingComponentType | 'all'>('all');
+  const [selectedType, setSelectedType] = useState<
+    LandingComponentType | 'all'
+  >('all');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [previewComponent, setPreviewComponent] = useState<ComponentLibraryItem | null>(null);
+  const [previewComponent, setPreviewComponent] =
+    useState<ComponentLibraryItem | null>(null);
 
   // Get unique component types
   const componentTypes = Array.from(new Set(components.map(c => c.type)));
-  
+
   // Get unique categories
-  const categories = Array.from(new Set(components.map(c => c.category).filter(Boolean))) as string[];
+  const categories = Array.from(
+    new Set(components.map(c => c.category).filter(Boolean))
+  ) as string[];
 
   // Filter components
   const filteredComponents = components.filter(component => {
-    const matchesSearch = component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         component.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'all' || component.type === selectedType;
-    const matchesCategory = selectedCategory === 'all' || component.category === selectedCategory;
+    const matchesSearch =
+      component.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      component.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType =
+      selectedType === 'all' || component.type === selectedType;
+    const matchesCategory =
+      selectedCategory === 'all' || component.category === selectedCategory;
     return matchesSearch && matchesType && matchesCategory;
   });
 
   // Group components by type
-  const groupedComponents = filteredComponents.reduce((acc, component) => {
-    if (!acc[component.type]) {
-      acc[component.type] = [];
-    }
-    acc[component.type]!.push(component);
-    return acc;
-  }, {} as Record<string, ComponentLibraryItem[]>);
+  const groupedComponents = filteredComponents.reduce(
+    (acc, component) => {
+      if (!acc[component.type]) {
+        acc[component.type] = [];
+      }
+      acc[component.type]!.push(component);
+      return acc;
+    },
+    {} as Record<string, ComponentLibraryItem[]>
+  );
 
   return (
     <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
@@ -81,30 +95,35 @@ export default function ComponentGallery({
                   type="text"
                   placeholder="Search components..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={e => setSearchTerm(e.target.value)}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
             </div>
-            
+
             <div className="flex items-center gap-2">
               <FiFilter className="text-gray-400" />
               <select
                 value={selectedType}
-                onChange={(e) => setSelectedType(e.target.value as LandingComponentType | 'all')}
+                onChange={e =>
+                  setSelectedType(
+                    e.target.value as LandingComponentType | 'all'
+                  )
+                }
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 <option value="all">All Types</option>
                 {componentTypes.map(type => (
                   <option key={type} value={type}>
-                    {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
+                    {type.charAt(0).toUpperCase() +
+                      type.slice(1).replace('_', ' ')}
                   </option>
                 ))}
               </select>
-              
+
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={e => setSelectedCategory(e.target.value)}
                 className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 <option value="all">All Categories</option>
@@ -125,9 +144,9 @@ export default function ComponentGallery({
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 {type.charAt(0).toUpperCase() + type.slice(1).replace('_', ' ')}
               </h3>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {typeComponents.map((component) => (
+                {typeComponents.map(component => (
                   <div
                     key={component.id}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden hover:border-purple-300 dark:hover:border-purple-600 transition-colors"
@@ -158,14 +177,14 @@ export default function ComponentGallery({
                           </div>
                         </div>
                       )}
-                      
+
                       {component.isPremium && (
                         <div className="absolute top-2 right-2 bg-yellow-400 text-yellow-900 px-2 py-1 rounded text-xs font-medium">
                           Premium
                         </div>
                       )}
                     </div>
-                    
+
                     {/* Component Info */}
                     <div className="p-4">
                       <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
@@ -176,7 +195,7 @@ export default function ComponentGallery({
                           {component.description}
                         </p>
                       )}
-                      
+
                       <div className="flex items-center justify-between mb-3">
                         <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400">
                           {component.usageCount && component.usageCount > 0 && (
@@ -190,7 +209,7 @@ export default function ComponentGallery({
                           )}
                         </div>
                       </div>
-                      
+
                       <div className="flex gap-2">
                         <button
                           onClick={() => setPreviewComponent(component)}
@@ -213,7 +232,7 @@ export default function ComponentGallery({
               </div>
             </div>
           ))}
-          
+
           {filteredComponents.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500 dark:text-gray-400">
@@ -239,7 +258,7 @@ export default function ComponentGallery({
                 <FiX className="w-5 h-5" />
               </button>
             </div>
-            
+
             <div className="p-6">
               {/* Preview would be rendered here */}
               <div className="bg-gray-100 dark:bg-gray-900 rounded-lg p-8 text-center">
@@ -255,7 +274,7 @@ export default function ComponentGallery({
                   </pre>
                 </div>
               </div>
-              
+
               <div className="mt-6 flex gap-4">
                 <button
                   onClick={() => setPreviewComponent(null)}

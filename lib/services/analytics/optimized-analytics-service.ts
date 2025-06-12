@@ -5,8 +5,10 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
+
 import type { Repository, PullRequest, Contributor } from '@/types/analytics';
+
+import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
 
 export class OptimizedAnalyticsService {
   private userId: string;
@@ -184,7 +186,9 @@ export class OptimizedAnalyticsService {
         .select();
 
       if (contributorError) {
-        logger.error('Failed to batch upsert contributors', { contributorError });
+        logger.error('Failed to batch upsert contributors', {
+          contributorError,
+        });
         throw contributorError;
       }
 
@@ -235,15 +239,18 @@ export class OptimizedAnalyticsService {
       return data;
     } catch (error) {
       // Fallback to multiple queries if RPC doesn't exist
-      logger.warn('Dashboard RPC not available, falling back to multiple queries');
-      
+      logger.warn(
+        'Dashboard RPC not available, falling back to multiple queries'
+      );
+
       // Fetch all data in parallel
-      const [repositories, metrics, pullRequests, contributors] = await Promise.all([
-        this.getRepositories(),
-        this.getAggregatedMetrics(),
-        this.getRecentPullRequests(),
-        this.getTopContributors(),
-      ]);
+      const [repositories, metrics, pullRequests, contributors] =
+        await Promise.all([
+          this.getRepositories(),
+          this.getAggregatedMetrics(),
+          this.getRecentPullRequests(),
+          this.getTopContributors(),
+        ]);
 
       return {
         repositories,
@@ -313,16 +320,15 @@ export class OptimizedAnalyticsService {
 
     const { data, error } = await supabase
       .from('repository_contributors')
-      .select(`
+      .select(
+        `
         commit_count,
         contributors (*)
-      `)
+      `
+      )
       .in(
         'repository_id',
-        supabase
-          .from('repositories')
-          .select('id')
-          .eq('user_id', this.userId)
+        supabase.from('repositories').select('id').eq('user_id', this.userId)
       )
       .order('commit_count', { ascending: false })
       .limit(10);
@@ -338,7 +344,9 @@ export class OptimizedAnalyticsService {
   /**
    * Helper method to get repository
    */
-  private async getRepository(repositoryId: string): Promise<Repository | null> {
+  private async getRepository(
+    repositoryId: string
+  ): Promise<Repository | null> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');

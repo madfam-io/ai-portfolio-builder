@@ -13,7 +13,9 @@ import { createClient } from '@/lib/supabase/server';
 const keywordResearchSchema = z.object({
   seedKeyword: z.string().min(2, 'Seed keyword must be at least 2 characters'),
   industry: z.string().optional(),
-  contentType: z.enum(['bio', 'project', 'experience', 'skill', 'general']).optional(),
+  contentType: z
+    .enum(['bio', 'project', 'experience', 'skill', 'general'])
+    .optional(),
   location: z.string().optional(),
 });
 
@@ -53,7 +55,8 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    const { seedKeyword, industry, contentType, location } = validationResult.data;
+    const { seedKeyword, industry, contentType, location } =
+      validationResult.data;
 
     // 3. Initialize GEO service
     const geoService = getGEOService();
@@ -92,8 +95,12 @@ export async function POST(request: NextRequest): Promise<Response> {
         questions: keywordResearch[0]?.questions || [],
         variations,
         longTailKeywords,
-        locationBased: location ? generateLocationKeywords(seedKeyword, location) : [],
-        industrySpecific: industry ? generateIndustryKeywords(seedKeyword, industry) : [],
+        locationBased: location
+          ? generateLocationKeywords(seedKeyword, location)
+          : [],
+        industrySpecific: industry
+          ? generateIndustryKeywords(seedKeyword, industry)
+          : [],
         recommendations: generateKeywordRecommendations({
           seedKeyword,
           industry,
@@ -103,7 +110,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
       metadata: {
         researchedAt: new Date().toISOString(),
-        totalKeywords: 
+        totalKeywords:
           (keywordResearch[0]?.relatedKeywords.length || 0) +
           variations.length +
           longTailKeywords.length,
@@ -294,7 +301,9 @@ function generateKeywordRecommendations(context: {
   const recommendations: string[] = [];
 
   // General recommendations
-  recommendations.push(`Use "${context.seedKeyword}" in your page title and H1 heading`);
+  recommendations.push(
+    `Use "${context.seedKeyword}" in your page title and H1 heading`
+  );
   recommendations.push('Include variations in H2 and H3 headings');
   recommendations.push('Maintain 1-2% keyword density for primary keyword');
   recommendations.push('Use LSI keywords naturally throughout content');
@@ -304,7 +313,9 @@ function generateKeywordRecommendations(context: {
     recommendations.push('Include keyword in the first sentence of your bio');
     recommendations.push('Use professional variations (expert, specialist)');
   } else if (context.contentType === 'project') {
-    recommendations.push('Use action-oriented keywords (developed, built, created)');
+    recommendations.push(
+      'Use action-oriented keywords (developed, built, created)'
+    );
     recommendations.push('Include technology-specific keywords');
   }
 

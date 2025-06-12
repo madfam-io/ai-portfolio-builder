@@ -53,7 +53,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=unauthorized`
       );
     }
-    
+
     // Retrieve and validate OAuth state from database
     const { data: oauthState, error: stateError } = await supabase
       .from('oauth_states')
@@ -63,14 +63,14 @@ export async function GET(request: NextRequest): Promise<Response> {
       .eq('provider', 'github')
       .is('used_at', null)
       .single();
-      
+
     if (stateError || !oauthState) {
       logger.error('Invalid OAuth state', { stateError, state });
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
       );
     }
-    
+
     // Check if state has expired
     if (new Date(oauthState.expires_at) < new Date()) {
       logger.error('OAuth state expired', { state });
@@ -78,17 +78,19 @@ export async function GET(request: NextRequest): Promise<Response> {
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=state_expired`
       );
     }
-    
+
     // Decrypt and validate state data
     try {
-      const encryptedState = JSON.parse(Buffer.from(state, 'base64url').toString());
+      const encryptedState = JSON.parse(
+        Buffer.from(state, 'base64url').toString()
+      );
       const stateData = JSON.parse(decrypt(encryptedState));
-      
+
       // Validate state contents
       if (stateData.userId !== user.id) {
         throw new Error('State user ID mismatch');
       }
-      
+
       // Check timestamp to prevent replay attacks (10 minute window)
       if (Date.now() - stateData.timestamp > 10 * 60 * 1000) {
         throw new Error('State timestamp expired');
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest): Promise<Response> {
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
       );
     }
-    
+
     // Mark state as used to prevent reuse
     await supabase
       .from('oauth_states')

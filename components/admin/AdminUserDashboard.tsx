@@ -285,7 +285,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                 <FiLayers className="text-3xl text-purple-600" />
               </div>
             </Link>
-            
+
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-50">
               <div className="flex items-center justify-between">
                 <div>
@@ -299,7 +299,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                 <FiActivity className="text-3xl text-blue-600" />
               </div>
             </div>
-            
+
             <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-50">
               <div className="flex items-center justify-between">
                 <div>

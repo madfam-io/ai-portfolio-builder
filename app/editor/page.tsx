@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 
 import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
+import { preloadEditorComponents } from '@/components/editor/index.lazy';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
-import { preloadEditorComponents } from '@/components/editor/index.lazy';
 // Removed server-side service import - will use API calls instead
 
 function EditorContent(): React.ReactElement {

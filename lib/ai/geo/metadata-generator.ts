@@ -54,14 +54,18 @@ export class MetadataGenerator {
   private generateTitle(content: string, settings: GEOSettings): string {
     const maxLength = 60;
     const primaryKeyword = settings.primaryKeyword;
-    
+
     // Extract first sentence or heading
     const firstSentence = content.split(/[.!?\n]/)[0]?.trim() || '';
-    
+
     let title = firstSentence;
 
     // Ensure primary keyword is included
-    if (primaryKeyword && title && !title.toLowerCase().includes(primaryKeyword.toLowerCase())) {
+    if (
+      primaryKeyword &&
+      title &&
+      !title.toLowerCase().includes(primaryKeyword.toLowerCase())
+    ) {
       // Try to naturally include the keyword
       if (title.length + primaryKeyword.length + 3 <= maxLength) {
         title = `${primaryKeyword} - ${title}`;
@@ -82,7 +86,10 @@ export class MetadataGenerator {
   /**
    * Generate meta description
    */
-  private generateMetaDescription(content: string, settings: GEOSettings): string {
+  private generateMetaDescription(
+    content: string,
+    settings: GEOSettings
+  ): string {
     const maxLength = 160;
     const primaryKeyword = settings.primaryKeyword;
 
@@ -95,7 +102,10 @@ export class MetadataGenerator {
     let description = sentences.join('. ').trim();
 
     // Ensure primary keyword is included
-    if (primaryKeyword && !description.toLowerCase().includes(primaryKeyword.toLowerCase())) {
+    if (
+      primaryKeyword &&
+      !description.toLowerCase().includes(primaryKeyword.toLowerCase())
+    ) {
       description = `${primaryKeyword}. ${description}`;
     }
 
@@ -164,9 +174,11 @@ export class MetadataGenerator {
   private generateOGTitle(title: string, settings: GEOSettings): string {
     // OG titles can be slightly longer than meta titles
     const maxLength = 70;
-    
+
     if (settings.targetAudience === 'clients') {
-      return title.length <= maxLength ? title : title.substring(0, maxLength - 3) + '...';
+      return title.length <= maxLength
+        ? title
+        : title.substring(0, maxLength - 3) + '...';
     }
 
     return title;
@@ -175,10 +187,13 @@ export class MetadataGenerator {
   /**
    * Generate Open Graph description
    */
-  private generateOGDescription(metaDescription: string, content: string): string {
+  private generateOGDescription(
+    metaDescription: string,
+    content: string
+  ): string {
     // OG descriptions can be up to 200 characters
     const maxLength = 200;
-    
+
     if (metaDescription.length <= maxLength) {
       return metaDescription;
     }
@@ -186,7 +201,7 @@ export class MetadataGenerator {
     // Try to create a more comprehensive description
     const firstParagraph = content.split(/\n\n/)[0];
     if (!firstParagraph) return metaDescription;
-    
+
     return firstParagraph.length <= maxLength
       ? firstParagraph
       : firstParagraph.substring(0, maxLength - 3) + '...';
@@ -267,8 +282,20 @@ export class MetadataGenerator {
    * Title case helper
    */
   private titleCase(str: string): string {
-    const smallWords = new Set(['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for']);
-    
+    const smallWords = new Set([
+      'a',
+      'an',
+      'the',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+    ]);
+
     return str
       .toLowerCase()
       .split(' ')
@@ -317,7 +344,10 @@ export class MetadataGenerator {
         return {
           'twitter:card': 'summary',
           'twitter:title': this.truncateForTwitter(baseMetadata.title),
-          'twitter:description': this.truncateForTwitter(baseMetadata.description, 200),
+          'twitter:description': this.truncateForTwitter(
+            baseMetadata.description,
+            200
+          ),
         };
 
       case 'linkedin':
@@ -351,14 +381,17 @@ export class MetadataGenerator {
           portfolio.social?.twitter,
         ].filter(Boolean),
         knowsAbout: portfolio.skills?.map((s: any) => s.name) || [],
-        alumniOf: portfolio.education?.map((edu: any) => ({
-          '@type': 'EducationalOrganization',
-          name: edu.institution,
-        })) || [],
-        worksFor: portfolio.experience?.[0] ? {
-          '@type': 'Organization',
-          name: portfolio.experience[0].company,
-        } : undefined,
+        alumniOf:
+          portfolio.education?.map((edu: any) => ({
+            '@type': 'EducationalOrganization',
+            name: edu.institution,
+          })) || [],
+        worksFor: portfolio.experience?.[0]
+          ? {
+              '@type': 'Organization',
+              name: portfolio.experience[0].company,
+            }
+          : undefined,
       },
     };
   }
@@ -374,7 +407,10 @@ export class MetadataGenerator {
         '@type': 'ListItem',
         position: index + 1,
         name: item,
-        item: index < path.length - 1 ? `/${path.slice(0, index + 1).join('/')}` : undefined,
+        item:
+          index < path.length - 1
+            ? `/${path.slice(0, index + 1).join('/')}`
+            : undefined,
       })),
     };
   }

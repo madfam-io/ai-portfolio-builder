@@ -5,10 +5,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
+
 import type { CreateExperimentRequest } from '@/types/experiments';
 
 /**
@@ -22,22 +23,28 @@ const createExperimentSchema = z.object({
   targetAudience: z.record(z.array(z.string())).default({}),
   primaryMetric: z.string(),
   secondaryMetrics: z.array(z.string()).optional(),
-  variants: z.array(z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    isControl: z.boolean(),
-    trafficPercentage: z.number().min(0).max(100),
-    components: z.array(z.object({
-      type: z.string(),
-      order: z.number(),
-      visible: z.boolean(),
-      variant: z.string(),
-      props: z.record(z.any())
-    })),
-    themeOverrides: z.record(z.any()).default({})
-  })).min(2), // At least 2 variants required
+  variants: z
+    .array(
+      z.object({
+        name: z.string(),
+        description: z.string().optional(),
+        isControl: z.boolean(),
+        trafficPercentage: z.number().min(0).max(100),
+        components: z.array(
+          z.object({
+            type: z.string(),
+            order: z.number(),
+            visible: z.boolean(),
+            variant: z.string(),
+            props: z.record(z.any()),
+          })
+        ),
+        themeOverrides: z.record(z.any()).default({}),
+      })
+    )
+    .min(2), // At least 2 variants required
   startDate: z.string().datetime().optional(),
-  endDate: z.string().datetime().optional()
+  endDate: z.string().datetime().optional(),
 });
 
 /**
@@ -47,7 +54,7 @@ const createExperimentSchema = z.object({
 export async function GET(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
@@ -62,7 +69,8 @@ export async function GET(request: NextRequest) {
 
     let query = supabase
       .from('landing_page_experiments')
-      .select(`
+      .select(
+        `
         *,
         variants:landing_page_variants(
           id,
@@ -71,7 +79,8 @@ export async function GET(request: NextRequest) {
           traffic_percentage,
           conversion_rate
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
@@ -92,11 +101,11 @@ export async function GET(request: NextRequest) {
     // Calculate additional metrics
     const experimentsWithMetrics = experiments?.map(experiment => {
       const totalVisitors = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.visitor_count || 0), 
+        (sum: number, v: any) => sum + (v.visitor_count || 0),
         0
       );
       const totalConversions = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.conversion_count || 0), 
+        (sum: number, v: any) => sum + (v.conversion_count || 0),
         0
       );
 
@@ -104,9 +113,8 @@ export async function GET(request: NextRequest) {
         ...experiment,
         totalVisitors,
         totalConversions,
-        overallConversionRate: totalVisitors > 0 
-          ? (totalConversions / totalVisitors) * 100 
-          : 0
+        overallConversionRate:
+          totalVisitors > 0 ? (totalConversions / totalVisitors) * 100 : 0,
       };
     });
 
@@ -115,8 +123,8 @@ export async function GET(request: NextRequest) {
       pagination: {
         limit,
         offset,
-        total: experiments?.length || 0
-      }
+        total: experiments?.length || 0,
+      },
     });
   } catch (error) {
     logger.error('Experiment list error', error as Error);
@@ -134,7 +142,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
@@ -149,11 +157,13 @@ export async function POST(request: NextRequest) {
     // }
 
     const body = await request.json();
-    const validatedData = createExperimentSchema.parse(body) as CreateExperimentRequest;
+    const validatedData = createExperimentSchema.parse(
+      body
+    ) as CreateExperimentRequest;
 
     // Validate traffic percentages sum to 100
     const totalTraffic = validatedData.variants.reduce(
-      (sum, v) => sum + v.trafficPercentage, 
+      (sum, v) => sum + v.trafficPercentage,
       0
     );
     if (Math.abs(totalTraffic - 100) > 0.01) {
@@ -177,7 +187,7 @@ export async function POST(request: NextRequest) {
         secondary_metrics: validatedData.secondaryMetrics || [],
         start_date: validatedData.startDate,
         end_date: validatedData.endDate,
-        created_by: 'system' // TODO: Use actual user ID
+        created_by: 'system', // TODO: Use actual user ID
       })
       .select()
       .single();
@@ -198,7 +208,7 @@ export async function POST(request: NextRequest) {
       is_control: variant.isControl,
       traffic_percentage: variant.trafficPercentage,
       components: variant.components,
-      theme_overrides: variant.themeOverrides
+      theme_overrides: variant.themeOverrides,
     }));
 
     const { error: variantsError } = await supabase
@@ -222,10 +232,12 @@ export async function POST(request: NextRequest) {
     // Fetch complete experiment with variants
     const { data: completeExperiment, error: fetchError } = await supabase
       .from('landing_page_experiments')
-      .select(`
+      .select(
+        `
         *,
         variants:landing_page_variants(*)
-      `)
+      `
+      )
       .eq('id', experiment.id)
       .single();
 

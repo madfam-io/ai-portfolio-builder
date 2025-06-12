@@ -1,15 +1,19 @@
 /**
  * @fileoverview Seed Data Orchestrator
  * @module data/seeds/index
- * 
+ *
  * Central orchestrator for all seeding operations.
  * Manages dependencies and execution order.
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import type { SeedingOptions } from '@/lib/database/seeder';
 
-export type SeedFunction = (client: any, options: SeedingOptions) => Promise<number>;
+export type SeedFunction = (
+  client: any,
+  options: SeedingOptions
+) => Promise<number>;
 
 /**
  * Seed execution configuration
@@ -29,7 +33,7 @@ export const SEED_CONFIG: SeedConfig[] = [
   {
     name: 'subscription_plans',
     dependencies: [],
-    fn: async (client) => {
+    fn: async client => {
       // Subscription plans are inserted via migration, just verify
       const { count } = await client
         .from('subscription_plans')
@@ -89,7 +93,7 @@ export const SEED_CONFIG: SeedConfig[] = [
  * Execute all seeding in proper dependency order
  */
 export async function executeSeeding(
-  client: any, 
+  client: any,
   options: SeedingOptions
 ): Promise<{
   success: boolean;
@@ -106,7 +110,7 @@ export async function executeSeeding(
 
   // Resolve execution order based on dependencies
   const executionOrder = resolveDependencies(SEED_CONFIG);
-  
+
   logger.info(`Executing seeding in order: ${executionOrder.join(' → ')}`);
 
   for (const seedName of executionOrder) {
@@ -126,7 +130,7 @@ export async function executeSeeding(
       const errorMsg = error instanceof Error ? error.message : String(error);
       logger.error(`❌ Failed to seed ${seedName}: ${errorMsg}`);
       result.failed.push(seedName);
-      
+
       if (config.critical) {
         logger.error(`Critical seeding failed for ${seedName}, aborting`);
         result.success = false;
@@ -145,7 +149,7 @@ export async function executeSeeding(
 function resolveDependencies(configs: SeedConfig[]): string[] {
   const graph = new Map<string, string[]>();
   const inDegree = new Map<string, number>();
-  
+
   // Build graph
   for (const config of configs) {
     graph.set(config.name, config.dependencies);
@@ -172,7 +176,7 @@ function resolveDependencies(configs: SeedConfig[]): string[] {
       if (dependencies.includes(current)) {
         const newDegree = inDegree.get(node)! - 1;
         inDegree.set(node, newDegree);
-        
+
         if (newDegree === 0) {
           queue.push(node);
         }
@@ -185,7 +189,9 @@ function resolveDependencies(configs: SeedConfig[]): string[] {
     const remaining = configs
       .map(c => c.name)
       .filter(name => !result.includes(name));
-    throw new Error(`Circular dependency detected in seeds: ${remaining.join(', ')}`);
+    throw new Error(
+      `Circular dependency detected in seeds: ${remaining.join(', ')}`
+    );
   }
 
   return result;

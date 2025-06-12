@@ -1,6 +1,6 @@
 /**
  * @fileoverview PullRequestStats Component
- * 
+ *
  * Displays pull request statistics including cycle time,
  * lead time, merge rate, and time to first review
  */
@@ -23,7 +23,10 @@ interface PullRequestStatsProps {
   };
 }
 
-export function PullRequestStats({ stats, labels }: PullRequestStatsProps): React.ReactElement {
+export function PullRequestStats({
+  stats,
+  labels,
+}: PullRequestStatsProps): React.ReactElement {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">

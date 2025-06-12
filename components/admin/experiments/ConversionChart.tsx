@@ -1,10 +1,11 @@
 /**
  * Conversion Chart Component
- * 
+ *
  * Displays conversion rate trends over time for experiment variants
  * using a line chart visualization.
  */
 
+import { format } from 'date-fns';
 import React from 'react';
 import {
   LineChart,
@@ -14,9 +15,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from 'recharts';
-import { format } from 'date-fns';
 
 interface ConversionChartProps {
   data: Array<{
@@ -38,30 +38,31 @@ interface ConversionChartProps {
   }>;
 }
 
-export default function ConversionChart({ 
-  data, 
-  variants 
+export default function ConversionChart({
+  data,
+  variants,
 }: ConversionChartProps): React.ReactElement {
   // Process data for the chart
   const chartData = data.map(day => {
     const dayData: any = {
       date: format(new Date(day.date), 'MMM dd'),
       fullDate: day.date,
-      total: day.visitors > 0 ? (day.conversions / day.visitors * 100) : 0
+      total: day.visitors > 0 ? (day.conversions / day.visitors) * 100 : 0,
     };
-    
+
     // Add data for each variant
     variants.forEach(variant => {
       const variantDay = variant.analytics.conversionsByDay.find(
         d => d.date === new Date(day.date).toISOString().split('T')[0]
       );
       if (variantDay && variantDay.visitors > 0) {
-        dayData[variant.name] = (variantDay.conversions / variantDay.visitors * 100);
+        dayData[variant.name] =
+          (variantDay.conversions / variantDay.visitors) * 100;
       } else {
         dayData[variant.name] = 0;
       }
     });
-    
+
     return dayData;
   });
 
@@ -83,17 +84,21 @@ export default function ConversionChart({
             {label}
           </p>
           {payload.map((entry: any, index: number) => (
-            <div key={index} className="flex items-center justify-between gap-4 text-sm">
-              <span 
+            <div
+              key={index}
+              className="flex items-center justify-between gap-4 text-sm"
+            >
+              <span
                 className="flex items-center gap-2"
                 style={{ color: entry.color }}
               >
-                <span className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }}></span>
+                <span
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: entry.color }}
+                ></span>
                 {entry.name}
               </span>
-              <span className="font-medium">
-                {entry.value.toFixed(2)}%
-              </span>
+              <span className="font-medium">{entry.value.toFixed(2)}%</span>
             </div>
           ))}
         </div>
@@ -109,31 +114,28 @@ export default function ConversionChart({
           data={chartData}
           margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
         >
-          <CartesianGrid 
-            strokeDasharray="3 3" 
+          <CartesianGrid
+            strokeDasharray="3 3"
             className="stroke-gray-200 dark:stroke-gray-700"
           />
-          <XAxis 
+          <XAxis
             dataKey="date"
             className="text-gray-600 dark:text-gray-400"
             tick={{ fontSize: 12 }}
           />
           <YAxis
-            label={{ 
-              value: 'Conversion Rate (%)', 
-              angle: -90, 
+            label={{
+              value: 'Conversion Rate (%)',
+              angle: -90,
               position: 'insideLeft',
-              className: 'text-gray-600 dark:text-gray-400'
+              className: 'text-gray-600 dark:text-gray-400',
             }}
             className="text-gray-600 dark:text-gray-400"
             tick={{ fontSize: 12 }}
           />
           <Tooltip content={<CustomTooltip />} />
-          <Legend 
-            wrapperStyle={{ paddingTop: '20px' }}
-            iconType="circle"
-          />
-          
+          <Legend wrapperStyle={{ paddingTop: '20px' }} iconType="circle" />
+
           {/* Overall conversion rate line */}
           <Line
             type="monotone"
@@ -144,7 +146,7 @@ export default function ConversionChart({
             name="Overall"
             dot={false}
           />
-          
+
           {/* Lines for each variant */}
           {variants.map((variant, index) => (
             <Line

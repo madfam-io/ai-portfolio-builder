@@ -1,6 +1,6 @@
 /**
  * Variant Preview Component
- * 
+ *
  * Shows a miniature preview of how the variant will look
  * with the configured components and theme.
  */
@@ -19,9 +19,9 @@ interface VariantPreviewProps {
   device?: 'desktop' | 'tablet' | 'mobile';
 }
 
-export default function VariantPreview({ 
-  variant, 
-  device = 'desktop' 
+export default function VariantPreview({
+  variant,
+  device = 'desktop',
 }: VariantPreviewProps): React.ReactElement {
   const [selectedDevice, setSelectedDevice] = React.useState(device);
 
@@ -39,12 +39,14 @@ export default function VariantPreview({
 
   // Generate component preview
   const renderComponentPreview = (component: ComponentConfig) => {
-    const baseClasses = "relative overflow-hidden";
-    
+    const baseClasses = 'relative overflow-hidden';
+
     switch (component.type) {
       case 'hero':
         return (
-          <div className={`${baseClasses} bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 p-6 text-center`}>
+          <div
+            className={`${baseClasses} bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 p-6 text-center`}
+          >
             <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4 mx-auto mb-2"></div>
             <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto mb-4"></div>
             <div className="flex gap-2 justify-center">
@@ -53,7 +55,7 @@ export default function VariantPreview({
             </div>
           </div>
         );
-        
+
       case 'features':
         return (
           <div className={`${baseClasses} bg-white dark:bg-gray-800 p-4`}>
@@ -68,13 +70,16 @@ export default function VariantPreview({
             </div>
           </div>
         );
-        
+
       case 'pricing':
         return (
           <div className={`${baseClasses} bg-gray-50 dark:bg-gray-900 p-4`}>
             <div className="grid grid-cols-3 gap-2">
               {[1, 2, 3].map(i => (
-                <div key={i} className={`border rounded p-3 ${i === 2 ? 'border-purple-500' : 'border-gray-200 dark:border-gray-700'}`}>
+                <div
+                  key={i}
+                  className={`border rounded p-3 ${i === 2 ? 'border-purple-500' : 'border-gray-200 dark:border-gray-700'}`}
+                >
                   <div className="h-2 bg-gray-300 dark:bg-gray-600 rounded w-2/3 mx-auto mb-2"></div>
                   <div className="h-4 bg-gray-400 dark:bg-gray-500 rounded w-1/2 mx-auto mb-2"></div>
                   <div className="space-y-1">
@@ -88,7 +93,7 @@ export default function VariantPreview({
             </div>
           </div>
         );
-        
+
       case 'cta':
         return (
           <div className={`${baseClasses} bg-purple-600 p-4 text-center`}>
@@ -97,7 +102,7 @@ export default function VariantPreview({
             <div className="h-8 bg-white rounded w-32 mx-auto"></div>
           </div>
         );
-        
+
       case 'testimonials':
         return (
           <div className={`${baseClasses} bg-white dark:bg-gray-800 p-4`}>
@@ -114,7 +119,7 @@ export default function VariantPreview({
             </div>
           </div>
         );
-        
+
       case 'social_proof':
         return (
           <div className={`${baseClasses} bg-gray-100 dark:bg-gray-800 p-3`}>
@@ -128,10 +133,12 @@ export default function VariantPreview({
             </div>
           </div>
         );
-        
+
       default:
         return (
-          <div className={`${baseClasses} bg-gray-100 dark:bg-gray-700 p-4 text-center`}>
+          <div
+            className={`${baseClasses} bg-gray-100 dark:bg-gray-700 p-4 text-center`}
+          >
             <div className="text-xs text-gray-500 dark:text-gray-400">
               {component.type} ({component.variant})
             </div>
@@ -147,8 +154,8 @@ export default function VariantPreview({
         <button
           onClick={() => setSelectedDevice('desktop')}
           className={`p-2 rounded transition-colors ${
-            selectedDevice === 'desktop' 
-              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
+            selectedDevice === 'desktop'
+              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
           title="Desktop"
@@ -158,8 +165,8 @@ export default function VariantPreview({
         <button
           onClick={() => setSelectedDevice('tablet')}
           className={`p-2 rounded transition-colors ${
-            selectedDevice === 'tablet' 
-              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
+            selectedDevice === 'tablet'
+              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
           title="Tablet"
@@ -169,8 +176,8 @@ export default function VariantPreview({
         <button
           onClick={() => setSelectedDevice('mobile')}
           className={`p-2 rounded transition-colors ${
-            selectedDevice === 'mobile' 
-              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
+            selectedDevice === 'mobile'
+              ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
               : 'hover:bg-gray-100 dark:hover:bg-gray-700'
           }`}
           title="Mobile"
@@ -181,7 +188,9 @@ export default function VariantPreview({
 
       {/* Preview Container */}
       <div className="flex justify-center">
-        <div className={`${getPreviewDimensions()} transition-all duration-300`}>
+        <div
+          className={`${getPreviewDimensions()} transition-all duration-300`}
+        >
           <div className="border-2 border-gray-300 dark:border-gray-600 rounded-lg overflow-hidden bg-white dark:bg-gray-900">
             {/* Browser Chrome */}
             <div className="bg-gray-200 dark:bg-gray-700 p-2 flex items-center gap-2">
@@ -196,17 +205,19 @@ export default function VariantPreview({
             </div>
 
             {/* Page Content */}
-            <div 
+            <div
               className="max-h-96 overflow-y-auto"
-              style={{
-                // Apply theme overrides
-                ...(variant.themeOverrides.primaryColor && {
-                  '--color-primary': variant.themeOverrides.primaryColor
-                }),
-                ...(variant.themeOverrides.fontFamily && {
-                  fontFamily: variant.themeOverrides.fontFamily
-                })
-              } as React.CSSProperties}
+              style={
+                {
+                  // Apply theme overrides
+                  ...(variant.themeOverrides.primaryColor && {
+                    '--color-primary': variant.themeOverrides.primaryColor,
+                  }),
+                  ...(variant.themeOverrides.fontFamily && {
+                    fontFamily: variant.themeOverrides.fontFamily,
+                  }),
+                } as React.CSSProperties
+              }
             >
               {variant.components.length === 0 ? (
                 <div className="p-8 text-center text-gray-500 dark:text-gray-400">
@@ -219,9 +230,7 @@ export default function VariantPreview({
                     .filter(c => c.visible)
                     .sort((a, b) => a.order - b.order)
                     .map((component, index) => (
-                      <div key={index}>
-                        {renderComponentPreview(component)}
-                      </div>
+                      <div key={index}>{renderComponentPreview(component)}</div>
                     ))}
                 </div>
               )}
@@ -229,11 +238,13 @@ export default function VariantPreview({
           </div>
         </div>
       </div>
-      
+
       {/* Variant Info */}
       <div className="text-center text-sm text-gray-600 dark:text-gray-400">
         <p className="font-medium">{variant.name}</p>
-        <p>{variant.components.filter(c => c.visible).length} visible components</p>
+        <p>
+          {variant.components.filter(c => c.visible).length} visible components
+        </p>
       </div>
     </div>
   );

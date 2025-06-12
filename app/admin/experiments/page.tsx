@@ -2,14 +2,14 @@
 
 /**
  * Admin Experiments Dashboard
- * 
+ *
  * Main dashboard for managing A/B testing experiments on landing pages.
  * Provides overview of all experiments and their performance metrics.
  */
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React, { useState, useEffect } from 'react';
 import {
   FiPlus,
   FiEdit,
@@ -23,14 +23,18 @@ import {
   FiClock,
   FiFilter,
   FiSearch,
-  FiMoreVertical
+  FiMoreVertical,
 } from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-import type { LandingPageExperiment, ExperimentStatus } from '@/types/experiments';
+
+import type {
+  LandingPageExperiment,
+  ExperimentStatus,
+} from '@/types/experiments';
 
 export default function AdminExperimentsPage(): React.ReactElement {
   const { user, isAdmin, canAccess } = useAuth();
@@ -39,8 +43,12 @@ export default function AdminExperimentsPage(): React.ReactElement {
   const [experiments, setExperiments] = useState<LandingPageExperiment[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<ExperimentStatus | 'all'>('all');
-  const [selectedExperiment, setSelectedExperiment] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<ExperimentStatus | 'all'>(
+    'all'
+  );
+  const [selectedExperiment, setSelectedExperiment] = useState<string | null>(
+    null
+  );
 
   // Check admin access
   useEffect(() => {
@@ -56,7 +64,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
         const supabase = createClient();
         const { data, error } = await supabase
           .from('landing_page_experiments')
-          .select(`
+          .select(
+            `
             *,
             variants:landing_page_variants(
               id,
@@ -66,7 +75,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
               conversions,
               visitors
             )
-          `)
+          `
+          )
           .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -83,14 +93,18 @@ export default function AdminExperimentsPage(): React.ReactElement {
 
   // Filter experiments
   const filteredExperiments = experiments.filter(exp => {
-    const matchesSearch = exp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         exp.description?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch =
+      exp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      exp.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesStatus = statusFilter === 'all' || exp.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   // Calculate conversion rate
-  const calculateConversionRate = (conversions: number, visitors: number): string => {
+  const calculateConversionRate = (
+    conversions: number,
+    visitors: number
+  ): string => {
     if (visitors === 0) return '0%';
     return `${((conversions / visitors) * 100).toFixed(2)}%`;
   };
@@ -114,7 +128,10 @@ export default function AdminExperimentsPage(): React.ReactElement {
   };
 
   // Handle status change
-  const handleStatusChange = async (experimentId: string, newStatus: ExperimentStatus) => {
+  const handleStatusChange = async (
+    experimentId: string,
+    newStatus: ExperimentStatus
+  ) => {
     try {
       const supabase = createClient();
       const { error } = await supabase
@@ -125,9 +142,11 @@ export default function AdminExperimentsPage(): React.ReactElement {
       if (error) throw error;
 
       // Update local state
-      setExperiments(prev => prev.map(exp => 
-        exp.id === experimentId ? { ...exp, status: newStatus } : exp
-      ));
+      setExperiments(prev =>
+        prev.map(exp =>
+          exp.id === experimentId ? { ...exp, status: newStatus } : exp
+        )
+      );
     } catch (error) {
       logger.error('Failed to update experiment status', error as Error);
     }
@@ -176,7 +195,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
                 type="text"
                 placeholder="Search experiments..."
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -185,7 +204,9 @@ export default function AdminExperimentsPage(): React.ReactElement {
             <FiFilter className="text-gray-400" />
             <select
               value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as ExperimentStatus | 'all')}
+              onChange={e =>
+                setStatusFilter(e.target.value as ExperimentStatus | 'all')
+              }
               className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
@@ -202,10 +223,16 @@ export default function AdminExperimentsPage(): React.ReactElement {
       {/* Experiments Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid gap-6">
-          {filteredExperiments.map((experiment) => {
-            const totalVisitors = experiment.variants?.reduce((sum, v) => sum + v.visitors, 0) || 0;
-            const totalConversions = experiment.variants?.reduce((sum, v) => sum + v.conversions, 0) || 0;
-            const overallConversionRate = calculateConversionRate(totalConversions, totalVisitors);
+          {filteredExperiments.map(experiment => {
+            const totalVisitors =
+              experiment.variants?.reduce((sum, v) => sum + v.visitors, 0) || 0;
+            const totalConversions =
+              experiment.variants?.reduce((sum, v) => sum + v.conversions, 0) ||
+              0;
+            const overallConversionRate = calculateConversionRate(
+              totalConversions,
+              totalVisitors
+            );
 
             return (
               <div
@@ -220,8 +247,11 @@ export default function AdminExperimentsPage(): React.ReactElement {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                           {experiment.name}
                         </h3>
-                        <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(experiment.status)}`}>
-                          {experiment.status.charAt(0).toUpperCase() + experiment.status.slice(1)}
+                        <span
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(experiment.status)}`}
+                        >
+                          {experiment.status.charAt(0).toUpperCase() +
+                            experiment.status.slice(1)}
                         </span>
                       </div>
                       {experiment.description && (
@@ -240,7 +270,12 @@ export default function AdminExperimentsPage(): React.ReactElement {
                         </div>
                         <div className="flex items-center gap-1">
                           <FiClock className="w-4 h-4" />
-                          <span>Created {new Date(experiment.createdAt).toLocaleDateString()}</span>
+                          <span>
+                            Created{' '}
+                            {new Date(
+                              experiment.createdAt
+                            ).toLocaleDateString()}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -248,7 +283,9 @@ export default function AdminExperimentsPage(): React.ReactElement {
                       {/* Quick Actions */}
                       {experiment.status === 'active' && (
                         <button
-                          onClick={() => handleStatusChange(experiment.id, 'paused')}
+                          onClick={() =>
+                            handleStatusChange(experiment.id, 'paused')
+                          }
                           className="p-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
                           title="Pause Experiment"
                         >
@@ -257,7 +294,9 @@ export default function AdminExperimentsPage(): React.ReactElement {
                       )}
                       {experiment.status === 'paused' && (
                         <button
-                          onClick={() => handleStatusChange(experiment.id, 'active')}
+                          onClick={() =>
+                            handleStatusChange(experiment.id, 'active')
+                          }
                           className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                           title="Resume Experiment"
                         >
@@ -280,7 +319,13 @@ export default function AdminExperimentsPage(): React.ReactElement {
                       </Link>
                       <div className="relative">
                         <button
-                          onClick={() => setSelectedExperiment(selectedExperiment === experiment.id ? null : experiment.id)}
+                          onClick={() =>
+                            setSelectedExperiment(
+                              selectedExperiment === experiment.id
+                                ? null
+                                : experiment.id
+                            )
+                          }
                           className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         >
                           <FiMoreVertical className="w-5 h-5" />
@@ -320,16 +365,20 @@ export default function AdminExperimentsPage(): React.ReactElement {
                     Variant Performance
                   </h4>
                   <div className="space-y-3">
-                    {experiment.variants?.map((variant) => {
-                      const conversionRate = calculateConversionRate(variant.conversions, variant.visitors);
-                      const isWinning = experiment.winningVariantId === variant.id;
-                      
+                    {experiment.variants?.map(variant => {
+                      const conversionRate = calculateConversionRate(
+                        variant.conversions,
+                        variant.visitors
+                      );
+                      const isWinning =
+                        experiment.winningVariantId === variant.id;
+
                       return (
                         <div
                           key={variant.id}
                           className={`flex items-center justify-between p-4 rounded-lg border ${
-                            isWinning 
-                              ? 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-900/20' 
+                            isWinning
+                              ? 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-900/20'
                               : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
                           }`}
                         >
@@ -357,19 +406,25 @@ export default function AdminExperimentsPage(): React.ReactElement {
                           </div>
                           <div className="flex items-center gap-6">
                             <div className="text-right">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">Visitors</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                Visitors
+                              </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
                                 {variant.visitors.toLocaleString()}
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">Conversions</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                Conversions
+                              </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
                                 {variant.conversions.toLocaleString()}
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">Rate</div>
+                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                                Rate
+                              </div>
                               <div className="font-medium text-lg text-gray-900 dark:text-gray-100">
                                 {conversionRate}
                               </div>
@@ -387,8 +442,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
           {filteredExperiments.length === 0 && (
             <div className="text-center py-12">
               <p className="text-gray-500 dark:text-gray-400 mb-4">
-                {searchTerm || statusFilter !== 'all' 
-                  ? 'No experiments found matching your filters.' 
+                {searchTerm || statusFilter !== 'all'
+                  ? 'No experiments found matching your filters.'
                   : 'No experiments created yet.'}
               </p>
               {!searchTerm && statusFilter === 'all' && (

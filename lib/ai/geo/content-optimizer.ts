@@ -3,6 +3,8 @@
  * Optimizes content structure, readability, and clarity for better search engine understanding
  */
 
+import { KeywordAnalyzer } from './keyword-analyzer';
+import { MetadataGenerator } from './metadata-generator';
 import {
   ContentStructure,
   ReadabilityMetrics,
@@ -12,8 +14,6 @@ import {
   OptimizeContentRequest,
   OptimizeContentResponse,
 } from './types';
-import { KeywordAnalyzer } from './keyword-analyzer';
-import { MetadataGenerator } from './metadata-generator';
 
 export class ContentOptimizer {
   private keywordAnalyzer: KeywordAnalyzer;
@@ -33,7 +33,10 @@ export class ContentOptimizer {
     const startTime = Date.now();
 
     // Analyze original content
-    const originalScore = this.calculateGEOScore(request.content, request.settings);
+    const originalScore = this.calculateGEOScore(
+      request.content,
+      request.settings
+    );
 
     // Apply optimizations
     let optimizedContent = request.content;
@@ -41,7 +44,10 @@ export class ContentOptimizer {
 
     // Structure optimization
     if (request.settings.enableKeywordOptimization) {
-      optimizedContent = this.optimizeStructure(optimizedContent, request.contentType);
+      optimizedContent = this.optimizeStructure(
+        optimizedContent,
+        request.contentType
+      );
       appliedOptimizations.push('structure');
     }
 
@@ -69,7 +75,10 @@ export class ContentOptimizer {
     );
 
     // Calculate improved score
-    const improvedScore = this.calculateGEOScore(optimizedContent, request.settings);
+    const improvedScore = this.calculateGEOScore(
+      optimizedContent,
+      request.settings
+    );
 
     return {
       optimizedContent: geoContent,
@@ -97,8 +106,12 @@ export class ContentOptimizer {
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const lists = content.match(/^[\-\*\d]+\.\s+.+$/gm) || [];
 
-    const avgSentenceLength = sentences.reduce((sum, s) => sum + s.split(' ').length, 0) / sentences.length;
-    const avgParagraphLength = paragraphs.reduce((sum, p) => sum + p.split(' ').length, 0) / paragraphs.length;
+    const avgSentenceLength =
+      sentences.reduce((sum, s) => sum + s.split(' ').length, 0) /
+      sentences.length;
+    const avgParagraphLength =
+      paragraphs.reduce((sum, p) => sum + p.split(' ').length, 0) /
+      paragraphs.length;
 
     return {
       headings,
@@ -116,20 +129,28 @@ export class ContentOptimizer {
   calculateReadability(content: string): ReadabilityMetrics {
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const words = content.split(/\s+/).filter(w => w.length > 0);
-    const syllables = words.reduce((sum, word) => sum + this.countSyllables(word), 0);
+    const syllables = words.reduce(
+      (sum, word) => sum + this.countSyllables(word),
+      0
+    );
 
     const avgWordsPerSentence = words.length / sentences.length;
     const avgSyllablesPerWord = syllables / words.length;
 
     // Flesch Reading Ease
-    const fleschReading = 206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
+    const fleschReading =
+      206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
 
     // Flesch-Kincaid Grade Level
-    const fleschKincaid = 0.39 * avgWordsPerSentence + 11.8 * avgSyllablesPerWord - 15.59;
+    const fleschKincaid =
+      0.39 * avgWordsPerSentence + 11.8 * avgSyllablesPerWord - 15.59;
 
     // Gunning Fog Index
-    const complexWords = words.filter(word => this.countSyllables(word) >= 3).length;
-    const gunningFog = 0.4 * (avgWordsPerSentence + (100 * complexWords / words.length));
+    const complexWords = words.filter(
+      word => this.countSyllables(word) >= 3
+    ).length;
+    const gunningFog =
+      0.4 * (avgWordsPerSentence + (100 * complexWords) / words.length);
 
     const score = Math.max(0, Math.min(100, fleschReading));
     const level = this.getReadabilityLevel(score);
@@ -143,7 +164,11 @@ export class ContentOptimizer {
       complexWordCount: complexWords,
       score,
       level,
-      suggestions: this.generateReadabilitySuggestions(score, avgWordsPerSentence, complexWords),
+      suggestions: this.generateReadabilitySuggestions(
+        score,
+        avgWordsPerSentence,
+        complexWords
+      ),
     };
   }
 
@@ -177,7 +202,7 @@ export class ContentOptimizer {
   private structureBio(content: string): string {
     // Ensure bio has clear sections
     const sections = content.split(/\n\n+/);
-    
+
     if (sections.length === 1) {
       // Single paragraph - split into introduction and details
       const sentences = content.split(/[.!?]+/).filter(s => s.trim());
@@ -243,7 +268,7 @@ export class ContentOptimizer {
    */
   private addBasicStructure(content: string): string {
     const paragraphs = content.split(/\n\n+/).filter(p => p.trim());
-    
+
     // Ensure proper paragraph breaks
     if (paragraphs.length === 1 && content.length > 500) {
       const sentences = content.split(/[.!?]+/).filter(s => s.trim());
@@ -251,9 +276,8 @@ export class ContentOptimizer {
       const structured: string[] = [];
 
       for (let i = 0; i < sentences.length; i += sentencesPerParagraph) {
-        const paragraph = sentences
-          .slice(i, i + sentencesPerParagraph)
-          .join('. ') + '.';
+        const paragraph =
+          sentences.slice(i, i + sentencesPerParagraph).join('. ') + '.';
         structured.push(paragraph);
       }
 
@@ -274,7 +298,8 @@ export class ContentOptimizer {
 
     // Split long sentences
     const sentences = optimized.split(/[.!?]+/).filter(s => s.trim());
-    const targetLength = targetLevel === 'simple' ? 15 : targetLevel === 'moderate' ? 20 : 25;
+    const targetLength =
+      targetLevel === 'simple' ? 15 : targetLevel === 'moderate' ? 20 : 25;
 
     const optimizedSentences = sentences.map(sentence => {
       const words = sentence.split(/\s+/);
@@ -282,7 +307,7 @@ export class ContentOptimizer {
         // Find natural breaking points
         const midPoint = Math.floor(words.length / 2);
         const breakWords = [',', 'and', 'but', 'or', 'which', 'that'];
-        
+
         let breakIndex = -1;
         for (let i = midPoint - 5; i < midPoint + 5; i++) {
           if (breakWords.some(word => words[i]?.toLowerCase() === word)) {
@@ -381,7 +406,12 @@ export class ContentOptimizer {
     );
     const readability = this.calculateReadability(content);
 
-    return this.calculateDetailedGEOScore(content, structure, keywords, readability);
+    return this.calculateDetailedGEOScore(
+      content,
+      structure,
+      keywords,
+      readability
+    );
   }
 
   /**
@@ -411,10 +441,10 @@ export class ContentOptimizer {
     // Overall score (weighted average)
     const overall = Math.round(
       keywordScore * 0.25 +
-      readabilityScore * 0.25 +
-      structureScore * 0.20 +
-      technicalScore * 0.15 +
-      uniquenessScore * 0.15
+        readabilityScore * 0.25 +
+        structureScore * 0.2 +
+        technicalScore * 0.15 +
+        uniquenessScore * 0.15
     );
 
     return {
@@ -470,7 +500,10 @@ export class ContentOptimizer {
     }
 
     // Check paragraph length
-    if (structure.avgParagraphLength >= 50 && structure.avgParagraphLength <= 150) {
+    if (
+      structure.avgParagraphLength >= 50 &&
+      structure.avgParagraphLength <= 150
+    ) {
       score += 10;
     }
 
@@ -480,7 +513,10 @@ export class ContentOptimizer {
   /**
    * Calculate technical score
    */
-  private calculateTechnicalScore(content: string, structure: ContentStructure): number {
+  private calculateTechnicalScore(
+    content: string,
+    structure: ContentStructure
+  ): number {
     let score = 70; // Base score
 
     // Check content length
@@ -495,7 +531,10 @@ export class ContentOptimizer {
     }
 
     // Check sentence variety
-    if (structure.avgSentenceLength >= 10 && structure.avgSentenceLength <= 20) {
+    if (
+      structure.avgSentenceLength >= 10 &&
+      structure.avgSentenceLength <= 20
+    ) {
       score += 5;
     }
 
@@ -539,13 +578,15 @@ export class ContentOptimizer {
 
     // Readability suggestions
     if (score.readability < 70) {
-      suggestions.push(...readability.suggestions.map(s => ({
-        type: 'readability' as const,
-        priority: 'medium' as const,
-        message: 'Improve readability',
-        action: s,
-        impact: 8,
-      })));
+      suggestions.push(
+        ...readability.suggestions.map(s => ({
+          type: 'readability' as const,
+          priority: 'medium' as const,
+          message: 'Improve readability',
+          action: s,
+          impact: 8,
+        }))
+      );
     }
 
     // Technical suggestions
@@ -584,7 +625,7 @@ export class ContentOptimizer {
     word = word.toLowerCase();
     let count = 0;
     let previousWasVowel = false;
-    
+
     for (let i = 0; i < word.length; i++) {
       const char = word[i];
       const isVowel = char ? /[aeiou]/.test(char) : false;
@@ -603,7 +644,9 @@ export class ContentOptimizer {
     return Math.max(1, count);
   }
 
-  private getReadabilityLevel(score: number): 'very-easy' | 'easy' | 'medium' | 'hard' | 'very-hard' {
+  private getReadabilityLevel(
+    score: number
+  ): 'very-easy' | 'easy' | 'medium' | 'hard' | 'very-hard' {
     if (score >= 90) return 'very-easy';
     if (score >= 70) return 'easy';
     if (score >= 50) return 'medium';
@@ -635,16 +678,16 @@ export class ContentOptimizer {
 
   private simplifyComplexWords(content: string): string {
     const replacements: Record<string, string> = {
-      'utilize': 'use',
-      'implement': 'do',
-      'facilitate': 'help',
-      'demonstrate': 'show',
-      'accomplish': 'do',
-      'collaborate': 'work with',
-      'innovative': 'new',
-      'comprehensive': 'complete',
-      'fundamental': 'basic',
-      'methodology': 'method',
+      utilize: 'use',
+      implement: 'do',
+      facilitate: 'help',
+      demonstrate: 'show',
+      accomplish: 'do',
+      collaborate: 'work with',
+      innovative: 'new',
+      comprehensive: 'complete',
+      fundamental: 'basic',
+      methodology: 'method',
     };
 
     let simplified = content;

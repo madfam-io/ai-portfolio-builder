@@ -24,7 +24,7 @@ function getEncryptionKey(): Buffer {
     if (process.env.NODE_ENV === 'production') {
       throw new Error('ENCRYPTION_KEY must be set in production environment');
     }
-    
+
     // In development, generate a random key per instance but keep it consistent during runtime
     if (!devEncryptionKey) {
       logger.warn(
@@ -32,18 +32,18 @@ function getEncryptionKey(): Buffer {
           'Generating a random key for development. ' +
           'Data will be lost on restart. Set ENCRYPTION_KEY for persistence!'
       );
-      
+
       // Generate a cryptographically secure random key
       devEncryptionKey = crypto.randomBytes(32);
-      
+
       // Also log the generated key so developers can set it if needed
       logger.info(
         `Generated development encryption key: ${devEncryptionKey.toString('hex')}\n` +
-        'To persist data across restarts, add this to your .env.local:\n' +
-        `ENCRYPTION_KEY=${devEncryptionKey.toString('hex')}`
+          'To persist data across restarts, add this to your .env.local:\n' +
+          `ENCRYPTION_KEY=${devEncryptionKey.toString('hex')}`
       );
     }
-    
+
     return devEncryptionKey;
   }
 
@@ -133,14 +133,14 @@ export function rotateEncryptionKey(
   // Temporarily override the key getter to use the old key
   const originalKey = process.env.ENCRYPTION_KEY;
   process.env.ENCRYPTION_KEY = oldKey.toString('hex');
-  
+
   try {
     // Decrypt with old key
     const plainText = decrypt(encryptedData);
-    
+
     // Set new key
     process.env.ENCRYPTION_KEY = newKey.toString('hex');
-    
+
     // Encrypt with new key
     return encrypt(plainText);
   } finally {

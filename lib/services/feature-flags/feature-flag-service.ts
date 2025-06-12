@@ -1,19 +1,21 @@
 /**
  * @fileoverview Feature Flag Service for A/B Testing
- * 
+ *
  * Handles experiment assignment, variant selection, and traffic splitting
  * for landing page A/B tests. Uses cookies for persistent assignment.
  */
 
-import { cookies } from 'next/headers';
 import crypto from 'crypto';
+
+import { cookies } from 'next/headers';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import type { 
-  GetActiveExperimentResponse, 
+
+import type {
+  GetActiveExperimentResponse,
   VisitorAssignment,
-  TargetAudience 
+  TargetAudience,
 } from '@/types/experiments';
 
 /**
@@ -45,7 +47,7 @@ export class FeatureFlagService {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: COOKIE_MAX_AGE,
-        path: '/'
+        path: '/',
       });
     }
 
@@ -55,7 +57,9 @@ export class FeatureFlagService {
   /**
    * Get stored experiment assignments from cookies
    */
-  private static async getStoredAssignments(): Promise<Record<string, VisitorAssignment>> {
+  private static async getStoredAssignments(): Promise<
+    Record<string, VisitorAssignment>
+  > {
     const cookieStore = await cookies();
     const assignmentsCookie = cookieStore.get(EXPERIMENT_COOKIE_NAME)?.value;
 
@@ -66,7 +70,10 @@ export class FeatureFlagService {
     try {
       return JSON.parse(decodeURIComponent(assignmentsCookie));
     } catch (error) {
-      logger.error('Failed to parse experiment assignments cookie', error as Error);
+      logger.error(
+        'Failed to parse experiment assignments cookie',
+        error as Error
+      );
       return {};
     }
   }
@@ -75,16 +82,16 @@ export class FeatureFlagService {
    * Store experiment assignment in cookies
    */
   private static async storeAssignment(
-    experimentId: string, 
+    experimentId: string,
     variantId: string
   ): Promise<void> {
     const cookieStore = await cookies();
     const assignments = await this.getStoredAssignments();
-    
+
     assignments[experimentId] = {
       experimentId,
       variantId,
-      assignedAt: new Date()
+      assignedAt: new Date(),
     };
 
     cookieStore.set(
@@ -95,7 +102,7 @@ export class FeatureFlagService {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: COOKIE_MAX_AGE,
-        path: '/'
+        path: '/',
       }
     );
   }
@@ -141,7 +148,7 @@ export class FeatureFlagService {
 
     // Check referrer targeting
     if (targetAudience.referrer && visitorContext.referrer) {
-      const referrerMatch = targetAudience.referrer.some(ref => 
+      const referrerMatch = targetAudience.referrer.some(ref =>
         visitorContext.referrer?.includes(ref)
       );
       if (!referrerMatch) {
@@ -172,15 +179,13 @@ export class FeatureFlagService {
   /**
    * Get active experiment and variant for the current visitor
    */
-  static async getActiveExperiment(
-    visitorContext?: {
-      country?: string;
-      device?: string;
-      language?: string;
-      referrer?: string;
-      utmSource?: string;
-    }
-  ): Promise<GetActiveExperimentResponse | null> {
+  static async getActiveExperiment(visitorContext?: {
+    country?: string;
+    device?: string;
+    language?: string;
+    referrer?: string;
+    utmSource?: string;
+  }): Promise<GetActiveExperimentResponse | null> {
     try {
       const supabase = await createClient();
       const visitorId = await this.getOrCreateVisitorId();
@@ -189,10 +194,12 @@ export class FeatureFlagService {
       // Get active experiments
       const { data: experiments, error: experimentsError } = await supabase
         .from('landing_page_experiments')
-        .select(`
+        .select(
+          `
           *,
           variants:landing_page_variants(*)
-        `)
+        `
+        )
         .eq('status', 'active')
         .or('start_date.is.null,start_date.lte.now()')
         .or('end_date.is.null,end_date.gte.now()')
@@ -211,36 +218,45 @@ export class FeatureFlagService {
           const variant = experiment.variants.find(
             (v: any) => v.id === existingAssignment.variantId
           );
-          
+
           if (variant) {
             return {
               experimentId: experiment.id,
               variantId: variant.id,
               variantName: variant.name,
               components: variant.components,
-              themeOverrides: variant.theme_overrides
+              themeOverrides: variant.theme_overrides,
             };
           }
         }
 
         // Check targeting criteria
-        if (!this.matchesTargeting(experiment.target_audience, visitorContext || {})) {
+        if (
+          !this.matchesTargeting(
+            experiment.target_audience,
+            visitorContext || {}
+          )
+        ) {
           continue;
         }
 
         // Check traffic percentage for experiment
-        const experimentHash = this.hashToPercentage(`${visitorId}-${experiment.id}`);
+        const experimentHash = this.hashToPercentage(
+          `${visitorId}-${experiment.id}`
+        );
         if (experimentHash >= experiment.traffic_percentage) {
           continue;
         }
 
         // Assign variant based on traffic allocation
-        const variantHash = this.hashToPercentage(`${visitorId}-${experiment.id}-variant`);
+        const variantHash = this.hashToPercentage(
+          `${visitorId}-${experiment.id}-variant`
+        );
         let cumulativePercentage = 0;
 
         for (const variant of experiment.variants) {
           cumulativePercentage += variant.traffic_percentage;
-          
+
           if (variantHash < cumulativePercentage) {
             // Store assignment
             await this.storeAssignment(experiment.id, variant.id);
@@ -251,7 +267,7 @@ export class FeatureFlagService {
               p_experiment_id: experiment.id,
               p_variant_id: variant.id,
               p_event_type: 'assignment',
-              p_event_data: { visitorContext }
+              p_event_data: { visitorContext },
             });
 
             return {
@@ -259,7 +275,7 @@ export class FeatureFlagService {
               variantId: variant.id,
               variantName: variant.name,
               components: variant.components,
-              themeOverrides: variant.theme_overrides
+              themeOverrides: variant.theme_overrides,
             };
           }
         }
@@ -289,7 +305,7 @@ export class FeatureFlagService {
         p_experiment_id: experimentId,
         p_variant_id: variantId,
         p_event_type: 'conversion',
-        p_event_data: conversionData || {}
+        p_event_data: conversionData || {},
       });
     } catch (error) {
       logger.error('Failed to record conversion', error as Error);
@@ -317,8 +333,8 @@ export class FeatureFlagService {
         p_event_data: {
           element,
           timestamp: new Date().toISOString(),
-          ...additionalData
-        }
+          ...additionalData,
+        },
       });
     } catch (error) {
       logger.error('Failed to record click', error as Error);
@@ -348,7 +364,7 @@ export class FeatureFlagService {
     variantName: string
   ): Promise<boolean> {
     const experiment = await this.getActiveExperiment();
-    
+
     if (!experiment) {
       return false;
     }

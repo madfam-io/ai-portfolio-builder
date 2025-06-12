@@ -1,13 +1,15 @@
 /**
  * @fileoverview GitHub Integration and Repository Seed Data
  * @module data/seeds/github-data
- * 
+ *
  * Generates realistic GitHub integration data and repository information.
  * Creates comprehensive repository data with commits, contributors, and metrics.
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import { getSeedConfig } from './index';
+
 // getUserTemplates imported but not used in current implementation
 import type { SeedingOptions } from '@/lib/database/seeder';
 
@@ -50,17 +52,18 @@ const REPOSITORY_TEMPLATES = [
     openIssues: 3,
     size: 15420,
     locByLanguage: {
-      'JavaScript': 8500,
-      'TypeScript': 4200,
-      'CSS': 1800,
-      'HTML': 920,
+      JavaScript: 8500,
+      TypeScript: 4200,
+      CSS: 1800,
+      HTML: 920,
     },
     topics: ['ecommerce', 'react', 'nodejs', 'postgresql', 'stripe'],
   },
   {
     name: 'task-manager-app',
     fullName: 'juan-dev-mx/task-manager-app',
-    description: 'Collaborative task management application with real-time updates',
+    description:
+      'Collaborative task management application with real-time updates',
     language: 'Vue',
     isPrivate: false,
     stars: 23,
@@ -68,10 +71,10 @@ const REPOSITORY_TEMPLATES = [
     openIssues: 1,
     size: 8340,
     locByLanguage: {
-      'Vue': 5200,
-      'JavaScript': 2100,
-      'CSS': 840,
-      'HTML': 200,
+      Vue: 5200,
+      JavaScript: 2100,
+      CSS: 840,
+      HTML: 200,
     },
     topics: ['vue', 'firebase', 'realtime', 'collaboration'],
   },
@@ -86,10 +89,10 @@ const REPOSITORY_TEMPLATES = [
     openIssues: 5,
     size: 12800,
     locByLanguage: {
-      'TypeScript': 7800,
-      'CSS': 3200,
-      'SCSS': 1500,
-      'MDX': 300,
+      TypeScript: 7800,
+      CSS: 3200,
+      SCSS: 1500,
+      MDX: 300,
     },
     topics: ['design-system', 'react', 'storybook', 'typescript'],
   },
@@ -104,10 +107,10 @@ const REPOSITORY_TEMPLATES = [
     openIssues: 2,
     size: 5600,
     locByLanguage: {
-      'JavaScript': 3400,
-      'HTML': 1200,
-      'CSS': 800,
-      'JSON': 200,
+      JavaScript: 3400,
+      HTML: 1200,
+      CSS: 800,
+      JSON: 200,
     },
     topics: ['ux', 'research', 'templates', 'figma'],
   },
@@ -122,11 +125,11 @@ const REPOSITORY_TEMPLATES = [
     openIssues: 8,
     size: 28900,
     locByLanguage: {
-      'Go': 18500,
-      'Docker': 2400,
-      'Makefile': 1200,
-      'YAML': 800,
-      'Shell': 600,
+      Go: 18500,
+      Docker: 2400,
+      Makefile: 1200,
+      YAML: 800,
+      Shell: 600,
     },
     topics: ['go', 'microservices', 'docker', 'kubernetes', 'api'],
   },
@@ -137,7 +140,7 @@ const REPOSITORY_TEMPLATES = [
  */
 function generateGitHubIntegration(userId: string, index: number): any {
   const template = GITHUB_INTEGRATION_TEMPLATES.find(t => t.userId === userId);
-  
+
   if (template) {
     return {
       id: `gh-integration-${userId}`,
@@ -149,10 +152,16 @@ function generateGitHubIntegration(userId: string, index: number): any {
       scope: 'read:user,repo,read:org',
       token_type: 'bearer',
       is_active: template.isActive,
-      last_synced_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+      last_synced_at: new Date(
+        Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
+      ),
       expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
-      created_at: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
-      updated_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
+      created_at: new Date(
+        Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
+      ),
+      updated_at: new Date(
+        Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000
+      ),
     };
   }
 
@@ -168,9 +177,13 @@ function generateGitHubIntegration(userId: string, index: number): any {
     scope: 'read:user,repo',
     token_type: 'bearer',
     is_active: Math.random() > 0.2, // 80% active
-    last_synced_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
+    last_synced_at: new Date(
+      Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+    ),
     expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
-    created_at: new Date(Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000),
+    created_at: new Date(
+      Date.now() - Math.random() * 180 * 24 * 60 * 60 * 1000
+    ),
     updated_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
   };
 }
@@ -179,15 +192,29 @@ function generateGitHubIntegration(userId: string, index: number): any {
  * Generate repository data
  */
 function generateRepository(
-  integrationId: string, 
-  userId: string, 
-  index: number, 
+  integrationId: string,
+  userId: string,
+  index: number,
   template?: any
 ): any {
-  const languages = ['JavaScript', 'TypeScript', 'Python', 'Go', 'Rust', 'Java'];
-  const frameworks = ['react', 'vue', 'angular', 'nextjs', 'express', 'fastapi'];
+  const languages = [
+    'JavaScript',
+    'TypeScript',
+    'Python',
+    'Go',
+    'Rust',
+    'Java',
+  ];
+  const frameworks = [
+    'react',
+    'vue',
+    'angular',
+    'nextjs',
+    'express',
+    'fastapi',
+  ];
   const topics = ['web', 'api', 'frontend', 'backend', 'fullstack', 'mobile'];
-  
+
   const repoTemplate = template || {
     name: `project-${index}`,
     fullName: `user/project-${index}`,
@@ -206,8 +233,11 @@ function generateRepository(
   };
 
   // Generate realistic LOC distribution
-  const totalLoc = repoTemplate.locByLanguage 
-    ? Object.values(repoTemplate.locByLanguage).reduce((sum: number, lines: any) => sum + lines, 0)
+  const totalLoc = repoTemplate.locByLanguage
+    ? Object.values(repoTemplate.locByLanguage).reduce(
+        (sum: number, lines: any) => sum + lines,
+        0
+      )
     : Math.floor(Math.random() * 20000) + 5000;
 
   const locByLanguage = repoTemplate.locByLanguage || {
@@ -244,7 +274,9 @@ function generateRepository(
     open_issues_count: repoTemplate.openIssues || 0,
     size: repoTemplate.size || 0,
     pushed_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-    created_at: new Date(Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000),
+    created_at: new Date(
+      Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
+    ),
     updated_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
     last_synced_at: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000),
     is_active: true,
@@ -254,7 +286,10 @@ function generateRepository(
 /**
  * Seed GitHub integrations table
  */
-export async function seedGitHubIntegrations(client: any, options: SeedingOptions): Promise<number> {
+export async function seedGitHubIntegrations(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   logger.info('Seeding GitHub integrations...');
 
   try {
@@ -264,7 +299,9 @@ export async function seedGitHubIntegrations(client: any, options: SeedingOption
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`GitHub integrations table already has ${existingCount} records, skipping`);
+      logger.info(
+        `GitHub integrations table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -287,7 +324,10 @@ export async function seedGitHubIntegrations(client: any, options: SeedingOption
     const integrationChance = 0.6; // 60% of users have GitHub integrations
 
     for (let i = 0; i < users.length; i++) {
-      if (Math.random() < integrationChance || i < GITHUB_INTEGRATION_TEMPLATES.length) {
+      if (
+        Math.random() < integrationChance ||
+        i < GITHUB_INTEGRATION_TEMPLATES.length
+      ) {
         const integration = generateGitHubIntegration(users[i].id, i);
         integrations.push(integration);
       }
@@ -299,14 +339,17 @@ export async function seedGitHubIntegrations(client: any, options: SeedingOption
 
     for (let i = 0; i < integrations.length; i += batchSize) {
       const batch = integrations.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('github_integrations')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting GitHub integration batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting GitHub integration batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
@@ -315,9 +358,11 @@ export async function seedGitHubIntegrations(client: any, options: SeedingOption
 
     logger.info(`Successfully seeded ${insertedCount} GitHub integrations`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding GitHub integrations:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding GitHub integrations:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -325,11 +370,16 @@ export async function seedGitHubIntegrations(client: any, options: SeedingOption
 /**
  * Seed repositories table
  */
-export async function seedRepositories(client: any, options: SeedingOptions): Promise<number> {
+export async function seedRepositories(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { repositoriesPerUser } = config;
 
-  logger.info(`Seeding repositories (${repositoriesPerUser} per integration)...`);
+  logger.info(
+    `Seeding repositories (${repositoriesPerUser} per integration)...`
+  );
 
   try {
     // Check for existing repositories
@@ -338,7 +388,9 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Repositories table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Repositories table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -349,11 +401,15 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
       .eq('is_active', true);
 
     if (integrationsError || !integrations) {
-      throw new Error(`Failed to fetch GitHub integrations: ${integrationsError?.message}`);
+      throw new Error(
+        `Failed to fetch GitHub integrations: ${integrationsError?.message}`
+      );
     }
 
     if (integrations.length === 0) {
-      logger.warn('No GitHub integrations found, skipping repositories seeding');
+      logger.warn(
+        'No GitHub integrations found, skipping repositories seeding'
+      );
       return 0;
     }
 
@@ -364,17 +420,18 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
     for (const integration of integrations) {
       for (let repoIndex = 0; repoIndex < repositoriesPerUser; repoIndex++) {
         // Use template for first few repositories
-        const template = templateIndex < REPOSITORY_TEMPLATES.length 
-          ? REPOSITORY_TEMPLATES[templateIndex] 
-          : undefined;
+        const template =
+          templateIndex < REPOSITORY_TEMPLATES.length
+            ? REPOSITORY_TEMPLATES[templateIndex]
+            : undefined;
 
         const repository = generateRepository(
-          integration.id, 
-          integration.user_id, 
-          repoIndex, 
+          integration.id,
+          integration.user_id,
+          repoIndex,
           template
         );
-        
+
         repositories.push(repository);
         templateIndex++;
       }
@@ -386,14 +443,17 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
 
     for (let i = 0; i < repositories.length; i += batchSize) {
       const batch = repositories.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('repositories')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting repository batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting repository batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
@@ -402,9 +462,11 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
 
     logger.info(`Successfully seeded ${insertedCount} repositories`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding repositories:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding repositories:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -412,14 +474,17 @@ export async function seedRepositories(client: any, options: SeedingOptions): Pr
 /**
  * Combined seeding function for GitHub data
  */
-export async function seedGitHubData(client: any, options: SeedingOptions): Promise<number> {
+export async function seedGitHubData(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   let totalCount = 0;
-  
+
   // Seed integrations first
   totalCount += await seedGitHubIntegrations(client, options);
-  
+
   // Then seed repositories
   totalCount += await seedRepositories(client, options);
-  
+
   return totalCount;
 }

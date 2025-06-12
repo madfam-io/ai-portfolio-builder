@@ -10,10 +10,43 @@ import { KeywordAnalysis, KeywordResearch } from './types';
  */
 export class KeywordAnalyzer {
   private readonly stopWords = new Set([
-    'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from',
-    'has', 'he', 'in', 'is', 'it', 'its', 'of', 'on', 'that', 'the',
-    'to', 'was', 'will', 'with', 'the', 'this', 'but', 'they', 'have',
-    'had', 'what', 'when', 'where', 'who', 'which', 'why', 'how'
+    'a',
+    'an',
+    'and',
+    'are',
+    'as',
+    'at',
+    'be',
+    'by',
+    'for',
+    'from',
+    'has',
+    'he',
+    'in',
+    'is',
+    'it',
+    'its',
+    'of',
+    'on',
+    'that',
+    'the',
+    'to',
+    'was',
+    'will',
+    'with',
+    'the',
+    'this',
+    'but',
+    'they',
+    'have',
+    'had',
+    'what',
+    'when',
+    'where',
+    'who',
+    'which',
+    'why',
+    'how',
   ]);
 
   /**
@@ -27,11 +60,11 @@ export class KeywordAnalyzer {
     const words = this.extractWords(content);
     const phrases = this.extractPhrases(content);
     const entities = this.extractEntities(content);
-    
+
     // Calculate keyword density
     const density = this.calculateKeywordDensity(content, [
       ...(primaryKeyword ? [primaryKeyword] : []),
-      ...secondaryKeywords
+      ...secondaryKeywords,
     ]);
 
     // Extract LSI keywords
@@ -45,14 +78,16 @@ export class KeywordAnalyzer {
     );
 
     return {
-      primaryKeyword: primaryKeyword || this.suggestPrimaryKeyword(words, phrases),
-      secondaryKeywords: secondaryKeywords.length > 0 
-        ? secondaryKeywords 
-        : this.suggestSecondaryKeywords(words, phrases),
+      primaryKeyword:
+        primaryKeyword || this.suggestPrimaryKeyword(words, phrases),
+      secondaryKeywords:
+        secondaryKeywords.length > 0
+          ? secondaryKeywords
+          : this.suggestSecondaryKeywords(words, phrases),
       lsiKeywords,
       entities,
       density,
-      recommendations
+      recommendations,
     };
   }
 
@@ -91,7 +126,12 @@ export class KeywordAnalyzer {
       for (let i = 0; i < words.length - 1; i++) {
         const word1 = words[i];
         const word2 = words[i + 1];
-        if (word1 && word2 && !this.stopWords.has(word1) && !this.stopWords.has(word2)) {
+        if (
+          word1 &&
+          word2 &&
+          !this.stopWords.has(word1) &&
+          !this.stopWords.has(word2)
+        ) {
           const phrase = `${word1} ${word2}`;
           phrases.set(phrase, (phrases.get(phrase) || 0) + 1);
         }
@@ -100,8 +140,10 @@ export class KeywordAnalyzer {
       // Extract 3-word phrases
       for (let i = 0; i < words.length - 2; i++) {
         const wordsInPhrase = [words[i], words[i + 1], words[i + 2]];
-        const nonStopWords = wordsInPhrase.filter(w => w && !this.stopWords.has(w));
-        
+        const nonStopWords = wordsInPhrase.filter(
+          w => w && !this.stopWords.has(w)
+        );
+
         if (nonStopWords.length >= 2) {
           const phrase = wordsInPhrase.join(' ');
           phrases.set(phrase, (phrases.get(phrase) || 0) + 1);
@@ -117,11 +159,11 @@ export class KeywordAnalyzer {
    */
   private extractEntities(content: string): string[] {
     const entities: string[] = [];
-    
+
     // Extract capitalized words (potential proper nouns)
     const capitalizedPattern = /\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*/g;
     const matches = content.match(capitalizedPattern);
-    
+
     if (matches) {
       matches.forEach(match => {
         // Filter out common sentence starters
@@ -135,7 +177,7 @@ export class KeywordAnalyzer {
     const techPatterns = [
       /\b(?:React|Vue|Angular|Node\.js|Python|Java|JavaScript|TypeScript)\b/gi,
       /\b(?:AWS|Azure|GCP|Docker|Kubernetes)\b/gi,
-      /\b(?:AI|ML|API|REST|GraphQL|SQL|NoSQL)\b/gi
+      /\b(?:AI|ML|API|REST|GraphQL|SQL|NoSQL)\b/gi,
     ];
 
     techPatterns.forEach(pattern => {
@@ -250,7 +292,7 @@ export class KeywordAnalyzer {
     // Check primary keyword density
     if (primaryKeyword && density[primaryKeyword]) {
       const primaryDensity = density[primaryKeyword];
-      
+
       if (primaryDensity < 0.5) {
         recommendations.push(
           `Increase usage of primary keyword "${primaryKeyword}" (current: ${primaryDensity}%, target: 1-2%)`
@@ -286,15 +328,18 @@ export class KeywordAnalyzer {
   /**
    * Check if content has keyword variations
    */
-  private hasKeywordVariations(keyword: string, density: Record<string, number>): boolean {
+  private hasKeywordVariations(
+    keyword: string,
+    density: Record<string, number>
+  ): boolean {
     const variations = [
       keyword + 's', // plural
       keyword + 'ing', // gerund
       keyword + 'ed', // past tense
     ];
 
-    return variations.some(variation => 
-      Object.keys(density).some(key => 
+    return variations.some(variation =>
+      Object.keys(density).some(key =>
         key.toLowerCase().includes(variation.toLowerCase())
       )
     );
@@ -303,10 +348,13 @@ export class KeywordAnalyzer {
   /**
    * Research keywords (mock implementation - would connect to real API)
    */
-  async researchKeywords(seed: string, industry?: string): Promise<KeywordResearch[]> {
+  async researchKeywords(
+    seed: string,
+    industry?: string
+  ): Promise<KeywordResearch[]> {
     // This would typically call an external API like Google Keyword Planner
     // For now, we'll return mock data based on common patterns
-    
+
     const mockKeywords: KeywordResearch[] = [
       {
         keyword: seed,
@@ -317,16 +365,16 @@ export class KeywordAnalyzer {
           `${seed} solutions`,
           `best ${seed}`,
           `${seed} tips`,
-          `${seed} guide`
+          `${seed} guide`,
         ],
         questions: [
           `What is ${seed}?`,
           `How to use ${seed}?`,
           `Why is ${seed} important?`,
-          `${seed} vs alternatives`
+          `${seed} vs alternatives`,
         ],
-        trends: 'stable'
-      }
+        trends: 'stable',
+      },
     ];
 
     // Add industry-specific keywords if provided
@@ -338,13 +386,13 @@ export class KeywordAnalyzer {
         relatedKeywords: [
           `${industry} ${seed}`,
           `${seed} in ${industry}`,
-          `${industry} ${seed} best practices`
+          `${industry} ${seed} best practices`,
         ],
         questions: [
           `How does ${seed} work in ${industry}?`,
-          `${industry} ${seed} benefits`
+          `${industry} ${seed} benefits`,
         ],
-        trends: 'rising'
+        trends: 'rising',
       });
     }
 

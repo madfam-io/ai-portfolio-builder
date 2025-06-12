@@ -1,18 +1,26 @@
 /**
  * @fileoverview Hero component variants for A/B testing
- * 
+ *
  * Different hero section implementations that can be selected
  * through the experiment system.
  */
 
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-import { FaPlay, FaCheckCircle, FaUsers, FaStar, FaRocket, FaArrowRight } from 'react-icons/fa';
+import React from 'react';
+import {
+  FaPlay,
+  FaCheckCircle,
+  FaUsers,
+  FaStar,
+  FaRocket,
+  FaArrowRight,
+} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useExperimentTracking } from '@/lib/services/feature-flags/use-experiment';
+
 import type { HeroProps } from '@/types/experiments';
 
 /**
@@ -75,7 +83,9 @@ export function HeroDefault(props: HeroProps): React.ReactElement {
             </div>
             <div className="flex items-center bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-md">
               <FaUsers className="text-blue-500 mr-3 text-lg" />
-              <span className="text-base font-medium">{t.joinProfessionals}</span>
+              <span className="text-base font-medium">
+                {t.joinProfessionals}
+              </span>
             </div>
             <div className="flex items-center bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-md">
               <FaStar className="text-yellow-500 mr-3 text-lg" />
@@ -106,7 +116,9 @@ export function HeroMinimal(props: HeroProps): React.ReactElement {
           {props.title || (
             <>
               <span className="block">{t.heroTitle}</span>
-              <span className="block text-purple-600 dark:text-purple-400">{t.heroTitle2}</span>
+              <span className="block text-purple-600 dark:text-purple-400">
+                {t.heroTitle2}
+              </span>
             </>
           )}
         </h1>
@@ -160,10 +172,10 @@ export function HeroVideo(props: HeroProps): React.ReactElement {
           <source src={props.videoUrl} type="video/mp4" />
         </video>
       )}
-      
+
       {/* Overlay */}
       <div className="absolute inset-0 bg-black/50" />
-      
+
       {/* Content */}
       <div className="relative z-10 container mx-auto text-center max-w-6xl px-6">
         <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-base font-semibold mb-10">
@@ -309,12 +321,14 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
 /**
  * Hero variant selector - Returns the appropriate variant based on configuration
  */
-export function getHeroVariant(variant: string): React.ComponentType<HeroProps> {
+export function getHeroVariant(
+  variant: string
+): React.ComponentType<HeroProps> {
   const variants: Record<string, React.ComponentType<HeroProps>> = {
     default: HeroDefault,
     minimal: HeroMinimal,
     video: HeroVideo,
-    split: HeroSplit
+    split: HeroSplit,
   };
 
   return variants[variant] || HeroDefault;

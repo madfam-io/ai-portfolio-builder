@@ -4,10 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 /**
  * Request schema for tracking events
@@ -16,7 +16,7 @@ const trackEventSchema = z.object({
   experimentId: z.string().uuid(),
   variantId: z.string().uuid(),
   eventType: z.enum(['click', 'conversion', 'engagement', 'pageview']),
-  eventData: z.record(z.any()).optional()
+  eventData: z.record(z.any()).optional(),
 });
 
 /**
@@ -25,13 +25,13 @@ const trackEventSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const validatedData = trackEventSchema.parse(body);
-    
+
     // Get visitor ID from cookie
     const visitorId = request.cookies.get('prisma_visitor_id')?.value;
-    
+
     if (!visitorId) {
       return NextResponse.json(
         { error: 'Visitor ID not found' },
@@ -40,21 +40,21 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
         { status: 503 }
       );
     }
-    
+
     // Record the event
     const { error } = await supabase.rpc('record_landing_page_event', {
       p_session_id: visitorId,
       p_experiment_id: validatedData.experimentId,
       p_variant_id: validatedData.variantId,
       p_event_type: validatedData.eventType,
-      p_event_data: validatedData.eventData || {}
+      p_event_data: validatedData.eventData || {},
     });
 
     if (error) {
@@ -69,12 +69,12 @@ export async function POST(request: NextRequest) {
         .select('conversions')
         .eq('id', validatedData.variantId)
         .single();
-      
+
       if (currentVariant) {
         await supabase
           .from('landing_page_variants')
-          .update({ 
-            conversions: (currentVariant.conversions || 0) + 1
+          .update({
+            conversions: (currentVariant.conversions || 0) + 1,
           })
           .eq('id', validatedData.variantId);
       }
@@ -83,14 +83,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ success: true });
   } catch (error) {
     logger.error('Failed to track experiment event', error as Error);
-    
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         { error: 'Invalid request data', details: error.errors },
         { status: 400 }
       );
     }
-    
+
     return NextResponse.json(
       { error: 'Failed to track event' },
       { status: 500 }

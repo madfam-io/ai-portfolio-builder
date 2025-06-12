@@ -1,13 +1,15 @@
 /**
  * @fileoverview User Seed Data
  * @module data/seeds/users
- * 
+ *
  * Generates realistic user accounts for development and testing.
  * Includes users across all subscription tiers with proper relationships.
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import { getSeedConfig } from './index';
+
 import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
@@ -109,7 +111,7 @@ function generateUser(index: number): any {
   const tiers = ['free', 'pro', 'business'];
   const timezones = [
     'America/Mexico_City',
-    'America/New_York', 
+    'America/New_York',
     'America/Los_Angeles',
     'Europe/Madrid',
     'Europe/London',
@@ -118,16 +120,44 @@ function generateUser(index: number): any {
   const language = languages[index % languages.length];
   const isSpanish = language === 'es';
 
-  const names = isSpanish 
+  const names = isSpanish
     ? ['Ana', 'Luis', 'Carmen', 'Diego', 'Isabel', 'Miguel', 'Sofía', 'Pablo']
-    : ['David', 'Lisa', 'Michael', 'Jennifer', 'Robert', 'Amanda', 'Daniel', 'Michelle'];
+    : [
+        'David',
+        'Lisa',
+        'Michael',
+        'Jennifer',
+        'Robert',
+        'Amanda',
+        'Daniel',
+        'Michelle',
+      ];
 
   const lastNames = isSpanish
-    ? ['García', 'Rodríguez', 'López', 'Martínez', 'Sánchez', 'Pérez', 'González', 'Fernández']
-    : ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis'];
+    ? [
+        'García',
+        'Rodríguez',
+        'López',
+        'Martínez',
+        'Sánchez',
+        'Pérez',
+        'González',
+        'Fernández',
+      ]
+    : [
+        'Smith',
+        'Johnson',
+        'Williams',
+        'Brown',
+        'Jones',
+        'Garcia',
+        'Miller',
+        'Davis',
+      ];
 
   const firstName = names[index % names.length];
-  const lastName = lastNames[Math.floor(index / names.length) % lastNames.length];
+  const lastName =
+    lastNames[Math.floor(index / names.length) % lastNames.length];
 
   if (!firstName || !lastName) {
     throw new Error('Failed to generate user name');
@@ -138,11 +168,12 @@ function generateUser(index: number): any {
     full_name: `${firstName} ${lastName}`,
     subscription_tier: tiers[index % tiers.length],
     preferred_language: language,
-    preferred_currency: language === 'es' ? 'MXN' : currencies[index % currencies.length],
+    preferred_currency:
+      language === 'es' ? 'MXN' : currencies[index % currencies.length],
     timezone: timezones[index % timezones.length],
     profile: {
       title: isSpanish ? 'Profesional' : 'Professional',
-      bio: isSpanish 
+      bio: isSpanish
         ? 'Profesional experimentado buscando nuevas oportunidades.'
         : 'Experienced professional seeking new opportunities.',
       location: isSpanish ? 'México' : 'United States',
@@ -154,7 +185,10 @@ function generateUser(index: number): any {
 /**
  * Seed users table with realistic test data
  */
-export async function seedUsers(client: any, options: SeedingOptions): Promise<number> {
+export async function seedUsers(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { usersCount } = config;
 
@@ -173,12 +207,12 @@ export async function seedUsers(client: any, options: SeedingOptions): Promise<n
 
     // Prepare user data
     const users = [];
-    
+
     // Add predefined templates first
     for (let i = 0; i < Math.min(USER_TEMPLATES.length, usersCount); i++) {
       const template = USER_TEMPLATES[i];
       if (!template) continue;
-      
+
       users.push({
         id: `00000000-0000-0000-0000-00000000000${i + 1}`, // Predictable IDs for testing
         email: template.email,
@@ -186,14 +220,18 @@ export async function seedUsers(client: any, options: SeedingOptions): Promise<n
         avatar_url: template.profile.avatar_url,
         subscription_tier: template.subscription_tier,
         subscription_status: 'active',
-        subscription_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year from now
+        subscription_expires_at: new Date(
+          Date.now() + 365 * 24 * 60 * 60 * 1000
+        ), // 1 year from now
         portfolio_count: 0,
         ai_requests_count: Math.floor(Math.random() * 50),
         ai_requests_reset_at: new Date(),
         preferred_language: template.preferred_language,
         preferred_currency: template.preferred_currency,
         timezone: template.timezone,
-        created_at: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000), // Random within last 90 days
+        created_at: new Date(
+          Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
+        ), // Random within last 90 days
         updated_at: new Date(),
       });
     }
@@ -208,14 +246,18 @@ export async function seedUsers(client: any, options: SeedingOptions): Promise<n
         avatar_url: userData.profile.avatar_url,
         subscription_tier: userData.subscription_tier,
         subscription_status: 'active',
-        subscription_expires_at: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        subscription_expires_at: new Date(
+          Date.now() + 365 * 24 * 60 * 60 * 1000
+        ),
         portfolio_count: 0,
         ai_requests_count: Math.floor(Math.random() * 30),
         ai_requests_reset_at: new Date(),
         preferred_language: userData.preferred_language,
         preferred_currency: userData.preferred_currency,
         timezone: userData.timezone,
-        created_at: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000),
+        created_at: new Date(
+          Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
+        ),
         updated_at: new Date(),
       });
     }
@@ -226,7 +268,7 @@ export async function seedUsers(client: any, options: SeedingOptions): Promise<n
 
     for (let i = 0; i < users.length; i += batchSize) {
       const batch = users.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('users')
         .insert(batch)
@@ -242,9 +284,11 @@ export async function seedUsers(client: any, options: SeedingOptions): Promise<n
 
     logger.info(`Successfully seeded ${insertedCount} users`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding users:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding users:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }

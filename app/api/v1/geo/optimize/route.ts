@@ -7,8 +7,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
-import { createClient } from '@/lib/supabase/server';
 import { GEOEnhancementRequest } from '@/lib/ai/types';
+import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
 const optimizeContentSchema = z.object({
@@ -17,7 +17,9 @@ const optimizeContentSchema = z.object({
   geoSettings: z.object({
     primaryKeyword: z.string().min(1, 'Primary keyword is required'),
     secondaryKeywords: z.array(z.string()).default([]),
-    targetAudience: z.enum(['employers', 'clients', 'collaborators']).default('employers'),
+    targetAudience: z
+      .enum(['employers', 'clients', 'collaborators'])
+      .default('employers'),
     industry: z.string().default('general'),
     contentGoals: z.array(z.string()).default(['inform', 'rank']),
     enableStructuredData: z.boolean().default(true),

@@ -3,7 +3,6 @@
  * Provides editing interface for different portfolio sections with drag-and-drop
  */
 
-import React, { useState } from 'react';
 import {
   Plus,
   Trash2,
@@ -16,10 +15,14 @@ import {
   Code,
   Award,
 } from 'lucide-react';
+import React, { useState } from 'react';
 
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import { cn } from '@/components/ui/utils';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
+import { DraggableItem } from './DraggableItem';
+
 import type {
   Portfolio,
   Experience,
@@ -28,8 +31,6 @@ import type {
   Skill,
   Certification,
 } from '@/types/portfolio';
-
-import { DraggableItem } from './DraggableItem';
 
 // Union type for portfolio section items
 type PortfolioSectionItem =

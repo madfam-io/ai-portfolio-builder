@@ -5,21 +5,22 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
+import {
+  versionedApiHandler,
+  apiSuccess,
+  apiError,
+} from '@/lib/api/versioning';
 import { createClient } from '@/lib/supabase/server';
+import { renderConsultantTemplate } from '@/lib/templates/consultant';
+import { renderDesignerTemplate } from '@/lib/templates/designer';
+import { renderDeveloperTemplate } from '@/lib/templates/developer';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
-import {
-  previewQuerySchema,
-  previewBodySchema,
-} from '@/lib/validations/api';
-import { versionedApiHandler, apiSuccess, apiError } from '@/lib/api/versioning';
+import { previewQuerySchema, previewBodySchema } from '@/lib/validations/api';
 
 import type { Portfolio } from '@/types/portfolio';
 
 // Template imports
-import { renderDeveloperTemplate } from '@/lib/templates/developer';
-import { renderDesignerTemplate } from '@/lib/templates/designer';
-import { renderConsultantTemplate } from '@/lib/templates/consultant';
 
 export const GET = versionedApiHandler(async (request: NextRequest) => {
   try {
@@ -32,9 +33,9 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     });
 
     if (!validationResult.success) {
-      return apiError('Invalid request parameters', { 
+      return apiError('Invalid request parameters', {
         status: 400,
-        data: { details: validationResult.error.issues }
+        data: { details: validationResult.error.issues },
       });
     }
 
@@ -137,7 +138,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     if (!validationResult.success) {
       return apiError('Invalid request body', {
         status: 400,
-        data: { details: validationResult.error.issues }
+        data: { details: validationResult.error.issues },
       });
     }
 

@@ -1,15 +1,22 @@
 /**
  * @fileoverview RepositoryHeader Component
- * 
+ *
  * Header section for repository analytics page
  * with title, description, and navigation
  */
 
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { FiArrowLeft, FiGithub, FiExternalLink, FiRefreshCw, FiClock } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import {
+  FiArrowLeft,
+  FiGithub,
+  FiExternalLink,
+  FiRefreshCw,
+  FiClock,
+} from 'react-icons/fi';
+
 import type { Repository } from '@/types/analytics';
 
 interface RepositoryHeaderProps {
@@ -55,7 +62,7 @@ export function RepositoryHeader({
                 </span>
               )}
             </div>
-            
+
             {repository.description && (
               <p className="text-gray-600 dark:text-gray-400 mb-3">
                 {repository.description}
@@ -69,10 +76,18 @@ export function RepositoryHeader({
                   {repository.language}
                 </span>
               )}
-              
+
               <span className="flex items-center gap-1">
                 <FiClock className="w-4 h-4" />
-                Updated {formatDistanceToNow(new Date(repository.githubUpdatedAt || repository.lastSyncedAt || new Date()), { addSuffix: true })}
+                Updated{' '}
+                {formatDistanceToNow(
+                  new Date(
+                    repository.githubUpdatedAt ||
+                      repository.lastSyncedAt ||
+                      new Date()
+                  ),
+                  { addSuffix: true }
+                )}
               </span>
             </div>
           </div>
@@ -87,13 +102,15 @@ export function RepositoryHeader({
               <FiExternalLink className="mr-2" />
               View on GitHub
             </a>
-            
+
             <button
               onClick={onSync}
               disabled={syncing}
               className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center"
             >
-              <FiRefreshCw className={`mr-2 ${syncing ? 'animate-spin' : ''}`} />
+              <FiRefreshCw
+                className={`mr-2 ${syncing ? 'animate-spin' : ''}`}
+              />
               {syncing ? 'Syncing...' : 'Sync'}
             </button>
           </div>

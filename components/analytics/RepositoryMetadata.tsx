@@ -44,9 +44,12 @@ export function RepositoryMetadata({
       <div className="flex items-center gap-1">
         <Calendar className="w-4 h-4" />
         Updated{' '}
-        {formatDistanceToNow(new Date(repo.githubUpdatedAt || repo.lastSyncedAt || new Date()), {
-          addSuffix: true,
-        })}
+        {formatDistanceToNow(
+          new Date(repo.githubUpdatedAt || repo.lastSyncedAt || new Date()),
+          {
+            addSuffix: true,
+          }
+        )}
       </div>
     </div>
   );

@@ -1,13 +1,15 @@
 /**
  * @fileoverview Analytics and Metrics Seed Data
  * @module data/seeds/analytics
- * 
+ *
  * Generates realistic analytics data including portfolio views, code metrics,
  * commit analytics, pull requests, and performance metrics.
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import { getSeedConfig } from './index';
+
 import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
@@ -16,13 +18,16 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 function generateCodeMetrics(repositoryId: string, daysBack: number): any[] {
   const metrics = [];
   const languages = {
-    'JavaScript': Math.floor(Math.random() * 10000) + 5000,
-    'TypeScript': Math.floor(Math.random() * 8000) + 3000,
-    'CSS': Math.floor(Math.random() * 2000) + 500,
-    'HTML': Math.floor(Math.random() * 1000) + 200,
+    JavaScript: Math.floor(Math.random() * 10000) + 5000,
+    TypeScript: Math.floor(Math.random() * 8000) + 3000,
+    CSS: Math.floor(Math.random() * 2000) + 500,
+    HTML: Math.floor(Math.random() * 1000) + 200,
   };
 
-  const totalLoc = Object.values(languages).reduce((sum, lines) => sum + lines, 0);
+  const totalLoc = Object.values(languages).reduce(
+    (sum, lines) => sum + lines,
+    0
+  );
 
   // Generate metrics for the last N days
   for (let i = 0; i < daysBack; i++) {
@@ -33,7 +38,7 @@ function generateCodeMetrics(repositoryId: string, daysBack: number): any[] {
     // Add some variance to the metrics over time
     const variance = 1 + (Math.random() - 0.5) * 0.1; // ±5% variance
     const currentLoc = Math.floor(totalLoc * variance);
-    
+
     // Adjust languages proportionally
     const adjustedLanguages: { [key: string]: number } = {};
     Object.entries(languages).forEach(([lang, lines]) => {
@@ -46,12 +51,15 @@ function generateCodeMetrics(repositoryId: string, daysBack: number): any[] {
       metric_date: dateString,
       loc_total: currentLoc,
       loc_by_language: JSON.stringify(adjustedLanguages),
-      file_count: Object.keys(languages).length + Math.floor(Math.random() * 10),
+      file_count:
+        Object.keys(languages).length + Math.floor(Math.random() * 10),
       commit_count: Math.floor(Math.random() * 20) + 1,
       contributor_count: Math.floor(Math.random() * 5) + 1,
       commits_last_30_days: Math.floor(Math.random() * 100) + 10,
       contributors_last_30_days: Math.floor(Math.random() * 8) + 1,
-      calculated_at: new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000),
+      calculated_at: new Date(
+        date.getTime() + Math.random() * 24 * 60 * 60 * 1000
+      ),
     });
   }
 
@@ -61,7 +69,10 @@ function generateCodeMetrics(repositoryId: string, daysBack: number): any[] {
 /**
  * Generate commit analytics for a repository
  */
-function generateCommitAnalytics(repositoryId: string, daysBack: number): any[] {
+function generateCommitAnalytics(
+  repositoryId: string,
+  daysBack: number
+): any[] {
   const analytics = [];
 
   for (let i = 0; i < daysBack; i++) {
@@ -73,7 +84,10 @@ function generateCommitAnalytics(repositoryId: string, daysBack: number): any[] 
     if (Math.random() < 0.3) continue; // 70% of days have commits
 
     const commitCount = Math.floor(Math.random() * 15) + 1;
-    const uniqueAuthors = Math.min(commitCount, Math.floor(Math.random() * 4) + 1);
+    const uniqueAuthors = Math.min(
+      commitCount,
+      Math.floor(Math.random() * 4) + 1
+    );
     const additions = Math.floor(Math.random() * 500) + 50;
     const deletions = Math.floor(Math.random() * 200) + 10;
     const peakHour = Math.floor(Math.random() * 24); // Random peak hour
@@ -87,7 +101,9 @@ function generateCommitAnalytics(repositoryId: string, daysBack: number): any[] 
       additions,
       deletions,
       peak_hour: peakHour,
-      created_at: new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000),
+      created_at: new Date(
+        date.getTime() + Math.random() * 24 * 60 * 60 * 1000
+      ),
     });
   }
 
@@ -115,9 +131,11 @@ function generatePullRequests(repositoryId: string, count: number): any[] {
   const pullRequests = [];
 
   for (let i = 0; i < count; i++) {
-    const createdAt = new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000);
+    const createdAt = new Date(
+      Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000
+    );
     const state = states[Math.floor(Math.random() * states.length)];
-    
+
     // Generate realistic timing
     let mergedAt = null;
     let closedAt = null;
@@ -125,14 +143,20 @@ function generatePullRequests(repositoryId: string, count: number): any[] {
     let leadTimeHours = null;
 
     if (state === 'merged' || state === 'closed') {
-      const closeTime = new Date(createdAt.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000);
+      const closeTime = new Date(
+        createdAt.getTime() + Math.random() * 14 * 24 * 60 * 60 * 1000
+      );
       if (state === 'merged') {
         mergedAt = closeTime;
-        cycleTimeHours = Math.floor((closeTime.getTime() - createdAt.getTime()) / (60 * 60 * 1000));
+        cycleTimeHours = Math.floor(
+          (closeTime.getTime() - createdAt.getTime()) / (60 * 60 * 1000)
+        );
         leadTimeHours = cycleTimeHours + Math.floor(Math.random() * 48); // Add review time
       } else {
         closedAt = closeTime;
-        cycleTimeHours = Math.floor((closeTime.getTime() - createdAt.getTime()) / (60 * 60 * 1000));
+        cycleTimeHours = Math.floor(
+          (closeTime.getTime() - createdAt.getTime()) / (60 * 60 * 1000)
+        );
       }
     }
 
@@ -145,8 +169,12 @@ function generatePullRequests(repositoryId: string, count: number): any[] {
       state,
       author: `contributor-${Math.floor(Math.random() * 5) + 1}`,
       assignees: JSON.stringify([]),
-      reviewers: JSON.stringify([`reviewer-${Math.floor(Math.random() * 3) + 1}`]),
-      labels: JSON.stringify(['enhancement', 'feature'].slice(0, Math.floor(Math.random() * 2) + 1)),
+      reviewers: JSON.stringify([
+        `reviewer-${Math.floor(Math.random() * 3) + 1}`,
+      ]),
+      labels: JSON.stringify(
+        ['enhancement', 'feature'].slice(0, Math.floor(Math.random() * 2) + 1)
+      ),
       additions: Math.floor(Math.random() * 300) + 10,
       deletions: Math.floor(Math.random() * 100) + 5,
       changed_files: Math.floor(Math.random() * 10) + 1,
@@ -156,7 +184,9 @@ function generatePullRequests(repositoryId: string, count: number): any[] {
       cycle_time_hours: cycleTimeHours,
       lead_time_hours: leadTimeHours,
       created_at: createdAt,
-      updated_at: new Date(createdAt.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000),
+      updated_at: new Date(
+        createdAt.getTime() + Math.random() * 7 * 24 * 60 * 60 * 1000
+      ),
       merged_at: mergedAt,
       closed_at: closedAt,
     });
@@ -168,7 +198,10 @@ function generatePullRequests(repositoryId: string, count: number): any[] {
 /**
  * Generate portfolio analytics
  */
-function generatePortfolioAnalytics(portfolioId: string, daysBack: number): any[] {
+function generatePortfolioAnalytics(
+  portfolioId: string,
+  daysBack: number
+): any[] {
   const analytics = [];
 
   for (let i = 0; i < daysBack; i++) {
@@ -214,12 +247,14 @@ function generatePortfolioAnalytics(portfolioId: string, daysBack: number): any[
         tablet: Math.floor(views * 0.1),
       }),
       countries: JSON.stringify({
-        'Mexico': Math.floor(views * 0.4),
+        Mexico: Math.floor(views * 0.4),
         'United States': Math.floor(views * 0.3),
-        'Spain': Math.floor(views * 0.2),
-        'Other': Math.floor(views * 0.1),
+        Spain: Math.floor(views * 0.2),
+        Other: Math.floor(views * 0.1),
       }),
-      created_at: new Date(date.getTime() + Math.random() * 24 * 60 * 60 * 1000),
+      created_at: new Date(
+        date.getTime() + Math.random() * 24 * 60 * 60 * 1000
+      ),
     });
   }
 
@@ -229,7 +264,10 @@ function generatePortfolioAnalytics(portfolioId: string, daysBack: number): any[
 /**
  * Seed code metrics table
  */
-export async function seedCodeMetrics(client: any, options: SeedingOptions): Promise<number> {
+export async function seedCodeMetrics(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { analyticsDays } = config;
 
@@ -242,7 +280,9 @@ export async function seedCodeMetrics(client: any, options: SeedingOptions): Pro
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Code metrics table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Code metrics table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -274,14 +314,17 @@ export async function seedCodeMetrics(client: any, options: SeedingOptions): Pro
 
     for (let i = 0; i < allMetrics.length; i += batchSize) {
       const batch = allMetrics.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('code_metrics')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting code metrics batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting code metrics batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
@@ -290,9 +333,11 @@ export async function seedCodeMetrics(client: any, options: SeedingOptions): Pro
 
     logger.info(`Successfully seeded ${insertedCount} code metrics records`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding code metrics:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding code metrics:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -300,7 +345,10 @@ export async function seedCodeMetrics(client: any, options: SeedingOptions): Pro
 /**
  * Seed commit analytics table
  */
-export async function seedCommitAnalytics(client: any, options: SeedingOptions): Promise<number> {
+export async function seedCommitAnalytics(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { analyticsDays } = config;
 
@@ -313,7 +361,9 @@ export async function seedCommitAnalytics(client: any, options: SeedingOptions):
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Commit analytics table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Commit analytics table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -345,25 +395,32 @@ export async function seedCommitAnalytics(client: any, options: SeedingOptions):
 
     for (let i = 0; i < allAnalytics.length; i += batchSize) {
       const batch = allAnalytics.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('commit_analytics')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting commit analytics batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting commit analytics batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
       insertedCount += data?.length || 0;
     }
 
-    logger.info(`Successfully seeded ${insertedCount} commit analytics records`);
+    logger.info(
+      `Successfully seeded ${insertedCount} commit analytics records`
+    );
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding commit analytics:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding commit analytics:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -371,7 +428,10 @@ export async function seedCommitAnalytics(client: any, options: SeedingOptions):
 /**
  * Seed pull requests table
  */
-export async function seedPullRequests(client: any, options: SeedingOptions): Promise<number> {
+export async function seedPullRequests(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   logger.info('Seeding pull requests...');
 
   try {
@@ -381,7 +441,9 @@ export async function seedPullRequests(client: any, options: SeedingOptions): Pr
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Pull requests table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Pull requests table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -414,14 +476,17 @@ export async function seedPullRequests(client: any, options: SeedingOptions): Pr
 
     for (let i = 0; i < allPullRequests.length; i += batchSize) {
       const batch = allPullRequests.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('pull_requests')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting pull requests batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting pull requests batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
@@ -430,9 +495,11 @@ export async function seedPullRequests(client: any, options: SeedingOptions): Pr
 
     logger.info(`Successfully seeded ${insertedCount} pull requests`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding pull requests:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding pull requests:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -440,7 +507,10 @@ export async function seedPullRequests(client: any, options: SeedingOptions): Pr
 /**
  * Seed portfolio analytics table
  */
-export async function seedPortfolioAnalytics(client: any, options: SeedingOptions): Promise<number> {
+export async function seedPortfolioAnalytics(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { analyticsDays } = config;
 
@@ -453,7 +523,9 @@ export async function seedPortfolioAnalytics(client: any, options: SeedingOption
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Portfolio analytics table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Portfolio analytics table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -464,11 +536,15 @@ export async function seedPortfolioAnalytics(client: any, options: SeedingOption
       .eq('status', 'published');
 
     if (portfoliosError || !portfolios) {
-      throw new Error(`Failed to fetch portfolios: ${portfoliosError?.message}`);
+      throw new Error(
+        `Failed to fetch portfolios: ${portfoliosError?.message}`
+      );
     }
 
     if (portfolios.length === 0) {
-      logger.warn('No published portfolios found, skipping portfolio analytics seeding');
+      logger.warn(
+        'No published portfolios found, skipping portfolio analytics seeding'
+      );
       return 0;
     }
 
@@ -485,25 +561,32 @@ export async function seedPortfolioAnalytics(client: any, options: SeedingOption
 
     for (let i = 0; i < allAnalytics.length; i += batchSize) {
       const batch = allAnalytics.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('portfolio_analytics')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting portfolio analytics batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting portfolio analytics batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
       insertedCount += data?.length || 0;
     }
 
-    logger.info(`Successfully seeded ${insertedCount} portfolio analytics records`);
+    logger.info(
+      `Successfully seeded ${insertedCount} portfolio analytics records`
+    );
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding portfolio analytics:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding portfolio analytics:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -511,14 +594,17 @@ export async function seedPortfolioAnalytics(client: any, options: SeedingOption
 /**
  * Combined seeding function for all analytics
  */
-export async function seedAnalytics(client: any, options: SeedingOptions): Promise<number> {
+export async function seedAnalytics(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   let totalCount = 0;
-  
+
   // Seed in dependency order
   totalCount += await seedCodeMetrics(client, options);
   totalCount += await seedCommitAnalytics(client, options);
   totalCount += await seedPullRequests(client, options);
   totalCount += await seedPortfolioAnalytics(client, options);
-  
+
   return totalCount;
 }

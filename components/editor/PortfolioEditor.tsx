@@ -21,20 +21,21 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useEditorHistory } from '@/hooks/useEditorHistory';
 import {
   Portfolio,
   PortfolioEditorState,
   TemplateType,
   SectionType,
 } from '@/types/portfolio';
+
 // Removed portfolioService import - will use API calls instead
-import { PortfolioPreview } from './PortfolioPreview';
-import { EditorSidebar } from './EditorSidebar';
 import { EditorHeader } from './EditorHeader';
+import { EditorSidebar } from './EditorSidebar';
 import { EditorToolbar } from './EditorToolbar';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { useEditorHistory } from '@/hooks/useEditorHistory';
+import { PortfolioPreview } from './PortfolioPreview';
 
 interface PortfolioEditorProps {
   portfolioId: string;

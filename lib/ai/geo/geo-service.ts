@@ -3,8 +3,14 @@
  * Main service for integrating GEO capabilities into content generation
  */
 
-import { KeywordAnalyzer } from './keyword-analyzer';
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+
+import { HuggingFaceService } from '../huggingface-service';
+import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
+
 import { ContentOptimizer } from './content-optimizer';
+import { KeywordAnalyzer } from './keyword-analyzer';
 import { MetadataGenerator } from './metadata-generator';
 import { GEOPromptBuilder } from './prompts';
 import {
@@ -14,13 +20,6 @@ import {
   SEOMetadata,
   KeywordResearch,
 } from './types';
-import {
-  GEOEnhancementRequest,
-  GEOEnhancementResponse,
-} from '../types';
-import { HuggingFaceService } from '../huggingface-service';
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
 
 export class GEOService {
   private keywordAnalyzer: KeywordAnalyzer;
@@ -62,7 +61,8 @@ export class GEOService {
         contentLength: 'detailed',
         enableStructuredData: request.geoSettings.enableStructuredData ?? true,
         enableInternalLinking: false,
-        enableKeywordOptimization: request.geoSettings.enableKeywordOptimization ?? true,
+        enableKeywordOptimization:
+          request.geoSettings.enableKeywordOptimization ?? true,
         keywordDensityTarget: 1.5,
         optimizeFor: ['google', 'ai-engines'],
       };
@@ -74,11 +74,12 @@ export class GEOService {
         settings: geoSettings,
       };
 
-      const optimized = await this.contentOptimizer.optimizeContent(optimizationRequest);
+      const optimized =
+        await this.contentOptimizer.optimizeContent(optimizationRequest);
 
       // Generate AI-enhanced content with GEO awareness
       let enhancedContent = optimized.optimizedContent.content;
-      
+
       if (request.contentType === 'bio') {
         enhancedContent = await this.enhanceBioWithGEO(
           request.content,
@@ -149,7 +150,10 @@ export class GEOService {
       skills: settings.secondaryKeywords,
       experience: [],
       industry: settings.industry,
-      tone: settings.tone === 'technical' || settings.tone === 'academic' ? 'professional' : settings.tone,
+      tone:
+        settings.tone === 'technical' || settings.tone === 'academic'
+          ? 'professional'
+          : settings.tone,
       targetLength: settings.contentLength,
     });
 

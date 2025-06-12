@@ -55,7 +55,7 @@ function generatePersonSchema(portfolio: Portfolio): any {
   if (portfolio.social.github) sameAs.push(portfolio.social.github);
   if (portfolio.social.twitter) sameAs.push(portfolio.social.twitter);
   if (portfolio.social.website) sameAs.push(portfolio.social.website);
-  
+
   if (sameAs.length > 0) {
     person.sameAs = sameAs;
   }
@@ -101,7 +101,9 @@ function generateWebPageSchema(portfolio: Portfolio): any {
     '@id': `#webpage-${portfolio.id}`,
     name: `${portfolio.name} - ${portfolio.title}`,
     description: portfolio.bio,
-    url: portfolio.customDomain || `https://prisma.madfam.io/${portfolio.subdomain}`,
+    url:
+      portfolio.customDomain ||
+      `https://prisma.madfam.io/${portfolio.subdomain}`,
     about: { '@id': `#person-${portfolio.id}` },
     dateModified: portfolio.updatedAt,
     datePublished: portfolio.publishedAt || portfolio.createdAt,
@@ -279,10 +281,12 @@ export function generateServiceSchema(service: {
 /**
  * Generate FAQ schema
  */
-export function generateFAQSchema(faqs: Array<{
-  question: string;
-  answer: string;
-}>): string {
+export function generateFAQSchema(
+  faqs: Array<{
+    question: string;
+    answer: string;
+  }>
+): string {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',

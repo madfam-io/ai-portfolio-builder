@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
-
 import Link from 'next/link';
+import React from 'react';
 import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';

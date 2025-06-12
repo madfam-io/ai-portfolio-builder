@@ -1,7 +1,7 @@
 /**
  * @fileoverview Database Seeding Engine
  * @module database/seeder
- * 
+ *
  * Provides intelligent database seeding with detection, validation,
  * and incremental data population for development environments.
  */
@@ -26,7 +26,7 @@ export interface SeedingResult {
 
 /**
  * Database Seeding Engine
- * 
+ *
  * Handles intelligent seeding with conflict detection and incremental updates
  */
 export class DatabaseSeeder {
@@ -59,7 +59,7 @@ export class DatabaseSeeder {
     try {
       // Check if core tables have data
       const tables = ['users', 'portfolios', 'subscription_plans'];
-      
+
       for (const table of tables) {
         const { count, error } = await this.client
           .from(table)
@@ -79,7 +79,10 @@ export class DatabaseSeeder {
       logger.info('Database appears to be populated');
       return false;
     } catch (error) {
-      logger.error('Error checking if seeding is needed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Error checking if seeding is needed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return true; // Assume seeding is needed if we can't check
     }
   }
@@ -103,7 +106,10 @@ export class DatabaseSeeder {
       logger.info('Database connectivity validated');
       return true;
     } catch (error) {
-      logger.error('Database validation error:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Database validation error:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return false;
     }
   }
@@ -139,18 +145,24 @@ export class DatabaseSeeder {
 
       // Use the centralized seeding orchestrator
       const { executeSeeding } = await import('@/lib/data/seeds/index');
-      
+
       const seedingResult = await executeSeeding(this.client, this.options);
-      
+
       result.tablesSeeded = seedingResult.completed;
       result.recordsCreated = seedingResult.totalRecords;
-      result.errors = seedingResult.failed.map(name => `Failed to seed ${name}`);
+      result.errors = seedingResult.failed.map(
+        name => `Failed to seed ${name}`
+      );
       result.success = seedingResult.success;
-      logger.info(`Seeding completed. Success: ${result.success}, Records: ${result.recordsCreated}`);
-
+      logger.info(
+        `Seeding completed. Success: ${result.success}, Records: ${result.recordsCreated}`
+      );
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : String(error);
-      logger.error('Seeding failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Seeding failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       result.errors.push(errorMsg);
       result.success = false;
     }
@@ -164,12 +176,12 @@ export class DatabaseSeeder {
    */
   async reset(): Promise<void> {
     logger.warn('Resetting all seed data...');
-    
+
     try {
       // Delete in reverse dependency order
       const tables = [
         'analytics_cache',
-        'commit_analytics', 
+        'commit_analytics',
         'repository_contributors',
         'pull_requests',
         'code_metrics',
@@ -197,7 +209,10 @@ export class DatabaseSeeder {
 
       logger.info('Database reset completed');
     } catch (error) {
-      logger.error('Database reset failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Database reset failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -212,10 +227,13 @@ export class DatabaseSeeder {
   }> {
     try {
       const tables = [
-        'users', 'portfolios', 'repositories', 
-        'github_integrations', 'code_metrics'
+        'users',
+        'portfolios',
+        'repositories',
+        'github_integrations',
+        'code_metrics',
       ];
-      
+
       const tableStats: Record<string, number> = {};
       let totalRecords = 0;
 
@@ -236,7 +254,10 @@ export class DatabaseSeeder {
         // Could track last seeded time in a metadata table
       };
     } catch (error) {
-      logger.error('Error getting seeding status:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Error getting seeding status:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return {
         isSeeded: false,
         tableStats: {},
@@ -248,7 +269,9 @@ export class DatabaseSeeder {
 /**
  * Quick seeding function for development
  */
-export async function quickSeed(options?: Partial<SeedingOptions>): Promise<SeedingResult> {
+export async function quickSeed(
+  options?: Partial<SeedingOptions>
+): Promise<SeedingResult> {
   const seeder = new DatabaseSeeder({
     mode: 'demo',
     ...options,

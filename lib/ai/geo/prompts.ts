@@ -48,9 +48,10 @@ Enhanced Bio:`,
 
     examples: [
       {
-        input: "Software developer with experience in web development",
-        output: "Full-stack software developer specializing in scalable web applications and cloud architecture. Expert in React, Node.js, and AWS, delivering high-performance solutions that increase user engagement by 40%. Passionate about clean code and agile methodologies, I help startups and enterprises build robust digital products. Let's transform your ideas into powerful web experiences."
-      }
+        input: 'Software developer with experience in web development',
+        output:
+          "Full-stack software developer specializing in scalable web applications and cloud architecture. Expert in React, Node.js, and AWS, delivering high-performance solutions that increase user engagement by 40%. Passionate about clean code and agile methodologies, I help startups and enterprises build robust digital products. Let's transform your ideas into powerful web experiences.",
+      },
     ],
   } as PromptTemplate,
 
@@ -92,7 +93,7 @@ Optimize this project description for search engines while showcasing technical 
 
     examples: [
       {
-        input: "E-commerce website built with React",
+        input: 'E-commerce website built with React',
         output: `{
   "title": "React E-commerce Platform - Scalable Online Store Solution",
   "description": "Developed a high-performance React e-commerce platform that handles 50,000+ daily transactions. Built with modern JAMstack architecture for optimal Core Web Vitals and SEO performance.",
@@ -114,8 +115,8 @@ Optimize this project description for search engines while showcasing technical 
     "Vercel Edge Functions"
   ],
   "keywords": "React e-commerce development, headless commerce solution, SEO-friendly online store, sustainable fashion platform"
-}`
-      }
+}`,
+      },
     ],
   } as PromptTemplate,
 
@@ -290,9 +291,10 @@ export class GEOPromptBuilder {
     contentGoals: string[];
   }): string {
     const template = geoPromptTemplates.geoBioEnhancement;
-    
+
     return (
-      template.system.replace('{targetLength}', params.targetLength)
+      template.system
+        .replace('{targetLength}', params.targetLength)
         .replace('{tone}', params.tone) +
       '\n\n' +
       template.user
@@ -321,7 +323,7 @@ export class GEOPromptBuilder {
     location?: string;
   }): string {
     const template = geoPromptTemplates.geoProjectOptimization;
-    
+
     return (
       template.system +
       '\n\n' +
@@ -347,7 +349,7 @@ export class GEOPromptBuilder {
     pageType: string;
   }): string {
     const template = geoPromptTemplates.geoMetaDescription;
-    
+
     return (
       template.system +
       '\n\n' +

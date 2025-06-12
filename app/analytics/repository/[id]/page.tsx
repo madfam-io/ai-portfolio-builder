@@ -37,6 +37,7 @@ import {
 import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 import type { RepositoryAnalytics } from '@/types/analytics';
 
 // Component state type

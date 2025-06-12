@@ -1,16 +1,19 @@
 /**
  * @fileoverview Client-side hook for A/B testing experiments
- * 
+ *
  * Provides React hooks for accessing experiment data and tracking
  * events in landing page A/B tests.
  */
 
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
 
-import type { GetActiveExperimentResponse, ComponentConfig } from '@/types/experiments';
+import type {
+  GetActiveExperimentResponse,
+  ComponentConfig,
+} from '@/types/experiments';
 
 /**
  * Experiment context data
@@ -32,7 +35,7 @@ export function useExperiment(): ExperimentContext {
   const [context, setContext] = useState<ExperimentContext>({
     components: [],
     themeOverrides: {},
-    isLoading: true
+    isLoading: true,
   });
   const pathname = usePathname();
 
@@ -48,8 +51,8 @@ export function useExperiment(): ExperimentContext {
         const response = await fetch('/api/v1/experiments/active', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json'
-          }
+            'Content-Type': 'application/json',
+          },
         });
 
         if (!response.ok) {
@@ -65,13 +68,13 @@ export function useExperiment(): ExperimentContext {
             variantName: data.variantName,
             components: data.components,
             themeOverrides: data.themeOverrides,
-            isLoading: false
+            isLoading: false,
           });
         } else {
           setContext({
             components: [],
             themeOverrides: {},
-            isLoading: false
+            isLoading: false,
           });
         }
       } catch (error) {
@@ -80,7 +83,7 @@ export function useExperiment(): ExperimentContext {
           components: [],
           themeOverrides: {},
           isLoading: false,
-          error: error as Error
+          error: error as Error,
         });
       }
     };
@@ -108,7 +111,7 @@ export function useExperimentTracking() {
         await fetch('/api/v1/experiments/track', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             experimentId,
@@ -116,9 +119,9 @@ export function useExperimentTracking() {
             eventType: 'click',
             eventData: {
               element,
-              ...additionalData
-            }
-          })
+              ...additionalData,
+            },
+          }),
         });
       } catch (error) {
         console.error('Failed to track click:', error);
@@ -131,14 +134,18 @@ export function useExperimentTracking() {
    * Track a conversion event
    */
   const trackConversion = useCallback(
-    async (conversionType: string, value?: number, metadata?: Record<string, any>) => {
+    async (
+      conversionType: string,
+      value?: number,
+      metadata?: Record<string, any>
+    ) => {
       if (!experimentId || !variantId) return;
 
       try {
         await fetch('/api/v1/experiments/track', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             experimentId,
@@ -147,9 +154,9 @@ export function useExperimentTracking() {
             eventData: {
               type: conversionType,
               value,
-              ...metadata
-            }
-          })
+              ...metadata,
+            },
+          }),
         });
       } catch (error) {
         console.error('Failed to track conversion:', error);
@@ -169,14 +176,14 @@ export function useExperimentTracking() {
         await fetch('/api/v1/experiments/track', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
             experimentId,
             variantId,
             eventType: 'engagement',
-            eventData: metrics
-          })
+            eventData: metrics,
+          }),
         });
       } catch (error) {
         console.error('Failed to track engagement:', error);
@@ -188,16 +195,14 @@ export function useExperimentTracking() {
   return {
     trackClick,
     trackConversion,
-    trackEngagement
+    trackEngagement,
   };
 }
 
 /**
  * Hook to check if a specific component variant is active
  */
-export function useComponentVariant(
-  componentType: string
-): {
+export function useComponentVariant(componentType: string): {
   variant: string | null;
   props: Record<string, any>;
   isVisible: boolean;
@@ -209,7 +214,7 @@ export function useComponentVariant(
   return {
     variant: component?.variant || null,
     props: component?.props || {},
-    isVisible: component?.visible ?? true
+    isVisible: component?.visible ?? true,
   };
 }
 
@@ -237,9 +242,12 @@ export function useExperimentTheme() {
           const spacingMap = {
             compact: '0.75',
             normal: '1',
-            relaxed: '1.25'
+            relaxed: '1.25',
           };
-          root.style.setProperty('--spacing-multiplier', spacingMap[value as keyof typeof spacingMap]);
+          root.style.setProperty(
+            '--spacing-multiplier',
+            spacingMap[value as keyof typeof spacingMap]
+          );
         }
       });
 

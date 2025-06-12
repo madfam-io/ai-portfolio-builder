@@ -7,10 +7,11 @@
 
 'use client';
 
+import { Badge } from '@/components/ui/badge';
+
 import { RepositoryMetadata } from './RepositoryMetadata';
 
 import type { Repository } from '@/types/analytics';
-import { Badge } from '@/components/ui/badge';
 
 interface RepositoryCardProps {
   repo: Repository;

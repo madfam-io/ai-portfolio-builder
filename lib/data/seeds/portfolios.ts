@@ -1,13 +1,15 @@
 /**
  * @fileoverview Portfolio Seed Data
  * @module data/seeds/portfolios
- * 
+ *
  * Generates realistic portfolio data for all user types and templates.
  * Creates comprehensive portfolio content including experience, projects, and skills.
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import { getSeedConfig } from './index';
+
 import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
@@ -37,7 +39,8 @@ const PORTFOLIO_TEMPLATES = [
         position: 'Senior Full Stack Developer',
         startDate: '2022-01',
         current: true,
-        description: 'Liderando el desarrollo de aplicaciones web modernas usando React y Node.js',
+        description:
+          'Liderando el desarrollo de aplicaciones web modernas usando React y Node.js',
         highlights: [
           'Lideré un equipo de 4 desarrolladores',
           'Mejoré el rendimiento de las aplicaciones en un 40%',
@@ -51,7 +54,8 @@ const PORTFOLIO_TEMPLATES = [
         startDate: '2019-03',
         endDate: '2021-12',
         current: false,
-        description: 'Desarrollé interfaces de usuario responsivas y aplicaciones móviles',
+        description:
+          'Desarrollé interfaces de usuario responsivas y aplicaciones móviles',
         highlights: [
           'Construí desde cero un portal de clientes',
           'Reduje el tiempo de carga en un 60%',
@@ -74,7 +78,8 @@ const PORTFOLIO_TEMPLATES = [
     projects: [
       {
         title: 'Plataforma de E-commerce',
-        description: 'Plataforma completa de comercio electrónico construida con React y Node.js',
+        description:
+          'Plataforma completa de comercio electrónico construida con React y Node.js',
         technologies: ['React', 'Node.js', 'PostgreSQL', 'Stripe', 'AWS'],
         highlights: [
           'Soporta múltiples métodos de pago',
@@ -88,7 +93,8 @@ const PORTFOLIO_TEMPLATES = [
       },
       {
         title: 'App de Gestión de Tareas',
-        description: 'Aplicación colaborativa de gestión de tareas con actualizaciones en tiempo real',
+        description:
+          'Aplicación colaborativa de gestión de tareas con actualizaciones en tiempo real',
         technologies: ['Vue.js', 'Firebase', 'Tailwind CSS'],
         highlights: [
           'Colaboración en tiempo real',
@@ -140,7 +146,8 @@ const PORTFOLIO_TEMPLATES = [
         position: 'Senior Product Designer',
         startDate: '2021-03',
         current: true,
-        description: 'Liderando el diseño de productos para múltiples proyectos de clientes',
+        description:
+          'Liderando el diseño de productos para múltiples proyectos de clientes',
         highlights: [
           'Diseñé UI para 10+ aplicaciones móviles',
           'Establecí sistema de diseño',
@@ -197,8 +204,9 @@ const PORTFOLIO_TEMPLATES = [
  */
 function generatePortfolio(userId: string, index: number, template?: any): any {
   const templates = ['developer', 'designer', 'consultant'];
-  const selectedTemplate = template?.template || templates[index % templates.length];
-  
+  const selectedTemplate =
+    template?.template || templates[index % templates.length];
+
   const baseData = template || {
     name: `Usuario ${index + 1}`,
     title: 'Profesional',
@@ -207,7 +215,7 @@ function generatePortfolio(userId: string, index: number, template?: any): any {
   };
 
   const subdomain = `${baseData.name.toLowerCase().replace(/\s+/g, '')}-${index}`;
-  
+
   return {
     id: `portfolio-${userId}-${index}`,
     user_id: userId,
@@ -216,10 +224,12 @@ function generatePortfolio(userId: string, index: number, template?: any): any {
     bio: baseData.bio,
     tagline: baseData.tagline || 'Mi tagline profesional',
     avatar_url: `https://i.pravatar.cc/300?u=${userId}-${index}`,
-    contact: JSON.stringify(baseData.contact || {
-      email: `${baseData.name.toLowerCase().replace(/\s+/g, '.')}@ejemplo.com`,
-      location: 'México',
-    }),
+    contact: JSON.stringify(
+      baseData.contact || {
+        email: `${baseData.name.toLowerCase().replace(/\s+/g, '.')}@ejemplo.com`,
+        location: 'México',
+      }
+    ),
     social: JSON.stringify(baseData.social || {}),
     experience: JSON.stringify(baseData.experience || []),
     education: JSON.stringify(baseData.education || []),
@@ -238,13 +248,19 @@ function generatePortfolio(userId: string, index: number, template?: any): any {
       tone: 'professional',
       targetLength: 'detailed',
     }),
-    status: index === 0 ? 'published' : (index % 3 === 0 ? 'published' : 'draft'),
+    status: index === 0 ? 'published' : index % 3 === 0 ? 'published' : 'draft',
     subdomain: subdomain.substring(0, 20), // Ensure subdomain length limit
     meta_title: `${baseData.name} - ${baseData.title}`,
-    meta_description: baseData.bio?.substring(0, 160) || 'Portfolio profesional',
+    meta_description:
+      baseData.bio?.substring(0, 160) || 'Portfolio profesional',
     views: Math.floor(Math.random() * 500),
-    last_viewed_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
-    published_at: index === 0 || index % 3 === 0 ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000) : null,
+    last_viewed_at: new Date(
+      Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
+    ),
+    published_at:
+      index === 0 || index % 3 === 0
+        ? new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000)
+        : null,
     created_at: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000),
     updated_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000),
   };
@@ -253,7 +269,10 @@ function generatePortfolio(userId: string, index: number, template?: any): any {
 /**
  * Seed portfolios table with realistic data
  */
-export async function seedPortfolios(client: any, options: SeedingOptions): Promise<number> {
+export async function seedPortfolios(
+  client: any,
+  options: SeedingOptions
+): Promise<number> {
   const config = getSeedConfig(options.mode);
   const { portfoliosPerUser } = config;
 
@@ -280,7 +299,9 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
       .select('*', { count: 'exact', head: true });
 
     if (existingCount > 0 && options.skipExisting) {
-      logger.info(`Portfolios table already has ${existingCount} records, skipping`);
+      logger.info(
+        `Portfolios table already has ${existingCount} records, skipping`
+      );
       return existingCount;
     }
 
@@ -289,12 +310,17 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
 
     for (let userIndex = 0; userIndex < users.length; userIndex++) {
       const user = users[userIndex];
-      
-      for (let portfolioIndex = 0; portfolioIndex < portfoliosPerUser; portfolioIndex++) {
+
+      for (
+        let portfolioIndex = 0;
+        portfolioIndex < portfoliosPerUser;
+        portfolioIndex++
+      ) {
         // Use template for first portfolio of template users
-        const template = userIndex < PORTFOLIO_TEMPLATES.length && portfolioIndex === 0 
-          ? PORTFOLIO_TEMPLATES[userIndex] 
-          : undefined;
+        const template =
+          userIndex < PORTFOLIO_TEMPLATES.length && portfolioIndex === 0
+            ? PORTFOLIO_TEMPLATES[userIndex]
+            : undefined;
 
         const portfolio = generatePortfolio(user.id, portfolioIndex, template);
         portfolios.push(portfolio);
@@ -307,14 +333,17 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
 
     for (let i = 0; i < portfolios.length; i += batchSize) {
       const batch = portfolios.slice(i, i + batchSize);
-      
+
       const { data, error } = await client
         .from('portfolios')
         .insert(batch)
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting portfolio batch ${i / batchSize + 1}:`, error);
+        logger.error(
+          `Error inserting portfolio batch ${i / batchSize + 1}:`,
+          error
+        );
         throw error;
       }
 
@@ -326,9 +355,11 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
 
     logger.info(`Successfully seeded ${insertedCount} portfolios`);
     return insertedCount;
-
   } catch (error) {
-    logger.error('Error seeding portfolios:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error seeding portfolios:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     throw error;
   }
 }
@@ -336,7 +367,10 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
 /**
  * Update user portfolio counts after seeding
  */
-async function updateUserPortfolioCounts(client: any, users: any[]): Promise<void> {
+async function updateUserPortfolioCounts(
+  client: any,
+  users: any[]
+): Promise<void> {
   try {
     for (const user of users) {
       const { count } = await client
@@ -352,7 +386,10 @@ async function updateUserPortfolioCounts(client: any, users: any[]): Promise<voi
 
     logger.info('Updated user portfolio counts');
   } catch (error) {
-    logger.error('Error updating user portfolio counts:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Error updating user portfolio counts:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     // Don't throw, this is not critical
   }
 }

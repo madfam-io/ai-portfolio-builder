@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
-
 import Link from 'next/link';
+import React from 'react';
 import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';

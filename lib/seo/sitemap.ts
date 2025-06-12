@@ -12,14 +12,21 @@ export function generatePortfolioSitemap(
   portfolio: Portfolio,
   baseUrl: string = 'https://prisma.madfam.io'
 ): string {
-  const portfolioUrl = portfolio.customDomain 
+  const portfolioUrl = portfolio.customDomain
     ? `https://${portfolio.customDomain}`
     : `${baseUrl}/${portfolio.subdomain}`;
 
   const entries: Array<{
     url: string;
     lastModified: Date;
-    changeFrequency: 'always' | 'hourly' | 'daily' | 'weekly' | 'monthly' | 'yearly' | 'never';
+    changeFrequency:
+      | 'always'
+      | 'hourly'
+      | 'daily'
+      | 'weekly'
+      | 'monthly'
+      | 'yearly'
+      | 'never';
     priority: number;
   }> = [];
 
@@ -54,7 +61,7 @@ export function generatePortfolioSitemap(
         url: `${portfolioUrl}/projects/${generateSlug(project.title)}`,
         lastModified: portfolio.updatedAt,
         changeFrequency: 'monthly',
-        priority: 0.7 - (index * 0.05), // Decrease priority for each project
+        priority: 0.7 - index * 0.05, // Decrease priority for each project
       });
     });
   }
@@ -91,10 +98,10 @@ export function generateSitemapIndex(
   const sitemaps = portfolios
     .filter(p => p.status === 'published')
     .map(portfolio => {
-      const url = portfolio.customDomain 
+      const url = portfolio.customDomain
         ? `https://${portfolio.customDomain}/sitemap.xml`
         : `${baseUrl}/${portfolio.subdomain}/sitemap.xml`;
-      
+
       return `
   <sitemap>
     <loc>${url}</loc>
@@ -111,19 +118,23 @@ ${sitemaps.join('')}
 /**
  * Generate sitemap XML from entries
  */
-function generateSitemapXML(entries: Array<{
-  url: string;
-  lastModified: Date;
-  changeFrequency: string;
-  priority: number;
-}>): string {
-  const urlElements = entries.map(entry => `
+function generateSitemapXML(
+  entries: Array<{
+    url: string;
+    lastModified: Date;
+    changeFrequency: string;
+    priority: number;
+  }>
+): string {
+  const urlElements = entries.map(
+    entry => `
   <url>
     <loc>${escapeXml(entry.url)}</loc>
     <lastmod>${entry.lastModified.toISOString()}</lastmod>
     <changefreq>${entry.changeFrequency}</changefreq>
     <priority>${entry.priority.toFixed(1)}</priority>
-  </url>`);
+  </url>`
+  );
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -153,7 +164,7 @@ function escapeXml(text: string): string {
     '"': '&quot;',
     "'": '&apos;',
   };
-  
+
   return text.replace(/[&<>"']/g, m => map[m] || m);
 }
 
@@ -164,10 +175,7 @@ export function generateRobotsTxt(
   sitemapUrl: string,
   disallowPaths: string[] = []
 ): string {
-  const lines = [
-    'User-agent: *',
-    'Allow: /',
-  ];
+  const lines = ['User-agent: *', 'Allow: /'];
 
   // Add disallow rules
   disallowPaths.forEach(path => {
@@ -184,7 +192,7 @@ export function generateRobotsTxt(
   lines.push('');
   lines.push('User-agent: Googlebot');
   lines.push('Allow: /');
-  
+
   lines.push('');
   lines.push('User-agent: Bingbot');
   lines.push('Allow: /');
@@ -223,7 +231,8 @@ export function generateNewsSitemap(
       twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
       return post.publishedDate > twoDaysAgo;
     })
-    .map(post => `
+    .map(
+      post => `
   <url>
     <loc>${escapeXml(post.url)}</loc>
     <news:news>
@@ -235,7 +244,8 @@ export function generateNewsSitemap(
       <news:title>${escapeXml(post.title)}</news:title>
       ${post.keywords && post.keywords.length > 0 ? `<news:keywords>${escapeXml(post.keywords.join(', '))}</news:keywords>` : ''}
     </news:news>
-  </url>`);
+  </url>`
+    );
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
@@ -257,29 +267,36 @@ export function generateImageSitemap(
   }>
 ): string {
   // Group images by page
-  const imagesByPage = images.reduce((acc, img) => {
-    if (!acc[img.pageUrl]) {
-      acc[img.pageUrl] = [];
-    }
-    acc[img.pageUrl]?.push(img);
-    return acc;
-  }, {} as Record<string, typeof images>);
+  const imagesByPage = images.reduce(
+    (acc, img) => {
+      if (!acc[img.pageUrl]) {
+        acc[img.pageUrl] = [];
+      }
+      acc[img.pageUrl]?.push(img);
+      return acc;
+    },
+    {} as Record<string, typeof images>
+  );
 
-  const urlElements = Object.entries(imagesByPage).map(([pageUrl, pageImages]) => {
-    const imageElements = pageImages.map(img => `
+  const urlElements = Object.entries(imagesByPage).map(
+    ([pageUrl, pageImages]) => {
+      const imageElements = pageImages.map(
+        img => `
     <image:image>
       <image:loc>${escapeXml(img.imageUrl)}</image:loc>
       ${img.caption ? `<image:caption>${escapeXml(img.caption)}</image:caption>` : ''}
       ${img.title ? `<image:title>${escapeXml(img.title)}</image:title>` : ''}
       ${img.geoLocation ? `<image:geo_location>${escapeXml(img.geoLocation)}</image:geo_location>` : ''}
-    </image:image>`);
+    </image:image>`
+      );
 
-    return `
+      return `
   <url>
     <loc>${escapeXml(pageUrl)}</loc>
     ${imageElements.join('')}
   </url>`;
-  });
+    }
+  );
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"

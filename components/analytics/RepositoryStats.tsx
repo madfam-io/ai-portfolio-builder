@@ -1,13 +1,21 @@
 /**
  * @fileoverview RepositoryStats Component
- * 
+ *
  * Displays repository statistics in a grid layout
  * including stars, forks, watchers, and other metrics
  */
 
 'use client';
 
-import { FiStar, FiGitBranch, FiEye, FiUsers, FiCode, FiActivity } from 'react-icons/fi';
+import {
+  FiStar,
+  FiGitBranch,
+  FiEye,
+  FiUsers,
+  FiCode,
+  FiActivity,
+} from 'react-icons/fi';
+
 import type { Repository } from '@/types/analytics';
 
 interface RepositoryStatsProps {
@@ -70,7 +78,9 @@ export function RepositoryStats({
         <p className="text-2xl font-bold text-gray-900 dark:text-white">
           {pullRequestCount}
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">Pull Requests</p>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Pull Requests
+        </p>
       </div>
     </div>
   );
