@@ -195,4 +195,4 @@ const FormField = <
 FormField.displayName = 'FormField';
 
 export { FormField, LegacyFormField };
-export type { EnhancedFormFieldProps as FormFieldProps, LegacyFormFieldProps };
+export type { EnhancedFormFieldProps as FormFieldProps };

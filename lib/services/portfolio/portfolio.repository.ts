@@ -53,7 +53,7 @@ export class PortfolioRepository {
         .order('updated_at', { ascending: false });
 
       if (error) {
-        logger.error('Error fetching portfolios:', error);
+        logger.error('Error fetching portfolios:', error as Error);
         throw error;
       }
 
@@ -82,7 +82,7 @@ export class PortfolioRepository {
 
       if (error) {
         if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error fetching portfolio:', error);
+        logger.error('Error fetching portfolio:', error as Error);
         throw error;
       }
 
@@ -143,7 +143,7 @@ export class PortfolioRepository {
         .single();
 
       if (error) {
-        logger.error('Error creating portfolio:', error);
+        logger.error('Error creating portfolio:', error as Error);
         throw error;
       }
 
@@ -183,7 +183,7 @@ export class PortfolioRepository {
 
       if (error) {
         if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error updating portfolio:', error);
+        logger.error('Error updating portfolio:', error as Error);
         throw error;
       }
 
@@ -207,7 +207,7 @@ export class PortfolioRepository {
       const { error } = await client.from('portfolios').delete().eq('id', id);
 
       if (error) {
-        logger.error('Error deleting portfolio:', error);
+        logger.error('Error deleting portfolio:', error as Error);
         throw error;
       }
 
@@ -241,7 +241,7 @@ export class PortfolioRepository {
 
       if (error) {
         if (error.code === 'PGRST116') return null; // Not found
-        logger.error('Error fetching portfolio by subdomain:', error);
+        logger.error('Error fetching portfolio by subdomain:', error as Error);
         throw error;
       }
 
@@ -276,7 +276,7 @@ export class PortfolioRepository {
         .single();
 
       if (error && error.code !== 'PGRST116') {
-        logger.error('Error checking subdomain:', error);
+        logger.error('Error checking subdomain:', error as Error);
         throw error;
       }
 
@@ -307,7 +307,7 @@ export class PortfolioRepository {
         .order('updated_at', { ascending: false });
 
       if (error) {
-        logger.error('Error fetching published portfolios:', error);
+        logger.error('Error fetching published portfolios:', error as Error);
         throw error;
       }
 

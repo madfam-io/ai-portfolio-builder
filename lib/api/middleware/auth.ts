@@ -20,7 +20,7 @@ export interface AuthenticatedRequest extends NextRequest {
  * @param request - The incoming request
  * @returns User object if authenticated, null otherwise
  */
-export async function authenticateUser(request: NextRequest) {
+export async function authenticateUser(_request: NextRequest) {
   try {
     const supabase = await createClient();
     

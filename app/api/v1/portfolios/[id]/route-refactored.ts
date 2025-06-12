@@ -111,7 +111,7 @@ export const PUT = withErrorHandling(async (
     .single();
 
   if (error || !updated) {
-    logger.error('Failed to update portfolio', error);
+    logger.error('Failed to update portfolio', error || new Error('No updated portfolio returned'));
     return apiError('Failed to update portfolio');
   }
 
@@ -149,7 +149,7 @@ export const DELETE = withErrorHandling(async (
     .eq('user_id', user.id);
 
   if (error) {
-    logger.error('Failed to delete portfolio', error);
+    logger.error('Failed to delete portfolio', error as Error);
     return apiError('Failed to delete portfolio');
   }
 

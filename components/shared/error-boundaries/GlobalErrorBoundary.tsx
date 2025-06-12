@@ -63,15 +63,15 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
       <Card className="max-w-md w-full">
         <CardHeader>
           <CardTitle className="text-destructive">
-            {t.errors?.unexpectedError || 'Unexpected Error'}
+            {(t as any).errors?.unexpectedError || 'Unexpected Error'}
           </CardTitle>
           <CardDescription>
-            {t.errors?.somethingWentWrong || 'Something went wrong. Please try again.'}
+            {(t as any).errors?.somethingWentWrong || 'Something went wrong. Please try again.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
-            <AlertTitle>{t.errors?.errorDetails || 'Error Details'}</AlertTitle>
+            <AlertTitle>{(t as any).errors?.errorDetails || 'Error Details'}</AlertTitle>
             <AlertDescription className="mt-2 font-mono text-sm">
               {error?.message || 'Unknown error occurred'}
             </AlertDescription>
@@ -79,13 +79,13 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
         </CardContent>
         <CardFooter className="flex gap-2">
           <Button onClick={onReset} variant="default">
-            {t.errors?.tryAgain || 'Try Again'}
+            {(t as any).errors?.tryAgain || 'Try Again'}
           </Button>
           <Button 
             onClick={() => window.location.href = '/'} 
             variant="outline"
           >
-            {t.navigation?.home || 'Go Home'}
+            {(t as any).navigation?.home || 'Go Home'}
           </Button>
         </CardFooter>
       </Card>

@@ -54,25 +54,28 @@ export class OptimizedAnalyticsService {
 
       // Transform all repositories at once
       const repoData = githubRepos.map((githubRepo) => ({
-        github_id: githubRepo.id.toString(),
+        githubId: githubRepo.id,
         name: githubRepo.name,
-        full_name: githubRepo.full_name,
+        fullName: githubRepo.full_name,
+        owner: githubRepo.full_name.split('/')[0],
         description: githubRepo.description,
-        private: githubRepo.private,
-        fork: githubRepo.fork,
-        created_at: githubRepo.created_at,
-        updated_at: githubRepo.updated_at,
-        pushed_at: githubRepo.pushed_at,
-        size: githubRepo.size,
-        stargazers_count: githubRepo.stargazers_count,
-        watchers_count: githubRepo.watchers_count,
+        visibility: githubRepo.private ? 'private' as const : 'public' as const,
+        githubCreatedAt: new Date(githubRepo.created_at),
+        githubUpdatedAt: new Date(githubRepo.updated_at),
+        sizeKb: githubRepo.size,
+        stargazersCount: githubRepo.stargazers_count,
+        watchersCount: githubRepo.watchers_count,
         language: githubRepo.language,
-        forks_count: githubRepo.forks_count,
-        open_issues_count: githubRepo.open_issues_count,
-        default_branch: githubRepo.default_branch,
-        user_id: this.userId,
-        github_integration_id: integration.id,
-        last_synced_at: new Date().toISOString(),
+        forksCount: githubRepo.forks_count,
+        openIssuesCount: githubRepo.open_issues_count,
+        defaultBranch: githubRepo.default_branch,
+        userId: this.userId,
+        githubIntegrationId: integration.id,
+        lastSyncedAt: new Date(),
+        isActive: true,
+        syncEnabled: true,
+        metadata: {},
+        topics: [],
       }));
 
       // Batch upsert all repositories in a single query
@@ -117,25 +120,34 @@ export class OptimizedAnalyticsService {
     try {
       // Fetch all pull requests from GitHub
       const githubClient = await this.getGitHubClient();
-      const [owner, repo] = repository.full_name.split('/');
+      const [owner, repo] = repository.fullName.split('/');
+      if (!owner || !repo) {
+        throw new Error(`Invalid repository fullName format: ${repository.fullName}`);
+      }
       const githubPRs = await githubClient.fetchPullRequests(owner, repo);
 
       // Transform all PRs at once
       const prData = githubPRs.map((pr) => ({
-        github_id: pr.id.toString(),
-        repository_id: repositoryId,
+        repositoryId: repositoryId,
+        githubPrId: pr.id,
         number: pr.number,
         title: pr.title,
-        state: pr.state,
-        created_at: pr.created_at,
-        updated_at: pr.updated_at,
-        closed_at: pr.closed_at,
-        merged_at: pr.merged_at,
-        author_login: pr.user.login,
-        author_avatar_url: pr.user.avatar_url,
+        body: '', // Not provided by GitHub API in list response
+        state: pr.state === 'open' ? 'open' as const : pr.merged_at ? 'merged' as const : 'closed' as const,
+        draft: false, // Default value
+        authorLogin: pr.user.login,
+        authorAvatarUrl: pr.user.avatar_url,
         additions: pr.additions,
         deletions: pr.deletions,
-        changed_files: pr.changed_files,
+        changedFiles: pr.changed_files,
+        commits: 0, // Would need additional API call
+        reviewComments: 0, // Would need additional API call
+        createdAt: new Date(pr.created_at),
+        updatedAt: new Date(pr.updated_at),
+        closedAt: pr.closed_at ? new Date(pr.closed_at) : undefined,
+        mergedAt: pr.merged_at ? new Date(pr.merged_at) : undefined,
+        labels: [],
+        metadata: {},
       }));
 
       // Batch upsert all pull requests
@@ -173,17 +185,20 @@ export class OptimizedAnalyticsService {
     try {
       // Fetch contributors from GitHub
       const githubClient = await this.getGitHubClient();
-      const [owner, repo] = repository.full_name.split('/');
+      const [owner, repo] = repository.fullName.split('/');
+      if (!owner || !repo) {
+        throw new Error(`Invalid repository fullName format: ${repository.fullName}`);
+      }
       const githubContributors = await githubClient.fetchContributors(owner, repo);
 
       // Prepare contributor data
       const contributorData = githubContributors.map(contributor => ({
-        github_id: contributor.id.toString(),
-        username: contributor.login,
-        avatar_url: contributor.avatar_url,
-        profile_url: `https://github.com/${contributor.login}`,
-        type: contributor.type,
-        last_seen_at: new Date().toISOString(),
+        githubId: contributor.id,
+        login: contributor.login,
+        avatarUrl: contributor.avatar_url,
+        lastSeenAt: new Date(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }));
 
       // Batch upsert all contributors
@@ -200,13 +215,17 @@ export class OptimizedAnalyticsService {
       }
 
       // Prepare repository-contributor links
-      const linkData = contributors.map((contributor, index) => ({
-        repository_id: repositoryId,
-        contributor_id: contributor.id,
-        commit_count: githubContributors[index].contributions,
-        is_active: true,
-        updated_at: new Date().toISOString(),
-      }));
+      const linkData = contributors?.map((contributor, index) => ({
+        repositoryId: repositoryId,
+        contributorId: contributor.id,
+        commitCount: githubContributors[index]?.contributions || 0,
+        additions: 0,
+        deletions: 0,
+        isActive: true,
+        commitsLast30Days: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })) || [];
 
       // Batch upsert all links
       const { error: linkError } = await supabase
@@ -344,19 +363,30 @@ export class OptimizedAnalyticsService {
       .from('repository_contributors')
       .select(
         `
-        commit_count,
-        contributor_id,
+        commitCount,
+        contributorId,
         contributors (
           id,
-          github_id,
-          username,
-          avatar_url,
-          profile_url
+          githubId,
+          login,
+          avatarUrl,
+          name,
+          email,
+          company,
+          location,
+          bio,
+          publicRepos,
+          followers,
+          following,
+          githubCreatedAt,
+          lastSeenAt,
+          createdAt,
+          updatedAt
         )
       `
       )
-      .in('repository_id', repoIds)
-      .order('commit_count', { ascending: false })
+      .in('repositoryId', repoIds)
+      .order('commitCount', { ascending: false })
       .limit(10);
 
     if (error) {
@@ -365,13 +395,23 @@ export class OptimizedAnalyticsService {
     }
 
     // Transform to proper Contributor type
-    return (data || []).map(item => ({
-      id: item.contributors.id,
-      github_id: item.contributors.github_id,
-      username: item.contributors.username,
-      avatar_url: item.contributors.avatar_url,
-      profile_url: item.contributors.profile_url,
-      commit_count: item.commit_count,
+    return (data || []).map((item: any) => ({
+      id: item.contributors?.id || '',
+      githubId: item.contributors?.githubId || 0,
+      login: item.contributors?.login || '',
+      name: item.contributors?.name,
+      email: item.contributors?.email,
+      avatarUrl: item.contributors?.avatarUrl,
+      company: item.contributors?.company,
+      location: item.contributors?.location,
+      bio: item.contributors?.bio,
+      publicRepos: item.contributors?.publicRepos,
+      followers: item.contributors?.followers,
+      following: item.contributors?.following,
+      githubCreatedAt: item.contributors?.githubCreatedAt ? new Date(item.contributors.githubCreatedAt) : undefined,
+      lastSeenAt: item.contributors?.lastSeenAt ? new Date(item.contributors.lastSeenAt) : undefined,
+      createdAt: new Date(item.contributors?.createdAt || new Date()),
+      updatedAt: new Date(item.contributors?.updatedAt || new Date()),
     })) as Contributor[];
   }
 

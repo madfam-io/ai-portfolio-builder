@@ -66,7 +66,7 @@ export class DatabaseSeeder {
           .select('*', { count: 'exact', head: true });
 
         if (error) {
-          logger.warn(`Error checking table ${table}:`, error);
+          logger.warn(`Error checking table ${table}:`, error as Error);
           continue;
         }
 
@@ -99,7 +99,7 @@ export class DatabaseSeeder {
         .limit(1);
 
       if (error) {
-        logger.error('Database validation failed:', error);
+        logger.error('Database validation failed:', error as Error);
         return false;
       }
 

@@ -192,6 +192,11 @@ export class FeatureFlagService {
       const storedAssignments = await this.getStoredAssignments();
 
       // Get active experiments
+      if (!supabase) {
+        logger.error('Failed to create Supabase client');
+        return null;
+      }
+
       const { data: experiments, error: experimentsError } = await supabase
         .from('landing_page_experiments')
         .select(
@@ -262,13 +267,15 @@ export class FeatureFlagService {
             await this.storeAssignment(experiment.id, variant.id);
 
             // Record visitor in analytics
-            await supabase.rpc('record_landing_page_event', {
-              p_session_id: visitorId,
-              p_experiment_id: experiment.id,
-              p_variant_id: variant.id,
-              p_event_type: 'assignment',
-              p_event_data: { visitorContext },
-            });
+            if (supabase) {
+              await supabase.rpc('record_landing_page_event', {
+                p_session_id: visitorId,
+                p_experiment_id: experiment.id,
+                p_variant_id: variant.id,
+                p_event_type: 'assignment',
+                p_event_data: { visitorContext },
+              });
+            }
 
             return {
               experimentId: experiment.id,
@@ -300,6 +307,11 @@ export class FeatureFlagService {
       const supabase = await createClient();
       const visitorId = await this.getOrCreateVisitorId();
 
+      if (!supabase) {
+        logger.error('Failed to create Supabase client for conversion tracking');
+        return;
+      }
+
       await supabase.rpc('record_landing_page_event', {
         p_session_id: visitorId,
         p_experiment_id: experimentId,
@@ -324,6 +336,11 @@ export class FeatureFlagService {
     try {
       const supabase = await createClient();
       const visitorId = await this.getOrCreateVisitorId();
+
+      if (!supabase) {
+        logger.error('Failed to create Supabase client for click tracking');
+        return;
+      }
 
       await supabase.rpc('record_landing_page_event', {
         p_session_id: visitorId,

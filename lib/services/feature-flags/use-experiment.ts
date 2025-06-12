@@ -260,6 +260,9 @@ export function useExperimentTheme() {
         root.style.removeProperty('--spacing-multiplier');
       };
     }
+    
+    // Return undefined when no theme overrides
+    return undefined;
   }, [themeOverrides]);
 
   return themeOverrides;

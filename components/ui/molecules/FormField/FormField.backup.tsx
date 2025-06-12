@@ -71,8 +71,6 @@ const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
         <Label
           htmlFor={fieldId}
           required={required}
-          optional={optional}
-          error={!!error}
         >
           {label}
         </Label>

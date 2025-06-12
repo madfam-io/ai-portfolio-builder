@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
     const { data: experiments, error } = await query;
 
     if (error) {
-      logger.error('Failed to fetch experiments', error);
+      logger.error('Failed to fetch experiments', error as Error);
       return NextResponse.json(
         { error: 'Failed to fetch experiments' },
         { status: 500 }
@@ -210,7 +210,7 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (experimentError || !experiment) {
-      logger.error('Failed to create experiment', experimentError);
+      logger.error('Failed to create experiment', experimentError || new Error('No experiment returned'));
       return NextResponse.json(
         { error: 'Failed to create experiment' },
         { status: 500 }
@@ -239,7 +239,7 @@ export async function POST(request: NextRequest) {
         .delete()
         .eq('id', experiment.id);
 
-      logger.error('Failed to create variants', variantsError);
+      logger.error('Failed to create variants', variantsError as Error);
       return NextResponse.json(
         { error: 'Failed to create experiment variants' },
         { status: 500 }

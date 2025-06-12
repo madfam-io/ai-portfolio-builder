@@ -15,7 +15,7 @@ import { logger } from '@/lib/utils/logger';
 export async function GET(request: NextRequest) {
   try {
     // Get visitor context from headers
-    const headersList = headers();
+    const headersList = await headers();
     const userAgent = headersList.get('user-agent') || '';
     const referer = headersList.get('referer') || '';
     const acceptLanguage = headersList.get('accept-language') || '';

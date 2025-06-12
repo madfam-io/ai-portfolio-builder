@@ -205,7 +205,7 @@ function getComponentForConfig(
 
   // Check if variant exists
   if (config.variant && componentEntry.variants?.[config.variant]) {
-    return componentEntry.variants[config.variant];
+    return componentEntry.variants[config.variant] ?? null;
   }
 
   // Return default component

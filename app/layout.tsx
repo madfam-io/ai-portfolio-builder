@@ -90,11 +90,7 @@ export default function RootLayout({
         className={`${inter.className} font-sans dark:bg-gray-900 bg-white`}
         suppressHydrationWarning={true}
       >
-        <GlobalErrorBoundary
-          showDetails={process.env.NODE_ENV === 'development'}
-          allowRetry={true}
-          maxRetries={3}
-        >
+        <GlobalErrorBoundary>
           <AppProvider>
             <LanguageProvider>
               <StoreProvider>

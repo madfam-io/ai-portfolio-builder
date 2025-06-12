@@ -18,8 +18,8 @@ import {
   FiChevronDown,
   FiGrid,
   FiLayers,
-  FiTarget,
-  FiClock,
+  // FiTarget,
+  // FiClock,
   FiPercent,
   FiArrowLeft,
   FiSave,
@@ -28,14 +28,13 @@ import {
 import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 
 import type {
   CreateExperimentRequest,
   ComponentConfig,
-  LandingPageVariant,
   ComponentLibraryItem,
   ExperimentTemplate,
 } from '@/types/experiments';
@@ -50,7 +49,7 @@ interface VariantConfig {
 
 export default function CreateExperimentPage(): React.ReactElement {
   const { user, isAdmin, canAccess } = useAuth();
-  const { t } = useLanguage();
+  // const { t } = useLanguage(); // TODO: Add translations
   const router = useRouter();
 
   // Form state
@@ -101,6 +100,10 @@ export default function CreateExperimentPage(): React.ReactElement {
     const loadData = async () => {
       try {
         const supabase = createClient();
+        if (!supabase) {
+          logger.error('Database connection not available', new Error('Supabase client is null'));
+          return;
+        }
 
         // Load component library
         const { data: components, error: componentsError } = await supabase
@@ -189,7 +192,10 @@ export default function CreateExperimentPage(): React.ReactElement {
   // Update variant
   const updateVariant = (index: number, updates: Partial<VariantConfig>) => {
     const newVariants = [...variants];
-    newVariants[index] = { ...newVariants[index], ...updates };
+    const currentVariant = newVariants[index];
+    if (!currentVariant) return;
+    
+    newVariants[index] = { ...currentVariant, ...updates };
 
     // Ensure only one control
     if (updates.isControl === true) {
@@ -203,16 +209,22 @@ export default function CreateExperimentPage(): React.ReactElement {
 
   // Add component to variant
   const addComponent = (component: ComponentLibraryItem) => {
+    const selectedVariant = variants[selectedVariantIndex];
+    if (!selectedVariant) return;
+    
     const newComponent: ComponentConfig = {
       type: component.type,
-      variant: component.variant_name,
-      order: variants[selectedVariantIndex].components.length + 1,
+      variant: component.variantName,
+      order: selectedVariant.components.length + 1,
       visible: true,
-      props: component.default_props || {},
+      props: component.defaultProps || {},
     };
 
     const newVariants = [...variants];
-    newVariants[selectedVariantIndex].components.push(newComponent);
+    const updatedVariant = newVariants[selectedVariantIndex];
+    if (!updatedVariant) return;
+    
+    updatedVariant.components.push(newComponent);
     setVariants(newVariants);
     setShowGallery(false);
   };
@@ -220,9 +232,12 @@ export default function CreateExperimentPage(): React.ReactElement {
   // Remove component from variant
   const removeComponent = (variantIndex: number, componentIndex: number) => {
     const newVariants = [...variants];
-    newVariants[variantIndex].components.splice(componentIndex, 1);
+    const variant = newVariants[variantIndex];
+    if (!variant) return;
+    
+    variant.components.splice(componentIndex, 1);
     // Reorder remaining components
-    newVariants[variantIndex].components.forEach((c, i) => {
+    variant.components.forEach((c, i) => {
       c.order = i + 1;
     });
     setVariants(newVariants);
@@ -235,16 +250,21 @@ export default function CreateExperimentPage(): React.ReactElement {
     direction: 'up' | 'down'
   ) => {
     const newVariants = [...variants];
-    const components = newVariants[variantIndex].components;
+    const variant = newVariants[variantIndex];
+    if (!variant) return;
+    
+    const components = variant.components;
     const newIndex =
       direction === 'up' ? componentIndex - 1 : componentIndex + 1;
 
     if (newIndex < 0 || newIndex >= components.length) return;
 
-    [components[componentIndex], components[newIndex]] = [
-      components[newIndex],
-      components[componentIndex],
-    ];
+    const temp = components[componentIndex];
+    const newComp = components[newIndex];
+    if (!temp || !newComp) return;
+    
+    components[componentIndex] = newComp;
+    components[newIndex] = temp;
     components.forEach((c, i) => {
       c.order = i + 1;
     });
@@ -258,28 +278,24 @@ export default function CreateExperimentPage(): React.ReactElement {
     componentIndex: number
   ) => {
     const newVariants = [...variants];
-    const component = newVariants[variantIndex].components[componentIndex];
+    const variant = newVariants[variantIndex];
+    if (!variant) return;
+    
+    const component = variant.components[componentIndex];
+    if (!component) return;
+    
     component.visible = !component.visible;
     setVariants(newVariants);
   };
 
-  // Update component props
-  const updateComponentProps = (
-    variantIndex: number,
-    componentIndex: number,
-    props: Record<string, any>
-  ) => {
-    const newVariants = [...variants];
-    newVariants[variantIndex].components[componentIndex].props = props;
-    setVariants(newVariants);
-  };
+  // Update component props - removed as unused
 
   // Apply template
   const applyTemplate = (template: ExperimentTemplate) => {
     setExperimentName(template.name);
     setDescription(template.description || '');
-    setHypothesis(template.hypothesis_template || '');
-    setPrimaryMetric(template.primary_metric);
+    setHypothesis(template.hypothesisTemplate || '');
+    setPrimaryMetric(template.primaryMetric);
 
     // Apply variant configurations
     if (template.variants && template.variants.length > 0) {
@@ -303,6 +319,11 @@ export default function CreateExperimentPage(): React.ReactElement {
     setLoading(true);
     try {
       const supabase = createClient();
+      if (!supabase) {
+        logger.error('Database connection not available', new Error('Supabase client is null'));
+        setLoading(false);
+        return;
+      }
 
       const experimentData: CreateExperimentRequest = {
         name: experimentName,
@@ -618,7 +639,7 @@ export default function CreateExperimentPage(): React.ReactElement {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Component Layout - {variants[selectedVariantIndex].name}
+                  Component Layout - {variants[selectedVariantIndex]?.name || 'Select a variant'}
                 </h2>
                 <button
                   onClick={() => setShowGallery(true)}
@@ -630,7 +651,7 @@ export default function CreateExperimentPage(): React.ReactElement {
               </div>
 
               <div className="space-y-3">
-                {variants[selectedVariantIndex].components.length === 0 ? (
+                {variants[selectedVariantIndex]?.components.length === 0 ? (
                   <div className="text-center py-12 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
                     <FiLayers className="mx-auto w-12 h-12 text-gray-400 mb-3" />
                     <p className="text-gray-500 dark:text-gray-400 mb-3">
@@ -644,7 +665,7 @@ export default function CreateExperimentPage(): React.ReactElement {
                     </button>
                   </div>
                 ) : (
-                  variants[selectedVariantIndex].components.map(
+                  variants[selectedVariantIndex]?.components.map(
                     (component, index) => (
                       <div
                         key={index}
@@ -682,8 +703,8 @@ export default function CreateExperimentPage(): React.ReactElement {
                                 }
                                 disabled={
                                   index ===
-                                  variants[selectedVariantIndex].components
-                                    .length -
+                                  (variants[selectedVariantIndex]?.components
+                                    .length ?? 0) -
                                     1
                                 }
                                 className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
@@ -768,13 +789,15 @@ export default function CreateExperimentPage(): React.ReactElement {
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Live Preview
               </h3>
-              <VariantPreview
-                variant={{
-                  name: variants[selectedVariantIndex].name,
-                  components: variants[selectedVariantIndex].components,
-                  themeOverrides: variants[selectedVariantIndex].themeOverrides,
-                }}
-              />
+              {variants[selectedVariantIndex] && (
+                <VariantPreview
+                  variant={{
+                    name: variants[selectedVariantIndex].name,
+                    components: variants[selectedVariantIndex].components,
+                    themeOverrides: variants[selectedVariantIndex].themeOverrides,
+                  }}
+                />
+              )}
             </div>
 
             {/* Templates */}
@@ -796,9 +819,9 @@ export default function CreateExperimentPage(): React.ReactElement {
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                         {template.description}
                       </p>
-                      {template.success_rate && (
+                      {template.successRate && (
                         <p className="text-xs text-green-600 dark:text-green-400 mt-2">
-                          {template.success_rate}% success rate
+                          {template.successRate}% success rate
                         </p>
                       )}
                     </button>

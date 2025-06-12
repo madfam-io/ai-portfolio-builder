@@ -27,7 +27,7 @@ import {
 } from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 
@@ -36,11 +36,25 @@ import type {
   ExperimentStatus,
 } from '@/types/experiments';
 
+// Extended type for experiments with variants from DB
+interface VariantFromDB {
+  id: string;
+  name: string;
+  is_control: boolean;
+  traffic_percentage: number;
+  conversions: number;
+  visitors: number;
+}
+
+interface ExperimentWithVariants extends LandingPageExperiment {
+  variants?: VariantFromDB[];
+}
+
 export default function AdminExperimentsPage(): React.ReactElement {
-  const { user, isAdmin, canAccess } = useAuth();
-  const { t } = useLanguage();
+  const { isAdmin, canAccess } = useAuth();
+  // const { t } = useLanguage(); // TODO: Add translations
   const router = useRouter();
-  const [experiments, setExperiments] = useState<LandingPageExperiment[]>([]);
+  const [experiments, setExperiments] = useState<ExperimentWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<ExperimentStatus | 'all'>(
@@ -62,6 +76,10 @@ export default function AdminExperimentsPage(): React.ReactElement {
     const fetchExperiments = async () => {
       try {
         const supabase = createClient();
+        if (!supabase) {
+          logger.error('Database connection not available', new Error('Supabase client is null'));
+          return;
+        }
         const { data, error } = await supabase
           .from('landing_page_experiments')
           .select(
@@ -134,6 +152,10 @@ export default function AdminExperimentsPage(): React.ReactElement {
   ) => {
     try {
       const supabase = createClient();
+      if (!supabase) {
+        logger.error('Database connection not available', new Error('Supabase client is null'));
+        return;
+      }
       const { error } = await supabase
         .from('landing_page_experiments')
         .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -225,9 +247,9 @@ export default function AdminExperimentsPage(): React.ReactElement {
         <div className="grid gap-6">
           {filteredExperiments.map(experiment => {
             const totalVisitors =
-              experiment.variants?.reduce((sum, v) => sum + v.visitors, 0) || 0;
+              experiment.variants?.reduce((sum: number, v: VariantFromDB) => sum + v.visitors, 0) || 0;
             const totalConversions =
-              experiment.variants?.reduce((sum, v) => sum + v.conversions, 0) ||
+              experiment.variants?.reduce((sum: number, v: VariantFromDB) => sum + v.conversions, 0) ||
               0;
             const overallConversionRate = calculateConversionRate(
               totalConversions,
@@ -365,7 +387,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
                     Variant Performance
                   </h4>
                   <div className="space-y-3">
-                    {experiment.variants?.map(variant => {
+                    {experiment.variants?.map((variant: VariantFromDB) => {
                       const conversionRate = calculateConversionRate(
                         variant.conversions,
                         variant.visitors

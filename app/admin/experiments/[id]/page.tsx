@@ -27,7 +27,7 @@ import {
 import ConversionChart from '@/components/admin/experiments/ConversionChart';
 import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 
@@ -53,8 +53,8 @@ interface DetailedVariant extends LandingPageVariant {
 }
 
 export default function ExperimentDetailsPage(): React.ReactElement {
-  const { user, isAdmin, canAccess } = useAuth();
-  const { t } = useLanguage();
+  const { isAdmin, canAccess } = useAuth();
+  // const { t } = useLanguage(); // TODO: Add translations
   const router = useRouter();
   const params = useParams();
   const experimentId = params.id as string;
@@ -82,6 +82,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   const fetchExperimentData = async () => {
     try {
       const supabase = createClient();
+      if (!supabase) {
+        logger.error('Database connection not available', new Error('Supabase client is null'));
+        return;
+      }
 
       // Fetch experiment
       const { data: experimentData, error: experimentError } = await supabase
@@ -141,6 +145,8 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         > = {};
         analytics.forEach((a: any) => {
           const date = new Date(a.created_at).toISOString().split('T')[0];
+          if (!date) return; // Guard against undefined date
+          
           if (!conversionsByDay[date]) {
             conversionsByDay[date] = { conversions: 0, visitors: 0 };
           }
@@ -192,7 +198,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
 
   // Calculate experiment results
   const calculateExperimentResults = (variants: DetailedVariant[]): any => {
-    const control = variants.find(v => v.is_control);
+    const control = variants.find(v => (v as any).is_control);
     if (!control) return null;
 
     const variantResults: VariantResult[] = variants.map(variant => {
@@ -326,6 +332,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   const handleStatusChange = async (newStatus: string) => {
     try {
       const supabase = createClient();
+      if (!supabase) {
+        logger.error('Database connection not available', new Error('Supabase client is null'));
+        return;
+      }
       const { error } = await supabase
         .from('landing_page_experiments')
         .update({ status: newStatus, updated_at: new Date().toISOString() })
@@ -414,7 +424,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
 
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setRefreshing(true) || fetchExperimentData()}
+                onClick={() => {
+                  setRefreshing(true);
+                  fetchExperimentData();
+                }}
                 disabled={refreshing}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
@@ -559,7 +572,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
             </h3>
             <ConversionChart
               data={analyticsData?.timeline || []}
-              variants={variants}
+              variants={variants.map(v => ({
+                ...v,
+                is_control: (v as any).is_control || false
+              }))}
             />
           </div>
 
@@ -630,7 +646,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
                           <span className="font-medium text-gray-900 dark:text-gray-100">
                             {result.variantName}
                           </span>
-                          {variant.is_control && (
+                          {(variant as any).is_control && (
                             <span className="px-2 py-0.5 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
                               Control
                             </span>
