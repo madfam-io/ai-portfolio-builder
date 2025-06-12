@@ -9,35 +9,46 @@ import {
   FiCheck,
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
-import { LinkedInImport } from '@/components/integrations/LinkedInImport';
+
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
+import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { ResumeParser } from '@/components/integrations/ResumeParser';
 
 interface ImportedData {
   name?: string;
   bio?: string;
+  headline?: string;
+  summary?: string;
+  location?: string;
+  connections?: number;
   projects?: Array<{
-    title: string;
+    title?: string;
+    name?: string; // GitHub uses 'name', Resume uses 'title'
     description: string;
     url?: string;
     technologies?: string[];
+    confidence?: number; // Resume parser adds confidence scores
   }>;
   skills?: Array<{
     name: string;
     level?: string;
+    endorsements?: number; // LinkedIn has endorsements
   }>;
   experience?: Array<{
     company: string;
     position: string;
-    startDate: string;
+    duration?: string; // LinkedIn format
+    startDate?: string; // Resume format
     endDate?: string;
     description: string;
   }>;
   education?: Array<{
-    institution: string;
+    institution?: string; // Resume format
+    school?: string; // LinkedIn format
     degree: string;
     field: string;
-    startDate: string;
+    year?: string; // LinkedIn format
+    startDate?: string; // Resume format
     endDate?: string;
   }>;
 }
@@ -207,9 +218,7 @@ export function SmartImportOptions({
                 isCompleted ? 'ring-2 ring-green-500' : ''
               }`}
               onClick={() =>
-                setActiveImport(
-                  option.id as 'linkedin' | 'github' | 'resume'
-                )
+                setActiveImport(option.id as 'linkedin' | 'github' | 'resume')
               }
             >
               {isCompleted && (
