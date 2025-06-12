@@ -15,7 +15,7 @@ import {
   FiRefreshCw,
 } from 'react-icons/fi';
 
-import ConversionChart from '@/components/admin/experiments/ConversionChart';
+import { ConversionChart } from '@/components/admin/experiments/index.lazy';
 import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
 
 import { VariantTableRow } from './VariantTableRow';
@@ -217,13 +217,7 @@ export function ExperimentDetailsContent({
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
               Conversion Rate Over Time
             </h3>
-            <ConversionChart
-              data={analyticsData?.timeline || []}
-              variants={variants.map(v => ({
-                ...v,
-                is_control: v.isControl || false,
-              }))}
-            />
+            <ConversionChart data={analyticsData?.timeline || []} />
           </div>
 
           {/* Statistical Analysis */}
