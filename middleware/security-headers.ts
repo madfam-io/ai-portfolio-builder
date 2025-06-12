@@ -10,7 +10,7 @@ import type { NextRequest } from 'next/server';
  * Apply security headers to the response
  */
 export function applySecurityHeaders(
-  request: NextRequest,
+  _request: NextRequest,
   response: NextResponse
 ): NextResponse {
   const headers = response.headers;

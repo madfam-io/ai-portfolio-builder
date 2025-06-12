@@ -24,24 +24,28 @@ export default function DemoPage(): React.ReactElement {
       description: t.demoStep1Desc,
       duration: t.demoStep1Duration,
       icon: '📄',
+      highlight: false,
     },
     {
       title: t.demoStep2Title,
       description: t.demoStep2Desc,
       duration: t.demoStep2Duration,
       icon: '🤖',
+      highlight: true,
     },
     {
       title: t.demoStep3Title,
       description: t.demoStep3Desc,
       duration: t.demoStep3Duration,
       icon: '🎨',
+      highlight: false,
     },
     {
       title: t.demoStep4Title,
       description: t.demoStep4Desc,
       duration: t.demoStep4Duration,
       icon: '🚀',
+      highlight: false,
     },
   ];
 
@@ -142,8 +146,17 @@ export default function DemoPage(): React.ReactElement {
               {demoSteps.map((step, index) => (
                 <div
                   key={index}
-                  className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-shadow duration-300"
+                  className={`${
+                    step.highlight
+                      ? 'bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-500'
+                      : 'bg-white dark:bg-gray-800'
+                  } p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all duration-300 relative`}
                 >
+                  {step.highlight && (
+                    <div className="absolute -top-3 -right-3 bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-medium">
+                      AI-Powered
+                    </div>
+                  )}
                   <div className="text-4xl mb-4">{step.icon}</div>
                   <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                     {step.title}

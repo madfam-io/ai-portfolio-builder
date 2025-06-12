@@ -20,7 +20,6 @@ import {
   FiUsers,
   FiTarget,
   FiClock,
-  FiBarChart2,
   FiDownload,
   FiRefreshCw,
 } from 'react-icons/fi';

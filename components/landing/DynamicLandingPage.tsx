@@ -209,5 +209,5 @@ function getComponentForConfig(
   }
 
   // Return default component
-  return componentEntry.default || null;
+  return componentEntry.default ?? null;
 }

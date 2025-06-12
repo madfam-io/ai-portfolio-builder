@@ -8,9 +8,14 @@ import {
   FiSettings,
   FiSave,
   FiRefreshCw,
+  FiCheck,
 } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';
+import { ProjectEnhancementDemo } from '@/components/demo/ProjectEnhancementDemo';
+import { AIModelComparison } from '@/components/demo/AIModelComparison';
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
@@ -22,11 +27,13 @@ export default function InteractiveDemoPage(): React.ReactElement {
   usePerformanceTracking('InteractiveDemoPage');
 
   const [currentStep, setCurrentStep] = useState<
-    'template' | 'editor' | 'preview'
+    'template' | 'ai-enhance' | 'editor' | 'preview'
   >('template');
   const [selectedTemplate, setSelectedTemplate] =
     useState<TemplateType>('developer');
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedAIModel, setSelectedAIModel] = useState('llama-3.1');
+  const [currentAITask, setCurrentAITask] = useState<'bio' | 'project' | 'template'>('bio');
 
   // Initialize portfolio with sample data immediately
   const [portfolio, setPortfolio] = useState<Portfolio>(() =>
@@ -75,6 +82,9 @@ export default function InteractiveDemoPage(): React.ReactElement {
   const handleNextStep = () => {
     switch (currentStep) {
       case 'template':
+        setCurrentStep('ai-enhance');
+        break;
+      case 'ai-enhance':
         setCurrentStep('editor');
         break;
       case 'editor':
@@ -88,8 +98,11 @@ export default function InteractiveDemoPage(): React.ReactElement {
 
   const handlePreviousStep = () => {
     switch (currentStep) {
-      case 'editor':
+      case 'ai-enhance':
         setCurrentStep('template');
+        break;
+      case 'editor':
+        setCurrentStep('ai-enhance');
         break;
       case 'preview':
         setCurrentStep('editor');
@@ -103,17 +116,39 @@ export default function InteractiveDemoPage(): React.ReactElement {
   };
 
   const handleExport = () => {
-    // Demo export functionality
-    alert(
-      'In the full version, this would export your portfolio as PDF, HTML, or other formats.'
-    );
+    // Demo export functionality with simulated download
+    const exportOptions = `
+Export Options Available in Full Version:
+• PDF Export - Professional PDF with custom styling
+• HTML Export - Complete website package
+• JSON Export - Raw portfolio data
+• WordPress Export - Import-ready format
+• GitHub Pages - Deploy-ready static site
+
+Your portfolio would be downloaded as: ${portfolio.name.toLowerCase().replace(/\s+/g, '-')}-portfolio.pdf
+    `;
+    alert(exportOptions);
   };
 
   const handleShare = () => {
-    // Demo share functionality
-    alert(
-      'In the full version, this would generate a shareable link to your portfolio.'
-    );
+    // Demo share functionality with rich options
+    const shareUrl = `https://${portfolio.name.toLowerCase().replace(/\s+/g, '')}.prisma.madfam.io`;
+    const shareOptions = `
+Share Your Portfolio:
+
+🔗 Direct Link: ${shareUrl}
+📧 Email signature ready
+💼 LinkedIn profile link
+🐦 Twitter card optimized
+📱 QR code generation
+
+Social preview includes:
+• Custom meta tags
+• Open Graph images
+• Twitter cards
+• SEO optimization
+    `;
+    alert(shareOptions);
   };
 
   return (
@@ -151,12 +186,21 @@ export default function InteractiveDemoPage(): React.ReactElement {
             </div>
             <div
               className={`px-3 py-1 rounded-full text-sm ${
+                currentStep === 'ai-enhance'
+                  ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300'
+                  : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
+              }`}
+            >
+              2. AI Enhance
+            </div>
+            <div
+              className={`px-3 py-1 rounded-full text-sm ${
                 currentStep === 'editor'
                   ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300'
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
             >
-              2. {t.demoEdit}
+              3. {t.demoEdit}
             </div>
             <div
               className={`px-3 py-1 rounded-full text-sm ${
@@ -165,7 +209,7 @@ export default function InteractiveDemoPage(): React.ReactElement {
                   : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
               }`}
             >
-              3. {t.demoPreview}
+              4. {t.demoPreview}
             </div>
           </div>
 
@@ -189,6 +233,114 @@ export default function InteractiveDemoPage(): React.ReactElement {
       </header>
 
       <main className="flex-1">
+        {currentStep === 'ai-enhance' && (
+          <div className="max-w-6xl mx-auto px-6 py-8">
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                AI-Powered Enhancements
+              </h1>
+              <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Watch how our AI transforms your content into compelling, professional narratives
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-8">
+              {/* Bio Enhancement Demo */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-xl font-bold">Bio Enhancement</h3>
+                    <HiSparkles className="w-6 h-6" />
+                  </div>
+                  <p className="text-purple-100">Transform basic descriptions into powerful professional summaries</p>
+                </div>
+                
+                <div className="p-6">
+                  <AnimatedBioEnhancement
+                    originalBio={portfolio.bio || "I'm a software developer with 5 years of experience building web applications."}
+                    onEnhance={(enhancedBio) => {
+                      handlePortfolioChange({ ...portfolio, bio: enhancedBio });
+                    }}
+                    template={selectedTemplate}
+                  />
+                </div>
+              </div>
+
+              {/* Project Enhancement Demo */}
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6">
+                  <h3 className="text-xl font-bold mb-2">Project Enhancement</h3>
+                  <p className="text-blue-100">Transform project descriptions with STAR format</p>
+                </div>
+                
+                <div className="p-6">
+                  <ProjectEnhancementDemo
+                    projects={portfolio.projects}
+                    onProjectEnhance={(projectId, enhancedDescription) => {
+                      const updatedProjects = portfolio.projects.map(p => 
+                        p.id === projectId ? { ...p, description: enhancedDescription } : p
+                      );
+                      handlePortfolioChange({ ...portfolio, projects: updatedProjects });
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* AI Model Selection Preview */}
+            <div className="mt-8 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 rounded-xl p-6">
+              <AIModelComparison
+                selectedModel={selectedAIModel}
+                onModelSelect={setSelectedAIModel}
+                activeTask={currentAITask}
+              />
+            </div>
+
+            <div className="mt-8 text-center space-y-4">
+              {/* Task Selector */}
+              <div className="flex justify-center space-x-2 mb-6">
+                <button
+                  onClick={() => setCurrentAITask('bio')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    currentAITask === 'bio'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  Bio Enhancement
+                </button>
+                <button
+                  onClick={() => setCurrentAITask('project')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    currentAITask === 'project'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  Project Descriptions
+                </button>
+                <button
+                  onClick={() => setCurrentAITask('template')}
+                  className={`px-4 py-2 rounded-lg transition-colors ${
+                    currentAITask === 'template'
+                      ? 'bg-purple-600 text-white'
+                      : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  }`}
+                >
+                  Template Selection
+                </button>
+              </div>
+              
+              <button
+                onClick={handleNextStep}
+                className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+              >
+                Continue to Editor
+              </button>
+            </div>
+          </div>
+        )}
+
         {currentStep === 'template' && (
           <div className="max-w-6xl mx-auto px-6 py-8">
             <div className="text-center mb-8">
@@ -229,7 +381,7 @@ export default function InteractiveDemoPage(): React.ReactElement {
                 disabled={isLoading}
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {t.demoContinueToEditor}
+                Continue to Import
               </button>
             </div>
           </div>
@@ -356,21 +508,99 @@ export default function InteractiveDemoPage(): React.ReactElement {
                       </button>
                     </div>
 
+                    {/* Projects Section */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Projects
+                      </h3>
+                      <div className="space-y-4">
+                        {portfolio.projects.slice(0, 2).map((project, index) => (
+                          <div key={project.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                            <input
+                              type="text"
+                              value={project.title}
+                              onChange={e => {
+                                const updatedProjects = [...portfolio.projects];
+                                updatedProjects[index] = { ...project, title: e.target.value };
+                                handlePortfolioChange({ ...portfolio, projects: updatedProjects });
+                              }}
+                              className="w-full font-medium text-gray-900 dark:text-white mb-2 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-purple-500 outline-none"
+                              placeholder="Project Title"
+                            />
+                            <textarea
+                              value={project.description}
+                              onChange={e => {
+                                const updatedProjects = [...portfolio.projects];
+                                updatedProjects[index] = { ...project, description: e.target.value };
+                                handlePortfolioChange({ ...portfolio, projects: updatedProjects });
+                              }}
+                              rows={2}
+                              className="w-full text-sm text-gray-600 dark:text-gray-400 bg-transparent resize-none outline-none"
+                              placeholder="Project description..."
+                            />
+                            <div className="mt-2">
+                              <button className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                                <HiSparkles className="inline w-3 h-3 mr-1" />
+                                Enhance with AI
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                        <button className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:border-purple-500 dark:hover:border-purple-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
+                          + Add Project
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Skills Section */}
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                        Skills
+                      </h3>
+                      <div className="space-y-3">
+                        {portfolio.skills.slice(0, 5).map((skill, index) => (
+                          <div key={skill.name} className="flex items-center justify-between">
+                            <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                            <div className="flex items-center space-x-2">
+                              <select
+                                value={skill.level || 'intermediate'}
+                                onChange={e => {
+                                  const updatedSkills = [...portfolio.skills];
+                                  updatedSkills[index] = { ...skill, level: e.target.value as any };
+                                  handlePortfolioChange({ ...portfolio, skills: updatedSkills });
+                                }}
+                                className="text-sm px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
+                              >
+                                <option value="beginner">Beginner</option>
+                                <option value="intermediate">Intermediate</option>
+                                <option value="advanced">Advanced</option>
+                                <option value="expert">Expert</option>
+                              </select>
+                            </div>
+                          </div>
+                        ))}
+                        <button className="w-full py-2 text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                          + Add Skill
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Additional Features */}
                     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                         {t.demoAvailableInFullVersion}
                       </h3>
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <FiCheck className="w-4 h-4 text-green-500" />
                           <span>{t.demoAiBioEnhancement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <FiCheck className="w-4 h-4 text-green-500" />
                           <span>{t.demoProjectManagement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <FiCheck className="w-4 h-4 text-green-500" />
                           <span>{t.demoSkillsExperience}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
@@ -378,11 +608,11 @@ export default function InteractiveDemoPage(): React.ReactElement {
                           <span>{t.demoCustomSections}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <FiCheck className="w-4 h-4 text-green-500" />
                           <span>{t.demoLinkedinImport}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                          <FiCheck className="w-4 h-4 text-green-500" />
                           <span>{t.demoGithubIntegration}</span>
                         </div>
                       </div>
@@ -466,7 +696,30 @@ export default function InteractiveDemoPage(): React.ReactElement {
 
             {/* Preview Content */}
             <div className="flex-1 bg-gray-100 dark:bg-gray-900 overflow-hidden">
-              <div className="h-full flex items-center justify-center p-4">
+              <div className="h-full flex flex-col items-center justify-center p-4">
+                {/* Browser Chrome */}
+                <div className="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-2xl w-full">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Your Portfolio URL:</h3>
+                    <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">Live Preview</span>
+                  </div>
+                  <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2">
+                    <div className="flex space-x-1">
+                      <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    </div>
+                    <div className="flex-1 text-center">
+                      <span className="text-sm font-mono text-gray-600 dark:text-gray-400">
+                        https://{portfolio.name.toLowerCase().replace(/\s+/g, '')}.prisma.madfam.io
+                      </span>
+                    </div>
+                    <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                      <FiCheck className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+                
                 <div
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden"
                   style={{
@@ -476,12 +729,12 @@ export default function InteractiveDemoPage(): React.ReactElement {
                         : previewDimensions.width,
                     height:
                       previewDimensions.height === '100%'
-                        ? '100%'
+                        ? 'calc(100% - 120px)'
                         : previewDimensions.height,
                     transform: `scale(${previewDimensions.scale})`,
                     transformOrigin: 'center top',
                     maxWidth: '100%',
-                    maxHeight: '100%',
+                    maxHeight: 'calc(100% - 120px)',
                   }}
                 >
                   <div
@@ -515,34 +768,68 @@ export default function InteractiveDemoPage(): React.ReactElement {
               </div>
             </div>
 
-            {/* Navigation */}
-            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 px-6 py-4">
-              <div className="flex items-center justify-between">
-                <button
-                  onClick={handlePreviousStep}
-                  className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-                >
-                  {t.demoBackToEditor}
-                </button>
-
-                <div className="text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                    {t.demoLoveWhatYouSee}
-                  </p>
-                  <Link
-                    href="/auth/signup"
-                    className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
-                  >
-                    {t.demoGetStartedFreeTrial}
-                  </Link>
+            {/* Navigation and Features */}
+            <div className="bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+              {/* Features bar */}
+              <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-3">
+                <div className="flex items-center justify-center space-x-6 text-sm">
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <span>Custom Domain Support</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <span>SEO Optimized</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <span>Analytics Dashboard</span>
+                  </div>
+                  <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
+                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <span>SSL Certificate</span>
+                  </div>
                 </div>
+              </div>
+              
+              {/* Navigation */}
+              <div className="px-6 py-4">
+                <div className="flex items-center justify-between">
+                  <button
+                    onClick={handlePreviousStep}
+                    className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                  >
+                    {t.demoBackToEditor}
+                  </button>
 
-                <button
-                  onClick={handleShare}
-                  className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
-                >
-                  {t.demoShareDemo}
-                </button>
+                  <div className="text-center">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                      {t.demoLoveWhatYouSee}
+                    </p>
+                    <Link
+                      href="/auth/signup"
+                      className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
+                    >
+                      <span>{t.demoGetStartedFreeTrial}</span>
+                      <FiArrowLeft className="w-4 h-4 rotate-180" />
+                    </Link>
+                  </div>
+
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={handleExport}
+                      className="px-4 py-2 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+                    >
+                      Export
+                    </button>
+                    <button
+                      onClick={handleShare}
+                      className="px-4 py-2 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors"
+                    >
+                      {t.demoShareDemo}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
