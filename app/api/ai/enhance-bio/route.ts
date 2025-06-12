@@ -145,6 +145,12 @@ export async function POST(request: NextRequest): Promise<Response> {
 export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
 
     const {
       data: { user },
