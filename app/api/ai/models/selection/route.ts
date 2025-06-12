@@ -20,7 +20,22 @@ const updateSelectionSchema = z.object({
 export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
-    // Supabase client is always created successfully or throws
+    if (!supabase) {
+      // Return default model selection for database configuration errors
+      const defaultSelection = {
+        bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+        project: 'microsoft/Phi-3.5-mini-instruct',
+        template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+        scoring: 'microsoft/DialoGPT-medium',
+      };
+
+      return NextResponse.json({
+        success: true,
+        data: defaultSelection,
+        isDefault: true,
+        warning: 'Database not configured, using defaults',
+      });
+    }
 
     const {
       data: { user },
@@ -82,7 +97,12 @@ export async function GET(): Promise<Response> {
 export async function PUT(request: NextRequest): Promise<Response> {
   try {
     const supabase = await createClient();
-    // Supabase client is always created successfully or throws
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database configuration error' },
+        { status: 500 }
+      );
+    }
 
     const {
       data: { user },

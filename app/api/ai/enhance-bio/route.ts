@@ -42,6 +42,12 @@ export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection failed' },
+        { status: 500 }
+      );
+    }
 
     const {
       data: { user },

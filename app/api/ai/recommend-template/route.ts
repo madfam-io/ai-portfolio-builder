@@ -40,6 +40,12 @@ export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database configuration error' },
+        { status: 500 }
+      );
+    }
 
     const {
       data: { user },
@@ -143,6 +149,12 @@ export async function POST(request: NextRequest): Promise<Response> {
 export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database configuration error' },
+        { status: 500 }
+      );
+    }
 
     const {
       data: { user },
