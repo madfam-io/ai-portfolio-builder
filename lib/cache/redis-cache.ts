@@ -25,7 +25,7 @@ export const CACHE_KEYS = {
 
 // In-memory cache fallback for development
 class InMemoryCache {
-  private cache = new Map<string, { value: any; expiry: number }>();
+  private cache = new Map<string, { value: unknown; expiry: number }>();
 
   async get(key: string): Promise<string | null> {
     const item = this.cache.get(key);
@@ -94,7 +94,7 @@ class CacheService {
       });
 
       await this.client.connect();
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Failed to connect to Redis', error as Error);
       logger.info('Falling back to in-memory cache');
     }
@@ -113,7 +113,7 @@ class CacheService {
       if (!value) return null;
 
       return JSON.parse(value) as T;
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Cache get error', error as Error, { key });
       return null;
     }
@@ -135,7 +135,7 @@ class CacheService {
       } else {
         await this.fallback.set(key, serialized, ttl);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Cache set error', error as Error, { key });
     }
   }
@@ -150,7 +150,7 @@ class CacheService {
       } else {
         await this.fallback.del(key);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Cache delete error', error as Error, { key });
     }
   }
@@ -169,7 +169,7 @@ class CacheService {
         // For in-memory cache, clear all (pattern matching not supported)
         await this.fallback.clear();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       logger.error('Cache clear pattern error', error as Error, { pattern });
     }
   }
@@ -190,8 +190,8 @@ export const cache = new CacheService();
 
 // Initialize cache on module load
 if (typeof window === 'undefined') {
-  cache.connect().catch(err => {
-    logger.error('Failed to initialize cache', err);
+  cache.connect().catch((err) => {
+    logger.error('Failed to initialize cache', err as Error);
   });
 }
 
@@ -200,7 +200,7 @@ if (typeof window === 'undefined') {
  */
 export function Cacheable(keyPrefix: string, ttl?: number) {
   return function (
-    _target: any,
+    _target: unknown,
     propertyName: string,
     descriptor: PropertyDescriptor
   ) {

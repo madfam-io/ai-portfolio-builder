@@ -177,7 +177,7 @@ export async function GET(): Promise<Response> {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (error) {
+    if (error != null) {
       throw error;
     }
 
