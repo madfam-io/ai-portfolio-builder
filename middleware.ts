@@ -6,6 +6,7 @@ import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
 import { csrfMiddleware } from './middleware/csrf';
 import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
+import { applySecurityHeaders, shouldApplySecurityHeaders } from './middleware/security-headers';
 
 import type { NextRequest } from 'next/server';
 
@@ -159,6 +160,11 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
+  // Apply security headers to all responses (except static assets)
+  if (shouldApplySecurityHeaders(pathname)) {
+    response = applySecurityHeaders(req, response);
+  }
+
   return response;
 }
 
@@ -176,16 +182,13 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
  */
 export const config = {
   matcher: [
-    // API routes (for rate limiting and CSRF)
-    '/api/:path*',
-    // Protected routes
-    '/dashboard/:path*',
-    '/editor/:path*',
-    '/profile/:path*',
-    // Auth routes
-    '/auth/signin',
-    '/auth/signup',
-    '/auth/callback',
-    '/auth/reset-password',
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
   ],
 };

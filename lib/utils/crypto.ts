@@ -9,6 +9,9 @@ import { logger } from '@/lib/utils/logger';
 
 const algorithm = 'aes-256-gcm';
 
+// Store generated keys in memory for consistency during runtime
+let devEncryptionKey: Buffer | null = null;
+
 /**
  * Get or generate the encryption key from environment
  * In production, this should be a stable key stored in environment variables
@@ -17,18 +20,38 @@ function getEncryptionKey(): Buffer {
   const envKey = process.env.ENCRYPTION_KEY;
 
   if (!envKey) {
-    logger.warn(
-      'ENCRYPTION_KEY not found in environment variables. ' +
-        'Using a random key which will change on restart. ' +
-        'Set ENCRYPTION_KEY in production!'
-    );
-    // In development, use a deterministic key based on a seed
-    // This prevents data loss during development
-    if (process.env.NODE_ENV === 'development') {
-      return crypto.scryptSync('dev-encryption-key', 'salt', 32);
-    }
     // In production, this should never happen
-    throw new Error('ENCRYPTION_KEY must be set in production environment');
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('ENCRYPTION_KEY must be set in production environment');
+    }
+    
+    // In development, generate a random key per instance but keep it consistent during runtime
+    if (!devEncryptionKey) {
+      logger.warn(
+        'ENCRYPTION_KEY not found in environment variables. ' +
+          'Generating a random key for development. ' +
+          'Data will be lost on restart. Set ENCRYPTION_KEY for persistence!'
+      );
+      
+      // Generate a cryptographically secure random key
+      devEncryptionKey = crypto.randomBytes(32);
+      
+      // Also log the generated key so developers can set it if needed
+      logger.info(
+        `Generated development encryption key: ${devEncryptionKey.toString('hex')}\n` +
+        'To persist data across restarts, add this to your .env.local:\n' +
+        `ENCRYPTION_KEY=${devEncryptionKey.toString('hex')}`
+      );
+    }
+    
+    return devEncryptionKey;
+  }
+
+  // Validate key format and length
+  if (!/^[0-9a-fA-F]{64}$/.test(envKey)) {
+    throw new Error(
+      'ENCRYPTION_KEY must be a 64-character hexadecimal string (32 bytes)'
+    );
   }
 
   // Convert hex string to buffer
@@ -92,6 +115,42 @@ export function decrypt(encryptedData: {
  */
 export function generateEncryptionKey(): string {
   return crypto.randomBytes(32).toString('hex');
+}
+
+/**
+ * Rotate encryption key by re-encrypting data with a new key
+ * This should be used periodically for security
+ * @param oldKey - The current encryption key
+ * @param newKey - The new encryption key to rotate to
+ * @param encryptedData - The data to re-encrypt
+ * @returns The re-encrypted data with the new key
+ */
+export function rotateEncryptionKey(
+  oldKey: Buffer,
+  newKey: Buffer,
+  encryptedData: { encrypted: string; iv: string; tag: string }
+): { encrypted: string; iv: string; tag: string } {
+  // Temporarily override the key getter to use the old key
+  const originalKey = process.env.ENCRYPTION_KEY;
+  process.env.ENCRYPTION_KEY = oldKey.toString('hex');
+  
+  try {
+    // Decrypt with old key
+    const plainText = decrypt(encryptedData);
+    
+    // Set new key
+    process.env.ENCRYPTION_KEY = newKey.toString('hex');
+    
+    // Encrypt with new key
+    return encrypt(plainText);
+  } finally {
+    // Restore original key
+    if (originalKey) {
+      process.env.ENCRYPTION_KEY = originalKey;
+    } else {
+      delete process.env.ENCRYPTION_KEY;
+    }
+  }
 }
 
 /**

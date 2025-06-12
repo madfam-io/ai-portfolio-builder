@@ -27,18 +27,29 @@ interface RateLimitResult {
  * Rate limit configurations for different endpoints
  */
 export const RATE_LIMIT_CONFIGS: Record<string, RateLimitConfig> = {
-  // Auth endpoints - strict limits
-  '/api/auth/signin': { windowMs: 15 * 60 * 1000, max: 5 },
-  '/api/auth/signup': { windowMs: 60 * 60 * 1000, max: 3 },
-  '/api/auth/reset-password': { windowMs: 60 * 60 * 1000, max: 3 },
+  // Auth endpoints - very strict limits to prevent brute force
+  '/api/auth/signin': { windowMs: 30 * 60 * 1000, max: 3 }, // 3 attempts per 30 minutes
+  '/api/auth/signup': { windowMs: 60 * 60 * 1000, max: 3 }, // 3 signups per hour
+  '/api/auth/reset-password': { windowMs: 60 * 60 * 1000, max: 2 }, // 2 resets per hour
+  
+  // Supabase auth endpoints (v1)
+  '/api/v1/auth/signin': { windowMs: 30 * 60 * 1000, max: 3 },
+  '/api/v1/auth/signup': { windowMs: 60 * 60 * 1000, max: 3 },
+  '/api/v1/auth/reset-password': { windowMs: 60 * 60 * 1000, max: 2 },
 
   // AI endpoints - prevent abuse
   '/api/ai/enhance-bio': { windowMs: 60 * 1000, max: 10 },
   '/api/ai/optimize-project': { windowMs: 60 * 1000, max: 10 },
   '/api/ai/recommend-template': { windowMs: 60 * 1000, max: 10 },
+  
+  // AI v1 endpoints
+  '/api/v1/ai/enhance-bio': { windowMs: 60 * 1000, max: 10 },
+  '/api/v1/ai/optimize-project': { windowMs: 60 * 1000, max: 10 },
+  '/api/v1/ai/recommend-template': { windowMs: 60 * 1000, max: 10 },
 
   // Portfolio endpoints - reasonable limits
   '/api/portfolios': { windowMs: 60 * 1000, max: 30 },
+  '/api/v1/portfolios': { windowMs: 60 * 1000, max: 30 },
 
   // Default for all other endpoints
   default: { windowMs: 60 * 1000, max: 60 },

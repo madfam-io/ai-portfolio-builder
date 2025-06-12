@@ -4,9 +4,11 @@
  */
 
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { encrypt } from '@/lib/utils/crypto';
 
 /**
  * Initiate GitHub OAuth flow
@@ -36,7 +38,35 @@ export async function GET(): Promise<Response> {
     const clientId = process.env.GITHUB_CLIENT_ID;
     const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/integrations/github/callback`;
     const scope = 'repo,read:user,user:email';
-    const state = user.id; // Use user ID as state for security
+    
+    // Generate cryptographically secure state parameter
+    const stateData = {
+      userId: user.id,
+      timestamp: Date.now(),
+      nonce: crypto.randomBytes(16).toString('hex')
+    };
+    
+    // Encrypt the state data to prevent tampering
+    const encryptedState = encrypt(JSON.stringify(stateData));
+    const state = Buffer.from(JSON.stringify(encryptedState)).toString('base64url');
+    
+    // Store state in database for validation on callback
+    const { error: stateError } = await supabase
+      .from('oauth_states')
+      .insert({
+        state,
+        user_id: user.id,
+        provider: 'github',
+        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString() // 10 minutes
+      });
+      
+    if (stateError) {
+      logger.error('Failed to store OAuth state', { error: stateError });
+      return NextResponse.json(
+        { error: 'Failed to initiate OAuth flow' },
+        { status: 500 }
+      );
+    }
 
     if (!clientId) {
       return NextResponse.json(

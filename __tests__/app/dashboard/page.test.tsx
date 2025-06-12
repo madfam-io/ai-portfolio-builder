@@ -2,13 +2,13 @@
  * Dashboard page test suite
  */
 
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-
-import DashboardPage from '@/app/dashboard/page';
-
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+// Mock AuthContext - MUST be before any imports that use it
+jest.mock('@/lib/contexts/AuthContext', () => ({
+  useAuth: jest.fn(),
+  AuthProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
+}));
 
 // Mock next/navigation
 const mockPush = jest.fn();
@@ -23,30 +23,56 @@ jest.mock('next/navigation', () => ({
   redirect: jest.fn(),
 }));
 
-// Mock BaseLayout
-jest.mock('@/components/layouts/BaseLayout', () => ({
+// Mock Next.js Image component to avoid IntersectionObserver issues
+jest.mock('next/image', () => ({
   __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
-  ),
+  default: function Image(props: any) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} />;
+  },
 }));
 
-// Mock AuthContext
+// Mock Next.js Link component
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: function Link({ children, href, ...props }: any) {
+    return <a href={href} {...props}>{children}</a>;
+  },
+}));
+
+// Mock BaseLayout - just render children without providers since they're mocked
+jest.mock('@/components/layouts/BaseLayout', () => ({
+  __esModule: true,
+  default: function BaseLayout({ children }: { children: React.ReactNode }) {
+    return <div data-testid="base-layout">{children}</div>;
+  },
+}));
+
+// Import test dependencies after mocks
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+
+import DashboardPage from '@/app/dashboard/page';
+
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
+import { useAuth } from '@/lib/contexts/AuthContext';
+
+// Get the mocked function
+const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
+
+// Create test user
 const mockUser = { id: 'user-1', email: 'test@example.com' };
-const mockAuthContext = {
+
+// Default mock implementation
+mockUseAuth.mockReturnValue({
   user: mockUser,
   loading: false,
   error: null,
-};
-
-const useAuthMock = jest.fn(() => mockAuthContext);
-
-jest.mock('@/lib/contexts/AuthContext', () => ({
-  useAuth: () => useAuthMock(),
-  AuthProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+  signIn: jest.fn(),
+  signUp: jest.fn(),
+  signOut: jest.fn(),
+});
 
 // Mock fetch for API calls
 const mockFetch = jest.fn();
@@ -91,10 +117,15 @@ describe('Dashboard Page', () => {
       json: async () => ({ data: mockPortfolios }),
     });
 
-    // Reset auth context
-    mockAuthContext.user = mockUser;
-    mockAuthContext.loading = false;
-    mockAuthContext.error = null;
+    // Reset auth context to default state
+    mockUseAuth.mockReturnValue({
+      user: mockUser,
+      loading: false,
+      error: null,
+      signIn: jest.fn(),
+      signUp: jest.fn(),
+      signOut: jest.fn(),
+    });
   });
 
   describe('Content Rendering', () => {
@@ -228,8 +259,14 @@ describe('Dashboard Page', () => {
   describe('Authentication', () => {
     test('redirects to login when not authenticated', async () => {
       // Mock no user
-      mockAuthContext.user = null;
-      mockAuthContext.loading = false;
+      mockUseAuth.mockReturnValue({
+        user: null,
+        loading: false,
+        error: null,
+        signIn: jest.fn(),
+        signUp: jest.fn(),
+        signOut: jest.fn(),
+      });
 
       renderWithLanguage(<DashboardPage />);
 
@@ -241,7 +278,14 @@ describe('Dashboard Page', () => {
 
   describe('Loading State', () => {
     test('shows loading indicator initially', () => {
-      mockAuthContext.loading = true;
+      mockUseAuth.mockReturnValue({
+        user: null,
+        loading: true,
+        error: null,
+        signIn: jest.fn(),
+        signUp: jest.fn(),
+        signOut: jest.fn(),
+      });
 
       renderWithLanguage(<DashboardPage />);
 

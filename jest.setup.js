@@ -5,6 +5,40 @@ import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
+// Mock IntersectionObserver before any components use it
+// Define the mock before importing anything that might use it
+if (typeof window !== 'undefined') {
+  window.IntersectionObserver = jest.fn().mockImplementation((callback, options) => {
+    const instance = {
+      callback,
+      options,
+      observe: jest.fn(),
+      unobserve: jest.fn(),
+      disconnect: jest.fn(),
+      takeRecords: jest.fn(() => []),
+      root: options?.root || null,
+      rootMargin: options?.rootMargin || '0px',
+      thresholds: Array.isArray(options?.threshold) ? options.threshold : [options?.threshold || 0],
+    };
+    return instance;
+  });
+}
+
+global.IntersectionObserver = window.IntersectionObserver || jest.fn().mockImplementation((callback, options) => {
+  const instance = {
+    callback,
+    options,
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn(),
+    takeRecords: jest.fn(() => []),
+    root: options?.root || null,
+    rootMargin: options?.rootMargin || '0px',
+    thresholds: Array.isArray(options?.threshold) ? options.threshold : [options?.threshold || 0],
+  };
+  return instance;
+});
+
 // Add ReadableStream polyfill
 if (typeof globalThis.ReadableStream === 'undefined') {
   const {
@@ -57,6 +91,56 @@ jest.mock('next/router', () => ({
   },
 }));
 
+// Mock Next.js Image component - completely bypass Next.js implementation
+jest.mock('next/image', () => {
+  const React = require('react');
+  
+  // Return a simple img element that doesn't use IntersectionObserver
+  const MockedImage = React.forwardRef(function Image(props, ref) {
+    // Extract Next.js specific props and ignore them
+    const {
+      loader,
+      quality,
+      priority,
+      loading,
+      unoptimized,
+      onLoadingComplete,
+      placeholder,
+      blurDataURL,
+      onLoad,
+      onError,
+      sizes,
+      fill,
+      ...imgProps
+    } = props;
+    
+    // Handle fill prop by adding style
+    if (fill) {
+      imgProps.style = {
+        ...imgProps.style,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      };
+    }
+    
+    // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
+    return <img ref={ref} {...imgProps} />;
+  });
+  
+  MockedImage.displayName = 'Image';
+  
+  return {
+    __esModule: true,
+    default: MockedImage,
+  };
+});
+
 // Mock Next.js navigation
 jest.mock('next/navigation', () => ({
   useRouter() {
@@ -75,6 +159,7 @@ jest.mock('next/navigation', () => ({
   usePathname() {
     return '/';
   },
+  redirect: jest.fn(),
 }));
 
 // Mock environment variables
@@ -232,12 +317,7 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
-// Mock IntersectionObserver
-global.IntersectionObserver = jest.fn().mockImplementation(() => ({
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-  disconnect: jest.fn(),
-}));
+// IntersectionObserver already mocked at the top of the file
 
 // Mock ResizeObserver
 global.ResizeObserver = jest.fn().mockImplementation(() => ({
@@ -308,6 +388,8 @@ jest.mock('@/lib/i18n/minimal-context', () => ({
   LanguageProvider: require('./__tests__/utils/comprehensive-test-setup')
     .TestLanguageProvider,
 }));
+
+// IntersectionObserver already mocked at the top of the file
 
 // Clear localStorage before each test suite to ensure consistent language detection
 beforeEach(() => {

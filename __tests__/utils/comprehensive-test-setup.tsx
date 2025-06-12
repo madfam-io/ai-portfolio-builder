@@ -291,6 +291,9 @@ export const mockAuthContextValue = {
   signOut: jest.fn(),
 };
 
+// Create mock context - MUST be defined before it's used
+const MockLanguageContext = React.createContext<any>(null);
+
 // Language Context Provider for tests
 export const TestLanguageProvider = ({
   children,
@@ -320,9 +323,6 @@ export const TestLanguageProvider = ({
     </MockLanguageContext.Provider>
   );
 };
-
-// Create mock context
-const MockLanguageContext = React.createContext<any>(null);
 
 // Mock hook
 export const useTestLanguage = () => {

@@ -6,7 +6,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/lib/supabase/server';
-import { encrypt } from '@/lib/utils/crypto';
+import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -42,17 +42,69 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    // Verify state matches user ID (security check)
+    // Verify state parameter for CSRF protection
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
 
-    if (authError || !user || user.id !== state) {
+    if (authError || !user) {
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=unauthorized`
+      );
+    }
+    
+    // Retrieve and validate OAuth state from database
+    const { data: oauthState, error: stateError } = await supabase
+      .from('oauth_states')
+      .select('*')
+      .eq('state', state)
+      .eq('user_id', user.id)
+      .eq('provider', 'github')
+      .is('used_at', null)
+      .single();
+      
+    if (stateError || !oauthState) {
+      logger.error('Invalid OAuth state', { stateError, state });
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
       );
     }
+    
+    // Check if state has expired
+    if (new Date(oauthState.expires_at) < new Date()) {
+      logger.error('OAuth state expired', { state });
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=state_expired`
+      );
+    }
+    
+    // Decrypt and validate state data
+    try {
+      const encryptedState = JSON.parse(Buffer.from(state, 'base64url').toString());
+      const stateData = JSON.parse(decrypt(encryptedState));
+      
+      // Validate state contents
+      if (stateData.userId !== user.id) {
+        throw new Error('State user ID mismatch');
+      }
+      
+      // Check timestamp to prevent replay attacks (10 minute window)
+      if (Date.now() - stateData.timestamp > 10 * 60 * 1000) {
+        throw new Error('State timestamp expired');
+      }
+    } catch (error) {
+      logger.error('State validation failed', { error });
+      return NextResponse.redirect(
+        `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
+      );
+    }
+    
+    // Mark state as used to prevent reuse
+    await supabase
+      .from('oauth_states')
+      .update({ used_at: new Date().toISOString() })
+      .eq('id', oauthState.id);
 
     // Exchange code for access token
     const tokenResponse = await fetch(
@@ -124,6 +176,7 @@ export async function GET(request: NextRequest): Promise<Response> {
           Date.now() + 60 * 60 * 1000
         ).toISOString(), // 1 hour from now
         last_synced_at: new Date().toISOString(),
+        encryption_version: 1, // Track encryption version for future rotation
       });
 
     if (integrationError) {
