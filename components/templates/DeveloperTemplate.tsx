@@ -33,6 +33,7 @@ import {
 } from 'react-icons/fi';
 
 import { Portfolio } from '@/types/portfolio';
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
 
 /**
  * Props interface for the Developer Template component
@@ -98,9 +99,20 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
 
             {/* Profile Image/Avatar */}
             <div className="flex justify-center">
-              <div className="w-64 h-64 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center">
-                <FiCode className="w-24 h-24 text-white" />
-              </div>
+              {portfolio.avatarUrl ? (
+                <OptimizedImage
+                  src={portfolio.avatarUrl}
+                  alt={portfolio.name}
+                  width={256}
+                  height={256}
+                  className="w-64 h-64 rounded-full object-cover shadow-2xl"
+                  priority
+                />
+              ) : (
+                <div className="w-64 h-64 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center">
+                  <FiCode className="w-24 h-24 text-white" />
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -180,7 +192,15 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                   key={project.id}
                   className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all group"
                 >
-                  {project.imageUrl && (
+                  {project.imageUrl ? (
+                    <OptimizedImage
+                      src={project.imageUrl}
+                      alt={project.title}
+                      width={400}
+                      height={192}
+                      className="h-48 w-full object-cover"
+                    />
+                  ) : (
                     <div className="h-48 bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
                       <FiCode className="w-12 h-12 text-white" />
                     </div>

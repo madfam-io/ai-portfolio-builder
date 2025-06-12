@@ -6,6 +6,7 @@ import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
 
 export default function BlogPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -23,7 +24,7 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-15',
       category: t.blogDesign || 'Design',
       readTime: t.blogPost1ReadTime || '5 min read',
-      image: '/blog/portfolio-trends-2024.jpg',
+      image: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&h=400&fit=crop',
     },
     {
       id: 2,
@@ -36,7 +37,7 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-10',
       category: t.blogTechnology || 'Technology',
       readTime: t.blogPost2ReadTime || '7 min read',
-      image: '/blog/ai-portfolios.jpg',
+      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
     },
     {
       id: 3,
@@ -50,7 +51,7 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-05',
       category: t.blogBusiness || 'Business',
       readTime: t.blogPost3ReadTime || '6 min read',
-      image: '/blog/linkedin-portfolio.jpg',
+      image: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=800&h=400&fit=crop',
     },
   ];
 
@@ -100,9 +101,16 @@ export default function BlogPage(): React.ReactElement {
                 key={post.id}
                 className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
-                <div className="h-48 bg-gradient-to-br from-purple-400 to-blue-500 relative">
-                  <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">
+                <div className="relative h-48">
+                  <OptimizedImage
+                    src={post.image}
+                    alt={post.title}
+                    width={800}
+                    height={400}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                    <span className="absolute bottom-4 left-4 text-white font-bold text-sm bg-purple-600 px-3 py-1 rounded-full">
                       {post.category}
                     </span>
                   </div>
