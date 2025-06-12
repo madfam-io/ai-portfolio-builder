@@ -8,9 +8,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { RootErrorBoundary } from './RootErrorBoundary';
-import { RouteErrorBoundary } from './RouteErrorBoundary';
-import { WidgetErrorBoundary } from './WidgetErrorBoundary';
+
 import {
   InlineLoader,
   CardSkeleton,
@@ -18,6 +16,10 @@ import {
   ErrorState,
   OfflineIndicator,
 } from '../fallbacks';
+
+import { RootErrorBoundary } from './RootErrorBoundary';
+import { RouteErrorBoundary } from './RouteErrorBoundary';
+import { WidgetErrorBoundary } from './WidgetErrorBoundary';
 
 /**
  * Component that throws an error for testing
@@ -68,7 +70,7 @@ function DataComponent({ hasData }: { hasData: boolean }) {
 /**
  * Error Boundary Examples Component
  */
-export default function ErrorBoundaryExample() {
+export default function ErrorBoundaryExample(): React.ReactElement {
   const [triggerError, setTriggerError] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [hasData, setHasData] = useState(true);

@@ -5,8 +5,9 @@
  * Spanish and English languages and displays all user-facing text correctly.
  */
 
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
+
 import InteractiveDemoPage from '@/app/demo/interactive/page';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 

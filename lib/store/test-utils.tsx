@@ -3,8 +3,8 @@
  * Helper functions and mocks for testing Zustand stores
  */
 
-import React from 'react';
 import { act } from '@testing-library/react';
+import React from 'react';
 import { StoreApi } from 'zustand';
 
 /**

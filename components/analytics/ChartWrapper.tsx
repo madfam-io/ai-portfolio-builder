@@ -11,7 +11,7 @@ interface ChartWrapperProps {
 }
 
 const ChartLoader = ({ height = 300 }: { height?: number }) => (
-  <div 
+  <div
     className="bg-white dark:bg-gray-800 rounded-lg p-6 animate-pulse"
     style={{ height: `${height}px` }}
   >
@@ -20,10 +20,11 @@ const ChartLoader = ({ height = 300 }: { height?: number }) => (
   </div>
 );
 
-export const ChartWrapper = React.memo(function ChartWrapper({ children, height }: ChartWrapperProps) {
+export const ChartWrapper = React.memo(function ChartWrapper({
+  children,
+  height,
+}: ChartWrapperProps) {
   return (
-    <Suspense fallback={<ChartLoader height={height} />}>
-      {children}
-    </Suspense>
+    <Suspense fallback={<ChartLoader height={height} />}>{children}</Suspense>
   );
 });

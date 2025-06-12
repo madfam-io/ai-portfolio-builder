@@ -1,10 +1,13 @@
-import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import React from 'react';
 import './globals.css';
+import { Inter } from 'next/font/google';
+
+import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
-import { GlobalErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { StoreProvider } from '@/lib/store/provider';
+
+import type { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -42,7 +45,7 @@ export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}): React.ReactElement {
   return (
     <html lang="en" className={`${inter.variable} dark`}>
       <head>

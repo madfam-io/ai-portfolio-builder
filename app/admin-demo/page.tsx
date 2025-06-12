@@ -6,10 +6,11 @@
  */
 
 import React from 'react';
-import { AuthProvider } from '@/lib/contexts/AuthContext';
-import AdminUserDashboard from '@/components/admin/AdminUserDashboard';
 
-export default function AdminDemoPage() {
+import AdminUserDashboard from '@/components/admin/AdminUserDashboard';
+import { AuthProvider } from '@/lib/contexts/AuthContext';
+
+export default function AdminDemoPage(): React.ReactElement {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">

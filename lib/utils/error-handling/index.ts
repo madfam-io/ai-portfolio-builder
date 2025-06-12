@@ -1,19 +1,19 @@
 /**
  * @fileoverview Error Handling Index
- * 
+ *
  * Central export point for all error handling utilities.
  */
 
 // Error types
-export type { 
-  ErrorType, 
-  ErrorSeverity, 
-  ErrorReport, 
+export type {
+  ErrorType,
+  ErrorSeverity,
+  ErrorReport,
   ErrorBoundaryConfig,
   ErrorRecoveryOptions,
   ErrorHandler,
   ErrorFilter,
-  ErrorTransformer
+  ErrorTransformer,
 } from './error-types';
 
 // Error utilities
@@ -27,12 +27,12 @@ export {
   isRetryableError,
   getErrorRecoveryStrategy,
   formatErrorForDisplay,
-  AggregateError
+  AggregateError,
 } from './error-utils';
 
 // Error monitoring
 export {
   default as errorMonitoring,
   captureError,
-  commonFilters
+  commonFilters,
 } from './error-monitoring';

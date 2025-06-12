@@ -1,6 +1,6 @@
 /**
  * @fileoverview Template Configuration System
- * 
+ *
  * Defines template-specific layouts, section ordering, and styling preferences
  * for the PRISMA portfolio builder. Each template targets specific professional
  * industries and provides optimized layouts.
@@ -115,10 +115,24 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
   developer: {
     id: 'developer',
     name: 'Developer',
-    description: 'Perfect for software engineers, developers, and technical professionals',
-    industry: ['Software Engineering', 'Web Development', 'DevOps', 'Data Science'],
+    description:
+      'Perfect for software engineers, developers, and technical professionals',
+    industry: [
+      'Software Engineering',
+      'Web Development',
+      'DevOps',
+      'Data Science',
+    ],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'projects', 'experience', 'skills', 'education', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'projects',
+      'experience',
+      'skills',
+      'education',
+      'contact',
+    ],
     colorScheme: {
       primary: '#3B82F6', // Blue
       secondary: '#1E40AF',
@@ -141,10 +155,24 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
   designer: {
     id: 'designer',
     name: 'Designer',
-    description: 'Ideal for UI/UX designers, graphic designers, and creative professionals',
-    industry: ['UI/UX Design', 'Graphic Design', 'Product Design', 'Brand Design'],
+    description:
+      'Ideal for UI/UX designers, graphic designers, and creative professionals',
+    industry: [
+      'UI/UX Design',
+      'Graphic Design',
+      'Product Design',
+      'Brand Design',
+    ],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'projects', 'about', 'experience', 'skills', 'education', 'contact'],
+    defaultOrder: [
+      'hero',
+      'projects',
+      'about',
+      'experience',
+      'skills',
+      'education',
+      'contact',
+    ],
     colorScheme: {
       primary: '#EC4899', // Pink
       secondary: '#BE185D',
@@ -168,9 +196,23 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
     id: 'consultant',
     name: 'Consultant',
     description: 'Professional template for consultants and business advisors',
-    industry: ['Management Consulting', 'Business Strategy', 'Operations', 'Finance'],
+    industry: [
+      'Management Consulting',
+      'Business Strategy',
+      'Operations',
+      'Finance',
+    ],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'experience', 'projects', 'skills', 'testimonials', 'education', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'experience',
+      'projects',
+      'skills',
+      'testimonials',
+      'education',
+      'contact',
+    ],
     colorScheme: {
       primary: '#059669', // Emerald
       secondary: '#047857',
@@ -194,9 +236,22 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
     id: 'business',
     name: 'Business',
     description: 'Corporate template for executives and business professionals',
-    industry: ['Executive Leadership', 'Business Development', 'Sales', 'Marketing'],
+    industry: [
+      'Executive Leadership',
+      'Business Development',
+      'Sales',
+      'Marketing',
+    ],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'experience', 'education', 'skills', 'projects', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'experience',
+      'education',
+      'skills',
+      'projects',
+      'contact',
+    ],
     colorScheme: {
       primary: '#1F2937', // Gray
       secondary: '#374151',
@@ -219,10 +274,19 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
   creative: {
     id: 'creative',
     name: 'Creative',
-    description: 'Dynamic template for artists, writers, and creative professionals',
+    description:
+      'Dynamic template for artists, writers, and creative professionals',
     industry: ['Art & Design', 'Writing', 'Photography', 'Film & Media'],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'projects', 'about', 'experience', 'skills', 'education', 'contact'],
+    defaultOrder: [
+      'hero',
+      'projects',
+      'about',
+      'experience',
+      'skills',
+      'education',
+      'contact',
+    ],
     colorScheme: {
       primary: '#7C3AED', // Violet
       secondary: '#5B21B6',
@@ -248,7 +312,14 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
     description: 'Clean and minimal design for any professional field',
     industry: ['Any Industry', 'Academia', 'Research', 'Non-Profit'],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'experience', 'education', 'skills', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'experience',
+      'education',
+      'skills',
+      'contact',
+    ],
     colorScheme: {
       primary: '#000000', // Black
       secondary: '#404040',
@@ -271,10 +342,19 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
   educator: {
     id: 'educator',
     name: 'Educator',
-    description: 'Academic-focused template for teachers, professors, and educational professionals',
+    description:
+      'Academic-focused template for teachers, professors, and educational professionals',
     industry: ['Education', 'Academia', 'Training', 'Research'],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'education', 'experience', 'projects', 'skills', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'education',
+      'experience',
+      'projects',
+      'skills',
+      'contact',
+    ],
     colorScheme: {
       primary: '#2563EB', // Blue
       secondary: '#1D4ED8',
@@ -300,7 +380,15 @@ export const TEMPLATE_CONFIGS: Record<TemplateType, TemplateConfig> = {
     description: 'Contemporary design with clean lines and modern aesthetics',
     industry: ['Any Industry', 'Technology', 'Startups', 'Digital'],
     sections: TEMPLATE_SECTIONS,
-    defaultOrder: ['hero', 'about', 'skills', 'experience', 'projects', 'education', 'contact'],
+    defaultOrder: [
+      'hero',
+      'about',
+      'skills',
+      'experience',
+      'projects',
+      'education',
+      'contact',
+    ],
     colorScheme: {
       primary: '#6366F1', // Indigo
       secondary: '#4F46E5',
@@ -346,7 +434,10 @@ export function getTemplateColors(template: TemplateType) {
 /**
  * Check if a section should be visible by default for a template
  */
-export function isSectionDefaultVisible(template: TemplateType, section: SectionType): boolean {
+export function isSectionDefaultVisible(
+  template: TemplateType,
+  section: SectionType
+): boolean {
   const config = TEMPLATE_CONFIGS[template];
   const sectionConfig = config.sections.find(s => s.id === section);
   return sectionConfig?.defaultVisible ?? false;

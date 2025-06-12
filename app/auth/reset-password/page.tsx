@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
+import React, { useState } from 'react';
+
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { resetPassword } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import BaseLayout from '@/components/layouts/BaseLayout';
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');

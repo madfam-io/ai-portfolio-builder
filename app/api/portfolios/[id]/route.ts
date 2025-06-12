@@ -4,14 +4,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import {
+  transformApiPortfolioToDb,
+  transformDbPortfolioToApi,
+} from '@/lib/utils/portfolio-transformer';
 import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 import { Portfolio } from '@/types/portfolio';
-import { transformApiPortfolioToDb } from '@/lib/utils/portfolio-transformer';
-import { logger } from '@/lib/utils/logger';
 
 interface RouteParams {
   params: {
@@ -23,25 +27,23 @@ interface RouteParams {
  * GET /api/portfolios/[id]
  * Retrieves a specific portfolio by ID
  */
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  _request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 
     // Create Supabase client
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     // Check authentication
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (!user || authError) {
+    if (user === null || authError !== null) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 }
@@ -64,7 +66,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         );
       }
 
-      console.error('Database error fetching portfolio:', fetchError);
+      logger.error('Database error fetching portfolio:', fetchError);
       return NextResponse.json(
         { error: 'Failed to fetch portfolio' },
         { status: 500 }
@@ -86,7 +88,7 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       portfolio: responsePortfolio,
     });
   } catch (error) {
-    console.error('Unexpected error in GET /api/portfolios/[id]:', error);
+    logger.error('Unexpected error in GET /api/portfolios/[id]:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -98,25 +100,23 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
  * PUT /api/portfolios/[id]
  * Updates a specific portfolio by ID
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 
     // Create Supabase client
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     // Check authentication
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (!user || authError) {
+    if (user === null || authError !== null) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 }
@@ -209,7 +209,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError) {
-      console.error('Database error updating portfolio:', updateError);
+      logger.error('Database error updating portfolio:', updateError);
 
       // Handle specific errors
       if (updateError.code === '23505') {
@@ -259,25 +259,23 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
  * DELETE /api/portfolios/[id]
  * Deletes a specific portfolio by ID
  */
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 
     // Create Supabase client
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     // Check authentication
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    if (!user || authError) {
+    if (user === null || authError !== null) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 }

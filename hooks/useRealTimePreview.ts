@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
+
 import { Portfolio, SectionType } from '@/types/portfolio';
 
 export type PreviewMode = 'desktop' | 'tablet' | 'mobile';

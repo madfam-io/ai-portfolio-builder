@@ -2,9 +2,11 @@
  * Templates Component test suite
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import Templates from '@/components/landing/Templates';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Templates Component', () => {

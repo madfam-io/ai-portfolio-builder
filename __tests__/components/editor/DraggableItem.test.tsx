@@ -2,11 +2,12 @@
  * Tests for DraggableItem Component
  */
 
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { DraggableItem } from '@/components/editor/DraggableItem';
+import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+
 import { DragItem } from '@/components/editor/DragDropContext';
+import { DraggableItem } from '@/components/editor/DraggableItem';
 
 // Mock the logger
 jest.mock('@/lib/utils/logger', () => ({
@@ -54,8 +55,8 @@ describe('DraggableItem', () => {
 
     it('should hide drag handle when showHandle is false', () => {
       render(
-        <DraggableItem 
-          item={mockDragItem} 
+        <DraggableItem
+          item={mockDragItem}
           onReorder={mockOnReorder}
           showHandle={false}
         >
@@ -68,8 +69,8 @@ describe('DraggableItem', () => {
 
     it('should apply custom className', () => {
       const { container } = render(
-        <DraggableItem 
-          item={mockDragItem} 
+        <DraggableItem
+          item={mockDragItem}
           onReorder={mockOnReorder}
           className="custom-class"
         >
@@ -82,8 +83,8 @@ describe('DraggableItem', () => {
 
     it('should apply disabled styles when disabled', () => {
       const { container } = render(
-        <DraggableItem 
-          item={mockDragItem} 
+        <DraggableItem
+          item={mockDragItem}
           onReorder={mockOnReorder}
           disabled={true}
         >
@@ -162,11 +163,13 @@ describe('DraggableItem', () => {
       const draggableElement = screen.getByRole('generic');
       const mockPreventDefault = jest.fn();
       const mockDataTransfer = {
-        getData: jest.fn().mockReturnValue(JSON.stringify({
-          id: 'other-item',
-          type: 'project',
-          index: 1,
-        })),
+        getData: jest.fn().mockReturnValue(
+          JSON.stringify({
+            id: 'other-item',
+            type: 'project',
+            index: 1,
+          })
+        ),
       };
 
       // Mock getBoundingClientRect for drop position calculation
@@ -201,8 +204,8 @@ describe('DraggableItem', () => {
 
     it('should not be focusable when disabled', () => {
       render(
-        <DraggableItem 
-          item={mockDragItem} 
+        <DraggableItem
+          item={mockDragItem}
           onReorder={mockOnReorder}
           disabled={true}
         >

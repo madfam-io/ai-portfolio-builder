@@ -1,6 +1,7 @@
-import * as React from 'react';
-import { cn } from '../../utils/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
+
+import { cn } from '../../utils/cn';
 
 const labelVariants = cva(
   'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
@@ -40,13 +41,13 @@ export interface LabelProps
 
 /**
  * Label component for form fields
- * 
+ *
  * @example
  * ```tsx
  * <Label htmlFor="email" required>
  *   Email Address
  * </Label>
- * 
+ *
  * <Label htmlFor="bio" optional helperText="Tell us about yourself">
  *   Bio
  * </Label>
@@ -65,7 +66,7 @@ const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
       ...props
     },
     ref
-  ) => {
+  ): React.ReactElement => {
     return (
       <div className="space-y-1">
         <label

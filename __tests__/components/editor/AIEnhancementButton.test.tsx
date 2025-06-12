@@ -2,12 +2,14 @@
  * AIEnhancementButton Component test suite
  */
 
-import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import { AIEnhancementButton } from '@/components/editor/AIEnhancementButton';
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
 import { aiClient } from '@/lib/ai/client';
+
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 // Mock the AI client
 jest.mock('@/lib/ai/client', () => ({

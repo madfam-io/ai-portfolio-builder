@@ -1,11 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { useAuth } from '@/lib/contexts/AuthContext';
-import { updateUserMetadata, updatePassword } from '@/lib/auth/auth';
+import React, { useState, useEffect } from 'react';
 import {
   FaUser,
   FaEnvelope,
@@ -16,7 +12,12 @@ import {
   FaExclamationCircle,
 } from 'react-icons/fa';
 
-export default function ProfilePage() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { updateUserMetadata, updatePassword } from '@/lib/auth/auth';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function ProfilePage(): React.ReactElement {
   const { t } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();

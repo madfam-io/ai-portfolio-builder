@@ -4,6 +4,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+
 import { useAIStore } from '@/lib/store/ai-store';
 
 describe('AI Store', () => {

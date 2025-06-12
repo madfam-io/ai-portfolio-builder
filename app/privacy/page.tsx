@@ -1,9 +1,11 @@
 'use client';
 
+import React from 'react';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function PrivacyPage() {
+export default function PrivacyPage(): React.ReactElement {
   const { t } = useLanguage();
 
   return (

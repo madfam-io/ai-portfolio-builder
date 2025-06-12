@@ -18,10 +18,10 @@ All page-specific translations should follow this pattern:
 ```typescript
 // Pattern: [pageName][Element]
 // Examples:
-dashboardTitle          // Page title
-dashboardSubtitle       // Page subtitle
-dashboardWelcomeMessage // Welcome message on dashboard
-dashboardEmptyState     // Empty state message
+dashboardTitle; // Page title
+dashboardSubtitle; // Page subtitle
+dashboardWelcomeMessage; // Welcome message on dashboard
+dashboardEmptyState; // Empty state message
 ```
 
 ### Common UI Elements
@@ -30,26 +30,25 @@ Reusable UI elements should be in the common namespace:
 
 ```typescript
 // Actions
-save              // Button labels
-cancel
-edit
-delete
-create
-update
+save; // Button labels
+cancel;
+edit;
+delete create;
+update;
 
 // Status
-loading           // Loading states
-saving
-saved
-error
-success
+loading; // Loading states
+saving;
+saved;
+error;
+success;
 
 // Navigation
-home
-about
-contact
-dashboard
-profile
+home;
+about;
+contact;
+dashboard;
+profile;
 ```
 
 ### Form Elements
@@ -59,12 +58,12 @@ Form-related translations:
 ```typescript
 // Pattern: [formName][FieldName][Type]
 // Examples:
-signInEmailLabel
-signInEmailPlaceholder
-signInEmailError
-signInPasswordLabel
-signInPasswordPlaceholder
-signInPasswordError
+signInEmailLabel;
+signInEmailPlaceholder;
+signInEmailError;
+signInPasswordLabel;
+signInPasswordPlaceholder;
+signInPasswordError;
 ```
 
 ### Feature-Specific Keys
@@ -74,10 +73,10 @@ Features should have their own namespace:
 ```typescript
 // Pattern: [featureName][Element]
 // Examples:
-portfolioEditorTitle
-portfolioEditorSaveButton
-portfolioEditorCancelButton
-portfolioEditorSuccessMessage
+portfolioEditorTitle;
+portfolioEditorSaveButton;
+portfolioEditorCancelButton;
+portfolioEditorSuccessMessage;
 ```
 
 ### Lists and Sequences
@@ -115,10 +114,10 @@ Error messages should be descriptive:
 ```typescript
 // Pattern: [context]Error[Type]
 // Examples:
-authErrorInvalidCredentials
-authErrorEmailRequired
-portfolioErrorNameRequired
-apiErrorNetworkFailure
+authErrorInvalidCredentials;
+authErrorEmailRequired;
+portfolioErrorNameRequired;
+apiErrorNetworkFailure;
 ```
 
 ### Success Messages
@@ -128,9 +127,9 @@ Success messages follow similar pattern:
 ```typescript
 // Pattern: [context]Success[Action]
 // Examples:
-authSuccessSignIn
-portfolioSuccessSaved
-profileSuccessUpdated
+authSuccessSignIn;
+portfolioSuccessSaved;
+profileSuccessUpdated;
 ```
 
 ## Naming Patterns by Category
@@ -139,61 +138,61 @@ profileSuccessUpdated
 
 ```typescript
 // Sign In
-signInTitle
-signInEmailLabel
-signInPasswordLabel
-signInSubmitButton
-signInForgotPassword
-signInNoAccount
+signInTitle;
+signInEmailLabel;
+signInPasswordLabel;
+signInSubmitButton;
+signInForgotPassword;
+signInNoAccount;
 
 // Sign Up
-signUpTitle
-signUpNameLabel
-signUpEmailLabel
-signUpPasswordLabel
-signUpConfirmPasswordLabel
-signUpSubmitButton
-signUpHaveAccount
+signUpTitle;
+signUpNameLabel;
+signUpEmailLabel;
+signUpPasswordLabel;
+signUpConfirmPasswordLabel;
+signUpSubmitButton;
+signUpHaveAccount;
 
 // Password Reset
-resetPasswordTitle
-resetPasswordEmailLabel
-resetPasswordSubmitButton
-resetPasswordBackToSignIn
+resetPasswordTitle;
+resetPasswordEmailLabel;
+resetPasswordSubmitButton;
+resetPasswordBackToSignIn;
 ```
 
 ### 2. Dashboard
 
 ```typescript
-dashboardTitle
-dashboardWelcomeBack      // "Welcome back, {name}"
-dashboardMyPortfolios
-dashboardCreatePortfolio
-dashboardRecentActivity
-dashboardQuickActions
+dashboardTitle;
+dashboardWelcomeBack; // "Welcome back, {name}"
+dashboardMyPortfolios;
+dashboardCreatePortfolio;
+dashboardRecentActivity;
+dashboardQuickActions;
 ```
 
 ### 3. Portfolio Editor
 
 ```typescript
-editorTitle
-editorSaveButton
-editorPublishButton
-editorPreviewButton
-editorAddSection
-editorDeleteSection
-editorUnsavedChanges
+editorTitle;
+editorSaveButton;
+editorPublishButton;
+editorPreviewButton;
+editorAddSection;
+editorDeleteSection;
+editorUnsavedChanges;
 ```
 
 ### 4. API Responses
 
 ```typescript
-apiErrorUnauthorized
-apiErrorNotFound
-apiErrorServerError
-apiErrorValidationFailed
-apiSuccessDataSaved
-apiSuccessDataDeleted
+apiErrorUnauthorized;
+apiErrorNotFound;
+apiErrorServerError;
+apiErrorValidationFailed;
+apiSuccessDataSaved;
+apiSuccessDataDeleted;
 ```
 
 ## Migration Guide
@@ -210,17 +209,17 @@ Example migration:
 ```typescript
 // Old
 translations = {
-  "welcomeMessage": "Welcome!",
-  "welcome_back": "Welcome back!",
-  "WelcomeUser": "Welcome, {name}!"
-}
+  welcomeMessage: 'Welcome!',
+  welcome_back: 'Welcome back!',
+  WelcomeUser: 'Welcome, {name}!',
+};
 
 // New
 translations = {
-  "welcome": "Welcome!",
-  "welcomeBack": "Welcome back!",
-  "welcomeUser": "Welcome, {name}!"
-}
+  welcome: 'Welcome!',
+  welcomeBack: 'Welcome back!',
+  welcomeUser: 'Welcome, {name}!',
+};
 ```
 
 ## Best Practices
@@ -235,16 +234,16 @@ translations = {
 
 ```typescript
 // ❌ Bad
-title1                    // Not descriptive
-btn_save                  // Wrong case style
-SaveButtonTextForProfile  // Too verbose, wrong case
-err                      // Too abbreviated
+title1; // Not descriptive
+btn_save; // Wrong case style
+SaveButtonTextForProfile; // Too verbose, wrong case
+err; // Too abbreviated
 
 // ✅ Good
-profileTitle             // Clear and contextual
-saveButton              // Simple and reusable
-profileSaveError        // Descriptive error
-welcomeMessage          // Clear purpose
+profileTitle; // Clear and contextual
+saveButton; // Simple and reusable
+profileSaveError; // Descriptive error
+welcomeMessage; // Clear purpose
 ```
 
 ## Special Cases
@@ -254,9 +253,9 @@ welcomeMessage          // Clear purpose
 For pluralized text, use the count suffix:
 
 ```typescript
-portfolioCount_zero    // "No portfolios"
-portfolioCount_one     // "1 portfolio"
-portfolioCount_other   // "{count} portfolios"
+portfolioCount_zero; // "No portfolios"
+portfolioCount_one; // "1 portfolio"
+portfolioCount_other; // "{count} portfolios"
 ```
 
 ### Dynamic Content
@@ -264,9 +263,9 @@ portfolioCount_other   // "{count} portfolios"
 For content with variables:
 
 ```typescript
-welcomeUser           // "Welcome, {name}!"
-lastUpdatedAt        // "Last updated {date}"
-itemsSelected        // "{count} items selected"
+welcomeUser; // "Welcome, {name}!"
+lastUpdatedAt; // "Last updated {date}"
+itemsSelected; // "{count} items selected"
 ```
 
 ## Validation

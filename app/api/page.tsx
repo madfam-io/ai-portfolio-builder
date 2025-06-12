@@ -1,12 +1,15 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
-import { FaCode, FaKey, FaBook, FaShieldAlt } from 'react-icons/fa';
-import Link from 'next/link';
+import React from 'react';
 
-export default function APIPage() {
+import Link from 'next/link';
+import { FaCode, FaKey, FaBook, FaShieldAlt } from 'react-icons/fa';
+
+import Footer from '@/components/landing/Footer';
+import Header from '@/components/landing/Header';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function APIPage(): React.ReactElement {
   const { t } = useLanguage();
 
   return (

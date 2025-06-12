@@ -1,6 +1,6 @@
 /**
  * @fileoverview Error Type Definitions
- * 
+ *
  * Defines error types and interfaces used throughout
  * the error handling system.
  */

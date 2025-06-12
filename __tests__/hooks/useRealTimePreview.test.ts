@@ -6,6 +6,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { Portfolio } from '@/types/portfolio';
 

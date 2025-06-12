@@ -3,8 +3,8 @@
  * Ensures data integrity and type safety for API requests
  */
 
-import { z } from 'zod';
 import DOMPurify from 'isomorphic-dompurify';
+import { z } from 'zod';
 
 // Regular expressions
 const SUBDOMAIN_REGEX = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;

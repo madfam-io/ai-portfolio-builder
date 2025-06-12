@@ -4,6 +4,7 @@
  */
 
 import Redis from 'redis';
+
 import { logger } from '@/lib/utils/logger';
 
 // Cache configuration
@@ -29,12 +30,12 @@ class InMemoryCache {
   async get(key: string): Promise<string | null> {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     if (Date.now() > item.expiry) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return JSON.stringify(item.value);
   }
 
@@ -73,7 +74,7 @@ class CacheService {
       this.client = Redis.createClient({
         url: process.env.REDIS_URL,
         socket: {
-          reconnectStrategy: (retries) => {
+          reconnectStrategy: retries => {
             if (retries > CACHE_CONFIG.maxRetries) {
               logger.error('Redis reconnection failed after max retries');
               return false;
@@ -83,7 +84,7 @@ class CacheService {
         },
       });
 
-      this.client.on('error', (err) => {
+      this.client.on('error', err => {
         logger.error('Redis client error', err);
       });
 
@@ -104,9 +105,10 @@ class CacheService {
    */
   async get<T = any>(key: string): Promise<T | null> {
     try {
-      const value = this.client && this.connected
-        ? await this.client.get(key)
-        : await this.fallback.get(key);
+      const value =
+        this.client && this.connected
+          ? await this.client.get(key)
+          : await this.fallback.get(key);
 
       if (!value) return null;
 
@@ -188,7 +190,7 @@ export const cache = new CacheService();
 
 // Initialize cache on module load
 if (typeof window === 'undefined') {
-  cache.connect().catch((err) => {
+  cache.connect().catch(err => {
     logger.error('Failed to initialize cache', err);
   });
 }
@@ -206,7 +208,7 @@ export function Cacheable(keyPrefix: string, ttl?: number) {
 
     descriptor.value = async function (...args: any[]) {
       const cacheKey = `${keyPrefix}:${propertyName}:${JSON.stringify(args)}`;
-      
+
       // Try to get from cache
       const cached = await cache.get(cacheKey);
       if (cached !== null) {
@@ -216,11 +218,11 @@ export function Cacheable(keyPrefix: string, ttl?: number) {
 
       // Execute original method
       const result = await originalMethod.apply(this, args);
-      
+
       // Cache the result
       await cache.set(cacheKey, result, ttl);
       logger.debug('Cache set', { key: cacheKey });
-      
+
       return result;
     };
 

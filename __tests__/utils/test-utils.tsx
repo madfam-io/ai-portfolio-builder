@@ -1,8 +1,10 @@
-import React, { ReactElement } from 'react';
-import { render, RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { render, RenderOptions } from '@testing-library/react';
 import { ThemeProvider } from 'next-themes';
+import React, { ReactElement } from 'react';
+
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
+
 import { setupI18nTestEnvironment } from './i18n-test-helpers';
 
 // Mock Supabase client for testing
@@ -58,7 +60,7 @@ export function renderWithProviders(
   options: CustomRenderOptions = {}
 ) {
   const { queryClient = createTestQueryClient(), ...renderOptions } = options;
-  
+
   // Setup i18n test environment with Spanish as default
   setupI18nTestEnvironment('es');
 
@@ -66,9 +68,7 @@ export function renderWithProviders(
     return (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <LanguageProvider initialLanguage="es">
-            {children}
-          </LanguageProvider>
+          <LanguageProvider initialLanguage="es">{children}</LanguageProvider>
         </ThemeProvider>
       </QueryClientProvider>
     );

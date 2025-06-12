@@ -2,16 +2,17 @@
 
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio } from '@/types/portfolio';
-// Removed server-side service import - will use API calls instead
 import Link from 'next/link';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
-import { preloadEditorComponents } from '@/components/editor/index.lazy';
 
-function EditorContent() {
+import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio } from '@/types/portfolio';
+import { preloadEditorComponents } from '@/components/editor/index.lazy';
+// Removed server-side service import - will use API calls instead
+
+function EditorContent(): React.ReactElement {
   const { t } = useLanguage();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -33,13 +34,13 @@ function EditorContent() {
         setLoading(true);
         setError(null);
 
-        if (!portfolioId) {
+        if (portfolioId === null || portfolioId === '') {
           // Check for template selection from landing page
           const selectedTemplate =
-            searchParams.get('template') ||
+            searchParams.get('template') ??
             (typeof window !== 'undefined'
               ? localStorage.getItem('selectedTemplate')
-              : null) ||
+              : null) ??
             'developer';
 
           // Clear the stored template after use
@@ -61,7 +62,7 @@ function EditorContent() {
             }),
           });
 
-          if (!response.ok) {
+          if (response.ok === false) {
             throw new Error('Failed to create portfolio');
           }
 
@@ -74,7 +75,7 @@ function EditorContent() {
         } else {
           // Load existing portfolio
           const response = await fetch(`/api/v1/portfolios/${portfolioId}`);
-          if (!response.ok) {
+          if (response.ok === false) {
             setError('Portfolio not found');
             return;
           }
@@ -224,7 +225,7 @@ function EditorContent() {
   );
 }
 
-export default function EditorPage() {
+export default function EditorPage(): React.ReactElement {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <EditorContent />

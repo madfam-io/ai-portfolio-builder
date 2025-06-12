@@ -2,9 +2,11 @@
  * Pricing Component test suite - working version
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import Pricing from '@/components/landing/Pricing';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Pricing Component', () => {

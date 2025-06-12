@@ -4,39 +4,37 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+
 import { AnalyticsService } from '@/lib/services/analyticsService';
+import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
 /**
  * Get user's repositories for analytics
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
         { status: 503 }
       );
     }
-    
+
     // Check if user is authenticated
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const analyticsService = new AnalyticsService(user.id);
-    
+
     try {
       await analyticsService.initialize();
     } catch (error: any) {
@@ -71,32 +69,29 @@ export async function GET() {
 /**
  * Sync repositories from GitHub
  */
-export async function POST(request: Request) {
+export async function POST(request: Request): Promise<Response> {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
         { status: 503 }
       );
     }
-    
+
     // Check if user is authenticated
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const analyticsService = new AnalyticsService(user.id);
-    
+
     try {
       await analyticsService.initialize();
     } catch (error: any) {
@@ -120,10 +115,11 @@ export async function POST(request: Request) {
       .eq('user_id', user.id)
       .single();
 
-    const lastSynced = integration?.last_synced_at 
-      ? new Date(integration.last_synced_at) 
+    const lastSynced = integration?.last_synced_at
+      ? new Date(integration.last_synced_at)
       : new Date(0);
-    const hoursSinceSync = (Date.now() - lastSynced.getTime()) / (1000 * 60 * 60);
+    const hoursSinceSync =
+      (Date.now() - lastSynced.getTime()) / (1000 * 60 * 60);
 
     if (!force && hoursSinceSync < 1) {
       return NextResponse.json(

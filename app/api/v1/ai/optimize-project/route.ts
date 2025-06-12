@@ -4,9 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { z } from 'zod';
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { createClient } from '@/lib/supabase/server';
 
 // Simple AI usage logging function - defined at the bottom of file to avoid duplication
 
@@ -40,7 +41,7 @@ const optimizeProjectSchema = z.object({
     .default({}),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
@@ -159,7 +160,7 @@ export async function POST(request: NextRequest) {
 /**
  * Batch optimize multiple projects
  */
-export async function PUT(request: NextRequest) {
+export async function PUT(request: NextRequest): Promise<Response> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -298,7 +299,7 @@ async function logAIUsage(
   userId: string,
   operationType: string,
   metadata: Record<string, any>
-) {
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {

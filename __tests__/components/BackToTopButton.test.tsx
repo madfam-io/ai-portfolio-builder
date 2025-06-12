@@ -1,7 +1,9 @@
-import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import BackToTopButton from '@/components/BackToTopButton';
+
 import { renderWithProviders } from '../utils/test-utils';
 
 // Mock window.scrollTo

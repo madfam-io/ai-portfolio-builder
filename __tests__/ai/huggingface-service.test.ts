@@ -36,9 +36,12 @@ describe('HuggingFaceService', () => {
     it('should enhance bio successfully', async () => {
       const mockResponse = {
         ok: true,
-        json: async () => [{
-          generated_text: 'Enhanced bio: Experienced Software Engineer with 3+ years developing scalable applications using JavaScript, React, and Node.js at Tech Corp.',
-        }],
+        json: async () => [
+          {
+            generated_text:
+              'Enhanced bio: Experienced Software Engineer with 3+ years developing scalable applications using JavaScript, React, and Node.js at Tech Corp.',
+          },
+        ],
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
@@ -60,9 +63,11 @@ describe('HuggingFaceService', () => {
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(service.enhanceBio('test bio', mockBioContext))
-        .rejects
-        .toThrow('Model microsoft/Phi-3.5-mini-instruct is unavailable on huggingface');
+      await expect(
+        service.enhanceBio('test bio', mockBioContext)
+      ).rejects.toThrow(
+        'Model microsoft/Phi-3.5-mini-instruct is unavailable on huggingface'
+      );
     });
 
     it('should handle quota exceeded errors', async () => {
@@ -72,23 +77,28 @@ describe('HuggingFaceService', () => {
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(service.enhanceBio('test bio', mockBioContext))
-        .rejects
-        .toThrow('API quota exceeded for huggingface');
+      await expect(
+        service.enhanceBio('test bio', mockBioContext)
+      ).rejects.toThrow('API quota exceeded for huggingface');
     });
 
     it('should clean up model response properly', async () => {
       const mockResponse = {
         ok: true,
-        json: async () => [{
-          generated_text: 'Bio: This is an enhanced bio with multiple\n\n\nline breaks.',
-        }],
+        json: async () => [
+          {
+            generated_text:
+              'Bio: This is an enhanced bio with multiple\n\n\nline breaks.',
+          },
+        ],
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
       const result = await service.enhanceBio('test', mockBioContext);
 
-      expect(result.content).toBe('This is an enhanced bio with multiple line breaks.');
+      expect(result.content).toBe(
+        'This is an enhanced bio with multiple line breaks.'
+      );
       expect(result.content).not.toContain('Bio:');
       expect(result.content).not.toContain('\n\n\n');
     });
@@ -98,19 +108,22 @@ describe('HuggingFaceService', () => {
     it('should optimize project description successfully', async () => {
       const mockResponse = {
         ok: true,
-        json: async () => [{
-          generated_text: JSON.stringify({
-            description: 'Enhanced project description with STAR format and metrics.',
-            highlights: ['10k+ users', 'Real-time features'],
-            metrics: ['99.9% uptime', '10,000+ users'],
-            starFormat: {
-              situation: 'E-commerce platform needed',
-              task: 'Build scalable solution',
-              action: 'Developed React/Node.js app',
-              result: 'Achieved 10k+ users',
-            },
-          }),
-        }],
+        json: async () => [
+          {
+            generated_text: JSON.stringify({
+              description:
+                'Enhanced project description with STAR format and metrics.',
+              highlights: ['10k+ users', 'Real-time features'],
+              metrics: ['99.9% uptime', '10,000+ users'],
+              starFormat: {
+                situation: 'E-commerce platform needed',
+                task: 'Build scalable solution',
+                action: 'Developed React/Node.js app',
+                result: 'Achieved 10k+ users',
+              },
+            }),
+          },
+        ],
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
@@ -128,9 +141,12 @@ describe('HuggingFaceService', () => {
     it('should handle non-JSON responses gracefully', async () => {
       const mockResponse = {
         ok: true,
-        json: async () => [{
-          generated_text: 'This is not JSON, just a text response about the project.',
-        }],
+        json: async () => [
+          {
+            generated_text:
+              'This is not JSON, just a text response about the project.',
+          },
+        ],
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
@@ -140,7 +156,9 @@ describe('HuggingFaceService', () => {
         ['JavaScript']
       );
 
-      expect(result.description).toBe('This is not JSON, just a text response about the project.');
+      expect(result.description).toBe(
+        'This is not JSON, just a text response about the project.'
+      );
       expect(result.highlights).toEqual([]);
       expect(result.metrics).toEqual([]);
     });
@@ -196,7 +214,8 @@ describe('HuggingFaceService', () => {
 
   describe('Content Scoring', () => {
     it('should score content quality accurately', async () => {
-      const professionalContent = 'Led development team of 5 engineers, delivering 3 major products that increased revenue by 40% and improved user satisfaction scores by 25%.';
+      const professionalContent =
+        'Led development team of 5 engineers, delivering 3 major products that increased revenue by 40% and improved user satisfaction scores by 25%.';
 
       const result = await service.scoreContent(professionalContent, 'bio');
 
@@ -213,15 +232,22 @@ describe('HuggingFaceService', () => {
 
       expect(result.overall).toBeLessThan(70);
       expect(result.suggestions.length).toBeGreaterThan(0);
-      expect(result.suggestions.some(s => s.includes('professional'))).toBe(true);
+      expect(result.suggestions.some(s => s.includes('professional'))).toBe(
+        true
+      );
     });
 
     it('should calculate readability scores correctly', async () => {
-      const readableContent = 'I am a software engineer. I build web applications. I love solving complex problems.';
-      const unreadableContent = 'I am a software engineer who builds web applications and loves solving complex problems that involve multiple stakeholders and cross-functional teams working together to deliver high-quality solutions.';
+      const readableContent =
+        'I am a software engineer. I build web applications. I love solving complex problems.';
+      const unreadableContent =
+        'I am a software engineer who builds web applications and loves solving complex problems that involve multiple stakeholders and cross-functional teams working together to deliver high-quality solutions.';
 
       const readableResult = await service.scoreContent(readableContent, 'bio');
-      const unreadableResult = await service.scoreContent(unreadableContent, 'bio');
+      const unreadableResult = await service.scoreContent(
+        unreadableContent,
+        'bio'
+      );
 
       // Both should have valid readability scores
       expect(readableResult.readability).toBeGreaterThan(0);
@@ -244,7 +270,7 @@ describe('HuggingFaceService', () => {
         expect.objectContaining({
           method: 'GET',
           headers: expect.objectContaining({
-            'Authorization': 'Bearer test-api-key',
+            Authorization: 'Bearer test-api-key',
           }),
         })
       );
@@ -285,13 +311,15 @@ describe('HuggingFaceService', () => {
     it('should wrap unknown errors in AIServiceError', async () => {
       mockFetch.mockRejectedValueOnce(new Error('Unknown error'));
 
-      await expect(service.enhanceBio('test', {
-        title: 'Test',
-        skills: ['test'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      })).rejects.toThrow('Model call failed');
+      await expect(
+        service.enhanceBio('test', {
+          title: 'Test',
+          skills: ['test'],
+          experience: [],
+          tone: 'professional',
+          targetLength: 'concise',
+        })
+      ).rejects.toThrow('Model call failed');
     });
 
     it('should preserve AIServiceError instances', async () => {
@@ -301,13 +329,15 @@ describe('HuggingFaceService', () => {
       };
       mockFetch.mockResolvedValueOnce(mockResponse as any);
 
-      await expect(service.enhanceBio('test', {
-        title: 'Test',
-        skills: ['test'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      })).rejects.toThrow('API request failed: 400');
+      await expect(
+        service.enhanceBio('test', {
+          title: 'Test',
+          skills: ['test'],
+          experience: [],
+          tone: 'professional',
+          targetLength: 'concise',
+        })
+      ).rejects.toThrow('API request failed: 400');
     });
   });
 
@@ -316,7 +346,7 @@ describe('HuggingFaceService', () => {
       const text = 'This is a test string with some words.';
       // Access private method for testing
       const estimatedTokens = (service as any).estimateTokens(text);
-      
+
       expect(estimatedTokens).toBeGreaterThan(0);
       expect(estimatedTokens).toBe(Math.ceil(text.length / 4));
     });

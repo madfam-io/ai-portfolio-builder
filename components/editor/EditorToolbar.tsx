@@ -1,6 +1,5 @@
 'use client';
 
-import { TemplateType } from '@/types/portfolio';
 import {
   FiMonitor,
   FiTablet,
@@ -14,6 +13,8 @@ import {
   FiStar,
   FiLayout,
 } from 'react-icons/fi';
+
+import { TemplateType } from '@/types/portfolio';
 
 interface EditorToolbarProps {
   previewMode: 'desktop' | 'tablet' | 'mobile';

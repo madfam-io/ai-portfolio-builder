@@ -51,7 +51,9 @@ export function getDeprecationInfo(version: string) {
  * API Version Middleware
  * Validates API version and adds appropriate headers
  */
-export async function apiVersionMiddleware(request: NextRequest) {
+export async function apiVersionMiddleware(
+  request: NextRequest
+): Promise<void> {
   const pathname = request.nextUrl.pathname;
 
   // Only process API routes

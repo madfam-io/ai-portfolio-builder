@@ -15,9 +15,11 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import * as esTranslations from './translations/es';
+
 import * as enTranslations from './translations/en';
+import * as esTranslations from './translations/es';
 import { flattenTranslations } from './utils';
+
 import type {
   Language,
   FlattenedTranslations,

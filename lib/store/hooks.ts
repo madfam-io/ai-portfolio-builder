@@ -5,10 +5,11 @@
 
 import { useCallback, useEffect, useMemo } from 'react';
 import { shallow } from 'zustand/shallow';
+
+import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
 import { useUIStore } from './ui-store';
-import { useAIStore } from './ai-store';
 
 /**
  * Hook for authenticated user data with loading state

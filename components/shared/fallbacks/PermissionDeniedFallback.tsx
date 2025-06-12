@@ -7,9 +7,10 @@
 
 'use client';
 
-import React from 'react';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { FiLock, FiHome, FiArrowLeft, FiMail, FiShield } from 'react-icons/fi';
+
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
 /**

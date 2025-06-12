@@ -20,7 +20,8 @@ export default {
 
   // Root error boundary
   rootErrorTitle: 'Algo salió mal',
-  persistentError: 'Si este problema persiste, por favor contacta a nuestro equipo de soporte.',
+  persistentError:
+    'Si este problema persiste, por favor contacta a nuestro equipo de soporte.',
 
   // Page errors
   pageError: 'Error de Página',
@@ -31,21 +32,25 @@ export default {
   // Generic errors
   error: 'Error',
   genericError: 'Ocurrió un error inesperado.',
-  
+
   // Network errors
   networkErrorTitle: 'Problema de Conexión',
-  networkErrorDescription: 'No se puede conectar a nuestros servidores. Por favor verifica tu conexión a internet e intenta de nuevo.',
+  networkErrorDescription:
+    'No se puede conectar a nuestros servidores. Por favor verifica tu conexión a internet e intenta de nuevo.',
   timeoutErrorTitle: 'Tiempo de Espera Agotado',
-  timeoutErrorDescription: 'La solicitud tardó demasiado en completarse. Por favor intenta de nuevo.',
+  timeoutErrorDescription:
+    'La solicitud tardó demasiado en completarse. Por favor intenta de nuevo.',
 
   // Authentication errors
   authErrorTitle: 'Autenticación Requerida',
-  authErrorDescription: 'Tu sesión ha expirado. Por favor inicia sesión nuevamente para continuar.',
+  authErrorDescription:
+    'Tu sesión ha expirado. Por favor inicia sesión nuevamente para continuar.',
 
   // Permission errors
   permissionErrorTitle: 'Acceso Denegado',
   permissionErrorDescription: 'No tienes permiso para acceder a este recurso.',
-  permissionErrorDescriptionResource: 'No tienes permiso para acceder a {resource}.',
+  permissionErrorDescriptionResource:
+    'No tienes permiso para acceder a {resource}.',
   permissionResource: 'Necesitas permiso para acceder a {resource}.',
   permissionActionResource: 'Necesitas permiso para {action} {resource}.',
   permissionGeneric: 'No tienes los permisos necesarios para esta acción.',
@@ -55,18 +60,21 @@ export default {
 
   // Validation errors
   validationErrorTitle: 'Entrada Inválida',
-  validationErrorDescription: 'Por favor corrige los errores a continuación e intenta de nuevo.',
+  validationErrorDescription:
+    'Por favor corrige los errores a continuación e intenta de nuevo.',
 
   // Server errors
   serverErrorTitle: 'Error del Servidor',
-  serverErrorDescription: 'Nuestros servidores están experimentando problemas. Por favor intenta de nuevo en unos momentos.',
+  serverErrorDescription:
+    'Nuestros servidores están experimentando problemas. Por favor intenta de nuevo en unos momentos.',
 
   // Not found errors
   notFoundTitle: 'No Encontrado',
   notFoundDescription: 'La página o recurso que buscas no existe.',
   notFound: 'no encontrado',
   pageNotFoundTitle: 'Página No Encontrada',
-  pageNotFoundDescription: 'La página que buscas no existe. Puede haber sido movida, eliminada, o ingresaste una URL incorrecta.',
+  pageNotFoundDescription:
+    'La página que buscas no existe. Puede haber sido movida, eliminada, o ingresaste una URL incorrecta.',
   resourceNotFoundDescription: 'El {type} que buscas no se pudo encontrar.',
 
   // Search errors
@@ -81,17 +89,20 @@ export default {
 
   // Unknown errors
   unknownErrorTitle: 'Error Inesperado',
-  unknownErrorDescription: 'Algo inesperado ocurrió. Nuestro equipo ha sido notificado.',
+  unknownErrorDescription:
+    'Algo inesperado ocurrió. Nuestro equipo ha sido notificado.',
 
   // Maximum retries
   maxRetriesReached: 'Se alcanzó el máximo de intentos de reintento.',
 
   // Offline errors
   offlineTitle: 'Estás Sin Conexión',
-  offlineDescription: 'Por favor verifica tu conexión a internet e intenta de nuevo.',
+  offlineDescription:
+    'Por favor verifica tu conexión a internet e intenta de nuevo.',
   offlineMode: 'Modo Sin Conexión',
   offlineModeDescription: 'Algunas funciones pueden estar limitadas.',
-  offlineBanner: 'Actualmente estás sin conexión. Algunas funciones pueden no estar disponibles.',
+  offlineBanner:
+    'Actualmente estás sin conexión. Algunas funciones pueden no estar disponibles.',
   offlineContent: 'Contenido No Disponible Sin Conexión',
   offlineContentDescription: 'Este contenido requiere una conexión a internet.',
   offlineCapabilities: 'Mientras estés sin conexión, puedes:',
@@ -111,7 +122,8 @@ export default {
   permissionDeniedResource: 'No tienes permiso para acceder a {resource}.',
 
   // API errors
-  apiTimeout: 'La solicitud ha excedido el tiempo de espera. Por favor, intenta de nuevo.',
+  apiTimeout:
+    'La solicitud ha excedido el tiempo de espera. Por favor, intenta de nuevo.',
   apiNotFound: 'El recurso solicitado no fue encontrado.',
   apiUnauthorized: 'No estás autorizado para realizar esta acción.',
   apiForbidden: 'El acceso a este recurso está prohibido.',
@@ -125,24 +137,30 @@ export default {
   passwordMismatch: 'Las contraseñas no coinciden',
   invalidUrl: 'Por favor ingresa una URL válida',
   fileTooLarge: 'El tamaño del archivo debe ser menor a 10MB',
-  invalidFileType: 'Tipo de archivo inválido. Por favor sube un archivo válido.',
+  invalidFileType:
+    'Tipo de archivo inválido. Por favor sube un archivo válido.',
 
   // Auth errors
   invalidCredentials: 'Correo electrónico o contraseña inválidos',
   accountExists: 'Ya existe una cuenta con este correo electrónico',
   accountNotFound: 'No se encontró una cuenta con este correo electrónico',
-  emailNotVerified: 'Por favor verifica tu correo electrónico antes de iniciar sesión',
+  emailNotVerified:
+    'Por favor verifica tu correo electrónico antes de iniciar sesión',
   tooManyAttempts: 'Demasiados intentos. Por favor, intenta más tarde.',
 
   // Portfolio errors
   portfolioNotFound: 'Portafolio no encontrado',
-  portfolioSaveFailed: 'Error al guardar el portafolio. Por favor, intenta de nuevo.',
-  portfolioDeleteFailed: 'Error al eliminar el portafolio. Por favor, intenta de nuevo.',
-  portfolioPublishFailed: 'Error al publicar el portafolio. Por favor, intenta de nuevo.',
+  portfolioSaveFailed:
+    'Error al guardar el portafolio. Por favor, intenta de nuevo.',
+  portfolioDeleteFailed:
+    'Error al eliminar el portafolio. Por favor, intenta de nuevo.',
+  portfolioPublishFailed:
+    'Error al publicar el portafolio. Por favor, intenta de nuevo.',
 
   // Payment errors
   paymentFailed: 'El pago falló. Por favor verifica tus detalles de pago.',
-  subscriptionExpired: 'Tu suscripción ha expirado. Por favor renueva para continuar.',
+  subscriptionExpired:
+    'Tu suscripción ha expirado. Por favor renueva para continuar.',
   planLimitReached: 'Has alcanzado el límite de tu plan actual.',
 
   // Empty states

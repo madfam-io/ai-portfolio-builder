@@ -6,6 +6,8 @@
  * Now uses versioned API endpoints
  */
 
+import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
+
 import {
   BioContext,
   ProjectEnhancement,
@@ -13,7 +15,6 @@ import {
   UserProfile,
   EnhancedContent,
 } from './types';
-import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
 
 export interface AIClientConfig {
   baseUrl?: string;

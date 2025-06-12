@@ -1,5 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
+
 import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
 import { Portfolio, TemplateType } from '@/types/portfolio';
 

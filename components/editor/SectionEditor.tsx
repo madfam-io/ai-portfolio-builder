@@ -16,14 +16,28 @@ import {
   Code,
   Award,
 } from 'lucide-react';
-import { DraggableItem } from './DraggableItem';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { cn } from '@/components/ui/utils';
+
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import type { Portfolio, Experience, Education, Project, Skill, Certification } from '@/types/portfolio';
+import { cn } from '@/components/ui/utils';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import type {
+  Portfolio,
+  Experience,
+  Education,
+  Project,
+  Skill,
+  Certification,
+} from '@/types/portfolio';
+
+import { DraggableItem } from './DraggableItem';
 
 // Union type for portfolio section items
-type PortfolioSectionItem = Experience | Education | Project | Skill | Certification;
+type PortfolioSectionItem =
+  | Experience
+  | Education
+  | Project
+  | Skill
+  | Certification;
 
 interface SectionEditorProps {
   portfolio: Portfolio;
@@ -120,71 +134,76 @@ export const SectionEditor = React.memo(function SectionEditor({
   };
 
   return (
-    <WidgetErrorBoundary 
+    <WidgetErrorBoundary
       widgetName={`SectionEditor-${section}`}
       compact={false}
       isolate={true}
     >
       <div className="space-y-4">
         {/* Section Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {getSectionIcon()}
-          <h3 className="text-lg font-semibold">{getSectionTitle()}</h3>
-          <span className="text-sm text-gray-500">
-            ({portfolio[section]?.length || 0})
-          </span>
-        </div>
-        <button
-          onClick={handleAdd}
-          className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          {t.add}
-        </button>
-      </div>
-
-      {/* Items List */}
-      <div className="space-y-3">
-        {portfolio[section]?.map((item, index) => (
-          <DraggableItem
-            key={`${section}-${index}`}
-            item={{
-              id: `${section}-${index}`,
-              type: section.slice(0, -1) as 'section' | 'project' | 'experience' | 'education' | 'skill',
-              index,
-              data: item as any, // TODO: Define proper types for portfolio items
-            }}
-            onReorder={handleReorder}
-            disabled={editingIndex === index}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {getSectionIcon()}
+            <h3 className="text-lg font-semibold">{getSectionTitle()}</h3>
+            <span className="text-sm text-gray-500">
+              ({portfolio[section]?.length || 0})
+            </span>
+          </div>
+          <button
+            onClick={handleAdd}
+            className="inline-flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
           >
-            {editingIndex === index ? (
-              <EditForm
-                section={section}
-                item={item}
-                onSave={updated => handleSave(updated, index)}
-                onCancel={handleCancel}
-              />
-            ) : (
-              <ItemCard
-                section={section}
-                item={item}
-                onEdit={() => handleEdit(index)}
-                onDelete={() => handleDelete(index)}
-              />
-            )}
-          </DraggableItem>
-        ))}
+            <Plus className="h-4 w-4" />
+            {t.add}
+          </button>
+        </div>
 
-        {/* Add New Form */}
-        {isAdding && (
-          <EditForm
-            section={section}
-            onSave={handleSave}
-            onCancel={handleCancel}
-          />
-        )}
-      </div>
+        {/* Items List */}
+        <div className="space-y-3">
+          {portfolio[section]?.map((item, index) => (
+            <DraggableItem
+              key={`${section}-${index}`}
+              item={{
+                id: `${section}-${index}`,
+                type: section.slice(0, -1) as
+                  | 'section'
+                  | 'project'
+                  | 'experience'
+                  | 'education'
+                  | 'skill',
+                index,
+                data: item as any, // TODO: Define proper types for portfolio items
+              }}
+              onReorder={handleReorder}
+              disabled={editingIndex === index}
+            >
+              {editingIndex === index ? (
+                <EditForm
+                  section={section}
+                  item={item}
+                  onSave={updated => handleSave(updated, index)}
+                  onCancel={handleCancel}
+                />
+              ) : (
+                <ItemCard
+                  section={section}
+                  item={item}
+                  onEdit={() => handleEdit(index)}
+                  onDelete={() => handleDelete(index)}
+                />
+              )}
+            </DraggableItem>
+          ))}
+
+          {/* Add New Form */}
+          {isAdding && (
+            <EditForm
+              section={section}
+              onSave={handleSave}
+              onCancel={handleCancel}
+            />
+          )}
+        </div>
       </div>
     </WidgetErrorBoundary>
   );
@@ -371,7 +390,9 @@ function EditForm({
   onCancel: () => void;
 }) {
   const { t } = useLanguage();
-  const [formData, _setFormData] = useState<PortfolioSectionItem>(item || getEmptyItem(section));
+  const [formData, _setFormData] = useState<PortfolioSectionItem>(
+    item || getEmptyItem(section)
+  );
 
   // Form implementation would go here...
   // This is a simplified version
@@ -418,8 +439,9 @@ function getSkillLevel(level: string | undefined): number {
 }
 
 function getEmptyItem(section: string): PortfolioSectionItem {
-  const generateId = () => `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-  
+  const generateId = () =>
+    `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
   switch (section) {
     case 'experience':
       return {
@@ -450,17 +472,17 @@ function getEmptyItem(section: string): PortfolioSectionItem {
         technologies: [],
       } as Project;
     case 'skills':
-      return { 
-        name: '', 
-        level: 'intermediate' as const, 
-        category: '' 
+      return {
+        name: '',
+        level: 'intermediate' as const,
+        category: '',
       } as Skill;
     case 'certifications':
-      return { 
+      return {
         id: generateId(),
-        name: '', 
-        issuer: '', 
-        issueDate: '' 
+        name: '',
+        issuer: '',
+        issueDate: '',
       } as Certification;
     default:
       return {} as PortfolioSectionItem;

@@ -9,6 +9,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { FiWifiOff, FiRefreshCw, FiCloud } from 'react-icons/fi';
+
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
 /**

@@ -4,21 +4,22 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { v4 as uuidv4 } from 'uuid';
+
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
   validateCreatePortfolio,
   validatePortfolioQuery,
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
-import { v4 as uuidv4 } from 'uuid';
-import { logger } from '@/lib/utils/logger';
-import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
 /**
  * GET /api/portfolios
  * Retrieves all portfolios for the authenticated user
  */
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
     // Create Supabase client
     const supabase = await createClient();
@@ -96,7 +97,10 @@ export async function GET(request: NextRequest) {
     const { data: portfolios, error: fetchError } = await query;
 
     if (fetchError) {
-      logger.error('Database error fetching portfolios', fetchError instanceof Error ? fetchError : { error: fetchError });
+      logger.error(
+        'Database error fetching portfolios',
+        fetchError instanceof Error ? fetchError : { error: fetchError }
+      );
       return NextResponse.json(
         { error: 'Failed to fetch portfolios' },
         { status: 500 }
@@ -131,7 +135,7 @@ export async function GET(request: NextRequest) {
  * POST /api/portfolios
  * Creates a new portfolio for the authenticated user
  */
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // Create Supabase client
     const supabase = await createClient();
@@ -242,7 +246,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      logger.error('Database error creating portfolio', insertError instanceof Error ? insertError : { error: insertError });
+      logger.error(
+        'Database error creating portfolio',
+        insertError instanceof Error ? insertError : { error: insertError }
+      );
 
       // Handle specific errors
       if (insertError.code === '23505') {

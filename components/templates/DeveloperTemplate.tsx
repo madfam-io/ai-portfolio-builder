@@ -22,7 +22,6 @@
 'use client';
 
 import React from 'react';
-import { Portfolio } from '@/types/portfolio';
 import {
   FiGithub,
   FiLinkedin,
@@ -32,6 +31,8 @@ import {
   FiCode,
   FiDownload,
 } from 'react-icons/fi';
+
+import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Developer Template component

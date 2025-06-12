@@ -1,9 +1,12 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import React from 'react';
+
 import Link from 'next/link';
 
-export default function CTA() {
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function CTA(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section className="py-20 px-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white">

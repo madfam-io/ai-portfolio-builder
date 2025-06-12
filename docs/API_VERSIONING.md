@@ -63,7 +63,7 @@ const { data: portfolio, error } = await apiClient.post(
   {
     name: 'My Portfolio',
     title: 'Senior Developer',
-    template: 'developer'
+    template: 'developer',
   }
 );
 
@@ -118,15 +118,17 @@ All errors follow a consistent format:
 ### Updating from Unversioned to v1
 
 1. **Update API calls**: Add `/v1` to all API endpoints
+
    ```typescript
    // Old
-   fetch('/api/portfolios')
-   
+   fetch('/api/portfolios');
+
    // New
-   fetch('/api/v1/portfolios')
+   fetch('/api/v1/portfolios');
    ```
 
 2. **Use the API client**: For automatic version management
+
    ```typescript
    import { apiClient } from '@/lib/api/client';
    const { data } = await apiClient.get('portfolios');

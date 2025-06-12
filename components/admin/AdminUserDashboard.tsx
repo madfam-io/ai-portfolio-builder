@@ -5,11 +5,8 @@
  * Allows admins to manage users, view analytics, and switch between admin/user modes
  */
 
-import React, { useState } from 'react';
 import Image from 'next/image';
-import { useAuth } from '@/lib/contexts/AuthContext';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { logger } from '@/lib/utils/logger';
+import React, { useState } from 'react';
 import {
   FiUsers,
   FiSettings,
@@ -25,7 +22,11 @@ import {
   FiCheck,
 } from 'react-icons/fi';
 
-export default function AdminUserDashboard() {
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
+
+export default function AdminUserDashboard(): React.ReactElement {
   const {
     user,
     isAdmin,

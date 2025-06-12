@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+
 import { getCurrentUser } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function AuthCallbackPage() {
+export default function AuthCallbackPage(): React.ReactElement {
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>(
     'loading'
   );

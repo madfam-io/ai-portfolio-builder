@@ -9,13 +9,14 @@
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { FiAlertTriangle, FiRefreshCw, FiHome, FiMail } from 'react-icons/fi';
-import { logger } from '@/lib/utils/logger';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   serializeError,
   getUserFriendlyMessage,
   getErrorContext,
 } from '@/lib/utils/error-handling/error-utils';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
 
 interface RootErrorBoundaryProps {
   children: ReactNode;

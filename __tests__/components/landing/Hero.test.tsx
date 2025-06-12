@@ -3,8 +3,10 @@
  */
 
 import React from 'react';
-import { screen, render } from '../../utils/comprehensive-test-setup';
+
 import Hero from '@/components/landing/Hero';
+
+import { screen, render } from '../../utils/comprehensive-test-setup';
 
 describe('Hero Component', () => {
   describe('Content Rendering', () => {

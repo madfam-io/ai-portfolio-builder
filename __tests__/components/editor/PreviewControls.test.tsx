@@ -5,8 +5,9 @@
  * zoom controls, fullscreen toggle, and responsiveness indicators.
  */
 
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+
 import { PreviewControls } from '@/components/editor/PreviewControls';
 
 describe('PreviewControls', () => {

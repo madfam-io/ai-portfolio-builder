@@ -2,9 +2,11 @@
  * Refactored HomePage test suite - optimized for performance
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import HomePage from '@/app/page';
+
 import { renderWithLanguage } from '../utils/i18n-test-utils';
 import { withTimeout } from '../utils/test-optimization';
 

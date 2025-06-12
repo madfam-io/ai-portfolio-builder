@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { TestHelpers } from './utils/test-helpers';
 
 test.describe('PRISMA Authentication', () => {
@@ -19,17 +20,23 @@ test.describe('PRISMA Authentication', () => {
     await expect(page.locator('text=Crear Cuenta')).toBeVisible();
     await expect(page.getByPlaceholder('Nombre completo')).toBeVisible();
     await expect(page.getByPlaceholder('Correo electrónico')).toBeVisible();
-    await expect(page.getByPlaceholder(/Contraseña.*12 caracteres/)).toBeVisible();
+    await expect(
+      page.getByPlaceholder(/Contraseña.*12 caracteres/)
+    ).toBeVisible();
 
     // Check password requirements text
-    await expect(page.locator('text=/12 caracteres.*mayús.*minús.*números.*símbolos/')).toBeVisible();
+    await expect(
+      page.locator('text=/12 caracteres.*mayús.*minús.*números.*símbolos/')
+    ).toBeVisible();
 
     // Check OAuth options
     await expect(page.locator('text=O regístrate con')).toBeVisible();
     await expect(page.getByRole('button', { name: /Google/ })).toBeVisible();
 
     // Check link to signin
-    await expect(page.locator('text=inicia sesión con tu cuenta existente')).toBeVisible();
+    await expect(
+      page.locator('text=inicia sesión con tu cuenta existente')
+    ).toBeVisible();
   });
 
   test('should display signin page with PRISMA branding', async ({ page }) => {
@@ -75,23 +82,25 @@ test.describe('PRISMA Authentication', () => {
     await helpers.goto('/auth/signup');
 
     const passwordInput = page.getByPlaceholder(/Contraseña/);
-    
+
     // Test various password patterns
     const weakPasswords = [
       'onlylowercase',
-      'ONLYUPPERCASE', 
+      'ONLYUPPERCASE',
       '123456789012',
       'NoNumbersHere',
       'nonumb3rs',
-      'NoSymbols123'
+      'NoSymbols123',
     ];
 
     for (const password of weakPasswords) {
       await passwordInput.clear();
       await passwordInput.fill(password);
-      
+
       // The placeholder should still indicate requirements
-      await expect(page.getByPlaceholder(/mayús.*minús.*números.*símbolos/)).toBeVisible();
+      await expect(
+        page.getByPlaceholder(/mayús.*minús.*números.*símbolos/)
+      ).toBeVisible();
     }
 
     // Test a strong password
@@ -100,12 +109,16 @@ test.describe('PRISMA Authentication', () => {
     await expect(passwordInput).toHaveValue('StrongPass123!@#');
   });
 
-  test('should handle signup flow with email confirmation', async ({ page }) => {
+  test('should handle signup flow with email confirmation', async ({
+    page,
+  }) => {
     await helpers.goto('/auth/signup');
 
     // Fill signup form with valid data
     await page.getByPlaceholder('Nombre completo').fill('E2E Test User');
-    await page.getByPlaceholder('Correo electrónico').fill('e2e-test@example.com');
+    await page
+      .getByPlaceholder('Correo electrónico')
+      .fill('e2e-test@example.com');
     await page.getByPlaceholder(/Contraseña/).fill('ValidPassword123!');
 
     // Mock successful signup response that requires email confirmation
@@ -118,11 +131,11 @@ test.describe('PRISMA Authentication', () => {
             user: {
               id: 'test-user-id',
               email: 'e2e-test@example.com',
-              email_confirmed_at: null // Not confirmed yet
-            }
+              email_confirmed_at: null, // Not confirmed yet
+            },
           },
-          error: null
-        })
+          error: null,
+        }),
       });
     });
 
@@ -131,11 +144,17 @@ test.describe('PRISMA Authentication', () => {
 
     // Should show email confirmation message
     await expect(page.locator('text=¡Cuenta Creada!')).toBeVisible();
-    await expect(page.locator('text=Hemos enviado un enlace de confirmación')).toBeVisible();
-    await expect(page.locator('text=revisa tu bandeja de entrada')).toBeVisible();
+    await expect(
+      page.locator('text=Hemos enviado un enlace de confirmación')
+    ).toBeVisible();
+    await expect(
+      page.locator('text=revisa tu bandeja de entrada')
+    ).toBeVisible();
 
     // Should have button to go to signin
-    await expect(page.getByRole('link', { name: 'Ir a Iniciar Sesión' })).toBeVisible();
+    await expect(
+      page.getByRole('link', { name: 'Ir a Iniciar Sesión' })
+    ).toBeVisible();
   });
 
   test('should handle forgot password flow', async ({ page }) => {
@@ -146,21 +165,23 @@ test.describe('PRISMA Authentication', () => {
 
     // Should navigate to reset password page
     await expect(page).toHaveURL(/\/auth\/reset-password/);
-    
+
     // Check reset password form
     await expect(page.locator('text=Restablecer Contraseña')).toBeVisible();
     await expect(page.getByPlaceholder('Correo electrónico')).toBeVisible();
-    await expect(page.locator('text=Ingresa tu correo electrónico')).toBeVisible();
+    await expect(
+      page.locator('text=Ingresa tu correo electrónico')
+    ).toBeVisible();
 
     // Fill email and submit
     await page.getByPlaceholder('Correo electrónico').fill('test@example.com');
-    
+
     // Mock password reset response
     await page.route('**/auth/v1/recover', async route => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
-        body: JSON.stringify({ error: null })
+        body: JSON.stringify({ error: null }),
       });
     });
 
@@ -168,7 +189,9 @@ test.describe('PRISMA Authentication', () => {
 
     // Should show success message
     await expect(page.locator('text=¡Correo Enviado!')).toBeVisible();
-    await expect(page.locator('text=Hemos enviado un enlace para restablecer')).toBeVisible();
+    await expect(
+      page.locator('text=Hemos enviado un enlace para restablecer')
+    ).toBeVisible();
   });
 
   test('should navigate between auth pages correctly', async ({ page }) => {
@@ -206,15 +229,15 @@ test.describe('PRISMA Authentication', () => {
         contentType: 'application/json',
         body: JSON.stringify({
           data: { url: 'https://accounts.google.com/oauth/authorize?...' },
-          error: null
-        })
+          error: null,
+        }),
       });
     });
 
     // Click Google OAuth button
     const googleButton = page.getByRole('button', { name: /Google/ });
     await expect(googleButton).toBeVisible();
-    
+
     // Note: We don't actually test the OAuth redirect as it would go to Google
     // In a real test, you might mock the entire OAuth flow
   });
@@ -224,7 +247,7 @@ test.describe('PRISMA Authentication', () => {
     await helpers.goto('/auth/signup');
     await helpers.checkA11y();
 
-    // Test signin page accessibility  
+    // Test signin page accessibility
     await helpers.goto('/auth/signin');
     await helpers.checkA11y();
 
@@ -237,7 +260,10 @@ test.describe('PRISMA Authentication', () => {
     await helpers.goto('/auth/signup');
 
     // Switch to English
-    const languageButton = page.locator('button').filter({ hasText: /🇲🇽|🇺🇸/ }).first();
+    const languageButton = page
+      .locator('button')
+      .filter({ hasText: /🇲🇽|🇺🇸/ })
+      .first();
     await languageButton.click();
 
     // Check English content

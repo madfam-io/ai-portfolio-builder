@@ -4,7 +4,11 @@
  */
 
 // GitHub Integration types
-export type GitHubIntegrationStatus = 'active' | 'inactive' | 'expired' | 'revoked';
+export type GitHubIntegrationStatus =
+  | 'active'
+  | 'inactive'
+  | 'expired'
+  | 'revoked';
 export type RepositoryVisibility = 'public' | 'private' | 'internal';
 export type PullRequestState = 'open' | 'closed' | 'merged';
 
@@ -244,7 +248,10 @@ export type ContributorCacheData = {
   metrics: ContributorMetrics;
 };
 
-export type AnalyticsCacheData = DashboardCacheData | RepositoryCacheData | ContributorCacheData;
+export type AnalyticsCacheData =
+  | DashboardCacheData
+  | RepositoryCacheData
+  | ContributorCacheData;
 
 /**
  * Analytics cache entry

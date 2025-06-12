@@ -19,7 +19,8 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
 import {
   Portfolio,
   PortfolioEditorState,
@@ -55,7 +56,7 @@ export default function PortfolioEditor({
   onSave,
   onPublish,
   onPreview,
-}: PortfolioEditorProps) {
+}: PortfolioEditorProps): React.ReactElement {
   // Editor state
   const [editorState, setEditorState] = useState<PortfolioEditorState>({
     portfolio: {} as Portfolio,
@@ -227,12 +228,15 @@ export default function PortfolioEditor({
       // Save changes first
       await handleManualSave();
 
-      const response = await fetch(`/api/v1/portfolios/${portfolioId}/publish`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const response = await fetch(
+        `/api/v1/portfolios/${portfolioId}/publish`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to publish portfolio');

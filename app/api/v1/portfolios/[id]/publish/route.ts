@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
 import { logger } from '@/lib/utils/logger';
 
 export async function POST(
   _request: NextRequest,
   { params }: { params: { id: string } }
-) {
+): Promise<Response> {
   try {
     const { id } = params;
 
@@ -29,7 +30,10 @@ export async function POST(
       message: 'Portfolio published successfully',
     });
   } catch (error) {
-    logger.error('Failed to publish portfolio', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to publish portfolio',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

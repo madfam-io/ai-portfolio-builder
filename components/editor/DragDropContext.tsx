@@ -4,6 +4,7 @@
  */
 
 import React, { createContext, useContext, useState, ReactNode } from 'react';
+
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import { logger } from '@/lib/utils/logger';
 
@@ -51,7 +52,7 @@ function DragDropProvider({ children }: { children: ReactNode }) {
   const isDragging = draggedItem !== null;
 
   return (
-    <WidgetErrorBoundary 
+    <WidgetErrorBoundary
       widgetName="DragDropProvider"
       compact={true}
       isolate={true}

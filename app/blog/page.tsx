@@ -1,11 +1,14 @@
 'use client';
 
+import React from 'react';
+
+import Link from 'next/link';
+import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
-import Link from 'next/link';
 
-export default function BlogPage() {
+export default function BlogPage(): React.ReactElement {
   const { t } = useLanguage();
 
   const featuredPosts = [

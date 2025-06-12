@@ -3,6 +3,7 @@
  */
 
 import React from 'react';
+
 import { render, screen } from './comprehensive-test-setup';
 
 describe('Test Setup Validation', () => {

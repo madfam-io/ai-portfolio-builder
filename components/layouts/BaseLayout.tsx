@@ -38,11 +38,12 @@
 'use client';
 
 import { ReactNode } from 'react';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
+
 import BackToTopButton from '@/components/BackToTopButton';
-import { LanguageProvider } from '@/lib/i18n/refactored-context';
+import Footer from '@/components/landing/Footer';
+import Header from '@/components/landing/Header';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 /**
  * Props interface for BaseLayout component
@@ -80,7 +81,7 @@ export default function BaseLayout({
   className = '',
   showHeader = true,
   showFooter = true,
-}: BaseLayoutProps) {
+}: BaseLayoutProps): React.ReactElement {
   return (
     <LanguageProvider>
       <AuthProvider>

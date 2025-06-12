@@ -4,9 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { z } from 'zod';
 
 // Request validation schema
 const updateSelectionSchema = z.object({
@@ -17,7 +18,7 @@ const updateSelectionSchema = z.object({
 /**
  * Get user's current model selection
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -73,7 +74,10 @@ export async function GET() {
       isDefault: !preferences,
     });
   } catch (error) {
-    logger.error('Failed to get model selection', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to get model selection',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Failed to get model selection' },
       { status: 500 }
@@ -84,7 +88,7 @@ export async function GET() {
 /**
  * Update user's model preference for a specific task
  */
-export async function PUT(request: NextRequest) {
+export async function PUT(request: NextRequest): Promise<Response> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -162,7 +166,10 @@ export async function PUT(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    logger.error('Failed to update model selection', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to update model selection',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Failed to update model selection' },
       { status: 500 }
@@ -177,7 +184,7 @@ async function logModelSelection(
   userId: string,
   taskType: string,
   modelId: string
-) {
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -196,7 +203,10 @@ async function logModelSelection(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Failed to log model selection', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to log model selection',
+      error instanceof Error ? error : { error }
+    );
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

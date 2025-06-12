@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import {
   FaGoogle,
   FaMicrosoft,
@@ -8,9 +10,10 @@ import {
   FaFacebookF,
   FaStar,
 } from 'react-icons/fa';
+
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function SocialProof() {
+export default function SocialProof(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section className="py-12 bg-gray-100 dark:bg-gray-800 transition-colors duration-300">

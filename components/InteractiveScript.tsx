@@ -1,4 +1,5 @@
-export default function InteractiveScript() {
+import React from 'react';
+export default function InteractiveScript(): React.ReactElement {
   const scriptContent = `
     (function() {
       'use strict';

@@ -3,6 +3,12 @@
  * Open-source model integration for content enhancement
  */
 
+import crypto from 'crypto';
+
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+
+import { promptTemplates } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -16,10 +22,6 @@ import {
   QuotaExceededError,
   ModelResponse,
 } from './types';
-import { promptTemplates } from './prompts';
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
-import crypto from 'crypto';
 
 // Available models with live capabilities
 export interface AvailableModel {

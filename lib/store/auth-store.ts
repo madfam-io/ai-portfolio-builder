@@ -6,8 +6,10 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { AuthState, AuthActions } from './types';
+
 import { createClient } from '@/lib/supabase/client';
+
+import { AuthState, AuthActions } from './types';
 
 const initialState: AuthState = {
   user: null,

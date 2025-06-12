@@ -6,8 +6,10 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { AIState, AIActions, AIEnhancement } from './types';
+
 import { aiClient } from '@/lib/ai/client';
+
+import { AIState, AIActions, AIEnhancement } from './types';
 
 const initialState: AIState = {
   selectedModels: {

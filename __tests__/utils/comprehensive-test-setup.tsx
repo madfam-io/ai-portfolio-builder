@@ -5,8 +5,9 @@
  * the bilingual (Spanish/English) application with proper context providers
  */
 
-import React, { ReactNode } from 'react';
 import { render as rtlRender, RenderOptions } from '@testing-library/react';
+import React, { ReactNode } from 'react';
+
 import type { Language } from '@/lib/i18n/refactored-types';
 
 // Comprehensive mock translations covering all components
@@ -297,7 +298,7 @@ export const TestLanguageProvider = ({
 }: {
   children: ReactNode;
   initialLanguage?: Language;
-}) => {
+}): React.ReactElement => {
   const [language, setLanguage] = React.useState<Language>(initialLanguage);
   const t = mockTranslations[language];
 
@@ -349,7 +350,7 @@ export const AllProviders = ({
 }: {
   children: ReactNode;
   initialLanguage?: Language;
-}) => {
+}): React.ReactElement => {
   return (
     <TestLanguageProvider initialLanguage={initialLanguage}>
       {children}

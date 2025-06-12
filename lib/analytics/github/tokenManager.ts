@@ -18,9 +18,15 @@ export interface EncryptedTokenData {
 /**
  * Decrypt a GitHub access token
  */
-export function decryptAccessToken(tokenData: EncryptedTokenData): string | null {
+export function decryptAccessToken(
+  tokenData: EncryptedTokenData
+): string | null {
   try {
-    if (!tokenData.encrypted_access_token || !tokenData.access_token_iv || !tokenData.access_token_tag) {
+    if (
+      !tokenData.encrypted_access_token ||
+      !tokenData.access_token_iv ||
+      !tokenData.access_token_tag
+    ) {
       logger.error('Missing required fields for token decryption');
       return null;
     }
@@ -41,9 +47,15 @@ export function decryptAccessToken(tokenData: EncryptedTokenData): string | null
 /**
  * Decrypt a GitHub refresh token
  */
-export function decryptRefreshToken(tokenData: EncryptedTokenData): string | null {
+export function decryptRefreshToken(
+  tokenData: EncryptedTokenData
+): string | null {
   try {
-    if (!tokenData.encrypted_refresh_token || !tokenData.refresh_token_iv || !tokenData.refresh_token_tag) {
+    if (
+      !tokenData.encrypted_refresh_token ||
+      !tokenData.refresh_token_iv ||
+      !tokenData.refresh_token_tag
+    ) {
       // No refresh token stored
       return null;
     }
@@ -64,7 +76,9 @@ export function decryptRefreshToken(tokenData: EncryptedTokenData): string | nul
 /**
  * Check if the integration has encrypted tokens
  */
-export function hasEncryptedTokens(integration: any): integration is EncryptedTokenData {
+export function hasEncryptedTokens(
+  integration: any
+): integration is EncryptedTokenData {
   return (
     integration &&
     typeof integration.encrypted_access_token === 'string' &&

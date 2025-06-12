@@ -16,8 +16,8 @@ export interface PerformanceMetric {
 // Web Vitals thresholds
 const THRESHOLDS = {
   LCP: { good: 2500, poor: 4000 }, // Largest Contentful Paint
-  FID: { good: 100, poor: 300 },   // First Input Delay
-  CLS: { good: 0.1, poor: 0.25 },  // Cumulative Layout Shift
+  FID: { good: 100, poor: 300 }, // First Input Delay
+  CLS: { good: 0.1, poor: 0.25 }, // Cumulative Layout Shift
   FCP: { good: 1800, poor: 3000 }, // First Contentful Paint
   TTFB: { good: 800, poor: 1800 }, // Time to First Byte
 };
@@ -42,7 +42,7 @@ function getRating(
  */
 export function reportWebVitals(metric: any): void {
   const { name, value, id } = metric;
-  
+
   const performanceMetric: PerformanceMetric = {
     name,
     value: Math.round(value),
@@ -91,7 +91,7 @@ export class PerformanceMonitor {
    */
   mark(name: string): void {
     this.marks.set(name, performance.now());
-    
+
     if (typeof window !== 'undefined') {
       performance.mark(name);
     }
@@ -150,7 +150,7 @@ export class PerformanceMonitor {
   clear(): void {
     this.marks.clear();
     this.measures = [];
-    
+
     if (typeof window !== 'undefined') {
       performance.clearMarks();
       performance.clearMeasures();
@@ -162,13 +162,16 @@ export class PerformanceMonitor {
 export const perfMonitor = new PerformanceMonitor();
 
 // Performance stats storage
-const performanceStats: Record<string, {
-  count: number;
-  totalDuration: number;
-  minDuration: number;
-  maxDuration: number;
-  averageDuration: number;
-}> = {};
+const performanceStats: Record<
+  string,
+  {
+    count: number;
+    totalDuration: number;
+    minDuration: number;
+    maxDuration: number;
+    averageDuration: number;
+  }
+> = {};
 
 /**
  * Measure async operation performance
@@ -178,11 +181,11 @@ export async function measureAsyncOperation<T>(
   operation: () => Promise<T>
 ): Promise<T> {
   const startTime = performance.now();
-  
+
   try {
     const result = await operation();
     const duration = performance.now() - startTime;
-    
+
     // Update stats
     if (!performanceStats[operationName]) {
       performanceStats[operationName] = {
@@ -193,18 +196,18 @@ export async function measureAsyncOperation<T>(
         averageDuration: 0,
       };
     }
-    
+
     const stats = performanceStats[operationName];
     stats.count++;
     stats.totalDuration += duration;
     stats.minDuration = Math.min(stats.minDuration, duration);
     stats.maxDuration = Math.max(stats.maxDuration, duration);
     stats.averageDuration = stats.totalDuration / stats.count;
-    
+
     return result;
   } catch (error) {
     const duration = performance.now() - startTime;
-    
+
     // Still track failed operations
     if (!performanceStats[operationName]) {
       performanceStats[operationName] = {
@@ -215,11 +218,11 @@ export async function measureAsyncOperation<T>(
         averageDuration: 0,
       };
     }
-    
+
     const stats = performanceStats[operationName];
     stats.count++;
     stats.totalDuration += duration;
-    
+
     throw error;
   }
 }
@@ -233,11 +236,11 @@ export async function trackApiCall(
 ): Promise<Response> {
   const operationName = `api_${endpoint}`;
   const startTime = performance.now();
-  
+
   try {
     const response = await fetch(endpoint, options);
     const duration = performance.now() - startTime;
-    
+
     if (!response.ok) {
       logger.error('API call failed', {
         endpoint,
@@ -246,10 +249,10 @@ export async function trackApiCall(
         duration,
       });
     }
-    
+
     // Track in stats
     await measureAsyncOperation(operationName, async () => response);
-    
+
     return response;
   } catch (error) {
     const duration = performance.now() - startTime;
@@ -283,11 +286,11 @@ export function resetStats(): void {
  */
 export function useRenderTracking(componentName: string): void {
   const renderCount = useRef(0);
-  
+
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
       renderCount.current += 1;
-      
+
       if (renderCount.current > 10) {
         logger.warn('Excessive re-renders detected', {
           component: componentName,

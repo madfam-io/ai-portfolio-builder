@@ -22,7 +22,6 @@
 'use client';
 
 import React from 'react';
-import { Portfolio } from '@/types/portfolio';
 import {
   FiMail,
   FiPhone,
@@ -34,6 +33,8 @@ import {
   FiCalendar,
   FiBarChart,
 } from 'react-icons/fi';
+
+import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Consultant Template component

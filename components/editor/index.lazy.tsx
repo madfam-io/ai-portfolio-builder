@@ -3,8 +3,8 @@
  * Only loads editor components when needed by authenticated users
  */
 
-import React from 'react';
 import dynamic from 'next/dynamic';
+import React from 'react';
 
 // Loading component for editor
 const EditorLoader = () => (
@@ -22,13 +22,10 @@ const EditorLoader = () => (
 );
 
 // Lazy load main editor components
-export const PortfolioEditor = dynamic(
-  () => import('./PortfolioEditor'),
-  {
-    loading: EditorLoader,
-    ssr: false,
-  }
-);
+export const PortfolioEditor = dynamic(() => import('./PortfolioEditor'), {
+  loading: EditorLoader,
+  ssr: false,
+});
 
 export const PortfolioPreview = dynamic(
   () =>

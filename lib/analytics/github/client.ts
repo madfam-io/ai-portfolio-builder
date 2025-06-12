@@ -1,17 +1,24 @@
 /**
  * @fileoverview GitHub Analytics Client
- * 
+ *
  * Handles all GitHub API interactions for the analytics feature.
  * Implements rate limiting, caching, and error handling.
- * 
+ *
  * @author PRISMA Development Team
  * @version 0.0.1-alpha
  */
 
 import { Octokit } from '@octokit/rest';
+
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { decryptAccessToken, hasEncryptedTokens, hasLegacyTokens } from './tokenManager';
+
+import {
+  decryptAccessToken,
+  hasEncryptedTokens,
+  hasLegacyTokens,
+} from './tokenManager';
+
 import type {
   GitHubIntegration,
   Repository,
@@ -103,7 +110,7 @@ interface GitHubContributor {
 
 /**
  * GitHub Analytics Client
- * 
+ *
  * Provides methods to interact with GitHub API for analytics purposes.
  * Handles authentication, rate limiting, and data transformation.
  */
@@ -125,7 +132,7 @@ export class GitHubAnalyticsClient {
     if (!supabase) {
       throw new Error('Database connection not available');
     }
-    
+
     // Fetch user's GitHub integration
     const { data: integration, error } = await supabase
       .from('github_integrations')
@@ -139,10 +146,10 @@ export class GitHubAnalyticsClient {
     }
 
     this.integration = integration as GitHubIntegration;
-    
+
     // Get the access token (handle both encrypted and legacy formats)
     let accessToken: string | null = null;
-    
+
     if (hasEncryptedTokens(integration)) {
       // New encrypted format
       accessToken = decryptAccessToken(integration);
@@ -151,11 +158,11 @@ export class GitHubAnalyticsClient {
       accessToken = integration.access_token;
       logger.warn('Using legacy unencrypted token - migration required');
     }
-    
+
     if (!accessToken) {
       throw new Error('Failed to retrieve access token');
     }
-    
+
     // Initialize Octokit with access token
     this.octokit = new Octokit({
       auth: accessToken,
@@ -191,7 +198,7 @@ export class GitHubAnalyticsClient {
 
     try {
       const { data } = await this.octokit.rateLimit.get();
-      
+
       this.rateLimitInfo = {
         limit: data.resources.core.limit,
         remaining: data.resources.core.remaining,
@@ -255,7 +262,10 @@ export class GitHubAnalyticsClient {
   /**
    * Fetch repository details
    */
-  async fetchRepository(owner: string, repo: string): Promise<GitHubRepository> {
+  async fetchRepository(
+    owner: string,
+    repo: string
+  ): Promise<GitHubRepository> {
     if (!this.octokit) {
       throw new Error('GitHub client not initialized');
     }
@@ -273,7 +283,10 @@ export class GitHubAnalyticsClient {
   /**
    * Fetch repository languages
    */
-  async fetchLanguages(owner: string, repo: string): Promise<Record<string, number>> {
+  async fetchLanguages(
+    owner: string,
+    repo: string
+  ): Promise<Record<string, number>> {
     if (!this.octokit) {
       throw new Error('GitHub client not initialized');
     }
@@ -452,9 +465,9 @@ export class GitHubAnalyticsClient {
 
     try {
       const { data } = await this.octokit.users.getByUsername({ username });
-      
+
       await this.checkRateLimit();
-      
+
       return {
         id: '', // Will be set by database
         githubId: data.id,
@@ -555,8 +568,12 @@ export class GitHubAnalyticsClient {
     repositoryId: string
   ): Partial<PullRequest> {
     const createdAt = new Date(githubPR.created_at);
-    const mergedAt = githubPR.merged_at ? new Date(githubPR.merged_at) : undefined;
-    const closedAt = githubPR.closed_at ? new Date(githubPR.closed_at) : undefined;
+    const mergedAt = githubPR.merged_at
+      ? new Date(githubPR.merged_at)
+      : undefined;
+    const closedAt = githubPR.closed_at
+      ? new Date(githubPR.closed_at)
+      : undefined;
 
     return {
       repositoryId,
@@ -566,7 +583,11 @@ export class GitHubAnalyticsClient {
       body: githubPR.body || undefined,
       authorLogin: githubPR.user.login,
       authorAvatarUrl: githubPR.user.avatar_url,
-      state: githubPR.merged_at ? 'merged' : githubPR.state === 'open' ? 'open' : 'closed',
+      state: githubPR.merged_at
+        ? 'merged'
+        : githubPR.state === 'open'
+          ? 'open'
+          : 'closed',
       draft: githubPR.draft,
       additions: githubPR.additions || 0,
       deletions: githubPR.deletions || 0,

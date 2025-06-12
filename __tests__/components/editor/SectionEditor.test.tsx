@@ -2,10 +2,12 @@
  * Tests for SectionEditor component
  */
 
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import SectionEditor from '@/components/editor/SectionEditor';
+import React from 'react';
+
 import DragDropProvider from '@/components/editor/DragDropContext';
+import SectionEditor from '@/components/editor/SectionEditor';
+
 import type { Portfolio } from '@/types/portfolio';
 
 // Mock the language context
@@ -31,7 +33,9 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
 
 // Mock the error boundary
 jest.mock('@/components/shared/error-boundaries', () => ({
-  WidgetErrorBoundary: ({ children }: { children: React.ReactNode }) => <div data-testid="error-boundary">{children}</div>,
+  WidgetErrorBoundary: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="error-boundary">{children}</div>
+  ),
 }));
 
 // Mock DraggableItem
@@ -95,20 +99,20 @@ describe('SectionEditor', () => {
   describe('Basic Rendering', () => {
     it('should render with error boundary', () => {
       renderSectionEditor('experience');
-      
+
       expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
     });
 
     it('should render section title and count', () => {
       renderSectionEditor('experience');
-      
+
       expect(screen.getByText('Experience')).toBeInTheDocument();
       expect(screen.getByText('(1)')).toBeInTheDocument();
     });
 
     it('should render add button', () => {
       renderSectionEditor('experience');
-      
+
       expect(screen.getByText('Add')).toBeInTheDocument();
     });
   });
@@ -116,28 +120,28 @@ describe('SectionEditor', () => {
   describe('Section Icons', () => {
     it('should render experience icon', () => {
       renderSectionEditor('experience');
-      
+
       const icon = document.querySelector('.lucide-briefcase');
       expect(icon).toBeInTheDocument();
     });
 
     it('should render education icon', () => {
       renderSectionEditor('education');
-      
+
       const icon = document.querySelector('.lucide-graduation-cap');
       expect(icon).toBeInTheDocument();
     });
 
     it('should render projects icon', () => {
       renderSectionEditor('projects');
-      
+
       const icon = document.querySelector('.lucide-code');
       expect(icon).toBeInTheDocument();
     });
 
     it('should render skills icon', () => {
       renderSectionEditor('skills');
-      
+
       const icon = document.querySelector('.lucide-award');
       expect(icon).toBeInTheDocument();
     });
@@ -146,14 +150,14 @@ describe('SectionEditor', () => {
   describe('Items Display', () => {
     it('should render experience items', () => {
       renderSectionEditor('experience');
-      
+
       expect(screen.getByText('Software Engineer')).toBeInTheDocument();
       expect(screen.getByText('Tech Corp')).toBeInTheDocument();
     });
 
     it('should render project items', () => {
       renderSectionEditor('projects');
-      
+
       expect(screen.getByText('Awesome Project')).toBeInTheDocument();
       expect(screen.getByText('React')).toBeInTheDocument();
       expect(screen.getByText('TypeScript')).toBeInTheDocument();
@@ -161,14 +165,14 @@ describe('SectionEditor', () => {
 
     it('should render skill items', () => {
       renderSectionEditor('skills');
-      
+
       expect(screen.getByText('JavaScript')).toBeInTheDocument();
       expect(screen.getByText('advanced')).toBeInTheDocument();
     });
 
     it('should render draggable items', () => {
       renderSectionEditor('experience');
-      
+
       expect(screen.getByTestId('draggable-item')).toBeInTheDocument();
     });
   });
@@ -176,19 +180,21 @@ describe('SectionEditor', () => {
   describe('Adding Items', () => {
     it('should show add form when add button is clicked', () => {
       renderSectionEditor('experience');
-      
+
       const addButton = screen.getByText('Add');
       fireEvent.click(addButton);
-      
-      expect(screen.getByText('Form implementation for experience')).toBeInTheDocument();
+
+      expect(
+        screen.getByText('Form implementation for experience')
+      ).toBeInTheDocument();
     });
 
     it('should show save and cancel buttons in add form', () => {
       renderSectionEditor('experience');
-      
+
       const addButton = screen.getByText('Add');
       fireEvent.click(addButton);
-      
+
       expect(screen.getByText('Save')).toBeInTheDocument();
       expect(screen.getByText('Cancel')).toBeInTheDocument();
     });
@@ -197,14 +203,14 @@ describe('SectionEditor', () => {
   describe('Empty Sections', () => {
     it('should handle empty sections', () => {
       renderSectionEditor('experience', { experience: [] });
-      
+
       expect(screen.getByText('Experience')).toBeInTheDocument();
       expect(screen.getByText('(0)')).toBeInTheDocument();
     });
 
     it('should handle undefined sections', () => {
       renderSectionEditor('experience', {});
-      
+
       expect(screen.getByText('Experience')).toBeInTheDocument();
       expect(screen.getByText('(0)')).toBeInTheDocument();
     });
@@ -213,14 +219,14 @@ describe('SectionEditor', () => {
   describe('Item Actions', () => {
     it('should render edit buttons for items', () => {
       renderSectionEditor('experience');
-      
+
       const editButton = document.querySelector('.lucide-edit-2');
       expect(editButton).toBeInTheDocument();
     });
 
     it('should render delete buttons for items', () => {
       renderSectionEditor('experience');
-      
+
       const deleteButton = document.querySelector('.lucide-trash-2');
       expect(deleteButton).toBeInTheDocument();
     });

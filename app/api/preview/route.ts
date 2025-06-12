@@ -4,14 +4,16 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@/lib/supabase/server';
-import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { logger } from '@/lib/utils/logger';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
   previewQuerySchema,
   previewBodySchema,
   createValidationError,
 } from '@/lib/validations/api';
+
 import type { Portfolio } from '@/types/portfolio';
 
 // Template imports
@@ -19,10 +21,10 @@ import { renderDeveloperTemplate } from '@/lib/templates/developer';
 import { renderDesignerTemplate } from '@/lib/templates/designer';
 import { renderConsultantTemplate } from '@/lib/templates/consultant';
 
-export async function GET(request: NextRequest) {
+export async function GET(request: NextRequest): Promise<Response> {
   try {
     const { searchParams } = new URL(request.url);
-    
+
     // Validate query parameters
     const validationResult = previewQuerySchema.safeParse({
       portfolioId: searchParams.get('portfolioId'),
@@ -30,10 +32,9 @@ export async function GET(request: NextRequest) {
     });
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        createValidationError(validationResult.error),
-        { status: 400 }
-      );
+      return NextResponse.json(createValidationError(validationResult.error), {
+        status: 400,
+      });
     }
 
     const { portfolioId, template } = validationResult.data;
@@ -130,18 +131,17 @@ export async function GET(request: NextRequest) {
 }
 
 // POST endpoint for receiving portfolio updates
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     const body = await request.json();
-    
+
     // Validate request body
     const validationResult = previewBodySchema.safeParse(body);
 
     if (!validationResult.success) {
-      return NextResponse.json(
-        createValidationError(validationResult.error),
-        { status: 400 }
-      );
+      return NextResponse.json(createValidationError(validationResult.error), {
+        status: 400,
+      });
     }
 
     const { portfolio, template } = validationResult.data;

@@ -3,6 +3,7 @@
  */
 
 import { NextRequest } from 'next/server';
+
 import { POST } from '@/app/api/ai/recommend-template/route';
 
 // Mock Supabase

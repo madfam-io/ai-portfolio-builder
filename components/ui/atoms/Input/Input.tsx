@@ -1,6 +1,7 @@
-import * as React from 'react';
-import { cn } from '../../utils/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
+
+import { cn } from '../../utils/cn';
 
 const inputVariants = cva(
   'flex w-full rounded-md border border-input bg-background text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-all duration-200',
@@ -8,8 +9,10 @@ const inputVariants = cva(
     variants: {
       variant: {
         default: '',
-        filled: 'bg-muted/50 border-transparent focus:bg-background focus:border-input',
-        flushed: 'rounded-none border-0 border-b px-0 focus:ring-0 focus:ring-offset-0',
+        filled:
+          'bg-muted/50 border-transparent focus:bg-background focus:border-input',
+        flushed:
+          'rounded-none border-0 border-b px-0 focus:ring-0 focus:ring-offset-0',
         unstyled: 'border-0 focus:ring-0 focus:ring-offset-0',
       },
       inputSize: {
@@ -63,18 +66,18 @@ export interface InputProps
 
 /**
  * Input component with multiple variants and addons
- * 
+ *
  * @example
  * ```tsx
  * <Input placeholder="Enter your name" />
- * 
- * <Input 
+ *
+ * <Input
  *   variant="filled"
  *   leftElement={<Icon />}
  *   placeholder="Search..."
  * />
- * 
- * <Input 
+ *
+ * <Input
  *   state="error"
  *   error="This field is required"
  * />
@@ -149,7 +152,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <div className="relative">
           {leftElement && (
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <span className="h-4 w-4 text-muted-foreground" aria-hidden="true">
+              <span
+                className="h-4 w-4 text-muted-foreground"
+                aria-hidden="true"
+              >
                 {leftElement}
               </span>
             </div>
@@ -180,7 +186,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   />
                 </svg>
               ) : (
-                <span className="h-4 w-4 text-muted-foreground" aria-hidden="true">
+                <span
+                  className="h-4 w-4 text-muted-foreground"
+                  aria-hidden="true"
+                >
                   {rightElement}
                 </span>
               )}

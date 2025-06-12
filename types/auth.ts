@@ -7,19 +7,23 @@
 export type SubscriptionPlan = 'free' | 'pro' | 'business' | 'enterprise';
 
 // Admin Privilege Levels
-export type AdminRole = 
-  | 'admin_viewer'      // View-only access to admin panels
-  | 'admin_support'     // Customer support capabilities
-  | 'admin_moderator'   // Content moderation and user management
-  | 'admin_manager'     // Full user and content management
-  | 'admin_developer'   // System configuration and analytics
-  | 'admin_architect';  // Full system access including infrastructure
+export type AdminRole =
+  | 'admin_viewer' // View-only access to admin panels
+  | 'admin_support' // Customer support capabilities
+  | 'admin_moderator' // Content moderation and user management
+  | 'admin_manager' // Full user and content management
+  | 'admin_developer' // System configuration and analytics
+  | 'admin_architect'; // Full system access including infrastructure
 
 // User Account Types
 export type UserAccountType = 'customer' | 'admin';
 
 // User Status
-export type UserStatus = 'active' | 'suspended' | 'pending_verification' | 'deactivated';
+export type UserStatus =
+  | 'active'
+  | 'suspended'
+  | 'pending_verification'
+  | 'deactivated';
 
 /**
  * Customer-specific data and subscription info
@@ -32,12 +36,12 @@ export interface CustomerProfile {
   trialEndDate?: Date;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
-  
+
   // Usage tracking
   portfoliosCreated: number;
   aiEnhancementsUsed: number;
   monthlyPortfolioViews: number;
-  
+
   // Plan limits
   maxPortfolios: number;
   maxAiEnhancements: number;
@@ -54,14 +58,14 @@ export interface AdminProfile {
   department: 'engineering' | 'support' | 'marketing' | 'sales' | 'management';
   hireDate: Date;
   lastAdminActivity?: Date;
-  
+
   // Admin session management
   isInAdminMode: boolean;
   lastViewSwitchAt?: Date;
-  
+
   // Permissions
   permissions: AdminPermission[];
-  
+
   // Audit trail
   adminActions: AdminAction[];
 }
@@ -69,33 +73,33 @@ export interface AdminProfile {
 /**
  * Granular admin permissions
  */
-export type AdminPermission = 
+export type AdminPermission =
   // User Management
   | 'users:read'
   | 'users:create'
   | 'users:update'
   | 'users:delete'
   | 'users:suspend'
-  
+
   // Content Management
   | 'portfolios:read'
   | 'portfolios:moderate'
   | 'portfolios:delete'
   | 'templates:manage'
-  
+
   // Subscription Management
   | 'subscriptions:read'
   | 'subscriptions:modify'
   | 'billing:read'
   | 'billing:refund'
-  
+
   // System Management
   | 'analytics:read'
   | 'analytics:export'
   | 'system:configure'
   | 'system:deploy'
   | 'system:logs'
-  
+
   // Support
   | 'support:tickets'
   | 'support:escalate'
@@ -126,22 +130,22 @@ export interface User {
   avatarUrl?: string;
   accountType: UserAccountType;
   status: UserStatus;
-  
+
   // Timestamps
   createdAt: Date;
   updatedAt: Date;
   lastLoginAt?: Date;
   emailVerifiedAt?: Date;
-  
+
   // Contact information
   phone?: string;
   timezone?: string;
   language: 'es' | 'en';
-  
+
   // Role-specific profiles
   customerProfile?: CustomerProfile;
   adminProfile?: AdminProfile;
-  
+
   // Feature flags
   featureFlags: Record<string, boolean>;
 }

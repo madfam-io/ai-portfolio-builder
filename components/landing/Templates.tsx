@@ -1,9 +1,12 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/minimal-context';
+import React from 'react';
+
 import Link from 'next/link';
 
-export default function Templates() {
+import { useLanguage } from '@/lib/i18n/minimal-context';
+
+export default function Templates(): React.ReactElement {
   const { t } = useLanguage();
 
   const handleTemplateClick = (templateType: string) => {

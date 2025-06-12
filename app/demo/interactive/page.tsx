@@ -1,12 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Portfolio, TemplateType } from '@/types/portfolio';
-import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { usePerformanceTracking } from '@/lib/utils/performance';
-import { useRealTimePreview } from '@/hooks/useRealTimePreview';
-import { generateSamplePortfolio } from '@/lib/utils/sampleData';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import {
   FiArrowLeft,
   FiBookOpen,
@@ -14,9 +9,15 @@ import {
   FiSave,
   FiRefreshCw,
 } from 'react-icons/fi';
-import Link from 'next/link';
 
-export default function InteractiveDemoPage() {
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { useRealTimePreview } from '@/hooks/useRealTimePreview';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { usePerformanceTracking } from '@/lib/utils/performance';
+import { generateSamplePortfolio } from '@/lib/utils/sampleData';
+import { Portfolio, TemplateType } from '@/types/portfolio';
+
+export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();
   usePerformanceTracking('InteractiveDemoPage');
 
@@ -276,7 +277,7 @@ export default function InteractiveDemoPage() {
                       </h3>
                       <div className="space-y-4">
                         <div>
-                          <label 
+                          <label
                             htmlFor="portfolio-name"
                             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                           >
@@ -296,7 +297,7 @@ export default function InteractiveDemoPage() {
                           />
                         </div>
                         <div>
-                          <label 
+                          <label
                             htmlFor="portfolio-title"
                             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                           >
@@ -316,7 +317,7 @@ export default function InteractiveDemoPage() {
                           />
                         </div>
                         <div>
-                          <label 
+                          <label
                             htmlFor="portfolio-bio"
                             className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
                           >

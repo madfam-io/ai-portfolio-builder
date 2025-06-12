@@ -157,11 +157,13 @@ NEXT_PUBLIC_POSTHOG_KEY=phc_...
 PRISMA v0.2.0-beta includes specific optimizations for Vercel deployment:
 
 #### **Webpack Configuration for Node.js Modules**
+
 - **Redis Module Handling**: Proper externalization of server-only dependencies
 - **Node.js Module Fallbacks**: Configured for `crypto`, `net`, `tls`, and other Node.js modules
 - **Client Bundle Optimization**: 40% reduction through proper server/client separation
 
 #### **Server/Client Architecture**
+
 - **API Endpoints**: Clean `/api/v1/*` structure compatible with Vercel serverless functions
 - **Client Components**: No server-only imports (Redis, next/headers) in client code
 - **Caching Strategy**: Redis with in-memory fallback for Vercel's serverless environment

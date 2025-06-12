@@ -3,20 +3,23 @@
  * Handles permission checking, role management, and admin mode switching
  */
 
-import { 
-  User, 
-  AdminPermission, 
-  AdminRole, 
-  SubscriptionPlan, 
+import {
+  User,
+  AdminPermission,
+  AdminRole,
+  SubscriptionPlan,
   PermissionContext,
   ADMIN_PERMISSIONS,
-  PLAN_FEATURES 
+  PLAN_FEATURES,
 } from '@/types/auth';
 
 /**
  * Check if user has specific admin permission
  */
-export function hasPermission(user: User, permission: AdminPermission): boolean {
+export function hasPermission(
+  user: User,
+  permission: AdminPermission
+): boolean {
   if (user.accountType !== 'admin' || !user.adminProfile) {
     return false;
   }
@@ -32,7 +35,10 @@ export function hasPermission(user: User, permission: AdminPermission): boolean 
 /**
  * Check if user can access a feature based on subscription plan
  */
-export function canAccessFeature(user: User, feature: keyof typeof PLAN_FEATURES.free): boolean {
+export function canAccessFeature(
+  user: User,
+  feature: keyof typeof PLAN_FEATURES.free
+): boolean {
   if (user.accountType === 'admin') {
     return true; // Admins have access to all features
   }
@@ -49,7 +55,7 @@ export function canAccessFeature(user: User, feature: keyof typeof PLAN_FEATURES
  * Check if user has reached their plan limits
  */
 export function hasReachedLimit(
-  user: User, 
+  user: User,
   limitType: 'portfolios' | 'aiEnhancements',
   currentUsage: number
 ): boolean {
@@ -62,12 +68,18 @@ export function hasReachedLimit(
   }
 
   const planFeatures = PLAN_FEATURES[user.customerProfile.subscriptionPlan];
-  
+
   switch (limitType) {
     case 'portfolios':
-      return planFeatures.maxPortfolios !== -1 && currentUsage >= planFeatures.maxPortfolios;
+      return (
+        planFeatures.maxPortfolios !== -1 &&
+        currentUsage >= planFeatures.maxPortfolios
+      );
     case 'aiEnhancements':
-      return planFeatures.maxAiEnhancements !== -1 && currentUsage >= planFeatures.maxAiEnhancements;
+      return (
+        planFeatures.maxAiEnhancements !== -1 &&
+        currentUsage >= planFeatures.maxAiEnhancements
+      );
     default:
       return false;
   }
@@ -112,7 +124,10 @@ export function getRolePermissions(role: AdminRole): AdminPermission[] {
 /**
  * Check if admin role can perform specific actions
  */
-export function canPerformAction(role: AdminRole, action: AdminPermission): boolean {
+export function canPerformAction(
+  role: AdminRole,
+  action: AdminPermission
+): boolean {
   return ADMIN_PERMISSIONS[role]?.includes(action) || false;
 }
 
@@ -120,9 +135,11 @@ export function canPerformAction(role: AdminRole, action: AdminPermission): bool
  * Validate if user can switch to admin mode
  */
 export function canSwitchToAdminMode(user: User): boolean {
-  return user.accountType === 'admin' && 
-         user.status === 'active' && 
-         user.adminProfile !== undefined;
+  return (
+    user.accountType === 'admin' &&
+    user.status === 'active' &&
+    user.adminProfile !== undefined
+  );
 }
 
 /**
@@ -148,14 +165,17 @@ export function getPlanDisplayName(plan: SubscriptionPlan): string {
 /**
  * Get plan pricing information
  */
-export function getPlanPricing(plan: SubscriptionPlan, currency: 'USD' | 'MXN' | 'EUR') {
+export function getPlanPricing(
+  plan: SubscriptionPlan,
+  currency: 'USD' | 'MXN' | 'EUR'
+) {
   const pricing = {
     free: { USD: 0, MXN: 0, EUR: 0 },
     pro: { USD: 29, MXN: 149, EUR: 25 },
     business: { USD: 79, MXN: 399, EUR: 69 },
     enterprise: { USD: 299, MXN: 1499, EUR: 249 },
   };
-  
+
   return {
     amount: pricing[plan][currency],
     currency,
@@ -176,16 +196,17 @@ export function isSubscriptionActive(user: User): boolean {
   }
 
   const { subscriptionStatus, subscriptionEndDate } = user.customerProfile;
-  
+
   // Free plan is always considered active
   if (user.customerProfile.subscriptionPlan === 'free') {
     return subscriptionStatus === 'active';
   }
 
   // Check if subscription is active and not expired
-  const isActive = subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
+  const isActive =
+    subscriptionStatus === 'active' || subscriptionStatus === 'trialing';
   const notExpired = !subscriptionEndDate || new Date() < subscriptionEndDate;
-  
+
   return isActive && notExpired;
 }
 
@@ -199,7 +220,7 @@ export function getDaysUntilExpiration(user: User): number | null {
 
   const { subscriptionEndDate, trialEndDate } = user.customerProfile;
   const expirationDate = subscriptionEndDate || trialEndDate;
-  
+
   if (!expirationDate) {
     return null;
   }
@@ -207,7 +228,7 @@ export function getDaysUntilExpiration(user: User): number | null {
   const now = new Date();
   const diffTime = expirationDate.getTime() - now.getTime();
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
   return diffDays > 0 ? diffDays : 0;
 }
 
@@ -216,10 +237,9 @@ export function getDaysUntilExpiration(user: User): number | null {
  */
 export function createPermissionContext(user: User): PermissionContext {
   const isAdmin = user.accountType === 'admin';
-  const isInAdminMode = isAdmin && user.adminProfile?.isInAdminMode || false;
-  const permissions = isAdmin && user.adminProfile 
-    ? user.adminProfile.permissions 
-    : [];
+  const isInAdminMode = (isAdmin && user.adminProfile?.isInAdminMode) || false;
+  const permissions =
+    isAdmin && user.adminProfile ? user.adminProfile.permissions : [];
 
   return {
     user,
@@ -228,7 +248,8 @@ export function createPermissionContext(user: User): PermissionContext {
     permissions,
     subscriptionPlan: user.customerProfile?.subscriptionPlan,
     canAccess: (permission: AdminPermission) => hasPermission(user, permission),
-    canAccessFeature: (feature: string) => canAccessFeature(user, feature as any),
+    canAccessFeature: (feature: string) =>
+      canAccessFeature(user, feature as any),
     switchToAdminMode: async () => {
       // This would be implemented in the auth service
       throw new Error('switchToAdminMode must be implemented by auth service');
@@ -262,7 +283,9 @@ export function isHigherRole(role1: AdminRole, role2: AdminRole): boolean {
 /**
  * Get required role for specific permission
  */
-export function getRequiredRoleForPermission(permission: AdminPermission): AdminRole | null {
+export function getRequiredRoleForPermission(
+  permission: AdminPermission
+): AdminRole | null {
   for (const [role, permissions] of Object.entries(ADMIN_PERMISSIONS)) {
     if (permissions.includes(permission)) {
       return role as AdminRole;

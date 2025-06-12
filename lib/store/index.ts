@@ -6,7 +6,13 @@
 // Export individual stores
 export { useAuthStore } from './auth-store';
 export { usePortfolioStore } from './portfolio-store';
-export { useUIStore, showSuccessToast, showErrorToast, showWarningToast, showInfoToast } from './ui-store';
+export {
+  useUIStore,
+  showSuccessToast,
+  showErrorToast,
+  showWarningToast,
+  showInfoToast,
+} from './ui-store';
 export { useAIStore } from './ai-store';
 
 // Export root store and slice hooks

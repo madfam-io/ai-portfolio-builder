@@ -1,6 +1,6 @@
 /**
  * @fileoverview Preview Controls Component
- * 
+ *
  * Advanced preview controls for the portfolio editor including responsive testing,
  * zoom controls, section highlighting, and export functionality.
  */
@@ -8,11 +8,11 @@
 'use client';
 
 import { useState } from 'react';
-import { 
-  FiMonitor, 
-  FiTablet, 
-  FiSmartphone, 
-  FiMaximize2, 
+import {
+  FiMonitor,
+  FiTablet,
+  FiSmartphone,
+  FiMaximize2,
   FiMinimize2,
   FiZoomIn,
   FiZoomOut,
@@ -22,8 +22,9 @@ import {
   FiDownload,
   FiShare2,
   FiSettings,
-  FiRefreshCw
+  FiRefreshCw,
 } from 'react-icons/fi';
+
 import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
 
 interface PreviewControlsProps {
@@ -33,7 +34,7 @@ interface PreviewControlsProps {
   showSectionBorders: boolean;
   showInteractiveElements: boolean;
   isLoading?: boolean;
-  
+
   // Control handlers
   onPreviewModeChange: (mode: PreviewMode) => void;
   onToggleFullscreen: () => void;
@@ -44,9 +45,13 @@ interface PreviewControlsProps {
   onExport?: () => void;
   onShare?: () => void;
   onOpenSettings?: () => void;
-  
+
   // Responsive testing
-  responsiveBreakpoints?: Array<{ name: string; width: number; height: number }>;
+  responsiveBreakpoints?: Array<{
+    name: string;
+    width: number;
+    height: number;
+  }>;
   onTestBreakpoint?: (width: number, height: number) => void;
 }
 
@@ -56,14 +61,18 @@ interface ResponsiveTestingProps {
   onClose: () => void;
 }
 
-function ResponsiveTestingPanel({ breakpoints, onTestBreakpoint, onClose }: ResponsiveTestingProps) {
+function ResponsiveTestingPanel({
+  breakpoints,
+  onTestBreakpoint,
+  onClose,
+}: ResponsiveTestingProps) {
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
 
   const handleCustomTest = () => {
     const width = parseInt(customWidth);
     const height = parseInt(customHeight);
-    
+
     if (width > 0 && height > 0) {
       onTestBreakpoint(width, height);
       onClose();
@@ -120,7 +129,7 @@ function ResponsiveTestingPanel({ breakpoints, onTestBreakpoint, onClose }: Resp
             type="number"
             placeholder="Width"
             value={customWidth}
-            onChange={(e) => setCustomWidth(e.target.value)}
+            onChange={e => setCustomWidth(e.target.value)}
             className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
           />
           <span className="self-center text-gray-500">×</span>
@@ -128,7 +137,7 @@ function ResponsiveTestingPanel({ breakpoints, onTestBreakpoint, onClose }: Resp
             type="number"
             placeholder="Height"
             value={customHeight}
-            onChange={(e) => setCustomHeight(e.target.value)}
+            onChange={e => setCustomHeight(e.target.value)}
             className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-sm focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-700 dark:text-white"
           />
         </div>
@@ -256,7 +265,7 @@ export function PreviewControls({
           >
             <FiZoomOut className="w-4 h-4" />
           </button>
-          
+
           <button
             onClick={handleZoomReset}
             className="px-2 py-1 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors min-w-[50px]"
@@ -264,7 +273,7 @@ export function PreviewControls({
           >
             {zoomPercentage}%
           </button>
-          
+
           <button
             onClick={handleZoomIn}
             disabled={zoomLevel >= 2}
@@ -313,7 +322,11 @@ export function PreviewControls({
           <button
             onClick={onToggleFullscreen}
             className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-            title={previewState === 'fullscreen' ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            title={
+              previewState === 'fullscreen'
+                ? 'Exit Fullscreen'
+                : 'Enter Fullscreen'
+            }
           >
             {previewState === 'fullscreen' ? (
               <FiMinimize2 className="w-4 h-4" />
@@ -329,7 +342,9 @@ export function PreviewControls({
             className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 transition-colors"
             title="Refresh Preview"
           >
-            <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            <FiRefreshCw
+              className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
+            />
           </button>
 
           {/* Export */}

@@ -2,9 +2,11 @@
  * HowItWorks Component test suite
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import HowItWorks from '@/components/landing/HowItWorks';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('HowItWorks Component', () => {

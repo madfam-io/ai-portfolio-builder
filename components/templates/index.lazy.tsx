@@ -3,9 +3,10 @@
  * Reduces initial bundle size by loading templates on demand
  */
 
-import React from 'react';
 import dynamic from 'next/dynamic';
+import React from 'react';
 import { ComponentType } from 'react';
+
 import { Portfolio } from '@/types/portfolio';
 
 // Loading component for templates

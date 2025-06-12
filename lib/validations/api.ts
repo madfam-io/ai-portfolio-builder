@@ -20,54 +20,60 @@ export const previewQuerySchema = z.object({
 });
 
 // For preview, we need a more permissive schema that allows partial portfolio data
-const previewPortfolioSchema = z.object({
-  // Required fields
-  name: z.string().min(1, 'Name is required'),
-  title: z.string().min(1, 'Title is required'),
-  bio: z.string().min(1, 'Bio is required'),
-  
-  // Optional but commonly used fields
-  id: z.string().optional(),
-  userId: z.string().optional(),
-  tagline: z.string().optional(),
-  avatarUrl: z.string().optional(),
-  
-  // Contact information
-  contact: z.object({
-    email: z.string().email('Invalid email format').optional(),
-    phone: z.string().optional(),
-    location: z.string().optional(),
-  }).optional(),
-  
-  // Social links
-  social: z.object({
-    linkedin: z.string().url().optional().or(z.literal('')),
-    github: z.string().url().optional().or(z.literal('')),
-    twitter: z.string().url().optional().or(z.literal('')),
-    website: z.string().url().optional().or(z.literal('')),
-  }).optional(),
-  
-  // Portfolio sections - allow any structure for flexibility
-  experience: z.array(z.any()).optional(),
-  education: z.array(z.any()).optional(),
-  projects: z.array(z.any()).optional(),
-  skills: z.array(z.any()).optional(),
-  certifications: z.array(z.any()).optional(),
-  
-  // Template and customization
-  template: z.string().optional(),
-  customization: z.any().optional(),
-  
-  // Metadata
-  status: z.string().optional(),
-  subdomain: z.string().optional(),
-  customDomain: z.string().optional(),
-  views: z.number().optional(),
-  lastViewedAt: z.any().optional(),
-  createdAt: z.any().optional(),
-  updatedAt: z.any().optional(),
-  publishedAt: z.any().optional(),
-}).passthrough(); // Allow additional fields for flexibility
+const previewPortfolioSchema = z
+  .object({
+    // Required fields
+    name: z.string().min(1, 'Name is required'),
+    title: z.string().min(1, 'Title is required'),
+    bio: z.string().min(1, 'Bio is required'),
+
+    // Optional but commonly used fields
+    id: z.string().optional(),
+    userId: z.string().optional(),
+    tagline: z.string().optional(),
+    avatarUrl: z.string().optional(),
+
+    // Contact information
+    contact: z
+      .object({
+        email: z.string().email('Invalid email format').optional(),
+        phone: z.string().optional(),
+        location: z.string().optional(),
+      })
+      .optional(),
+
+    // Social links
+    social: z
+      .object({
+        linkedin: z.string().url().optional().or(z.literal('')),
+        github: z.string().url().optional().or(z.literal('')),
+        twitter: z.string().url().optional().or(z.literal('')),
+        website: z.string().url().optional().or(z.literal('')),
+      })
+      .optional(),
+
+    // Portfolio sections - allow any structure for flexibility
+    experience: z.array(z.any()).optional(),
+    education: z.array(z.any()).optional(),
+    projects: z.array(z.any()).optional(),
+    skills: z.array(z.any()).optional(),
+    certifications: z.array(z.any()).optional(),
+
+    // Template and customization
+    template: z.string().optional(),
+    customization: z.any().optional(),
+
+    // Metadata
+    status: z.string().optional(),
+    subdomain: z.string().optional(),
+    customDomain: z.string().optional(),
+    views: z.number().optional(),
+    lastViewedAt: z.any().optional(),
+    createdAt: z.any().optional(),
+    updatedAt: z.any().optional(),
+    publishedAt: z.any().optional(),
+  })
+  .passthrough(); // Allow additional fields for flexibility
 
 export const previewBodySchema = z.object({
   portfolio: previewPortfolioSchema,
@@ -136,9 +142,7 @@ export const searchSchema = z.object({
   filters: z
     .object({
       status: z.enum(['draft', 'published', 'archived']).optional(),
-      template: z
-        .enum(['developer', 'designer', 'consultant'])
-        .optional(),
+      template: z.enum(['developer', 'designer', 'consultant']).optional(),
       dateFrom: z.string().datetime().optional(),
       dateTo: z.string().datetime().optional(),
     })
@@ -146,9 +150,10 @@ export const searchSchema = z.object({
 });
 
 // Error response helper
-export function createValidationError(
-  errors: z.ZodError
-): { error: string; details: any } {
+export function createValidationError(errors: z.ZodError): {
+  error: string;
+  details: any;
+} {
   return {
     error: 'Validation failed',
     details: errors.format(),
@@ -162,11 +167,11 @@ export function safeParseWithLogging<T>(
   context: string
 ): { success: true; data: T } | { success: false; error: any } {
   const result = schema.safeParse(data);
-  
+
   if (!result.success) {
     // Log validation errors for debugging
     console.error(`Validation failed for ${context}:`, result.error.format());
   }
-  
+
   return result;
 }

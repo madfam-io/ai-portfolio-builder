@@ -2,10 +2,12 @@
  * Sign Up page test suite
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import SignUpPage from '@/app/auth/signup/page';
+
 import { renderWithLanguage } from '../../../utils/i18n-test-utils';
 
 // Mock next/navigation

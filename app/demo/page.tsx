@@ -1,8 +1,7 @@
 'use client';
 
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import Header from '@/components/landing/Header';
-import Footer from '@/components/landing/Footer';
+import Link from 'next/link';
+import React, { useState } from 'react';
 import {
   FaPlay,
   FaCheckCircle,
@@ -10,10 +9,12 @@ import {
   FaClock,
   FaUser,
 } from 'react-icons/fa';
-import Link from 'next/link';
-import { useState } from 'react';
 
-export default function DemoPage() {
+import Footer from '@/components/landing/Footer';
+import Header from '@/components/landing/Header';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function DemoPage(): React.ReactElement {
   const { t } = useLanguage();
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
 

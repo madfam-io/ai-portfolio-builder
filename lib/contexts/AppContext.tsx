@@ -1,24 +1,24 @@
 /**
  * @fileoverview App Context for managing global application state
- * 
+ *
  * This module provides centralized state management for app-wide settings including:
  * - Dark/Light mode with system preference and localStorage persistence
  * - Currency cycling for international pricing (MXN → USD → EUR)
  * - Mobile menu state for responsive navigation
- * 
+ *
  * Key Features:
  * - Dark mode as default for better UX and modern design
  * - MXN as default currency (MADFAM's primary market)
  * - Automatic DOM manipulation for theme switching
  * - Cycle-based currency switching for easy user experience
- * 
+ *
  * Usage:
  * ```tsx
  * import { useAppContext } from '@/lib/contexts/AppContext';
- * 
+ *
  * export default function MyComponent() {
  *   const { isDarkMode, currency, toggleDarkMode, setCurrency } = useAppContext();
- *   
+ *
  *   return (
  *     <div>
  *       <button onClick={toggleDarkMode}>
@@ -31,7 +31,7 @@
  *   );
  * }
  * ```
- * 
+ *
  * @author MADFAM Development Team
  * @version 2.0.0 - Enhanced currency system and dark mode defaults
  */
@@ -39,6 +39,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+
 import { AuthProvider } from './AuthContext';
 
 /**
@@ -68,7 +69,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 /**
  * Currency rotation sequence prioritizing MADFAM's target markets:
  * 1. MXN (Mexican Peso) - Primary market
- * 2. USD (US Dollar) - Secondary market 
+ * 2. USD (US Dollar) - Secondary market
  * 3. EUR (Euro) - International market
  */
 const CURRENCY_CYCLE: Array<'MXN' | 'USD' | 'EUR'> = ['MXN', 'USD', 'EUR'];
@@ -82,7 +83,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const isDarkClass = document.documentElement.classList.contains('dark');
-    
+
     if (savedTheme === 'light') {
       setIsDarkMode(false);
       if (isDarkClass) {
@@ -102,7 +103,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize currency from localStorage or default to MXN
   useEffect(() => {
-    const savedCurrency = localStorage.getItem('currency') as 'MXN' | 'USD' | 'EUR';
+    const savedCurrency = localStorage.getItem('currency') as
+      | 'MXN'
+      | 'USD'
+      | 'EUR';
     if (savedCurrency && CURRENCY_CYCLE.includes(savedCurrency)) {
       setCurrencyState(savedCurrency);
     } else {
@@ -114,7 +118,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const toggleDarkMode = () => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
-    
+
     if (newDarkMode) {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
@@ -149,9 +153,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AppContext.Provider value={value}>
-      <AuthProvider>
-        {children}
-      </AuthProvider>
+      <AuthProvider>{children}</AuthProvider>
     </AppContext.Provider>
   );
 }

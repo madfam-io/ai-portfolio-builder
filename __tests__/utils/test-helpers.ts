@@ -105,6 +105,6 @@ export function mockIntersectionObserver() {
 /**
  * Wait for async updates
  */
-export async function waitForAsync() {
+export async function waitForAsync(): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, 0));
 }

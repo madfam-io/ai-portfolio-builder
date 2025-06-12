@@ -7,7 +7,7 @@ A comprehensive error boundary and fallback component system for the PRISMA port
 The error handling system consists of three main layers:
 
 1. **Error Boundaries** - Catch JavaScript errors in component tree
-2. **Fallback Components** - Provide user-friendly error and loading states  
+2. **Fallback Components** - Provide user-friendly error and loading states
 3. **Error Utilities** - Handle error processing, monitoring, and recovery
 
 ## 📁 Directory Structure
@@ -51,6 +51,7 @@ function App() {
 ```
 
 **Features:**
+
 - Full-page error display
 - Error reporting to monitoring service
 - Retry mechanism with exponential backoff
@@ -74,6 +75,7 @@ function DashboardPage() {
 ```
 
 **Features:**
+
 - Inline or full-page error display
 - Route-specific error handling
 - Navigation-aware recovery
@@ -91,7 +93,7 @@ function Dashboard() {
       <WidgetErrorBoundary widgetName="Analytics Chart" compact>
         <AnalyticsChart />
       </WidgetErrorBoundary>
-      
+
       <WidgetErrorBoundary widgetName="User Stats">
         <UserStats />
       </WidgetErrorBoundary>
@@ -101,6 +103,7 @@ function Dashboard() {
 ```
 
 **Features:**
+
 - Compact or standard error display
 - Component isolation
 - Reset on props change
@@ -113,11 +116,11 @@ function Dashboard() {
 Comprehensive loading indicators and skeleton screens.
 
 ```tsx
-import { 
-  FullPageLoader, 
-  InlineLoader, 
+import {
+  FullPageLoader,
+  InlineLoader,
   CardSkeleton,
-  TableSkeleton 
+  TableSkeleton
 } from '@/components/shared/fallbacks';
 
 // Full page loading
@@ -136,19 +139,19 @@ import {
 User-friendly empty state displays with call-to-action buttons.
 
 ```tsx
-import { 
-  NoPortfoliosState, 
+import {
+  NoPortfoliosState,
   NoProjectsState,
-  EmptyListState 
+  EmptyListState
 } from '@/components/shared/fallbacks';
 
 // Specific empty states
-<NoPortfoliosState 
-  onCreatePortfolio={() => router.push('/create')} 
+<NoPortfoliosState
+  onCreatePortfolio={() => router.push('/create')}
 />
 
-<NoProjectsState 
-  onAddProject={() => setShowAddProject(true)} 
+<NoProjectsState
+  onAddProject={() => setShowAddProject(true)}
 />
 
 // Generic empty state
@@ -163,11 +166,11 @@ import {
 Various error displays for different error scenarios.
 
 ```tsx
-import { 
+import {
   ErrorState,
   NetworkErrorState,
   AuthErrorState,
-  PermissionDeniedState 
+  PermissionDeniedState
 } from '@/components/shared/fallbacks';
 
 // Generic error state
@@ -188,19 +191,19 @@ import {
 Handle offline scenarios gracefully.
 
 ```tsx
-import { 
-  OfflineState, 
+import {
+  OfflineState,
   OfflineIndicator,
-  useConnectionStatus 
+  useConnectionStatus,
 } from '@/components/shared/fallbacks';
 
 function App() {
   const { isOffline } = useConnectionStatus();
-  
+
   if (isOffline) {
     return <OfflineState onRetry={() => window.location.reload()} />;
   }
-  
+
   return (
     <>
       <MainApp />
@@ -215,14 +218,14 @@ function App() {
 Handle access control with user-friendly displays.
 
 ```tsx
-import { 
+import {
   PermissionDeniedPage,
   RoleBasedAccess,
-  FeatureGate 
+  FeatureGate
 } from '@/components/shared/fallbacks';
 
 // Full page permission denied
-<PermissionDeniedPage 
+<PermissionDeniedPage
   resource="Admin Dashboard"
   requiredRole="admin"
 />
@@ -243,11 +246,11 @@ import {
 ### Error Processing
 
 ```tsx
-import { 
+import {
   serializeError,
   getErrorType,
   getUserFriendlyMessage,
-  formatErrorForDisplay 
+  formatErrorForDisplay,
 } from '@/lib/utils/error-handling';
 
 // Process error for logging
@@ -269,14 +272,14 @@ const { title, description, details } = formatErrorForDisplay(error);
 import { captureError, errorMonitoring } from '@/lib/utils/error-handling';
 
 // Capture error with context
-await captureError(error, { 
+await captureError(error, {
   userId: user.id,
   action: 'portfolio_save',
-  additionalContext: data 
+  additionalContext: data,
 });
 
 // Add custom error filter
-errorMonitoring.addFilter((error) => {
+errorMonitoring.addFilter(error => {
   return !error.message.includes('cancelled');
 });
 
@@ -296,9 +299,9 @@ All error messages support both English and Spanish through the i18n system.
 const { t } = useLanguage();
 
 // Access error translations
-t.errors.networkErrorTitle    // "Connection Problem" / "Problema de Conexión"
-t.errors.tryAgain            // "Try Again" / "Intentar de Nuevo"
-t.emptyStates.noPortfolios   // "No portfolios yet" / "Aún no hay portafolios"
+t.errors.networkErrorTitle; // "Connection Problem" / "Problema de Conexión"
+t.errors.tryAgain; // "Try Again" / "Intentar de Nuevo"
+t.emptyStates.noPortfolios; // "No portfolios yet" / "Aún no hay portafolios"
 ```
 
 ## 🎯 Best Practices
@@ -340,9 +343,9 @@ Provide meaningful recovery options:
 ```tsx
 <ErrorState
   errorType="network"
-  onRetry={() => refetch()}           // Try the same action
-  onGoHome={() => router.push('/')}   // Navigate away
-  onReport={() => reportBug()}        // Report the issue
+  onRetry={() => refetch()} // Try the same action
+  onGoHome={() => router.push('/')} // Navigate away
+  onReport={() => reportBug()} // Report the issue
 />
 ```
 
@@ -351,7 +354,7 @@ Provide meaningful recovery options:
 Gracefully degrade functionality:
 
 ```tsx
-<WidgetErrorBoundary 
+<WidgetErrorBoundary
   fallback={<SimpleChart data={fallbackData} />}
   isolate={true}
 >
@@ -369,7 +372,7 @@ const handleError = (error, errorInfo) => {
     component: 'PortfolioEditor',
     portfolioId: portfolio.id,
     userAction: 'save',
-    formData: sanitizeFormData(data)
+    formData: sanitizeFormData(data),
   });
 };
 ```
@@ -392,7 +395,7 @@ test('displays error boundary when child throws', () => {
       <ThrowError />
     </RootErrorBoundary>
   );
-  
+
   expect(screen.getByText(/something went wrong/i)).toBeInTheDocument();
 });
 ```
@@ -405,9 +408,9 @@ import { NoPortfoliosState } from '@/components/shared/fallbacks';
 
 test('displays create portfolio button', () => {
   const onCreatePortfolio = jest.fn();
-  
+
   render(<NoPortfoliosState onCreatePortfolio={onCreatePortfolio} />);
-  
+
   const button = screen.getByText(/create your first portfolio/i);
   expect(button).toBeInTheDocument();
 });
@@ -424,13 +427,13 @@ errorMonitoring.configure({
   endpoint: process.env.NEXT_PUBLIC_ERROR_MONITORING_ENDPOINT,
   apiKey: process.env.NEXT_PUBLIC_ERROR_MONITORING_API_KEY,
   sampleRate: 1.0,
-  beforeSend: (report) => {
+  beforeSend: report => {
     // Filter sensitive data
     if (report.context.userId) {
       report.context.userId = 'REDACTED';
     }
     return report;
-  }
+  },
 });
 ```
 
@@ -458,6 +461,7 @@ NEXT_PUBLIC_SUPPORT_EMAIL=support@prisma.madfam.io
 ### Error Monitoring Setup
 
 1. **Sentry Integration** (Recommended)
+
 ```typescript
 import * as Sentry from '@sentry/nextjs';
 
@@ -467,14 +471,15 @@ errorMonitoring.addHandler(async (error, context) => {
 ```
 
 2. **Custom API Integration**
+
 ```typescript
 errorMonitoring.configure({
   endpoint: '/api/errors',
-  beforeSend: (report) => ({
+  beforeSend: report => ({
     ...report,
     environment: process.env.NODE_ENV,
-    version: process.env.NEXT_PUBLIC_APP_VERSION
-  })
+    version: process.env.NEXT_PUBLIC_APP_VERSION,
+  }),
 });
 ```
 

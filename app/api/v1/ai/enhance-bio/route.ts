@@ -4,10 +4,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { logger } from '@/lib/utils/logger';
 import { z } from 'zod';
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Request validation schema
 const enhanceBioSchema = z.object({
@@ -38,7 +39,7 @@ const enhanceBioSchema = z.object({
   }),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -110,7 +111,10 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error: any) {
-    logger.error('Bio enhancement failed', error instanceof Error ? error : { error });
+    logger.error(
+      'Bio enhancement failed',
+      error instanceof Error ? error : { error }
+    );
 
     // Handle specific AI service errors
     if (error.name === 'AIServiceError') {
@@ -142,7 +146,7 @@ export async function POST(request: NextRequest) {
 /**
  * Get enhancement history for user
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -151,7 +155,7 @@ export async function GET() {
         { status: 500 }
       );
     }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -184,7 +188,10 @@ export async function GET() {
       },
     });
   } catch (error) {
-    logger.error('Failed to fetch enhancement history', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to fetch enhancement history',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Failed to fetch history' },
       { status: 500 }
@@ -199,7 +206,7 @@ async function logAIUsage(
   userId: string,
   operationType: string,
   metadata: Record<string, any>
-) {
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -214,7 +221,10 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    logger.error('Failed to log AI usage', error instanceof Error ? error : { error });
+    logger.error(
+      'Failed to log AI usage',
+      error instanceof Error ? error : { error }
+    );
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

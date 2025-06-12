@@ -1,13 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
+
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { signIn, signInWithOAuth } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/minimal-context';
-import BaseLayout from '@/components/layouts/BaseLayout';
 
-export default function SignInPage() {
+export default function SignInPage(): React.ReactElement {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);

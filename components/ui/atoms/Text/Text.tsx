@@ -1,6 +1,7 @@
-import * as React from 'react';
-import { cn } from '../../utils/cn';
 import { cva, type VariantProps } from 'class-variance-authority';
+import * as React from 'react';
+
+import { cn } from '../../utils/cn';
 
 const textVariants = cva('', {
   variants: {
@@ -64,7 +65,16 @@ const textVariants = cva('', {
   },
 });
 
-type TextElement = 'p' | 'span' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+type TextElement =
+  | 'p'
+  | 'span'
+  | 'div'
+  | 'h1'
+  | 'h2'
+  | 'h3'
+  | 'h4'
+  | 'h5'
+  | 'h6';
 
 export interface TextProps
   extends React.HTMLAttributes<HTMLElement>,
@@ -81,17 +91,17 @@ export interface TextProps
 
 /**
  * Text component with typography variants
- * 
+ *
  * @example
  * ```tsx
  * <Text size="2xl" weight="bold">
  *   Heading Text
  * </Text>
- * 
+ *
  * <Text variant="muted" size="sm">
  *   Secondary text content
  * </Text>
- * 
+ *
  * <Text gradient as="h1" size="5xl" weight="extrabold">
  *   Gradient Heading
  * </Text>
@@ -128,7 +138,8 @@ const Text = React.forwardRef<HTMLElement, TextProps>(
             truncate,
             wrap,
           }),
-          gradient && 'bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent',
+          gradient &&
+            'bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent',
           className
         )}
         {...props}

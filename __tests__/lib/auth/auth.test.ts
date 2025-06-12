@@ -32,6 +32,7 @@ import {
   setSupabaseClient,
   resetSupabaseClient,
 } from '@/lib/auth/auth';
+
 import { resetAllMocks } from '../../utils/test-utils';
 
 describe('Authentication Service', () => {

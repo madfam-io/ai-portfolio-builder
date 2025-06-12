@@ -30,13 +30,13 @@ import { useUser, useTheme, useToasts } from '@/lib/store';
 function MyComponent() {
   // Access user state
   const { user, isAuthenticated, isLoading } = useUser();
-  
+
   // Manage theme
   const { theme, toggleTheme } = useTheme();
-  
+
   // Show notifications
   const { success, error } = useToasts();
-  
+
   const handleAction = async () => {
     try {
       // Do something
@@ -51,14 +51,19 @@ function MyComponent() {
 ### Accessing Stores Directly
 
 ```typescript
-import { useAuthStore, usePortfolioStore, useUIStore, useAIStore } from '@/lib/store';
+import {
+  useAuthStore,
+  usePortfolioStore,
+  useUIStore,
+  useAIStore,
+} from '@/lib/store';
 
 // In a component
 function MyComponent() {
-  const user = useAuthStore((state) => state.user);
-  const portfolios = usePortfolioStore((state) => state.portfolios);
-  const theme = useUIStore((state) => state.theme);
-  const selectedModels = useAIStore((state) => state.selectedModels);
+  const user = useAuthStore(state => state.user);
+  const portfolios = usePortfolioStore(state => state.portfolios);
+  const theme = useUIStore(state => state.theme);
+  const selectedModels = useAIStore(state => state.selectedModels);
 }
 
 // Outside React (in API routes, utilities, etc.)
@@ -108,7 +113,8 @@ interface PortfolioState {
 }
 
 // Usage
-const { loadPortfolios, createPortfolio, updatePortfolio } = usePortfolioStore();
+const { loadPortfolios, createPortfolio, updatePortfolio } =
+  usePortfolioStore();
 
 const portfolio = await createPortfolio({
   title: 'My Portfolio',
@@ -176,6 +182,7 @@ const enhanced = await enhanceBio('Software developer with 5 years experience');
 ## 🪝 Custom Hooks
 
 ### `useUser()`
+
 Access authenticated user data with loading state.
 
 ```typescript
@@ -183,10 +190,12 @@ const { user, isAuthenticated, isLoading, isGuest } = useUser();
 ```
 
 ### `useCurrentPortfolio()`
+
 Manage the currently edited portfolio with helper methods.
 
 ```typescript
-const { portfolio, updateField, save, isEditing, isSaving } = useCurrentPortfolio();
+const { portfolio, updateField, save, isEditing, isSaving } =
+  useCurrentPortfolio();
 
 // Update a field
 updateField('title', 'New Title');
@@ -199,6 +208,7 @@ await save();
 ```
 
 ### `useTheme()`
+
 Theme management with system detection.
 
 ```typescript
@@ -206,6 +216,7 @@ const { theme, resolvedTheme, setTheme, toggleTheme } = useTheme();
 ```
 
 ### `useToasts()`
+
 Convenient toast notification management.
 
 ```typescript
@@ -216,6 +227,7 @@ error('Failed to save', 'Network error');
 ```
 
 ### `useModal()`
+
 Modal state management for specific modal IDs.
 
 ```typescript
@@ -225,6 +237,7 @@ open(EditProfileModal, { userId: '123' });
 ```
 
 ### `useGlobalLoading()`
+
 Global loading state with message support.
 
 ```typescript
@@ -237,6 +250,7 @@ const result = await withLoading(
 ```
 
 ### `useAIModels()`
+
 AI model selection with quota tracking.
 
 ```typescript
@@ -255,7 +269,7 @@ if (!quota.isExceeded) {
 import { createAsyncAction } from '@/lib/store/utils';
 
 const savePortfolio = createAsyncAction(
-  async (data) => {
+  async data => {
     return await api.savePortfolio(data);
   },
   {
@@ -271,7 +285,7 @@ const savePortfolio = createAsyncAction(
 ```typescript
 const MyStore = create((set, get) => ({
   ...createLoadingSlice(),
-  
+
   fetchData: async () => {
     get().startLoading('fetch');
     try {
@@ -289,10 +303,10 @@ const MyStore = create((set, get) => ({
 ```typescript
 import { createOptimisticUpdate } from '@/lib/store/utils';
 
-const updateItem = (id, data) => 
+const updateItem = (id, data) =>
   createOptimisticUpdate(
     // Optimistic update
-    (state) => {
+    state => {
       const item = state.items.find(i => i.id === id);
       if (item) Object.assign(item, data);
     },
@@ -320,11 +334,11 @@ describe('AuthStore', () => {
 
   it('should sign in user', async () => {
     const { result } = renderHook(() => useAuthStore());
-    
+
     await act(async () => {
       await result.current.signIn('test@example.com', 'password');
     });
-    
+
     expect(result.current.isAuthenticated).toBe(true);
     expect(result.current.user?.email).toBe('test@example.com');
   });
@@ -356,9 +370,10 @@ All stores are integrated with Redux DevTools for debugging:
 ## 🚨 Best Practices
 
 1. **Use selectors with shallow comparison** to prevent unnecessary re-renders:
+
    ```typescript
    const { user, isLoading } = useAuthStore(
-     (state) => ({ user: state.user, isLoading: state.isLoading }),
+     state => ({ user: state.user, isLoading: state.isLoading }),
      shallow
    );
    ```
@@ -381,7 +396,7 @@ The root store enables cross-store communication:
 // In auth store's signOut method
 signOut: async () => {
   await supabase.auth.signOut();
-  
+
   // Reset other stores
   usePortfolioStore.getState().resetPortfolios();
   useAIStore.getState().clearHistory();
@@ -399,6 +414,7 @@ signOut: async () => {
 6. Add tests
 
 Example:
+
 ```typescript
 // lib/store/my-new-store.ts
 import { create } from 'zustand';
@@ -416,10 +432,10 @@ interface MyNewActions {
 
 export const useMyNewStore = create<MyNewState & MyNewActions>()(
   devtools(
-    (set) => ({
+    set => ({
       data: [],
       isLoading: false,
-      
+
       loadData: async () => {
         set({ isLoading: true });
         try {
@@ -430,7 +446,7 @@ export const useMyNewStore = create<MyNewState & MyNewActions>()(
           throw error;
         }
       },
-      
+
       reset: () => set({ data: [], isLoading: false }),
     }),
     { name: 'my-new-store' }

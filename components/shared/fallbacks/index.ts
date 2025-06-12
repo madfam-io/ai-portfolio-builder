@@ -1,6 +1,6 @@
 /**
  * @fileoverview Fallback Components Index
- * 
+ *
  * Central export point for all fallback components.
  */
 
@@ -17,7 +17,7 @@ export {
   ProfileSkeleton,
   StatsSkeleton,
   NavigationSkeleton,
-  ContentLoader
+  ContentLoader,
 } from './LoadingFallback';
 
 // Empty state fallbacks
@@ -31,7 +31,7 @@ export {
   NoImagesState,
   EmptyListState,
   EmptyTableState,
-  InlineEmptyState
+  InlineEmptyState,
 } from './EmptyStateFallback';
 
 // Error state fallbacks
@@ -43,7 +43,7 @@ export {
   NotFoundState,
   ValidationErrorState,
   ServerErrorState,
-  TimeoutErrorState
+  TimeoutErrorState,
 } from './ErrorStateFallback';
 
 // Offline state fallbacks
@@ -52,7 +52,7 @@ export {
   OfflineIndicator,
   OfflineBanner,
   OfflineCard,
-  useConnectionStatus
+  useConnectionStatus,
 } from './OfflineStateFallback';
 
 // Not found fallbacks
@@ -60,7 +60,7 @@ export {
   NotFoundPage,
   ResourceNotFound,
   SearchNotFound,
-  DynamicNotFound
+  DynamicNotFound,
 } from './NotFoundFallback';
 
 // Permission denied fallbacks
@@ -68,5 +68,5 @@ export {
   PermissionDeniedPage,
   InlinePermissionDenied,
   RoleBasedAccess,
-  FeatureGate
+  FeatureGate,
 } from './PermissionDeniedFallback';

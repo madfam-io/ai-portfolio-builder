@@ -7,15 +7,16 @@
 
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { FiAlertTriangle, FiRefreshCw, FiArrowLeft } from 'react-icons/fi';
-import { useRouter } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   serializeError,
   getErrorType,
 } from '@/lib/utils/error-handling/error-utils';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
 
 interface RouteErrorBoundaryProps {
   children: ReactNode;

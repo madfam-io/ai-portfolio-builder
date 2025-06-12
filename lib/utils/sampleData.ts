@@ -1,12 +1,20 @@
 /**
  * @fileoverview Sample Data Generator
- * 
+ *
  * Generates realistic sample portfolio data for demos and testing.
  * Includes template-specific content and industry-appropriate examples.
  */
 
-import { Portfolio, TemplateType, Experience, Project, Education, Skill, Certification } from '@/types/portfolio';
 import { getTemplateConfig } from '@/lib/templates/templateConfig';
+import {
+  Portfolio,
+  TemplateType,
+  Experience,
+  Project,
+  Education,
+  Skill,
+  Certification,
+} from '@/types/portfolio';
 
 interface SampleDataConfig {
   name: string;
@@ -50,13 +58,21 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2021-03',
         endDate: '',
         current: true,
-        description: 'Led development of microservices architecture serving 2M+ users. Architected CI/CD pipelines reducing deployment time by 60%.',
+        description:
+          'Led development of microservices architecture serving 2M+ users. Architected CI/CD pipelines reducing deployment time by 60%.',
         highlights: [
           'Increased system performance by 40% through database optimization',
           'Mentored team of 4 junior developers',
-          'Implemented real-time features using WebSocket and Redis'
+          'Implemented real-time features using WebSocket and Redis',
         ],
-        technologies: ['React', 'Node.js', 'PostgreSQL', 'AWS', 'Docker', 'TypeScript']
+        technologies: [
+          'React',
+          'Node.js',
+          'PostgreSQL',
+          'AWS',
+          'Docker',
+          'TypeScript',
+        ],
       },
       {
         id: '2',
@@ -65,24 +81,26 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2019-06',
         endDate: '2021-02',
         current: false,
-        description: 'Built MVP from scratch for healthcare platform. Collaborated directly with founders and product team.',
+        description:
+          'Built MVP from scratch for healthcare platform. Collaborated directly with founders and product team.',
         highlights: [
           'Developed HIPAA-compliant patient portal',
           'Integrated with 5+ third-party medical APIs',
-          'Achieved 99.9% uptime in production'
+          'Achieved 99.9% uptime in production',
         ],
-        technologies: ['Vue.js', 'Python', 'FastAPI', 'MongoDB', 'GCP']
-      }
+        technologies: ['Vue.js', 'Python', 'FastAPI', 'MongoDB', 'GCP'],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'EcoTracker Mobile App',
-        description: 'A React Native app that helps users track their carbon footprint and suggests eco-friendly alternatives.',
+        description:
+          'A React Native app that helps users track their carbon footprint and suggests eco-friendly alternatives.',
         highlights: [
           'Built with React Native and Node.js backend',
           '10,000+ downloads in first month',
-          'Featured on Product Hunt'
+          'Featured on Product Hunt',
         ],
         technologies: ['React Native', 'Node.js', 'MongoDB', 'Stripe API'],
         projectUrl: 'https://ecotracker.example.com',
@@ -94,11 +112,12 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
       {
         id: '2',
         title: 'DevTools Dashboard',
-        description: 'Real-time monitoring dashboard for development teams to track code quality, deployments, and performance metrics.',
+        description:
+          'Real-time monitoring dashboard for development teams to track code quality, deployments, and performance metrics.',
         highlights: [
           'Real-time data visualization with D3.js',
           'Integrated with GitHub, Jira, and AWS',
-          'Used by 50+ development teams'
+          'Used by 50+ development teams',
         ],
         technologies: ['React', 'D3.js', 'Express', 'WebSocket', 'Redis'],
         projectUrl: 'https://devtools.example.com',
@@ -106,7 +125,7 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         imageUrl: '/demo/project2.jpg',
         featured: false,
         order: 2,
-      }
+      },
     ],
     education: [
       {
@@ -118,21 +137,29 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         endDate: '2019-05',
         current: false,
         achievements: [
-          'Dean\'s List for 3 consecutive semesters',
+          "Dean's List for 3 consecutive semesters",
           'President of Computer Science Student Association',
-          'Winner of UC Berkeley Hackathon 2018'
-        ]
-      }
+          'Winner of UC Berkeley Hackathon 2018',
+        ],
+      },
     ],
     skills: [
-      { name: 'JavaScript', level: 'expert', category: 'Programming Languages' },
-      { name: 'TypeScript', level: 'expert', category: 'Programming Languages' },
+      {
+        name: 'JavaScript',
+        level: 'expert',
+        category: 'Programming Languages',
+      },
+      {
+        name: 'TypeScript',
+        level: 'expert',
+        category: 'Programming Languages',
+      },
       { name: 'Python', level: 'advanced', category: 'Programming Languages' },
       { name: 'React', level: 'expert', category: 'Frontend' },
       { name: 'Node.js', level: 'expert', category: 'Backend' },
       { name: 'PostgreSQL', level: 'advanced', category: 'Databases' },
       { name: 'AWS', level: 'advanced', category: 'Cloud & DevOps' },
-      { name: 'Docker', level: 'advanced', category: 'Cloud & DevOps' }
+      { name: 'Docker', level: 'advanced', category: 'Cloud & DevOps' },
     ],
     certifications: [
       {
@@ -142,15 +169,15 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         issueDate: '2022-08',
         expiryDate: '2025-08',
         credentialId: 'AWS-SA-2022-ARX',
-        credentialUrl: 'https://aws.amazon.com/verification'
-      }
+        credentialUrl: 'https://aws.amazon.com/verification',
+      },
     ],
     social: {
       linkedin: 'https://linkedin.com/in/alexrodriguez',
       github: 'https://github.com/alexr',
       twitter: 'https://twitter.com/alexr_dev',
-      website: 'https://alexrodriguez.dev'
-    }
+      website: 'https://alexrodriguez.dev',
+    },
   },
 
   designer: {
@@ -169,31 +196,39 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2020-09',
         endDate: '',
         current: true,
-        description: 'Lead designer for enterprise SaaS products. Manage design system and mentor junior designers.',
+        description:
+          'Lead designer for enterprise SaaS products. Manage design system and mentor junior designers.',
         highlights: [
           'Increased user engagement by 35% through redesign',
           'Built comprehensive design system used across 8 products',
-          'Led user research initiatives with 500+ participants'
+          'Led user research initiatives with 500+ participants',
         ],
-        technologies: ['Figma', 'Sketch', 'Adobe Creative Suite', 'Principle', 'InVision']
-      }
+        technologies: [
+          'Figma',
+          'Sketch',
+          'Adobe Creative Suite',
+          'Principle',
+          'InVision',
+        ],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'FinanceApp Mobile Redesign',
-        description: 'Complete redesign of mobile banking app focusing on accessibility and user experience improvements.',
+        description:
+          'Complete redesign of mobile banking app focusing on accessibility and user experience improvements.',
         highlights: [
           'Improved task completion rate by 40%',
           'WCAG 2.1 AA compliant design',
-          'Featured in UX Magazine'
+          'Featured in UX Magazine',
         ],
         technologies: ['Figma', 'Principle', 'Adobe XD', 'UserTesting'],
         projectUrl: 'https://behance.net/maya/financeapp',
         imageUrl: '/demo/design1.jpg',
         featured: true,
         order: 1,
-      }
+      },
     ],
     education: [
       {
@@ -204,15 +239,15 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2016-09',
         endDate: '2020-05',
         current: false,
-        achievements: ['Summa Cum Laude', 'Design Excellence Award']
-      }
+        achievements: ['Summa Cum Laude', 'Design Excellence Award'],
+      },
     ],
     skills: [
       { name: 'UI Design', level: 'expert', category: 'Design' },
       { name: 'UX Research', level: 'expert', category: 'Research' },
       { name: 'Figma', level: 'expert', category: 'Tools' },
       { name: 'Prototyping', level: 'advanced', category: 'Design' },
-      { name: 'Design Systems', level: 'expert', category: 'Design' }
+      { name: 'Design Systems', level: 'expert', category: 'Design' },
     ],
     certifications: [
       {
@@ -220,14 +255,14 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         name: 'Google UX Design Certificate',
         issuer: 'Google',
         issueDate: '2021-03',
-        credentialId: 'GOOGLE-UX-2021'
-      }
+        credentialId: 'GOOGLE-UX-2021',
+      },
     ],
     social: {
       linkedin: 'https://linkedin.com/in/mayachen',
       behance: 'https://behance.net/mayachen',
-      dribbble: 'https://dribbble.com/mayachen'
-    }
+      dribbble: 'https://dribbble.com/mayachen',
+    },
   },
 
   consultant: {
@@ -246,29 +281,31 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2019-01',
         endDate: '',
         current: true,
-        description: 'Lead strategic initiatives for Fortune 500 clients across retail, manufacturing, and technology sectors.',
+        description:
+          'Lead strategic initiatives for Fortune 500 clients across retail, manufacturing, and technology sectors.',
         highlights: [
           'Generated $50M+ in cost savings for clients',
           'Led 15+ digital transformation projects',
-          'Managed teams of up to 12 consultants'
+          'Managed teams of up to 12 consultants',
         ],
-        technologies: ['Tableau', 'PowerBI', 'SAP', 'Salesforce', 'Excel']
-      }
+        technologies: ['Tableau', 'PowerBI', 'SAP', 'Salesforce', 'Excel'],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'Retail Digital Transformation',
-        description: 'Led complete digital transformation for major retail chain, implementing omnichannel strategy and new POS systems.',
+        description:
+          'Led complete digital transformation for major retail chain, implementing omnichannel strategy and new POS systems.',
         highlights: [
           '$25M cost reduction in first year',
           '30% improvement in customer satisfaction',
-          'Successful rollout across 200+ stores'
+          'Successful rollout across 200+ stores',
         ],
         technologies: ['SAP', 'Salesforce', 'Tableau', 'Azure'],
         featured: true,
         order: 1,
-      }
+      },
     ],
     education: [
       {
@@ -279,14 +316,14 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2016-09',
         endDate: '2018-05',
         current: false,
-        achievements: ['Baker Scholar (Top 5%)', 'Consulting Club President']
-      }
+        achievements: ['Baker Scholar (Top 5%)', 'Consulting Club President'],
+      },
     ],
     skills: [
       { name: 'Strategic Planning', level: 'expert', category: 'Strategy' },
       { name: 'Process Improvement', level: 'expert', category: 'Operations' },
       { name: 'Data Analysis', level: 'advanced', category: 'Analytics' },
-      { name: 'Change Management', level: 'expert', category: 'Leadership' }
+      { name: 'Change Management', level: 'expert', category: 'Leadership' },
     ],
     certifications: [
       {
@@ -294,12 +331,12 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         name: 'PMP Certification',
         issuer: 'Project Management Institute',
         issueDate: '2020-06',
-        expiryDate: '2023-06'
-      }
+        expiryDate: '2023-06',
+      },
     ],
     social: {
-      linkedin: 'https://linkedin.com/in/robertthompson'
-    }
+      linkedin: 'https://linkedin.com/in/robertthompson',
+    },
   },
 
   business: {
@@ -318,14 +355,20 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2020-03',
         endDate: '',
         current: true,
-        description: 'Lead business development strategy and partnership initiatives for $100M+ SaaS company.',
+        description:
+          'Lead business development strategy and partnership initiatives for $100M+ SaaS company.',
         highlights: [
           'Increased annual revenue by 150% over 3 years',
           'Established partnerships with 50+ enterprise clients',
-          'Built and managed team of 8 business development professionals'
+          'Built and managed team of 8 business development professionals',
         ],
-        technologies: ['Salesforce', 'HubSpot', 'Tableau', 'LinkedIn Sales Navigator']
-      }
+        technologies: [
+          'Salesforce',
+          'HubSpot',
+          'Tableau',
+          'LinkedIn Sales Navigator',
+        ],
+      },
     ],
     projects: [],
     education: [
@@ -336,19 +379,23 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         field: 'Marketing',
         startDate: '2006-08',
         endDate: '2010-05',
-        current: false
-      }
+        current: false,
+      },
     ],
     skills: [
       { name: 'Business Strategy', level: 'expert', category: 'Strategy' },
-      { name: 'Partnership Development', level: 'expert', category: 'Business Development' },
+      {
+        name: 'Partnership Development',
+        level: 'expert',
+        category: 'Business Development',
+      },
       { name: 'Sales Management', level: 'expert', category: 'Sales' },
-      { name: 'Market Analysis', level: 'advanced', category: 'Analytics' }
+      { name: 'Market Analysis', level: 'advanced', category: 'Analytics' },
     ],
     certifications: [],
     social: {
-      linkedin: 'https://linkedin.com/in/sarahwilliams'
-    }
+      linkedin: 'https://linkedin.com/in/sarahwilliams',
+    },
   },
 
   creative: {
@@ -367,29 +414,36 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2018-01',
         endDate: '',
         current: true,
-        description: 'Lead creative projects for brands, agencies, and individual clients across various industries.',
+        description:
+          'Lead creative projects for brands, agencies, and individual clients across various industries.',
         highlights: [
           'Collaborated with 100+ brands including Nike and Apple',
           'Work featured in Vogue, GQ, and National Geographic',
-          'Founded successful creative studio with 5 team members'
+          'Founded successful creative studio with 5 team members',
         ],
-        technologies: ['Adobe Creative Suite', 'Cinema 4D', 'Capture One', 'Final Cut Pro']
-      }
+        technologies: [
+          'Adobe Creative Suite',
+          'Cinema 4D',
+          'Capture One',
+          'Final Cut Pro',
+        ],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'Nike Campaign Photography',
-        description: 'Lead photographer for Nike\'s summer 2023 campaign featuring professional athletes.',
+        description:
+          "Lead photographer for Nike's summer 2023 campaign featuring professional athletes.",
         highlights: [
           'Campaign reached 10M+ impressions',
           'Featured across digital and print media',
-          'Collaborated with world-class athletes'
+          'Collaborated with world-class athletes',
         ],
         technologies: ['Canon R5', 'Capture One', 'Photoshop'],
         featured: true,
         order: 1,
-      }
+      },
     ],
     education: [
       {
@@ -399,20 +453,20 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         field: 'Photography',
         startDate: '2012-09',
         endDate: '2016-05',
-        current: false
-      }
+        current: false,
+      },
     ],
     skills: [
       { name: 'Photography', level: 'expert', category: 'Creative' },
       { name: 'Brand Design', level: 'expert', category: 'Design' },
       { name: 'Adobe Creative Suite', level: 'expert', category: 'Tools' },
-      { name: 'Art Direction', level: 'expert', category: 'Creative' }
+      { name: 'Art Direction', level: 'expert', category: 'Creative' },
     ],
     certifications: [],
     social: {
       instagram: 'https://instagram.com/davidpark',
-      behance: 'https://behance.net/davidpark'
-    }
+      behance: 'https://behance.net/davidpark',
+    },
   },
 
   minimal: {
@@ -431,14 +485,15 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2019-09',
         endDate: '',
         current: true,
-        description: 'Lead computational biology research focusing on machine learning applications in drug discovery.',
+        description:
+          'Lead computational biology research focusing on machine learning applications in drug discovery.',
         highlights: [
           'Published 15 papers in Nature, Science, and Cell',
           'Received $2M NIH grant for drug discovery research',
-          'Supervised 6 PhD students and 4 postdocs'
+          'Supervised 6 PhD students and 4 postdocs',
         ],
-        technologies: ['Python', 'R', 'MATLAB', 'TensorFlow', 'BioPython']
-      }
+        technologies: ['Python', 'R', 'MATLAB', 'TensorFlow', 'BioPython'],
+      },
     ],
     projects: [],
     education: [
@@ -450,19 +505,19 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2013-09',
         endDate: '2018-06',
         current: false,
-        achievements: ['Summa Cum Laude', 'Outstanding Dissertation Award']
-      }
+        achievements: ['Summa Cum Laude', 'Outstanding Dissertation Award'],
+      },
     ],
     skills: [
       { name: 'Machine Learning', level: 'expert', category: 'Computational' },
       { name: 'Bioinformatics', level: 'expert', category: 'Biology' },
       { name: 'Python', level: 'expert', category: 'Programming' },
-      { name: 'Statistical Analysis', level: 'expert', category: 'Analytics' }
+      { name: 'Statistical Analysis', level: 'expert', category: 'Analytics' },
     ],
     certifications: [],
     social: {
-      linkedin: 'https://linkedin.com/in/emmajohnson'
-    }
+      linkedin: 'https://linkedin.com/in/emmajohnson',
+    },
   },
   educator: {
     name: 'Prof. Michael Chen',
@@ -480,30 +535,38 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2015-09',
         endDate: '',
         current: true,
-        description: 'Lead research in educational technology and teach undergraduate and graduate courses in algorithms and data structures.',
+        description:
+          'Lead research in educational technology and teach undergraduate and graduate courses in algorithms and data structures.',
         highlights: [
           'Published 40+ papers in educational technology',
           'Developed online course with 100,000+ students',
-          'Received Outstanding Teaching Award 3 times'
+          'Received Outstanding Teaching Award 3 times',
         ],
-        technologies: ['Python', 'Java', 'JavaScript', 'React', 'Machine Learning']
-      }
+        technologies: [
+          'Python',
+          'Java',
+          'JavaScript',
+          'React',
+          'Machine Learning',
+        ],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'Interactive Algorithm Visualizer',
-        description: 'Web-based platform for visualizing complex algorithms to help students understand data structures and algorithms.',
+        description:
+          'Web-based platform for visualizing complex algorithms to help students understand data structures and algorithms.',
         highlights: [
           'Used by 50,000+ students worldwide',
           'Reduced student failure rate by 30%',
-          'Featured in ACM Education Conference'
+          'Featured in ACM Education Conference',
         ],
         technologies: ['React', 'D3.js', 'Node.js', 'MongoDB'],
         projectUrl: 'https://algo-viz.edu',
         featured: true,
         order: 1,
-      }
+      },
     ],
     education: [
       {
@@ -514,20 +577,27 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2008-09',
         endDate: '2013-05',
         current: false,
-        achievements: ['Outstanding Dissertation Award', 'Teaching Assistant Excellence Award']
-      }
+        achievements: [
+          'Outstanding Dissertation Award',
+          'Teaching Assistant Excellence Award',
+        ],
+      },
     ],
     skills: [
-      { name: 'Educational Technology', level: 'expert', category: 'Education' },
+      {
+        name: 'Educational Technology',
+        level: 'expert',
+        category: 'Education',
+      },
       { name: 'Curriculum Design', level: 'expert', category: 'Education' },
       { name: 'Python', level: 'expert', category: 'Programming' },
-      { name: 'Machine Learning', level: 'advanced', category: 'Technical' }
+      { name: 'Machine Learning', level: 'advanced', category: 'Technical' },
     ],
     certifications: [],
     social: {
       linkedin: 'https://linkedin.com/in/michaelchen',
-      twitter: 'https://twitter.com/profchen'
-    }
+      twitter: 'https://twitter.com/profchen',
+    },
   },
   modern: {
     name: 'Jessica Kim',
@@ -545,29 +615,31 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2020-01',
         endDate: '',
         current: true,
-        description: 'Lead product strategy for Azure developer tools, managing roadmap and feature prioritization for products used by millions of developers.',
+        description:
+          'Lead product strategy for Azure developer tools, managing roadmap and feature prioritization for products used by millions of developers.',
         highlights: [
           'Increased user engagement by 45% through data-driven features',
           'Led cross-functional team of 15 engineers and designers',
-          'Launched 3 major product features ahead of schedule'
+          'Launched 3 major product features ahead of schedule',
         ],
-        technologies: ['SQL', 'Python', 'Tableau', 'Figma', 'Jira']
-      }
+        technologies: ['SQL', 'Python', 'Tableau', 'Figma', 'Jira'],
+      },
     ],
     projects: [
       {
         id: '1',
         title: 'Developer Experience Platform',
-        description: 'End-to-end developer experience platform that streamlined the development workflow for Azure services.',
+        description:
+          'End-to-end developer experience platform that streamlined the development workflow for Azure services.',
         highlights: [
           '40% reduction in developer onboarding time',
           '85% user satisfaction score',
-          'Adopted by 500,000+ developers globally'
+          'Adopted by 500,000+ developers globally',
         ],
         technologies: ['React', 'Azure', 'TypeScript', 'GraphQL'],
         featured: true,
         order: 1,
-      }
+      },
     ],
     education: [
       {
@@ -578,14 +650,14 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         startDate: '2014-09',
         endDate: '2016-06',
         current: false,
-        achievements: ['Dean\'s List', 'Product Management Concentration']
-      }
+        achievements: ["Dean's List", 'Product Management Concentration'],
+      },
     ],
     skills: [
       { name: 'Product Strategy', level: 'expert', category: 'Product' },
       { name: 'Data Analysis', level: 'expert', category: 'Analytics' },
       { name: 'User Research', level: 'advanced', category: 'Research' },
-      { name: 'Agile Methodologies', level: 'expert', category: 'Process' }
+      { name: 'Agile Methodologies', level: 'expert', category: 'Process' },
     ],
     certifications: [
       {
@@ -593,14 +665,14 @@ const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
         name: 'Certified Scrum Product Owner',
         issuer: 'Scrum Alliance',
         issueDate: '2019-03',
-        expiryDate: '2022-03'
-      }
+        expiryDate: '2022-03',
+      },
     ],
     social: {
       linkedin: 'https://linkedin.com/in/jessicakim',
-      twitter: 'https://twitter.com/jessicapm'
-    }
-  }
+      twitter: 'https://twitter.com/jessicapm',
+    },
+  },
 };
 
 /**
@@ -621,22 +693,22 @@ export function generateSamplePortfolio(template: TemplateType): Portfolio {
     template,
     status: 'draft',
     subdomain: `${sampleData.name.toLowerCase().replace(' ', '')}-demo`,
-    
+
     contact: {
       email: sampleData.email,
       phone: sampleData.phone,
       location: sampleData.location,
-      availability: 'Available for new opportunities'
+      availability: 'Available for new opportunities',
     },
-    
+
     social: sampleData.social,
-    
+
     experience: sampleData.experience,
     education: sampleData.education,
     projects: sampleData.projects,
     skills: sampleData.skills,
     certifications: sampleData.certifications,
-    
+
     customization: {
       primaryColor: templateConfig.colorScheme.primary,
       secondaryColor: templateConfig.colorScheme.secondary,
@@ -644,11 +716,11 @@ export function generateSamplePortfolio(template: TemplateType): Portfolio {
       fontFamily: 'Inter',
       headerStyle: templateConfig.layout.headerStyle,
       sectionOrder: templateConfig.defaultOrder,
-      hiddenSections: []
+      hiddenSections: [],
     },
-    
+
     createdAt: new Date(),
-    updatedAt: new Date()
+    updatedAt: new Date(),
   };
 }
 
@@ -658,29 +730,39 @@ export function generateSamplePortfolio(template: TemplateType): Portfolio {
 export function getSampleProjects(industry: string): Project[] {
   // Return industry-specific sample projects
   const projectsByIndustry: Record<string, Project[]> = {
-    'software': [
+    software: [
       {
         id: '1',
         title: 'E-commerce Platform',
-        description: 'Full-stack e-commerce solution with payment processing and inventory management.',
-        highlights: ['Built with MERN stack', 'Stripe integration', '99.9% uptime'],
+        description:
+          'Full-stack e-commerce solution with payment processing and inventory management.',
+        highlights: [
+          'Built with MERN stack',
+          'Stripe integration',
+          '99.9% uptime',
+        ],
         technologies: ['React', 'Node.js', 'MongoDB', 'Stripe'],
         featured: true,
         order: 1,
-      }
+      },
     ],
-    'design': [
+    design: [
       {
         id: '1',
         title: 'Mobile App Redesign',
-        description: 'Complete UX/UI redesign of popular fitness tracking application.',
-        highlights: ['40% increase in user engagement', 'WCAG compliant', '5-star rating'],
+        description:
+          'Complete UX/UI redesign of popular fitness tracking application.',
+        highlights: [
+          '40% increase in user engagement',
+          'WCAG compliant',
+          '5-star rating',
+        ],
         technologies: ['Figma', 'Principle', 'Adobe XD'],
         featured: true,
         order: 1,
-      }
-    ]
+      },
+    ],
   };
-  
+
   return projectsByIndustry[industry] || [];
 }

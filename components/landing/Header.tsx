@@ -1,5 +1,9 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { useState } from 'react';
 import {
   FaMoon,
   FaSun,
@@ -8,15 +12,12 @@ import {
   FaUser,
   FaSignOutAlt,
 } from 'react-icons/fa';
-import Image from 'next/image';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+
 import { useApp } from '@/lib/contexts/AppContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function Header() {
+export default function Header(): React.ReactElement {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
   const {
     isDarkMode,

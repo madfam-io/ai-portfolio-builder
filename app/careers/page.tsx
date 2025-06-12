@@ -1,7 +1,8 @@
 'use client';
 
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import React from 'react';
+
+import Link from 'next/link';
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -10,9 +11,11 @@ import {
   FaRocket,
   FaGlobe,
 } from 'react-icons/fa';
-import Link from 'next/link';
 
-export default function CareersPage() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function CareersPage(): React.ReactElement {
   const { t } = useLanguage();
 
   const openPositions = [

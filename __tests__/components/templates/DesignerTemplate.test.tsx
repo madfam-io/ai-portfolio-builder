@@ -2,10 +2,12 @@
  * DesignerTemplate Component test suite
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { Portfolio } from '@/types/portfolio';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 const mockPortfolio: Portfolio = {

@@ -2,10 +2,12 @@
  * Editor page test suite
  */
 
-import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import EditorPage from '@/app/editor/page';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 // Mock next/navigation

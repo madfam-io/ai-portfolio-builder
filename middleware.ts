@@ -1,10 +1,13 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
-import { csrfMiddleware } from './middleware/csrf';
-import { apiVersionMiddleware } from './middleware/api-version';
+
 import { logger } from '@/lib/utils/logger';
+
+import { apiVersionMiddleware } from './middleware/api-version';
+import { csrfMiddleware } from './middleware/csrf';
+import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
+
+import type { NextRequest } from 'next/server';
 
 /**
  * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning
@@ -19,7 +22,7 @@ import { logger } from '@/lib/utils/logger';
  * 7. Redirects unauthenticated users to sign in
  * 8. Redirects authenticated users away from auth pages
  */
-export async function middleware(req: NextRequest) {
+export async function middleware(req: NextRequest): Promise<void> {
   const { pathname } = req.nextUrl;
 
   // Apply API versioning middleware first

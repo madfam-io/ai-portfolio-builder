@@ -4,8 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+
 import { AnalyticsService } from '@/lib/services/analyticsService';
+import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
 interface RouteParams {
@@ -17,33 +18,33 @@ interface RouteParams {
 /**
  * Get analytics for a specific repository
  */
-export async function GET(_: NextRequest, { params }: RouteParams) {
+export async function GET(
+  _: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
         { status: 503 }
       );
     }
-    
+
     // Check if user is authenticated
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const repositoryId = params.id;
     const analyticsService = new AnalyticsService(user.id);
-    
+
     try {
       await analyticsService.initialize();
     } catch (error: any) {
@@ -57,8 +58,9 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
     }
 
     // Get repository analytics
-    const analytics = await analyticsService.getRepositoryAnalytics(repositoryId);
-    
+    const analytics =
+      await analyticsService.getRepositoryAnalytics(repositoryId);
+
     if (!analytics) {
       return NextResponse.json(
         { error: 'Repository not found' },
@@ -71,9 +73,9 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
       data: analytics,
     });
   } catch (error: any) {
-    logger.error('Failed to fetch repository analytics', { 
-      repositoryId: params.id, 
-      error: error.message || 'Unknown error'
+    logger.error('Failed to fetch repository analytics', {
+      repositoryId: params.id,
+      error: error.message || 'Unknown error',
     });
     return NextResponse.json(
       { error: error.message || 'An unexpected error occurred' },
@@ -85,41 +87,41 @@ export async function GET(_: NextRequest, { params }: RouteParams) {
 /**
  * Sync specific repository data
  */
-export async function POST(request: NextRequest, { params }: RouteParams) {
+export async function POST(
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database connection not available' },
         { status: 503 }
       );
     }
-    
+
     // Check if user is authenticated
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const repositoryId = params.id;
     const body = await request.json().catch(() => ({}));
-    const { 
-      syncMetrics = true, 
-      syncPullRequests = true, 
+    const {
+      syncMetrics = true,
+      syncPullRequests = true,
       syncContributors = true,
-      syncCommits = true 
+      syncCommits = true,
     } = body;
 
     const analyticsService = new AnalyticsService(user.id);
-    
+
     try {
       await analyticsService.initialize();
     } catch (error: any) {
@@ -153,8 +155,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         await analyticsService.syncRepositoryMetrics(repositoryId);
         results.synced.push('metrics');
       } catch (error: any) {
-        logger.error('Failed to sync metrics', { repositoryId, error: error.message || 'Unknown error' });
-        results.errors.push({ type: 'metrics', error: error.message || 'An unexpected error occurred' });
+        logger.error('Failed to sync metrics', {
+          repositoryId,
+          error: error.message || 'Unknown error',
+        });
+        results.errors.push({
+          type: 'metrics',
+          error: error.message || 'An unexpected error occurred',
+        });
       }
     }
 
@@ -164,8 +172,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         await analyticsService.syncPullRequests(repositoryId);
         results.synced.push('pull_requests');
       } catch (error: any) {
-        logger.error('Failed to sync pull requests', { repositoryId, error: error.message || 'Unknown error' });
-        results.errors.push({ type: 'pull_requests', error: error.message || 'An unexpected error occurred' });
+        logger.error('Failed to sync pull requests', {
+          repositoryId,
+          error: error.message || 'Unknown error',
+        });
+        results.errors.push({
+          type: 'pull_requests',
+          error: error.message || 'An unexpected error occurred',
+        });
       }
     }
 
@@ -175,8 +189,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         await analyticsService.syncContributors(repositoryId);
         results.synced.push('contributors');
       } catch (error: any) {
-        logger.error('Failed to sync contributors', { repositoryId, error: error.message || 'Unknown error' });
-        results.errors.push({ type: 'contributors', error: error.message || 'An unexpected error occurred' });
+        logger.error('Failed to sync contributors', {
+          repositoryId,
+          error: error.message || 'Unknown error',
+        });
+        results.errors.push({
+          type: 'contributors',
+          error: error.message || 'An unexpected error occurred',
+        });
       }
     }
 
@@ -186,8 +206,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         await analyticsService.syncCommitAnalytics(repositoryId);
         results.synced.push('commits');
       } catch (error: any) {
-        logger.error('Failed to sync commits', { repositoryId, error: error.message || 'Unknown error' });
-        results.errors.push({ type: 'commits', error: error.message || 'An unexpected error occurred' });
+        logger.error('Failed to sync commits', {
+          repositoryId,
+          error: error.message || 'Unknown error',
+        });
+        results.errors.push({
+          type: 'commits',
+          error: error.message || 'An unexpected error occurred',
+        });
       }
     }
 
@@ -196,9 +222,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       data: results,
     });
   } catch (error: any) {
-    logger.error('Failed to sync repository', { 
-      repositoryId: params.id, 
-      error: error.message || 'Unknown error'
+    logger.error('Failed to sync repository', {
+      repositoryId: params.id,
+      error: error.message || 'Unknown error',
     });
     return NextResponse.json(
       { error: error.message || 'An unexpected error occurred' },

@@ -2,11 +2,13 @@
  * ConsultantTemplate Component test suite
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import { ConsultantTemplate } from '@/components/templates/ConsultantTemplate';
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
 import { Portfolio } from '@/types/portfolio';
+
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 // Mock portfolio data for consultant
 const mockPortfolio: Portfolio = {

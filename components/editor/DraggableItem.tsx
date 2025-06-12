@@ -3,10 +3,12 @@
  * Wrapper component that makes any content draggable
  */
 
-import React, { useState } from 'react';
-import { cn } from '@/components/ui/utils';
 import { GripVertical } from 'lucide-react';
+import React, { useState } from 'react';
+
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { cn } from '@/components/ui/utils';
+
 import {
   DragItem,
   handleDragStart,
@@ -69,7 +71,7 @@ export const DraggableItem = React.memo(function DraggableItem({
   };
 
   return (
-    <WidgetErrorBoundary 
+    <WidgetErrorBoundary
       widgetName="DraggableItem"
       compact={true}
       isolate={true}

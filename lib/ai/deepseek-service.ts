@@ -3,6 +3,7 @@
  * Provides AI-powered content enhancement using DeepSeek reasoning models
  */
 
+import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -15,7 +16,6 @@ import {
   ModelUnavailableError,
   QuotaExceededError,
 } from './types';
-import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 
 interface DeepSeekResponse {
   choices: Array<{

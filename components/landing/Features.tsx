@@ -1,5 +1,7 @@
 'use client';
 
+import React from 'react';
+
 import {
   FaMagic,
   FaLink,
@@ -8,9 +10,10 @@ import {
   FaChartLine,
   FaMobileAlt,
 } from 'react-icons/fa';
+
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function Features() {
+export default function Features(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section id="features" className="py-24 px-6 bg-white dark:bg-gray-900">

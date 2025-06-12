@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
+
 import { Portfolio } from '@/types/portfolio';
 // Removed portfolioService import - will use API calls instead
 

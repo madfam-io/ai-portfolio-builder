@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
-import { Portfolio } from '@/types/portfolio';
+import React from 'react';
 import {
   FiMail,
   FiPhone,
@@ -12,6 +11,8 @@ import {
   FiTwitter,
   FiExternalLink,
 } from 'react-icons/fi';
+
+import { Portfolio } from '@/types/portfolio';
 
 interface PortfolioPreviewProps {
   portfolio: Portfolio;

@@ -1,17 +1,24 @@
 /**
  * @fileoverview Error Boundaries Index
- * 
+ *
  * Central export point for all error boundary components.
  */
 
 export { RootErrorBoundary } from './RootErrorBoundary';
-export { RouteErrorBoundary, withRouteErrorBoundary } from './RouteErrorBoundary';
-export { WidgetErrorBoundary, withWidgetErrorBoundary, useWidgetError } from './WidgetErrorBoundary';
+export {
+  RouteErrorBoundary,
+  withRouteErrorBoundary,
+} from './RouteErrorBoundary';
+export {
+  WidgetErrorBoundary,
+  withWidgetErrorBoundary,
+  useWidgetError,
+} from './WidgetErrorBoundary';
 
 // Re-export from original ErrorBoundary for backward compatibility
-export { 
+export {
   GlobalErrorBoundary,
   RouteErrorBoundary as LegacyRouteErrorBoundary,
   useErrorBoundary,
-  withErrorBoundary
+  withErrorBoundary,
 } from '../ErrorBoundary';

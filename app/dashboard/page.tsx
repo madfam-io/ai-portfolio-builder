@@ -1,14 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { useAuth } from '@/lib/contexts/AuthContext';
-import { Portfolio } from '@/types/portfolio';
-// Removed portfolioService import - will use API calls instead
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { logger } from '@/lib/utils/logger';
 import {
   FaPlus,
   FaEdit,
@@ -18,7 +12,14 @@ import {
   FaGlobe,
 } from 'react-icons/fa';
 
-export default function Dashboard() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useAuth } from '@/lib/contexts/AuthContext';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio } from '@/types/portfolio';
+import { logger } from '@/lib/utils/logger';
+// Removed portfolioService import - will use API calls instead
+
+export default function Dashboard(): React.ReactElement {
   const { t } = useLanguage();
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
@@ -29,31 +30,34 @@ export default function Dashboard() {
   // Load user's portfolios
   useEffect(() => {
     // If user is not authenticated, redirect to sign in
-    if (!authLoading && !user) {
+    if (authLoading === false && user === null) {
       router.push('/auth/signin');
       return;
     }
 
     // Load user's portfolios
-    if (user) {
-      loadPortfolios();
+    if (user !== null) {
+      void loadPortfolios();
     }
   }, [user, authLoading, router]);
 
-  const loadPortfolios = async () => {
+  const loadPortfolios = async (): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
 
       const response = await fetch('/api/v1/portfolios');
-      if (!response.ok) {
+      if (response.ok === false) {
         throw new Error('Failed to fetch portfolios');
       }
 
       const { data: userPortfolios } = await response.json();
       setPortfolios(userPortfolios);
     } catch (err) {
-      logger.error('Failed to load portfolios', err instanceof Error ? err : { error: err });
+      logger.error(
+        'Failed to load portfolios',
+        err instanceof Error ? err : { error: err }
+      );
       setError('Failed to load portfolios');
     } finally {
       setLoading(false);
@@ -76,7 +80,10 @@ export default function Dashboard() {
         throw new Error('Failed to delete portfolio');
       }
     } catch (err) {
-      logger.error('Failed to delete portfolio', err instanceof Error ? err : { error: err });
+      logger.error(
+        'Failed to delete portfolio',
+        err instanceof Error ? err : { error: err }
+      );
       alert('Failed to delete portfolio');
     }
   };

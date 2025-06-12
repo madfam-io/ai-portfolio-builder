@@ -2,9 +2,9 @@
  * Portfolio Repository tests
  */
 
+import { mockPortfolios } from '@/lib/services/portfolio/mock-data';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
 import { createClient } from '@/lib/supabase/server';
-import { mockPortfolios } from '@/lib/services/portfolio/mock-data';
 import { CreatePortfolioDTO } from '@/types/portfolio';
 
 // Mock Supabase
@@ -144,7 +144,9 @@ describe('PortfolioRepository', () => {
         template: 'developer' as const,
       };
 
-      await expect(repository.create(dto, 'user-123')).rejects.toThrow('Insert failed');
+      await expect(repository.create(dto, 'user-123')).rejects.toThrow(
+        'Insert failed'
+      );
     });
   });
 
@@ -248,7 +250,9 @@ describe('PortfolioRepository', () => {
 
   describe('findPublished', () => {
     it('should return only published portfolios', async () => {
-      const publishedPortfolios = mockPortfolios.filter(p => p.publishedAt !== null);
+      const publishedPortfolios = mockPortfolios.filter(
+        p => p.publishedAt !== null
+      );
       mockSupabase.from().order.mockResolvedValue({
         data: publishedPortfolios,
         error: null,

@@ -132,7 +132,7 @@
     "standard-version": "^9.5.0",
     "supabase": "^1.123.4",
     "tailwindcss": "^3.3.6",
-    "typescript": "^5.3.0",
+    "typescript": "^5.8.3",
     "undici": "^7.10.0"
   },
   "engines": {

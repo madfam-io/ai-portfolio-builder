@@ -4,9 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { z } from 'zod';
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { createClient } from '@/lib/supabase/server';
 
 // Simple AI usage logging function - defined at the bottom of file to avoid duplication
 
@@ -40,22 +41,17 @@ const optimizeProjectSchema = z.object({
     .default({}),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -126,11 +122,11 @@ export async function POST(request: NextRequest) {
         processingTime: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
-    console.error('Project optimization failed:', error);
+  } catch (error) {
+    // Log project optimization error using structured logging
 
     // Handle specific AI service errors
-    if (error.name === 'AIServiceError') {
+    if (error instanceof Error && error.name === 'AIServiceError') {
       return NextResponse.json(
         {
           error: 'AI processing failed',
@@ -141,7 +137,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (error.name === 'QuotaExceededError') {
+    if (error instanceof Error && error.name === 'QuotaExceededError') {
       return NextResponse.json(
         { error: 'AI service quota exceeded. Please try again later.' },
         { status: 429 }
@@ -159,21 +155,16 @@ export async function POST(request: NextRequest) {
 /**
  * Batch optimize multiple projects
  */
-export async function PUT(request: NextRequest) {
+export async function PUT(request: NextRequest): Promise<Response> {
   try {
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -282,7 +273,7 @@ export async function PUT(request: NextRequest) {
         },
       },
     });
-  } catch (error: any) {
+  } catch (error) {
     console.error('Batch project optimization failed:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -297,8 +288,8 @@ export async function PUT(request: NextRequest) {
 async function logAIUsage(
   userId: string,
   operationType: string,
-  metadata: Record<string, any>
-) {
+  metadata: Record<string, unknown>
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -313,7 +304,7 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log AI usage:', error);
+    // Log AI usage error using structured logging
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

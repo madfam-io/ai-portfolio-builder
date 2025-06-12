@@ -32,6 +32,7 @@ Brief description of what this PR does and why it's needed.
 ## 🔗 Related Issues
 
 <!-- Link to related issues -->
+
 - Closes #
 - Fixes #
 - Related to #
@@ -39,6 +40,7 @@ Brief description of what this PR does and why it's needed.
 ## ✅ Checklist
 
 ### Code Quality
+
 - [ ] Code follows the project's style guidelines
 - [ ] Self-review of code completed
 - [ ] Code is well-commented, particularly in hard-to-understand areas
@@ -46,23 +48,27 @@ Brief description of what this PR does and why it's needed.
 - [ ] No commented-out code blocks left in
 
 ### Documentation
+
 - [ ] Documentation has been updated (if needed)
 - [ ] README.md updated (if needed)
 - [ ] API documentation updated (if needed)
 - [ ] CHANGELOG.md updated (if needed)
 
 ### Performance & Security
+
 - [ ] Bundle size impact assessed (if applicable)
 - [ ] Performance impact assessed (if applicable)
 - [ ] Security implications considered
 - [ ] No sensitive data exposed in code or logs
 
 ### Dependencies
+
 - [ ] No unnecessary dependencies added
 - [ ] New dependencies are justified and documented
 - [ ] Package.json updated appropriately
 
 ### Database (if applicable)
+
 - [ ] Database migrations are safe and reversible
 - [ ] Database changes are backward compatible
 - [ ] Data migration scripts tested

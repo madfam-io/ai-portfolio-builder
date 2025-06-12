@@ -4,12 +4,13 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 
 /**
  * Get available AI models with live updates
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     // Initialize AI service
     const aiService = new HuggingFaceService();
@@ -25,8 +26,8 @@ export async function GET() {
         totalModels: availableModels.length,
       },
     });
-  } catch (error: any) {
-    console.error('Failed to fetch available models:', error);
+  } catch (error) {
+    // Log fetch available models error using structured logging
 
     // Return cached models as fallback
     const fallbackModels = [

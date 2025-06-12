@@ -21,6 +21,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+
 import { usePerformanceTracking } from '@/lib/utils/performance';
 
 interface PullRequestsChartProps {

@@ -1,10 +1,13 @@
 'use client';
 
-import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import Link from 'next/link';
+import React from 'react';
 
-export default function Hero() {
+import Link from 'next/link';
+import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function Hero(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section className="pt-32 pb-32 px-6 bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

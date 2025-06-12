@@ -266,7 +266,11 @@ export interface CVImportData {
   };
 }
 
-export type ImportData = LinkedInImportData | GitHubImportData | CVImportData | Record<string, unknown>;
+export type ImportData =
+  | LinkedInImportData
+  | GitHubImportData
+  | CVImportData
+  | Record<string, unknown>;
 
 // Portfolio creation DTO
 export interface CreatePortfolioDTO {

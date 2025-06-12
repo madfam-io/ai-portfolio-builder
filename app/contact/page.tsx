@@ -1,7 +1,7 @@
 'use client';
 
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import Link from 'next/link';
+import React, { useState, useEffect } from 'react';
 import {
   FaEnvelope,
   FaMapMarkerAlt,
@@ -9,10 +9,11 @@ import {
   FaBusinessTime,
   FaUserTie,
 } from 'react-icons/fa';
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
 
-export default function ContactPage() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function ContactPage(): React.ReactElement {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',

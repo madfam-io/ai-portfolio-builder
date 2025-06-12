@@ -23,7 +23,7 @@
 'use client';
 
 import React from 'react';
-import { Portfolio } from '@/types/portfolio';
+import { FaBehance } from 'react-icons/fa';
 import {
   FiInstagram,
   FiDribbble,
@@ -32,7 +32,8 @@ import {
   FiHeart,
   FiAward,
 } from 'react-icons/fi';
-import { FaBehance } from 'react-icons/fa';
+
+import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Designer Template component

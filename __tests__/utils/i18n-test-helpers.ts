@@ -7,7 +7,7 @@
  */
 export const mockLocalStorage = () => {
   const store: Record<string, string> = {};
-  
+
   const localStorageMock = {
     getItem: jest.fn((key: string) => store[key] || null),
     setItem: jest.fn((key: string, value: string) => {
@@ -35,19 +35,19 @@ export const mockLocalStorage = () => {
 export const setupI18nTestEnvironment = (language: 'es' | 'en' = 'es') => {
   // Mock localStorage
   const localStorageMock = mockLocalStorage();
-  
+
   // Set initial language
   if (language) {
     localStorageMock.setItem('language', language);
   }
-  
+
   // Mock navigator.language
   Object.defineProperty(navigator, 'language', {
     value: language === 'es' ? 'es-ES' : 'en-US',
     writable: true,
     configurable: true,
   });
-  
+
   return localStorageMock;
 };
 
@@ -59,7 +59,7 @@ export const resetI18nTestEnvironment = () => {
   if (window.localStorage && typeof window.localStorage.clear === 'function') {
     window.localStorage.clear();
   }
-  
+
   // Reset navigator.language to default
   Object.defineProperty(navigator, 'language', {
     value: 'en-US',

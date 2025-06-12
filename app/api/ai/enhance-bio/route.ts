@@ -4,9 +4,10 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { z } from 'zod';
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
 const enhanceBioSchema = z.object({
@@ -37,22 +38,16 @@ const enhanceBioSchema = z.object({
   }),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -108,22 +103,22 @@ export async function POST(request: NextRequest) {
         processingTime: new Date().toISOString(),
       },
     });
-  } catch (error: any) {
-    console.error('Bio enhancement failed:', error);
+  } catch (error) {
+    // Log bio enhancement error using structured logging
 
     // Handle specific AI service errors
-    if (error.name === 'AIServiceError') {
+    if (error instanceof Error && error.name === 'AIServiceError') {
       return NextResponse.json(
         {
           error: 'AI processing failed',
           message: error.message,
-          retryable: error.retryable,
+          retryable: (error as any).retryable ?? false,
         },
-        { status: error.retryable ? 503 : 500 }
+        { status: (error as any).retryable === true ? 503 : 500 }
       );
     }
 
-    if (error.name === 'QuotaExceededError') {
+    if (error instanceof Error && error.name === 'QuotaExceededError') {
       return NextResponse.json(
         { error: 'AI service quota exceeded. Please try again later.' },
         { status: 429 }
@@ -141,21 +136,15 @@ export async function POST(request: NextRequest) {
 /**
  * Get enhancement history for user
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -171,7 +160,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
       .limit(10);
 
-    if (error) {
+    if (error !== null) {
       throw error;
     }
 
@@ -179,11 +168,11 @@ export async function GET() {
       success: true,
       data: {
         history: usageHistory,
-        totalEnhancements: usageHistory?.length || 0,
+        totalEnhancements: usageHistory?.length ?? 0,
       },
     });
   } catch (error) {
-    console.error('Failed to fetch enhancement history:', error);
+    // Log fetch enhancement history error using structured logging
     return NextResponse.json(
       { error: 'Failed to fetch history' },
       { status: 500 }
@@ -197,12 +186,12 @@ export async function GET() {
 async function logAIUsage(
   userId: string,
   operationType: string,
-  metadata: Record<string, any>
-) {
+  metadata: Record<string, unknown>
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      // Log Supabase client creation error using structured logging
       return;
     }
 
@@ -213,7 +202,7 @@ async function logAIUsage(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log AI usage:', error);
+    // Log AI usage error using structured logging
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

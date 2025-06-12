@@ -2,10 +2,12 @@
  * PortfolioEditor test suite - final version
  */
 
-import React from 'react';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 // Mock portfolioService

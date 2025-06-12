@@ -4,14 +4,16 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validations/portfolio';
 import { Portfolio } from '@/types/portfolio';
+
 import { transformApiPortfolioToDb } from '../route';
-import { logger } from '@/lib/utils/logger';
 
 interface RouteParams {
   params: {
@@ -23,7 +25,10 @@ interface RouteParams {
  * GET /api/portfolios/[id]
  * Retrieves a specific portfolio by ID
  */
-export async function GET(_request: NextRequest, { params }: RouteParams) {
+export async function GET(
+  _request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 
@@ -64,7 +69,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
         );
       }
 
-      logger.error('Database error fetching portfolio', fetchError instanceof Error ? fetchError : { error: fetchError });
+      logger.error(
+        'Database error fetching portfolio',
+        fetchError instanceof Error ? fetchError : { error: fetchError }
+      );
       return NextResponse.json(
         { error: 'Failed to fetch portfolio' },
         { status: 500 }
@@ -86,7 +94,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
       portfolio: responsePortfolio,
     });
   } catch (error) {
-    logger.error('Unexpected error in GET /api/portfolios/[id]', error instanceof Error ? error : { error });
+    logger.error(
+      'Unexpected error in GET /api/portfolios/[id]',
+      error instanceof Error ? error : { error }
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -98,7 +109,10 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
  * PUT /api/portfolios/[id]
  * Updates a specific portfolio by ID
  */
-export async function PUT(request: NextRequest, { params }: RouteParams) {
+export async function PUT(
+  request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 
@@ -209,7 +223,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single();
 
     if (updateError) {
-      logger.error('Database error updating portfolio', updateError instanceof Error ? updateError : { error: updateError });
+      logger.error(
+        'Database error updating portfolio',
+        updateError instanceof Error ? updateError : { error: updateError }
+      );
 
       // Handle specific errors
       if (updateError.code === '23505') {
@@ -259,7 +276,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
  * DELETE /api/portfolios/[id]
  * Deletes a specific portfolio by ID
  */
-export async function DELETE(_request: NextRequest, { params }: RouteParams) {
+export async function DELETE(
+  _request: NextRequest,
+  { params }: RouteParams
+): Promise<Response> {
   try {
     const { id } = params;
 

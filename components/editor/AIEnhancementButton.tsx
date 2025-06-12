@@ -1,13 +1,14 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HiSparkles, HiOutlineSparkles } from 'react-icons/hi';
 import { FiLoader } from 'react-icons/fi';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import { HiSparkles, HiOutlineSparkles } from 'react-icons/hi';
+
 import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';
-import { getErrorMessage } from '@/types/errors';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
+import { getErrorMessage } from '@/types/errors';
 
 interface ProjectContext {
   title?: string;

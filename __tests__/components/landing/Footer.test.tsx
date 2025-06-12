@@ -1,5 +1,6 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
+
 import Footer from '@/components/landing/Footer';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';
@@ -30,7 +31,9 @@ Object.defineProperty(window.navigator, 'language', {
 });
 
 const renderWithProvider = (component: React.ReactElement) => {
-  return render(<LanguageProvider initialLanguage="es">{component}</LanguageProvider>);
+  return render(
+    <LanguageProvider initialLanguage="es">{component}</LanguageProvider>
+  );
 };
 
 describe('Footer', () => {

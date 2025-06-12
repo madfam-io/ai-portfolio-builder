@@ -3,6 +3,7 @@
  */
 
 import { NextRequest } from 'next/server';
+
 import { GET, POST } from '@/app/api/preview/route';
 
 // Mock portfolio service

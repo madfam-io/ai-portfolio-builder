@@ -31,24 +31,30 @@ export default {
   // Generic errors
   error: 'Error',
   genericError: 'An unexpected error occurred.',
-  
+
   // Network errors
   networkErrorTitle: 'Connection Problem',
-  networkErrorDescription: 'Unable to connect to our servers. Please check your internet connection and try again.',
+  networkErrorDescription:
+    'Unable to connect to our servers. Please check your internet connection and try again.',
   timeoutErrorTitle: 'Request Timeout',
-  timeoutErrorDescription: 'The request took too long to complete. Please try again.',
+  timeoutErrorDescription:
+    'The request took too long to complete. Please try again.',
 
   // Authentication errors
   authErrorTitle: 'Authentication Required',
-  authErrorDescription: 'Your session has expired. Please sign in again to continue.',
+  authErrorDescription:
+    'Your session has expired. Please sign in again to continue.',
 
   // Permission errors
   permissionErrorTitle: 'Access Denied',
-  permissionErrorDescription: 'You don\'t have permission to access this resource.',
-  permissionErrorDescriptionResource: 'You don\'t have permission to access {resource}.',
+  permissionErrorDescription:
+    "You don't have permission to access this resource.",
+  permissionErrorDescriptionResource:
+    "You don't have permission to access {resource}.",
   permissionResource: 'You need permission to access {resource}.',
   permissionActionResource: 'You need permission to {action} {resource}.',
-  permissionGeneric: 'You don\'t have the necessary permissions for this action.',
+  permissionGeneric:
+    "You don't have the necessary permissions for this action.",
   accessDenied: 'Access Denied',
   requiredRole: 'Required Role',
   privileges: 'privileges',
@@ -59,15 +65,18 @@ export default {
 
   // Server errors
   serverErrorTitle: 'Server Error',
-  serverErrorDescription: 'Our servers are experiencing issues. Please try again in a few moments.',
+  serverErrorDescription:
+    'Our servers are experiencing issues. Please try again in a few moments.',
 
   // Not found errors
   notFoundTitle: 'Not Found',
-  notFoundDescription: 'The page or resource you\'re looking for doesn\'t exist.',
+  notFoundDescription: "The page or resource you're looking for doesn't exist.",
   notFound: 'not found',
   pageNotFoundTitle: 'Page Not Found',
-  pageNotFoundDescription: 'The page you\'re looking for doesn\'t exist. It may have been moved, deleted, or you entered the wrong URL.',
-  resourceNotFoundDescription: 'The {type} you\'re looking for could not be found.',
+  pageNotFoundDescription:
+    "The page you're looking for doesn't exist. It may have been moved, deleted, or you entered the wrong URL.",
+  resourceNotFoundDescription:
+    "The {type} you're looking for could not be found.",
 
   // Search errors
   noSearchResults: 'No Results Found',
@@ -81,17 +90,19 @@ export default {
 
   // Unknown errors
   unknownErrorTitle: 'Unexpected Error',
-  unknownErrorDescription: 'Something unexpected happened. Our team has been notified.',
+  unknownErrorDescription:
+    'Something unexpected happened. Our team has been notified.',
 
   // Maximum retries
   maxRetriesReached: 'Maximum retry attempts reached.',
 
   // Offline errors
-  offlineTitle: 'You\'re Offline',
+  offlineTitle: "You're Offline",
   offlineDescription: 'Please check your internet connection and try again.',
   offlineMode: 'Offline Mode',
   offlineModeDescription: 'Some features may be limited.',
-  offlineBanner: 'You\'re currently offline. Some features may not be available.',
+  offlineBanner:
+    "You're currently offline. Some features may not be available.",
   offlineContent: 'Content Unavailable Offline',
   offlineContentDescription: 'This content requires an internet connection.',
   offlineCapabilities: 'While offline, you can:',
@@ -108,7 +119,7 @@ export default {
 
   // Permission denied specific
   permissionDeniedTitle: 'Permission Denied',
-  permissionDeniedResource: 'You don\'t have permission to access {resource}.',
+  permissionDeniedResource: "You don't have permission to access {resource}.",
 
   // API errors
   apiTimeout: 'Request timed out. Please try again.',
@@ -142,7 +153,8 @@ export default {
 
   // Payment errors
   paymentFailed: 'Payment failed. Please check your payment details.',
-  subscriptionExpired: 'Your subscription has expired. Please renew to continue.',
+  subscriptionExpired:
+    'Your subscription has expired. Please renew to continue.',
   planLimitReached: 'You have reached the limit for your current plan.',
 
   // Empty states

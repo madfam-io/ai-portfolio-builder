@@ -8,9 +8,10 @@
  * @version 0.0.1-alpha
  */
 
-import { createClient } from '@/lib/supabase/server';
 import { GitHubAnalyticsClient } from '@/lib/analytics/github/client';
+import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
 import type {
   Repository,
   CodeMetrics,

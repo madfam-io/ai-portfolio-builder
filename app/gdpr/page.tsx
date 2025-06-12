@@ -1,7 +1,8 @@
 'use client';
 
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import React from 'react';
+
+import Link from 'next/link';
 import {
   FaShieldAlt,
   FaUser,
@@ -10,9 +11,11 @@ import {
   FaDownload,
   FaEdit,
 } from 'react-icons/fa';
-import Link from 'next/link';
 
-export default function GDPRPage() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function GDPRPage(): React.ReactElement {
   const { t } = useLanguage();
 
   const rights = [

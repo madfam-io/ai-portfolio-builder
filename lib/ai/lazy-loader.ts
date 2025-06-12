@@ -3,8 +3,9 @@
  * Loads AI modules only when enhancement features are used
  */
 
-import { BioContext, UserProfile } from './types';
 import { logger } from '@/lib/utils/logger';
+
+import { BioContext, UserProfile } from './types';
 
 // Cache for loaded services
 let huggingFaceService: any = null;
@@ -12,7 +13,7 @@ let huggingFaceService: any = null;
 /**
  * Lazy load HuggingFace service
  */
-async function getHuggingFaceService() {
+async function getHuggingFaceService(): Promise<void> {
   if (!huggingFaceService) {
     logger.info('Loading HuggingFace service...');
     const { HuggingFaceService } = await import('./huggingface-service');
@@ -28,7 +29,7 @@ export async function enhanceBioLazy(
   bio: string,
   context: BioContext,
   selectedModel?: string
-) {
+): Promise<void> {
   const service = await getHuggingFaceService();
   return service.enhanceBio(bio, context, selectedModel);
 }
@@ -41,7 +42,7 @@ export async function optimizeProjectLazy(
   description: string,
   technologies: string[],
   selectedModel?: string
-) {
+): Promise<void> {
   const service = await getHuggingFaceService();
   return service.optimizeProjectDescription(
     title,
@@ -57,7 +58,7 @@ export async function optimizeProjectLazy(
 export async function recommendTemplateLazy(
   profile: UserProfile,
   selectedModel?: string
-) {
+): Promise<void> {
   const service = await getHuggingFaceService();
   return service.recommendTemplate(profile, selectedModel);
 }
@@ -65,7 +66,7 @@ export async function recommendTemplateLazy(
 /**
  * Get available models - lazy loaded
  */
-export async function getAvailableModelsLazy(task?: string) {
+export async function getAvailableModelsLazy(task?: string): Promise<void> {
   const service = await getHuggingFaceService();
   return service.getAvailableModels(task);
 }

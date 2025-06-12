@@ -9,9 +9,10 @@
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { FiAlertCircle, FiRefreshCw } from 'react-icons/fi';
-import { logger } from '@/lib/utils/logger';
-import { serializeError } from '@/lib/utils/error-handling/error-utils';
+
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { serializeError } from '@/lib/utils/error-handling/error-utils';
+import { logger } from '@/lib/utils/logger';
 
 interface WidgetErrorBoundaryProps {
   children: ReactNode;

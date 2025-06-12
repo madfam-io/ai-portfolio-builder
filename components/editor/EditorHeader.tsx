@@ -1,6 +1,5 @@
 'use client';
 
-import { Portfolio } from '@/types/portfolio';
 import {
   FiSave,
   FiEye,
@@ -10,6 +9,8 @@ import {
   FiCheckCircle,
   FiLoader,
 } from 'react-icons/fi';
+
+import { Portfolio } from '@/types/portfolio';
 
 interface EditorHeaderProps {
   portfolio: Portfolio;

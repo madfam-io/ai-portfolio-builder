@@ -1,12 +1,13 @@
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
   TemplateCustomization,
 } from '@/types/portfolio';
+
 import { PortfolioRepository } from './portfolio.repository';
-import { logger } from '@/lib/utils/logger';
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
 
 /**
  * Portfolio service for managing portfolio business logic

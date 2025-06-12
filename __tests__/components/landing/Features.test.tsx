@@ -2,9 +2,11 @@
  * Features Component test suite - working version
  */
 
-import React from 'react';
 import { screen } from '@testing-library/react';
+import React from 'react';
+
 import Features from '@/components/landing/Features';
+
 import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 describe('Features Component', () => {

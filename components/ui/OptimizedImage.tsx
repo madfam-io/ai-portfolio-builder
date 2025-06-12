@@ -35,7 +35,7 @@ export function OptimizedImage({
       {showSkeleton && loading && (
         <div className="absolute inset-0 bg-gray-200 dark:bg-gray-700 animate-pulse rounded" />
       )}
-      
+
       <Image
         src={error ? fallbackSrc : src}
         alt={alt}

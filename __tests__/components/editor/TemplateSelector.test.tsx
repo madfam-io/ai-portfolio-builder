@@ -80,8 +80,9 @@ jest.mock('@/lib/templates/templateConfig', () => ({
   }),
 }));
 
-import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+import React from 'react';
+
 import { TemplateSelector } from '@/components/editor/TemplateSelector';
 import { TemplateType } from '@/types/portfolio';
 

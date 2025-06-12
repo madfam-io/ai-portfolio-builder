@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
+
+import BaseLayout from '@/components/layouts/BaseLayout';
 import { signUp, signInWithOAuth } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/minimal-context';
-import BaseLayout from '@/components/layouts/BaseLayout';
 
 function SignUpContent() {
   const [email, setEmail] = useState('');
@@ -286,7 +287,7 @@ function SignUpContent() {
   );
 }
 
-export default function SignUpPage() {
+export default function SignUpPage(): React.ReactElement {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <SignUpContent />

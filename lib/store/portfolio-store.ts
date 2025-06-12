@@ -6,8 +6,10 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
-import { PortfolioState, PortfolioActions } from './types';
+
 import { portfolioService } from '@/lib/services/portfolioService';
+
+import { PortfolioState, PortfolioActions } from './types';
 
 const initialState: PortfolioState = {
   portfolios: [],

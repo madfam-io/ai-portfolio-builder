@@ -4,6 +4,7 @@
  */
 
 import { renderHook, act } from '@testing-library/react';
+
 import { useAuthStore } from '@/lib/store/auth-store';
 
 // Mock Supabase client

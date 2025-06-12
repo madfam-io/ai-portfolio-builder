@@ -1,15 +1,15 @@
 /**
  * @fileoverview Geolocation detection utility for automatic language setting
- * 
+ *
  * This module detects user's geographic location to automatically set the most
  * appropriate default language for PRISMA SaaS platform.
- * 
+ *
  * Features:
  * - Detects Spanish-speaking countries for Spanish default
  * - Detects English-speaking countries for English default
  * - Fallback to Spanish for MADFAM's primary market (Mexico/LATAM)
  * - Privacy-conscious detection using browser APIs
- * 
+ *
  * @author MADFAM Development Team
  * @version 1.0.0 - Initial geolocation detection
  */
@@ -75,20 +75,53 @@ const ENGLISH_SPEAKING_COUNTRIES = [
  */
 const COUNTRY_FLAGS: Record<string, string> = {
   // Spanish-speaking countries
-  'AR': '🇦🇷', 'BO': '🇧🇴', 'CL': '🇨🇱', 'CO': '🇨🇴', 'CR': '🇨🇷',
-  'CU': '🇨🇺', 'DO': '🇩🇴', 'EC': '🇪🇨', 'SV': '🇸🇻', 'GQ': '🇬🇶',
-  'GT': '🇬🇹', 'HN': '🇭🇳', 'MX': '🇲🇽', 'NI': '🇳🇮', 'PA': '🇵🇦',
-  'PY': '🇵🇾', 'PE': '🇵🇪', 'PR': '🇵🇷', 'ES': '🇪🇸', 'UY': '🇺🇾', 'VE': '🇻🇪',
-  
+  AR: '🇦🇷',
+  BO: '🇧🇴',
+  CL: '🇨🇱',
+  CO: '🇨🇴',
+  CR: '🇨🇷',
+  CU: '🇨🇺',
+  DO: '🇩🇴',
+  EC: '🇪🇨',
+  SV: '🇸🇻',
+  GQ: '🇬🇶',
+  GT: '🇬🇹',
+  HN: '🇭🇳',
+  MX: '🇲🇽',
+  NI: '🇳🇮',
+  PA: '🇵🇦',
+  PY: '🇵🇾',
+  PE: '🇵🇪',
+  PR: '🇵🇷',
+  ES: '🇪🇸',
+  UY: '🇺🇾',
+  VE: '🇻🇪',
+
   // English-speaking countries
-  'US': '🇺🇸', 'CA': '🇨🇦', 'GB': '🇬🇧', 'AU': '🇦🇺', 'NZ': '🇳🇿',
-  'IE': '🇮🇪', 'ZA': '🇿🇦', 'IN': '🇮🇳', 'SG': '🇸🇬', 'MY': '🇲🇾',
-  'PH': '🇵🇭', 'NG': '🇳🇬', 'KE': '🇰🇪', 'GH': '🇬🇭', 'JM': '🇯🇲',
-  'TT': '🇹🇹', 'BB': '🇧🇧', 'BS': '🇧🇸', 'BZ': '🇧🇿', 'GY': '🇬🇾',
-  
+  US: '🇺🇸',
+  CA: '🇨🇦',
+  GB: '🇬🇧',
+  AU: '🇦🇺',
+  NZ: '🇳🇿',
+  IE: '🇮🇪',
+  ZA: '🇿🇦',
+  IN: '🇮🇳',
+  SG: '🇸🇬',
+  MY: '🇲🇾',
+  PH: '🇵🇭',
+  NG: '🇳🇬',
+  KE: '🇰🇪',
+  GH: '🇬🇭',
+  JM: '🇯🇲',
+  TT: '🇹🇹',
+  BB: '🇧🇧',
+  BS: '🇧🇸',
+  BZ: '🇧🇿',
+  GY: '🇬🇾',
+
   // Default flags for language groups (Mexico for Spanish, USA for English)
-  'ES_DEFAULT': '🇲🇽',
-  'EN_DEFAULT': '🇺🇸',
+  ES_DEFAULT: '🇲🇽',
+  EN_DEFAULT: '🇺🇸',
 };
 
 /**
@@ -109,7 +142,7 @@ export interface LanguageDetectionResult {
 
 /**
  * Detects user's country from IP geolocation using a free service
- * 
+ *
  * @returns Promise resolving to country code or null if detection fails
  */
 async function detectCountryFromIP(): Promise<string | null> {
@@ -118,13 +151,13 @@ async function detectCountryFromIP(): Promise<string | null> {
     const response = await fetch('https://ipapi.co/country/', {
       method: 'GET',
       headers: {
-        'Accept': 'text/plain',
+        Accept: 'text/plain',
       },
     });
-    
+
     if (response.ok) {
       const countryCode = (await response.text()).trim().toUpperCase();
-      
+
       // Validate country code format (2 characters)
       if (countryCode.length === 2 && /^[A-Z]{2}$/.test(countryCode)) {
         return countryCode;
@@ -137,20 +170,20 @@ async function detectCountryFromIP(): Promise<string | null> {
       console.debug('IP geolocation detection failed:', error);
     }
   }
-  
+
   return null;
 }
 
 /**
  * Detects user's likely country from timezone
  * Less accurate but works as fallback when IP detection fails
- * 
+ *
  * @returns Estimated country code or null
  */
 function detectCountryFromTimezone(): string | null {
   try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    
+
     // Common timezone to country mappings for our target markets
     const timezoneCountryMap: Record<string, string> = {
       // Spanish-speaking countries
@@ -170,7 +203,7 @@ function detectCountryFromTimezone(): string | null {
       'America/Santiago': 'CL',
       'America/Caracas': 'VE',
       'Europe/Madrid': 'ES',
-      
+
       // English-speaking countries
       'America/New_York': 'US',
       'America/Chicago': 'US',
@@ -183,7 +216,7 @@ function detectCountryFromTimezone(): string | null {
       'Australia/Melbourne': 'AU',
       'Pacific/Auckland': 'NZ',
     };
-    
+
     return timezoneCountryMap[timezone] || null;
   } catch (error) {
     // Timezone detection failed - this is expected in some environments
@@ -193,7 +226,7 @@ function detectCountryFromTimezone(): string | null {
 
 /**
  * Detects user's language from browser settings
- * 
+ *
  * @returns Detected language code or null
  */
 function detectLanguageFromBrowser(): 'es' | 'en' | null {
@@ -203,10 +236,10 @@ function detectLanguageFromBrowser(): 'es' | 'en' | null {
       navigator.language,
       ...(navigator.languages || []),
     ];
-    
+
     for (const lang of browserLanguages) {
       const langCode = lang.toLowerCase().split('-')[0];
-      
+
       if (langCode === 'es' || langCode === 'spa') {
         return 'es';
       }
@@ -214,7 +247,7 @@ function detectLanguageFromBrowser(): 'es' | 'en' | null {
         return 'en';
       }
     }
-    
+
     return null;
   } catch (error) {
     // Browser language detection failed - this is expected in some environments
@@ -224,49 +257,58 @@ function detectLanguageFromBrowser(): 'es' | 'en' | null {
 
 /**
  * Determines appropriate language based on country code
- * 
+ *
  * @param countryCode - ISO 3166-1 alpha-2 country code
  * @returns Language code and confidence level
  */
-function getLanguageFromCountry(countryCode: string): { language: 'es' | 'en'; confident: boolean } {
+function getLanguageFromCountry(countryCode: string): {
+  language: 'es' | 'en';
+  confident: boolean;
+} {
   if (SPANISH_SPEAKING_COUNTRIES.includes(countryCode)) {
     return { language: 'es', confident: true };
   }
-  
+
   if (ENGLISH_SPEAKING_COUNTRIES.includes(countryCode)) {
     return { language: 'en', confident: true };
   }
-  
+
   // For unknown countries, fallback to Spanish (MADFAM's primary market)
   return { language: 'es', confident: false };
 }
 
 /**
  * Gets appropriate flag emoji for country or language
- * 
+ *
  * @param countryCode - Country code (optional)
  * @param language - Language code
  * @returns Flag emoji
  */
-function getFlag(countryCode: string | undefined, language: 'es' | 'en'): string {
+function getFlag(
+  countryCode: string | undefined,
+  language: 'es' | 'en'
+): string {
   if (countryCode && COUNTRY_FLAGS[countryCode]) {
     return COUNTRY_FLAGS[countryCode];
   }
-  
+
   // Default flag for language
-  const defaultFlag = language === 'es' ? COUNTRY_FLAGS['ES_DEFAULT'] : COUNTRY_FLAGS['EN_DEFAULT'];
+  const defaultFlag =
+    language === 'es'
+      ? COUNTRY_FLAGS['ES_DEFAULT']
+      : COUNTRY_FLAGS['EN_DEFAULT'];
   return defaultFlag || '🇲🇽'; // Fallback to Mexican flag if undefined
 }
 
 /**
  * Detects user's preferred language based on geographic location and browser settings
- * 
+ *
  * Uses multiple detection methods in order of reliability:
  * 1. IP-based geolocation (most accurate for location)
  * 2. Timezone detection (fallback geolocation)
  * 3. Browser language preferences (user setting)
  * 4. Spanish fallback (MADFAM's primary market)
- * 
+ *
  * @returns Promise resolving to language detection result
  */
 export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
@@ -275,7 +317,7 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
     const countryCode = await detectCountryFromIP();
     if (countryCode) {
       const { language, confident } = getLanguageFromCountry(countryCode);
-      
+
       return {
         language,
         countryCode,
@@ -287,12 +329,12 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
   } catch (error) {
     // IP detection failed, trying timezone detection
   }
-  
+
   // Method 2: Fallback to timezone detection
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {
     const { language, confident } = getLanguageFromCountry(timezoneCountry);
-    
+
     return {
       language,
       countryCode: timezoneCountry,
@@ -301,7 +343,7 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
       confident,
     };
   }
-  
+
   // Method 3: Try browser language detection
   const browserLanguage = detectLanguageFromBrowser();
   if (browserLanguage) {
@@ -312,7 +354,7 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
       confident: true,
     };
   }
-  
+
   // Method 4: Final fallback to Spanish (MADFAM's primary market)
   return {
     language: 'es',
@@ -325,7 +367,7 @@ export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
 /**
  * Quick synchronous language detection for immediate UI rendering
  * Uses only browser settings and timezone (no async IP detection)
- * 
+ *
  * @returns Language detection result (synchronous)
  */
 export function detectUserLanguageSync(): LanguageDetectionResult {
@@ -333,7 +375,7 @@ export function detectUserLanguageSync(): LanguageDetectionResult {
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {
     const { language, confident } = getLanguageFromCountry(timezoneCountry);
-    
+
     return {
       language,
       countryCode: timezoneCountry,
@@ -342,7 +384,7 @@ export function detectUserLanguageSync(): LanguageDetectionResult {
       confident,
     };
   }
-  
+
   // Try browser language detection
   const browserLanguage = detectLanguageFromBrowser();
   if (browserLanguage) {
@@ -353,7 +395,7 @@ export function detectUserLanguageSync(): LanguageDetectionResult {
       confident: true,
     };
   }
-  
+
   // Fallback to Spanish
   return {
     language: 'es',

@@ -1,9 +1,12 @@
 'use client';
 
-import { FaCheck } from 'react-icons/fa';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { useApp } from '@/lib/contexts/AppContext';
+import React from 'react';
+
 import Link from 'next/link';
+import { FaCheck } from 'react-icons/fa';
+
+import { useApp } from '@/lib/contexts/AppContext';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
 // Currency exchange rates (MXN as base)
 const EXCHANGE_RATES = {
@@ -26,7 +29,7 @@ const CURRENCY_SYMBOLS = {
   EUR: '€',
 };
 
-export default function Pricing() {
+export default function Pricing(): React.ReactElement {
   const { t } = useLanguage();
   const { currency } = useApp();
 

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Label } from '../../atoms/Label';
+
 import { Input, type InputProps } from '../../atoms/Input';
+import { Label } from '../../atoms/Label';
 import { cn } from '../../utils/cn';
 
 export interface FormFieldProps extends InputProps {
@@ -28,7 +29,7 @@ export interface FormFieldProps extends InputProps {
 
 /**
  * FormField molecule combining Label and Input atoms
- * 
+ *
  * @example
  * ```tsx
  * <FormField
@@ -38,7 +39,7 @@ export interface FormFieldProps extends InputProps {
  *   required
  *   placeholder="john@example.com"
  * />
- * 
+ *
  * <FormField
  *   label="Phone Number"
  *   name="phone"
@@ -62,7 +63,7 @@ const FormField = React.forwardRef<HTMLInputElement, FormFieldProps>(
       ...inputProps
     },
     ref
-  ) => {
+  ): React.ReactElement => {
     const fieldId = id || name;
 
     return (

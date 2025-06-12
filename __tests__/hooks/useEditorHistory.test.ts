@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+
 import { useEditorHistory } from '@/hooks/useEditorHistory';
 import { PortfolioEditorState } from '@/types/portfolio';
 
@@ -244,7 +245,7 @@ describe('useEditorHistory', () => {
     });
 
     expect(mockSetState).toHaveBeenCalledWith(expect.any(Function));
-    
+
     // Verify that the state function returns the same state when no undo is possible
     const setStateFunction = mockSetState.mock.calls[0][0];
     const newState = setStateFunction(mockInitialState);
@@ -274,7 +275,7 @@ describe('useEditorHistory', () => {
     });
 
     expect(mockSetState).toHaveBeenCalledWith(expect.any(Function));
-    
+
     // Verify that the state function returns the same state when no redo is possible
     const setStateFunction = mockSetState.mock.calls[0][0];
     const newState = setStateFunction(stateWithHistory);

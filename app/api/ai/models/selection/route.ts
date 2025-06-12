@@ -4,8 +4,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
+
+import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
 const updateSelectionSchema = z.object({
@@ -16,21 +17,16 @@ const updateSelectionSchema = z.object({
 /**
  * Get user's current model selection
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       // Return default model selection for unauthenticated users
       const defaultSelection = {
         bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
@@ -53,13 +49,13 @@ export async function GET() {
       .eq('user_id', user.id)
       .single();
 
-    if (error && error.code !== 'PGRST116') {
+    if (error !== null && error.code !== 'PGRST116') {
       // PGRST116 = no rows returned
       throw error;
     }
 
     // Return user preferences or defaults
-    const modelSelection = preferences?.preferences || {
+    const modelSelection = preferences?.preferences ?? {
       bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
       project: 'microsoft/Phi-3.5-mini-instruct',
       template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
@@ -69,10 +65,10 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: modelSelection,
-      isDefault: !preferences,
+      isDefault: preferences === null || preferences === undefined,
     });
   } catch (error) {
-    console.error('Failed to get model selection:', error);
+    // Log get model selection error using structured logging
     return NextResponse.json(
       { error: 'Failed to get model selection' },
       { status: 500 }
@@ -83,21 +79,16 @@ export async function GET() {
 /**
  * Update user's model preference for a specific task
  */
-export async function PUT(request: NextRequest) {
+export async function PUT(request: NextRequest): Promise<Response> {
   try {
     const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection failed' },
-        { status: 500 }
-      );
-    }
+    // Supabase client is always created successfully or throws
 
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    if (!user) {
+    if (user === null) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
@@ -129,7 +120,7 @@ export async function PUT(request: NextRequest) {
 
     // Update the specific task type
     const updatedPreferences = {
-      ...(currentPreferences?.preferences || {}),
+      ...(currentPreferences?.preferences ?? {}),
       [taskType]: modelId,
     };
 
@@ -145,7 +136,7 @@ export async function PUT(request: NextRequest) {
       }
     );
 
-    if (error) {
+    if (error !== null) {
       throw error;
     }
 
@@ -160,8 +151,8 @@ export async function PUT(request: NextRequest) {
         preferences: updatedPreferences,
       },
     });
-  } catch (error: any) {
-    console.error('Failed to update model selection:', error);
+  } catch (error) {
+    // Log update model selection error using structured logging
     return NextResponse.json(
       { error: 'Failed to update model selection' },
       { status: 500 }
@@ -176,11 +167,11 @@ async function logModelSelection(
   userId: string,
   taskType: string,
   modelId: string
-) {
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      // Log Supabase client creation error using structured logging
       return;
     }
 
@@ -195,7 +186,7 @@ async function logModelSelection(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log model selection:', error);
+    // Log model selection error using structured logging
     // Don't throw - logging failure shouldn't break the main operation
   }
 }

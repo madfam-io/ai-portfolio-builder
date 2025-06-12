@@ -1,4 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
+
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { portfolioService } from '@/lib/services/portfolioService';
 import { Portfolio } from '@/types/portfolio';
@@ -6,7 +7,9 @@ import { Portfolio } from '@/types/portfolio';
 // Mock the portfolio service
 jest.mock('@/lib/services/portfolioService');
 
-const mockPortfolioService = portfolioService as jest.Mocked<typeof portfolioService>;
+const mockPortfolioService = portfolioService as jest.Mocked<
+  typeof portfolioService
+>;
 
 const mockPortfolio: Portfolio = {
   id: 'test-portfolio-1',

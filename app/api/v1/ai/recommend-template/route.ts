@@ -4,10 +4,11 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { z } from 'zod';
+
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { UserProfile } from '@/lib/ai/types';
-import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
 
 // Request validation schema
 const recommendTemplateSchema = z.object({
@@ -19,14 +20,23 @@ const recommendTemplateSchema = z.object({
     industry: z.string().optional(),
     experienceLevel: z.enum(['entry', 'mid', 'senior', 'lead']),
   }),
-  preferences: z.object({
-    style: z.enum(['minimal', 'modern', 'creative', 'professional']).optional(),
-    targetAudience: z.enum(['employers', 'clients', 'collaborators']).optional(),
-    priority: z.enum(['simplicity', 'visual_impact', 'content_heavy']).optional(),
-  }).optional().default({}),
+  preferences: z
+    .object({
+      style: z
+        .enum(['minimal', 'modern', 'creative', 'professional'])
+        .optional(),
+      targetAudience: z
+        .enum(['employers', 'clients', 'collaborators'])
+        .optional(),
+      priority: z
+        .enum(['simplicity', 'visual_impact', 'content_heavy'])
+        .optional(),
+    })
+    .optional()
+    .default({}),
 });
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
     const supabase = await createClient();
@@ -36,9 +46,11 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -49,12 +61,12 @@ export async function POST(request: NextRequest) {
     // 2. Validate request body
     const body = await request.json();
     const validationResult = recommendTemplateSchema.safeParse(body);
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Invalid request data',
-          details: validationResult.error.errors 
+          details: validationResult.error.errors,
         },
         { status: 400 }
       );
@@ -64,7 +76,7 @@ export async function POST(request: NextRequest) {
 
     // 3. Initialize AI service
     const aiService = new HuggingFaceService();
-    
+
     // 4. Check service health
     const isHealthy = await aiService.healthCheck();
     if (!isHealthy) {
@@ -106,19 +118,18 @@ export async function POST(request: NextRequest) {
         profileAnalyzed: true,
         recommendationConfidence: recommendation.confidence,
         processingTime: new Date().toISOString(),
-      }
+      },
     });
-
   } catch (error: any) {
     console.error('Template recommendation failed:', error);
 
     // Handle specific AI service errors
     if (error.name === 'AIServiceError') {
       return NextResponse.json(
-        { 
-          error: 'AI processing failed', 
+        {
+          error: 'AI processing failed',
           message: error.message,
-          retryable: error.retryable 
+          retryable: error.retryable,
         },
         { status: error.retryable ? 503 : 500 }
       );
@@ -135,7 +146,7 @@ export async function POST(request: NextRequest) {
 /**
  * Get all available templates with descriptions
  */
-export async function GET() {
+export async function GET(): Promise<Response> {
   try {
     const supabase = await createClient();
     if (!supabase) {
@@ -144,9 +155,11 @@ export async function GET() {
         { status: 500 }
       );
     }
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
@@ -158,40 +171,85 @@ export async function GET() {
     const templates = {
       developer: {
         name: 'Developer',
-        description: 'Clean, code-focused layout perfect for software engineers and technical professionals',
-        features: ['GitHub integration', 'Code syntax highlighting', 'Technical project showcase', 'Skills matrix'],
+        description:
+          'Clean, code-focused layout perfect for software engineers and technical professionals',
+        features: [
+          'GitHub integration',
+          'Code syntax highlighting',
+          'Technical project showcase',
+          'Skills matrix',
+        ],
         preview: '/templates/developer-preview.jpg',
-        bestFor: ['Software Engineers', 'DevOps Engineers', 'Data Scientists', 'Technical Leads'],
+        bestFor: [
+          'Software Engineers',
+          'DevOps Engineers',
+          'Data Scientists',
+          'Technical Leads',
+        ],
         industries: ['Technology', 'Startups', 'Enterprise Software'],
       },
       designer: {
         name: 'Designer',
-        description: 'Visual-heavy layout showcasing creative work and design portfolios',
-        features: ['Image galleries', 'Project case studies', 'Color customization', 'Interactive elements'],
+        description:
+          'Visual-heavy layout showcasing creative work and design portfolios',
+        features: [
+          'Image galleries',
+          'Project case studies',
+          'Color customization',
+          'Interactive elements',
+        ],
         preview: '/templates/designer-preview.jpg',
-        bestFor: ['UI/UX Designers', 'Graphic Designers', 'Product Designers', 'Creative Directors'],
+        bestFor: [
+          'UI/UX Designers',
+          'Graphic Designers',
+          'Product Designers',
+          'Creative Directors',
+        ],
         industries: ['Design', 'Advertising', 'Media', 'E-commerce'],
       },
       consultant: {
         name: 'Consultant',
-        description: 'Professional, results-oriented layout for business and consulting roles',
-        features: ['Client testimonials', 'Case studies', 'ROI metrics', 'Professional timeline'],
+        description:
+          'Professional, results-oriented layout for business and consulting roles',
+        features: [
+          'Client testimonials',
+          'Case studies',
+          'ROI metrics',
+          'Professional timeline',
+        ],
         preview: '/templates/consultant-preview.jpg',
-        bestFor: ['Business Consultants', 'Strategy Advisors', 'Project Managers', 'Analysts'],
+        bestFor: [
+          'Business Consultants',
+          'Strategy Advisors',
+          'Project Managers',
+          'Analysts',
+        ],
         industries: ['Consulting', 'Finance', 'Healthcare', 'Government'],
       },
       creative: {
         name: 'Creative',
-        description: 'Artistic, flexible layout for creative professionals and freelancers',
-        features: ['Portfolio galleries', 'Blog integration', 'Custom layouts', 'Video embeds'],
+        description:
+          'Artistic, flexible layout for creative professionals and freelancers',
+        features: [
+          'Portfolio galleries',
+          'Blog integration',
+          'Custom layouts',
+          'Video embeds',
+        ],
         preview: '/templates/creative-preview.jpg',
         bestFor: ['Artists', 'Writers', 'Photographers', 'Content Creators'],
         industries: ['Arts', 'Entertainment', 'Publishing', 'Non-profit'],
       },
       minimal: {
         name: 'Minimal',
-        description: 'Simple, content-focused layout suitable for any profession',
-        features: ['Clean typography', 'Fast loading', 'Mobile optimized', 'Easy customization'],
+        description:
+          'Simple, content-focused layout suitable for any profession',
+        features: [
+          'Clean typography',
+          'Fast loading',
+          'Mobile optimized',
+          'Easy customization',
+        ],
         preview: '/templates/minimal-preview.jpg',
         bestFor: ['Academics', 'Researchers', 'Executives', 'Career Changers'],
         industries: ['Education', 'Research', 'Corporate', 'Any Industry'],
@@ -204,9 +262,8 @@ export async function GET() {
       metadata: {
         totalTemplates: Object.keys(templates).length,
         lastUpdated: '2024-01-15',
-      }
+      },
     });
-
   } catch (error) {
     console.error('Failed to fetch templates:', error);
     return NextResponse.json(
@@ -223,14 +280,16 @@ async function enhanceRecommendation(
   aiRecommendation: any,
   profile: UserProfile,
   preferences: any
-) {
+): Promise<void> {
   // Apply business rules and preferences
-  const enhancedAlternatives = aiRecommendation.alternatives.map((alt: any) => ({
-    ...alt,
-    reasoning: generateReasoningForTemplate(alt.template, profile),
-    preview: `/templates/${alt.template}-preview.jpg`,
-    features: getTemplateFeatures(alt.template),
-  }));
+  const enhancedAlternatives = aiRecommendation.alternatives.map(
+    (alt: any) => ({
+      ...alt,
+      reasoning: generateReasoningForTemplate(alt.template, profile),
+      preview: `/templates/${alt.template}-preview.jpg`,
+      features: getTemplateFeatures(alt.template),
+    })
+  );
 
   // Add style preference adjustments
   if (preferences.style) {
@@ -238,20 +297,32 @@ async function enhanceRecommendation(
       aiRecommendation.recommendedTemplate,
       preferences.style
     );
-    aiRecommendation.confidence = Math.min(0.95, aiRecommendation.confidence + styleBonus);
+    aiRecommendation.confidence = Math.min(
+      0.95,
+      aiRecommendation.confidence + styleBonus
+    );
   }
 
   return {
     ...aiRecommendation,
     alternatives: enhancedAlternatives,
-    reasoning: generateReasoningForTemplate(aiRecommendation.recommendedTemplate, profile),
+    reasoning: generateReasoningForTemplate(
+      aiRecommendation.recommendedTemplate,
+      profile
+    ),
     preview: `/templates/${aiRecommendation.recommendedTemplate}-preview.jpg`,
     features: getTemplateFeatures(aiRecommendation.recommendedTemplate),
-    customizations: getRecommendedCustomizations(aiRecommendation.recommendedTemplate, profile),
+    customizations: getRecommendedCustomizations(
+      aiRecommendation.recommendedTemplate,
+      profile
+    ),
   };
 }
 
-function generateReasoningForTemplate(template: string, profile: UserProfile): string {
+function generateReasoningForTemplate(
+  template: string,
+  profile: UserProfile
+): string {
   const reasoningMap = {
     developer: `Perfect for technical roles like "${profile.title}". Highlights programming skills and technical projects effectively.`,
     designer: `Ideal for creative professionals. Visual-focused layout showcases design work and creative projects.`,
@@ -259,27 +330,44 @@ function generateReasoningForTemplate(template: string, profile: UserProfile): s
     creative: `Great for artistic and creative fields. Flexible layout accommodates diverse content types.`,
     minimal: `Clean, professional approach suitable for any industry. Focuses on content over design.`,
   };
-  
-  return reasoningMap[template as keyof typeof reasoningMap] || 'Recommended based on your profile analysis.';
+
+  return (
+    reasoningMap[template as keyof typeof reasoningMap] ||
+    'Recommended based on your profile analysis.'
+  );
 }
 
 function getTemplateFeatures(template: string): string[] {
   const featuresMap = {
-    developer: ['GitHub integration', 'Code syntax highlighting', 'Technical project showcase'],
-    designer: ['Image galleries', 'Project case studies', 'Color customization'],
+    developer: [
+      'GitHub integration',
+      'Code syntax highlighting',
+      'Technical project showcase',
+    ],
+    designer: [
+      'Image galleries',
+      'Project case studies',
+      'Color customization',
+    ],
     consultant: ['Client testimonials', 'Case studies', 'ROI metrics'],
     creative: ['Portfolio galleries', 'Blog integration', 'Video embeds'],
     minimal: ['Clean typography', 'Fast loading', 'Mobile optimized'],
   };
-  
+
   return featuresMap[template as keyof typeof featuresMap] || [];
 }
 
 function getRecommendedCustomizations(template: string, profile: UserProfile) {
   const baseConfig = {
     primaryColor: profile.hasDesignWork ? '#6366f1' : '#1f2937',
-    headerStyle: profile.experienceLevel === 'senior' || profile.experienceLevel === 'lead' ? 'professional' : 'minimal',
-    sectionOrder: profile.projectCount > 3 ? ['about', 'projects', 'experience', 'skills'] : ['about', 'experience', 'skills', 'projects'],
+    headerStyle:
+      profile.experienceLevel === 'senior' || profile.experienceLevel === 'lead'
+        ? 'professional'
+        : 'minimal',
+    sectionOrder:
+      profile.projectCount > 3
+        ? ['about', 'projects', 'experience', 'skills']
+        : ['about', 'experience', 'skills', 'projects'],
   };
 
   // Template-specific customizations
@@ -319,7 +407,7 @@ function calculateStyleBonus(template: string, preferredStyle: string): number {
     consultant: { professional: 0.15, minimal: 0.05 },
     creative: { creative: 0.15, modern: 0.1 },
   };
-  
+
   return styleMatches[template]?.[preferredStyle] || 0;
 }
 
@@ -327,25 +415,23 @@ function calculateStyleBonus(template: string, preferredStyle: string): number {
  * Log AI usage for analytics and billing
  */
 async function logAIUsage(
-  userId: string, 
-  operationType: string, 
+  userId: string,
+  operationType: string,
   metadata: Record<string, any>
-) {
+): Promise<void> {
   try {
     const supabase = await createClient();
     if (!supabase) {
       console.error('Failed to create Supabase client for logging');
       return;
     }
-    
-    await supabase
-      .from('ai_usage_logs')
-      .insert({
-        user_id: userId,
-        operation_type: operationType,
-        metadata,
-        created_at: new Date().toISOString(),
-      });
+
+    await supabase.from('ai_usage_logs').insert({
+      user_id: userId,
+      operation_type: operationType,
+      metadata,
+      created_at: new Date().toISOString(),
+    });
   } catch (error) {
     console.error('Failed to log AI usage:', error);
     // Don't throw - logging failure shouldn't break the main operation

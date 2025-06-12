@@ -10,24 +10,8 @@
 
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
-
-// API Response Interfaces
-interface DashboardApiResponse {
-  data?: any;
-  error?: string;
-  requiresAuth?: boolean;
-}
-
-interface RepositoriesApiResponse {
-  repositories?: any[];
-  error?: string;
-  requiresAuth?: boolean;
-}
 import { useRouter, useSearchParams } from 'next/navigation';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { usePerformanceTracking } from '@/lib/utils/performance';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   FiGithub,
   FiActivity,
@@ -39,7 +23,25 @@ import {
   FiExternalLink,
   FiAlertCircle,
 } from 'react-icons/fi';
+
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { usePerformanceTracking } from '@/lib/utils/performance';
+
 import type { AnalyticsDashboardData } from '@/types/analytics';
+
+// API Response Interfaces
+interface DashboardApiResponse {
+  data?: AnalyticsDashboardData;
+  error?: string;
+  requiresAuth?: boolean;
+}
+
+interface RepositoriesApiResponse {
+  repositories?: unknown[];
+  error?: string;
+  requiresAuth?: boolean;
+}
 
 // Dashboard state type
 interface DashboardState {
@@ -53,7 +55,7 @@ interface DashboardState {
 /**
  * Analytics Dashboard Component with Search Params
  */
-function AnalyticsDashboard() {
+function AnalyticsDashboard(): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
   usePerformanceTracking('AnalyticsDashboard');
@@ -76,10 +78,10 @@ function AnalyticsDashboard() {
 
     if (connected === 'true') {
       // Successfully connected, fetch data
-      fetchDashboardData();
+      void fetchDashboardData();
       // Clean up URL
       router.replace('/analytics');
-    } else if (error) {
+    } else if (error !== null && error !== '') {
       setDashboard(prev => ({
         ...prev,
         error: getErrorMessage(error),
@@ -90,8 +92,13 @@ function AnalyticsDashboard() {
 
   // Fetch dashboard data on mount
   useEffect(() => {
-    if (!searchParams.get('connected') && !searchParams.get('error')) {
-      fetchDashboardData();
+    const connected = searchParams.get('connected');
+    const error = searchParams.get('error');
+    if (
+      (connected === null || connected === '') &&
+      (error === null || error === '')
+    ) {
+      void fetchDashboardData();
     }
   }, [searchParams]);
 
@@ -109,13 +116,13 @@ function AnalyticsDashboard() {
       integration_store_failed: 'Failed to store GitHub integration.',
       callback_failed: 'OAuth callback failed. Please try again.',
     };
-    return errorMessages[errorCode] || 'An unknown error occurred.';
+    return errorMessages[errorCode] ?? 'An unknown error occurred.';
   };
 
   /**
    * Fetch dashboard data from API
    */
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = async (): Promise<void> => {
     try {
       setDashboard(prev => ({ ...prev, loading: true, error: null }));
 
@@ -123,7 +130,7 @@ function AnalyticsDashboard() {
       const result: DashboardApiResponse = await response.json();
 
       if (!response.ok) {
-        if (result.requiresAuth) {
+        if (result.requiresAuth === true) {
           setDashboard(prev => ({
             ...prev,
             loading: false,
@@ -132,7 +139,7 @@ function AnalyticsDashboard() {
           }));
           return;
         }
-        throw new Error(result.error || 'Failed to fetch dashboard data');
+        throw new Error(result.error ?? 'Failed to fetch dashboard data');
       }
 
       setDashboard(prev => ({
@@ -142,11 +149,13 @@ function AnalyticsDashboard() {
         error: null,
         needsAuth: false,
       }));
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An error occurred';
       setDashboard(prev => ({
         ...prev,
         loading: false,
-        error: error.message,
+        error: errorMessage,
       }));
     }
   };
@@ -154,17 +163,19 @@ function AnalyticsDashboard() {
   /**
    * Initiate GitHub OAuth flow
    */
-  const connectGitHub = async () => {
+  const connectGitHub = async (): Promise<void> => {
     try {
       const response = await fetch('/api/integrations/github/auth');
       const result: { error?: string; url?: string } = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to initiate GitHub OAuth');
+        throw new Error(result.error ?? 'Failed to initiate GitHub OAuth');
       }
 
       // Redirect to GitHub OAuth
-      window.location.href = result.url!;
+      if (result.url !== undefined && result.url !== null) {
+        window.location.href = result.url;
+      }
     } catch (error: any) {
       setDashboard(prev => ({
         ...prev,
@@ -176,7 +187,7 @@ function AnalyticsDashboard() {
   /**
    * Sync repositories from GitHub
    */
-  const syncRepositories = async (force = false) => {
+  const syncRepositories = async (force = false): Promise<void> => {
     try {
       setDashboard(prev => ({ ...prev, syncing: true }));
 
@@ -191,7 +202,7 @@ function AnalyticsDashboard() {
       const result: RepositoriesApiResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || 'Failed to sync repositories');
+        throw new Error(result.error ?? 'Failed to sync repositories');
       }
 
       // Refresh dashboard data
@@ -263,7 +274,7 @@ function AnalyticsDashboard() {
   }
 
   // Error state
-  if (dashboard.error) {
+  if (dashboard.error !== null && dashboard.error !== '') {
     return (
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -288,7 +299,7 @@ function AnalyticsDashboard() {
     );
   }
 
-  const data = dashboard.data!;
+  const data = dashboard.data as AnalyticsDashboardData;
 
   return (
     <BaseLayout>
@@ -475,10 +486,12 @@ function AnalyticsDashboard() {
                         )}
                       </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {repo.description || 'No description'}
+                        {repo.description !== null && repo.description !== ''
+                          ? repo.description
+                          : 'No description'}
                       </p>
                       <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                        {repo.language && (
+                        {repo.language !== null && repo.language !== '' && (
                           <span className="flex items-center gap-1">
                             <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                             {repo.language}
@@ -516,8 +529,10 @@ function AnalyticsDashboard() {
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {contributor.contributor.name ||
-                          contributor.contributor.login}
+                        {contributor.contributor.name !== null &&
+                        contributor.contributor.name !== ''
+                          ? contributor.contributor.name
+                          : contributor.contributor.login}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {contributor.commitCount} commits
@@ -563,7 +578,7 @@ function AnalyticsDashboard() {
                 <button
                   onClick={() =>
                     router.push(
-                      `/analytics/repository/${data.overview.mostActiveRepository!.repository.id}`
+                      `/analytics/repository/${data.overview.mostActiveRepository?.repository.id ?? ''}`
                     )
                   }
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
@@ -582,7 +597,7 @@ function AnalyticsDashboard() {
 /**
  * Main Analytics Page with Suspense wrapper
  */
-export default function AnalyticsPage() {
+export default function AnalyticsPage(): React.ReactElement {
   return (
     <Suspense
       fallback={

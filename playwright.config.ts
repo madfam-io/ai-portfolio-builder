@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@playwright/test';
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -83,4 +83,4 @@ export default defineConfig({
   expect: {
     timeout: 5 * 1000,
   },
-})
+});

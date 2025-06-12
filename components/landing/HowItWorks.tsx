@@ -1,8 +1,10 @@
 'use client';
 
+import React from 'react';
+
 import { useLanguage } from '@/lib/i18n/minimal-context';
 
-export default function HowItWorks() {
+export default function HowItWorks(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section

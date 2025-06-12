@@ -6,6 +6,7 @@
  */
 
 import { logger } from '@/lib/utils/logger';
+
 import {
   ErrorReport,
   ErrorType,

@@ -12,7 +12,12 @@ const path = require('path');
 console.log('🔍 Analyzing bundle sizes...\n');
 
 // Check if bundle analyzer is installed
-const bundleAnalyzerPath = path.join(process.cwd(), 'node_modules', '@next', 'bundle-analyzer');
+const bundleAnalyzerPath = path.join(
+  process.cwd(),
+  'node_modules',
+  '@next',
+  'bundle-analyzer'
+);
 if (!fs.existsSync(bundleAnalyzerPath)) {
   console.log('📦 Installing @next/bundle-analyzer...');
   try {
@@ -29,9 +34,9 @@ if (!fs.existsSync(bundleAnalyzerPath)) {
 // Build with bundle analyzer
 try {
   console.log('Building production bundle with analysis...');
-  execSync('ANALYZE=true pnpm build', { 
+  execSync('ANALYZE=true pnpm build', {
     stdio: 'inherit',
-    env: { ...process.env, ANALYZE: 'true' }
+    env: { ...process.env, ANALYZE: 'true' },
   });
 } catch (error) {
   console.error('Failed to build bundle:', error.message);
@@ -53,14 +58,14 @@ try {
   const buildManifest = JSON.parse(
     fs.readFileSync(path.join(nextDir, 'build-manifest.json'), 'utf8')
   );
-  
+
   const pages = Object.keys(buildManifest.pages);
   console.log(`Total pages: ${pages.length}`);
-  
+
   // Show largest pages
   console.log('\nLargest pages:');
   const pageSizes = [];
-  
+
   for (const page of pages) {
     const scripts = buildManifest.pages[page] || [];
     const totalSize = scripts.reduce((sum, script) => {
@@ -70,19 +75,18 @@ try {
       }
       return sum;
     }, 0);
-    
+
     if (totalSize > 0) {
       pageSizes.push({ page, size: totalSize });
     }
   }
-  
+
   pageSizes
     .sort((a, b) => b.size - a.size)
     .slice(0, 10)
     .forEach(({ page, size }) => {
       console.log(`  ${page}: ${(size / 1024).toFixed(2)} KB`);
     });
-    
 } catch (error) {
   console.error('Failed to parse build manifest:', error.message);
 }

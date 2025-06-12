@@ -4,8 +4,9 @@
  */
 
 import React, { ReactNode } from 'react';
-import * as esTranslations from '@/lib/i18n/translations/es';
+
 import * as enTranslations from '@/lib/i18n/translations/en';
+import * as esTranslations from '@/lib/i18n/translations/es';
 import { flattenTranslations } from '@/lib/i18n/utils';
 
 // Create mock context that always returns Spanish by default
@@ -50,7 +51,7 @@ export const MockLanguageProvider = ({
 }: {
   children: ReactNode;
   initialLanguage?: 'es' | 'en';
-}) => {
+}): React.ReactElement => {
   const translations =
     initialLanguage === 'es' ? esTranslations : enTranslations;
   const contextValue: typeof mockLanguageContext = {

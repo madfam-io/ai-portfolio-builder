@@ -1,6 +1,6 @@
 /**
  * @fileoverview Enhanced Template Selector Component
- * 
+ *
  * Provides an intuitive interface for selecting and previewing portfolio templates
  * with live preview cards, industry targeting, and feature comparisons.
  */
@@ -8,9 +8,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { TemplateType } from '@/types/portfolio';
-import { getAvailableTemplates, getTemplateConfig, TemplateConfig } from '@/lib/templates/templateConfig';
 import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
+
+import {
+  getAvailableTemplates,
+  getTemplateConfig,
+  TemplateConfig,
+} from '@/lib/templates/templateConfig';
+import { TemplateType } from '@/types/portfolio';
 
 interface TemplateSelectorProps {
   currentTemplate: TemplateType;
@@ -26,8 +31,13 @@ interface TemplateCardProps {
   isLoading?: boolean;
 }
 
-function TemplateCard({ template, isSelected, onSelect, onPreview, isLoading }: TemplateCardProps) {
-
+function TemplateCard({
+  template,
+  isSelected,
+  onSelect,
+  onPreview,
+  isLoading,
+}: TemplateCardProps) {
   return (
     <div
       className={`relative border-2 rounded-xl p-6 cursor-pointer transition-all duration-200 hover:shadow-lg ${
@@ -45,40 +55,55 @@ function TemplateCard({ template, isSelected, onSelect, onPreview, isLoading }: 
       )}
 
       {/* Template preview */}
-      <div 
+      <div
         className="h-32 rounded-lg mb-4 relative overflow-hidden"
         style={{ backgroundColor: template.colorScheme.background }}
       >
         {/* Mock layout preview */}
         <div className="absolute inset-2 space-y-1">
           {/* Header */}
-          <div 
+          <div
             className="h-4 rounded-sm"
-            style={{ backgroundColor: template.colorScheme.primary, opacity: 0.8 }}
+            style={{
+              backgroundColor: template.colorScheme.primary,
+              opacity: 0.8,
+            }}
           />
           {/* Content blocks */}
           <div className="grid grid-cols-3 gap-1">
-            <div 
+            <div
               className="h-3 rounded-sm"
-              style={{ backgroundColor: template.colorScheme.secondary, opacity: 0.6 }}
+              style={{
+                backgroundColor: template.colorScheme.secondary,
+                opacity: 0.6,
+              }}
             />
-            <div 
+            <div
               className="h-3 rounded-sm col-span-2"
-              style={{ backgroundColor: template.colorScheme.text, opacity: 0.3 }}
+              style={{
+                backgroundColor: template.colorScheme.text,
+                opacity: 0.3,
+              }}
             />
           </div>
           <div className="grid grid-cols-2 gap-1">
-            <div 
+            <div
               className="h-6 rounded-sm"
-              style={{ backgroundColor: template.colorScheme.accent, opacity: 0.7 }}
+              style={{
+                backgroundColor: template.colorScheme.accent,
+                opacity: 0.7,
+              }}
             />
-            <div 
+            <div
               className="h-6 rounded-sm"
-              style={{ backgroundColor: template.colorScheme.secondary, opacity: 0.5 }}
+              style={{
+                backgroundColor: template.colorScheme.secondary,
+                opacity: 0.5,
+              }}
             />
           </div>
           {/* Footer */}
-          <div 
+          <div
             className="h-2 rounded-sm w-3/4"
             style={{ backgroundColor: template.colorScheme.text, opacity: 0.4 }}
           />
@@ -127,7 +152,7 @@ function TemplateCard({ template, isSelected, onSelect, onPreview, isLoading }: 
 
           {/* Preview button */}
           <button
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               onPreview();
             }}
@@ -149,10 +174,10 @@ function TemplateCard({ template, isSelected, onSelect, onPreview, isLoading }: 
   );
 }
 
-export function TemplateSelector({ 
-  currentTemplate, 
-  onTemplateChange, 
-  isLoading = false
+export function TemplateSelector({
+  currentTemplate,
+  onTemplateChange,
+  isLoading = false,
 }: TemplateSelectorProps) {
   const [filterIndustry, setFilterIndustry] = useState<string>('');
 
@@ -160,8 +185,8 @@ export function TemplateSelector({
 
   const filteredTemplates = useMemo(() => {
     if (!filterIndustry) return templates;
-    return templates.filter(template => 
-      template.industry.some(industry => 
+    return templates.filter(template =>
+      template.industry.some(industry =>
         industry.toLowerCase().includes(filterIndustry.toLowerCase())
       )
     );

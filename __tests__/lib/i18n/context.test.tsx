@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   render,
   screen,
@@ -7,6 +6,8 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import { LanguageProvider, useLanguage } from '@/lib/i18n/refactored-context';
 
 // Mock localStorage

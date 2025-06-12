@@ -20,6 +20,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+
 import { usePerformanceTracking } from '@/lib/utils/performance';
 
 interface CommitsChartProps {

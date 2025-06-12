@@ -5,11 +5,12 @@
 
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
+
+import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
-import { useUIStore } from './ui-store';
-import { useAIStore } from './ai-store';
 import { RootState } from './types';
+import { useUIStore } from './ui-store';
 
 /**
  * Root store that combines all individual stores

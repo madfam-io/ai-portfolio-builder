@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Portfolio, SectionType } from '@/types/portfolio';
 import {
   FiUser,
   FiBriefcase,
@@ -14,6 +13,8 @@ import {
   FiPlus,
   FiEdit3,
 } from 'react-icons/fi';
+
+import { Portfolio, SectionType } from '@/types/portfolio';
 
 interface EditorSidebarProps {
   portfolio: Portfolio;

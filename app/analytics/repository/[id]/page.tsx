@@ -10,10 +10,8 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FiArrowLeft,
   FiGithub,
@@ -28,9 +26,6 @@ import {
   FiEye,
   FiClock,
 } from 'react-icons/fi';
-import type { RepositoryAnalytics } from '@/types/analytics';
-
-// Import Recharts components directly - they'll be code-split by Next.js
 import {
   LineChart,
   Line,
@@ -44,6 +39,10 @@ import {
   Cell,
 } from 'recharts';
 
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import type { RepositoryAnalytics } from '@/types/analytics';
+
 // Component state type
 interface RepoState {
   data: RepositoryAnalytics | null;
@@ -55,7 +54,7 @@ interface RepoState {
 /**
  * Repository Analytics Detail Page
  */
-export default function RepositoryAnalyticsPage() {
+export default function RepositoryAnalyticsPage(): React.ReactElement {
   const router = useRouter();
   const params = useParams();
   const repositoryId = params.id as string;
@@ -90,7 +89,7 @@ export default function RepositoryAnalyticsPage() {
           }));
           return;
         }
-        throw new Error(result.error || (t.failedToFetchAnalytics as string));
+        throw new Error(result.error ?? (t.failedToFetchAnalytics as string));
       }
 
       setRepo(prev => ({
@@ -99,26 +98,28 @@ export default function RepositoryAnalyticsPage() {
         loading: false,
         error: null,
       }));
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An error occurred';
       setRepo(prev => ({
         ...prev,
         loading: false,
-        error: error.message,
+        error: errorMessage,
       }));
     }
   }, [repositoryId, t]);
 
   // Fetch repository analytics on mount
   useEffect(() => {
-    if (repositoryId) {
-      fetchRepositoryAnalytics();
+    if (repositoryId !== null && repositoryId !== '') {
+      void fetchRepositoryAnalytics();
     }
   }, [repositoryId, fetchRepositoryAnalytics]);
 
   /**
    * Sync repository data
    */
-  const syncRepository = async () => {
+  const syncRepository = async (): Promise<void> => {
     try {
       setRepo(prev => ({ ...prev, syncing: true }));
 
@@ -141,15 +142,17 @@ export default function RepositoryAnalyticsPage() {
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error || (t.failedToSync as string));
+        throw new Error(result.error ?? (t.failedToSync as string));
       }
 
       // Refresh data after sync
       await fetchRepositoryAnalytics();
-    } catch (error: any) {
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : 'An error occurred';
       setRepo(prev => ({
         ...prev,
-        error: error.message,
+        error: errorMessage,
       }));
     } finally {
       setRepo(prev => ({ ...prev, syncing: false }));
@@ -184,7 +187,7 @@ export default function RepositoryAnalyticsPage() {
   }
 
   // Error state
-  if (repo.error) {
+  if (repo.error !== null && repo.error !== '') {
     return (
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -249,15 +252,19 @@ export default function RepositoryAnalyticsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 dark:text-gray-400 mb-2">
-                  {repository.description || t.noDescriptionAvailable}
+                  {repository.description !== null &&
+                  repository.description !== ''
+                    ? repository.description
+                    : t.noDescriptionAvailable}
                 </p>
                 <div className="flex items-center gap-6 text-sm text-gray-500">
-                  {repository.language && (
-                    <span className="flex items-center gap-1">
-                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                      {repository.language}
-                    </span>
-                  )}
+                  {repository.language !== null &&
+                    repository.language !== '' && (
+                      <span className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                        {repository.language}
+                      </span>
+                    )}
                   <span className="flex items-center gap-1">
                     <FiStar className="w-3 h-3" />
                     {repository.stargazersCount}
@@ -309,8 +316,10 @@ export default function RepositoryAnalyticsPage() {
                     {t.totalLOC}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.metrics.current?.locTotal?.toLocaleString() ||
-                      t.notAvailable}
+                    {data.metrics.current?.locTotal !== null &&
+                    data.metrics.current?.locTotal !== undefined
+                      ? data.metrics.current.locTotal.toLocaleString()
+                      : t.notAvailable}
                   </p>
                 </div>
               </div>
@@ -326,7 +335,7 @@ export default function RepositoryAnalyticsPage() {
                     {t.commitsLast30Days}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.metrics.current?.commitsLast30Days || 0}
+                    {data.metrics.current?.commitsLast30Days ?? 0}
                   </p>
                 </div>
               </div>
@@ -366,50 +375,51 @@ export default function RepositoryAnalyticsPage() {
           </div>
 
           {/* Pull Request Stats */}
-          {data.pullRequests.stats && (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.pullRequestMetrics}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-purple-600">
-                    {data.pullRequests.stats.averageCycleTime.toFixed(1)}h
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.avgCycleTime}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-blue-600">
-                    {data.pullRequests.stats.averageLeadTime.toFixed(1)}h
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.avgLeadTime}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-green-600">
-                    {data.pullRequests.stats.mergeRate.toFixed(1)}%
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.mergeRate}
-                  </p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl font-bold text-yellow-600">
-                    {data.pullRequests.stats.averageTimeToFirstReview.toFixed(
-                      1
-                    )}
-                    h
-                  </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.timeToReview}
-                  </p>
+          {data.pullRequests.stats !== null &&
+            data.pullRequests.stats !== undefined && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                  {t.pullRequestMetrics}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-purple-600">
+                      {data.pullRequests.stats.averageCycleTime.toFixed(1)}h
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t.avgCycleTime}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-blue-600">
+                      {data.pullRequests.stats.averageLeadTime.toFixed(1)}h
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t.avgLeadTime}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-green-600">
+                      {data.pullRequests.stats.mergeRate.toFixed(1)}%
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t.mergeRate}
+                    </p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-2xl font-bold text-yellow-600">
+                      {data.pullRequests.stats.averageTimeToFirstReview.toFixed(
+                        1
+                      )}
+                      h
+                    </p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                      {t.timeToReview}
+                    </p>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
           {/* Charts Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
@@ -446,9 +456,13 @@ export default function RepositoryAnalyticsPage() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percentage }: any) =>
-                      `${name} ${percentage.toFixed(1)}%`
-                    }
+                    label={({
+                      name,
+                      percentage,
+                    }: {
+                      name: string;
+                      percentage: number;
+                    }) => `${name} ${percentage.toFixed(1)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="percentage"
@@ -492,20 +506,24 @@ export default function RepositoryAnalyticsPage() {
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">
-                        {contrib.contributor.name || contrib.contributor.login}
+                        {contrib.contributor.name !== null &&
+                        contrib.contributor.name !== ''
+                          ? contrib.contributor.name
+                          : contrib.contributor.login}
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {contrib.stats.commitCount} {t.commitsWithChanges},{' '}
-                        {t.codeChanges
-                          ?.replace(
-                            '{additions}',
-                            contrib.stats.additions.toString()
-                          )
-                          .replace(
-                            '{deletions}',
-                            contrib.stats.deletions.toString()
-                          ) ||
-                          `+${contrib.stats.additions} -${contrib.stats.deletions}`}
+                        {t.codeChanges !== undefined && t.codeChanges !== null
+                          ? t.codeChanges
+                              .replace(
+                                '{additions}',
+                                contrib.stats.additions.toString()
+                              )
+                              .replace(
+                                '{deletions}',
+                                contrib.stats.deletions.toString()
+                              )
+                          : `+${contrib.stats.additions} -${contrib.stats.deletions}`}
                       </p>
                     </div>
                   </div>
@@ -527,32 +545,42 @@ export default function RepositoryAnalyticsPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <p className="font-medium text-gray-900 dark:text-white text-sm">
-                          {t.pullRequestNumber?.replace(
-                            '{number}',
-                            pr.number.toString()
-                          ) || `#${pr.number}`}
+                          {t.pullRequestNumber !== undefined &&
+                          t.pullRequestNumber !== null
+                            ? t.pullRequestNumber.replace(
+                                '{number}',
+                                pr.number.toString()
+                              )
+                            : `#${pr.number}`}
                           : {pr.title}
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                           {t.by} {pr.authorLogin} •{' '}
-                          {t[pr.state as 'merged' | 'open' | 'closed'] ||
+                          {t[pr.state as 'merged' | 'open' | 'closed'] ??
                             pr.state}
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                           <span>
-                            {t.codeChanges
-                              ?.replace('{additions}', pr.additions.toString())
-                              .replace(
-                                '{deletions}',
-                                pr.deletions.toString()
-                              ) || `+${pr.additions} -${pr.deletions}`}
+                            {t.codeChanges !== undefined &&
+                            t.codeChanges !== null
+                              ? t.codeChanges
+                                  .replace(
+                                    '{additions}',
+                                    pr.additions.toString()
+                                  )
+                                  .replace(
+                                    '{deletions}',
+                                    pr.deletions.toString()
+                                  )
+                              : `+${pr.additions} -${pr.deletions}`}
                           </span>
-                          {pr.cycleTimeHours && (
-                            <span className="flex items-center gap-1">
-                              <FiClock className="w-3 h-3" />
-                              {pr.cycleTimeHours.toFixed(1)}h
-                            </span>
-                          )}
+                          {pr.cycleTimeHours !== null &&
+                            pr.cycleTimeHours !== undefined && (
+                              <span className="flex items-center gap-1">
+                                <FiClock className="w-3 h-3" />
+                                {pr.cycleTimeHours.toFixed(1)}h
+                              </span>
+                            )}
                         </div>
                       </div>
                       <span

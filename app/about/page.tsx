@@ -1,11 +1,13 @@
 'use client';
 
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
 import Link from 'next/link';
+import React from 'react';
 import { FaRocket, FaUsers, FaStar, FaHeart } from 'react-icons/fa';
 
-export default function About() {
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+export default function About(): React.ReactElement {
   const { t } = useLanguage();
 
   const team = [

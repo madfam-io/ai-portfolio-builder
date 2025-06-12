@@ -3,7 +3,7 @@
 /**
  * Enhanced Authentication Context for PRISMA
  * Handles both customer and admin authentication with role-based access control
- * 
+ *
  * Features:
  * - Customer subscription management (Free, Pro, Business, Enterprise)
  * - Admin role hierarchy (Viewer → Support → Moderator → Manager → Developer → Architect)
@@ -13,23 +13,30 @@
  * - Subscription limits and feature flags
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { User as SupabaseUser } from '@supabase/supabase-js';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from 'react';
+
 import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
-import { 
-  User, 
-  SubscriptionPlan, 
-  AdminPermission,
-  SessionData
-} from '@/types/auth';
-import { 
-  hasPermission, 
+import {
+  hasPermission,
   canAccessFeature,
   canSwitchToAdminMode,
   isSubscriptionActive as checkSubscriptionActive,
   getDaysUntilExpiration,
-  getPermissionLevel 
+  getPermissionLevel,
 } from '@/lib/auth/roles';
+import {
+  User,
+  SubscriptionPlan,
+  AdminPermission,
+  SessionData,
+} from '@/types/auth';
 
 interface AuthContextType {
   // Authentication state
@@ -37,7 +44,7 @@ interface AuthContextType {
   user: User | null;
   supabaseUser: SupabaseUser | null; // Keep original Supabase user for compatibility
   session: SessionData | null;
-  
+
   // User type and permissions
   isAdmin: boolean;
   isInAdminMode: boolean;
@@ -45,29 +52,32 @@ interface AuthContextType {
   permissions: AdminPermission[];
   subscriptionPlan?: SubscriptionPlan;
   permissionLevel: string;
-  
+
   // Authentication methods
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
-  
+
   // Admin functionality
   switchToAdminMode: () => Promise<void>;
   switchToUserMode: () => Promise<void>;
   impersonateUser: (userId: string) => Promise<void>;
   stopImpersonation: () => Promise<void>;
-  
+
   // Permission checking
   canAccess: (permission: AdminPermission) => boolean;
   canAccessFeature: (feature: string) => boolean;
-  hasReachedLimit: (limitType: 'portfolios' | 'aiEnhancements', currentUsage: number) => boolean;
-  
+  hasReachedLimit: (
+    limitType: 'portfolios' | 'aiEnhancements',
+    currentUsage: number
+  ) => boolean;
+
   // Profile management
   updateProfile: (updates: Partial<User>) => Promise<void>;
   upgradeSubscription: (plan: SubscriptionPlan) => Promise<void>;
   refreshUser: () => Promise<void>;
-  
+
   // Subscription info
   isSubscriptionActive: boolean;
   daysUntilExpiration: number | null;
@@ -98,65 +108,91 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Mock user profile loader (in real implementation, this would fetch from Supabase)
    * For now, we'll create a mock admin user for demonstration
    */
-  const loadUserProfile = useCallback(async (supabaseUser: SupabaseUser): Promise<User | null> => {
-    try {
-      // Mock implementation - in real app, this would query the database
-      const isAdminEmail = supabaseUser.email?.includes('admin') || 
-                          supabaseUser.email?.includes('madfam') ||
-                          supabaseUser.email?.includes('prisma');
-      
-      const mockUser: User = {
-        id: supabaseUser.id,
-        email: supabaseUser.email || '',
-        name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
-        avatarUrl: supabaseUser.user_metadata?.avatar_url,
-        accountType: isAdminEmail ? 'admin' : 'customer',
-        status: 'active',
-        createdAt: new Date(supabaseUser.created_at),
-        updatedAt: new Date(),
-        lastLoginAt: new Date(),
-        language: 'es',
-        featureFlags: {},
-        
-        // Mock customer profile for non-admin users
-        customerProfile: !isAdminEmail ? {
-          subscriptionPlan: 'free',
-          subscriptionStatus: 'active',
-          subscriptionStartDate: new Date(),
-          portfoliosCreated: 0,
-          aiEnhancementsUsed: 1,
-          monthlyPortfolioViews: 0,
-          maxPortfolios: 1,
-          maxAiEnhancements: 3,
-          customDomainEnabled: false,
-          analyticsEnabled: false,
-          prioritySupport: false,
-        } : undefined,
-        
-        // Mock admin profile for admin users
-        adminProfile: isAdminEmail ? {
-          adminRole: 'admin_architect', // Highest level for demo
-          department: 'engineering',
-          hireDate: new Date('2024-01-01'),
-          isInAdminMode: false, // Start in user mode
-          permissions: [
-            'users:read', 'users:create', 'users:update', 'users:delete', 'users:suspend',
-            'portfolios:read', 'portfolios:moderate', 'portfolios:delete',
-            'templates:manage', 'subscriptions:read', 'subscriptions:modify',
-            'billing:read', 'billing:refund', 'analytics:read', 'analytics:export',
-            'system:configure', 'system:deploy', 'system:logs',
-            'support:tickets', 'support:escalate', 'impersonation:users'
-          ],
-          adminActions: [],
-        } : undefined,
-      };
+  const loadUserProfile = useCallback(
+    async (supabaseUser: SupabaseUser): Promise<User | null> => {
+      try {
+        // Mock implementation - in real app, this would query the database
+        const isAdminEmail =
+          supabaseUser.email?.includes('admin') ||
+          supabaseUser.email?.includes('madfam') ||
+          supabaseUser.email?.includes('prisma');
 
-      return mockUser;
-    } catch (error) {
-      console.error('Failed to load user profile:', error);
-      return null;
-    }
-  }, []);
+        const mockUser: User = {
+          id: supabaseUser.id,
+          email: supabaseUser.email || '',
+          name:
+            supabaseUser.user_metadata?.name ||
+            supabaseUser.email?.split('@')[0] ||
+            'User',
+          avatarUrl: supabaseUser.user_metadata?.avatar_url,
+          accountType: isAdminEmail ? 'admin' : 'customer',
+          status: 'active',
+          createdAt: new Date(supabaseUser.created_at),
+          updatedAt: new Date(),
+          lastLoginAt: new Date(),
+          language: 'es',
+          featureFlags: {},
+
+          // Mock customer profile for non-admin users
+          customerProfile: !isAdminEmail
+            ? {
+                subscriptionPlan: 'free',
+                subscriptionStatus: 'active',
+                subscriptionStartDate: new Date(),
+                portfoliosCreated: 0,
+                aiEnhancementsUsed: 1,
+                monthlyPortfolioViews: 0,
+                maxPortfolios: 1,
+                maxAiEnhancements: 3,
+                customDomainEnabled: false,
+                analyticsEnabled: false,
+                prioritySupport: false,
+              }
+            : undefined,
+
+          // Mock admin profile for admin users
+          adminProfile: isAdminEmail
+            ? {
+                adminRole: 'admin_architect', // Highest level for demo
+                department: 'engineering',
+                hireDate: new Date('2024-01-01'),
+                isInAdminMode: false, // Start in user mode
+                permissions: [
+                  'users:read',
+                  'users:create',
+                  'users:update',
+                  'users:delete',
+                  'users:suspend',
+                  'portfolios:read',
+                  'portfolios:moderate',
+                  'portfolios:delete',
+                  'templates:manage',
+                  'subscriptions:read',
+                  'subscriptions:modify',
+                  'billing:read',
+                  'billing:refund',
+                  'analytics:read',
+                  'analytics:export',
+                  'system:configure',
+                  'system:deploy',
+                  'system:logs',
+                  'support:tickets',
+                  'support:escalate',
+                  'impersonation:users',
+                ],
+                adminActions: [],
+              }
+            : undefined,
+        };
+
+        return mockUser;
+      } catch (error) {
+        console.error('Failed to load user profile:', error);
+        return null;
+      }
+    },
+    []
+  );
 
   /**
    * Create session data from user
@@ -185,10 +221,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Implementation would go here
   }, []);
 
-  const signUp = useCallback(async (email: string, _password: string, name: string) => {
-    console.log('Sign up:', email, name);
-    // Implementation would go here
-  }, []);
+  const signUp = useCallback(
+    async (email: string, _password: string, name: string) => {
+      console.log('Sign up:', email, name);
+      // Implementation would go here
+    },
+    []
+  );
 
   const signOut = useCallback(async () => {
     try {
@@ -226,12 +265,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
         ...user.adminProfile!,
         isInAdminMode: true,
         lastViewSwitchAt: new Date(),
-      }
+      },
     };
 
     setUser(updatedUser);
     setSession(createSession(updatedUser));
-    
+
     console.log('✅ Switched to admin mode');
   }, [user, createSession]);
 
@@ -246,55 +285,58 @@ export function AuthProvider({ children }: AuthProviderProps) {
         ...user.adminProfile,
         isInAdminMode: false,
         lastViewSwitchAt: new Date(),
-      }
+      },
     };
 
     setUser(updatedUser);
     setSession(createSession(updatedUser));
-    
+
     // Clear impersonation when switching to user mode
     setImpersonatedUser(null);
-    
+
     console.log('✅ Switched to user mode');
   }, [user, createSession]);
 
   /**
    * User impersonation (admin only)
    */
-  const impersonateUser = useCallback(async (targetUserId: string) => {
-    if (!user || !hasPermission(user, 'impersonation:users')) {
-      throw new Error('No permission to impersonate users');
-    }
+  const impersonateUser = useCallback(
+    async (targetUserId: string) => {
+      if (!user || !hasPermission(user, 'impersonation:users')) {
+        throw new Error('No permission to impersonate users');
+      }
 
-    // In real implementation, this would load the target user from database
-    const mockTargetUser: User = {
-      id: targetUserId,
-      email: `user${targetUserId}@example.com`,
-      name: `Test User ${targetUserId}`,
-      accountType: 'customer',
-      status: 'active',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      language: 'es',
-      featureFlags: {},
-      customerProfile: {
-        subscriptionPlan: 'pro',
-        subscriptionStatus: 'active',
-        subscriptionStartDate: new Date(),
-        portfoliosCreated: 2,
-        aiEnhancementsUsed: 15,
-        monthlyPortfolioViews: 150,
-        maxPortfolios: 5,
-        maxAiEnhancements: 50,
-        customDomainEnabled: true,
-        analyticsEnabled: true,
-        prioritySupport: false,
-      },
-    };
+      // In real implementation, this would load the target user from database
+      const mockTargetUser: User = {
+        id: targetUserId,
+        email: `user${targetUserId}@example.com`,
+        name: `Test User ${targetUserId}`,
+        accountType: 'customer',
+        status: 'active',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        language: 'es',
+        featureFlags: {},
+        customerProfile: {
+          subscriptionPlan: 'pro',
+          subscriptionStatus: 'active',
+          subscriptionStartDate: new Date(),
+          portfoliosCreated: 2,
+          aiEnhancementsUsed: 15,
+          monthlyPortfolioViews: 150,
+          maxPortfolios: 5,
+          maxAiEnhancements: 50,
+          customDomainEnabled: true,
+          analyticsEnabled: true,
+          prioritySupport: false,
+        },
+      };
 
-    setImpersonatedUser(mockTargetUser);
-    console.log(`🎭 Now impersonating user: ${mockTargetUser.email}`);
-  }, [user]);
+      setImpersonatedUser(mockTargetUser);
+      console.log(`🎭 Now impersonating user: ${mockTargetUser.email}`);
+    },
+    [user]
+  );
 
   const stopImpersonation = useCallback(async () => {
     if (impersonatedUser) {
@@ -306,12 +348,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Profile management (stub implementations)
    */
-  const updateProfile = useCallback(async (updates: Partial<User>) => {
-    if (!user) return;
-    const updatedUser = { ...user, ...updates };
-    setUser(updatedUser);
-    console.log('Profile updated:', updates);
-  }, [user]);
+  const updateProfile = useCallback(
+    async (updates: Partial<User>) => {
+      if (!user) return;
+      const updatedUser = { ...user, ...updates };
+      setUser(updatedUser);
+      console.log('Profile updated:', updates);
+    },
+    [user]
+  );
 
   const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
     console.log('Upgrading to plan:', plan);
@@ -330,29 +375,44 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Permission and feature checking
    */
-  const canAccess = useCallback((permission: AdminPermission): boolean => {
-    return effectiveUser ? hasPermission(effectiveUser, permission) : false;
-  }, [effectiveUser]);
+  const canAccess = useCallback(
+    (permission: AdminPermission): boolean => {
+      return effectiveUser ? hasPermission(effectiveUser, permission) : false;
+    },
+    [effectiveUser]
+  );
 
-  const canAccessFeatureCheck = useCallback((feature: string): boolean => {
-    return effectiveUser ? canAccessFeature(effectiveUser, feature as any) : false;
-  }, [effectiveUser]);
+  const canAccessFeatureCheck = useCallback(
+    (feature: string): boolean => {
+      return effectiveUser
+        ? canAccessFeature(effectiveUser, feature as any)
+        : false;
+    },
+    [effectiveUser]
+  );
 
-  const hasReachedLimit = useCallback((limitType: 'portfolios' | 'aiEnhancements', currentUsage: number): boolean => {
-    if (!effectiveUser || effectiveUser.accountType === 'admin') return false;
-    if (!effectiveUser.customerProfile) return true;
+  const hasReachedLimit = useCallback(
+    (
+      limitType: 'portfolios' | 'aiEnhancements',
+      currentUsage: number
+    ): boolean => {
+      if (!effectiveUser || effectiveUser.accountType === 'admin') return false;
+      if (!effectiveUser.customerProfile) return true;
 
-    const { maxPortfolios, maxAiEnhancements } = effectiveUser.customerProfile;
-    
-    switch (limitType) {
-      case 'portfolios':
-        return maxPortfolios !== -1 && currentUsage >= maxPortfolios;
-      case 'aiEnhancements':
-        return maxAiEnhancements !== -1 && currentUsage >= maxAiEnhancements;
-      default:
-        return false;
-    }
-  }, [effectiveUser]);
+      const { maxPortfolios, maxAiEnhancements } =
+        effectiveUser.customerProfile;
+
+      switch (limitType) {
+        case 'portfolios':
+          return maxPortfolios !== -1 && currentUsage >= maxPortfolios;
+        case 'aiEnhancements':
+          return maxAiEnhancements !== -1 && currentUsage >= maxAiEnhancements;
+        default:
+          return false;
+      }
+    },
+    [effectiveUser]
+  );
 
   // Initialize auth state
   useEffect(() => {
@@ -408,10 +468,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [loadUserProfile, createSession]);
 
   // Calculate subscription status and stats
-  const isSubscriptionActiveStatus = effectiveUser ? checkSubscriptionActive(effectiveUser) : false;
-  const daysUntilExpiration = effectiveUser ? getDaysUntilExpiration(effectiveUser) : null;
-  const permissionLevel = effectiveUser ? getPermissionLevel(effectiveUser) : 'Unknown';
-  
+  const isSubscriptionActiveStatus = effectiveUser
+    ? checkSubscriptionActive(effectiveUser)
+    : false;
+  const daysUntilExpiration = effectiveUser
+    ? getDaysUntilExpiration(effectiveUser)
+    : null;
+  const permissionLevel = effectiveUser
+    ? getPermissionLevel(effectiveUser)
+    : 'Unknown';
+
   const usageStats = {
     portfoliosCreated: effectiveUser?.customerProfile?.portfoliosCreated || 0,
     aiEnhancementsUsed: effectiveUser?.customerProfile?.aiEnhancementsUsed || 0,
@@ -424,7 +490,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     user: effectiveUser,
     supabaseUser, // Keep for compatibility with existing code
     session,
-    
+
     // User type and permissions
     isAdmin: effectiveUser?.accountType === 'admin' || false,
     isInAdminMode: effectiveUser?.adminProfile?.isInAdminMode || false,
@@ -432,40 +498,36 @@ export function AuthProvider({ children }: AuthProviderProps) {
     permissions: effectiveUser?.adminProfile?.permissions || [],
     subscriptionPlan: effectiveUser?.customerProfile?.subscriptionPlan,
     permissionLevel,
-    
+
     // Auth methods
     signIn,
     signUp,
     signOut,
     resetPassword,
-    
+
     // Admin methods
     switchToAdminMode,
     switchToUserMode,
     impersonateUser,
     stopImpersonation,
-    
+
     // Permission methods
     canAccess,
     canAccessFeature: canAccessFeatureCheck,
     hasReachedLimit,
-    
+
     // Profile methods
     updateProfile,
     upgradeSubscription,
     refreshUser,
-    
+
     // Subscription info
     isSubscriptionActive: isSubscriptionActiveStatus,
     daysUntilExpiration,
     usageStats,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth(): AuthContextType {
@@ -486,9 +548,15 @@ export function useAuth(): AuthContextType {
       signUp: async () => {},
       signOut: async () => {},
       resetPassword: async () => {},
-      switchToAdminMode: async () => { throw new Error('Not in AuthProvider'); },
-      switchToUserMode: async () => { throw new Error('Not in AuthProvider'); },
-      impersonateUser: async () => { throw new Error('Not in AuthProvider'); },
+      switchToAdminMode: async () => {
+        throw new Error('Not in AuthProvider');
+      },
+      switchToUserMode: async () => {
+        throw new Error('Not in AuthProvider');
+      },
+      impersonateUser: async () => {
+        throw new Error('Not in AuthProvider');
+      },
       stopImpersonation: async () => {},
       canAccess: () => false,
       canAccessFeature: () => false,
@@ -498,7 +566,11 @@ export function useAuth(): AuthContextType {
       refreshUser: async () => {},
       isSubscriptionActive: false,
       daysUntilExpiration: null,
-      usageStats: { portfoliosCreated: 0, aiEnhancementsUsed: 0, monthlyViews: 0 },
+      usageStats: {
+        portfoliosCreated: 0,
+        aiEnhancementsUsed: 0,
+        monthlyViews: 0,
+      },
     };
   }
   return context;

@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+
 import { TestHelpers } from './utils/test-helpers';
 
 test.describe('PRISMA Navigation', () => {
@@ -8,7 +9,9 @@ test.describe('PRISMA Navigation', () => {
     helpers = new TestHelpers(page);
   });
 
-  test('should navigate from landing page to key sections', async ({ page }) => {
+  test('should navigate from landing page to key sections', async ({
+    page,
+  }) => {
     await helpers.goto('/');
 
     // Test navigation to features section
@@ -42,7 +45,9 @@ test.describe('PRISMA Navigation', () => {
     // Check About page content
     await expect(page.locator('text=Acerca de PRISMA')).toBeVisible();
     await expect(page.locator('text=Nuestra Misión')).toBeVisible();
-    await expect(page.locator('text=democratizar la creación de portafolios')).toBeVisible();
+    await expect(
+      page.locator('text=democratizar la creación de portafolios')
+    ).toBeVisible();
 
     // Check PRISMA branding persists
     await expect(page.locator('text=PRISMA')).toBeVisible();
@@ -51,10 +56,14 @@ test.describe('PRISMA Navigation', () => {
     // Navigate back to home via logo
     await page.locator('text=PRISMA').first().click();
     await expect(page).toHaveURL('/');
-    await expect(page.locator('text=Tu portafolio, elevado por IA')).toBeVisible();
+    await expect(
+      page.locator('text=Tu portafolio, elevado por IA')
+    ).toBeVisible();
   });
 
-  test('should navigate to Dashboard page (unauthenticated)', async ({ page }) => {
+  test('should navigate to Dashboard page (unauthenticated)', async ({
+    page,
+  }) => {
     await helpers.goto('/');
 
     // Try to navigate to dashboard without authentication
@@ -70,7 +79,10 @@ test.describe('PRISMA Navigation', () => {
       await expect(page.locator('text=Iniciar Sesión')).toBeVisible();
     } else if (isOnDashboard) {
       // If on dashboard, should show authentication prompt or login form
-      const hasAuthContent = await page.locator('text=Iniciar Sesión, text=Sign In, text=Login').count() > 0;
+      const hasAuthContent =
+        (await page
+          .locator('text=Iniciar Sesión, text=Sign In, text=Login')
+          .count()) > 0;
       expect(hasAuthContent).toBeTruthy();
     }
   });
@@ -87,7 +99,10 @@ test.describe('PRISMA Navigation', () => {
       await expect(page.locator('text=Iniciar Sesión')).toBeVisible();
     } else if (isOnEditor) {
       // If on editor, should show authentication prompt
-      const hasAuthContent = await page.locator('text=Iniciar Sesión, text=Sign In, text=Login').count() > 0;
+      const hasAuthContent =
+        (await page
+          .locator('text=Iniciar Sesión, text=Sign In, text=Login')
+          .count()) > 0;
       expect(hasAuthContent).toBeTruthy();
     }
   });
@@ -97,10 +112,10 @@ test.describe('PRISMA Navigation', () => {
 
     for (const pagePath of pages) {
       await helpers.goto(pagePath);
-      
+
       // Check PRISMA logo and branding
       await expect(page.locator('text=PRISMA')).toBeVisible();
-      
+
       // Check that MADFAM attribution is present
       if (pagePath !== '/auth/signin' && pagePath !== '/auth/signup') {
         await expect(page.locator('text=by MADFAM')).toBeVisible();
@@ -113,8 +128,11 @@ test.describe('PRISMA Navigation', () => {
 
     // Test mobile navigation on landing page
     await helpers.goto('/');
-    
-    const mobileMenuButton = page.locator('button').filter({ has: page.locator('svg') }).first();
+
+    const mobileMenuButton = page
+      .locator('button')
+      .filter({ has: page.locator('svg') })
+      .first();
     await mobileMenuButton.click();
 
     // Navigate to About from mobile menu
@@ -154,15 +172,22 @@ test.describe('PRISMA Navigation', () => {
     await expect(page).toHaveURL(/\/auth\/signin/);
   });
 
-  test('should preserve language preference across navigation', async ({ page }) => {
+  test('should preserve language preference across navigation', async ({
+    page,
+  }) => {
     await helpers.goto('/');
 
     // Switch to English
-    const languageButton = page.locator('button').filter({ hasText: /🇲🇽|🇺🇸/ }).first();
+    const languageButton = page
+      .locator('button')
+      .filter({ hasText: /🇲🇽|🇺🇸/ })
+      .first();
     await languageButton.click();
-    
+
     // Verify English content
-    await expect(page.locator('text=Your portfolio, elevated by AI')).toBeVisible();
+    await expect(
+      page.locator('text=Your portfolio, elevated by AI')
+    ).toBeVisible();
 
     // Navigate to About page
     await page.locator('text=About').click();
@@ -174,15 +199,17 @@ test.describe('PRISMA Navigation', () => {
 
     // Navigate to signup
     await helpers.goto('/auth/signup');
-    
+
     // Should still be in English
     await expect(page.locator('text=Create Account')).toBeVisible();
 
     // Navigate back to home
     await helpers.goto('/');
-    
+
     // Should still be in English
-    await expect(page.locator('text=Your portfolio, elevated by AI')).toBeVisible();
+    await expect(
+      page.locator('text=Your portfolio, elevated by AI')
+    ).toBeVisible();
   });
 
   test('should handle footer navigation', async ({ page }) => {
@@ -204,7 +231,9 @@ test.describe('PRISMA Navigation', () => {
     // Check PRISMA branding in footer
     await page.locator('footer').scrollIntoViewIfNeeded();
     await expect(page.locator('text=© 2025 PRISMA by MADFAM')).toBeVisible();
-    await expect(page.locator('text=Todos los derechos reservados')).toBeVisible();
+    await expect(
+      page.locator('text=Todos los derechos reservados')
+    ).toBeVisible();
   });
 
   test('should handle pricing CTA navigation', async ({ page }) => {
@@ -225,17 +254,22 @@ test.describe('PRISMA Navigation', () => {
   test('should handle 404 and error pages gracefully', async ({ page }) => {
     // Navigate to non-existent page
     const response = await page.goto('/non-existent-page');
-    
+
     // Should either show 404 or redirect to home
     if (response?.status() === 404) {
       // Check for 404 content or should still have PRISMA branding
-      const hasError = await page.locator('text=404, text=Not Found, text=Page not found').count() > 0;
-      const hasPrisma = await page.locator('text=PRISMA').count() > 0;
-      
+      const hasError =
+        (await page
+          .locator('text=404, text=Not Found, text=Page not found')
+          .count()) > 0;
+      const hasPrisma = (await page.locator('text=PRISMA').count()) > 0;
+
       expect(hasError || hasPrisma).toBeTruthy();
     } else {
       // If redirected to home, should show landing page
-      await expect(page.locator('text=Tu portafolio, elevado por IA')).toBeVisible();
+      await expect(
+        page.locator('text=Tu portafolio, elevado por IA')
+      ).toBeVisible();
     }
   });
 });

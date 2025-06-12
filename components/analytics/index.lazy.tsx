@@ -3,8 +3,8 @@
  * Splits heavy chart dependencies (Recharts) from main bundle
  */
 
-import React from 'react';
 import dynamic from 'next/dynamic';
+import React from 'react';
 
 // Loading component for charts
 const ChartLoader = () => (

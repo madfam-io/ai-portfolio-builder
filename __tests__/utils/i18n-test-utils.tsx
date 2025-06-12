@@ -3,6 +3,7 @@
  */
 
 import React, { ReactNode } from 'react';
+
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 interface TestLanguageProviderProps {

@@ -1,6 +1,6 @@
-import { API_VERSION_CONFIG } from '@/middleware/api-version';
 import { getCSRFHeaders } from '@/lib/utils/csrf-client';
 import { logger } from '@/lib/utils/logger';
+import { API_VERSION_CONFIG } from '@/middleware/api-version';
 
 /**
  * API client configuration

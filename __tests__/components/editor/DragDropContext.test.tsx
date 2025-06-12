@@ -2,9 +2,10 @@
  * Tests for DragDropProvider component
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
+
 import DragDropProvider from '@/components/editor/DragDropContext';
 import { DraggableItem } from '@/components/editor/DraggableItem';
 
@@ -65,7 +66,9 @@ describe('DragDropProvider', () => {
     it('should render drag drop context', () => {
       render(
         <DragDropProvider>
-          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+          {mockItems.map(item => (
+            <div key={item.id}>{item.content}</div>
+          ))}
         </DragDropProvider>
       );
 
@@ -75,7 +78,9 @@ describe('DragDropProvider', () => {
     it('should render all items', () => {
       render(
         <DragDropProvider>
-          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+          {mockItems.map(item => (
+            <div key={item.id}>{item.content}</div>
+          ))}
         </DragDropProvider>
       );
 
@@ -87,7 +92,9 @@ describe('DragDropProvider', () => {
     it('should render with custom droppable ID', () => {
       render(
         <DragDropProvider>
-          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+          {mockItems.map(item => (
+            <div key={item.id}>{item.content}</div>
+          ))}
         </DragDropProvider>
       );
 
@@ -101,7 +108,9 @@ describe('DragDropProvider', () => {
 
       render(
         <DragDropProvider>
-          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+          {mockItems.map(item => (
+            <div key={item.id}>{item.content}</div>
+          ))}
         </DragDropProvider>
       );
 
@@ -222,7 +231,9 @@ describe('DragDropProvider', () => {
     it('should have proper ARIA attributes', () => {
       render(
         <DragDropProvider>
-          {mockItems.map(item => <div key={item.id}>{item.content}</div>)}
+          {mockItems.map(item => (
+            <div key={item.id}>{item.content}</div>
+          ))}
         </DragDropProvider>
       );
 

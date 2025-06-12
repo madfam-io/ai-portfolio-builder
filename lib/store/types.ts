@@ -4,6 +4,7 @@
  */
 
 import { User } from '@supabase/supabase-js';
+
 import { Portfolio } from '@/types/portfolio';
 
 // Auth Store Types

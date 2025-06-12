@@ -3,12 +3,13 @@
  */
 
 import { NextRequest } from 'next/server';
-import { GET, POST } from '@/app/api/portfolios/route';
+
 import {
   GET as getPortfolioById,
   PUT as updatePortfolioById,
   DELETE as deletePortfolioById,
 } from '@/app/api/portfolios/[id]/route';
+import { GET, POST } from '@/app/api/portfolios/route';
 import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
 
 // Centralized mock setup
