@@ -26,25 +26,81 @@ export function AnimatedBioEnhancement({
 
   // Enhanced bios based on template
   const enhancedBios: Record<string, string> = {
-    developer: "Results-driven software engineer with 5+ years crafting scalable web solutions. Specialized in React, Node.js, and cloud architectures, delivering 40% performance improvements across enterprise applications. Led cross-functional teams in implementing microservices that reduced deployment time by 60%. Passionate about creating intuitive user experiences that drive business growth and user satisfaction.",
-    designer: "Award-winning UI/UX designer with 5+ years transforming complex challenges into elegant digital experiences. Expert in design systems, user research, and accessibility, increasing user engagement by 85% across multiple platforms. Pioneered design thinking workshops that accelerated product development cycles by 45%. Committed to creating inclusive designs that delight users and drive measurable business outcomes.",
-    consultant: "Strategic management consultant with 5+ years driving organizational transformation and operational excellence. Specialized in digital transformation and change management, delivering $2M+ in cost savings for Fortune 500 clients. Led 15+ enterprise-wide initiatives improving efficiency by 35%. Passionate about empowering teams to achieve sustainable growth through data-driven insights and innovative solutions.",
-    business: "Dynamic business leader with 5+ years scaling revenue and building high-performance teams. Expert in strategic planning and market expansion, achieving 150% YoY growth across multiple ventures. Spearheaded digital transformation initiatives resulting in $5M revenue increase. Dedicated to fostering innovation and creating value through customer-centric strategies and operational excellence.",
-    creative: "Versatile creative professional with 5+ years crafting compelling narratives across digital and traditional media. Specialized in brand storytelling and content strategy, increasing audience engagement by 200%. Launched award-winning campaigns reaching 1M+ viewers. Passionate about pushing creative boundaries while delivering measurable impact through authentic, purpose-driven content.",
-    minimal: "Accomplished professional with 5+ years of proven expertise in delivering exceptional results. Demonstrated ability to lead complex projects, optimize processes, and drive innovation. Consistently exceeded performance targets by 30%+. Committed to continuous learning and creating lasting value through strategic thinking and collaborative leadership.",
-    educator: "Innovative educator with 5+ years transforming learning experiences through technology and evidence-based pedagogy. Specialized in curriculum design and educational technology, improving student outcomes by 40%. Developed engaging programs serving 500+ learners annually. Dedicated to fostering inclusive learning environments that inspire curiosity and lifelong learning.",
-    modern: "Forward-thinking professional with 5+ years at the intersection of technology and business innovation. Expert in agile methodologies and digital transformation, accelerating time-to-market by 50%. Built and scaled products used by 100K+ users globally. Passionate about leveraging emerging technologies to solve complex challenges and create meaningful impact."
+    developer:
+      'Results-driven software engineer with 5+ years crafting scalable web solutions. Specialized in React, Node.js, and cloud architectures, delivering 40% performance improvements across enterprise applications. Led cross-functional teams in implementing microservices that reduced deployment time by 60%. Passionate about creating intuitive user experiences that drive business growth and user satisfaction.',
+    designer:
+      'Award-winning UI/UX designer with 5+ years transforming complex challenges into elegant digital experiences. Expert in design systems, user research, and accessibility, increasing user engagement by 85% across multiple platforms. Pioneered design thinking workshops that accelerated product development cycles by 45%. Committed to creating inclusive designs that delight users and drive measurable business outcomes.',
+    consultant:
+      'Strategic management consultant with 5+ years driving organizational transformation and operational excellence. Specialized in digital transformation and change management, delivering $2M+ in cost savings for Fortune 500 clients. Led 15+ enterprise-wide initiatives improving efficiency by 35%. Passionate about empowering teams to achieve sustainable growth through data-driven insights and innovative solutions.',
+    business:
+      'Dynamic business leader with 5+ years scaling revenue and building high-performance teams. Expert in strategic planning and market expansion, achieving 150% YoY growth across multiple ventures. Spearheaded digital transformation initiatives resulting in $5M revenue increase. Dedicated to fostering innovation and creating value through customer-centric strategies and operational excellence.',
+    creative:
+      'Versatile creative professional with 5+ years crafting compelling narratives across digital and traditional media. Specialized in brand storytelling and content strategy, increasing audience engagement by 200%. Launched award-winning campaigns reaching 1M+ viewers. Passionate about pushing creative boundaries while delivering measurable impact through authentic, purpose-driven content.',
+    minimal:
+      'Accomplished professional with 5+ years of proven expertise in delivering exceptional results. Demonstrated ability to lead complex projects, optimize processes, and drive innovation. Consistently exceeded performance targets by 30%+. Committed to continuous learning and creating lasting value through strategic thinking and collaborative leadership.',
+    educator:
+      'Innovative educator with 5+ years transforming learning experiences through technology and evidence-based pedagogy. Specialized in curriculum design and educational technology, improving student outcomes by 40%. Developed engaging programs serving 500+ learners annually. Dedicated to fostering inclusive learning environments that inspire curiosity and lifelong learning.',
+    modern:
+      'Forward-thinking professional with 5+ years at the intersection of technology and business innovation. Expert in agile methodologies and digital transformation, accelerating time-to-market by 50%. Built and scaled products used by 100K+ users globally. Passionate about leveraging emerging technologies to solve complex challenges and create meaningful impact.',
   };
 
   const keywordsByTemplate: Record<string, string[]> = {
-    developer: ['React', 'Node.js', 'cloud architectures', 'microservices', 'performance optimization'],
-    designer: ['UI/UX', 'design systems', 'user research', 'accessibility', 'design thinking'],
-    consultant: ['strategic planning', 'digital transformation', 'change management', 'cost savings', 'operational excellence'],
-    business: ['revenue growth', 'team building', 'market expansion', 'strategic planning', 'digital transformation'],
-    creative: ['brand storytelling', 'content strategy', 'audience engagement', 'creative campaigns', 'digital media'],
-    minimal: ['project leadership', 'process optimization', 'innovation', 'performance', 'collaboration'],
-    educator: ['curriculum design', 'educational technology', 'student outcomes', 'inclusive learning', 'pedagogy'],
-    modern: ['agile methodologies', 'digital transformation', 'product development', 'emerging technologies', 'innovation']
+    developer: [
+      'React',
+      'Node.js',
+      'cloud architectures',
+      'microservices',
+      'performance optimization',
+    ],
+    designer: [
+      'UI/UX',
+      'design systems',
+      'user research',
+      'accessibility',
+      'design thinking',
+    ],
+    consultant: [
+      'strategic planning',
+      'digital transformation',
+      'change management',
+      'cost savings',
+      'operational excellence',
+    ],
+    business: [
+      'revenue growth',
+      'team building',
+      'market expansion',
+      'strategic planning',
+      'digital transformation',
+    ],
+    creative: [
+      'brand storytelling',
+      'content strategy',
+      'audience engagement',
+      'creative campaigns',
+      'digital media',
+    ],
+    minimal: [
+      'project leadership',
+      'process optimization',
+      'innovation',
+      'performance',
+      'collaboration',
+    ],
+    educator: [
+      'curriculum design',
+      'educational technology',
+      'student outcomes',
+      'inclusive learning',
+      'pedagogy',
+    ],
+    modern: [
+      'agile methodologies',
+      'digital transformation',
+      'product development',
+      'emerging technologies',
+      'innovation',
+    ],
   };
 
   const improvementsList = [
@@ -52,7 +108,7 @@ export function AnimatedBioEnhancement({
     'Highlighted industry-specific expertise',
     'Incorporated action verbs and power words',
     'Created compelling value proposition',
-    'Optimized for ATS and SEO keywords'
+    'Optimized for ATS and SEO keywords',
   ];
 
   // Typewriter effect
@@ -97,13 +153,16 @@ export function AnimatedBioEnhancement({
 
   const handleEnhance = () => {
     setIsEnhancing(true);
-    const selectedBio = (enhancedBios[template as keyof typeof enhancedBios] ?? enhancedBios.developer) as string;
+    const selectedBio = (enhancedBios[template as keyof typeof enhancedBios] ??
+      enhancedBios.developer) as string;
     setEnhancedBio(selectedBio);
     setTargetScore(95);
-    
+
     // Simulate keyword extraction
     setTimeout(() => {
-      const selectedKeywords = (keywordsByTemplate[template as keyof typeof keywordsByTemplate] ?? keywordsByTemplate.developer) as string[];
+      const selectedKeywords = (keywordsByTemplate[
+        template as keyof typeof keywordsByTemplate
+      ] ?? keywordsByTemplate.developer) as string[];
       setExtractedKeywords(selectedKeywords);
     }, 1000);
 
@@ -114,7 +173,9 @@ export function AnimatedBioEnhancement({
 
     // Notify parent component
     setTimeout(() => {
-      const selectedBio = (enhancedBios[template as keyof typeof enhancedBios] ?? enhancedBios.developer) as string;
+      const selectedBio = (enhancedBios[
+        template as keyof typeof enhancedBios
+      ] ?? enhancedBios.developer) as string;
       onEnhance(selectedBio);
     }, 2000);
   };
@@ -135,20 +196,25 @@ export function AnimatedBioEnhancement({
           </label>
           <div className="flex items-center space-x-2">
             <span className="text-sm text-gray-500">Quality Score:</span>
-            <span className={`text-sm font-bold ${getScoreColor(isEnhancing ? Math.round(qualityScore) : 65)}`}>
+            <span
+              className={`text-sm font-bold ${getScoreColor(isEnhancing ? Math.round(qualityScore) : 65)}`}
+            >
               {isEnhancing ? Math.round(qualityScore) : 65}%
             </span>
           </div>
         </div>
-        <div className={`p-4 rounded-lg transition-all duration-300 ${
-          showComparison ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800' : 'bg-gray-50 dark:bg-gray-700'
-        }`}>
-          <p className="text-gray-600 dark:text-gray-400">
-            {originalBio}
-          </p>
+        <div
+          className={`p-4 rounded-lg transition-all duration-300 ${
+            showComparison
+              ? 'bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800'
+              : 'bg-gray-50 dark:bg-gray-700'
+          }`}
+        >
+          <p className="text-gray-600 dark:text-gray-400">{originalBio}</p>
           {showComparison && (
             <div className="mt-2 text-xs text-red-600 dark:text-red-400">
-              ❌ Generic description • No metrics • Missing keywords • Passive voice
+              ❌ Generic description • No metrics • Missing keywords • Passive
+              voice
             </div>
           )}
         </div>
@@ -191,16 +257,23 @@ export function AnimatedBioEnhancement({
               </div>
             )}
           </div>
-          <div className={`p-4 rounded-lg transition-all duration-300 ${
-            showComparison ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500 shadow-lg' : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
-          }`}>
+          <div
+            className={`p-4 rounded-lg transition-all duration-300 ${
+              showComparison
+                ? 'bg-green-50 dark:bg-green-900/20 border-2 border-green-500 shadow-lg'
+                : 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800'
+            }`}
+          >
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
               {displayText}
-              {isEnhancing && <span className="inline-block w-1 h-5 bg-purple-600 animate-pulse ml-1" />}
+              {isEnhancing && (
+                <span className="inline-block w-1 h-5 bg-purple-600 animate-pulse ml-1" />
+              )}
             </p>
             {showComparison && (
               <div className="mt-3 text-xs text-green-600 dark:text-green-400">
-                ✅ Quantifiable achievements • Industry keywords • Active voice • Compelling narrative
+                ✅ Quantifiable achievements • Industry keywords • Active voice
+                • Compelling narrative
               </div>
             )}
           </div>

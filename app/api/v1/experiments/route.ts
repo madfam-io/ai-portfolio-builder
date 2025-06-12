@@ -9,7 +9,12 @@ import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { authenticateUser, hasPermission, unauthorizedResponse, forbiddenResponse } from '@/lib/api/middleware/auth';
+import {
+  authenticateUser,
+  hasPermission,
+  unauthorizedResponse,
+  forbiddenResponse,
+} from '@/lib/api/middleware/auth';
 
 import type { CreateExperimentRequest } from '@/types/experiments';
 
@@ -210,7 +215,10 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (experimentError || !experiment) {
-      logger.error('Failed to create experiment', experimentError || new Error('No experiment returned'));
+      logger.error(
+        'Failed to create experiment',
+        experimentError || new Error('No experiment returned')
+      );
       return NextResponse.json(
         { error: 'Failed to create experiment' },
         { status: 500 }

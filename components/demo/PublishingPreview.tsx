@@ -1,19 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { 
-  FiGlobe, 
-  FiBarChart, 
-  FiShield, 
-  FiShare2, 
-  FiMail, 
-  FiEye, 
-  FiUsers, 
+import {
+  FiGlobe,
+  FiBarChart,
+  FiShield,
+  FiShare2,
+  FiMail,
+  FiEye,
+  FiUsers,
   FiTrendingUp,
   FiCheck,
   FiCopy,
   FiCode,
-  FiDownload
+  FiDownload,
 } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 
@@ -37,7 +37,7 @@ export function PublishingPreview({
   portfolioName = 'John Doe',
   onPublish,
   isDemo = true,
-  className = ''
+  className = '',
 }: PublishingPreviewProps) {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishProgress, setPublishProgress] = useState(0);
@@ -58,14 +58,14 @@ export function PublishingPreview({
       { source: 'LinkedIn', percentage: 45, color: 'bg-blue-500' },
       { source: 'Direct', percentage: 30, color: 'bg-gray-500' },
       { source: 'Google', percentage: 15, color: 'bg-green-500' },
-      { source: 'GitHub', percentage: 10, color: 'bg-purple-500' }
+      { source: 'GitHub', percentage: 10, color: 'bg-purple-500' },
     ],
     recentActivity: [
       { action: 'Portfolio views', count: 23, time: 'Last 24h' },
       { action: 'Contact form submissions', count: 5, time: 'Last 7 days' },
       { action: 'Social shares', count: 12, time: 'Last 7 days' },
-      { action: 'Download requests', count: 8, time: 'Last 7 days' }
-    ]
+      { action: 'Download requests', count: 8, time: 'Last 7 days' },
+    ],
   };
 
   const handlePublish = async () => {
@@ -77,7 +77,7 @@ export function PublishingPreview({
       { label: 'Generating SEO metadata...', progress: 40 },
       { label: 'Setting up subdomain...', progress: 60 },
       { label: 'Configuring SSL certificate...', progress: 80 },
-      { label: 'Going live...', progress: 100 }
+      { label: 'Going live...', progress: 100 },
     ];
 
     for (const step of steps) {
@@ -108,7 +108,7 @@ export function PublishingPreview({
 
     setIsPublishing(false);
     setIsPublished(true);
-    
+
     if (onPublish) {
       onPublish();
     }
@@ -133,13 +133,17 @@ export function PublishingPreview({
 
   if (!isPublished) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
+      >
         <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6">
           <div className="flex items-center space-x-3">
             <FiGlobe className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Ready to Publish</h3>
-              <p className="text-green-100">Your portfolio is ready to go live</p>
+              <p className="text-green-100">
+                Your portfolio is ready to go live
+              </p>
             </div>
           </div>
         </div>
@@ -161,10 +165,12 @@ export function PublishingPreview({
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                     Publishing Progress
                   </span>
-                  <span className="text-sm text-gray-500">{publishProgress}%</span>
+                  <span className="text-sm text-gray-500">
+                    {publishProgress}%
+                  </span>
                 </div>
                 <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-                  <div 
+                  <div
                     className="bg-gradient-to-r from-green-600 to-blue-600 h-3 rounded-full transition-all duration-500"
                     style={{ width: `${publishProgress}%` }}
                   />
@@ -178,7 +184,9 @@ export function PublishingPreview({
               {/* URL Preview */}
               <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                 <div className="text-center">
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Your portfolio will be available at:</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+                    Your portfolio will be available at:
+                  </p>
                   <div className="font-mono text-lg font-bold text-gray-900 dark:text-white">
                     {portfolioUrl}
                   </div>
@@ -201,7 +209,9 @@ export function PublishingPreview({
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
                     <FiGlobe className="w-5 h-5 text-blue-600" />
-                    <h5 className="font-semibold text-gray-900 dark:text-white">Custom Subdomain</h5>
+                    <h5 className="font-semibold text-gray-900 dark:text-white">
+                      Custom Subdomain
+                    </h5>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Your unique URL: {portfolioUrl}
@@ -214,7 +224,9 @@ export function PublishingPreview({
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
                     <FiShield className="w-5 h-5 text-green-600" />
-                    <h5 className="font-semibold text-gray-900 dark:text-white">SSL Certificate</h5>
+                    <h5 className="font-semibold text-gray-900 dark:text-white">
+                      SSL Certificate
+                    </h5>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Secure HTTPS connection included
@@ -227,7 +239,9 @@ export function PublishingPreview({
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
                     <FiBarChart className="w-5 h-5 text-purple-600" />
-                    <h5 className="font-semibold text-gray-900 dark:text-white">Analytics Dashboard</h5>
+                    <h5 className="font-semibold text-gray-900 dark:text-white">
+                      Analytics Dashboard
+                    </h5>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Track views, engagement, and leads
@@ -240,7 +254,9 @@ export function PublishingPreview({
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
                     <FiTrendingUp className="w-5 h-5 text-orange-600" />
-                    <h5 className="font-semibold text-gray-900 dark:text-white">SEO Optimization</h5>
+                    <h5 className="font-semibold text-gray-900 dark:text-white">
+                      SEO Optimization
+                    </h5>
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
                     Optimized for search engines
@@ -281,8 +297,12 @@ export function PublishingPreview({
             <div className="flex items-center space-x-3">
               <FiCheck className="w-8 h-8" />
               <div>
-                <h3 className="text-xl font-bold">Portfolio Published Successfully!</h3>
-                <p className="text-green-100">Your portfolio is now live and accessible</p>
+                <h3 className="text-xl font-bold">
+                  Portfolio Published Successfully!
+                </h3>
+                <p className="text-green-100">
+                  Your portfolio is now live and accessible
+                </p>
               </div>
             </div>
             <div className="text-right">
@@ -296,7 +316,9 @@ export function PublishingPreview({
           <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your portfolio is live at:</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                  Your portfolio is live at:
+                </p>
                 <div className="font-mono text-lg font-bold text-blue-600 dark:text-blue-400">
                   {portfolioUrl}
                 </div>
@@ -315,15 +337,21 @@ export function PublishingPreview({
             <div className="bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h5 className="font-semibold text-gray-900 dark:text-white">SEO Score</h5>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Search optimization</p>
+                  <h5 className="font-semibold text-gray-900 dark:text-white">
+                    SEO Score
+                  </h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Search optimization
+                  </p>
                 </div>
-                <div className={`text-3xl font-bold ${getScoreColor(seoScore)}`}>
+                <div
+                  className={`text-3xl font-bold ${getScoreColor(seoScore)}`}
+                >
                   {seoScore}/100
                 </div>
               </div>
               <div className="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-1000 ${getScoreBg(seoScore)}`}
                   style={{ width: `${seoScore}%` }}
                 />
@@ -333,15 +361,21 @@ export function PublishingPreview({
             <div className="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h5 className="font-semibold text-gray-900 dark:text-white">Performance</h5>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">Loading speed</p>
+                  <h5 className="font-semibold text-gray-900 dark:text-white">
+                    Performance
+                  </h5>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Loading speed
+                  </p>
                 </div>
-                <div className={`text-3xl font-bold ${getScoreColor(performanceScore)}`}>
+                <div
+                  className={`text-3xl font-bold ${getScoreColor(performanceScore)}`}
+                >
                   {performanceScore}/100
                 </div>
               </div>
               <div className="mt-3 w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                <div 
+                <div
                   className={`h-2 rounded-full transition-all duration-1000 ${getScoreBg(performanceScore)}`}
                   style={{ width: `${performanceScore}%` }}
                 />
@@ -365,9 +399,7 @@ export function PublishingPreview({
               <FiBarChart className="w-4 h-4" />
               <span>View Analytics</span>
             </button>
-            <button
-              className="px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
-            >
+            <button className="px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
               <FiShare2 className="w-4 h-4" />
             </button>
           </div>
@@ -382,7 +414,9 @@ export function PublishingPreview({
               <FiBarChart className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold">Analytics Dashboard</h3>
-                <p className="text-purple-100">Track your portfolio performance</p>
+                <p className="text-purple-100">
+                  Track your portfolio performance
+                </p>
               </div>
             </div>
           </div>
@@ -392,40 +426,65 @@ export function PublishingPreview({
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 text-center">
                 <FiEye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-blue-600">{mockAnalytics.views.toLocaleString()}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Total Views</div>
+                <div className="text-2xl font-bold text-blue-600">
+                  {mockAnalytics.views.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Total Views
+                </div>
               </div>
               <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 text-center">
                 <FiUsers className="w-8 h-8 text-green-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-green-600">{mockAnalytics.uniqueVisitors.toLocaleString()}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Unique Visitors</div>
+                <div className="text-2xl font-bold text-green-600">
+                  {mockAnalytics.uniqueVisitors.toLocaleString()}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Unique Visitors
+                </div>
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 text-center">
                 <FiTrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-purple-600">{mockAnalytics.engagementRate}%</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Engagement</div>
+                <div className="text-2xl font-bold text-purple-600">
+                  {mockAnalytics.engagementRate}%
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Engagement
+                </div>
               </div>
               <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 text-center">
                 <FiUsers className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-orange-600">{mockAnalytics.averageTimeOnSite}</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Avg. Time</div>
+                <div className="text-2xl font-bold text-orange-600">
+                  {mockAnalytics.averageTimeOnSite}
+                </div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">
+                  Avg. Time
+                </div>
               </div>
             </div>
 
             {/* Traffic Sources */}
             <div>
-              <h5 className="font-semibold text-gray-900 dark:text-white mb-4">Traffic Sources</h5>
+              <h5 className="font-semibold text-gray-900 dark:text-white mb-4">
+                Traffic Sources
+              </h5>
               <div className="space-y-3">
-                {mockAnalytics.topSources.map((source) => (
-                  <div key={source.source} className="flex items-center space-x-3">
-                    <div className="w-24 text-sm text-gray-600 dark:text-gray-400">{source.source}</div>
+                {mockAnalytics.topSources.map(source => (
+                  <div
+                    key={source.source}
+                    className="flex items-center space-x-3"
+                  >
+                    <div className="w-24 text-sm text-gray-600 dark:text-gray-400">
+                      {source.source}
+                    </div>
                     <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
-                      <div 
+                      <div
                         className={`h-2 rounded-full ${source.color}`}
                         style={{ width: `${source.percentage}%` }}
                       />
                     </div>
-                    <div className="w-12 text-sm font-medium text-gray-900 dark:text-white">{source.percentage}%</div>
+                    <div className="w-12 text-sm font-medium text-gray-900 dark:text-white">
+                      {source.percentage}%
+                    </div>
                   </div>
                 ))}
               </div>
@@ -433,15 +492,26 @@ export function PublishingPreview({
 
             {/* Recent Activity */}
             <div>
-              <h5 className="font-semibold text-gray-900 dark:text-white mb-4">Recent Activity</h5>
+              <h5 className="font-semibold text-gray-900 dark:text-white mb-4">
+                Recent Activity
+              </h5>
               <div className="space-y-3">
                 {mockAnalytics.recentActivity.map((activity, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
+                  >
                     <div>
-                      <div className="font-medium text-gray-900 dark:text-white">{activity.action}</div>
-                      <div className="text-sm text-gray-600 dark:text-gray-400">{activity.time}</div>
+                      <div className="font-medium text-gray-900 dark:text-white">
+                        {activity.action}
+                      </div>
+                      <div className="text-sm text-gray-600 dark:text-gray-400">
+                        {activity.time}
+                      </div>
                     </div>
-                    <div className="text-lg font-bold text-purple-600">{activity.count}</div>
+                    <div className="text-lg font-bold text-purple-600">
+                      {activity.count}
+                    </div>
                   </div>
                 ))}
               </div>

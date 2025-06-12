@@ -85,9 +85,11 @@ export const mockTranslations = {
     features: 'Características',
     featuresTitle: 'Qué hace PRISMA',
     standOut: 'Destacar',
-    featuresSubtitle: 'Hecho para profesionales que saben que su presencia digital importa.',
+    featuresSubtitle:
+      'Hecho para profesionales que saben que su presencia digital importa.',
     aiContentTitle: 'IA que entiende tu perfil',
-    aiContentDesc: 'Reescribe tu biografía y tus proyectos con claridad y persuasión.',
+    aiContentDesc:
+      'Reescribe tu biografía y tus proyectos con claridad y persuasión.',
     oneClickTitle: 'Conexión inteligente',
     oneClickDesc: 'Sincroniza automáticamente tu LinkedIn y GitHub.',
     customizationTitle: 'Diseño personalizable',
@@ -126,9 +128,11 @@ export const mockTranslations = {
     features: 'Features',
     featuresTitle: 'What PRISMA does',
     standOut: 'Stand Out',
-    featuresSubtitle: 'Built for professionals who know their digital presence matters.',
+    featuresSubtitle:
+      'Built for professionals who know their digital presence matters.',
     aiContentTitle: 'AI that understands your profile',
-    aiContentDesc: 'Rewrites your bio and projects with clarity and persuasion.',
+    aiContentDesc:
+      'Rewrites your bio and projects with clarity and persuasion.',
     oneClickTitle: 'Smart connection',
     oneClickDesc: 'Automatically syncs your LinkedIn and GitHub.',
     customizationTitle: 'Customizable design',

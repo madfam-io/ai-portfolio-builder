@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FiGithub, FiStar, FiGitBranch, FiCode, FiCalendar, FiCheck, FiEye } from 'react-icons/fi';
+import {
+  FiGithub,
+  FiStar,
+  FiGitBranch,
+  FiCode,
+  FiCalendar,
+  FiCheck,
+  FiEye,
+} from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 
 interface GitHubRepository {
@@ -39,7 +47,7 @@ export function GitHubIntegration({
   onRepositorySelect,
   isDemo = false,
   className = '',
-  maxRepositories = 6
+  maxRepositories = 6,
 }: GitHubIntegrationProps) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
@@ -66,7 +74,7 @@ export function GitHubIntegration({
         forks: 12,
         url: 'https://github.com/johndoe/portfolio-website',
         lastUpdated: '2024-01-15',
-        isPrivate: false
+        isPrivate: false,
       },
       {
         id: '2',
@@ -77,18 +85,19 @@ export function GitHubIntegration({
         forks: 23,
         url: 'https://github.com/johndoe/e-commerce-platform',
         lastUpdated: '2024-01-10',
-        isPrivate: false
+        isPrivate: false,
       },
       {
         id: '3',
         name: 'task-manager-app',
-        description: 'React-based task management application with real-time updates',
+        description:
+          'React-based task management application with real-time updates',
         language: 'TypeScript',
         stars: 19,
         forks: 8,
         url: 'https://github.com/johndoe/task-manager-app',
         lastUpdated: '2024-01-05',
-        isPrivate: false
+        isPrivate: false,
       },
       {
         id: '4',
@@ -99,7 +108,7 @@ export function GitHubIntegration({
         forks: 5,
         url: 'https://github.com/johndoe/api-gateway-microservice',
         lastUpdated: '2023-12-20',
-        isPrivate: false
+        isPrivate: false,
       },
       {
         id: '5',
@@ -110,7 +119,7 @@ export function GitHubIntegration({
         forks: 15,
         url: 'https://github.com/johndoe/ml-data-analyzer',
         lastUpdated: '2023-12-15',
-        isPrivate: false
+        isPrivate: false,
       },
       {
         id: '6',
@@ -121,14 +130,14 @@ export function GitHubIntegration({
         forks: 9,
         url: 'https://github.com/johndoe/mobile-expense-tracker',
         lastUpdated: '2023-12-01',
-        isPrivate: false
-      }
-    ]
+        isPrivate: false,
+      },
+    ],
   };
 
   const handleConnect = async () => {
     setIsConnecting(true);
-    
+
     if (isDemo) {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
@@ -140,7 +149,7 @@ export function GitHubIntegration({
         const clientId = process.env.NEXT_PUBLIC_GITHUB_CLIENT_ID;
         const redirectUri = `${window.location.origin}/api/integrations/github/callback`;
         const scope = 'repo,read:user,user:email';
-        
+
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
       } catch (error) {
         console.error('GitHub connection failed:', error);
@@ -152,20 +161,20 @@ export function GitHubIntegration({
   const handleAnalyze = async () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
-    
+
     const steps = [
       { label: 'Fetching repositories...', progress: 20 },
       { label: 'Analyzing code quality...', progress: 40 },
       { label: 'Calculating metrics...', progress: 60 },
       { label: 'Ranking projects...', progress: 80 },
-      { label: 'Generating insights...', progress: 100 }
+      { label: 'Generating insights...', progress: 100 },
     ];
-    
+
     for (const step of steps) {
       await new Promise(resolve => setTimeout(resolve, 800));
       setAnalysisProgress(step.progress);
     }
-    
+
     setProfile(mockProfile);
     // Auto-select top repositories
     const topRepos = mockProfile.repositories
@@ -174,7 +183,7 @@ export function GitHubIntegration({
       .map(repo => repo.id);
     setSelectedRepos(new Set(topRepos));
     setIsAnalyzing(false);
-    
+
     if (onImport) {
       onImport(mockProfile);
     }
@@ -192,7 +201,7 @@ export function GitHubIntegration({
 
   const handleConfirmSelection = () => {
     if (profile && onRepositorySelect) {
-      const selectedRepositories = profile.repositories.filter(repo => 
+      const selectedRepositories = profile.repositories.filter(repo =>
         selectedRepos.has(repo.id)
       );
       onRepositorySelect(selectedRepositories);
@@ -201,12 +210,12 @@ export function GitHubIntegration({
 
   const getLanguageColor = (language: string) => {
     const colors: Record<string, string> = {
-      'TypeScript': 'bg-blue-500',
-      'JavaScript': 'bg-yellow-500',
-      'Python': 'bg-green-500',
-      'Java': 'bg-red-500',
-      'Go': 'bg-cyan-500',
-      'Rust': 'bg-orange-500',
+      TypeScript: 'bg-blue-500',
+      JavaScript: 'bg-yellow-500',
+      Python: 'bg-green-500',
+      Java: 'bg-red-500',
+      Go: 'bg-cyan-500',
+      Rust: 'bg-orange-500',
       'C++': 'bg-purple-500',
       'C#': 'bg-indigo-500',
     };
@@ -215,42 +224,58 @@ export function GitHubIntegration({
 
   if (!isConnected) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
+      >
         <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-6">
           <div className="flex items-center space-x-3">
             <FiGithub className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">GitHub Integration</h3>
-              <p className="text-gray-300">Showcase your best repositories and coding skills</p>
+              <p className="text-gray-300">
+                Showcase your best repositories and coding skills
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div className="p-6">
           <div className="space-y-4 mb-6">
             <div className="flex items-start space-x-3">
               <FiCode className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white">Repository Analysis</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">AI analyzes your code quality and project impact</p>
+                <h4 className="font-medium text-gray-900 dark:text-white">
+                  Repository Analysis
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  AI analyzes your code quality and project impact
+                </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <FiStar className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white">Smart Selection</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Automatically highlights your most impressive projects</p>
+                <h4 className="font-medium text-gray-900 dark:text-white">
+                  Smart Selection
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Automatically highlights your most impressive projects
+                </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <FiGitBranch className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
-                <h4 className="font-medium text-gray-900 dark:text-white">Live Updates</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Portfolio stays current with your latest commits</p>
+                <h4 className="font-medium text-gray-900 dark:text-white">
+                  Live Updates
+                </h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Portfolio stays current with your latest commits
+                </p>
               </div>
             </div>
           </div>
-          
+
           <button
             onClick={handleConnect}
             disabled={isConnecting}
@@ -268,7 +293,7 @@ export function GitHubIntegration({
               </>
             )}
           </button>
-          
+
           {isDemo && (
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2 text-center">
               Demo mode - No actual GitHub connection required
@@ -281,17 +306,21 @@ export function GitHubIntegration({
 
   if (isAnalyzing) {
     return (
-      <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+      <div
+        className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
+      >
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
           <div className="flex items-center space-x-3">
             <FiGithub className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Analyzing Your Repositories</h3>
-              <p className="text-green-100">AI is evaluating your projects...</p>
+              <p className="text-green-100">
+                AI is evaluating your projects...
+              </p>
             </div>
           </div>
         </div>
-        
+
         <div className="p-6 space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -300,14 +329,16 @@ export function GitHubIntegration({
             <span className="text-sm text-gray-500">{analysisProgress}%</span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
-            <div 
+            <div
               className="bg-gradient-to-r from-green-600 to-blue-600 h-3 rounded-full transition-all duration-500"
               style={{ width: `${analysisProgress}%` }}
             />
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
             <HiSparkles className="w-4 h-4 animate-pulse" />
-            <span>Evaluating code quality, documentation, and project impact...</span>
+            <span>
+              Evaluating code quality, documentation, and project impact...
+            </span>
           </div>
         </div>
       </div>
@@ -315,14 +346,18 @@ export function GitHubIntegration({
   }
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
+    >
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <FiGithub className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">GitHub Connected</h3>
-              <p className="text-green-100">{profile?.publicRepos} repositories analyzed</p>
+              <p className="text-green-100">
+                {profile?.publicRepos} repositories analyzed
+              </p>
             </div>
           </div>
           <div className="text-right text-green-100">
@@ -331,7 +366,7 @@ export function GitHubIntegration({
           </div>
         </div>
       </div>
-      
+
       <div className="p-6">
         <div className="mb-6">
           <div className="flex items-center justify-between mb-4">
@@ -343,12 +378,13 @@ export function GitHubIntegration({
             </span>
           </div>
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-            Choose up to {maxRepositories} repositories to showcase in your portfolio
+            Choose up to {maxRepositories} repositories to showcase in your
+            portfolio
           </p>
         </div>
-        
+
         <div className="grid gap-4 mb-6">
-          {profile?.repositories.map((repo) => (
+          {profile?.repositories.map(repo => (
             <div
               key={repo.id}
               className={`border-2 rounded-lg p-4 cursor-pointer transition-all duration-200 ${
@@ -361,7 +397,9 @@ export function GitHubIntegration({
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-2">
-                    <h5 className="font-bold text-gray-900 dark:text-white">{repo.name}</h5>
+                    <h5 className="font-bold text-gray-900 dark:text-white">
+                      {repo.name}
+                    </h5>
                     {selectedRepos.has(repo.id) && (
                       <FiCheck className="w-4 h-4 text-green-600" />
                     )}
@@ -371,7 +409,9 @@ export function GitHubIntegration({
                   </p>
                   <div className="flex items-center space-x-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-1">
-                      <div className={`w-3 h-3 rounded-full ${getLanguageColor(repo.language)}`} />
+                      <div
+                        className={`w-3 h-3 rounded-full ${getLanguageColor(repo.language)}`}
+                      />
                       <span>{repo.language}</span>
                     </div>
                     <div className="flex items-center space-x-1">
@@ -384,12 +424,14 @@ export function GitHubIntegration({
                     </div>
                     <div className="flex items-center space-x-1">
                       <FiCalendar className="w-3 h-3" />
-                      <span>{new Date(repo.lastUpdated).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(repo.lastUpdated).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </div>
                 <button
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     window.open(repo.url, '_blank');
                   }}
@@ -401,7 +443,7 @@ export function GitHubIntegration({
             </div>
           ))}
         </div>
-        
+
         <button
           onClick={handleConfirmSelection}
           disabled={selectedRepos.size === 0}

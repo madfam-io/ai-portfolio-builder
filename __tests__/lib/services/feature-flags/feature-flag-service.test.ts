@@ -9,8 +9,8 @@ jest.mock('next/headers', () => ({
   cookies: jest.fn(() => ({
     get: jest.fn(),
     set: jest.fn(),
-    delete: jest.fn()
-  }))
+    delete: jest.fn(),
+  })),
 }));
 
 jest.mock('@/lib/supabase/server', () => ({
@@ -22,15 +22,15 @@ jest.mock('@/lib/supabase/server', () => ({
             or: jest.fn(() => ({
               order: jest.fn(() => ({
                 data: [],
-                error: null
-              }))
-            }))
-          }))
-        }))
-      }))
+                error: null,
+              })),
+            })),
+          })),
+        })),
+      })),
     })),
-    rpc: jest.fn()
-  }))
+    rpc: jest.fn(),
+  })),
 }));
 
 describe('FeatureFlagService', () => {
@@ -42,10 +42,10 @@ describe('FeatureFlagService', () => {
     it('should return consistent hash values', () => {
       // Access private method through any type
       const service = FeatureFlagService as any;
-      
+
       const hash1 = service.hashToPercentage('test-string');
       const hash2 = service.hashToPercentage('test-string');
-      
+
       expect(hash1).toBe(hash2);
       expect(hash1).toBeGreaterThanOrEqual(0);
       expect(hash1).toBeLessThan(100);
@@ -55,34 +55,37 @@ describe('FeatureFlagService', () => {
   describe('matchesTargeting', () => {
     it('should match when no targeting is specified', () => {
       const service = FeatureFlagService as any;
-      
-      const result = service.matchesTargeting({}, {
-        country: 'US',
-        device: 'desktop'
-      });
-      
+
+      const result = service.matchesTargeting(
+        {},
+        {
+          country: 'US',
+          device: 'desktop',
+        }
+      );
+
       expect(result).toBe(true);
     });
 
     it('should match when targeting criteria are met', () => {
       const service = FeatureFlagService as any;
-      
+
       const result = service.matchesTargeting(
         { geo: ['US', 'MX'], device: ['desktop'] },
         { country: 'US', device: 'desktop' }
       );
-      
+
       expect(result).toBe(true);
     });
 
     it('should not match when targeting criteria are not met', () => {
       const service = FeatureFlagService as any;
-      
+
       const result = service.matchesTargeting(
         { geo: ['US'], device: ['mobile'] },
         { country: 'MX', device: 'desktop' }
       );
-      
+
       expect(result).toBe(false);
     });
   });
@@ -107,7 +110,10 @@ describe('FeatureFlagService', () => {
 
   describe('isFeatureEnabled', () => {
     it('should return false when no experiment is active', async () => {
-      const result = await FeatureFlagService.isFeatureEnabled('hero', 'minimal');
+      const result = await FeatureFlagService.isFeatureEnabled(
+        'hero',
+        'minimal'
+      );
       expect(result).toBe(false);
     });
   });

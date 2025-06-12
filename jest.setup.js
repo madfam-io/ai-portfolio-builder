@@ -8,7 +8,29 @@ global.TextDecoder = TextDecoder;
 // Mock IntersectionObserver before any components use it
 // Define the mock before importing anything that might use it
 if (typeof window !== 'undefined') {
-  window.IntersectionObserver = jest.fn().mockImplementation((callback, options) => {
+  window.IntersectionObserver = jest
+    .fn()
+    .mockImplementation((callback, options) => {
+      const instance = {
+        callback,
+        options,
+        observe: jest.fn(),
+        unobserve: jest.fn(),
+        disconnect: jest.fn(),
+        takeRecords: jest.fn(() => []),
+        root: options?.root || null,
+        rootMargin: options?.rootMargin || '0px',
+        thresholds: Array.isArray(options?.threshold)
+          ? options.threshold
+          : [options?.threshold || 0],
+      };
+      return instance;
+    });
+}
+
+global.IntersectionObserver =
+  window.IntersectionObserver ||
+  jest.fn().mockImplementation((callback, options) => {
     const instance = {
       callback,
       options,
@@ -18,26 +40,12 @@ if (typeof window !== 'undefined') {
       takeRecords: jest.fn(() => []),
       root: options?.root || null,
       rootMargin: options?.rootMargin || '0px',
-      thresholds: Array.isArray(options?.threshold) ? options.threshold : [options?.threshold || 0],
+      thresholds: Array.isArray(options?.threshold)
+        ? options.threshold
+        : [options?.threshold || 0],
     };
     return instance;
   });
-}
-
-global.IntersectionObserver = window.IntersectionObserver || jest.fn().mockImplementation((callback, options) => {
-  const instance = {
-    callback,
-    options,
-    observe: jest.fn(),
-    unobserve: jest.fn(),
-    disconnect: jest.fn(),
-    takeRecords: jest.fn(() => []),
-    root: options?.root || null,
-    rootMargin: options?.rootMargin || '0px',
-    thresholds: Array.isArray(options?.threshold) ? options.threshold : [options?.threshold || 0],
-  };
-  return instance;
-});
 
 // Add ReadableStream polyfill
 if (typeof globalThis.ReadableStream === 'undefined') {
@@ -94,7 +102,7 @@ jest.mock('next/router', () => ({
 // Mock Next.js Image component - completely bypass Next.js implementation
 jest.mock('next/image', () => {
   const React = require('react');
-  
+
   // Return a simple img element that doesn't use IntersectionObserver
   const MockedImage = React.forwardRef(function Image(props, ref) {
     // Extract Next.js specific props and ignore them
@@ -113,7 +121,7 @@ jest.mock('next/image', () => {
       fill,
       ...imgProps
     } = props;
-    
+
     // Handle fill prop by adding style
     if (fill) {
       imgProps.style = {
@@ -128,13 +136,13 @@ jest.mock('next/image', () => {
         objectFit: 'cover',
       };
     }
-    
+
     // eslint-disable-next-line jsx-a11y/alt-text, @next/next/no-img-element
     return <img ref={ref} {...imgProps} />;
   });
-  
+
   MockedImage.displayName = 'Image';
-  
+
   return {
     __esModule: true,
     default: MockedImage,
@@ -299,6 +307,20 @@ jest.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => children,
 }));
 
+// Mock react-hot-toast
+jest.mock('react-hot-toast', () => ({
+  __esModule: true,
+  default: {
+    success: jest.fn(),
+    error: jest.fn(),
+    loading: jest.fn(),
+    dismiss: jest.fn(),
+    custom: jest.fn(),
+    promise: jest.fn(),
+  },
+  Toaster: ({ children }) => children,
+}));
+
 // Mock file reading for testing
 global.fetch = jest.fn();
 
@@ -334,6 +356,11 @@ global.console = {
   warn: jest.fn(),
   log: jest.fn(),
 };
+
+// Mock window.alert, window.confirm, window.prompt
+global.alert = jest.fn();
+global.confirm = jest.fn(() => true);
+global.prompt = jest.fn(() => '');
 
 // Mock AppContext before importing any components
 jest.mock('@/lib/contexts/AppContext', () => ({

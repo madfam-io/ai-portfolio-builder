@@ -39,10 +39,13 @@ export interface LegacyFormFieldProps extends InputProps {
 
 /**
  * Legacy FormField molecule for direct use without react-hook-form
- * 
+ *
  * @deprecated Use FormField with react-hook-form integration instead
  */
-const LegacyFormField = React.forwardRef<HTMLInputElement, LegacyFormFieldProps>(
+const LegacyFormField = React.forwardRef<
+  HTMLInputElement,
+  LegacyFormFieldProps
+>(
   (
     {
       label,
@@ -69,7 +72,9 @@ const LegacyFormField = React.forwardRef<HTMLInputElement, LegacyFormFieldProps>
         >
           {label}
           {optional && !required && (
-            <span className="ml-1 text-xs text-muted-foreground">(optional)</span>
+            <span className="ml-1 text-xs text-muted-foreground">
+              (optional)
+            </span>
           )}
         </Label>
         <Input
@@ -93,7 +98,7 @@ LegacyFormField.displayName = 'LegacyFormField';
 // Enhanced FormField for react-hook-form integration
 export interface EnhancedFormFieldProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > extends Omit<InputProps, 'name'> {
   /**
    * The form control instance from react-hook-form
@@ -141,7 +146,7 @@ export interface EnhancedFormFieldProps<
  *     <Input {...field} type="email" placeholder="john@example.com" />
  *   )}
  * />
- * 
+ *
  * // Legacy usage (deprecated)
  * <LegacyFormField
  *   label="Email Address"
@@ -154,7 +159,7 @@ export interface EnhancedFormFieldProps<
  */
 const FormField = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   control,
   name,
@@ -182,9 +187,7 @@ const FormField = <
               state={fieldState.error ? 'error' : undefined}
             />
           </FormControl>
-          {description && (
-            <FormDescription>{description}</FormDescription>
-          )}
+          {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />
         </FormItem>
       )}

@@ -8,6 +8,7 @@ import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
+import { showToast } from '@/lib/utils/toast';
 import { getErrorMessage } from '@/types/errors';
 
 interface ProjectContext {
@@ -76,8 +77,8 @@ export function AIEnhancementButton({
           ? t.aiQuotaExceeded
           : t.aiEnhancementFailed;
 
-      // You could show a toast notification here
-      alert(errorMessage);
+      // Show toast notification
+      showToast.error(errorMessage);
     } finally {
       setIsEnhancing(false);
     }

@@ -7,7 +7,10 @@ import React from 'react';
 
 import Features from '@/components/landing/Features';
 
-import { renderWithLanguage, createMockUseLanguage } from '../../utils/i18n-test-utils';
+import {
+  renderWithLanguage,
+  createMockUseLanguage,
+} from '../../utils/i18n-test-utils';
 
 // Mock the useLanguage hook
 jest.mock('@/lib/i18n/refactored-context', () => ({
@@ -20,7 +23,7 @@ describe('Features Component', () => {
   beforeEach(() => {
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
-    
+
     // Setup default mock
     mockUseLanguage.mockReturnValue(createMockUseLanguage('es'));
   });

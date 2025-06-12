@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FiSettings, FiType, FiLayout, FiEye, FiSun, FiMoon, FiMove } from 'react-icons/fi';
+import {
+  FiSettings,
+  FiType,
+  FiLayout,
+  FiEye,
+  FiSun,
+  FiMoon,
+  FiMove,
+} from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 
 interface ColorScheme {
@@ -42,12 +50,18 @@ export function VisualCustomizationTools({
   onFontChange,
   onLayoutChange,
   onThemeToggle,
-  className = ''
+  className = '',
 }: VisualCustomizationToolsProps) {
-  const [activeTab, setActiveTab] = useState<'colors' | 'fonts' | 'layout' | 'theme'>('colors');
-  const [selectedColors, setSelectedColors] = useState<ColorScheme | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    'colors' | 'fonts' | 'layout' | 'theme'
+  >('colors');
+  const [selectedColors, setSelectedColors] = useState<ColorScheme | null>(
+    null
+  );
   const [selectedFont, setSelectedFont] = useState<Font | null>(null);
-  const [selectedLayout, setSelectedLayout] = useState<LayoutOption | null>(null);
+  const [selectedLayout, setSelectedLayout] = useState<LayoutOption | null>(
+    null
+  );
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isCustomizing, setIsCustomizing] = useState(false);
 
@@ -58,7 +72,7 @@ export function VisualCustomizationTools({
       secondary: '#1E40AF',
       accent: '#06B6D4',
       background: '#F8FAFC',
-      text: '#1E293B'
+      text: '#1E293B',
     },
     {
       name: 'Forest Green',
@@ -66,7 +80,7 @@ export function VisualCustomizationTools({
       secondary: '#047857',
       accent: '#0891B2',
       background: '#F9FAFB',
-      text: '#111827'
+      text: '#111827',
     },
     {
       name: 'Sunset Orange',
@@ -74,7 +88,7 @@ export function VisualCustomizationTools({
       secondary: '#C2410C',
       accent: '#F59E0B',
       background: '#FFFBEB',
-      text: '#1C1917'
+      text: '#1C1917',
     },
     {
       name: 'Royal Purple',
@@ -82,7 +96,7 @@ export function VisualCustomizationTools({
       secondary: '#5B21B6',
       accent: '#EC4899',
       background: '#FDFCFC',
-      text: '#1E1B4B'
+      text: '#1E1B4B',
     },
     {
       name: 'Professional Gray',
@@ -90,7 +104,7 @@ export function VisualCustomizationTools({
       secondary: '#374151',
       accent: '#DC2626',
       background: '#FFFFFF',
-      text: '#111827'
+      text: '#111827',
     },
     {
       name: 'Creative Pink',
@@ -98,8 +112,8 @@ export function VisualCustomizationTools({
       secondary: '#BE185D',
       accent: '#F59E0B',
       background: '#FEFBFB',
-      text: '#1F2937'
-    }
+      text: '#1F2937',
+    },
   ];
 
   const fonts: Font[] = [
@@ -107,38 +121,38 @@ export function VisualCustomizationTools({
       name: 'Inter',
       family: 'Inter, sans-serif',
       preview: 'Modern & Clean',
-      category: 'modern'
+      category: 'modern',
     },
     {
       name: 'Poppins',
       family: 'Poppins, sans-serif',
       preview: 'Friendly & Approachable',
-      category: 'modern'
+      category: 'modern',
     },
     {
       name: 'Playfair Display',
       family: 'Playfair Display, serif',
       preview: 'Elegant & Sophisticated',
-      category: 'classic'
+      category: 'classic',
     },
     {
       name: 'Source Sans Pro',
       family: 'Source Sans Pro, sans-serif',
       preview: 'Professional & Readable',
-      category: 'classic'
+      category: 'classic',
     },
     {
       name: 'Space Grotesk',
       family: 'Space Grotesk, sans-serif',
       preview: 'Bold & Distinctive',
-      category: 'creative'
+      category: 'creative',
     },
     {
       name: 'JetBrains Mono',
       family: 'JetBrains Mono, monospace',
       preview: 'Technical & Modern',
-      category: 'creative'
-    }
+      category: 'creative',
+    },
   ];
 
   const layoutOptions: LayoutOption[] = [
@@ -147,38 +161,38 @@ export function VisualCustomizationTools({
       name: 'Compact',
       description: 'Tight spacing, maximum content density',
       density: 'compact',
-      headerStyle: 'minimal'
+      headerStyle: 'minimal',
     },
     {
       id: 'balanced',
       name: 'Balanced',
       description: 'Optimal spacing for readability',
       density: 'normal',
-      headerStyle: 'bold'
+      headerStyle: 'bold',
     },
     {
       id: 'spacious',
       name: 'Spacious',
       description: 'Generous spacing, premium feel',
       density: 'relaxed',
-      headerStyle: 'creative'
-    }
+      headerStyle: 'creative',
+    },
   ];
 
   const tabs = [
     { id: 'colors', label: 'Colors', icon: FiSettings },
     { id: 'fonts', label: 'Typography', icon: FiType },
     { id: 'layout', label: 'Layout', icon: FiLayout },
-    { id: 'theme', label: 'Theme', icon: FiEye }
+    { id: 'theme', label: 'Theme', icon: FiEye },
   ];
 
   const handleColorSelect = async (colorScheme: ColorScheme) => {
     setIsCustomizing(true);
     setSelectedColors(colorScheme);
-    
+
     // Simulate customization process
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
+
     setIsCustomizing(false);
     if (onColorChange) {
       onColorChange(colorScheme);
@@ -188,9 +202,9 @@ export function VisualCustomizationTools({
   const handleFontSelect = async (font: Font) => {
     setIsCustomizing(true);
     setSelectedFont(font);
-    
+
     await new Promise(resolve => setTimeout(resolve, 800));
-    
+
     setIsCustomizing(false);
     if (onFontChange) {
       onFontChange(font);
@@ -200,9 +214,9 @@ export function VisualCustomizationTools({
   const handleLayoutSelect = async (layout: LayoutOption) => {
     setIsCustomizing(true);
     setSelectedLayout(layout);
-    
+
     await new Promise(resolve => setTimeout(resolve, 1200));
-    
+
     setIsCustomizing(false);
     if (onLayoutChange) {
       onLayoutChange(layout);
@@ -218,14 +232,18 @@ export function VisualCustomizationTools({
   };
 
   return (
-    <div className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}>
+    <div
+      className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
+    >
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
         <div className="flex items-center space-x-3">
           <FiSettings className="w-8 h-8" />
           <div>
             <h3 className="text-xl font-bold">Visual Customization</h3>
-            <p className="text-purple-100">Personalize your portfolio's appearance</p>
+            <p className="text-purple-100">
+              Personalize your portfolio's appearance
+            </p>
           </div>
         </div>
       </div>
@@ -235,7 +253,9 @@ export function VisualCustomizationTools({
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 border-b border-gray-200 dark:border-gray-700">
           <div className="flex items-center space-x-3">
             <div className="w-5 h-5 border-2 border-purple-600 border-t-transparent rounded-full animate-spin" />
-            <span className="text-purple-700 dark:text-purple-300 font-medium">Applying changes...</span>
+            <span className="text-purple-700 dark:text-purple-300 font-medium">
+              Applying changes...
+            </span>
             <HiSparkles className="w-4 h-4 text-purple-600 animate-pulse" />
           </div>
         </div>
@@ -244,7 +264,7 @@ export function VisualCustomizationTools({
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700">
         <div className="flex">
-          {tabs.map((tab) => {
+          {tabs.map(tab => {
             const IconComponent = tab.icon;
             return (
               <button
@@ -278,7 +298,7 @@ export function VisualCustomizationTools({
             </div>
 
             <div className="grid grid-cols-2 gap-4">
-              {colorSchemes.map((scheme) => (
+              {colorSchemes.map(scheme => (
                 <div
                   key={scheme.name}
                   className={`cursor-pointer rounded-lg p-4 border-2 transition-all duration-200 ${
@@ -307,7 +327,7 @@ export function VisualCustomizationTools({
                       {scheme.name}
                     </span>
                   </div>
-                  
+
                   {/* Mini Preview */}
                   <div
                     className="h-16 rounded"
@@ -316,11 +336,18 @@ export function VisualCustomizationTools({
                     <div className="p-2">
                       <div
                         className="h-2 rounded mb-1"
-                        style={{ backgroundColor: scheme.primary, width: '60%' }}
+                        style={{
+                          backgroundColor: scheme.primary,
+                          width: '60%',
+                        }}
                       />
                       <div
                         className="h-1 rounded mb-1"
-                        style={{ backgroundColor: scheme.text, opacity: 0.6, width: '80%' }}
+                        style={{
+                          backgroundColor: scheme.text,
+                          opacity: 0.6,
+                          width: '80%',
+                        }}
                       />
                       <div
                         className="h-1 rounded"
@@ -346,7 +373,7 @@ export function VisualCustomizationTools({
             </div>
 
             <div className="space-y-3">
-              {fonts.map((font) => (
+              {fonts.map(font => (
                 <div
                   key={font.name}
                   className={`cursor-pointer rounded-lg p-4 border-2 transition-all duration-200 ${
@@ -368,15 +395,19 @@ export function VisualCustomizationTools({
                         {font.preview}
                       </p>
                     </div>
-                    <span className={`text-xs px-2 py-1 rounded-full ${
-                      font.category === 'modern' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300' :
-                      font.category === 'classic' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300' :
-                      'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
-                    }`}>
+                    <span
+                      className={`text-xs px-2 py-1 rounded-full ${
+                        font.category === 'modern'
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300'
+                          : font.category === 'classic'
+                            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300'
+                            : 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300'
+                      }`}
+                    >
                       {font.category}
                     </span>
                   </div>
-                  
+
                   {/* Font Preview */}
                   <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-600">
                     <p
@@ -404,7 +435,7 @@ export function VisualCustomizationTools({
             </div>
 
             <div className="space-y-4">
-              {layoutOptions.map((layout) => (
+              {layoutOptions.map(layout => (
                 <div
                   key={layout.id}
                   className={`cursor-pointer rounded-lg p-4 border-2 transition-all duration-200 ${
@@ -425,10 +456,12 @@ export function VisualCustomizationTools({
                     </div>
                     <FiMove className="w-5 h-5 text-gray-400" />
                   </div>
-                  
+
                   {/* Layout Preview */}
                   <div className="mt-3 bg-gray-100 dark:bg-gray-700 rounded p-3">
-                    <div className={`space-y-${layout.density === 'compact' ? '1' : layout.density === 'normal' ? '2' : '3'}`}>
+                    <div
+                      className={`space-y-${layout.density === 'compact' ? '1' : layout.density === 'normal' ? '2' : '3'}`}
+                    >
                       <div className="h-3 bg-gray-300 dark:bg-gray-600 rounded w-3/4" />
                       <div className="h-2 bg-gray-300 dark:bg-gray-600 rounded w-full" />
                       <div className="h-2 bg-gray-300 dark:bg-gray-600 rounded w-5/6" />
@@ -480,7 +513,11 @@ export function VisualCustomizationTools({
 
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Currently using <span className="font-semibold">{isDarkMode ? 'Dark' : 'Light'}</span> mode
+                Currently using{' '}
+                <span className="font-semibold">
+                  {isDarkMode ? 'Dark' : 'Light'}
+                </span>{' '}
+                mode
               </p>
             </div>
           </div>
@@ -490,24 +527,32 @@ export function VisualCustomizationTools({
       {/* Applied Changes Summary */}
       {(selectedColors || selectedFont || selectedLayout) && (
         <div className="border-t border-gray-200 dark:border-gray-700 p-6">
-          <h5 className="font-semibold text-gray-900 dark:text-white mb-3">Applied Changes:</h5>
+          <h5 className="font-semibold text-gray-900 dark:text-white mb-3">
+            Applied Changes:
+          </h5>
           <div className="space-y-2 text-sm">
             {selectedColors && (
               <div className="flex items-center space-x-2">
                 <FiSettings className="w-4 h-4 text-purple-600" />
-                <span className="text-gray-600 dark:text-gray-400">Color scheme: {selectedColors.name}</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Color scheme: {selectedColors.name}
+                </span>
               </div>
             )}
             {selectedFont && (
               <div className="flex items-center space-x-2">
                 <FiType className="w-4 h-4 text-blue-600" />
-                <span className="text-gray-600 dark:text-gray-400">Typography: {selectedFont.name}</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Typography: {selectedFont.name}
+                </span>
               </div>
             )}
             {selectedLayout && (
               <div className="flex items-center space-x-2">
                 <FiLayout className="w-4 h-4 text-green-600" />
-                <span className="text-gray-600 dark:text-gray-400">Layout: {selectedLayout.name}</span>
+                <span className="text-gray-600 dark:text-gray-400">
+                  Layout: {selectedLayout.name}
+                </span>
               </div>
             )}
           </div>

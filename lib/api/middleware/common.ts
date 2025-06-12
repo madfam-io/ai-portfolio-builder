@@ -11,11 +11,14 @@ import { logger } from '@/lib/utils/logger';
 /**
  * Standard API error response
  */
-export function apiError(message: string, options?: { status?: number; details?: any }) {
+export function apiError(
+  message: string,
+  options?: { status?: number; details?: any }
+) {
   return NextResponse.json(
     {
       error: message,
-      ...(options?.details && { details: options.details })
+      ...(options?.details && { details: options.details }),
     },
     { status: options?.status || 500 }
   );
@@ -24,11 +27,14 @@ export function apiError(message: string, options?: { status?: number; details?:
 /**
  * Standard API success response
  */
-export function apiSuccess<T>(data: T, options?: { status?: number; message?: string }) {
+export function apiSuccess<T>(
+  data: T,
+  options?: { status?: number; message?: string }
+) {
   return NextResponse.json(
     {
       data,
-      ...(options?.message && { message: options.message })
+      ...(options?.message && { message: options.message }),
     },
     { status: options?.status || 200 }
   );
@@ -39,11 +45,11 @@ export function apiSuccess<T>(data: T, options?: { status?: number; message?: st
  */
 export async function getSupabaseClient() {
   const supabase = await createClient();
-  
+
   if (!supabase) {
     throw new Error('Database connection not available');
   }
-  
+
   return supabase;
 }
 
@@ -73,12 +79,15 @@ export function withErrorHandling<T extends any[], R>(
       if (error instanceof ZodError) {
         return apiError('Invalid request data', {
           status: 400,
-          details: error.errors
+          details: error.errors,
         });
       }
 
       // Handle database connection errors
-      if (error instanceof Error && error.message === 'Database connection not available') {
+      if (
+        error instanceof Error &&
+        error.message === 'Database connection not available'
+      ) {
         return apiError('Database service not available', { status: 503 });
       }
 

@@ -275,7 +275,10 @@ export async function seedUsers(
         .select('id');
 
       if (error) {
-        logger.error(`Error inserting user batch ${i / batchSize + 1}:`, error as Error);
+        logger.error(
+          `Error inserting user batch ${i / batchSize + 1}:`,
+          error as Error
+        );
         throw error;
       }
 

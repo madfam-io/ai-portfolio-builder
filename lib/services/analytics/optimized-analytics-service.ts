@@ -53,13 +53,15 @@ export class OptimizedAnalyticsService {
       const githubRepos = await githubClient.fetchRepositories();
 
       // Transform all repositories at once
-      const repoData = githubRepos.map((githubRepo) => ({
+      const repoData = githubRepos.map(githubRepo => ({
         githubId: githubRepo.id,
         name: githubRepo.name,
         fullName: githubRepo.full_name,
         owner: githubRepo.full_name.split('/')[0],
         description: githubRepo.description,
-        visibility: githubRepo.private ? 'private' as const : 'public' as const,
+        visibility: githubRepo.private
+          ? ('private' as const)
+          : ('public' as const),
         githubCreatedAt: new Date(githubRepo.created_at),
         githubUpdatedAt: new Date(githubRepo.updated_at),
         sizeKb: githubRepo.size,
@@ -122,18 +124,25 @@ export class OptimizedAnalyticsService {
       const githubClient = await this.getGitHubClient();
       const [owner, repo] = repository.fullName.split('/');
       if (!owner || !repo) {
-        throw new Error(`Invalid repository fullName format: ${repository.fullName}`);
+        throw new Error(
+          `Invalid repository fullName format: ${repository.fullName}`
+        );
       }
       const githubPRs = await githubClient.fetchPullRequests(owner, repo);
 
       // Transform all PRs at once
-      const prData = githubPRs.map((pr) => ({
+      const prData = githubPRs.map(pr => ({
         repositoryId: repositoryId,
         githubPrId: pr.id,
         number: pr.number,
         title: pr.title,
         body: '', // Not provided by GitHub API in list response
-        state: pr.state === 'open' ? 'open' as const : pr.merged_at ? 'merged' as const : 'closed' as const,
+        state:
+          pr.state === 'open'
+            ? ('open' as const)
+            : pr.merged_at
+              ? ('merged' as const)
+              : ('closed' as const),
         draft: false, // Default value
         authorLogin: pr.user.login,
         authorAvatarUrl: pr.user.avatar_url,
@@ -187,9 +196,14 @@ export class OptimizedAnalyticsService {
       const githubClient = await this.getGitHubClient();
       const [owner, repo] = repository.fullName.split('/');
       if (!owner || !repo) {
-        throw new Error(`Invalid repository fullName format: ${repository.fullName}`);
+        throw new Error(
+          `Invalid repository fullName format: ${repository.fullName}`
+        );
       }
-      const githubContributors = await githubClient.fetchContributors(owner, repo);
+      const githubContributors = await githubClient.fetchContributors(
+        owner,
+        repo
+      );
 
       // Prepare contributor data
       const contributorData = githubContributors.map(contributor => ({
@@ -215,17 +229,18 @@ export class OptimizedAnalyticsService {
       }
 
       // Prepare repository-contributor links
-      const linkData = contributors?.map((contributor, index) => ({
-        repositoryId: repositoryId,
-        contributorId: contributor.id,
-        commitCount: githubContributors[index]?.contributions || 0,
-        additions: 0,
-        deletions: 0,
-        isActive: true,
-        commitsLast30Days: 0,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      })) || [];
+      const linkData =
+        contributors?.map((contributor, index) => ({
+          repositoryId: repositoryId,
+          contributorId: contributor.id,
+          commitCount: githubContributors[index]?.contributions || 0,
+          additions: 0,
+          deletions: 0,
+          isActive: true,
+          commitsLast30Days: 0,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })) || [];
 
       // Batch upsert all links
       const { error: linkError } = await supabase
@@ -351,7 +366,7 @@ export class OptimizedAnalyticsService {
         .from('repositories')
         .select('id')
         .eq('user_id', this.userId);
-      
+
       repoIds = repos?.map(r => r.id) || [];
     }
 
@@ -408,8 +423,12 @@ export class OptimizedAnalyticsService {
       publicRepos: item.contributors?.publicRepos,
       followers: item.contributors?.followers,
       following: item.contributors?.following,
-      githubCreatedAt: item.contributors?.githubCreatedAt ? new Date(item.contributors.githubCreatedAt) : undefined,
-      lastSeenAt: item.contributors?.lastSeenAt ? new Date(item.contributors.lastSeenAt) : undefined,
+      githubCreatedAt: item.contributors?.githubCreatedAt
+        ? new Date(item.contributors.githubCreatedAt)
+        : undefined,
+      lastSeenAt: item.contributors?.lastSeenAt
+        ? new Date(item.contributors.lastSeenAt)
+        : undefined,
       createdAt: new Date(item.contributors?.createdAt || new Date()),
       updatedAt: new Date(item.contributors?.updatedAt || new Date()),
     })) as Contributor[];

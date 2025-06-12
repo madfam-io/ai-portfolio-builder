@@ -308,7 +308,9 @@ export class FeatureFlagService {
       const visitorId = await this.getOrCreateVisitorId();
 
       if (!supabase) {
-        logger.error('Failed to create Supabase client for conversion tracking');
+        logger.error(
+          'Failed to create Supabase client for conversion tracking'
+        );
         return;
       }
 

@@ -9,7 +9,7 @@
 
 import Link from 'next/link';
 import { useRouter, useParams } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   FiArrowLeft,
   FiEdit,
@@ -36,6 +36,7 @@ import type {
   LandingPageVariant,
   ExperimentAnalyticsResponse,
   VariantResult,
+  LandingPageAnalytics,
 } from '@/types/experiments';
 
 interface DetailedVariant extends LandingPageVariant {
@@ -79,11 +80,14 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   }, [isAdmin, canAccess, router]);
 
   // Fetch experiment data
-  const fetchExperimentData = async () => {
+  const fetchExperimentData = useCallback(async (): Promise<void> => {
     try {
       const supabase = createClient();
       if (!supabase) {
-        logger.error('Database connection not available', new Error('Supabase client is null'));
+        logger.error(
+          'Database connection not available',
+          new Error('Supabase client is null')
+        );
         return;
       }
 
@@ -119,21 +123,21 @@ export default function ExperimentDetailsPage(): React.ReactElement {
 
       // Process variants with analytics
       const processedVariants = variantsData.map(variant => {
-        const analytics = variant.analytics || [];
+        const analytics = (variant.analytics || []) as LandingPageAnalytics[];
         const uniqueVisitors = new Set(
-          analytics.map((a: any) => a.visitor_id || a.session_id)
+          analytics.map((a) => a.visitorId || a.sessionId)
         ).size;
         const totalClicks = analytics.reduce(
-          (sum: number, a: any) => sum + (a.clicks?.length || 0),
+          (sum, a) => sum + (a.clicks?.length || 0),
           0
         );
         const averageTimeOnPage =
           analytics.reduce(
-            (sum: number, a: any) => sum + (a.time_on_page || 0),
+            (sum, a) => sum + (a.timeOnPage || 0),
             0
           ) / (analytics.length || 1);
         const bounceRate =
-          (analytics.filter((a: any) => !a.clicks || a.clicks.length === 0)
+          (analytics.filter((a) => !a.clicks || a.clicks.length === 0)
             .length /
             (analytics.length || 1)) *
           100;
@@ -143,10 +147,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           string,
           { conversions: number; visitors: number }
         > = {};
-        analytics.forEach((a: any) => {
-          const date = new Date(a.created_at).toISOString().split('T')[0];
+        analytics.forEach((a) => {
+          const date = new Date(a.createdAt).toISOString().split('T')[0];
           if (!date) return; // Guard against undefined date
-          
+
           if (!conversionsByDay[date]) {
             conversionsByDay[date] = { conversions: 0, visitors: 0 };
           }
@@ -190,24 +194,24 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, [experimentId, timeRange]);
 
   useEffect(() => {
     fetchExperimentData();
-  }, [experimentId, timeRange]);
+  }, [fetchExperimentData]);
 
   // Calculate experiment results
-  const calculateExperimentResults = (variants: DetailedVariant[]): any => {
-    const control = variants.find(v => (v as any).is_control);
+  const calculateExperimentResults = (variants: DetailedVariant[]): ExperimentAnalyticsResponse['results'] | null => {
+    const control = variants.find(v => v.isControl);
     if (!control) return null;
 
     const variantResults: VariantResult[] = variants.map(variant => {
       const conversionRate =
-        variant.visitors > 0
+        variant.visitors && variant.visitors > 0
           ? (variant.conversions / variant.visitors) * 100
           : 0;
       const controlConversionRate =
-        control.visitors > 0
+        control.visitors && control.visitors > 0
           ? (control.conversions / control.visitors) * 100
           : 0;
       const uplift =
@@ -333,7 +337,10 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     try {
       const supabase = createClient();
       if (!supabase) {
-        logger.error('Database connection not available', new Error('Supabase client is null'));
+        logger.error(
+          'Database connection not available',
+          new Error('Supabase client is null')
+        );
         return;
       }
       const { error } = await supabase
@@ -574,7 +581,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
               data={analyticsData?.timeline || []}
               variants={variants.map(v => ({
                 ...v,
-                is_control: (v as any).is_control || false
+                is_control: (v as any).is_control || false,
               }))}
             />
           </div>

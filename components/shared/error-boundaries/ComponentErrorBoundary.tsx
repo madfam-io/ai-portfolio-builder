@@ -30,10 +30,14 @@ export class ComponentErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    logger.error(`Component error boundary caught error in ${this.props.componentName || 'unknown'}`, error, {
-      componentStack: errorInfo.componentStack,
-      digest: errorInfo.digest,
-    });
+    logger.error(
+      `Component error boundary caught error in ${this.props.componentName || 'unknown'}`,
+      error,
+      {
+        componentStack: errorInfo.componentStack,
+        digest: errorInfo.digest,
+      }
+    );
   }
 
   handleReset = () => {
@@ -47,7 +51,12 @@ export class ComponentErrorBoundary extends React.Component<
         return <Fallback error={this.state.error} reset={this.handleReset} />;
       }
 
-      return <DefaultComponentError error={this.state.error} reset={this.handleReset} />;
+      return (
+        <DefaultComponentError
+          error={this.state.error}
+          reset={this.handleReset}
+        />
+      );
     }
 
     return this.props.children;
@@ -65,12 +74,7 @@ function DefaultComponentError({ error, reset }: DefaultComponentErrorProps) {
       <AlertTitle>Component Error</AlertTitle>
       <AlertDescription className="mt-2">
         <p className="text-sm">{error.message}</p>
-        <Button
-          size="sm"
-          variant="outline"
-          onClick={reset}
-          className="mt-3"
-        >
+        <Button size="sm" variant="outline" onClick={reset} className="mt-3">
           Try Again
         </Button>
       </AlertDescription>

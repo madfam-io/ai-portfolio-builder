@@ -1,7 +1,13 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FiLinkedin, FiGithub, FiUpload, FiArrowRight, FiCheck } from 'react-icons/fi';
+import {
+  FiLinkedin,
+  FiGithub,
+  FiUpload,
+  FiArrowRight,
+  FiCheck,
+} from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
@@ -16,20 +22,30 @@ interface SmartImportOptionsProps {
 export function SmartImportOptions({
   onDataImport,
   isDemo = true,
-  className = ''
+  className = '',
 }: SmartImportOptionsProps) {
-  const [activeImport, setActiveImport] = useState<'linkedin' | 'github' | 'resume' | null>(null);
-  const [completedImports, setCompletedImports] = useState<Set<string>>(new Set());
+  const [activeImport, setActiveImport] = useState<
+    'linkedin' | 'github' | 'resume' | null
+  >(null);
+  const [completedImports, setCompletedImports] = useState<Set<string>>(
+    new Set()
+  );
 
   const importOptions = [
     {
       id: 'linkedin',
       title: 'LinkedIn Profile',
-      description: 'Import your professional experience, skills, and connections',
+      description:
+        'Import your professional experience, skills, and connections',
       icon: FiLinkedin,
       color: 'from-blue-600 to-blue-700',
-      features: ['Work experience', 'Skills & endorsements', 'Education & certifications', 'Professional summary'],
-      estimatedTime: '30 seconds'
+      features: [
+        'Work experience',
+        'Skills & endorsements',
+        'Education & certifications',
+        'Professional summary',
+      ],
+      estimatedTime: '30 seconds',
     },
     {
       id: 'github',
@@ -37,8 +53,13 @@ export function SmartImportOptions({
       description: 'Showcase your best coding projects and contributions',
       icon: FiGithub,
       color: 'from-gray-800 to-gray-900',
-      features: ['Repository analysis', 'Code metrics', 'Project highlights', 'Technology stack'],
-      estimatedTime: '45 seconds'
+      features: [
+        'Repository analysis',
+        'Code metrics',
+        'Project highlights',
+        'Technology stack',
+      ],
+      estimatedTime: '45 seconds',
     },
     {
       id: 'resume',
@@ -46,9 +67,14 @@ export function SmartImportOptions({
       description: 'Parse your existing resume with AI-powered extraction',
       icon: FiUpload,
       color: 'from-green-600 to-green-700',
-      features: ['Smart text extraction', 'Section identification', 'Data validation', 'Format conversion'],
-      estimatedTime: '60 seconds'
-    }
+      features: [
+        'Smart text extraction',
+        'Section identification',
+        'Data validation',
+        'Format conversion',
+      ],
+      estimatedTime: '60 seconds',
+    },
   ];
 
   const handleImportComplete = (source: string, data: any) => {
@@ -74,24 +100,24 @@ export function SmartImportOptions({
             <span>Back to import options</span>
           </button>
         </div>
-        
+
         {activeImport === 'linkedin' && (
           <LinkedInImport
-            onImport={(data) => handleImportComplete('linkedin', data)}
+            onImport={data => handleImportComplete('linkedin', data)}
             isDemo={isDemo}
           />
         )}
-        
+
         {activeImport === 'github' && (
           <GitHubIntegration
-            onImport={(data) => handleImportComplete('github', data)}
+            onImport={data => handleImportComplete('github', data)}
             isDemo={isDemo}
           />
         )}
-        
+
         {activeImport === 'resume' && (
           <ResumeParser
-            onParse={(data) => handleImportComplete('resume', data)}
+            onParse={data => handleImportComplete('resume', data)}
             isDemo={isDemo}
           />
         )}
@@ -106,7 +132,8 @@ export function SmartImportOptions({
           Smart Import Options
         </h3>
         <p className="text-gray-600 dark:text-gray-400">
-          Import your professional data from multiple sources to create a comprehensive portfolio
+          Import your professional data from multiple sources to create a
+          comprehensive portfolio
         </p>
       </div>
 
@@ -114,30 +141,36 @@ export function SmartImportOptions({
       {completedImports.size > 0 && (
         <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl p-4">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="font-semibold text-gray-900 dark:text-white">Import Progress</h4>
+            <h4 className="font-semibold text-gray-900 dark:text-white">
+              Import Progress
+            </h4>
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {completedImports.size} of {importOptions.length} completed
             </span>
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 mb-3">
-            <div 
+            <div
               className="bg-gradient-to-r from-green-600 to-blue-600 h-2 rounded-full transition-all duration-500"
-              style={{ width: `${(completedImports.size / importOptions.length) * 100}%` }}
+              style={{
+                width: `${(completedImports.size / importOptions.length) * 100}%`,
+              }}
             />
           </div>
           <div className="flex items-center space-x-2 text-sm text-green-600 dark:text-green-400">
             <HiSparkles className="w-4 h-4" />
-            <span>Great progress! Your portfolio is getting richer with each import.</span>
+            <span>
+              Great progress! Your portfolio is getting richer with each import.
+            </span>
           </div>
         </div>
       )}
 
       {/* Import Options Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {importOptions.map((option) => {
+        {importOptions.map(option => {
           const IconComponent = option.icon;
           const isCompleted = completedImports.has(option.id);
-          
+
           return (
             <div
               key={option.id}
@@ -151,9 +184,11 @@ export function SmartImportOptions({
                   <FiCheck className="w-4 h-4" />
                 </div>
               )}
-              
+
               {/* Header */}
-              <div className={`bg-gradient-to-r ${option.color} text-white p-6`}>
+              <div
+                className={`bg-gradient-to-r ${option.color} text-white p-6`}
+              >
                 <div className="flex items-center space-x-3 mb-2">
                   <IconComponent className="w-8 h-8" />
                   <div>
@@ -162,25 +197,31 @@ export function SmartImportOptions({
                 </div>
                 <p className="text-white/90 text-sm">{option.description}</p>
               </div>
-              
+
               {/* Content */}
               <div className="p-6">
                 <div className="space-y-3 mb-6">
                   {option.features.map((feature, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <FiCheck className="w-4 h-4 text-green-500 flex-shrink-0" />
-                      <span className="text-sm text-gray-600 dark:text-gray-400">{feature}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-500">Estimated time:</span>
-                    <span className="font-medium text-gray-900 dark:text-white">{option.estimatedTime}</span>
+                    <span className="font-medium text-gray-900 dark:text-white">
+                      {option.estimatedTime}
+                    </span>
                   </div>
-                  
-                  <button className={`w-full bg-gradient-to-r ${option.color} text-white px-4 py-3 rounded-lg font-medium transition-all duration-300 group-hover:shadow-lg flex items-center justify-center space-x-2`}>
+
+                  <button
+                    className={`w-full bg-gradient-to-r ${option.color} text-white px-4 py-3 rounded-lg font-medium transition-all duration-300 group-hover:shadow-lg flex items-center justify-center space-x-2`}
+                  >
                     {isCompleted ? (
                       <>
                         <FiCheck className="w-4 h-4" />
@@ -211,7 +252,9 @@ export function SmartImportOptions({
             <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
               <FiLinkedin className="w-6 h-6 text-white" />
             </div>
-            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">Professional Network</h5>
+            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Professional Network
+            </h5>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Leverage your professional connections and endorsements
             </p>
@@ -220,7 +263,9 @@ export function SmartImportOptions({
             <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-2">
               <FiGithub className="w-6 h-6 text-white" />
             </div>
-            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">Technical Expertise</h5>
+            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Technical Expertise
+            </h5>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Showcase your coding skills and project contributions
             </p>
@@ -229,7 +274,9 @@ export function SmartImportOptions({
             <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
               <FiUpload className="w-6 h-6 text-white" />
             </div>
-            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">Complete History</h5>
+            <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
+              Complete History
+            </h5>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               Capture every detail from your existing resume
             </p>
@@ -241,7 +288,9 @@ export function SmartImportOptions({
         <div className="text-center">
           <div className="inline-flex items-center space-x-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-6 py-3 rounded-full">
             <FiCheck className="w-5 h-5" />
-            <span className="font-medium">All imports completed! Your portfolio is now comprehensive.</span>
+            <span className="font-medium">
+              All imports completed! Your portfolio is now comprehensive.
+            </span>
           </div>
         </div>
       )}
@@ -249,7 +298,8 @@ export function SmartImportOptions({
       {isDemo && (
         <div className="text-center">
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            Demo mode - Experience the import process without connecting real accounts
+            Demo mode - Experience the import process without connecting real
+            accounts
           </p>
         </div>
       )}

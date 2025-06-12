@@ -1,6 +1,6 @@
 /**
  * @fileoverview TypeScript types for Landing Page A/B Testing System
- * 
+ *
  * Defines all types related to experiments, variants, analytics, and
  * component configuration for the landing page A/B testing framework.
  */
@@ -8,17 +8,17 @@
 /**
  * Experiment status lifecycle
  */
-export type ExperimentStatus = 
-  | 'draft'      // Being configured, not yet live
-  | 'active'     // Currently running
-  | 'paused'     // Temporarily stopped
-  | 'completed'  // Finished, winner selected
-  | 'archived';  // No longer needed
+export type ExperimentStatus =
+  | 'draft' // Being configured, not yet live
+  | 'active' // Currently running
+  | 'paused' // Temporarily stopped
+  | 'completed' // Finished, winner selected
+  | 'archived'; // No longer needed
 
 /**
  * Available landing page component types
  */
-export type LandingComponentType = 
+export type LandingComponentType =
   | 'hero'
   | 'social_proof'
   | 'features'
@@ -47,10 +47,10 @@ export interface ComponentVariants {
  * Targeting criteria for experiments
  */
 export interface TargetAudience {
-  geo?: string[];        // Country codes: ['MX', 'US', 'ES']
-  device?: string[];     // ['mobile', 'tablet', 'desktop']
-  language?: string[];   // ['es', 'en']
-  referrer?: string[];   // Referrer domains
+  geo?: string[]; // Country codes: ['MX', 'US', 'ES']
+  device?: string[]; // ['mobile', 'tablet', 'desktop']
+  language?: string[]; // ['es', 'en']
+  referrer?: string[]; // Referrer domains
   utm_source?: string[]; // UTM sources for campaigns
 }
 
@@ -84,7 +84,7 @@ export interface ComponentConfig {
   order: number;
   visible: boolean;
   variant: string; // e.g., 'default', 'minimal', 'video'
-  props: Record<string, any>; // Component-specific props
+  props: Record<string, string | number | boolean | Record<string, unknown>>; // Component-specific props
 }
 
 /**
@@ -127,7 +127,7 @@ export interface AnalyticsEvent {
   experimentId: string;
   variantId: string;
   eventType: 'pageview' | 'click' | 'scroll' | 'conversion' | 'engagement';
-  eventData: Record<string, any>;
+  eventData: Record<string, string | number | boolean | Record<string, unknown>>;
   timestamp: Date;
 }
 
@@ -160,7 +160,7 @@ export interface LandingPageAnalytics {
   clicks: ClickEvent[];
   converted: boolean;
   conversionValue?: number;
-  conversionMetadata: Record<string, any>;
+  conversionMetadata: Record<string, string | number | boolean>;
   createdAt: Date;
 }
 
@@ -185,8 +185,8 @@ export interface ComponentLibraryItem {
   name: string;
   description?: string;
   thumbnailUrl?: string;
-  defaultProps: Record<string, any>;
-  propSchema: Record<string, any>; // JSON Schema
+  defaultProps: Record<string, string | number | boolean | Record<string, unknown>>;
+  propSchema: Record<string, unknown>; // JSON Schema
   tags?: string[];
   category?: string;
   usageCount: number;
@@ -303,7 +303,15 @@ export interface CreateExperimentRequest {
   targetAudience?: TargetAudience;
   primaryMetric: string;
   secondaryMetrics?: string[];
-  variants: Omit<LandingPageVariant, 'id' | 'experimentId' | 'conversions' | 'visitors' | 'createdAt' | 'updatedAt'>[];
+  variants: Omit<
+    LandingPageVariant,
+    | 'id'
+    | 'experimentId'
+    | 'conversions'
+    | 'visitors'
+    | 'createdAt'
+    | 'updatedAt'
+  >[];
   startDate?: Date;
   endDate?: Date;
 }
@@ -338,7 +346,7 @@ export interface ExperimentAnalyticsResponse {
 /**
  * Conversion metrics
  */
-export type ConversionMetric = 
+export type ConversionMetric =
   | 'signup_rate'
   | 'demo_click_rate'
   | 'cta_click_rate'

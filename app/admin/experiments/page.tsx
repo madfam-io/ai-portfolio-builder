@@ -77,7 +77,10 @@ export default function AdminExperimentsPage(): React.ReactElement {
       try {
         const supabase = createClient();
         if (!supabase) {
-          logger.error('Database connection not available', new Error('Supabase client is null'));
+          logger.error(
+            'Database connection not available',
+            new Error('Supabase client is null')
+          );
           return;
         }
         const { data, error } = await supabase
@@ -153,7 +156,10 @@ export default function AdminExperimentsPage(): React.ReactElement {
     try {
       const supabase = createClient();
       if (!supabase) {
-        logger.error('Database connection not available', new Error('Supabase client is null'));
+        logger.error(
+          'Database connection not available',
+          new Error('Supabase client is null')
+        );
         return;
       }
       const { error } = await supabase
@@ -247,10 +253,15 @@ export default function AdminExperimentsPage(): React.ReactElement {
         <div className="grid gap-6">
           {filteredExperiments.map(experiment => {
             const totalVisitors =
-              experiment.variants?.reduce((sum: number, v: VariantFromDB) => sum + v.visitors, 0) || 0;
+              experiment.variants?.reduce(
+                (sum: number, v: VariantFromDB) => sum + v.visitors,
+                0
+              ) || 0;
             const totalConversions =
-              experiment.variants?.reduce((sum: number, v: VariantFromDB) => sum + v.conversions, 0) ||
-              0;
+              experiment.variants?.reduce(
+                (sum: number, v: VariantFromDB) => sum + v.conversions,
+                0
+              ) || 0;
             const overallConversionRate = calculateConversionRate(
               totalConversions,
               totalVisitors

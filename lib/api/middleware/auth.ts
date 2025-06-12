@@ -23,13 +23,16 @@ export interface AuthenticatedRequest extends NextRequest {
 export async function authenticateUser(_request: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
       logger.error('Supabase client not available for authentication');
       return null;
     }
 
-    const { data: { user }, error } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
 
     if (error || !user) {
       logger.debug('Authentication failed', { error });
@@ -46,7 +49,7 @@ export async function authenticateUser(_request: NextRequest) {
     return {
       id: user.id,
       email: user.email!,
-      role: profile?.role || 'user'
+      role: profile?.role || 'user',
     };
   } catch (error) {
     logger.error('Authentication error', error as Error);
@@ -60,19 +63,19 @@ export async function authenticateUser(_request: NextRequest) {
  * @param permission - The required permission
  * @returns True if user has permission
  */
-export function hasPermission(user: { role?: string }, permission: string): boolean {
+export function hasPermission(
+  user: { role?: string },
+  permission: string
+): boolean {
   const rolePermissions: Record<string, string[]> = {
     admin: [
       'experiments:manage',
       'experiments:view',
       'users:manage',
       'analytics:view',
-      'portfolio:manage'
-    ],
-    user: [
       'portfolio:manage',
-      'analytics:view'
-    ]
+    ],
+    user: ['portfolio:manage', 'analytics:view'],
   };
 
   const userPermissions = rolePermissions[user.role || 'user'] || [];
@@ -83,20 +86,14 @@ export function hasPermission(user: { role?: string }, permission: string): bool
  * Standard unauthorized response
  */
 export function unauthorizedResponse(message = 'Unauthorized') {
-  return NextResponse.json(
-    { error: message },
-    { status: 401 }
-  );
+  return NextResponse.json({ error: message }, { status: 401 });
 }
 
 /**
  * Standard forbidden response
  */
 export function forbiddenResponse(message = 'Insufficient permissions') {
-  return NextResponse.json(
-    { error: message },
-    { status: 403 }
-  );
+  return NextResponse.json({ error: message }, { status: 403 });
 }
 
 /**

@@ -6,7 +6,10 @@ import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
 import { csrfMiddleware } from './middleware/csrf';
 import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
-import { applySecurityHeaders, shouldApplySecurityHeaders } from './middleware/security-headers';
+import {
+  applySecurityHeaders,
+  shouldApplySecurityHeaders,
+} from './middleware/security-headers';
 
 import type { NextRequest } from 'next/server';
 

@@ -109,13 +109,15 @@ export class GitHubAnalyticsClient {
 
         if (data.length === 0) break;
 
-        repos.push(...data as GitHubRepository[]);
-        
+        repos.push(...(data as GitHubRepository[]));
+
         if (data.length < perPage) break;
         page++;
       }
 
-      logger.info(`Fetched ${repos.length} repositories for user ${this.userId}`);
+      logger.info(
+        `Fetched ${repos.length} repositories for user ${this.userId}`
+      );
       return repos;
     } catch (error) {
       logger.error('Failed to fetch repositories from GitHub', error as Error);
@@ -126,7 +128,10 @@ export class GitHubAnalyticsClient {
   /**
    * Fetch pull requests for a repository
    */
-  async fetchPullRequests(owner: string, repo: string): Promise<GitHubPullRequest[]> {
+  async fetchPullRequests(
+    owner: string,
+    repo: string
+  ): Promise<GitHubPullRequest[]> {
     try {
       const prs: GitHubPullRequest[] = [];
       let page = 1;
@@ -147,7 +152,7 @@ export class GitHubAnalyticsClient {
 
         // Fetch additional details for each PR
         const detailedPRs = await Promise.all(
-          data.map(async (pr) => {
+          data.map(async pr => {
             const { data: details } = await this.octokit.pulls.get({
               owner,
               repo,
@@ -157,8 +162,8 @@ export class GitHubAnalyticsClient {
           })
         );
 
-        prs.push(...detailedPRs as GitHubPullRequest[]);
-        
+        prs.push(...(detailedPRs as GitHubPullRequest[]));
+
         if (data.length < perPage) break;
         page++;
       }
@@ -166,7 +171,10 @@ export class GitHubAnalyticsClient {
       logger.info(`Fetched ${prs.length} pull requests for ${owner}/${repo}`);
       return prs;
     } catch (error) {
-      logger.error(`Failed to fetch pull requests for ${owner}/${repo}`, error as Error);
+      logger.error(
+        `Failed to fetch pull requests for ${owner}/${repo}`,
+        error as Error
+      );
       throw error;
     }
   }
@@ -174,7 +182,10 @@ export class GitHubAnalyticsClient {
   /**
    * Fetch contributors for a repository
    */
-  async fetchContributors(owner: string, repo: string): Promise<GitHubContributor[]> {
+  async fetchContributors(
+    owner: string,
+    repo: string
+  ): Promise<GitHubContributor[]> {
     try {
       const contributors: GitHubContributor[] = [];
       let page = 1;
@@ -190,16 +201,21 @@ export class GitHubAnalyticsClient {
 
         if (data.length === 0) break;
 
-        contributors.push(...data as GitHubContributor[]);
-        
+        contributors.push(...(data as GitHubContributor[]));
+
         if (data.length < perPage) break;
         page++;
       }
 
-      logger.info(`Fetched ${contributors.length} contributors for ${owner}/${repo}`);
+      logger.info(
+        `Fetched ${contributors.length} contributors for ${owner}/${repo}`
+      );
       return contributors;
     } catch (error) {
-      logger.error(`Failed to fetch contributors for ${owner}/${repo}`, error as Error);
+      logger.error(
+        `Failed to fetch contributors for ${owner}/${repo}`,
+        error as Error
+      );
       throw error;
     }
   }
@@ -212,7 +228,10 @@ export class GitHubAnalyticsClient {
       const { data } = await this.octokit.users.getByUsername({ username });
       return data;
     } catch (error) {
-      logger.error(`Failed to fetch user details for ${username}`, error as Error);
+      logger.error(
+        `Failed to fetch user details for ${username}`,
+        error as Error
+      );
       throw error;
     }
   }

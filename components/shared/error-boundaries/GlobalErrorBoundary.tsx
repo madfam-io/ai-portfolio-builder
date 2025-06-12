@@ -2,7 +2,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { logger } from '@/lib/utils/logger';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -43,7 +50,9 @@ export class GlobalErrorBoundary extends React.Component<
 
   render() {
     if (this.state.hasError) {
-      return <ErrorFallback error={this.state.error} onReset={this.handleReset} />;
+      return (
+        <ErrorFallback error={this.state.error} onReset={this.handleReset} />
+      );
     }
 
     return this.props.children;
@@ -66,12 +75,15 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
             {(t as any).errors?.unexpectedError || 'Unexpected Error'}
           </CardTitle>
           <CardDescription>
-            {(t as any).errors?.somethingWentWrong || 'Something went wrong. Please try again.'}
+            {(t as any).errors?.somethingWentWrong ||
+              'Something went wrong. Please try again.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
-            <AlertTitle>{(t as any).errors?.errorDetails || 'Error Details'}</AlertTitle>
+            <AlertTitle>
+              {(t as any).errors?.errorDetails || 'Error Details'}
+            </AlertTitle>
             <AlertDescription className="mt-2 font-mono text-sm">
               {error?.message || 'Unknown error occurred'}
             </AlertDescription>
@@ -81,8 +93,8 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
           <Button onClick={onReset} variant="default">
             {(t as any).errors?.tryAgain || 'Try Again'}
           </Button>
-          <Button 
-            onClick={() => window.location.href = '/'} 
+          <Button
+            onClick={() => (window.location.href = '/')}
             variant="outline"
           >
             {(t as any).navigation?.home || 'Go Home'}

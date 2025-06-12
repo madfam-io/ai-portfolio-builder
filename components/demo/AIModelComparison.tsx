@@ -42,7 +42,8 @@ export function AIModelComparison({
       cost: '$0.0002/request',
       responseTime: '1.2s',
       bestFor: ['Professional bios', 'Complex content', 'Technical writing'],
-      description: 'State-of-the-art model with excellent comprehension and generation capabilities',
+      description:
+        'State-of-the-art model with excellent comprehension and generation capabilities',
       recommended: activeTask === 'bio',
     },
     {
@@ -53,7 +54,11 @@ export function AIModelComparison({
       quality: 4,
       cost: '$0.0001/request',
       responseTime: '1.8s',
-      bestFor: ['Creative content', 'Template recommendations', 'General purpose'],
+      bestFor: [
+        'Creative content',
+        'Template recommendations',
+        'General purpose',
+      ],
       description: 'Versatile model balancing performance and efficiency',
       recommended: activeTask === 'template',
     },
@@ -110,7 +115,8 @@ export function AIModelComparison({
             }`}
             style={{
               animationDelay: `${i * 100}ms`,
-              transform: showComparison && i < speed ? 'scaleY(1)' : 'scaleY(0.3)',
+              transform:
+                showComparison && i < speed ? 'scaleY(1)' : 'scaleY(0.3)',
             }}
           />
         ))}
@@ -134,7 +140,9 @@ export function AIModelComparison({
       <div className="flex items-center justify-center">
         <div className="flex items-center space-x-2 text-sm bg-white dark:bg-gray-800 px-4 py-2 rounded-full shadow-md">
           <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-          <span className="text-gray-700 dark:text-gray-300">All models operational</span>
+          <span className="text-gray-700 dark:text-gray-300">
+            All models operational
+          </span>
           <span className="text-gray-500">• 99.9% uptime</span>
         </div>
       </div>
@@ -177,7 +185,7 @@ export function AIModelComparison({
                 </div>
                 <button
                   className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-                  onClick={(e) => {
+                  onClick={e => {
                     e.stopPropagation();
                     // Show model details
                   }}
@@ -197,7 +205,9 @@ export function AIModelComparison({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <FiZap className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Speed</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Speed
+                  </span>
                 </div>
                 {renderSpeedBars(model.speed)}
               </div>
@@ -206,7 +216,9 @@ export function AIModelComparison({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <FiAward className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Quality</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Quality
+                  </span>
                 </div>
                 <div>{renderStars(model.quality)}</div>
               </div>
@@ -215,7 +227,9 @@ export function AIModelComparison({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <FiDollarSign className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Cost</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Cost
+                  </span>
                 </div>
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
                   {model.cost}
@@ -226,7 +240,9 @@ export function AIModelComparison({
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <FiClock className="w-4 h-4 text-gray-500" />
-                  <span className="text-sm text-gray-600 dark:text-gray-400">Response</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    Response
+                  </span>
                 </div>
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
                   {model.responseTime}
@@ -236,7 +252,9 @@ export function AIModelComparison({
 
             {/* Best For */}
             <div className="px-6 pb-6">
-              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">Best for:</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                Best for:
+              </p>
               <div className="flex flex-wrap gap-1">
                 {model.bestFor.map((use, idx) => (
                   <span
@@ -274,21 +292,38 @@ export function AIModelComparison({
             Quick Comparison
           </h4>
           <span className="text-xs text-gray-500">
-            Based on {activeTask === 'bio' ? 'Bio Enhancement' : activeTask === 'project' ? 'Project Description' : 'Template Selection'}
+            Based on{' '}
+            {activeTask === 'bio'
+              ? 'Bio Enhancement'
+              : activeTask === 'project'
+                ? 'Project Description'
+                : 'Template Selection'}
           </span>
         </div>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Fastest</p>
-            <p className="font-semibold text-sm text-gray-900 dark:text-white">Phi-3.5 Mini</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              Fastest
+            </p>
+            <p className="font-semibold text-sm text-gray-900 dark:text-white">
+              Phi-3.5 Mini
+            </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Best Quality</p>
-            <p className="font-semibold text-sm text-gray-900 dark:text-white">Llama 3.1 8B</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              Best Quality
+            </p>
+            <p className="font-semibold text-sm text-gray-900 dark:text-white">
+              Llama 3.1 8B
+            </p>
           </div>
           <div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Best Value</p>
-            <p className="font-semibold text-sm text-gray-900 dark:text-white">Mistral 7B</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">
+              Best Value
+            </p>
+            <p className="font-semibold text-sm text-gray-900 dark:text-white">
+              Mistral 7B
+            </p>
           </div>
         </div>
       </div>

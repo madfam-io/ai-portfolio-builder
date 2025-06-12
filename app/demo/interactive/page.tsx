@@ -21,6 +21,7 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
 import { Portfolio, TemplateType } from '@/types/portfolio';
+import { showToast } from '@/lib/utils/toast';
 
 export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -33,7 +34,9 @@ export default function InteractiveDemoPage(): React.ReactElement {
     useState<TemplateType>('developer');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedAIModel, setSelectedAIModel] = useState('llama-3.1');
-  const [currentAITask, setCurrentAITask] = useState<'bio' | 'project' | 'template'>('bio');
+  const [currentAITask, setCurrentAITask] = useState<
+    'bio' | 'project' | 'template'
+  >('bio');
 
   // Initialize portfolio with sample data immediately
   const [portfolio, setPortfolio] = useState<Portfolio>(() =>
@@ -117,24 +120,28 @@ export default function InteractiveDemoPage(): React.ReactElement {
 
   const handleExport = () => {
     // Demo export functionality with simulated download
-    const exportOptions = `
-Export Options Available in Full Version:
+    const exportOptions = `Export Options Available in Full Version:
 • PDF Export - Professional PDF with custom styling
 • HTML Export - Complete website package
 • JSON Export - Raw portfolio data
 • WordPress Export - Import-ready format
 • GitHub Pages - Deploy-ready static site
 
-Your portfolio would be downloaded as: ${portfolio.name.toLowerCase().replace(/\s+/g, '-')}-portfolio.pdf
-    `;
-    alert(exportOptions);
+Your portfolio would be downloaded as: ${portfolio.name.toLowerCase().replace(/\s+/g, '-')}-portfolio.pdf`;
+    
+    showToast.custom(
+      <div className="max-w-md">
+        <h3 className="font-semibold mb-2">Export Options</h3>
+        <p className="text-sm whitespace-pre-line">{exportOptions}</p>
+      </div>,
+      { duration: 6000 }
+    );
   };
 
   const handleShare = () => {
     // Demo share functionality with rich options
     const shareUrl = `https://${portfolio.name.toLowerCase().replace(/\s+/g, '')}.prisma.madfam.io`;
-    const shareOptions = `
-Share Your Portfolio:
+    const shareOptions = `Share Your Portfolio:
 
 🔗 Direct Link: ${shareUrl}
 📧 Email signature ready
@@ -146,9 +153,15 @@ Social preview includes:
 • Custom meta tags
 • Open Graph images
 • Twitter cards
-• SEO optimization
-    `;
-    alert(shareOptions);
+• SEO optimization`;
+    
+    showToast.custom(
+      <div className="max-w-md">
+        <h3 className="font-semibold mb-2">Share Your Portfolio</h3>
+        <p className="text-sm whitespace-pre-line">{shareOptions}</p>
+      </div>,
+      { duration: 6000 }
+    );
   };
 
   return (
@@ -240,7 +253,8 @@ Social preview includes:
                 AI-Powered Enhancements
               </h1>
               <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-                Watch how our AI transforms your content into compelling, professional narratives
+                Watch how our AI transforms your content into compelling,
+                professional narratives
               </p>
             </div>
 
@@ -252,13 +266,19 @@ Social preview includes:
                     <h3 className="text-xl font-bold">Bio Enhancement</h3>
                     <HiSparkles className="w-6 h-6" />
                   </div>
-                  <p className="text-purple-100">Transform basic descriptions into powerful professional summaries</p>
+                  <p className="text-purple-100">
+                    Transform basic descriptions into powerful professional
+                    summaries
+                  </p>
                 </div>
-                
+
                 <div className="p-6">
                   <AnimatedBioEnhancement
-                    originalBio={portfolio.bio || "I'm a software developer with 5 years of experience building web applications."}
-                    onEnhance={(enhancedBio) => {
+                    originalBio={
+                      portfolio.bio ||
+                      "I'm a software developer with 5 years of experience building web applications."
+                    }
+                    onEnhance={enhancedBio => {
                       handlePortfolioChange({ ...portfolio, bio: enhancedBio });
                     }}
                     template={selectedTemplate}
@@ -269,18 +289,27 @@ Social preview includes:
               {/* Project Enhancement Demo */}
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
                 <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6">
-                  <h3 className="text-xl font-bold mb-2">Project Enhancement</h3>
-                  <p className="text-blue-100">Transform project descriptions with STAR format</p>
+                  <h3 className="text-xl font-bold mb-2">
+                    Project Enhancement
+                  </h3>
+                  <p className="text-blue-100">
+                    Transform project descriptions with STAR format
+                  </p>
                 </div>
-                
+
                 <div className="p-6">
                   <ProjectEnhancementDemo
                     projects={portfolio.projects}
                     onProjectEnhance={(projectId, enhancedDescription) => {
-                      const updatedProjects = portfolio.projects.map(p => 
-                        p.id === projectId ? { ...p, description: enhancedDescription } : p
+                      const updatedProjects = portfolio.projects.map(p =>
+                        p.id === projectId
+                          ? { ...p, description: enhancedDescription }
+                          : p
                       );
-                      handlePortfolioChange({ ...portfolio, projects: updatedProjects });
+                      handlePortfolioChange({
+                        ...portfolio,
+                        projects: updatedProjects,
+                      });
                     }}
                   />
                 </div>
@@ -330,7 +359,7 @@ Social preview includes:
                   Template Selection
                 </button>
               </div>
-              
+
               <button
                 onClick={handleNextStep}
                 className="bg-purple-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
@@ -514,38 +543,59 @@ Social preview includes:
                         Projects
                       </h3>
                       <div className="space-y-4">
-                        {portfolio.projects.slice(0, 2).map((project, index) => (
-                          <div key={project.id} className="border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                            <input
-                              type="text"
-                              value={project.title}
-                              onChange={e => {
-                                const updatedProjects = [...portfolio.projects];
-                                updatedProjects[index] = { ...project, title: e.target.value };
-                                handlePortfolioChange({ ...portfolio, projects: updatedProjects });
-                              }}
-                              className="w-full font-medium text-gray-900 dark:text-white mb-2 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-purple-500 outline-none"
-                              placeholder="Project Title"
-                            />
-                            <textarea
-                              value={project.description}
-                              onChange={e => {
-                                const updatedProjects = [...portfolio.projects];
-                                updatedProjects[index] = { ...project, description: e.target.value };
-                                handlePortfolioChange({ ...portfolio, projects: updatedProjects });
-                              }}
-                              rows={2}
-                              className="w-full text-sm text-gray-600 dark:text-gray-400 bg-transparent resize-none outline-none"
-                              placeholder="Project description..."
-                            />
-                            <div className="mt-2">
-                              <button className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
-                                <HiSparkles className="inline w-3 h-3 mr-1" />
-                                Enhance with AI
-                              </button>
+                        {portfolio.projects
+                          .slice(0, 2)
+                          .map((project, index) => (
+                            <div
+                              key={project.id}
+                              className="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+                            >
+                              <input
+                                type="text"
+                                value={project.title}
+                                onChange={e => {
+                                  const updatedProjects = [
+                                    ...portfolio.projects,
+                                  ];
+                                  updatedProjects[index] = {
+                                    ...project,
+                                    title: e.target.value,
+                                  };
+                                  handlePortfolioChange({
+                                    ...portfolio,
+                                    projects: updatedProjects,
+                                  });
+                                }}
+                                className="w-full font-medium text-gray-900 dark:text-white mb-2 bg-transparent border-b border-gray-300 dark:border-gray-600 focus:border-purple-500 outline-none"
+                                placeholder="Project Title"
+                              />
+                              <textarea
+                                value={project.description}
+                                onChange={e => {
+                                  const updatedProjects = [
+                                    ...portfolio.projects,
+                                  ];
+                                  updatedProjects[index] = {
+                                    ...project,
+                                    description: e.target.value,
+                                  };
+                                  handlePortfolioChange({
+                                    ...portfolio,
+                                    projects: updatedProjects,
+                                  });
+                                }}
+                                rows={2}
+                                className="w-full text-sm text-gray-600 dark:text-gray-400 bg-transparent resize-none outline-none"
+                                placeholder="Project description..."
+                              />
+                              <div className="mt-2">
+                                <button className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
+                                  <HiSparkles className="inline w-3 h-3 mr-1" />
+                                  Enhance with AI
+                                </button>
+                              </div>
                             </div>
-                          </div>
-                        ))}
+                          ))}
                         <button className="w-full py-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-600 dark:text-gray-400 hover:border-purple-500 dark:hover:border-purple-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors">
                           + Add Project
                         </button>
@@ -559,20 +609,33 @@ Social preview includes:
                       </h3>
                       <div className="space-y-3">
                         {portfolio.skills.slice(0, 5).map((skill, index) => (
-                          <div key={skill.name} className="flex items-center justify-between">
-                            <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
+                          <div
+                            key={skill.name}
+                            className="flex items-center justify-between"
+                          >
+                            <span className="text-gray-700 dark:text-gray-300">
+                              {skill.name}
+                            </span>
                             <div className="flex items-center space-x-2">
                               <select
                                 value={skill.level || 'intermediate'}
                                 onChange={e => {
                                   const updatedSkills = [...portfolio.skills];
-                                  updatedSkills[index] = { ...skill, level: e.target.value as any };
-                                  handlePortfolioChange({ ...portfolio, skills: updatedSkills });
+                                  updatedSkills[index] = {
+                                    ...skill,
+                                    level: e.target.value as any,
+                                  };
+                                  handlePortfolioChange({
+                                    ...portfolio,
+                                    skills: updatedSkills,
+                                  });
                                 }}
                                 className="text-sm px-2 py-1 border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300"
                               >
                                 <option value="beginner">Beginner</option>
-                                <option value="intermediate">Intermediate</option>
+                                <option value="intermediate">
+                                  Intermediate
+                                </option>
                                 <option value="advanced">Advanced</option>
                                 <option value="expert">Expert</option>
                               </select>
@@ -700,8 +763,12 @@ Social preview includes:
                 {/* Browser Chrome */}
                 <div className="mb-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 max-w-2xl w-full">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">Your Portfolio URL:</h3>
-                    <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">Live Preview</span>
+                    <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Your Portfolio URL:
+                    </h3>
+                    <span className="text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 py-1 rounded-full">
+                      Live Preview
+                    </span>
                   </div>
                   <div className="flex items-center space-x-2 bg-gray-50 dark:bg-gray-700 rounded-lg px-3 py-2">
                     <div className="flex space-x-1">
@@ -711,7 +778,9 @@ Social preview includes:
                     </div>
                     <div className="flex-1 text-center">
                       <span className="text-sm font-mono text-gray-600 dark:text-gray-400">
-                        https://{portfolio.name.toLowerCase().replace(/\s+/g, '')}.prisma.madfam.io
+                        https://
+                        {portfolio.name.toLowerCase().replace(/\s+/g, '')}
+                        .prisma.madfam.io
                       </span>
                     </div>
                     <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
@@ -719,7 +788,7 @@ Social preview includes:
                     </button>
                   </div>
                 </div>
-                
+
                 <div
                   className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden"
                   style={{
@@ -791,7 +860,7 @@ Social preview includes:
                   </div>
                 </div>
               </div>
-              
+
               {/* Navigation */}
               <div className="px-6 py-4">
                 <div className="flex items-center justify-between">

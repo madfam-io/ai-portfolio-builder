@@ -35,11 +35,11 @@ export function applySecurityHeaders(
 
   // Content-Security-Policy: Comprehensive CSP
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   const cspDirectives = [
     "default-src 'self'",
     // Scripts: self, Next.js inline scripts, and trusted CDNs
-    `script-src 'self' ${isDevelopment ? "'unsafe-eval'" : ""} 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com`,
+    `script-src 'self' ${isDevelopment ? "'unsafe-eval'" : ''} 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com`,
     // Styles: self, inline styles for Tailwind
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     // Images: self, data URIs, and common image CDNs
@@ -59,7 +59,7 @@ export function applySecurityHeaders(
     // Frame ancestors: none (same as X-Frame-Options: DENY)
     "frame-ancestors 'none'",
     // Upgrade insecure requests in production
-    ...(isDevelopment ? [] : ["upgrade-insecure-requests"]),
+    ...(isDevelopment ? [] : ['upgrade-insecure-requests']),
   ];
 
   headers.set('Content-Security-Policy', cspDirectives.join('; '));
@@ -92,7 +92,15 @@ export function shouldApplySecurityHeaders(pathname: string): boolean {
   }
 
   // Skip static file extensions that don't need headers
-  const staticExtensions = ['.ico', '.png', '.jpg', '.jpeg', '.svg', '.gif', '.webp'];
+  const staticExtensions = [
+    '.ico',
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.svg',
+    '.gif',
+    '.webp',
+  ];
   if (staticExtensions.some(ext => pathname.endsWith(ext))) {
     return false;
   }

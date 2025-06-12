@@ -883,21 +883,18 @@ expect(component).toHaveTextContent('Get Started Free');
 
 ```typescript
 // Enhanced Button with additional variants
-const buttonVariants = cva(
-  "base-classes",
-  {
-    variants: {
-      variant: {
-        // Standard shadcn variants
-        default: "...",
-        destructive: "...",
-        // Enhanced variants
-        success: "bg-success text-success-foreground hover:bg-success/90",
-        warning: "bg-warning text-warning-foreground hover:bg-warning/90",
-      }
-    }
-  }
-)
+const buttonVariants = cva('base-classes', {
+  variants: {
+    variant: {
+      // Standard shadcn variants
+      default: '...',
+      destructive: '...',
+      // Enhanced variants
+      success: 'bg-success text-success-foreground hover:bg-success/90',
+      warning: 'bg-warning text-warning-foreground hover:bg-warning/90',
+    },
+  },
+});
 ```
 
 ### Migration Pattern

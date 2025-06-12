@@ -23,7 +23,7 @@ interface ExperimentContext {
   variantId?: string;
   variantName?: string;
   components: ComponentConfig[];
-  themeOverrides: Record<string, any>;
+  themeOverrides: Record<string, string | number | boolean>;
   isLoading: boolean;
   error?: Error;
 }
@@ -46,7 +46,7 @@ export function useExperiment(): ExperimentContext {
       return;
     }
 
-    const fetchExperiment = async () => {
+    const fetchExperiment = async (): Promise<void> => {
       try {
         const response = await fetch('/api/v1/experiments/active', {
           method: 'GET',
@@ -78,7 +78,7 @@ export function useExperiment(): ExperimentContext {
           });
         }
       } catch (error) {
-        console.error('Failed to load experiment:', error);
+        logger.error('Failed to load experiment', error as Error);
         setContext({
           components: [],
           themeOverrides: {},
@@ -97,14 +97,18 @@ export function useExperiment(): ExperimentContext {
 /**
  * Hook for tracking experiment events
  */
-export function useExperimentTracking() {
+export function useExperimentTracking(): {
+  trackClick: (element: string, additionalData?: Record<string, string | number | boolean>) => Promise<void>;
+  trackConversion: (conversionType: string, value?: number, metadata?: Record<string, string | number | boolean>) => Promise<void>;
+  trackEngagement: (metrics: Record<string, number>) => Promise<void>;
+} {
   const { experimentId, variantId } = useExperiment();
 
   /**
    * Track a click event
    */
   const trackClick = useCallback(
-    async (element: string, additionalData?: Record<string, any>) => {
+    async (element: string, additionalData?: Record<string, string | number | boolean>) => {
       if (!experimentId || !variantId) return;
 
       try {
@@ -124,7 +128,7 @@ export function useExperimentTracking() {
           }),
         });
       } catch (error) {
-        console.error('Failed to track click:', error);
+        logger.error('Failed to track click', error as Error);
       }
     },
     [experimentId, variantId]
@@ -137,7 +141,7 @@ export function useExperimentTracking() {
     async (
       conversionType: string,
       value?: number,
-      metadata?: Record<string, any>
+      metadata?: Record<string, string | number | boolean>
     ) => {
       if (!experimentId || !variantId) return;
 
@@ -159,7 +163,7 @@ export function useExperimentTracking() {
           }),
         });
       } catch (error) {
-        console.error('Failed to track conversion:', error);
+        logger.error('Failed to track conversion', error as Error);
       }
     },
     [experimentId, variantId]
@@ -186,7 +190,7 @@ export function useExperimentTracking() {
           }),
         });
       } catch (error) {
-        console.error('Failed to track engagement:', error);
+        logger.error('Failed to track engagement', error as Error);
       }
     },
     [experimentId, variantId]
@@ -204,7 +208,7 @@ export function useExperimentTracking() {
  */
 export function useComponentVariant(componentType: string): {
   variant: string | null;
-  props: Record<string, any>;
+  props: Record<string, string | number | boolean | Record<string, unknown>>;
   isVisible: boolean;
 } {
   const { components } = useExperiment();
@@ -221,7 +225,7 @@ export function useComponentVariant(componentType: string): {
 /**
  * Hook to get theme overrides from experiment
  */
-export function useExperimentTheme() {
+export function useExperimentTheme(): Record<string, string | number | boolean> {
   const { themeOverrides } = useExperiment();
 
   useEffect(() => {
@@ -260,7 +264,7 @@ export function useExperimentTheme() {
         root.style.removeProperty('--spacing-multiplier');
       };
     }
-    
+
     // Return undefined when no theme overrides
     return undefined;
   }, [themeOverrides]);

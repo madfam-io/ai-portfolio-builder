@@ -44,7 +44,7 @@ interface VariantConfig {
   isControl: boolean;
   trafficPercentage: number;
   components: ComponentConfig[];
-  themeOverrides: Record<string, any>;
+  themeOverrides: Record<string, string | number | boolean>;
 }
 
 export default function CreateExperimentPage(): React.ReactElement {
@@ -101,7 +101,10 @@ export default function CreateExperimentPage(): React.ReactElement {
       try {
         const supabase = createClient();
         if (!supabase) {
-          logger.error('Database connection not available', new Error('Supabase client is null'));
+          logger.error(
+            'Database connection not available',
+            new Error('Supabase client is null')
+          );
           return;
         }
 
@@ -194,7 +197,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newVariants = [...variants];
     const currentVariant = newVariants[index];
     if (!currentVariant) return;
-    
+
     newVariants[index] = { ...currentVariant, ...updates };
 
     // Ensure only one control
@@ -211,7 +214,7 @@ export default function CreateExperimentPage(): React.ReactElement {
   const addComponent = (component: ComponentLibraryItem) => {
     const selectedVariant = variants[selectedVariantIndex];
     if (!selectedVariant) return;
-    
+
     const newComponent: ComponentConfig = {
       type: component.type,
       variant: component.variantName,
@@ -223,7 +226,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newVariants = [...variants];
     const updatedVariant = newVariants[selectedVariantIndex];
     if (!updatedVariant) return;
-    
+
     updatedVariant.components.push(newComponent);
     setVariants(newVariants);
     setShowGallery(false);
@@ -234,7 +237,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
-    
+
     variant.components.splice(componentIndex, 1);
     // Reorder remaining components
     variant.components.forEach((c, i) => {
@@ -252,7 +255,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
-    
+
     const components = variant.components;
     const newIndex =
       direction === 'up' ? componentIndex - 1 : componentIndex + 1;
@@ -262,7 +265,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const temp = components[componentIndex];
     const newComp = components[newIndex];
     if (!temp || !newComp) return;
-    
+
     components[componentIndex] = newComp;
     components[newIndex] = temp;
     components.forEach((c, i) => {
@@ -280,10 +283,10 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newVariants = [...variants];
     const variant = newVariants[variantIndex];
     if (!variant) return;
-    
+
     const component = variant.components[componentIndex];
     if (!component) return;
-    
+
     component.visible = !component.visible;
     setVariants(newVariants);
   };
@@ -320,7 +323,10 @@ export default function CreateExperimentPage(): React.ReactElement {
     try {
       const supabase = createClient();
       if (!supabase) {
-        logger.error('Database connection not available', new Error('Supabase client is null'));
+        logger.error(
+          'Database connection not available',
+          new Error('Supabase client is null')
+        );
         setLoading(false);
         return;
       }
@@ -639,7 +645,8 @@ export default function CreateExperimentPage(): React.ReactElement {
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Component Layout - {variants[selectedVariantIndex]?.name || 'Select a variant'}
+                  Component Layout -{' '}
+                  {variants[selectedVariantIndex]?.name || 'Select a variant'}
                 </h2>
                 <button
                   onClick={() => setShowGallery(true)}
@@ -794,7 +801,8 @@ export default function CreateExperimentPage(): React.ReactElement {
                   variant={{
                     name: variants[selectedVariantIndex].name,
                     components: variants[selectedVariantIndex].components,
-                    themeOverrides: variants[selectedVariantIndex].themeOverrides,
+                    themeOverrides:
+                      variants[selectedVariantIndex].themeOverrides,
                   }}
                 />
               )}

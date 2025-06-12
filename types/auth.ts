@@ -104,7 +104,7 @@ export type AdminPermission =
   | 'support:tickets'
   | 'support:escalate'
   | 'impersonation:users'
-  
+
   // Experiments
   | 'experiments:manage';
 
@@ -117,7 +117,7 @@ export interface AdminAction {
   action: string;
   targetType: 'user' | 'portfolio' | 'subscription' | 'system';
   targetId?: string;
-  details: Record<string, any>;
+  details: Record<string, string | number | boolean | Record<string, unknown>>;
   ipAddress: string;
   userAgent: string;
   timestamp: Date;
