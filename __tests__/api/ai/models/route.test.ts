@@ -2,7 +2,7 @@
  * AI Models API route test suite
  */
 
-import { GET } from '@/app/api/ai/models/route';
+import { GET } from '@/app/api/v1/ai/models/route';
 
 // Mock HuggingFace service
 jest.mock('@/lib/ai/huggingface-service', () => ({

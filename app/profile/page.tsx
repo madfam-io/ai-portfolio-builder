@@ -145,7 +145,7 @@ export default function ProfilePage(): React.ReactElement {
   }
 
   if (!user) {
-    return null;
+    return <div>Not authenticated</div>;
   }
 
   return (

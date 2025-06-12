@@ -8,7 +8,7 @@
 'use client';
 
 import { FiStar, FiGitBranch, FiEye, FiUsers, FiCode, FiActivity } from 'react-icons/fi';
-import type { Repository } from '@/lib/types/analytics';
+import type { Repository } from '@/types/analytics';
 
 interface RepositoryStatsProps {
   repository: Repository;

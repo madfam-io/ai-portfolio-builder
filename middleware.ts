@@ -22,7 +22,7 @@ import type { NextRequest } from 'next/server';
  * 7. Redirects unauthenticated users to sign in
  * 8. Redirects authenticated users away from auth pages
  */
-export async function middleware(req: NextRequest): Promise<void> {
+export async function middleware(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
 
   // Apply API versioning middleware first

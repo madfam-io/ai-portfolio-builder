@@ -8,8 +8,8 @@ import {
   GET as getPortfolioById,
   PUT as updatePortfolioById,
   DELETE as deletePortfolioById,
-} from '@/app/api/portfolios/[id]/route';
-import { GET, POST } from '@/app/api/portfolios/route';
+} from '@/app/api/v1/portfolios/[id]/route';
+import { GET, POST } from '@/app/api/v1/portfolios/route';
 import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
 
 // Centralized mock setup

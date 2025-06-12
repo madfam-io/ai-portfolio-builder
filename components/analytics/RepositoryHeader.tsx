@@ -10,7 +10,7 @@
 import { useRouter } from 'next/navigation';
 import { FiArrowLeft, FiGithub, FiExternalLink, FiRefreshCw, FiClock } from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
-import type { Repository } from '@/lib/types/analytics';
+import type { Repository } from '@/types/analytics';
 
 interface RepositoryHeaderProps {
   repository: Repository;
@@ -72,14 +72,14 @@ export function RepositoryHeader({
               
               <span className="flex items-center gap-1">
                 <FiClock className="w-4 h-4" />
-                Updated {formatDistanceToNow(new Date(repository.updatedAt), { addSuffix: true })}
+                Updated {formatDistanceToNow(new Date(repository.githubUpdatedAt || repository.lastSyncedAt || new Date()), { addSuffix: true })}
               </span>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <a
-              href={repository.htmlUrl}
+              href={`https://github.com/${repository.fullName}`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors inline-flex items-center"

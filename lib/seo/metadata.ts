@@ -155,7 +155,7 @@ function extractTwitterHandle(twitterUrl?: string): string | undefined {
   if (!twitterUrl) return undefined;
   
   const match = twitterUrl.match(/twitter\.com\/(@?\w+)/);
-  if (match) {
+  if (match && match[1]) {
     return match[1].startsWith('@') ? match[1] : `@${match[1]}`;
   }
   

@@ -261,9 +261,7 @@ export function generateImageSitemap(
     if (!acc[img.pageUrl]) {
       acc[img.pageUrl] = [];
     }
-    if (acc[img.pageUrl]) {
-      acc[img.pageUrl].push(img);
-    }
+    acc[img.pageUrl]?.push(img);
     return acc;
   }, {} as Record<string, typeof images>);
 

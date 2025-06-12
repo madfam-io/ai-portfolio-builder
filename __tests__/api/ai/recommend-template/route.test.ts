@@ -4,7 +4,7 @@
 
 import { NextRequest } from 'next/server';
 
-import { POST } from '@/app/api/ai/recommend-template/route';
+import { POST } from '@/app/api/v1/ai/recommend-template/route';
 
 // Mock Supabase
 const mockSupabase = {

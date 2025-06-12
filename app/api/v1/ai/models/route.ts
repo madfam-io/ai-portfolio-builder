@@ -27,7 +27,7 @@ export async function GET(): Promise<Response> {
         totalModels: availableModels.length,
       },
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(
       'Failed to fetch available models',
       error instanceof Error ? error : { error }

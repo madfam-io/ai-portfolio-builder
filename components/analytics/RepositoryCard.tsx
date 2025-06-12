@@ -9,8 +9,7 @@
 
 import { RepositoryMetadata } from './RepositoryMetadata';
 
-import type { Repository } from '@/lib/types/analytics';
-
+import type { Repository } from '@/types/analytics';
 import { Badge } from '@/components/ui/badge';
 
 interface RepositoryCardProps {
@@ -26,7 +25,7 @@ export function RepositoryCard({
         <div>
           <h3 className="text-lg font-semibold">
             <a
-              href={repo.html_url}
+              href={`https://github.com/${repo.fullName}`}
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-primary transition-colors"
@@ -40,7 +39,7 @@ export function RepositoryCard({
             </p>
           )}
         </div>
-        {repo.private === true && (
+        {repo.visibility === 'private' && (
           <Badge variant="secondary" className="ml-2">
             Private
           </Badge>
@@ -53,7 +52,7 @@ export function RepositoryCard({
         repo.topics !== undefined &&
         repo.topics.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-4">
-            {repo.topics.map(topic => (
+            {repo.topics.map((topic: string) => (
               <Badge key={topic} variant="outline" className="text-xs">
                 {topic}
               </Badge>

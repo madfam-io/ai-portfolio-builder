@@ -7,10 +7,13 @@
 
 'use client';
 
-import type { TopContributor } from '@/lib/types/analytics';
+import type { Contributor } from '@/types/analytics';
 
 interface ContributorsListProps {
-  contributors: TopContributor[];
+  contributors: Array<{
+    contributor: Contributor;
+    commitCount: number;
+  }>;
   title?: string;
 }
 

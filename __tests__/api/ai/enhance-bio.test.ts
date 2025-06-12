@@ -4,7 +4,7 @@
 
 import { NextRequest } from 'next/server';
 
-import { POST } from '@/app/api/ai/enhance-bio/route';
+import { POST } from '@/app/api/v1/ai/enhance-bio/route';
 
 // Mock dependencies
 jest.mock('@/lib/ai/huggingface-service', () => ({

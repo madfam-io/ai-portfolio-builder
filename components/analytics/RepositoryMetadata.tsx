@@ -8,9 +8,9 @@
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
-import { GitFork, Star, GitCommit, Calendar } from 'lucide-react';
+import { GitFork, Star, Calendar } from 'lucide-react';
 
-import type { Repository } from '@/lib/types/analytics';
+import type { Repository } from '@/types/analytics';
 
 interface RepositoryMetadataProps {
   repo: Repository;
@@ -34,22 +34,17 @@ export function RepositoryMetadata({
       )}
       <div className="flex items-center gap-1">
         <Star className="w-4 h-4" />
-        {repo.stargazers_count}
+        {repo.stargazersCount}
       </div>
       <div className="flex items-center gap-1">
         <GitFork className="w-4 h-4" />
-        {repo.forks_count}
+        {repo.forksCount}
       </div>
-      {repo.commits_count !== null && repo.commits_count !== undefined && (
-        <div className="flex items-center gap-1">
-          <GitCommit className="w-4 h-4" />
-          {repo.commits_count} commits
-        </div>
-      )}
+      {/* Commit count would come from metrics, not repository directly */}
       <div className="flex items-center gap-1">
         <Calendar className="w-4 h-4" />
         Updated{' '}
-        {formatDistanceToNow(new Date(repo.updated_at), {
+        {formatDistanceToNow(new Date(repo.githubUpdatedAt || repo.lastSyncedAt || new Date()), {
           addSuffix: true,
         })}
       </div>

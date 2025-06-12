@@ -34,9 +34,9 @@ import {
   Cell,
 } from 'recharts';
 
+import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import type { RepositoryAnalytics } from '@/types/analytics';
 
 // Component state type

@@ -3,7 +3,7 @@
  */
 
 export class HuggingFaceService {
-  async enhanceBio(bio: string, context: any) {
+  async enhanceBio(bio: string, _context: any) {
     return {
       content: 'Enhanced bio: ' + bio,
       confidence: 0.85,
@@ -34,7 +34,7 @@ export class HuggingFaceService {
     };
   }
 
-  async recommendTemplate(profile: any) {
+  async recommendTemplate(_profile: any) {
     return {
       recommendedTemplate: 'developer',
       confidence: 0.9,
@@ -45,7 +45,7 @@ export class HuggingFaceService {
     };
   }
 
-  async scoreContent(content: string, type: string) {
+  async scoreContent(_content: string, _type: string) {
     return {
       overall: 85,
       readability: 90,

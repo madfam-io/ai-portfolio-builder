@@ -4,7 +4,7 @@
 
 import { NextRequest } from 'next/server';
 
-import { GET, POST } from '@/app/api/portfolios/route';
+import { GET, POST } from '@/app/api/v1/portfolios/route';
 import {
   validateCreatePortfolio,
   validatePortfolioQuery,

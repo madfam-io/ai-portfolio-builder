@@ -53,7 +53,7 @@ export function getDeprecationInfo(version: string) {
  */
 export async function apiVersionMiddleware(
   request: NextRequest
-): Promise<void> {
+): Promise<NextResponse> {
   const pathname = request.nextUrl.pathname;
 
   // Only process API routes

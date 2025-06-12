@@ -21,7 +21,7 @@ jest.mock('@/lib/supabase/server', () => ({
 }));
 
 // Import route after mocks are set up
-import { POST } from '@/app/api/ai/optimize-project/route';
+import { POST } from '@/app/api/v1/ai/optimize-project/route';
 
 // Get the mocked supabase for test assertions
 const mockSupabase = {

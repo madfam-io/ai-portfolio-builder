@@ -11,7 +11,6 @@ import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
   previewQuerySchema,
   previewBodySchema,
-  createValidationError,
 } from '@/lib/validations/api';
 import { versionedApiHandler, apiSuccess, apiError } from '@/lib/api/versioning';
 
@@ -35,7 +34,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     if (!validationResult.success) {
       return apiError('Invalid request parameters', { 
         status: 400,
-        details: validationResult.error.issues 
+        data: { details: validationResult.error.issues }
       });
     }
 
@@ -138,7 +137,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     if (!validationResult.success) {
       return apiError('Invalid request body', {
         status: 400,
-        details: validationResult.error.issues
+        data: { details: validationResult.error.issues }
       });
     }
 

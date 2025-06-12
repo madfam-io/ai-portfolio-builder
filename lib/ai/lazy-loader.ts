@@ -13,7 +13,7 @@ let huggingFaceService: any = null;
 /**
  * Lazy load HuggingFace service
  */
-async function getHuggingFaceService(): Promise<void> {
+async function getHuggingFaceService(): Promise<any> {
   if (!huggingFaceService) {
     logger.info('Loading HuggingFace service...');
     const { HuggingFaceService } = await import('./huggingface-service');
@@ -29,7 +29,7 @@ export async function enhanceBioLazy(
   bio: string,
   context: BioContext,
   selectedModel?: string
-): Promise<void> {
+): Promise<string> {
   const service = await getHuggingFaceService();
   return service.enhanceBio(bio, context, selectedModel);
 }
@@ -42,7 +42,7 @@ export async function optimizeProjectLazy(
   description: string,
   technologies: string[],
   selectedModel?: string
-): Promise<void> {
+): Promise<string> {
   const service = await getHuggingFaceService();
   return service.optimizeProjectDescription(
     title,
@@ -58,7 +58,7 @@ export async function optimizeProjectLazy(
 export async function recommendTemplateLazy(
   profile: UserProfile,
   selectedModel?: string
-): Promise<void> {
+): Promise<any> {
   const service = await getHuggingFaceService();
   return service.recommendTemplate(profile, selectedModel);
 }
@@ -66,7 +66,7 @@ export async function recommendTemplateLazy(
 /**
  * Get available models - lazy loaded
  */
-export async function getAvailableModelsLazy(task?: string): Promise<void> {
+export async function getAvailableModelsLazy(task?: string): Promise<any[]> {
   const service = await getHuggingFaceService();
   return service.getAvailableModels(task);
 }

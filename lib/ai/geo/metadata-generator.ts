@@ -56,7 +56,7 @@ export class MetadataGenerator {
     const primaryKeyword = settings.primaryKeyword;
     
     // Extract first sentence or heading
-    const firstSentence = content.split(/[.!?\n]/)[0].trim();
+    const firstSentence = content.split(/[.!?\n]/)[0]?.trim() || '';
     
     let title = firstSentence;
 

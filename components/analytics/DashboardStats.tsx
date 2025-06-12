@@ -4,10 +4,10 @@ import React from 'react';
 import { FaChartLine, FaCode, FaGitAlt, FaStar, FaUsers } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { GitHubDashboard } from '@/types/analytics';
+import { AnalyticsDashboardData } from '@/types/analytics';
 
 interface DashboardStatsProps {
-  dashboard: GitHubDashboard;
+  dashboard: AnalyticsDashboardData;
 }
 
 export default function DashboardStats({
@@ -18,25 +18,25 @@ export default function DashboardStats({
   const stats = [
     {
       label: t.totalRepositories,
-      value: dashboard.totalRepos,
+      value: dashboard.overview.totalRepositories,
       icon: FaCode,
       color: 'text-blue-500',
     },
     {
-      label: t.totalStars,
-      value: dashboard.totalStars,
-      icon: FaStar,
-      color: 'text-yellow-500',
-    },
-    {
       label: t.totalCommits,
-      value: dashboard.totalCommits,
+      value: dashboard.overview.totalCommits,
       icon: FaGitAlt,
       color: 'text-green-500',
     },
     {
-      label: t.totalFollowers,
-      value: dashboard.followers || 0,
+      label: t.totalPullRequests,
+      value: dashboard.overview.totalPullRequests,
+      icon: FaStar,
+      color: 'text-yellow-500',
+    },
+    {
+      label: t.totalContributors,
+      value: dashboard.overview.totalContributors,
       icon: FaUsers,
       color: 'text-purple-500',
     },

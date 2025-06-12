@@ -21,7 +21,7 @@ class MockCacheService {
     return this.mockCache.get(key) || null;
   }
 
-  async set<T = any>(key: string, value: T, ttl?: number): Promise<void> {
+  async set<T = any>(key: string, value: T, _ttl?: number): Promise<void> {
     this.mockCache.set(key, value);
   }
 
@@ -45,13 +45,13 @@ class MockCacheService {
 
 export const cache = new MockCacheService();
 
-export function Cacheable(keyPrefix: string, ttl?: number) {
+export function Cacheable(_keyPrefix: string, _ttl?: number) {
   return function (
-    target: any,
-    propertyName: string,
-    descriptor: PropertyDescriptor
+    _target: any,
+    _propertyName: string,
+    _descriptor: PropertyDescriptor
   ) {
     // Return original method in tests
-    return descriptor;
+    return _descriptor;
   };
 }

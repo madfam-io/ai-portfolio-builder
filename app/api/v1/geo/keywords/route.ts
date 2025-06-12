@@ -368,7 +368,7 @@ function getTrendingKeywordsByIndustry(industry: string): string[] {
   if (industryKeywords) {
     return industryKeywords;
   }
-  return trendingByIndustry.technology;
+  return trendingByIndustry.technology || [];
 }
 
 /**

@@ -10,7 +10,7 @@
 import { useRouter } from 'next/navigation';
 import { FiExternalLink } from 'react-icons/fi';
 
-import type { Repository } from '@/lib/types/analytics';
+import type { Repository } from '@/types/analytics';
 
 interface RepositoryListProps {
   repositories: Repository[];

@@ -8,7 +8,6 @@
 
 import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from './index';
-import { getUserTemplates } from './users';
 import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
@@ -287,7 +286,6 @@ export async function seedPortfolios(client: any, options: SeedingOptions): Prom
 
     // Generate portfolios
     const portfolios = [];
-    const userTemplates = getUserTemplates();
 
     for (let userIndex = 0; userIndex < users.length; userIndex++) {
       const user = users[userIndex];

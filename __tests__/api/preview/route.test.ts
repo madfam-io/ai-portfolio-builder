@@ -4,7 +4,7 @@
 
 import { NextRequest } from 'next/server';
 
-import { GET, POST } from '@/app/api/preview/route';
+import { GET, POST } from '@/app/api/v1/preview/route';
 
 // Mock portfolio service
 const mockPortfolioData = {

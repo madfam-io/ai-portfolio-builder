@@ -136,7 +136,7 @@ export default function Dashboard(): React.ReactElement {
 
   // If not authenticated (shouldn't reach here due to redirect, but just in case)
   if (!user) {
-    return null;
+    return <div>Not authenticated</div>;
   }
 
   // Error state
