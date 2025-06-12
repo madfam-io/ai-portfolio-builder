@@ -26,6 +26,91 @@ interface AIEnhancementButtonProps {
   disabled?: boolean;
 }
 
+// Helper function to enhance bio content
+async function enhanceBioContent(
+  content: string,
+  context: BioContext,
+  onEnhanced: (content: string, suggestions?: string[]) => void
+): Promise<string> {
+  const result = await aiClient.enhanceBio(content, context);
+  onEnhanced(result.content, result.suggestions);
+  return result.content;
+}
+
+// Helper function to enhance project content
+async function enhanceProjectContent(
+  content: string,
+  context: ProjectContext | undefined,
+  onEnhanced: (content: string, suggestions?: string[]) => void
+): Promise<string> {
+  const title = context?.title || '';
+  const description = context?.description || content;
+  const technologies = context?.technologies || [];
+
+  const result = await aiClient.optimizeProject(
+    title,
+    description,
+    technologies
+  );
+  onEnhanced(result.description, result.highlights);
+  return result.description;
+}
+
+// Helper function to determine error message
+function getEnhancementErrorMessage(
+  errorMsg: string,
+  t: Record<string, string>
+): string {
+  if (errorMsg.includes('Authentication')) {
+    return t.aiEnhancementRequiresAuth;
+  }
+  if (errorMsg.includes('quota')) {
+    return t.aiQuotaExceeded;
+  }
+  return t.aiEnhancementFailed;
+}
+
+// Helper function to get button styling
+function getButtonStyling(
+  wasRecentlyEnhanced: boolean,
+  className: string
+): string {
+  const baseClasses =
+    'inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200';
+  const stateClasses = wasRecentlyEnhanced
+    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+    : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50';
+  const disabledClasses = 'disabled:opacity-50 disabled:cursor-not-allowed';
+
+  return `${baseClasses} ${stateClasses} ${disabledClasses} ${className}`;
+}
+
+// Helper function to get button title
+function getButtonTitle(
+  type: 'bio' | 'project',
+  t: Record<string, string>
+): string {
+  if (type === 'bio') {
+    return t.enhanceBioWithAI || 'Enhance bio with AI';
+  }
+  return t.enhanceProjectWithAI || 'Enhance project with AI';
+}
+
+// Helper function to get button text
+function getButtonText(
+  isEnhancing: boolean,
+  wasRecentlyEnhanced: boolean,
+  t: Record<string, string>
+): string {
+  if (isEnhancing) {
+    return t.enhancing || 'Enhancing...';
+  }
+  if (wasRecentlyEnhanced) {
+    return t.enhanced || 'Enhanced!';
+  }
+  return t.enhance || 'Enhance';
+}
+
 export function AIEnhancementButton({
   type,
   content,
@@ -44,40 +129,28 @@ export function AIEnhancementButton({
     setIsEnhancing(true);
 
     try {
-      if (type === 'bio') {
-        const result = await aiClient.enhanceBio(
-          content,
-          context as BioContext
-        );
-        onEnhanced(result.content, result.suggestions);
-        setLastEnhanced(result.content);
-      } else if (type === 'project') {
-        // For project enhancement, we need title, description, and technologies
-        const projectContext = context as ProjectContext;
-        const title = projectContext?.title || '';
-        const description = projectContext?.description || content;
-        const technologies = projectContext?.technologies || [];
+      let enhancedContent: string;
 
-        const result = await aiClient.optimizeProject(
-          title,
-          description,
-          technologies
+      if (type === 'bio') {
+        enhancedContent = await enhanceBioContent(
+          content,
+          context as BioContext,
+          onEnhanced
         );
-        onEnhanced(result.description, result.highlights);
-        setLastEnhanced(result.description);
+      } else {
+        enhancedContent = await enhanceProjectContent(
+          content,
+          context as ProjectContext,
+          onEnhanced
+        );
       }
+
+      setLastEnhanced(enhancedContent);
     } catch (error) {
       const errorMsg = getErrorMessage(error);
       logger.error('AI enhancement failed', { error: errorMsg, type, content });
 
-      // Show user-friendly error message
-      const errorMessage = errorMsg.includes('Authentication')
-        ? t.aiEnhancementRequiresAuth
-        : errorMsg.includes('quota')
-          ? t.aiQuotaExceeded
-          : t.aiEnhancementFailed;
-
-      // Show toast notification
+      const errorMessage = getEnhancementErrorMessage(errorMsg, t);
       showToast.error(errorMessage || 'Enhancement failed');
     } finally {
       setIsEnhancing(false);
@@ -85,27 +158,14 @@ export function AIEnhancementButton({
   };
 
   const wasRecentlyEnhanced = lastEnhanced === content;
+  const isDisabled = disabled || isEnhancing || !content.trim();
 
   return (
     <button
       onClick={handleEnhance}
-      disabled={disabled || isEnhancing || !content.trim()}
-      className={`
-        inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
-        transition-all duration-200
-        ${
-          wasRecentlyEnhanced
-            ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-            : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50'
-        }
-        disabled:opacity-50 disabled:cursor-not-allowed
-        ${className}
-      `}
-      title={
-        type === 'bio'
-          ? t.enhanceBioWithAI || 'Enhance bio with AI'
-          : t.enhanceProjectWithAI || 'Enhance project with AI'
-      }
+      disabled={isDisabled}
+      className={getButtonStyling(wasRecentlyEnhanced, className)}
+      title={getButtonTitle(type, t)}
     >
       {isEnhancing ? (
         <FiLoader className="h-4 w-4 animate-spin" />
@@ -115,11 +175,7 @@ export function AIEnhancementButton({
         <HiOutlineSparkles className="h-4 w-4" />
       )}
 
-      {isEnhancing
-        ? t.enhancing || 'Enhancing...'
-        : wasRecentlyEnhanced
-          ? t.enhanced || 'Enhanced!'
-          : t.enhance || 'Enhance'}
+      {getButtonText(isEnhancing, wasRecentlyEnhanced, t)}
     </button>
   );
 }

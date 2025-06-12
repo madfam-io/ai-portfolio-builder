@@ -45,15 +45,12 @@ describe('AIEnhancementButton Component', () => {
         'Experienced software developer with 5+ years building scalable web applications. Specializes in React, Node.js, and cloud architecture.';
 
       (aiClient.enhanceBio as jest.Mock).mockResolvedValueOnce({
-        enhanced: enhancedBio,
-        qualityScore: {
-          overall: 92,
-          readability: 90,
-          professionalism: 95,
-          impact: 88,
-          completeness: 94,
-          suggestions: [],
-        },
+        content: enhancedBio,
+        confidence: 92,
+        suggestions: [],
+        wordCount: 25,
+        qualityScore: 92,
+        enhancementType: 'bio',
       });
 
       renderWithLanguage(
@@ -81,8 +78,12 @@ describe('AIEnhancementButton Component', () => {
             setTimeout(
               () =>
                 resolve({
-                  enhanced: 'Enhanced bio',
-                  qualityScore: { suggestions: [] },
+                  content: 'Enhanced bio',
+                  confidence: 90,
+                  suggestions: [],
+                  wordCount: 15,
+                  qualityScore: 90,
+                  enhancementType: 'bio',
                 }),
               100
             )
@@ -147,7 +148,7 @@ describe('AIEnhancementButton Component', () => {
       await waitFor(() => {
         expect(onEnhanced).toHaveBeenCalledWith(
           expect.stringContaining('40% increase'),
-          undefined
+          ['40% conversion increase', 'React/Node.js stack']
         );
       });
     });
