@@ -1,13 +1,3 @@
-/**
- * @fileoverview Analytics Dashboard Page
- *
- * Main analytics dashboard for GitHub repository insights.
- * Provides overview metrics, repository selection, and visualizations.
- *
- * @author PRISMA Development Team
- * @version 0.0.1-alpha - Phase 1 MVP
- */
-
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -20,17 +10,18 @@ import {
   FiCode,
   FiRefreshCw,
   FiTrendingUp,
-  FiExternalLink,
   FiAlertCircle,
 } from 'react-icons/fi';
 
+import { ContributorsList } from '@/components/analytics/ContributorsList';
+import { RepositoryList } from '@/components/analytics/RepositoryList';
+import { StatsCard } from '@/components/analytics/StatsCard';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 
 import type { AnalyticsDashboardData } from '@/types/analytics';
 
-// API Response Interfaces
 interface DashboardApiResponse {
   data?: AnalyticsDashboardData;
   error?: string;
@@ -43,7 +34,6 @@ interface RepositoriesApiResponse {
   requiresAuth?: boolean;
 }
 
-// Dashboard state type
 interface DashboardState {
   data: AnalyticsDashboardData | null;
   loading: boolean;
@@ -52,9 +42,6 @@ interface DashboardState {
   syncing: boolean;
 }
 
-/**
- * Analytics Dashboard Component with Search Params
- */
 function AnalyticsDashboard(): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -144,7 +131,7 @@ function AnalyticsDashboard(): React.ReactElement {
 
       setDashboard(prev => ({
         ...prev,
-        data: result.data,
+        data: result.data ?? null,
         loading: false,
         error: null,
         needsAuth: false,
@@ -176,10 +163,10 @@ function AnalyticsDashboard(): React.ReactElement {
       if (result.url !== undefined && result.url !== null) {
         window.location.href = result.url;
       }
-    } catch (error: any) {
+    } catch (error) {
       setDashboard(prev => ({
         ...prev,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'An error occurred',
       }));
     }
   };
@@ -207,10 +194,10 @@ function AnalyticsDashboard(): React.ReactElement {
 
       // Refresh dashboard data
       await fetchDashboardData();
-    } catch (error: any) {
+    } catch (error) {
       setDashboard(prev => ({
         ...prev,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'An error occurred',
       }));
     } finally {
       setDashboard(prev => ({ ...prev, syncing: false }));
@@ -227,8 +214,6 @@ function AnalyticsDashboard(): React.ReactElement {
     warning: '#f59e0b',
     danger: '#ef4444',
   };
-
-  // const pieColors = [chartColors.primary, chartColors.secondary, chartColors.accent, chartColors.warning, chartColors.danger];
 
   // Loading state
   if (dashboard.loading) {
@@ -333,85 +318,41 @@ function AnalyticsDashboard(): React.ReactElement {
 
           {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                  <FiCode className="w-6 h-6 text-purple-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Repositories
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.overview.totalRepositories}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                  <FiActivity className="w-6 h-6 text-blue-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Commits
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.overview.totalCommits.toLocaleString()}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                  <FiGitPullRequest className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Pull Requests
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.overview.totalPullRequests}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                  <FiUsers className="w-6 h-6 text-yellow-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Contributors
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.overview.totalContributors}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <div className="flex items-center">
-                <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg">
-                  <FiTrendingUp className="w-6 h-6 text-indigo-600" />
-                </div>
-                <div className="ml-4">
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Lines of Code
-                  </p>
-                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {(data.overview.totalLinesOfCode / 1000).toFixed(1)}K
-                  </p>
-                </div>
-              </div>
-            </div>
+            <StatsCard
+              icon={<FiCode />}
+              label="Repositories"
+              value={data.overview.totalRepositories}
+              iconBgColor="bg-purple-100 dark:bg-purple-900/30"
+              iconColor="text-purple-600"
+            />
+            <StatsCard
+              icon={<FiActivity />}
+              label="Commits"
+              value={data.overview.totalCommits.toLocaleString()}
+              iconBgColor="bg-blue-100 dark:bg-blue-900/30"
+              iconColor="text-blue-600"
+            />
+            <StatsCard
+              icon={<FiGitPullRequest />}
+              label="Pull Requests"
+              value={data.overview.totalPullRequests}
+              iconBgColor="bg-green-100 dark:bg-green-900/30"
+              iconColor="text-green-600"
+            />
+            <StatsCard
+              icon={<FiUsers />}
+              label="Contributors"
+              value={data.overview.totalContributors}
+              iconBgColor="bg-yellow-100 dark:bg-yellow-900/30"
+              iconColor="text-yellow-600"
+            />
+            <StatsCard
+              icon={<FiTrendingUp />}
+              label="Lines of Code"
+              value={`${(data.overview.totalLinesOfCode / 1000).toFixed(1)}K`}
+              iconBgColor="bg-indigo-100 dark:bg-indigo-900/30"
+              iconColor="text-indigo-600"
+            />
           </div>
 
           {/* Charts Grid - Lazy Loaded for Performance */}
@@ -464,84 +405,14 @@ function AnalyticsDashboard(): React.ReactElement {
           {/* Repositories and Contributors */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             {/* Top Repositories */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Your Repositories
-              </h3>
-              <div className="space-y-3 max-h-96 overflow-y-auto">
-                {data.repositories.slice(0, 10).map(repo => (
-                  <div
-                    key={repo.id}
-                    className="flex items-center justify-between p-3 border rounded-lg dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
-                          {repo.name}
-                        </h4>
-                        {repo.visibility === 'private' && (
-                          <span className="px-2 py-1 text-xs bg-yellow-100 text-yellow-800 rounded">
-                            Private
-                          </span>
-                        )}
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {repo.description !== null && repo.description !== ''
-                          ? repo.description
-                          : 'No description'}
-                      </p>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                        {repo.language !== null && repo.language !== '' && (
-                          <span className="flex items-center gap-1">
-                            <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                            {repo.language}
-                          </span>
-                        )}
-                        <span>⭐ {repo.stargazersCount}</span>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() =>
-                        router.push(`/analytics/repository/${repo.id}`)
-                      }
-                      className="p-2 text-gray-500 hover:text-purple-600 transition-colors"
-                    >
-                      <FiExternalLink className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <RepositoryList
+              repositories={data.repositories}
+              title="Your Repositories"
+              maxItems={10}
+            />
 
             {/* Top Contributors */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                Top Contributors
-              </h3>
-              <div className="space-y-3">
-                {data.overview.topContributors.map((contributor, index) => (
-                  <div
-                    key={contributor.contributor.id}
-                    className="flex items-center gap-3"
-                  >
-                    <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-medium text-gray-900 dark:text-white">
-                        {contributor.contributor.name !== null &&
-                        contributor.contributor.name !== ''
-                          ? contributor.contributor.name
-                          : contributor.contributor.login}
-                      </p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {contributor.commitCount} commits
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            <ContributorsList contributors={data.overview.topContributors} />
           </div>
 
           {/* Most Active Repository */}
@@ -594,9 +465,6 @@ function AnalyticsDashboard(): React.ReactElement {
   );
 }
 
-/**
- * Main Analytics Page with Suspense wrapper
- */
 export default function AnalyticsPage(): React.ReactElement {
   return (
     <Suspense
