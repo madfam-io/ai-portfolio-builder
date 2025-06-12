@@ -103,7 +103,10 @@ export type AdminPermission =
   // Support
   | 'support:tickets'
   | 'support:escalate'
-  | 'impersonation:users';
+  | 'impersonation:users'
+  
+  // Experiments
+  | 'experiments:manage';
 
 /**
  * Admin action audit log
@@ -309,6 +312,7 @@ export const ADMIN_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'support:tickets',
     'support:escalate',
     'impersonation:users',
+    'experiments:manage',
   ],
   admin_developer: [
     'users:read',
@@ -320,6 +324,7 @@ export const ADMIN_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'analytics:export',
     'system:configure',
     'system:logs',
+    'experiments:manage',
   ],
   admin_architect: [
     'users:read',
@@ -343,5 +348,6 @@ export const ADMIN_PERMISSIONS: Record<AdminRole, AdminPermission[]> = {
     'support:tickets',
     'support:escalate',
     'impersonation:users',
+    'experiments:manage',
   ],
 };

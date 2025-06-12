@@ -6,6 +6,7 @@
  */
 
 import Image from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 import {
   FiUsers,
@@ -20,6 +21,7 @@ import {
   FiActivity,
   FiAlertTriangle,
   FiCheck,
+  FiLayers,
 } from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
@@ -261,6 +263,54 @@ export default function AdminUserDashboard(): React.ReactElement {
                   </p>
                 </div>
                 <FiActivity className="text-2xl text-purple-600" />
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <Link
+              href="/admin/experiments"
+              className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    A/B Testing
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Manage landing page experiments
+                  </p>
+                </div>
+                <FiLayers className="text-3xl text-purple-600" />
+              </div>
+            </Link>
+            
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Analytics
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    View platform analytics
+                  </p>
+                </div>
+                <FiActivity className="text-3xl text-blue-600" />
+              </div>
+            </div>
+            
+            <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer opacity-50">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                    Settings
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Configure platform settings
+                  </p>
+                </div>
+                <FiSettings className="text-3xl text-gray-600" />
               </div>
             </div>
           </div>

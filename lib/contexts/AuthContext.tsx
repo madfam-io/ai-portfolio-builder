@@ -179,6 +179,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                   'support:tickets',
                   'support:escalate',
                   'impersonation:users',
+                  'experiments:manage',
                 ],
                 adminActions: [],
               }
