@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 import type {
   GetActiveExperimentResponse,
   ComponentConfig,
+} from '@/types/experiments';
 
 import { logger } from '@/lib/utils/logger';
-} from '@/types/experiments';
 
 /**
  * @fileoverview Client-side hook for A/B testing experiments

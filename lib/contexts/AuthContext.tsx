@@ -16,16 +16,15 @@ import {
   isSubscriptionActive as checkSubscriptionActive,
   getDaysUntilExpiration,
   getPermissionLevel,
+} from '@/lib/auth/roles';
 import {
   User,
   SubscriptionPlan,
   AdminPermission,
   SessionData,
-
-import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
-} from '@/lib/auth/roles';
-import { logger } from '@/lib/utils/logger';
 } from '@/types/auth';
+import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
+import { logger } from '@/lib/utils/logger';
 
 
 /**

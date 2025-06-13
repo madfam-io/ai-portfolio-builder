@@ -1,21 +1,22 @@
 'use client';
 
-} from 'react';
 import React, {
   createContext,
   useContext,
   useState,
   useEffect,
   ReactNode,
+} from 'react';
+
 import type {
   Language,
   FlattenedTranslations,
   TranslationNamespace,
+} from './refactored-types';
 
 import * as enTranslations from './translations/en';
 import * as esTranslations from './translations/es';
 import { flattenTranslations } from './utils';
-} from './refactored-types';
 
 /**
  * @fileoverview Refactored i18n context provider with modular translations

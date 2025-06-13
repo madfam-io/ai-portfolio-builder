@@ -6,9 +6,9 @@ import {
   Education,
   Skill,
   Certification,
+} from '@/types/portfolio';
 
 import { getTemplateConfig } from '@/lib/templates/templateConfig';
-} from '@/types/portfolio';
 
 /**
  * @fileoverview Sample Data Generator

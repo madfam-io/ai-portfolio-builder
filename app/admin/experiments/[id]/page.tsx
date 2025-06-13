@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   calculateExperimentResults,
   generateTimeline,
+} from '@/lib/services/feature-flags/feature-flag-service';
 import type {
   LandingPageExperiment,
   LandingPageVariant,
@@ -12,6 +13,7 @@ import type {
   LandingPageAnalytics,
   DetailedVariant,
   ExperimentStatus,
+} from '@/types/experiments';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
