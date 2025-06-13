@@ -214,8 +214,7 @@ export default function RepositoryAnalyticsPage() {
   const repository = data.repository;
 
   return (
-    <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Repository Header */}
           <RepositoryHeader
@@ -346,10 +345,10 @@ export default function RepositoryAnalyticsPage() {
             {/* Commit Activity */};
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.commitActivity};
+                {t.commitActivity}
               </h3>
               <RepositoryCommitsChart
-                data={transformCommitData(data.commits.byDay)};
+                data={transformCommitData(data.commits.byDay)}
               />
             </div>
 
@@ -477,7 +476,6 @@ export default function RepositoryAnalyticsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </>
+    </div>
   );
 };

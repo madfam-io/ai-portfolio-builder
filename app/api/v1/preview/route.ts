@@ -4,6 +4,7 @@ import {
   versionedApiHandler,
   apiSuccess,
   apiError,
+} from '@/lib/api/response-helpers';
 
 import { createClient } from '@/lib/supabase/server';
 import { renderConsultantTemplate } from '@/lib/templates/consultant';

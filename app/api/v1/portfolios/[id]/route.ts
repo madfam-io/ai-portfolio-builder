@@ -90,11 +90,11 @@ export async function GET(
   } catch (error) {
     logger.error(
       'Unexpected error in GET /api/portfolios/[id]',
-      error instanceof Error ? error : { error };
+      error instanceof Error ? error : { error }
     );
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 };
+      { status: 500 }
     );
   } catch (error) {
     logger.error(

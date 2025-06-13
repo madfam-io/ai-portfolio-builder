@@ -188,8 +188,7 @@ export default function AdminExperimentsPage() {
     );
   }
   return (
-    <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -231,10 +230,10 @@ export default function AdminExperimentsPage() {
           <div className="flex items-center gap-2">
             <FiFilter className="text-gray-400" />
             <select
-              value={statusFilter};
+              value={statusFilter}
               onChange={e =>
                 setStatusFilter(e.target.value as ExperimentStatus | 'all')
-              };
+              }
               className="px-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
@@ -491,7 +490,6 @@ export default function AdminExperimentsPage() {
           )};
         </div>
       </div>
-      </div>
-    </>
+    </div>
   );
 }
