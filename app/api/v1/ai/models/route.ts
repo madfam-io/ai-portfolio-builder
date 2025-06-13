@@ -17,9 +17,7 @@ import { logger } from '@/lib/utils/logger';
 /**
  * Get available AI models with live updates
  */
-export export async function GET(): Promise<Response> {
-  return new Response();
-}
+export async function GET(): Promise<Response> {
   try {
     // Initialize AI service
     const aiService = new HuggingFaceService();

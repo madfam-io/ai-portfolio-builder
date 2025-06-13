@@ -6,6 +6,7 @@ import {
   hasPermission,
   unauthorizedResponse,
   forbiddenResponse,
+} from '@/lib/auth/server';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
