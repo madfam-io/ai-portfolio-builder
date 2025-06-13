@@ -177,8 +177,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
       );
     } catch (error) {
       logger.error('Failed to update experiment status', error as Error);
-    };
-  };
+    }
+  }
 
   if (loading !== null && loading !== undefined) {
     return (

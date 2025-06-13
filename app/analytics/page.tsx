@@ -1,7 +1,7 @@
-'use client';
+'use client'
 
-import React, { useState, useEffect, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 
 import {
   FiGithub,
@@ -12,14 +12,14 @@ import {
   FiRefreshCw,
   FiTrendingUp,
   FiAlertCircle,
-} from 'react-icons/fi';
-import { ContributorsList } from '@/components/analytics/ContributorsList';
-import { RepositoryList } from '@/components/analytics/RepositoryList';
-import { StatsCard } from '@/components/analytics/StatsCard';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { usePerformanceTracking } from '@/lib/utils/performance';
-import type { AnalyticsDashboardData } from '@/types/analytics';
+} from 'react-icons/fi'
+import { ContributorsList } from '@/components/analytics/ContributorsList'
+import { RepositoryList } from '@/components/analytics/RepositoryList'
+import { StatsCard } from '@/components/analytics/StatsCard'
+import BaseLayout from '@/components/layouts/BaseLayout'
+import { LazyWrapper } from '@/components/shared/LazyWrapper'
+import { usePerformanceTracking } from '@/lib/utils/performance'
+import type { AnalyticsDashboardData } from '@/types/analytics'
 
 /**
  * @fileoverview Analytics Dashboard Page
@@ -30,30 +30,30 @@ import type { AnalyticsDashboardData } from '@/types/analytics';
 
 
 interface DashboardApiResponse {
-  data?: AnalyticsDashboardData;
-  error?: string;
-  requiresAuth?: boolean;
-};
+  data?: AnalyticsDashboardData
+  error?: string
+  requiresAuth?: boolean
+}
 interface RepositoriesApiResponse {
-  repositories?: unknown[];
-  error?: string;
-  requiresAuth?: boolean;
-};
+  repositories?: unknown[]
+  error?: string
+  requiresAuth?: boolean
+}
 interface DashboardState {
-  data: AnalyticsDashboardData | null;
-  loading: boolean;
-  error: string | null;
-  needsAuth: boolean;
-  syncing: boolean;
-};
+  data: AnalyticsDashboardData | null
+  loading: boolean
+  error: string | null
+  needsAuth: boolean
+  syncing: boolean
+}
 /**
  * Analytics Dashboard Component
  * Handles GitHub integration, data fetching, and visualization
  */
 function AnalyticsDashboard(): React.ReactElement {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  usePerformanceTracking('AnalyticsDashboard');
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  usePerformanceTracking('AnalyticsDashboard')
 
   // Dashboard state management
   const [dashboard, setDashboard] = useState<DashboardState>({
@@ -62,40 +62,40 @@ function AnalyticsDashboard(): React.ReactElement {
     error: null,
     needsAuth: false,
     syncing: false,
-  });
+  })
 
-  // const [selectedRepo, setSelectedRepo] = useState<string>('all');
+  // const [selectedRepo, setSelectedRepo] = useState<string>('all')
 
   // Check for OAuth callback messages
   useEffect(() => {
-    const connected = searchParams.get('connected');
-    const error = searchParams.get('error');
+    const connected = searchParams.get('connected')
+    const error = searchParams.get('error')
 
     if (connected === 'true') {
       // Successfully connected, fetch data
-      void fetchDashboardData();
+      void fetchDashboardData()
       // Clean up URL
-      router.replace('/analytics');
+      router.replace('/analytics')
     } else if (error !== null && error !== '') {
       setDashboard(prev => ({
         ...prev,
         error: getErrorMessage(error),
         loading: false,
-      }));
-    };
-  }, [searchParams, router]);
+      }))
+    }
+  }, [searchParams, router])
 
   // Fetch dashboard data on mount
   useEffect(() => {
-    const connected = searchParams.get('connected');
-    const error = searchParams.get('error');
+    const connected = searchParams.get('connected')
+    const error = searchParams.get('error')
     if (
       (connected === null || connected === '') &&
       (error === null || error === '')
     ) {
-      void fetchDashboardData();
-    };
-  }, [searchParams]);
+      void fetchDashboardData()
+    }
+  }, [searchParams])
 
   /**
    * Get user-friendly error message
@@ -110,9 +110,9 @@ function AnalyticsDashboard(): React.ReactElement {
       user_fetch_failed: 'Failed to fetch GitHub user information.',
       integration_store_failed: 'Failed to store GitHub integration.',
       callback_failed: 'OAuth callback failed. Please try again.',
-    };
-    return errorMessages[errorCode] ?? 'An unknown error occurred.';
-  };
+    }
+    return errorMessages[errorCode] ?? 'An unknown error occurred.'
+  }
 
   /**
    * Fetch dashboard data from API
@@ -120,10 +120,10 @@ function AnalyticsDashboard(): React.ReactElement {
    */
   const fetchDashboardData = async (): Promise<void> => {
     try {
-      setDashboard(prev => ({ ...prev, loading: true, error: null }));
+      setDashboard(prev => ({ ...prev, loading: true, error: null }))
 
-      const response = await fetch('/api/analytics/dashboard');
-      const result: DashboardApiResponse = await response.json();
+      const response = await fetch('/api/analytics/dashboard')
+      const result: DashboardApiResponse = await response.json()
 
       if (!response.ok) {
         // Check if user needs to authenticate with GitHub
@@ -133,58 +133,58 @@ function AnalyticsDashboard(): React.ReactElement {
             loading: false,
             needsAuth: true,
             error: null,
-          }));
-          return;
-        };
-        throw new Error(result.error ?? 'Failed to fetch dashboard data');
-      };
+          }))
+          return
+        }
+        throw new Error(result.error ?? 'Failed to fetch dashboard data')
+      }
       setDashboard(prev => ({
         ...prev,
         data: result.data ?? null,
         loading: false,
         error: null,
         needsAuth: false,
-      }));
+      }))
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'An error occurred';
+        error instanceof Error ? error.message : 'An error occurred'
       setDashboard(prev => ({
         ...prev,
         loading: false,
         error: errorMessage,
-      }));
-    };
-  };
+      }))
+    }
+  }
 
   /**
    * Initiate GitHub OAuth flow
    */
   const connectGitHub = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/integrations/github/auth');
-      const result: { error?: string; url?: string } = await response.json();
+      const response = await fetch('/api/integrations/github/auth')
+      const result: { error?: string; url?: string } = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error ?? 'Failed to initiate GitHub OAuth');
-      };
+        throw new Error(result.error ?? 'Failed to initiate GitHub OAuth')
+      }
       // Redirect to GitHub OAuth
       if (result.url) {
-        window.location.href = result.url;
-      };
+        window.location.href = result.url
+      }
     } catch (error) {
       setDashboard(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'An error occurred',
-      }));
-    };
-  };
+      }))
+    }
+  }
 
   /**
    * Sync repositories from GitHub
    */
   const syncRepositories = async (force = false): Promise<void> => {
     try {
-      setDashboard(prev => ({ ...prev, syncing: true }));
+      setDashboard(prev => ({ ...prev, syncing: true }))
 
       const response = await fetch('/api/analytics/repositories', {
         method: 'POST',
@@ -192,24 +192,24 @@ function AnalyticsDashboard(): React.ReactElement {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ force }),
-      });
+      })
 
-      const result: RepositoriesApiResponse = await response.json();
+      const result: RepositoriesApiResponse = await response.json()
 
       if (!response.ok) {
-        throw new Error(result.error ?? 'Failed to sync repositories');
-      };
+        throw new Error(result.error ?? 'Failed to sync repositories')
+      }
       // Refresh dashboard data
-      await fetchDashboardData();
+      await fetchDashboardData()
     } catch (error) {
       setDashboard(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'An error occurred',
-      }));
+      }))
     } finally {
-      setDashboard(prev => ({ ...prev, syncing: false }));
-    };
-  };
+      setDashboard(prev => ({ ...prev, syncing: false }))
+    }
+  }
 
   /**
    * Colors for charts
@@ -221,7 +221,7 @@ function AnalyticsDashboard(): React.ReactElement {
     accent: '#10b981', // Green - positive metrics
     warning: '#f59e0b', // Amber - warnings
     danger: '#ef4444', // Red - errors/critical
-  };
+  }
 
   // Loading state
   if (dashboard.loading) {
@@ -236,7 +236,7 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    );
+    )
   }
   // GitHub connection required
   if (dashboard.needsAuth) {
@@ -253,7 +253,7 @@ function AnalyticsDashboard(): React.ReactElement {
               insights into your development metrics.
             </p>
             <button
-              onClick={connectGitHub};
+              onClick={connectGitHub}
               className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
               <FiGithub className="mr-2" />
@@ -262,8 +262,8 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    );
-  };
+    )
+  }
   // Error state
   if (dashboard.error !== null && dashboard.error !== '') {
     return (
@@ -275,10 +275,11 @@ function AnalyticsDashboard(): React.ReactElement {
               Error
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              {dashboard.error};
+              {dashboard.error}
             </p>
             <button
-              onClick={fetchDashboardData};
+              onClick={fetchDashboardData}
+
               className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <FiRefreshCw className="mr-2" />
@@ -287,15 +288,15 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    );
-  };
-  const data = dashboard.data as AnalyticsDashboardData;
+    )
+  }
+  const data = dashboard.data as AnalyticsDashboardData
 
   return (
     <BaseLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Header */};
+          {/* Header */}
           <div className="mb-8">
             <div className="flex items-center justify-between">
               <div>
@@ -308,67 +309,68 @@ function AnalyticsDashboard(): React.ReactElement {
               </div>
               <div className="flex items-center gap-4">
                 <button
-                  onClick={() => syncRepositories()};
-                  disabled={dashboard.syncing};
+                  onClick={() => syncRepositories()}
+
+                  disabled={dashboard.syncing}
                   className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
                 >
                   <FiRefreshCw
-                    className={`mr-2 ${dashboard.syncing ? 'animate-spin' : ''}`};
+                    className={`mr-2 ${dashboard.syncing ? 'animate-spin' : ''}`}
                   />
-                  {dashboard.syncing ? 'Syncing...' : 'Sync'};
+                  {dashboard.syncing ? 'Syncing...' : 'Sync'}
                 </button>
               </div>
             </div>
           </div>
 
-          {/* Overview Stats */};
+          {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             <StatsCard
-              icon={<FiCode />};
+              icon={<FiCode />}
               label="Repositories"
-              value={data.overview.totalRepositories};
+              value={data.overview.totalRepositories}
               iconBgColor="bg-purple-100 dark:bg-purple-900/30"
               iconColor="text-purple-600"
             />
             <StatsCard
-              icon={<FiActivity />};
+              icon={<FiActivity />}
               label="Commits"
-              value={data.overview.totalCommits.toLocaleString()};
+              value={data.overview.totalCommits.toLocaleString()}
               iconBgColor="bg-blue-100 dark:bg-blue-900/30"
               iconColor="text-blue-600"
             />
             <StatsCard
-              icon={<FiGitPullRequest />};
+              icon={<FiGitPullRequest />}
               label="Pull Requests"
-              value={data.overview.totalPullRequests};
+              value={data.overview.totalPullRequests}
               iconBgColor="bg-green-100 dark:bg-green-900/30"
               iconColor="text-green-600"
             />
             <StatsCard
-              icon={<FiUsers />};
+              icon={<FiUsers />}
               label="Contributors"
-              value={data.overview.totalContributors};
+              value={data.overview.totalContributors}
               iconBgColor="bg-yellow-100 dark:bg-yellow-900/30"
               iconColor="text-yellow-600"
             />
             <StatsCard
-              icon={<FiTrendingUp />};
+              icon={<FiTrendingUp />}
               label="Lines of Code"
-              value={`${(data.overview.totalLinesOfCode / 1000).toFixed(1)}K`};
+              value={`${(data.overview.totalLinesOfCode / 1000).toFixed(1)}K`}
               iconBgColor="bg-indigo-100 dark:bg-indigo-900/30"
               iconColor="text-indigo-600"
             />
           </div>
 
-          {/* Charts Grid - Lazy Loaded for Performance */};
+          {/* Charts Grid - Lazy Loaded for Performance */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Commits Trend Chart */};
+            {/* Commits Trend Chart */}
             <LazyWrapper
-              component={() => import('@/components/analytics/CommitsChart')};
+              component={() => import('@/components/analytics/CommitsChart')}
               componentProps={{
                 data: data.trends.commitsPerDay,
                 chartColors,
-              }};
+              }}
               fallback={
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
                   <div className="text-center">
@@ -378,14 +380,14 @@ function AnalyticsDashboard(): React.ReactElement {
                     </p>
                   </div>
                 </div>
-              };
+              }
             />
 
-            {/* Pull Requests Chart */};
+            {/* Pull Requests Chart */}
             <LazyWrapper
               component={() =>
                 import('@/components/analytics/PullRequestsChart')
-              };
+              }
               componentProps={{
                 data: data.trends.pullRequestsPerWeek,
                 chartColors: {
@@ -393,7 +395,7 @@ function AnalyticsDashboard(): React.ReactElement {
                   accent: chartColors.accent,
                   warning: chartColors.warning,
                 },
-              }};
+              }}
               fallback={
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
                   <div className="text-center">
@@ -403,24 +405,24 @@ function AnalyticsDashboard(): React.ReactElement {
                     </p>
                   </div>
                 </div>
-              };
+              }
             />
           </div>
 
-          {/* Repositories and Contributors */};
+          {/* Repositories and Contributors */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            {/* Top Repositories */};
+            {/* Top Repositories */}
             <RepositoryList
-              repositories={data.repositories};
+              repositories={data.repositories}
               title="Your Repositories"
-              maxItems={10};
+              maxItems={10}
             />
 
-            {/* Top Contributors */};
+            {/* Top Contributors */}
             <ContributorsList contributors={data.overview.topContributors} />
           </div>
 
-          {/* Most Active Repository */};
+          {/* Most Active Repository */}
           {data.overview.mostActiveRepository && (
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mt-8">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -429,25 +431,25 @@ function AnalyticsDashboard(): React.ReactElement {
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="text-xl font-bold text-gray-900 dark:text-white">
-                    {data.overview.mostActiveRepository.repository.name};
+                    {data.overview.mostActiveRepository.repository.name}
                   </h4>
                   <p className="text-gray-600 dark:text-gray-400 mt-1">
-                    {data.overview.mostActiveRepository.repository.description};
+                    {data.overview.mostActiveRepository.repository.description}
                   </p>
                   <div className="flex items-center gap-4 mt-3 text-sm text-gray-500">
                     <span>
                       {data.overview.mostActiveRepository.commitCount} commits
                     </span>
                     <span>
-                      ⭐{' '};
+                      ⭐{' '}
                       {
                         data.overview.mostActiveRepository.repository
                           .stargazersCount
-                      };
+                      }
                     </span>
                     <span>
-                      🍴{' '};
-                      {data.overview.mostActiveRepository.repository.forksCount};
+                      🍴{' '}
+                      {data.overview.mostActiveRepository.repository.forksCount}
                     </span>
                   </div>
                 </div>
@@ -456,7 +458,7 @@ function AnalyticsDashboard(): React.ReactElement {
                     router.push(
                       `/analytics/repository/${data.overview.mostActiveRepository?.repository.id ?? ''}`
                     )
-                  };
+                  }
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   View Details
@@ -467,8 +469,8 @@ function AnalyticsDashboard(): React.ReactElement {
         </div>
       </div>
     </BaseLayout>
-  );
-};
+  )
+}
 export default function AnalyticsPage(): React.ReactElement {
   return (
     <Suspense
@@ -481,9 +483,9 @@ export default function AnalyticsPage(): React.ReactElement {
             </p>
           </div>
         </div>
-      };
+      }
     >
       <AnalyticsDashboard />
     </Suspense>
-  );
-};
+  )
+}

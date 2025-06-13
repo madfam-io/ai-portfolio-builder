@@ -337,7 +337,7 @@ export default function CreateExperimentPage(): React.ReactElement {
         );
         setLoading(false);
         return;
-      };
+      }
       const experimentData: CreateExperimentRequest = {
         name: experimentName,
         description,
