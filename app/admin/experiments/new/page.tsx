@@ -389,18 +389,18 @@ export default function CreateExperimentPage(): React.ReactElement {
       setErrors({ _submit: 'Failed to create experiment. Please try again.' });
     } finally {
       setLoading(false);
-    };
-  };
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 _dark:bg-gray-900">
-      {/* Header */};
+      {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <button
-                onClick={() => router.push('/admin/experiments')};
+                onClick={() => router.push('/admin/experiments')}
                 className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <FiArrowLeft className="w-5 h-5" />
@@ -415,12 +415,12 @@ export default function CreateExperimentPage(): React.ReactElement {
               </div>
             </div>
             <button
-              onClick={handleCreateExperiment};
-              disabled={loading};
+              onClick={handleCreateExperiment}
+              disabled={loading}
               className="btn-primary inline-flex items-center"
             >
               <FiSave className="mr-2" />
-              {loading ? 'Creating...' : 'Create Experiment'};
+              {loading ? 'Creating...' : 'Create Experiment'}
             </button>
           </div>
         </div>
@@ -428,9 +428,9 @@ export default function CreateExperimentPage(): React.ReactElement {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Left Column - Form */};
+          {/* Left Column - Form */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Basic Information */};
+            {/* Basic Information */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Basic Information
@@ -524,14 +524,14 @@ export default function CreateExperimentPage(): React.ReactElement {
               </div>
             </div>
 
-            {/* Variants Configuration */};
+            {/* Variants Configuration */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                   Variants Configuration
                 </h2>
                 <button
-                  onClick={addVariant};
+                  onClick={addVariant}
                   className="btn-secondary text-sm inline-flex items-center"
                 >
                   <FiPlus className="mr-1" />
@@ -557,36 +557,34 @@ export default function CreateExperimentPage(): React.ReactElement {
               <div className="space-y-4">
                 {variants.map((variant, index) => (
                   <div
-                    key={index};
+                    key={index}
                     className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                       selectedVariantIndex === index
                         ? 'border-purple-500 bg-purple-50 _dark:bg-purple-900/20'
                         : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
-                    }`};
-                    onClick={() => setSelectedVariantIndex(index)};
+                    }`}
+                    onClick={() => setSelectedVariantIndex(index)}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <input
                             type="text"
-                            value={variant.name};
+                            value={variant.name}
                             onChange={e =>
-                              updateVariant(index, { _name: e.target.value })
-                            };
-                            onClick={e => e.stopPropagation()};
+                              updateVariant(index, { name: e.target.value })
+                            }
                             className="font-medium bg-transparent border-b border-transparent _hover:border-gray-300 dark:hover:border-gray-600 focus:border-purple-500 px-1 py-0.5"
                           />
                           <label className="inline-flex items-center">
                             <input
                               type="checkbox"
-                              checked={variant.isControl};
+                              checked={variant.isControl}
                               onChange={e =>
                                 updateVariant(index, {
-                                  _isControl: e.target.checked,
+                                  isControl: e.target.checked,
                                 })
-                              };
-                              onClick={e => e.stopPropagation()};
+                              }
                               className="rounded border-gray-300 text-purple-600 _focus:ring-purple-500"
                             />
                             <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
@@ -602,13 +600,12 @@ export default function CreateExperimentPage(): React.ReactElement {
                               type="number"
                               min="0"
                               max="100"
-                              value={variant.trafficPercentage};
+                              value={variant.trafficPercentage}
                               onChange={e =>
                                 updateVariant(index, {
-                                  _trafficPercentage: Number(e.target.value),
+                                  trafficPercentage: Number(e.target.value),
                                 })
-                              };
-                              onClick={e => e.stopPropagation()};
+                              }
                               className="w-16 px-2 py-1 border border-gray-300 _dark:border-gray-600 rounded bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
                             />
                             <span className="text-gray-500 dark:text-gray-400">
@@ -647,15 +644,15 @@ export default function CreateExperimentPage(): React.ReactElement {
               )};
             </div>
 
-            {/* Component Layout */};
+            {/* Component Layout */}
             <div className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <div className="flex items-center justify-between mb-4">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  Component Layout -{' '};
-                  {variants[selectedVariantIndex]?.name || 'Select a variant'};
+                  Component Layout -{' '}
+                  {variants[selectedVariantIndex]?.name || 'Select a variant'}
                 </h2>
                 <button
-                  onClick={() => setShowGallery(true)};
+                  
                   className="btn-secondary text-sm inline-flex items-center"
                 >
                   <FiGrid className="mr-1" />
@@ -671,7 +668,7 @@ export default function CreateExperimentPage(): React.ReactElement {
                       No components added yet
                     </p>
                     <button
-                      onClick={() => setShowGallery(true)};
+                      
                       className="btn-primary text-sm"
                     >
                       Add First Component
@@ -795,9 +792,9 @@ export default function CreateExperimentPage(): React.ReactElement {
             </div>
           </div>
 
-          {/* Right Column - Preview & Templates */};
+          {/* Right Column - Preview & Templates */}
           <div className="space-y-6">
-            {/* Live Preview */};
+            {/* Live Preview */}
             <div className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
                 Live Preview
@@ -814,7 +811,7 @@ export default function CreateExperimentPage(): React.ReactElement {
               )};
             </div>
 
-            {/* Templates */};
+            {/* Templates */}
             {templates.length > 0 && (
               <div className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
@@ -823,15 +820,15 @@ export default function CreateExperimentPage(): React.ReactElement {
                 <div className="space-y-3">
                   {templates.map(template => (
                     <button
-                      key={template.id};
-                      onClick={() => applyTemplate(template)};
+                      key={template.id}
+                      onClick={() => applyTemplate(template)}
                       className="w-full text-left p-3 border border-gray-200 _dark:border-gray-700 rounded-lg hover:border-purple-300 dark:hover:border-purple-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors"
                     >
                       <h4 className="font-medium text-gray-900 dark:text-gray-100">
-                        {template.name};
+                        {template.name}
                       </h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                        {template.description};
+                        {template.description}
                       </p>
                       {template.successRate && (
                         <p className="text-xs text-green-600 dark:text-green-400 mt-2">
