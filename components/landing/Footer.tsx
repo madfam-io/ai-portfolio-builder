@@ -10,7 +10,7 @@ import FaGithub from 'react-icons/fa/FaGithub';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';
 
-export default function Footer(): React.ReactElement {
+export default function Footer(): JSX.Element (): React.ReactElement {
   const { t } = useLanguage();
   return (
     <footer className="bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 py-12 px-6 transition-colors duration-300">

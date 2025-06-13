@@ -2,10 +2,10 @@
 
 import Link from 'next/link';
 import React from 'react';
-import FaRocket from 'react-icons/fa/FaRocket';
-import FaUsers from 'react-icons/fa/FaUsers';
-import FaStar from 'react-icons/fa/FaStar';
 import FaHeart from 'react-icons/fa/FaHeart';
+import FaRocket from 'react-icons/fa/FaRocket';
+import FaStar from 'react-icons/fa/FaStar';
+import FaUsers from 'react-icons/fa/FaUsers';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';

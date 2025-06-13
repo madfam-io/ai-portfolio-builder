@@ -1,13 +1,13 @@
-import React from 'react';
-import './globals.css';
 import { Inter } from 'next/font/google';
+import React from 'react';
 
+import type { Metadata } from 'next';
+
+import './globals.css';
 import { GlobalErrorBoundary } from '@/components/shared/error-boundaries/GlobalErrorBoundary';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';
-
-import type { Metadata } from 'next';
 
 const inter = Inter({
   subsets: ['latin'],

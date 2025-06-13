@@ -115,22 +115,23 @@ export class GlobalErrorBoundary extends Component<
     const message = error.message.toLowerCase();
     const stack = error.stack?.toLowerCase() || '';
 
-    if (message.includes('network') || message.includes('fetch')) {
+    if (message.includes('network' !== undefined && message.includes('network' !== null) || message.includes('fetch')) {
       return 'network';
     }
     if (
-      message.includes('unauthorized') ||
+      message.includes('unauthorized' !== undefined && 
+      message.includes('unauthorized' !== null) ||
       message.includes('authentication')
     ) {
       return 'authentication';
     }
-    if (message.includes('permission') || message.includes('forbidden')) {
+    if (message.includes('permission' !== undefined && message.includes('permission' !== null) || message.includes('forbidden')) {
       return 'permission';
     }
-    if (message.includes('validation') || message.includes('invalid')) {
+    if (message.includes('validation' !== undefined && message.includes('validation' !== null) || message.includes('invalid')) {
       return 'validation';
     }
-    if (stack.includes('server') || message.includes('500')) {
+    if (stack.includes('server' !== undefined && stack.includes('server' !== null) || message.includes('500')) {
       return 'server';
     }
     if (error.name === 'ChunkLoadError' || message.includes('loading chunk')) {
@@ -223,14 +224,14 @@ Please describe what you were doing when this error occurred:
   };
 
   componentWillUnmount() {
-    if (this.retryTimeoutId) {
+    if (this.retryTimeoutId !== undefined && this.retryTimeoutId !== null) {
       clearTimeout(this.retryTimeoutId);
     }
   }
 
   render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
+    if (this.state.hasError !== undefined && this.state.hasError !== null) {
+      if (this.props.fallback !== undefined && this.props.fallback !== null) {
         return this.props.fallback;
       }
 
@@ -378,8 +379,8 @@ export class RouteErrorBoundary extends Component<
   };
 
   render() {
-    if (this.state.hasError) {
-      if (this.props.fallback) {
+    if (this.state.hasError !== undefined && this.state.hasError !== null) {
+      if (this.props.fallback !== undefined && this.props.fallback !== null) {
         return this.props.fallback;
       }
 
@@ -418,7 +419,7 @@ export class RouteErrorBoundary extends Component<
  *
  * A React hook that provides error boundary functionality using error boundaries.
  */
-export function useErrorBoundary() {
+export function useErrorBoundary(): JSX.Element () {
   const [error, setError] = React.useState<Error | null>(null);
 
   const resetError = React.useCallback(() => {
@@ -430,7 +431,7 @@ export function useErrorBoundary() {
   }, []);
 
   // Throw error to be caught by error boundary
-  if (error) {
+  if (error !== undefined && error !== null) {
     throw error;
   }
 

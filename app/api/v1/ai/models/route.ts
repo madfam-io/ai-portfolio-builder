@@ -6,8 +6,12 @@
 import { NextResponse } from 'next/server';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import {
+  withCacheHeaders,
+  CACHE_CONFIGS,
+  generateETag,
+} from '@/lib/cache/cache-headers';
 import { logger } from '@/lib/utils/logger';
-import { withCacheHeaders, CACHE_CONFIGS, generateETag } from '@/lib/cache/cache-headers';
 
 /**
  * Get available AI models with live updates
@@ -31,7 +35,7 @@ export async function GET(): Promise<Response> {
 
     // Create response with caching headers
     const response = NextResponse.json(responseData);
-    
+
     // Apply AI models caching strategy
     return withCacheHeaders(response, {
       ...CACHE_CONFIGS.aiModels,

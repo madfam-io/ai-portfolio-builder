@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Request validation schema
 const keywordResearchSchema = z.object({
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Keyword research failed:', error);
+    logger.error('Keyword research failed:', error as Error);
     return NextResponse.json(
       { error: 'Failed to research keywords' },
       { status: 500 }
@@ -165,7 +166,7 @@ export async function GET(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Failed to fetch trending keywords:', error);
+    logger.error('Failed to fetch trending keywords:', error as Error);
     return NextResponse.json(
       { error: 'Failed to fetch trending keywords' },
       { status: 500 }

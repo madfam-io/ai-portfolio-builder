@@ -9,7 +9,7 @@ import FaStar from 'react-icons/fa/FaStar';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function Hero(): React.ReactElement {
+export default function Hero(): JSX.Element (): React.ReactElement {
   const { t } = useLanguage();
   return (
     <section className="pt-32 pb-32 px-6 bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">

@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import FiLayout from 'react-icons/fi/FiLayout';
 import FiCode from 'react-icons/fi/FiCode';
+import FiLayout from 'react-icons/fi/FiLayout';
 import FiPalette from 'react-icons/fi/FiPalette';
 
 import { TemplateType } from '@/types/portfolio';

@@ -9,15 +9,15 @@
 import { NextRequest } from 'next/server';
 
 import {
+  authenticateUser,
+  unauthorizedResponse,
+} from '@/lib/api/middleware/auth';
+import {
   withErrorHandling,
   getSupabaseClient,
   apiSuccess,
   apiError,
 } from '@/lib/api/middleware/common';
-import {
-  authenticateUser,
-  unauthorizedResponse,
-} from '@/lib/api/middleware/auth';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { validateUpdatePortfolio } from '@/lib/validations/portfolio';

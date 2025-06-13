@@ -31,13 +31,13 @@ import {
   getDaysUntilExpiration,
   getPermissionLevel,
 } from '@/lib/auth/roles';
+import { logger } from '@/lib/utils/logger';
 import {
   User,
   SubscriptionPlan,
   AdminPermission,
   SessionData,
 } from '@/types/auth';
-import { logger } from '@/lib/utils/logger';
 
 interface AuthContextType {
   // Authentication state
@@ -95,7 +95,7 @@ interface AuthProviderProps {
   children: React.ReactNode;
 }
 
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -218,9 +218,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Authentication methods (mock implementations for now)
    */
   const signIn = useCallback(async (email: string, _password: string) => {
-    // This would use the existing auth system
     logger.info('Sign in attempt', { email });
-    // Implementation would go here
+    await Promise.resolve(); // Implementation would go here
   }, []);
 
   const signUp = useCallback(
@@ -240,7 +239,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setSession(null);
       setImpersonatedUser(null);
     } catch (error) {
-      logger.warn('Sign out failed - auth service not available', error as Error);
+      logger.warn(
+        'Sign out failed - auth service not available',
+        error as Error
+      );
       setSupabaseUser(null);
       setUser(null);
       setSession(null);
@@ -340,8 +342,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user]
   );
 
-  const stopImpersonation = useCallback(async () => {
-    if (impersonatedUser) {
+  const stopImpersonation = useCallback(() => {
+    if (impersonatedUser !== undefined && impersonatedUser !== null) {
       logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
     }
@@ -351,7 +353,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Profile management (stub implementations)
    */
   const updateProfile = useCallback(
-    async (updates: Partial<User>) => {
+    (updates: Partial<User>) => {
       if (!user) return;
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
@@ -360,7 +362,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user]
   );
 
-  const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
+  const upgradeSubscription = useCallback((plan: SubscriptionPlan) => {
     logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
   }, []);
@@ -368,7 +370,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const refreshUser = useCallback(async () => {
     if (!supabaseUser) return;
     const freshUser = await loadUserProfile(supabaseUser);
-    if (freshUser) {
+    if (freshUser !== undefined && freshUser !== null) {
       setUser(freshUser);
       setSession(createSession(freshUser));
     }
@@ -425,7 +427,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (!error && data.user) {
           setSupabaseUser(data.user);
           const userProfile = await loadUserProfile(data.user);
-          if (userProfile) {
+          if (userProfile !== undefined && userProfile !== null) {
             setUser(userProfile);
             setSession(createSession(userProfile));
           }
@@ -436,10 +438,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const {
           data: { subscription },
         } = onAuthStateChange(async (_event, session) => {
-          if (session?.user) {
+          if (session?.user !== undefined && session?.user !== null) {
             setSupabaseUser(session.user);
             const userProfile = await loadUserProfile(session.user);
-            if (userProfile) {
+            if (userProfile !== undefined && userProfile !== null) {
               setUser(userProfile);
               setSession(createSession(userProfile));
             }
@@ -550,13 +552,13 @@ export function useAuth(): AuthContextType {
       signUp: async () => {},
       signOut: async () => {},
       resetPassword: async () => {},
-      switchToAdminMode: async () => {
+      switchToAdminMode: () => {
         throw new Error('Not in AuthProvider');
       },
-      switchToUserMode: async () => {
+      switchToUserMode: () => {
         throw new Error('Not in AuthProvider');
       },
-      impersonateUser: async () => {
+      impersonateUser: () => {
         throw new Error('Not in AuthProvider');
       },
       stopImpersonation: async () => {},

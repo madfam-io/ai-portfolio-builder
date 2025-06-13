@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
 
-import { Input, type InputProps } from '../../input';
-import { Label, type LabelProps } from '../../label';
+import { cn } from '@/lib/utils';
+
 import {
   FormItem,
   FormLabel,
@@ -11,7 +11,8 @@ import {
   FormMessage,
   FormField as ShadcnFormField,
 } from '../../form';
-import { cn } from '@/lib/utils';
+import { Input, type InputProps } from '../../input';
+import { Label, type LabelProps } from '../../label';
 
 // Legacy FormField for direct use (without react-hook-form)
 export interface LegacyFormFieldProps extends InputProps {

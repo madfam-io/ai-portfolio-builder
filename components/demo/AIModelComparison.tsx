@@ -27,7 +27,7 @@ interface AIModelComparisonProps {
   activeTask?: 'bio' | 'project' | 'template';
 }
 
-export function AIModelComparison({
+export function AIModelComparison(): JSX.Element ({
   selectedModel = 'llama-3.1',
   onModelSelect,
   activeTask = 'bio',

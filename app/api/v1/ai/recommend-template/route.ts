@@ -7,10 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import {
-  UserProfile,
-  AIServiceError,
-} from '@/lib/ai/types';
+import { UserProfile, AIServiceError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
@@ -292,12 +289,14 @@ function enhanceRecommendation(
   preferences: Record<string, unknown>
 ): any {
   // Apply business rules and preferences
-  const enhancedAlternatives = aiRecommendation.alternatives.map((alt: any) => ({
-    ...alt,
-    reasoning: generateReasoningForTemplate(alt.template, profile),
-    preview: `/templates/${alt.template}-preview.jpg`,
-    features: getTemplateFeatures(alt.template),
-  }));
+  const enhancedAlternatives = aiRecommendation.alternatives.map(
+    (alt: any) => ({
+      ...alt,
+      reasoning: generateReasoningForTemplate(alt.template, profile),
+      preview: `/templates/${alt.template}-preview.jpg`,
+      features: getTemplateFeatures(alt.template),
+    })
+  );
 
   // Add style preference adjustments
   if (preferences.style) {

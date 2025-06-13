@@ -32,8 +32,8 @@ import {
   FiDownload,
 } from 'react-icons/fi';
 
-import { Portfolio } from '@/types/portfolio';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
+import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Developer Template component

@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Request validation schema
 const analyzeContentSchema = z.object({
@@ -123,7 +124,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('GEO analysis failed:', error);
+    logger.error('GEO analysis failed', error as Error);
     return NextResponse.json(
       { error: 'Failed to analyze content' },
       { status: 500 }
@@ -218,7 +219,7 @@ export async function GET(): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Failed to fetch GEO guidelines:', error);
+    logger.error('Failed to fetch GEO guidelines', error as Error);
     return NextResponse.json(
       { error: 'Failed to fetch guidelines' },
       { status: 500 }

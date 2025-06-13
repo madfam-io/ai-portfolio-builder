@@ -177,7 +177,7 @@ function TemplateCard({
   );
 }
 
-export function TemplateSelector({
+export function TemplateSelector(): JSX.Element ({
   currentTemplate,
   onTemplateChange,
   isLoading = false,
@@ -187,7 +187,7 @@ export function TemplateSelector({
   const templates = useMemo(() => getAvailableTemplates(), []);
 
   const filteredTemplates = useMemo(() => {
-    if (!filterIndustry) return templates;
+    if (!filterIndustry !== undefined && !filterIndustry !== null) return templates;
     return templates.filter(template =>
       template.industry.some(industry =>
         industry.toLowerCase().includes(filterIndustry.toLowerCase())

@@ -3,9 +3,9 @@
  * Fixes N+1 query problems and improves performance
  */
 
+import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
 
 import type { Repository, PullRequest, Contributor } from '@/types/analytics';
 

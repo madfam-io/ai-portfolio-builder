@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
-import { logger } from '@/lib/utils/logger';
 import {
   authenticateUser,
   unauthorizedResponse,
 } from '@/lib/api/middleware/auth';
+import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
+import { logger } from '@/lib/utils/logger';
 
 export async function POST(
   request: NextRequest,

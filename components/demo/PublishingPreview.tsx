@@ -38,7 +38,7 @@ export function PublishingPreview({
   onPublish,
   isDemo = true,
   className = '',
-}: PublishingPreviewProps) {
+}: PublishingPreviewProps): React.ReactElement {
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishProgress, setPublishProgress] = useState(0);
   const [isPublished, setIsPublished] = useState(false);
@@ -68,7 +68,7 @@ export function PublishingPreview({
     ],
   };
 
-  const handlePublish = async () => {
+  const handlePublish = () => {
     setIsPublishing(true);
     setPublishProgress(0);
 

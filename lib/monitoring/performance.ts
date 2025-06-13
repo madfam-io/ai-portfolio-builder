@@ -52,7 +52,7 @@ export function reportWebVitals(metric: any): void {
 
   // Log to console in development
   if (process.env.NODE_ENV === 'development') {
-    console.log(`[Web Vital] ${name}:`, {
+    logger.debug(`[Web Vital] ${name}`, {
       value: performanceMetric.value,
       rating: performanceMetric.rating,
       id,
@@ -178,10 +178,10 @@ class PerformanceMonitorSingleton extends PerformanceMonitor {
     // Disconnect all observers
     this.observers.forEach(observer => observer.disconnect());
     this.observers = [];
-    
+
     // Clear all data
     this.clear();
-    
+
     // Reset singleton instance
     PerformanceMonitorSingleton.instance = null;
   }
@@ -329,11 +329,11 @@ export function useRenderTracking(componentName: string): void {
   });
 }
 
+import { useRef, useEffect } from 'react';
+
 // Import for Next.js types
 declare global {
   interface Window {
     gtag?: (...args: any[]) => void;
   }
 }
-
-import { useRef, useEffect } from 'react';

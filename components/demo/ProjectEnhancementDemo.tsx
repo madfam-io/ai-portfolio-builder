@@ -27,7 +27,7 @@ interface STARBreakdown {
   result: string;
 }
 
-export function ProjectEnhancementDemo({
+export function ProjectEnhancementDemo(): JSX.Element ({
   projects,
   onProjectEnhance,
 }: ProjectEnhancementDemoProps) {

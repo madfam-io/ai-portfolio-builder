@@ -28,7 +28,7 @@ const CURRENCY_SYMBOLS = {
   EUR: '€',
 };
 
-export default function Pricing(): React.ReactElement {
+export default function Pricing(): JSX.Element (): React.ReactElement {
   const { t } = useLanguage();
   const { currency } = useApp();
 

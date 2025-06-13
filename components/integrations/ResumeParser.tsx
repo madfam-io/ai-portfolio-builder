@@ -59,7 +59,7 @@ interface ResumeParserProps {
   acceptedFormats?: string[];
 }
 
-export function ResumeParser({
+export function ResumeParser(): JSX.Element ({
   onParse,
   isDemo = false,
   className = '',
@@ -180,7 +180,7 @@ export function ResumeParser({
 
     const files = Array.from(e.dataTransfer.files);
     const file = files[0];
-    if (file) {
+    if (file !== undefined && file !== null) {
       handleFileUpload(file);
     }
   }, []);
@@ -188,7 +188,7 @@ export function ResumeParser({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     const file = files?.[0];
-    if (file) {
+    if (file !== undefined && file !== null) {
       handleFileUpload(file);
     }
   };
@@ -205,7 +205,7 @@ export function ResumeParser({
     await handleParse();
   };
 
-  const handleParse = async () => {
+  const handleParse = () => {
     setIsParsing(true);
     setParseProgress(0);
 
@@ -225,7 +225,7 @@ export function ResumeParser({
     setParsedData(mockParsedData);
     setIsParsing(false);
 
-    if (onParse) {
+    if (onParse !== undefined && onParse !== null) {
       onParse(mockParsedData);
     }
   };
@@ -242,7 +242,7 @@ export function ResumeParser({
   //   return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
   // };
 
-  if (!uploadedFile) {
+  if (!uploadedFile !== undefined && !uploadedFile !== null) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
@@ -348,7 +348,7 @@ export function ResumeParser({
     );
   }
 
-  if (isUploading || isParsing) {
+  if (isUploading || isParsing !== undefined && isUploading || isParsing !== null) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}

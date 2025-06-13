@@ -4,8 +4,9 @@
  */
 
 import { Octokit } from '@octokit/rest';
-import { logger } from '@/lib/utils/logger';
+
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 export interface GitHubRepository {
   id: number;

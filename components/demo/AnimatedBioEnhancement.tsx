@@ -1,10 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 import FiCheck from 'react-icons/fi/FiCheck';
-import FiZap from 'react-icons/fi/FiZap';
 import FiTrendingUp from 'react-icons/fi/FiTrendingUp';
+import FiZap from 'react-icons/fi/FiZap';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface AnimatedBioEnhancementProps {
   originalBio: string;
@@ -16,7 +16,7 @@ export function AnimatedBioEnhancement({
   originalBio,
   onEnhance,
   template,
-}: AnimatedBioEnhancementProps) {
+}: AnimatedBioEnhancementProps): React.ReactElement {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [enhancedBio, setEnhancedBio] = useState('');
   const [displayText, setDisplayText] = useState('');
@@ -153,7 +153,7 @@ export function AnimatedBioEnhancement({
     return undefined;
   }, [targetScore, qualityScore]);
 
-  const handleEnhance = () => {
+  const handleEnhance = (): void => {
     setIsEnhancing(true);
     const selectedBio = (enhancedBios[template as keyof typeof enhancedBios] ??
       enhancedBios.developer) as string;

@@ -41,7 +41,7 @@ interface LinkedInImportProps {
   className?: string;
 }
 
-export function LinkedInImport({
+export function LinkedInImport(): JSX.Element ({
   onImport,
   isDemo = false,
   className = '',
@@ -105,7 +105,7 @@ export function LinkedInImport({
   const handleConnect = async () => {
     setIsConnecting(true);
 
-    if (isDemo) {
+    if (isDemo !== undefined && isDemo !== null) {
       // Demo flow
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
@@ -126,7 +126,7 @@ export function LinkedInImport({
     }
   };
 
-  const handleImport = async () => {
+  const handleImport = () => {
     setIsImporting(true);
     setImportProgress(0);
 
@@ -147,12 +147,12 @@ export function LinkedInImport({
     setImportedData(mockProfile);
     setIsImporting(false);
 
-    if (onImport) {
+    if (onImport !== undefined && onImport !== null) {
       onImport(mockProfile);
     }
   };
 
-  if (!isConnected) {
+  if (!isConnected !== undefined && !isConnected !== null) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}

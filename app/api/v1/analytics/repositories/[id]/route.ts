@@ -76,7 +76,8 @@ export async function GET(
       data: analytics,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to fetch repository analytics', {
       repositoryId: params.id,
       error: errorMessage,
@@ -170,7 +171,8 @@ export async function POST(
         await analyticsService.syncRepositoryMetrics(repositoryId);
         results.synced.push('metrics');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync metrics', {
           repositoryId,
           error: errorMessage,
@@ -188,7 +190,8 @@ export async function POST(
         await analyticsService.syncPullRequests(repositoryId);
         results.synced.push('pull_requests');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync pull requests', {
           repositoryId,
           error: errorMessage,
@@ -206,7 +209,8 @@ export async function POST(
         await analyticsService.syncContributors(repositoryId);
         results.synced.push('contributors');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync contributors', {
           repositoryId,
           error: errorMessage,
@@ -224,7 +228,8 @@ export async function POST(
         await analyticsService.syncCommitAnalytics(repositoryId);
         results.synced.push('commits');
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
         logger.error('Failed to sync commits', {
           repositoryId,
           error: errorMessage,
@@ -241,7 +246,8 @@ export async function POST(
       data: results,
     });
   } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
     logger.error('Failed to sync repository', {
       repositoryId: params.id,
       error: errorMessage,

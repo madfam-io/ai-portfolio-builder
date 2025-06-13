@@ -11,36 +11,36 @@ export interface CacheOptions {
    * @default 300 (5 minutes)
    */
   maxAge?: number;
-  
+
   /**
    * Stale-while-revalidate duration in seconds
    * @default 86400 (24 hours)
    */
   swr?: number;
-  
+
   /**
    * Whether to cache on CDN
    * @default true
    */
   public?: boolean;
-  
+
   /**
    * Whether to allow caching of responses with cookies
    * @default false
    */
   private?: boolean;
-  
+
   /**
    * Revalidation time for static pages
    * @default undefined
    */
   revalidate?: number;
-  
+
   /**
    * Entity tag for cache validation
    */
   etag?: string;
-  
+
   /**
    * Last modified timestamp
    */
@@ -62,37 +62,37 @@ export function withCacheHeaders(
     etag,
     lastModified,
   } = options;
-  
+
   // Build Cache-Control header
   const cacheDirectives: string[] = [];
-  
+
   if (isPrivate) {
     cacheDirectives.push('private');
   } else if (isPublic) {
     cacheDirectives.push('public');
   }
-  
+
   cacheDirectives.push(`max-age=${maxAge}`);
-  
+
   if (swr > 0) {
     cacheDirectives.push(`stale-while-revalidate=${swr}`);
   }
-  
+
   response.headers.set('Cache-Control', cacheDirectives.join(', '));
-  
+
   // Set ETag if provided
   if (etag) {
     response.headers.set('ETag', etag);
   }
-  
+
   // Set Last-Modified if provided
   if (lastModified) {
     response.headers.set('Last-Modified', lastModified.toUTCString());
   }
-  
+
   // Add Vary header for content negotiation
   response.headers.set('Vary', 'Accept-Encoding, Accept, Authorization');
-  
+
   return response;
 }
 
@@ -106,35 +106,35 @@ export const CACHE_CONFIGS = {
     swr: 604800, // 1 week
     public: true,
   },
-  
+
   // Analytics data that updates periodically
   analytics: {
     maxAge: 300, // 5 minutes
     swr: 3600, // 1 hour
     public: false,
   },
-  
+
   // AI model information
   aiModels: {
     maxAge: 1800, // 30 minutes
     swr: 86400, // 24 hours
     public: true,
   },
-  
+
   // User portfolios (authenticated)
   portfolios: {
     maxAge: 60, // 1 minute
     swr: 300, // 5 minutes
     private: true,
   },
-  
+
   // Static API responses
   static: {
     maxAge: 86400, // 24 hours
     swr: 604800, // 1 week
     public: true,
   },
-  
+
   // Real-time data
   realtime: {
     maxAge: 0,
@@ -169,7 +169,7 @@ export function checkCacheValidity(
       return true;
     }
   }
-  
+
   // Check If-Modified-Since header
   if (lastModified) {
     const ifModifiedSince = request.headers.get('If-Modified-Since');
@@ -180,7 +180,7 @@ export function checkCacheValidity(
       }
     }
   }
-  
+
   return false;
 }
 

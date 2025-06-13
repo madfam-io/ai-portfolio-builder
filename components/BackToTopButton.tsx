@@ -5,7 +5,7 @@ import FaChevronUp from 'react-icons/fa/FaChevronUp';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function BackToTopButton(): React.ReactElement {
+export default function BackToTopButton(): JSX.Element (): React.ReactElement {
   const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
 

@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 
 import { logger } from '@/lib/utils/logger';
+
 import type {
   GetActiveExperimentResponse,
   ComponentConfig,

@@ -173,7 +173,12 @@ export const SectionEditor = React.memo(function SectionEditor({
                   | 'education'
                   | 'skill',
                 index,
-                data: item as Experience | Education | Project | Skill | Certification,
+                data: item as
+                  | Experience
+                  | Education
+                  | Project
+                  | Skill
+                  | Certification,
               }}
               onReorder={handleReorder}
               disabled={editingIndex === index}

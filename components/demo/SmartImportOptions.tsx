@@ -59,7 +59,7 @@ interface SmartImportOptionsProps {
   className?: string;
 }
 
-export function SmartImportOptions({
+export function SmartImportOptions(): JSX.Element ({
   onDataImport,
   isDemo = true,
   className = '',
@@ -119,7 +119,7 @@ export function SmartImportOptions({
 
   const handleImportComplete = (source: string, data: ImportedData): void => {
     setCompletedImports(prev => new Set([...prev, source]));
-    if (onDataImport) {
+    if (onDataImport !== undefined && onDataImport !== null) {
       onDataImport(source, data);
     }
   };
@@ -128,7 +128,7 @@ export function SmartImportOptions({
     setActiveImport(null);
   };
 
-  if (activeImport) {
+  if (activeImport !== undefined && activeImport !== null) {
     return (
       <div className={className}>
         <div className="mb-6">

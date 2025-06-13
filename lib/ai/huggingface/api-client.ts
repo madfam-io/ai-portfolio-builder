@@ -38,7 +38,7 @@ class RequestQueue {
 
   private async process(): Promise<void> {
     if (this.processing || this.activeRequests >= this.concurrency) return;
-    
+
     const request = this.queue.shift();
     if (!request) return;
 
@@ -48,7 +48,9 @@ class RequestQueue {
     // Ensure minimum delay between requests
     const timeSinceLastRequest = Date.now() - this.lastRequestTime;
     if (timeSinceLastRequest < this.minDelay) {
-      await new Promise(resolve => setTimeout(resolve, this.minDelay - timeSinceLastRequest));
+      await new Promise(resolve =>
+        setTimeout(resolve, this.minDelay - timeSinceLastRequest)
+      );
     }
 
     try {
@@ -83,7 +85,7 @@ export class HuggingFaceAPIClient {
     parameters: Record<string, any> = {}
   ): Promise<ModelResponse> {
     // Use request queue to prevent rate limiting
-    return this.requestQueue.add(() => 
+    return this.requestQueue.add(() =>
       this.makeRequestWithRetry(modelId, prompt, parameters)
     );
   }
@@ -135,11 +137,21 @@ export class HuggingFaceAPIClient {
 
       if (!response.ok) {
         // Retry on 503 (model loading) or 429 (rate limit)
-        if ((response.status === 503 || response.status === 429) && attempt < this.maxRetries) {
+        if (
+          (response.status === 503 || response.status === 429) &&
+          attempt < this.maxRetries
+        ) {
           const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Exponential backoff
-          logger.warn(`Retrying request after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`);
+          logger.warn(
+            `Retrying request after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`
+          );
           await new Promise(resolve => setTimeout(resolve, backoffDelay));
-          return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
+          return this.makeRequestWithRetry(
+            modelId,
+            prompt,
+            parameters,
+            attempt + 1
+          );
         }
         await this.handleAPIError(response, modelId);
       }
@@ -175,8 +187,15 @@ export class HuggingFaceAPIClient {
       // Handle timeout
       if (error instanceof Error && error.name === 'AbortError') {
         if (attempt < this.maxRetries) {
-          logger.warn(`Request timeout, retrying (attempt ${attempt}/${this.maxRetries})`);
-          return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
+          logger.warn(
+            `Request timeout, retrying (attempt ${attempt}/${this.maxRetries})`
+          );
+          return this.makeRequestWithRetry(
+            modelId,
+            prompt,
+            parameters,
+            attempt + 1
+          );
         }
         throw new AIServiceError(
           'Request timeout after 5 seconds',
@@ -191,12 +210,22 @@ export class HuggingFaceAPIClient {
       }
 
       // Retry on network errors
-      if (attempt < this.maxRetries && error instanceof Error && 
-          (error.message.includes('fetch') || error.message.includes('network'))) {
+      if (
+        attempt < this.maxRetries &&
+        error instanceof Error &&
+        (error.message.includes('fetch') || error.message.includes('network'))
+      ) {
         const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
-        logger.warn(`Network error, retrying after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`);
+        logger.warn(
+          `Network error, retrying after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`
+        );
         await new Promise(resolve => setTimeout(resolve, backoffDelay));
-        return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
+        return this.makeRequestWithRetry(
+          modelId,
+          prompt,
+          parameters,
+          attempt + 1
+        );
       }
 
       throw new AIServiceError(
@@ -256,7 +285,7 @@ export class HuggingFaceAPIClient {
     let hash = 0;
     for (let i = 0; i < content.length; i++) {
       const char = content.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(36);

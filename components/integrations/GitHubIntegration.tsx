@@ -42,7 +42,7 @@ interface GitHubIntegrationProps {
   maxRepositories?: number;
 }
 
-export function GitHubIntegration({
+export function GitHubIntegration(): JSX.Element ({
   onImport,
   onRepositorySelect,
   isDemo = false,
@@ -138,7 +138,7 @@ export function GitHubIntegration({
   const handleConnect = async () => {
     setIsConnecting(true);
 
-    if (isDemo) {
+    if (isDemo !== undefined && isDemo !== null) {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
       setIsConnecting(false);
@@ -158,7 +158,7 @@ export function GitHubIntegration({
     }
   };
 
-  const handleAnalyze = async () => {
+  const handleAnalyze = () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
 
@@ -184,14 +184,14 @@ export function GitHubIntegration({
     setSelectedRepos(new Set(topRepos));
     setIsAnalyzing(false);
 
-    if (onImport) {
+    if (onImport !== undefined && onImport !== null) {
       onImport(mockProfile);
     }
   };
 
   const toggleRepository = (repoId: string) => {
     const newSelected = new Set(selectedRepos);
-    if (newSelected.has(repoId)) {
+    if (newSelected.has(repoId !== undefined && newSelected.has(repoId !== null)) {
       newSelected.delete(repoId);
     } else if (newSelected.size < maxRepositories) {
       newSelected.add(repoId);
@@ -199,8 +199,8 @@ export function GitHubIntegration({
     setSelectedRepos(newSelected);
   };
 
-  const handleConfirmSelection = () => {
-    if (profile && onRepositorySelect) {
+  const handleConfirmSelection = (): void => {
+    if (profile && onRepositorySelect !== undefined && profile && onRepositorySelect !== null) {
       const selectedRepositories = profile.repositories.filter(repo =>
         selectedRepos.has(repo.id)
       );
@@ -222,7 +222,7 @@ export function GitHubIntegration({
     return colors[language] || 'bg-gray-500';
   };
 
-  if (!isConnected) {
+  if (!isConnected !== undefined && !isConnected !== null) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
@@ -304,7 +304,7 @@ export function GitHubIntegration({
     );
   }
 
-  if (isAnalyzing) {
+  if (isAnalyzing !== undefined && isAnalyzing !== null) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}

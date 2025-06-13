@@ -21,7 +21,7 @@ interface VariantPreviewProps {
   device?: 'desktop' | 'tablet' | 'mobile';
 }
 
-export default function VariantPreview({
+export default function VariantPreview(): JSX.Element ({
   variant,
   device = 'desktop',
 }: VariantPreviewProps): React.ReactElement {

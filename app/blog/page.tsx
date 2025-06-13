@@ -2,13 +2,13 @@
 
 import Link from 'next/link';
 import React from 'react';
+import FaArrowRight from 'react-icons/fa/FaArrowRight';
 import FaCalendar from 'react-icons/fa/FaCalendar';
 import FaUser from 'react-icons/fa/FaUser';
-import FaArrowRight from 'react-icons/fa/FaArrowRight';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 
 export default function BlogPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -26,7 +26,8 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-15',
       category: t.blogDesign || 'Design',
       readTime: t.blogPost1ReadTime || '5 min read',
-      image: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&h=400&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&h=400&fit=crop',
     },
     {
       id: 2,
@@ -39,7 +40,8 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-10',
       category: t.blogTechnology || 'Technology',
       readTime: t.blogPost2ReadTime || '7 min read',
-      image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
     },
     {
       id: 3,
@@ -53,7 +55,8 @@ export default function BlogPage(): React.ReactElement {
       date: '2024-01-05',
       category: t.blogBusiness || 'Business',
       readTime: t.blogPost3ReadTime || '6 min read',
-      image: 'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=800&h=400&fit=crop',
+      image:
+        'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=800&h=400&fit=crop',
     },
   ];
 

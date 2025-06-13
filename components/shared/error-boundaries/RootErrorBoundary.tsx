@@ -9,9 +9,9 @@
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
 import FiAlertTriangle from 'react-icons/fi/FiAlertTriangle';
-import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
 import FiHome from 'react-icons/fi/FiHome';
 import FiMail from 'react-icons/fi/FiMail';
+import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import {

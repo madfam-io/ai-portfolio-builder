@@ -12,16 +12,16 @@ import {
 } from 'react-icons/fi';
 import HiSparkles from 'react-icons/hi/HiSparkles';
 
-import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { AIModelComparison } from '@/components/demo/AIModelComparison';
 import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';
 import { ProjectEnhancementDemo } from '@/components/demo/ProjectEnhancementDemo';
-import { AIModelComparison } from '@/components/demo/AIModelComparison';
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
-import { Portfolio, TemplateType } from '@/types/portfolio';
 import { showToast } from '@/lib/utils/toast';
+import { Portfolio, TemplateType } from '@/types/portfolio';
 
 export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();

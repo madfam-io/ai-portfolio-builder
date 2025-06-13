@@ -1,18 +1,18 @@
 'use client';
 
 import React from 'react';
-import FiUser from 'react-icons/fi/FiUser';
-import FiBriefcase from 'react-icons/fi/FiBriefcase';
 import FiAward from 'react-icons/fi/FiAward';
-import FiEdit from 'react-icons/fi/FiEdit';
-import FiTrash from 'react-icons/fi/FiTrash';
+import FiBriefcase from 'react-icons/fi/FiBriefcase';
+// import FiEdit from 'react-icons/fi/FiEdit';
+// import FiTrash from 'react-icons/fi/FiTrash';
+import FiLayout from 'react-icons/fi/FiLayout';
+import FiPalette from 'react-icons/fi/FiPalette';
 import FiPlus from 'react-icons/fi/FiPlus';
 import FiSettings from 'react-icons/fi/FiSettings';
-import FiPalette from 'react-icons/fi/FiPalette';
-import FiLayout from 'react-icons/fi/FiLayout';
+import FiUser from 'react-icons/fi/FiUser';
 
-import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio, PortfolioSection } from '@/types/portfolio';
 
 interface InteractiveEditorSectionProps {

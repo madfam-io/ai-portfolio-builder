@@ -10,6 +10,7 @@ import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-lo
 import { preloadEditorComponents } from '@/components/editor/index.lazy';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
 // Removed server-side service import - will use API calls instead
 
@@ -84,7 +85,7 @@ function EditorContent(): React.ReactElement {
           setPortfolio(existingPortfolio);
         }
       } catch (err) {
-        console.error('Failed to load portfolio:', err);
+        logger.error('Failed to load portfolio', err as Error);
         setError('Failed to load portfolio');
       } finally {
         setLoading(false);
@@ -115,7 +116,7 @@ function EditorContent(): React.ReactElement {
       const { data: saved } = await response.json();
       setPortfolio(saved);
     } catch (error) {
-      console.error('Failed to save portfolio:', error);
+      logger.error('Failed to save portfolio', error as Error);
       throw error; // Re-throw to let the editor handle the error
     }
   };
@@ -142,7 +143,7 @@ function EditorContent(): React.ReactElement {
       const { data: published } = await response.json();
       setPortfolio(published);
     } catch (error) {
-      console.error('Failed to publish portfolio:', error);
+      logger.error('Failed to publish portfolio', error as Error);
     }
   };
 

@@ -45,7 +45,7 @@ interface VisualCustomizationToolsProps {
   className?: string;
 }
 
-export function VisualCustomizationTools({
+export function VisualCustomizationTools(): JSX.Element ({
   onColorChange,
   onFontChange,
   onLayoutChange,
@@ -194,7 +194,7 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setIsCustomizing(false);
-    if (onColorChange) {
+    if (onColorChange !== undefined && onColorChange !== null) {
       onColorChange(colorScheme);
     }
   };
@@ -206,7 +206,7 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 800));
 
     setIsCustomizing(false);
-    if (onFontChange) {
+    if (onFontChange !== undefined && onFontChange !== null) {
       onFontChange(font);
     }
   };
@@ -218,15 +218,15 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 1200));
 
     setIsCustomizing(false);
-    if (onLayoutChange) {
+    if (onLayoutChange !== undefined && onLayoutChange !== null) {
       onLayoutChange(layout);
     }
   };
 
-  const handleThemeToggle = () => {
+  const handleThemeToggle = (): void => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
-    if (onThemeToggle) {
+    if (onThemeToggle !== undefined && onThemeToggle !== null) {
       onThemeToggle(newTheme);
     }
   };

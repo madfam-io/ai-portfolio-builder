@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { GEOEnhancementRequest } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 
 // Request validation schema
 const optimizeContentSchema = z.object({
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('GEO optimization failed:', error);
+    logger.error('GEO optimization failed:', error as Error);
     return NextResponse.json(
       { error: 'Failed to optimize content' },
       { status: 500 }
@@ -214,7 +215,7 @@ export async function PUT(request: NextRequest): Promise<Response> {
       },
     });
   } catch (error) {
-    console.error('Batch GEO optimization failed:', error);
+    logger.error('Batch GEO optimization failed:', error as Error);
     return NextResponse.json(
       { error: 'Failed to optimize content batch' },
       { status: 500 }
@@ -244,7 +245,7 @@ async function logGEOOptimization(
   try {
     const supabase = await createClient();
     if (!supabase) {
-      console.error('Failed to create Supabase client for logging');
+      logger.error('Failed to create Supabase client for logging');
       return;
     }
 
@@ -255,7 +256,7 @@ async function logGEOOptimization(
       created_at: new Date().toISOString(),
     });
   } catch (error) {
-    console.error('Failed to log GEO optimization:', error);
+    logger.error('Failed to log GEO optimization:', error as Error);
     // Don't throw - logging failure shouldn't break the main operation
   }
 }
