@@ -16,6 +16,7 @@ import {
   FiShare2,
   FiSettings,
   FiRefreshCw,
+} from 'react-icons/fi';
 
 import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
 

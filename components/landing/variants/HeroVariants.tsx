@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-} from 'react-icons/fa';
 import {
   FaPlay,
   FaCheckCircle,
@@ -10,6 +9,7 @@ import {
   FaStar,
   FaRocket,
   FaArrowRight,
+} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useExperimentTracking } from '@/lib/services/feature-flags/use-experiment';

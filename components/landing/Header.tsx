@@ -11,6 +11,7 @@ import {
   FaTimes,
   FaUser,
   FaSignOutAlt,
+} from 'react-icons/fa';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
