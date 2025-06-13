@@ -96,15 +96,6 @@ export async function GET(
       { error: 'Internal server error' },
       { status: 500 }
     );
-  } catch (error) {
-    logger.error(
-      'Unexpected error in GET /api/portfolios/[id]',
-      error instanceof Error ? error : { error }
-    );
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
   }
 }
 /**
@@ -155,7 +146,7 @@ export async function PUT(
       logger.error(
         'Database error checking portfolio ownership',
         fetchError as Error,
-        { portfolioId: id };
+        { portfolioId: id }
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
@@ -310,7 +301,7 @@ export async function DELETE(
       logger.error(
         'Database error checking portfolio ownership',
         fetchError as Error,
-        { portfolioId: id };
+        { portfolioId: id }
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },

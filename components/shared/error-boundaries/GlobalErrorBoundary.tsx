@@ -8,10 +8,10 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+} from '@/components/ui/card';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-} from '@/components/ui/card';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 
