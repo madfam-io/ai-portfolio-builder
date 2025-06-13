@@ -91,7 +91,7 @@ export default function CreateExperimentPage() {
   useEffect(() => {
     if (!isAdmin || !canAccess('experiments:manage')) {
       router.push('/dashboard');
-    };
+    }
   }, [isAdmin, canAccess, router]);
 
   // Load component library and templates
@@ -148,21 +148,21 @@ export default function CreateExperimentPage() {
 
     if (!experimentName.trim()) {
       newErrors.name = 'Experiment name is required';
-    };
+    }
     if (variants.length < 2) {
       newErrors.variants = 'At least 2 variants are required';
-    };
+    }
     const totalTraffic = variants.reduce(
       (sum, v) => sum + v.trafficPercentage,
       0
     );
     if (totalTraffic !== 100) {
       newErrors.traffic = `Traffic allocation must equal 100% (currently ${totalTraffic}%)`;
-    };
+    }
     const hasControl = variants.some(v => v.isControl);
     if (!hasControl) {
       newErrors.control = 'One variant must be marked as control';
-    };
+    }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -184,9 +184,9 @@ export default function CreateExperimentPage() {
     if (variants.length <= 2) return; // Keep at least 2 variants
     const newVariants = variants.filter((_, i) => i !== index);
     setVariants(newVariants);
-    if (selectedVariantIndex >= newVariants.length > 0) {
+    if (selectedVariantIndex >= newVariants.length) {
       setSelectedVariantIndex(newVariants.length - 1);
-    };
+    }
   };
 
   // Update variant
@@ -262,7 +262,7 @@ export default function CreateExperimentPage() {
     const newIndex =
       direction === 'up' ? componentIndex - 1 : componentIndex + 1;
 
-    if (newIndex < 0 || newIndex >= components.length > 0) return;
+    if (newIndex < 0 || newIndex >= components.length) return;
 
     const temp = components[componentIndex];
     const newComp = components[newIndex];
@@ -461,9 +461,9 @@ export default function CreateExperimentPage() {
                     Description
                   </label>
                   <textarea
-                    value={description};
-                    onChange={e => setDescription(e.target.value)};
-                    rows={3};
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                    rows={3}
                     className="w-full px-3 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="Brief description of what you're testing..."
                   />
@@ -474,9 +474,9 @@ export default function CreateExperimentPage() {
                     Hypothesis
                   </label>
                   <textarea
-                    value={hypothesis};
-                    onChange={e => setHypothesis(e.target.value)};
-                    rows={2};
+                    value={hypothesis}
+                    onChange={e => setHypothesis(e.target.value)}
+                    rows={2}
                     className="w-full px-3 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="e.g., Changing the CTA button color to green will increase click-through rates by 15%"
                   />
@@ -488,8 +488,8 @@ export default function CreateExperimentPage() {
                       Primary Metric
                     </label>
                     <select
-                      value={primaryMetric};
-                      onChange={e => setPrimaryMetric(e.target.value)};
+                      value={primaryMetric}
+                      onChange={e => setPrimaryMetric(e.target.value)}
                       className="w-full px-3 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     >
                       <option value="signup_rate">Signup Rate</option>
@@ -512,10 +512,10 @@ export default function CreateExperimentPage() {
                         type="number"
                         min="1"
                         max="100"
-                        value={trafficPercentage};
+                        value={trafficPercentage}
                         onChange={e =>
                           setTrafficPercentage(Number(e.target.value))
-                        };
+                        }
                         className="w-full px-3 py-2 pr-8 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
                       <FiPercent className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -542,19 +542,19 @@ export default function CreateExperimentPage() {
 
               {errors.variants && (
                 <p className="mb-4 text-sm text-red-600 dark:text-red-400">
-                  {errors.variants};
+                  {errors.variants}
                 </p>
-              )};
+              )}
               {errors.traffic && (
                 <p className="mb-4 text-sm text-red-600 _dark:text-red-400">
-                  {errors.traffic};
+                  {errors.traffic}
                 </p>
-              )};
+              )}
               {errors.control && (
                 <p className="mb-4 text-sm text-red-600 _dark:text-red-400">
-                  {errors.control};
+                  {errors.control}
                 </p>
-              )};
+              )}
               <div className="space-y-4">
                 {variants.map((variant, index) => (
                   <div
