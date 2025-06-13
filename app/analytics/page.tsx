@@ -463,7 +463,7 @@ function AnalyticsDashboard(): React.ReactElement {
                 </button>
               </div>
             </div>
-          )};
+          )}
         </div>
       </div>
     </BaseLayout>

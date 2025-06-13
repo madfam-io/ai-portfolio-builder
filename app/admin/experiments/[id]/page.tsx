@@ -80,7 +80,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     // Group conversions by day
     const conversionsByDay: Record<
       string,
-      { _conversions: number; visitors: number };
+      { conversions: number; visitors: number }
     > = {};
     analytics.forEach(a => {
       const date = new Date(a.createdAt).toISOString().split('T')[0];

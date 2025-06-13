@@ -131,7 +131,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
             syncContributors: true,
             syncCommits: true,
           }),
-        };
+        }
       );
 
       const result = await response.json();

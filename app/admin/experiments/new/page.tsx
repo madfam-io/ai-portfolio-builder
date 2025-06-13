@@ -837,24 +837,24 @@ export default function CreateExperimentPage(): React.ReactElement {
                         <p className="text-xs text-green-600 dark:text-green-400 mt-2">
                           {template.successRate}% success rate
                         </p>
-                      )};
+                      )}
                     </button>
-                  ))};
+                  ))}
                 </div>
               </div>
-            )};
+            )}
           </div>
         </div>
       </div>
 
-      {/* Component Gallery Modal */};
+      {/* Component Gallery Modal */}
       {showGallery && (
         <ComponentGallery
-          components={componentLibrary};
-          onSelect={addComponent};
-          onClose={() => setShowGallery(false)};
+          components={componentLibrary}
+          onSelect={addComponent}
+          onClose={() => setShowGallery(false)}
         />
-      )};
+      )}
     </div>
   );
-};
+}
