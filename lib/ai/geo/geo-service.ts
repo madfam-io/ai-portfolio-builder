@@ -179,12 +179,12 @@ export class GEOService {
     });
 
     const response = await this.aiService.optimizeProjectDescription(
-      geoSettings.primaryKeyword,
       description,
-      geoSettings.secondaryKeywords
+      geoSettings.secondaryKeywords,
+      geoSettings.primaryKeyword
     );
 
-    return response.description;
+    return response.enhanced;
   }
 
   /**

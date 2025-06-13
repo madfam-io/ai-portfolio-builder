@@ -91,23 +91,16 @@ export class AIClient {
    * Optimize project description using AI
    */
   async optimizeProject(
-    title: string,
     description: string,
     technologies: string[],
-    context?: {
-      industry?: string;
-      projectType?: 'web' | 'mobile' | 'desktop' | 'api' | 'ai/ml' | 'other';
-      targetAudience?: 'employers' | 'clients' | 'collaborators';
-      emphasize?: 'technical' | 'business' | 'creative';
-    }
+    industryContext?: string
   ): Promise<ProjectEnhancement> {
     const { data, error } = await apiClient.post(
       API_ENDPOINTS.ai.optimizeProject,
       {
-        title,
         description,
         technologies,
-        context,
+        industryContext,
         selectedModel: this.userModelPreferences.project,
         autoUpdate: this.autoUpdateModels,
       }
@@ -121,9 +114,9 @@ export class AIClient {
    */
   async optimizeProjectsBatch(
     projects: Array<{
-      title: string;
       description: string;
       technologies: string[];
+      industryContext?: string;
     }>
   ): Promise<{
     results: Array<{

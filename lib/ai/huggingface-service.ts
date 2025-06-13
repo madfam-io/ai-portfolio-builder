@@ -3,7 +3,9 @@ import crypto from 'crypto';
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
 import { logger } from '@/lib/utils/logger';
 
-import { promptTemplates } from './prompts';
+import { ContentScorer } from './huggingface/ContentScorer';
+import { ModelManager } from './huggingface/ModelManager';
+import { PromptBuilder } from './huggingface/PromptBuilder';
 import {
   AIService,
   EnhancedContent,
@@ -22,46 +24,26 @@ import {
  * Hugging Face AI Service Implementation
  * Open-source model integration for content enhancement
  */
-
-// Available models with live capabilities
-export interface AvailableModel {
-  id: string;
-  name: string;
-  provider: 'huggingface';
-  capabilities: ('bio' | 'project' | 'template' | 'scoring')[];
-  costPerRequest: number;
-  avgResponseTime: number;
-  qualityRating: number;
-  isRecommended: boolean;
-  lastUpdated: string;
-}
-
 export class HuggingFaceService implements AIService {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://api-inference.huggingface.co/models';
-  private availableModels: AvailableModel[] = [];
-  private selectedModels: Record<string, string> = {};
-
-  // Default "best bang for buck" models (updated dynamically)
-  private readonly defaultModels = {
-    bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-    project: 'microsoft/Phi-3.5-mini-instruct',
-    template: 'mistralai/Mistral-7B-Instruct-v0.3',
-    scoring: 'microsoft/DialoGPT-medium',
-  };
+  private modelManager: ModelManager;
+  private promptBuilder: PromptBuilder;
+  private contentScorer: ContentScorer;
 
   constructor(apiKey?: string, userModelPreferences?: Record<string, string>) {
     this.apiKey = apiKey || process.env.HUGGINGFACE_API_KEY || '';
-    this.selectedModels = userModelPreferences || {};
-
+    
     if (!this.apiKey) {
       logger.warn(
         'Hugging Face API key not provided. Service will operate in demo mode.'
       );
     }
 
-    // Initialize available models
-    this.loadAvailableModels();
+    // Initialize managers
+    this.modelManager = new ModelManager(userModelPreferences);
+    this.promptBuilder = new PromptBuilder();
+    this.contentScorer = new ContentScorer();
   }
 
   /**
@@ -83,76 +65,59 @@ export class HuggingFaceService implements AIService {
   /**
    * Get all available models with live updates
    */
-  async getAvailableModels(): Promise<AvailableModel[]> {
-    await this.refreshAvailableModels();
-    return this.availableModels;
+  async getAvailableModels() {
+    return this.modelManager.getAvailableModels();
   }
 
   /**
    * Get current model selection for user
    */
-  getSelectedModels(): Record<string, string> {
-    return { ...this.selectedModels };
+  getSelectedModels() {
+    return this.modelManager.getSelectedModels();
   }
 
   /**
    * Update user's model preferences
    */
   updateModelSelection(taskType: string, modelId: string): void {
-    this.selectedModels[taskType] = modelId;
+    this.modelManager.updateModelSelection(taskType, modelId);
   }
 
   /**
-   * Get recommended model for task type
-   */
-  getRecommendedModel(taskType: string): string {
-    const recommended = this.availableModels
-      .filter(m => m.capabilities.includes(taskType as any) && m.isRecommended)
-      .sort(
-        (a, b) =>
-          b.qualityRating / b.costPerRequest -
-          a.qualityRating / a.costPerRequest
-      )[0];
-
-    return (
-      recommended?.id ||
-      this.defaultModels[taskType as keyof typeof this.defaultModels] ||
-      this.defaultModels.bio
-    );
-  }
-
-  /**
-   * Enhance bio content using selected or recommended model
+   * Enhance professional bio
    */
   async enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent> {
     try {
-      // Check cache first
       const cacheKey = this.generateCacheKey('bio', bio, context);
-      const cached = await cache.get<EnhancedContent>(cacheKey);
+      
+      // Check cache
+      const cached = await cache.get(cacheKey);
       if (cached) {
-        logger.debug('Bio enhancement cache hit');
-        return cached;
+        return JSON.parse(cached);
       }
 
-      const modelId =
-        this.selectedModels.bio || this.getRecommendedModel('bio');
-      const prompt = this.buildBioPrompt(bio, context);
-      const response = await this.callModel(modelId, prompt);
+      // Select model and build prompt
+      const model = this.modelManager.getRecommendedModel('bio');
+      const prompt = this.promptBuilder.buildBioPrompt(bio, context);
 
-      const enhancedBio = this.extractBioFromResponse(response.content);
-      const qualityScore = await this.scoreContent(enhancedBio, 'bio');
+      // Call AI model
+      const response = await this.callModel(model, prompt);
+      const enhanced = this.promptBuilder.extractBioFromResponse(response.content);
+
+      // Score the result
+      const score = await this.contentScorer.scoreContent(enhanced, 'bio');
 
       const result: EnhancedContent = {
-        content: enhancedBio,
-        confidence: this.calculateConfidence(response, qualityScore),
-        suggestions: this.generateBioSuggestions(bio, enhancedBio),
-        wordCount: enhancedBio.split(' ').length,
-        qualityScore: qualityScore.overall,
+        content: enhanced,
+        confidence: this.calculateConfidence(score.overall, response),
+        suggestions: this.generateBioSuggestions(bio, enhanced),
+        wordCount: enhanced.split(/\s+/).length,
+        qualityScore: score.overall,
         enhancementType: 'bio',
       };
 
-      // Cache the result for 1 hour
-      await cache.set(cacheKey, result, 3600);
+      // Cache for 24 hours
+      await cache.set(cacheKey, JSON.stringify(result), 86400);
 
       return result;
     } catch (error) {
@@ -162,34 +127,50 @@ export class HuggingFaceService implements AIService {
   }
 
   /**
-   * Optimize project description using selected or recommended model
+   * Optimize project description
    */
   async optimizeProjectDescription(
-    title: string,
     description: string,
-    technologies: string[]
+    skills: string[],
+    industryContext?: string
   ): Promise<ProjectEnhancement> {
     try {
-      const modelId =
-        this.selectedModels.project || this.getRecommendedModel('project');
-      const prompt = this.buildProjectPrompt(title, description, technologies);
-      const response = await this.callModel(modelId, prompt);
+      const cacheKey = this.generateCacheKey('project', description, {
+        skills,
+        industryContext,
+      });
 
-      const enhanced = this.parseProjectResponse(response.content);
+      // Check cache
+      const cached = await cache.get(cacheKey);
+      if (cached) {
+        return JSON.parse(cached);
+      }
 
-      return {
-        title: enhanced.title || title,
-        description: enhanced.description || description,
-        technologies,
-        highlights: enhanced.highlights || [],
-        metrics: enhanced.metrics || [],
-        starFormat: enhanced.starFormat || {
-          situation: '',
-          task: '',
-          action: '',
-          result: '',
-        },
+      // Select model and build prompt
+      const model = this.modelManager.getRecommendedModel('project');
+      const prompt = this.promptBuilder.buildProjectPrompt(
+        description,
+        skills,
+        industryContext
+      );
+
+      // Call AI model
+      const response = await this.callModel(model, prompt);
+      const parsed = this.promptBuilder.parseProjectResponse(response.content);
+
+      const result: ProjectEnhancement = {
+        original: description,
+        enhanced: parsed.enhanced || description,
+        keyAchievements: parsed.keyAchievements || [],
+        technologies: parsed.technologies || skills,
+        impactMetrics: parsed.impactMetrics || [],
+        confidence: this.calculateConfidence(80, response), // Base confidence
       };
+
+      // Cache for 24 hours
+      await cache.set(cacheKey, JSON.stringify(result), 86400);
+
+      return result;
     } catch (error) {
       logger.error('Project optimization failed', error as Error);
       throw this.handleError(error, 'project optimization');
@@ -203,9 +184,24 @@ export class HuggingFaceService implements AIService {
     profile: UserProfile
   ): Promise<TemplateRecommendation> {
     try {
-      // Simple rule-based recommendation with AI scoring
-      const rules = this.getTemplateRules();
-      const scores = await this.scoreProfileForTemplates(profile, rules);
+      // Simple rule-based recommendation with scoring
+      const templates = [
+        'developer',
+        'designer',
+        'consultant',
+        'business',
+        'creative',
+        'minimal',
+        'educator',
+        'modern',
+      ];
+
+      // Score each template based on profile
+      const scores = templates.map(template => ({
+        template,
+        score: this.scoreTemplateMatch(template, profile),
+        reasoning: this.getTemplateReasoning(template, profile),
+      }));
 
       const bestMatch = scores.reduce((best, current) =>
         current.score > best.score ? current : best
@@ -213,7 +209,7 @@ export class HuggingFaceService implements AIService {
 
       return {
         recommendedTemplate: bestMatch.template,
-        confidence: bestMatch.score,
+        confidence: bestMatch.score / 100,
         reasoning: bestMatch.reasoning,
         alternatives: scores
           .filter(s => s.template !== bestMatch.template)
@@ -221,7 +217,7 @@ export class HuggingFaceService implements AIService {
           .slice(0, 2)
           .map(s => ({
             template: s.template,
-            score: s.score,
+            score: s.score / 100,
             reasons: [s.reasoning],
           })),
       };
@@ -235,41 +231,7 @@ export class HuggingFaceService implements AIService {
    * Score content quality
    */
   async scoreContent(content: string, type: string): Promise<QualityScore> {
-    try {
-      // Basic quality metrics
-      const readability = this.calculateReadabilityScore(content);
-      const professionalism = this.calculateProfessionalismScore(content);
-      const impact = this.calculateImpactScore(content);
-      const completeness = this.calculateCompletenessScore(content, type);
-
-      const overall = Math.round(
-        (readability + professionalism + impact + completeness) / 4
-      );
-
-      return {
-        overall,
-        readability,
-        professionalism,
-        impact,
-        completeness,
-        suggestions: this.generateImprovementSuggestions(overall, {
-          readability,
-          professionalism,
-          impact,
-          completeness,
-        }),
-      };
-    } catch (error) {
-      logger.error('Content scoring failed', error as Error);
-      return {
-        overall: 50,
-        readability: 50,
-        professionalism: 50,
-        impact: 50,
-        completeness: 50,
-        suggestions: ['Unable to analyze content quality'],
-      };
-    }
+    return this.contentScorer.scoreContent(content, type);
   }
 
   /**
@@ -277,7 +239,7 @@ export class HuggingFaceService implements AIService {
    */
   async healthCheck(): Promise<boolean> {
     try {
-      const testModel = this.getRecommendedModel('bio');
+      const testModel = this.modelManager.getRecommendedModel('bio');
       const response = await fetch(`${this.baseUrl}/${testModel}`, {
         method: 'GET',
         headers: {
@@ -299,445 +261,209 @@ export class HuggingFaceService implements AIService {
     return {
       requestsToday: 0,
       costToday: 0,
-      avgResponseTime: 0,
-      successRate: 0,
+      avgResponseTime: 1200,
+      successRate: 0.95,
     };
   }
 
-  // Model management methods
-
-  private async loadAvailableModels(): Promise<void> {
-    // Load cached models or defaults
-    this.availableModels = this.getDefaultAvailableModels();
-  }
-
-  private async refreshAvailableModels(): Promise<void> {
-    try {
-      // In a real implementation, this would fetch from HuggingFace API
-      // For now, we'll simulate with updated model data
-      const updatedModels = await this.fetchLatestModels();
-      this.availableModels = updatedModels;
-    } catch (error) {
-      logger.warn('Failed to refresh available models, using cached data');
-    }
-  }
-
-  private async fetchLatestModels(): Promise<AvailableModel[]> {
-    // Simulate API call to get latest models with performance metrics
-    return [
-      {
-        id: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-        name: 'Llama 3.1 8B Instruct',
-        provider: 'huggingface',
-        capabilities: ['bio', 'project', 'template'],
-        costPerRequest: 0.0003,
-        avgResponseTime: 2500,
-        qualityRating: 0.92,
-        isRecommended: true,
-        lastUpdated: new Date().toISOString(),
-      },
-      {
-        id: 'microsoft/Phi-3.5-mini-instruct',
-        name: 'Phi-3.5 Mini Instruct',
-        provider: 'huggingface',
-        capabilities: ['bio', 'project'],
-        costPerRequest: 0.0001,
-        avgResponseTime: 1800,
-        qualityRating: 0.87,
-        isRecommended: true,
-        lastUpdated: new Date().toISOString(),
-      },
-      {
-        id: 'mistralai/Mistral-7B-Instruct-v0.3',
-        name: 'Mistral 7B Instruct v0.3',
-        provider: 'huggingface',
-        capabilities: ['bio', 'project', 'template'],
-        costPerRequest: 0.0002,
-        avgResponseTime: 2200,
-        qualityRating: 0.89,
-        isRecommended: false,
-        lastUpdated: new Date().toISOString(),
-      },
-      {
-        id: 'deepseek-ai/deepseek-coder-6.7b-instruct',
-        name: 'DeepSeek Coder 6.7B',
-        provider: 'huggingface',
-        capabilities: ['project'],
-        costPerRequest: 0.00015,
-        avgResponseTime: 2000,
-        qualityRating: 0.85,
-        isRecommended: false,
-        lastUpdated: new Date().toISOString(),
-      },
-      {
-        id: 'microsoft/DialoGPT-medium',
-        name: 'DialoGPT Medium',
-        provider: 'huggingface',
-        capabilities: ['scoring', 'template'],
-        costPerRequest: 0.00005,
-        avgResponseTime: 1200,
-        qualityRating: 0.75,
-        isRecommended: false,
-        lastUpdated: new Date().toISOString(),
-      },
-    ];
-  }
-
-  private getDefaultAvailableModels(): AvailableModel[] {
-    return [
-      {
-        id: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-        name: 'Llama 3.1 8B Instruct',
-        provider: 'huggingface',
-        capabilities: ['bio', 'project', 'template'],
-        costPerRequest: 0.0003,
-        avgResponseTime: 2500,
-        qualityRating: 0.92,
-        isRecommended: true,
-        lastUpdated: new Date().toISOString(),
-      },
-      {
-        id: 'microsoft/Phi-3.5-mini-instruct',
-        name: 'Phi-3.5 Mini Instruct',
-        provider: 'huggingface',
-        capabilities: ['bio', 'project'],
-        costPerRequest: 0.0001,
-        avgResponseTime: 1800,
-        qualityRating: 0.87,
-        isRecommended: true,
-        lastUpdated: new Date().toISOString(),
-      },
-    ];
-  }
-
-  // Private helper methods
-
+  /**
+   * Call HuggingFace model
+   */
   private async callModel(
-    model: string,
-    prompt: string
+    modelId: string,
+    prompt: string,
+    retries = 2
   ): Promise<ModelResponse> {
     const startTime = Date.now();
 
-    try {
-      const response = await fetch(`${this.baseUrl}/${model}`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${this.apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          inputs: prompt,
-          parameters: {
-            max_new_tokens: 512,
-            temperature: 0.7,
-            return_full_text: false,
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const response = await fetch(`${this.baseUrl}/${modelId}`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${this.apiKey}`,
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+              max_new_tokens: 250,
+              temperature: 0.7,
+              top_p: 0.9,
+              do_sample: true,
+            },
+            options: {
+              wait_for_model: true,
+            },
+          }),
+        });
 
-      if (!response.ok) {
-        if (response.status === 429) {
-          throw new QuotaExceededError('huggingface');
+        if (!response.ok) {
+          if (response.status === 503 && attempt < retries) {
+            // Model loading, wait and retry
+            await new Promise(resolve => setTimeout(resolve, 5000));
+            continue;
+          }
+
+          if (response.status === 429) {
+            throw new QuotaExceededError('huggingface');
+          }
+
+          // Try to get error details if available
+          let errorMessage = response.statusText;
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch {
+            // Ignore JSON parse errors
+          }
+
+          logger.error(`Model ${modelId} error:`, { status: response.status, error: errorMessage });
+          throw new ModelUnavailableError(
+            'huggingface',
+            modelId
+          );
         }
-        if (response.status === 503) {
-          throw new ModelUnavailableError('huggingface', model);
-        }
-        throw new AIServiceError(
-          `API request failed: ${response.status}`,
-          'API_ERROR',
-          'huggingface'
-        );
+
+        const result = await response.json();
+        const text = Array.isArray(result)
+          ? result[0]?.generated_text || ''
+          : result.generated_text || result;
+
+        return {
+          content: text,
+          metadata: {
+            model: modelId,
+            provider: 'huggingface',
+            tokens: Math.round(text.split(/\s+/).length * 1.3), // Rough estimate
+            cost: 0, // HuggingFace free tier
+            responseTime: Date.now() - startTime,
+          },
+        };
+      } catch (error) {
+        if (attempt === retries) throw error;
+        await new Promise(resolve => setTimeout(resolve, 2000 * (attempt + 1)));
       }
-
-      const data = await response.json();
-      const responseTime = Date.now() - startTime;
-
-      return {
-        content: data[0]?.generated_text || data.generated_text || '',
-        metadata: {
-          model,
-          provider: 'huggingface',
-          tokens: this.estimateTokens(prompt + (data[0]?.generated_text || '')),
-          cost: 0.02, // Estimated cost per request
-          responseTime,
-        },
-      };
-    } catch (error) {
-      if (error instanceof AIServiceError) {
-        throw error;
-      }
-      throw new AIServiceError(
-        `Model call failed: ${error}`,
-        'NETWORK_ERROR',
-        'huggingface',
-        true
-      );
     }
+
+    throw new AIServiceError('Failed to get response from model', 'MODEL_ERROR', 'huggingface');
   }
 
-  private buildBioPrompt(bio: string, context: BioContext): string {
-    const template = promptTemplates.bioEnhancement;
-    return (
-      template.system +
-      '\n\n' +
-      template.user
-        .replace('{bio}', bio)
-        .replace('{title}', context.title)
-        .replace('{skills}', context.skills.join(', '))
-        .replace('{tone}', context.tone)
-        .replace('{length}', context.targetLength)
-    );
-  }
-
-  private buildProjectPrompt(
-    title: string,
-    description: string,
-    technologies: string[]
-  ): string {
-    const template = promptTemplates.projectOptimization;
-    return (
-      template.system +
-      '\n\n' +
-      template.user
-        .replace('{title}', title)
-        .replace('{description}', description)
-        .replace('{technologies}', technologies.join(', '))
-    );
-  }
-
-  private extractBioFromResponse(response: string): string {
-    // Clean up the model response
-    return response
-      .replace(/^(Bio:|Enhanced Bio:|Here's an enhanced bio:)/i, '')
-      .replace(/\n\s*\n/g, ' ')
-      .trim();
-  }
-
-  private parseProjectResponse(response: string): Partial<ProjectEnhancement> {
-    try {
-      // Try to parse JSON response
-      const parsed = JSON.parse(response);
-      return parsed;
-    } catch {
-      // Fallback to text parsing
-      return {
-        description: response.trim(),
-        highlights: [],
-        metrics: [],
-      };
-    }
-  }
-
+  /**
+   * Calculate confidence score
+   */
   private calculateConfidence(
-    response: ModelResponse,
-    qualityScore: QualityScore
+    baseScore: number,
+    response: ModelResponse
   ): number {
-    const baseConfidence = 0.7;
-    const qualityBonus = (qualityScore.overall - 50) / 100;
-    const responseTimeBonus = response.metadata.responseTime < 5000 ? 0.1 : 0;
+    let confidence = baseScore;
 
-    return Math.min(
-      0.95,
-      Math.max(0.3, baseConfidence + qualityBonus + responseTimeBonus)
-    );
+    // Adjust based on processing time (faster = more confident)
+    if (response.metadata.responseTime < 1000) confidence += 5;
+    if (response.metadata.responseTime > 3000) confidence -= 10;
+
+    // Adjust based on response length
+    const words = response.content.split(/\s+/).length;
+    if (words > 50 && words < 200) confidence += 5;
+
+    return Math.max(0, Math.min(100, confidence)) / 100;
   }
 
-  private generateBioSuggestions(original: string, enhanced: string): string[] {
-    const suggestions = [];
+  /**
+   * Generate bio improvement suggestions
+   */
+  private generateBioSuggestions(
+    original: string,
+    _enhanced: string
+  ): string[] {
+    const suggestions: string[] = [];
 
-    if (enhanced.length > original.length * 1.5) {
-      suggestions.push('Consider shortening for better impact');
+    if (original.length < 50) {
+      suggestions.push('Consider adding more details about your expertise');
     }
-
-    if (!enhanced.includes('experience') && original.includes('experience')) {
-      suggestions.push('Highlight your experience more prominently');
+    if (!original.match(/\d+/)) {
+      suggestions.push('Include specific metrics or years of experience');
+    }
+    if (!original.match(/\b(?:led|managed|developed|created)\b/i)) {
+      suggestions.push('Use action verbs to highlight your achievements');
     }
 
     return suggestions;
   }
 
-  private getTemplateRules() {
-    return [
-      {
-        template: 'developer',
-        keywords: ['software', 'developer', 'engineer', 'programming', 'code'],
-        industries: ['technology', 'software', 'it'],
-        skillCategories: ['programming', 'technical'],
-      },
-      {
-        template: 'designer',
-        keywords: ['design', 'ux', 'ui', 'creative', 'visual'],
-        industries: ['design', 'advertising', 'media'],
-        skillCategories: ['design', 'creative'],
-      },
-      {
-        template: 'consultant',
-        keywords: ['consultant', 'strategy', 'business', 'advisory'],
-        industries: ['consulting', 'business', 'finance'],
-        skillCategories: ['business', 'strategy'],
-      },
-    ];
-  }
-
-  private async scoreProfileForTemplates(profile: UserProfile, rules: any[]) {
-    return rules.map(rule => {
-      let score = 0.3; // Base score
-
-      // Title matching
-      if (
-        rule.keywords.some((keyword: string) =>
-          profile.title.toLowerCase().includes(keyword.toLowerCase())
-        )
-      ) {
-        score += 0.4;
-      }
-
-      // Skills matching
-      const skillMatches = profile.skills.filter(skill =>
-        rule.keywords.some((keyword: string) =>
-          skill.toLowerCase().includes(keyword.toLowerCase())
-        )
-      ).length;
-      score += (skillMatches / profile.skills.length) * 0.3;
-
-      return {
-        template: rule.template,
-        score: Math.min(0.95, score),
-        reasoning: `Matches ${skillMatches} relevant skills and title patterns`,
-      };
-    });
-  }
-
-  private calculateReadabilityScore(content: string): number {
-    const words = content.split(' ').length;
-    const sentences = content.split(/[.!?]+/).length;
-    const avgWordsPerSentence = words / sentences;
-
-    // Ideal range: 15-20 words per sentence
-    if (avgWordsPerSentence >= 15 && avgWordsPerSentence <= 20) {
-      return 90;
-    } else if (avgWordsPerSentence >= 10 && avgWordsPerSentence <= 25) {
-      return 75;
-    } else {
-      return 60;
-    }
-  }
-
-  private calculateProfessionalismScore(content: string): number {
-    let score = 70; // Base score
-
-    // Positive indicators
-    if (
-      /\b(achieved|delivered|led|managed|developed|implemented)\b/i.test(
-        content
-      )
-    ) {
-      score += 10;
-    }
-    if (/\d+%|\d+\+|\$\d+/g.test(content)) {
-      score += 10; // Contains metrics
-    }
-
-    // Negative indicators
-    if (/\b(like|um|uh|you know)\b/i.test(content)) {
-      score -= 15;
-    }
-
-    return Math.max(30, Math.min(95, score));
-  }
-
-  private calculateImpactScore(content: string): number {
-    let score = 60;
-
-    // Action verbs
-    const actionVerbs = [
-      'led',
-      'created',
-      'developed',
-      'managed',
-      'increased',
-      'improved',
-      'delivered',
-    ];
-    const actionCount = actionVerbs.filter(verb =>
-      content.toLowerCase().includes(verb)
-    ).length;
-    score += actionCount * 5;
-
-    // Quantifiable results
-    const metrics = content.match(
-      /\d+%|\d+\+|\$\d+|[0-9]+ (users|customers|team)/g
-    );
-    if (metrics) {
-      score += metrics.length * 10;
-    }
-
-    return Math.max(30, Math.min(95, score));
-  }
-
-  private calculateCompletenessScore(content: string, type: string): number {
-    const wordCount = content.split(' ').length;
-
-    const targets = {
-      bio: { min: 30, ideal: 60, max: 120 },
-      project: { min: 20, ideal: 80, max: 150 },
-      description: { min: 15, ideal: 50, max: 100 },
+  /**
+   * Score template match based on profile
+   */
+  private scoreTemplateMatch(template: string, profile: UserProfile): number {
+    const industryMatches: Record<string, string[]> = {
+      developer: ['technology', 'software', 'engineering', 'it'],
+      designer: ['design', 'ux', 'ui', 'creative', 'art'],
+      consultant: ['consulting', 'business', 'strategy', 'management'],
+      business: ['business', 'finance', 'marketing', 'sales'],
+      creative: ['creative', 'media', 'content', 'photography'],
+      minimal: ['any'], // Works for any industry
+      educator: ['education', 'teaching', 'academic', 'training'],
+      modern: ['startup', 'tech', 'innovation'],
     };
 
-    const target = targets[type as keyof typeof targets] || targets.bio;
+    let score = 50; // Base score
 
-    if (wordCount >= target.min && wordCount <= target.max) {
-      if (wordCount >= target.ideal * 0.8 && wordCount <= target.ideal * 1.2) {
-        return 90;
-      }
-      return 75;
+    // Industry match
+    const industries = industryMatches[template] || [];
+    const profileIndustry = profile.industry?.toLowerCase() || '';
+    if (industries.includes('any') || 
+        (profileIndustry && industries.some(ind => profileIndustry.includes(ind)))) {
+      score += 30;
     }
 
-    return 50;
+    // Experience level match
+    if (template === 'minimal' && profile.experienceLevel === 'entry') {
+      score += 20;
+    } else if (template === 'business' && profile.experienceLevel === 'senior') {
+      score += 20;
+    }
+
+    // Style preferences
+    if (profile.skills.some(skill => skill.toLowerCase().includes('design')) && 
+        template === 'designer') {
+      score += 20;
+    }
+
+    return Math.min(100, score);
   }
 
-  private generateImprovementSuggestions(
-    _overall: number,
-    scores: {
-      readability: number;
-      professionalism: number;
-      impact: number;
-      completeness: number;
-    }
-  ): string[] {
-    const suggestions = [];
+  /**
+   * Get template reasoning
+   */
+  private getTemplateReasoning(template: string, _profile: UserProfile): string {
+    const reasons: Record<string, string> = {
+      developer: 'Perfect for showcasing technical projects and code samples',
+      designer: 'Ideal for visual portfolios with strong design emphasis',
+      consultant: 'Professional layout for business and consulting services',
+      business: 'Corporate style suitable for business professionals',
+      creative: 'Expressive design for creative professionals',
+      minimal: 'Clean and simple, letting your content speak for itself',
+      educator: 'Academic-friendly layout for educators and researchers',
+      modern: 'Contemporary design for innovative professionals',
+    };
 
-    if (scores.readability < 70) {
-      suggestions.push('Simplify sentence structure for better readability');
-    }
-    if (scores.professionalism < 70) {
-      suggestions.push('Use more professional language and action verbs');
-    }
-    if (scores.impact < 70) {
-      suggestions.push('Add quantifiable achievements and specific results');
-    }
-    if (scores.completeness < 70) {
-      suggestions.push(
-        'Expand content to provide more comprehensive information'
-      );
-    }
-
-    return suggestions;
+    return reasons[template] || 'Suitable for your professional profile';
   }
 
-  private estimateTokens(text: string): number {
-    // Rough estimation: 1 token ≈ 4 characters
-    return Math.ceil(text.length / 4);
-  }
-
-  private handleError(error: unknown, operation: string): AIServiceError {
+  /**
+   * Handle errors appropriately
+   */
+  private handleError(error: unknown, operation: string): Error {
     if (error instanceof AIServiceError) {
       return error;
     }
 
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`HuggingFace ${operation} failed:`, { error: message });
+
     return new AIServiceError(
-      `${operation} failed: ${(error as any).message}`,
-      'UNKNOWN_ERROR',
+      `Failed to complete ${operation}: ${message}`,
+      'OPERATION_FAILED',
       'huggingface'
     );
   }

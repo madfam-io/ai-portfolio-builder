@@ -103,30 +103,25 @@ describe('AIClient', () => {
         json: async () => ({
           success: true,
           data: {
-            title: 'E-commerce Platform',
-            description: 'Enhanced description',
+            original: 'Built an online store',
+            enhanced: 'Enhanced description',
+            keyAchievements: ['10k+ users'],
             technologies: ['React', 'Node.js'],
-            highlights: ['10k+ users'],
-            metrics: ['99.9% uptime'],
-            starFormat: {
-              situation: 'Business needed online presence',
-              task: 'Build scalable platform',
-              action: 'Developed full-stack solution',
-              result: 'Achieved 10k+ users',
-            },
+            impactMetrics: ['99.9% uptime'],
+            confidence: 0.95,
           },
         }),
       };
       mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.optimizeProject(
-        'E-commerce Platform',
         'Built an online store',
-        ['React', 'Node.js']
+        ['React', 'Node.js'],
+        'E-commerce Platform'
       );
 
-      expect(result.description).toBe('Enhanced description');
-      expect(result.highlights).toContain('10k+ users');
+      expect(result.enhanced).toBe('Enhanced description');
+      expect(result.keyAchievements).toContain('10k+ users');
     });
 
     it('should handle batch optimization', async () => {
@@ -138,7 +133,14 @@ describe('AIClient', () => {
             results: [
               {
                 success: true,
-                data: { description: 'Enhanced 1' },
+                data: { 
+                  original: 'Desc 1',
+                  enhanced: 'Enhanced 1',
+                  keyAchievements: [],
+                  technologies: ['React'],
+                  impactMetrics: [],
+                  confidence: 0.9
+                },
                 error: null,
               },
               { success: false, data: null, error: 'Failed to process' },
@@ -150,8 +152,8 @@ describe('AIClient', () => {
       mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const projects = [
-        { title: 'Project 1', description: 'Desc 1', technologies: ['React'] },
-        { title: 'Project 2', description: 'Desc 2', technologies: ['Vue'] },
+        { description: 'Desc 1', technologies: ['React'], industryContext: 'Project 1' },
+        { description: 'Desc 2', technologies: ['Vue'], industryContext: 'Project 2' },
       ];
 
       const result = await client.optimizeProjectsBatch(projects);

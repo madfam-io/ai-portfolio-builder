@@ -79,7 +79,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    const { title, description, technologies, context } = validationResult.data;
+    const { title: _title, description, technologies, context } = validationResult.data;
 
     // 3. Initialize AI service
     const aiService = new HuggingFaceService();
@@ -95,21 +95,21 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     // 5. Optimize project description using AI
     const optimizedProject = await aiService.optimizeProjectDescription(
-      title,
       description,
-      technologies
+      technologies,
+      context?.industry
     );
 
     // 6. Score the optimized content
     const qualityScore = await aiService.scoreContent(
-      optimizedProject.description,
+      optimizedProject.enhanced,
       'project'
     );
 
     // 7. Log usage for analytics
     await logAIUsage(user.id, 'project_optimization', {
       originalLength: description.length,
-      optimizedLength: optimizedProject.description.length,
+      optimizedLength: optimizedProject.enhanced.length,
       technologiesCount: technologies.length,
       qualityScore: qualityScore.overall,
       context,
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       },
       metadata: {
         originalLength: description.length,
-        optimizedLength: optimizedProject.description.length,
+        optimizedLength: optimizedProject.enhanced.length,
         improvementSuggestions: qualityScore.suggestions,
         processingTime: new Date().toISOString(),
       },
@@ -240,16 +240,15 @@ export async function PUT(request: NextRequest): Promise<Response> {
       validationResults.map(async (result, index) => {
         if (!result.success) return null;
 
-        const { title, description, technologies } = result.data;
+        const { title: _title, description, technologies } = result.data;
 
         const optimized = await aiService.optimizeProjectDescription(
-          title,
           description,
           technologies
         );
 
         const qualityScore = await aiService.scoreContent(
-          optimized.description,
+          optimized.enhanced,
           'project'
         );
 

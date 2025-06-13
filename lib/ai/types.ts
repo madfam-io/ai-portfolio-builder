@@ -29,17 +29,12 @@ export interface BioContext {
 
 // Project enhancement
 export interface ProjectEnhancement {
-  title: string;
-  description: string;
+  original: string;
+  enhanced: string;
+  keyAchievements: string[];
   technologies: string[];
-  highlights: string[];
-  metrics?: string[];
-  starFormat: {
-    situation: string;
-    task: string;
-    action: string;
-    result: string;
-  };
+  impactMetrics: string[];
+  confidence: number;
 }
 
 // Template recommendation
@@ -88,9 +83,9 @@ export interface ModelConfig {
 export interface AIService {
   enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent>;
   optimizeProjectDescription(
-    title: string,
     description: string,
-    technologies: string[]
+    technologies: string[],
+    industryContext?: string
   ): Promise<ProjectEnhancement>;
   recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation>;
   scoreContent(content: string, type: string): Promise<QualityScore>;

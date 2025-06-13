@@ -396,7 +396,7 @@ export class GitHubAnalyticsClient {
     }
 
     try {
-      const params: any = {
+      const params: Parameters<typeof this.octokit.repos.listCommits>[0] = {
         owner,
         repo,
         per_page: options.perPage || 30,

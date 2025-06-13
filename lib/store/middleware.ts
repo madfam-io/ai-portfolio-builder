@@ -19,13 +19,13 @@ export const logger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) =>
     config(
-      ((partial: any, replace?: any) => {
+      ((partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: boolean | undefined) => {
         if (process.env.NODE_ENV === 'development') {
-          utilLogger.debug('  applying', partial);
-          set(partial, replace);
-          utilLogger.debug('  new state', { state: get() });
+          utilLogger.debug('  applying', { partial: partial as unknown });
+          (set as any)(partial, replace);
+          utilLogger.debug('  new state', { state: get() as unknown });
         } else {
-          set(partial, replace);
+          (set as any)(partial, replace);
         }
       }) as typeof set,
       get,
@@ -82,16 +82,16 @@ export const actionLogger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) => {
     const state = config(
-      ((partial: any, replace?: any) => {
+      ((partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: boolean | undefined) => {
         if (process.env.NODE_ENV === 'development') {
           // const timestamp = new Date().toISOString();
           // Group logging removed
-          utilLogger.debug('Previous State:', { state: get() });
-          set(partial, replace);
-          utilLogger.debug('Next State:', { state: get() });
+          utilLogger.debug('Previous State:', { state: get() as unknown });
+          (set as any)(partial, replace);
+          utilLogger.debug('Next State:', { state: get() as unknown });
           // Group end removed
         } else {
-          set(partial, replace);
+          (set as any)(partial, replace);
         }
       }) as typeof set,
       get,
@@ -99,18 +99,18 @@ export const actionLogger =
     );
 
     // Wrap actions to log them
-    const wrappedState: any = {};
+    const wrappedState: T = {} as T;
 
     for (const key in state) {
       if (typeof state[key as keyof typeof state] === 'function') {
-        wrappedState[key] = (...args: any[]) => {
+        wrappedState[key as keyof T] = ((...args: unknown[]) => {
           if (process.env.NODE_ENV === 'development') {
             utilLogger.debug(`[${_storeName}] Action: ${key}`, { args });
           }
-          return (state[key as keyof typeof state] as any)(...args);
-        };
+          return (state[key as keyof typeof state] as (...args: unknown[]) => unknown)(...args);
+        }) as T[keyof T];
       } else {
-        wrappedState[key] = state[key as keyof typeof state];
+        (wrappedState as any)[key] = state[key as keyof typeof state];
       }
     }
 

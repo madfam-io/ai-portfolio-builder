@@ -65,7 +65,10 @@ export async function apiVersionMiddleware(
   const version = extractApiVersion(pathname);
 
   // If no version specified, redirect to current version
-  if ((!version && pathname === '/api/') || pathname.match(/^\/api\/[^v]/)) {
+  const isApiRootPath = !version && pathname === '/api/';
+  const isNonVersionedApiPath = pathname.match(/^\/api\/[^v]/) !== null;
+  
+  if (isApiRootPath || isNonVersionedApiPath) {
     const newPathname = pathname.replace(
       '/api/',
       `/api/${API_VERSION_CONFIG._currentVersion}/`
@@ -157,7 +160,7 @@ export function createVersionedResponse<T>(
 /**
  * Helper to handle version-specific logic in route handlers
  */
-export function withApiVersion<T extends (...args: any[]) => any>(
+export function withApiVersion<T extends (...args: unknown[]) => unknown>(
   _handler: T,
   options?: {
     minVersion?: string;

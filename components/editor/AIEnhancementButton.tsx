@@ -42,17 +42,17 @@ async function enhanceProjectContent(
   context: ProjectContext | undefined,
   onEnhanced: (content: string, suggestions?: string[]) => void
 ): Promise<string> {
-  const title = context?.title || '';
   const description = context?.description || content;
   const technologies = context?.technologies || [];
+  const industryContext = context?.title; // Use title as industry context if provided
 
   const result = await aiClient.optimizeProject(
-    title,
     description,
-    technologies
+    technologies,
+    industryContext
   );
-  onEnhanced(result.description, result.highlights);
-  return result.description;
+  onEnhanced(result.enhanced, result.keyAchievements);
+  return result.enhanced;
 }
 
 // Helper function to determine error message

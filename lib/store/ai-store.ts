@@ -149,16 +149,16 @@ export const useAIStore = create<AIState & AIActions>()(
               aiClient.updateModelSelection('project', selectedModels.project);
 
               const enhanced = await aiClient.optimizeProject(
-                'Project',
                 text,
-                []
+                [],
+                'Project'
               );
 
               const enhancement: AIEnhancement = {
                 id: `enhancement-${Date.now()}`,
                 type: 'project',
                 originalText: text,
-                enhancedText: enhanced.description,
+                enhancedText: enhanced.enhanced,
                 model: selectedModels.project,
                 timestamp: new Date(),
                 quality: 0.8,
@@ -170,7 +170,7 @@ export const useAIStore = create<AIState & AIActions>()(
                 state.isProcessing = false;
               });
 
-              return enhanced.description;
+              return enhanced.enhanced;
             } catch (error: unknown) {
               set(state => {
                 state.error =

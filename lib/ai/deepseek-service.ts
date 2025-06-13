@@ -93,15 +93,15 @@ export class DeepSeekService implements AIService {
    * Optimize project description using DeepSeek
    */
   async optimizeProjectDescription(
-    title: string,
     description: string,
-    technologies: string[]
+    technologies: string[],
+    industryContext?: string
   ): Promise<ProjectEnhancement> {
     try {
-      const prompt = this.buildProjectPrompt(title, description, technologies);
+      const prompt = this.buildProjectPrompt(description, technologies, industryContext);
       const response = await this.callDeepSeek(prompt);
 
-      return this.parseProjectResponse(response, title, technologies);
+      return this.parseProjectResponse(response, description, technologies);
     } catch (error) {
       this.usageStats.failedRequests++;
       if (error instanceof AIServiceError) {
@@ -297,17 +297,17 @@ Please enhance this bio to be more compelling while keeping it authentic. Use re
    * Build project optimization prompt
    */
   private buildProjectPrompt(
-    title: string,
     description: string,
-    technologies: string[]
+    technologies: string[],
+    industryContext?: string
   ): string {
+    const contextLine = industryContext ? `\nIndustry/Context: "${industryContext}"` : '';
     return `${PROJECT_PROMPTS.optimize}
 
-Project: "${title}"
 Description: "${description}"
-Technologies: ${technologies.join(', ')}
+Technologies: ${technologies.join(', ')}${contextLine}
 
-Please optimize this project description using the STAR format (Situation, Task, Action, Result). Use reasoning to identify key achievements and metrics that would make this project stand out.`;
+Please optimize this project description to highlight key achievements, quantifiable results, and technical impact. Focus on specific metrics and outcomes.`;
   }
 
   /**
@@ -375,35 +375,25 @@ Also provide specific suggestions for improvement. Use reasoning to explain your
    */
   private parseProjectResponse(
     response: DeepSeekResponse,
-    title: string,
+    originalDescription: string,
     technologies: string[]
   ): ProjectEnhancement {
     const content = response.choices[0]?.message?.content || '';
 
-    // Parse STAR format from response
-    const starMatch = content.match(
-      /Situation: (.+?)\nTask: (.+?)\nAction: (.+?)\nResult: (.+?)(?:\n|$)/
-    );
+    // Extract key achievements and impact metrics
+    const keyAchievements = this.extractHighlights(content);
+    const impactMetrics = this.extractMetrics(content);
+
+    // Calculate confidence based on content quality
+    const confidence = this.calculateConfidence(content, keyAchievements, impactMetrics);
 
     return {
-      title,
-      description: content,
+      original: originalDescription,
+      enhanced: content,
+      keyAchievements,
       technologies,
-      highlights: this.extractHighlights(content),
-      metrics: this.extractMetrics(content),
-      starFormat: starMatch
-        ? {
-            situation: starMatch[1]?.trim() || 'Context not specified',
-            task: starMatch[2]?.trim() || 'Goals not specified',
-            action: starMatch[3]?.trim() || 'Implementation details needed',
-            result: starMatch[4]?.trim() || 'Results not quantified',
-          }
-        : {
-            situation: 'Context not specified',
-            task: 'Goals not specified',
-            action: 'Implementation details needed',
-            result: 'Results not quantified',
-          },
+      impactMetrics,
+      confidence,
     };
   }
 
@@ -600,6 +590,25 @@ Also provide specific suggestions for improvement. Use reasoning to explain your
     if (content.split('.').length > 3) score += 10; // Multiple sentences
 
     return Math.min(score, 100);
+  }
+
+  /**
+   * Calculate confidence score for project enhancement
+   */
+  private calculateConfidence(
+    content: string,
+    keyAchievements: string[],
+    impactMetrics: string[]
+  ): number {
+    let confidence = 0.5; // Base confidence
+
+    // Increase confidence based on content quality
+    if (content.length > 100) confidence += 0.1;
+    if (keyAchievements.length > 0) confidence += 0.15;
+    if (impactMetrics.length > 0) confidence += 0.15;
+    if (content.includes('increased') || content.includes('improved')) confidence += 0.1;
+
+    return Math.min(confidence, 1.0);
   }
 
   /**
