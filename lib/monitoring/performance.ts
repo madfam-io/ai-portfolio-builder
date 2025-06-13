@@ -158,8 +158,36 @@ export class PerformanceMonitor {
   }
 }
 
-// Global performance monitor instance
-export const perfMonitor = new PerformanceMonitor();
+// Global performance monitor instance with cleanup
+class PerformanceMonitorSingleton extends PerformanceMonitor {
+  private static instance: PerformanceMonitorSingleton | null = null;
+  private observers: PerformanceObserver[] = [];
+
+  static getInstance(): PerformanceMonitorSingleton {
+    if (!PerformanceMonitorSingleton.instance) {
+      PerformanceMonitorSingleton.instance = new PerformanceMonitorSingleton();
+    }
+    return PerformanceMonitorSingleton.instance;
+  }
+
+  registerObserver(observer: PerformanceObserver): void {
+    this.observers.push(observer);
+  }
+
+  destroy(): void {
+    // Disconnect all observers
+    this.observers.forEach(observer => observer.disconnect());
+    this.observers = [];
+    
+    // Clear all data
+    this.clear();
+    
+    // Reset singleton instance
+    PerformanceMonitorSingleton.instance = null;
+  }
+}
+
+export const perfMonitor = PerformanceMonitorSingleton.getInstance();
 
 // Performance stats storage
 const performanceStats: Record<

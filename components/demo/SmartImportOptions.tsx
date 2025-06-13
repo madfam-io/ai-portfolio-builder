@@ -8,7 +8,7 @@ import {
   FiArrowRight,
   FiCheck,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';

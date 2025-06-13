@@ -64,7 +64,9 @@ export default function RootLayout({
                       if (parsed.state && parsed.state.theme) {
                         theme = parsed.state.theme;
                       }
-                    } catch (e) {}
+                    } catch (e) {
+                      // Silent fallback if parsing fails
+                    }
                   }
                   
                   // Apply theme

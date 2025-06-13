@@ -20,11 +20,14 @@ export async function POST(
       return unauthorizedResponse();
     }
 
-    // TODO: Verify user owns this portfolio
-    // const portfolio = await portfolioService.getPortfolio(id);
-    // if (portfolio?.userId !== user.id) {
-    //   return forbiddenResponse();
-    // }
+    // Verify user owns this portfolio
+    const portfolio = await portfolioService.getPortfolio(id);
+    if (!portfolio || portfolio.userId !== user.id) {
+      return NextResponse.json(
+        { error: 'Portfolio not found or access denied' },
+        { status: 403 }
+      );
+    }
 
     const published = await portfolioService.publishPortfolio(id);
 

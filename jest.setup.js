@@ -152,13 +152,13 @@ jest.mock('next/navigation', () => ({
   redirect: jest.fn(),
 }));
 
-// Mock environment variables
+// Mock environment variables - use dynamic values instead of hardcoded
 process.env = {
   ...process.env,
   NODE_ENV: 'test',
-  NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
-  NEXT_PUBLIC_APP_URL: 'http://localhost:3000',
+  NEXT_PUBLIC_SUPABASE_URL: process.env.TEST_SUPABASE_URL || 'https://test-project.supabase.co',
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key-' + Math.random().toString(36).substring(7),
+  NEXT_PUBLIC_APP_URL: process.env.TEST_APP_URL || 'http://localhost:3000',
 };
 
 // Mock Supabase client

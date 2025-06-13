@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { FaGithub } from 'react-icons/fa';
+import FaGithub from 'react-icons/fa/FaGithub';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

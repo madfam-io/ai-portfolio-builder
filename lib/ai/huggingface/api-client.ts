@@ -3,6 +3,7 @@
  * Handles all API communication with HuggingFace Inference API
  */
 
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
 import { logger } from '@/lib/utils/logger';
 
 import {
@@ -12,9 +13,62 @@ import {
   ModelResponse,
 } from '../types';
 
+// Request queue to prevent rate limiting
+class RequestQueue {
+  private queue: Array<() => Promise<any>> = [];
+  private processing = false;
+  private readonly concurrency = 2; // Max concurrent requests
+  private activeRequests = 0;
+  private readonly minDelay = 1000; // Minimum delay between requests (ms)
+  private lastRequestTime = 0;
+
+  async add<T>(request: () => Promise<T>): Promise<T> {
+    return new Promise((resolve, reject) => {
+      this.queue.push(async () => {
+        try {
+          const result = await request();
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        }
+      });
+      this.process();
+    });
+  }
+
+  private async process(): Promise<void> {
+    if (this.processing || this.activeRequests >= this.concurrency) return;
+    
+    const request = this.queue.shift();
+    if (!request) return;
+
+    this.processing = true;
+    this.activeRequests++;
+
+    // Ensure minimum delay between requests
+    const timeSinceLastRequest = Date.now() - this.lastRequestTime;
+    if (timeSinceLastRequest < this.minDelay) {
+      await new Promise(resolve => setTimeout(resolve, this.minDelay - timeSinceLastRequest));
+    }
+
+    try {
+      this.lastRequestTime = Date.now();
+      await request();
+    } finally {
+      this.activeRequests--;
+      this.processing = false;
+      // Process next request
+      setTimeout(() => this.process(), 0);
+    }
+  }
+}
+
 export class HuggingFaceAPIClient {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://api-inference.huggingface.co/models';
+  private readonly requestQueue = new RequestQueue();
+  private readonly timeout = 5000; // 5 second timeout
+  private readonly maxRetries = 3;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;
@@ -28,9 +82,33 @@ export class HuggingFaceAPIClient {
     prompt: string,
     parameters: Record<string, any> = {}
   ): Promise<ModelResponse> {
+    // Use request queue to prevent rate limiting
+    return this.requestQueue.add(() => 
+      this.makeRequestWithRetry(modelId, prompt, parameters)
+    );
+  }
+
+  private async makeRequestWithRetry(
+    modelId: string,
+    prompt: string,
+    parameters: Record<string, any> = {},
+    attempt = 1
+  ): Promise<ModelResponse> {
+    // Check cache first
+    const cacheKey = `${CACHE_KEYS.AI_RESULT}${modelId}:${this.hashPrompt(prompt, parameters)}`;
+    const cachedResponse = await cache.get<ModelResponse>(cacheKey);
+    if (cachedResponse) {
+      logger.info('Returning cached AI response', { modelId, cacheKey });
+      return cachedResponse;
+    }
+
     const startTime = Date.now();
 
     try {
+      // Create abort controller for timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
       const response = await fetch(`${this.baseUrl}/${modelId}`, {
         method: 'POST',
         headers: {
@@ -48,11 +126,21 @@ export class HuggingFaceAPIClient {
             ...parameters,
           },
         }),
+        signal: controller.signal,
       });
+
+      clearTimeout(timeoutId);
 
       const responseTime = Date.now() - startTime;
 
       if (!response.ok) {
+        // Retry on 503 (model loading) or 429 (rate limit)
+        if ((response.status === 503 || response.status === 429) && attempt < this.maxRetries) {
+          const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 10000); // Exponential backoff
+          logger.warn(`Retrying request after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`);
+          await new Promise(resolve => setTimeout(resolve, backoffDelay));
+          return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
+        }
         await this.handleAPIError(response, modelId);
       }
 
@@ -63,7 +151,7 @@ export class HuggingFaceAPIClient {
         ? data[0]?.generated_text || ''
         : data.generated_text || data.error || '';
 
-      return {
+      const modelResponse: ModelResponse = {
         content: generatedText,
         metadata: {
           model: modelId,
@@ -73,13 +161,42 @@ export class HuggingFaceAPIClient {
           responseTime,
         },
       };
+
+      // Cache successful response for 1 hour
+      await cache.set(cacheKey, modelResponse, 3600);
+
+      return modelResponse;
     } catch (error) {
       logger.error('HuggingFace API request failed', error as Error, {
         modelId,
+        attempt,
       });
+
+      // Handle timeout
+      if (error instanceof Error && error.name === 'AbortError') {
+        if (attempt < this.maxRetries) {
+          logger.warn(`Request timeout, retrying (attempt ${attempt}/${this.maxRetries})`);
+          return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
+        }
+        throw new AIServiceError(
+          'Request timeout after 5 seconds',
+          'TIMEOUT',
+          'huggingface',
+          true
+        );
+      }
 
       if (error instanceof AIServiceError) {
         throw error;
+      }
+
+      // Retry on network errors
+      if (attempt < this.maxRetries && error instanceof Error && 
+          (error.message.includes('fetch') || error.message.includes('network'))) {
+        const backoffDelay = Math.min(1000 * Math.pow(2, attempt - 1), 10000);
+        logger.warn(`Network error, retrying after ${backoffDelay}ms (attempt ${attempt}/${this.maxRetries})`);
+        await new Promise(resolve => setTimeout(resolve, backoffDelay));
+        return this.makeRequestWithRetry(modelId, prompt, parameters, attempt + 1);
       }
 
       throw new AIServiceError(
@@ -128,6 +245,21 @@ export class HuggingFaceAPIClient {
           response.status >= 500
         );
     }
+  }
+
+  /**
+   * Generate a hash for caching
+   */
+  private hashPrompt(prompt: string, parameters: Record<string, any>): string {
+    const content = prompt + JSON.stringify(parameters);
+    // Simple hash function for cache key
+    let hash = 0;
+    for (let i = 0; i < content.length; i++) {
+      const char = content.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash).toString(36);
   }
 
   /**

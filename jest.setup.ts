@@ -125,8 +125,8 @@ global.fetch = jest.fn(() =>
   })
 ) as jest.Mock;
 
-// Mock environment variables
-process.env.NEXT_PUBLIC_SUPABASE_URL = 'http://localhost:54321';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = 'mock-anon-key';
-process.env.SUPABASE_SERVICE_ROLE_KEY = 'mock-service-key';
-process.env.HUGGINGFACE_API_KEY = 'mock-hf-key';
+// Mock environment variables - use dynamic values instead of hardcoded
+process.env.NEXT_PUBLIC_SUPABASE_URL = process.env.TEST_SUPABASE_URL || 'http://localhost:54321';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key-' + Math.random().toString(36).substring(7);
+process.env.SUPABASE_SERVICE_ROLE_KEY = process.env.TEST_SUPABASE_SERVICE_KEY || 'test-service-key-' + Math.random().toString(36).substring(7);
+process.env.HUGGINGFACE_API_KEY = process.env.TEST_HUGGINGFACE_API_KEY || 'test-hf-key-' + Math.random().toString(36).substring(7);

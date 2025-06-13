@@ -8,7 +8,7 @@
 'use client';
 
 import React from 'react';
-import { FiLoader } from 'react-icons/fi';
+import FiLoader from 'react-icons/fi/FiLoader';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

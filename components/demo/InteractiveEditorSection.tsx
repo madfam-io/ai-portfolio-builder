@@ -1,0 +1,187 @@
+'use client';
+
+import React from 'react';
+import FiUser from 'react-icons/fi/FiUser';
+import FiBriefcase from 'react-icons/fi/FiBriefcase';
+import FiAward from 'react-icons/fi/FiAward';
+import FiEdit from 'react-icons/fi/FiEdit';
+import FiTrash from 'react-icons/fi/FiTrash';
+import FiPlus from 'react-icons/fi/FiPlus';
+import FiSettings from 'react-icons/fi/FiSettings';
+import FiPalette from 'react-icons/fi/FiPalette';
+import FiLayout from 'react-icons/fi/FiLayout';
+
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
+import { Portfolio, PortfolioSection } from '@/types/portfolio';
+
+interface InteractiveEditorSectionProps {
+  portfolio: Portfolio;
+  activeSection: string;
+  showImportOptions: boolean;
+  t: any; // TODO: Add proper translation type
+  onPortfolioChange: (portfolio: Portfolio) => void;
+  onSectionChange: (section: string) => void;
+  onToggleImportOptions: () => void;
+  onPreviousStep: () => void;
+  onNextStep: () => void;
+}
+
+export function InteractiveEditorSection({
+  portfolio,
+  activeSection,
+  showImportOptions,
+  t,
+  onPortfolioChange,
+  onSectionChange,
+  onToggleImportOptions,
+  onPreviousStep,
+  onNextStep,
+}: InteractiveEditorSectionProps): React.ReactElement {
+  const handleSectionUpdate = (sectionId: string, content: any) => {
+    const updatedSections = portfolio.sections.map(section =>
+      section.id === sectionId ? { ...section, content } : section
+    );
+    onPortfolioChange({ ...portfolio, sections: updatedSections });
+  };
+
+  const handleDeleteSection = (sectionId: string) => {
+    const updatedSections = portfolio.sections.filter(
+      section => section.id !== sectionId
+    );
+    onPortfolioChange({ ...portfolio, sections: updatedSections });
+  };
+
+  const handleAddSection = () => {
+    const newSection: PortfolioSection = {
+      id: `section-${Date.now()}`,
+      type: 'custom',
+      title: 'New Section',
+      enabled: true,
+      content: { text: 'Add your content here...' },
+    };
+    onPortfolioChange({
+      ...portfolio,
+      sections: [...portfolio.sections, newSection],
+    });
+  };
+
+  const sections = [
+    { id: 'bio', label: t.demoSectionBio, icon: FiUser },
+    { id: 'experience', label: t.demoSectionExperience, icon: FiBriefcase },
+    { id: 'skills', label: t.demoSectionSkills, icon: FiAward },
+  ];
+
+  return (
+    <div className="flex h-full">
+      {/* Sidebar */}
+      <div className="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
+        <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
+          {t.demoSections}
+        </h3>
+        <div className="space-y-2">
+          {sections.map(section => (
+            <button
+              key={section.id}
+              onClick={() => onSectionChange(section.id)}
+              className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                activeSection === section.id
+                  ? 'bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              <section.icon className="w-4 h-4" />
+              <span className="text-sm font-medium">{section.label}</span>
+            </button>
+          ))}
+          <button
+            onClick={handleAddSection}
+            className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+          >
+            <FiPlus className="w-4 h-4" />
+            <span className="text-sm font-medium">{t.demoAddSection}</span>
+          </button>
+        </div>
+
+        {/* Tools Section */}
+        <div className="mt-8">
+          <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+            {t.demoTools}
+          </h4>
+          <div className="space-y-2">
+            <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <FiPalette className="w-4 h-4" />
+              <span className="text-sm">{t.demoCustomizeTheme}</span>
+            </button>
+            <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <FiLayout className="w-4 h-4" />
+              <span className="text-sm">{t.demoChangeLayout}</span>
+            </button>
+            <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
+              <FiSettings className="w-4 h-4" />
+              <span className="text-sm">{t.demoSettings}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Editor Content */}
+      <div className="flex-1 p-6">
+        <div className="mb-6">
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {t.demoEditPortfolio}
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            {t.demoEditorDescription}
+          </p>
+        </div>
+
+        {/* Smart Import Options */}
+        {showImportOptions && (
+          <div className="mb-6">
+            <SmartImportOptions onImport={onToggleImportOptions} />
+          </div>
+        )}
+
+        {/* Editor */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <LazyWrapper
+            component={() =>
+              import('@/components/editor/SectionEditor').then(mod => ({
+                default: mod.SectionEditor,
+              }))
+            }
+            componentProps={{
+              section: portfolio.sections.find(s => s.id === activeSection),
+              onUpdate: (content: any) =>
+                handleSectionUpdate(activeSection, content),
+              onDelete: () => handleDeleteSection(activeSection),
+            }}
+            fallback={
+              <div className="animate-pulse">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4" />
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+              </div>
+            }
+          />
+        </div>
+
+        {/* Navigation */}
+        <div className="mt-8 flex items-center justify-between">
+          <button
+            onClick={onPreviousStep}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          >
+            {t.demoBackToAI}
+          </button>
+          <button
+            onClick={onNextStep}
+            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
+          >
+            {t.demoPreviewPortfolio}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

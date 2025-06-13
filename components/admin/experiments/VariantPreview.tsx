@@ -6,7 +6,9 @@
  */
 
 import React from 'react';
-import { FiMonitor, FiTablet, FiSmartphone } from 'react-icons/fi';
+import FiMonitor from 'react-icons/fi/FiMonitor';
+import FiTablet from 'react-icons/fi/FiTablet';
+import FiSmartphone from 'react-icons/fi/FiSmartphone';
 
 import type { ComponentConfig } from '@/types/experiments';
 

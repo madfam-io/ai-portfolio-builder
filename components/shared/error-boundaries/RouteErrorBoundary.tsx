@@ -9,7 +9,9 @@
 
 import { useRouter } from 'next/navigation';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { FiAlertTriangle, FiRefreshCw, FiArrowLeft } from 'react-icons/fi';
+import FiAlertTriangle from 'react-icons/fi/FiAlertTriangle';
+import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
+import FiArrowLeft from 'react-icons/fi/FiArrowLeft';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import {

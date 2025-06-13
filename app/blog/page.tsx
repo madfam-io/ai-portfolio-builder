@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { FaCalendar, FaUser, FaArrowRight } from 'react-icons/fa';
+import FaCalendar from 'react-icons/fa/FaCalendar';
+import FaUser from 'react-icons/fa/FaUser';
+import FaArrowRight from 'react-icons/fa/FaArrowRight';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';

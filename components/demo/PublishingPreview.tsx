@@ -15,7 +15,7 @@ import {
   FiCode,
   FiDownload,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface PublishingPreviewProps {
   portfolioName?: string;

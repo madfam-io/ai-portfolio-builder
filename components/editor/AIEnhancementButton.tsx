@@ -1,8 +1,9 @@
 'use client';
 
 import React, { useState } from 'react';
-import { FiLoader } from 'react-icons/fi';
-import { HiSparkles, HiOutlineSparkles } from 'react-icons/hi';
+import FiLoader from 'react-icons/fi/FiLoader';
+import HiSparkles from 'react-icons/hi/HiSparkles';
+import HiOutlineSparkles from 'react-icons/hi/HiOutlineSparkles';
 
 import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { FaChevronUp } from 'react-icons/fa';
+import FaChevronUp from 'react-icons/fa/FaChevronUp';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

@@ -9,7 +9,10 @@
 
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { FiHome, FiArrowLeft, FiSearch, FiFileText } from 'react-icons/fi';
+import FiHome from 'react-icons/fi/FiHome';
+import FiArrowLeft from 'react-icons/fi/FiArrowLeft';
+import FiSearch from 'react-icons/fi/FiSearch';
+import FiFileText from 'react-icons/fi/FiFileText';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

@@ -25,13 +25,17 @@ export const CACHE_KEYS = {
 
 // In-memory cache fallback for development
 class InMemoryCache {
-  private cache = new Map<string, { value: unknown; expiry: number }>();
+  private cache = new Map<string, { value: unknown; expiry: number; size: number }>();
+  private maxSize = 100; // Maximum number of entries
+  private maxMemory = 50 * 1024 * 1024; // 50MB maximum memory
+  private currentMemory = 0;
 
   async get(key: string): Promise<string | null> {
     const item = this.cache.get(key);
     if (!item) return null;
 
     if (Date.now() > item.expiry) {
+      this.currentMemory -= item.size;
       this.cache.delete(key);
       return null;
     }
@@ -41,15 +45,51 @@ class InMemoryCache {
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
     const expiry = Date.now() + (ttl || CACHE_CONFIG.defaultTTL) * 1000;
-    this.cache.set(key, { value: JSON.parse(value), expiry });
+    const parsedValue = JSON.parse(value);
+    const size = new TextEncoder().encode(value).length;
+
+    // Check if we need to evict entries
+    if (this.cache.size >= this.maxSize || this.currentMemory + size > this.maxMemory) {
+      await this.evictOldestEntries();
+    }
+
+    // Remove old entry if exists
+    const oldItem = this.cache.get(key);
+    if (oldItem) {
+      this.currentMemory -= oldItem.size;
+    }
+
+    this.cache.set(key, { value: parsedValue, expiry, size });
+    this.currentMemory += size;
+  }
+
+  private async evictOldestEntries(): Promise<void> {
+    // Sort entries by expiry time
+    const entries = Array.from(this.cache.entries())
+      .sort((a, b) => a[1].expiry - b[1].expiry);
+
+    // Remove oldest entries until we have enough space
+    while (
+      (this.cache.size >= this.maxSize || this.currentMemory > this.maxMemory * 0.9) &&
+      entries.length > 0
+    ) {
+      const [key, item] = entries.shift()!;
+      this.currentMemory -= item.size;
+      this.cache.delete(key);
+    }
   }
 
   async del(key: string): Promise<void> {
-    this.cache.delete(key);
+    const item = this.cache.get(key);
+    if (item) {
+      this.currentMemory -= item.size;
+      this.cache.delete(key);
+    }
   }
 
   async clear(): Promise<void> {
     this.cache.clear();
+    this.currentMemory = 0;
   }
 }
 
@@ -192,6 +232,17 @@ export const cache = new CacheService();
 if (typeof window === 'undefined') {
   cache.connect().catch((err) => {
     logger.error('Failed to initialize cache', err as Error);
+  });
+}
+
+// Cleanup on process termination
+if (typeof window === 'undefined') {
+  process.on('SIGTERM', async () => {
+    await cache.disconnect();
+  });
+  
+  process.on('SIGINT', async () => {
+    await cache.disconnect();
   });
 }
 

@@ -3,7 +3,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { FaTwitter, FaLinkedinIn, FaGithub } from 'react-icons/fa';
+import FaTwitter from 'react-icons/fa/FaTwitter';
+import FaLinkedinIn from 'react-icons/fa/FaLinkedinIn';
+import FaGithub from 'react-icons/fa/FaGithub';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';

@@ -19,7 +19,10 @@
 'use client';
 
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { FiAlertTriangle, FiRefreshCw, FiHome, FiMail } from 'react-icons/fi';
+import FiAlertTriangle from 'react-icons/fi/FiAlertTriangle';
+import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
+import FiHome from 'react-icons/fi/FiHome';
+import FiMail from 'react-icons/fi/FiMail';
 
 // Error types for categorization
 export type ErrorType =

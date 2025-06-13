@@ -1,8 +1,12 @@
 'use client';
 
 import React, { useState, useCallback } from 'react';
-import { FiUpload, FiFile, FiCheck, FiX, FiEye } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import FiUpload from 'react-icons/fi/FiUpload';
+import FiFile from 'react-icons/fi/FiFile';
+import FiCheck from 'react-icons/fi/FiCheck';
+import FiX from 'react-icons/fi/FiX';
+import FiEye from 'react-icons/fi/FiEye';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface ParsedResumeData {
   personalInfo: {

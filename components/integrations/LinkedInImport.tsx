@@ -9,7 +9,7 @@ import {
   FiBriefcase,
   FiAward,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface LinkedInProfile {
   name: string;

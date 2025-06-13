@@ -6,7 +6,12 @@
  */
 
 import React, { useState } from 'react';
-import { FiX, FiSearch, FiFilter, FiEye, FiPlus, FiStar } from 'react-icons/fi';
+import FiX from 'react-icons/fi/FiX';
+import FiSearch from 'react-icons/fi/FiSearch';
+import FiFilter from 'react-icons/fi/FiFilter';
+import FiEye from 'react-icons/fi/FiEye';
+import FiPlus from 'react-icons/fi/FiPlus';
+import FiStar from 'react-icons/fi/FiStar';
 
 import type {
   ComponentLibraryItem,

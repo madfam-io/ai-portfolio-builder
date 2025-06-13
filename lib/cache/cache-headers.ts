@@ -146,7 +146,7 @@ export const CACHE_CONFIGS = {
 /**
  * Generate ETag from content
  */
-export function generateETag(content: any): string {
+export function generateETag(content: unknown): string {
   const hash = require('crypto')
     .createHash('md5')
     .update(JSON.stringify(content))

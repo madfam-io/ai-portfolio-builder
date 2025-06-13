@@ -10,7 +10,7 @@ import {
   FiRefreshCw,
   FiCheck,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';

@@ -37,6 +37,7 @@ import {
   AdminPermission,
   SessionData,
 } from '@/types/auth';
+import { logger } from '@/lib/utils/logger';
 
 interface AuthContextType {
   // Authentication state
@@ -188,7 +189,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         return mockUser;
       } catch (error) {
-        console.error('Failed to load user profile:', error);
+        logger.error('Failed to load user profile', error as Error);
         return null;
       }
     },
@@ -218,13 +219,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const signIn = useCallback(async (email: string, _password: string) => {
     // This would use the existing auth system
-    console.log('Sign in:', email);
+    logger.info('Sign in attempt', { email });
     // Implementation would go here
   }, []);
 
   const signUp = useCallback(
     async (email: string, _password: string, name: string) => {
-      console.log('Sign up:', email, name);
+      logger.info('Sign up attempt', { email, name });
       // Implementation would go here
     },
     []
@@ -239,7 +240,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setSession(null);
       setImpersonatedUser(null);
     } catch (error) {
-      console.warn('Sign out failed - auth service not available:', error);
+      logger.warn('Sign out failed - auth service not available', error as Error);
       setSupabaseUser(null);
       setUser(null);
       setSession(null);
@@ -248,7 +249,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const resetPassword = useCallback(async (email: string) => {
-    console.log('Reset password for:', email);
+    logger.info('Reset password for', { email });
     // Implementation would go here
   }, []);
 
@@ -272,7 +273,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setUser(updatedUser);
     setSession(createSession(updatedUser));
 
-    console.log('✅ Switched to admin mode');
+    logger.info('Switched to admin mode');
   }, [user, createSession]);
 
   const switchToUserMode = useCallback(async () => {
@@ -295,7 +296,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Clear impersonation when switching to user mode
     setImpersonatedUser(null);
 
-    console.log('✅ Switched to user mode');
+    logger.info('Switched to user mode');
   }, [user, createSession]);
 
   /**
@@ -334,14 +335,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
       };
 
       setImpersonatedUser(mockTargetUser);
-      console.log(`🎭 Now impersonating user: ${mockTargetUser.email}`);
+      logger.info('Now impersonating user', { email: mockTargetUser.email });
     },
     [user]
   );
 
   const stopImpersonation = useCallback(async () => {
     if (impersonatedUser) {
-      console.log(`🎭 Stopped impersonating: ${impersonatedUser.email}`);
+      logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
     }
   }, [impersonatedUser]);
@@ -354,13 +355,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
       if (!user) return;
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
-      console.log('Profile updated:', updates);
+      logger.info('Profile updated', { updates });
     },
     [user]
   );
 
   const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
-    console.log('Upgrading to plan:', plan);
+    logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
   }, []);
 
@@ -453,7 +454,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         return () => subscription.unsubscribe();
       } catch (error) {
-        console.warn('Authentication service not available:', error);
+        logger.warn('Authentication service not available', error as Error);
         setSupabaseUser(null);
         setUser(null);
         setSession(null);

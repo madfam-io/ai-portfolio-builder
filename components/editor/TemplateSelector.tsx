@@ -8,7 +8,10 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
+import FiCheck from 'react-icons/fi/FiCheck';
+import FiEye from 'react-icons/fi/FiEye';
+import FiGrid from 'react-icons/fi/FiGrid';
+import FiLayout from 'react-icons/fi/FiLayout';
 
 import {
   getAvailableTemplates,

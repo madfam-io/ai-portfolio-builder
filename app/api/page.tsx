@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { FaCode, FaKey, FaBook, FaShieldAlt } from 'react-icons/fa';
+import FaCode from 'react-icons/fa/FaCode';
+import FaKey from 'react-icons/fa/FaKey';
+import FaBook from 'react-icons/fa/FaBook';
+import FaShieldAlt from 'react-icons/fa/FaShieldAlt';
 
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';

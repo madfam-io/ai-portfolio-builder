@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import React from 'react';
-import { FaPlay, FaCheckCircle, FaUsers, FaStar } from 'react-icons/fa';
+import FaPlay from 'react-icons/fa/FaPlay';
+import FaCheckCircle from 'react-icons/fa/FaCheckCircle';
+import FaUsers from 'react-icons/fa/FaUsers';
+import FaStar from 'react-icons/fa/FaStar';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

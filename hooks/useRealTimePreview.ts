@@ -150,15 +150,17 @@ export function useRealTimePreview({
   const scrollToSection = useCallback(
     (section: SectionType) => {
       // This would trigger a scroll event in the preview component
-      const sectionElement = document.querySelector(
-        `[data-section="${section}"]`
-      );
-      if (sectionElement) {
-        sectionElement.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-          inline: 'nearest',
-        });
+      if (typeof window !== 'undefined') {
+        const sectionElement = document.querySelector(
+          `[data-section="${section}"]`
+        );
+        if (sectionElement) {
+          sectionElement.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+            inline: 'nearest',
+          });
+        }
       }
       setActiveSection(section);
     },
@@ -203,6 +205,8 @@ export function useRealTimePreview({
     string | null
   > => {
     try {
+      if (typeof window === 'undefined') return null;
+      
       // This would use html2canvas or similar library to capture the preview
       const previewElement = document.querySelector('[data-preview-container]');
       if (!previewElement) return null;
@@ -217,6 +221,8 @@ export function useRealTimePreview({
 
   const exportPreviewHTML = useCallback((): string => {
     // Generate HTML export of the current preview
+    if (typeof window === 'undefined') return '';
+    
     const previewElement = document.querySelector('[data-preview-container]');
     if (!previewElement) return '';
 

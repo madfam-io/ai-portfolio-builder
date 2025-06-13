@@ -10,7 +10,7 @@ import {
   FiMoon,
   FiMove,
 } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface ColorScheme {
   name: string;

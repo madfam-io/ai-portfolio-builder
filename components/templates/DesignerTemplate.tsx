@@ -23,7 +23,7 @@
 'use client';
 
 import React from 'react';
-import { FaBehance } from 'react-icons/fa';
+import FaBehance from 'react-icons/fa/FaBehance';
 import {
   FiInstagram,
   FiDribbble,
