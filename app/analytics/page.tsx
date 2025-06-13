@@ -237,7 +237,7 @@ function AnalyticsDashboard(): React.ReactElement {
         </div>
       </BaseLayout>
     );
-  };
+  }
   // GitHub connection required
   if (dashboard.needsAuth) {
     return (

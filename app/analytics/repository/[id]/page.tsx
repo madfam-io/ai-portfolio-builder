@@ -11,14 +11,16 @@ import {
   FiCode,
   FiRefreshCw,
   FiClock,
+} from 'react-icons/fi';
+
 import {
   RepositoryCommitsChart,
   RepositoryLanguagesChart,
+} from '@/components/analytics/charts';
 import {
   transformCommitData,
   transformLanguageData,
-
-} from 'react-icons/fi';
+} from '@/lib/analytics/data-transforms';
 import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';

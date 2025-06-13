@@ -17,12 +17,14 @@ import {
   FiPercent,
   FiArrowLeft,
   FiSave,
+} from 'react-icons/fi';
+
 import type {
   CreateExperimentRequest,
   ComponentConfig,
   ComponentLibraryItem,
   ExperimentTemplate,
-} from 'react-icons/fi';
+} from '@/types/experiments';
 import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
 import { useAuth } from '@/lib/contexts/AuthContext';

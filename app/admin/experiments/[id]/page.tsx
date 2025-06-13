@@ -59,7 +59,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   const processVariantAnalytics = (
     variant: LandingPageVariant & {
       analytics?: LandingPageAnalytics[];
-    };
+    }
   ): DetailedVariant => {
     const analytics = (variant.analytics || []) as LandingPageAnalytics[];
     const uniqueVisitors = new Set(

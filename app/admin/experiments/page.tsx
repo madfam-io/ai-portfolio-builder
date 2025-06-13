@@ -18,10 +18,12 @@ import {
   FiFilter,
   FiSearch,
   FiMoreVertical,
+} from 'react-icons/fi';
+
 import type {
   LandingPageExperiment,
   ExperimentStatus,
-} from 'react-icons/fi';
+} from '@/types/experiments';
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
