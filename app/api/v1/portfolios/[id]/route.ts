@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
+} from '@/lib/validation/portfolio';
 import { transformApiPortfolioToDb } from '../route';
 
 import { createClient } from '@/lib/supabase/server';

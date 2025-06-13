@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
 
 import {
@@ -393,7 +393,7 @@ export default function CreateExperimentPage() {
   }
 
   return (
-    <>
+    <Fragment>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm">
@@ -444,8 +444,8 @@ export default function CreateExperimentPage() {
                   </label>
                   <input
                     type="text"
-                    value={experimentName};
-                    onChange={e => setExperimentName(e.target.value)};
+                    value={experimentName}
+                    onChange={e => setExperimentName(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     placeholder="e.g., Hero Message Test"
                   />
@@ -854,6 +854,6 @@ export default function CreateExperimentPage() {
         />
       )}
       </div>
-    </>
+    </Fragment>
   );
 }

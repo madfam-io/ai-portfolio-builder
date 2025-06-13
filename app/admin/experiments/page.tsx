@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -188,7 +188,7 @@ export default function AdminExperimentsPage() {
     );
   }
   return (
-    <>
+    <Fragment>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm">
@@ -222,8 +222,8 @@ export default function AdminExperimentsPage() {
               <input
                 type="text"
                 placeholder="Search experiments..."
-                value={searchTerm};
-                onChange={e => setSearchTerm(e.target.value)};
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
@@ -492,6 +492,6 @@ export default function AdminExperimentsPage() {
         </div>
       </div>
       </div>
-    </>
+    </Fragment>
   );
 }
