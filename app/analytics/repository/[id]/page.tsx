@@ -50,7 +50,7 @@ interface RepoState {
  * Repository Analytics Detail Page
  */
 // eslint-disable-next-line complexity
-export default function RepositoryAnalyticsPage(): React.ReactElement {
+export default function RepositoryAnalyticsPage() {
   const router = useRouter();
   const params = useParams();
   const repositoryId = params.id as string;

@@ -45,7 +45,7 @@ export async function GET(): Promise<Response> {
   } catch (error: unknown) {
     logger.error(
       'Failed to fetch available models',
-      error instanceof Error ? error : { error };
+      error instanceof Error ? error : { error }
     );
 
     // Return cached models as fallback

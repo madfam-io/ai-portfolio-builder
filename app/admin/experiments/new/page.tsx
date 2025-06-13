@@ -46,7 +46,7 @@ interface VariantConfig {
   components: ComponentConfig[];
   themeOverrides: Record<string, string | number | boolean>;
 };
-export default function CreateExperimentPage(): React.ReactElement {
+export default function CreateExperimentPage() {
   const { user, isAdmin, canAccess } = useAuth();
   // const { t } = useLanguage(); // _TODO: Add translations
   const router = useRouter();

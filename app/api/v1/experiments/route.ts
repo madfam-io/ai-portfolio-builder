@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import {
-  authenticateUser,
-  hasPermission,
-  unauthorizedResponse,
-  forbiddenResponse,
-} from '@/lib/auth/server';
+// TODO: Implement auth functions
+// import {
+//   authenticateUser,
+//   hasPermission,
+//   unauthorizedResponse,
+//   forbiddenResponse,
+// } from '@/lib/auth/server';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
