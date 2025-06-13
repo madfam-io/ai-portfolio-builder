@@ -171,7 +171,7 @@ export default function RepositoryAnalyticsPage() {
         <div className="text-center">
           <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">
-            {t.loadingAnalytics};
+            {t.loadingAnalytics}
           </p>
         </div>
       </div>
@@ -190,18 +190,18 @@ export default function RepositoryAnalyticsPage() {
           <p className="text-gray-600 dark:text-gray-400 mb-6">{repo.error}</p>
           <div className="space-x-4">
             <button
-              onClick={() => router.push('/analytics')};
+              onClick={() => router.push('/analytics')}
               className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               <FiArrowLeft className="mr-2" />
-              {t.backToAnalytics};
+              {t.backToAnalytics}
             </button>
             <button
-              onClick={fetchRepositoryAnalytics};
+              onClick={fetchRepositoryAnalytics}
               className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <FiRefreshCw className="mr-2" />
-              {t.tryAgain};
+              {t.tryAgain}
             </button>
           </div>
         </div>
@@ -221,15 +221,15 @@ export default function RepositoryAnalyticsPage() {
     <BaseLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Repository Header */};
+          {/* Repository Header */}
           <RepositoryHeader
-            repository={repository};
-            syncing={repo.syncing};
-            onSync={syncRepository};
-            backText={t.backToAnalytics || 'Back to Analytics'};
+            repository={repository}
+            syncing={repo.syncing}
+            onSync={syncRepository}
+            backText={t.backToAnalytics || 'Back to Analytics'}
           />
 
-          {/* Metrics Overview */};
+          {/* Metrics Overview */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <div className="flex items-center">
@@ -238,13 +238,13 @@ export default function RepositoryAnalyticsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.totalLOC};
+                    {t.totalLOC}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.metrics.current?.locTotal !== null &&
                     data.metrics.current?.locTotal !== undefined
                       ? data.metrics.current.locTotal.toLocaleString()
-                      : t.notAvailable};
+                      : t.notAvailable}
                   </p>
                 </div>
               </div>
@@ -257,10 +257,10 @@ export default function RepositoryAnalyticsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.commitsLast30Days};
+                    {t.commitsLast30Days}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.metrics.current?.commitsLast30Days ?? 0};
+                    {data.metrics.current?.commitsLast30Days ?? 0}
                   </p>
                 </div>
               </div>
@@ -273,10 +273,10 @@ export default function RepositoryAnalyticsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.recentPRs};
+                    {t.recentPRs}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.pullRequests.recent.length};
+                    {data.pullRequests.recent.length}
                   </p>
                 </div>
               </div>
@@ -289,10 +289,10 @@ export default function RepositoryAnalyticsPage() {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.contributors};
+                    {t.contributors}
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.contributors.length};
+                    {data.contributors.length}
                   </p>
                 </div>
               </div>
