@@ -266,18 +266,18 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         <p className="text-gray-500 _dark:text-gray-400">Experiment not found</p>
       </div>
     );
-  };
+  }
   return (
     <ExperimentDetailsContent
-      experiment={experiment};
-      variants={variants};
-      analyticsData={analyticsData};
-      timeRange={timeRange};
-      refreshing={refreshing};
-      onTimeRangeChange={setTimeRange};
-      onStatusChange={handleStatusChange};
-      onRefresh={handleRefresh};
-      onExport={handleExportData};
+      experiment={experiment}
+      variants={variants}
+      analyticsData={analyticsData}
+      timeRange={timeRange}
+      refreshing={refreshing}
+      onTimeRangeChange={setTimeRange}
+      onStatusChange={handleStatusChange}
+      onRefresh={handleRefresh}
+      onExport={handleExportData}
     />
   );
-};
+}
