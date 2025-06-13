@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import {
   calculateExperimentResults,
   generateTimeline,
-} from '@/lib/services/feature-flags/feature-flag-service';
+} from '@/lib/utils/experiments/calculate-results';
 import type {
   LandingPageExperiment,
   LandingPageVariant,

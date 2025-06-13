@@ -1,11 +1,11 @@
 import React from 'react';
-} from 'react-icons/fi';
 import {
   FiCheckCircle,
   FiXCircle,
   FiAlertTriangle,
   FiInfo,
   FiTarget,
+} from 'react-icons/fi';
 
 import type { ExperimentResults } from '@/types/experiments';
 
