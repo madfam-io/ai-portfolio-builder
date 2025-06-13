@@ -47,7 +47,7 @@ export async function GET(
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
-        { status: 401 };
+        { status: 401 }
       );
     }
     // Fetch portfolio
@@ -62,7 +62,7 @@ export async function GET(
         // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
-          { status: 404 };
+          { status: 404 }
         );
       }
       logger.error(
@@ -78,7 +78,7 @@ export async function GET(
     if (portfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only access your own portfolios' },
-        { status: 403 };
+        { status: 403 }
       );
     }
     // Transform to API format
@@ -134,7 +134,7 @@ export async function PUT(
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
-        { status: 401 };
+        { status: 401 }
       );
     }
     // Verify portfolio exists and user owns it
@@ -149,7 +149,7 @@ export async function PUT(
         // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
-          { status: 404 };
+          { status: 404 }
         );
       }
       logger.error(
@@ -166,7 +166,7 @@ export async function PUT(
     if (existingPortfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only modify your own portfolios' },
-        { status: 403 };
+        { status: 403 }
       );
     }
     // Parse and validate request body
@@ -289,7 +289,7 @@ export async function DELETE(
     if (!user || authError) {
       return NextResponse.json(
         { error: 'Unauthorized - Please sign in' },
-        { status: 401 };
+        { status: 401 }
       );
     }
     // Verify portfolio exists and user owns it
@@ -304,7 +304,7 @@ export async function DELETE(
         // Not found
         return NextResponse.json(
           { error: 'Portfolio not found' },
-          { status: 404 };
+          { status: 404 }
         );
       }
       logger.error(
@@ -321,7 +321,7 @@ export async function DELETE(
     if (existingPortfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only delete your own portfolios' },
-        { status: 403 };
+        { status: 403 }
       );
     }
     // Delete portfolio

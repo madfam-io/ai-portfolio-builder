@@ -166,47 +166,43 @@ export default function RepositoryAnalyticsPage() {
 
   // Helper function for loading state
   const renderLoadingState = (): React.ReactElement => (
-    <BaseLayout>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
-          <p className="text-gray-600 dark:text-gray-400">
-            {t.loadingAnalytics}
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+        <p className="text-gray-600 dark:text-gray-400">
+          {t.loadingAnalytics}
+        </p>
       </div>
-    </BaseLayout>
+    </div>
   );
 
   // Helper function for error state
   const renderErrorState = () => (
-    <BaseLayout>
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center max-w-md">
-          <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            {t.error}
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">{repo.error}</p>
-          <div className="space-x-4">
-            <button
-              onClick={() => router.push('/analytics')}
-              className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              <FiArrowLeft className="mr-2" />
-              {t.backToAnalytics}
-            </button>
-            <button
-              onClick={fetchRepositoryAnalytics}
-              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              <FiRefreshCw className="mr-2" />
-              {t.tryAgain}
-            </button>
-          </div>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center max-w-md">
+        <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          {t.error}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-6">{repo.error}</p>
+        <div className="space-x-4">
+          <button
+            onClick={() => router.push('/analytics')}
+            className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+          >
+            <FiArrowLeft className="mr-2" />
+            {t.backToAnalytics}
+          </button>
+          <button
+            onClick={fetchRepositoryAnalytics}
+            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          >
+            <FiRefreshCw className="mr-2" />
+            {t.tryAgain}
+          </button>
         </div>
       </div>
-    </BaseLayout>
+    </div>
   );
 
   // State checks
@@ -218,8 +214,7 @@ export default function RepositoryAnalyticsPage() {
   const repository = data.repository;
 
   return (
-    <BaseLayout>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Repository Header */}
           <RepositoryHeader
@@ -481,7 +476,6 @@ export default function RepositoryAnalyticsPage() {
             </div>
           </div>
         </div>
-      </div>
-    </BaseLayout>
+    </div>
   );
 };

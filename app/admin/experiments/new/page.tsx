@@ -393,7 +393,7 @@ export default function CreateExperimentPage() {
   }
 
   return (
-    <Fragment>
+    <React.Fragment>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 shadow-sm">
@@ -854,6 +854,6 @@ export default function CreateExperimentPage() {
         />
       )}
       </div>
-    </Fragment>
+    </React.Fragment>
   );
 }
