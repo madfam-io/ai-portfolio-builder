@@ -67,7 +67,7 @@ export async function GET(
       }
       logger.error(
         'Database error fetching portfolio',
-        fetchError instanceof Error ? fetchError : { error: fetchError };
+        fetchError instanceof Error ? fetchError : { error: fetchError }
       );
       return NextResponse.json(
         { error: 'Failed to fetch portfolio' },
