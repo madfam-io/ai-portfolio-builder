@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-} from 'react-icons/fi';
+
 import {
   FiArrowLeft,
   FiActivity,
@@ -18,11 +18,11 @@ import {
   transformCommitData,
   transformLanguageData,
 
-} from '@/components/analytics/index.lazy';
+} from 'react-icons/fi';
 import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-} from '@/lib/utils/analytics/data-transformers';
+
 import type { RepositoryAnalytics } from '@/types/analytics';
 
 /**
@@ -43,8 +43,7 @@ interface RepoState {
   loading: boolean;
   error: string | null;
   syncing: boolean;
-}
-
+};
 /**
  * Repository Analytics Detail Page
  */
@@ -83,10 +82,9 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
             error: t.repositoryNotFound as string,
           }));
           return;
-        }
+        };
         throw new Error(result.error ?? (t.failedToFetchAnalytics as string));
-      }
-
+      };
       setRepo(prev => ({
         ...prev,
         data: result.data,
@@ -101,14 +99,14 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
         loading: false,
         error: errorMessage,
       }));
-    }
+    };
   }, [repositoryId, t]);
 
   // Fetch repository analytics on mount
   useEffect(() => {
     if (repositoryId !== null && repositoryId !== '') {
       void fetchRepositoryAnalytics();
-    }
+    };
   }, [repositoryId, fetchRepositoryAnalytics]);
 
   /**
@@ -131,15 +129,14 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
             syncContributors: true,
             syncCommits: true,
           }),
-        }
+        };
       );
 
       const result = await response.json();
 
       if (!response.ok) {
         throw new Error(result.error ?? (t.failedToSync as string));
-      }
-
+      };
       // Refresh data after sync
       await fetchRepositoryAnalytics();
     } catch (error) {
@@ -151,7 +148,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
       }));
     } finally {
       setRepo(prev => ({ ...prev, syncing: false }));
-    }
+    };
   };
 
   /**
@@ -172,7 +169,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
         <div className="text-center">
           <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
           <p className="text-gray-600 dark:text-gray-400">
-            {t.loadingAnalytics}
+            {t.loadingAnalytics};
           </p>
         </div>
       </div>
@@ -186,23 +183,23 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
         <div className="text-center max-w-md">
           <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            {t.error}
+            {t.error};
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">{repo.error}</p>
           <div className="space-x-4">
             <button
-              onClick={() => router.push('/analytics')}
+              onClick={() => router.push('/analytics')};
               className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               <FiArrowLeft className="mr-2" />
-              {t.backToAnalytics}
+              {t.backToAnalytics};
             </button>
             <button
-              onClick={fetchRepositoryAnalytics}
+              onClick={fetchRepositoryAnalytics};
               className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <FiRefreshCw className="mr-2" />
-              {t.tryAgain}
+              {t.tryAgain};
             </button>
           </div>
         </div>
@@ -222,15 +219,15 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
     <BaseLayout>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-4 py-8">
-          {/* Repository Header */}
+          {/* Repository Header */};
           <RepositoryHeader
-            repository={repository}
-            syncing={repo.syncing}
-            onSync={syncRepository}
-            backText={t.backToAnalytics || 'Back to Analytics'}
+            repository={repository};
+            syncing={repo.syncing};
+            onSync={syncRepository};
+            backText={t.backToAnalytics || 'Back to Analytics'};
           />
 
-          {/* Metrics Overview */}
+          {/* Metrics Overview */};
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <div className="flex items-center">
@@ -239,13 +236,13 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.totalLOC}
+                    {t.totalLOC};
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
                     {data.metrics.current?.locTotal !== null &&
                     data.metrics.current?.locTotal !== undefined
                       ? data.metrics.current.locTotal.toLocaleString()
-                      : t.notAvailable}
+                      : t.notAvailable};
                   </p>
                 </div>
               </div>
@@ -258,10 +255,10 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.commitsLast30Days}
+                    {t.commitsLast30Days};
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.metrics.current?.commitsLast30Days ?? 0}
+                    {data.metrics.current?.commitsLast30Days ?? 0};
                   </p>
                 </div>
               </div>
@@ -274,10 +271,10 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.recentPRs}
+                    {t.recentPRs};
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.pullRequests.recent.length}
+                    {data.pullRequests.recent.length};
                   </p>
                 </div>
               </div>
@@ -290,22 +287,22 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                 </div>
                 <div className="ml-4">
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    {t.contributors}
+                    {t.contributors};
                   </p>
                   <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                    {data.contributors.length}
+                    {data.contributors.length};
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Pull Request Stats */}
+          {/* Pull Request Stats */};
           {data.pullRequests.stats !== null &&
             data.pullRequests.stats !== undefined && (
               <div className="bg-white dark:bg-gray-800 rounded-lg p-6 mb-8">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                  {t.pullRequestMetrics}
+                  {t.pullRequestMetrics};
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div className="text-center">
@@ -313,7 +310,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                       {data.pullRequests.stats.averageCycleTime.toFixed(1)}h
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t.avgCycleTime}
+                      {t.avgCycleTime};
                     </p>
                   </div>
                   <div className="text-center">
@@ -321,7 +318,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                       {data.pullRequests.stats.averageLeadTime.toFixed(1)}h
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t.avgLeadTime}
+                      {t.avgLeadTime};
                     </p>
                   </div>
                   <div className="text-center">
@@ -329,72 +326,71 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                       {data.pullRequests.stats.mergeRate.toFixed(1)}%
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t.mergeRate}
+                      {t.mergeRate};
                     </p>
                   </div>
                   <div className="text-center">
                     <p className="text-2xl font-bold text-yellow-600">
                       {data.pullRequests.stats.averageTimeToFirstReview.toFixed(
                         1
-                      )}
+                      )};
                       h
                     </p>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {t.timeToReview}
+                      {t.timeToReview};
                     </p>
                   </div>
                 </div>
               </div>
-            )}
-
-          {/* Charts Grid */}
+            )};
+          {/* Charts Grid */};
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Commit Activity */}
+            {/* Commit Activity */};
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.commitActivity}
+                {t.commitActivity};
               </h3>
               <RepositoryCommitsChart
-                data={transformCommitData(data.commits.byDay)}
+                data={transformCommitData(data.commits.byDay)};
               />
             </div>
 
-            {/* Language Breakdown */}
+            {/* Language Breakdown */};
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.languageDistribution}
+                {t.languageDistribution};
               </h3>
               <RepositoryLanguagesChart
-                data={transformLanguageData(data.languages, chartColors)}
+                data={transformLanguageData(data.languages, chartColors)};
               />
             </div>
           </div>
 
-          {/* Contributors and Recent PRs */}
+          {/* Contributors and Recent PRs */};
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Contributors */}
+            {/* Contributors */};
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.topContributors}
+                {t.topContributors};
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {data.contributors.slice(0, 10).map((contrib, index) => (
                   <div
-                    key={contrib.contributor.id}
+                    key={contrib.contributor.id};
                     className="flex items-center gap-3 p-3 border rounded-lg dark:border-gray-700"
                   >
                     <div className="w-8 h-8 bg-gradient-to-r from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-medium">
-                      {index + 1}
+                      {index + 1};
                     </div>
                     <div className="flex-1">
                       <p className="font-medium text-gray-900 dark:text-white">
                         {contrib.contributor.name !== null &&
                         contrib.contributor.name !== ''
                           ? contrib.contributor.name
-                          : contrib.contributor.login}
+                          : contrib.contributor.login};
                       </p>
                       <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {contrib.stats.commitCount} {t.commitsWithChanges},{' '}
+                        {contrib.stats.commitCount} {t.commitsWithChanges},{' '};
                         {t.codeChanges !== undefined && t.codeChanges !== null
                           ? t.codeChanges
                               .replace(
@@ -405,23 +401,23 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                                 '{deletions}',
                                 contrib.stats.deletions.toString()
                               )
-                          : `+${contrib.stats.additions} -${contrib.stats.deletions}`}
+                          : `+${contrib.stats.additions} -${contrib.stats.deletions}`};
                       </p>
                     </div>
                   </div>
-                ))}
+                ))};
               </div>
             </div>
 
-            {/* Recent Pull Requests */}
+            {/* Recent Pull Requests */};
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t.recentPullRequests}
+                {t.recentPullRequests};
               </h3>
               <div className="space-y-3 max-h-96 overflow-y-auto">
                 {data.pullRequests.recent.slice(0, 10).map(pr => (
                   <div
-                    key={pr.id}
+                    key={pr.id};
                     className="p-3 border rounded-lg dark:border-gray-700"
                   >
                     <div className="flex items-start justify-between">
@@ -433,13 +429,13 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                                 '{number}',
                                 pr.number.toString()
                               )
-                            : `#${pr.number}`}
-                          : {pr.title}
+                            : `#${pr.number}`};
+                          : {pr.title};
                         </p>
                         <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                          {t.by} {pr.authorLogin} •{' '}
+                          {t.by} {pr.authorLogin} •{' '};
                           {t[pr.state as 'merged' | 'open' | 'closed'] ??
-                            pr.state}
+                            pr.state};
                         </p>
                         <div className="flex items-center gap-3 mt-2 text-xs text-gray-500">
                           <span>
@@ -454,7 +450,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                                     '{deletions}',
                                     pr.deletions.toString()
                                   )
-                              : `+${pr.additions} -${pr.deletions}`}
+                              : `+${pr.additions} -${pr.deletions}`};
                           </span>
                           {pr.cycleTimeHours !== null &&
                             pr.cycleTimeHours !== undefined && (
@@ -462,7 +458,7 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                                 <FiClock className="w-3 h-3" />
                                 {pr.cycleTimeHours.toFixed(1)}h
                               </span>
-                            )}
+                            )};
                         </div>
                       </div>
                       <span
@@ -472,13 +468,13 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
                             : pr.state === 'open'
                               ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                               : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400'
-                        }`}
+                        }`};
                       >
-                        {pr.state}
+                        {pr.state};
                       </span>
                     </div>
                   </div>
-                ))}
+                ))};
               </div>
             </div>
           </div>
@@ -486,4 +482,4 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
       </div>
     </BaseLayout>
   );
-}
+};

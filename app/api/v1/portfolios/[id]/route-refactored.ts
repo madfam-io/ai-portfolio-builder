@@ -8,8 +8,8 @@ import {
   apiSuccess,
   apiError,
 
-} from '@/lib/api/middleware/auth';
-} from '@/lib/api/middleware/common';
+
+
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { validateUpdatePortfolio } from '@/lib/validations/portfolio';
@@ -34,8 +34,7 @@ export const GET = withErrorHandling(
     const user = await authenticateUser(request);
     if (!user) {
       return unauthorizedResponse();
-    }
-
+    };
     // Get database client
     const supabase = await getSupabaseClient();
 
@@ -50,12 +49,11 @@ export const GET = withErrorHandling(
     if (error || !portfolio) {
       logger.debug('Portfolio not found', { id, userId: user.id });
       return apiError('Portfolio not found', { status: 404 });
-    }
-
+    };
     // Transform and return
     const transformedPortfolio = transformDbPortfolioToApi(portfolio);
     return apiSuccess(transformedPortfolio);
-  }
+  };
 );
 
 /**
@@ -70,8 +68,7 @@ export const PUT = withErrorHandling(
     const user = await authenticateUser(request);
     if (!user) {
       return unauthorizedResponse();
-    }
-
+    };
     // Parse and validate request body
     const body = await request.json();
     const validation = validateUpdatePortfolio(body);
@@ -81,8 +78,7 @@ export const PUT = withErrorHandling(
         status: 400,
         details: validation.error.issues,
       });
-    }
-
+    };
     // Get database client
     const supabase = await getSupabaseClient();
 
@@ -96,8 +92,7 @@ export const PUT = withErrorHandling(
 
     if (!existing) {
       return apiError('Portfolio not found', { status: 404 });
-    }
-
+    };
     // Update portfolio
     const { data: updated, error } = await supabase
       .from('portfolios')
@@ -116,14 +111,13 @@ export const PUT = withErrorHandling(
         error || new Error('No updated portfolio returned')
       );
       return apiError('Failed to update portfolio');
-    }
-
+    };
     // Transform and return
     const transformedPortfolio = transformDbPortfolioToApi(updated);
     return apiSuccess(transformedPortfolio, {
       message: 'Portfolio updated successfully',
     });
-  }
+  };
 );
 
 /**
@@ -138,8 +132,7 @@ export const DELETE = withErrorHandling(
     const user = await authenticateUser(request);
     if (!user) {
       return unauthorizedResponse();
-    }
-
+    };
     // Get database client
     const supabase = await getSupabaseClient();
 
@@ -153,11 +146,10 @@ export const DELETE = withErrorHandling(
     if (error) {
       logger.error('Failed to delete portfolio', error as Error);
       return apiError('Failed to delete portfolio');
-    }
-
+    };
     return apiSuccess(null, {
       status: 204,
       message: 'Portfolio deleted successfully',
     });
-  }
+  };
 );

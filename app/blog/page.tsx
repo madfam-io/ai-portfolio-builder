@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import React from 'react';
 import { FaArrowRight, FaCalendar, FaUser } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
@@ -13,47 +13,47 @@ export default function BlogPage(): React.ReactElement {
 
   const featuredPosts = [
     {
-      id: 1,
-      title:
+      _id: 1,
+      _title:
         t.blogPost1Title ||
         '10 Portfolio Design Trends That Will Dominate 2024',
-      excerpt:
+      _excerpt:
         t.blogPost1Excerpt ||
         'Discover the latest design trends that will make your portfolio stand out from the competition and attract more opportunities.',
-      author: t.blogPost1Author || 'MADFAM Design Team',
-      date: '2024-01-15',
-      category: t.blogDesign || 'Design',
-      readTime: t.blogPost1ReadTime || '5 min read',
-      image:
+      _author: t.blogPost1Author || 'MADFAM Design Team',
+      _date: '2024-01-15',
+      _category: t.blogDesign || 'Design',
+      _readTime: t.blogPost1ReadTime || '5 min read',
+      _image:
         'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?w=800&h=400&fit=crop',
     },
     {
-      id: 2,
-      title:
+      _id: 2,
+      _title:
         t.blogPost2Title || 'How AI is Revolutionizing Professional Portfolios',
-      excerpt:
+      _excerpt:
         t.blogPost2Excerpt ||
         'Learn how artificial intelligence is transforming the way professionals create, optimize, and manage their online portfolios.',
-      author: t.blogPost2Author || 'Dr. Sarah Johnson',
-      date: '2024-01-10',
-      category: t.blogTechnology || 'Technology',
-      readTime: t.blogPost2ReadTime || '7 min read',
-      image:
+      _author: t.blogPost2Author || 'Dr. Sarah Johnson',
+      _date: '2024-01-10',
+      _category: t.blogTechnology || 'Technology',
+      _readTime: t.blogPost2ReadTime || '7 min read',
+      _image:
         'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=400&fit=crop',
     },
     {
-      id: 3,
-      title:
+      _id: 3,
+      _title:
         t.blogPost3Title ||
         'From LinkedIn to Portfolio: Converting Connections to Clients',
-      excerpt:
+      _excerpt:
         t.blogPost3Excerpt ||
         'Master the art of turning your LinkedIn network into a powerful client acquisition engine using your professional portfolio.',
-      author: t.blogPost3Author || 'Marcus Rodriguez',
-      date: '2024-01-05',
-      category: t.blogBusiness || 'Business',
-      readTime: t.blogPost3ReadTime || '6 min read',
-      image:
+      _author: t.blogPost3Author || 'Marcus Rodriguez',
+      _date: '2024-01-05',
+      _category: t.blogBusiness || 'Business',
+      _readTime: t.blogPost3ReadTime || '6 min read',
+      _image:
         'https://images.unsplash.com/photo-1611944212129-29977ae1398c?w=800&h=400&fit=crop',
     },
   ];
@@ -69,7 +69,7 @@ export default function BlogPage(): React.ReactElement {
 
   return (
     <BaseLayout>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="container mx-auto px-4 _sm:px-6 lg:px-8 py-8 pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
@@ -89,7 +89,7 @@ export default function BlogPage(): React.ReactElement {
                 className={`px-6 py-2 rounded-full font-medium transition ${
                   index === 0
                     ? 'bg-purple-600 text-white'
-                    : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700'
+                    : 'bg-white _dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-gray-700'
                 }`}
               >
                 {category}
@@ -98,7 +98,7 @@ export default function BlogPage(): React.ReactElement {
           </div>
 
           {/* Featured Posts */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid _md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {featuredPosts.map(post => (
               <article
                 key={post.id}
@@ -128,7 +128,7 @@ export default function BlogPage(): React.ReactElement {
                     <span>{post.readTime}</span>
                   </div>
 
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white line-clamp-2">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 _dark:text-white line-clamp-2">
                     {post.title}
                   </h3>
 
@@ -159,7 +159,7 @@ export default function BlogPage(): React.ReactElement {
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-8 rounded-xl text-center">
             <h2 className="text-3xl font-bold mb-4">{t.blogStayUpdated}</h2>
             <p className="text-xl mb-6 opacity-90">{t.blogNewsletterDesc}</p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+            <div className="flex flex-col _sm:flex-row gap-4 max-w-md mx-auto">
               <input
                 type="email"
                 placeholder={t.blogEmailPlaceholder}

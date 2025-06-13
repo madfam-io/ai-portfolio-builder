@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-} from 'react-icons/fi';
+
 import {
   FiPlus,
   FiEdit,
@@ -21,13 +21,11 @@ import {
 import type {
   LandingPageExperiment,
   ExperimentStatus,
-
+} from 'react-icons/fi';
 import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-} from '@/types/experiments';
-
 
 /**
  * Admin Experiments Dashboard
@@ -44,15 +42,13 @@ interface VariantFromDB {
   traffic_percentage: number;
   conversions: number;
   visitors: number;
-}
-
+};
 interface ExperimentWithVariants extends LandingPageExperiment {
   variants?: VariantFromDB[];
-}
-
+};
 export default function AdminExperimentsPage(): React.ReactElement {
   const { isAdmin, canAccess } = useAuth();
-  // const { t } = useLanguage(); // TODO: Add translations
+  // const { t } = useLanguage(); // _TODO: Add translations
   const router = useRouter();
   const [experiments, setExperiments] = useState<ExperimentWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -68,7 +64,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
   useEffect(() => {
     if (!isAdmin || !canAccess('experiments:manage')) {
       router.push('/dashboard');
-    }
+    };
   }, [isAdmin, canAccess, router]);
 
   // Fetch experiments
@@ -82,13 +78,13 @@ export default function AdminExperimentsPage(): React.ReactElement {
             new Error('Supabase client is null')
           );
           return;
-        }
+        };
         const { data, error } = await supabase
           .from('landing_page_experiments')
           .select(
             `
             *,
-            variants:landing_page_variants(
+            _variants:landing_page_variants(
               id,
               name,
               is_control,
@@ -98,17 +94,17 @@ export default function AdminExperimentsPage(): React.ReactElement {
             )
           `
           )
-          .order('created_at', { ascending: false });
+          .order('created_at', { _ascending: false });
 
-        if (error) throw error;
+        if (error !== null && error !== undefined) throw error;
         if (data != null) {
           setExperiments(data);
-        }
+        };
       } catch (error) {
         logger.error('Failed to fetch experiments', error as Error);
       } finally {
         setLoading(false);
-      }
+      };
     };
 
     fetchExperiments();
@@ -136,7 +132,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
   const getStatusColor = (status: ExperimentStatus): string => {
     switch (status) {
       case 'active':
-        return 'text-green-600 bg-green-100 dark:text-green-400 dark:bg-green-900';
+        return 'text-green-600 bg-green-100 _dark:text-green-400 dark:bg-green-900';
       case 'paused':
         return 'text-yellow-600 bg-yellow-100 dark:text-yellow-400 dark:bg-yellow-900';
       case 'completed':
@@ -147,13 +143,13 @@ export default function AdminExperimentsPage(): React.ReactElement {
         return 'text-gray-500 bg-gray-100 dark:text-gray-500 dark:bg-gray-800';
       default:
         return 'text-gray-600 bg-gray-100 dark:text-gray-400 dark:bg-gray-700';
-    }
+    };
   };
 
   // Handle status change
   const handleStatusChange = async (
     experimentId: string,
-    newStatus: ExperimentStatus
+    _newStatus: ExperimentStatus
   ): Promise<void> => {
     try {
       const supabase = createClient();
@@ -163,13 +159,13 @@ export default function AdminExperimentsPage(): React.ReactElement {
           new Error('Supabase client is null')
         );
         return;
-      }
+      };
       const { error } = await supabase
         .from('landing_page_experiments')
-        .update({ status: newStatus, updated_at: new Date().toISOString() })
+        .update({ status: newStatus, _updated_at: new Date().toISOString() })
         .eq('id', experimentId);
 
-      if (error) throw error;
+      if (error !== null && error !== undefined) throw error;
 
       // Update local state
       setExperiments(prev =>
@@ -179,20 +175,19 @@ export default function AdminExperimentsPage(): React.ReactElement {
       );
     } catch (error) {
       logger.error('Failed to update experiment status', error as Error);
-    }
+    };
   };
 
-  if (loading) {
+  if (loading !== null && loading !== undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
-  }
-
+  };
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
+    <div className="min-h-screen bg-gray-50 _dark:bg-gray-900">
+      {/* Header */};
       <div className="bg-white dark:bg-gray-800 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
@@ -215,7 +210,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Filters */};
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
@@ -224,20 +219,20 @@ export default function AdminExperimentsPage(): React.ReactElement {
               <input
                 type="text"
                 placeholder="Search experiments..."
-                value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                value={searchTerm};
+                onChange={e => setSearchTerm(e.target.value)};
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               />
             </div>
           </div>
           <div className="flex items-center gap-2">
             <FiFilter className="text-gray-400" />
             <select
-              value={statusFilter}
+              value={statusFilter};
               onChange={e =>
                 setStatusFilter(e.target.value as ExperimentStatus | 'all')
-              }
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              };
+              className="px-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -250,7 +245,7 @@ export default function AdminExperimentsPage(): React.ReactElement {
         </div>
       </div>
 
-      {/* Experiments Grid */}
+      {/* Experiments Grid */};
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="grid gap-6">
           {filteredExperiments.map(experiment => {
@@ -271,30 +266,30 @@ export default function AdminExperimentsPage(): React.ReactElement {
 
             return (
               <div
-                key={experiment.id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+                key={experiment.id};
+                className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
               >
-                {/* Experiment Header */}
+                {/* Experiment Header */};
                 <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                          {experiment.name}
+                          {experiment.name};
                         </h3>
                         <span
-                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(experiment.status)}`}
+                          className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(experiment.status)}`};
                         >
                           {experiment.status.charAt(0).toUpperCase() +
-                            experiment.status.slice(1)}
+                            experiment.status.slice(1)};
                         </span>
                       </div>
                       {experiment.description && (
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                          {experiment.description}
+                        <p className="text-sm text-gray-600 _dark:text-gray-400 mb-3">
+                          {experiment.description};
                         </p>
-                      )}
-                      <div className="flex items-center gap-6 text-sm text-gray-500 dark:text-gray-400">
+                      )};
+                      <div className="flex items-center gap-6 text-sm text-gray-500 _dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <FiUsers className="w-4 h-4" />
                           <span>{totalVisitors.toLocaleString()} visitors</span>
@@ -306,47 +301,47 @@ export default function AdminExperimentsPage(): React.ReactElement {
                         <div className="flex items-center gap-1">
                           <FiClock className="w-4 h-4" />
                           <span>
-                            Created{' '}
+                            Created{' '};
                             {new Date(
                               experiment.createdAt
-                            ).toLocaleDateString()}
+                            ).toLocaleDateString()};
                           </span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {/* Quick Actions */}
+                      {/* Quick Actions */};
                       {experiment.status === 'active' && (
                         <button
                           onClick={() =>
                             handleStatusChange(experiment.id, 'paused')
-                          }
-                          className="p-2 text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
+                          };
+                          className="p-2 text-yellow-600 _hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
                           title="Pause Experiment"
                         >
                           <FiPause className="w-5 h-5" />
                         </button>
-                      )}
+                      )};
                       {experiment.status === 'paused' && (
                         <button
                           onClick={() =>
                             handleStatusChange(experiment.id, 'active')
-                          }
-                          className="p-2 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
+                          };
+                          className="p-2 text-green-600 _hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                           title="Resume Experiment"
                         >
                           <FiPlay className="w-5 h-5" />
                         </button>
-                      )}
+                      )};
                       <Link
-                        href={`/admin/experiments/${experiment.id}`}
-                        className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                        href={`/admin/experiments/${experiment.id}`};
+                        className="p-2 text-gray-600 _hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title="View Details"
                       >
                         <FiBarChart2 className="w-5 h-5" />
                       </Link>
                       <Link
-                        href={`/admin/experiments/${experiment.id}/edit`}
+                        href={`/admin/experiments/${experiment.id}/edit`};
                         className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title="Edit Experiment"
                       >
@@ -360,8 +355,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
                                 ? null
                                 : experiment.id
                             )
-                          }
-                          className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                          };
+                          className="p-2 text-gray-600 _hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         >
                           <FiMoreVertical className="w-5 h-5" />
                         </button>
@@ -371,8 +366,8 @@ export default function AdminExperimentsPage(): React.ReactElement {
                               onClick={() => {
                                 handleStatusChange(experiment.id, 'completed');
                                 setSelectedExperiment(null);
-                              }}
-                              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                              }};
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <FiCheckCircle className="w-4 h-4" />
                               Mark as Completed
@@ -381,22 +376,22 @@ export default function AdminExperimentsPage(): React.ReactElement {
                               onClick={() => {
                                 handleStatusChange(experiment.id, 'archived');
                                 setSelectedExperiment(null);
-                              }}
-                              className="w-full px-4 py-2 text-left text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
+                              }};
+                              className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <FiArchive className="w-4 h-4" />
                               Archive
                             </button>
                           </div>
-                        )}
+                        )};
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Variants Performance */}
+                {/* Variants Performance */};
                 <div className="p-6">
-                  <h4 className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-4">
+                  <h4 className="text-sm font-medium text-gray-900 _dark:text-gray-100 mb-4">
                     Variant Performance
                   </h4>
                   <div className="space-y-3">
@@ -410,31 +405,31 @@ export default function AdminExperimentsPage(): React.ReactElement {
 
                       return (
                         <div
-                          key={variant.id}
+                          key={variant.id};
                           className={`flex items-center justify-between p-4 rounded-lg border ${
                             isWinning
-                              ? 'border-green-300 bg-green-50 dark:border-green-700 dark:bg-green-900/20'
+                              ? 'border-green-300 bg-green-50 _dark:border-green-700 dark:bg-green-900/20'
                               : 'border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800/50'
-                          }`}
+                          }`};
                         >
                           <div className="flex items-center gap-3">
                             <div>
                               <div className="flex items-center gap-2">
                                 <span className="font-medium text-gray-900 dark:text-gray-100">
-                                  {variant.name}
+                                  {variant.name};
                                 </span>
                                 {variant.is_control && (
                                   <span className="px-2 py-0.5 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
                                     Control
                                   </span>
-                                )}
+                                )};
                                 {isWinning && (
-                                  <span className="px-2 py-0.5 text-xs bg-green-200 dark:bg-green-800 text-green-700 dark:text-green-300 rounded">
+                                  <span className="px-2 py-0.5 text-xs bg-green-200 _dark:bg-green-800 text-green-700 dark:text-green-300 rounded">
                                     Winner
                                   </span>
-                                )}
+                                )};
                               </div>
-                              <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                              <div className="text-sm text-gray-500 _dark:text-gray-400 mt-1">
                                 {variant.traffic_percentage}% traffic allocation
                               </div>
                             </div>
@@ -445,41 +440,40 @@ export default function AdminExperimentsPage(): React.ReactElement {
                                 Visitors
                               </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
-                                {variant.visitors.toLocaleString()}
+                                {variant.visitors.toLocaleString()};
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-gray-500 _dark:text-gray-400">
                                 Conversions
                               </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
-                                {variant.conversions.toLocaleString()}
+                                {variant.conversions.toLocaleString()};
                               </div>
                             </div>
                             <div className="text-right">
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-gray-500 _dark:text-gray-400">
                                 Rate
                               </div>
                               <div className="font-medium text-lg text-gray-900 dark:text-gray-100">
-                                {conversionRate}
+                                {conversionRate};
                               </div>
                             </div>
                           </div>
                         </div>
                       );
-                    })}
+                    })};
                   </div>
                 </div>
               </div>
             );
-          })}
-
+          })};
           {filteredExperiments.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-gray-500 _dark:text-gray-400 mb-4">
                 {searchTerm || statusFilter !== 'all'
                   ? 'No experiments found matching your filters.'
-                  : 'No experiments created yet.'}
+                  : 'No experiments created yet.'};
               </p>
               {!searchTerm && statusFilter === 'all' && (
                 <Link
@@ -489,11 +483,11 @@ export default function AdminExperimentsPage(): React.ReactElement {
                   <FiPlus className="mr-2" />
                   Create Your First Experiment
                 </Link>
-              )}
+              )};
             </div>
-          )}
+          )};
         </div>
       </div>
     </div>
   );
-}
+};

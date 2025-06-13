@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import {
   versionedApiHandler,
   apiSuccess,
   apiError,
-} from '@/lib/api/versioning';
+
 import { createClient } from '@/lib/supabase/server';
 import { renderConsultantTemplate } from '@/lib/templates/consultant';
 import { renderDesignerTemplate } from '@/lib/templates/designer';
@@ -11,6 +12,7 @@ import { renderDeveloperTemplate } from '@/lib/templates/developer';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { previewQuerySchema, previewBodySchema } from '@/lib/validations/api';
+
 import type { Portfolio } from '@/types/portfolio';
 
 /**

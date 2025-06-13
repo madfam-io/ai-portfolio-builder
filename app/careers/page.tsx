@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-} from 'react-icons/fa';
+
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -10,7 +10,7 @@ import {
   FaHeart,
   FaRocket,
   FaGlobe,
-
+} from 'react-icons/fa';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -20,12 +20,12 @@ export default function CareersPage(): React.ReactElement {
 
   const openPositions = [
     {
-      id: 1,
-      title: t.careersPosition1Title || 'Senior Full-Stack Developer',
-      department: t.careersPosition1Department || 'Engineering',
-      location: t.careersPosition1Location || 'Remote',
-      type: t.careersPosition1Type || 'Full-time',
-      description:
+      _id: 1,
+      _title: t.careersPosition1Title || 'Senior Full-Stack Developer',
+      _department: t.careersPosition1Department || 'Engineering',
+      _location: t.careersPosition1Location || 'Remote',
+      _type: t.careersPosition1Type || 'Full-time',
+      _description:
         t.careersPosition1Description ||
         'Join our engineering team to build the next generation of AI-powered portfolio tools. Work with React, Node.js, and cutting-edge AI technologies.',
       requirements: [
@@ -35,12 +35,12 @@ export default function CareersPage(): React.ReactElement {
       ],
     },
     {
-      id: 2,
-      title: t.careersPosition2Title || 'Product Designer',
-      department: t.careersPosition2Department || 'Design',
-      location: t.careersPosition2Location || 'Mexico City / Remote',
-      type: t.careersPosition2Type || 'Full-time',
-      description:
+      _id: 2,
+      _title: t.careersPosition2Title || 'Product Designer',
+      _department: t.careersPosition2Department || 'Design',
+      _location: t.careersPosition2Location || 'Mexico City / Remote',
+      _type: t.careersPosition2Type || 'Full-time',
+      _description:
         t.careersPosition2Description ||
         'Shape the user experience of PRISMA and help millions of professionals create stunning portfolios. Design for web and mobile platforms.',
       requirements: [
@@ -50,12 +50,12 @@ export default function CareersPage(): React.ReactElement {
       ],
     },
     {
-      id: 3,
-      title: t.careersPosition3Title || 'AI Research Engineer',
-      department: t.careersPosition3Department || 'AI/ML',
-      location: t.careersPosition3Location || 'Remote',
-      type: t.careersPosition3Type || 'Full-time',
-      description:
+      _id: 3,
+      _title: t.careersPosition3Title || 'AI Research Engineer',
+      _department: t.careersPosition3Department || 'AI/ML',
+      _location: t.careersPosition3Location || 'Remote',
+      _type: t.careersPosition3Type || 'Full-time',
+      _description:
         t.careersPosition3Description ||
         'Research and develop AI models for content generation, template recommendation, and portfolio optimization using latest ML techniques.',
       requirements: [
@@ -65,12 +65,12 @@ export default function CareersPage(): React.ReactElement {
       ],
     },
     {
-      id: 4,
-      title: t.careersPosition4Title || 'Customer Success Manager',
-      department: t.careersPosition4Department || 'Customer Success',
-      location: t.careersPosition4Location || 'Austin, TX / Remote',
-      type: t.careersPosition4Type || 'Full-time',
-      description:
+      _id: 4,
+      _title: t.careersPosition4Title || 'Customer Success Manager',
+      _department: t.careersPosition4Department || 'Customer Success',
+      _location: t.careersPosition4Location || 'Austin, TX / Remote',
+      _type: t.careersPosition4Type || 'Full-time',
+      _description:
         t.careersPosition4Description ||
         'Drive customer adoption and success, ensuring our users get maximum value from PRISMA. Work closely with product and engineering teams.',
       requirements: [
@@ -83,30 +83,30 @@ export default function CareersPage(): React.ReactElement {
 
   const benefits = [
     {
-      icon: FaGlobe,
-      title: t.careersRemoteTitle,
-      description: t.careersRemoteDesc,
+      _icon: FaGlobe,
+      _title: t.careersRemoteTitle,
+      _description: t.careersRemoteDesc,
     },
     {
-      icon: FaHeart,
-      title: t.careersBenefitsTitle,
-      description: t.careersBenefitsDesc,
+      _icon: FaHeart,
+      _title: t.careersBenefitsTitle,
+      _description: t.careersBenefitsDesc,
     },
     {
-      icon: FaRocket,
-      title: t.careersGrowthTitle,
-      description: t.careersGrowthDesc,
+      _icon: FaRocket,
+      _title: t.careersGrowthTitle,
+      _description: t.careersGrowthDesc,
     },
     {
-      icon: FaUsers,
-      title: t.careersInclusiveTitle,
-      description: t.careersInclusiveDesc,
+      _icon: FaUsers,
+      _title: t.careersInclusiveTitle,
+      _description: t.careersInclusiveDesc,
     },
   ];
 
   return (
     <BaseLayout>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="container mx-auto px-4 _sm:px-6 lg:px-8 py-8 pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
@@ -138,7 +138,7 @@ export default function CareersPage(): React.ReactElement {
 
           {/* Open Positions */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 _dark:text-white">
               {t.careersOpenPositions || 'Open Positions'}
             </h2>
 
@@ -197,7 +197,7 @@ export default function CareersPage(): React.ReactElement {
           </div>
 
           {/* No Perfect Match */}
-          <div className="text-center bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+          <div className="text-center bg-white _dark:bg-gray-800 p-8 rounded-xl shadow-lg">
             <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.careersNoMatch || "Don't see a perfect match?"}
             </h2>

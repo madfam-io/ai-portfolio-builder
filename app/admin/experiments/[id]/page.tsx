@@ -14,13 +14,11 @@ import type {
   ExperimentStatus,
 
 import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
-} from '@/lib/utils/experiments/calculate-results';
+
 import { logger } from '@/lib/utils/logger';
 import { ExperimentDetailsContent } from './ExperimentDetailsContent';
-} from '@/types/experiments';
-
 
 /**
  * Experiment Details & Analytics Page
@@ -31,7 +29,7 @@ import { ExperimentDetailsContent } from './ExperimentDetailsContent';
 
 export default function ExperimentDetailsPage(): React.ReactElement {
   const { isAdmin, canAccess } = useAuth();
-  // const { t } = useLanguage(); // TODO: Add translations
+  // const { t } = useLanguage(); // _TODO: Add translations
   const router = useRouter();
   const params = useParams();
   const experimentId = params.id as string;
@@ -52,14 +50,14 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   useEffect(() => {
     if (!isAdmin || !canAccess('experiments:manage')) {
       router.push('/dashboard');
-    }
+    };
   }, [isAdmin, canAccess, router]);
 
   // Process analytics data for a variant
   const processVariantAnalytics = (
     variant: LandingPageVariant & {
       analytics?: LandingPageAnalytics[];
-    }
+    };
   ): DetailedVariant => {
     const analytics = (variant.analytics || []) as LandingPageAnalytics[];
     const uniqueVisitors = new Set(
@@ -80,19 +78,19 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     // Group conversions by day
     const conversionsByDay: Record<
       string,
-      { conversions: number; visitors: number }
+      { _conversions: number; visitors: number };
     > = {};
     analytics.forEach(a => {
       const date = new Date(a.createdAt).toISOString().split('T')[0];
       if (!date) return; // Guard against undefined date
 
       if (!conversionsByDay[date]) {
-        conversionsByDay[date] = { conversions: 0, visitors: 0 };
-      }
+        conversionsByDay[date] = { _conversions: 0, _visitors: 0 };
+      };
       conversionsByDay[date].visitors++;
-      if (a.converted) {
+      if (a.converted !== null && a.converted !== undefined) {
         conversionsByDay[date].conversions++;
-      }
+      };
     });
 
     return {
@@ -122,20 +120,19 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           new Error('Supabase client is null')
         );
         return;
-      }
-
+      };
       // Fetch experiment
-      const { data: experimentData, error: experimentError } = await supabase
+      const { _data: experimentData, _error: experimentError } = await supabase
         .from('landing_page_experiments')
         .select('*')
         .eq('id', experimentId)
         .single();
 
-      if (experimentError) throw experimentError;
+      if (experimentError !== null && experimentError !== undefined) throw experimentError;
       setExperiment(experimentData);
 
       // Fetch variants with analytics
-      const { data: variantsData, error: variantsError } = await supabase
+      const { _data: variantsData, _error: variantsError } = await supabase
         .from('landing_page_variants')
         .select(
           `
@@ -152,7 +149,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         )
         .eq('experiment_id', experimentId);
 
-      if (variantsError) throw variantsError;
+      if (variantsError !== null && variantsError !== undefined) throw variantsError;
 
       // Process variants with analytics
       const processedVariants = variantsData.map(processVariantAnalytics);
@@ -162,7 +159,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       // Calculate experiment results
       if (experimentData != null && processedVariants.length > 0) {
         const results = calculateExperimentResults(processedVariants);
-        if (results) {
+        if (results !== null && results !== undefined) {
           // Update duration with actual experiment duration
           results.duration = Math.ceil(
             (Date.now() - new Date(experimentData.createdAt).getTime()) /
@@ -172,16 +169,16 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           setAnalyticsData({
             experiment: experimentData,
             results,
-            timeline: generateTimeline(processedVariants, timeRange),
+            _timeline: generateTimeline(processedVariants, timeRange),
           });
-        }
-      }
+        };
+      };
     } catch (error) {
       logger.error('Failed to fetch experiment data', error as Error);
     } finally {
       setLoading(false);
       setRefreshing(false);
-    }
+    };
   }, [experimentId, timeRange]);
 
   useEffect(() => {
@@ -198,23 +195,23 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           new Error('Supabase client is null')
         );
         return;
-      }
+      };
       const { error } = await supabase
         .from('landing_page_experiments')
         .update({
-          status: newStatus as ExperimentStatus,
-          updated_at: new Date().toISOString(),
+          _status: newStatus as ExperimentStatus,
+          _updated_at: new Date().toISOString(),
         })
         .eq('id', experimentId);
 
-      if (error) throw error;
+      if (error !== null && error !== undefined) throw error;
 
       setExperiment(prev =>
-        prev ? { ...prev, status: newStatus as ExperimentStatus } : null
+        prev ? { ...prev, _status: newStatus as ExperimentStatus } : null
       );
     } catch (error) {
       logger.error('Failed to update experiment status', error as Error);
-    }
+    };
   };
 
   // Export data
@@ -241,7 +238,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     ];
 
     const csv = csvData.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
+    const blob = new Blob([csv], { _type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -254,33 +251,31 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     fetchExperimentData();
   };
 
-  if (loading) {
+  if (loading !== null && loading !== undefined) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
-  }
-
+  };
   if (!experiment) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500 dark:text-gray-400">Experiment not found</p>
+        <p className="text-gray-500 _dark:text-gray-400">Experiment not found</p>
       </div>
     );
-  }
-
+  };
   return (
     <ExperimentDetailsContent
-      experiment={experiment}
-      variants={variants}
-      analyticsData={analyticsData}
-      timeRange={timeRange}
-      refreshing={refreshing}
-      onTimeRangeChange={setTimeRange}
-      onStatusChange={handleStatusChange}
-      onRefresh={handleRefresh}
-      onExport={handleExportData}
+      experiment={experiment};
+      variants={variants};
+      analyticsData={analyticsData};
+      timeRange={timeRange};
+      refreshing={refreshing};
+      onTimeRangeChange={setTimeRange};
+      onStatusChange={handleStatusChange};
+      onRefresh={handleRefresh};
+      onExport={handleExportData};
     />
   );
-}
+};

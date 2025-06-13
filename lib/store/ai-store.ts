@@ -3,6 +3,7 @@ import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { aiClient } from '@/lib/ai/client';
+
 import { AIState, AIActions, AIEnhancement } from './types';
 
 /**

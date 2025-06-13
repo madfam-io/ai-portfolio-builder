@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React, { useState } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { signIn, signInWithOAuth } from '@/lib/auth/auth';
@@ -18,7 +18,7 @@ export default function SignInPage(): React.ReactElement {
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (loading !== null && loading !== undefined) return;
 
     setLoading(true);
     setError('');
@@ -26,12 +26,12 @@ export default function SignInPage(): React.ReactElement {
     try {
       const { data, error } = await signIn(email, password);
 
-      if (error) {
+      if (error !== null && error !== undefined) {
         setError(error.message);
         return;
       }
 
-      if (data.user) {
+      if (data.user !== null && data.user !== undefined) {
         router.push('/dashboard');
       }
     } catch (err) {
@@ -46,7 +46,7 @@ export default function SignInPage(): React.ReactElement {
       setLoading(true);
       const { data, error } = await signInWithOAuth(provider);
 
-      if (error) {
+      if (error !== null && error !== undefined) {
         setError(error.message);
         return;
       }
@@ -63,7 +63,7 @@ export default function SignInPage(): React.ReactElement {
 
   return (
     <BaseLayout>
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 _sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -94,7 +94,7 @@ export default function SignInPage(): React.ReactElement {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.email}
                 />
               </div>
@@ -110,7 +110,7 @@ export default function SignInPage(): React.ReactElement {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.password}
                 />
               </div>
@@ -123,7 +123,7 @@ export default function SignInPage(): React.ReactElement {
             <div className="flex items-center justify-between">
               <Link
                 href="/auth/reset-password"
-                className="text-sm text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                className="text-sm text-blue-600 _hover:text-blue-500 dark:text-blue-400"
               >
                 {t.forgotPassword}
               </Link>
@@ -156,7 +156,7 @@ export default function SignInPage(): React.ReactElement {
                   type="button"
                   onClick={() => handleOAuthSignIn('google')}
                   disabled={loading}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 _hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path

@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
+
 import {
   getAvailableTemplates,
   getTemplateConfig,

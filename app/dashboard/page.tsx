@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-} from 'react-icons/fa';
+
 import {
   FaPlus,
   FaEdit,
@@ -12,7 +12,7 @@ import {
   FaSpinner,
   FaGlobe,
 // Removed portfolioService import - will use API calls instead
-
+} from 'react-icons/fa';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';

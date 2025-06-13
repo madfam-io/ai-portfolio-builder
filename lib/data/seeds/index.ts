@@ -1,4 +1,5 @@
 import { logger } from '@/lib/utils/logger';
+
 import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-} from 'react-icons/fi';
 import {
   FiMonitor,
   FiTablet,

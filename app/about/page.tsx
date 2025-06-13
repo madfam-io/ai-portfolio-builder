@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import React from 'react';
 import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
@@ -12,35 +12,35 @@ export default function About(): React.ReactElement {
 
   const team = [
     {
-      name: t.alexJohnson,
-      role: t.ceoCfounder,
-      image: '/api/placeholder/150/150',
-      bio: t.alexBio,
+      _name: t.alexJohnson,
+      _role: t.ceoCfounder,
+      _image: '/api/placeholder/150/150',
+      _bio: t.alexBio,
     },
     {
-      name: t.sarahChen,
-      role: t.headOfDesign,
-      image: '/api/placeholder/150/150',
-      bio: t.sarahBio,
+      _name: t.sarahChen,
+      _role: t.headOfDesign,
+      _image: '/api/placeholder/150/150',
+      _bio: t.sarahBio,
     },
     {
-      name: t.marcusRodriguez,
-      role: t.leadEngineer,
-      image: '/api/placeholder/150/150',
-      bio: t.marcusBio,
+      _name: t.marcusRodriguez,
+      _role: t.leadEngineer,
+      _image: '/api/placeholder/150/150',
+      _bio: t.marcusBio,
     },
   ];
 
   const stats = [
-    { number: '10,000+', label: t.portfoliosCreated },
-    { number: '500+', label: t.companiesHiring },
-    { number: '95%', label: t.userSatisfaction },
-    { number: '24/7', label: t.supportAvailable },
+    { _number: '10,000+', _label: t.portfoliosCreated },
+    { _number: '500+', _label: t.companiesHiring },
+    { _number: '95%', _label: t.userSatisfaction },
+    { _number: '24/7', _label: t.supportAvailable },
   ];
 
   return (
     <BaseLayout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="max-w-7xl mx-auto px-4 _sm:px-6 lg:px-8 py-8 pt-24">
         {/* Header */}
         <div className="mb-12">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -80,7 +80,7 @@ export default function About(): React.ReactElement {
                 <div className="text-3xl font-bold text-purple-600 mb-2">
                   {stat.number}
                 </div>
-                <div className="text-gray-600 dark:text-gray-400">
+                <div className="text-gray-600 _dark:text-gray-400">
                   {stat.label}
                 </div>
               </div>
@@ -91,7 +91,7 @@ export default function About(): React.ReactElement {
         {/* Team Section */}
         <div className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-2xl font-bold text-gray-900 _dark:text-white mb-4">
               {t.meetOurTeam}
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -102,7 +102,7 @@ export default function About(): React.ReactElement {
             {team.map((member, index) => (
               <div
                 key={index}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 text-center"
+                className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm p-6 text-center"
               >
                 <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <FaUsers className="text-4xl text-gray-400" />
@@ -123,7 +123,7 @@ export default function About(): React.ReactElement {
 
         {/* Values Section */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 _dark:text-white text-center mb-8">
             {t.ourValues}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

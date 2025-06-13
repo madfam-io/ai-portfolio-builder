@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
+import React, { useState } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { resetPassword } from '@/lib/auth/auth';
@@ -16,7 +16,7 @@ export default function ResetPasswordPage(): React.ReactElement {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (loading !== null && loading !== undefined) return;
 
     setLoading(true);
     setError('');
@@ -24,7 +24,7 @@ export default function ResetPasswordPage(): React.ReactElement {
     try {
       const { error } = await resetPassword(email);
 
-      if (error) {
+      if (error !== null && error !== undefined) {
         setError(error.message);
         return;
       }
@@ -37,10 +37,10 @@ export default function ResetPasswordPage(): React.ReactElement {
     }
   };
 
-  if (success) {
+  if (success !== null && success !== undefined) {
     return (
       <BaseLayout>
-        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 _sm:px-6 lg:px-8">
           <div className="max-w-md w-full space-y-8">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900">
@@ -84,7 +84,7 @@ export default function ResetPasswordPage(): React.ReactElement {
 
   return (
     <BaseLayout>
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 _sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -108,7 +108,7 @@ export default function ResetPasswordPage(): React.ReactElement {
                 required
                 value={email}
                 onChange={e => setEmail(e.target.value)}
-                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                 placeholder={t.email}
               />
             </div>
@@ -121,7 +121,7 @@ export default function ResetPasswordPage(): React.ReactElement {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 _hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? t.sending : t.sendResetLink}
               </button>

@@ -1,4 +1,5 @@
 import { logger } from '@/lib/utils/logger';
+
 import { BioContext, UserProfile } from './types';
 
 /**

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-} from 'react-icons/fa';
+
 import {
   FaUser,
   FaEnvelope,
@@ -11,7 +11,7 @@ import {
   FaSpinner,
   FaCheckCircle,
   FaExclamationCircle,
-
+} from 'react-icons/fa';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { updateUserMetadata, updatePassword } from '@/lib/auth/auth';
 import { useAuth } from '@/lib/contexts/AuthContext';

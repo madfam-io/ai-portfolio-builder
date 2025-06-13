@@ -1,6 +1,7 @@
 import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
 import type { Repository, PullRequest, Contributor } from '@/types/analytics';
 
 /**

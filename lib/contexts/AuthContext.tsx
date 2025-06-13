@@ -1,13 +1,14 @@
 'use client';
 
-} from 'react';
-import { User as SupabaseUser } from '@supabase/supabase-js';
 import React, {
   createContext,
   useContext,
   useState,
   useEffect,
   useCallback,
+} from 'react';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+
 import {
   hasPermission,
   canAccessFeature,

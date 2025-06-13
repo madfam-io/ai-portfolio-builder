@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { HiSparkles } from 'react-icons/hi';
-} from 'react-icons/fi';
+
 import {
   FiGlobe,
   FiBarChart,
@@ -17,7 +17,7 @@ import {
   FiCode,
   FiDownload,
 
-
+} from 'react-icons/fi';
 interface PublishingPreviewProps {
   portfolioName?: string;
   onPublish?: () => void;

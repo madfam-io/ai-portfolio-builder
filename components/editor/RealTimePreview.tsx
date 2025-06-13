@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react';
 import {
   Monitor,
   Tablet,
@@ -8,6 +7,7 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import { cn } from '@/components/ui/utils';

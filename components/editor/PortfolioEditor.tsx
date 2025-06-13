@@ -1,16 +1,17 @@
 'use client';
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useEditorHistory } from '@/hooks/useEditorHistory';
 import {
   Portfolio,
   PortfolioEditorState,
   TemplateType,
   SectionType,
-
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useEditorHistory } from '@/hooks/useEditorHistory';
 } from '@/types/portfolio';
+
 import { EditorHeader } from './EditorHeader';
 import { EditorSidebar } from './EditorSidebar';
 import { EditorToolbar } from './EditorToolbar';

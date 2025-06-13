@@ -1,5 +1,5 @@
-import React from 'react';
 import dynamic from 'next/dynamic';
+import React from 'react';
 
 /**
  * Lazy-loaded admin experiment components

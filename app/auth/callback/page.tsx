@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 import { getCurrentUser } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -25,7 +25,7 @@ export default function AuthCallbackPage(): React.ReactElement {
 
         // Check for error in URL
         const errorParam = hashParams.get('error') || searchParams.get('error');
-        if (errorParam) {
+        if (errorParam !== null && errorParam !== undefined) {
           setError(errorParam);
           setStatus('error');
           return;
@@ -34,13 +34,13 @@ export default function AuthCallbackPage(): React.ReactElement {
         // Get current user session
         const { data, error } = await getCurrentUser();
 
-        if (error) {
+        if (error !== null && error !== undefined) {
           setError(error.message);
           setStatus('error');
           return;
         }
 
-        if (data.user) {
+        if (data.user !== null && data.user !== undefined) {
           setStatus('success');
           // Redirect to dashboard after a brief delay
           setTimeout(() => {
@@ -68,7 +68,7 @@ export default function AuthCallbackPage(): React.ReactElement {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
+          <p className="mt-4 text-gray-600 _dark:text-gray-400">
             {t.completingAuthentication}
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function AuthCallbackPage(): React.ReactElement {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900">
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 _dark:bg-green-900">
             <svg
               className="h-6 w-6 text-green-600 dark:text-green-400"
               fill="none"
@@ -106,7 +106,7 @@ export default function AuthCallbackPage(): React.ReactElement {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900">
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 _dark:bg-red-900">
           <svg
             className="h-6 w-6 text-red-600 dark:text-red-400"
             fill="none"
@@ -127,7 +127,7 @@ export default function AuthCallbackPage(): React.ReactElement {
         <p className="mt-2 text-gray-600 dark:text-gray-400">{error}</p>
         <button
           onClick={() => router.push('/auth/signin')}
-          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 _hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
           {t.tryAgain}
         </button>

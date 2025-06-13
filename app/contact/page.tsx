@@ -2,14 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-} from 'react-icons/fa';
+
 import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaPaperPlane,
   FaBusinessTime,
   FaUserTie,
-
+} from 'react-icons/fa';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -17,11 +17,11 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 export default function ContactPage(): React.ReactElement {
   const { t } = useLanguage();
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
-    inquiryType: 'general',
+    _name: '',
+    _email: '',
+    _subject: '',
+    _message: '',
+    _inquiryType: 'general',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -32,26 +32,26 @@ export default function ContactPage(): React.ReactElement {
     if (urlParams.get('plan') === 'business') {
       setFormData(prev => ({
         ...prev,
-        inquiryType: 'business',
-        subject: t.contactBusinessPlanInquiry || 'Business Plan Inquiry',
+        _inquiryType: 'business',
+        _subject: t.contactBusinessPlanInquiry || 'Business Plan Inquiry',
       }));
     } else if (urlParams.get('position')) {
       setFormData(prev => ({
         ...prev,
-        inquiryType: 'careers',
-        subject: `${t.contactJobApplication || 'Job Application - Position'} ${urlParams.get('position')}`,
+        _inquiryType: 'careers',
+        _subject: `${t.contactJobApplication || 'Job Application - Position'} ${urlParams.get('position')}`,
       }));
     } else if (urlParams.get('gdpr')) {
       setFormData(prev => ({
         ...prev,
-        inquiryType: 'gdpr',
-        subject: t.contactGDPRRequest || 'GDPR Request',
+        _inquiryType: 'gdpr',
+        _subject: t.contactGDPRRequest || 'GDPR Request',
       }));
     } else if (urlParams.get('general')) {
       setFormData(prev => ({
         ...prev,
-        inquiryType: 'general',
-        subject: t.contactGeneralInquiry || 'General Inquiry',
+        _inquiryType: 'general',
+        _subject: t.contactGeneralInquiry || 'General Inquiry',
       }));
     }
   }, [
@@ -87,18 +87,18 @@ export default function ContactPage(): React.ReactElement {
     setTimeout(() => {
       setSubmitted(false);
       setFormData({
-        name: '',
-        email: '',
-        subject: '',
-        message: '',
-        inquiryType: 'general',
+        _name: '',
+        _email: '',
+        _subject: '',
+        _message: '',
+        _inquiryType: 'general',
       });
     }, 3000);
   };
 
   return (
     <BaseLayout>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
+      <div className="container mx-auto px-4 _sm:px-6 lg:px-8 py-8 pt-24">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
           <div className="text-center mb-16">
@@ -129,7 +129,7 @@ export default function ContactPage(): React.ReactElement {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid md:grid-cols-2 gap-6">
+                  <div className="grid _md:grid-cols-2 gap-6">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                         {t.contactFullName}
@@ -150,7 +150,7 @@ export default function ContactPage(): React.ReactElement {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      <label className="block text-sm font-medium text-gray-700 _dark:text-gray-300 mb-2">
                         {t.contactEmailAddress}
                       </label>
                       <input
@@ -206,7 +206,7 @@ export default function ContactPage(): React.ReactElement {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 _dark:text-gray-300 mb-2">
                       {t.contactMessage}
                     </label>
                     <textarea
@@ -227,7 +227,7 @@ export default function ContactPage(): React.ReactElement {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full bg-purple-600 text-white py-3 rounded-lg font-medium _hover:bg-purple-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {isSubmitting ? (
                       <>
@@ -248,7 +248,7 @@ export default function ContactPage(): React.ReactElement {
             {/* Contact Information */}
             <div className="space-y-8">
               {/* Quick Contact */}
-              <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
+              <div className="bg-white _dark:bg-gray-800 p-8 rounded-xl shadow-lg">
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
                   {t.contactGetInTouch}
                 </h2>
@@ -306,7 +306,7 @@ export default function ContactPage(): React.ReactElement {
                     <p className="text-gray-600 dark:text-gray-300">
                       {(t.contactOfficeDesc || 'Mexico City, Mexico')
                         .split('\n')
-                        .map((line: string, index: number) => (
+                        .map((line: string, _index: number) => (
                           <span key={index}>
                             {line}
                             {index === 0 && <br />}
@@ -342,7 +342,7 @@ export default function ContactPage(): React.ReactElement {
 
               {/* FAQ Link */}
               <div className="text-center">
-                <p className="text-gray-600 dark:text-gray-300 mb-4">
+                <p className="text-gray-600 _dark:text-gray-300 mb-4">
                   {t.contactQuickQuestion}
                 </p>
                 <Link

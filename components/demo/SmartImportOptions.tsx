@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import { HiSparkles } from 'react-icons/hi';
-} from 'react-icons/fi';
+
 import {
   FiLinkedin,
   FiGithub,
   FiUpload,
   FiArrowRight,
   FiCheck,
-
+} from 'react-icons/fi';
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { ResumeParser } from '@/components/integrations/ResumeParser';

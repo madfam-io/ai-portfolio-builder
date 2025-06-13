@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import React from 'react';
 import { FaGithub, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';

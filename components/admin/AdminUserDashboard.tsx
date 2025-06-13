@@ -3,7 +3,6 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-} from 'react-icons/fi';
 import {
   FiUsers,
   FiSettings,
@@ -18,6 +17,7 @@ import {
   FiAlertTriangle,
   FiCheck,
   FiLayers,
+} from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';

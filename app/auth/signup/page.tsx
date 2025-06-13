@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { signUp, signInWithOAuth } from '@/lib/auth/auth';
@@ -23,7 +23,7 @@ function SignUpContent() {
   // Extract plan from URL parameters
   useEffect(() => {
     const plan = searchParams.get('plan');
-    if (plan) {
+    if (plan !== null && plan !== undefined) {
       setSelectedPlan(plan);
     }
   }, [searchParams]);
@@ -38,14 +38,14 @@ function SignUpContent() {
         return t.planBusiness;
       case 'enterprise':
         return t.planEnterprise;
-      default:
+      _default:
         return plan;
     }
   };
 
   const handleEmailSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (loading !== null && loading !== undefined) return;
 
     setLoading(true);
     setError('');
@@ -54,13 +54,13 @@ function SignUpContent() {
     try {
       const { data, error } = await signUp(email, password, fullName);
 
-      if (error) {
+      if (error !== null && error !== undefined) {
         setError(error.message);
         return;
       }
 
-      if (data.user) {
-        if (data.user.email_confirmed_at) {
+      if (data.user !== null && data.user !== undefined) {
+        if (data.user.email_confirmed_at !== null && data.user.email_confirmed_at !== undefined) {
           // Email already confirmed, redirect to dashboard with plan info
           const redirectUrl = selectedPlan
             ? `/dashboard?plan=${selectedPlan}`
@@ -83,7 +83,7 @@ function SignUpContent() {
       setLoading(true);
       const { data, error } = await signInWithOAuth(provider);
 
-      if (error) {
+      if (error !== null && error !== undefined) {
         setError(error.message);
         return;
       }
@@ -98,10 +98,10 @@ function SignUpContent() {
     }
   };
 
-  if (success) {
+  if (success !== null && success !== undefined) {
     return (
       <BaseLayout>
-        <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen flex items-center justify-center py-12 px-4 _sm:px-6 lg:px-8">
           <div className="max-w-md w-full space-y-8">
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 dark:bg-green-900">
@@ -145,7 +145,7 @@ function SignUpContent() {
 
   return (
     <BaseLayout>
-      <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center py-12 px-4 _sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">
           <div>
             <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -162,7 +162,7 @@ function SignUpContent() {
                 </div>
               </div>
             )}
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-center text-sm text-gray-600 _dark:text-gray-400">
               {t.or}{' '}
               <Link
                 href={`/auth/signin${selectedPlan ? `?plan=${selectedPlan}` : ''}`}
@@ -187,7 +187,7 @@ function SignUpContent() {
                   required
                   value={fullName}
                   onChange={e => setFullName(e.target.value)}
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.fullName}
                 />
               </div>
@@ -203,7 +203,7 @@ function SignUpContent() {
                   required
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.email}
                 />
               </div>
@@ -219,7 +219,7 @@ function SignUpContent() {
                   required
                   value={password}
                   onChange={e => setPassword(e.target.value)}
-                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+                  className="relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md _focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
                   placeholder={t.passwordMinLength}
                 />
               </div>
@@ -233,7 +233,7 @@ function SignUpContent() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 _hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? t.creatingAccount : t.signUp}
               </button>
@@ -256,7 +256,7 @@ function SignUpContent() {
                   type="button"
                   onClick={() => handleOAuthSignUp('google')}
                   disabled={loading}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 _hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path

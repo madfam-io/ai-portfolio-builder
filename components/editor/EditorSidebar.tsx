@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-} from 'react-icons/fi';
 import {
   FiUser,
   FiBriefcase,
@@ -13,6 +12,7 @@ import {
   FiChevronRight,
   FiPlus,
   FiEdit3,
+} from 'react-icons/fi';
 
 import { Portfolio, SectionType } from '@/types/portfolio';
 

@@ -9,7 +9,6 @@ import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
 import { csrfMiddleware } from './middleware/csrf';
 import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
-} from './middleware/security-headers';
 
 /**
  * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning

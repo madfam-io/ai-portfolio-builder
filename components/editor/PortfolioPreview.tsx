@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Image from 'next/image';
-} from 'react-icons/fi';
 import {
   FiMail,
   FiPhone,
@@ -11,6 +10,7 @@ import {
   FiLinkedin,
   FiTwitter,
   FiExternalLink,
+} from 'react-icons/fi';
 
 import { Portfolio } from '@/types/portfolio';
 

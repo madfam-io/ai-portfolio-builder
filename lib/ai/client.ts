@@ -4,9 +4,9 @@ import {
   TemplateRecommendation,
   UserProfile,
   EnhancedContent,
+} from './types';
 
 import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
-} from './types';
 
 /**
  * AI Service Client

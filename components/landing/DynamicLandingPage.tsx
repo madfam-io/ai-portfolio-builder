@@ -5,9 +5,9 @@ import {
   useExperiment,
   useExperimentTheme,
   sortComponentsByOrder,
-import BackToTopButton from '../BackToTopButton';
-
 } from '@/lib/services/feature-flags/use-experiment';
+
+import BackToTopButton from '../BackToTopButton';
 import Footer from './Footer';
 import Header from './Header';
 import { getHeroVariant } from './variants/HeroVariants';

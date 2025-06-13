@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
 import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 // Removed server-side service import - will use API calls instead
 

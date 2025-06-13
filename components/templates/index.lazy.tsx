@@ -1,6 +1,6 @@
+import dynamic from 'next/dynamic';
 import React from 'react';
 import { ComponentType } from 'react';
-import dynamic from 'next/dynamic';
 
 import { Portfolio } from '@/types/portfolio';
 

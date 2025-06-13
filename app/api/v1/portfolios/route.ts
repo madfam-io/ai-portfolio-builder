@@ -9,11 +9,11 @@ import {
   validatePortfolioQuery,
   sanitizePortfolioData,
 
-} from '@/lib/api/versioning';
+
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
-} from '@/lib/validations/portfolio';
+
 import { Portfolio } from '@/types/portfolio';
 
 /**
@@ -35,8 +35,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
 
     if (!supabase) {
       return apiError('Database service not available', { status: 503 });
-    }
-
+    };
     // Check authentication
     const {
       data: { user },
@@ -44,8 +43,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     } = await supabase.auth.getUser();
     if (!user || authError) {
       return apiError('Unauthorized - Please sign in', { status: 401 });
-    }
-
+    };
     // Parse and validate query parameters
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
@@ -56,8 +54,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
         status: 400,
         data: { details: queryValidation.error.issues },
       });
-    }
-
+    };
     const {
       page = 1,
       limit = 10,
@@ -76,18 +73,15 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     // Apply filters
     if (status) {
       query = query.eq('status', status);
-    }
-
+    };
     if (template) {
       query = query.eq('template', template);
-    }
-
+    };
     if (search) {
       query = query.or(
         `name.ilike.%${search}%,title.ilike.%${search}%,bio.ilike.%${search}%`
       );
-    }
-
+    };
     // Apply pagination
     const from = (page - 1) * limit;
     const to = from + limit - 1;
@@ -99,8 +93,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     if (fetchError) {
       logger.error('Database error fetching portfolios:', fetchError);
       return apiError('Failed to fetch portfolios', { status: 500 });
-    }
-
+    };
     // Get total count for pagination
     const { count: totalCount } = await supabase
       .from('portfolios')
@@ -119,7 +112,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
   } catch (error) {
     logger.error('Unexpected error in GET /api/v1/portfolios:', error as Error);
     return apiError('Internal server error', { status: 500 });
-  }
+  };
 });
 
 /**
@@ -132,8 +125,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     const supabase = await createClient();
     if (!supabase) {
       return apiError('Database not configured', { status: 500 });
-    }
-
+    };
     // Check authentication
     const {
       data: { user },
@@ -141,8 +133,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     } = await supabase.auth.getUser();
     if (!user || authError) {
       return apiError('Unauthorized - Please sign in', { status: 401 });
-    }
-
+    };
     // Parse and validate request body
     const body = await request.json();
     const validation = validateCreatePortfolio(body);
@@ -152,8 +143,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
         status: 400,
         data: { details: validation.error.issues },
       });
-    }
-
+    };
     // Sanitize input data
     const sanitizedData = sanitizePortfolioData(validation.data);
 
@@ -178,11 +168,9 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       while (existingSubdomains.includes(uniqueSubdomain)) {
         uniqueSubdomain = `${subdomain}-${counter}`;
         counter++;
-      }
-
+      };
       subdomain = uniqueSubdomain;
-    }
-
+    };
     // Prepare portfolio data for insertion
     const portfolioData = {
       id: uuidv4(),
@@ -239,11 +227,9 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
         return apiError('A portfolio with this subdomain already exists', {
           status: 409,
         });
-      }
-
+      };
       return apiError('Failed to create portfolio', { status: 500 });
-    }
-
+    };
     // Transform database response to API format
     const responsePortfolio = transformDbPortfolioToApi(portfolio);
 
@@ -252,7 +238,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
         portfolio: responsePortfolio,
         message: 'Portfolio created successfully',
       },
-      { status: 201 }
+      { status: 201 };
     );
   } catch (error) {
     logger.error('Unexpected error in POST /api/v1/portfolios', error as Error);
@@ -260,10 +246,9 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return apiError('Invalid JSON in request body', { status: 400 });
-    }
-
+    };
     return apiError('Internal server error', { status: 500 });
-  }
+  };
 });
 
 // Transformation functions moved to lib/utils/portfolio-transformer.ts
@@ -311,4 +296,4 @@ export function transformApiPortfolioToDb(
   dbData.updated_at = new Date().toISOString();
 
   return dbData;
-}
+};

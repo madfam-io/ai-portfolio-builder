@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+
 import {
   API_VERSION_CONFIG,
   createVersionedResponse,

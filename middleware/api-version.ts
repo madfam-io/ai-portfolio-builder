@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export interface ApiVersionConfig {
-  currentVersion: string;
+  _currentVersion: string;
   supportedVersions: string[];
   deprecatedVersions: Map<
     string,
@@ -14,7 +14,7 @@ export const API_VERSION_CONFIG: ApiVersionConfig = {
   currentVersion: 'v1',
   supportedVersions: ['v1'],
   deprecatedVersions: new Map([
-    // Example: ['v0', { deprecatedAt: new Date('2025-01-01'), sunsetDate: new Date('2025-06-01'), message: 'Please upgrade to v1' }]
+    // Example: ['v0', { deprecatedAt: new Date('2025-01-01'), sunsetDate: new Date('2025-06-01'), _message: 'Please upgrade to v1' }]
   ]),
 };
 
@@ -94,12 +94,12 @@ export async function apiVersionMiddleware(
   if (version && !isVersionSupported(version)) {
     return NextResponse.json(
       {
-        error: 'Unsupported API Version',
-        message: `API version ${version} is not supported. Supported versions: ${API_VERSION_CONFIG.supportedVersions.join(', ')}`,
-        currentVersion: API_VERSION_CONFIG.currentVersion,
+        _error: 'Unsupported API Version',
+        _message: `API version ${version} is not supported. Supported versions: ${API_VERSION_CONFIG.supportedVersions.join(', ')}`,
+        _currentVersion: API_VERSION_CONFIG.currentVersion,
       },
       {
-        status: 400,
+        _status: 400,
         headers: response.headers,
       }
     );
@@ -108,7 +108,7 @@ export async function apiVersionMiddleware(
   // Check if version is deprecated
   if (version && isVersionDeprecated(version)) {
     const deprecationInfo = getDeprecationInfo(version);
-    if (deprecationInfo) {
+    if (deprecationInfo !== null && deprecationInfo !== undefined) {
       response.headers.set(
         'X-API-Deprecation-Warning',
         deprecationInfo.message
@@ -132,7 +132,7 @@ export async function apiVersionMiddleware(
  * Helper function to create versioned API response
  */
 export function createVersionedResponse<T>(
-  data: T,
+  _data: T,
   options?: {
     status?: number;
     headers?: HeadersInit;
@@ -158,7 +158,7 @@ export function createVersionedResponse<T>(
  * Helper to handle version-specific logic in route handlers
  */
 export function withApiVersion<T extends (...args: any[]) => any>(
-  handler: T,
+  _handler: T,
   options?: {
     minVersion?: string;
     maxVersion?: string;
@@ -174,26 +174,26 @@ export function withApiVersion<T extends (...args: any[]) => any>(
     if (options?.minVersion && version < options.minVersion) {
       return NextResponse.json(
         {
-          error: 'Version Too Low',
-          message: `This endpoint requires API version ${options.minVersion} or higher. You are using ${version}.`,
-          currentVersion: API_VERSION_CONFIG.currentVersion,
+          _error: 'Version Too Low',
+          _message: `This endpoint requires API version ${options.minVersion} or higher. You are using ${version}.`,
+          _currentVersion: API_VERSION_CONFIG.currentVersion,
         },
-        { status: 400 }
+        { _status: 400 }
       );
     }
 
     if (options?.maxVersion && version > options.maxVersion) {
       return NextResponse.json(
         {
-          error: 'Version Too High',
-          message: `This endpoint supports API version ${options.maxVersion} or lower. You are using ${version}.`,
-          currentVersion: API_VERSION_CONFIG.currentVersion,
+          _error: 'Version Too High',
+          _message: `This endpoint supports API version ${options.maxVersion} or lower. You are using ${version}.`,
+          _currentVersion: API_VERSION_CONFIG.currentVersion,
         },
-        { status: 400 }
+        { _status: 400 }
       );
     }
 
     // Call the original handler with version context
-    return handler(...args, { apiVersion: version });
+    return handler(...args, { _apiVersion: version });
   }) as T;
 }

@@ -1,13 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
+
 import {
   authenticateUser,
   hasPermission,
   unauthorizedResponse,
   forbiddenResponse,
-} from '@/lib/api/middleware/auth';
+
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
 import type { CreateExperimentRequest } from '@/types/experiments';
 
 /**

@@ -2,14 +2,14 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-} from 'react-icons/fa';
+
 import {
   FaPlay,
   FaCheckCircle,
   FaArrowRight,
   FaClock,
   FaUser,
-
+} from 'react-icons/fa';
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -21,32 +21,32 @@ export default function DemoPage(): React.ReactElement {
 
   const demoSteps = [
     {
-      title: t.demoStep1Title,
-      description: t.demoStep1Desc,
-      duration: t.demoStep1Duration,
-      icon: '📄',
-      highlight: false,
+      _title: t.demoStep1Title,
+      _description: t.demoStep1Desc,
+      _duration: t.demoStep1Duration,
+      _icon: '📄',
+      _highlight: false,
     },
     {
-      title: t.demoStep2Title,
-      description: t.demoStep2Desc,
-      duration: t.demoStep2Duration,
-      icon: '🤖',
-      highlight: true,
+      _title: t.demoStep2Title,
+      _description: t.demoStep2Desc,
+      _duration: t.demoStep2Duration,
+      _icon: '🤖',
+      _highlight: true,
     },
     {
-      title: t.demoStep3Title,
-      description: t.demoStep3Desc,
-      duration: t.demoStep3Duration,
-      icon: '🎨',
-      highlight: false,
+      _title: t.demoStep3Title,
+      _description: t.demoStep3Desc,
+      _duration: t.demoStep3Duration,
+      _icon: '🎨',
+      _highlight: false,
     },
     {
-      title: t.demoStep4Title,
-      description: t.demoStep4Desc,
-      duration: t.demoStep4Duration,
-      icon: '🚀',
-      highlight: false,
+      _title: t.demoStep4Title,
+      _description: t.demoStep4Desc,
+      _duration: t.demoStep4Duration,
+      _icon: '🚀',
+      _highlight: false,
     },
   ];
 
@@ -60,7 +60,7 @@ export default function DemoPage(): React.ReactElement {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-50 _dark:bg-gray-900">
       <Header />
 
       <main className="pt-32 pb-20 px-6">
@@ -107,7 +107,7 @@ export default function DemoPage(): React.ReactElement {
                     </p>
                     <Link
                       href="/demo/interactive"
-                      className="inline-block mt-4 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition"
+                      className="inline-block mt-4 bg-purple-600 text-white px-6 py-3 rounded-lg _hover:bg-purple-700 transition"
                     >
                       Launch Interactive Demo
                     </Link>
@@ -139,7 +139,7 @@ export default function DemoPage(): React.ReactElement {
 
           {/* Demo Steps */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 _dark:text-white">
               How It Works
             </h2>
 
@@ -149,7 +149,7 @@ export default function DemoPage(): React.ReactElement {
                   key={index}
                   className={`${
                     step.highlight
-                      ? 'bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-500'
+                      ? 'bg-gradient-to-br from-purple-50 to-blue-50 _dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-500'
                       : 'bg-white dark:bg-gray-800'
                   } p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all duration-300 relative`}
                 >
@@ -159,7 +159,7 @@ export default function DemoPage(): React.ReactElement {
                     </div>
                   )}
                   <div className="text-4xl mb-4">{step.icon}</div>
-                  <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
+                  <h3 className="text-xl font-bold mb-3 text-gray-900 _dark:text-white">
                     {step.title}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-3">
@@ -176,7 +176,7 @@ export default function DemoPage(): React.ReactElement {
 
           {/* Live Example */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold text-center mb-12 text-gray-900 _dark:text-white">
               Live Portfolio Example
             </h2>
 
@@ -210,7 +210,7 @@ export default function DemoPage(): React.ReactElement {
                   </div>
                 </div>
 
-                <div className="grid md:grid-cols-3 gap-6">
+                <div className="grid _md:grid-cols-3 gap-6">
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                     <h4 className="font-bold text-gray-900 dark:text-white mb-2">
                       Projects
@@ -258,7 +258,7 @@ export default function DemoPage(): React.ReactElement {
               {features.map((feature, index) => (
                 <div
                   key={index}
-                  className="flex items-center gap-3 bg-white dark:bg-gray-800 p-4 rounded-lg shadow"
+                  className="flex items-center gap-3 bg-white _dark:bg-gray-800 p-4 rounded-lg shadow"
                 >
                   <FaCheckCircle className="text-green-500 text-xl flex-shrink-0" />
                   <span className="text-gray-900 dark:text-white font-medium">
@@ -278,7 +278,7 @@ export default function DemoPage(): React.ReactElement {
               Join thousands of professionals who have transformed their careers
               with PRISMA.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col _sm:flex-row gap-4 justify-center">
               <Link
                 href="/auth/signup"
                 className="bg-white text-purple-600 px-8 py-4 rounded-lg font-medium hover:bg-gray-100 transition inline-flex items-center justify-center gap-2"

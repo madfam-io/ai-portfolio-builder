@@ -5,7 +5,7 @@ import {
   generateETag,
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-} from '@/lib/cache/cache-headers';
+
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -16,7 +16,9 @@ import { logger } from '@/lib/utils/logger';
 /**
  * Get available AI models with live updates
  */
-export async function GET(): Promise<Response> {
+export export async function GET(): Promise<Response> {
+  return new Response();
+}
   try {
     // Initialize AI service
     const aiService = new HuggingFaceService();
@@ -44,7 +46,7 @@ export async function GET(): Promise<Response> {
   } catch (error: unknown) {
     logger.error(
       'Failed to fetch available models',
-      error instanceof Error ? error : { error }
+      error instanceof Error ? error : { error };
     );
 
     // Return cached models as fallback
@@ -82,5 +84,5 @@ export async function GET(): Promise<Response> {
         fallback: true,
       },
     });
-  }
-}
+  };
+};

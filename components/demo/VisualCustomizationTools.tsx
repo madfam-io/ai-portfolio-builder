@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { HiSparkles } from 'react-icons/hi';
-} from 'react-icons/fi';
+
 import {
   FiSettings,
   FiType,
@@ -12,7 +12,7 @@ import {
   FiMoon,
   FiMove,
 
-
+} from 'react-icons/fi';
 interface ColorScheme {
   name: string;
   primary: string;

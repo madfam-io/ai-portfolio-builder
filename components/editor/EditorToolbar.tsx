@@ -1,6 +1,5 @@
 'use client';
 
-} from 'react-icons/fi';
 import {
   FiMonitor,
   FiTablet,
@@ -13,6 +12,7 @@ import {
   FiUser,
   FiStar,
   FiLayout,
+} from 'react-icons/fi';
 
 import { TemplateType } from '@/types/portfolio';
 

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { FaPalette } from 'react-icons/fa';
 import {
   FiAward,
   FiBriefcase,
@@ -9,8 +10,6 @@ import {
   FiSettings,
   FiUser,
 } from 'react-icons/fi';
-import { FaPalette } from 'react-icons/fa';
-
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';

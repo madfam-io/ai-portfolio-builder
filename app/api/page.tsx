@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import React from 'react';
 import { FaBook, FaCode, FaKey, FaShieldAlt } from 'react-icons/fa';
 
 import Footer from '@/components/landing/Footer';
