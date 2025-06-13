@@ -4,10 +4,10 @@ import type {
   GetActiveExperimentResponse,
   VisitorAssignment,
   TargetAudience,
+} from '@/types/experiments';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-} from '@/types/experiments';
 
 /**
  * @fileoverview Feature Flag Service for A/B Testing

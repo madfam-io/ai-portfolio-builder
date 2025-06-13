@@ -52,7 +52,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   useEffect(() => {
     if (!isAdmin || !canAccess('experiments:manage')) {
       router.push('/dashboard');
-    };
+    }
   }, [isAdmin, canAccess, router]);
 
   // Process analytics data for a variant
@@ -88,11 +88,11 @@ export default function ExperimentDetailsPage(): React.ReactElement {
 
       if (!conversionsByDay[date]) {
         conversionsByDay[date] = { _conversions: 0, _visitors: 0 };
-      };
+      }
       conversionsByDay[date].visitors++;
       if (a.converted !== null && a.converted !== undefined) {
         conversionsByDay[date].conversions++;
-      };
+      }
     });
 
     return {
@@ -122,7 +122,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           new Error('Supabase client is null')
         );
         return;
-      };
+      }
       // Fetch experiment
       const { _data: experimentData, _error: experimentError } = await supabase
         .from('landing_page_experiments')
@@ -173,14 +173,14 @@ export default function ExperimentDetailsPage(): React.ReactElement {
             results,
             _timeline: generateTimeline(processedVariants, timeRange),
           });
-        };
-      };
+        }
+      }
     } catch (error) {
       logger.error('Failed to fetch experiment data', error as Error);
     } finally {
       setLoading(false);
       setRefreshing(false);
-    };
+    }
   }, [experimentId, timeRange]);
 
   useEffect(() => {
@@ -197,7 +197,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           new Error('Supabase client is null')
         );
         return;
-      };
+      }
       const { error } = await supabase
         .from('landing_page_experiments')
         .update({
@@ -213,7 +213,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       );
     } catch (error) {
       logger.error('Failed to update experiment status', error as Error);
-    };
+    }
   };
 
   // Export data
@@ -240,7 +240,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     ];
 
     const csv = csvData.map(row => row.join(',')).join('\n');
-    const blob = new Blob([csv], { _type: 'text/csv' });
+    const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -259,7 +259,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
       </div>
     );
-  };
+  }
   if (!experiment) {
     return (
       <div className="flex items-center justify-center min-h-screen">

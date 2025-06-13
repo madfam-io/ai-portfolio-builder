@@ -84,9 +84,9 @@ export default function RepositoryAnalyticsPage(): React.ReactElement {
             error: t.repositoryNotFound as string,
           }));
           return;
-        };
+        }
         throw new Error(result.error ?? (t.failedToFetchAnalytics as string));
-      };
+      }
       setRepo(prev => ({
         ...prev,
         data: result.data,
