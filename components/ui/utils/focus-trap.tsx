@@ -28,7 +28,7 @@ export function FocusTrap({
     if (!container) return;
 
     // Get all focusable elements
-    const getFocusableElements = (): void => {
+    const getFocusableElements = () => {
       const selectors = [
         'a[href]',
         'button:not([disabled])',

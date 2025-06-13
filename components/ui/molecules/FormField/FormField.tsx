@@ -10,7 +10,7 @@ import {
   FormDescription,
   FormMessage,
   FormField as ShadcnFormField,
-} from 'react-icons/fi';
+} from '../../form';
 import { Input, type InputProps } from '../../input';
 import { Label, type LabelProps } from '../../label';
 
@@ -104,7 +104,7 @@ export interface EnhancedFormFieldProps<
   /**
    * The form control instance from react-hook-form
    */
-  control: unknown; // Will be properly typed when used
+  control: any; // Will be properly typed when used
   /**
    * The field name
    */

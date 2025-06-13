@@ -1,5 +1,5 @@
 import { headers } from 'next/headers';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
 import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
 import { logger } from '@/lib/utils/logger';
@@ -12,7 +12,7 @@ import { logger } from '@/lib/utils/logger';
 /**
  * Get active experiment for current visitor
  */
-export async function GET($1): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
   try {
     // Get visitor context from headers
     const headersList = await headers();

@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HiSparkles } from 'react-icons/hi';
-} from 'react-icons/fi';
 import {
   FiLinkedin,
   FiCheck,
@@ -10,7 +8,8 @@ import {
   FiUser,
   FiBriefcase,
   FiAward,
-
+} from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 
 interface LinkedInProfile {
   name: string;

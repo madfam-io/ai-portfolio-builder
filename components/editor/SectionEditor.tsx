@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import {
   Plus,
   Trash2,
@@ -11,6 +10,14 @@ import {
   Code,
   Award,
 } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { cn } from '@/components/ui/utils';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+import { DraggableItem } from './DraggableItem';
+
 import type {
   Portfolio,
   Experience,
@@ -18,11 +25,6 @@ import type {
   Project,
   Skill,
   Certification,
-
-import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import { cn } from '@/components/ui/utils';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { DraggableItem } from './DraggableItem';
 } from '@/types/portfolio';
 
 /**
@@ -58,7 +60,7 @@ export const SectionEditor = React.memo(function SectionEditor({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  const getSectionIcon = (): void => {
+  const getSectionIcon = (): React.ReactElement => {
     switch (section) {
       case 'experience':
         return <Briefcase className="h-5 w-5" />;
@@ -73,18 +75,18 @@ export const SectionEditor = React.memo(function SectionEditor({
     }
   };
 
-  const getSectionTitle = (): void => {
+  const getSectionTitle = (): string => {
     switch (section) {
       case 'experience':
-        return t.experience;
+        return (t as any).experience;
       case 'education':
-        return t.education;
+        return (t as any).education;
       case 'projects':
-        return t.projects;
+        return (t as any).projects;
       case 'skills':
-        return t.skills;
+        return (t as any).skills;
       case 'certifications':
-        return t.certifications;
+        return (t as any).certifications;
     }
   };
 
@@ -171,7 +173,7 @@ export const SectionEditor = React.memo(function SectionEditor({
                   | 'education'
                   | 'skill',
                 index,
-                data: { ...item } as unknown,
+                data: { ...item } as any,
               }}
               onReorder={handleReorder}
               disabled={editingIndex === index}
@@ -223,7 +225,7 @@ function ItemCard({
 }) {
   const { t } = useLanguage();
 
-  const renderContent = (): void => {
+  const renderContent = (): React.ReactElement | null => {
     switch (section) {
       case 'experience':
         const expItem = item as Experience;

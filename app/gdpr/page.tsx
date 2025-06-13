@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-
+import React from 'react';
 import {
   FaShieldAlt,
   FaUser,
@@ -11,9 +10,9 @@ import {
   FaDownload,
   FaEdit,
 } from 'react-icons/fa';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-
 
 export default function GDPRPage(): React.ReactElement {
   const { t } = useLanguage();

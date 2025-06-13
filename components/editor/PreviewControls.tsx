@@ -27,7 +27,6 @@ import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
  * zoom controls, section highlighting, and export functionality.
  */
 
-
 interface PreviewControlsProps {
   previewMode: PreviewMode;
   previewState: PreviewState;

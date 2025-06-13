@@ -90,10 +90,10 @@ export async function POST(request: NextRequest): Promise<Response> {
           keyword: seedKeyword,
           searchVolume: keywordResearch[0]?.searchVolume || 'N/A',
           difficulty: keywordResearch[0]?.difficulty || 'N/A',
-          trends: keywordResearch[0]?.trends || 'stable',
+          trends: (keywordResearch[0] as any)?.trends || 'stable',
         },
-        relatedKeywords: keywordResearch[0]?.relatedKeywords || [],
-        questions: keywordResearch[0]?.questions || [],
+        relatedKeywords: (keywordResearch[0] as any)?.relatedKeywords || [],
+        questions: (keywordResearch[0] as any)?.questions || [],
         variations,
         longTailKeywords,
         locationBased: location
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       metadata: {
         researchedAt: new Date().toISOString(),
         totalKeywords:
-          (keywordResearch[0]?.relatedKeywords.length || 0) +
+          ((keywordResearch[0] as any)?.relatedKeywords?.length || 0) +
           variations.length +
           longTailKeywords.length,
       },

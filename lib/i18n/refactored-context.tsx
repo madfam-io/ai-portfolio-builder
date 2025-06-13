@@ -8,15 +8,15 @@ import React, {
   ReactNode,
 } from 'react';
 
+import * as enTranslations from './translations/en';
+import * as esTranslations from './translations/es';
+import { flattenTranslations } from './utils';
+
 import type {
   Language,
   FlattenedTranslations,
   TranslationNamespace,
 } from './refactored-types';
-
-import * as enTranslations from './translations/en';
-import * as esTranslations from './translations/es';
-import { flattenTranslations } from './utils';
 
 /**
  * @fileoverview Refactored i18n context provider with modular translations
@@ -25,7 +25,6 @@ import { flattenTranslations } from './utils';
  * This is the new modular version of the i18n system that uses separate
  * translation files for better code organization and maintainability.
  */
-
 
 /**
  * Available language configuration

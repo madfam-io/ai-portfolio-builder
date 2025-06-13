@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import React, { useState } from 'react';
 import {
   FiUsers,
   FiSettings,
@@ -22,7 +22,6 @@ import {
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
-
 
 /**
  * Admin User Dashboard Component

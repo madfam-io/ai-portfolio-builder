@@ -16,12 +16,12 @@ export function serializeError(error: unknown): Record<string, any> {
       name: error.name,
       message: error.message,
       stack: error.stack,
-      cause: (error as unknown).cause,
+      cause: (error as any).cause,
       // Include any custom properties
       ...Object.getOwnPropertyNames(error).reduce(
         (acc, key) => {
           if (!['name', 'message', 'stack', 'cause'].includes(key)) {
-            acc[key] = (error as unknown)[key];
+            acc[key] = (error as any)[key];
           }
           return acc;
         },
@@ -203,8 +203,8 @@ export function getErrorContext() {
   };
 
   // Add user context if available
-  if (typeof window !== 'undefined' && (window as unknown).__USER_CONTEXT__) {
-    context.user = (window as unknown).__USER_CONTEXT__;
+  if (typeof window !== 'undefined' && (window as any).__USER_CONTEXT__) {
+    context.user = (window as any).__USER_CONTEXT__;
   }
 
   return context;

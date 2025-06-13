@@ -16,7 +16,6 @@ import {
 
 import { TemplateType } from '@/types/portfolio';
 
-
 interface EditorToolbarProps {
   previewMode: 'desktop' | 'tablet' | 'mobile';
   onPreviewModeChange: (mode: 'desktop' | 'tablet' | 'mobile') => void;

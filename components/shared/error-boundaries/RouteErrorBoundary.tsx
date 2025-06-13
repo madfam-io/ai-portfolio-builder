@@ -1,13 +1,13 @@
 'use client';
 
-import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { useRouter } from 'next/navigation';
+import React, { Component, ReactNode, ErrorInfo } from 'react';
 import { FiAlertTriangle, FiArrowLeft, FiRefreshCw } from 'react-icons/fi';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
   serializeError,
   getErrorType,
-
-import { useLanguage } from '@/lib/i18n/refactored-context';
 } from '@/lib/utils/error-handling/error-utils';
 import { logger } from '@/lib/utils/logger';
 
@@ -17,7 +17,6 @@ import { logger } from '@/lib/utils/logger';
  * Page-level error boundary for handling route-specific errors.
  * Provides inline error handling without full page replacement.
  */
-
 
 interface RouteErrorBoundaryProps {
   children: ReactNode;
@@ -140,18 +139,18 @@ function InlineErrorFallback({
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
-            {(t.errors as unknown)?.sectionError || 'Section Error'}
+            {(t as any).errors?.sectionError || 'Section Error'}
           </h3>
           <p className="text-sm text-red-700 dark:text-red-300 mb-4">
-            {(t.errors as unknown)?.[`${errorType}Error`] ||
-              (t.errors as unknown)?.genericError ||
+            {(t as any).errors?.[`${errorType}Error`] ||
+              (t as any).errors?.genericError ||
               'An error occurred'}
           </p>
 
           {showDetails && error && (
             <details className="mb-4">
               <summary className="cursor-pointer text-sm text-red-600 dark:text-red-400 hover:underline">
-                {(t.errors as unknown)?.showDetails || 'Show Details'}
+                {(t as any).errors?.showDetails || 'Show Details'}
               </summary>
               <pre className="mt-2 text-xs bg-red-100 dark:bg-red-900/30 p-2 rounded overflow-x-auto">
                 {error.message}
@@ -164,7 +163,7 @@ function InlineErrorFallback({
             className="inline-flex items-center gap-2 text-sm bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
           >
             <FiRefreshCw className="w-4 h-4" />
-            {(t.errors as unknown)?.tryAgain || 'Try Again'}
+            {(t as any).errors?.tryAgain || 'Try Again'}
           </button>
         </div>
       </div>
@@ -202,19 +201,19 @@ function FullPageErrorFallback({
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {(t.errors as unknown)?.pageError || 'Page Error'}
+            {(t as any).errors?.pageError || 'Page Error'}
           </h1>
 
           <p className="text-gray-600 dark:text-gray-400 mb-6">
-            {(t.errors as unknown)?.[`${errorType}Error`] ||
-              (t.errors as unknown)?.genericError ||
+            {(t as any).errors?.[`${errorType}Error`] ||
+              (t as any).errors?.genericError ||
               'An error occurred'}
           </p>
 
           {showDetails && error && (
             <details className="text-left bg-gray-100 dark:bg-gray-800 rounded-lg p-4 mb-6">
               <summary className="cursor-pointer font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {(t.errors as unknown)?.technicalDetails || 'Technical Details'}
+                {(t as any).errors?.technicalDetails || 'Technical Details'}
               </summary>
               <pre className="text-xs font-mono text-gray-600 dark:text-gray-400 whitespace-pre-wrap">
                 {error.message}
@@ -229,7 +228,7 @@ function FullPageErrorFallback({
             className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
           >
             <FiRefreshCw className="w-4 h-4" />
-            {(t.errors as unknown)?.tryAgain || 'Try Again'}
+            {(t as any).errors?.tryAgain || 'Try Again'}
           </button>
 
           <button
@@ -237,7 +236,7 @@ function FullPageErrorFallback({
             className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             <FiArrowLeft className="w-4 h-4" />
-            {(t.errors as unknown)?.goBack || 'Go Back'}
+            {(t as any).errors?.goBack || 'Go Back'}
           </button>
         </div>
       </div>

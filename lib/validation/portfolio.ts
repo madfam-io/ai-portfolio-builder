@@ -1,6 +1,6 @@
 /**
  * Portfolio Validation
- * 
+ *
  * Re-exports portfolio validation functions for backwards compatibility
  */
 
@@ -20,6 +20,6 @@ export function validatePortfolioQuery(query: Record<string, any>) {
       status: query.status,
       template: query.template,
       search: query.search,
-    }
+    },
   };
 }

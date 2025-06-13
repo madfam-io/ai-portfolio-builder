@@ -16,7 +16,6 @@ import {
 
 import { Portfolio, SectionType } from '@/types/portfolio';
 
-
 interface EditorSidebarProps {
   portfolio: Portfolio;
   activeSection: SectionType;

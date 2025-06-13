@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-
+import React, { useState, useEffect } from 'react';
 import {
   FaEnvelope,
   FaMapMarkerAlt,
@@ -10,9 +9,9 @@ import {
   FaBusinessTime,
   FaUserTie,
 } from 'react-icons/fa';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-
 
 export default function ContactPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -137,7 +136,7 @@ export default function ContactPage(): React.ReactElement {
                       <input
                         type="text"
                         name="name"
-                        value={formData.name}
+                        value={formData._name}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
@@ -156,7 +155,7 @@ export default function ContactPage(): React.ReactElement {
                       <input
                         type="email"
                         name="email"
-                        value={formData.email}
+                        value={formData._email}
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
@@ -173,7 +172,7 @@ export default function ContactPage(): React.ReactElement {
                     </label>
                     <select
                       name="inquiryType"
-                      value={formData.inquiryType}
+                      value={formData._inquiryType}
                       onChange={handleInputChange}
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
                     >
@@ -193,7 +192,7 @@ export default function ContactPage(): React.ReactElement {
                     <input
                       type="text"
                       name="subject"
-                      value={formData.subject}
+                      value={formData._subject}
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 dark:bg-gray-700 dark:text-white"
@@ -211,7 +210,7 @@ export default function ContactPage(): React.ReactElement {
                     </label>
                     <textarea
                       name="message"
-                      value={formData.message}
+                      value={formData._message}
                       onChange={handleInputChange}
                       required
                       rows={6}
@@ -306,7 +305,7 @@ export default function ContactPage(): React.ReactElement {
                     <p className="text-gray-600 dark:text-gray-300">
                       {(t.contactOfficeDesc || 'Mexico City, Mexico')
                         .split('\n')
-                        .map((line: string, _index: number) => (
+                        .map((line: string, index: number) => (
                           <span key={index}>
                             {line}
                             {index === 0 && <br />}

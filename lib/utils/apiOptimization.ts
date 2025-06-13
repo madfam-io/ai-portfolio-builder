@@ -281,7 +281,7 @@ export function withCache(config: CacheConfig) {
       const cacheKey = config.key || `${req.url}_${req.method}`;
 
       // Try to get from cache
-      const cached = memoryCache.get(cacheKey);
+      const cached = memoryCache.get(cacheKey) as any;
       if (cached) {
         // Return cached response with cache headers
         const response = new NextResponse(cached.body, {

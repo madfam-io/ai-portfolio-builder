@@ -26,7 +26,7 @@ export default function VariantPreview({
   const [selectedDevice, setSelectedDevice] = React.useState(device);
 
   // Calculate preview dimensions
-  const getPreviewDimensions = (): void => {
+  const getPreviewDimensions = (): string => {
     switch (selectedDevice) {
       case 'mobile':
         return 'max-w-[375px]';

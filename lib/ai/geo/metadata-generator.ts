@@ -366,30 +366,31 @@ export class MetadataGenerator {
    * Generate portfolio-specific structured data
    */
   generatePortfolioStructuredData(portfolio: unknown): Record<string, any> {
+    const portfolioData = portfolio as any;
     return {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
       mainEntity: {
         '@type': 'Person',
-        name: portfolio.name,
-        jobTitle: portfolio.title,
-        description: portfolio.bio,
-        url: portfolio.url,
+        name: portfolioData.name,
+        jobTitle: portfolioData.title,
+        description: portfolioData.bio,
+        url: portfolioData.url,
         sameAs: [
-          portfolio.social?.linkedin,
-          portfolio.social?.github,
-          portfolio.social?.twitter,
+          portfolioData.social?.linkedin,
+          portfolioData.social?.github,
+          portfolioData.social?.twitter,
         ].filter(Boolean),
-        knowsAbout: portfolio.skills?.map((s: unknown) => s.name) || [],
+        knowsAbout: portfolioData.skills?.map((s: any) => s.name) || [],
         alumniOf:
-          portfolio.education?.map((edu: unknown) => ({
+          portfolioData.education?.map((edu: any) => ({
             '@type': 'EducationalOrganization',
             name: edu.institution,
           })) || [],
-        worksFor: portfolio.experience?.[0]
+        worksFor: portfolioData.experience?.[0]
           ? {
               '@type': 'Organization',
-              name: portfolio.experience[0].company,
+              name: portfolioData.experience[0].company,
             }
           : undefined,
       },

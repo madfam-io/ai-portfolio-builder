@@ -9,7 +9,7 @@ import { Portfolio } from '@/types/portfolio';
  * Transforms database portfolio object to API format
  * Converts snake_case to camelCase and adjusts field names
  */
-export function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
+export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
   return {
     id: dbPortfolio.id,
     userId: dbPortfolio.user_id,
@@ -49,8 +49,8 @@ export function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
  */
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
-): unknown {
-  const dbData: unknown = {};
+): any {
+  const dbData: any = {};
 
   // Map API fields to database fields
   const fieldMapping: Record<string, string> = {
@@ -136,7 +136,7 @@ export function sanitizePortfolioData(
 
   allowedFields.forEach(field => {
     if (field in data) {
-      (sanitized as unknown)[field] = (data as unknown)[field];
+      (sanitized as any)[field] = (data as any)[field];
     }
   });
 
@@ -153,7 +153,7 @@ export function sanitizePortfolioData(
       field in sanitized &&
       !Array.isArray(sanitized[field as keyof Portfolio])
     ) {
-      sanitized[field as keyof Portfolio] = [] as unknown;
+      sanitized[field as keyof Portfolio] = [] as any;
     }
   });
 
@@ -164,7 +164,7 @@ export function sanitizePortfolioData(
       field in sanitized &&
       typeof sanitized[field as keyof Portfolio] !== 'object'
     ) {
-      sanitized[field as keyof Portfolio] = {} as unknown;
+      sanitized[field as keyof Portfolio] = {} as any;
     }
   });
 

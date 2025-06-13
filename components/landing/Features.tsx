@@ -12,7 +12,6 @@ import {
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-
 export default function Features(): React.ReactElement {
   const { t } = useLanguage();
   return (

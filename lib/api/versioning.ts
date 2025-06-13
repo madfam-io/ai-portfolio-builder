@@ -72,7 +72,7 @@ export function apiError(
 export function getApiVersion(request: NextRequest): string {
   return (
     extractApiVersion(request.nextUrl.pathname) ||
-    API_VERSION_CONFIG.currentVersion
+    API_VERSION_CONFIG._currentVersion
   );
 }
 
@@ -94,7 +94,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 
       // Replace request in args
       const versionedArgs = [...args] as unknown as Parameters<T>;
-      (versionedArgs as unknown)[0] = versionedRequest;
+      (versionedArgs as any)[0] = versionedRequest;
 
       // Call handler with versioned request
       const result = await handler(...versionedArgs);
@@ -124,7 +124,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 export function createVersionedRoute(routePath: string) {
   return {
     v1: `/api/v1/${routePath}`,
-    current: `/api/${API_VERSION_CONFIG.currentVersion}/${routePath}`,
+    current: `/api/${API_VERSION_CONFIG._currentVersion}/${routePath}`,
     legacy: `/api/${routePath}`, // For backward compatibility
   };
 }
@@ -139,7 +139,7 @@ export function generateApiDocHeaders(
   return {
     'X-API-Endpoint': endpoint,
     'X-API-Methods': methods.join(', '),
-    'X-API-Version-Required': API_VERSION_CONFIG.currentVersion,
-    'X-API-Documentation': `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/docs/api/${API_VERSION_CONFIG.currentVersion}/${endpoint}`,
+    'X-API-Version-Required': API_VERSION_CONFIG._currentVersion,
+    'X-API-Documentation': `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/docs/api/${API_VERSION_CONFIG._currentVersion}/${endpoint}`,
   };
 }

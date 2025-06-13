@@ -1,14 +1,14 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-} from 'react-icons/fi';
 import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
 import {
   FiArrowLeft,
   FiGithub,
   FiExternalLink,
   FiRefreshCw,
   FiClock,
+} from 'react-icons/fi';
 
 import type { Repository } from '@/types/analytics';
 
@@ -18,7 +18,6 @@ import type { Repository } from '@/types/analytics';
  * Header section for repository analytics page
  * with title, description, and navigation
  */
-
 
 interface RepositoryHeaderProps {
   repository: Repository;

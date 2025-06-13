@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
-import { transformApiPortfolioToDb } from '../route';
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
 import { Portfolio } from '@/types/portfolio';
+
+import { transformApiPortfolioToDb } from '../route';
 
 /**
  * Portfolio API Routes - Individual portfolio operations
@@ -19,6 +19,34 @@ interface RouteParams {
   params: {
     id: string;
   };
+}
+
+interface DbPortfolio {
+  id: string;
+  user_id: string;
+  name: string;
+  title: string;
+  bio: string;
+  tagline: string;
+  avatar_url: string | null;
+  contact: Record<string, unknown> | null;
+  social: Record<string, unknown> | null;
+  experience: unknown[] | null;
+  education: unknown[] | null;
+  projects: unknown[] | null;
+  skills: unknown[] | null;
+  certifications: unknown[] | null;
+  template: string;
+  customization: Record<string, unknown> | null;
+  ai_settings: Record<string, unknown> | null;
+  status: string;
+  subdomain: string | null;
+  custom_domain: string | null;
+  views: number;
+  last_viewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
 }
 /**
  * GET /api/portfolios/[id]
@@ -145,8 +173,7 @@ export async function PUT(
       }
       logger.error(
         'Database error checking portfolio ownership',
-        fetchError as Error,
-        { portfolioId: id }
+        fetchError as Error
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
@@ -164,17 +191,20 @@ export async function PUT(
     const body = await request.json();
     const validation = validateUpdatePortfolio(body);
 
-    if (!validation.success) {
+    if (!validation.isValid) {
       return NextResponse.json(
-        { error: 'Invalid portfolio data', details: validation.error.issues },
+        { error: 'Invalid portfolio data', details: validation.errors },
         { status: 400 }
       );
     }
     // Sanitize input data
-    const sanitizedData = sanitizePortfolioData(validation.data);
+    const sanitizedData = sanitizePortfolioData(body);
 
     // Handle subdomain uniqueness if being updated
-    if (sanitizedData.subdomain) {
+    if (
+      sanitizedData.subdomain !== undefined &&
+      sanitizedData.subdomain !== null
+    ) {
       const { data: existingSubdomain } = await supabase
         .from('portfolios')
         .select('id')
@@ -188,14 +218,14 @@ export async function PUT(
           { status: 409 }
         );
       }
-    };
+    }
     // Handle status change to published
     if (
       sanitizedData.status === 'published' &&
       existingPortfolio.status !== 'published'
     ) {
       sanitizedData.publishedAt = new Date();
-    };
+    }
     // Transform to database format
     const updateData = transformApiPortfolioToDb(sanitizedData);
 
@@ -210,7 +240,7 @@ export async function PUT(
     if (updateError) {
       logger.error(
         'Database error updating portfolio',
-        updateError instanceof Error ? updateError : { error: updateError };
+        updateError instanceof Error ? updateError : { error: updateError }
       );
 
       // Handle specific errors
@@ -236,8 +266,7 @@ export async function PUT(
   } catch (error) {
     logger.error(
       'Unexpected error in PUT /api/portfolios/[id]',
-      error as Error,
-      { portfolioId: params.id }
+      error as Error
     );
 
     // Handle JSON parsing errors
@@ -300,8 +329,7 @@ export async function DELETE(
       }
       logger.error(
         'Database error checking portfolio ownership',
-        fetchError as Error,
-        { portfolioId: id }
+        fetchError as Error
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
@@ -322,9 +350,7 @@ export async function DELETE(
       .eq('id', id);
 
     if (deleteError) {
-      logger.error('Database error deleting portfolio', deleteError as Error, {
-        portfolioId: id,
-      });
+      logger.error('Database error deleting portfolio', deleteError as Error);
       return NextResponse.json(
         { error: 'Failed to delete portfolio' },
         { status: 500 }
@@ -340,8 +366,7 @@ export async function DELETE(
   } catch (error) {
     logger.error(
       'Unexpected error in DELETE /api/portfolios/[id]',
-      error as Error,
-      { portfolioId: params.id }
+      error as Error
     );
     return NextResponse.json(
       { error: 'Internal server error' },
@@ -353,7 +378,7 @@ export async function DELETE(
  * Transforms database portfolio object to API format
  * Converts snake_case to camelCase and adjusts field names
  */
-function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
+function transformDbPortfolioToApi(dbPortfolio: DbPortfolio): Portfolio {
   return {
     id: dbPortfolio.id,
     userId: dbPortfolio.user_id,
@@ -361,20 +386,20 @@ function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
     title: dbPortfolio.title,
     bio: dbPortfolio.bio,
     tagline: dbPortfolio.tagline,
-    avatarUrl: dbPortfolio.avatar_url,
+    avatarUrl: dbPortfolio.avatar_url || undefined,
     contact: dbPortfolio.contact || {},
     social: dbPortfolio.social || {},
-    experience: dbPortfolio.experience || [],
-    education: dbPortfolio.education || [],
-    projects: dbPortfolio.projects || [],
-    skills: dbPortfolio.skills || [],
-    certifications: dbPortfolio.certifications || [],
-    template: dbPortfolio.template,
+    experience: (dbPortfolio.experience as any) || [],
+    education: (dbPortfolio.education as any) || [],
+    projects: (dbPortfolio.projects as any) || [],
+    skills: (dbPortfolio.skills as any) || [],
+    certifications: (dbPortfolio.certifications as any) || [],
+    template: dbPortfolio.template as any,
     customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings,
-    status: dbPortfolio.status,
-    subdomain: dbPortfolio.subdomain,
-    customDomain: dbPortfolio.custom_domain,
+    aiSettings: dbPortfolio.ai_settings || undefined,
+    status: dbPortfolio.status as any,
+    subdomain: dbPortfolio.subdomain || undefined,
+    customDomain: dbPortfolio.custom_domain || undefined,
     views: dbPortfolio.views,
     lastViewedAt: dbPortfolio.last_viewed_at
       ? new Date(dbPortfolio.last_viewed_at)
@@ -385,4 +410,4 @@ function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
       ? new Date(dbPortfolio.published_at)
       : undefined,
   };
-};
+}

@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-
+import React from 'react';
 import {
   FiArrowLeft,
   FiEdit,
@@ -16,14 +15,16 @@ import {
   FiRefreshCw,
 } from 'react-icons/fi';
 
+import { ConversionChart } from '@/components/admin/experiments/index.lazy';
+import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
+
+import { VariantTableRow } from './VariantTableRow';
+
 import type {
   LandingPageExperiment,
   ExperimentAnalyticsResponse,
   DetailedVariant,
 } from '@/types/experiments';
-import { ConversionChart } from '@/components/admin/experiments/index.lazy';
-import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
-import { VariantTableRow } from './VariantTableRow';
 
 interface ExperimentDetailsContentProps {
   experiment: LandingPageExperiment;
@@ -32,10 +33,10 @@ interface ExperimentDetailsContentProps {
   timeRange: '7d' | '14d' | '30d' | 'all';
   refreshing: boolean;
   onTimeRangeChange: (range: '7d' | '14d' | '30d' | 'all') => void;
-  _onStatusChange: (status: string) => Promise<void>;
-  _onRefresh: () => void;
-  _onExport: () => void;
-};
+  onStatusChange: (status: string) => Promise<void>;
+  onRefresh: () => void;
+  onExport: () => void;
+}
 export function ExperimentDetailsContent({
   experiment,
   variants,
@@ -287,4 +288,4 @@ export function ExperimentDetailsContent({
       </div>
     </div>
   );
-};
+}

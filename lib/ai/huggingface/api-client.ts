@@ -308,7 +308,9 @@ export class HuggingFaceAPIClient {
       });
       return true;
     } catch (error) {
-      logger.warn('HuggingFace API test failed', error as Error);
+      logger.warn('HuggingFace API test failed', {
+        error: (error as Error).message,
+      });
       return false;
     }
   }

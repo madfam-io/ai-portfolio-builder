@@ -30,7 +30,7 @@ export interface SeedingResult {
  * Handles intelligent seeding with conflict detection and incremental updates
  */
 export class DatabaseSeeder {
-  private client: unknown;
+  private client: any;
   private options: SeedingOptions;
 
   constructor(options: SeedingOptions = { mode: 'demo' }) {
@@ -66,7 +66,9 @@ export class DatabaseSeeder {
           .select('*', { count: 'exact', head: true });
 
         if (error) {
-          logger.warn(`Error checking table ${table}:`, error as Error);
+          logger.warn(`Error checking table ${table}:`, {
+            error: (error as Error).message,
+          });
           continue;
         }
 

@@ -1,11 +1,11 @@
+import { logger } from '@/lib/utils/logger';
+
 import {
   ErrorReport,
   ErrorType,
   ErrorSeverity,
   ErrorHandler,
   ErrorFilter,
-
-import { logger } from '@/lib/utils/logger';
 } from './error-types';
 import { serializeError, getErrorType, getErrorContext } from './error-utils';
 
@@ -160,7 +160,7 @@ class ErrorMonitoringService {
         ...(getErrorContext() || {}),
         environment: this.config.environment,
         ...(context || {}),
-      } as unknown,
+      } as any,
       metadata: serializeError(error),
     };
   }

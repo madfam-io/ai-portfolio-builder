@@ -38,7 +38,7 @@ function SignUpContent() {
         return t.planBusiness;
       case 'enterprise':
         return t.planEnterprise;
-      _default:
+      default:
         return plan;
     }
   };
@@ -60,7 +60,10 @@ function SignUpContent() {
       }
 
       if (data.user !== null && data.user !== undefined) {
-        if (data.user.email_confirmed_at !== null && data.user.email_confirmed_at !== undefined) {
+        if (
+          data.user.email_confirmed_at !== null &&
+          data.user.email_confirmed_at !== undefined
+        ) {
           // Email already confirmed, redirect to dashboard with plan info
           const redirectUrl = selectedPlan
             ? `/dashboard?plan=${selectedPlan}`

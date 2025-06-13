@@ -289,38 +289,40 @@ function enhanceRecommendation(
   preferences: Record<string, unknown>
 ): unknown {
   // Apply business rules and preferences
-  const enhancedAlternatives = aiRecommendation.alternatives.map(
+  const enhancedAlternatives = (aiRecommendation as any).alternatives.map(
     (alt: unknown) => ({
-      ...alt,
-      reasoning: generateReasoningForTemplate(alt.template, profile),
-      preview: `/templates/${alt.template}-preview.jpg`,
-      features: getTemplateFeatures(alt.template),
+      ...(alt as Record<string, unknown>),
+      reasoning: generateReasoningForTemplate((alt as any).template, profile),
+      preview: `/templates/${(alt as any).template}-preview.jpg`,
+      features: getTemplateFeatures((alt as any).template),
     })
   );
 
   // Add style preference adjustments
   if (preferences.style) {
     const styleBonus = calculateStyleBonus(
-      aiRecommendation.recommendedTemplate,
+      (aiRecommendation as any).recommendedTemplate,
       preferences.style as string
     );
-    aiRecommendation.confidence = Math.min(
+    (aiRecommendation as any).confidence = Math.min(
       0.95,
-      aiRecommendation.confidence + styleBonus
+      (aiRecommendation as any).confidence + styleBonus
     );
   }
 
   return {
-    ...aiRecommendation,
+    ...(aiRecommendation as Record<string, unknown>),
     alternatives: enhancedAlternatives,
     reasoning: generateReasoningForTemplate(
-      aiRecommendation.recommendedTemplate,
+      (aiRecommendation as any).recommendedTemplate,
       profile
     ),
-    preview: `/templates/${aiRecommendation.recommendedTemplate}-preview.jpg`,
-    features: getTemplateFeatures(aiRecommendation.recommendedTemplate),
+    preview: `/templates/${(aiRecommendation as any).recommendedTemplate}-preview.jpg`,
+    features: getTemplateFeatures(
+      (aiRecommendation as any).recommendedTemplate
+    ),
     customizations: getRecommendedCustomizations(
-      aiRecommendation.recommendedTemplate,
+      (aiRecommendation as any).recommendedTemplate,
       profile
     ),
   };

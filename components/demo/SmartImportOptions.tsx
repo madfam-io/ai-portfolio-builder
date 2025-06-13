@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HiSparkles } from 'react-icons/hi';
-
 import {
   FiLinkedin,
   FiGithub,
@@ -10,10 +8,11 @@ import {
   FiArrowRight,
   FiCheck,
 } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
+
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { ResumeParser } from '@/components/integrations/ResumeParser';
-
 
 interface ImportedData {
   name?: string;

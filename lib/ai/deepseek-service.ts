@@ -1,3 +1,4 @@
+import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -9,8 +10,6 @@ import {
   AIServiceError,
   ModelUnavailableError,
   QuotaExceededError,
-
-import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 } from './types';
 
 /**

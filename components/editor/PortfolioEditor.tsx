@@ -36,7 +36,6 @@ import { PortfolioPreview } from './PortfolioPreview';
  * @version 0.0.1-alpha - Enhanced with professional templates
  */
 
-
 // Removed portfolioService import - will use API calls instead
 interface PortfolioEditorProps {
   portfolioId: string;

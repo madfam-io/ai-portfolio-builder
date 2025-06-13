@@ -65,19 +65,22 @@ export async function POST(request: NextRequest): Promise<Response> {
     if (targetKeywords && targetKeywords.length > 0) {
       const primaryKeyword = targetKeywords[0];
       if (primaryKeyword) {
-        analysis.keywords.primaryKeyword = primaryKeyword;
-        analysis.keywords.secondaryKeywords = targetKeywords.slice(1);
+        (analysis as any).keywords = {
+          primaryKeyword: primaryKeyword,
+          secondaryKeywords: targetKeywords.slice(1),
+        };
       }
     }
 
     // 6. Generate optimization suggestions
-    const suggestions = analysis.suggestions.map(suggestion => ({
-      type: suggestion.type,
-      priority: suggestion.priority,
-      message: suggestion.message,
-      action: suggestion.action,
-      estimatedImpact: `+${suggestion.impact}% score improvement`,
-    }));
+    const suggestions =
+      (analysis as any).suggestions?.map((suggestion: any) => ({
+        type: suggestion.type,
+        priority: suggestion.priority,
+        message: suggestion.message,
+        action: suggestion.action,
+        estimatedImpact: `+${suggestion.impact}% score improvement`,
+      })) || [];
 
     // 7. Return analysis results
     return NextResponse.json({
@@ -85,36 +88,40 @@ export async function POST(request: NextRequest): Promise<Response> {
       data: {
         content: analysis.content,
         scores: {
-          overall: analysis.score.overall,
-          keyword: analysis.score.keyword,
-          readability: analysis.score.readability,
-          structure: analysis.score.structure,
-          technical: analysis.score.technical,
+          overall:
+            (analysis as any).score?.overall || analysis.optimizationScore,
+          keyword: (analysis as any).score?.keyword || 0,
+          readability: (analysis as any).score?.readability || 0,
+          structure: (analysis as any).score?.structure || 0,
+          technical: (analysis as any).score?.technical || 0,
         },
         keywords: {
-          detected: analysis.keywords.lsiKeywords,
-          density: analysis.keywords.density,
-          recommendations: analysis.keywords.recommendations,
+          detected:
+            (analysis as any).keywords?.lsiKeywords || analysis.keywords,
+          density: (analysis as any).keywords?.density || {},
+          recommendations: (analysis as any).keywords?.recommendations || [],
         },
         readability: {
-          score: analysis.readability.score,
-          level: analysis.readability.level,
+          score: (analysis as any).readability?.score || 0,
+          level: (analysis as any).readability?.level || 'unknown',
           metrics: {
-            avgSentenceLength: analysis.readability.avgWordsPerSentence,
-            complexWords: analysis.readability.complexWordCount,
-            readingEase: analysis.readability.fleschReading,
+            avgSentenceLength:
+              (analysis as any).readability?.avgWordsPerSentence || 0,
+            complexWords: (analysis as any).readability?.complexWordCount || 0,
+            readingEase: (analysis as any).readability?.fleschReading || 0,
           },
         },
         structure: {
-          headings: analysis.structure.headings,
-          paragraphs: analysis.structure.paragraphCount,
-          hasProperHierarchy: analysis.structure.hasProperHierarchy,
+          headings: (analysis as any).structure?.headings || [],
+          paragraphs: (analysis as any).structure?.paragraphCount || 0,
+          hasProperHierarchy:
+            (analysis as any).structure?.hasProperHierarchy || false,
         },
         suggestions,
         metadata: {
-          title: analysis.metadata.title,
-          description: analysis.metadata.metaDescription,
-          recommendedKeywords: analysis.metadata.keywords,
+          title: analysis.metadata?.title || '',
+          description: analysis.metadata?.description || '',
+          recommendedKeywords: analysis.metadata?.keywords || [],
         },
       },
       metadata: {

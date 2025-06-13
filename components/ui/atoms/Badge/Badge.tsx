@@ -88,7 +88,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
       <Component
         ref={ref as any}
         className={cn(badgeVariants({ variant, size, interactive }), className)}
-        {...(props as unknown)}
+        {...(props as any)}
       >
         {leftIcon && (
           <span className="mr-1 h-3 w-3" aria-hidden="true">

@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import { HiSparkles } from 'react-icons/hi';
-} from 'react-icons/fi';
 import {
   FiGithub,
   FiStar,
@@ -11,7 +9,8 @@ import {
   FiCalendar,
   FiCheck,
   FiEye,
-
+} from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 
 interface GitHubRepository {
   id: string;

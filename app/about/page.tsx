@@ -12,30 +12,30 @@ export default function About(): React.ReactElement {
 
   const team = [
     {
-      _name: t.alexJohnson,
-      _role: t.ceoCfounder,
-      _image: '/api/placeholder/150/150',
-      _bio: t.alexBio,
+      name: t.alexJohnson,
+      role: t.ceoCfounder,
+      image: '/api/placeholder/150/150',
+      bio: t.alexBio,
     },
     {
-      _name: t.sarahChen,
-      _role: t.headOfDesign,
-      _image: '/api/placeholder/150/150',
-      _bio: t.sarahBio,
+      name: t.sarahChen,
+      role: t.headOfDesign,
+      image: '/api/placeholder/150/150',
+      bio: t.sarahBio,
     },
     {
-      _name: t.marcusRodriguez,
-      _role: t.leadEngineer,
-      _image: '/api/placeholder/150/150',
-      _bio: t.marcusBio,
+      name: t.marcusRodriguez,
+      role: t.leadEngineer,
+      image: '/api/placeholder/150/150',
+      bio: t.marcusBio,
     },
   ];
 
   const stats = [
-    { _number: '10,000+', _label: t.portfoliosCreated },
-    { _number: '500+', _label: t.companiesHiring },
-    { _number: '95%', _label: t.userSatisfaction },
-    { _number: '24/7', _label: t.supportAvailable },
+    { number: '10,000+', label: t.portfoliosCreated },
+    { number: '500+', label: t.companiesHiring },
+    { number: '95%', label: t.userSatisfaction },
+    { number: '24/7', label: t.supportAvailable },
   ];
 
   return (

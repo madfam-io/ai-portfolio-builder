@@ -1,13 +1,15 @@
-import { cookies } from 'next/headers';
 import crypto from 'crypto';
+
+import { cookies } from 'next/headers';
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
 import type {
   GetActiveExperimentResponse,
   VisitorAssignment,
   TargetAudience,
 } from '@/types/experiments';
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 
 /**
  * @fileoverview Feature Flag Service for A/B Testing
@@ -219,7 +221,7 @@ export class FeatureFlagService {
         if (existingAssignment) {
           // Find the assigned variant
           const variant = experiment.variants.find(
-            (v: unknown) => v.id === existingAssignment.variantId
+            (v: any) => v.id === existingAssignment.variantId
           );
 
           if (variant) {

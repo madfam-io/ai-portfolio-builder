@@ -22,27 +22,27 @@ export function InteractiveTemplateSection({
   const templates = [
     {
       id: 'developer' as TemplateType,
-      name: t.demoTemplates?.developer?.name || 'Developer',
+      name: (t as any).demoTemplates?.developer?.name || 'Developer',
       description:
-        t.demoTemplates?.developer?.description ||
+        (t as any).demoTemplates?.developer?.description ||
         'Clean and modern template for software developers',
       icon: FiCode,
       color: 'purple',
     },
     {
       id: 'designer' as TemplateType,
-      name: t.demoTemplates?.designer?.name || 'Designer',
+      name: (t as any).demoTemplates?.designer?.name || 'Designer',
       description:
-        t.demoTemplates?.designer?.description ||
+        (t as any).demoTemplates?.designer?.description ||
         'Creative and visual template for designers',
       icon: FaPalette,
       color: 'pink',
     },
     {
       id: 'consultant' as TemplateType,
-      name: t.demoTemplates?.consultant?.name || 'Consultant',
+      name: (t as any).demoTemplates?.consultant?.name || 'Consultant',
       description:
-        t.demoTemplates?.consultant?.description ||
+        (t as any).demoTemplates?.consultant?.description ||
         'Professional template for business consultants',
       icon: FiLayout,
       color: 'blue',
@@ -52,10 +52,10 @@ export function InteractiveTemplateSection({
   return (
     <div className="px-8 py-6">
       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        {t.demoChooseTemplate}
+        {(t as any).demoChooseTemplate}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 mb-8">
-        {t.demoTemplateDescription}
+        {(t as any).demoTemplateDescription}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -103,7 +103,7 @@ export function InteractiveTemplateSection({
           onClick={onNextStep}
           className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
         >
-          {t.demoContinueToAI}
+          {(t as any).demoContinueToAI}
         </button>
       </div>
     </div>

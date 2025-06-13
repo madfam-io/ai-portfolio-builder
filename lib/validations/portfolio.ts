@@ -266,7 +266,7 @@ export function validatePortfolioQuery(data: unknown) {
 export function sanitizePortfolioData<T extends Record<string, any>>(
   data: T
 ): T {
-  const sanitized = { ...data } as unknown;
+  const sanitized = { ...data } as any;
 
   // List of fields that should be sanitized
   const textFields = ['name', 'title', 'bio', 'tagline', 'description'];

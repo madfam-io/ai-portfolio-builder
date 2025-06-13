@@ -73,7 +73,10 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             });
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Failed to load portfolios';
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to load portfolios';
               state.isLoading = false;
             });
             throw error;
@@ -94,7 +97,10 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             });
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Failed to load portfolio';
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to load portfolio';
               state.isLoading = false;
             });
             throw error;
@@ -126,7 +132,10 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             return portfolio;
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Failed to create portfolio';
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to create portfolio';
               state.isSaving = false;
             });
             throw error;
@@ -156,7 +165,10 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             }
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Failed to update portfolio';
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to update portfolio';
               state.isSaving = false;
             });
             throw error;
@@ -180,7 +192,10 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             });
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Failed to delete portfolio';
+              state.error =
+                error instanceof Error
+                  ? error.message
+                  : 'Failed to delete portfolio';
               state.isLoading = false;
             });
             throw error;

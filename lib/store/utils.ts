@@ -38,10 +38,11 @@ export function createAsyncAction<T extends any[], R>(
       return result;
     } catch (error: unknown) {
       const errorMessage =
-        options?.errorMessage || error.message || 'Operation failed';
+        options?.errorMessage ||
+        (error instanceof Error ? error.message : 'Operation failed');
       showErrorToast('Error', errorMessage);
 
-      options?.onError?.(error);
+      options?.onError?.(error as Error);
       throw error;
     } finally {
       if (options?.loadingMessage) {
@@ -82,7 +83,7 @@ export const createLoadingSlice = <T extends object>(
     ...initialState,
 
     startLoading: key =>
-      set((state: unknown) => ({
+      set((state: any) => ({
         ...state,
         isLoading: true,
         loadingKey: key || state.loadingKey,
@@ -92,7 +93,7 @@ export const createLoadingSlice = <T extends object>(
       })),
 
     stopLoading: key =>
-      set((state: unknown) => {
+      set((state: any) => {
         const newLoadingKeys = new Set(state.loadingKeys);
         if (key) {
           newLoadingKeys.delete(key);
@@ -106,12 +107,12 @@ export const createLoadingSlice = <T extends object>(
       }),
 
     isLoadingKey: key => {
-      const state = get() as unknown;
+      const state = get() as any;
       return state.loadingKeys.has(key);
     },
 
     resetLoading: () =>
-      set((state: unknown) => ({
+      set((state: any) => ({
         ...state,
         isLoading: false,
         loadingKey: null,
@@ -149,7 +150,7 @@ export const createErrorSlice = <T extends object>(
     ...initialState,
 
     setError: (error, key) =>
-      set((state: unknown) => {
+      set((state: any) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.set(key, error || '');
@@ -162,7 +163,7 @@ export const createErrorSlice = <T extends object>(
       }),
 
     clearError: key =>
-      set((state: unknown) => {
+      set((state: any) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.delete(key);
@@ -175,14 +176,14 @@ export const createErrorSlice = <T extends object>(
       }),
 
     clearAllErrors: () =>
-      set((state: unknown) => ({
+      set((state: any) => ({
         ...state,
         error: null,
         errors: new Map(),
       })),
 
     hasError: key => {
-      const state = get() as unknown;
+      const state = get() as any;
       if (key) {
         return state.errors.has(key);
       }
@@ -216,7 +217,7 @@ export function createOptimisticUpdate<T, R>(
     } catch (error: unknown) {
       // Rollback on error
       set(state => {
-        rollback(state, error);
+        rollback(state, error as Error);
         return state;
       });
       throw error;

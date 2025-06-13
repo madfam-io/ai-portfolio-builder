@@ -1,8 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
-
+import React from 'react';
 import {
   FaMapMarkerAlt,
   FaClock,
@@ -11,9 +10,9 @@ import {
   FaRocket,
   FaGlobe,
 } from 'react-icons/fa';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-
 
 export default function CareersPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -128,9 +127,9 @@ export default function CareersPage(): React.ReactElement {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {benefits.map((benefit, index) => (
                 <div key={index} className="text-center">
-                  <benefit.icon className="text-3xl mx-auto mb-4" />
-                  <h3 className="font-bold mb-2">{benefit.title}</h3>
-                  <p className="text-sm opacity-90">{benefit.description}</p>
+                  <benefit._icon className="text-3xl mx-auto mb-4" />
+                  <h3 className="font-bold mb-2">{benefit._title}</h3>
+                  <p className="text-sm opacity-90">{benefit._description}</p>
                 </div>
               ))}
             </div>
@@ -145,32 +144,32 @@ export default function CareersPage(): React.ReactElement {
             <div className="space-y-6">
               {openPositions.map(position => (
                 <div
-                  key={position.id}
+                  key={position._id}
                   className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
                     <div>
                       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                        {position.title}
+                        {position._title}
                       </h3>
                       <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span className="flex items-center gap-1">
                           <FaUsers className="text-xs" />
-                          {position.department}
+                          {position._department}
                         </span>
                         <span className="flex items-center gap-1">
                           <FaMapMarkerAlt className="text-xs" />
-                          {position.location}
+                          {position._location}
                         </span>
                         <span className="flex items-center gap-1">
                           <FaClock className="text-xs" />
-                          {position.type}
+                          {position._type}
                         </span>
                       </div>
                     </div>
 
                     <Link
-                      href={`/contact?position=${position.id}`}
+                      href={`/contact?position=${position._id}`}
                       className="mt-4 md:mt-0 bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition whitespace-nowrap"
                     >
                       {t.careersApplyNow || 'Apply Now'}
@@ -178,7 +177,7 @@ export default function CareersPage(): React.ReactElement {
                   </div>
 
                   <p className="text-gray-600 dark:text-gray-300 mb-4">
-                    {position.description}
+                    {position._description}
                   </p>
 
                   <div>

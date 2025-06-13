@@ -410,7 +410,7 @@ export class OptimizedAnalyticsService {
     }
 
     // Transform to proper Contributor type
-    return (data || []).map((item: unknown) => ({
+    return (data || []).map((item: any) => ({
       id: item.contributors?.id || '',
       githubId: item.contributors?.githubId || 0,
       login: item.contributors?.login || '',

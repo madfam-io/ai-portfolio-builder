@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-} from 'react-icons/fi';
 import {
   FiInbox,
   FiSearch,
@@ -12,6 +11,7 @@ import {
   FiFolder,
   FiImage,
   FiShoppingBag,
+} from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -21,7 +21,6 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
  * Provides user-friendly empty state displays when no data is available.
  * Includes call-to-action prompts and helpful guidance.
  */
-
 
 interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -113,22 +112,22 @@ export function NoResultsState({
       }
       title={
         searchTerm
-          ? (t.emptyStates as unknown)?.noSearchResults || 'No search results'
-          : (t.emptyStates as unknown)?.noResults || 'No results'
+          ? (t as any).emptyStates?.noSearchResults || 'No search results'
+          : (t as any).emptyStates?.noResults || 'No results'
       }
       description={
         searchTerm
           ? (
-              (t.emptyStates as unknown)?.noSearchResultsDescription ||
+              (t as any).emptyStates?.noSearchResultsDescription ||
               'No results found for "{term}"'
             ).replace('{term}', searchTerm)
-          : (t.emptyStates as unknown)?.noResultsDescription ||
+          : (t as any).emptyStates?.noResultsDescription ||
             'No results to display'
       }
       action={
         onClearSearch
           ? {
-              label: (t.emptyStates as unknown)?.clearSearch || 'Clear search',
+              label: (t as any).emptyStates?.clearSearch || 'Clear search',
               onClick: onClearSearch,
             }
           : undefined
@@ -154,14 +153,14 @@ export function NoPortfoliosState({
           <FiFileText className="w-10 h-10 text-purple-600 dark:text-purple-400" />
         </div>
       }
-      title={(t.emptyStates as unknown)?.noPortfolios || 'No portfolios yet'}
+      title={(t as any).emptyStates?.noPortfolios || 'No portfolios yet'}
       description={
-        (t.emptyStates as unknown)?.noPortfoliosDescription ||
+        (t as any).emptyStates?.noPortfoliosDescription ||
         'Create your first portfolio to get started'
       }
       action={{
         label:
-          (t.emptyStates as unknown)?.createFirstPortfolio ||
+          (t as any).emptyStates?.createFirstPortfolio ||
           'Create First Portfolio',
         onClick: onCreatePortfolio,
       }}
@@ -186,13 +185,13 @@ export function NoProjectsState({
           <FiFolder className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </div>
       }
-      title={(t.emptyStates as unknown)?.noProjects || 'No projects yet'}
+      title={(t as any).emptyStates?.noProjects || 'No projects yet'}
       description={
-        (t.emptyStates as unknown)?.noProjectsDescription ||
+        (t as any).emptyStates?.noProjectsDescription ||
         'Add your first project to showcase your work'
       }
       action={{
-        label: (t.emptyStates as unknown)?.addFirstProject || 'Add First Project',
+        label: (t as any).emptyStates?.addFirstProject || 'Add First Project',
         onClick: onAddProject,
       }}
     />
@@ -212,32 +211,32 @@ export function NoDataState({
   const configs = {
     generic: {
       icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: (t.emptyStates as unknown)?.noData || 'No data available',
+      title: (t as any).emptyStates?.noData || 'No data available',
       description:
-        (t.emptyStates as unknown)?.noDataDescription ||
+        (t as any).emptyStates?.noDataDescription ||
         'There is no data to display at this time',
     },
     analytics: {
       icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: (t.emptyStates as unknown)?.noAnalyticsData || 'No analytics data',
+      title: (t as any).emptyStates?.noAnalyticsData || 'No analytics data',
       description:
-        (t.emptyStates as unknown)?.noAnalyticsDataDescription ||
+        (t as any).emptyStates?.noAnalyticsDataDescription ||
         'Analytics data will appear here once available',
     },
     users: {
       icon: <FiUsers className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
-      title: (t.emptyStates as unknown)?.noUsers || 'No users found',
+      title: (t as any).emptyStates?.noUsers || 'No users found',
       description:
-        (t.emptyStates as unknown)?.noUsersDescription ||
+        (t as any).emptyStates?.noUsersDescription ||
         'No users match your criteria',
     },
     products: {
       icon: (
         <FiShoppingBag className="w-8 h-8 text-gray-400 dark:text-gray-500" />
       ),
-      title: (t.emptyStates as unknown)?.noProducts || 'No products found',
+      title: (t as any).emptyStates?.noProducts || 'No products found',
       description:
-        (t.emptyStates as unknown)?.noProductsDescription ||
+        (t as any).emptyStates?.noProductsDescription ||
         'No products are available',
     },
   };
@@ -282,11 +281,11 @@ export function UploadEmptyState({
             <FiUpload className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
         }
-        title={(t.emptyStates as unknown)?.uploadTitle || 'Upload files'}
+        title={(t as any).emptyStates?.uploadTitle || 'Upload files'}
         description={
           acceptedFormats
-            ? `${(t.emptyStates as unknown)?.uploadDescription || 'Upload your files'} ${acceptedFormats.join(', ')}${maxSize ? ` (${(t.emptyStates as unknown)?.maxSize || 'Max size'} ${maxSize})` : ''}`
-            : (t.emptyStates as unknown)?.uploadDescription ||
+            ? `${(t as any).emptyStates?.uploadDescription || 'Upload your files'} ${acceptedFormats.join(', ')}${maxSize ? ` (${(t as any).emptyStates?.maxSize || 'Max size'} ${maxSize})` : ''}`
+            : (t as any).emptyStates?.uploadDescription ||
               'Drag and drop files here or click to browse'
         }
       />
@@ -307,13 +306,13 @@ export function NoImagesState({ onAddImage }: { onAddImage: () => void }) {
           <FiImage className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
-      title={(t.emptyStates as unknown)?.noImages || 'No images uploaded'}
+      title={(t as any).emptyStates?.noImages || 'No images uploaded'}
       description={
-        (t.emptyStates as unknown)?.noImagesDescription ||
+        (t as any).emptyStates?.noImagesDescription ||
         'Upload images to get started'
       }
       action={{
-        label: (t.emptyStates as unknown)?.uploadImage || 'Upload Image',
+        label: (t as any).emptyStates?.uploadImage || 'Upload Image',
         onClick: onAddImage,
       }}
     />
@@ -339,16 +338,16 @@ export function EmptyListState({
           <FiInbox className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
-      title={((t.emptyStates as unknown)?.noItems || 'No {type} found').replace(
+      title={((t as any).emptyStates?.noItems || 'No {type} found').replace(
         '{type}',
         itemType
       )}
       description={(
-        (t.emptyStates as unknown)?.noItemsDescription ||
+        (t as any).emptyStates?.noItemsDescription ||
         'Add your first {type} to get started'
       ).replace('{type}', itemType)}
       action={{
-        label: `${(t.common as unknown)?.add || 'Add'} ${itemType}`,
+        label: `${(t as any).common?.add || 'Add'} ${itemType}`,
         onClick: onAdd,
       }}
     />
@@ -378,7 +377,7 @@ export function EmptyTableState({
           }
           title={
             message ||
-            (t.emptyStates as unknown)?.noTableData ||
+            (t as any).emptyStates?.noTableData ||
             'No data available'
           }
         />

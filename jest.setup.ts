@@ -9,7 +9,7 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock as unknown;
+global.localStorage = localStorageMock as any;
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {

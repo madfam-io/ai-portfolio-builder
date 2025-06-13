@@ -1,3 +1,5 @@
+import { KeywordAnalyzer } from './keyword-analyzer';
+import { MetadataGenerator } from './metadata-generator';
 import {
   ContentStructure,
   ReadabilityMetrics,
@@ -6,9 +8,6 @@ import {
   GEOSuggestion,
   OptimizeContentRequest,
   OptimizeContentResponse,
-
-import { KeywordAnalyzer } from './keyword-analyzer';
-import { MetadataGenerator } from './metadata-generator';
 } from './types';
 
 /**
@@ -358,16 +357,17 @@ export class ContentOptimizer {
     content: string,
     settings: unknown
   ): Promise<GEOContent> {
+    const geoSettings = settings as any;
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
       content,
-      settings.primaryKeyword,
-      settings.secondaryKeywords
+      geoSettings.primaryKeyword,
+      geoSettings.secondaryKeywords
     );
     const readability = this.calculateReadability(content);
     const metadata = await this.metadataGenerator.generateMetadata(
       content,
-      settings
+      geoSettings
     );
 
     const score = this.calculateDetailedGEOScore(
@@ -399,11 +399,12 @@ export class ContentOptimizer {
    * Calculate GEO score
    */
   private calculateGEOScore(content: string, settings: unknown): GEOScore {
+    const geoSettings = settings as any;
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
       content,
-      settings.primaryKeyword,
-      settings.secondaryKeywords
+      geoSettings.primaryKeyword,
+      geoSettings.secondaryKeywords
     );
     const readability = this.calculateReadability(content);
 
@@ -462,11 +463,15 @@ export class ContentOptimizer {
    * Calculate keyword score
    */
   private calculateKeywordScore(keywords: unknown): number {
+    const keywordData = keywords as any;
     let score = 70; // Base score
 
     // Check primary keyword density
-    if (keywords.primaryKeyword && keywords.density[keywords.primaryKeyword]) {
-      const density = keywords.density[keywords.primaryKeyword];
+    if (
+      keywordData.primaryKeyword &&
+      keywordData.density[keywordData.primaryKeyword]
+    ) {
+      const density = keywordData.density[keywordData.primaryKeyword];
       if (density >= 0.5 && density <= 2.5) {
         score += 20;
       } else if (density < 0.5) {
@@ -477,7 +482,7 @@ export class ContentOptimizer {
     }
 
     // Check for LSI keywords
-    if (keywords.lsiKeywords.length > 3) {
+    if (keywordData.lsiKeywords.length > 3) {
       score += 10;
     }
 
@@ -551,6 +556,7 @@ export class ContentOptimizer {
     keywords: unknown,
     readability: ReadabilityMetrics
   ): GEOSuggestion[] {
+    const keywordData = keywords as any;
     const suggestions: GEOSuggestion[] = [];
 
     // Keyword suggestions
@@ -559,7 +565,8 @@ export class ContentOptimizer {
         type: 'keyword',
         priority: 'high',
         message: 'Keyword optimization needed',
-        action: keywords.recommendations[0] || 'Add primary keyword to content',
+        action:
+          keywordData.recommendations[0] || 'Add primary keyword to content',
         impact: 15,
       });
     }
@@ -616,9 +623,10 @@ export class ContentOptimizer {
   }
 
   private checkHeadingHierarchy(headings: unknown): boolean {
+    const headingData = headings as any;
     // H1 should come before H2, H2 before H3, etc.
-    if (headings.h3.length > 0 && headings.h2.length === 0) return false;
-    if (headings.h4.length > 0 && headings.h3.length === 0) return false;
+    if (headingData.h3.length > 0 && headingData.h2.length === 0) return false;
+    if (headingData.h4.length > 0 && headingData.h3.length === 0) return false;
     return true;
   }
 

@@ -1,3 +1,4 @@
+import { getTemplateConfig } from '@/lib/templates/templateConfig';
 import {
   Portfolio,
   TemplateType,
@@ -7,8 +8,6 @@ import {
   Skill,
   Certification,
 } from '@/types/portfolio';
-
-import { getTemplateConfig } from '@/lib/templates/templateConfig';
 
 /**
  * @fileoverview Sample Data Generator

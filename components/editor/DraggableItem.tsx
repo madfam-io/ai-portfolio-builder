@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
 import { GripVertical } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { cn } from '@/components/ui/utils';
+
 import {
   DragItem,
   handleDragStart,
   handleDragOver,
   handleDrop,
-
-import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import { cn } from '@/components/ui/utils';
 } from './DragDropContext';
 
 /**

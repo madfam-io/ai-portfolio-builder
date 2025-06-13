@@ -11,7 +11,7 @@ export interface ApiVersionConfig {
 
 // API Version Configuration
 export const API_VERSION_CONFIG: ApiVersionConfig = {
-  currentVersion: 'v1',
+  _currentVersion: 'v1',
   supportedVersions: ['v1'],
   deprecatedVersions: new Map([
     // Example: ['v0', { deprecatedAt: new Date('2025-01-01'), sunsetDate: new Date('2025-06-01'), _message: 'Please upgrade to v1' }]
@@ -68,7 +68,7 @@ export async function apiVersionMiddleware(
   if ((!version && pathname === '/api/') || pathname.match(/^\/api\/[^v]/)) {
     const newPathname = pathname.replace(
       '/api/',
-      `/api/${API_VERSION_CONFIG.currentVersion}/`
+      `/api/${API_VERSION_CONFIG._currentVersion}/`
     );
     return NextResponse.redirect(new URL(newPathname, request.url));
   }
@@ -79,11 +79,11 @@ export async function apiVersionMiddleware(
   // Add API version headers
   response.headers.set(
     'X-API-Version',
-    version || API_VERSION_CONFIG.currentVersion
+    version || API_VERSION_CONFIG._currentVersion
   );
   response.headers.set(
     'X-API-Current-Version',
-    API_VERSION_CONFIG.currentVersion
+    API_VERSION_CONFIG._currentVersion
   );
   response.headers.set(
     'X-API-Supported-Versions',
@@ -96,10 +96,10 @@ export async function apiVersionMiddleware(
       {
         _error: 'Unsupported API Version',
         _message: `API version ${version} is not supported. Supported versions: ${API_VERSION_CONFIG.supportedVersions.join(', ')}`,
-        _currentVersion: API_VERSION_CONFIG.currentVersion,
+        _currentVersion: API_VERSION_CONFIG._currentVersion,
       },
       {
-        _status: 400,
+        status: 400,
         headers: response.headers,
       }
     );
@@ -142,10 +142,10 @@ export function createVersionedResponse<T>(
   const {
     status = 200,
     headers = {},
-    version = API_VERSION_CONFIG.currentVersion,
+    version = API_VERSION_CONFIG._currentVersion,
   } = options || {};
 
-  const response = NextResponse.json(data, { status, headers });
+  const response = NextResponse.json(_data, { status, headers });
 
   // Add standard API version headers
   response.headers.set('X-API-Version', version);
@@ -168,7 +168,7 @@ export function withApiVersion<T extends (...args: any[]) => any>(
     const [request] = args as unknown as [NextRequest];
     const version =
       extractApiVersion(request.nextUrl.pathname) ||
-      API_VERSION_CONFIG.currentVersion;
+      API_VERSION_CONFIG._currentVersion;
 
     // Version validation
     if (options?.minVersion && version < options.minVersion) {
@@ -176,9 +176,9 @@ export function withApiVersion<T extends (...args: any[]) => any>(
         {
           _error: 'Version Too Low',
           _message: `This endpoint requires API version ${options.minVersion} or higher. You are using ${version}.`,
-          _currentVersion: API_VERSION_CONFIG.currentVersion,
+          _currentVersion: API_VERSION_CONFIG._currentVersion,
         },
-        { _status: 400 }
+        { status: 400 }
       );
     }
 
@@ -187,13 +187,13 @@ export function withApiVersion<T extends (...args: any[]) => any>(
         {
           _error: 'Version Too High',
           _message: `This endpoint supports API version ${options.maxVersion} or lower. You are using ${version}.`,
-          _currentVersion: API_VERSION_CONFIG.currentVersion,
+          _currentVersion: API_VERSION_CONFIG._currentVersion,
         },
-        { _status: 400 }
+        { status: 400 }
       );
     }
 
     // Call the original handler with version context
-    return handler(...args, { _apiVersion: version });
+    return _handler(...args, { _apiVersion: version });
   }) as T;
 }

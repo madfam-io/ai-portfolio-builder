@@ -1,6 +1,6 @@
 /**
  * API Response Helpers
- * 
+ *
  * Re-exports common API utilities for backwards compatibility
  */
 

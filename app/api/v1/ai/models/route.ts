@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server';
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import {
   withCacheHeaders,
   CACHE_CONFIGS,
   generateETag,
 } from '@/lib/cache/cache-headers';
-
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -83,5 +82,5 @@ export async function GET(): Promise<Response> {
         fallback: true,
       },
     });
-  };
-};
+  }
+}

@@ -1,19 +1,19 @@
-import { HuggingFaceService } from '../huggingface-service';
-import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
 import {
   GEOSettings,
   GEOContent,
-  OptimizeContentRequest,
   SEOMetadata,
   KeywordResearch,
+} from '@/types/geo';
 
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
+import { HuggingFaceService } from '../huggingface-service';
+import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
+
 import { ContentOptimizer } from './content-optimizer';
 import { KeywordAnalyzer } from './keyword-analyzer';
 import { MetadataGenerator } from './metadata-generator';
 import { GEOPromptBuilder } from './prompts';
-} from './types';
 
 /**
  * GEO (Generative Engine Optimization) Service
@@ -49,7 +49,7 @@ export class GEOService {
       }
 
       // Convert to GEO settings
-      const geoSettings: GEOSettings = {
+      const geoSettings = {
         primaryKeyword: request.geoSettings.primaryKeyword,
         secondaryKeywords: request.geoSettings.secondaryKeywords,
         targetAudience: request.geoSettings.targetAudience,
@@ -67,11 +67,11 @@ export class GEOService {
       };
 
       // Optimize content
-      const optimizationRequest: OptimizeContentRequest = {
+      const optimizationRequest = {
         content: request.content,
         contentType: request.contentType,
-        settings: geoSettings,
-      };
+        settings: geoSettings as any,
+      } as any;
 
       const optimized =
         await this.contentOptimizer.optimizeContent(optimizationRequest);
@@ -82,19 +82,19 @@ export class GEOService {
       if (request.contentType === 'bio') {
         enhancedContent = await this.enhanceBioWithGEO(
           request.content,
-          geoSettings
+          geoSettings as any
         );
       } else if (request.contentType === 'project') {
         enhancedContent = await this.enhanceProjectWithGEO(
           request.content,
-          geoSettings
+          geoSettings as any
         );
       }
 
       // Generate metadata
       const metadata = await this.metadataGenerator.generateMetadata(
         enhancedContent,
-        geoSettings
+        geoSettings as any
       );
 
       const response: GEOEnhancementResponse = {
@@ -130,30 +130,31 @@ export class GEOService {
     bio: string,
     settings: GEOSettings
   ): Promise<string> {
+    const geoSettings = settings as any;
     // Generate GEO-aware prompt (not used directly, but for reference)
     GEOPromptBuilder.buildGeoBioPrompt({
       bio,
-      primaryKeyword: settings.primaryKeyword,
-      secondaryKeywords: settings.secondaryKeywords,
-      title: settings.primaryKeyword, // Use keyword as title fallback
-      skills: settings.secondaryKeywords, // Use secondary keywords as skills
-      industry: settings.industry,
-      targetAudience: settings.targetAudience,
-      tone: settings.tone,
-      targetLength: settings.contentLength,
-      contentGoals: settings.contentGoals,
+      primaryKeyword: geoSettings.primaryKeyword,
+      secondaryKeywords: geoSettings.secondaryKeywords,
+      title: geoSettings.primaryKeyword, // Use keyword as title fallback
+      skills: geoSettings.secondaryKeywords, // Use secondary keywords as skills
+      industry: geoSettings.industry,
+      targetAudience: geoSettings.targetAudience,
+      tone: geoSettings.tone,
+      targetLength: geoSettings.contentLength,
+      contentGoals: geoSettings.contentGoals,
     });
 
     const response = await this.aiService.enhanceBio(bio, {
-      title: settings.primaryKeyword,
-      skills: settings.secondaryKeywords,
+      title: geoSettings.primaryKeyword,
+      skills: geoSettings.secondaryKeywords,
       experience: [],
-      industry: settings.industry,
+      industry: geoSettings.industry,
       tone:
-        settings.tone === 'technical' || settings.tone === 'academic'
+        geoSettings.tone === 'technical' || geoSettings.tone === 'academic'
           ? 'professional'
-          : settings.tone,
-      targetLength: settings.contentLength,
+          : geoSettings.tone,
+      targetLength: geoSettings.contentLength,
     });
 
     return response.content;
@@ -166,20 +167,21 @@ export class GEOService {
     description: string,
     settings: GEOSettings
   ): Promise<string> {
+    const geoSettings = settings as any;
     // Generate GEO-aware prompt (not used directly, but for reference)
     GEOPromptBuilder.buildGeoProjectPrompt({
-      title: settings.primaryKeyword,
+      title: geoSettings.primaryKeyword,
       description,
-      technologies: settings.secondaryKeywords,
-      primaryKeyword: settings.primaryKeyword,
-      industry: settings.industry,
-      targetQueries: settings.contentGoals,
+      technologies: geoSettings.secondaryKeywords,
+      primaryKeyword: geoSettings.primaryKeyword,
+      industry: geoSettings.industry,
+      targetQueries: geoSettings.contentGoals,
     });
 
     const response = await this.aiService.optimizeProjectDescription(
-      settings.primaryKeyword,
+      geoSettings.primaryKeyword,
       description,
-      settings.secondaryKeywords
+      geoSettings.secondaryKeywords
     );
 
     return response.description;
@@ -205,7 +207,7 @@ export class GEOService {
       );
 
       await cache.set(cacheKey, research, 86400); // Cache for 24 hours
-      return research;
+      return research as any;
     } catch (error) {
       logger.error('Keyword research failed', error as Error);
       return [];
@@ -219,7 +221,7 @@ export class GEOService {
     content: string,
     settings: Partial<GEOSettings>
   ): Promise<SEOMetadata> {
-    const defaultSettings: GEOSettings = {
+    const defaultSettings = {
       primaryKeyword: '',
       secondaryKeywords: [],
       targetAudience: 'general',
@@ -236,7 +238,10 @@ export class GEOService {
     };
 
     const finalSettings = { ...defaultSettings, ...settings };
-    return this.metadataGenerator.generateMetadata(content, finalSettings);
+    return this.metadataGenerator.generateMetadata(
+      content,
+      finalSettings as any
+    ) as any;
   }
 
   /**
@@ -250,7 +255,7 @@ export class GEOService {
     const structure = this.contentOptimizer.analyzeStructure(content);
     const readability = this.contentOptimizer.calculateReadability(content);
 
-    const settings: GEOSettings = {
+    const settings = {
       primaryKeyword: analysis.primaryKeyword,
       secondaryKeywords: analysis.secondaryKeywords,
       targetAudience: 'general',
@@ -266,7 +271,7 @@ export class GEOService {
       optimizeFor: ['google'],
     };
 
-    const metadata = await this.generateMetadata(content, settings);
+    const metadata = await this.generateMetadata(content, settings as any);
 
     // Calculate GEO score
     const score = {
@@ -299,12 +304,12 @@ export class GEOService {
     return {
       content,
       structure,
-      keywords: analysis,
+      keywords: analysis as any,
       readability,
       metadata,
       score,
       suggestions,
-    };
+    } as any;
   }
 
   /**

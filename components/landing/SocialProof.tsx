@@ -12,7 +12,6 @@ import {
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-
 export default function SocialProof(): React.ReactElement {
   const { t } = useLanguage();
   return (

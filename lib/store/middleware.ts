@@ -18,7 +18,7 @@ export const logger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) =>
     config(
-      ((partial: unknown, replace?: unknown) => {
+      ((partial: any, replace?: any) => {
         if (process.env.NODE_ENV === 'development') {
           console.log('  applying', partial);
           set(partial, replace);
@@ -81,7 +81,7 @@ export const actionLogger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) => {
     const state = config(
-      ((partial: unknown, replace?: unknown) => {
+      ((partial: any, replace?: any) => {
         if (process.env.NODE_ENV === 'development') {
           const timestamp = new Date().toISOString();
           console.group(`[${storeName}] State Update @ ${timestamp}`);
@@ -98,7 +98,7 @@ export const actionLogger =
     );
 
     // Wrap actions to log them
-    const wrappedState: unknown = {};
+    const wrappedState: any = {};
 
     for (const key in state) {
       if (typeof state[key as keyof typeof state] === 'function') {
@@ -106,7 +106,7 @@ export const actionLogger =
           if (process.env.NODE_ENV === 'development') {
             console.log(`[${storeName}] Action: ${key}`, args);
           }
-          return (state[key as keyof typeof state] as unknown)(...args);
+          return (state[key as keyof typeof state] as any)(...args);
         };
       } else {
         wrappedState[key] = state[key as keyof typeof state];

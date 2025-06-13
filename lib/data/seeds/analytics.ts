@@ -265,7 +265,7 @@ function generatePortfolioAnalytics(
  * Seed code metrics table
  */
 export async function seedCodeMetrics(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -346,7 +346,7 @@ export async function seedCodeMetrics(
  * Seed commit analytics table
  */
 export async function seedCommitAnalytics(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -429,7 +429,7 @@ export async function seedCommitAnalytics(
  * Seed pull requests table
  */
 export async function seedPullRequests(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding pull requests...');
@@ -508,7 +508,7 @@ export async function seedPullRequests(
  * Seed portfolio analytics table
  */
 export async function seedPortfolioAnalytics(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -595,7 +595,7 @@ export async function seedPortfolioAnalytics(
  * Combined seeding function for all analytics
  */
 export async function seedAnalytics(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

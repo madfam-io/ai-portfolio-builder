@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
 import Link from 'next/link';
-
+import React, { useState } from 'react';
 import {
   FaPlay,
   FaCheckCircle,
@@ -10,10 +9,10 @@ import {
   FaClock,
   FaUser,
 } from 'react-icons/fa';
+
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-
 
 export default function DemoPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -148,26 +147,26 @@ export default function DemoPage(): React.ReactElement {
                 <div
                   key={index}
                   className={`${
-                    step.highlight
+                    step._highlight
                       ? 'bg-gradient-to-br from-purple-50 to-blue-50 _dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-500'
                       : 'bg-white dark:bg-gray-800'
                   } p-6 rounded-xl shadow-lg text-center hover:shadow-xl transition-all duration-300 relative`}
                 >
-                  {step.highlight && (
+                  {step._highlight && (
                     <div className="absolute -top-3 -right-3 bg-purple-600 text-white text-xs px-3 py-1 rounded-full font-medium">
                       AI-Powered
                     </div>
                   )}
-                  <div className="text-4xl mb-4">{step.icon}</div>
+                  <div className="text-4xl mb-4">{step._icon}</div>
                   <h3 className="text-xl font-bold mb-3 text-gray-900 _dark:text-white">
-                    {step.title}
+                    {step._title}
                   </h3>
                   <p className="text-gray-600 dark:text-gray-300 mb-3">
-                    {step.description}
+                    {step._description}
                   </p>
                   <div className="flex items-center justify-center gap-1 text-sm text-purple-600 font-medium">
                     <FaClock className="text-xs" />
-                    {step.duration}
+                    {step._duration}
                   </div>
                 </div>
               ))}

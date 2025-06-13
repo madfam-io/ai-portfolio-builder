@@ -11,7 +11,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
  */
 
 export type SeedFunction = (
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ) => Promise<number>;
 
@@ -33,7 +33,7 @@ export const SEED_CONFIG: SeedConfig[] = [
   {
     name: 'subscription_plans',
     dependencies: [],
-    fn: async client => {
+    fn: async (client: any) => {
       // Subscription plans are inserted via migration, just verify
       const { count } = await client
         .from('subscription_plans')
@@ -185,7 +185,7 @@ function resolveDependencies(configs: SeedConfig[]): string[] {
   }
 
   // Check for circular dependencies
-  if (result.length !== configs.length > 0) {
+  if (result.length !== configs.length) {
     const remaining = configs
       .map(c => c.name)
       .filter(name => !result.includes(name));

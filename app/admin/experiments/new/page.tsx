@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, Fragment } from 'react';
 import { useRouter } from 'next/navigation';
-
+import React, { useState, useEffect } from 'react';
 import {
   FiPlus,
   FiTrash2,
@@ -19,18 +18,19 @@ import {
   FiSave,
 } from 'react-icons/fi';
 
-import type {
-  CreateExperimentRequest,
-  ComponentConfig,
-  ComponentLibraryItem,
-  ExperimentTemplate,
-} from '@/types/experiments';
 import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
+
+import type {
+  CreateExperimentRequest,
+  ComponentConfig,
+  ComponentLibraryItem,
+  ExperimentTemplate,
+} from '@/types/experiments';
 
 /**
  * Create New Experiment Page
@@ -45,8 +45,8 @@ interface VariantConfig {
   trafficPercentage: number;
   components: ComponentConfig[];
   themeOverrides: Record<string, string | number | boolean>;
-};
-export default function CreateExperimentPage() {
+}
+export default function CreateExperimentPage(): JSX.Element {
   const { user, isAdmin, canAccess } = useAuth();
   // const { t } = useLanguage(); // _TODO: Add translations
   const router = useRouter();
@@ -59,18 +59,18 @@ export default function CreateExperimentPage() {
   const [trafficPercentage, setTrafficPercentage] = useState(100);
   const [variants, setVariants] = useState<VariantConfig[]>([
     {
-      _name: 'Control',
-      _isControl: true,
-      _trafficPercentage: 50,
+      name: 'Control',
+      isControl: true,
+      trafficPercentage: 50,
       components: [],
-      _themeOverrides: {},
+      themeOverrides: {},
     },
     {
-      _name: 'Variant A',
-      _isControl: false,
-      _trafficPercentage: 50,
+      name: 'Variant A',
+      isControl: false,
+      trafficPercentage: 50,
       components: [],
-      _themeOverrides: {},
+      themeOverrides: {},
     },
   ]);
 
@@ -105,32 +105,34 @@ export default function CreateExperimentPage() {
             new Error('Supabase client is null')
           );
           return;
-        };
+        }
         // Load component library
-        const { data: components, _error: componentsError } = await supabase
+        const { data: components, error: componentsError } = await supabase
           .from('landing_component_library')
           .select('*')
           .eq('is_active', true)
           .order('type, variant_name');
 
-        if (componentsError !== null && componentsError !== undefined) throw componentsError;
+        if (componentsError !== null && componentsError !== undefined)
+          throw componentsError;
         if (components != null) {
           setComponentLibrary(components);
-        };
+        }
         // Load experiment templates
-        const { data: templateData, _error: templatesError } = await supabase
+        const { data: templateData, error: templatesError } = await supabase
           .from('experiment_templates')
           .select('*')
           .eq('is_active', true)
-          .order('usage_count', { _ascending: false });
+          .order('usage_count', { ascending: false });
 
-        if (templatesError !== null && templatesError !== undefined) throw templatesError;
+        if (templatesError !== null && templatesError !== undefined)
+          throw templatesError;
         if (templateData != null) {
           setTemplates(templateData);
-        };
+        }
       } catch (error) {
         logger.error('Failed to load component library', error as Error);
-      };
+      }
     };
 
     loadData();
@@ -171,12 +173,12 @@ export default function CreateExperimentPage() {
   const addVariant = (): void => {
     const _newVariant: VariantConfig = {
       name: `Variant ${String.fromCharCode(65 + variants.length - 1)}`,
-      _isControl: false,
-      _trafficPercentage: 0,
+      isControl: false,
+      trafficPercentage: 0,
       components: [],
-      _themeOverrides: {},
+      themeOverrides: {},
     };
-    setVariants([...variants, newVariant]);
+    setVariants([...variants, _newVariant]);
   };
 
   // Remove variant
@@ -195,17 +197,17 @@ export default function CreateExperimentPage() {
     updates: Partial<VariantConfig>
   ): void => {
     const newVariants = [...variants];
-    const currentVariant = newVariants[index];
+    const currentVariant = newVariants[_index];
     if (!currentVariant) return;
 
-    newVariants[index] = { ...currentVariant, ...updates };
+    newVariants[_index] = { ...currentVariant, ...updates };
 
     // Ensure only one control
     if (updates.isControl === true) {
       newVariants.forEach((v, i) => {
-        if (i !== index) v.isControl = false;
+        if (i !== _index) v.isControl = false;
       });
-    };
+    }
     setVariants(newVariants);
   };
 
@@ -217,16 +219,16 @@ export default function CreateExperimentPage() {
     const _newComponent: ComponentConfig = {
       type: component.type,
       variant: component.variantName,
-      _order: selectedVariant.components.length + 1,
-      _visible: true,
-      _props: component.defaultProps != null ? component.defaultProps : {},
+      order: selectedVariant.components.length + 1,
+      visible: true,
+      props: component.defaultProps != null ? component.defaultProps : {},
     };
 
     const newVariants = [...variants];
     const updatedVariant = newVariants[selectedVariantIndex];
     if (!updatedVariant) return;
 
-    updatedVariant.components.push(newComponent);
+    updatedVariant.components.push(_newComponent);
     setVariants(newVariants);
     setShowGallery(false);
   };
@@ -237,10 +239,10 @@ export default function CreateExperimentPage() {
     _componentIndex: number
   ): void => {
     const newVariants = [...variants];
-    const variant = newVariants[variantIndex];
+    const variant = newVariants[_variantIndex];
     if (!variant) return;
 
-    variant.components.splice(componentIndex, 1);
+    variant.components.splice(_componentIndex, 1);
     // Reorder remaining components
     variant.components.forEach((c, i) => {
       c.order = i + 1;
@@ -255,20 +257,20 @@ export default function CreateExperimentPage() {
     _direction: 'up' | 'down'
   ): void => {
     const newVariants = [...variants];
-    const variant = newVariants[variantIndex];
+    const variant = newVariants[_variantIndex];
     if (!variant) return;
 
     const components = variant.components;
     const newIndex =
-      direction === 'up' ? componentIndex - 1 : componentIndex + 1;
+      _direction === 'up' ? _componentIndex - 1 : _componentIndex + 1;
 
     if (newIndex < 0 || newIndex >= components.length) return;
 
-    const temp = components[componentIndex];
+    const temp = components[_componentIndex];
     const newComp = components[newIndex];
     if (!temp || !newComp) return;
 
-    components[componentIndex] = newComp;
+    components[_componentIndex] = newComp;
     components[newIndex] = temp;
     components.forEach((c, i) => {
       c.order = i + 1;
@@ -283,10 +285,10 @@ export default function CreateExperimentPage() {
     _componentIndex: number
   ): void => {
     const newVariants = [...variants];
-    const variant = newVariants[variantIndex];
+    const variant = newVariants[_variantIndex];
     if (!variant) return;
 
-    const component = variant.components[componentIndex];
+    const component = variant.components[_componentIndex];
     if (!component) return;
 
     component.visible = !component.visible;
@@ -306,11 +308,11 @@ export default function CreateExperimentPage() {
     if (template.variants != null && template.variants.length > 0) {
       const newVariants: VariantConfig[] = template.variants.map(
         (v, index) => ({
-          _name: v.name,
-          _isControl: index === 0,
-          _trafficPercentage: Math.floor(100 / template.variants.length),
+          name: v.name,
+          isControl: index === 0,
+          trafficPercentage: Math.floor(100 / template.variants.length),
           components: v.components || [],
-          _themeOverrides:
+          themeOverrides:
             v.themeOverrides != null
               ? ({ ...v.themeOverrides } as Record<
                   string,
@@ -320,7 +322,7 @@ export default function CreateExperimentPage() {
         })
       );
       setVariants(newVariants);
-    };
+    }
   };
 
   // Create experiment
@@ -346,23 +348,23 @@ export default function CreateExperimentPage() {
         trafficPercentage,
         variants: variants.map(v => ({
           name: v.name,
-          _isControl: v.isControl,
-          _trafficPercentage: v.trafficPercentage,
+          isControl: v.isControl,
+          trafficPercentage: v.trafficPercentage,
           components: v.components,
-          _themeOverrides: v.themeOverrides,
+          themeOverrides: v.themeOverrides,
         })),
       };
 
       const { data, error } = await supabase
         .from('landing_page_experiments')
         .insert({
-          _name: experimentData.name,
-          _description: experimentData.description,
-          _hypothesis: experimentData.hypothesis,
-          _primary_metric: experimentData.primaryMetric,
-          _traffic_percentage: experimentData.trafficPercentage,
-          _status: 'draft',
-          _created_by: user?.id,
+          name: experimentData.name,
+          description: experimentData.description,
+          hypothesis: experimentData.hypothesis,
+          primary_metric: experimentData.primaryMetric,
+          traffic_percentage: experimentData.trafficPercentage,
+          status: 'draft',
+          created_by: user?.id,
         })
         .select()
         .single();
@@ -372,12 +374,12 @@ export default function CreateExperimentPage() {
       // Create variants
       const variantPromises = experimentData.variants.map(v =>
         supabase.from('landing_page_variants').insert({
-          _experiment_id: data.id,
-          _name: v.name,
-          _is_control: v.isControl,
-          _traffic_percentage: v.trafficPercentage,
+          experiment_id: data.id,
+          name: v.name,
+          is_control: v.isControl,
+          traffic_percentage: v.trafficPercentage,
           components: v.components,
-          _theme_overrides: v.themeOverrides,
+          theme_overrides: v.themeOverrides,
         })
       );
 
@@ -401,7 +403,7 @@ export default function CreateExperimentPage() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => router.push('/admin/experiments')}
-                className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
                 <FiArrowLeft className="w-5 h-5" />
               </button>
@@ -450,9 +452,9 @@ export default function CreateExperimentPage() {
                   />
                   {errors.name && (
                     <p className="mt-1 text-sm text-red-600 _dark:text-red-400">
-                      {errors.name};
+                      {errors.name}
                     </p>
-                  )};
+                  )}
                 </div>
 
                 <div>
@@ -625,23 +627,23 @@ export default function CreateExperimentPage() {
                           onClick={e => {
                             e.stopPropagation();
                             removeVariant(index);
-                          }};
+                          }}
                           className="p-1 text-red-600 _hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                         >
                           <FiTrash2 className="w-4 h-4" />
                         </button>
-                      )};
+                      )}
                     </div>
                   </div>
-                ))};
+                ))}
               </div>
 
               {getRemainingTrafficPercentage() !== 0 && (
                 <p className="mt-2 text-sm text-yellow-600 _dark:text-yellow-400">
-                  Remaining traffic to allocate:{' '};
+                  Remaining traffic to allocate:{' '}
                   {getRemainingTrafficPercentage()}%
                 </p>
-              )};
+              )}
             </div>
 
             {/* Component Layout */}
@@ -652,7 +654,7 @@ export default function CreateExperimentPage() {
                   {variants[selectedVariantIndex]?.name || 'Select a variant'}
                 </h2>
                 <button
-                  
+                  onClick={() => setShowGallery(true)}
                   className="btn-secondary text-sm inline-flex items-center"
                 >
                   <FiGrid className="mr-1" />
@@ -668,7 +670,7 @@ export default function CreateExperimentPage() {
                       No components added yet
                     </p>
                     <button
-                      
+                      onClick={() => setShowGallery(true)}
                       className="btn-primary text-sm"
                     >
                       Add First Component
@@ -678,14 +680,14 @@ export default function CreateExperimentPage() {
                   variants[selectedVariantIndex]?.components.map(
                     (component, index) => (
                       <div
-                        key={index};
+                        key={index}
                         className={`border rounded-lg p-4 ${
                           !component.visible ? 'opacity-50' : ''
                         } ${
                           selectedComponentIndex === index
                             ? 'border-purple-500 bg-purple-50 _dark:bg-purple-900/20'
                             : 'border-gray-200 dark:border-gray-700'
-                        }`};
+                        }`}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">
@@ -697,8 +699,8 @@ export default function CreateExperimentPage() {
                                     index,
                                     'up'
                                   )
-                                };
-                                disabled={index === 0};
+                                }
+                                disabled={index === 0}
                                 className="p-1 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
                               >
                                 <FiChevronUp className="w-4 h-4" />
@@ -710,13 +712,13 @@ export default function CreateExperimentPage() {
                                     index,
                                     'down'
                                   )
-                                };
+                                }
                                 disabled={
                                   index ===
                                   (variants[selectedVariantIndex]?.components
                                     .length ?? 0) -
                                     1
-                                };
+                                }
                                 className="p-1 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
                               >
                                 <FiChevronDown className="w-4 h-4" />
@@ -726,10 +728,10 @@ export default function CreateExperimentPage() {
                             <div>
                               <h4 className="font-medium text-gray-900 dark:text-gray-100">
                                 {component.type.charAt(0).toUpperCase() +
-                                  component.type.slice(1).replace('_', ' ')};
+                                  component.type.slice(1).replace('_', ' ')}
                               </h4>
                               <p className="text-sm text-gray-500 _dark:text-gray-400">
-                                Variant: {component.variant};
+                                Variant: {component.variant}
                               </p>
                             </div>
                           </div>
@@ -741,12 +743,12 @@ export default function CreateExperimentPage() {
                                   selectedVariantIndex,
                                   index
                                 )
-                              };
+                              }
                               className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-                              title={component.visible ? 'Hide' : 'Show'};
+                              title={component.visible ? 'Hide' : 'Show'}
                             >
                               <FiEye
-                                className={`w-4 h-4 ${!component.visible ? 'text-gray-400' : ''}`};
+                                className={`w-4 h-4 ${!component.visible ? 'text-gray-400' : ''}`}
                               />
                             </button>
                             <button
@@ -756,7 +758,7 @@ export default function CreateExperimentPage() {
                                     ? null
                                     : index
                                 )
-                              };
+                              }
                               className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                               title="Configure"
                             >
@@ -765,7 +767,7 @@ export default function CreateExperimentPage() {
                             <button
                               onClick={() =>
                                 removeComponent(selectedVariantIndex, index)
-                              };
+                              }
                               className="p-2 text-red-600 _hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                               title="Remove"
                             >
@@ -780,14 +782,14 @@ export default function CreateExperimentPage() {
                               Component Properties
                             </p>
                             <pre className="text-xs bg-gray-50 dark:bg-gray-900 p-3 rounded overflow-auto">
-                              {JSON.stringify(component.props, null, 2)};
+                              {JSON.stringify(component.props, null, 2)}
                             </pre>
                           </div>
-                        )};
+                        )}
                       </div>
                     )
                   )
-                )};
+                )}
               </div>
             </div>
           </div>
@@ -804,11 +806,11 @@ export default function CreateExperimentPage() {
                   variant={{
                     name: variants[selectedVariantIndex].name,
                     components: variants[selectedVariantIndex].components,
-                    _themeOverrides:
+                    themeOverrides:
                       variants[selectedVariantIndex].themeOverrides,
-                  }};
+                  }}
                 />
-              )};
+              )}
             </div>
 
             {/* Templates */}

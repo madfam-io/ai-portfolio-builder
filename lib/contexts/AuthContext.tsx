@@ -1,5 +1,6 @@
 'use client';
 
+import { User as SupabaseUser } from '@supabase/supabase-js';
 import React, {
   createContext,
   useContext,
@@ -7,8 +8,8 @@ import React, {
   useEffect,
   useCallback,
 } from 'react';
-import { User as SupabaseUser } from '@supabase/supabase-js';
 
+import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
 import {
   hasPermission,
   canAccessFeature,
@@ -17,15 +18,13 @@ import {
   getDaysUntilExpiration,
   getPermissionLevel,
 } from '@/lib/auth/roles';
+import { logger } from '@/lib/utils/logger';
 import {
   User,
   SubscriptionPlan,
   AdminPermission,
   SessionData,
 } from '@/types/auth';
-import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
-import { logger } from '@/lib/utils/logger';
-
 
 /**
  * Enhanced Authentication Context for PRISMA
@@ -240,10 +239,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       setSession(null);
       setImpersonatedUser(null);
     } catch (error) {
-      logger.warn(
-        'Sign out failed - auth service not available',
-        error as Error
-      );
+      logger.warn('Sign out failed - auth service not available', {
+        error: (error as Error).message,
+      });
       setSupabaseUser(null);
       setUser(null);
       setSession(null);
@@ -390,7 +388,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const canAccessFeatureCheck = useCallback(
     (feature: string): boolean => {
       return effectiveUser
-        ? canAccessFeature(effectiveUser, feature as unknown)
+        ? canAccessFeature(effectiveUser, feature as any)
         : false;
     },
     [effectiveUser]
@@ -457,7 +455,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
         return () => subscription.unsubscribe();
       } catch (error) {
-        logger.warn('Authentication service not available', error as Error);
+        logger.warn('Authentication service not available', {
+          error: (error as Error).message,
+        });
         setSupabaseUser(null);
         setUser(null);
         setSession(null);

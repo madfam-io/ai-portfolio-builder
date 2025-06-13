@@ -1,18 +1,20 @@
 import { Octokit } from '@octokit/rest';
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
 import {
   decryptAccessToken,
   hasEncryptedTokens,
   hasLegacyTokens,
+} from './tokenManager';
+
 import type {
   GitHubIntegration,
   Repository,
   PullRequest,
   Contributor,
   RateLimitInfo,
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-} from './tokenManager';
 } from '@/types/analytics';
 
 /**
@@ -394,7 +396,7 @@ export class GitHubAnalyticsClient {
     }
 
     try {
-      const params: unknown = {
+      const params: any = {
         owner,
         repo,
         per_page: options.perPage || 30,
@@ -520,7 +522,7 @@ export class GitHubAnalyticsClient {
       logger.info('Webhook created successfully', { owner, repo });
     } catch (error: unknown) {
       // Ignore if webhook already exists
-      if (error.status !== 422) {
+      if ((error as any).status !== 422) {
         logger.error('Failed to create webhook', { owner, repo, error });
         throw error;
       }

@@ -72,7 +72,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             });
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Sign in failed';
+              state.error =
+                error instanceof Error ? error.message : 'Sign in failed';
               state.isLoading = false;
             });
             throw error;
@@ -92,7 +93,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               email,
               password,
               options: {
-                data: metadata,
+                data: metadata as any,
               },
             });
 
@@ -106,7 +107,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             });
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Sign up failed';
+              state.error =
+                error instanceof Error ? error.message : 'Sign up failed';
               state.isLoading = false;
             });
             throw error;
@@ -130,7 +132,8 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             get().resetAuth();
           } catch (error: unknown) {
             set(state => {
-              state.error = error.message || 'Sign out failed';
+              state.error =
+                error instanceof Error ? error.message : 'Sign out failed';
               state.isLoading = false;
             });
             throw error;

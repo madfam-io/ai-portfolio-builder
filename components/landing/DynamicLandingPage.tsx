@@ -1,6 +1,7 @@
 'use client';
 
 import React, { Suspense, lazy } from 'react';
+
 import {
   useExperiment,
   useExperimentTheme,
@@ -8,9 +9,11 @@ import {
 } from '@/lib/services/feature-flags/use-experiment';
 
 import BackToTopButton from '../BackToTopButton';
+
 import Footer from './Footer';
 import Header from './Header';
 import { getHeroVariant } from './variants/HeroVariants';
+
 import type { ComponentConfig } from '@/types/experiments';
 
 /**
@@ -19,7 +22,6 @@ import type { ComponentConfig } from '@/types/experiments';
  * Renders landing page components based on experiment configuration,
  * supporting A/B testing with different component variants and orders.
  */
-
 
 // Import all landing components and their variants
 // Lazy load other components for better performance

@@ -47,11 +47,11 @@ export function NotFoundPage() {
 
         {/* Error Message */}
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-          {(t.errors as unknown)?.pageNotFoundTitle || '404 - Page Not Found'}
+          {(t as any).errors?.pageNotFoundTitle || '404 - Page Not Found'}
         </h1>
 
         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">
-          {(t.errors as unknown)?.pageNotFoundDescription ||
+          {(t as any).errors?.pageNotFoundDescription ||
             "The page you're looking for doesn't exist"}
         </p>
 
@@ -62,7 +62,7 @@ export function NotFoundPage() {
             className="inline-flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
           >
             <FiHome className="w-5 h-5" />
-            {(t.errors as unknown)?.goToHomepage || 'Go to Homepage'}
+            {(t as any).errors?.goToHomepage || 'Go to Homepage'}
           </button>
 
           <button
@@ -70,33 +70,33 @@ export function NotFoundPage() {
             className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
           >
             <FiArrowLeft className="w-5 h-5" />
-            {(t.errors as unknown)?.goBack || 'Go Back'}
+            {(t as any).errors?.goBack || 'Go Back'}
           </button>
         </div>
 
         {/* Helpful Links */}
         <div className="mt-12 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
           <h2 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
-            {(t.errors as unknown)?.helpfulLinks || 'Helpful Links'}
+            {(t as any).errors?.helpfulLinks || 'Helpful Links'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <a
               href="/portfolios"
               className="text-purple-600 dark:text-purple-400 hover:underline text-sm"
             >
-              {(t.navigation as unknown)?.portfolios || 'Portfolios'}
+              {(t as any).navigation?.portfolios || 'Portfolios'}
             </a>
             <a
               href="/templates"
               className="text-purple-600 dark:text-purple-400 hover:underline text-sm"
             >
-              {(t.navigation as unknown)?.templates || 'Templates'}
+              {(t as any).navigation?.templates || 'Templates'}
             </a>
             <a
               href="/contact"
               className="text-purple-600 dark:text-purple-400 hover:underline text-sm"
             >
-              {(t.navigation as unknown)?.contact || 'Contact'}
+              {(t as any).navigation?.contact || 'Contact'}
             </a>
           </div>
         </div>
@@ -135,12 +135,12 @@ export function ResourceNotFound({
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-        {resourceType} {(t.errors as unknown)?.notFound || 'Not Found'}
+        {resourceType} {(t as any).errors?.notFound || 'Not Found'}
       </h2>
 
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center max-w-md">
         {(
-          (t.errors as unknown)?.resourceNotFoundDescription ||
+          (t as any).errors?.resourceNotFoundDescription ||
           "The {type} you're looking for doesn't exist"
         ).replace('{type}', resourceType.toLowerCase())}
         {resourceId && (
@@ -153,7 +153,7 @@ export function ResourceNotFound({
         className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
       >
         <FiArrowLeft className="w-4 h-4" />
-        {(t.errors as unknown)?.goBack || 'Go Back'}
+        {(t as any).errors?.goBack || 'Go Back'}
       </button>
     </div>
   );
@@ -182,19 +182,18 @@ export function SearchNotFound({
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-        {(t.errors as unknown)?.noSearchResults || 'No Search Results'}
+        {(t as any).errors?.noSearchResults || 'No Search Results'}
       </h2>
 
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 text-center max-w-md">
-        {(t.errors as unknown)?.noSearchResultsFor || 'No results found for'}{' '}
-        &quot;
+        {(t as any).errors?.noSearchResultsFor || 'No results found for'} &quot;
         <span className="font-medium">{query}</span>&quot;
       </p>
 
       {suggestions && suggestions.length > 0 && (
         <div className="mb-6">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            {(t.errors as unknown)?.searchSuggestions || 'Search suggestions'}:
+            {(t as any).errors?.searchSuggestions || 'Search suggestions'}:
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
             {suggestions.map((suggestion, index) => (
@@ -214,7 +213,7 @@ export function SearchNotFound({
         onClick={onClearSearch}
         className="inline-flex items-center justify-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
       >
-        {(t.errors as unknown)?.clearSearch || 'Clear Search'}
+        {(t as any).errors?.clearSearch || 'Clear Search'}
       </button>
     </div>
   );
@@ -242,18 +241,18 @@ export function DynamicNotFound({
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-        {(t.errors as unknown)?.invalidRoute || 'Invalid Route'}
+        {(t as any).errors?.invalidRoute || 'Invalid Route'}
       </h2>
 
       <p className="text-sm text-gray-600 dark:text-gray-400 mb-2 text-center">
         &quot;<span className="font-mono font-medium">{segment}</span>&quot;{' '}
-        {(t.errors as unknown)?.isNotValid || 'is not a valid route segment'}
+        {(t as any).errors?.isNotValid || 'is not a valid route segment'}
       </p>
 
       {validOptions && validOptions.length > 0 && (
         <div className="mb-6 text-center">
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            {(t.errors as unknown)?.validOptions || 'Valid options'}:
+            {(t as any).errors?.validOptions || 'Valid options'}:
           </p>
           <div className="flex flex-wrap gap-2 justify-center">
             {validOptions.map((option, index) => (
@@ -273,7 +272,7 @@ export function DynamicNotFound({
         className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
       >
         <FiArrowLeft className="w-4 h-4" />
-        {(t.errors as unknown)?.goBack || 'Go Back'}
+        {(t as any).errors?.goBack || 'Go Back'}
       </button>
     </div>
   );

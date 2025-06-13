@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { FaBehance } from 'react-icons/fa';
-} from 'react-icons/fi';
 import {
   FiInstagram,
   FiDribbble,
@@ -10,6 +9,7 @@ import {
   FiEye,
   FiHeart,
   FiAward,
+} from 'react-icons/fi';
 
 import { Portfolio } from '@/types/portfolio';
 
@@ -34,7 +34,6 @@ import { Portfolio } from '@/types/portfolio';
  * @author PRISMA Development Team
  * @version 0.0.1-alpha
  */
-
 
 /**
  * Props interface for the Designer Template component

@@ -38,7 +38,7 @@ export async function GET(): Promise<Response> {
     try {
       await analyticsService.initialize();
     } catch (error: unknown) {
-      if (error.message.includes('No active GitHub integration')) {
+      if ((error as Error).message?.includes('No active GitHub integration')) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },
           { status: 400 }
@@ -95,7 +95,7 @@ export async function POST(request: Request): Promise<Response> {
     try {
       await analyticsService.initialize();
     } catch (error: unknown) {
-      if (error.message.includes('No active GitHub integration')) {
+      if ((error as Error).message?.includes('No active GitHub integration')) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },
           { status: 400 }

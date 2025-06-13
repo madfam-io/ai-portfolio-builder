@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest): Promise<Response> {
 
     // Process contents in parallel
     const results = await Promise.allSettled(
-      contents.map(async (item: unknown) => {
+      contents.map(async (item: any) => {
         const request: GEOEnhancementRequest = {
           content: item.content,
           contentType: item.contentType,

@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
+import React from 'react';
 import {
   FaPlay,
   FaCheckCircle,
@@ -13,6 +13,7 @@ import {
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useExperimentTracking } from '@/lib/services/feature-flags/use-experiment';
+
 import type { HeroProps } from '@/types/experiments';
 
 /**
@@ -21,7 +22,6 @@ import type { HeroProps } from '@/types/experiments';
  * Different hero section implementations that can be selected
  * through the experiment system.
  */
-
 
 /**
  * Default Hero variant (current implementation)

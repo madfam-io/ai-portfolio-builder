@@ -79,11 +79,11 @@ export function decryptRefreshToken(
 export function hasEncryptedTokens(
   integration: unknown
 ): integration is EncryptedTokenData {
-  return (
+  return Boolean(
     integration &&
-    typeof integration.encrypted_access_token === 'string' &&
-    typeof integration.access_token_iv === 'string' &&
-    typeof integration.access_token_tag === 'string'
+      typeof (integration as any).encrypted_access_token === 'string' &&
+      typeof (integration as any).access_token_iv === 'string' &&
+      typeof (integration as any).access_token_tag === 'string'
   );
 }
 
@@ -91,5 +91,7 @@ export function hasEncryptedTokens(
  * Check if the integration has legacy unencrypted tokens
  */
 export function hasLegacyTokens(integration: unknown): boolean {
-  return integration && typeof integration.access_token === 'string';
+  return Boolean(
+    integration && typeof (integration as any).access_token === 'string'
+  );
 }

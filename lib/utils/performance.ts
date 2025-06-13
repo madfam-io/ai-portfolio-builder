@@ -96,7 +96,7 @@ export class PerformanceMonitor {
     try {
       const lcpObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1] as unknown;
+        const lastEntry = entries[entries.length - 1] as any;
         this.metrics.lcp = lastEntry.startTime;
         this.reportMetric('lcp', lastEntry.startTime);
       });
@@ -110,7 +110,7 @@ export class PerformanceMonitor {
     try {
       const fidObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: unknown) => {
+        entries.forEach((entry: any) => {
           this.metrics.fid = entry.processingStart - entry.startTime;
           this.reportMetric('fid', this.metrics.fid);
         });
@@ -126,7 +126,7 @@ export class PerformanceMonitor {
       let clsValue = 0;
       const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: unknown) => {
+        entries.forEach((entry: any) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
             this.metrics.cls = clsValue;
@@ -374,14 +374,11 @@ export function getMemoryUsage(): {
   total: number;
   percentage: number;
 } | null {
-  if (
-    typeof window === 'undefined' ||
-    !(window.performance as unknown)?.memory
-  ) {
+  if (typeof window === 'undefined' || !(window.performance as any)?.memory) {
     return null;
   }
 
-  const memory = (window.performance as unknown).memory;
+  const memory = (window.performance as any).memory;
   return {
     used: memory.usedJSHeapSize,
     total: memory.totalJSHeapSize,

@@ -105,7 +105,7 @@ const USER_TEMPLATES = [
 /**
  * Generate additional users beyond templates
  */
-function generateUser(index: number): unknown {
+function generateUser(index: number): any {
   const languages = ['es', 'en'];
   const currencies = ['MXN', 'USD', 'EUR'];
   const tiers = ['free', 'pro', 'business'];
@@ -186,7 +186,7 @@ function generateUser(index: number): unknown {
  * Seed users table with realistic test data
  */
 export async function seedUsers(
-  client: unknown,
+  client: any,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

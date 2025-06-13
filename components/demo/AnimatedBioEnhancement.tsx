@@ -116,7 +116,7 @@ export function AnimatedBioEnhancement({
     if (enhancedBio && isEnhancing) {
       let currentIndex = 0;
       const interval = setInterval(() => {
-        if (currentIndex <= enhancedBio.length > 0) {
+        if (currentIndex <= enhancedBio.length) {
           setDisplayText(enhancedBio.slice(0, currentIndex));
           currentIndex++;
         } else {

@@ -1,8 +1,7 @@
-'use client'
+'use client';
 
-import React, { useState, useEffect, Suspense } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-
+import { useRouter, useSearchParams } from 'next/navigation';
+import React, { useState, useEffect, Suspense } from 'react';
 import {
   FiGithub,
   FiActivity,
@@ -12,14 +11,16 @@ import {
   FiRefreshCw,
   FiTrendingUp,
   FiAlertCircle,
-} from 'react-icons/fi'
-import { ContributorsList } from '@/components/analytics/ContributorsList'
-import { RepositoryList } from '@/components/analytics/RepositoryList'
-import { StatsCard } from '@/components/analytics/StatsCard'
-import BaseLayout from '@/components/layouts/BaseLayout'
-import { LazyWrapper } from '@/components/shared/LazyWrapper'
-import { usePerformanceTracking } from '@/lib/utils/performance'
-import type { AnalyticsDashboardData } from '@/types/analytics'
+} from 'react-icons/fi';
+
+import { ContributorsList } from '@/components/analytics/ContributorsList';
+import { RepositoryList } from '@/components/analytics/RepositoryList';
+import { StatsCard } from '@/components/analytics/StatsCard';
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { LazyWrapper } from '@/components/shared/LazyWrapper';
+import { usePerformanceTracking } from '@/lib/utils/performance';
+
+import type { AnalyticsDashboardData } from '@/types/analytics';
 
 /**
  * @fileoverview Analytics Dashboard Page
@@ -28,32 +29,31 @@ import type { AnalyticsDashboardData } from '@/types/analytics'
  * Provides overview metrics, repository selection, and visualizations.
  */
 
-
 interface DashboardApiResponse {
-  data?: AnalyticsDashboardData
-  error?: string
-  requiresAuth?: boolean
+  data?: AnalyticsDashboardData;
+  error?: string;
+  requiresAuth?: boolean;
 }
 interface RepositoriesApiResponse {
-  repositories?: unknown[]
-  error?: string
-  requiresAuth?: boolean
+  repositories?: unknown[];
+  error?: string;
+  requiresAuth?: boolean;
 }
 interface DashboardState {
-  data: AnalyticsDashboardData | null
-  loading: boolean
-  error: string | null
-  needsAuth: boolean
-  syncing: boolean
+  data: AnalyticsDashboardData | null;
+  loading: boolean;
+  error: string | null;
+  needsAuth: boolean;
+  syncing: boolean;
 }
 /**
  * Analytics Dashboard Component
  * Handles GitHub integration, data fetching, and visualization
  */
 function AnalyticsDashboard(): React.ReactElement {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  usePerformanceTracking('AnalyticsDashboard')
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  usePerformanceTracking('AnalyticsDashboard');
 
   // Dashboard state management
   const [dashboard, setDashboard] = useState<DashboardState>({
@@ -62,40 +62,40 @@ function AnalyticsDashboard(): React.ReactElement {
     error: null,
     needsAuth: false,
     syncing: false,
-  })
+  });
 
   // const [selectedRepo, setSelectedRepo] = useState<string>('all')
 
   // Check for OAuth callback messages
   useEffect(() => {
-    const connected = searchParams.get('connected')
-    const error = searchParams.get('error')
+    const connected = searchParams.get('connected');
+    const error = searchParams.get('error');
 
     if (connected === 'true') {
       // Successfully connected, fetch data
-      void fetchDashboardData()
+      void fetchDashboardData();
       // Clean up URL
-      router.replace('/analytics')
+      router.replace('/analytics');
     } else if (error !== null && error !== '') {
       setDashboard(prev => ({
         ...prev,
         error: getErrorMessage(error),
         loading: false,
-      }))
+      }));
     }
-  }, [searchParams, router])
+  }, [searchParams, router]);
 
   // Fetch dashboard data on mount
   useEffect(() => {
-    const connected = searchParams.get('connected')
-    const error = searchParams.get('error')
+    const connected = searchParams.get('connected');
+    const error = searchParams.get('error');
     if (
       (connected === null || connected === '') &&
       (error === null || error === '')
     ) {
-      void fetchDashboardData()
+      void fetchDashboardData();
     }
-  }, [searchParams])
+  }, [searchParams]);
 
   /**
    * Get user-friendly error message
@@ -110,9 +110,9 @@ function AnalyticsDashboard(): React.ReactElement {
       user_fetch_failed: 'Failed to fetch GitHub user information.',
       integration_store_failed: 'Failed to store GitHub integration.',
       callback_failed: 'OAuth callback failed. Please try again.',
-    }
-    return errorMessages[errorCode] ?? 'An unknown error occurred.'
-  }
+    };
+    return errorMessages[errorCode] ?? 'An unknown error occurred.';
+  };
 
   /**
    * Fetch dashboard data from API
@@ -120,10 +120,10 @@ function AnalyticsDashboard(): React.ReactElement {
    */
   const fetchDashboardData = async (): Promise<void> => {
     try {
-      setDashboard(prev => ({ ...prev, loading: true, error: null }))
+      setDashboard(prev => ({ ...prev, loading: true, error: null }));
 
-      const response = await fetch('/api/analytics/dashboard')
-      const result: DashboardApiResponse = await response.json()
+      const response = await fetch('/api/analytics/dashboard');
+      const result: DashboardApiResponse = await response.json();
 
       if (!response.ok) {
         // Check if user needs to authenticate with GitHub
@@ -133,10 +133,10 @@ function AnalyticsDashboard(): React.ReactElement {
             loading: false,
             needsAuth: true,
             error: null,
-          }))
-          return
+          }));
+          return;
         }
-        throw new Error(result.error ?? 'Failed to fetch dashboard data')
+        throw new Error(result.error ?? 'Failed to fetch dashboard data');
       }
       setDashboard(prev => ({
         ...prev,
@@ -144,47 +144,47 @@ function AnalyticsDashboard(): React.ReactElement {
         loading: false,
         error: null,
         needsAuth: false,
-      }))
+      }));
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : 'An error occurred'
+        error instanceof Error ? error.message : 'An error occurred';
       setDashboard(prev => ({
         ...prev,
         loading: false,
         error: errorMessage,
-      }))
+      }));
     }
-  }
+  };
 
   /**
    * Initiate GitHub OAuth flow
    */
   const connectGitHub = async (): Promise<void> => {
     try {
-      const response = await fetch('/api/integrations/github/auth')
-      const result: { error?: string; url?: string } = await response.json()
+      const response = await fetch('/api/integrations/github/auth');
+      const result: { error?: string; url?: string } = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error ?? 'Failed to initiate GitHub OAuth')
+        throw new Error(result.error ?? 'Failed to initiate GitHub OAuth');
       }
       // Redirect to GitHub OAuth
       if (result.url) {
-        window.location.href = result.url
+        window.location.href = result.url;
       }
     } catch (error) {
       setDashboard(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'An error occurred',
-      }))
+      }));
     }
-  }
+  };
 
   /**
    * Sync repositories from GitHub
    */
   const syncRepositories = async (force = false): Promise<void> => {
     try {
-      setDashboard(prev => ({ ...prev, syncing: true }))
+      setDashboard(prev => ({ ...prev, syncing: true }));
 
       const response = await fetch('/api/analytics/repositories', {
         method: 'POST',
@@ -192,24 +192,24 @@ function AnalyticsDashboard(): React.ReactElement {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ force }),
-      })
+      });
 
-      const result: RepositoriesApiResponse = await response.json()
+      const result: RepositoriesApiResponse = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.error ?? 'Failed to sync repositories')
+        throw new Error(result.error ?? 'Failed to sync repositories');
       }
       // Refresh dashboard data
-      await fetchDashboardData()
+      await fetchDashboardData();
     } catch (error) {
       setDashboard(prev => ({
         ...prev,
         error: error instanceof Error ? error.message : 'An error occurred',
-      }))
+      }));
     } finally {
-      setDashboard(prev => ({ ...prev, syncing: false }))
+      setDashboard(prev => ({ ...prev, syncing: false }));
     }
-  }
+  };
 
   /**
    * Colors for charts
@@ -221,7 +221,7 @@ function AnalyticsDashboard(): React.ReactElement {
     accent: '#10b981', // Green - positive metrics
     warning: '#f59e0b', // Amber - warnings
     danger: '#ef4444', // Red - errors/critical
-  }
+  };
 
   // Loading state
   if (dashboard.loading) {
@@ -236,7 +236,7 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    )
+    );
   }
   // GitHub connection required
   if (dashboard.needsAuth) {
@@ -262,7 +262,7 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    )
+    );
   }
   // Error state
   if (dashboard.error !== null && dashboard.error !== '') {
@@ -279,7 +279,6 @@ function AnalyticsDashboard(): React.ReactElement {
             </p>
             <button
               onClick={fetchDashboardData}
-
               className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
               <FiRefreshCw className="mr-2" />
@@ -288,9 +287,9 @@ function AnalyticsDashboard(): React.ReactElement {
           </div>
         </div>
       </BaseLayout>
-    )
+    );
   }
-  const data = dashboard.data as AnalyticsDashboardData
+  const data = dashboard.data as AnalyticsDashboardData;
 
   return (
     <BaseLayout>
@@ -310,7 +309,6 @@ function AnalyticsDashboard(): React.ReactElement {
               <div className="flex items-center gap-4">
                 <button
                   onClick={() => syncRepositories()}
-
                   disabled={dashboard.syncing}
                   className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
                 >
@@ -469,7 +467,7 @@ function AnalyticsDashboard(): React.ReactElement {
         </div>
       </div>
     </BaseLayout>
-  )
+  );
 }
 export default function AnalyticsPage(): React.ReactElement {
   return (
@@ -487,5 +485,5 @@ export default function AnalyticsPage(): React.ReactElement {
     >
       <AnalyticsDashboard />
     </Suspense>
-  )
+  );
 }

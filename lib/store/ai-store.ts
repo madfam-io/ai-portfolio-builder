@@ -124,7 +124,8 @@ export const useAIStore = create<AIState & AIActions>()(
               return enhanced.content;
             } catch (error: unknown) {
               set(state => {
-                state.error = error.message || 'Enhancement failed';
+                state.error =
+                  error instanceof Error ? error.message : 'Enhancement failed';
                 state.isProcessing = false;
               });
               throw error;
@@ -172,7 +173,8 @@ export const useAIStore = create<AIState & AIActions>()(
               return enhanced.description;
             } catch (error: unknown) {
               set(state => {
-                state.error = error.message || 'Enhancement failed';
+                state.error =
+                  error instanceof Error ? error.message : 'Enhancement failed';
                 state.isProcessing = false;
               });
               throw error;
@@ -198,7 +200,9 @@ export const useAIStore = create<AIState & AIActions>()(
                 selectedModels.template
               );
 
-              const recommendation = await aiClient.recommendTemplate(data);
+              const recommendation = await aiClient.recommendTemplate(
+                data as any
+              );
 
               set(state => {
                 state.quotaUsed += 1;
@@ -208,7 +212,10 @@ export const useAIStore = create<AIState & AIActions>()(
               return recommendation;
             } catch (error: unknown) {
               set(state => {
-                state.error = error.message || 'Recommendation failed';
+                state.error =
+                  error instanceof Error
+                    ? error.message
+                    : 'Recommendation failed';
                 state.isProcessing = false;
               });
               throw error;
@@ -232,7 +239,10 @@ export const useAIStore = create<AIState & AIActions>()(
               });
             } catch (error: unknown) {
               set(state => {
-                state.error = error.message || 'Failed to load models';
+                state.error =
+                  error instanceof Error
+                    ? error.message
+                    : 'Failed to load models';
                 state.isProcessing = false;
               });
               throw error;

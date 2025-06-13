@@ -1,6 +1,5 @@
 'use client';
 
-} from 'react-icons/fi';
 import {
   FiStar,
   FiGitBranch,
@@ -8,6 +7,7 @@ import {
   FiUsers,
   FiCode,
   FiActivity,
+} from 'react-icons/fi';
 
 import type { Repository } from '@/types/analytics';
 
@@ -17,7 +17,6 @@ import type { Repository } from '@/types/analytics';
  * Displays repository statistics in a grid layout
  * including stars, forks, watchers, and other metrics
  */
-
 
 interface RepositoryStatsProps {
   repository: Repository;

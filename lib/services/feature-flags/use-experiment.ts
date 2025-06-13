@@ -1,13 +1,14 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState, useCallback } from 'react';
+
+import { logger } from '@/lib/utils/logger';
+
 import type {
   GetActiveExperimentResponse,
   ComponentConfig,
 } from '@/types/experiments';
-
-import { logger } from '@/lib/utils/logger';
 
 /**
  * @fileoverview Client-side hook for A/B testing experiments
@@ -15,7 +16,6 @@ import { logger } from '@/lib/utils/logger';
  * Provides React hooks for accessing experiment data and tracking
  * events in landing page A/B tests.
  */
-
 
 /**
  * Experiment context data

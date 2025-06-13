@@ -1,11 +1,19 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import React, { useState, useEffect, useCallback } from 'react';
+
+import { useAuth } from '@/lib/contexts/AuthContext';
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
+import { createClient } from '@/lib/supabase/client';
 import {
   calculateExperimentResults,
   generateTimeline,
 } from '@/lib/utils/experiments/calculate-results';
+import { logger } from '@/lib/utils/logger';
+
+import { ExperimentDetailsContent } from './ExperimentDetailsContent';
+
 import type {
   LandingPageExperiment,
   LandingPageVariant,
@@ -14,13 +22,6 @@ import type {
   DetailedVariant,
   ExperimentStatus,
 } from '@/types/experiments';
-
-import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
-import { createClient } from '@/lib/supabase/client';
-
-import { logger } from '@/lib/utils/logger';
-import { ExperimentDetailsContent } from './ExperimentDetailsContent';
 
 /**
  * Experiment Details & Analytics Page
@@ -87,7 +88,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
       if (!date) return; // Guard against undefined date
 
       if (!conversionsByDay[date]) {
-        conversionsByDay[date] = { _conversions: 0, _visitors: 0 };
+        conversionsByDay[date] = { conversions: 0, visitors: 0 };
       }
       conversionsByDay[date].visitors++;
       if (a.converted !== null && a.converted !== undefined) {
@@ -124,17 +125,18 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         return;
       }
       // Fetch experiment
-      const { _data: experimentData, _error: experimentError } = await supabase
+      const { data: experimentData, error: experimentError } = await supabase
         .from('landing_page_experiments')
         .select('*')
         .eq('id', experimentId)
         .single();
 
-      if (experimentError !== null && experimentError !== undefined) throw experimentError;
+      if (experimentError !== null && experimentError !== undefined)
+        throw experimentError;
       setExperiment(experimentData);
 
       // Fetch variants with analytics
-      const { _data: variantsData, _error: variantsError } = await supabase
+      const { data: variantsData, error: variantsError } = await supabase
         .from('landing_page_variants')
         .select(
           `
@@ -151,7 +153,8 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         )
         .eq('experiment_id', experimentId);
 
-      if (variantsError !== null && variantsError !== undefined) throw variantsError;
+      if (variantsError !== null && variantsError !== undefined)
+        throw variantsError;
 
       // Process variants with analytics
       const processedVariants = variantsData.map(processVariantAnalytics);
@@ -171,7 +174,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
           setAnalyticsData({
             experiment: experimentData,
             results,
-            _timeline: generateTimeline(processedVariants, timeRange),
+            timeline: generateTimeline(processedVariants, timeRange),
           });
         }
       }
@@ -263,7 +266,9 @@ export default function ExperimentDetailsPage(): React.ReactElement {
   if (!experiment) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-gray-500 _dark:text-gray-400">Experiment not found</p>
+        <p className="text-gray-500 _dark:text-gray-400">
+          Experiment not found
+        </p>
       </div>
     );
   }

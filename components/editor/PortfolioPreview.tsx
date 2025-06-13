@@ -1,7 +1,7 @@
 'use client';
 
-import React from 'react';
 import Image from 'next/image';
+import React from 'react';
 import {
   FiMail,
   FiPhone,
@@ -13,7 +13,6 @@ import {
 } from 'react-icons/fi';
 
 import { Portfolio } from '@/types/portfolio';
-
 
 interface PortfolioPreviewProps {
   portfolio: Portfolio;
@@ -46,7 +45,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
   const isDesktop = mode === 'desktop';
 
   // Get container classes based on preview mode
-  const getContainerClasses = (): void => {
+  const getContainerClasses = (): string => {
     if (mode === 'mobile') {
       return 'max-w-sm mx-auto';
     }
@@ -109,7 +108,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
   };
 
   // Template-specific rendering
-  const renderTemplateSpecific = (): void => {
+  const renderTemplateSpecific = (): React.ReactElement | null => {
     switch (portfolio.template) {
       case 'designer':
         return (

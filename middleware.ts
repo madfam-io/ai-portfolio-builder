@@ -4,6 +4,7 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import {
   applySecurityHeaders,
   shouldApplySecurityHeaders,
+} from './middleware/security-headers';
 
 import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
@@ -121,7 +122,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     const { data } = await supabase.auth.getSession();
     session = data.session;
   } catch (error) {
-    logger.warn('Error getting session', error as Error);
+    logger.warn('Error getting session', { error: (error as Error).message });
     // Continue without session if there's an error
   }
 

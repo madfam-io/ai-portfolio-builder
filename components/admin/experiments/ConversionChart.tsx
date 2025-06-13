@@ -44,7 +44,7 @@ export default function ConversionChart({
 }: ConversionChartProps): React.ReactElement {
   // Process data for the chart
   const chartData = data.map(day => {
-    const dayData: unknown = {
+    const dayData: any = {
       date: format(new Date(day.date), 'MMM dd'),
       fullDate: day.date,
       total: day.visitors > 0 ? (day.conversions / day.visitors) * 100 : 0,
@@ -76,14 +76,14 @@ export default function ConversionChart({
   ];
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: unknown) => {
+  const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length > 0) {
       return (
         <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
             {label}
           </p>
-          {payload.map((entry: unknown, index: number) => (
+          {payload.map((entry: any, index: number) => (
             <div
               key={index}
               className="flex items-center justify-between gap-4 text-sm"

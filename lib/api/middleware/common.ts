@@ -19,7 +19,7 @@ export function apiError(
   return NextResponse.json(
     {
       error: message,
-      ...(options?.details && { details: options.details }),
+      ...(options?.details ? { details: options.details } : {}),
     },
     { status: options?.status || 500 }
   );

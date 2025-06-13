@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-} from 'react-icons/fi';
 import {
   FiGithub,
   FiLinkedin,
@@ -10,6 +9,7 @@ import {
   FiExternalLink,
   FiCode,
   FiDownload,
+} from 'react-icons/fi';
 
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { Portfolio } from '@/types/portfolio';
@@ -34,7 +34,6 @@ import { Portfolio } from '@/types/portfolio';
  * @author PRISMA Development Team
  * @version 0.0.1-alpha
  */
-
 
 /**
  * Props interface for the Developer Template component

@@ -17,7 +17,7 @@ export interface ApiClientConfig {
  */
 const defaultConfig: ApiClientConfig = {
   baseUrl: process.env.NEXT_PUBLIC_APP_URL || '',
-  version: API_VERSION_CONFIG.currentVersion,
+  version: API_VERSION_CONFIG._currentVersion,
   credentials: 'same-origin',
 };
 

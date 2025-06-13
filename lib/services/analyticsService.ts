@@ -1,3 +1,7 @@
+import { GitHubAnalyticsClient } from '@/lib/analytics/github/client';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
 import type {
   Repository,
   CodeMetrics,
@@ -5,10 +9,6 @@ import type {
   CommitAnalytics,
   AnalyticsDashboardData,
   RepositoryAnalytics,
-
-import { GitHubAnalyticsClient } from '@/lib/analytics/github/client';
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 } from '@/types/analytics';
 
 /**
@@ -541,7 +541,7 @@ export class AnalyticsService {
         0
       );
       const totalContributors = new Set(
-        contributorData?.map((rc: unknown) => rc.contributor?.id).filter(Boolean) ||
+        contributorData?.map((rc: any) => rc.contributor?.id).filter(Boolean) ||
           []
       ).size;
 
@@ -609,7 +609,7 @@ export class AnalyticsService {
               }
             : undefined,
           topContributors:
-            contributorData?.slice(0, 5).map((rc: unknown) => ({
+            contributorData?.slice(0, 5).map((rc: any) => ({
               contributor: rc.contributor,
               commitCount: rc.commit_count,
             })) || [],
@@ -735,7 +735,7 @@ export class AnalyticsService {
           history: metrics,
         },
         contributors:
-          contributorData?.map((rc: unknown) => ({
+          contributorData?.map((rc: any) => ({
             contributor: rc.contributor,
             stats: rc,
           })) || [],

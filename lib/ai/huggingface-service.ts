@@ -1,4 +1,9 @@
 import crypto from 'crypto';
+
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+
+import { promptTemplates } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -11,10 +16,6 @@ import {
   ModelUnavailableError,
   QuotaExceededError,
   ModelResponse,
-
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
-import { promptTemplates } from './prompts';
 } from './types';
 
 /**
@@ -106,7 +107,7 @@ export class HuggingFaceService implements AIService {
    */
   getRecommendedModel(taskType: string): string {
     const recommended = this.availableModels
-      .filter(m => m.capabilities.includes(taskType as unknown) && m.isRecommended)
+      .filter(m => m.capabilities.includes(taskType as any) && m.isRecommended)
       .sort(
         (a, b) =>
           b.qualityRating / b.costPerRequest -
@@ -735,7 +736,7 @@ export class HuggingFaceService implements AIService {
     }
 
     return new AIServiceError(
-      `${operation} failed: ${error.message}`,
+      `${operation} failed: ${(error as any).message}`,
       'UNKNOWN_ERROR',
       'huggingface'
     );

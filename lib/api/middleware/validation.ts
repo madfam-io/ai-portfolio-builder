@@ -49,7 +49,7 @@ function sanitizeObject(obj: unknown): unknown {
   }
 
   if (obj !== null && typeof obj === 'object') {
-    const sanitized: unknown = {};
+    const sanitized: any = {};
     for (const [key, value] of Object.entries(obj)) {
       sanitized[key] = sanitizeObject(value);
     }
@@ -120,7 +120,7 @@ export function validateRequest(options: ValidationOptions) {
     context?: unknown
   ): Promise<NextResponse | null> {
     try {
-      const validated: unknown = {};
+      const validated: any = {};
 
       // Validate body
       if (options.body && ['POST', 'PUT', 'PATCH'].includes(request.method)) {
@@ -145,11 +145,11 @@ export function validateRequest(options: ValidationOptions) {
       }
 
       // Validate route params
-      if (options.params && context?.params) {
+      if (options.params && (context as any)?.params) {
         const sanitizedParams =
           options.sanitize !== false
-            ? sanitizeObject(context.params)
-            : context.params;
+            ? sanitizeObject((context as any).params)
+            : (context as any).params;
         validated.params = options.params.parse(sanitizedParams);
       }
 
@@ -279,6 +279,6 @@ export function createValidatedHandler<T extends ValidationOptions>(
       return validationResult;
     }
 
-    return handler(request as unknown, context);
+    return handler(request as any, context);
   };
 }

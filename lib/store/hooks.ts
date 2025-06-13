@@ -71,7 +71,7 @@ export function useCurrentPortfolio() {
 
       const keys = path.split('.');
       const updated = { ...currentPortfolio };
-      let current: unknown = updated;
+      let current: any = updated;
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];

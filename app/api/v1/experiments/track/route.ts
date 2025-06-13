@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
@@ -22,7 +23,7 @@ const trackEventSchema = z.object({
 /**
  * Track experiment events
  */
-export async function POST($1): Promise<Response> {
+export async function POST(request: Request): Promise<Response> {
   try {
     const body = await request.json();
 
@@ -30,7 +31,8 @@ export async function POST($1): Promise<Response> {
     const validatedData = trackEventSchema.parse(body);
 
     // Get visitor ID from cookie
-    const visitorId = request.cookies.get('prisma_visitor_id')?.value;
+    const cookieStore = await cookies();
+    const visitorId = cookieStore.get('prisma_visitor_id')?.value;
 
     if (!visitorId) {
       return NextResponse.json(

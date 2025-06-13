@@ -101,7 +101,7 @@ export function isErrorLike(
     typeof error === 'object' &&
     error !== null &&
     'message' in error &&
-    typeof (error as unknown).message === 'string'
+    typeof (error as any).message === 'string'
   );
 }
 

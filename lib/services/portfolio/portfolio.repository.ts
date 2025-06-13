@@ -1,11 +1,11 @@
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 } from '@/types/portfolio';
+
 import { getMockPortfolios } from './__mocks__/portfolio.mock';
 import { PortfolioMapper } from './portfolio.mapper';
 
@@ -14,7 +14,7 @@ import { PortfolioMapper } from './portfolio.mapper';
  * Handles all database operations for portfolios
  */
 export class PortfolioRepository {
-  private supabase: unknown;
+  private supabase: any;
   private useMockData: boolean;
 
   constructor() {
@@ -22,7 +22,7 @@ export class PortfolioRepository {
       process.env.NODE_ENV === 'development' && !process.env.SUPABASE_URL;
   }
 
-  private async getClient() {
+  private async getClient(): Promise<any> {
     if (!this.supabase) {
       this.supabase = await createClient();
     }

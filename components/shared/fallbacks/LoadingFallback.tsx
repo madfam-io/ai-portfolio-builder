@@ -38,7 +38,7 @@ export function FullPageLoader({
           <div className="absolute inset-0 rounded-full bg-purple-600/20 animate-ping" />
         </div>
         <p className="mt-4 text-gray-600 dark:text-gray-400">
-          {message || (t.common as unknown)?.loading || 'Loading...'}
+          {message || (t as any).common?.loading || 'Loading...'}
         </p>
       </div>
     </div>
@@ -105,9 +105,7 @@ export function ButtonLoader({
         <InlineLoader
           size="sm"
           color="white"
-          message={
-            loadingText || (t.common as unknown)?.loading || 'Loading...'
-          }
+          message={loadingText || (t as any).common?.loading || 'Loading...'}
         />
       </button>
     );

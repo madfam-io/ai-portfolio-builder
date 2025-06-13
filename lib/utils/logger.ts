@@ -112,7 +112,7 @@ class Logger {
       entry.error = {
         message: context.message,
         stack: context.stack,
-        code: (context as unknown).code,
+        code: (context as any).code,
       };
     } else if (context) {
       entry.context = context;

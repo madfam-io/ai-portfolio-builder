@@ -1,0 +1,55 @@
+/**
+ * Data transforms for analytics charts
+ * Converts raw analytics data to chart-compatible formats
+ */
+
+export interface CommitDataPoint {
+  date: string;
+  commits: number;
+}
+
+export interface LanguageDataPoint {
+  name: string;
+  value: number;
+  color: string;
+}
+
+/**
+ * Transform commit data for charts
+ */
+export function transformCommitData(commitsByDay: any[]): CommitDataPoint[] {
+  if (!Array.isArray(commitsByDay)) {
+    return [];
+  }
+
+  return commitsByDay.map(day => ({
+    date: day.date,
+    commits: day.count || 0,
+  }));
+}
+
+/**
+ * Transform language data for charts
+ */
+export function transformLanguageData(
+  languages: any[],
+  colors: Record<string, string>
+): LanguageDataPoint[] {
+  if (!Array.isArray(languages)) {
+    return [];
+  }
+
+  const sortedLanguages = languages
+    .sort((a, b) => (b.percentage || 0) - (a.percentage || 0))
+    .slice(0, 8); // Top 8 languages
+
+  const colorKeys = Object.keys(colors);
+
+  return sortedLanguages.map((lang, index) => ({
+    name: lang.name,
+    value: lang.percentage || 0,
+    color:
+      (colors as any)[colorKeys[index % colorKeys.length] || 'primary'] ||
+      colors.primary,
+  }));
+}

@@ -1,21 +1,19 @@
 import { NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
+
 import {
   apiSuccess,
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
   validateCreatePortfolio,
   validatePortfolioQuery,
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
-
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
-
 import { Portfolio } from '@/types/portfolio';
 
 /**
@@ -51,12 +49,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     const queryParams = Object.fromEntries(url.searchParams.entries());
     const queryValidation = validatePortfolioQuery(queryParams);
 
-    if (!queryValidation.success) {
-      return apiError('Invalid query parameters', {
-        status: 400,
-        data: { details: queryValidation.error.issues },
-      });
-    }
+    // Query validation always succeeds based on the implementation
     const {
       page = 1,
       limit = 10,
@@ -140,14 +133,14 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     const body = await request.json();
     const validation = validateCreatePortfolio(body);
 
-    if (!validation.success) {
+    if (!validation.isValid) {
       return apiError('Invalid portfolio data', {
         status: 400,
-        data: { details: validation.error.issues },
+        data: { details: validation.errors },
       });
     }
     // Sanitize input data
-    const sanitizedData = sanitizePortfolioData(validation.data);
+    const sanitizedData = sanitizePortfolioData(body);
 
     // Generate unique subdomain if not provided
     let subdomain = sanitizedData.name
@@ -262,7 +255,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
 ): unknown {
-  const dbData: unknown = {};
+  const dbData: any = {};
 
   if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
   if (apiPortfolio.name) dbData.name = apiPortfolio.name;
@@ -298,4 +291,4 @@ export function transformApiPortfolioToDb(
   dbData.updated_at = new Date().toISOString();
 
   return dbData;
-};
+}

@@ -12,7 +12,6 @@ import {
 
 import { Portfolio } from '@/types/portfolio';
 
-
 interface EditorHeaderProps {
   portfolio: Portfolio;
   isDirty: boolean;

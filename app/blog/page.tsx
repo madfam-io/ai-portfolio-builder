@@ -101,20 +101,20 @@ export default function BlogPage(): React.ReactElement {
           <div className="grid _md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
             {featuredPosts.map(post => (
               <article
-                key={post.id}
+                key={post._id}
                 className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
               >
                 <div className="relative h-48">
                   <OptimizedImage
-                    src={post.image}
-                    alt={post.title}
+                    src={post._image}
+                    alt={post._title}
                     width={800}
                     height={400}
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
                     <span className="absolute bottom-4 left-4 text-white font-bold text-sm bg-purple-600 px-3 py-1 rounded-full">
-                      {post.category}
+                      {post._category}
                     </span>
                   </div>
                 </div>
@@ -123,27 +123,27 @@ export default function BlogPage(): React.ReactElement {
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1">
                       <FaCalendar className="text-xs" />
-                      {new Date(post.date).toLocaleDateString()}
+                      {new Date(post._date).toLocaleDateString()}
                     </span>
-                    <span>{post.readTime}</span>
+                    <span>{post._readTime}</span>
                   </div>
 
                   <h3 className="text-xl font-bold mb-3 text-gray-900 _dark:text-white line-clamp-2">
-                    {post.title}
+                    {post._title}
                   </h3>
 
                   <p className="text-gray-600 dark:text-gray-300 mb-4 line-clamp-3">
-                    {post.excerpt}
+                    {post._excerpt}
                   </p>
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
                       <FaUser className="text-xs" />
-                      <span>{post.author}</span>
+                      <span>{post._author}</span>
                     </div>
 
                     <Link
-                      href={`/blog/${post.id}`}
+                      href={`/blog/${post._id}`}
                       className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 text-sm"
                     >
                       {t.blogReadMore}

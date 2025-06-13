@@ -1,3 +1,5 @@
+import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
+
 import {
   BioContext,
   ProjectEnhancement,
@@ -5,8 +7,6 @@ import {
   UserProfile,
   EnhancedContent,
 } from './types';
-
-import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
 
 /**
  * AI Service Client
@@ -257,21 +257,22 @@ export const AIUtils = {
    * Extract user profile from portfolio data
    */
   extractUserProfile(portfolio: unknown): UserProfile {
+    const portfolioData = portfolio as any;
     return {
-      title: portfolio.title || '',
-      skills: portfolio.skills?.map((s: unknown) => s.name) || [],
-      projectCount: portfolio.projects?.length || 0,
+      title: portfolioData.title || '',
+      skills: portfolioData.skills?.map((s: any) => s.name) || [],
+      projectCount: portfolioData.projects?.length || 0,
       hasDesignWork:
-        portfolio.projects?.some((p: unknown) =>
+        portfolioData.projects?.some((p: any) =>
           p.technologies?.some((t: string) =>
             ['figma', 'sketch', 'photoshop', 'illustrator', 'design'].some(
               design => t.toLowerCase().includes(design)
             )
           )
         ) || false,
-      industry: portfolio.experience?.[0]?.company || undefined,
+      industry: portfolioData.experience?.[0]?.company || undefined,
       experienceLevel: this.calculateExperienceLevel(
-        portfolio.experience || []
+        portfolioData.experience || []
       ),
     };
   },
@@ -299,11 +300,12 @@ export const AIUtils = {
    * Prepare bio context from portfolio data
    */
   prepareBioContext(portfolio: unknown): BioContext {
+    const portfolioData = portfolio as any;
     return {
-      title: portfolio.title || '',
-      skills: portfolio.skills?.map((s: unknown) => s.name) || [],
+      title: portfolioData.title || '',
+      skills: portfolioData.skills?.map((s: any) => s.name) || [],
       experience:
-        portfolio.experience?.map((exp: unknown) => ({
+        portfolioData.experience?.map((exp: any) => ({
           company: exp.company,
           position: exp.position,
           yearsExperience: this.calculateYearsExperience(
@@ -312,9 +314,9 @@ export const AIUtils = {
             exp.current
           ),
         })) || [],
-      industry: portfolio.experience?.[0]?.company || undefined,
-      tone: portfolio.aiSettings?.tone || 'professional',
-      targetLength: portfolio.aiSettings?.targetLength || 'concise',
+      industry: portfolioData.experience?.[0]?.company || undefined,
+      tone: portfolioData.aiSettings?.tone || 'professional',
+      targetLength: portfolioData.aiSettings?.targetLength || 'concise',
     };
   },
 
