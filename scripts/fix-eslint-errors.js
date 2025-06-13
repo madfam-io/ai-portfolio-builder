@@ -1,155 +1,202 @@
-import { FiEdit, FiTrash } from 'react-icons/fi';
-
 #!/usr/bin/env node
-
 const fs = require('fs');
 const path = require('path');
 
-// Files that need fixing
-const filesToFix = [
-  // Return type fixes
-  'components/BackToTopButton.tsx',
-  'components/admin/experiments/VariantPreview.tsx',
-  'components/demo/AIModelComparison.tsx',
-  'components/demo/AnimatedBioEnhancement.tsx',
-  'components/demo/ProjectEnhancementDemo.tsx',
-  'components/demo/PublishingPreview.tsx',
-  'components/demo/SmartImportOptions.tsx',
-  'components/demo/VisualCustomizationTools.tsx',
-  'components/editor/AIEnhancementButton.tsx',
-  'components/editor/TemplateSelector.tsx',
-  'components/integrations/GitHubIntegration.tsx',
-  'components/integrations/LinkedInImport.tsx',
-  'components/integrations/ResumeParser.tsx',
-  'components/landing/Footer.tsx',
-  'components/landing/Hero.tsx',
-  'components/landing/Pricing.tsx',
-  'components/shared/ErrorBoundary.tsx',
-  'lib/contexts/AuthContext.tsx',
-  'lib/monitoring/performance.ts',
-];
+/**
+ * Script to fix common ESLint errors across the codebase
+ */
 
-// Function to add return types to React components
-function addReturnTypes(content, fileName) {
-  // Add JSX.Element return type to function components
-  content = content.replace(
-    /export (default )?function (\w+)\(/g,
-    'export $1function $2(): JSX.Element ('
-  );
-  
-  // Add JSX.Element return type to arrow function components
-  content = content.replace(
-    /export const (\w+) = \(/g,
-    'export const $1 = (): JSX.Element => ('
-  );
-  
-  // Fix arrow functions with props
-  content = content.replace(
-    /export const (\w+) = \(([^)]+)\) => \{/g,
-    'export const $1 = ($2): JSX.Element => {'
-  );
-  
-  // Fix useCallback return types
-  content = content.replace(
-    /const (\w+) = useCallback\(\(\) => \{/g,
-    'const $1 = useCallback((): void => {'
-  );
-  
-  // Fix event handlers
-  content = content.replace(
-    /const handle(\w+) = \(\) => \{/g,
-    'const handle$1 = (): void => {'
-  );
-  
-  return content;
-}
+const fixes = [];
 
-// Function to remove unused imports
-function removeUnusedImports(content) {
-  // Remove FiEdit and FiTrash from InteractiveEditorSection
-  if (content.includes('FiEdit') && content.includes('FiTrash')) {
-    const lines = content.split('\n');
-    const newLines = lines.filter(line => 
-      !line.includes("") &&
-      !line.includes("")
-    );
-    content = newLines.join('\n');
-  }
-  
-  return content;
-}
+/**
+ * Fix prettier formatting errors
+ */
+function fixPrettierErrors(filePath, content) {
+  let fixed = content;
+  let changesMade = false;
 
-// Function to fix async/await issues
-function fixAsyncAwait(content) {
-  // Add await to async functions that don't have it
-  content = content.replace(
-    /async \([^)]*\) => \{([^}]+)\}/g,
-    (match, body) => {
-      if (!body.includes('await')) {
-        // Remove async if no await
-        return match.replace('async ', '');
+  // Fix import formatting - multi-line imports
+  fixed = fixed.replace(
+    /import \{ ([^}]+) \} from/g,
+    (match, imports) => {
+      const importList = imports.split(',').map(i => i.trim()).filter(Boolean);
+      if (importList.length > 3 || imports.length > 80) {
+        changesMade = true;
+        return `import {\n  ${importList.join(',\n  ')},\n} from`;
       }
       return match;
     }
   );
-  
-  return content;
+
+  // Fix double semicolons and empty lines
+  fixed = fixed.replace(/;\s*\n\s*\n/g, ';\n');
+  if (fixed !== content) changesMade = true;
+
+  // Remove trailing semicolons after imports
+  fixed = fixed.replace(/from ['"][^'"]+['"]\s*;\s*\n;\s*\n/g, (match) => {
+    changesMade = true;
+    return match.replace(/;\s*\n;\s*\n/, ';\n');
+  });
+
+  return { fixed, changesMade };
 }
 
-// Function to fix TypeScript strict errors
-function fixTypeScriptStrict(content) {
-  // Replace any types with unknown or proper types
-  content = content.replace(/: any/g, ': unknown');
-  
-  // Fix non-null assertions
-  content = content.replace(/!(?=\.)/g, '?');
-  
-  // Fix strict boolean expressions
-  content = content.replace(
+/**
+ * Fix TypeScript strict-boolean-expressions
+ */
+function fixStrictBooleanExpressions(filePath, content) {
+  let fixed = content;
+  let changesMade = false;
+
+  // Fix conditional any values - add explicit checks
+  fixed = fixed.replace(
     /if \(([^)]+)\)/g,
     (match, condition) => {
-      if (!condition.includes('===') && !condition.includes('!==') && 
-          !condition.includes('>') && !condition.includes('<') &&
-          !condition.includes('typeof') && !condition.includes('instanceof')) {
-        return `if (${condition})`;
+      // Skip if already has explicit comparison
+      if (condition.includes('===') || condition.includes('!==') || 
+          condition.includes('>') || condition.includes('<') ||
+          condition.includes('typeof') || condition.includes('instanceof')) {
+        return match;
       }
+
+      // Check if it's likely an any/unknown value that needs explicit check
+      if (condition.match(/\w+\.\w+/) || condition.match(/\w+\[\w+\]/)) {
+        changesMade = true;
+        return `if (${condition} !== undefined && ${condition} !== null)`;
+      }
+
       return match;
     }
   );
-  
-  return content;
+
+  // Fix ternary operators with any values
+  fixed = fixed.replace(
+    /(\w+(?:\.\w+)*(?:\[\w+\])*)\s*\?\s*/g,
+    (match, variable) => {
+      // Skip if it's already in a proper boolean context
+      if (content.substring(content.indexOf(match) - 50, content.indexOf(match)).includes('!!')) {
+        return match;
+      }
+      changesMade = true;
+      return `(${variable} !== undefined && ${variable} !== null) ? `;
+    }
+  );
+
+  return { fixed, changesMade };
 }
 
-// Process each file
-filesToFix.forEach(file => {
-  const filePath = path.join(process.cwd(), file);
-  
-  if (!fs.existsSync(filePath)) {
-    console.log(`⚠️  File not found: ${file}`);
-    return;
-  }
-  
-  try {
-    let content = fs.readFileSync(filePath, 'utf8');
-    const originalContent = content;
+/**
+ * Fix no-explicit-any errors by replacing with proper types
+ */
+function fixExplicitAny(filePath, content) {
+  let fixed = content;
+  let changesMade = false;
+
+  // Common any replacements based on context
+  const replacements = [
+    // Error handling
+    { pattern: /catch \(error: any\)/g, replacement: 'catch (error: unknown)' },
+    { pattern: /\(error: any\) =>/g, replacement: '(error: unknown) =>' },
+    { pattern: /\(err: any\) =>/g, replacement: '(err: unknown) =>' },
     
-    // Apply fixes
-    content = addReturnTypes(content, file);
-    content = removeUnusedImports(content);
-    content = fixAsyncAwait(content);
-    content = fixTypeScriptStrict(content);
+    // Response types
+    { pattern: /\(response: any\)/g, replacement: '(response: unknown)' },
+    { pattern: /\(data: any\)/g, replacement: '(data: unknown)' },
     
-    // Only write if changed
-    if (content !== originalContent) {
-      fs.writeFileSync(filePath, content, 'utf8');
-      console.log(`✅ Fixed: ${file}`);
-    } else {
-      console.log(`⏭️  No changes: ${file}`);
+    // Event handlers
+    { pattern: /\(e: any\)/g, replacement: '(e: React.ChangeEvent<HTMLInputElement>)' },
+    { pattern: /\(event: any\)/g, replacement: '(event: React.ChangeEvent<HTMLInputElement>)' },
+  ];
+
+  replacements.forEach(({ pattern, replacement }) => {
+    if (fixed.match(pattern)) {
+      fixed = fixed.replace(pattern, replacement);
+      changesMade = true;
     }
-  } catch (error) {
-    console.error(`❌ Error processing ${file}:`, error.message);
+  });
+
+  return { fixed, changesMade };
+}
+
+/**
+ * Process a single file
+ */
+function processFile(filePath) {
+  if (!fs.existsSync(filePath)) {
+    console.error(`File not found: ${filePath}`);
+    return false;
+  }
+
+  const content = fs.readFileSync(filePath, 'utf8');
+  let finalContent = content;
+  let anyChangesMade = false;
+
+  // Apply prettier fixes
+  const prettierResult = fixPrettierErrors(filePath, finalContent);
+  if (prettierResult.changesMade) {
+    finalContent = prettierResult.fixed;
+    anyChangesMade = true;
+  }
+
+  // Apply strict boolean fixes for TypeScript files
+  if (filePath.endsWith('.ts') || filePath.endsWith('.tsx')) {
+    const booleanResult = fixStrictBooleanExpressions(filePath, finalContent);
+    if (booleanResult.changesMade) {
+      finalContent = booleanResult.fixed;
+      anyChangesMade = true;
+    }
+
+    const anyResult = fixExplicitAny(filePath, finalContent);
+    if (anyResult.changesMade) {
+      finalContent = anyResult.fixed;
+      anyChangesMade = true;
+    }
+  }
+
+  if (anyChangesMade) {
+    fs.writeFileSync(filePath, finalContent);
+    fixes.push(filePath);
+    return true;
+  }
+
+  return false;
+}
+
+// Files with ESLint errors from the output
+const filesToFix = [
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/about/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/admin/experiments/[id]/ExperimentDetailsContent.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/admin/experiments/[id]/VariantTableRow.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/admin/experiments/new/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/admin/experiments/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/analytics/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/analytics/repository/[id]/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/page.tsx',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/ai/models/selection/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/ai/recommend-template/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/analytics/repositories/[id]/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/analytics/repositories/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/experiments/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/experiments/track/route.ts',
+  '/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api/v1/geo/analyze/route.ts',
+];
+
+console.log('🔧 Fixing ESLint errors...\n');
+
+filesToFix.forEach(file => {
+  if (processFile(file)) {
+    console.log(`✅ Fixed: ${path.basename(file)}`);
   }
 });
 
-console.log('\n✅ ESLint fixes applied!');
-console.log('Run "pnpm lint" to check remaining issues.');
+console.log(`\n📊 Summary: Fixed ${fixes.length} files`);
+
+// Now run prettier to ensure formatting
+console.log('\n🎨 Running Prettier to ensure consistent formatting...');
+const { execSync } = require('child_process');
+try {
+  execSync('npx prettier --write "app/**/*.{ts,tsx,js,jsx}"', { stdio: 'inherit' });
+  console.log('✅ Prettier formatting complete');
+} catch (error) {
+  console.error('❌ Prettier formatting failed:', error.message);
+}

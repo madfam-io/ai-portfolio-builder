@@ -1,9 +1,9 @@
 'use client';
 
+import { Check, Eye, File, Sparkles, Upload, X } from 'lucide-react';
 import React, { useState, useCallback } from 'react';
-import { FiCheck, FiEye, FiFile, FiUpload, FiX } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
 
+import { logger } from '@/lib/utils/logger';
 interface ParsedResumeData {
   personalInfo: {
     name: string;
@@ -245,7 +245,7 @@ export function ResumeParser({
       >
         <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiUpload className="w-8 h-8" />
+            <Upload className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Resume Parser</h3>
               <p className="text-green-100">
@@ -267,7 +267,7 @@ export function ResumeParser({
             onDragOver={handleDragOver}
             onDrop={handleDrop}
           >
-            <FiFile className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+            <File className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
               Drop your resume here
             </h4>
@@ -286,7 +286,7 @@ export function ResumeParser({
               htmlFor="resume-upload"
               className="inline-flex items-center space-x-2 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors cursor-pointer"
             >
-              <FiUpload className="w-4 h-4" />
+              <Upload className="w-4 h-4" />
               <span>Choose File</span>
             </label>
 
@@ -297,7 +297,7 @@ export function ResumeParser({
 
           <div className="mt-6 space-y-3">
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   AI-Powered Extraction
@@ -309,7 +309,7 @@ export function ResumeParser({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   Smart Validation
@@ -320,7 +320,7 @@ export function ResumeParser({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   Privacy Protected
@@ -351,7 +351,7 @@ export function ResumeParser({
       >
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiFile className="w-8 h-8" />
+            <File className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">
                 {isUploading ? 'Uploading Resume' : 'Parsing Content'}
@@ -383,7 +383,7 @@ export function ResumeParser({
             />
           </div>
           <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-            <HiSparkles className="w-4 h-4 animate-pulse" />
+            <Sparkles className="w-4 h-4 animate-pulse" />
             <span>
               {isUploading
                 ? 'Uploading your resume securely...'
@@ -402,7 +402,7 @@ export function ResumeParser({
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <FiFile className="w-8 h-8" />
+            <File className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Resume Parsed Successfully</h3>
               <p className="text-green-100">
@@ -410,7 +410,7 @@ export function ResumeParser({
               </p>
             </div>
           </div>
-          <FiCheck className="w-8 h-8" />
+          <Check className="w-8 h-8" />
         </div>
       </div>
 
@@ -482,17 +482,17 @@ export function ResumeParser({
         {/* Action Buttons */}
         <div className="flex gap-3">
           <button
-            onClick={() => console.log('Review extracted data')}
+            onClick={() => logger.debug('Review extracted data')}
             className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
           >
-            <FiEye className="w-4 h-4" />
+            <Eye className="w-4 h-4" />
             <span>Review Extracted Data</span>
           </button>
           <button
             onClick={() => setParsedData(null)}
             className="px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
-            <FiX className="w-4 h-4" />
+            <X className="w-4 h-4" />
           </button>
         </div>
       </div>

@@ -1,15 +1,15 @@
 'use client';
 
-import React from 'react';
-import { FaBehance } from 'react-icons/fa';
 import {
-  FiInstagram,
-  FiDribbble,
-  FiExternalLink,
-  FiEye,
-  FiHeart,
-  FiAward,
-} from 'react-icons/fi';
+  Award,
+  Dribbble,
+  ExternalLink,
+  Eye,
+  Heart,
+  Instagram,
+  Layers,
+} from 'lucide-react';
+import React from 'react';
 
 import { Portfolio } from '@/types/portfolio';
 
@@ -129,10 +129,10 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                         <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 flex gap-4">
                           <button className="p-3 bg-white rounded-full text-gray-800 hover:bg-gray-100">
-                            <FiEye className="w-5 h-5" />
+                            <Eye className="w-5 h-5" />
                           </button>
                           <button className="p-3 bg-white rounded-full text-gray-800 hover:bg-gray-100">
-                            <FiHeart className="w-5 h-5" />
+                            <Heart className="w-5 h-5" />
                           </button>
                         </div>
                       </div>
@@ -169,18 +169,18 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                               rel="noopener noreferrer"
                               className="text-pink-600 hover:text-pink-700 font-medium text-sm flex items-center gap-1"
                             >
-                              <FiExternalLink className="w-4 h-4" />
+                              <ExternalLink className="w-4 h-4" />
                               Live View
                             </a>
                           )}
                         </div>
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           <span className="flex items-center gap-1">
-                            <FiEye className="w-4 h-4" />
+                            <Eye className="w-4 h-4" />
                             {Math.floor(Math.random() * 1000) + 100}
                           </span>
                           <span className="flex items-center gap-1">
-                            <FiHeart className="w-4 h-4" />
+                            <Heart className="w-4 h-4" />
                             {Math.floor(Math.random() * 50) + 10}
                           </span>
                         </div>
@@ -219,7 +219,7 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
             ).map(([category, skills]) => (
               <div key={category} className="text-center">
                 <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-pink-400 to-purple-500 rounded-2xl flex items-center justify-center">
-                  <FiAward className="w-8 h-8 text-white" />
+                  <Award className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
                   {category}
@@ -322,7 +322,7 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-4 bg-white/10 rounded-full hover:bg-white/20 transition-all transform hover:scale-110"
               >
-                <FiInstagram className="w-6 h-6" />
+                <Instagram className="w-6 h-6" />
               </a>
             )}
             {portfolio.social.dribbble && (
@@ -332,7 +332,7 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-4 bg-white/10 rounded-full hover:bg-white/20 transition-all transform hover:scale-110"
               >
-                <FiDribbble className="w-6 h-6" />
+                <Dribbble className="w-6 h-6" />
               </a>
             )}
             {portfolio.social.behance && (
@@ -342,7 +342,7 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-4 bg-white/10 rounded-full hover:bg-white/20 transition-all transform hover:scale-110"
               >
-                <FaBehance className="w-6 h-6" />
+                <Layers className="w-6 h-6" />
               </a>
             )}
           </div>

@@ -1,8 +1,8 @@
 'use client';
 
+import { Check } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { FaCheck } from 'react-icons/fa';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -78,19 +78,19 @@ export default function Pricing(): React.ReactElement {
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.portfolio1}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.basicTemplates}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.madfamSubdomain}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.aiRewrites3}</span>
               </li>
             </ul>
@@ -114,23 +114,23 @@ export default function Pricing(): React.ReactElement {
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.portfolios3}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.allTemplates}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.customDomain}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.unlimitedAiRewrites}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.analyticsTools}</span>
               </li>
             </ul>
@@ -155,23 +155,23 @@ export default function Pricing(): React.ReactElement {
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.unlimitedPortfolios}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.whiteLabelOption}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.apiAccess}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.teamCollaboration}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="text-green-500 mr-3" />
+                <Check className="text-green-500 mr-3" />
                 <span>{t.prioritySupport}</span>
               </li>
             </ul>
@@ -203,27 +203,27 @@ export default function Pricing(): React.ReactElement {
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricingEverythingInBusiness}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricingWhiteLabelSolutions}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricingDedicatedManager}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricingCustomIntegrations}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricing24Support}</span>
               </li>
               <li className="flex items-center">
-                <FaCheck className="mr-3" />
+                <Check className="mr-3" />
                 <span>{t.pricingSlaGuarantees}</span>
               </li>
             </ul>

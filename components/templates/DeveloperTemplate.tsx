@@ -1,15 +1,15 @@
 'use client';
 
-import React from 'react';
 import {
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiMail,
-  FiExternalLink,
-  FiCode,
-  FiDownload,
-} from 'react-icons/fi';
+  Code,
+  Download,
+  ExternalLink,
+  Github,
+  Linkedin,
+  Mail,
+  Twitter,
+} from 'lucide-react';
+import React from 'react';
 
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
 import { Portfolio } from '@/types/portfolio';
@@ -87,11 +87,11 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                   style={{ backgroundColor: primaryColor }}
                   className="px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-all flex items-center gap-2"
                 >
-                  <FiMail />
+                  <Mail />
                   Get In Touch
                 </button>
                 <button className="px-6 py-3 border border-white/30 rounded-lg font-semibold hover:bg-white/10 transition-all flex items-center gap-2">
-                  <FiDownload />
+                  <Download />
                   Download CV
                 </button>
               </div>
@@ -110,7 +110,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                 />
               ) : (
                 <div className="w-64 h-64 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center">
-                  <FiCode className="w-24 h-24 text-white" />
+                  <Code className="w-24 h-24 text-white" />
                 </div>
               )}
             </div>
@@ -202,7 +202,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                     />
                   ) : (
                     <div className="h-48 bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center">
-                      <FiCode className="w-12 h-12 text-white" />
+                      <Code className="w-12 h-12 text-white" />
                     </div>
                   )}
                   <div className="p-6">
@@ -238,7 +238,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
-                          <FiExternalLink className="w-4 h-4" />
+                          <ExternalLink className="w-4 h-4" />
                           Live Demo
                         </a>
                       )}
@@ -249,7 +249,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                           rel="noopener noreferrer"
                           className="flex items-center gap-1 text-gray-600 hover:text-gray-700 text-sm font-medium"
                         >
-                          <FiGithub className="w-4 h-4" />
+                          <Github className="w-4 h-4" />
                           Code
                         </a>
                       )}
@@ -314,7 +314,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
               >
-                <FiGithub className="w-6 h-6" />
+                <Github className="w-6 h-6" />
               </a>
             )}
             {portfolio.social.linkedin && (
@@ -324,7 +324,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
               >
-                <FiLinkedin className="w-6 h-6" />
+                <Linkedin className="w-6 h-6" />
               </a>
             )}
             {portfolio.social.twitter && (
@@ -334,7 +334,7 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
                 rel="noopener noreferrer"
                 className="p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
               >
-                <FiTwitter className="w-6 h-6" />
+                <Twitter className="w-6 h-6" />
               </a>
             )}
           </div>

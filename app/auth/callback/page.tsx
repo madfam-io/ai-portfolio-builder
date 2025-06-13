@@ -15,7 +15,7 @@ export default function AuthCallbackPage(): React.ReactElement {
   const { t } = useLanguage();
 
   useEffect(() => {
-    const handleAuthCallback = async () => {
+    const handleAuthCallback = async (): Promise<void> => {
       try {
         // Get URL hash and search params
         const hashParams = new URLSearchParams(

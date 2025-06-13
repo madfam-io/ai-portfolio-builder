@@ -1,17 +1,9 @@
 'use client';
 
+import { Edit, Eye, Globe, Loader, Plus, Trash } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import {
-  FaPlus,
-  FaEdit,
-  FaEye,
-  FaTrash,
-  FaSpinner,
-  FaGlobe,
-  // Removed portfolioService import - will use API calls instead
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useAuth } from '@/lib/contexts/AuthContext';
@@ -124,7 +116,7 @@ export default function Dashboard(): React.ReactElement {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <FaSpinner className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <Loader className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
               {t.loadingDashboard}
             </p>
@@ -182,7 +174,7 @@ export default function Dashboard(): React.ReactElement {
             href="/editor"
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
-            <FaPlus className="mr-2" />
+            <Plus className="mr-2" />
             {t.createNewPortfolio}
           </Link>
         </div>
@@ -256,7 +248,7 @@ export default function Dashboard(): React.ReactElement {
                           <>
                             <span>•</span>
                             <span className="flex items-center gap-1">
-                              <FaGlobe className="text-xs" />
+                              <Globe className="text-xs" />
                               {portfolio.subdomain}.prisma.io
                             </span>
                           </>
@@ -272,7 +264,7 @@ export default function Dashboard(): React.ReactElement {
                           className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                           title="View live portfolio"
                         >
-                          <FaEye />
+                          <Eye />
                         </a>
                       )}
                       <Link
@@ -280,14 +272,14 @@ export default function Dashboard(): React.ReactElement {
                         className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                         title="Edit portfolio"
                       >
-                        <FaEdit />
+                        <Edit />
                       </Link>
                       <button
                         onClick={() => handleDeletePortfolio(portfolio.id)}
                         className="p-2 text-gray-400 hover:text-red-600 transition-colors"
                         title="Delete portfolio"
                       >
-                        <FaTrash />
+                        <Trash />
                       </button>
                     </div>
                   </div>
@@ -300,7 +292,7 @@ export default function Dashboard(): React.ReactElement {
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
             <div className="text-center py-12">
               <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <FaPlus className="text-3xl text-gray-400" />
+                <Plus className="text-3xl text-gray-400" />
               </div>
               <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
                 {t.noPortfoliosYet}
@@ -312,7 +304,7 @@ export default function Dashboard(): React.ReactElement {
                 href="/editor"
                 className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
-                <FaPlus className="mr-2" />
+                <Plus className="mr-2" />
                 {t.createPortfolio}
               </Link>
             </div>

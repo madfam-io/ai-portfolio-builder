@@ -1,22 +1,22 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  FiMonitor,
-  FiTablet,
-  FiSmartphone,
-  FiMaximize2,
-  FiMinimize2,
-  FiZoomIn,
-  FiZoomOut,
-  FiEye,
-  FiEyeOff,
-  FiGrid,
-  FiDownload,
-  FiShare2,
-  FiSettings,
-  FiRefreshCw,
-} from 'react-icons/fi';
+  Download,
+  Eye,
+  EyeOff,
+  Grid,
+  Maximize2,
+  Minimize2,
+  Monitor,
+  RefreshCw,
+  Settings,
+  Share2,
+  Smartphone,
+  Tablet,
+  ZoomIn,
+  ZoomOut,
+} from 'lucide-react';
+import { useState } from 'react';
 
 import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
 
@@ -204,7 +204,7 @@ export function PreviewControls({
               }`}
               title="Desktop Preview"
             >
-              <FiMonitor className="w-4 h-4" />
+              <Monitor className="w-4 h-4" />
               <span className="hidden sm:inline">Desktop</span>
             </button>
             <button
@@ -216,7 +216,7 @@ export function PreviewControls({
               }`}
               title="Tablet Preview"
             >
-              <FiTablet className="w-4 h-4" />
+              <Tablet className="w-4 h-4" />
               <span className="hidden sm:inline">Tablet</span>
             </button>
             <button
@@ -228,7 +228,7 @@ export function PreviewControls({
               }`}
               title="Mobile Preview"
             >
-              <FiSmartphone className="w-4 h-4" />
+              <Smartphone className="w-4 h-4" />
               <span className="hidden sm:inline">Mobile</span>
             </button>
           </div>
@@ -241,7 +241,7 @@ export function PreviewControls({
                 className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
                 title="Responsive Testing"
               >
-                <FiGrid className="w-4 h-4" />
+                <Grid className="w-4 h-4" />
               </button>
 
               {showResponsiveTesting && (
@@ -263,7 +263,7 @@ export function PreviewControls({
             className="p-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 transition-colors"
             title="Zoom Out"
           >
-            <FiZoomOut className="w-4 h-4" />
+            <ZoomOut className="w-4 h-4" />
           </button>
 
           <button
@@ -280,7 +280,7 @@ export function PreviewControls({
             className="p-1 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 transition-colors"
             title="Zoom In"
           >
-            <FiZoomIn className="w-4 h-4" />
+            <ZoomIn className="w-4 h-4" />
           </button>
         </div>
 
@@ -296,7 +296,7 @@ export function PreviewControls({
             }`}
             title="Toggle Section Borders"
           >
-            <FiGrid className="w-4 h-4" />
+            <Grid className="w-4 h-4" />
           </button>
 
           <button
@@ -309,9 +309,9 @@ export function PreviewControls({
             title="Toggle Interactive Elements"
           >
             {showInteractiveElements ? (
-              <FiEye className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
             ) : (
-              <FiEyeOff className="w-4 h-4" />
+              <EyeOff className="w-4 h-4" />
             )}
           </button>
 
@@ -329,9 +329,9 @@ export function PreviewControls({
             }
           >
             {previewState === 'fullscreen' ? (
-              <FiMinimize2 className="w-4 h-4" />
+              <Minimize2 className="w-4 h-4" />
             ) : (
-              <FiMaximize2 className="w-4 h-4" />
+              <Maximize2 className="w-4 h-4" />
             )}
           </button>
 
@@ -342,7 +342,7 @@ export function PreviewControls({
             className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 transition-colors"
             title="Refresh Preview"
           >
-            <FiRefreshCw
+            <RefreshCw
               className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`}
             />
           </button>
@@ -354,7 +354,7 @@ export function PreviewControls({
               className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               title="Export Preview"
             >
-              <FiDownload className="w-4 h-4" />
+              <Download className="w-4 h-4" />
             </button>
           )}
 
@@ -365,7 +365,7 @@ export function PreviewControls({
               className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               title="Share Preview"
             >
-              <FiShare2 className="w-4 h-4" />
+              <Share2 className="w-4 h-4" />
             </button>
           )}
 
@@ -376,7 +376,7 @@ export function PreviewControls({
               className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               title="Preview Settings"
             >
-              <FiSettings className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
             </button>
           )}
         </div>

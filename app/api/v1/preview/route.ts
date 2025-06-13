@@ -53,7 +53,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
       .eq('id', portfolioId)
       .single();
 
-    if (error || !dbPortfolio) {
+    if (error !== null || dbPortfolio === null || dbPortfolio === undefined) {
       logger.error('Failed to fetch portfolio for preview', {
         portfolioId,
         error,
@@ -156,7 +156,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       certifications: portfolio.certifications || [],
       contact: portfolio.contact || {},
       social: portfolio.social || {},
-      template: portfolio.template || template || 'developer',
+      template: portfolio.template ?? template ?? 'developer',
       customization: portfolio.customization || {},
       status: portfolio.status || 'draft',
     } as Portfolio;

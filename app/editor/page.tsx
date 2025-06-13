@@ -1,9 +1,9 @@
 'use client';
 
+import { ArrowLeft, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useState, useEffect, Suspense } from 'react';
-import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 // Removed server-side service import - will use API calls instead
 
 import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
@@ -152,7 +152,7 @@ function EditorContent(): React.ReactElement {
       <BaseLayout className="!bg-gray-50 dark:!bg-gray-900">
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <FaSpinner className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <Loader className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
               {t.loadingDashboard}
             </p>
@@ -178,7 +178,7 @@ function EditorContent(): React.ReactElement {
                 href="/dashboard"
                 className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
               >
-                <FaArrowLeft className="mr-2" />
+                <ArrowLeft className="mr-2" />
                 {t.backToDashboard}
               </Link>
               <button

@@ -1,5 +1,5 @@
+import { Eye, Filter, Plus, Search, Star, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { FiEye, FiFilter, FiPlus, FiSearch, FiStar, FiX } from 'react-icons/fi';
 
 import type {
   ComponentLibraryItem,
@@ -81,7 +81,7 @@ export default function ComponentGallery({
             onClick={onClose}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
-            <FiX className="w-5 h-5" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -90,7 +90,7 @@ export default function ComponentGallery({
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <div className="relative">
-                <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Search components..."
@@ -102,7 +102,7 @@ export default function ComponentGallery({
             </div>
 
             <div className="flex items-center gap-2">
-              <FiFilter className="text-gray-400" />
+              <Filter className="text-gray-400" />
               <select
                 value={selectedType}
                 onChange={e =>
@@ -203,7 +203,7 @@ export default function ComponentGallery({
                           )}
                           {component.averageConversionRate && (
                             <span className="flex items-center gap-1">
-                              <FiStar className="w-3 h-3" />
+                              <Star className="w-3 h-3" />
                               {component.averageConversionRate}% CR
                             </span>
                           )}
@@ -215,14 +215,14 @@ export default function ComponentGallery({
                           onClick={() => setPreviewComponent(component)}
                           className="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors text-sm font-medium text-gray-700 dark:text-gray-300 inline-flex items-center justify-center"
                         >
-                          <FiEye className="mr-1.5" />
+                          <Eye className="mr-1.5" />
                           Preview
                         </button>
                         <button
                           onClick={() => onSelect(component)}
                           className="flex-1 px-3 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors text-sm font-medium inline-flex items-center justify-center"
                         >
-                          <FiPlus className="mr-1.5" />
+                          <Plus className="mr-1.5" />
                           Add
                         </button>
                       </div>
@@ -255,7 +255,7 @@ export default function ComponentGallery({
                 onClick={() => setPreviewComponent(null)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <FiX className="w-5 h-5" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 

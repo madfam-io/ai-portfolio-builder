@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
 import {
-  FiUser,
-  FiBriefcase,
-  FiFolder,
-  FiAward,
-  FiMail,
-  FiSettings,
-  FiChevronDown,
-  FiChevronRight,
-  FiPlus,
-  FiEdit3,
-} from 'react-icons/fi';
+  Award as FiAward,
+  Briefcase as FiBriefcase,
+  ChevronDown,
+  ChevronRight,
+  Edit3,
+  Folder as FiFolder,
+  Mail as FiMail,
+  Plus,
+  Settings as FiSettings,
+  User as FiUser,
+} from 'lucide-react';
+import { useState } from 'react';
 
 import { Portfolio, SectionType } from '@/types/portfolio';
 
@@ -164,7 +164,7 @@ export function EditorSidebar({
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-gray-900">Work Experience</h3>
         <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <FiPlus className="w-4 h-4 inline mr-1" />
+          <Plus className="w-4 h-4 inline mr-1" />
           Add Experience
         </button>
       </div>
@@ -181,7 +181,7 @@ export function EditorSidebar({
                 </p>
               </div>
               <button className="text-gray-400 hover:text-gray-600">
-                <FiEdit3 className="w-4 h-4" />
+                <Edit3 className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -195,7 +195,7 @@ export function EditorSidebar({
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-gray-900">Projects</h3>
         <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <FiPlus className="w-4 h-4 inline mr-1" />
+          <Plus className="w-4 h-4 inline mr-1" />
           Add Project
         </button>
       </div>
@@ -227,7 +227,7 @@ export function EditorSidebar({
                 </div>
               </div>
               <button className="text-gray-400 hover:text-gray-600">
-                <FiEdit3 className="w-4 h-4" />
+                <Edit3 className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -241,7 +241,7 @@ export function EditorSidebar({
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium text-gray-900">Skills</h3>
         <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <FiPlus className="w-4 h-4 inline mr-1" />
+          <Plus className="w-4 h-4 inline mr-1" />
           Add Skill
         </button>
       </div>
@@ -339,9 +339,9 @@ export function EditorSidebar({
                   </div>
                 </div>
                 {isExpanded ? (
-                  <FiChevronDown className="w-4 h-4 text-gray-400" />
+                  <ChevronDown className="w-4 h-4 text-gray-400" />
                 ) : (
-                  <FiChevronRight className="w-4 h-4 text-gray-400" />
+                  <ChevronRight className="w-4 h-4 text-gray-400" />
                 )}
               </button>
 

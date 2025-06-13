@@ -1,5 +1,5 @@
+import { Monitor, Smartphone, Tablet } from 'lucide-react';
 import React from 'react';
-import { FiMonitor, FiSmartphone, FiTablet } from 'react-icons/fi';
 
 import type { ComponentConfig } from '@/types/experiments';
 
@@ -160,7 +160,7 @@ export default function VariantPreview({
           }`}
           title="Desktop"
         >
-          <FiMonitor className="w-5 h-5" />
+          <Monitor className="w-5 h-5" />
         </button>
         <button
           onClick={() => setSelectedDevice('tablet')}
@@ -171,7 +171,7 @@ export default function VariantPreview({
           }`}
           title="Tablet"
         >
-          <FiTablet className="w-5 h-5" />
+          <Tablet className="w-5 h-5" />
         </button>
         <button
           onClick={() => setSelectedDevice('mobile')}
@@ -182,7 +182,7 @@ export default function VariantPreview({
           }`}
           title="Mobile"
         >
-          <FiSmartphone className="w-5 h-5" />
+          <Smartphone className="w-5 h-5" />
         </button>
       </div>
 

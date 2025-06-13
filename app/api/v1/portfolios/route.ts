@@ -66,13 +66,13 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
       .order('updated_at', { ascending: false });
 
     // Apply filters
-    if (status) {
+    if (status !== undefined && status !== null) {
       query = query.eq('status', status);
     }
-    if (template) {
+    if (template !== undefined && template !== null) {
       query = query.eq('template', template);
     }
-    if (search) {
+    if (search !== undefined && search !== null) {
       query = query.or(
         `name.ilike.%${search}%,title.ilike.%${search}%,bio.ilike.%${search}%`
       );
@@ -96,7 +96,7 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
       .eq('user_id', user.id);
 
     return apiSuccess({
-      portfolios: portfolios || [],
+      portfolios: portfolios ?? [],
       pagination: {
         page,
         limit,
@@ -172,7 +172,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       user_id: user.id,
       name: sanitizedData.name,
       title: sanitizedData.title,
-      bio: sanitizedData.bio || '',
+      bio: sanitizedData.bio ?? '',
       tagline: '',
       avatar_url: null,
       contact: {},
@@ -255,7 +255,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
 ): unknown {
-  const dbData: any = {};
+  const dbData: Record<string, unknown> = {};
 
   if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
   if (apiPortfolio.name) dbData.name = apiPortfolio.name;

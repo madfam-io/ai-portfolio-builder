@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowLeft, Home, Lock, Mail, Shield } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { FiArrowLeft, FiHome, FiLock, FiMail, FiShield } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -67,10 +67,10 @@ Please provide the necessary permissions or explain how to gain access.
           <div className="flex justify-center mb-8">
             <div className="relative">
               <div className="w-20 h-20 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-                <FiLock className="w-10 h-10 text-orange-600 dark:text-orange-400" />
+                <Lock className="w-10 h-10 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                <FiShield className="w-4 h-4 text-white" />
+                <Shield className="w-4 h-4 text-white" />
               </div>
             </div>
           </div>
@@ -104,7 +104,7 @@ Please provide the necessary permissions or explain how to gain access.
               onClick={handleContactSupport}
               className="w-full flex items-center justify-center gap-3 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
             >
-              <FiMail className="w-5 h-5" />
+              <Mail className="w-5 h-5" />
               {(t as any).errors?.requestAccess || 'requestAccess'}
             </button>
 
@@ -113,7 +113,7 @@ Please provide the necessary permissions or explain how to gain access.
                 onClick={handleGoBack}
                 className="flex-1 flex items-center justify-center gap-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
-                <FiArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
                 {(t as any).errors?.goBack || 'goBack'}
               </button>
 
@@ -121,7 +121,7 @@ Please provide the necessary permissions or explain how to gain access.
                 onClick={handleGoHome}
                 className="flex-1 flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
               >
-                <FiHome className="w-5 h-5" />
+                <Home className="w-5 h-5" />
                 {(t as any).errors?.goToHomepage || 'goToHomepage'}
               </button>
             </div>
@@ -165,7 +165,7 @@ export function InlinePermissionDenied({
   if (compact) {
     return (
       <div className="flex items-center justify-center gap-2 py-4 text-orange-600 dark:text-orange-400">
-        <FiLock className="w-4 h-4" />
+        <Lock className="w-4 h-4" />
         <span className="text-sm">
           {(t as any).errors?.accessDenied || 'accessDenied'}
         </span>
@@ -186,7 +186,7 @@ export function InlinePermissionDenied({
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
           <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-full flex items-center justify-center">
-            <FiLock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <Lock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
           </div>
         </div>
         <div className="flex-1">
@@ -215,7 +215,7 @@ export function InlinePermissionDenied({
               onClick={onRequestAccess}
               className="inline-flex items-center gap-2 text-sm bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors"
             >
-              <FiMail className="w-4 h-4" />
+              <Mail className="w-4 h-4" />
               {(t as any).errors?.requestAccess || 'requestAccess'}
             </button>
           )}

@@ -1,15 +1,15 @@
 'use client';
 
+import {
+  Download as FaDownload,
+  Edit as FaEdit,
+  Key as FaKey,
+  Shield as FaShieldAlt,
+  Trash as FaTrash,
+  User as FaUser,
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import {
-  FaShieldAlt,
-  FaUser,
-  FaKey,
-  FaTrash,
-  FaDownload,
-  FaEdit,
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';

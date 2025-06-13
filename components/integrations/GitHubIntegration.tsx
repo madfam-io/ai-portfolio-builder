@@ -1,16 +1,18 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  FiGithub,
-  FiStar,
-  FiGitBranch,
-  FiCode,
-  FiCalendar,
-  FiCheck,
-  FiEye,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+  Calendar,
+  Check,
+  Code,
+  Eye,
+  GitBranch,
+  Github,
+  Star,
+} from 'lucide-react';
+import { Sparkles as HiSparkles } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { logger } from '@/lib/utils/logger';
 
 interface GitHubRepository {
   id: string;
@@ -152,7 +154,7 @@ export function GitHubIntegration({
 
         window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
       } catch (error) {
-        console.error('GitHub connection failed:', error);
+        logger.error('GitHub connection failed:', error as Error);
         setIsConnecting(false);
       }
     }
@@ -229,7 +231,7 @@ export function GitHubIntegration({
       >
         <div className="bg-gradient-to-r from-gray-800 to-gray-900 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiGithub className="w-8 h-8" />
+            <Github className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">GitHub Integration</h3>
               <p className="text-gray-300">
@@ -242,7 +244,7 @@ export function GitHubIntegration({
         <div className="p-6">
           <div className="space-y-4 mb-6">
             <div className="flex items-start space-x-3">
-              <FiCode className="w-5 h-5 text-green-500 mt-0.5" />
+              <Code className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Repository Analysis
@@ -253,7 +255,7 @@ export function GitHubIntegration({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiStar className="w-5 h-5 text-green-500 mt-0.5" />
+              <Star className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Smart Selection
@@ -264,7 +266,7 @@ export function GitHubIntegration({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiGitBranch className="w-5 h-5 text-green-500 mt-0.5" />
+              <GitBranch className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Live Updates
@@ -288,7 +290,7 @@ export function GitHubIntegration({
               </>
             ) : (
               <>
-                <FiGithub className="w-5 h-5" />
+                <Github className="w-5 h-5" />
                 <span>Connect GitHub Account</span>
               </>
             )}
@@ -311,7 +313,7 @@ export function GitHubIntegration({
       >
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiGithub className="w-8 h-8" />
+            <Github className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Analyzing Your Repositories</h3>
               <p className="text-green-100">
@@ -352,7 +354,7 @@ export function GitHubIntegration({
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <FiGithub className="w-8 h-8" />
+            <Github className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">GitHub Connected</h3>
               <p className="text-green-100">
@@ -401,7 +403,7 @@ export function GitHubIntegration({
                       {repo.name}
                     </h5>
                     {selectedRepos.has(repo.id) && (
-                      <FiCheck className="w-4 h-4 text-green-600" />
+                      <Check className="w-4 h-4 text-green-600" />
                     )}
                   </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
@@ -415,15 +417,15 @@ export function GitHubIntegration({
                       <span>{repo.language}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <FiStar className="w-3 h-3" />
+                      <Star className="w-3 h-3" />
                       <span>{repo.stars}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <FiGitBranch className="w-3 h-3" />
+                      <GitBranch className="w-3 h-3" />
                       <span>{repo.forks}</span>
                     </div>
                     <div className="flex items-center space-x-1">
-                      <FiCalendar className="w-3 h-3" />
+                      <Calendar className="w-3 h-3" />
                       <span>
                         {new Date(repo.lastUpdated).toLocaleDateString()}
                       </span>
@@ -437,7 +439,7 @@ export function GitHubIntegration({
                   }}
                   className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                 >
-                  <FiEye className="w-4 h-4" />
+                  <Eye className="w-4 h-4" />
                 </button>
               </div>
             </div>
@@ -449,7 +451,7 @@ export function GitHubIntegration({
           disabled={selectedRepos.size === 0}
           className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
         >
-          <FiCheck className="w-5 h-5" />
+          <Check className="w-5 h-5" />
           <span>Import Selected Repositories</span>
         </button>
       </div>

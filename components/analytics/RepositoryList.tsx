@@ -1,7 +1,7 @@
 'use client';
 
+import { ExternalLink } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { FiExternalLink } from 'react-icons/fi';
 
 import type { Repository } from '@/types/analytics';
 
@@ -66,7 +66,7 @@ export function RepositoryList({
               onClick={() => router.push(`/analytics/repository/${repo.id}`)}
               className="p-2 text-gray-500 hover:text-purple-600 transition-colors"
             >
-              <FiExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-4 h-4" />
             </button>
           </div>
         ))}

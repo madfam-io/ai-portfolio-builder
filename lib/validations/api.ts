@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { logger } from '@/lib/utils/logger';
 /**
  * API Input Validation Schemas
  * Comprehensive validation for all API routes
@@ -170,7 +171,7 @@ export function safeParseWithLogging<T>(
 
   if (!result.success) {
     // Log validation errors for debugging
-    console.error(`Validation failed for ${context}:`, result.error.format());
+    logger.error(`Validation failed for ${context}:`, result.error.format());
   }
 
   return result;

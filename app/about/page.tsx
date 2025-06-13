@@ -1,8 +1,8 @@
 'use client';
 
+import { Heart, Rocket, Star, Users } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -55,7 +55,7 @@ export default function About(): React.ReactElement {
         <div className="mb-16">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8">
             <div className="flex items-center mb-6">
-              <FaRocket className="text-3xl text-purple-600 mr-4" />
+              <Rocket className="text-3xl text-purple-600 mr-4" />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {t.ourMission}
               </h2>
@@ -105,7 +105,7 @@ export default function About(): React.ReactElement {
                 className="bg-white _dark:bg-gray-800 rounded-lg shadow-sm p-6 text-center"
               >
                 <div className="w-32 h-32 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <FaUsers className="text-4xl text-gray-400" />
+                  <Users className="text-4xl text-gray-400" />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
                   {member.name}
@@ -128,7 +128,7 @@ export default function About(): React.ReactElement {
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <FaStar className="text-3xl text-purple-600 mx-auto mb-4" />
+              <Star className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 {t.excellence}
               </h3>
@@ -137,7 +137,7 @@ export default function About(): React.ReactElement {
               </p>
             </div>
             <div className="text-center">
-              <FaUsers className="text-3xl text-purple-600 mx-auto mb-4" />
+              <Users className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 {t.accessibility}
               </h3>
@@ -146,7 +146,7 @@ export default function About(): React.ReactElement {
               </p>
             </div>
             <div className="text-center">
-              <FaHeart className="text-3xl text-purple-600 mx-auto mb-4" />
+              <Heart className="text-3xl text-purple-600 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
                 {t.empowerment}
               </h3>

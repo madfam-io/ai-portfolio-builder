@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 
 import { createClient } from '@/lib/supabase/client';
+import { logger } from '@/lib/utils/logger';
 
 import { useAuthStore } from './auth-store';
 import { useUIStore } from './ui-store';
@@ -55,17 +56,17 @@ export function StoreProvider({ children }: StoreProviderProps) {
           // Handle specific auth events
           switch (event) {
             case 'SIGNED_IN':
-              console.log('User signed in');
+              logger.info('User signed in', { userId: session?.user?.id });
               break;
             case 'SIGNED_OUT':
-              console.log('User signed out');
+              logger.info('User signed out');
               // Reset stores handled in auth store
               break;
             case 'TOKEN_REFRESHED':
-              console.log('Token refreshed');
+              logger.debug('Token refreshed', { userId: session?.user?.id });
               break;
             case 'USER_UPDATED':
-              console.log('User updated');
+              logger.info('User updated', { userId: session?.user?.id });
               break;
           }
         });
@@ -74,7 +75,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
           subscription.unsubscribe();
         };
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        logger.error('Auth initialization error', error as Error);
         setLoading(false);
       }
     };
@@ -98,7 +99,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
           setTheme(parsed.state.theme);
         }
       } catch (error) {
-        console.error('Failed to parse saved theme:', error);
+        logger.error('Failed to parse saved theme:', error as Error);
       }
     }
 

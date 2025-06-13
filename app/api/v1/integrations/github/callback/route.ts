@@ -64,7 +64,11 @@ export async function GET(request: NextRequest): Promise<Response> {
       .is('used_at', null)
       .single();
 
-    if (stateError || !oauthState) {
+    if (
+      stateError !== null ||
+      oauthState === null ||
+      oauthState === undefined
+    ) {
       logger.error('Invalid OAuth state', { stateError, state });
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
@@ -127,7 +131,7 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     const tokenData = await tokenResponse.json();
 
-    if (tokenData.error) {
+    if (tokenData.error !== undefined && tokenData.error !== null) {
       logger.error('GitHub token exchange failed', { error: tokenData });
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=token_exchange_failed`
@@ -153,9 +157,10 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     // Encrypt the access token before storage
     const encryptedToken = encrypt(tokenData.access_token);
-    const encryptedRefreshToken = tokenData.refresh_token
-      ? encrypt(tokenData.refresh_token)
-      : null;
+    const encryptedRefreshToken =
+      tokenData.refresh_token !== undefined && tokenData.refresh_token !== null
+        ? encrypt(tokenData.refresh_token)
+        : null;
 
     // Store GitHub integration with encrypted tokens
     const { error: integrationError } = await supabase

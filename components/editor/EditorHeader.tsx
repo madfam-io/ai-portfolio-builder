@@ -1,14 +1,14 @@
 'use client';
 
 import {
-  FiSave,
-  FiEye,
-  FiShare2,
-  FiRotateCcw,
-  FiRotateCw,
-  FiCheckCircle,
-  FiLoader,
-} from 'react-icons/fi';
+  CheckCircle,
+  Eye,
+  Loader,
+  RotateCcw,
+  RotateCw,
+  Save,
+  Share2,
+} from 'lucide-react';
 
 import { Portfolio } from '@/types/portfolio';
 
@@ -65,7 +65,7 @@ export function EditorHeader({
             <div className="flex items-center space-x-2 text-sm text-gray-500">
               {isSaving ? (
                 <div className="flex items-center space-x-1">
-                  <FiLoader className="w-3 h-3 animate-spin" />
+                  <Loader className="w-3 h-3 animate-spin" />
                   <span>Saving...</span>
                 </div>
               ) : isDirty ? (
@@ -75,7 +75,7 @@ export function EditorHeader({
                 </div>
               ) : (
                 <div className="flex items-center space-x-1">
-                  <FiCheckCircle className="w-3 h-3 text-green-500" />
+                  <CheckCircle className="w-3 h-3 text-green-500" />
                   <span>{formatLastSaved(lastSaved)}</span>
                 </div>
               )}
@@ -105,7 +105,7 @@ export function EditorHeader({
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-l-lg"
               title="Undo"
             >
-              <FiRotateCcw className="w-4 h-4" />
+              <RotateCcw className="w-4 h-4" />
             </button>
             <div className="w-px h-6 bg-gray-200" />
             <button
@@ -114,7 +114,7 @@ export function EditorHeader({
               className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed rounded-r-lg"
               title="Redo"
             >
-              <FiRotateCw className="w-4 h-4" />
+              <RotateCw className="w-4 h-4" />
             </button>
           </div>
 
@@ -123,7 +123,7 @@ export function EditorHeader({
             onClick={onPreview}
             className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-gray-900 hover:bg-gray-50 rounded-lg border border-gray-200"
           >
-            <FiEye className="w-4 h-4" />
+            <Eye className="w-4 h-4" />
             <span>Preview</span>
           </button>
 
@@ -134,9 +134,9 @@ export function EditorHeader({
             className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? (
-              <FiLoader className="w-4 h-4 animate-spin" />
+              <Loader className="w-4 h-4 animate-spin" />
             ) : (
-              <FiSave className="w-4 h-4" />
+              <Save className="w-4 h-4" />
             )}
             <span>{isSaving ? 'Saving...' : 'Save'}</span>
           </button>
@@ -150,7 +150,7 @@ export function EditorHeader({
                 : 'bg-green-600 text-white hover:bg-green-700'
             }`}
           >
-            <FiShare2 className="w-4 h-4" />
+            <Share2 className="w-4 h-4" />
             <span>
               {portfolio.status === 'published' ? 'Unpublish' : 'Publish'}
             </span>

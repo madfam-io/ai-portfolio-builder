@@ -1,14 +1,8 @@
 'use client';
 
+import { Briefcase, Mail, MapPin, Send, UserCheck } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import {
-  FaEnvelope,
-  FaMapMarkerAlt,
-  FaPaperPlane,
-  FaBusinessTime,
-  FaUserTie,
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -118,7 +112,7 @@ export default function ContactPage(): React.ReactElement {
 
               {submitted ? (
                 <div className="text-center py-8">
-                  <FaPaperPlane className="text-4xl text-green-500 mx-auto mb-4" />
+                  <Send className="text-4xl text-green-500 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                     {t.contactMessageSent}
                   </h3>
@@ -235,7 +229,7 @@ export default function ContactPage(): React.ReactElement {
                       </>
                     ) : (
                       <>
-                        <FaPaperPlane />
+                        <Send />
                         {t.contactSendButton}
                       </>
                     )}
@@ -254,7 +248,7 @@ export default function ContactPage(): React.ReactElement {
 
                 <div className="space-y-4">
                   <div className="flex items-center gap-4">
-                    <FaEnvelope className="text-purple-600 text-xl" />
+                    <Mail className="text-purple-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
                         {t.contactGeneralInquiries}
@@ -266,7 +260,7 @@ export default function ContactPage(): React.ReactElement {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <FaUserTie className="text-blue-600 text-xl" />
+                    <UserCheck className="text-blue-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
                         {t.contactBusinessSalesLabel}
@@ -278,7 +272,7 @@ export default function ContactPage(): React.ReactElement {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <FaBusinessTime className="text-green-600 text-xl" />
+                    <Briefcase className="text-green-600 text-xl" />
                     <div>
                       <h3 className="font-semibold text-gray-900 dark:text-white">
                         {t.contactSupportLabel}
@@ -297,7 +291,7 @@ export default function ContactPage(): React.ReactElement {
                   {t.contactOffice}
                 </h2>
                 <div className="flex items-start gap-4">
-                  <FaMapMarkerAlt className="text-red-600 text-xl mt-1" />
+                  <MapPin className="text-red-600 text-xl mt-1" />
                   <div>
                     <h3 className="font-semibold text-gray-900 dark:text-white">
                       {t.contactMadfamHq}

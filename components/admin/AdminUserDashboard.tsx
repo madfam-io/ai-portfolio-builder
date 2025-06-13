@@ -1,23 +1,23 @@
 'use client';
 
+import {
+  Activity,
+  AlertTriangle,
+  Check,
+  DollarSign,
+  Eye,
+  Layers,
+  Settings,
+  Shield,
+  Star,
+  ToggleLeft,
+  ToggleRight,
+  User,
+  Users,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import {
-  FiUsers,
-  FiSettings,
-  FiEye,
-  FiShield,
-  FiUser,
-  FiToggleLeft,
-  FiToggleRight,
-  FiStar,
-  FiDollarSign,
-  FiActivity,
-  FiAlertTriangle,
-  FiCheck,
-  FiLayers,
-} from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -49,7 +49,7 @@ export default function AdminUserDashboard(): React.ReactElement {
   if (!isAdmin) {
     return (
       <div className="p-6 text-center">
-        <FiShield className="mx-auto mb-4 text-6xl text-red-500" />
+        <Shield className="mx-auto mb-4 text-6xl text-red-500" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           {t.adminAccessDenied}
         </h2>
@@ -131,7 +131,7 @@ export default function AdminUserDashboard(): React.ReactElement {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center space-x-4">
-              <FiShield className="text-2xl text-blue-600" />
+              <Shield className="text-2xl text-blue-600" />
               <div>
                 <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">
                   {t.adminDashboard}
@@ -146,7 +146,7 @@ export default function AdminUserDashboard(): React.ReactElement {
               {/* Impersonation Banner */}
               {isImpersonating && (
                 <div className="flex items-center space-x-2 bg-yellow-100 dark:bg-yellow-900 px-3 py-1 rounded-lg">
-                  <FiEye className="text-yellow-600 dark:text-yellow-400" />
+                  <Eye className="text-yellow-600 dark:text-yellow-400" />
                   <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200">
                     {t.adminImpersonatingUser}
                   </span>
@@ -154,7 +154,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     onClick={() => handleImpersonation('')}
                     className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200"
                   >
-                    <FiToggleLeft className="text-lg" />
+                    <ToggleLeft className="text-lg" />
                   </button>
                 </div>
               )}
@@ -176,9 +176,9 @@ export default function AdminUserDashboard(): React.ReactElement {
                   }
                 >
                   {isInAdminMode ? (
-                    <FiToggleRight className="text-2xl text-blue-600" />
+                    <ToggleRight className="text-2xl text-blue-600" />
                   ) : (
-                    <FiToggleLeft className="text-2xl text-gray-400" />
+                    <ToggleLeft className="text-2xl text-gray-400" />
                   )}
                 </button>
                 <span
@@ -220,7 +220,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     {systemStats.totalUsers.toLocaleString()}
                   </p>
                 </div>
-                <FiUsers className="text-2xl text-blue-600" />
+                <Users className="text-2xl text-blue-600" />
               </div>
             </div>
 
@@ -234,7 +234,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     {systemStats.activeSubscriptions.toLocaleString()}
                   </p>
                 </div>
-                <FiStar className="text-2xl text-yellow-600" />
+                <Star className="text-2xl text-yellow-600" />
               </div>
             </div>
 
@@ -248,7 +248,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     ${systemStats.monthlyRevenue.toLocaleString()}
                   </p>
                 </div>
-                <FiDollarSign className="text-2xl text-green-600" />
+                <DollarSign className="text-2xl text-green-600" />
               </div>
             </div>
 
@@ -262,7 +262,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     {systemStats.portfoliosCreated.toLocaleString()}
                   </p>
                 </div>
-                <FiActivity className="text-2xl text-purple-600" />
+                <Activity className="text-2xl text-purple-600" />
               </div>
             </div>
           </div>
@@ -282,7 +282,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     Manage landing page experiments
                   </p>
                 </div>
-                <FiLayers className="text-3xl text-purple-600" />
+                <Layers className="text-3xl text-purple-600" />
               </div>
             </Link>
 
@@ -296,7 +296,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     View platform analytics
                   </p>
                 </div>
-                <FiActivity className="text-3xl text-blue-600" />
+                <Activity className="text-3xl text-blue-600" />
               </div>
             </div>
 
@@ -310,7 +310,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     Configure platform settings
                   </p>
                 </div>
-                <FiSettings className="text-3xl text-gray-600" />
+                <Settings className="text-3xl text-gray-600" />
               </div>
             </div>
           </div>
@@ -360,7 +360,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                         <div className="flex items-center">
                           <div className="flex-shrink-0 h-10 w-10">
                             <div className="h-10 w-10 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center">
-                              <FiUser className="text-gray-600 dark:text-gray-400" />
+                              <User className="text-gray-600 dark:text-gray-400" />
                             </div>
                           </div>
                           <div className="ml-4">
@@ -389,9 +389,9 @@ export default function AdminUserDashboard(): React.ReactElement {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           {user.status === 'active' ? (
-                            <FiCheck className="text-green-500 mr-2" />
+                            <Check className="text-green-500 mr-2" />
                           ) : (
-                            <FiAlertTriangle className="text-red-500 mr-2" />
+                            <AlertTriangle className="text-red-500 mr-2" />
                           )}
                           <span
                             className={`text-sm ${
@@ -426,7 +426,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                           </button>
                         )}
                         <button className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">
-                          <FiSettings />
+                          <Settings />
                         </button>
                       </td>
                     </tr>

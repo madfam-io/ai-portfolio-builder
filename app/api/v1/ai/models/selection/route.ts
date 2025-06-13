@@ -61,12 +61,16 @@ export async function GET(): Promise<Response> {
     }
 
     // Return user preferences or defaults
-    const modelSelection = preferences?.preferences || {
-      bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-      project: 'microsoft/Phi-3.5-mini-instruct',
-      template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
-      scoring: 'microsoft/DialoGPT-medium',
-    };
+    const modelSelection =
+      preferences?.preferences !== undefined &&
+      preferences?.preferences !== null
+        ? preferences.preferences
+        : {
+            bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+            project: 'microsoft/Phi-3.5-mini-instruct',
+            template: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
+            scoring: 'microsoft/DialoGPT-medium',
+          };
 
     return NextResponse.json({
       success: true,
@@ -134,7 +138,10 @@ export async function PUT(request: NextRequest): Promise<Response> {
 
     // Update the specific task type
     const updatedPreferences = {
-      ...(currentPreferences?.preferences || {}),
+      ...(currentPreferences?.preferences !== undefined &&
+      currentPreferences?.preferences !== null
+        ? currentPreferences.preferences
+        : {}),
       [taskType]: modelId,
     };
 

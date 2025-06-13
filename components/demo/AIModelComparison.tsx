@@ -1,9 +1,7 @@
 'use client';
 
+import { Award, Clock, DollarSign, Info, Sparkles, Zap } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { FiAward, FiClock, FiDollarSign, FiInfo, FiZap } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
-
 interface AIModel {
   id: string;
   name: string;
@@ -166,7 +164,7 @@ export function AIModelComparison({
             {model.recommended && (
               <div className="absolute top-0 right-0 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs px-3 py-1 rounded-bl-lg">
                 <span className="flex items-center space-x-1">
-                  <HiSparkles className="w-3 h-3" />
+                  <Sparkles className="w-3 h-3" />
                   <span>Recommended</span>
                 </span>
               </div>
@@ -190,7 +188,7 @@ export function AIModelComparison({
                     // Show model details
                   }}
                 >
-                  <FiInfo className="w-4 h-4 text-gray-400" />
+                  <Info className="w-4 h-4 text-gray-400" />
                 </button>
               </div>
 
@@ -204,7 +202,7 @@ export function AIModelComparison({
               {/* Speed */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <FiZap className="w-4 h-4 text-gray-500" />
+                  <Zap className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Speed
                   </span>
@@ -215,7 +213,7 @@ export function AIModelComparison({
               {/* Quality */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <FiAward className="w-4 h-4 text-gray-500" />
+                  <Award className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Quality
                   </span>
@@ -226,7 +224,7 @@ export function AIModelComparison({
               {/* Cost */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <FiDollarSign className="w-4 h-4 text-gray-500" />
+                  <DollarSign className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Cost
                   </span>
@@ -239,7 +237,7 @@ export function AIModelComparison({
               {/* Response Time */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2">
-                  <FiClock className="w-4 h-4 text-gray-500" />
+                  <Clock className="w-4 h-4 text-gray-500" />
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     Response
                   </span>

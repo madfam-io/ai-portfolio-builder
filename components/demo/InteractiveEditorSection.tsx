@@ -1,15 +1,15 @@
 'use client';
 
-import React from 'react';
-import { FaPalette } from 'react-icons/fa';
 import {
-  FiAward,
-  FiBriefcase,
-  FiLayout,
-  FiPlus,
-  FiSettings,
-  FiUser,
-} from 'react-icons/fi';
+  Award as FiAward,
+  Briefcase as FiBriefcase,
+  Layout,
+  Palette,
+  Plus,
+  Settings,
+  User as FiUser,
+} from 'lucide-react';
+import React from 'react';
 
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
@@ -91,7 +91,7 @@ export function InteractiveEditorSection({
             onClick={handleAddSection}
             className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
           >
-            <FiPlus className="w-4 h-4" />
+            <Plus className="w-4 h-4" />
             <span className="text-sm font-medium">
               {(t as any).demoAddSection}
             </span>
@@ -105,15 +105,15 @@ export function InteractiveEditorSection({
           </h4>
           <div className="space-y-2">
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
-              <FaPalette className="w-4 h-4" />
+              <Palette className="w-4 h-4" />
               <span className="text-sm">{(t as any).demoCustomizeTheme}</span>
             </button>
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
-              <FiLayout className="w-4 h-4" />
+              <Layout className="w-4 h-4" />
               <span className="text-sm">{(t as any).demoChangeLayout}</span>
             </button>
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
-              <FiSettings className="w-4 h-4" />
+              <Settings className="w-4 h-4" />
               <span className="text-sm">{(t as any).demoSettings}</span>
             </button>
           </div>

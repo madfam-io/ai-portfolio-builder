@@ -1,17 +1,17 @@
 'use client';
 
+import {
+  Activity,
+  AlertCircle,
+  Code,
+  GitPullRequest,
+  Github,
+  RefreshCw,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState, useEffect, Suspense } from 'react';
-import {
-  FiGithub,
-  FiActivity,
-  FiGitPullRequest,
-  FiUsers,
-  FiCode,
-  FiRefreshCw,
-  FiTrendingUp,
-  FiAlertCircle,
-} from 'react-icons/fi';
 
 import { ContributorsList } from '@/components/analytics/ContributorsList';
 import { RepositoryList } from '@/components/analytics/RepositoryList';
@@ -229,7 +229,7 @@ function AnalyticsDashboard(): React.ReactElement {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <RefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
               Loading analytics dashboard...
             </p>
@@ -244,7 +244,7 @@ function AnalyticsDashboard(): React.ReactElement {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center max-w-md">
-            <FiGithub className="text-6xl text-gray-400 mx-auto mb-6" />
+            <Github className="text-6xl text-gray-400 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Connect GitHub
             </h2>
@@ -256,7 +256,7 @@ function AnalyticsDashboard(): React.ReactElement {
               onClick={connectGitHub}
               className="inline-flex items-center px-6 py-3 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors"
             >
-              <FiGithub className="mr-2" />
+              <Github className="mr-2" />
               Connect with GitHub
             </button>
           </div>
@@ -270,7 +270,7 @@ function AnalyticsDashboard(): React.ReactElement {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center max-w-md">
-            <FiAlertCircle className="text-6xl text-red-500 mx-auto mb-6" />
+            <AlertCircle className="text-6xl text-red-500 mx-auto mb-6" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
               Error
             </h2>
@@ -281,7 +281,7 @@ function AnalyticsDashboard(): React.ReactElement {
               onClick={fetchDashboardData}
               className="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
             >
-              <FiRefreshCw className="mr-2" />
+              <RefreshCw className="mr-2" />
               Try Again
             </button>
           </div>
@@ -312,7 +312,7 @@ function AnalyticsDashboard(): React.ReactElement {
                   disabled={dashboard.syncing}
                   className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 transition-colors"
                 >
-                  <FiRefreshCw
+                  <RefreshCw
                     className={`mr-2 ${dashboard.syncing ? 'animate-spin' : ''}`}
                   />
                   {dashboard.syncing ? 'Syncing...' : 'Sync'}
@@ -324,35 +324,35 @@ function AnalyticsDashboard(): React.ReactElement {
           {/* Overview Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
             <StatsCard
-              icon={<FiCode />}
+              icon={<Code />}
               label="Repositories"
               value={data.overview.totalRepositories}
               iconBgColor="bg-purple-100 dark:bg-purple-900/30"
               iconColor="text-purple-600"
             />
             <StatsCard
-              icon={<FiActivity />}
+              icon={<Activity />}
               label="Commits"
               value={data.overview.totalCommits.toLocaleString()}
               iconBgColor="bg-blue-100 dark:bg-blue-900/30"
               iconColor="text-blue-600"
             />
             <StatsCard
-              icon={<FiGitPullRequest />}
+              icon={<GitPullRequest />}
               label="Pull Requests"
               value={data.overview.totalPullRequests}
               iconBgColor="bg-green-100 dark:bg-green-900/30"
               iconColor="text-green-600"
             />
             <StatsCard
-              icon={<FiUsers />}
+              icon={<Users />}
               label="Contributors"
               value={data.overview.totalContributors}
               iconBgColor="bg-yellow-100 dark:bg-yellow-900/30"
               iconColor="text-yellow-600"
             />
             <StatsCard
-              icon={<FiTrendingUp />}
+              icon={<TrendingUp />}
               label="Lines of Code"
               value={`${(data.overview.totalLinesOfCode / 1000).toFixed(1)}K`}
               iconBgColor="bg-indigo-100 dark:bg-indigo-900/30"
@@ -372,7 +372,7 @@ function AnalyticsDashboard(): React.ReactElement {
               fallback={
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
                   <div className="text-center">
-                    <FiRefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
+                    <RefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
                     <p className="text-gray-600 dark:text-gray-400 text-sm">
                       Loading commits chart...
                     </p>
@@ -397,7 +397,7 @@ function AnalyticsDashboard(): React.ReactElement {
               fallback={
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-6 h-80 flex items-center justify-center">
                   <div className="text-center">
-                    <FiRefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
+                    <RefreshCw className="animate-spin text-2xl text-purple-600 mx-auto mb-2" />
                     <p className="text-gray-600 dark:text-gray-400 text-sm">
                       Loading pull requests chart...
                     </p>

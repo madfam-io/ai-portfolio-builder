@@ -1,7 +1,7 @@
 'use client';
 
+import { Loader } from 'lucide-react';
 import React from 'react';
-import { FiLoader } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -33,7 +33,7 @@ export function FullPageLoader({
       <div className="text-center">
         <div className="relative inline-flex">
           <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-            <FiLoader className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
+            <Loader className="w-8 h-8 text-purple-600 dark:text-purple-400 animate-spin" />
           </div>
           <div className="absolute inset-0 rounded-full bg-purple-600/20 animate-ping" />
         </div>
@@ -73,7 +73,7 @@ export function InlineLoader({
 
   return (
     <div className="inline-flex items-center gap-2">
-      <FiLoader
+      <Loader
         className={`${sizeClasses[size]} ${colorClasses[color]} animate-spin`}
       />
       {message && (

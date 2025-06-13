@@ -7,6 +7,7 @@ import {
   useExperimentTheme,
   sortComponentsByOrder,
 } from '@/lib/services/feature-flags/use-experiment';
+import { logger } from '@/lib/utils/logger';
 
 import BackToTopButton from '../BackToTopButton';
 
@@ -153,7 +154,7 @@ export default function DynamicLandingPage(): React.ReactElement {
 
   // Show error state
   if (error) {
-    console.error('Failed to load experiment configuration:', error);
+    logger.error('Failed to load experiment configuration:', error);
     // Fall back to default components on error
   }
 

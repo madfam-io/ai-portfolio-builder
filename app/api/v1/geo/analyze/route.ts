@@ -65,7 +65,7 @@ export async function POST(request: NextRequest): Promise<Response> {
     if (targetKeywords && targetKeywords.length > 0) {
       const primaryKeyword = targetKeywords[0];
       if (primaryKeyword) {
-        (analysis as any).keywords = {
+        (analysis as unknown as Record<string, unknown>).keywords = {
           primaryKeyword: primaryKeyword,
           secondaryKeywords: targetKeywords.slice(1),
         };
@@ -74,13 +74,17 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     // 6. Generate optimization suggestions
     const suggestions =
-      (analysis as any).suggestions?.map((suggestion: any) => ({
+      (
+        (analysis as unknown as Record<string, unknown>).suggestions as Array<
+          Record<string, unknown>
+        >
+      )?.map((suggestion: Record<string, unknown>) => ({
         type: suggestion.type,
         priority: suggestion.priority,
         message: suggestion.message,
         action: suggestion.action,
         estimatedImpact: `+${suggestion.impact}% score improvement`,
-      })) || [];
+      })) ?? [];
 
     // 7. Return analysis results
     return NextResponse.json({
@@ -89,39 +93,109 @@ export async function POST(request: NextRequest): Promise<Response> {
         content: analysis.content,
         scores: {
           overall:
-            (analysis as any).score?.overall || analysis.optimizationScore,
-          keyword: (analysis as any).score?.keyword || 0,
-          readability: (analysis as any).score?.readability || 0,
-          structure: (analysis as any).score?.structure || 0,
-          technical: (analysis as any).score?.technical || 0,
+            (
+              (analysis as unknown as Record<string, unknown>).score as Record<
+                string,
+                unknown
+              >
+            )?.overall ?? analysis.optimizationScore,
+          keyword:
+            (
+              (analysis as unknown as Record<string, unknown>).score as Record<
+                string,
+                unknown
+              >
+            )?.keyword ?? 0,
+          readability:
+            (
+              (analysis as unknown as Record<string, unknown>).score as Record<
+                string,
+                unknown
+              >
+            )?.readability ?? 0,
+          structure:
+            (
+              (analysis as unknown as Record<string, unknown>).score as Record<
+                string,
+                unknown
+              >
+            )?.structure ?? 0,
+          technical:
+            (
+              (analysis as unknown as Record<string, unknown>).score as Record<
+                string,
+                unknown
+              >
+            )?.technical ?? 0,
         },
         keywords: {
           detected:
-            (analysis as any).keywords?.lsiKeywords || analysis.keywords,
-          density: (analysis as any).keywords?.density || {},
-          recommendations: (analysis as any).keywords?.recommendations || [],
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .keywords as Record<string, unknown>
+            )?.lsiKeywords ?? analysis.keywords,
+          density:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .keywords as Record<string, unknown>
+            )?.density ?? {},
+          recommendations:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .keywords as Record<string, unknown>
+            )?.recommendations ?? [],
         },
         readability: {
-          score: (analysis as any).readability?.score || 0,
-          level: (analysis as any).readability?.level || 'unknown',
+          score:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .readability as Record<string, unknown>
+            )?.score ?? 0,
+          level:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .readability as Record<string, unknown>
+            )?.level ?? 'unknown',
           metrics: {
             avgSentenceLength:
-              (analysis as any).readability?.avgWordsPerSentence || 0,
-            complexWords: (analysis as any).readability?.complexWordCount || 0,
-            readingEase: (analysis as any).readability?.fleschReading || 0,
+              (
+                (analysis as unknown as Record<string, unknown>)
+                  .readability as Record<string, unknown>
+              )?.avgWordsPerSentence ?? 0,
+            complexWords:
+              (
+                (analysis as unknown as Record<string, unknown>)
+                  .readability as Record<string, unknown>
+              )?.complexWordCount ?? 0,
+            readingEase:
+              (
+                (analysis as unknown as Record<string, unknown>)
+                  .readability as Record<string, unknown>
+              )?.fleschReading ?? 0,
           },
         },
         structure: {
-          headings: (analysis as any).structure?.headings || [],
-          paragraphs: (analysis as any).structure?.paragraphCount || 0,
+          headings:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .structure as Record<string, unknown>
+            )?.headings ?? [],
+          paragraphs:
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .structure as Record<string, unknown>
+            )?.paragraphCount ?? 0,
           hasProperHierarchy:
-            (analysis as any).structure?.hasProperHierarchy || false,
+            (
+              (analysis as unknown as Record<string, unknown>)
+                .structure as Record<string, unknown>
+            )?.hasProperHierarchy ?? false,
         },
         suggestions,
         metadata: {
           title: analysis.metadata?.title || '',
           description: analysis.metadata?.description || '',
-          recommendedKeywords: analysis.metadata?.keywords || [],
+          recommendedKeywords: analysis.metadata?.keywords ?? [],
         },
       },
       metadata: {

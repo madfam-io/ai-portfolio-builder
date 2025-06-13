@@ -1,8 +1,7 @@
 'use client';
 
+import { Loader, Sparkles } from 'lucide-react';
 import React, { useState } from 'react';
-import { FiLoader } from 'react-icons/fi';
-import { HiOutlineSparkles, HiSparkles } from 'react-icons/hi';
 
 import { aiClient } from '@/lib/ai/client';
 import { BioContext } from '@/lib/ai/types';
@@ -171,11 +170,11 @@ export function AIEnhancementButton({
       title={getButtonTitle(type, t)}
     >
       {isEnhancing ? (
-        <FiLoader className="h-4 w-4 animate-spin" />
+        <Loader className="h-4 w-4 animate-spin" />
       ) : wasRecentlyEnhanced ? (
-        <HiSparkles className="h-4 w-4" />
+        <Sparkles className="h-4 w-4" />
       ) : (
-        <HiOutlineSparkles className="h-4 w-4" />
+        <Sparkles className="h-4 w-4" />
       )}
 
       {getButtonText(isEnhancing, wasRecentlyEnhanced, t)}
@@ -260,7 +259,7 @@ export function ModelSelectionModal({
 
         {loading ? (
           <div className="flex items-center justify-center py-8">
-            <FiLoader className="h-8 w-8 animate-spin text-blue-600" />
+            <Loader className="h-8 w-8 animate-spin text-blue-600" />
           </div>
         ) : (
           <div className="space-y-3">

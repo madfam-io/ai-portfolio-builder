@@ -1,16 +1,16 @@
 'use client';
 
+import {
+  Activity,
+  ArrowLeft,
+  Clock,
+  Code,
+  GitPullRequest,
+  RefreshCw,
+  Users,
+} from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  FiArrowLeft,
-  FiActivity,
-  FiGitPullRequest,
-  FiUsers,
-  FiCode,
-  FiRefreshCw,
-  FiClock,
-} from 'react-icons/fi';
 
 import {
   RepositoryCommitsChart,
@@ -165,7 +165,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
   const renderLoadingState = (): React.ReactElement => (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <FiRefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+        <RefreshCw className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
         <p className="text-gray-600 dark:text-gray-400">{t.loadingAnalytics}</p>
       </div>
     </div>
@@ -175,7 +175,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
   const renderErrorState = (): React.ReactElement => (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center max-w-md">
-        <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
+        <Code className="text-6xl text-red-500 mx-auto mb-6" />
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
           {t.error}
         </h2>
@@ -185,14 +185,14 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
             onClick={() => router.push('/analytics')}
             className="inline-flex items-center px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
           >
-            <FiArrowLeft className="mr-2" />
+            <ArrowLeft className="mr-2" />
             {t.backToAnalytics}
           </button>
           <button
             onClick={fetchRepositoryAnalytics}
             className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
-            <FiRefreshCw className="mr-2" />
+            <RefreshCw className="mr-2" />
             {t.tryAgain}
           </button>
         </div>
@@ -224,7 +224,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg">
-                <FiCode className="w-6 h-6 text-purple-600" />
+                <Code className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -243,7 +243,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                <FiActivity className="w-6 h-6 text-blue-600" />
+                <Activity className="w-6 h-6 text-blue-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -259,7 +259,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg">
-                <FiGitPullRequest className="w-6 h-6 text-green-600" />
+                <GitPullRequest className="w-6 h-6 text-green-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -275,7 +275,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
           <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg">
-                <FiUsers className="w-6 h-6 text-yellow-600" />
+                <Users className="w-6 h-6 text-yellow-600" />
               </div>
               <div className="ml-4">
                 <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -440,7 +440,7 @@ export default function RepositoryAnalyticsPage(): JSX.Element {
                         {pr.cycleTimeHours !== null &&
                           pr.cycleTimeHours !== undefined && (
                             <span className="flex items-center gap-1">
-                              <FiClock className="w-3 h-3" />
+                              <Clock className="w-3 h-3" />
                               {pr.cycleTimeHours.toFixed(1)}h
                             </span>
                           )}

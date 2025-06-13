@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+import { logger } from '@/lib/utils/logger';
 /**
  * Supabase Server Client
  * Server-side Supabase client configuration for API routes
@@ -12,7 +13,7 @@ export async function createClient() {
 
   // If Supabase is not configured, return null (graceful degradation)
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables not configured');
+    logger.warn('Supabase environment variables not configured');
     return null;
   }
 
@@ -28,7 +29,7 @@ export async function createClient() {
           cookieStore.set({ name, value, ...options });
         } catch (error) {
           // Handle cases where cookies can't be set (e.g., in middleware)
-          console.warn('Failed to set cookie:', error);
+          logger.warn('Failed to set cookie:', { error });
         }
       },
       remove(name: string, options: CookieOptions) {
@@ -36,7 +37,7 @@ export async function createClient() {
           cookieStore.set({ name, value: '', ...options });
         } catch (error) {
           // Handle cases where cookies can't be removed
-          console.warn('Failed to remove cookie:', error);
+          logger.warn('Failed to remove cookie:', { error });
         }
       },
     },

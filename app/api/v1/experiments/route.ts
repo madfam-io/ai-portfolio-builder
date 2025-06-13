@@ -120,11 +120,13 @@ export async function GET(request: Request): Promise<Response> {
     // Calculate additional metrics
     const experimentsWithMetrics = experiments?.map(experiment => {
       const totalVisitors = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.visitor_count || 0),
+        (sum: number, v: Record<string, unknown>) =>
+          sum + ((v.visitor_count as number) ?? 0),
         0
       );
       const totalConversions = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.conversion_count || 0),
+        (sum: number, v: Record<string, unknown>) =>
+          sum + ((v.conversion_count as number) ?? 0),
         0
       );
 
@@ -138,11 +140,11 @@ export async function GET(request: Request): Promise<Response> {
     });
 
     return NextResponse.json({
-      experiments: experimentsWithMetrics || [],
+      experiments: experimentsWithMetrics ?? [],
       pagination: {
         limit,
         offset,
-        total: experiments?.length || 0,
+        total: experiments?.length ?? 0,
       },
     });
   } catch (error) {
@@ -216,10 +218,14 @@ export async function POST(request: Request): Promise<Response> {
       .select()
       .single();
 
-    if (experimentError || !experiment) {
+    if (
+      experimentError !== null ||
+      experiment === null ||
+      experiment === undefined
+    ) {
       logger.error(
         'Failed to create experiment',
-        experimentError || new Error('No experiment returned')
+        experimentError ?? new Error('No experiment returned')
       );
       return NextResponse.json(
         { error: 'Failed to create experiment' },
@@ -268,7 +274,11 @@ export async function POST(request: Request): Promise<Response> {
       .eq('id', experiment.id)
       .single();
 
-    if (fetchError || !completeExperiment) {
+    if (
+      fetchError !== null ||
+      completeExperiment === null ||
+      completeExperiment === undefined
+    ) {
       return NextResponse.json(
         { error: 'Failed to fetch created experiment' },
         { status: 500 }

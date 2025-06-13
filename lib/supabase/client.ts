@@ -1,5 +1,6 @@
 import { createBrowserClient } from '@supabase/ssr';
 
+import { logger } from '@/lib/utils/logger';
 /**
  * Supabase Client
  * Client-side Supabase client configuration
@@ -11,7 +12,7 @@ export function createClient() {
 
   // If Supabase is not configured, return null (graceful degradation)
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('Supabase environment variables not configured');
+    logger.warn('Supabase environment variables not configured');
     return null;
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
+import { Cloud, RefreshCw, WifiOff } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { FiCloud, FiRefreshCw, FiWifiOff } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -43,7 +43,7 @@ export function OfflineState({
       <div className="max-w-md w-full text-center">
         <div className="mb-8">
           <div className="mx-auto w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 relative">
-            <FiWifiOff className="w-10 h-10 text-gray-600 dark:text-gray-400" />
+            <WifiOff className="w-10 h-10 text-gray-600 dark:text-gray-400" />
             <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center">
               <span className="text-white text-xs font-bold">!</span>
             </div>
@@ -65,7 +65,7 @@ export function OfflineState({
             disabled={isRetrying}
             className="inline-flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            <FiRefreshCw
+            <RefreshCw
               className={`w-4 h-4 ${isRetrying ? 'animate-spin' : ''}`}
             />
             {isRetrying
@@ -123,7 +123,7 @@ export function OfflineIndicator() {
   return (
     <div className="fixed bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-auto z-50">
       <div className="bg-gray-900 dark:bg-gray-800 text-white px-4 py-3 rounded-lg shadow-lg flex items-center gap-3">
-        <FiWifiOff className="w-5 h-5 text-red-400" />
+        <WifiOff className="w-5 h-5 text-red-400" />
         <div className="flex-1">
           <p className="text-sm font-medium">
             {(t as any).errors?.offlineMode || 'Offline Mode'}
@@ -166,7 +166,7 @@ export function OfflineBanner() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <FiWifiOff className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
+            <WifiOff className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
               {(t as any).errors?.offlineBanner || 'You are currently offline'}
             </p>
@@ -197,7 +197,7 @@ export function OfflineCard({
 
   return (
     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
-      <FiCloud className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+      <Cloud className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
         {title || (t as any).errors?.offlineContent || 'Offline Content'}
       </h3>

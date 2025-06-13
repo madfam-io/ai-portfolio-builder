@@ -1,21 +1,15 @@
 'use client';
 
+import { LogOut, Menu, Moon, Sun, User, X } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import {
-  FaMoon,
-  FaSun,
-  FaBars,
-  FaTimes,
-  FaUser,
-  FaSignOutAlt,
-} from 'react-icons/fa';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { logger } from '@/lib/utils/logger';
 
 export default function Header(): React.ReactElement {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
@@ -155,8 +149,9 @@ export default function Header(): React.ReactElement {
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Currency toggle clicked!', {
+                logger.debug('Currency toggle clicked', {
                   current: currency,
+                  feature: 'header-currency-toggle',
                 });
                 setCurrency();
               }}
@@ -173,9 +168,10 @@ export default function Header(): React.ReactElement {
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Language toggle clicked!', {
+                logger.debug('Language toggle clicked', {
                   current: language,
                   switching_to: otherLang?.code,
+                  feature: 'header-language-toggle',
                 });
                 setLanguage(otherLang?.code || 'en');
               }}
@@ -192,17 +188,18 @@ export default function Header(): React.ReactElement {
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Dark mode toggle clicked!', {
+                logger.debug('Dark mode toggle clicked', {
                   current: isDarkMode ? 'dark' : 'light',
+                  feature: 'header-dark-mode-toggle',
                 });
                 toggleDarkMode();
               }}
               title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
             >
               {isDarkMode ? (
-                <FaSun className="text-yellow-500" />
+                <Sun className="text-yellow-500" />
               ) : (
-                <FaMoon className="text-gray-600 dark:text-gray-300" />
+                <Moon className="text-gray-600 dark:text-gray-300" />
               )}
             </button>
 
@@ -215,7 +212,7 @@ export default function Header(): React.ReactElement {
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center space-x-2 text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
                 >
-                  <FaUser className="text-lg" />
+                  <User className="text-lg" />
                   <span className="text-sm font-medium">
                     {user.name || user.email?.split('@')[0] || 'User'}
                   </span>
@@ -242,7 +239,7 @@ export default function Header(): React.ReactElement {
                       className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                       onClick={() => setUserMenuOpen(false)}
                     >
-                      <FaUser className="inline mr-2" />
+                      <User className="inline mr-2" />
                       Profile
                     </Link>
                     <button
@@ -252,7 +249,7 @@ export default function Header(): React.ReactElement {
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                     >
-                      <FaSignOutAlt className="inline mr-2" />
+                      <LogOut className="inline mr-2" />
                       {t.signOut}
                     </button>
                   </div>
@@ -282,17 +279,18 @@ export default function Header(): React.ReactElement {
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Mobile menu toggle clicked!', {
+                logger.debug('Mobile menu toggle clicked', {
                   current: isMobileMenuOpen ? 'open' : 'closed',
+                  feature: 'header-mobile-menu',
                 });
                 setMobileMenuOpen(!isMobileMenuOpen);
               }}
               title={`${isMobileMenuOpen ? 'Close' : 'Open'} mobile menu`}
             >
               {isMobileMenuOpen ? (
-                <FaTimes className="text-xl" />
+                <X className="text-xl" />
               ) : (
-                <FaBars className="text-xl" />
+                <Menu className="text-xl" />
               )}
             </button>
           </div>
@@ -387,9 +385,10 @@ export default function Header(): React.ReactElement {
               onClick={e => {
                 e.preventDefault();
                 e.stopPropagation();
-                console.log('Mobile language toggle clicked!', {
+                logger.debug('Mobile language toggle clicked', {
                   current: language,
                   switching_to: otherLang?.code,
+                  feature: 'header-mobile-language-toggle',
                 });
                 setLanguage(otherLang?.code || 'en');
               }}
@@ -427,7 +426,7 @@ export default function Header(): React.ReactElement {
               }}
               title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
             >
-              {isDarkMode ? <FaSun className="text-yellow-500" /> : <FaMoon />}
+              {isDarkMode ? <Sun className="text-yellow-500" /> : <Moon />}
               <span className="text-sm font-medium">
                 {isDarkMode ? 'Light mode' : 'Dark mode'}
               </span>
@@ -454,7 +453,7 @@ export default function Header(): React.ReactElement {
                   }}
                   className="block w-full text-gray-900 dark:text-white hover:text-purple-600 transition text-center py-2"
                 >
-                  <FaSignOutAlt className="inline mr-2" />
+                  <LogOut className="inline mr-2" />
                   {t.signOut}
                 </button>
               </div>

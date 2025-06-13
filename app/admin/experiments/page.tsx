@@ -1,23 +1,23 @@
 'use client';
 
+import {
+  Archive,
+  BarChart2,
+  CheckCircle,
+  Clock,
+  Edit,
+  Filter,
+  MoreVertical,
+  Pause,
+  Play,
+  Plus,
+  Search,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import {
-  FiPlus,
-  FiEdit,
-  FiPause,
-  FiPlay,
-  FiArchive,
-  FiBarChart2,
-  FiUsers,
-  FiTrendingUp,
-  FiCheckCircle,
-  FiClock,
-  FiFilter,
-  FiSearch,
-  FiMoreVertical,
-} from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
@@ -205,7 +205,7 @@ export default function AdminExperimentsPage(): JSX.Element {
               href="/admin/experiments/new"
               className="btn-primary inline-flex items-center"
             >
-              <FiPlus className="mr-2" />
+              <Plus className="mr-2" />
               New Experiment
             </Link>
           </div>
@@ -217,7 +217,7 @@ export default function AdminExperimentsPage(): JSX.Element {
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="flex-1">
             <div className="relative">
-              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search experiments..."
@@ -228,7 +228,7 @@ export default function AdminExperimentsPage(): JSX.Element {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <FiFilter className="text-gray-400" />
+            <Filter className="text-gray-400" />
             <select
               value={statusFilter}
               onChange={e =>
@@ -293,15 +293,15 @@ export default function AdminExperimentsPage(): JSX.Element {
                       )}
                       <div className="flex items-center gap-6 text-sm text-gray-500 _dark:text-gray-400">
                         <div className="flex items-center gap-1">
-                          <FiUsers className="w-4 h-4" />
+                          <Users className="w-4 h-4" />
                           <span>{totalVisitors.toLocaleString()} visitors</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <FiTrendingUp className="w-4 h-4" />
+                          <TrendingUp className="w-4 h-4" />
                           <span>{overallConversionRate} conversion</span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <FiClock className="w-4 h-4" />
+                          <Clock className="w-4 h-4" />
                           <span>
                             Created{' '}
                             {new Date(
@@ -321,7 +321,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                           className="p-2 text-yellow-600 _hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
                           title="Pause Experiment"
                         >
-                          <FiPause className="w-5 h-5" />
+                          <Pause className="w-5 h-5" />
                         </button>
                       )}
                       {experiment.status === 'paused' && (
@@ -332,7 +332,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                           className="p-2 text-green-600 _hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                           title="Resume Experiment"
                         >
-                          <FiPlay className="w-5 h-5" />
+                          <Play className="w-5 h-5" />
                         </button>
                       )}
                       <Link
@@ -340,14 +340,14 @@ export default function AdminExperimentsPage(): JSX.Element {
                         className="p-2 text-gray-600 _hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title="View Details"
                       >
-                        <FiBarChart2 className="w-5 h-5" />
+                        <BarChart2 className="w-5 h-5" />
                       </Link>
                       <Link
                         href={`/admin/experiments/${experiment.id}/edit`}
                         className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         title="Edit Experiment"
                       >
-                        <FiEdit className="w-5 h-5" />
+                        <Edit className="w-5 h-5" />
                       </Link>
                       <div className="relative">
                         <button
@@ -360,7 +360,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                           }
                           className="p-2 text-gray-600 _hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
                         >
-                          <FiMoreVertical className="w-5 h-5" />
+                          <MoreVertical className="w-5 h-5" />
                         </button>
                         {selectedExperiment === experiment.id && (
                           <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-10">
@@ -371,7 +371,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                               }}
                               className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
-                              <FiCheckCircle className="w-4 h-4" />
+                              <CheckCircle className="w-4 h-4" />
                               Mark as Completed
                             </button>
                             <button
@@ -381,7 +381,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                               }}
                               className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
-                              <FiArchive className="w-4 h-4" />
+                              <Archive className="w-4 h-4" />
                               Archive
                             </button>
                           </div>
@@ -482,7 +482,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                   href="/admin/experiments/new"
                   className="btn-primary inline-flex items-center"
                 >
-                  <FiPlus className="mr-2" />
+                  <Plus className="mr-2" />
                   Create Your First Experiment
                 </Link>
               )}

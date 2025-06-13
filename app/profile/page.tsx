@@ -1,16 +1,16 @@
 'use client';
 
+import {
+  AlertCircle,
+  CheckCircle,
+  Loader,
+  Lock,
+  Mail,
+  Save,
+  User,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import {
-  FaUser,
-  FaEnvelope,
-  FaLock,
-  FaSave,
-  FaSpinner,
-  FaCheckCircle,
-  FaExclamationCircle,
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { updateUserMetadata, updatePassword } from '@/lib/auth/auth';
@@ -134,7 +134,7 @@ export default function ProfilePage(): React.ReactElement {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <FaSpinner className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
+            <Loader className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
             <p className="text-gray-600 dark:text-gray-400">
               {t.loadingProfile}
             </p>
@@ -166,7 +166,7 @@ export default function ProfilePage(): React.ReactElement {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              <FaUser className="inline mr-2" />
+              <User className="inline mr-2" />
               {t.profileInformation}
             </button>
             <button
@@ -177,7 +177,7 @@ export default function ProfilePage(): React.ReactElement {
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
               }`}
             >
-              <FaLock className="inline mr-2" />
+              <Lock className="inline mr-2" />
               {t.changePassword}
             </button>
           </nav>
@@ -186,14 +186,14 @@ export default function ProfilePage(): React.ReactElement {
         {/* Success/Error Messages */}
         {success && (
           <div className="mb-6 p-4 bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-lg flex items-center">
-            <FaCheckCircle className="mr-2" />
+            <CheckCircle className="mr-2" />
             {success}
           </div>
         )}
 
         {error && (
           <div className="mb-6 p-4 bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300 rounded-lg flex items-center">
-            <FaExclamationCircle className="mr-2" />
+            <AlertCircle className="mr-2" />
             {error}
           </div>
         )}
@@ -228,7 +228,7 @@ export default function ProfilePage(): React.ReactElement {
                     htmlFor="email"
                     className="block text-sm font-medium text-gray-700 dark:text-gray-300"
                   >
-                    <FaEnvelope className="inline mr-1" />
+                    <Mail className="inline mr-1" />
                     {t.email}
                   </label>
                   <input
@@ -358,12 +358,12 @@ export default function ProfilePage(): React.ReactElement {
                 >
                   {loading ? (
                     <>
-                      <FaSpinner className="animate-spin mr-2" />
+                      <Loader className="animate-spin mr-2" />
                       {t.saving}
                     </>
                   ) : (
                     <>
-                      <FaSave className="mr-2" />
+                      <Save className="mr-2" />
                       {t.saveChanges}
                     </>
                   )}
@@ -423,12 +423,12 @@ export default function ProfilePage(): React.ReactElement {
                   >
                     {loading ? (
                       <>
-                        <FaSpinner className="animate-spin mr-2" />
+                        <Loader className="animate-spin mr-2" />
                         {t.updating}
                       </>
                     ) : (
                       <>
-                        <FaLock className="mr-2" />
+                        <Lock className="mr-2" />
                         {t.updatePassword}
                       </>
                     )}

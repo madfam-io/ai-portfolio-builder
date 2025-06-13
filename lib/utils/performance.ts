@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { logger } from '@/lib/utils/logger';
 /**
  * @fileoverview Performance Monitoring and Optimization Utilities
  *
@@ -103,7 +104,7 @@ export class PerformanceMonitor {
       lcpObserver.observe({ entryTypes: ['largest-contentful-paint'] });
       this.observers.set('lcp', lcpObserver);
     } catch (error) {
-      console.warn('LCP observer not supported:', error);
+      logger.warn('LCP observer not supported:', { error });
     }
 
     // First Input Delay
@@ -118,7 +119,7 @@ export class PerformanceMonitor {
       fidObserver.observe({ entryTypes: ['first-input'] });
       this.observers.set('fid', fidObserver);
     } catch (error) {
-      console.warn('FID observer not supported:', error);
+      logger.warn('FID observer not supported:', { error });
     }
 
     // Cumulative Layout Shift
@@ -137,7 +138,7 @@ export class PerformanceMonitor {
       clsObserver.observe({ entryTypes: ['layout-shift'] });
       this.observers.set('cls', clsObserver);
     } catch (error) {
-      console.warn('CLS observer not supported:', error);
+      logger.warn('CLS observer not supported:', { error });
     }
 
     // Navigation timing

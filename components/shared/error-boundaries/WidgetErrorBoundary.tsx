@@ -1,7 +1,7 @@
 'use client';
 
+import { AlertCircle, RefreshCw } from 'lucide-react';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { FiAlertCircle, FiRefreshCw } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { serializeError } from '@/lib/utils/error-handling/error-utils';
@@ -179,7 +179,7 @@ function CompactErrorFallback({
   return (
     <div className="flex items-center justify-center p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
       <div className="text-center">
-        <FiAlertCircle className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
+        <AlertCircle className="w-6 h-6 text-gray-400 dark:text-gray-500 mx-auto mb-2" />
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
           {(t as any).errors?.widgetError || 'Widget Error'}
         </p>
@@ -193,7 +193,7 @@ function CompactErrorFallback({
             onClick={onRetry}
             className="text-xs text-purple-600 dark:text-purple-400 hover:underline inline-flex items-center gap-1"
           >
-            <FiRefreshCw className="w-3 h-3" />
+            <RefreshCw className="w-3 h-3" />
             {(t as any).errors?.retry || 'Retry'}
           </button>
         )}
@@ -223,7 +223,7 @@ function StandardErrorFallback({
   return (
     <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
       <div className="flex items-start gap-3">
-        <FiAlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
+        <AlertCircle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           <h4 className="text-sm font-medium text-yellow-800 dark:text-yellow-200 mb-1">
             {widgetName
@@ -251,7 +251,7 @@ function StandardErrorFallback({
               onClick={onRetry}
               className="inline-flex items-center gap-1 text-sm bg-yellow-100 dark:bg-yellow-800 text-yellow-700 dark:text-yellow-200 px-3 py-1 rounded hover:bg-yellow-200 dark:hover:bg-yellow-700 transition-colors"
             >
-              <FiRefreshCw className="w-3 h-3" />
+              <RefreshCw className="w-3 h-3" />
               {(t as any).errors?.tryAgain || 'Try Again'}
             </button>
           )}

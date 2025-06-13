@@ -1,22 +1,21 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  FiGlobe,
-  FiBarChart,
-  FiShield,
-  FiShare2,
-  FiMail,
-  FiEye,
-  FiUsers,
-  FiTrendingUp,
-  FiCheck,
-  FiCopy,
-  FiCode,
-  FiDownload,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
-
+  BarChart,
+  Check,
+  Code,
+  Copy,
+  Download,
+  Eye,
+  Globe,
+  Mail,
+  Share2,
+  Shield,
+  Sparkles,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
+import React, { useState } from 'react';
 interface PublishingPreviewProps {
   portfolioName?: string;
   onPublish?: () => void;
@@ -138,7 +137,7 @@ export function PublishingPreview({
       >
         <div className="bg-gradient-to-r from-green-600 to-blue-600 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiGlobe className="w-8 h-8" />
+            <Globe className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">Ready to Publish</h3>
               <p className="text-green-100">
@@ -176,7 +175,7 @@ export function PublishingPreview({
                   />
                 </div>
                 <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-                  <HiSparkles className="w-4 h-4 animate-pulse" />
+                  <Sparkles className="w-4 h-4 animate-pulse" />
                   <span>Optimizing for search engines and performance...</span>
                 </div>
               </div>
@@ -208,7 +207,7 @@ export function PublishingPreview({
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
-                    <FiGlobe className="w-5 h-5 text-blue-600" />
+                    <Globe className="w-5 h-5 text-blue-600" />
                     <h5 className="font-semibold text-gray-900 dark:text-white">
                       Custom Subdomain
                     </h5>
@@ -223,7 +222,7 @@ export function PublishingPreview({
 
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
-                    <FiShield className="w-5 h-5 text-green-600" />
+                    <Shield className="w-5 h-5 text-green-600" />
                     <h5 className="font-semibold text-gray-900 dark:text-white">
                       SSL Certificate
                     </h5>
@@ -238,7 +237,7 @@ export function PublishingPreview({
 
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
-                    <FiBarChart className="w-5 h-5 text-purple-600" />
+                    <BarChart className="w-5 h-5 text-purple-600" />
                     <h5 className="font-semibold text-gray-900 dark:text-white">
                       Analytics Dashboard
                     </h5>
@@ -253,7 +252,7 @@ export function PublishingPreview({
 
                 <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
                   <div className="flex items-center space-x-3 mb-2">
-                    <FiTrendingUp className="w-5 h-5 text-orange-600" />
+                    <TrendingUp className="w-5 h-5 text-orange-600" />
                     <h5 className="font-semibold text-gray-900 dark:text-white">
                       SEO Optimization
                     </h5>
@@ -271,9 +270,9 @@ export function PublishingPreview({
                 onClick={handlePublish}
                 className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-4 rounded-lg font-bold text-lg hover:from-green-700 hover:to-blue-700 transition-all duration-300 flex items-center justify-center space-x-3"
               >
-                <FiGlobe className="w-6 h-6" />
+                <Globe className="w-6 h-6" />
                 <span>Publish Portfolio</span>
-                <HiSparkles className="w-6 h-6" />
+                <Sparkles className="w-6 h-6" />
               </button>
 
               {isDemo && (
@@ -295,7 +294,7 @@ export function PublishingPreview({
         <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <FiCheck className="w-8 h-8" />
+              <Check className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold">
                   Portfolio Published Successfully!
@@ -327,7 +326,7 @@ export function PublishingPreview({
                 onClick={() => copyToClipboard(portfolioUrl)}
                 className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
               >
-                <FiCopy className="w-5 h-5" />
+                <Copy className="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -389,18 +388,18 @@ export function PublishingPreview({
               onClick={() => window.open(portfolioUrl, '_blank')}
               className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
             >
-              <FiEye className="w-4 h-4" />
+              <Eye className="w-4 h-4" />
               <span>View Live</span>
             </button>
             <button
               onClick={() => setShowAnalytics(!showAnalytics)}
               className="flex-1 bg-purple-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors flex items-center justify-center space-x-2"
             >
-              <FiBarChart className="w-4 h-4" />
+              <BarChart className="w-4 h-4" />
               <span>View Analytics</span>
             </button>
             <button className="px-4 py-3 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-              <FiShare2 className="w-4 h-4" />
+              <Share2 className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -411,7 +410,7 @@ export function PublishingPreview({
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
             <div className="flex items-center space-x-3">
-              <FiBarChart className="w-8 h-8" />
+              <BarChart className="w-8 h-8" />
               <div>
                 <h3 className="text-xl font-bold">Analytics Dashboard</h3>
                 <p className="text-purple-100">
@@ -425,7 +424,7 @@ export function PublishingPreview({
             {/* Key Metrics */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 text-center">
-                <FiEye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
+                <Eye className="w-8 h-8 text-blue-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-blue-600">
                   {mockAnalytics.views.toLocaleString()}
                 </div>
@@ -434,7 +433,7 @@ export function PublishingPreview({
                 </div>
               </div>
               <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 text-center">
-                <FiUsers className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                <Users className="w-8 h-8 text-green-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-green-600">
                   {mockAnalytics.uniqueVisitors.toLocaleString()}
                 </div>
@@ -443,7 +442,7 @@ export function PublishingPreview({
                 </div>
               </div>
               <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4 text-center">
-                <FiTrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+                <TrendingUp className="w-8 h-8 text-purple-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-purple-600">
                   {mockAnalytics.engagementRate}%
                 </div>
@@ -452,7 +451,7 @@ export function PublishingPreview({
                 </div>
               </div>
               <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-4 text-center">
-                <FiUsers className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+                <Users className="w-8 h-8 text-orange-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-orange-600">
                   {mockAnalytics.averageTimeOnSite}
                 </div>
@@ -528,15 +527,15 @@ export function PublishingPreview({
           </h4>
           <div className="grid md:grid-cols-3 gap-4">
             <button className="flex items-center space-x-3 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors">
-              <FiMail className="w-5 h-5 text-blue-600" />
+              <Mail className="w-5 h-5 text-blue-600" />
               <span className="font-medium text-blue-600">Email Signature</span>
             </button>
             <button className="flex items-center space-x-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors">
-              <FiCode className="w-5 h-5 text-green-600" />
+              <Code className="w-5 h-5 text-green-600" />
               <span className="font-medium text-green-600">QR Code</span>
             </button>
             <button className="flex items-center space-x-3 p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors">
-              <FiDownload className="w-5 h-5 text-purple-600" />
+              <Download className="w-5 h-5 text-purple-600" />
               <span className="font-medium text-purple-600">PDF Export</span>
             </button>
           </div>

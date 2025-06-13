@@ -1,18 +1,18 @@
 'use client';
 
 import {
-  FiMonitor,
-  FiTablet,
-  FiSmartphone,
-  FiEye,
-  FiEyeOff,
-  FiCode,
-  FiEdit3,
-  FiBriefcase,
-  FiUser,
-  FiStar,
-  FiLayout,
-} from 'react-icons/fi';
+  Briefcase as FiBriefcase,
+  Code as FiCode,
+  Edit3 as FiEdit3,
+  Eye,
+  EyeOff,
+  Layout as FiLayout,
+  Monitor,
+  Smartphone,
+  Star as FiStar,
+  Tablet,
+  User as FiUser,
+} from 'lucide-react';
 
 import { TemplateType } from '@/types/portfolio';
 
@@ -106,7 +106,7 @@ export function EditorToolbar({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <FiMonitor className="w-4 h-4" />
+            <Monitor className="w-4 h-4" />
             <span>Desktop</span>
           </button>
           <button
@@ -117,7 +117,7 @@ export function EditorToolbar({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <FiTablet className="w-4 h-4" />
+            <Tablet className="w-4 h-4" />
             <span>Tablet</span>
           </button>
           <button
@@ -128,7 +128,7 @@ export function EditorToolbar({
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            <FiSmartphone className="w-4 h-4" />
+            <Smartphone className="w-4 h-4" />
             <span>Mobile</span>
           </button>
         </div>
@@ -141,12 +141,12 @@ export function EditorToolbar({
           >
             {showPreview ? (
               <>
-                <FiEyeOff className="w-4 h-4" />
+                <EyeOff className="w-4 h-4" />
                 <span>Hide Preview</span>
               </>
             ) : (
               <>
-                <FiEye className="w-4 h-4" />
+                <Eye className="w-4 h-4" />
                 <span>Show Preview</span>
               </>
             )}

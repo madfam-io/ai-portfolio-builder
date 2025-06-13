@@ -1,15 +1,15 @@
 'use client';
 
+import {
+  ArrowRight,
+  CheckCircle,
+  Play,
+  Rocket,
+  Star,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import {
-  FaPlay,
-  FaCheckCircle,
-  FaUsers,
-  FaStar,
-  FaRocket,
-  FaArrowRight,
-} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useExperimentTracking } from '@/lib/services/feature-flags/use-experiment';
@@ -38,7 +38,7 @@ export function HeroDefault(props: HeroProps): React.ReactElement {
     <section className="pt-32 pb-32 px-6 bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <div className="container mx-auto text-center max-w-7xl">
         <div className="inline-flex items-center bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900 dark:to-blue-900 text-purple-700 dark:text-purple-300 px-6 py-3 rounded-full text-base font-semibold mb-10 shadow-lg">
-          <FaStar className="mr-3 text-yellow-500" />
+          <Star className="mr-3 text-yellow-500" />
           <span>{props.title || t.poweredByAi}</span>
         </div>
 
@@ -59,7 +59,7 @@ export function HeroDefault(props: HeroProps): React.ReactElement {
             aria-label={props.ctaText || t.startFreeTrial}
             onClick={() => handleCTAClick('primary')}
           >
-            <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
+            <Play className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
             <span>{props.ctaText || t.startFreeTrial}</span>
             <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
           </Link>
@@ -78,17 +78,17 @@ export function HeroDefault(props: HeroProps): React.ReactElement {
         {props.showStats !== false && (
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12 text-gray-600 dark:text-gray-300">
             <div className="flex items-center bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-md">
-              <FaCheckCircle className="text-green-500 mr-3 text-lg" />
+              <CheckCircle className="text-green-500 mr-3 text-lg" />
               <span className="text-base font-medium">{t.noCreditCard}</span>
             </div>
             <div className="flex items-center bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-md">
-              <FaUsers className="text-blue-500 mr-3 text-lg" />
+              <Users className="text-blue-500 mr-3 text-lg" />
               <span className="text-base font-medium">
                 {t.joinProfessionals}
               </span>
             </div>
             <div className="flex items-center bg-white dark:bg-gray-800 px-4 py-3 rounded-full shadow-md">
-              <FaStar className="text-yellow-500 mr-3 text-lg" />
+              <Star className="text-yellow-500 mr-3 text-lg" />
               <span className="text-base font-medium">{t.rating}</span>
             </div>
           </div>
@@ -134,7 +134,7 @@ export function HeroMinimal(props: HeroProps): React.ReactElement {
           onClick={handleCTAClick}
         >
           {props.ctaText || t.startFreeTrial}
-          <FaArrowRight className="ml-3" />
+          <ArrowRight className="ml-3" />
         </Link>
 
         {props.showStats !== false && (
@@ -179,7 +179,7 @@ export function HeroVideo(props: HeroProps): React.ReactElement {
       {/* Content */}
       <div className="relative z-10 container mx-auto text-center max-w-6xl px-6">
         <div className="inline-flex items-center bg-white/10 backdrop-blur-sm text-white px-6 py-3 rounded-full text-base font-semibold mb-10">
-          <FaRocket className="mr-3" />
+          <Rocket className="mr-3" />
           <span>{props.title || t.poweredByAi}</span>
         </div>
 
@@ -200,7 +200,7 @@ export function HeroVideo(props: HeroProps): React.ReactElement {
             aria-label={props.ctaText || t.startFreeTrial}
             onClick={() => handleCTAClick('primary')}
           >
-            <FaPlay className="mr-3" />
+            <Play className="mr-3" />
             {props.ctaText || t.startFreeTrial}
           </Link>
 
@@ -236,7 +236,7 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
           {/* Left Content */}
           <div className="text-left">
             <div className="inline-flex items-center bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 px-4 py-2 rounded-full text-sm font-semibold mb-6">
-              <FaStar className="mr-2 text-yellow-500" />
+              <Star className="mr-2 text-yellow-500" />
               <span>{props.title || t.poweredByAi}</span>
             </div>
 
@@ -257,7 +257,7 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
                 aria-label={props.ctaText || t.startFreeTrial}
                 onClick={() => handleCTAClick('primary')}
               >
-                <FaPlay className="mr-2" />
+                <Play className="mr-2" />
                 {props.ctaText || t.startFreeTrial}
               </Link>
 
@@ -274,11 +274,11 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
             {props.showStats !== false && (
               <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
                 <div className="flex items-center">
-                  <FaCheckCircle className="text-green-500 mr-2" />
+                  <CheckCircle className="text-green-500 mr-2" />
                   <span>{t.noCreditCard}</span>
                 </div>
                 <div className="flex items-center">
-                  <FaUsers className="text-blue-500 mr-2" />
+                  <Users className="text-blue-500 mr-2" />
                   <span>{t.joinProfessionals}</span>
                 </div>
               </div>

@@ -1,7 +1,13 @@
 'use client';
 
+import {
+  Code as FaCode,
+  GitBranch as FaGitAlt,
+  Star as FaStar,
+  TrendingUp,
+  Users as FaUsers,
+} from 'lucide-react';
 import React from 'react';
-import { FaChartLine, FaCode, FaGitAlt, FaStar, FaUsers } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { AnalyticsDashboardData } from '@/types/analytics';
@@ -51,7 +57,7 @@ export default function DashboardStats({
         >
           <div className="flex items-center justify-between mb-4">
             <stat.icon className={`text-3xl ${stat.color}`} />
-            <FaChartLine className="text-gray-400 text-sm" />
+            <TrendingUp className="text-gray-400 text-sm" />
           </div>
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
             {stat.value.toLocaleString()}

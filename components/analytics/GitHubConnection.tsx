@@ -1,7 +1,7 @@
 'use client';
 
+import { Github } from 'lucide-react';
 import React from 'react';
-import { FaGithub } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -16,7 +16,7 @@ export default function GitHubConnection({
 
   return (
     <div className="text-center">
-      <FaGithub className="text-6xl text-gray-400 mx-auto mb-4" />
+      <Github className="text-6xl text-gray-400 mx-auto mb-4" />
       <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
         {t.connectGitHub}
       </h3>
@@ -32,7 +32,7 @@ export default function GitHubConnection({
           }
         }}
       >
-        <FaGithub className="mr-2" />
+        <Github className="mr-2" />
         {loading ? t.connecting : t.connectGitHub}
       </a>
     </div>

@@ -1,16 +1,16 @@
 'use client';
 
-import React from 'react';
 import {
-  FiAlertTriangle,
-  FiWifiOff,
-  FiLock,
-  FiXCircle,
-  FiRefreshCw,
-  FiHome,
-  FiMail,
-  FiAlertCircle,
-} from 'react-icons/fi';
+  AlertCircle,
+  AlertTriangle,
+  Home,
+  Lock,
+  Mail,
+  RefreshCw,
+  WifiOff,
+  XCircle,
+} from 'lucide-react';
+import React from 'react';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { ErrorType } from '@/lib/utils/error-handling/error-types';
@@ -65,24 +65,18 @@ export function ErrorState({
   }
 
   const errorIcons: Record<ErrorType, React.ReactNode> = {
-    network: <FiWifiOff className="w-8 h-8 text-red-600 dark:text-red-400" />,
-    authentication: (
-      <FiLock className="w-8 h-8 text-red-600 dark:text-red-400" />
-    ),
+    network: <WifiOff className="w-8 h-8 text-red-600 dark:text-red-400" />,
+    authentication: <Lock className="w-8 h-8 text-red-600 dark:text-red-400" />,
     permission: (
-      <FiLock className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+      <Lock className="w-8 h-8 text-orange-600 dark:text-orange-400" />
     ),
-    validation: (
-      <FiXCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
-    ),
+    validation: <XCircle className="w-8 h-8 text-red-600 dark:text-red-400" />,
     server: (
-      <FiAlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+      <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
     ),
-    notFound: (
-      <FiXCircle className="w-8 h-8 text-gray-600 dark:text-gray-400" />
-    ),
+    notFound: <XCircle className="w-8 h-8 text-gray-600 dark:text-gray-400" />,
     unknown: (
-      <FiAlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+      <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
     ),
   };
 
@@ -157,7 +151,7 @@ export function ErrorState({
             onClick={onRetry}
             className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
-            <FiRefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-4 h-4" />
             {(t as any).errors?.tryAgain || 'Try Again'}
           </button>
         )}
@@ -167,7 +161,7 @@ export function ErrorState({
             onClick={onGoHome}
             className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
-            <FiHome className="w-4 h-4" />
+            <Home className="w-4 h-4" />
             {(t as any).errors?.goToHomepage || 'Go to Homepage'}
           </button>
         )}
@@ -177,7 +171,7 @@ export function ErrorState({
             onClick={onReport}
             className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
-            <FiMail className="w-4 h-4" />
+            <Mail className="w-4 h-4" />
             {(t as any).errors?.reportBug || 'Report Bug'}
           </button>
         )}
@@ -219,7 +213,7 @@ function CompactErrorState({
   return (
     <div className={`border rounded-lg p-4 ${errorColors[errorType]}`}>
       <div className="flex items-start gap-3">
-        <FiAlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+        <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           {title && (
             <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
@@ -236,7 +230,7 @@ function CompactErrorState({
               onClick={onRetry}
               className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline inline-flex items-center gap-1"
             >
-              <FiRefreshCw className="w-3 h-3" />
+              <RefreshCw className="w-3 h-3" />
               {(t as any).errors?.retry || 'Retry'}
             </button>
           )}
@@ -357,7 +351,7 @@ export function ValidationErrorState({
   return (
     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
       <div className="flex items-start gap-3">
-        <FiXCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+        <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
             {(t as any).errors?.validationErrorTitle || 'Validation Error'}

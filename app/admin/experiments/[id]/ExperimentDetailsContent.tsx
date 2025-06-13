@@ -1,19 +1,19 @@
 'use client';
 
+import {
+  ArrowLeft,
+  Clock,
+  Download,
+  Edit,
+  Pause,
+  Play,
+  RefreshCw,
+  Target,
+  TrendingUp,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import {
-  FiArrowLeft,
-  FiEdit,
-  FiPause,
-  FiPlay,
-  FiTrendingUp,
-  FiUsers,
-  FiTarget,
-  FiClock,
-  FiDownload,
-  FiRefreshCw,
-} from 'react-icons/fi';
 
 import { ConversionChart } from '@/components/admin/experiments/index.lazy';
 import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
@@ -59,7 +59,7 @@ export function ExperimentDetailsContent({
                 href="/admin/experiments"
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <FiArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
               </Link>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -77,7 +77,7 @@ export function ExperimentDetailsContent({
                 disabled={refreshing}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <FiRefreshCw
+                <RefreshCw
                   className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`}
                 />
               </button>
@@ -86,7 +86,7 @@ export function ExperimentDetailsContent({
                 onClick={onExport}
                 className="btn-secondary inline-flex items-center text-sm"
               >
-                <FiDownload className="mr-2" />
+                <Download className="mr-2" />
                 Export
               </button>
 
@@ -95,7 +95,7 @@ export function ExperimentDetailsContent({
                   onClick={() => onStatusChange('paused')}
                   className="btn-secondary inline-flex items-center text-sm"
                 >
-                  <FiPause className="mr-2" />
+                  <Pause className="mr-2" />
                   Pause
                 </button>
               )}
@@ -104,7 +104,7 @@ export function ExperimentDetailsContent({
                   onClick={() => onStatusChange('active')}
                   className="btn-primary inline-flex items-center text-sm"
                 >
-                  <FiPlay className="mr-2" />
+                  <Play className="mr-2" />
                   Resume
                 </button>
               )}
@@ -112,7 +112,7 @@ export function ExperimentDetailsContent({
                 href={`/admin/experiments/${experiment.id}/edit`}
                 className="btn-primary inline-flex items-center text-sm"
               >
-                <FiEdit className="mr-2" />
+                <Edit className="mr-2" />
                 Edit
               </Link>
             </div>
@@ -133,7 +133,7 @@ export function ExperimentDetailsContent({
                   {analyticsData?.results.totalVisitors.toLocaleString() || 0}
                 </p>
               </div>
-              <FiUsers className="text-2xl text-blue-600" />
+              <Users className="text-2xl text-blue-600" />
             </div>
           </div>
 
@@ -148,7 +148,7 @@ export function ExperimentDetailsContent({
                     0}
                 </p>
               </div>
-              <FiTarget className="text-2xl text-green-600" />
+              <Target className="text-2xl text-green-600" />
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export function ExperimentDetailsContent({
                   %
                 </p>
               </div>
-              <FiTrendingUp className="text-2xl text-purple-600" />
+              <TrendingUp className="text-2xl text-purple-600" />
             </div>
           </div>
 
@@ -183,7 +183,7 @@ export function ExperimentDetailsContent({
                   {analyticsData?.results.duration || 0}
                 </p>
               </div>
-              <FiClock className="text-2xl text-yellow-600" />
+              <Clock className="text-2xl text-yellow-600" />
             </div>
           </div>
         </div>

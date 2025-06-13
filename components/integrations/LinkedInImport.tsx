@@ -1,15 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  FiLinkedin,
-  FiCheck,
-  FiDownload,
-  FiUser,
-  FiBriefcase,
-  FiAward,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+  Award,
+  Briefcase,
+  Check,
+  Download,
+  Linkedin,
+  User,
+} from 'lucide-react';
+import { Sparkles as HiSparkles } from 'lucide-react';
+import React, { useState } from 'react';
+
+import { logger } from '@/lib/utils/logger';
 
 interface LinkedInProfile {
   name: string;
@@ -120,7 +122,7 @@ export function LinkedInImport({
 
         window.location.href = `https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
       } catch (error) {
-        console.error('LinkedIn connection failed:', error);
+        logger.error('LinkedIn connection failed:', error as Error);
         setIsConnecting(false);
       }
     }
@@ -159,7 +161,7 @@ export function LinkedInImport({
       >
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
           <div className="flex items-center space-x-3">
-            <FiLinkedin className="w-8 h-8" />
+            <Linkedin className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">LinkedIn Import</h3>
               <p className="text-blue-100">
@@ -172,7 +174,7 @@ export function LinkedInImport({
         <div className="p-6">
           <div className="space-y-4 mb-6">
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Professional Experience
@@ -183,7 +185,7 @@ export function LinkedInImport({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Skills & Endorsements
@@ -194,7 +196,7 @@ export function LinkedInImport({
               </div>
             </div>
             <div className="flex items-start space-x-3">
-              <FiCheck className="w-5 h-5 text-green-500 mt-0.5" />
+              <Check className="w-5 h-5 text-green-500 mt-0.5" />
               <div>
                 <h4 className="font-medium text-gray-900 dark:text-white">
                   Education & Certifications
@@ -219,7 +221,7 @@ export function LinkedInImport({
               </>
             ) : (
               <>
-                <FiLinkedin className="w-5 h-5" />
+                <Linkedin className="w-5 h-5" />
                 <span>Connect LinkedIn Profile</span>
               </>
             )}
@@ -242,7 +244,7 @@ export function LinkedInImport({
       <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <FiLinkedin className="w-8 h-8" />
+            <Linkedin className="w-8 h-8" />
             <div>
               <h3 className="text-xl font-bold">LinkedIn Connected</h3>
               <p className="text-green-100">
@@ -250,7 +252,7 @@ export function LinkedInImport({
               </p>
             </div>
           </div>
-          <FiCheck className="w-8 h-8" />
+          <Check className="w-8 h-8" />
         </div>
       </div>
 
@@ -280,7 +282,7 @@ export function LinkedInImport({
               onClick={handleImport}
               className="w-full bg-gradient-to-r from-blue-600 to-green-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-green-700 transition-all duration-300 flex items-center justify-center space-x-2"
             >
-              <FiDownload className="w-5 h-5" />
+              <Download className="w-5 h-5" />
               <span>Import LinkedIn Data</span>
             </button>
           )}
@@ -300,7 +302,7 @@ export function LinkedInImport({
           <div className="grid md:grid-cols-3 gap-4">
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
-                <FiUser className="w-4 h-4 text-blue-600" />
+                <User className="w-4 h-4 text-blue-600" />
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   Profile
                 </h5>
@@ -312,7 +314,7 @@ export function LinkedInImport({
 
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
-                <FiBriefcase className="w-4 h-4 text-green-600" />
+                <Briefcase className="w-4 h-4 text-green-600" />
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   Experience
                 </h5>
@@ -324,7 +326,7 @@ export function LinkedInImport({
 
             <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
               <div className="flex items-center space-x-2 mb-2">
-                <FiAward className="w-4 h-4 text-purple-600" />
+                <Award className="w-4 h-4 text-purple-600" />
                 <h5 className="font-medium text-gray-900 dark:text-white">
                   Skills
                 </h5>
@@ -337,7 +339,7 @@ export function LinkedInImport({
 
           <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
             <div className="flex items-center space-x-2 text-sm text-green-600 dark:text-green-400">
-              <FiCheck className="w-4 h-4" />
+              <Check className="w-4 h-4" />
               <span>
                 All data has been imported and is ready for customization
               </span>

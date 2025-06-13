@@ -1,13 +1,14 @@
 'use client';
 
+import { Check, Eye, Grid, Layout } from 'lucide-react';
 import { useState, useMemo } from 'react';
-import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
 
 import {
   getAvailableTemplates,
   getTemplateConfig,
   TemplateConfig,
 } from '@/lib/templates/templateConfig';
+import { logger } from '@/lib/utils/logger';
 import { TemplateType } from '@/types/portfolio';
 
 /**
@@ -50,7 +51,7 @@ function TemplateCard({
       {/* Selected indicator */}
       {isSelected && (
         <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-          <FiCheck className="w-4 h-4 text-white" />
+          <Check className="w-4 h-4 text-white" />
         </div>
       )}
 
@@ -141,13 +142,11 @@ function TemplateCard({
         {/* Features */}
         <div className="flex items-center justify-between">
           <div className="flex space-x-2 text-xs text-gray-500 dark:text-gray-400">
-            {template.features.showcaseProjects && (
-              <FiGrid className="w-4 h-4" title="Project showcase" />
-            )}
+            {template.features.showcaseProjects && <Grid className="w-4 h-4" />}
             {template.features.includeTestimonials && (
-              <FiLayout className="w-4 h-4" title="Testimonials" />
+              <Layout className="w-4 h-4" />
             )}
-            <FiEye className="w-4 h-4" title="Customizable colors" />
+            <Eye className="w-4 h-4" />
           </div>
 
           {/* Preview button */}
@@ -158,7 +157,7 @@ function TemplateCard({
             }}
             className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors flex items-center space-x-1"
           >
-            <FiEye className="w-3 h-3" />
+            <Eye className="w-3 h-3" />
             <span>Preview</span>
           </button>
         </div>
@@ -208,7 +207,7 @@ export function TemplateSelector({
 
   const handlePreview = (templateId: TemplateType) => {
     // This could open a modal or navigate to a preview page
-    console.log('Preview template:', templateId);
+    logger.debug('Preview template:', { templateId });
   };
 
   return (
@@ -272,7 +271,7 @@ export function TemplateSelector({
       {/* Empty state */}
       {filteredTemplates.length === 0 && (
         <div className="text-center py-12">
-          <FiLayout className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+          <Layout className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             No templates found
           </h3>

@@ -1,14 +1,17 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  FiLinkedin,
-  FiGithub,
-  FiUpload,
-  FiArrowRight,
-  FiCheck,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
+  ArrowRight,
+  Check,
+  Github,
+  Github as FiGithub,
+  Linkedin,
+  Linkedin as FiLinkedin,
+  Sparkles,
+  Upload,
+  Upload as FiUpload,
+} from 'lucide-react';
+import React, { useState } from 'react';
 
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
@@ -136,7 +139,7 @@ export function SmartImportOptions({
             onClick={handleBackToOptions}
             className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
-            <FiArrowRight className="w-4 h-4 rotate-180" />
+            <ArrowRight className="w-4 h-4 rotate-180" />
             <span>Back to import options</span>
           </button>
         </div>
@@ -197,7 +200,7 @@ export function SmartImportOptions({
             />
           </div>
           <div className="flex items-center space-x-2 text-sm text-green-600 dark:text-green-400">
-            <HiSparkles className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
             <span>
               Great progress! Your portfolio is getting richer with each import.
             </span>
@@ -223,7 +226,7 @@ export function SmartImportOptions({
             >
               {isCompleted && (
                 <div className="absolute top-0 right-0 bg-green-500 text-white p-2 rounded-bl-lg">
-                  <FiCheck className="w-4 h-4" />
+                  <Check className="w-4 h-4" />
                 </div>
               )}
 
@@ -245,7 +248,7 @@ export function SmartImportOptions({
                 <div className="space-y-3 mb-6">
                   {option.features.map((feature, index) => (
                     <div key={index} className="flex items-center space-x-2">
-                      <FiCheck className="w-4 h-4 text-green-500 flex-shrink-0" />
+                      <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         {feature}
                       </span>
@@ -266,14 +269,14 @@ export function SmartImportOptions({
                   >
                     {isCompleted ? (
                       <>
-                        <FiCheck className="w-4 h-4" />
+                        <Check className="w-4 h-4" />
                         <span>View Details</span>
                       </>
                     ) : (
                       <>
                         <IconComponent className="w-4 h-4" />
                         <span>Import Now</span>
-                        <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
                   </button>
@@ -292,7 +295,7 @@ export function SmartImportOptions({
         <div className="grid md:grid-cols-3 gap-4 text-center">
           <div>
             <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-2">
-              <FiLinkedin className="w-6 h-6 text-white" />
+              <Linkedin className="w-6 h-6 text-white" />
             </div>
             <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
               Professional Network
@@ -303,7 +306,7 @@ export function SmartImportOptions({
           </div>
           <div>
             <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-2">
-              <FiGithub className="w-6 h-6 text-white" />
+              <Github className="w-6 h-6 text-white" />
             </div>
             <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
               Technical Expertise
@@ -314,7 +317,7 @@ export function SmartImportOptions({
           </div>
           <div>
             <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-2">
-              <FiUpload className="w-6 h-6 text-white" />
+              <Upload className="w-6 h-6 text-white" />
             </div>
             <h5 className="font-semibold text-gray-900 dark:text-white mb-1">
               Complete History
@@ -329,7 +332,7 @@ export function SmartImportOptions({
       {completedImports.size === importOptions.length && (
         <div className="text-center">
           <div className="inline-flex items-center space-x-2 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-6 py-3 rounded-full">
-            <FiCheck className="w-5 h-5" />
+            <Check className="w-5 h-5" />
             <span className="font-medium">
               All imports completed! Your portfolio is now comprehensive.
             </span>

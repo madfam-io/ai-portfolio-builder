@@ -1,7 +1,7 @@
 'use client';
 
+import { CheckCircle } from 'lucide-react';
 import React from 'react';
-import { FiCheckCircle } from 'react-icons/fi';
 
 import type { VariantResult, DetailedVariant } from '@/types/experiments';
 
@@ -61,7 +61,7 @@ function SignificanceCell({ pValue }: { pValue?: number }): React.ReactElement {
   if (pValue < 0.05) {
     return (
       <span className="inline-flex items-center gap-1 text-green-600 _dark:text-green-400">
-        <FiCheckCircle className="w-4 h-4" />
+        <CheckCircle className="w-4 h-4" />
         <span className="text-sm">p={pValue.toFixed(3)}</span>
       </span>
     );

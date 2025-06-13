@@ -1,17 +1,17 @@
 'use client';
 
-import React from 'react';
 import {
-  FiInbox,
-  FiSearch,
-  FiUpload,
-  FiDatabase,
-  FiFileText,
-  FiUsers,
-  FiFolder,
-  FiImage,
-  FiShoppingBag,
-} from 'react-icons/fi';
+  Database,
+  FileText,
+  Folder,
+  Image,
+  Inbox,
+  Search,
+  ShoppingBag,
+  Upload,
+  Users,
+} from 'lucide-react';
+import React from 'react';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -107,7 +107,7 @@ export function NoResultsState({
     <EmptyState
       icon={
         <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-          <FiSearch className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+          <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
       title={
@@ -150,7 +150,7 @@ export function NoPortfoliosState({
     <EmptyState
       icon={
         <div className="w-20 h-20 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-          <FiFileText className="w-10 h-10 text-purple-600 dark:text-purple-400" />
+          <FileText className="w-10 h-10 text-purple-600 dark:text-purple-400" />
         </div>
       }
       title={(t as any).emptyStates?.noPortfolios || 'No portfolios yet'}
@@ -182,7 +182,7 @@ export function NoProjectsState({
     <EmptyState
       icon={
         <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-          <FiFolder className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+          <Folder className="w-8 h-8 text-blue-600 dark:text-blue-400" />
         </div>
       }
       title={(t as any).emptyStates?.noProjects || 'No projects yet'}
@@ -210,21 +210,21 @@ export function NoDataState({
 
   const configs = {
     generic: {
-      icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
+      icon: <Database className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
       title: (t as any).emptyStates?.noData || 'No data available',
       description:
         (t as any).emptyStates?.noDataDescription ||
         'There is no data to display at this time',
     },
     analytics: {
-      icon: <FiDatabase className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
+      icon: <Database className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
       title: (t as any).emptyStates?.noAnalyticsData || 'No analytics data',
       description:
         (t as any).emptyStates?.noAnalyticsDataDescription ||
         'Analytics data will appear here once available',
     },
     users: {
-      icon: <FiUsers className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
+      icon: <Users className="w-8 h-8 text-gray-400 dark:text-gray-500" />,
       title: (t as any).emptyStates?.noUsers || 'No users found',
       description:
         (t as any).emptyStates?.noUsersDescription ||
@@ -232,7 +232,7 @@ export function NoDataState({
     },
     products: {
       icon: (
-        <FiShoppingBag className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+        <ShoppingBag className="w-8 h-8 text-gray-400 dark:text-gray-500" />
       ),
       title: (t as any).emptyStates?.noProducts || 'No products found',
       description:
@@ -278,7 +278,7 @@ export function UploadEmptyState({
       <EmptyState
         icon={
           <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-            <FiUpload className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+            <Upload className="w-8 h-8 text-gray-400 dark:text-gray-500" />
           </div>
         }
         title={(t as any).emptyStates?.uploadTitle || 'Upload files'}
@@ -303,7 +303,7 @@ export function NoImagesState({ onAddImage }: { onAddImage: () => void }) {
     <EmptyState
       icon={
         <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-          <FiImage className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+          <Image className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
       title={(t as any).emptyStates?.noImages || 'No images uploaded'}
@@ -335,7 +335,7 @@ export function EmptyListState({
     <EmptyState
       icon={
         <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-          <FiInbox className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+          <Inbox className="w-8 h-8 text-gray-400 dark:text-gray-500" />
         </div>
       }
       title={((t as any).emptyStates?.noItems || 'No {type} found').replace(
@@ -372,7 +372,7 @@ export function EmptyTableState({
         <EmptyState
           icon={
             <div className="w-12 h-12 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center">
-              <FiInbox className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+              <Inbox className="w-6 h-6 text-gray-400 dark:text-gray-500" />
             </div>
           }
           title={
@@ -391,7 +391,7 @@ export function EmptyTableState({
  */
 export function InlineEmptyState({
   message,
-  icon: Icon = FiInbox,
+  icon: Icon = Inbox,
 }: {
   message: string;
   icon?: React.ComponentType<{ className?: string }>;

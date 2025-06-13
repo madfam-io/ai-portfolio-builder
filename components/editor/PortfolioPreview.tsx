@@ -1,16 +1,17 @@
 'use client';
 
+import {
+  ExternalLink as FiExternalLink,
+  Github,
+  Github as FiGithub,
+  Linkedin as FiLinkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Twitter as FiTwitter,
+} from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
-import {
-  FiMail,
-  FiPhone,
-  FiMapPin,
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiExternalLink,
-} from 'react-icons/fi';
 
 import { Portfolio } from '@/types/portfolio';
 
@@ -222,7 +223,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
         <div className="mt-4 flex flex-wrap justify-center gap-4 text-sm text-gray-600 dark:text-gray-400">
           {portfolio.contact.location && (
             <div className="flex items-center gap-1">
-              <FiMapPin size={16} />
+              <MapPin size={16} />
               <span>{portfolio.contact.location}</span>
             </div>
           )}
@@ -427,7 +428,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
                             rel="noopener noreferrer"
                             className="text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 text-sm"
                           >
-                            <FiGithub className="inline mr-1" />
+                            <Github className="inline mr-1" />
                             Code
                           </a>
                         )}
@@ -584,7 +585,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
                 aria-label={`Email ${portfolio.name}`}
                 className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
               >
-                <FiMail />
+                <Mail />
                 {portfolio.contact.email}
               </a>
             )}
@@ -593,7 +594,7 @@ export const PortfolioPreview = React.memo(function PortfolioPreview({
                 href={`tel:${portfolio.contact.phone}`}
                 className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
               >
-                <FiPhone />
+                <Phone />
                 {portfolio.contact.phone}
               </a>
             )}

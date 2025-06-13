@@ -1,9 +1,7 @@
 'use client';
 
+import { Check, Sparkles, Target, TrendingUp, Zap } from 'lucide-react';
 import React, { useState } from 'react';
-import { FiCheck, FiTarget, FiTrendingUp, FiZap } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
-
 interface Project {
   id: string;
   title: string;
@@ -166,7 +164,7 @@ export function ProjectEnhancementDemo({
                 </div>
                 {enhancedProjects.has(project.id) && (
                   <div className="flex items-center space-x-1 text-green-600 text-sm">
-                    <FiCheck className="w-4 h-4" />
+                    <Check className="w-4 h-4" />
                     <span>Enhanced</span>
                   </div>
                 )}
@@ -198,7 +196,7 @@ export function ProjectEnhancementDemo({
                     </>
                   ) : (
                     <>
-                      <FiZap className="w-4 h-4" />
+                      <Zap className="w-4 h-4" />
                       <span>Enhance with AI</span>
                     </>
                   )}
@@ -209,7 +207,7 @@ export function ProjectEnhancementDemo({
                     onClick={() => toggleSTAR(project.id)}
                     className="px-4 py-2 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded-lg font-medium hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors flex items-center space-x-2"
                   >
-                    <FiTarget className="w-4 h-4" />
+                    <Target className="w-4 h-4" />
                     <span>View STAR</span>
                   </button>
                 )}
@@ -289,7 +287,7 @@ export function ProjectEnhancementDemo({
                 extractedMetrics[project.title] && (
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex items-center space-x-2 mb-2">
-                      <FiTrendingUp className="w-4 h-4 text-green-600" />
+                      <TrendingUp className="w-4 h-4 text-green-600" />
                       <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                         Key Metrics:
                       </span>
@@ -313,7 +311,7 @@ export function ProjectEnhancementDemo({
 
       <div className="text-center mt-6">
         <div className="inline-flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-          <HiSparkles className="w-4 h-4 text-purple-600" />
+          <Sparkles className="w-4 h-4 text-purple-600" />
           <span>
             AI analyzes your projects and creates compelling narratives with
             measurable impact

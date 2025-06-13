@@ -1,7 +1,9 @@
 'use client';
 
+import { AlertTriangle, Home, Mail, RefreshCw } from 'lucide-react';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
+
+import { logger } from '@/lib/utils/logger';
 
 /**
  * @fileoverview Error Boundary Components
@@ -87,11 +89,11 @@ export class GlobalErrorBoundary extends Component<
     const errorId = this.state.errorId || 'unknown';
 
     // Log error details
-    console.group(`🚨 Global Error Boundary (${errorId})`);
-    console.error('Error:', error);
-    console.error('Error Info:', errorInfo);
-    console.error('Stack trace:', error.stack);
-    console.groupEnd();
+    logger.error('Global Error Boundary caught error', error, {
+      errorId,
+      component: errorInfo.componentStack,
+      feature: 'error-boundary',
+    });
 
     // Update state with error info
     this.setState({ errorInfo });
@@ -140,21 +142,22 @@ export class GlobalErrorBoundary extends Component<
   /**
    * Report error to external monitoring service
    */
-  private reportError(error: Error, errorInfo: ErrorInfo, errorId: string) {
+  private reportError(_error: Error, _errorInfo: ErrorInfo, _errorId: string) {
     try {
       // In a real application, send to error reporting service
       // Example: Sentry, LogRocket, Bugsnag, etc.
-      const errorReport = {
-        errorId,
-        message: error.message,
-        stack: error.stack,
-        componentStack: errorInfo.componentStack,
-        timestamp: new Date().toISOString(),
-        url: window.location.href,
-        userAgent: navigator.userAgent,
-        userId: 'current-user-id', // Get from auth context
-        buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION,
-      };
+      // Error report would be constructed here
+      // const errorReport = {
+      //   errorId,
+      //   message: error.message,
+      //   stack: error.stack,
+      //   componentStack: errorInfo.componentStack,
+      //   timestamp: new Date().toISOString(),
+      //   url: window.location.href,
+      //   userAgent: navigator.userAgent,
+      //   userId: 'current-user-id', // Get from auth context
+      //   buildVersion: process.env.NEXT_PUBLIC_BUILD_VERSION,
+      // };
 
       // Example API call (implement based on your error reporting service)
       // fetch('/api/errors', {
@@ -162,9 +165,14 @@ export class GlobalErrorBoundary extends Component<
       //   body: JSON.stringify(errorReport),
       // });
 
-      console.log('Error reported:', errorReport);
+      logger.info('Error reported to monitoring service', {
+        errorId: _errorId,
+      });
     } catch (reportingError) {
-      console.error('Failed to report error:', reportingError);
+      logger.error(
+        'Failed to report error to monitoring service',
+        reportingError as Error
+      );
     }
   }
 
@@ -243,7 +251,7 @@ Please describe what you were doing when this error occurred:
           <div className="max-w-md w-full text-center">
             <div className="mb-8">
               <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
-                <FiAlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+                <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
 
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -282,7 +290,7 @@ Please describe what you were doing when this error occurred:
                   onClick={this.handleRetry}
                   className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
                 >
-                  <FiRefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4" />
                   Try Again {retryCount > 0 && `(${retryCount}/3)`}
                 </button>
               )}
@@ -291,7 +299,7 @@ Please describe what you were doing when this error occurred:
                 onClick={this.handleGoHome}
                 className="w-full flex items-center justify-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
               >
-                <FiHome className="w-4 h-4" />
+                <Home className="w-4 h-4" />
                 Go to Homepage
               </button>
 
@@ -299,7 +307,7 @@ Please describe what you were doing when this error occurred:
                 onClick={this.handleReportBug}
                 className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
-                <FiMail className="w-4 h-4" />
+                <Mail className="w-4 h-4" />
                 Report Bug
               </button>
             </div>
@@ -362,7 +370,10 @@ export class RouteErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('Route Error Boundary:', error, errorInfo);
+    logger.error('Route Error Boundary caught error', error, {
+      component: errorInfo.componentStack,
+      feature: 'route-error-boundary',
+    });
     this.props.onError?.(error, errorInfo);
   }
 
@@ -383,7 +394,7 @@ export class RouteErrorBoundary extends Component<
       return (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 my-4">
           <div className="flex items-start gap-3">
-            <FiAlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
+            <AlertTriangle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
             <div className="flex-1">
               <h3 className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
                 Section failed to load

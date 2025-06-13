@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { logger } from '@/lib/utils/logger';
 import {
   API_VERSION_CONFIG,
   createVersionedResponse,
@@ -106,7 +107,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 
       return result;
     } catch (error) {
-      console.error('API Handler Error:', error);
+      logger.error('API Handler Error:', error as Error);
 
       // Return standardized error response
       if (error instanceof Error) {

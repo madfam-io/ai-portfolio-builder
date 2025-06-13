@@ -1,11 +1,11 @@
-import React from 'react';
 import {
-  FiCheckCircle,
-  FiXCircle,
-  FiAlertTriangle,
-  FiInfo,
-  FiTarget,
-} from 'react-icons/fi';
+  AlertTriangle,
+  CheckCircle,
+  Info,
+  Target,
+  XCircle,
+} from 'lucide-react';
+import React from 'react';
 
 import type { ExperimentResults } from '@/types/experiments';
 
@@ -82,7 +82,7 @@ export default function StatisticalAnalysis({
       {/* Primary Metric */}
       <div className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-4">
         <div className="flex items-center gap-2 mb-2">
-          <FiTarget className="w-5 h-5 text-purple-600" />
+          <Target className="w-5 h-5 text-purple-600" />
           <h4 className="font-medium text-gray-900 dark:text-gray-100">
             Primary Metric
           </h4>
@@ -100,7 +100,7 @@ export default function StatisticalAnalysis({
 
         {hasWinner ? (
           <div className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <FiCheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-green-900 dark:text-green-100">
                 Statistically Significant Result
@@ -114,7 +114,7 @@ export default function StatisticalAnalysis({
           </div>
         ) : (
           <div className="flex items-start gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg">
-            <FiAlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-medium text-yellow-900 dark:text-yellow-100">
                 No Significant Difference Yet
@@ -144,11 +144,11 @@ export default function StatisticalAnalysis({
           }`}
         >
           {sampleSizeRec.status === 'sufficient' ? (
-            <FiCheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+            <CheckCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           ) : sampleSizeRec.status === 'warning' ? (
-            <FiAlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+            <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
           ) : (
-            <FiXCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+            <XCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
           )}
           <div>
             <p
@@ -258,7 +258,7 @@ export default function StatisticalAnalysis({
       {/* Recommendations */}
       <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
         <div className="flex items-start gap-3">
-          <FiInfo className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
               Recommendations

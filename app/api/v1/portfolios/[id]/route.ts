@@ -6,7 +6,16 @@ import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
-import { Portfolio } from '@/types/portfolio';
+import {
+  Portfolio,
+  Experience,
+  Education,
+  Project,
+  Skill,
+  Certification,
+  TemplateType,
+  PortfolioStatus,
+} from '@/types/portfolio';
 
 import { transformApiPortfolioToDb } from '../route';
 
@@ -389,15 +398,15 @@ function transformDbPortfolioToApi(dbPortfolio: DbPortfolio): Portfolio {
     avatarUrl: dbPortfolio.avatar_url || undefined,
     contact: dbPortfolio.contact || {},
     social: dbPortfolio.social || {},
-    experience: (dbPortfolio.experience as any) || [],
-    education: (dbPortfolio.education as any) || [],
-    projects: (dbPortfolio.projects as any) || [],
-    skills: (dbPortfolio.skills as any) || [],
-    certifications: (dbPortfolio.certifications as any) || [],
-    template: dbPortfolio.template as any,
+    experience: (dbPortfolio.experience as Experience[]) ?? [],
+    education: (dbPortfolio.education as Education[]) ?? [],
+    projects: (dbPortfolio.projects as Project[]) ?? [],
+    skills: (dbPortfolio.skills as Skill[]) ?? [],
+    certifications: (dbPortfolio.certifications as Certification[]) ?? [],
+    template: dbPortfolio.template as TemplateType,
     customization: dbPortfolio.customization || {},
     aiSettings: dbPortfolio.ai_settings || undefined,
-    status: dbPortfolio.status as any,
+    status: dbPortfolio.status as PortfolioStatus,
     subdomain: dbPortfolio.subdomain || undefined,
     customDomain: dbPortfolio.custom_domain || undefined,
     views: dbPortfolio.views,

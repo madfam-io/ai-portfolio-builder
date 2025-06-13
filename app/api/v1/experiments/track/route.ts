@@ -76,7 +76,7 @@ export async function POST(request: Request): Promise<Response> {
         await supabase
           .from('landing_page_variants')
           .update({
-            conversions: (currentVariant.conversions || 0) + 1,
+            conversions: ((currentVariant.conversions as number) ?? 0) + 1,
           })
           .eq('id', validatedData.variantId);
       }

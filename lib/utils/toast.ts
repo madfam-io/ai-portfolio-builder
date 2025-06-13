@@ -1,9 +1,8 @@
 import React from 'react';
-import toast from 'react-hot-toast';
 
 /**
  * Toast notification utility
- * Provides a simple API for showing notifications without using alert()
+ * Provides a simple API for showing notifications without external dependencies
  */
 
 interface ToastOptions {
@@ -17,22 +16,23 @@ interface ToastOptions {
     | 'bottom-right';
 }
 
-const defaultOptions: ToastOptions = {
-  duration: 4000,
-  position: 'top-center',
-};
-
+// Simple console-based implementation for now
+// In production, this would integrate with a proper notification system
 export const showToast = {
-  success: (message: string, options?: ToastOptions) => {
-    toast.success(message, { ...defaultOptions, ...options });
+  success: (message: string, _options?: ToastOptions) => {
+    console.info(`✅ ${message}`);
+    // In production, this would show a toast notification
   },
 
-  error: (message: string, options?: ToastOptions) => {
-    toast.error(message, { ...defaultOptions, ...options });
+  error: (message: string, _options?: ToastOptions) => {
+    console.error(`❌ ${message}`);
+    // In production, this would show a toast notification
   },
 
-  loading: (message: string, options?: ToastOptions) => {
-    return toast.loading(message, { ...defaultOptions, ...options });
+  loading: (message: string, _options?: ToastOptions) => {
+    console.info(`⏳ ${message}`);
+    // Return a mock ID for compatibility
+    return `toast-${Date.now()}`;
   },
 
   promise: <T>(
@@ -42,34 +42,61 @@ export const showToast = {
       success: string | ((data: T) => string);
       error: string | ((err: unknown) => string);
     },
-    options?: ToastOptions
+    _options?: ToastOptions
   ) => {
-    return toast.promise(promise, messages, { ...defaultOptions, ...options });
+    console.info(`⏳ ${messages.loading}`);
+
+    return promise
+      .then(data => {
+        const successMsg =
+          typeof messages.success === 'function'
+            ? messages.success(data)
+            : messages.success;
+        console.info(`✅ ${successMsg}`);
+        return data;
+      })
+      .catch(err => {
+        const errorMsg =
+          typeof messages.error === 'function'
+            ? messages.error(err)
+            : messages.error;
+        console.error(`❌ ${errorMsg}`);
+        throw err;
+      });
   },
 
-  dismiss: (toastId?: string) => {
-    if (toastId) {
-      toast.dismiss(toastId);
-    } else {
-      toast.dismiss();
-    }
+  dismiss: (_toastId?: string) => {
+    // No-op for console implementation
   },
 
-  custom: (message: React.ReactNode, options?: ToastOptions) => {
+  custom: (message: React.ReactNode, _options?: ToastOptions) => {
     if (message === undefined || message === null) {
       return;
     }
-    // react-hot-toast custom method accepts ReactNode directly
-    // We need to ensure it's a valid renderable type
-    if (typeof message === 'number' || typeof message === 'bigint') {
-      toast.custom(String(message), { ...defaultOptions, ...options });
+
+    // Convert ReactNode to string for console
+    let messageStr = '';
+    if (typeof message === 'string') {
+      messageStr = message;
+    } else if (typeof message === 'number' || typeof message === 'bigint') {
+      messageStr = String(message);
+    } else if (React.isValidElement(message)) {
+      // For React elements, just log a placeholder
+      messageStr = '[React Component]';
     } else {
-      // Type assertion is necessary due to react-hot-toast types
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast.custom(message as any, { ...defaultOptions, ...options });
+      messageStr = String(message);
     }
+
+    console.info(`ℹ️ ${messageStr}`);
   },
 };
 
-// Export toast instance for advanced usage
-export { toast };
+// Export a mock toast object for compatibility
+export const toast = {
+  success: showToast.success,
+  error: showToast.error,
+  loading: showToast.loading,
+  promise: showToast.promise,
+  dismiss: showToast.dismiss,
+  custom: showToast.custom,
+};

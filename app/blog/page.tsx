@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowRight, Calendar, User } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { FaArrowRight, FaCalendar, FaUser } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';
@@ -122,7 +122,7 @@ export default function BlogPage(): React.ReactElement {
                 <div className="p-6">
                   <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-400 mb-3">
                     <span className="flex items-center gap-1">
-                      <FaCalendar className="text-xs" />
+                      <Calendar className="text-xs" />
                       {new Date(post._date).toLocaleDateString()}
                     </span>
                     <span>{post._readTime}</span>
@@ -138,7 +138,7 @@ export default function BlogPage(): React.ReactElement {
 
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                      <FaUser className="text-xs" />
+                      <User className="text-xs" />
                       <span>{post._author}</span>
                     </div>
 
@@ -147,7 +147,7 @@ export default function BlogPage(): React.ReactElement {
                       className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 text-sm"
                     >
                       {t.blogReadMore}
-                      <FaArrowRight className="text-xs" />
+                      <ArrowRight className="text-xs" />
                     </Link>
                   </div>
                 </div>

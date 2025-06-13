@@ -1,14 +1,8 @@
 'use client';
 
+import { ArrowRight, CheckCircle, Clock, Play, User } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
-import {
-  FaPlay,
-  FaCheckCircle,
-  FaArrowRight,
-  FaClock,
-  FaUser,
-} from 'react-icons/fa';
 
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';
@@ -79,7 +73,7 @@ export default function DemoPage(): React.ReactElement {
                 href="/demo/interactive"
                 className="btn-primary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center"
               >
-                <FaPlay className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
+                <Play className="mr-3 text-lg group-hover:scale-110 transition-transform duration-200" />
                 <span>Try Interactive Demo</span>
               </Link>
 
@@ -87,7 +81,7 @@ export default function DemoPage(): React.ReactElement {
                 onClick={() => setIsVideoPlaying(true)}
                 className="btn-secondary group text-xl px-12 py-5 min-h-[64px] text-center inline-flex items-center justify-center"
               >
-                <FaPlay className="mr-3 text-lg" />
+                <Play className="mr-3 text-lg" />
                 <span>Watch Video Demo</span>
               </button>
             </div>
@@ -99,7 +93,7 @@ export default function DemoPage(): React.ReactElement {
               {isVideoPlaying ? (
                 <div className="aspect-video bg-black flex items-center justify-center">
                   <div className="text-center text-white">
-                    <FaPlay className="text-6xl mb-4 mx-auto opacity-50" />
+                    <Play className="text-6xl mb-4 mx-auto opacity-50" />
                     <p className="text-xl">Demo Video Coming Soon</p>
                     <p className="text-gray-400 mt-2">
                       In the meantime, try our interactive demo
@@ -119,7 +113,7 @@ export default function DemoPage(): React.ReactElement {
                 >
                   <div className="text-center text-white">
                     <div className="w-20 h-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-opacity-30 transition">
-                      <FaPlay className="text-3xl ml-1" />
+                      <Play className="text-3xl ml-1" />
                     </div>
                     <h3 className="text-2xl font-bold mb-2">
                       Portfolio Creation Demo
@@ -165,7 +159,7 @@ export default function DemoPage(): React.ReactElement {
                     {step._description}
                   </p>
                   <div className="flex items-center justify-center gap-1 text-sm text-purple-600 font-medium">
-                    <FaClock className="text-xs" />
+                    <Clock className="text-xs" />
                     {step._duration}
                   </div>
                 </div>
@@ -194,7 +188,7 @@ export default function DemoPage(): React.ReactElement {
               <div className="p-8">
                 <div className="flex items-center gap-6 mb-8">
                   <div className="w-24 h-24 bg-gradient-to-br from-purple-400 to-blue-500 rounded-full flex items-center justify-center">
-                    <FaUser className="text-2xl text-white" />
+                    <User className="text-2xl text-white" />
                   </div>
                   <div>
                     <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -259,7 +253,7 @@ export default function DemoPage(): React.ReactElement {
                   key={index}
                   className="flex items-center gap-3 bg-white _dark:bg-gray-800 p-4 rounded-lg shadow"
                 >
-                  <FaCheckCircle className="text-green-500 text-xl flex-shrink-0" />
+                  <CheckCircle className="text-green-500 text-xl flex-shrink-0" />
                   <span className="text-gray-900 dark:text-white font-medium">
                     {feature}
                   </span>
@@ -283,7 +277,7 @@ export default function DemoPage(): React.ReactElement {
                 className="bg-white text-purple-600 px-8 py-4 rounded-lg font-medium hover:bg-gray-100 transition inline-flex items-center justify-center gap-2"
               >
                 Start Free Trial
-                <FaArrowRight />
+                <ArrowRight />
               </Link>
               <Link
                 href="/demo/interactive"

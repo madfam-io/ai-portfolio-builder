@@ -1,7 +1,7 @@
 'use client';
 
+import { ChevronUp } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { FaChevronUp } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -37,7 +37,7 @@ export default function BackToTopButton(): React.ReactElement {
       aria-label={t.backToTop}
       title={t.backToTop}
     >
-      <FaChevronUp className="w-4 h-4" />
+      <ChevronUp className="w-4 h-4" />
     </button>
   );
 }

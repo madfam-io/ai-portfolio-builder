@@ -1,14 +1,7 @@
 'use client';
 
+import { Apple, Chrome, Facebook, Package, Square, Star } from 'lucide-react';
 import React from 'react';
-import {
-  FaGoogle,
-  FaMicrosoft,
-  FaApple,
-  FaAmazon,
-  FaFacebookF,
-  FaStar,
-} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -30,7 +23,7 @@ export default function SocialProof(): React.ReactElement {
             </div>
             <div className="flex items-center gap-1">
               {[1, 2, 3, 4, 5].map(star => (
-                <FaStar key={star} className="text-yellow-400 text-lg" />
+                <Star key={star} className="text-yellow-400 text-lg" />
               ))}
               <span className="ml-2 text-gray-600 dark:text-gray-300">
                 {t.rating}
@@ -54,7 +47,7 @@ export default function SocialProof(): React.ReactElement {
             <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg">
               <div className="flex items-center mb-4">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <FaStar key={star} className="text-yellow-400" />
+                  <Star key={star} className="text-yellow-400" />
                 ))}
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-4 italic">
@@ -67,7 +60,7 @@ export default function SocialProof(): React.ReactElement {
             <div className="bg-white dark:bg-gray-700 p-6 rounded-xl shadow-lg">
               <div className="flex items-center mb-4">
                 {[1, 2, 3, 4, 5].map(star => (
-                  <FaStar key={star} className="text-yellow-400" />
+                  <Star key={star} className="text-yellow-400" />
                 ))}
               </div>
               <p className="text-gray-600 dark:text-gray-300 mb-4 italic">
@@ -94,11 +87,11 @@ export default function SocialProof(): React.ReactElement {
 
         {/* Company Logos */}
         <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-12 opacity-60">
-          <FaGoogle className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
-          <FaMicrosoft className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
-          <FaApple className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
-          <FaAmazon className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
-          <FaFacebookF className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
+          <Chrome className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
+          <Square className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
+          <Apple className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
+          <Package className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
+          <Facebook className="text-2xl sm:text-3xl text-gray-700 dark:text-gray-400" />
         </div>
       </div>
     </section>

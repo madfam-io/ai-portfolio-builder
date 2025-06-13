@@ -1,22 +1,20 @@
 'use client';
 
+import {
+  ArrowLeft,
+  ChevronDown,
+  ChevronUp,
+  Eye,
+  Grid,
+  Layers,
+  Percent,
+  Plus,
+  Save,
+  Settings,
+  Trash2,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
-import {
-  FiPlus,
-  FiTrash2,
-  FiSettings,
-  FiEye,
-  FiChevronUp,
-  FiChevronDown,
-  FiGrid,
-  FiLayers,
-  // FiTarget,
-  // FiClock,
-  FiPercent,
-  FiArrowLeft,
-  FiSave,
-} from 'react-icons/fi';
 
 import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
@@ -405,7 +403,7 @@ export default function CreateExperimentPage(): JSX.Element {
                 onClick={() => router.push('/admin/experiments')}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
               >
-                <FiArrowLeft className="w-5 h-5" />
+                <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
@@ -421,7 +419,7 @@ export default function CreateExperimentPage(): JSX.Element {
               disabled={loading}
               className="btn-primary inline-flex items-center"
             >
-              <FiSave className="mr-2" />
+              <Save className="mr-2" />
               {loading ? 'Creating...' : 'Create Experiment'}
             </button>
           </div>
@@ -519,7 +517,7 @@ export default function CreateExperimentPage(): JSX.Element {
                         }
                         className="w-full px-3 py-2 pr-8 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
-                      <FiPercent className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Percent className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                     </div>
                   </div>
                 </div>
@@ -536,7 +534,7 @@ export default function CreateExperimentPage(): JSX.Element {
                   onClick={addVariant}
                   className="btn-secondary text-sm inline-flex items-center"
                 >
-                  <FiPlus className="mr-1" />
+                  <Plus className="mr-1" />
                   Add Variant
                 </button>
               </div>
@@ -597,7 +595,7 @@ export default function CreateExperimentPage(): JSX.Element {
 
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-2">
-                            <FiPercent className="w-4 h-4 text-gray-400" />
+                            <Percent className="w-4 h-4 text-gray-400" />
                             <input
                               type="number"
                               min="0"
@@ -616,7 +614,7 @@ export default function CreateExperimentPage(): JSX.Element {
                           </div>
 
                           <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
-                            <FiLayers className="w-4 h-4" />
+                            <Layers className="w-4 h-4" />
                             <span>{variant.components.length} components</span>
                           </div>
                         </div>
@@ -630,7 +628,7 @@ export default function CreateExperimentPage(): JSX.Element {
                           }}
                           className="p-1 text-red-600 _hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                         >
-                          <FiTrash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </button>
                       )}
                     </div>
@@ -657,7 +655,7 @@ export default function CreateExperimentPage(): JSX.Element {
                   onClick={() => setShowGallery(true)}
                   className="btn-secondary text-sm inline-flex items-center"
                 >
-                  <FiGrid className="mr-1" />
+                  <Grid className="mr-1" />
                   Add Component
                 </button>
               </div>
@@ -665,7 +663,7 @@ export default function CreateExperimentPage(): JSX.Element {
               <div className="space-y-3">
                 {variants[selectedVariantIndex]?.components.length === 0 ? (
                   <div className="text-center py-12 border-2 border-dashed border-gray-300 _dark:border-gray-600 rounded-lg">
-                    <FiLayers className="mx-auto w-12 h-12 text-gray-400 mb-3" />
+                    <Layers className="mx-auto w-12 h-12 text-gray-400 mb-3" />
                     <p className="text-gray-500 dark:text-gray-400 mb-3">
                       No components added yet
                     </p>
@@ -703,7 +701,7 @@ export default function CreateExperimentPage(): JSX.Element {
                                 disabled={index === 0}
                                 className="p-1 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
                               >
-                                <FiChevronUp className="w-4 h-4" />
+                                <ChevronUp className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() =>
@@ -721,7 +719,7 @@ export default function CreateExperimentPage(): JSX.Element {
                                 }
                                 className="p-1 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded disabled:opacity-30 disabled:cursor-not-allowed"
                               >
-                                <FiChevronDown className="w-4 h-4" />
+                                <ChevronDown className="w-4 h-4" />
                               </button>
                             </div>
 
@@ -747,7 +745,7 @@ export default function CreateExperimentPage(): JSX.Element {
                               className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                               title={component.visible ? 'Hide' : 'Show'}
                             >
-                              <FiEye
+                              <Eye
                                 className={`w-4 h-4 ${!component.visible ? 'text-gray-400' : ''}`}
                               />
                             </button>
@@ -762,7 +760,7 @@ export default function CreateExperimentPage(): JSX.Element {
                               className="p-2 _hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                               title="Configure"
                             >
-                              <FiSettings className="w-4 h-4" />
+                              <Settings className="w-4 h-4" />
                             </button>
                             <button
                               onClick={() =>
@@ -771,7 +769,7 @@ export default function CreateExperimentPage(): JSX.Element {
                               className="p-2 text-red-600 _hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                               title="Remove"
                             >
-                              <FiTrash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
                         </div>

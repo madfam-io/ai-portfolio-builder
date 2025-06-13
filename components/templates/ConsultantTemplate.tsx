@@ -1,17 +1,18 @@
 'use client';
 
-import React from 'react';
 import {
-  FiMail,
-  FiPhone,
-  FiTrendingUp,
-  FiTarget,
-  FiUsers,
-  FiAward,
-  FiDollarSign,
-  FiCalendar,
-  FiBarChart,
-} from 'react-icons/fi';
+  Award,
+  BarChart,
+  Calendar,
+  DollarSign,
+  Mail,
+  Phone,
+  Target as FiTarget,
+  TrendingUp as FiTrendingUp,
+  Users,
+  Users as FiUsers,
+} from 'lucide-react';
+import React from 'react';
 
 import { Portfolio } from '@/types/portfolio';
 
@@ -111,7 +112,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
             {/* Professional Photo Placeholder */}
             <div className="flex justify-center">
               <div className="w-56 h-56 bg-gradient-to-br from-green-400 to-blue-500 rounded-xl flex items-center justify-center shadow-2xl">
-                <FiUsers className="w-20 h-20 text-white" />
+                <Users className="w-20 h-20 text-white" />
               </div>
             </div>
           </div>
@@ -222,7 +223,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
                 >
                   <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
-                      <FiBarChart className="w-6 h-6 text-green-600" />
+                      <BarChart className="w-6 h-6 text-green-600" />
                     </div>
                     <div>
                       <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
@@ -292,7 +293,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
                     <div className="absolute w-4 h-4 bg-green-500 rounded-full -left-2 top-2"></div>
                     <div className="bg-white dark:bg-gray-700 rounded-lg p-6 shadow-md">
                       <div className="flex items-center gap-2 mb-2">
-                        <FiCalendar className="w-4 h-4 text-green-600" />
+                        <Calendar className="w-4 h-4 text-green-600" />
                         <span className="text-green-600 font-medium text-sm">
                           {exp.startDate} -{' '}
                           {exp.current ? 'Present' : exp.endDate}
@@ -333,7 +334,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
               ).map(([category, skills]) => (
                 <div key={category} className="mb-8">
                   <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white flex items-center gap-2">
-                    <FiAward className="w-5 h-5 text-green-600" />
+                    <Award className="w-5 h-5 text-green-600" />
                     {category}
                   </h3>
                   <div className="space-y-3">
@@ -387,21 +388,21 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
           {/* Contact Options */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <div className="bg-white/10 rounded-xl p-6">
-              <FiMail className="w-8 h-8 mx-auto mb-4" />
+              <Mail className="w-8 h-8 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Email Consultation</h3>
               <p className="text-sm text-green-100">
                 Get expert advice via email
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6">
-              <FiPhone className="w-8 h-8 mx-auto mb-4" />
+              <Phone className="w-8 h-8 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Strategy Call</h3>
               <p className="text-sm text-green-100">
                 30-minute strategy session
               </p>
             </div>
             <div className="bg-white/10 rounded-xl p-6">
-              <FiDollarSign className="w-8 h-8 mx-auto mb-4" />
+              <DollarSign className="w-8 h-8 mx-auto mb-4" />
               <h3 className="font-semibold mb-2">Project Proposal</h3>
               <p className="text-sm text-green-100">
                 Custom engagement proposal

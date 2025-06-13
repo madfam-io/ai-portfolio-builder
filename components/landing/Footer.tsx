@@ -1,9 +1,9 @@
 'use client';
 
+import { Github, Linkedin, Twitter } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import { FaGithub, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';
@@ -162,7 +162,7 @@ export default function Footer(): React.ReactElement {
               rel="noopener noreferrer"
               aria-label="Follow PRISMA on Twitter"
             >
-              <FaTwitter className="text-xl" />
+              <Twitter className="text-xl" />
             </a>
             <a
               href="https://linkedin.com/company/prisma-by-madfam"
@@ -171,7 +171,7 @@ export default function Footer(): React.ReactElement {
               rel="noopener noreferrer"
               aria-label="Follow PRISMA on LinkedIn"
             >
-              <FaLinkedinIn className="text-xl" />
+              <Linkedin className="text-xl" />
             </a>
             <a
               href="https://github.com/aldoruizluna/ai-portfolio-builder"
@@ -180,7 +180,7 @@ export default function Footer(): React.ReactElement {
               rel="noopener noreferrer"
               aria-label="View PRISMA on GitHub"
             >
-              <FaGithub className="text-xl" />
+              <Github className="text-xl" />
             </a>
           </div>
         </div>

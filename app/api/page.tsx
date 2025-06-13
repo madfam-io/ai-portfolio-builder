@@ -1,8 +1,8 @@
 'use client';
 
+import { Book, Code, Key, Shield } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { FaBook, FaCode, FaKey, FaShieldAlt } from 'react-icons/fa';
 
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';
@@ -30,7 +30,7 @@ export default function APIPage(): React.ReactElement {
           {/* API Features */}
           <div className="grid md:grid-cols-2 gap-8 mb-16">
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <FaCode className="text-3xl text-purple-600 mb-4" />
+              <Code className="text-3xl text-purple-600 mb-4" />
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t.apiRestfulTitle}
               </h3>
@@ -40,7 +40,7 @@ export default function APIPage(): React.ReactElement {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <FaKey className="text-3xl text-blue-600 mb-4" />
+              <Key className="text-3xl text-blue-600 mb-4" />
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t.apiAuthTitle}
               </h3>
@@ -50,7 +50,7 @@ export default function APIPage(): React.ReactElement {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <FaBook className="text-3xl text-green-600 mb-4" />
+              <Book className="text-3xl text-green-600 mb-4" />
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t.apiDocsTitle}
               </h3>
@@ -60,7 +60,7 @@ export default function APIPage(): React.ReactElement {
             </div>
 
             <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg">
-              <FaShieldAlt className="text-3xl text-red-600 mb-4" />
+              <Shield className="text-3xl text-red-600 mb-4" />
               <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">
                 {t.apiEnterpriseTitle}
               </h3>

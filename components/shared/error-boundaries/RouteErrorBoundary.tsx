@@ -1,8 +1,8 @@
 'use client';
 
+import { AlertTriangle, ArrowLeft, RefreshCw } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import { FiAlertTriangle, FiArrowLeft, FiRefreshCw } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import {
@@ -135,7 +135,7 @@ function InlineErrorFallback({
     <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 my-4">
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <FiAlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+          <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-red-800 dark:text-red-200 mb-2">
@@ -162,7 +162,7 @@ function InlineErrorFallback({
             onClick={onRetry}
             className="inline-flex items-center gap-2 text-sm bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors"
           >
-            <FiRefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-4 h-4" />
             {(t as any).errors?.tryAgain || 'Try Again'}
           </button>
         </div>
@@ -197,7 +197,7 @@ function FullPageErrorFallback({
       <div className="max-w-md w-full text-center">
         <div className="mb-8">
           <div className="mx-auto w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-4">
-            <FiAlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
+            <AlertTriangle className="w-8 h-8 text-red-600 dark:text-red-400" />
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -227,7 +227,7 @@ function FullPageErrorFallback({
             onClick={onRetry}
             className="w-full flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-colors"
           >
-            <FiRefreshCw className="w-4 h-4" />
+            <RefreshCw className="w-4 h-4" />
             {(t as any).errors?.tryAgain || 'Try Again'}
           </button>
 
@@ -235,7 +235,7 @@ function FullPageErrorFallback({
             onClick={handleGoBack}
             className="w-full flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
-            <FiArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" />
             {(t as any).errors?.goBack || 'Go Back'}
           </button>
         </div>

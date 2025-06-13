@@ -1,17 +1,19 @@
 'use client';
 
-import React, { useState } from 'react';
 import {
-  FiSettings,
-  FiType,
-  FiLayout,
-  FiEye,
-  FiSun,
-  FiMoon,
-  FiMove,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
-
+  Eye as FiEye,
+  Layout,
+  Layout as FiLayout,
+  Moon,
+  Move,
+  Settings,
+  Settings as FiSettings,
+  Sparkles,
+  Sun,
+  Type,
+  Type as FiType,
+} from 'lucide-react';
+import React, { useState } from 'react';
 interface ColorScheme {
   name: string;
   primary: string;
@@ -238,7 +240,7 @@ export function VisualCustomizationTools({
       {/* Header */}
       <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
         <div className="flex items-center space-x-3">
-          <FiSettings className="w-8 h-8" />
+          <Settings className="w-8 h-8" />
           <div>
             <h3 className="text-xl font-bold">Visual Customization</h3>
             <p className="text-purple-100">
@@ -256,7 +258,7 @@ export function VisualCustomizationTools({
             <span className="text-purple-700 dark:text-purple-300 font-medium">
               Applying changes...
             </span>
-            <HiSparkles className="w-4 h-4 text-purple-600 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-purple-600 animate-pulse" />
           </div>
         </div>
       )}
@@ -454,7 +456,7 @@ export function VisualCustomizationTools({
                         {layout.description}
                       </p>
                     </div>
-                    <FiMove className="w-5 h-5 text-gray-400" />
+                    <Move className="w-5 h-5 text-gray-400" />
                   </div>
 
                   {/* Layout Preview */}
@@ -497,16 +499,16 @@ export function VisualCustomizationTools({
                   }`}
                 >
                   {isDarkMode ? (
-                    <FiMoon className="w-8 h-8 text-gray-800 m-4" />
+                    <Moon className="w-8 h-8 text-gray-800 m-4" />
                   ) : (
-                    <FiSun className="w-8 h-8 text-yellow-500 m-4" />
+                    <Sun className="w-8 h-8 text-yellow-500 m-4" />
                   )}
                 </span>
                 <div className="absolute left-4 text-gray-600">
-                  <FiSun className="w-6 h-6" />
+                  <Sun className="w-6 h-6" />
                 </div>
                 <div className="absolute right-4 text-gray-400">
-                  <FiMoon className="w-6 h-6" />
+                  <Moon className="w-6 h-6" />
                 </div>
               </button>
             </div>
@@ -533,7 +535,7 @@ export function VisualCustomizationTools({
           <div className="space-y-2 text-sm">
             {selectedColors && (
               <div className="flex items-center space-x-2">
-                <FiSettings className="w-4 h-4 text-purple-600" />
+                <Settings className="w-4 h-4 text-purple-600" />
                 <span className="text-gray-600 dark:text-gray-400">
                   Color scheme: {selectedColors.name}
                 </span>
@@ -541,7 +543,7 @@ export function VisualCustomizationTools({
             )}
             {selectedFont && (
               <div className="flex items-center space-x-2">
-                <FiType className="w-4 h-4 text-blue-600" />
+                <Type className="w-4 h-4 text-blue-600" />
                 <span className="text-gray-600 dark:text-gray-400">
                   Typography: {selectedFont.name}
                 </span>
@@ -549,7 +551,7 @@ export function VisualCustomizationTools({
             )}
             {selectedLayout && (
               <div className="flex items-center space-x-2">
-                <FiLayout className="w-4 h-4 text-green-600" />
+                <Layout className="w-4 h-4 text-green-600" />
                 <span className="text-gray-600 dark:text-gray-400">
                   Layout: {selectedLayout.name}
                 </span>

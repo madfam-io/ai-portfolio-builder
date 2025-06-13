@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowLeft, Check } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import { FiArrowLeft, FiCheck } from 'react-icons/fi';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -90,19 +90,19 @@ export function InteractivePreviewSection({
         <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-3">
           <div className="flex items-center justify-center space-x-6 text-sm">
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <FiCheck className="w-4 h-4 text-green-500" />
+              <Check className="w-4 h-4 text-green-500" />
               <span>Custom Domain Support</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <FiCheck className="w-4 h-4 text-green-500" />
+              <Check className="w-4 h-4 text-green-500" />
               <span>SEO Optimized</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <FiCheck className="w-4 h-4 text-green-500" />
+              <Check className="w-4 h-4 text-green-500" />
               <span>Analytics Dashboard</span>
             </div>
             <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-              <FiCheck className="w-4 h-4 text-green-500" />
+              <Check className="w-4 h-4 text-green-500" />
               <span>SSL Certificate</span>
             </div>
           </div>
@@ -127,7 +127,7 @@ export function InteractivePreviewSection({
                 className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
               >
                 <span>{(t as any).demoGetStartedFreeTrial}</span>
-                <FiArrowLeft className="w-4 h-4 rotate-180" />
+                <ArrowLeft className="w-4 h-4 rotate-180" />
               </Link>
             </div>
 

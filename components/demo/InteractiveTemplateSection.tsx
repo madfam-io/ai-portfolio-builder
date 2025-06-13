@@ -1,8 +1,11 @@
 'use client';
 
+import {
+  Code as FiCode,
+  Layout as FiLayout,
+  Palette as FaPalette,
+} from 'lucide-react';
 import React from 'react';
-import { FaPalette } from 'react-icons/fa';
-import { FiCode, FiLayout } from 'react-icons/fi';
 
 import { TemplateType } from '@/types/portfolio';
 

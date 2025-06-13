@@ -289,24 +289,28 @@ function enhanceRecommendation(
   preferences: Record<string, unknown>
 ): unknown {
   // Apply business rules and preferences
-  const enhancedAlternatives = (aiRecommendation as any).alternatives.map(
-    (alt: unknown) => ({
-      ...(alt as Record<string, unknown>),
-      reasoning: generateReasoningForTemplate((alt as any).template, profile),
-      preview: `/templates/${(alt as any).template}-preview.jpg`,
-      features: getTemplateFeatures((alt as any).template),
-    })
-  );
+  const enhancedAlternatives = (
+    (aiRecommendation as Record<string, unknown>).alternatives as Array<
+      Record<string, unknown>
+    >
+  ).map((alt: Record<string, unknown>) => ({
+    ...alt,
+    reasoning: generateReasoningForTemplate(alt.template as string, profile),
+    preview: `/templates/${alt.template as string}-preview.jpg`,
+    features: getTemplateFeatures(alt.template as string),
+  }));
 
   // Add style preference adjustments
-  if (preferences.style) {
+  if (preferences.style !== undefined && preferences.style !== null) {
     const styleBonus = calculateStyleBonus(
-      (aiRecommendation as any).recommendedTemplate,
+      (aiRecommendation as Record<string, unknown>)
+        .recommendedTemplate as string,
       preferences.style as string
     );
-    (aiRecommendation as any).confidence = Math.min(
+    (aiRecommendation as Record<string, unknown>).confidence = Math.min(
       0.95,
-      (aiRecommendation as any).confidence + styleBonus
+      ((aiRecommendation as Record<string, unknown>).confidence as number) +
+        styleBonus
     );
   }
 
@@ -314,15 +318,18 @@ function enhanceRecommendation(
     ...(aiRecommendation as Record<string, unknown>),
     alternatives: enhancedAlternatives,
     reasoning: generateReasoningForTemplate(
-      (aiRecommendation as any).recommendedTemplate,
+      (aiRecommendation as Record<string, unknown>)
+        .recommendedTemplate as string,
       profile
     ),
-    preview: `/templates/${(aiRecommendation as any).recommendedTemplate}-preview.jpg`,
+    preview: `/templates/${(aiRecommendation as Record<string, unknown>).recommendedTemplate as string}-preview.jpg`,
     features: getTemplateFeatures(
-      (aiRecommendation as any).recommendedTemplate
+      (aiRecommendation as Record<string, unknown>)
+        .recommendedTemplate as string
     ),
     customizations: getRecommendedCustomizations(
-      (aiRecommendation as any).recommendedTemplate,
+      (aiRecommendation as Record<string, unknown>)
+        .recommendedTemplate as string,
       profile
     ),
   };
@@ -363,7 +370,7 @@ function getTemplateFeatures(template: string): string[] {
     minimal: ['Clean typography', 'Fast loading', 'Mobile optimized'],
   };
 
-  return featuresMap[template as keyof typeof featuresMap] || [];
+  return featuresMap[template as keyof typeof featuresMap] ?? [];
 }
 
 function getRecommendedCustomizations(

@@ -1,16 +1,16 @@
 'use client';
 
+import {
+  ArrowLeft,
+  BookOpen,
+  Check,
+  RefreshCw,
+  Save,
+  Settings,
+  Sparkles,
+} from 'lucide-react';
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import {
-  FiArrowLeft,
-  FiBookOpen,
-  FiSettings,
-  FiSave,
-  FiRefreshCw,
-  FiCheck,
-} from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
 
 import { AIModelComparison } from '@/components/demo/AIModelComparison';
 import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';
@@ -176,12 +176,12 @@ Social preview includes:
               href="/demo"
               className="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
             >
-              <FiArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-5 h-5" />
               <span>{t.demoBackToDemo}</span>
             </Link>
 
             <div className="flex items-center space-x-2">
-              <FiBookOpen className="w-5 h-5 text-purple-600" />
+              <BookOpen className="w-5 h-5 text-purple-600" />
               <span className="font-semibold text-gray-900 dark:text-white">
                 {t.demoPrismaInteractiveDemo}
               </span>
@@ -234,13 +234,13 @@ Social preview includes:
               className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
               title={t.demoResetDemo}
             >
-              <FiSettings className="w-5 h-5" />
+              <Settings className="w-5 h-5" />
             </button>
             <Link
               href="/auth/signup"
               className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
             >
-              <FiSave className="w-4 h-4" />
+              <Save className="w-4 h-4" />
               <span>{t.demoCreateAccount}</span>
             </Link>
           </div>
@@ -266,7 +266,7 @@ Social preview includes:
                 <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white p-6">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-xl font-bold">Bio Enhancement</h3>
-                    <HiSparkles className="w-6 h-6" />
+                    <Sparkles className="w-6 h-6" />
                   </div>
                   <p className="text-purple-100">
                     Transform basic descriptions into powerful professional
@@ -397,7 +397,7 @@ Social preview includes:
               fallback={
                 <div className="flex items-center justify-center p-12">
                   <div className="text-center">
-                    <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
+                    <RefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                     <p className="text-gray-600 dark:text-gray-400">
                       {t.demoLoadingTemplates}
                     </p>
@@ -592,7 +592,7 @@ Social preview includes:
                               />
                               <div className="mt-2">
                                 <button className="text-xs text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
-                                  <HiSparkles className="inline w-3 h-3 mr-1" />
+                                  <Sparkles className="inline w-3 h-3 mr-1" />
                                   Enhance with AI
                                 </button>
                               </div>
@@ -661,15 +661,15 @@ Social preview includes:
                       </h3>
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <FiCheck className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-green-500" />
                           <span>{t.demoAiBioEnhancement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <FiCheck className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-green-500" />
                           <span>{t.demoProjectManagement}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <FiCheck className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-green-500" />
                           <span>{t.demoSkillsExperience}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
@@ -677,11 +677,11 @@ Social preview includes:
                           <span>{t.demoCustomSections}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <FiCheck className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-green-500" />
                           <span>{t.demoLinkedinImport}</span>
                         </div>
                         <div className="flex items-center space-x-3 text-gray-600 dark:text-gray-400">
-                          <FiCheck className="w-4 h-4 text-green-500" />
+                          <Check className="w-4 h-4 text-green-500" />
                           <span>{t.demoGithubIntegration}</span>
                         </div>
                       </div>
@@ -710,7 +710,7 @@ Social preview includes:
                       fallback={
                         <div className="flex items-center justify-center h-96">
                           <div className="text-center">
-                            <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
+                            <RefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                             <p className="text-gray-600 dark:text-gray-400">
                               {t.demoLoadingPreview}
                             </p>
@@ -754,7 +754,7 @@ Social preview includes:
               fallback={
                 <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
                   <div className="flex items-center justify-center">
-                    <FiRefreshCw className="animate-spin text-lg text-purple-600 mr-2" />
+                    <RefreshCw className="animate-spin text-lg text-purple-600 mr-2" />
                     <span className="text-gray-600 dark:text-gray-400">
                       {t.demoLoadingControls}
                     </span>
@@ -790,7 +790,7 @@ Social preview includes:
                       </span>
                     </div>
                     <button className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300">
-                      <FiCheck className="w-4 h-4" />
+                      <Check className="w-4 h-4" />
                     </button>
                   </div>
                 </div>
@@ -830,7 +830,7 @@ Social preview includes:
                       fallback={
                         <div className="flex items-center justify-center h-96">
                           <div className="text-center">
-                            <FiRefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
+                            <RefreshCw className="animate-spin text-3xl text-purple-600 mx-auto mb-4" />
                             <p className="text-gray-600 dark:text-gray-400">
                               {t.demoLoadingPreview}
                             </p>
@@ -849,19 +849,19 @@ Social preview includes:
               <div className="border-b border-gray-200 dark:border-gray-700 px-6 py-3">
                 <div className="flex items-center justify-center space-x-6 text-sm">
                   <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <Check className="w-4 h-4 text-green-500" />
                     <span>Custom Domain Support</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <Check className="w-4 h-4 text-green-500" />
                     <span>SEO Optimized</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <Check className="w-4 h-4 text-green-500" />
                     <span>Analytics Dashboard</span>
                   </div>
                   <div className="flex items-center space-x-2 text-gray-600 dark:text-gray-400">
-                    <FiCheck className="w-4 h-4 text-green-500" />
+                    <Check className="w-4 h-4 text-green-500" />
                     <span>SSL Certificate</span>
                   </div>
                 </div>
@@ -886,7 +886,7 @@ Social preview includes:
                       className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
                     >
                       <span>{t.demoGetStartedFreeTrial}</span>
-                      <FiArrowLeft className="w-4 h-4 rotate-180" />
+                      <ArrowLeft className="w-4 h-4 rotate-180" />
                     </Link>
                   </div>
 

@@ -1,5 +1,6 @@
 import { StateCreator, StoreMutatorIdentifier } from 'zustand';
 
+import { logger as utilLogger } from '@/lib/utils/logger';
 /**
  * Store Middleware
  * Custom middleware for Zustand stores
@@ -20,9 +21,9 @@ export const logger =
     config(
       ((partial: any, replace?: any) => {
         if (process.env.NODE_ENV === 'development') {
-          console.log('  applying', partial);
+          utilLogger.debug('  applying', partial);
           set(partial, replace);
-          console.log('  new state', get());
+          utilLogger.debug('  new state', { state: get() });
         } else {
           set(partial, replace);
         }
@@ -77,18 +78,18 @@ export const actionLogger =
     Mcs extends [StoreMutatorIdentifier, unknown][] = [],
   >(
     config: StateCreator<T, Mps, Mcs, T>,
-    storeName: string
+    _storeName: string
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) => {
     const state = config(
       ((partial: any, replace?: any) => {
         if (process.env.NODE_ENV === 'development') {
-          const timestamp = new Date().toISOString();
-          console.group(`[${storeName}] State Update @ ${timestamp}`);
-          console.log('Previous State:', get());
+          // const timestamp = new Date().toISOString();
+          // Group logging removed
+          utilLogger.debug('Previous State:', { state: get() });
           set(partial, replace);
-          console.log('Next State:', get());
-          console.groupEnd();
+          utilLogger.debug('Next State:', { state: get() });
+          // Group end removed
         } else {
           set(partial, replace);
         }
@@ -104,7 +105,7 @@ export const actionLogger =
       if (typeof state[key as keyof typeof state] === 'function') {
         wrappedState[key] = (...args: any[]) => {
           if (process.env.NODE_ENV === 'development') {
-            console.log(`[${storeName}] Action: ${key}`, args);
+            utilLogger.debug(`[${_storeName}] Action: ${key}`, { args });
           }
           return (state[key as keyof typeof state] as any)(...args);
         };

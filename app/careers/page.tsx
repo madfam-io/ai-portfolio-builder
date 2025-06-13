@@ -1,15 +1,16 @@
 'use client';
 
+import {
+  Clock,
+  Globe as FaGlobe,
+  Heart as FaHeart,
+  MapPin,
+  Rocket as FaRocket,
+  Users,
+  Users as FaUsers,
+} from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
-import {
-  FaMapMarkerAlt,
-  FaClock,
-  FaUsers,
-  FaHeart,
-  FaRocket,
-  FaGlobe,
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -154,15 +155,15 @@ export default function CareersPage(): React.ReactElement {
                       </h3>
                       <div className="flex flex-wrap gap-4 text-sm text-gray-600 dark:text-gray-400">
                         <span className="flex items-center gap-1">
-                          <FaUsers className="text-xs" />
+                          <Users className="text-xs" />
                           {position._department}
                         </span>
                         <span className="flex items-center gap-1">
-                          <FaMapMarkerAlt className="text-xs" />
+                          <MapPin className="text-xs" />
                           {position._location}
                         </span>
                         <span className="flex items-center gap-1">
-                          <FaClock className="text-xs" />
+                          <Clock className="text-xs" />
                           {position._type}
                         </span>
                       </div>

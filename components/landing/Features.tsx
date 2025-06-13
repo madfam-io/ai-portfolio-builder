@@ -1,14 +1,14 @@
 'use client';
 
-import React from 'react';
 import {
-  FaMagic,
-  FaLink,
-  FaPalette,
-  FaGlobe,
-  FaChartLine,
-  FaMobileAlt,
-} from 'react-icons/fa';
+  Globe,
+  Link,
+  Palette,
+  Smartphone,
+  Sparkles,
+  TrendingUp,
+} from 'lucide-react';
+import React from 'react';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -37,7 +37,7 @@ export default function Features(): React.ReactElement {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaMagic className="text-2xl text-white" />
+              <Sparkles className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.aiContentTitle}
@@ -49,7 +49,7 @@ export default function Features(): React.ReactElement {
 
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaLink className="text-2xl text-white" />
+              <Link className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.oneClickTitle}
@@ -61,7 +61,7 @@ export default function Features(): React.ReactElement {
 
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaPalette className="text-2xl text-white" />
+              <Palette className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.templatesTitle}
@@ -73,7 +73,7 @@ export default function Features(): React.ReactElement {
 
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaGlobe className="text-2xl text-white" />
+              <Globe className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.customDomainTitle}
@@ -85,7 +85,7 @@ export default function Features(): React.ReactElement {
 
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaChartLine className="text-2xl text-white" />
+              <TrendingUp className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.publishTitle}
@@ -97,7 +97,7 @@ export default function Features(): React.ReactElement {
 
           <div className="card-feature group">
             <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-300">
-              <FaMobileAlt className="text-2xl text-white" />
+              <Smartphone className="text-2xl text-white" />
             </div>
             <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
               {t.mobileTitle}

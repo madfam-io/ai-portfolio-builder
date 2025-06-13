@@ -8,6 +8,8 @@ import React, {
   ReactNode,
 } from 'react';
 
+import { logger } from '@/lib/utils/logger';
+
 import * as enTranslations from './translations/en';
 import * as esTranslations from './translations/es';
 import { flattenTranslations } from './utils';
@@ -142,7 +144,7 @@ export function LanguageProvider({
         }
       } catch (error) {
         // Handle localStorage errors gracefully
-        console.warn('Failed to access localStorage:', error);
+        logger.warn('Failed to access localStorage:', { error });
       }
       setIsLoaded(true);
     }
@@ -160,7 +162,7 @@ export function LanguageProvider({
       try {
         localStorage.setItem('language', newLanguage);
       } catch (error) {
-        console.warn('Failed to save language preference:', error);
+        logger.warn('Failed to save language preference:', { error });
       }
     }
   };
@@ -217,7 +219,7 @@ export function useLanguage(): LanguageContextValue {
 
   if (!context) {
     // Provide graceful fallback when used outside provider
-    console.warn('useLanguage called outside LanguageProvider, using fallback');
+    logger.warn('useLanguage called outside LanguageProvider, using fallback');
     return {
       language: 'es',
       setLanguage: () => {},

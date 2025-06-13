@@ -166,7 +166,7 @@ export async function POST(
     };
 
     // Sync metrics
-    if (syncMetrics) {
+    if (syncMetrics === true) {
       try {
         await analyticsService.syncRepositoryMetrics(repositoryId);
         results.synced.push('metrics');
@@ -185,7 +185,7 @@ export async function POST(
     }
 
     // Sync pull requests
-    if (syncPullRequests) {
+    if (syncPullRequests === true) {
       try {
         await analyticsService.syncPullRequests(repositoryId);
         results.synced.push('pull_requests');
@@ -204,7 +204,7 @@ export async function POST(
     }
 
     // Sync contributors
-    if (syncContributors) {
+    if (syncContributors === true) {
       try {
         await analyticsService.syncContributors(repositoryId);
         results.synced.push('contributors');
@@ -223,7 +223,7 @@ export async function POST(
     }
 
     // Sync commit analytics
-    if (syncCommits) {
+    if (syncCommits === true) {
       try {
         await analyticsService.syncCommitAnalytics(repositoryId);
         results.synced.push('commits');

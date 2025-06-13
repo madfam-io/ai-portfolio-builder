@@ -1,8 +1,8 @@
 'use client';
 
+import { ArrowLeft, FileText, Home, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import { FiArrowLeft, FiFileText, FiHome, FiSearch } from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -39,7 +39,7 @@ export function NotFoundPage() {
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center">
-                <FiFileText className="w-12 h-12 text-purple-600 dark:text-purple-400" />
+                <FileText className="w-12 h-12 text-purple-600 dark:text-purple-400" />
               </div>
             </div>
           </div>
@@ -61,7 +61,7 @@ export function NotFoundPage() {
             onClick={handleGoHome}
             className="inline-flex items-center justify-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            <FiHome className="w-5 h-5" />
+            <Home className="w-5 h-5" />
             {(t as any).errors?.goToHomepage || 'Go to Homepage'}
           </button>
 
@@ -69,7 +69,7 @@ export function NotFoundPage() {
             onClick={handleGoBack}
             className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
           >
-            <FiArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-5 h-5" />
             {(t as any).errors?.goBack || 'Go Back'}
           </button>
         </div>
@@ -131,7 +131,7 @@ export function ResourceNotFound({
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-        <FiFileText className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+        <FileText className="w-8 h-8 text-gray-400 dark:text-gray-500" />
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -152,7 +152,7 @@ export function ResourceNotFound({
         onClick={handleGoBack}
         className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
       >
-        <FiArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4" />
         {(t as any).errors?.goBack || 'Go Back'}
       </button>
     </div>
@@ -178,7 +178,7 @@ export function SearchNotFound({
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-        <FiSearch className="w-8 h-8 text-gray-400 dark:text-gray-500" />
+        <Search className="w-8 h-8 text-gray-400 dark:text-gray-500" />
       </div>
 
       <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
@@ -271,7 +271,7 @@ export function DynamicNotFound({
         onClick={() => router.back()}
         className="inline-flex items-center justify-center gap-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
       >
-        <FiArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4" />
         {(t as any).errors?.goBack || 'Go Back'}
       </button>
     </div>

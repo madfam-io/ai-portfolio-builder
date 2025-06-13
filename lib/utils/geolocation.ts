@@ -1,3 +1,5 @@
+import { logger } from '@/lib/utils/logger';
+
 /**
  * @fileoverview Geolocation detection utility for automatic language setting
  *
@@ -167,7 +169,7 @@ async function detectCountryFromIP(): Promise<string | null> {
     // IP geolocation failed - this is expected in many environments
     // Only log in development to avoid console noise
     if (process.env.NODE_ENV === 'development') {
-      console.debug('IP geolocation detection failed:', error);
+      logger.debug('IP geolocation detection failed:', { error });
     }
   }
 

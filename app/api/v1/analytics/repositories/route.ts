@@ -115,13 +115,15 @@ export async function POST(request: Request): Promise<Response> {
       .eq('user_id', user.id)
       .single();
 
-    const lastSynced = integration?.last_synced_at
-      ? new Date(integration.last_synced_at)
-      : new Date(0);
+    const lastSynced =
+      integration?.last_synced_at !== undefined &&
+      integration?.last_synced_at !== null
+        ? new Date(integration.last_synced_at)
+        : new Date(0);
     const hoursSinceSync =
       (Date.now() - lastSynced.getTime()) / (1000 * 60 * 60);
 
-    if (!force && hoursSinceSync < 1) {
+    if (force !== true && hoursSinceSync < 1) {
       return NextResponse.json(
         { error: 'Sync too recent, wait at least 1 hour or use force=true' },
         { status: 429 }

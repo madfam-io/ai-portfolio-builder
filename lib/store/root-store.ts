@@ -1,6 +1,8 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
+import { logger } from '@/lib/utils/logger';
+
 import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
@@ -32,7 +34,7 @@ export const useRootStore = create<RootState>()(
             useUIStore.getState().clearToasts();
             useUIStore.getState().closeAllModals();
           } catch (error) {
-            console.error('Sign out error:', error);
+            logger.error('Sign out error:', error as Error);
             throw error;
           }
         },

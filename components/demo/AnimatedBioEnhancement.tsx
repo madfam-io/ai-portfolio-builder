@@ -1,9 +1,7 @@
 'use client';
 
+import { Check, Sparkles, TrendingUp, Zap } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { FiCheck, FiTrendingUp, FiZap } from 'react-icons/fi';
-import { HiSparkles } from 'react-icons/hi';
-
 interface AnimatedBioEnhancementProps {
   originalBio: string;
   onEnhance: (enhancedBio: string) => void;
@@ -228,15 +226,15 @@ export function AnimatedBioEnhancement({
       >
         {isEnhancing ? (
           <>
-            <HiSparkles className="w-5 h-5 animate-pulse" />
+            <Sparkles className="w-5 h-5 animate-pulse" />
             <span>AI is enhancing your bio...</span>
             <div className="ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
           </>
         ) : (
           <>
-            <FiZap className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <Zap className="w-5 h-5 group-hover:scale-110 transition-transform" />
             <span>Enhance with AI</span>
-            <HiSparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
           </>
         )}
       </button>
@@ -250,7 +248,7 @@ export function AnimatedBioEnhancement({
             </label>
             {!isEnhancing && (
               <div className="flex items-center space-x-2">
-                <FiTrendingUp className="w-4 h-4 text-green-600" />
+                <TrendingUp className="w-4 h-4 text-green-600" />
                 <span className="text-sm font-bold text-green-600">
                   {Math.round(qualityScore)}% Quality Score
                 </span>
@@ -313,7 +311,7 @@ export function AnimatedBioEnhancement({
                 className="flex items-start space-x-2 text-sm text-gray-600 dark:text-gray-400 animate-slide-in"
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <FiCheck className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                <Check className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
                 <span>{improvement}</span>
               </div>
             ))}
