@@ -7,9 +7,9 @@
 
 'use client';
 
+import { FiAlertCircle, FiRefreshCw } from 'react-icons/fi';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import FiAlertCircle from 'react-icons/fi/FiAlertCircle';
-import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
+
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { serializeError } from '@/lib/utils/error-handling/error-utils';

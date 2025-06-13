@@ -1,10 +1,10 @@
 'use client';
 
+import { FaArrowLeft, FaSpinner } from 'react-icons/fa';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import React, { useState, useEffect, Suspense } from 'react';
-import FaArrowLeft from 'react-icons/fa/FaArrowLeft';
-import FaSpinner from 'react-icons/fa/FaSpinner';
+
 
 import { PortfolioEditor } from '@/components/editor/index.lazy'; // Use lazy-loaded version
 import { preloadEditorComponents } from '@/components/editor/index.lazy';

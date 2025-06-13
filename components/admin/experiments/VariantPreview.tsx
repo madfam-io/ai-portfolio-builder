@@ -5,10 +5,10 @@
  * with the configured components and theme.
  */
 
+import { FiMonitor, FiSmartphone, FiTablet } from 'react-icons/fi';
 import React from 'react';
-import FiMonitor from 'react-icons/fi/FiMonitor';
-import FiTablet from 'react-icons/fi/FiTablet';
-import FiSmartphone from 'react-icons/fi/FiSmartphone';
+
+
 
 import type { ComponentConfig } from '@/types/experiments';
 
@@ -21,7 +21,7 @@ interface VariantPreviewProps {
   device?: 'desktop' | 'tablet' | 'mobile';
 }
 
-export default function VariantPreview(): JSX.Element ({
+export default function VariantPreview({
   variant,
   device = 'desktop',
 }: VariantPreviewProps): React.ReactElement {

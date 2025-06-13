@@ -1,9 +1,10 @@
 'use client';
 
+import { FiCode, FiLayout } from 'react-icons/fi';
+import { FaPalette } from 'react-icons/fa';
 import React from 'react';
-import FiCode from 'react-icons/fi/FiCode';
-import FiLayout from 'react-icons/fi/FiLayout';
-import FiPalette from 'react-icons/fi/FiPalette';
+
+
 
 import { TemplateType } from '@/types/portfolio';
 
@@ -36,7 +37,7 @@ export function InteractiveTemplateSection({
       description:
         t.demoTemplates?.designer?.description ||
         'Creative and visual template for designers',
-      icon: FiPalette,
+      icon: FaPalette,
       color: 'pink',
     },
     {

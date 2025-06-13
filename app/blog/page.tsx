@@ -1,10 +1,10 @@
 'use client';
 
+import { FaArrowRight, FaCalendar, FaUser } from 'react-icons/fa';
 import Link from 'next/link';
 import React from 'react';
-import FaArrowRight from 'react-icons/fa/FaArrowRight';
-import FaCalendar from 'react-icons/fa/FaCalendar';
-import FaUser from 'react-icons/fa/FaUser';
+
+
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { OptimizedImage } from '@/components/ui/OptimizedImage';

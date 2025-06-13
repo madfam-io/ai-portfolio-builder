@@ -1,5 +1,6 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
 import {
   FiGithub,
@@ -10,7 +11,6 @@ import {
   FiCheck,
   FiEye,
 } from 'react-icons/fi';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface GitHubRepository {
   id: string;
@@ -42,7 +42,7 @@ interface GitHubIntegrationProps {
   maxRepositories?: number;
 }
 
-export function GitHubIntegration(): JSX.Element ({
+export function GitHubIntegration({
   onImport,
   onRepositorySelect,
   isDemo = false,
@@ -142,7 +142,7 @@ export function GitHubIntegration(): JSX.Element ({
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
       setIsConnecting(false);
-      handleAnalyze();
+      void handleAnalyze();
     } else {
       // Real implementation would handle GitHub OAuth
       try {
@@ -158,7 +158,7 @@ export function GitHubIntegration(): JSX.Element ({
     }
   };
 
-  const handleAnalyze = () => {
+  const handleAnalyze = async () => {
     setIsAnalyzing(true);
     setAnalysisProgress(0);
 
@@ -191,7 +191,7 @@ export function GitHubIntegration(): JSX.Element ({
 
   const toggleRepository = (repoId: string) => {
     const newSelected = new Set(selectedRepos);
-    if (newSelected.has(repoId !== undefined && newSelected.has(repoId !== null)) {
+    if (newSelected.has(repoId)) {
       newSelected.delete(repoId);
     } else if (newSelected.size < maxRepositories) {
       newSelected.add(repoId);

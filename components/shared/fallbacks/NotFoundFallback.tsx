@@ -7,12 +7,12 @@
 
 'use client';
 
+import { FiArrowLeft, FiFileText, FiHome, FiSearch } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import FiArrowLeft from 'react-icons/fi/FiArrowLeft';
-import FiFileText from 'react-icons/fi/FiFileText';
-import FiHome from 'react-icons/fi/FiHome';
-import FiSearch from 'react-icons/fi/FiSearch';
+
+
+
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

@@ -1,8 +1,8 @@
 'use client';
 
+import { FaCheck } from 'react-icons/fa';
 import Link from 'next/link';
 import React from 'react';
-import FaCheck from 'react-icons/fa/FaCheck';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -28,7 +28,7 @@ const CURRENCY_SYMBOLS = {
   EUR: '€',
 };
 
-export default function Pricing(): JSX.Element (): React.ReactElement {
+export default function Pricing(): React.ReactElement {
   const { t } = useLanguage();
   const { currency } = useApp();
 

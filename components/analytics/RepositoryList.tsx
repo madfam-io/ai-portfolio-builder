@@ -7,8 +7,8 @@
 
 'use client';
 
+import { FiExternalLink } from 'react-icons/fi';
 import { useRouter } from 'next/navigation';
-import FiExternalLink from 'react-icons/fi/FiExternalLink';
 
 import type { Repository } from '@/types/analytics';
 

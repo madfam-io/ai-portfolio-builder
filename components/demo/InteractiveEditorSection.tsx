@@ -1,19 +1,20 @@
 'use client';
 
+import { FiAward, FiBriefcase, FiLayout, FiPlus, FiSettings, FiUser } from 'react-icons/fi';
+import { FaPalette } from 'react-icons/fa';
 import React from 'react';
-import FiAward from 'react-icons/fi/FiAward';
-import FiBriefcase from 'react-icons/fi/FiBriefcase';
-// import FiEdit from 'react-icons/fi/FiEdit';
-// import FiTrash from 'react-icons/fi/FiTrash';
-import FiLayout from 'react-icons/fi/FiLayout';
-import FiPalette from 'react-icons/fi/FiPalette';
-import FiPlus from 'react-icons/fi/FiPlus';
-import FiSettings from 'react-icons/fi/FiSettings';
-import FiUser from 'react-icons/fi/FiUser';
+
+
+// ;
+// ;
+
+
+
+
 
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
-import { Portfolio, PortfolioSection } from '@/types/portfolio';
+import { Portfolio } from '@/types/portfolio';
 
 interface InteractiveEditorSectionProps {
   portfolio: Portfolio;
@@ -39,31 +40,17 @@ export function InteractiveEditorSection({
   onNextStep,
 }: InteractiveEditorSectionProps): React.ReactElement {
   const handleSectionUpdate = (sectionId: string, content: any) => {
-    const updatedSections = portfolio.sections.map(section =>
-      section.id === sectionId ? { ...section, content } : section
-    );
-    onPortfolioChange({ ...portfolio, sections: updatedSections });
+    // In the real app, this would update the specific section
+    // For demo, we'll just update the portfolio bio as an example
+    if (sectionId === 'bio') {
+      onPortfolioChange({ ...portfolio, bio: content });
+    }
   };
 
-  const handleDeleteSection = (sectionId: string) => {
-    const updatedSections = portfolio.sections.filter(
-      section => section.id !== sectionId
-    );
-    onPortfolioChange({ ...portfolio, sections: updatedSections });
-  };
-
+  // Placeholder for future functionality
   const handleAddSection = () => {
-    const newSection: PortfolioSection = {
-      id: `section-${Date.now()}`,
-      type: 'custom',
-      title: 'New Section',
-      enabled: true,
-      content: { text: 'Add your content here...' },
-    };
-    onPortfolioChange({
-      ...portfolio,
-      sections: [...portfolio.sections, newSection],
-    });
+    // Demo placeholder - in real app would add new section
+    // For now, just a no-op
   };
 
   const sections = [
@@ -110,7 +97,7 @@ export function InteractiveEditorSection({
           </h4>
           <div className="space-y-2">
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
-              <FiPalette className="w-4 h-4" />
+              <FaPalette className="w-4 h-4" />
               <span className="text-sm">{t.demoCustomizeTheme}</span>
             </button>
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
@@ -139,7 +126,7 @@ export function InteractiveEditorSection({
         {/* Smart Import Options */}
         {showImportOptions && (
           <div className="mb-6">
-            <SmartImportOptions onImport={onToggleImportOptions} />
+            <SmartImportOptions onDataImport={() => onToggleImportOptions()} />
           </div>
         )}
 
@@ -147,15 +134,12 @@ export function InteractiveEditorSection({
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <LazyWrapper
             component={() =>
-              import('@/components/editor/SectionEditor').then(mod => ({
-                default: mod.SectionEditor,
-              }))
+              import('@/components/editor/PortfolioEditor')
             }
             componentProps={{
-              section: portfolio.sections.find(s => s.id === activeSection),
-              onUpdate: (content: any) =>
-                handleSectionUpdate(activeSection, content),
-              onDelete: () => handleDeleteSection(activeSection),
+              portfolio: portfolio,
+              activeSection: activeSection,
+              onUpdate: handleSectionUpdate,
             }}
             fallback={
               <div className="animate-pulse">

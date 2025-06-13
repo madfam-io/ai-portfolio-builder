@@ -342,8 +342,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     [user]
   );
 
-  const stopImpersonation = useCallback(() => {
-    if (impersonatedUser !== undefined && impersonatedUser !== null) {
+  const stopImpersonation = useCallback(async () => {
+    if (impersonatedUser) {
       logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
     }
@@ -353,7 +353,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
    * Profile management (stub implementations)
    */
   const updateProfile = useCallback(
-    (updates: Partial<User>) => {
+    async (updates: Partial<User>) => {
       if (!user) return;
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
@@ -362,7 +362,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     [user]
   );
 
-  const upgradeSubscription = useCallback((plan: SubscriptionPlan) => {
+  const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
     logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
   }, []);

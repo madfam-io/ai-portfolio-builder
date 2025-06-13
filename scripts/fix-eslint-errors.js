@@ -1,3 +1,5 @@
+import { FiEdit, FiTrash } from 'react-icons/fi';
+
 #!/usr/bin/env node
 
 const fs = require('fs');
@@ -68,8 +70,8 @@ function removeUnusedImports(content) {
   if (content.includes('FiEdit') && content.includes('FiTrash')) {
     const lines = content.split('\n');
     const newLines = lines.filter(line => 
-      !line.includes("import FiEdit from 'react-icons/fi/FiEdit'") &&
-      !line.includes("import FiTrash from 'react-icons/fi/FiTrash'")
+      !line.includes("") &&
+      !line.includes("")
     );
     content = newLines.join('\n');
   }

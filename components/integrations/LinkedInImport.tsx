@@ -1,5 +1,6 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
 import {
   FiLinkedin,
@@ -9,7 +10,6 @@ import {
   FiBriefcase,
   FiAward,
 } from 'react-icons/fi';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface LinkedInProfile {
   name: string;
@@ -41,7 +41,7 @@ interface LinkedInImportProps {
   className?: string;
 }
 
-export function LinkedInImport(): JSX.Element ({
+export function LinkedInImport({
   onImport,
   isDemo = false,
   className = '',
@@ -126,7 +126,7 @@ export function LinkedInImport(): JSX.Element ({
     }
   };
 
-  const handleImport = () => {
+  const handleImport = async () => {
     setIsImporting(true);
     setImportProgress(0);
 

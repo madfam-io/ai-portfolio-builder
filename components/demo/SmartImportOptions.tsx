@@ -1,5 +1,6 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
 import {
   FiLinkedin,
@@ -8,7 +9,6 @@ import {
   FiArrowRight,
   FiCheck,
 } from 'react-icons/fi';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
@@ -59,7 +59,7 @@ interface SmartImportOptionsProps {
   className?: string;
 }
 
-export function SmartImportOptions(): JSX.Element ({
+export function SmartImportOptions({
   onDataImport,
   isDemo = true,
   className = '',

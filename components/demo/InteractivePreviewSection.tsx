@@ -1,9 +1,9 @@
 'use client';
 
+import { FiArrowLeft, FiCheck } from 'react-icons/fi';
 import Link from 'next/link';
 import React from 'react';
-import FiArrowLeft from 'react-icons/fi/FiArrowLeft';
-import FiCheck from 'react-icons/fi/FiCheck';
+
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';

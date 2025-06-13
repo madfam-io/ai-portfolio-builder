@@ -7,11 +7,11 @@
 
 'use client';
 
+import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
 import { useState, useMemo } from 'react';
-import FiCheck from 'react-icons/fi/FiCheck';
-import FiEye from 'react-icons/fi/FiEye';
-import FiGrid from 'react-icons/fi/FiGrid';
-import FiLayout from 'react-icons/fi/FiLayout';
+
+
+
 
 import {
   getAvailableTemplates,
@@ -177,7 +177,7 @@ function TemplateCard({
   );
 }
 
-export function TemplateSelector(): JSX.Element ({
+export function TemplateSelector({
   currentTemplate,
   onTemplateChange,
   isLoading = false,

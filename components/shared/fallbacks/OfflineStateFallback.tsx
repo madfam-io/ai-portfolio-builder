@@ -7,10 +7,10 @@
 
 'use client';
 
+import { FiCloud, FiRefreshCw, FiWifiOff } from 'react-icons/fi';
 import React, { useEffect, useState } from 'react';
-import FiCloud from 'react-icons/fi/FiCloud';
-import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
-import FiWifiOff from 'react-icons/fi/FiWifiOff';
+
+
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

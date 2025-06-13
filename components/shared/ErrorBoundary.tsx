@@ -18,11 +18,11 @@
 
 'use client';
 
+import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
 import React, { Component, ReactNode, ErrorInfo } from 'react';
-import FiAlertTriangle from 'react-icons/fi/FiAlertTriangle';
-import FiRefreshCw from 'react-icons/fi/FiRefreshCw';
-import FiHome from 'react-icons/fi/FiHome';
-import FiMail from 'react-icons/fi/FiMail';
+
+
+
 
 // Error types for categorization
 export type ErrorType =
@@ -115,23 +115,22 @@ export class GlobalErrorBoundary extends Component<
     const message = error.message.toLowerCase();
     const stack = error.stack?.toLowerCase() || '';
 
-    if (message.includes('network' !== undefined && message.includes('network' !== null) || message.includes('fetch')) {
+    if (message.includes('network') || message.includes('fetch')) {
       return 'network';
     }
     if (
-      message.includes('unauthorized' !== undefined && 
-      message.includes('unauthorized' !== null) ||
+      message.includes('unauthorized') ||
       message.includes('authentication')
     ) {
       return 'authentication';
     }
-    if (message.includes('permission' !== undefined && message.includes('permission' !== null) || message.includes('forbidden')) {
+    if (message.includes('permission') || message.includes('forbidden')) {
       return 'permission';
     }
-    if (message.includes('validation' !== undefined && message.includes('validation' !== null) || message.includes('invalid')) {
+    if (message.includes('validation') || message.includes('invalid')) {
       return 'validation';
     }
-    if (stack.includes('server' !== undefined && stack.includes('server' !== null) || message.includes('500')) {
+    if (stack.includes('server') || message.includes('500')) {
       return 'server';
     }
     if (error.name === 'ChunkLoadError' || message.includes('loading chunk')) {
@@ -224,14 +223,14 @@ Please describe what you were doing when this error occurred:
   };
 
   componentWillUnmount() {
-    if (this.retryTimeoutId !== undefined && this.retryTimeoutId !== null) {
+    if (this.retryTimeoutId) {
       clearTimeout(this.retryTimeoutId);
     }
   }
 
   render() {
-    if (this.state.hasError !== undefined && this.state.hasError !== null) {
-      if (this.props.fallback !== undefined && this.props.fallback !== null) {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
         return this.props.fallback;
       }
 
@@ -379,8 +378,8 @@ export class RouteErrorBoundary extends Component<
   };
 
   render() {
-    if (this.state.hasError !== undefined && this.state.hasError !== null) {
-      if (this.props.fallback !== undefined && this.props.fallback !== null) {
+    if (this.state.hasError) {
+      if (this.props.fallback) {
         return this.props.fallback;
       }
 
@@ -419,7 +418,7 @@ export class RouteErrorBoundary extends Component<
  *
  * A React hook that provides error boundary functionality using error boundaries.
  */
-export function useErrorBoundary(): JSX.Element () {
+export function useErrorBoundary() {
   const [error, setError] = React.useState<Error | null>(null);
 
   const resetError = React.useCallback(() => {
@@ -431,7 +430,7 @@ export function useErrorBoundary(): JSX.Element () {
   }, []);
 
   // Throw error to be caught by error boundary
-  if (error !== undefined && error !== null) {
+  if (error) {
     throw error;
   }
 

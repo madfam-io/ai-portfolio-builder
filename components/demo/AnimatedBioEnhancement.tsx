@@ -1,10 +1,11 @@
 'use client';
 
+import { FiCheck, FiTrendingUp, FiZap } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState, useEffect } from 'react';
-import FiCheck from 'react-icons/fi/FiCheck';
-import FiTrendingUp from 'react-icons/fi/FiTrendingUp';
-import FiZap from 'react-icons/fi/FiZap';
-import HiSparkles from 'react-icons/hi/HiSparkles';
+
+
+
 
 interface AnimatedBioEnhancementProps {
   originalBio: string;

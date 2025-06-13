@@ -1,16 +1,16 @@
 'use client';
 
+import { FaGithub, FaLinkedinIn, FaTwitter } from 'react-icons/fa';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
-import FaTwitter from 'react-icons/fa/FaTwitter';
-import FaLinkedinIn from 'react-icons/fa/FaLinkedinIn';
-import FaGithub from 'react-icons/fa/FaGithub';
+
+
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { getCurrentYear } from '@/lib/utils/date';
 
-export default function Footer(): JSX.Element (): React.ReactElement {
+export default function Footer(): React.ReactElement {
   const { t } = useLanguage();
   return (
     <footer className="bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-300 py-12 px-6 transition-colors duration-300">

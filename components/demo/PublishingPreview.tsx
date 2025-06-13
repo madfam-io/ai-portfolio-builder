@@ -1,5 +1,6 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
 import {
   FiGlobe,
@@ -15,7 +16,6 @@ import {
   FiCode,
   FiDownload,
 } from 'react-icons/fi';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface PublishingPreviewProps {
   portfolioName?: string;
@@ -68,7 +68,7 @@ export function PublishingPreview({
     ],
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     setIsPublishing(true);
     setPublishProgress(0);
 

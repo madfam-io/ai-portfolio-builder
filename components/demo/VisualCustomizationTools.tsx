@@ -1,5 +1,6 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
 import {
   FiSettings,
@@ -10,7 +11,6 @@ import {
   FiMoon,
   FiMove,
 } from 'react-icons/fi';
-import HiSparkles from 'react-icons/hi/HiSparkles';
 
 interface ColorScheme {
   name: string;
@@ -45,7 +45,7 @@ interface VisualCustomizationToolsProps {
   className?: string;
 }
 
-export function VisualCustomizationTools(): JSX.Element ({
+export function VisualCustomizationTools({
   onColorChange,
   onFontChange,
   onLayoutChange,

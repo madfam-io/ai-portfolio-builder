@@ -1,11 +1,12 @@
 'use client';
 
+import { HiSparkles } from 'react-icons/hi';
+import { FiCheck, FiTarget, FiTrendingUp, FiZap } from 'react-icons/fi';
 import React, { useState } from 'react';
-import HiSparkles from 'react-icons/hi/HiSparkles';
-import FiZap from 'react-icons/fi/FiZap';
-import FiTrendingUp from 'react-icons/fi/FiTrendingUp';
-import FiTarget from 'react-icons/fi/FiTarget';
-import FiCheck from 'react-icons/fi/FiCheck';
+
+
+
+
 
 interface Project {
   id: string;
@@ -27,7 +28,7 @@ interface STARBreakdown {
   result: string;
 }
 
-export function ProjectEnhancementDemo(): JSX.Element ({
+export function ProjectEnhancementDemo({
   projects,
   onProjectEnhance,
 }: ProjectEnhancementDemoProps) {

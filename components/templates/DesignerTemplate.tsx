@@ -22,8 +22,9 @@
 
 'use client';
 
+import { FaBehance } from 'react-icons/fa';
 import React from 'react';
-import FaBehance from 'react-icons/fa/FaBehance';
+
 import {
   FiInstagram,
   FiDribbble,
@@ -32,7 +33,6 @@ import {
   FiHeart,
   FiAward,
 } from 'react-icons/fi';
-
 import { Portfolio } from '@/types/portfolio';
 
 /**

@@ -1,12 +1,13 @@
 'use client';
 
+import { FiCheck, FiEye, FiFile, FiUpload, FiX } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState, useCallback } from 'react';
-import FiUpload from 'react-icons/fi/FiUpload';
-import FiFile from 'react-icons/fi/FiFile';
-import FiCheck from 'react-icons/fi/FiCheck';
-import FiX from 'react-icons/fi/FiX';
-import FiEye from 'react-icons/fi/FiEye';
-import HiSparkles from 'react-icons/hi/HiSparkles';
+
+
+
+
+
 
 interface ParsedResumeData {
   personalInfo: {
@@ -59,7 +60,7 @@ interface ResumeParserProps {
   acceptedFormats?: string[];
 }
 
-export function ResumeParser(): JSX.Element ({
+export function ResumeParser({
   onParse,
   isDemo = false,
   className = '',
@@ -205,7 +206,7 @@ export function ResumeParser(): JSX.Element ({
     await handleParse();
   };
 
-  const handleParse = () => {
+  const handleParse = async () => {
     setIsParsing(true);
     setParseProgress(0);
 
@@ -361,8 +362,8 @@ export function ResumeParser(): JSX.Element ({
                 {isUploading ? 'Uploading Resume' : 'Parsing Content'}
               </h3>
               <p className="text-blue-100">
-                {uploadedFile.name} •{' '}
-                {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                {uploadedFile?.name} •{' '}
+                {uploadedFile ? (uploadedFile.size / 1024 / 1024).toFixed(2) : '0'} MB
               </p>
             </div>
           </div>
@@ -407,7 +408,7 @@ export function ResumeParser(): JSX.Element ({
             <div>
               <h3 className="text-xl font-bold">Resume Parsed Successfully</h3>
               <p className="text-green-100">
-                {uploadedFile.name} • All sections extracted
+                {uploadedFile?.name} • All sections extracted
               </p>
             </div>
           </div>

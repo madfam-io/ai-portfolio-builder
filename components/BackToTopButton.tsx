@@ -1,11 +1,11 @@
 'use client';
 
+import { FaChevronUp } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
-import FaChevronUp from 'react-icons/fa/FaChevronUp';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
-export default function BackToTopButton(): JSX.Element (): React.ReactElement {
+export default function BackToTopButton(): React.ReactElement {
   const { t } = useLanguage();
   const [isVisible, setIsVisible] = useState(false);
 

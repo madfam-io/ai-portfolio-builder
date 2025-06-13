@@ -1,12 +1,13 @@
 'use client';
 
+import { FiAward, FiClock, FiDollarSign, FiInfo, FiZap } from 'react-icons/fi';
+import { HiSparkles } from 'react-icons/hi';
 import React, { useState, useEffect } from 'react';
-import FiZap from 'react-icons/fi/FiZap';
-import FiDollarSign from 'react-icons/fi/FiDollarSign';
-import FiClock from 'react-icons/fi/FiClock';
-import FiAward from 'react-icons/fi/FiAward';
-import FiInfo from 'react-icons/fi/FiInfo';
-import HiSparkles from 'react-icons/hi/HiSparkles';
+
+
+
+
+
 
 interface AIModel {
   id: string;
@@ -27,7 +28,7 @@ interface AIModelComparisonProps {
   activeTask?: 'bio' | 'project' | 'template';
 }
 
-export function AIModelComparison(): JSX.Element ({
+export function AIModelComparison({
   selectedModel = 'llama-3.1',
   onModelSelect,
   activeTask = 'bio',
