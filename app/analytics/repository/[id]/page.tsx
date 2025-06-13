@@ -179,13 +179,13 @@ export default function RepositoryAnalyticsPage() {
   );
 
   // Helper function for error state
-  const renderErrorState = (): React.ReactElement => (
+  const renderErrorState = () => (
     <BaseLayout>
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center max-w-md">
           <FiCode className="text-6xl text-red-500 mx-auto mb-6" />
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
-            {t.error};
+            {t.error}
           </h2>
           <p className="text-gray-600 dark:text-gray-400 mb-6">{repo.error}</p>
           <div className="space-x-4">

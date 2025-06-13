@@ -3,7 +3,7 @@ import {
   withCacheHeaders,
   CACHE_CONFIGS,
   generateETag,
-} from '@/lib/utils/cache';
+} from '@/lib/cache/cache-headers';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 
