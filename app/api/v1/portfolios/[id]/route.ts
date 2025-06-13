@@ -19,17 +19,15 @@ interface RouteParams {
   params: {
     id: string;
   };
-};
+}
 /**
  * GET /api/portfolios/[id]
  * Retrieves a specific portfolio by ID
  */
-export export async function GET(
+export async function GET(
   _request: NextRequest,
   { params }: RouteParams
 ): Promise<Response> {
-  return new Response();
-}
   try {
     const { id } = params;
 
@@ -38,9 +36,9 @@ export export async function GET(
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check authentication
     const {
       data: { user },
@@ -51,7 +49,7 @@ export export async function GET(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 };
       );
-    };
+    }
     // Fetch portfolio
     const { data: portfolio, error: fetchError } = await supabase
       .from('portfolios')
@@ -66,23 +64,23 @@ export export async function GET(
           { error: 'Portfolio not found' },
           { status: 404 };
         );
-      };
+      }
       logger.error(
         'Database error fetching portfolio',
         fetchError instanceof Error ? fetchError : { error: fetchError };
       );
       return NextResponse.json(
         { error: 'Failed to fetch portfolio' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check ownership
     if (portfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only access your own portfolios' },
         { status: 403 };
       );
-    };
+    }
     // Transform to API format
     const responsePortfolio = transformDbPortfolioToApi(portfolio);
 
@@ -98,18 +96,25 @@ export export async function GET(
       { error: 'Internal server error' },
       { status: 500 };
     );
-  };
-};
+  } catch (error) {
+    logger.error(
+      'Unexpected error in GET /api/portfolios/[id]',
+      error instanceof Error ? error : { error }
+    );
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
 /**
  * PUT /api/portfolios/[id]
  * Updates a specific portfolio by ID
  */
-export export async function PUT(
+export async function PUT(
   request: NextRequest,
   { params }: RouteParams
 ): Promise<Response> {
-  return new Response();
-}
   try {
     const { id } = params;
 
@@ -118,9 +123,9 @@ export export async function PUT(
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check authentication
     const {
       data: { user },
@@ -131,7 +136,7 @@ export export async function PUT(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 };
       );
-    };
+    }
     // Verify portfolio exists and user owns it
     const { data: existingPortfolio, error: fetchError } = await supabase
       .from('portfolios')
@@ -146,7 +151,7 @@ export export async function PUT(
           { error: 'Portfolio not found' },
           { status: 404 };
         );
-      };
+      }
       logger.error(
         'Database error checking portfolio ownership',
         fetchError as Error,
@@ -154,16 +159,16 @@ export export async function PUT(
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check ownership
     if (existingPortfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only modify your own portfolios' },
         { status: 403 };
       );
-    };
+    }
     // Parse and validate request body
     const body = await request.json();
     const validation = validateUpdatePortfolio(body);
@@ -171,9 +176,9 @@ export export async function PUT(
     if (!validation.success) {
       return NextResponse.json(
         { error: 'Invalid portfolio data', details: validation.error.issues },
-        { status: 400 };
+        { status: 400 }
       );
-    };
+    }
     // Sanitize input data
     const sanitizedData = sanitizePortfolioData(validation.data);
 
@@ -189,9 +194,9 @@ export export async function PUT(
       if (existingSubdomain) {
         return NextResponse.json(
           { error: 'Subdomain already exists' },
-          { status: 409 };
+          { status: 409 }
         );
-      };
+      }
     };
     // Handle status change to published
     if (
@@ -222,14 +227,14 @@ export export async function PUT(
         // Unique constraint violation
         return NextResponse.json(
           { error: 'Subdomain already exists' },
-          { status: 409 };
+          { status: 409 }
         );
-      };
+      }
       return NextResponse.json(
         { error: 'Failed to update portfolio' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Transform to API format
     const responsePortfolio = transformDbPortfolioToApi(updatedPortfolio);
 
@@ -241,32 +246,30 @@ export export async function PUT(
     logger.error(
       'Unexpected error in PUT /api/portfolios/[id]',
       error as Error,
-      { portfolioId: params.id };
+      { portfolioId: params.id }
     );
 
     // Handle JSON parsing errors
     if (error instanceof SyntaxError) {
       return NextResponse.json(
         { error: 'Invalid JSON in request body' },
-        { status: 400 };
+        { status: 400 }
       );
-    };
+    }
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 };
+      { status: 500 }
     );
-  };
-};
+  }
+}
 /**
  * DELETE /api/portfolios/[id]
  * Deletes a specific portfolio by ID
  */
-export export async function DELETE(
+export async function DELETE(
   _request: NextRequest,
   { params }: RouteParams
 ): Promise<Response> {
-  return new Response();
-}
   try {
     const { id } = params;
 
@@ -275,9 +278,9 @@ export export async function DELETE(
     if (!supabase) {
       return NextResponse.json(
         { error: 'Database not configured' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check authentication
     const {
       data: { user },
@@ -288,7 +291,7 @@ export export async function DELETE(
         { error: 'Unauthorized - Please sign in' },
         { status: 401 };
       );
-    };
+    }
     // Verify portfolio exists and user owns it
     const { data: existingPortfolio, error: fetchError } = await supabase
       .from('portfolios')
@@ -303,7 +306,7 @@ export export async function DELETE(
           { error: 'Portfolio not found' },
           { status: 404 };
         );
-      };
+      }
       logger.error(
         'Database error checking portfolio ownership',
         fetchError as Error,
@@ -311,16 +314,16 @@ export export async function DELETE(
       );
       return NextResponse.json(
         { error: 'Failed to verify portfolio ownership' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Check ownership
     if (existingPortfolio.user_id !== user.id) {
       return NextResponse.json(
         { error: 'Forbidden - You can only delete your own portfolios' },
         { status: 403 };
       );
-    };
+    }
     // Delete portfolio
     const { error: deleteError } = await supabase
       .from('portfolios')
@@ -333,9 +336,9 @@ export export async function DELETE(
       });
       return NextResponse.json(
         { error: 'Failed to delete portfolio' },
-        { status: 500 };
+        { status: 500 }
       );
-    };
+    }
     // Return success with no content
     return new NextResponse(null, {
       status: 204,
@@ -347,14 +350,14 @@ export export async function DELETE(
     logger.error(
       'Unexpected error in DELETE /api/portfolios/[id]',
       error as Error,
-      { portfolioId: params.id };
+      { portfolioId: params.id }
     );
     return NextResponse.json(
       { error: 'Internal server error' },
-      { status: 500 };
+      { status: 500 }
     );
-  };
-};
+  }
+}
 /**
  * Transforms database portfolio object to API format
  * Converts snake_case to camelCase and adjusts field names
