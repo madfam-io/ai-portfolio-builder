@@ -1,7 +1,7 @@
-#!/usr/bin/env tsx
-
 import { promises as fs } from 'fs';
 import path from 'path';
+
+#!/usr/bin/env tsx
 
 async function quickESLintFix() {
   console.log('🚀 Quick ESLint fixes for critical errors...\n');
@@ -61,19 +61,19 @@ async function quickESLintFix() {
     // Extract step components to reduce complexity
     const stepComponents = `
 // Extracted components to reduce complexity
-const TemplateStep = ({ portfolio, onTemplateSelect }: any) => (
+const TemplateStep = ({ portfolio, onTemplateSelect }: unknown) => (
   <div className="space-y-8">
     {/* Template selection UI */}
   </div>
 );
 
-const EditorStep = ({ portfolio, onUpdate }: any) => (
+const EditorStep = ({ portfolio, onUpdate }: unknown) => (
   <div className="space-y-8">
     {/* Editor UI */}
   </div>
 );
 
-const PreviewStep = ({ portfolio }: any) => (
+const PreviewStep = ({ portfolio }: unknown) => (
   <div className="space-y-8">
     {/* Preview UI */}
   </div>
@@ -137,10 +137,10 @@ const PreviewStep = ({ portfolio }: any) => (
       const filePath = path.join(process.cwd(), file);
       let content = await fs.readFile(filePath, 'utf-8');
       
-      // Replace : any with : unknown
+      // Replace : unknown with : unknown
       content = content.replace(/:\s*any(\s*[),;{])/g, ': unknown$1');
       
-      // Replace as any with as unknown
+      // Replace as unknown with as unknown
       content = content.replace(/as\s+any/g, 'as unknown');
       
       // Fix catch blocks

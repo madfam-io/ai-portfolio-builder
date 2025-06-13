@@ -1,9 +1,9 @@
+import { SEOMetadata, GEOSettings } from './types';
+
 /**
  * SEO Metadata and Structured Data Generator
  * Generates optimized metadata, structured data, and social sharing tags
  */
-
-import { SEOMetadata, GEOSettings } from './types';
 
 export class MetadataGenerator {
   /**
@@ -365,7 +365,7 @@ export class MetadataGenerator {
   /**
    * Generate portfolio-specific structured data
    */
-  generatePortfolioStructuredData(portfolio: any): Record<string, any> {
+  generatePortfolioStructuredData(portfolio: unknown): Record<string, any> {
     return {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
@@ -380,9 +380,9 @@ export class MetadataGenerator {
           portfolio.social?.github,
           portfolio.social?.twitter,
         ].filter(Boolean),
-        knowsAbout: portfolio.skills?.map((s: any) => s.name) || [],
+        knowsAbout: portfolio.skills?.map((s: unknown) => s.name) || [],
         alumniOf:
-          portfolio.education?.map((edu: any) => ({
+          portfolio.education?.map((edu: unknown) => ({
             '@type': 'EducationalOrganization',
             name: edu.institution,
           })) || [],

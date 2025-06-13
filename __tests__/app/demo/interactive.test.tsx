@@ -1,15 +1,15 @@
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+
+import InteractiveDemoPage from '@/app/demo/interactive/page';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
+
 /**
  * @fileoverview Tests for Interactive Demo Page multilingual functionality
  *
  * This test suite ensures the Interactive Demo page properly supports
  * Spanish and English languages and displays all user-facing text correctly.
  */
-
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
-
-import InteractiveDemoPage from '@/app/demo/interactive/page';
-import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 // Mock the dependencies that are not available in test environment
 jest.mock('@/lib/utils/performance', () => ({
@@ -90,7 +90,7 @@ describe('Interactive Demo Page', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     jest.clearAllMocks();
   });
 

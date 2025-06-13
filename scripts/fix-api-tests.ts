@@ -1,8 +1,8 @@
-#!/usr/bin/env tsx
-
 import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+
+#!/usr/bin/env tsx
 
 async function fixApiTests() {
   console.log('🔧 Fixing API route tests...\n');
@@ -106,7 +106,7 @@ jest.mock('@/lib/supabase/server', () => ({
       if (!content.includes('global.fetch') && content.includes('fetch')) {
         const fetchMock = `
 const mockFetch = jest.fn();
-global.fetch = mockFetch as any;
+global.fetch = mockFetch as unknown;
 
 beforeEach(() => {
   mockFetch.mockClear();

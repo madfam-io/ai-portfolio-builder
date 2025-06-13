@@ -1,7 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+} from 'react-icons/fi';
 import {
   FiArrowLeft,
   FiEdit,
@@ -13,18 +14,16 @@ import {
   FiClock,
   FiDownload,
   FiRefreshCw,
-} from 'react-icons/fi';
-
-import { ConversionChart } from '@/components/admin/experiments/index.lazy';
-import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
-
-import { VariantTableRow } from './VariantTableRow';
-
 import type {
   LandingPageExperiment,
   ExperimentAnalyticsResponse,
   DetailedVariant,
+
+import { ConversionChart } from '@/components/admin/experiments/index.lazy';
+import StatisticalAnalysis from '@/components/admin/experiments/StatisticalAnalysis';
+import { VariantTableRow } from './VariantTableRow';
 } from '@/types/experiments';
+
 
 interface ExperimentDetailsContentProps {
   experiment: LandingPageExperiment;

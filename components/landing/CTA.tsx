@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 

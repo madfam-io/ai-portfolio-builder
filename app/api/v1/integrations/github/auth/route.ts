@@ -1,15 +1,14 @@
-/**
- * GitHub OAuth Integration API
- * Handles GitHub OAuth flow for analytics integration
- */
-
-import crypto from 'crypto';
-
 import { NextResponse } from 'next/server';
+import crypto from 'crypto';
 
 import { createClient } from '@/lib/supabase/server';
 import { encrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * GitHub OAuth Integration API
+ * Handles GitHub OAuth flow for analytics integration
+ */
 
 /**
  * Initiate GitHub OAuth flow

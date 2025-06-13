@@ -1,14 +1,14 @@
-/**
- * GEO Content Analysis API
- * Analyzes content for SEO optimization opportunities
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * GEO Content Analysis API
+ * Analyzes content for SEO optimization opportunities
+ */
 
 // Request validation schema
 const analyzeContentSchema = z.object({

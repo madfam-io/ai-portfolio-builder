@@ -1,7 +1,8 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiLinkedin,
   FiCheck,
@@ -9,7 +10,7 @@ import {
   FiUser,
   FiBriefcase,
   FiAward,
-} from 'react-icons/fi';
+
 
 interface LinkedInProfile {
   name: string;
@@ -105,7 +106,7 @@ export function LinkedInImport({
   const handleConnect = async () => {
     setIsConnecting(true);
 
-    if (isDemo !== undefined && isDemo !== null) {
+    if (isDemo) {
       // Demo flow
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
@@ -147,12 +148,12 @@ export function LinkedInImport({
     setImportedData(mockProfile);
     setIsImporting(false);
 
-    if (onImport !== undefined && onImport !== null) {
+    if (onImport) {
       onImport(mockProfile);
     }
   };
 
-  if (!isConnected !== undefined && !isConnected !== null) {
+  if (!isConnected) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}

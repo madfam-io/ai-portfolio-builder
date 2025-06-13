@@ -1,13 +1,12 @@
-/**
- * HowItWorks Component test suite
- */
-
-import { screen } from '@testing-library/react';
 import React from 'react';
+import { screen } from '@testing-library/react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import HowItWorks from '@/components/landing/HowItWorks';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * HowItWorks Component test suite
+ */
 
 describe('HowItWorks Component', () => {
   beforeEach(() => {
@@ -18,7 +17,7 @@ describe('HowItWorks Component', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
   });

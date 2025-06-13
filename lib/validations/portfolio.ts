@@ -1,10 +1,10 @@
+import DOMPurify from 'isomorphic-dompurify';
+import { z } from 'zod';
+
 /**
  * Portfolio validation schemas using Zod
  * Ensures data integrity and type safety for API requests
  */
-
-import DOMPurify from 'isomorphic-dompurify';
-import { z } from 'zod';
 
 // Regular expressions
 const SUBDOMAIN_REGEX = /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
@@ -266,7 +266,7 @@ export function validatePortfolioQuery(data: unknown) {
 export function sanitizePortfolioData<T extends Record<string, any>>(
   data: T
 ): T {
-  const sanitized = { ...data } as any;
+  const sanitized = { ...data } as unknown;
 
   // List of fields that should be sanitized
   const textFields = ['name', 'title', 'bio', 'tagline', 'description'];
@@ -285,7 +285,7 @@ export function sanitizePortfolioData<T extends Record<string, any>>(
   // Sanitize array text fields
   for (const field of arrayTextFields) {
     if (field in sanitized && Array.isArray(sanitized[field])) {
-      sanitized[field] = sanitized[field].map((item: any) =>
+      sanitized[field] = sanitized[field].map((item: unknown) =>
         typeof item === 'string'
           ? DOMPurify.sanitize(item, {
               ALLOWED_TAGS: [],

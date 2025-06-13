@@ -1,9 +1,9 @@
+import type { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Portfolio service types and interfaces
  * @module services/portfolio/types
  */
-
-import type { Portfolio } from '@/types/portfolio';
 
 /**
  * Portfolio service configuration options

@@ -1,5 +1,5 @@
-import DOMPurify from 'isomorphic-dompurify';
 import { NextRequest, NextResponse } from 'next/server';
+import DOMPurify from 'isomorphic-dompurify';
 import { z, ZodError, ZodSchema } from 'zod';
 
 import { logger } from '@/lib/utils/logger';
@@ -19,10 +19,10 @@ interface ValidationOptions {
 
 interface ValidatedRequest extends NextRequest {
   validated?: {
-    body?: any;
-    query?: any;
-    params?: any;
-    headers?: any;
+    body?: unknown;
+    query?: unknown;
+    params?: unknown;
+    headers?: unknown;
   };
 }
 
@@ -39,7 +39,7 @@ function sanitizeString(input: string): string {
 /**
  * Recursively sanitize all string values in an object
  */
-function sanitizeObject(obj: any): any {
+function sanitizeObject(obj: unknown): unknown {
   if (typeof obj === 'string') {
     return sanitizeString(obj);
   }
@@ -49,7 +49,7 @@ function sanitizeObject(obj: any): any {
   }
 
   if (obj !== null && typeof obj === 'object') {
-    const sanitized: any = {};
+    const sanitized: unknown = {};
     for (const [key, value] of Object.entries(obj)) {
       sanitized[key] = sanitizeObject(value);
     }
@@ -117,10 +117,10 @@ async function parseBody(request: NextRequest): Promise<any> {
 export function validateRequest(options: ValidationOptions) {
   return async function middleware(
     request: ValidatedRequest,
-    context?: any
+    context?: unknown
   ): Promise<NextResponse | null> {
     try {
-      const validated: any = {};
+      const validated: unknown = {};
 
       // Validate body
       if (options.body && ['POST', 'PUT', 'PATCH'].includes(request.method)) {
@@ -262,13 +262,13 @@ export const commonSchemas = {
 export function createValidatedHandler<T extends ValidationOptions>(
   validation: T,
   handler: (
-    request: NextRequest & { validated: any },
-    context?: any
+    request: NextRequest & { validated: unknown },
+    context?: unknown
   ) => Promise<Response>
 ) {
   return async function (
     request: NextRequest,
-    context?: any
+    context?: unknown
   ): Promise<Response> {
     const validationResult = await validateRequest(validation)(
       request,
@@ -279,6 +279,6 @@ export function createValidatedHandler<T extends ValidationOptions>(
       return validationResult;
     }
 
-    return handler(request as any, context);
+    return handler(request as unknown, context);
   };
 }

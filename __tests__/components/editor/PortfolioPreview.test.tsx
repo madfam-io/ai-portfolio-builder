@@ -1,7 +1,12 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+
+import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
+import { Portfolio, TemplateType } from '@/types/portfolio';
 
 // Mock hooks
 jest.mock('@/hooks/useDebounce', () => ({
-  useDebounce: (value: any) => value,
+  useDebounce: (value: unknown) => value,
 }));
 
 jest.mock('@/hooks/useRealTimePreview', () => ({
@@ -14,12 +19,6 @@ jest.mock('@/hooks/useRealTimePreview', () => ({
     reconnect: jest.fn(),
   }),
 }));
-import { render, screen } from '@testing-library/react';
-import React from 'react';
-
-import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
-import { Portfolio, TemplateType } from '@/types/portfolio';
-
 // Mock portfolio data
 const mockPortfolio: Portfolio = {
   id: '1',
@@ -379,7 +378,9 @@ describe('PortfolioPreview', () => {
         value: mockRemoveEventListener,
       });
 
-      render(<PortfolioPreview portfolio={mockPortfolio as any} mode="mobile" />);
+      render(
+        <PortfolioPreview portfolio={mockPortfolio as any} mode="mobile" />
+      );
 
       const container = screen.getByTestId('portfolio-container');
       expect(container).toHaveClass('mobile-layout');

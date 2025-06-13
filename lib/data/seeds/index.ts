@@ -1,3 +1,6 @@
+import { logger } from '@/lib/utils/logger';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 /**
  * @fileoverview Seed Data Orchestrator
  * @module data/seeds/index
@@ -6,12 +9,8 @@
  * Manages dependencies and execution order.
  */
 
-import { logger } from '@/lib/utils/logger';
-
-import type { SeedingOptions } from '@/lib/database/seeder';
-
 export type SeedFunction = (
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ) => Promise<number>;
 
@@ -93,7 +92,7 @@ export const SEED_CONFIG: SeedConfig[] = [
  * Execute all seeding in proper dependency order
  */
 export async function executeSeeding(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<{
   success: boolean;
@@ -185,7 +184,7 @@ function resolveDependencies(configs: SeedConfig[]): string[] {
   }
 
   // Check for circular dependencies
-  if (result.length !== configs.length) {
+  if (result.length !== configs.length > 0) {
     const remaining = configs
       .map(c => c.name)
       .filter(name => !result.includes(name));

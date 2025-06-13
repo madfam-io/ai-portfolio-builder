@@ -1,7 +1,7 @@
 'use client';
 
-import { FiCheckCircle } from 'react-icons/fi';
 import React from 'react';
+import { FiCheckCircle } from 'react-icons/fi';
 
 import type { VariantResult, DetailedVariant } from '@/types/experiments';
 

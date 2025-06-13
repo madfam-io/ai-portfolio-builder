@@ -1,14 +1,13 @@
-/**
- * Tests for SectionEditor component
- */
-
-import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 
 import DragDropProvider from '@/components/editor/DragDropContext';
 import SectionEditor from '@/components/editor/SectionEditor';
-
 import type { Portfolio } from '@/types/portfolio';
+
+/**
+ * Tests for SectionEditor component
+ */
 
 // Mock the language context
 jest.mock('@/lib/i18n/refactored-context', () => ({
@@ -76,7 +75,7 @@ const mockPortfolio: Partial<Portfolio> = {
 
 const mockOnChange = jest.fn() as jest.Mock;
 
-const renderSectionEditor = (section: any, portfolio = mockPortfolio) => {
+const renderSectionEditor = (section: unknown, portfolio = mockPortfolio) => {
   return render(
     <DragDropProvider>
       <SectionEditor

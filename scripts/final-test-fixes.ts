@@ -1,14 +1,14 @@
+import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Final comprehensive test fixes
  */
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
-
 // Update jest config to handle React 19
-const updateJestConfig = () => {
+const updateJestConfig = (): void => {
   const jestConfigPath = join(process.cwd(), 'jest.config.js');
   let config = readFileSync(jestConfigPath, 'utf-8');
   
@@ -26,7 +26,7 @@ const updateJestConfig = () => {
 };
 
 // Fix UI store test to match actual implementation
-const fixUIStoreTest = () => {
+const fixUIStoreTest = (): void => {
   const filePath = join(process.cwd(), '__tests__/lib/store/ui-store.test.ts');
   let content = readFileSync(filePath, 'utf-8');
   
@@ -49,7 +49,7 @@ const fixUIStoreTest = () => {
 };
 
 // Fix component tests with missing mocks
-const addComponentMocks = () => {
+const addComponentMocks = (): void => {
   const componentTests = [
     '__tests__/components/editor/PortfolioEditor.test.tsx',
     '__tests__/components/editor/PortfolioPreview.test.tsx',
@@ -66,7 +66,7 @@ const addComponentMocks = () => {
         const mockSection = `
 // Mock hooks
 jest.mock('@/hooks/useDebounce', () => ({
-  useDebounce: (value: any) => value,
+  useDebounce: (value: unknown) => value,
 }));
 
 jest.mock('@/hooks/useRealTimePreview', () => ({
@@ -90,7 +90,7 @@ jest.mock('@/hooks/useRealTimePreview', () => ({
 };
 
 // Fix HuggingFace test
-const fixHuggingFaceTest = () => {
+const fixHuggingFaceTest = (): void => {
   const filePath = join(process.cwd(), '__tests__/ai/huggingface-service.test.ts');
   if (existsSync(filePath)) {
     let content = readFileSync(filePath, 'utf-8');
@@ -116,7 +116,7 @@ const fixHuggingFaceTest = () => {
 };
 
 // Fix auth context test
-const fixAuthTests = () => {
+const fixAuthTests = (): void => {
   const authTests = [
     '__tests__/app/dashboard/page.test.tsx',
     '__tests__/app/demo/interactive.test.tsx',

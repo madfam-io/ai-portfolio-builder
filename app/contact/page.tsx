@@ -1,17 +1,18 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+} from 'react-icons/fa';
 import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaPaperPlane,
   FaBusinessTime,
   FaUserTie,
-} from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 
 export default function ContactPage(): React.ReactElement {
   const { t } = useLanguage();

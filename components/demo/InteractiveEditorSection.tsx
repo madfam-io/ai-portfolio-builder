@@ -1,26 +1,28 @@
 'use client';
 
-import { FiAward, FiBriefcase, FiLayout, FiPlus, FiSettings, FiUser } from 'react-icons/fi';
-import { FaPalette } from 'react-icons/fa';
 import React from 'react';
-
-
-// ;
-// ;
-
-
-
-
+import {
+  FiAward,
+  FiBriefcase,
+  FiLayout,
+  FiPlus,
+  FiSettings,
+  FiUser,
+} from 'react-icons/fi';
+import { FaPalette } from 'react-icons/fa';
 
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
 
+// ;
+// ;
+
 interface InteractiveEditorSectionProps {
   portfolio: Portfolio;
   activeSection: string;
   showImportOptions: boolean;
-  t: any; // TODO: Add proper translation type
+  t: unknown; // TODO: Add proper translation type
   onPortfolioChange: (portfolio: Portfolio) => void;
   onSectionChange: (section: string) => void;
   onToggleImportOptions: () => void;
@@ -39,7 +41,7 @@ export function InteractiveEditorSection({
   onPreviousStep,
   onNextStep,
 }: InteractiveEditorSectionProps): React.ReactElement {
-  const handleSectionUpdate = (sectionId: string, content: any) => {
+  const handleSectionUpdate = (sectionId: string, content: unknown) => {
     // In the real app, this would update the specific section
     // For demo, we'll just update the portfolio bio as an example
     if (sectionId === 'bio') {
@@ -48,7 +50,7 @@ export function InteractiveEditorSection({
   };
 
   // Placeholder for future functionality
-  const handleAddSection = () => {
+  const handleAddSection = (): void => {
     // Demo placeholder - in real app would add new section
     // For now, just a no-op
   };
@@ -133,9 +135,7 @@ export function InteractiveEditorSection({
         {/* Editor */}
         <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
           <LazyWrapper
-            component={() =>
-              import('@/components/editor/PortfolioEditor')
-            }
+            component={() => import('@/components/editor/PortfolioEditor')}
             componentProps={{
               portfolio: portfolio,
               activeSection: activeSection,

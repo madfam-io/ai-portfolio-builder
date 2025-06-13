@@ -1,3 +1,6 @@
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
 /**
  * @fileoverview Database Seeding Engine
  * @module database/seeder
@@ -5,9 +8,6 @@
  * Provides intelligent database seeding with detection, validation,
  * and incremental data population for development environments.
  */
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 
 export interface SeedingOptions {
   mode: 'minimal' | 'demo' | 'full' | 'custom';
@@ -30,7 +30,7 @@ export interface SeedingResult {
  * Handles intelligent seeding with conflict detection and incremental updates
  */
 export class DatabaseSeeder {
-  private client: any;
+  private client: unknown;
   private options: SeedingOptions;
 
   constructor(options: SeedingOptions = { mode: 'demo' }) {

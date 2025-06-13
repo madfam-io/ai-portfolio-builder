@@ -1,13 +1,13 @@
-/**
- * @fileoverview API endpoint for tracking experiment events
- * POST /api/v1/experiments/track
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * @fileoverview API endpoint for tracking experiment events
+ * POST /api/v1/experiments/track
+ */
 
 /**
  * Request schema for tracking events
@@ -22,7 +22,7 @@ const trackEventSchema = z.object({
 /**
  * Track experiment events
  */
-export async function POST(request: NextRequest) {
+export async function POST($1): Promise<Response> {
   try {
     const body = await request.json();
 

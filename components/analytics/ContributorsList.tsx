@@ -1,13 +1,13 @@
+'use client';
+
+import type { Contributor } from '@/types/analytics';
+
 /**
  * @fileoverview ContributorsList Component
  *
  * Displays a ranked list of top contributors
  * with commit counts and visual ranking
  */
-
-'use client';
-
-import type { Contributor } from '@/types/analytics';
 
 interface ContributorsListProps {
   contributors: Array<{

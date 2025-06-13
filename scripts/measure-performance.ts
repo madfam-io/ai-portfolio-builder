@@ -1,13 +1,13 @@
+import { promises as fs } from 'fs';
+import path from 'path';
+import { execSync } from 'child_process';
+
 #!/usr/bin/env tsx
 
 /**
  * Performance Measurement Script
  * Measures key performance metrics for Phase 3 optimization
  */
-
-import { promises as fs } from 'fs';
-import path from 'path';
-import { execSync } from 'child_process';
 
 interface PerformanceMetrics {
   bundleSize: {

@@ -11,7 +11,7 @@ describe('enhance-bio API Route', () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ test: 'data' })
+      body: JSON.stringify({ test: 'data' }),
     });
 
     // Since the route exports might not exist, we'll just test the request creation

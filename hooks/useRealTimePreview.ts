@@ -1,13 +1,13 @@
+import { useState, useEffect, useCallback, useMemo } from 'react';
+
+import { Portfolio, SectionType } from '@/types/portfolio';
+
 /**
  * @fileoverview Real-Time Preview Hook
  *
  * Manages real-time preview functionality for the portfolio editor,
  * including preview modes, section highlighting, and responsive design testing.
  */
-
-import { useState, useEffect, useCallback, useMemo } from 'react';
-
-import { Portfolio, SectionType } from '@/types/portfolio';
 
 export type PreviewMode = 'desktop' | 'tablet' | 'mobile';
 export type PreviewState = 'editing' | 'preview' | 'fullscreen';
@@ -206,7 +206,7 @@ export function useRealTimePreview({
   > => {
     try {
       if (typeof window === 'undefined') return null;
-      
+
       // This would use html2canvas or similar library to capture the preview
       const previewElement = document.querySelector('[data-preview-container]');
       if (!previewElement) return null;
@@ -222,7 +222,7 @@ export function useRealTimePreview({
   const exportPreviewHTML = useCallback((): string => {
     // Generate HTML export of the current preview
     if (typeof window === 'undefined') return '';
-    
+
     const previewElement = document.querySelector('[data-preview-container]');
     if (!previewElement) return '';
 

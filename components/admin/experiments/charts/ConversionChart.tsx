@@ -1,12 +1,5 @@
-/**
- * Conversion Chart Component (Lazy-loaded)
- *
- * Displays conversion rate trends over time for experiment variants
- * using a line chart visualization.
- */
-
-import { format } from 'date-fns';
 import React from 'react';
+import { format } from 'date-fns';
 import {
   LineChart,
   Line,
@@ -17,6 +10,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+
+/**
+ * Conversion Chart Component (Lazy-loaded)
+ *
+ * Displays conversion rate trends over time for experiment variants
+ * using a line chart visualization.
+ */
 
 interface ConversionChartProps {
   data: Array<{

@@ -1,17 +1,17 @@
-/**
- * HuggingFace API Client
- * Handles all API communication with HuggingFace Inference API
- */
-
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
-
 import {
   AIServiceError,
   ModelUnavailableError,
   QuotaExceededError,
   ModelResponse,
 } from '../types';
+
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+
+/**
+ * HuggingFace API Client
+ * Handles all API communication with HuggingFace Inference API
+ */
 
 // Request queue to prevent rate limiting
 class RequestQueue {

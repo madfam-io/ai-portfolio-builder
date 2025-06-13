@@ -1,3 +1,18 @@
+'use client';
+
+import React from 'react';
+import { FaBehance } from 'react-icons/fa';
+} from 'react-icons/fi';
+import {
+  FiInstagram,
+  FiDribbble,
+  FiExternalLink,
+  FiEye,
+  FiHeart,
+  FiAward,
+
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Designer Portfolio Template
  *
@@ -20,20 +35,6 @@
  * @version 0.0.1-alpha
  */
 
-'use client';
-
-import { FaBehance } from 'react-icons/fa';
-import React from 'react';
-
-import {
-  FiInstagram,
-  FiDribbble,
-  FiExternalLink,
-  FiEye,
-  FiHeart,
-  FiAward,
-} from 'react-icons/fi';
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Designer Template component

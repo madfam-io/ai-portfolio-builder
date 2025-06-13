@@ -1,14 +1,14 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+
+import { PreviewControls } from '@/components/editor/PreviewControls';
+
 /**
  * @fileoverview Tests for PreviewControls Component
  *
  * Tests the preview controls functionality including device mode switching,
  * zoom controls, fullscreen toggle, and responsiveness indicators.
  */
-
-import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
-
-import { PreviewControls } from '@/components/editor/PreviewControls';
 
 describe('PreviewControls', () => {
   const mockOnPreviewModeChange = jest.fn() as jest.Mock;

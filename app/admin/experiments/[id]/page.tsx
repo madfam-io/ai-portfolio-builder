@@ -1,26 +1,10 @@
 'use client';
 
-/**
- * Experiment Details & Analytics Page
- *
- * Displays detailed analytics, conversion data, and statistical
- * analysis for a specific A/B testing experiment.
- */
-
-import { useRouter, useParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
-
-import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
-import { createClient } from '@/lib/supabase/client';
+import { useRouter, useParams } from 'next/navigation';
 import {
   calculateExperimentResults,
   generateTimeline,
-} from '@/lib/utils/experiments/calculate-results';
-import { logger } from '@/lib/utils/logger';
-
-import { ExperimentDetailsContent } from './ExperimentDetailsContent';
-
 import type {
   LandingPageExperiment,
   LandingPageVariant,
@@ -28,7 +12,22 @@ import type {
   LandingPageAnalytics,
   DetailedVariant,
   ExperimentStatus,
+
+import { useAuth } from '@/lib/contexts/AuthContext';
+// import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
+import { createClient } from '@/lib/supabase/client';
+} from '@/lib/utils/experiments/calculate-results';
+import { logger } from '@/lib/utils/logger';
+import { ExperimentDetailsContent } from './ExperimentDetailsContent';
 } from '@/types/experiments';
+
+
+/**
+ * Experiment Details & Analytics Page
+ *
+ * Displays detailed analytics, conversion data, and statistical
+ * analysis for a specific A/B testing experiment.
+ */
 
 export default function ExperimentDetailsPage(): React.ReactElement {
   const { isAdmin, canAccess } = useAuth();

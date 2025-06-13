@@ -1,3 +1,21 @@
+'use client';
+
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import {
+  Portfolio,
+  PortfolioEditorState,
+  TemplateType,
+  SectionType,
+
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useEditorHistory } from '@/hooks/useEditorHistory';
+} from '@/types/portfolio';
+import { EditorHeader } from './EditorHeader';
+import { EditorSidebar } from './EditorSidebar';
+import { EditorToolbar } from './EditorToolbar';
+import { PortfolioPreview } from './PortfolioPreview';
+
 /**
  * @fileoverview Portfolio Editor Component - Complete portfolio editing interface
  *
@@ -17,26 +35,8 @@
  * @version 0.0.1-alpha - Enhanced with professional templates
  */
 
-'use client';
-
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useEditorHistory } from '@/hooks/useEditorHistory';
-import {
-  Portfolio,
-  PortfolioEditorState,
-  TemplateType,
-  SectionType,
-} from '@/types/portfolio';
 
 // Removed portfolioService import - will use API calls instead
-import { EditorHeader } from './EditorHeader';
-import { EditorSidebar } from './EditorSidebar';
-import { EditorToolbar } from './EditorToolbar';
-import { PortfolioPreview } from './PortfolioPreview';
-
 interface PortfolioEditorProps {
   portfolioId: string;
   userId: string;
@@ -259,7 +259,7 @@ export default function PortfolioEditor({
     }
   };
 
-  const handlePreview = () => {
+  const handlePreview = (): void => {
     setShowPreview(true);
     onPreview?.(editorState.portfolio);
   };
@@ -290,7 +290,7 @@ export default function PortfolioEditor({
   };
 
   const handleSectionUpdate = useCallback(
-    (sectionType: SectionType, updates: any) => {
+    (sectionType: SectionType, updates: unknown) => {
       updatePortfolio(
         {
           ...editorState.portfolio,

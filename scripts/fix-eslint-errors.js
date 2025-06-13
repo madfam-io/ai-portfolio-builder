@@ -111,7 +111,7 @@ function fixTypeScriptStrict(content) {
       if (!condition.includes('===') && !condition.includes('!==') && 
           !condition.includes('>') && !condition.includes('<') &&
           !condition.includes('typeof') && !condition.includes('instanceof')) {
-        return `if (${condition} !== undefined && ${condition} !== null)`;
+        return `if (${condition})`;
       }
       return match;
     }

@@ -1,9 +1,9 @@
+import { PromptTemplate } from './types';
+
 /**
  * AI Model Prompt Templates
  * Optimized prompts for open-source models (Llama, Mistral, etc.)
  */
-
-import { PromptTemplate } from './types';
 
 export const promptTemplates = {
   /**

@@ -1,3 +1,5 @@
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Mock data for portfolio service development
  * @module services/portfolio/mock-data
@@ -5,8 +7,6 @@
  * This module provides realistic mock data for development and testing.
  * In production, this data is replaced by real database queries.
  */
-
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Mock portfolio for a Full Stack Developer

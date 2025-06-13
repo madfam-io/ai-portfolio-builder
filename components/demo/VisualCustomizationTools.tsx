@@ -1,7 +1,8 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiSettings,
   FiType,
@@ -10,7 +11,7 @@ import {
   FiSun,
   FiMoon,
   FiMove,
-} from 'react-icons/fi';
+
 
 interface ColorScheme {
   name: string;
@@ -194,7 +195,7 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     setIsCustomizing(false);
-    if (onColorChange !== undefined && onColorChange !== null) {
+    if (onColorChange) {
       onColorChange(colorScheme);
     }
   };
@@ -206,7 +207,7 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 800));
 
     setIsCustomizing(false);
-    if (onFontChange !== undefined && onFontChange !== null) {
+    if (onFontChange) {
       onFontChange(font);
     }
   };
@@ -218,7 +219,7 @@ export function VisualCustomizationTools({
     await new Promise(resolve => setTimeout(resolve, 1200));
 
     setIsCustomizing(false);
-    if (onLayoutChange !== undefined && onLayoutChange !== null) {
+    if (onLayoutChange) {
       onLayoutChange(layout);
     }
   };
@@ -226,7 +227,7 @@ export function VisualCustomizationTools({
   const handleThemeToggle = (): void => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
-    if (onThemeToggle !== undefined && onThemeToggle !== null) {
+    if (onThemeToggle) {
       onThemeToggle(newTheme);
     }
   };
@@ -269,7 +270,7 @@ export function VisualCustomizationTools({
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
+                onClick={() => setActiveTab(tab.id as unknown)}
                 className={`flex-1 flex items-center justify-center space-x-2 px-4 py-3 text-sm font-medium transition-colors ${
                   activeTab === tab.id
                     ? 'text-purple-600 dark:text-purple-400 border-b-2 border-purple-600 dark:border-purple-400 bg-purple-50 dark:bg-purple-900/20'

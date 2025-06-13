@@ -1,13 +1,9 @@
 'use client';
 
-/**
- * Admin User Dashboard Component
- * Allows admins to manage users, view analytics, and switch between admin/user modes
- */
-
+import React, { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import React, { useState } from 'react';
+} from 'react-icons/fi';
 import {
   FiUsers,
   FiSettings,
@@ -22,11 +18,16 @@ import {
   FiAlertTriangle,
   FiCheck,
   FiLayers,
-} from 'react-icons/fi';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
+
+
+/**
+ * Admin User Dashboard Component
+ * Allows admins to manage users, view analytics, and switch between admin/user modes
+ */
 
 export default function AdminUserDashboard(): React.ReactElement {
   const {

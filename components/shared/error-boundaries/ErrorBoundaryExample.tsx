@@ -1,14 +1,6 @@
-/**
- * @fileoverview Error Boundary Usage Examples
- *
- * Demonstrates how to use the various error boundaries and fallback components
- * throughout the PRISMA application.
- */
-
 'use client';
 
 import React, { useState } from 'react';
-
 import {
   InlineLoader,
   CardSkeleton,
@@ -20,6 +12,13 @@ import {
 import { RootErrorBoundary } from './RootErrorBoundary';
 import { RouteErrorBoundary } from './RouteErrorBoundary';
 import { WidgetErrorBoundary } from './WidgetErrorBoundary';
+
+/**
+ * @fileoverview Error Boundary Usage Examples
+ *
+ * Demonstrates how to use the various error boundaries and fallback components
+ * throughout the PRISMA application.
+ */
 
 /**
  * Component that throws an error for testing
@@ -75,17 +74,17 @@ export default function ErrorBoundaryExample(): React.ReactElement {
   const [isLoading, setIsLoading] = useState(false);
   const [hasData, setHasData] = useState(true);
 
-  const handleTriggerError = () => {
+  const handleTriggerError = (): void => {
     setTriggerError(true);
     // Reset after a delay for demo purposes
     setTimeout(() => setTriggerError(false), 5000);
   };
 
-  const handleToggleLoading = () => {
+  const handleToggleLoading = (): void => {
     setIsLoading(!isLoading);
   };
 
-  const handleToggleData = () => {
+  const handleToggleData = (): void => {
     setHasData(!hasData);
   };
 

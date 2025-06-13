@@ -1,13 +1,13 @@
+import React from 'react';
+import { ComponentType } from 'react';
+import dynamic from 'next/dynamic';
+
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Lazy-loaded template components for code splitting
  * Reduces initial bundle size by loading templates on demand
  */
-
-import dynamic from 'next/dynamic';
-import React from 'react';
-import { ComponentType } from 'react';
-
-import { Portfolio } from '@/types/portfolio';
 
 // Loading component for templates
 const TemplateLoader = () => (

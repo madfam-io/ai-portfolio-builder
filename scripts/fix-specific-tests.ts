@@ -1,11 +1,11 @@
+import { readFileSync, writeFileSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Fix specific test issues that weren't caught by the first pass
  */
-
-import { readFileSync, writeFileSync } from 'fs';
-import { join } from 'path';
 
 const fixes = [
   {
@@ -119,7 +119,7 @@ const fixLocalStorage = (content: string): string => {
     removeItem: jest.fn(),
     clear: jest.fn(),
   };
-  (global as any).localStorage = localStorageMock;
+  (global as unknown).localStorage = localStorageMock;
 `
     );
   }

@@ -1,3 +1,10 @@
+import {
+  Portfolio,
+  CreatePortfolioDTO,
+  UpdatePortfolioDTO,
+} from '@/types/portfolio';
+import { ValidationResult } from './types';
+
 /**
  * @fileoverview Portfolio validation utilities
  * @module services/portfolio/validation
@@ -5,14 +12,6 @@
  * This module provides comprehensive validation for portfolio data
  * to ensure data integrity and consistency.
  */
-
-import {
-  Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
-} from '@/types/portfolio';
-
-import { ValidationResult } from './types';
 
 /**
  * Validation rules configuration
@@ -286,7 +285,7 @@ export function sanitizePortfolioData<T extends Partial<Portfolio>>(
     urlFields.forEach(field => {
       const value = sanitized.social![field as keyof typeof sanitized.social];
       if (typeof value === 'string') {
-        (sanitized.social as any)[field] = sanitizeUrl(value);
+        (sanitized.social as unknown)[field] = sanitizeUrl(value);
       }
     });
 

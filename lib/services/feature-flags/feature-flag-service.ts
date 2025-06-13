@@ -1,22 +1,20 @@
+import { cookies } from 'next/headers';
+import crypto from 'crypto';
+import type {
+  GetActiveExperimentResponse,
+  VisitorAssignment,
+  TargetAudience,
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+} from '@/types/experiments';
+
 /**
  * @fileoverview Feature Flag Service for A/B Testing
  *
  * Handles experiment assignment, variant selection, and traffic splitting
  * for landing page A/B tests. Uses cookies for persistent assignment.
  */
-
-import crypto from 'crypto';
-
-import { cookies } from 'next/headers';
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
-import type {
-  GetActiveExperimentResponse,
-  VisitorAssignment,
-  TargetAudience,
-} from '@/types/experiments';
 
 /**
  * Cookie name for storing experiment assignments
@@ -221,7 +219,7 @@ export class FeatureFlagService {
         if (existingAssignment) {
           // Find the assigned variant
           const variant = experiment.variants.find(
-            (v: any) => v.id === existingAssignment.variantId
+            (v: unknown) => v.id === existingAssignment.variantId
           );
 
           if (variant) {

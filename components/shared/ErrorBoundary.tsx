@@ -1,3 +1,8 @@
+'use client';
+
+import React, { Component, ReactNode, ErrorInfo } from 'react';
+import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
+
 /**
  * @fileoverview Error Boundary Components
  *
@@ -15,14 +20,6 @@
  * @author PRISMA Development Team
  * @version 1.0.0
  */
-
-'use client';
-
-import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
-import React, { Component, ReactNode, ErrorInfo } from 'react';
-
-
-
 
 // Error types for categorization
 export type ErrorType =

@@ -1,8 +1,3 @@
-/**
- * Template Recommendation API Route
- * Uses AI to recommend the best portfolio template based on user profile
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -10,6 +5,11 @@ import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { UserProfile, AIServiceError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Template Recommendation API Route
+ * Uses AI to recommend the best portfolio template based on user profile
+ */
 
 // Request validation schema
 const recommendTemplateSchema = z.object({
@@ -284,13 +284,13 @@ export async function GET(): Promise<Response> {
  * Enhance AI recommendation with additional business logic
  */
 function enhanceRecommendation(
-  aiRecommendation: any,
+  aiRecommendation: unknown,
   profile: UserProfile,
   preferences: Record<string, unknown>
-): any {
+): unknown {
   // Apply business rules and preferences
   const enhancedAlternatives = aiRecommendation.alternatives.map(
-    (alt: any) => ({
+    (alt: unknown) => ({
       ...alt,
       reasoning: generateReasoningForTemplate(alt.template, profile),
       preview: `/templates/${alt.template}-preview.jpg`,
@@ -367,7 +367,7 @@ function getTemplateFeatures(template: string): string[] {
 function getRecommendedCustomizations(
   template: string,
   profile: UserProfile
-): any {
+): unknown {
   const baseConfig = {
     primaryColor: profile.hasDesignWork ? '#6366f1' : '#1f2937',
     headerStyle:

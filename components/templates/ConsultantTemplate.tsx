@@ -1,3 +1,20 @@
+'use client';
+
+import React from 'react';
+} from 'react-icons/fi';
+import {
+  FiMail,
+  FiPhone,
+  FiTrendingUp,
+  FiTarget,
+  FiUsers,
+  FiAward,
+  FiDollarSign,
+  FiCalendar,
+  FiBarChart,
+
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Consultant Portfolio Template
  *
@@ -19,22 +36,6 @@
  * @version 0.0.1-alpha
  */
 
-'use client';
-
-import React from 'react';
-import {
-  FiMail,
-  FiPhone,
-  FiTrendingUp,
-  FiTarget,
-  FiUsers,
-  FiAward,
-  FiDollarSign,
-  FiCalendar,
-  FiBarChart,
-} from 'react-icons/fi';
-
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Consultant Template component

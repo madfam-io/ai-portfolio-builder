@@ -1,9 +1,9 @@
+import { useState } from 'react';
+import Image, { ImageProps } from 'next/image';
+
 /**
  * Optimized image component with lazy loading and blur placeholder
  */
-
-import Image, { ImageProps } from 'next/image';
-import { useState } from 'react';
 
 interface OptimizedImageProps extends Omit<ImageProps, 'placeholder'> {
   fallbackSrc?: string;
@@ -21,12 +21,12 @@ export function OptimizedImage({
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const handleError = () => {
+  const handleError = (): void => {
     setError(true);
     setLoading(false);
   };
 
-  const handleLoad = () => {
+  const handleLoad = (): void => {
     setLoading(false);
   };
 

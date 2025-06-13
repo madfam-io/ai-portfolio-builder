@@ -1,6 +1,6 @@
-
-import { render, RenderOptions } from '@testing-library/react';
 import { ReactElement } from 'react';
+import { render, RenderOptions } from '@testing-library/react';
+
 
 // Test providers wrapper
 export function AllTheProviders({ children }: { children: React.ReactNode }) {

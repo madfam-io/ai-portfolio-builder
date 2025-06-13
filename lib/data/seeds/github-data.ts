@@ -1,3 +1,7 @@
+import { logger } from '@/lib/utils/logger';
+import { getSeedConfig } from './index';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 /**
  * @fileoverview GitHub Integration and Repository Seed Data
  * @module data/seeds/github-data
@@ -6,13 +10,7 @@
  * Creates comprehensive repository data with commits, contributors, and metrics.
  */
 
-import { logger } from '@/lib/utils/logger';
-
-import { getSeedConfig } from './index';
-
 // getUserTemplates imported but not used in current implementation
-import type { SeedingOptions } from '@/lib/database/seeder';
-
 /**
  * GitHub integration templates
  */
@@ -138,7 +136,7 @@ const REPOSITORY_TEMPLATES = [
 /**
  * Generate GitHub integration for a user
  */
-function generateGitHubIntegration(userId: string, index: number): any {
+function generateGitHubIntegration(userId: string, index: number): unknown {
   const template = GITHUB_INTEGRATION_TEMPLATES.find(t => t.userId === userId);
 
   if (template) {
@@ -195,8 +193,8 @@ function generateRepository(
   integrationId: string,
   userId: string,
   index: number,
-  template?: any
-): any {
+  template?: unknown
+): unknown {
   const languages = [
     'JavaScript',
     'TypeScript',
@@ -235,7 +233,7 @@ function generateRepository(
   // Generate realistic LOC distribution
   const totalLoc = repoTemplate.locByLanguage
     ? Object.values(repoTemplate.locByLanguage).reduce(
-        (sum: number, lines: any) => sum + lines,
+        (sum: number, lines: unknown) => sum + lines,
         0
       )
     : Math.floor(Math.random() * 20000) + 5000;
@@ -287,7 +285,7 @@ function generateRepository(
  * Seed GitHub integrations table
  */
 export async function seedGitHubIntegrations(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding GitHub integrations...');
@@ -371,7 +369,7 @@ export async function seedGitHubIntegrations(
  * Seed repositories table
  */
 export async function seedRepositories(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -475,7 +473,7 @@ export async function seedRepositories(
  * Combined seeding function for GitHub data
  */
 export async function seedGitHubData(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

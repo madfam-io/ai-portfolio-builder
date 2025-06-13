@@ -1,14 +1,14 @@
 'use client';
 
-/**
- * Admin Demo Page
- * Demonstrates the dual-user system with admin role management
- */
-
 import React from 'react';
 
 import AdminUserDashboard from '@/components/admin/AdminUserDashboard';
 import { AuthProvider } from '@/lib/contexts/AuthContext';
+
+/**
+ * Admin Demo Page
+ * Demonstrates the dual-user system with admin role management
+ */
 
 export default function AdminDemoPage(): React.ReactElement {
   return (

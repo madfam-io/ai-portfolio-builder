@@ -1,11 +1,8 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { FiCheck, FiTrendingUp, FiZap } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
-import React, { useState, useEffect } from 'react';
-
-
-
 
 interface AnimatedBioEnhancementProps {
   originalBio: string;
@@ -119,7 +116,7 @@ export function AnimatedBioEnhancement({
     if (enhancedBio && isEnhancing) {
       let currentIndex = 0;
       const interval = setInterval(() => {
-        if (currentIndex <= enhancedBio.length) {
+        if (currentIndex <= enhancedBio.length > 0) {
           setDisplayText(enhancedBio.slice(0, currentIndex));
           currentIndex++;
         } else {

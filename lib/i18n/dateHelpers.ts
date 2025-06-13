@@ -1,13 +1,13 @@
-/**
- * Helper functions for dynamic date generation in translations
- */
-
 import {
   getCurrentYear,
   getPromotionalDeadline,
   getLastUpdatedDate,
   getLastUpdatedDateSpanish,
 } from '@/lib/utils/date';
+
+/**
+ * Helper functions for dynamic date generation in translations
+ */
 
 /**
  * Get dynamic translation values that include dates

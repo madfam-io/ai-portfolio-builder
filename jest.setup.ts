@@ -9,7 +9,7 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock as any;
+global.localStorage = localStorageMock as unknown;
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
@@ -47,8 +47,8 @@ beforeAll(() => {
     if (
       typeof args[0] === 'string' &&
       (args[0].includes('Warning: ReactDOM.render') ||
-       args[0].includes('Warning: unmountComponentAtNode') ||
-       args[0].includes('not wrapped in act'))
+        args[0].includes('Warning: unmountComponentAtNode') ||
+        args[0].includes('not wrapped in act'))
     ) {
       return;
     }
@@ -62,7 +62,6 @@ afterAll(() => {
 
 export {};
 
-
 // Additional mocks for remaining tests
 const mockSupabaseClient = {
   from: jest.fn(() => ({
@@ -70,21 +69,23 @@ const mockSupabaseClient = {
       eq: jest.fn(() => ({
         single: jest.fn(() => Promise.resolve({ data: null, error: null })),
         order: jest.fn(() => ({
-          limit: jest.fn(() => Promise.resolve({ data: [], error: null }))
-        }))
+          limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
+        })),
       })),
       insert: jest.fn(() => Promise.resolve({ data: null, error: null })),
       update: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ data: null, error: null }))
+        eq: jest.fn(() => Promise.resolve({ data: null, error: null })),
       })),
       delete: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ data: null, error: null }))
-      }))
-    }))
+        eq: jest.fn(() => Promise.resolve({ data: null, error: null })),
+      })),
+    })),
   })),
   auth: {
-    getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null }))
-  }
+    getUser: jest.fn(() =>
+      Promise.resolve({ data: { user: null }, error: null })
+    ),
+  },
 };
 
 const mockRedisClient = {
@@ -94,25 +95,25 @@ const mockRedisClient = {
   flushall: jest.fn(() => Promise.resolve('OK')),
   quit: jest.fn(() => Promise.resolve('OK')),
   on: jest.fn(),
-  connect: jest.fn(() => Promise.resolve())
+  connect: jest.fn(() => Promise.resolve()),
 };
 
 const mockPerformanceMonitor = {
   startTimer: jest.fn(() => ({ end: jest.fn() })),
   recordMetric: jest.fn(),
-  getMetrics: jest.fn(() => ({}))
+  getMetrics: jest.fn(() => ({})),
 };
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => mockSupabaseClient)
+  createClient: jest.fn(() => mockSupabaseClient),
 }));
 
 jest.mock('redis', () => ({
-  createClient: jest.fn(() => mockRedisClient)
+  createClient: jest.fn(() => mockRedisClient),
 }));
 
 jest.mock('@/lib/monitoring/performance', () => ({
-  performanceMonitor: mockPerformanceMonitor
+  performanceMonitor: mockPerformanceMonitor,
 }));
 
 // Mock HuggingFace API
@@ -121,12 +122,19 @@ global.fetch = jest.fn(() =>
     ok: true,
     json: () => Promise.resolve({ generated_text: 'Mock AI response' }),
     text: () => Promise.resolve('Mock response'),
-    headers: new Headers()
+    headers: new Headers(),
   })
 ) as jest.Mock;
 
 // Mock environment variables - use dynamic values instead of hardcoded
-process.env.NEXT_PUBLIC_SUPABASE_URL = process.env.TEST_SUPABASE_URL || 'http://localhost:54321';
-process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY = process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key-' + Math.random().toString(36).substring(7);
-process.env.SUPABASE_SERVICE_ROLE_KEY = process.env.TEST_SUPABASE_SERVICE_KEY || 'test-service-key-' + Math.random().toString(36).substring(7);
-process.env.HUGGINGFACE_API_KEY = process.env.TEST_HUGGINGFACE_API_KEY || 'test-hf-key-' + Math.random().toString(36).substring(7);
+process.env.NEXT_PUBLIC_SUPABASE_URL =
+  process.env.TEST_SUPABASE_URL || 'http://localhost:54321';
+process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY =
+  process.env.TEST_SUPABASE_ANON_KEY ||
+  'test-anon-key-' + Math.random().toString(36).substring(7);
+process.env.SUPABASE_SERVICE_ROLE_KEY =
+  process.env.TEST_SUPABASE_SERVICE_KEY ||
+  'test-service-key-' + Math.random().toString(36).substring(7);
+process.env.HUGGINGFACE_API_KEY =
+  process.env.TEST_HUGGINGFACE_API_KEY ||
+  'test-hf-key-' + Math.random().toString(36).substring(7);

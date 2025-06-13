@@ -1,4 +1,3 @@
-
 import { performanceMonitor } from '@/lib/monitoring/performance';
 
 // Mock timers
@@ -18,7 +17,7 @@ describe('Performance Monitor', () => {
       const timer = performanceMonitor.startTimer('test-operation');
       expect(timer).toBeDefined();
       expect(timer.end).toBeDefined();
-      
+
       const duration = timer.end();
       expect(typeof duration).toBe('number');
     });

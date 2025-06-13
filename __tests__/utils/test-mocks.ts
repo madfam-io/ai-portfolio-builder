@@ -1,4 +1,3 @@
-
 // Common mock implementations
 export const mockSupabaseClient = {
   from: jest.fn(() => ({
@@ -6,21 +5,23 @@ export const mockSupabaseClient = {
       eq: jest.fn(() => ({
         single: jest.fn(() => Promise.resolve({ data: null, error: null })),
         order: jest.fn(() => ({
-          limit: jest.fn(() => Promise.resolve({ data: [], error: null }))
-        }))
+          limit: jest.fn(() => Promise.resolve({ data: [], error: null })),
+        })),
       })),
       insert: jest.fn(() => Promise.resolve({ data: null, error: null })),
       update: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ data: null, error: null }))
+        eq: jest.fn(() => Promise.resolve({ data: null, error: null })),
       })),
       delete: jest.fn(() => ({
-        eq: jest.fn(() => Promise.resolve({ data: null, error: null }))
-      }))
-    }))
+        eq: jest.fn(() => Promise.resolve({ data: null, error: null })),
+      })),
+    })),
   })),
   auth: {
-    getUser: jest.fn(() => Promise.resolve({ data: { user: null }, error: null }))
-  }
+    getUser: jest.fn(() =>
+      Promise.resolve({ data: { user: null }, error: null })
+    ),
+  },
 };
 
 export const mockRedisClient = {
@@ -28,11 +29,11 @@ export const mockRedisClient = {
   set: jest.fn(() => Promise.resolve('OK')),
   del: jest.fn(() => Promise.resolve(1)),
   flushall: jest.fn(() => Promise.resolve('OK')),
-  quit: jest.fn(() => Promise.resolve('OK'))
+  quit: jest.fn(() => Promise.resolve('OK')),
 };
 
 export const mockPerformanceMonitor = {
   startTimer: jest.fn(() => ({ end: jest.fn() })),
   recordMetric: jest.fn(),
-  getMetrics: jest.fn(() => ({}))
+  getMetrics: jest.fn(() => ({})),
 };

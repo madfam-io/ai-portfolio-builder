@@ -1,9 +1,9 @@
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Consultant Portfolio Template
  * Professional, business-focused design for consultants and advisors
  */
-
-import { Portfolio } from '@/types/portfolio';
 
 export function renderConsultantTemplate(portfolio: Portfolio): string {
   const {

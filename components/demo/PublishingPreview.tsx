@@ -1,7 +1,8 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiGlobe,
   FiBarChart,
@@ -15,7 +16,7 @@ import {
   FiCopy,
   FiCode,
   FiDownload,
-} from 'react-icons/fi';
+
 
 interface PublishingPreviewProps {
   portfolioName?: string;

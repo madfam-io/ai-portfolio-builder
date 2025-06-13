@@ -1,3 +1,7 @@
+'use client';
+
+import React, { Suspense, ComponentType, ReactNode } from 'react';
+
 /**
  * @fileoverview Lazy Loading Wrapper Component
  *
@@ -13,10 +17,6 @@
  * @author PRISMA Development Team
  * @version 1.0.0
  */
-
-'use client';
-
-import React, { Suspense, ComponentType, ReactNode } from 'react';
 
 interface LazyWrapperProps {
   /** The component to lazy load */

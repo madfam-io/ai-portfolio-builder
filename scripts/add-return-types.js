@@ -1,3 +1,4 @@
+
 #!/usr/bin/env node
 
 const fs = require('fs');
@@ -7,7 +8,7 @@ const ts = require('typescript');
 console.log('🔧 Adding missing function return types...\n');
 
 // Get all TypeScript files
-const getAllFiles = (dirPath, arrayOfFiles = []) => {
+const getAllFiles = (dirPath, arrayOfFiles = []): void => {
   const files = fs.readdirSync(dirPath);
 
   files.forEach(file => {

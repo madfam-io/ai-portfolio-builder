@@ -1,13 +1,3 @@
-/**
- * @fileoverview Pull Requests Chart Component
- *
- * A lazy-loaded chart component for displaying pull request metrics.
- * Shows opened, merged, and closed PRs by week.
- *
- * @author PRISMA Development Team
- * @version 1.0.0
- */
-
 'use client';
 
 import React, { memo } from 'react';
@@ -23,6 +13,16 @@ import {
 } from 'recharts';
 
 import { usePerformanceTracking } from '@/lib/utils/performance';
+
+/**
+ * @fileoverview Pull Requests Chart Component
+ *
+ * A lazy-loaded chart component for displaying pull request metrics.
+ * Shows opened, merged, and closed PRs by week.
+ *
+ * @author PRISMA Development Team
+ * @version 1.0.0
+ */
 
 interface PullRequestsChartProps {
   data: Array<{

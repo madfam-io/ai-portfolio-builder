@@ -1,13 +1,13 @@
-/**
- * Mock language provider for consistent testing
- * Forces Spanish as default language to match production behavior
- */
-
 import React, { ReactNode } from 'react';
 
 import * as enTranslations from '@/lib/i18n/translations/en';
 import * as esTranslations from '@/lib/i18n/translations/es';
 import { flattenTranslations } from '@/lib/i18n/utils';
+
+/**
+ * Mock language provider for consistent testing
+ * Forces Spanish as default language to match production behavior
+ */
 
 // Create mock context that always returns Spanish by default
 const mockLanguageContext = {
@@ -19,7 +19,7 @@ const mockLanguageContext = {
     { code: 'en' as const, name: 'English', flag: '🇺🇸' },
   ],
   getNamespace: jest.fn((namespace: string) => {
-    const translations = esTranslations as any;
+    const translations = esTranslations as unknown;
     return translations[namespace] || {};
   }),
   isLoaded: true,
@@ -37,7 +37,7 @@ export const mockUseLanguage = (language: 'es' | 'en' = 'es') => {
     t: flattenTranslations(translations),
     availableLanguages: mockLanguageContext.availableLanguages,
     getNamespace: jest.fn((namespace: string) => {
-      const trans = translations as any;
+      const trans = translations as unknown;
       return trans[namespace] || {};
     }),
     isLoaded: true,
@@ -60,7 +60,7 @@ export const MockLanguageProvider = ({
     t: flattenTranslations(translations),
     availableLanguages: mockLanguageContext.availableLanguages,
     getNamespace: jest.fn((namespace: string) => {
-      const trans = translations as any;
+      const trans = translations as unknown;
       return trans[namespace] || {};
     }),
     isLoaded: true,

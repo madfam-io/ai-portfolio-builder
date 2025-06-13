@@ -1,11 +1,11 @@
+import * as redis from 'redis';
+
+import { logger } from '@/lib/utils/logger';
+
 /**
  * Redis cache service for performance optimization
  * Provides caching layer for expensive operations
  */
-
-import * as redis from 'redis';
-
-import { logger } from '@/lib/utils/logger';
 
 // Cache configuration
 const CACHE_CONFIG = {

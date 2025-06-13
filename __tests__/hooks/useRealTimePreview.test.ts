@@ -1,14 +1,14 @@
+import { renderHook, act } from '@testing-library/react';
+
+import { useRealTimePreview } from '@/hooks/useRealTimePreview';
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Tests for useRealTimePreview Hook
  *
  * Tests the real-time preview functionality including portfolio state management,
  * preview updates, device mode switching, and performance optimizations.
  */
-
-import { renderHook, act } from '@testing-library/react';
-
-import { useRealTimePreview } from '@/hooks/useRealTimePreview';
-import { Portfolio } from '@/types/portfolio';
 
 describe('useRealTimePreview', () => {
   let querySelectorSpy: jest.SpyInstance;

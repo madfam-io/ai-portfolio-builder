@@ -11,10 +11,10 @@ describe('Portfolios API', () => {
       method: 'POST',
       body: JSON.stringify({
         name: 'Test Portfolio',
-        template: 'developer'
-      })
+        template: 'developer',
+      }),
     });
-    
+
     expect(req.method).toBe('POST');
   });
 });

@@ -1,10 +1,10 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+
 /**
  * Security Headers Middleware
  * Implements comprehensive security headers to protect against common vulnerabilities
  */
-
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
 
 /**
  * Apply security headers to the response

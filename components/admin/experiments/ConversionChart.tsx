@@ -1,12 +1,5 @@
-/**
- * Conversion Chart Component
- *
- * Displays conversion rate trends over time for experiment variants
- * using a line chart visualization.
- */
-
-import { format } from 'date-fns';
 import React from 'react';
+import { format } from 'date-fns';
 import {
   LineChart,
   Line,
@@ -17,6 +10,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+
+/**
+ * Conversion Chart Component
+ *
+ * Displays conversion rate trends over time for experiment variants
+ * using a line chart visualization.
+ */
 
 interface ConversionChartProps {
   data: Array<{
@@ -44,7 +44,7 @@ export default function ConversionChart({
 }: ConversionChartProps): React.ReactElement {
   // Process data for the chart
   const chartData = data.map(day => {
-    const dayData: any = {
+    const dayData: unknown = {
       date: format(new Date(day.date), 'MMM dd'),
       fullDate: day.date,
       total: day.visitors > 0 ? (day.conversions / day.visitors) * 100 : 0,
@@ -76,14 +76,14 @@ export default function ConversionChart({
   ];
 
   // Custom tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
+  const CustomTooltip = ({ active, payload, label }: unknown) => {
+    if (active && payload && payload.length > 0) {
       return (
         <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
           <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">
             {label}
           </p>
-          {payload.map((entry: any, index: number) => (
+          {payload.map((entry: unknown, index: number) => (
             <div
               key={index}
               className="flex items-center justify-between gap-4 text-sm"

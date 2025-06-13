@@ -18,7 +18,7 @@ interface LogContext {
   feature?: string;
   action?: string;
   metadata?: Record<string, any>;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 interface LogEntry {
@@ -112,7 +112,7 @@ class Logger {
       entry.error = {
         message: context.message,
         stack: context.stack,
-        code: (context as any).code,
+        code: (context as unknown).code,
       };
     } else if (context) {
       entry.context = context;

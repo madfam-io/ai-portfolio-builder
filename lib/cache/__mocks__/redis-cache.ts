@@ -47,7 +47,7 @@ export const cache = new MockCacheService();
 
 export function Cacheable(_keyPrefix: string, _ttl?: number) {
   return function (
-    _target: any,
+    _target: unknown,
     _propertyName: string,
     _descriptor: PropertyDescriptor
   ) {

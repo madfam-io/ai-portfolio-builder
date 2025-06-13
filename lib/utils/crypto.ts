@@ -1,11 +1,11 @@
+import crypto from 'crypto';
+
+import { logger } from '@/lib/utils/logger';
+
 /**
  * Cryptographic utilities for secure data storage
  * Implements AES-256-GCM encryption for sensitive data like API tokens
  */
-
-import crypto from 'crypto';
-
-import { logger } from '@/lib/utils/logger';
 
 const algorithm = 'aes-256-gcm';
 

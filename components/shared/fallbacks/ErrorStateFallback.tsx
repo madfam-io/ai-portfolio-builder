@@ -1,13 +1,7 @@
-/**
- * @fileoverview Error State Fallback Components
- *
- * Provides user-friendly error state displays with retry capabilities.
- * Handles various error scenarios with appropriate messaging and actions.
- */
-
 'use client';
 
 import React from 'react';
+} from 'react-icons/fi';
 import {
   FiAlertTriangle,
   FiWifiOff,
@@ -17,10 +11,17 @@ import {
   FiHome,
   FiMail,
   FiAlertCircle,
-} from 'react-icons/fi';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { ErrorType } from '@/lib/utils/error-handling/error-types';
+
+/**
+ * @fileoverview Error State Fallback Components
+ *
+ * Provides user-friendly error state displays with retry capabilities.
+ * Handles various error scenarios with appropriate messaging and actions.
+ */
+
 
 interface ErrorStateProps {
   error?: Error | string;
@@ -87,35 +88,35 @@ export function ErrorState({
   };
 
   const defaultTitles: Record<ErrorType, string> = {
-    network: (t.errors as any)?.networkErrorTitle || 'Network Error',
-    authentication: (t.errors as any)?.authErrorTitle || 'Authentication Error',
-    permission: (t.errors as any)?.permissionErrorTitle || 'Permission Denied',
-    validation: (t.errors as any)?.validationErrorTitle || 'Validation Error',
-    server: (t.errors as any)?.serverErrorTitle || 'Server Error',
-    notFound: (t.errors as any)?.notFoundTitle || 'Not Found',
-    unknown: (t.errors as any)?.unknownErrorTitle || 'Unknown Error',
+    network: (t.errors as unknown)?.networkErrorTitle || 'Network Error',
+    authentication: (t.errors as unknown)?.authErrorTitle || 'Authentication Error',
+    permission: (t.errors as unknown)?.permissionErrorTitle || 'Permission Denied',
+    validation: (t.errors as unknown)?.validationErrorTitle || 'Validation Error',
+    server: (t.errors as unknown)?.serverErrorTitle || 'Server Error',
+    notFound: (t.errors as unknown)?.notFoundTitle || 'Not Found',
+    unknown: (t.errors as unknown)?.unknownErrorTitle || 'Unknown Error',
   };
 
   const defaultDescriptions: Record<ErrorType, string> = {
     network:
-      (t.errors as any)?.networkErrorDescription ||
+      (t.errors as unknown)?.networkErrorDescription ||
       'Please check your internet connection',
     authentication:
-      (t.errors as any)?.authErrorDescription || 'Please sign in to continue',
+      (t.errors as unknown)?.authErrorDescription || 'Please sign in to continue',
     permission:
-      (t.errors as any)?.permissionErrorDescription ||
+      (t.errors as unknown)?.permissionErrorDescription ||
       "You don't have permission to access this resource",
     validation:
-      (t.errors as any)?.validationErrorDescription ||
+      (t.errors as unknown)?.validationErrorDescription ||
       'Please check your input and try again',
     server:
-      (t.errors as any)?.serverErrorDescription ||
+      (t.errors as unknown)?.serverErrorDescription ||
       'Our servers are experiencing issues',
     notFound:
-      (t.errors as any)?.notFoundDescription ||
+      (t.errors as unknown)?.notFoundDescription ||
       'The requested resource was not found',
     unknown:
-      (t.errors as any)?.unknownErrorDescription ||
+      (t.errors as unknown)?.unknownErrorDescription ||
       'An unexpected error occurred',
   };
 
@@ -136,7 +137,7 @@ export function ErrorState({
       {showDetails && errorMessage && (
         <details className="w-full max-w-md mb-6 bg-gray-100 dark:bg-gray-800 rounded-lg p-4">
           <summary className="cursor-pointer font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {(t.errors as any)?.technicalDetails || 'Technical Details'}
+            {(t.errors as unknown)?.technicalDetails || 'Technical Details'}
           </summary>
           <div className="space-y-2 mt-2">
             <p className="text-sm font-mono text-gray-600 dark:text-gray-400">
@@ -158,7 +159,7 @@ export function ErrorState({
             className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             <FiRefreshCw className="w-4 h-4" />
-            {(t.errors as any)?.tryAgain || 'Try Again'}
+            {(t.errors as unknown)?.tryAgain || 'Try Again'}
           </button>
         )}
 
@@ -168,7 +169,7 @@ export function ErrorState({
             className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
           >
             <FiHome className="w-4 h-4" />
-            {(t.errors as any)?.goToHomepage || 'Go to Homepage'}
+            {(t.errors as unknown)?.goToHomepage || 'Go to Homepage'}
           </button>
         )}
 
@@ -178,7 +179,7 @@ export function ErrorState({
             className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
           >
             <FiMail className="w-4 h-4" />
-            {(t.errors as any)?.reportBug || 'Report Bug'}
+            {(t.errors as unknown)?.reportBug || 'Report Bug'}
           </button>
         )}
       </div>
@@ -237,7 +238,7 @@ function CompactErrorState({
               className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline inline-flex items-center gap-1"
             >
               <FiRefreshCw className="w-3 h-3" />
-              {(t.errors as any)?.retry || 'Retry'}
+              {(t.errors as unknown)?.retry || 'Retry'}
             </button>
           )}
         </div>
@@ -255,9 +256,9 @@ export function NetworkErrorState({ onRetry }: { onRetry?: () => void }) {
   return (
     <ErrorState
       errorType="network"
-      title={(t.errors as any)?.networkErrorTitle || 'Network Error'}
+      title={(t.errors as unknown)?.networkErrorTitle || 'Network Error'}
       description={
-        (t.errors as any)?.networkErrorDescription ||
+        (t.errors as unknown)?.networkErrorDescription ||
         'Please check your internet connection'
       }
       onRetry={onRetry}
@@ -274,9 +275,9 @@ export function AuthErrorState({ onLogin }: { onLogin: () => void }) {
   return (
     <ErrorState
       errorType="authentication"
-      title={(t.errors as any)?.authErrorTitle || 'Authentication Error'}
+      title={(t.errors as unknown)?.authErrorTitle || 'Authentication Error'}
       description={
-        (t.errors as any)?.authErrorDescription || 'Please sign in to continue'
+        (t.errors as unknown)?.authErrorDescription || 'Please sign in to continue'
       }
       onRetry={onLogin}
     />
@@ -298,14 +299,14 @@ export function PermissionDeniedState({
   return (
     <ErrorState
       errorType="permission"
-      title={(t.errors as any)?.permissionErrorTitle || 'Permission Denied'}
+      title={(t.errors as unknown)?.permissionErrorTitle || 'Permission Denied'}
       description={
         resource
           ? (
-              (t.errors as any)?.permissionErrorDescriptionResource ||
+              (t.errors as unknown)?.permissionErrorDescriptionResource ||
               "You don't have permission to access {resource}"
             ).replace('{resource}', resource)
-          : (t.errors as any)?.permissionErrorDescription ||
+          : (t.errors as unknown)?.permissionErrorDescription ||
             "You don't have permission to access this resource"
       }
       onGoHome={onGoBack}
@@ -330,11 +331,11 @@ export function NotFoundState({
       errorType="notFound"
       title={
         resource
-          ? `${resource} ${(t.errors as any)?.notFound || 'Not Found'}`
-          : (t.errors as any)?.notFoundTitle || 'Not Found'
+          ? `${resource} ${(t.errors as unknown)?.notFound || 'Not Found'}`
+          : (t.errors as unknown)?.notFoundTitle || 'Not Found'
       }
       description={
-        (t.errors as any)?.notFoundDescription ||
+        (t.errors as unknown)?.notFoundDescription ||
         'The requested resource was not found'
       }
       onGoHome={onGoHome}
@@ -360,7 +361,7 @@ export function ValidationErrorState({
         <FiXCircle className="w-5 h-5 text-red-600 dark:text-red-400 mt-0.5 flex-shrink-0" />
         <div className="flex-1">
           <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
-            {(t.errors as any)?.validationErrorTitle || 'Validation Error'}
+            {(t.errors as unknown)?.validationErrorTitle || 'Validation Error'}
           </h4>
           {errors && errors.length > 0 && (
             <ul className="space-y-1">
@@ -379,7 +380,7 @@ export function ValidationErrorState({
               onClick={onCorrect}
               className="mt-2 text-sm text-red-600 dark:text-red-400 hover:underline"
             >
-              {(t.errors as any)?.correctErrors || 'Please correct the errors'}
+              {(t.errors as unknown)?.correctErrors || 'Please correct the errors'}
             </button>
           )}
         </div>
@@ -403,9 +404,9 @@ export function ServerErrorState({
   return (
     <ErrorState
       errorType="server"
-      title={(t.errors as any)?.serverErrorTitle || 'Server Error'}
+      title={(t.errors as unknown)?.serverErrorTitle || 'Server Error'}
       description={
-        (t.errors as any)?.serverErrorDescription ||
+        (t.errors as unknown)?.serverErrorDescription ||
         'Our servers are experiencing issues'
       }
       onRetry={onRetry}
@@ -423,9 +424,9 @@ export function TimeoutErrorState({ onRetry }: { onRetry?: () => void }) {
   return (
     <ErrorState
       errorType="network"
-      title={(t.errors as any)?.timeoutErrorTitle || 'Request Timeout'}
+      title={(t.errors as unknown)?.timeoutErrorTitle || 'Request Timeout'}
       description={
-        (t.errors as any)?.timeoutErrorDescription ||
+        (t.errors as unknown)?.timeoutErrorDescription ||
         'The request took too long to complete'
       }
       onRetry={onRetry}

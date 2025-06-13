@@ -1,3 +1,15 @@
+import {
+  signUp,
+  signIn,
+  signOut,
+  getCurrentUser,
+  signInWithOAuth,
+  setSupabaseClient,
+  resetSupabaseClient,
+import { resetAllMocks } from '../../utils/test-utils';
+
+} from '@/lib/auth/auth';
+
 /**
  * @jest-environment jsdom
  */
@@ -23,24 +35,12 @@ jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
 }));
 
-import {
-  signUp,
-  signIn,
-  signOut,
-  getCurrentUser,
-  signInWithOAuth,
-  setSupabaseClient,
-  resetSupabaseClient,
-} from '@/lib/auth/auth';
-
-import { resetAllMocks } from '../../utils/test-utils';
-
 describe('Authentication Service', () => {
   beforeEach(() => {
     resetAllMocks();
     jest.clearAllMocks();
     // Set our mock client for each test
-    setSupabaseClient(mockSupabaseClient as any);
+    setSupabaseClient(mockSupabaseClient as unknown);
   });
 
   afterEach(() => {

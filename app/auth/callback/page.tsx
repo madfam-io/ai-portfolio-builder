@@ -1,7 +1,7 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { getCurrentUser } from '@/lib/auth/auth';
 import { useLanguage } from '@/lib/i18n/refactored-context';

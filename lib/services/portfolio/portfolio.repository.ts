@@ -1,11 +1,11 @@
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
-} from '@/types/portfolio';
 
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+} from '@/types/portfolio';
 import { getMockPortfolios } from './__mocks__/portfolio.mock';
 import { PortfolioMapper } from './portfolio.mapper';
 
@@ -14,7 +14,7 @@ import { PortfolioMapper } from './portfolio.mapper';
  * Handles all database operations for portfolios
  */
 export class PortfolioRepository {
-  private supabase: any;
+  private supabase: unknown;
   private useMockData: boolean;
 
   constructor() {

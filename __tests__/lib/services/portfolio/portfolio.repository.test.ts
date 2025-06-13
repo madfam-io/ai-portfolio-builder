@@ -4,25 +4,25 @@ const mockSupabaseClient = {
   from: jest.fn().mockReturnValue({
     select: jest.fn().mockReturnValue({
       eq: jest.fn().mockReturnValue({
-        order: jest.fn().mockResolvedValue({ data: [], error: null })
-      })
+        order: jest.fn().mockResolvedValue({ data: [], error: null }),
+      }),
     }),
     insert: jest.fn().mockReturnValue({
       select: jest.fn().mockReturnValue({
-        single: jest.fn().mockResolvedValue({ data: null, error: null })
-      })
+        single: jest.fn().mockResolvedValue({ data: null, error: null }),
+      }),
     }),
     update: jest.fn().mockReturnValue({
-      eq: jest.fn().mockResolvedValue({ data: null, error: null })
+      eq: jest.fn().mockResolvedValue({ data: null, error: null }),
     }),
     delete: jest.fn().mockReturnValue({
-      eq: jest.fn().mockResolvedValue({ data: null, error: null })
-    })
-  })
+      eq: jest.fn().mockResolvedValue({ data: null, error: null }),
+    }),
+  }),
 };
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => mockSupabaseClient)
+  createClient: jest.fn(() => mockSupabaseClient),
 }));
 
 describe('PortfolioRepository', () => {
@@ -37,19 +37,19 @@ describe('PortfolioRepository', () => {
     it('should return all user portfolios', async () => {
       const mockData = [
         { id: '1', name: 'Portfolio 1' },
-        { id: '2', name: 'Portfolio 2' }
+        { id: '2', name: 'Portfolio 2' },
       ];
-      
+
       mockSupabaseClient.from.mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
-            order: jest.fn().mockResolvedValue({ data: mockData, error: null })
-          })
-        })
+            order: jest.fn().mockResolvedValue({ data: mockData, error: null }),
+          }),
+        }),
       });
-      
+
       const result = await repository.findAll('user-id');
-      
+
       expect(result).toEqual(mockData);
     });
   });
@@ -59,21 +59,21 @@ describe('PortfolioRepository', () => {
       const newPortfolio = {
         name: 'New Portfolio',
         title: 'Developer',
-        template: 'developer' as const
+        template: 'developer' as const,
       };
-      
+
       const created = { id: 'new-id', ...newPortfolio };
-      
+
       mockSupabaseClient.from.mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: created, error: null })
-          })
-        })
+            single: jest.fn().mockResolvedValue({ data: created, error: null }),
+          }),
+        }),
       });
-      
+
       const result = await repository.create('user-id', newPortfolio);
-      
+
       expect(result).toEqual(created);
     });
   });

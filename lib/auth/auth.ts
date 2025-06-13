@@ -1,5 +1,4 @@
 import { createClient } from '@supabase/supabase-js';
-
 import type {
   AuthResponse,
   User,

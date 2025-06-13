@@ -1,3 +1,21 @@
+import { NextRequest } from 'next/server';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+import {
+  validateCreatePortfolio,
+  validatePortfolioQuery,
+  sanitizePortfolioData,
+
+} from '@/lib/api/versioning';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
+} from '@/lib/validations/portfolio';
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Portfolio API Routes v1 - Main CRUD operations
  * Handles portfolio listing and creation
@@ -5,24 +23,6 @@
  * @version 1.0.0
  * @endpoint /api/v1/portfolios
  */
-
-import { NextRequest } from 'next/server';
-import { v4 as uuidv4 } from 'uuid';
-
-import {
-  apiSuccess,
-  apiError,
-  versionedApiHandler,
-} from '@/lib/api/versioning';
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
-import {
-  validateCreatePortfolio,
-  validatePortfolioQuery,
-  sanitizePortfolioData,
-} from '@/lib/validations/portfolio';
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * GET /api/v1/portfolios
@@ -274,8 +274,8 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
  */
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
-): any {
-  const dbData: any = {};
+): unknown {
+  const dbData: unknown = {};
 
   if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
   if (apiPortfolio.name) dbData.name = apiPortfolio.name;

@@ -1,9 +1,9 @@
+import { NextResponse } from 'next/server';
+
 /**
  * Cache Header Utilities
  * Implements comprehensive caching strategies for API routes
  */
-
-import { NextResponse } from 'next/server';
 
 export interface CacheOptions {
   /**

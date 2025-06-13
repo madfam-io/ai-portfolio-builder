@@ -1,13 +1,8 @@
 'use client';
 
+import React, { useState, useCallback } from 'react';
 import { FiCheck, FiEye, FiFile, FiUpload, FiX } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
-import React, { useState, useCallback } from 'react';
-
-
-
-
-
 
 interface ParsedResumeData {
   personalInfo: {
@@ -181,7 +176,7 @@ export function ResumeParser({
 
     const files = Array.from(e.dataTransfer.files);
     const file = files[0];
-    if (file !== undefined && file !== null) {
+    if (file) {
       handleFileUpload(file);
     }
   }, []);
@@ -189,7 +184,7 @@ export function ResumeParser({
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     const file = files?.[0];
-    if (file !== undefined && file !== null) {
+    if (file) {
       handleFileUpload(file);
     }
   };
@@ -226,7 +221,7 @@ export function ResumeParser({
     setParsedData(mockParsedData);
     setIsParsing(false);
 
-    if (onParse !== undefined && onParse !== null) {
+    if (onParse) {
       onParse(mockParsedData);
     }
   };
@@ -243,7 +238,7 @@ export function ResumeParser({
   //   return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
   // };
 
-  if (!uploadedFile !== undefined && !uploadedFile !== null) {
+  if (!uploadedFile) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
@@ -349,7 +344,7 @@ export function ResumeParser({
     );
   }
 
-  if (isUploading || isParsing !== undefined && isUploading || isParsing !== null) {
+  if (isUploading || isParsing) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
@@ -363,7 +358,10 @@ export function ResumeParser({
               </h3>
               <p className="text-blue-100">
                 {uploadedFile?.name} •{' '}
-                {uploadedFile ? (uploadedFile.size / 1024 / 1024).toFixed(2) : '0'} MB
+                {uploadedFile
+                  ? (uploadedFile.size / 1024 / 1024).toFixed(2)
+                  : '0'}{' '}
+                MB
               </p>
             </div>
           </div>

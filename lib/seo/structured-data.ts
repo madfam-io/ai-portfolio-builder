@@ -1,9 +1,9 @@
+import { Portfolio, Project, Experience, Education } from '@/types/portfolio';
+
 /**
  * Structured Data Generation for SEO
  * Generates Schema.org JSON-LD structured data for portfolios
  */
-
-import { Portfolio, Project, Experience, Education } from '@/types/portfolio';
 
 /**
  * Generate complete structured data for a portfolio
@@ -26,8 +26,8 @@ export function generatePortfolioStructuredData(portfolio: Portfolio): string {
 /**
  * Generate Person schema
  */
-function generatePersonSchema(portfolio: Portfolio): any {
-  const person: any = {
+function generatePersonSchema(portfolio: Portfolio): unknown {
+  const person: unknown = {
     '@type': 'Person',
     '@id': `#person-${portfolio.id}`,
     name: portfolio.name,
@@ -95,8 +95,8 @@ function generatePersonSchema(portfolio: Portfolio): any {
 /**
  * Generate WebPage schema
  */
-function generateWebPageSchema(portfolio: Portfolio): any {
-  const webpage: any = {
+function generateWebPageSchema(portfolio: Portfolio): unknown {
+  const webpage: unknown = {
     '@type': 'ProfilePage',
     '@id': `#webpage-${portfolio.id}`,
     name: `${portfolio.name} - ${portfolio.title}`,
@@ -247,7 +247,7 @@ export function generateServiceSchema(service: {
   };
   areaServed?: string[];
 }): string {
-  const schema: any = {
+  const schema: unknown = {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: service.name,
@@ -322,7 +322,7 @@ export function generateHowToSchema(howTo: {
     image?: string;
   }>;
 }): string {
-  const schema: any = {
+  const schema: unknown = {
     '@context': 'https://schema.org',
     '@type': 'HowTo',
     name: howTo.name,
@@ -384,7 +384,7 @@ export function generateLocalBusinessSchema(business: {
   priceRange?: string;
   image?: string;
 }): string {
-  const schema: any = {
+  const schema: unknown = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: business.name,

@@ -1,10 +1,3 @@
-/**
- * Content Structure and Readability Optimizer
- * Optimizes content structure, readability, and clarity for better search engine understanding
- */
-
-import { KeywordAnalyzer } from './keyword-analyzer';
-import { MetadataGenerator } from './metadata-generator';
 import {
   ContentStructure,
   ReadabilityMetrics,
@@ -13,7 +6,15 @@ import {
   GEOSuggestion,
   OptimizeContentRequest,
   OptimizeContentResponse,
+
+import { KeywordAnalyzer } from './keyword-analyzer';
+import { MetadataGenerator } from './metadata-generator';
 } from './types';
+
+/**
+ * Content Structure and Readability Optimizer
+ * Optimizes content structure, readability, and clarity for better search engine understanding
+ */
 
 export class ContentOptimizer {
   private keywordAnalyzer: KeywordAnalyzer;
@@ -355,7 +356,7 @@ export class ContentOptimizer {
    */
   private async generateGEOContent(
     content: string,
-    settings: any
+    settings: unknown
   ): Promise<GEOContent> {
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
@@ -397,7 +398,7 @@ export class ContentOptimizer {
   /**
    * Calculate GEO score
    */
-  private calculateGEOScore(content: string, settings: any): GEOScore {
+  private calculateGEOScore(content: string, settings: unknown): GEOScore {
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
       content,
@@ -420,7 +421,7 @@ export class ContentOptimizer {
   private calculateDetailedGEOScore(
     content: string,
     structure: ContentStructure,
-    keywords: any,
+    keywords: unknown,
     readability: ReadabilityMetrics
   ): GEOScore {
     // Keyword score (0-100)
@@ -460,7 +461,7 @@ export class ContentOptimizer {
   /**
    * Calculate keyword score
    */
-  private calculateKeywordScore(keywords: any): number {
+  private calculateKeywordScore(keywords: unknown): number {
     let score = 70; // Base score
 
     // Check primary keyword density
@@ -547,7 +548,7 @@ export class ContentOptimizer {
   private generateGEOSuggestions(
     score: GEOScore,
     structure: ContentStructure,
-    keywords: any,
+    keywords: unknown,
     readability: ReadabilityMetrics
   ): GEOSuggestion[] {
     const suggestions: GEOSuggestion[] = [];
@@ -614,7 +615,7 @@ export class ContentOptimizer {
     return matches.map(match => match.replace(/^#+\s+/, ''));
   }
 
-  private checkHeadingHierarchy(headings: any): boolean {
+  private checkHeadingHierarchy(headings: unknown): boolean {
     // H1 should come before H2, H2 before H3, etc.
     if (headings.h3.length > 0 && headings.h2.length === 0) return false;
     if (headings.h4.length > 0 && headings.h3.length === 0) return false;

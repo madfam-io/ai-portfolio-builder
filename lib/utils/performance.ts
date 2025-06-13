@@ -1,3 +1,5 @@
+import React from 'react';
+
 /**
  * @fileoverview Performance Monitoring and Optimization Utilities
  *
@@ -15,8 +17,6 @@
  * @author PRISMA Development Team
  * @version 1.0.0
  */
-
-import React from 'react';
 
 // Performance metric interfaces
 export interface PerformanceMetrics {
@@ -96,7 +96,7 @@ export class PerformanceMonitor {
     try {
       const lcpObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1] as any;
+        const lastEntry = entries[entries.length - 1] as unknown;
         this.metrics.lcp = lastEntry.startTime;
         this.reportMetric('lcp', lastEntry.startTime);
       });
@@ -110,7 +110,7 @@ export class PerformanceMonitor {
     try {
       const fidObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        entries.forEach((entry: unknown) => {
           this.metrics.fid = entry.processingStart - entry.startTime;
           this.reportMetric('fid', this.metrics.fid);
         });
@@ -126,7 +126,7 @@ export class PerformanceMonitor {
       let clsValue = 0;
       const clsObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        entries.forEach((entry: any) => {
+        entries.forEach((entry: unknown) => {
           if (!entry.hadRecentInput) {
             clsValue += entry.value;
             this.metrics.cls = clsValue;
@@ -334,7 +334,7 @@ export function debounce<T extends (...args: any[]) => any>(
   let timeout: NodeJS.Timeout | null = null;
 
   return ((...args: Parameters<T>) => {
-    const later = () => {
+    const later = (): void => {
       timeout = null;
       if (!immediate) func(...args);
     };
@@ -374,11 +374,14 @@ export function getMemoryUsage(): {
   total: number;
   percentage: number;
 } | null {
-  if (typeof window === 'undefined' || !(window.performance as any)?.memory) {
+  if (
+    typeof window === 'undefined' ||
+    !(window.performance as unknown)?.memory
+  ) {
     return null;
   }
 
-  const memory = (window.performance as any).memory;
+  const memory = (window.performance as unknown).memory;
   return {
     used: memory.usedJSHeapSize,
     total: memory.totalJSHeapSize,

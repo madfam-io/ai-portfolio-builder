@@ -1,7 +1,7 @@
 'use client';
 
-import { FaChevronUp } from 'react-icons/fa';
 import React, { useState, useEffect } from 'react';
+import { FaChevronUp } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -10,7 +10,7 @@ export default function BackToTopButton(): React.ReactElement {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
+    const toggleVisibility = (): void => {
       if (window.pageYOffset > 300) {
         setIsVisible(true);
       } else {
@@ -23,7 +23,7 @@ export default function BackToTopButton(): React.ReactElement {
     return () => window.removeEventListener('scroll', toggleVisibility);
   }, []);
 
-  const scrollToTop = () => {
+  const scrollToTop = (): void => {
     window.scrollTo({
       top: 0,
       behavior: 'smooth',

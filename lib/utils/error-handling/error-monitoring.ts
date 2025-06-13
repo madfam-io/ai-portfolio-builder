@@ -1,20 +1,20 @@
-/**
- * @fileoverview Error Monitoring Service
- *
- * Provides error monitoring and reporting capabilities
- * with integration points for external services.
- */
-
-import { logger } from '@/lib/utils/logger';
-
 import {
   ErrorReport,
   ErrorType,
   ErrorSeverity,
   ErrorHandler,
   ErrorFilter,
+
+import { logger } from '@/lib/utils/logger';
 } from './error-types';
 import { serializeError, getErrorType, getErrorContext } from './error-utils';
+
+/**
+ * @fileoverview Error Monitoring Service
+ *
+ * Provides error monitoring and reporting capabilities
+ * with integration points for external services.
+ */
 
 /**
  * Error monitoring service configuration
@@ -160,7 +160,7 @@ class ErrorMonitoringService {
         ...(getErrorContext() || {}),
         environment: this.config.environment,
         ...(context || {}),
-      } as any,
+      } as unknown,
       metadata: serializeError(error),
     };
   }

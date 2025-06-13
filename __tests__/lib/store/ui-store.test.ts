@@ -1,11 +1,11 @@
+import { renderHook, act } from '@testing-library/react';
+
+import { useUIStore } from '@/lib/store/ui-store';
+
 /**
  * Tests for UI Store
  * Testing Zustand state management for UI state
  */
-
-import { renderHook, act } from '@testing-library/react';
-
-import { useUIStore } from '@/lib/store/ui-store';
 
 describe('UI Store', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('UI Store', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     // Reset store state
     const { result } = renderHook(() => useUIStore());
     act(() => {
@@ -47,13 +47,17 @@ describe('UI Store', () => {
       expect(result.current.theme).toBe('light');
 
       act(() => {
-        result.current.setTheme(result.current.theme === "light" ? "dark" : "light");
+        result.current.setTheme(
+          result.current.theme === 'light' ? 'dark' : 'light'
+        );
       });
 
       expect(result.current.theme).toBe('dark');
 
       act(() => {
-        result.current.setTheme(result.current.theme === "light" ? "dark" : "light");
+        result.current.setTheme(
+          result.current.theme === 'light' ? 'dark' : 'light'
+        );
       });
 
       expect(result.current.theme).toBe('light');

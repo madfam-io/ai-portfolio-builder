@@ -1,8 +1,9 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+} from 'react-icons/fa';
 import {
   FaPlus,
   FaEdit,
@@ -10,14 +11,14 @@ import {
   FaTrash,
   FaSpinner,
   FaGlobe,
-} from 'react-icons/fa';
+// Removed portfolioService import - will use API calls instead
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useAuth } from '@/lib/contexts/AuthContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
-// Removed portfolioService import - will use API calls instead
+
 
 export default function Dashboard(): React.ReactElement {
   const { t } = useLanguage();

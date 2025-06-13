@@ -1,8 +1,3 @@
-/**
- * Project Optimization API Route
- * Uses open-source AI models to enhance project descriptions
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -10,6 +5,11 @@ import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { AIServiceError, QuotaExceededError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Project Optimization API Route
+ * Uses open-source AI models to enhance project descriptions
+ */
 
 // Simple AI usage logging function - defined at the bottom of file to avoid duplication
 

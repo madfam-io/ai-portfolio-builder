@@ -1,3 +1,4 @@
+
 #!/usr/bin/env node
 
 const fs = require('fs');
@@ -6,7 +7,7 @@ const path = require('path');
 console.log('🔧 Fixing strict boolean expression errors...\n');
 
 // Get all TypeScript files
-const getAllFiles = (dirPath, arrayOfFiles = []) => {
+const getAllFiles = (dirPath, arrayOfFiles = []): void => {
   const files = fs.readdirSync(dirPath);
 
   files.forEach(file => {

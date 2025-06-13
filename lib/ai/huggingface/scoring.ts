@@ -1,9 +1,9 @@
+import { QualityScore } from '../types';
+
 /**
  * Content Quality Scoring Module
  * Evaluates enhanced content across multiple dimensions
  */
-
-import { QualityScore } from '../types';
 
 export class ContentScorer {
   /**

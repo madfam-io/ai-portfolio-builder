@@ -1,3 +1,13 @@
+import {
+  BioContext,
+  ProjectEnhancement,
+  TemplateRecommendation,
+  UserProfile,
+  EnhancedContent,
+
+import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
+} from './types';
+
 /**
  * AI Service Client
  * Frontend client for interacting with AI enhancement APIs
@@ -5,16 +15,6 @@
  * @version 1.0.0
  * Now uses versioned API endpoints
  */
-
-import { apiClient, API_ENDPOINTS } from '@/lib/api/client';
-
-import {
-  BioContext,
-  ProjectEnhancement,
-  TemplateRecommendation,
-  UserProfile,
-  EnhancedContent,
-} from './types';
 
 export interface AIClientConfig {
   baseUrl?: string;
@@ -256,13 +256,13 @@ export const AIUtils = {
   /**
    * Extract user profile from portfolio data
    */
-  extractUserProfile(portfolio: any): UserProfile {
+  extractUserProfile(portfolio: unknown): UserProfile {
     return {
       title: portfolio.title || '',
-      skills: portfolio.skills?.map((s: any) => s.name) || [],
+      skills: portfolio.skills?.map((s: unknown) => s.name) || [],
       projectCount: portfolio.projects?.length || 0,
       hasDesignWork:
-        portfolio.projects?.some((p: any) =>
+        portfolio.projects?.some((p: unknown) =>
           p.technologies?.some((t: string) =>
             ['figma', 'sketch', 'photoshop', 'illustrator', 'design'].some(
               design => t.toLowerCase().includes(design)
@@ -298,12 +298,12 @@ export const AIUtils = {
   /**
    * Prepare bio context from portfolio data
    */
-  prepareBioContext(portfolio: any): BioContext {
+  prepareBioContext(portfolio: unknown): BioContext {
     return {
       title: portfolio.title || '',
-      skills: portfolio.skills?.map((s: any) => s.name) || [],
+      skills: portfolio.skills?.map((s: unknown) => s.name) || [],
       experience:
-        portfolio.experience?.map((exp: any) => ({
+        portfolio.experience?.map((exp: unknown) => ({
           company: exp.company,
           position: exp.position,
           yearsExperience: this.calculateYearsExperience(

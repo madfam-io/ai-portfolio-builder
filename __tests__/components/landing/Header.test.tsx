@@ -1,13 +1,12 @@
-/**
- * Header Component test suite - working version
- */
-
-import { screen, fireEvent } from '@testing-library/react';
 import React from 'react';
+import { screen, fireEvent } from '@testing-library/react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import Header from '@/components/landing/Header';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * Header Component test suite - working version
+ */
 
 describe('Header Component', () => {
   describe('Content Rendering', () => {

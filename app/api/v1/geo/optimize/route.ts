@@ -1,8 +1,3 @@
-/**
- * GEO Content Optimization API
- * Optimizes content for search engines and AI aggregators
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -10,6 +5,11 @@ import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { GEOEnhancementRequest } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * GEO Content Optimization API
+ * Optimizes content for search engines and AI aggregators
+ */
 
 // Request validation schema
 const optimizeContentSchema = z.object({
@@ -174,7 +174,7 @@ export async function PUT(request: NextRequest): Promise<Response> {
 
     // Process contents in parallel
     const results = await Promise.allSettled(
-      contents.map(async (item: any) => {
+      contents.map(async (item: unknown) => {
         const request: GEOEnhancementRequest = {
           content: item.content,
           contentType: item.contentType,

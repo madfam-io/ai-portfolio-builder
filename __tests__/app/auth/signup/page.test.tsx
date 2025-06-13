@@ -1,14 +1,13 @@
-/**
- * Sign Up page test suite
- */
-
+import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { renderWithLanguage } from '../../../utils/i18n-test-utils';
 
 import SignUpPage from '@/app/auth/signup/page';
 
-import { renderWithLanguage } from '../../../utils/i18n-test-utils';
+/**
+ * Sign Up page test suite
+ */
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({

@@ -1,12 +1,12 @@
-/**
- * @fileoverview Authentication middleware for API routes
- * Provides reusable authentication and authorization utilities
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * @fileoverview Authentication middleware for API routes
+ * Provides reusable authentication and authorization utilities
+ */
 
 export interface AuthenticatedRequest extends NextRequest {
   user?: {
@@ -103,7 +103,7 @@ export function forbiddenResponse(message = 'Insufficient permissions') {
  * @param requiredPermission - Optional permission requirement
  */
 export function requireAuth(
-  handler: (request: NextRequest, user: any) => Promise<NextResponse>,
+  handler: (request: NextRequest, user: unknown) => Promise<NextResponse>,
   requiredPermission?: string
 ) {
   return async (request: NextRequest) => {

@@ -1,8 +1,3 @@
-/**
- * Repository Languages Chart Component
- * Dynamically imported pie chart for repository language distribution
- */
-
 import React from 'react';
 import {
   PieChart,
@@ -12,6 +7,11 @@ import {
   Tooltip,
   Legend,
 } from 'recharts';
+
+/**
+ * Repository Languages Chart Component
+ * Dynamically imported pie chart for repository language distribution
+ */
 
 interface LanguageData {
   name: string;

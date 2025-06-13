@@ -1,9 +1,9 @@
+import { StateCreator, StoreMutatorIdentifier } from 'zustand';
+
 /**
  * Store Middleware
  * Custom middleware for Zustand stores
  */
-
-import { StateCreator, StoreMutatorIdentifier } from 'zustand';
 
 /**
  * Logger middleware for development
@@ -18,7 +18,7 @@ export const logger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) =>
     config(
-      ((partial: any, replace?: any) => {
+      ((partial: unknown, replace?: unknown) => {
         if (process.env.NODE_ENV === 'development') {
           console.log('  applying', partial);
           set(partial, replace);
@@ -52,7 +52,7 @@ export const logger =
 //     const state = config(set, get, api);
 
 //     // Create computed property getter
-//     const computed = new Proxy({} as any, {
+//     const computed = new Proxy({} as unknown, {
 //       get: (target, prop: string) => {
 //         if (prop in computedValues) {
 //           return computedValues[prop](get() as T);
@@ -64,7 +64,7 @@ export const logger =
 //     return {
 //       ...state,
 //       computed,
-//     } as any;
+//     } as unknown;
 //   };
 
 /**
@@ -81,7 +81,7 @@ export const actionLogger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) => {
     const state = config(
-      ((partial: any, replace?: any) => {
+      ((partial: unknown, replace?: unknown) => {
         if (process.env.NODE_ENV === 'development') {
           const timestamp = new Date().toISOString();
           console.group(`[${storeName}] State Update @ ${timestamp}`);
@@ -98,7 +98,7 @@ export const actionLogger =
     );
 
     // Wrap actions to log them
-    const wrappedState: any = {};
+    const wrappedState: unknown = {};
 
     for (const key in state) {
       if (typeof state[key as keyof typeof state] === 'function') {
@@ -106,7 +106,7 @@ export const actionLogger =
           if (process.env.NODE_ENV === 'development') {
             console.log(`[${storeName}] Action: ${key}`, args);
           }
-          return (state[key as keyof typeof state] as any)(...args);
+          return (state[key as keyof typeof state] as unknown)(...args);
         };
       } else {
         wrappedState[key] = state[key as keyof typeof state];

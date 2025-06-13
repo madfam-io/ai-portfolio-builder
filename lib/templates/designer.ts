@@ -1,9 +1,9 @@
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Designer Portfolio Template
  * Visual, creative design for designers and creatives
  */
-
-import { Portfolio } from '@/types/portfolio';
 
 export function renderDesignerTemplate(portfolio: Portfolio): string {
   const {

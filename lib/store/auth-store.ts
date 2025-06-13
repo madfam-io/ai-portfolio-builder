@@ -1,15 +1,14 @@
-/**
- * Auth Store
- * Manages authentication state, user sessions, and auth operations
- */
-
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { createClient } from '@/lib/supabase/client';
-
 import { AuthState, AuthActions } from './types';
+
+/**
+ * Auth Store
+ * Manages authentication state, user sessions, and auth operations
+ */
 
 const initialState: AuthState = {
   user: null,
@@ -70,7 +69,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               state.isAuthenticated = true;
               state.isLoading = false;
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Sign in failed';
               state.isLoading = false;
@@ -104,7 +103,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
               state.isAuthenticated = !!data.user;
               state.isLoading = false;
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Sign up failed';
               state.isLoading = false;
@@ -128,7 +127,7 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 
             // Reset all auth state
             get().resetAuth();
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Sign out failed';
               state.isLoading = false;

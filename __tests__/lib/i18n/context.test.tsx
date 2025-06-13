@@ -1,3 +1,4 @@
+import React from 'react';
 import {
   render,
   screen,
@@ -6,7 +7,6 @@ import {
   waitFor,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 
 import { LanguageProvider, useLanguage } from '@/lib/i18n/refactored-context';
 
@@ -164,7 +164,7 @@ describe('LanguageProvider', () => {
     it('should provide graceful fallback when useLanguage is called outside provider', () => {
       const mockWarn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
-      const TestComponent = () => {
+      const TestComponent = (): void => {
         const { language, t } = useLanguage();
         return (
           <div>
@@ -190,7 +190,7 @@ describe('LanguageProvider', () => {
 
   describe('Component Integration', () => {
     it('should update component when language changes', async () => {
-      const TestComponent = () => {
+      const TestComponent = (): void => {
         const { t, language, setLanguage } = useLanguage();
         return (
           <div>

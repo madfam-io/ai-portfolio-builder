@@ -1,6 +1,5 @@
-import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-
+import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
 const badgeVariants = cva(
@@ -88,7 +87,7 @@ const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
       <Component
         ref={ref as any}
         className={cn(badgeVariants({ variant, size, interactive }), className)}
-        {...(props as any)}
+        {...(props as unknown)}
       >
         {leftIcon && (
           <span className="mr-1 h-3 w-3" aria-hidden="true">

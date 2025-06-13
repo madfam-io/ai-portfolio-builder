@@ -1,18 +1,17 @@
-/**
- * Test-specific language provider that properly handles language switching
- * This provider bypasses localStorage and browser detection for consistent testing
- */
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-
 import type {
   Language,
   FlattenedTranslations,
   TranslationNamespace,
 } from '@/lib/i18n/refactored-types';
 
+/**
+ * Test-specific language provider that properly handles language switching
+ * This provider bypasses localStorage and browser detection for consistent testing
+ */
+
 // Mock translations for testing
-const mockEsTranslations: any = {
+const mockEsTranslations: unknown = {
   common: {
     loading: 'Cargando...',
     error: 'Error',
@@ -66,7 +65,7 @@ const mockEsTranslations: any = {
   },
 };
 
-const mockEnTranslations: any = {
+const mockEnTranslations: unknown = {
   common: {
     loading: 'Loading...',
     error: 'Error',
@@ -146,7 +145,7 @@ export function TestLanguageProvider({
   const [language, setLanguage] = useState<Language>(initialLanguage);
 
   // Get translations based on current language
-  const getTranslations = (lang: Language): any => {
+  const getTranslations = (lang: Language): unknown => {
     return lang === 'es' ? mockEsTranslations : mockEnTranslations;
   };
 

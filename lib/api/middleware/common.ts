@@ -1,8 +1,3 @@
-/**
- * @fileoverview Common middleware utilities for API routes
- * Provides reusable patterns for error handling, validation, and database access
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { ZodError, ZodSchema } from 'zod';
 
@@ -10,11 +5,16 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
 /**
+ * @fileoverview Common middleware utilities for API routes
+ * Provides reusable patterns for error handling, validation, and database access
+ */
+
+/**
  * Standard API error response
  */
 export function apiError(
   message: string,
-  options?: { status?: number; details?: any }
+  options?: { status?: number; details?: unknown }
 ) {
   return NextResponse.json(
     {

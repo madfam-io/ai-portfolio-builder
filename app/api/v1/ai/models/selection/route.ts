@@ -1,13 +1,13 @@
-/**
- * AI Model Selection API Route
- * Manages user's AI model preferences
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * AI Model Selection API Route
+ * Manages user's AI model preferences
+ */
 
 // Request validation schema
 const updateSelectionSchema = z.object({

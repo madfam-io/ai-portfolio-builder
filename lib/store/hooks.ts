@@ -1,8 +1,3 @@
-/**
- * Store Hooks
- * Custom hooks for accessing and manipulating store state
- */
-
 import { useCallback, useEffect, useMemo } from 'react';
 import { shallow } from 'zustand/shallow';
 
@@ -10,6 +5,11 @@ import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
 import { useUIStore } from './ui-store';
+
+/**
+ * Store Hooks
+ * Custom hooks for accessing and manipulating store state
+ */
 
 /**
  * Hook for authenticated user data with loading state
@@ -54,7 +54,7 @@ export function useCurrentPortfolio() {
   );
 
   const updateField = useCallback(
-    (field: string, value: any) => {
+    (field: string, value: unknown) => {
       if (!currentPortfolio) return;
 
       setCurrentPortfolio({
@@ -66,12 +66,12 @@ export function useCurrentPortfolio() {
   );
 
   const updateNestedField = useCallback(
-    (path: string, value: any) => {
+    (path: string, value: unknown) => {
       if (!currentPortfolio) return;
 
       const keys = path.split('.');
       const updated = { ...currentPortfolio };
-      let current: any = updated;
+      let current: unknown = updated;
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];
@@ -225,7 +225,7 @@ export function useModal(modalId: string) {
   const isOpen = modals.some(m => m.id === modalId);
 
   const open = useCallback(
-    (component: React.ComponentType<any>, props?: any) => {
+    (component: React.ComponentType<any>, props?: unknown) => {
       openModal({ id: modalId, component, props });
     },
     [modalId, openModal]
@@ -309,8 +309,8 @@ export function useGlobalLoading() {
  * Hook for portfolio list with filtering and sorting
  */
 export function usePortfolios(options?: {
-  filter?: (portfolio: any) => boolean;
-  sort?: (a: any, b: any) => number;
+  filter?: (portfolio: unknown) => boolean;
+  sort?: (a: unknown, b: unknown) => number;
 }) {
   const { portfolios, isLoading, loadPortfolios } = usePortfolioStore(
     state => ({

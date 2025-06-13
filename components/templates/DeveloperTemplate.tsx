@@ -1,3 +1,19 @@
+'use client';
+
+import React from 'react';
+} from 'react-icons/fi';
+import {
+  FiGithub,
+  FiLinkedin,
+  FiTwitter,
+  FiMail,
+  FiExternalLink,
+  FiCode,
+  FiDownload,
+
+import { OptimizedImage } from '@/components/ui/OptimizedImage';
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * @fileoverview Developer Portfolio Template
  *
@@ -19,21 +35,6 @@
  * @version 0.0.1-alpha
  */
 
-'use client';
-
-import React from 'react';
-import {
-  FiGithub,
-  FiLinkedin,
-  FiTwitter,
-  FiMail,
-  FiExternalLink,
-  FiCode,
-  FiDownload,
-} from 'react-icons/fi';
-
-import { OptimizedImage } from '@/components/ui/OptimizedImage';
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Props interface for the Developer Template component

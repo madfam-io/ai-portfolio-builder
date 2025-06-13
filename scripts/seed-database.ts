@@ -1,3 +1,7 @@
+import { DatabaseSeeder } from '@/lib/database/seeder';
+import { logger } from '@/lib/utils/logger';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 #!/usr/bin/env tsx
 /**
  * @fileoverview Database Seeding CLI Script
@@ -6,10 +10,6 @@
  * Command-line tool for seeding the database with development data.
  * Supports different modes and configuration options.
  */
-
-import { DatabaseSeeder } from '@/lib/database/seeder';
-import { logger } from '@/lib/utils/logger';
-import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
  * Parse command line arguments

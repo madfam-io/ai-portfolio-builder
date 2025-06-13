@@ -1,13 +1,13 @@
-/**
- * Analytics Dashboard API
- * Provides aggregated dashboard data for analytics overview
- */
-
 import { NextResponse } from 'next/server';
 
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Analytics Dashboard API
+ * Provides aggregated dashboard data for analytics overview
+ */
 
 /**
  * Get analytics dashboard data

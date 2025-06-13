@@ -127,7 +127,10 @@ export interface AnalyticsEvent {
   experimentId: string;
   variantId: string;
   eventType: 'pageview' | 'click' | 'scroll' | 'conversion' | 'engagement';
-  eventData: Record<string, string | number | boolean | Record<string, unknown>>;
+  eventData: Record<
+    string,
+    string | number | boolean | Record<string, unknown>
+  >;
   timestamp: Date;
 }
 
@@ -185,7 +188,10 @@ export interface ComponentLibraryItem {
   name: string;
   description?: string;
   thumbnailUrl?: string;
-  defaultProps: Record<string, string | number | boolean | Record<string, unknown>>;
+  defaultProps: Record<
+    string,
+    string | number | boolean | Record<string, unknown>
+  >;
   propSchema: Record<string, unknown>; // JSON Schema
   tags?: string[];
   category?: string;

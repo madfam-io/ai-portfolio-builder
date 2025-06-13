@@ -1,3 +1,4 @@
+
 #!/usr/bin/env node
 
 const fs = require('fs');
@@ -25,7 +26,7 @@ const syntaxFixes = [
   {
     file: 'lib/monitoring/performance.ts',
     fixes: [
-      { find: /export function reportWebVitals\(\): JSX\.Element \(metric: unknown\): void \{/g, replace: 'export function reportWebVitals(metric: any): void {' },
+      { find: /export function reportWebVitals\(\): JSX\.Element \(metric: unknown\): void \{/g, replace: 'export function reportWebVitals(metric: unknown): void {' },
       { find: /export function getPerformanceStats\(\): JSX\.Element \(\) \{/g, replace: 'export function getPerformanceStats() {' },
       { find: /export function resetStats\(\): JSX\.Element \(\): void \{/g, replace: 'export function resetStats(): void {' },
       { find: /export function useRenderTracking\(\): JSX\.Element \(componentName: string\): void \{/g, replace: 'export function useRenderTracking(componentName: string): void {' },

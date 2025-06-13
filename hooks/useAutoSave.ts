@@ -1,7 +1,7 @@
 import { useCallback, useRef, useState } from 'react';
+// Removed portfolioService import - will use API calls instead
 
 import { Portfolio } from '@/types/portfolio';
-// Removed portfolioService import - will use API calls instead
 
 /**
  * Custom hook for auto-saving portfolio changes

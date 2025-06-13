@@ -1,12 +1,12 @@
-/**
- * GitHub Analytics Client
- * Handles all GitHub API interactions for analytics
- */
-
 import { Octokit } from '@octokit/rest';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * GitHub Analytics Client
+ * Handles all GitHub API interactions for analytics
+ */
 
 export interface GitHubRepository {
   id: number;

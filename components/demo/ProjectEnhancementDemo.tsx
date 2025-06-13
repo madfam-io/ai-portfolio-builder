@@ -1,12 +1,8 @@
 'use client';
 
+import React, { useState } from 'react';
 import { HiSparkles } from 'react-icons/hi';
 import { FiCheck, FiTarget, FiTrendingUp, FiZap } from 'react-icons/fi';
-import React, { useState } from 'react';
-
-
-
-
 
 interface Project {
   id: string;

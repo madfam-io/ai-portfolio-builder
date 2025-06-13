@@ -6,7 +6,7 @@ import { DragDropContext } from 'react-beautiful-dnd';
 describe('DragDropContext', () => {
   it('should render children', () => {
     const onDragEnd = jest.fn();
-    
+
     render(
       <DragDropContext onDragEnd={onDragEnd}>
         <div data-testid="child">Test Child</div>
@@ -18,7 +18,7 @@ describe('DragDropContext', () => {
 
   it('should handle drag end', () => {
     const onDragEnd = jest.fn();
-    
+
     render(
       <DragDropContext onDragEnd={onDragEnd}>
         <div>Content</div>

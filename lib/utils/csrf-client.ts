@@ -1,8 +1,8 @@
+import { getCSRFToken } from '@/middleware/csrf-enhanced';
+
 /**
  * Client-side CSRF token utilities
  */
-
-import { getCSRFToken } from '@/middleware/csrf-enhanced';
 
 /**
  * Fetch wrapper that automatically includes CSRF token

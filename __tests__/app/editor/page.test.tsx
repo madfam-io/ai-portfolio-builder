@@ -1,14 +1,13 @@
-/**
- * Editor page test suite
- */
-
+import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import EditorPage from '@/app/editor/page';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * Editor page test suite
+ */
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -61,7 +60,7 @@ jest.mock('@/components/layouts/BaseLayout', () => ({
 // Mock editor components
 jest.mock('@/components/editor/PortfolioEditor', () => ({
   __esModule: true,
-  default: ({ onSave, onChange, portfolio }: any) => (
+  default: ({ onSave, onChange, portfolio }: unknown) => (
     <div data-testid="portfolio-editor">
       <button onClick={() => onSave(portfolio)}>Save</button>
       <button onClick={() => onChange({ ...portfolio, name: 'Updated' })}>
@@ -73,7 +72,7 @@ jest.mock('@/components/editor/PortfolioEditor', () => ({
 
 jest.mock('@/components/editor/PortfolioPreview', () => ({
   __esModule: true,
-  default: ({ portfolio }: any) => (
+  default: ({ portfolio }: unknown) => (
     <div data-testid="portfolio-preview">
       <h1>{portfolio?.name || 'Preview'}</h1>
     </div>

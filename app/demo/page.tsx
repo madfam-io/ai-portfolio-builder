@@ -1,18 +1,19 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
+import Link from 'next/link';
+} from 'react-icons/fa';
 import {
   FaPlay,
   FaCheckCircle,
   FaArrowRight,
   FaClock,
   FaUser,
-} from 'react-icons/fa';
 
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 
 export default function DemoPage(): React.ReactElement {
   const { t } = useLanguage();

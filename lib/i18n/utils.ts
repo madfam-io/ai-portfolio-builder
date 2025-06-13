@@ -1,12 +1,12 @@
-/**
- * @fileoverview Utility functions for the i18n system
- * @module i18n/utils
- */
-
 import type {
   TranslationNamespace,
   FlattenedTranslations,
 } from './refactored-types';
+
+/**
+ * @fileoverview Utility functions for the i18n system
+ * @module i18n/utils
+ */
 
 /**
  * Flattens a nested translation object into a single-level object
@@ -32,7 +32,7 @@ export function flattenTranslations(
   const flattened: FlattenedTranslations = {};
 
   // Helper function to recursively flatten objects
-  function flattenObject(obj: any, prefix = ''): void {
+  function flattenObject(obj: unknown, prefix = ''): void {
     Object.entries(obj).forEach(([key, value]) => {
       const newKey = prefix ? `${prefix}.${key}` : key;
 

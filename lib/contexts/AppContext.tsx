@@ -1,3 +1,9 @@
+'use client';
+
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+import { AuthProvider } from './AuthContext';
+
 /**
  * @fileoverview App Context for managing global application state
  *
@@ -35,12 +41,6 @@
  * @author MADFAM Development Team
  * @version 2.0.0 - Enhanced currency system and dark mode defaults
  */
-
-'use client';
-
-import React, { createContext, useContext, useState, useEffect } from 'react';
-
-import { AuthProvider } from './AuthContext';
 
 /**
  * Application context interface defining all global state and controls
@@ -115,7 +115,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  const toggleDarkMode = () => {
+  const toggleDarkMode = (): void => {
     const newDarkMode = !isDarkMode;
     setIsDarkMode(newDarkMode);
 
@@ -133,7 +133,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('currency', newCurrency);
   };
 
-  const cycleCurrency = () => {
+  const cycleCurrency = (): void => {
     const currentIndex = CURRENCY_CYCLE.indexOf(currency);
     const nextIndex = (currentIndex + 1) % CURRENCY_CYCLE.length;
     const nextCurrency = CURRENCY_CYCLE[nextIndex];

@@ -1,15 +1,14 @@
-/**
- * Portfolio Store
- * Manages portfolio data, editing state, and portfolio operations
- */
-
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { portfolioService } from '@/lib/services/portfolioService';
-
 import { PortfolioState, PortfolioActions } from './types';
+
+/**
+ * Portfolio Store
+ * Manages portfolio data, editing state, and portfolio operations
+ */
 
 const initialState: PortfolioState = {
   portfolios: [],
@@ -71,7 +70,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
               state.portfolios = portfolios;
               state.isLoading = false;
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Failed to load portfolios';
               state.isLoading = false;
@@ -92,7 +91,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
               state.currentPortfolio = portfolio;
               state.isLoading = false;
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Failed to load portfolio';
               state.isLoading = false;
@@ -124,7 +123,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
               state.lastSaved = new Date();
             });
             return portfolio;
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Failed to create portfolio';
               state.isSaving = false;
@@ -154,7 +153,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
                 state.lastSaved = new Date();
               });
             }
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Failed to update portfolio';
               state.isSaving = false;
@@ -178,7 +177,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
               }
               state.isLoading = false;
             });
-          } catch (error: any) {
+          } catch (error: unknown) {
             set(state => {
               state.error = error.message || 'Failed to delete portfolio';
               state.isLoading = false;

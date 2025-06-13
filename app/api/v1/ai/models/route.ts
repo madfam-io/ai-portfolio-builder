@@ -1,17 +1,17 @@
-/**
- * AI Models API Route
- * Manages available AI models and user preferences
- */
-
 import { NextResponse } from 'next/server';
-
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import {
   withCacheHeaders,
   CACHE_CONFIGS,
   generateETag,
+
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 } from '@/lib/cache/cache-headers';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * AI Models API Route
+ * Manages available AI models and user preferences
+ */
 
 /**
  * Get available AI models with live updates

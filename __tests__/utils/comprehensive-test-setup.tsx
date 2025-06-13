@@ -1,14 +1,14 @@
+import React, { ReactNode } from 'react';
+import { render as rtlRender, RenderOptions } from '@testing-library/react';
+
+import type { Language } from '@/lib/i18n/refactored-types';
+
 /**
  * Comprehensive test setup utilities for PRISMA Portfolio Builder
  *
  * This module provides all necessary mocks and utilities for testing
  * the bilingual (Spanish/English) application with proper context providers
  */
-
-import { render as rtlRender, RenderOptions } from '@testing-library/react';
-import React, { ReactNode } from 'react';
-
-import type { Language } from '@/lib/i18n/refactored-types';
 
 // Comprehensive mock translations covering all components
 export const mockTranslations = {

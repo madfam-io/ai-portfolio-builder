@@ -1,15 +1,9 @@
 'use client';
 
-/**
- * Admin Experiments Dashboard
- *
- * Main dashboard for managing A/B testing experiments on landing pages.
- * Provides overview of all experiments and their performance metrics.
- */
-
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
+} from 'react-icons/fi';
 import {
   FiPlus,
   FiEdit,
@@ -24,17 +18,23 @@ import {
   FiFilter,
   FiSearch,
   FiMoreVertical,
-} from 'react-icons/fi';
+import type {
+  LandingPageExperiment,
+  ExperimentStatus,
 
 import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-
-import type {
-  LandingPageExperiment,
-  ExperimentStatus,
 } from '@/types/experiments';
+
+
+/**
+ * Admin Experiments Dashboard
+ *
+ * Main dashboard for managing A/B testing experiments on landing pages.
+ * Provides overview of all experiments and their performance metrics.
+ */
 
 // Extended type for experiments with variants from DB
 interface VariantFromDB {

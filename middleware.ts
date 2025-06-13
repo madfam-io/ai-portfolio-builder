@@ -1,17 +1,15 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
-
-import { logger } from '@/lib/utils/logger';
-
-import { apiVersionMiddleware } from './middleware/api-version';
-import { csrfMiddleware } from './middleware/csrf';
-import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
+import type { NextRequest } from 'next/server';
+import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import {
   applySecurityHeaders,
   shouldApplySecurityHeaders,
-} from './middleware/security-headers';
 
-import type { NextRequest } from 'next/server';
+import { logger } from '@/lib/utils/logger';
+import { apiVersionMiddleware } from './middleware/api-version';
+import { csrfMiddleware } from './middleware/csrf';
+import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
+} from './middleware/security-headers';
 
 /**
  * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning

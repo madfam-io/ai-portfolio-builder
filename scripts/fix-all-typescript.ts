@@ -1,11 +1,11 @@
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Comprehensive TypeScript fix for all test files
  */
-
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
 
 function findTestFiles(dir: string): string[] {
   const files: string[] = [];
@@ -37,7 +37,7 @@ function fixTypeScriptIssues(filePath: string): boolean {
     // Fix function children properly
     content = content.replace(
       /<DragDropProvider items=\{mockItems as any\} onReorder=\{(\w+)\}>\s*\{(item(?:\s*:\s*any)?)\s*=>/g,
-      '<DragDropProvider items={mockItems as any} onReorder={$1}>\n          {(($2: any) =>'
+      '<DragDropProvider items={mockItems as any} onReorder={$1}>\n          {(($2: unknown) =>'
     );
     
     content = content.replace(
@@ -54,7 +54,7 @@ function fixTypeScriptIssues(filePath: string): boolean {
     // Fix the integration test
     content = content.replace(
       /\{\(\(item, index: any\) => \(/g,
-      '{((item: any, index: any) => ('
+      '{((item: unknown, index: unknown) => ('
     );
     
     // Add missing closing parenthesis
@@ -86,7 +86,7 @@ function fixTypeScriptIssues(filePath: string): boolean {
   // Fix 5: Add type annotations to all render prop patterns
   content = content.replace(
     /\{(item|child|children)\s*=>\s*\(/g,
-    '{($1: any) => ('
+    '{($1: unknown) => ('
   );
   
   // Fix 6: Fix mock function children

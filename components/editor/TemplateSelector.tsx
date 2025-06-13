@@ -1,24 +1,20 @@
-/**
- * @fileoverview Enhanced Template Selector Component
- *
- * Provides an intuitive interface for selecting and previewing portfolio templates
- * with live preview cards, industry targeting, and feature comparisons.
- */
-
 'use client';
 
-import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
 import { useState, useMemo } from 'react';
-
-
-
-
+import { FiCheck, FiEye, FiGrid, FiLayout } from 'react-icons/fi';
 import {
   getAvailableTemplates,
   getTemplateConfig,
   TemplateConfig,
 } from '@/lib/templates/templateConfig';
 import { TemplateType } from '@/types/portfolio';
+
+/**
+ * @fileoverview Enhanced Template Selector Component
+ *
+ * Provides an intuitive interface for selecting and previewing portfolio templates
+ * with live preview cards, industry targeting, and feature comparisons.
+ */
 
 interface TemplateSelectorProps {
   currentTemplate: TemplateType;
@@ -187,7 +183,7 @@ export function TemplateSelector({
   const templates = useMemo(() => getAvailableTemplates(), []);
 
   const filteredTemplates = useMemo(() => {
-    if (!filterIndustry !== undefined && !filterIndustry !== null) return templates;
+    if (!filterIndustry) return templates;
     return templates.filter(template =>
       template.industry.some(industry =>
         industry.toLowerCase().includes(filterIndustry.toLowerCase())

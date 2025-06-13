@@ -1,15 +1,14 @@
-/**
- * AI Store
- * Manages AI model selection, enhancement history, and AI operations
- */
-
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
 import { aiClient } from '@/lib/ai/client';
-
 import { AIState, AIActions, AIEnhancement } from './types';
+
+/**
+ * AI Store
+ * Manages AI model selection, enhancement history, and AI operations
+ */
 
 const initialState: AIState = {
   selectedModels: {
@@ -122,7 +121,7 @@ export const useAIStore = create<AIState & AIActions>()(
               });
 
               return enhanced.content;
-            } catch (error: any) {
+            } catch (error: unknown) {
               set(state => {
                 state.error = error.message || 'Enhancement failed';
                 state.isProcessing = false;
@@ -170,7 +169,7 @@ export const useAIStore = create<AIState & AIActions>()(
               });
 
               return enhanced.description;
-            } catch (error: any) {
+            } catch (error: unknown) {
               set(state => {
                 state.error = error.message || 'Enhancement failed';
                 state.isProcessing = false;
@@ -206,7 +205,7 @@ export const useAIStore = create<AIState & AIActions>()(
               });
 
               return recommendation;
-            } catch (error: any) {
+            } catch (error: unknown) {
               set(state => {
                 state.error = error.message || 'Recommendation failed';
                 state.isProcessing = false;
@@ -230,7 +229,7 @@ export const useAIStore = create<AIState & AIActions>()(
                 state.availableModels = models;
                 state.isProcessing = false;
               });
-            } catch (error: any) {
+            } catch (error: unknown) {
               set(state => {
                 state.error = error.message || 'Failed to load models';
                 state.isProcessing = false;

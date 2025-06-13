@@ -1,17 +1,15 @@
+'use client';
+
+import { Badge } from '@/components/ui/badge';
+import { RepositoryMetadata } from './RepositoryMetadata';
+import type { Repository } from '@/types/analytics';
+
 /**
  * @fileoverview RepositoryCard Component
  *
  * Individual repository card with detailed information
  * including description, metadata, and topics
  */
-
-'use client';
-
-import { Badge } from '@/components/ui/badge';
-
-import { RepositoryMetadata } from './RepositoryMetadata';
-
-import type { Repository } from '@/types/analytics';
 
 interface RepositoryCardProps {
   repo: Repository;

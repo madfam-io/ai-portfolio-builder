@@ -1,3 +1,5 @@
+import { NextRequest, NextResponse } from 'next/server';
+
 /**
  * @fileoverview API Optimization Utilities
  *
@@ -15,8 +17,6 @@
  * @author PRISMA Development Team
  * @version 1.0.0
  */
-
-import { NextRequest, NextResponse } from 'next/server';
 
 // Cache configuration interfaces
 export interface CacheConfig {
@@ -53,11 +53,11 @@ export interface APIMetrics {
 class MemoryCache {
   private cache = new Map<
     string,
-    { data: any; expiry: number; tags: string[] }
+    { data: unknown; expiry: number; tags: string[] }
   >();
   private timers = new Map<string, NodeJS.Timeout>();
 
-  set(key: string, data: any, ttl: number, tags: string[] = []): void {
+  set(key: string, data: unknown, ttl: number, tags: string[] = []): void {
     // Clear existing timer
     const existingTimer = this.timers.get(key);
     if (existingTimer) {
@@ -74,7 +74,7 @@ class MemoryCache {
     this.timers.set(key, timer);
   }
 
-  get(key: string): any | null {
+  get(key: string): unknown | null {
     const entry = this.cache.get(key);
     if (!entry) return null;
 

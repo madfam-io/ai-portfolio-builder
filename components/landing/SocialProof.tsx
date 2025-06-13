@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+} from 'react-icons/fa';
 import {
   FaGoogle,
   FaMicrosoft,
@@ -8,9 +9,9 @@ import {
   FaAmazon,
   FaFacebookF,
   FaStar,
-} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 
 export default function SocialProof(): React.ReactElement {
   const { t } = useLanguage();

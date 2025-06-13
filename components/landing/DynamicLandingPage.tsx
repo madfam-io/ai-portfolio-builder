@@ -1,3 +1,18 @@
+'use client';
+
+import React, { Suspense, lazy } from 'react';
+import {
+  useExperiment,
+  useExperimentTheme,
+  sortComponentsByOrder,
+import BackToTopButton from '../BackToTopButton';
+
+} from '@/lib/services/feature-flags/use-experiment';
+import Footer from './Footer';
+import Header from './Header';
+import { getHeroVariant } from './variants/HeroVariants';
+import type { ComponentConfig } from '@/types/experiments';
+
 /**
  * @fileoverview Dynamic Landing Page Renderer
  *
@@ -5,25 +20,8 @@
  * supporting A/B testing with different component variants and orders.
  */
 
-'use client';
-
-import React, { Suspense, lazy } from 'react';
-
-import {
-  useExperiment,
-  useExperimentTheme,
-  sortComponentsByOrder,
-} from '@/lib/services/feature-flags/use-experiment';
 
 // Import all landing components and their variants
-import BackToTopButton from '../BackToTopButton';
-
-import Footer from './Footer';
-import Header from './Header';
-import { getHeroVariant } from './variants/HeroVariants';
-
-import type { ComponentConfig } from '@/types/experiments';
-
 // Lazy load other components for better performance
 const SocialProof = lazy(() => import('./SocialProof'));
 const Features = lazy(() => import('./Features'));

@@ -1,12 +1,12 @@
-/**
- * Drag and Drop Context for Portfolio Editor
- * Provides drag-and-drop functionality for reordering sections and content
- */
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Drag and Drop Context for Portfolio Editor
+ * Provides drag-and-drop functionality for reordering sections and content
+ */
 
 interface DragItemData {
   title?: string;

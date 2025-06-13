@@ -1,9 +1,9 @@
+import { createBrowserClient } from '@supabase/ssr';
+
 /**
  * Supabase Client
  * Client-side Supabase client configuration
  */
-
-import { createBrowserClient } from '@supabase/ssr';
 
 export function createClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

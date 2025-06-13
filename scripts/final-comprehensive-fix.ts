@@ -1,8 +1,18 @@
-#!/usr/bin/env tsx
-
+import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { mockSupabaseClient, mockRedisClient } from '../utils/test-mocks';
+import { mockPortfolioRepository } from '../utils/service-mocks';
+import { mockSupabaseClient } from '../../utils/test-mocks';
+
+import { PortfolioService } from '@/lib/services/portfolio-service';
+import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
+import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
+import { lazyLoad } from '@/lib/ai/lazy-loader';
+import { GET, POST, PUT, DELETE } from '@/app/api/v1/${fileName.includes('enhance-bio') ? 'ai/enhance-bio' : fileName.includes('optimize-project') ? 'ai/optimize-project' : fileName.includes('recommend-template') ? 'ai/recommend-template' : fileName.includes('models') ? 'ai/models/selection' : 'portfolios'}/route';
+
+#!/usr/bin/env tsx
 
 async function finalComprehensiveFix() {
   console.log('🔧 Applying final comprehensive test fixes...\n');
@@ -45,10 +55,6 @@ export const mockLazyLoader = {
 
   // Fix 2: Fix portfolio service test
   const portfolioServiceTestFix = `
-import { PortfolioService } from '@/lib/services/portfolio-service';
-import { mockSupabaseClient, mockRedisClient } from '../utils/test-mocks';
-import { mockPortfolioRepository } from '../utils/service-mocks';
-
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => mockSupabaseClient)
 }));
@@ -130,9 +136,6 @@ describe('PortfolioService', () => {
 
   // Fix 3: Fix portfolio repository test
   const portfolioRepositoryTestFix = `
-import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
-import { mockSupabaseClient } from '../../utils/test-mocks';
-
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => mockSupabaseClient)
 }));
@@ -214,8 +217,6 @@ describe('PortfolioRepository', () => {
 
   // Fix 4: Fix feature flag service test
   const featureFlagTestFix = `
-import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
-
 describe('FeatureFlagService', () => {
   let service: FeatureFlagService;
 
@@ -259,8 +260,6 @@ describe('FeatureFlagService', () => {
 
   // Fix 5: Fix lazy loader test
   const lazyLoaderTestFix = `
-import { lazyLoad } from '@/lib/ai/lazy-loader';
-
 describe('Lazy Loader', () => {
   it('should lazy load a module', async () => {
     const TestComponent = () => <div>Test Component</div>;
@@ -302,11 +301,8 @@ describe('Lazy Loader', () => {
       const fileName = path.basename(file, '.test.ts');
       
       const apiTestContent = `
-import { NextRequest, NextResponse } from 'next/server';
-import { GET, POST, PUT, DELETE } from '@/app/api/v1/${fileName.includes('enhance-bio') ? 'ai/enhance-bio' : fileName.includes('optimize-project') ? 'ai/optimize-project' : fileName.includes('recommend-template') ? 'ai/recommend-template' : fileName.includes('models') ? 'ai/models/selection' : 'portfolios'}/route';
-
 const mockFetch = jest.fn();
-global.fetch = mockFetch as any;
+global.fetch = mockFetch as unknown;
 
 const mockSupabaseClient = {
   auth: {

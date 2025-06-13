@@ -1,8 +1,4 @@
-/**
- * Real-Time Preview Component
- * Provides live preview of portfolio changes with device simulation
- */
-
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Monitor,
   Tablet,
@@ -12,12 +8,16 @@ import {
   Eye,
   EyeOff,
 } from 'lucide-react';
-import React, { useState, useEffect, useRef } from 'react';
 
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
 import { cn } from '@/components/ui/utils';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
+
+/**
+ * Real-Time Preview Component
+ * Provides live preview of portfolio changes with device simulation
+ */
 
 interface RealTimePreviewProps {
   portfolio: Portfolio;
@@ -67,7 +67,7 @@ export const RealTimePreview = React.memo(function RealTimePreview({
     onDeviceChange?.(newDevice);
   };
 
-  const handleRefresh = () => {
+  const handleRefresh = (): void => {
     setIsLoading(true);
     if (iframeRef.current) {
       iframeRef.current.src = iframeRef.current.src;
@@ -75,7 +75,7 @@ export const RealTimePreview = React.memo(function RealTimePreview({
     setTimeout(() => setIsLoading(false), 1000);
   };
 
-  const handleOpenInNewTab = () => {
+  const handleOpenInNewTab = (): void => {
     const previewUrl = `/preview/${portfolio.id}?template=${template}`;
     window.open(previewUrl, '_blank');
   };

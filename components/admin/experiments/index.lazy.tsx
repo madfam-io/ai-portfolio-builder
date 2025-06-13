@@ -1,10 +1,10 @@
+import React from 'react';
+import dynamic from 'next/dynamic';
+
 /**
  * Lazy-loaded admin experiment components
  * Splits heavy chart dependencies from main bundle
  */
-
-import dynamic from 'next/dynamic';
-import React from 'react';
 
 // Loading component for charts
 const ChartLoader = (): React.JSX.Element => (

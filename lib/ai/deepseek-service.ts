@@ -1,9 +1,3 @@
-/**
- * DeepSeek AI Service Implementation
- * Provides AI-powered content enhancement using DeepSeek reasoning models
- */
-
-import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -15,7 +9,14 @@ import {
   AIServiceError,
   ModelUnavailableError,
   QuotaExceededError,
+
+import { BIO_PROMPTS, PROJECT_PROMPTS, TEMPLATE_PROMPTS } from './prompts';
 } from './types';
+
+/**
+ * DeepSeek AI Service Implementation
+ * Provides AI-powered content enhancement using DeepSeek reasoning models
+ */
 
 interface DeepSeekResponse {
   choices: Array<{

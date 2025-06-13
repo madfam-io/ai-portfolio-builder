@@ -1,13 +1,13 @@
-/**
- * Tests for DraggableItem Component
- */
-
+import React from 'react';
 import '@testing-library/jest-dom';
 import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
 
 import { DragItem } from '@/components/editor/DragDropContext';
 import { DraggableItem } from '@/components/editor/DraggableItem';
+
+/**
+ * Tests for DraggableItem Component
+ */
 
 // Mock the logger
 jest.mock('@/lib/utils/logger', () => ({
@@ -35,7 +35,10 @@ describe('DraggableItem', () => {
   describe('Rendering', () => {
     it('should render children content', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
@@ -45,7 +48,10 @@ describe('DraggableItem', () => {
 
     it('should show drag handle by default', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
@@ -99,23 +105,29 @@ describe('DraggableItem', () => {
   describe('Drag and Drop Functionality', () => {
     it('should make element draggable', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       expect(draggableElement).toHaveAttribute('draggable', 'true');
     });
 
     it('should handle drag start event', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       const mockDataTransfer = {
         effectAllowed: '',
         setData: jest.fn(),
@@ -135,12 +147,15 @@ describe('DraggableItem', () => {
 
     it('should handle drag over event', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       const mockPreventDefault = jest.fn() as jest.Mock;
       const mockDataTransfer = { dropEffect: '' };
 
@@ -155,12 +170,15 @@ describe('DraggableItem', () => {
 
     it('should handle drop event and call onReorder', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       const mockPreventDefault = jest.fn() as jest.Mock;
       const mockDataTransfer = {
         getData: jest.fn().mockReturnValue(
@@ -193,12 +211,15 @@ describe('DraggableItem', () => {
   describe('Accessibility', () => {
     it('should be focusable', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       expect(draggableElement).toHaveAttribute('tabIndex', '0');
     });
 
@@ -213,7 +234,7 @@ describe('DraggableItem', () => {
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       expect(draggableElement).toHaveAttribute('tabIndex', '-1');
     });
   });
@@ -221,12 +242,15 @@ describe('DraggableItem', () => {
   describe('Error Handling', () => {
     it('should handle malformed drag data gracefully', () => {
       render(
-        <DraggableItem item={mockDragItem as any} onReorder={mockOnReorder as any}>
+        <DraggableItem
+          item={mockDragItem as any}
+          onReorder={mockOnReorder as any}
+        >
           <div>Test Content</div>
         </DraggableItem>
       );
 
-      const draggableElement = screen.getByTestId("draggable-item");
+      const draggableElement = screen.getByTestId('draggable-item');
       const mockDataTransfer = {
         getData: jest.fn().mockReturnValue('invalid-json'),
       };

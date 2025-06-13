@@ -1,7 +1,9 @@
-#!/usr/bin/env tsx
-
+import { ReactElement } from 'react';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { render, RenderOptions } from '@testing-library/react';
+
+#!/usr/bin/env tsx
 
 async function fixRemainingTests() {
   console.log('🔧 Fixing remaining test failures...\n');
@@ -145,9 +147,6 @@ process.env.HUGGINGFACE_API_KEY = 'mock-hf-key';
 
   // Fix 7: Create missing test utilities
   const testUtilities = `
-import { render, RenderOptions } from '@testing-library/react';
-import { ReactElement } from 'react';
-
 // Test providers wrapper
 export function AllTheProviders({ children }: { children: React.ReactNode }) {
   return <>{children}</>;

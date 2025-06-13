@@ -1,11 +1,11 @@
+import { StateCreator, StoreApi } from 'zustand';
+
+import { showErrorToast, showSuccessToast } from './ui-store';
+
 /**
  * Store Utilities
  * Common patterns and helper functions for Zustand stores
  */
-
-import { StateCreator, StoreApi } from 'zustand';
-
-import { showErrorToast, showSuccessToast } from './ui-store';
 
 /**
  * Async action wrapper with loading and error handling
@@ -36,7 +36,7 @@ export function createAsyncAction<T extends any[], R>(
 
       options?.onSuccess?.(result);
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       const errorMessage =
         options?.errorMessage || error.message || 'Operation failed';
       showErrorToast('Error', errorMessage);
@@ -82,7 +82,7 @@ export const createLoadingSlice = <T extends object>(
     ...initialState,
 
     startLoading: key =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         isLoading: true,
         loadingKey: key || state.loadingKey,
@@ -92,7 +92,7 @@ export const createLoadingSlice = <T extends object>(
       })),
 
     stopLoading: key =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newLoadingKeys = new Set(state.loadingKeys);
         if (key) {
           newLoadingKeys.delete(key);
@@ -106,12 +106,12 @@ export const createLoadingSlice = <T extends object>(
       }),
 
     isLoadingKey: key => {
-      const state = get() as any;
+      const state = get() as unknown;
       return state.loadingKeys.has(key);
     },
 
     resetLoading: () =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         isLoading: false,
         loadingKey: null,
@@ -149,7 +149,7 @@ export const createErrorSlice = <T extends object>(
     ...initialState,
 
     setError: (error, key) =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.set(key, error || '');
@@ -162,7 +162,7 @@ export const createErrorSlice = <T extends object>(
       }),
 
     clearError: key =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.delete(key);
@@ -175,14 +175,14 @@ export const createErrorSlice = <T extends object>(
       }),
 
     clearAllErrors: () =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         error: null,
         errors: new Map(),
       })),
 
     hasError: key => {
-      const state = get() as any;
+      const state = get() as unknown;
       if (key) {
         return state.errors.has(key);
       }
@@ -213,7 +213,7 @@ export function createOptimisticUpdate<T, R>(
       // Perform actual update
       const result = await actualUpdate();
       return result;
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Rollback on error
       set(state => {
         rollback(state, error);
@@ -268,7 +268,7 @@ export function createResetAction<T extends object>(
 export interface PersistOptions<T> {
   name: string;
   version?: number;
-  migrate?: (persistedState: any, version: number) => T;
+  migrate?: (persistedState: unknown, version: number) => T;
   partialize?: (state: T) => Partial<T>;
 }
 

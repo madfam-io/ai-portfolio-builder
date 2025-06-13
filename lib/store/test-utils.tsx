@@ -1,11 +1,11 @@
+import React from 'react';
+import { act } from '@testing-library/react';
+import { StoreApi } from 'zustand';
+
 /**
  * Store Test Utilities
  * Helper functions and mocks for testing Zustand stores
  */
-
-import { act } from '@testing-library/react';
-import React from 'react';
-import { StoreApi } from 'zustand';
 
 /**
  * Create a mock store for testing
@@ -16,7 +16,7 @@ export function createMockStore<T>(initialState: T): StoreApi<T> {
 
   return {
     getState: () => state,
-    setState: (partial: any, replace?: any) => {
+    setState: (partial: unknown, replace?: unknown) => {
       const nextState =
         typeof partial === 'function' ? partial(state) : partial;
 
@@ -47,7 +47,7 @@ export async function waitForStoreUpdate<T>(
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 
-    const checkState = () => {
+    const checkState = (): void => {
       const state = store.getState();
       if (predicate(state)) {
         resolve(state);

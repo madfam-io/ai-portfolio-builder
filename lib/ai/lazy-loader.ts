@@ -1,14 +1,13 @@
+import { logger } from '@/lib/utils/logger';
+import { BioContext, UserProfile } from './types';
+
 /**
  * Lazy loading wrapper for AI services
  * Loads AI modules only when enhancement features are used
  */
 
-import { logger } from '@/lib/utils/logger';
-
-import { BioContext, UserProfile } from './types';
-
 // Cache for loaded services
-let huggingFaceService: any = null;
+let huggingFaceService: unknown = null;
 
 /**
  * Lazy load HuggingFace service

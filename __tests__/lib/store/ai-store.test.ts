@@ -1,11 +1,11 @@
+import { renderHook, act } from '@testing-library/react';
+
+import { useAIStore } from '@/lib/store/ai-store';
+
 /**
  * Tests for AI Store
  * Testing Zustand state management for AI preferences and history
  */
-
-import { renderHook, act } from '@testing-library/react';
-
-import { useAIStore } from '@/lib/store/ai-store';
 
 describe('AI Store', () => {
   beforeEach(() => {

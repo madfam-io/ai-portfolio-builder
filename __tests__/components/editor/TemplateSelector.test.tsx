@@ -1,3 +1,9 @@
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+
+import { TemplateSelector } from '@/components/editor/TemplateSelector';
+import { TemplateType } from '@/types/portfolio';
+
 /**
  * @fileoverview Tests for TemplateSelector Component
  *
@@ -79,12 +85,6 @@ jest.mock('@/lib/templates/templateConfig', () => ({
     },
   }),
 }));
-
-import { render, screen, fireEvent } from '@testing-library/react';
-import React from 'react';
-
-import { TemplateSelector } from '@/components/editor/TemplateSelector';
-import { TemplateType } from '@/types/portfolio';
 
 describe('TemplateSelector', () => {
   const mockOnTemplateChange = jest.fn() as jest.Mock;

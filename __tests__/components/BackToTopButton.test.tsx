@@ -1,10 +1,9 @@
+import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { renderWithProviders } from '../utils/test-utils';
 
 import BackToTopButton from '@/components/BackToTopButton';
-
-import { renderWithProviders } from '../utils/test-utils';
 
 // Mock window.scrollTo
 const scrollToMock = jest.fn();

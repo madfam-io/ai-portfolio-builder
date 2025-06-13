@@ -52,7 +52,7 @@ export class PortfolioMapper {
    * Transform database format to API format
    * Converts snake_case to camelCase for API responses
    */
-  static fromDatabase(dbPortfolio: any): Portfolio {
+  static fromDatabase(dbPortfolio: unknown): Portfolio {
     return {
       id: dbPortfolio.id,
       userId: dbPortfolio.user_id,

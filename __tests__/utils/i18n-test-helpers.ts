@@ -5,7 +5,7 @@
 /**
  * Mock localStorage for language tests
  */
-export const mockLocalStorage = () => {
+export const mockLocalStorage = (): void => {
   const store: Record<string, string> = {};
 
   const localStorageMock = {
@@ -54,7 +54,7 @@ export const setupI18nTestEnvironment = (language: 'es' | 'en' = 'es') => {
 /**
  * Reset i18n test environment
  */
-export const resetI18nTestEnvironment = () => {
+export const resetI18nTestEnvironment = (): void => {
   // Clear localStorage
   if (window.localStorage && typeof window.localStorage.clear === 'function') {
     window.localStorage.clear();

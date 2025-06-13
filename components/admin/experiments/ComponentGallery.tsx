@@ -1,22 +1,16 @@
+import React, { useState } from 'react';
+import { FiEye, FiFilter, FiPlus, FiSearch, FiStar, FiX } from 'react-icons/fi';
+import type {
+  ComponentLibraryItem,
+  LandingComponentType,
+} from '@/types/experiments';
+
 /**
  * Component Gallery Modal
  *
  * Visual gallery for browsing and selecting landing page components
  * to add to experiment variants.
  */
-
-import { FiEye, FiFilter, FiPlus, FiSearch, FiStar, FiX } from 'react-icons/fi';
-import React, { useState } from 'react';
-
-
-
-
-
-
-import type {
-  ComponentLibraryItem,
-  LandingComponentType,
-} from '@/types/experiments';
 
 interface ComponentGalleryProps {
   components: ComponentLibraryItem[];

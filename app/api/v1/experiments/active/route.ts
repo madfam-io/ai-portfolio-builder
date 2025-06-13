@@ -1,8 +1,3 @@
-/**
- * @fileoverview API endpoint for getting active experiment
- * GET /api/v1/experiments/active
- */
-
 import { headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -10,9 +5,14 @@ import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-se
 import { logger } from '@/lib/utils/logger';
 
 /**
+ * @fileoverview API endpoint for getting active experiment
+ * GET /api/v1/experiments/active
+ */
+
+/**
  * Get active experiment for current visitor
  */
-export async function GET(request: NextRequest) {
+export async function GET($1): Promise<Response> {
   try {
     // Get visitor context from headers
     const headersList = await headers();

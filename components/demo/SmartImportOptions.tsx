@@ -1,18 +1,19 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiLinkedin,
   FiGithub,
   FiUpload,
   FiArrowRight,
   FiCheck,
-} from 'react-icons/fi';
 
 import { GitHubIntegration } from '@/components/integrations/GitHubIntegration';
 import { LinkedInImport } from '@/components/integrations/LinkedInImport';
 import { ResumeParser } from '@/components/integrations/ResumeParser';
+
 
 interface ImportedData {
   name?: string;
@@ -119,7 +120,7 @@ export function SmartImportOptions({
 
   const handleImportComplete = (source: string, data: ImportedData): void => {
     setCompletedImports(prev => new Set([...prev, source]));
-    if (onDataImport !== undefined && onDataImport !== null) {
+    if (onDataImport) {
       onDataImport(source, data);
     }
   };
@@ -128,7 +129,7 @@ export function SmartImportOptions({
     setActiveImport(null);
   };
 
-  if (activeImport !== undefined && activeImport !== null) {
+  if (activeImport) {
     return (
       <div className={className}>
         <div className="mb-6">

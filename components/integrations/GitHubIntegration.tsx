@@ -1,7 +1,8 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
 import React, { useState } from 'react';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiGithub,
   FiStar,
@@ -10,7 +11,7 @@ import {
   FiCalendar,
   FiCheck,
   FiEye,
-} from 'react-icons/fi';
+
 
 interface GitHubRepository {
   id: string;
@@ -138,7 +139,7 @@ export function GitHubIntegration({
   const handleConnect = async () => {
     setIsConnecting(true);
 
-    if (isDemo !== undefined && isDemo !== null) {
+    if (isDemo) {
       await new Promise(resolve => setTimeout(resolve, 1500));
       setIsConnected(true);
       setIsConnecting(false);
@@ -184,7 +185,7 @@ export function GitHubIntegration({
     setSelectedRepos(new Set(topRepos));
     setIsAnalyzing(false);
 
-    if (onImport !== undefined && onImport !== null) {
+    if (onImport) {
       onImport(mockProfile);
     }
   };
@@ -200,7 +201,7 @@ export function GitHubIntegration({
   };
 
   const handleConfirmSelection = (): void => {
-    if (profile && onRepositorySelect !== undefined && profile && onRepositorySelect !== null) {
+    if (profile && onRepositorySelect) {
       const selectedRepositories = profile.repositories.filter(repo =>
         selectedRepos.has(repo.id)
       );
@@ -222,7 +223,7 @@ export function GitHubIntegration({
     return colors[language] || 'bg-gray-500';
   };
 
-  if (!isConnected !== undefined && !isConnected !== null) {
+  if (!isConnected) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}
@@ -304,7 +305,7 @@ export function GitHubIntegration({
     );
   }
 
-  if (isAnalyzing !== undefined && isAnalyzing !== null) {
+  if (isAnalyzing) {
     return (
       <div
         className={`bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden ${className}`}

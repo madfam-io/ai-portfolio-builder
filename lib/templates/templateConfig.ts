@@ -1,3 +1,5 @@
+import { TemplateType, SectionType } from '@/types/portfolio';
+
 /**
  * @fileoverview Template Configuration System
  *
@@ -5,8 +7,6 @@
  * for the PRISMA portfolio builder. Each template targets specific professional
  * industries and provides optimized layouts.
  */
-
-import { TemplateType, SectionType } from '@/types/portfolio';
 
 export interface TemplateSection {
   id: SectionType;

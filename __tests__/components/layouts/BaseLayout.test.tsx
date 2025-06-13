@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+
 import BaseLayout from '@/components/layouts/BaseLayout';
 
 // Mock the child components to isolate BaseLayout testing

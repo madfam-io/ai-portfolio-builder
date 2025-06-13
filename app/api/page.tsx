@@ -1,11 +1,8 @@
 'use client';
 
-import { FaBook, FaCode, FaKey, FaShieldAlt } from 'react-icons/fa';
-import Link from 'next/link';
 import React from 'react';
-
-
-
+import Link from 'next/link';
+import { FaBook, FaCode, FaKey, FaShieldAlt } from 'react-icons/fa';
 
 import Footer from '@/components/landing/Footer';
 import Header from '@/components/landing/Header';

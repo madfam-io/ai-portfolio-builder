@@ -1,13 +1,12 @@
-/**
- * Templates Component test suite
- */
-
-import { screen } from '@testing-library/react';
 import React from 'react';
+import { screen } from '@testing-library/react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import Templates from '@/components/landing/Templates';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * Templates Component test suite
+ */
 
 describe('Templates Component', () => {
   beforeEach(() => {
@@ -18,7 +17,7 @@ describe('Templates Component', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
   });

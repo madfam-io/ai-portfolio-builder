@@ -1,3 +1,16 @@
+'use client';
+
+import React, { Component, ReactNode, ErrorInfo } from 'react';
+import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
+import {
+  serializeError,
+  getUserFriendlyMessage,
+  getErrorContext,
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
+} from '@/lib/utils/error-handling/error-utils';
+import { logger } from '@/lib/utils/logger';
+
 /**
  * @fileoverview Root Error Boundary
  *
@@ -5,21 +18,6 @@
  * Provides comprehensive error handling with monitoring integration.
  */
 
-'use client';
-
-import { FiAlertTriangle, FiHome, FiMail, FiRefreshCw } from 'react-icons/fi';
-import React, { Component, ReactNode, ErrorInfo } from 'react';
-
-
-
-
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import {
-  serializeError,
-  getUserFriendlyMessage,
-  getErrorContext,
-} from '@/lib/utils/error-handling/error-utils';
-import { logger } from '@/lib/utils/logger';
 
 interface RootErrorBoundaryProps {
   children: ReactNode;
@@ -90,7 +88,7 @@ export class RootErrorBoundary extends Component<
     }
   }
 
-  private reportToMonitoring(error: Error, errorInfo: ErrorInfo, context: any) {
+  private reportToMonitoring(error: Error, errorInfo: ErrorInfo, context: unknown) {
     // Integration with error monitoring service
     // This would be replaced with actual service integration (Sentry, LogRocket, etc.)
     fetch('/api/errors', {
@@ -223,14 +221,14 @@ function RootErrorFallback({
           {/* Error Message */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {(t.errors as any)?.rootErrorTitle ||
+              {(t.errors as unknown)?.rootErrorTitle ||
                 'Oops! Something went wrong'}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               {userMessage}
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
-              {(t.errors as any)?.errorId || 'Error ID'}:{' '}
+              {(t.errors as unknown)?.errorId || 'Error ID'}:{' '}
               <span className="font-mono">{errorId}</span>
             </p>
           </div>
@@ -239,7 +237,7 @@ function RootErrorFallback({
           {isDevelopment && error && (
             <details className="mb-8 bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
               <summary className="cursor-pointer font-medium text-gray-700 dark:text-gray-300 mb-2">
-                {(t.errors as any)?.technicalDetails || 'Technical Details'}
+                {(t.errors as unknown)?.technicalDetails || 'Technical Details'}
               </summary>
               <div className="space-y-4 mt-4">
                 <div>
@@ -272,7 +270,7 @@ function RootErrorFallback({
                 className="w-full flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <FiRefreshCw className="w-5 h-5" />
-                {(t.errors as any)?.tryAgain || 'Try Again'}
+                {(t.errors as unknown)?.tryAgain || 'Try Again'}
                 {retryCount > 0 && ` (${retryCount}/3)`}
               </button>
             )}
@@ -283,7 +281,7 @@ function RootErrorFallback({
                 className="w-full flex items-center justify-center gap-3 bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <FiRefreshCw className="w-5 h-5" />
-                {(t.errors as any)?.reloadPage || 'Reload Page'}
+                {(t.errors as unknown)?.reloadPage || 'Reload Page'}
               </button>
             )}
 
@@ -292,7 +290,7 @@ function RootErrorFallback({
               className="w-full flex items-center justify-center gap-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <FiHome className="w-5 h-5" />
-              {(t.errors as any)?.goToHomepage || 'Go to Homepage'}
+              {(t.errors as unknown)?.goToHomepage || 'Go to Homepage'}
             </button>
 
             <button
@@ -300,14 +298,14 @@ function RootErrorFallback({
               className="w-full flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
             >
               <FiMail className="w-5 h-5" />
-              {(t.errors as any)?.reportBug || 'Report Bug'}
+              {(t.errors as unknown)?.reportBug || 'Report Bug'}
             </button>
           </div>
 
           {/* Help Text */}
           <div className="mt-8 text-center">
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {(t.errors as any)?.persistentError ||
+              {(t.errors as unknown)?.persistentError ||
                 'If the error persists, please contact support'}
             </p>
           </div>

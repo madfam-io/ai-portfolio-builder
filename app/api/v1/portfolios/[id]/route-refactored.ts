@@ -1,3 +1,19 @@
+import { NextRequest } from 'next/server';
+import {
+  authenticateUser,
+  unauthorizedResponse,
+import {
+  withErrorHandling,
+  getSupabaseClient,
+  apiSuccess,
+  apiError,
+
+} from '@/lib/api/middleware/auth';
+} from '@/lib/api/middleware/common';
+import { logger } from '@/lib/utils/logger';
+import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
+import { validateUpdatePortfolio } from '@/lib/validations/portfolio';
+
 /**
  * Portfolio API Routes v1 - Individual portfolio operations
  * Demonstrates refactored pattern with authentication and common middleware
@@ -5,22 +21,6 @@
  * @version 1.0.0
  * @endpoint /api/v1/portfolios/[id]
  */
-
-import { NextRequest } from 'next/server';
-
-import {
-  authenticateUser,
-  unauthorizedResponse,
-} from '@/lib/api/middleware/auth';
-import {
-  withErrorHandling,
-  getSupabaseClient,
-  apiSuccess,
-  apiError,
-} from '@/lib/api/middleware/common';
-import { logger } from '@/lib/utils/logger';
-import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
-import { validateUpdatePortfolio } from '@/lib/validations/portfolio';
 
 /**
  * GET /api/v1/portfolios/[id]

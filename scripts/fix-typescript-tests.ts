@@ -1,12 +1,12 @@
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Script to fix TypeScript errors in test files
  * This handles common patterns that need fixing for React 19 compatibility
  */
-
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
 
 // Find all test files
 function findTestFiles(dir: string): string[] {
@@ -36,7 +36,7 @@ function fixTestFile(filePath: string): boolean {
   // Pattern: {(item) => <div>{item}</div>}
   const renderPropPattern = /\{(\s*)\(([^:)]+)\)(\s*)=>/g;
   if (renderPropPattern.test(content)) {
-    content = content.replace(renderPropPattern, '{$1($2: any)$3=>');
+    content = content.replace(renderPropPattern, '{$1($2: unknown)$3=>');
     modified = true;
   }
   

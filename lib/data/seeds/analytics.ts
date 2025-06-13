@@ -1,3 +1,7 @@
+import { logger } from '@/lib/utils/logger';
+import { getSeedConfig } from './index';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 /**
  * @fileoverview Analytics and Metrics Seed Data
  * @module data/seeds/analytics
@@ -5,12 +9,6 @@
  * Generates realistic analytics data including portfolio views, code metrics,
  * commit analytics, pull requests, and performance metrics.
  */
-
-import { logger } from '@/lib/utils/logger';
-
-import { getSeedConfig } from './index';
-
-import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
  * Generate code metrics for a repository
@@ -265,7 +263,7 @@ function generatePortfolioAnalytics(
  * Seed code metrics table
  */
 export async function seedCodeMetrics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -346,7 +344,7 @@ export async function seedCodeMetrics(
  * Seed commit analytics table
  */
 export async function seedCommitAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -429,7 +427,7 @@ export async function seedCommitAnalytics(
  * Seed pull requests table
  */
 export async function seedPullRequests(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding pull requests...');
@@ -508,7 +506,7 @@ export async function seedPullRequests(
  * Seed portfolio analytics table
  */
 export async function seedPortfolioAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -595,7 +593,7 @@ export async function seedPortfolioAnalytics(
  * Combined seeding function for all analytics
  */
 export async function seedAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

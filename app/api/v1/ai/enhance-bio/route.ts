@@ -1,8 +1,3 @@
-/**
- * Bio Enhancement API Route
- * Uses open-source AI models to enhance user bios
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
@@ -10,6 +5,11 @@ import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { AIServiceError, QuotaExceededError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Bio Enhancement API Route
+ * Uses open-source AI models to enhance user bios
+ */
 
 // Request validation schema
 const enhanceBioSchema = z.object({

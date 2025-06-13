@@ -1,3 +1,30 @@
+'use client';
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+} from 'react-icons/fi';
+import {
+  FiArrowLeft,
+  FiActivity,
+  FiGitPullRequest,
+  FiUsers,
+  FiCode,
+  FiRefreshCw,
+  FiClock,
+import {
+  RepositoryCommitsChart,
+  RepositoryLanguagesChart,
+import {
+  transformCommitData,
+  transformLanguageData,
+
+} from '@/components/analytics/index.lazy';
+import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+} from '@/lib/utils/analytics/data-transformers';
+import type { RepositoryAnalytics } from '@/types/analytics';
+
 /**
  * @fileoverview Repository Analytics Detail Page
  *
@@ -8,35 +35,8 @@
  * @version 0.0.1-alpha - Phase 1 MVP
  */
 
-'use client';
-
-import { useRouter, useParams } from 'next/navigation';
-import React, { useState, useEffect, useCallback } from 'react';
-import {
-  FiArrowLeft,
-  FiActivity,
-  FiGitPullRequest,
-  FiUsers,
-  FiCode,
-  FiRefreshCw,
-  FiClock,
-} from 'react-icons/fi';
 
 // Dynamic imports for charts - reduces bundle size by ~60KB
-import {
-  RepositoryCommitsChart,
-  RepositoryLanguagesChart,
-} from '@/components/analytics/index.lazy';
-import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
-import BaseLayout from '@/components/layouts/BaseLayout';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import {
-  transformCommitData,
-  transformLanguageData,
-} from '@/lib/utils/analytics/data-transformers';
-
-import type { RepositoryAnalytics } from '@/types/analytics';
-
 // Component state type
 interface RepoState {
   data: RepositoryAnalytics | null;

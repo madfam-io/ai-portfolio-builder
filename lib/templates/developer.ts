@@ -1,9 +1,9 @@
+import { Portfolio, Skill } from '@/types/portfolio';
+
 /**
  * Developer Portfolio Template
  * Clean, code-focused design for software developers
  */
-
-import { Portfolio, Skill } from '@/types/portfolio';
 
 export function renderDeveloperTemplate(portfolio: Portfolio): string {
   const {

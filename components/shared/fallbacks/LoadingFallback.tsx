@@ -1,16 +1,16 @@
+'use client';
+
+import React from 'react';
+import { FiLoader } from 'react-icons/fi';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
 /**
  * @fileoverview Loading Fallback Components
  *
  * Comprehensive loading states and skeleton screens for the PRISMA platform.
  * Provides consistent loading experiences across different UI patterns.
  */
-
-'use client';
-
-import { FiLoader } from 'react-icons/fi';
-import React from 'react';
-
-import { useLanguage } from '@/lib/i18n/refactored-context';
 
 /**
  * Full Page Loading Fallback
@@ -38,7 +38,7 @@ export function FullPageLoader({
           <div className="absolute inset-0 rounded-full bg-purple-600/20 animate-ping" />
         </div>
         <p className="mt-4 text-gray-600 dark:text-gray-400">
-          {message || (t.common as any)?.loading || 'Loading...'}
+          {message || (t.common as unknown)?.loading || 'Loading...'}
         </p>
       </div>
     </div>
@@ -105,7 +105,9 @@ export function ButtonLoader({
         <InlineLoader
           size="sm"
           color="white"
-          message={loadingText || (t.common as any)?.loading || 'Loading...'}
+          message={
+            loadingText || (t.common as unknown)?.loading || 'Loading...'
+          }
         />
       </button>
     );

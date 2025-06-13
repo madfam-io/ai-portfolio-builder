@@ -1,8 +1,8 @@
 'use client';
 
-import { FaCheck } from 'react-icons/fa';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import { FaCheck } from 'react-icons/fa';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';

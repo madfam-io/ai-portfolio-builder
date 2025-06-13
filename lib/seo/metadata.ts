@@ -1,9 +1,9 @@
+import { Portfolio, SEOMetadata } from '@/types/portfolio';
+
 /**
  * SEO Metadata Generation Utilities
  * Generates meta tags, Open Graph, and Twitter Card data
  */
-
-import { Portfolio, SEOMetadata } from '@/types/portfolio';
 
 /**
  * Generate complete metadata for a portfolio page
@@ -187,7 +187,7 @@ function extractTwitterHandle(twitterUrl?: string): string | undefined {
 export function generatePageMetadata(
   pageType: 'home' | 'about' | 'projects' | 'contact' | 'blog',
   portfolio: Portfolio,
-  _additionalData?: any
+  _additionalData?: unknown
 ): SEOMetadata {
   const baseMetadata = generatePortfolioMetadata(portfolio);
 
@@ -239,7 +239,7 @@ export function generatePageMetadata(
 /**
  * Generate JSON-LD script tag
  */
-export function generateJSONLDScript(data: any): string {
+export function generateJSONLDScript(data: unknown): string {
   return `<script type="application/ld+json">${JSON.stringify(data, null, 2)}</script>`;
 }
 

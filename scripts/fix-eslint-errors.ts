@@ -1,8 +1,8 @@
-#!/usr/bin/env tsx
-
 import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+
+#!/usr/bin/env tsx
 
 async function fixESLintErrors() {
   console.log('🔧 Fixing ESLint errors across the codebase...\n');

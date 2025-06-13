@@ -1,25 +1,24 @@
-/**
- * GEO (Generative Engine Optimization) Service
- * Main service for integrating GEO capabilities into content generation
- */
-
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
-
 import { HuggingFaceService } from '../huggingface-service';
 import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
-
-import { ContentOptimizer } from './content-optimizer';
-import { KeywordAnalyzer } from './keyword-analyzer';
-import { MetadataGenerator } from './metadata-generator';
-import { GEOPromptBuilder } from './prompts';
 import {
   GEOSettings,
   GEOContent,
   OptimizeContentRequest,
   SEOMetadata,
   KeywordResearch,
+
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+import { ContentOptimizer } from './content-optimizer';
+import { KeywordAnalyzer } from './keyword-analyzer';
+import { MetadataGenerator } from './metadata-generator';
+import { GEOPromptBuilder } from './prompts';
 } from './types';
+
+/**
+ * GEO (Generative Engine Optimization) Service
+ * Main service for integrating GEO capabilities into content generation
+ */
 
 export class GEOService {
   private keywordAnalyzer: KeywordAnalyzer;
@@ -351,7 +350,7 @@ export class GEOService {
   /**
    * Generate cache key for GEO operations
    */
-  private generateCacheKey(operation: string, data: any): string {
+  private generateCacheKey(operation: string, data: unknown): string {
     const hash = require('crypto')
       .createHash('md5')
       .update(JSON.stringify(data))

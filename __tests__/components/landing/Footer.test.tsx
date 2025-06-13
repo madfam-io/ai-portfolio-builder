@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { render, screen } from '@testing-library/react';
 
 import Footer from '@/components/landing/Footer';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';

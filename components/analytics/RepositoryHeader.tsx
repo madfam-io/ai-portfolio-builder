@@ -1,3 +1,17 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+} from 'react-icons/fi';
+import { formatDistanceToNow } from 'date-fns';
+import {
+  FiArrowLeft,
+  FiGithub,
+  FiExternalLink,
+  FiRefreshCw,
+  FiClock,
+
+import type { Repository } from '@/types/analytics';
+
 /**
  * @fileoverview RepositoryHeader Component
  *
@@ -5,19 +19,6 @@
  * with title, description, and navigation
  */
 
-'use client';
-
-import { formatDistanceToNow } from 'date-fns';
-import { useRouter } from 'next/navigation';
-import {
-  FiArrowLeft,
-  FiGithub,
-  FiExternalLink,
-  FiRefreshCw,
-  FiClock,
-} from 'react-icons/fi';
-
-import type { Repository } from '@/types/analytics';
 
 interface RepositoryHeaderProps {
   repository: Repository;

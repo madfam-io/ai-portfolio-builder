@@ -1,13 +1,13 @@
-/**
- * GitHub OAuth Callback API
- * Handles GitHub OAuth callback and stores integration
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/lib/supabase/server';
 import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * GitHub OAuth Callback API
+ * Handles GitHub OAuth callback and stores integration
+ */
 
 /**
  * Handle GitHub OAuth callback

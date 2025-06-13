@@ -1,10 +1,9 @@
 import '@testing-library/jest-dom';
-
-// Polyfill for Next.js 15 Request/Response in Node environment
 import { TextEncoder, TextDecoder } from 'util';
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
+// Polyfill for Next.js 15 Request/Response in Node environment
 // Mock IntersectionObserver before any components use it
 // Define the mock before importing anything that might use it
 class MockIntersectionObserver {
@@ -156,8 +155,11 @@ jest.mock('next/navigation', () => ({
 process.env = {
   ...process.env,
   NODE_ENV: 'test',
-  NEXT_PUBLIC_SUPABASE_URL: process.env.TEST_SUPABASE_URL || 'https://test-project.supabase.co',
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.TEST_SUPABASE_ANON_KEY || 'test-anon-key-' + Math.random().toString(36).substring(7),
+  NEXT_PUBLIC_SUPABASE_URL:
+    process.env.TEST_SUPABASE_URL || 'https://test-project.supabase.co',
+  NEXT_PUBLIC_SUPABASE_ANON_KEY:
+    process.env.TEST_SUPABASE_ANON_KEY ||
+    'test-anon-key-' + Math.random().toString(36).substring(7),
   NEXT_PUBLIC_APP_URL: process.env.TEST_APP_URL || 'http://localhost:3000',
 };
 

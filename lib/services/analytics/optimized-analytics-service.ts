@@ -1,13 +1,12 @@
+import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import type { Repository, PullRequest, Contributor } from '@/types/analytics';
+
 /**
  * Optimized Analytics Service
  * Fixes N+1 query problems and improves performance
  */
-
-import { GitHubAnalyticsClient } from '@/lib/integrations/github/analytics-client';
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
-import type { Repository, PullRequest, Contributor } from '@/types/analytics';
 
 export class OptimizedAnalyticsService {
   private userId: string;
@@ -410,7 +409,7 @@ export class OptimizedAnalyticsService {
     }
 
     // Transform to proper Contributor type
-    return (data || []).map((item: any) => ({
+    return (data || []).map((item: unknown) => ({
       id: item.contributors?.id || '',
       githubId: item.contributors?.githubId || 0,
       login: item.contributors?.login || '',

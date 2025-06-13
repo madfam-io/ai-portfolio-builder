@@ -39,7 +39,7 @@ export interface ErrorReport {
     sessionId?: string;
     buildVersion?: string;
     environment: string;
-    [key: string]: any;
+    [key: string]: unknown;
   };
   metadata?: Record<string, any>;
 }

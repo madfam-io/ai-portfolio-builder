@@ -1,3 +1,22 @@
+'use client';
+
+} from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+import type {
+  Language,
+  FlattenedTranslations,
+  TranslationNamespace,
+
+import * as enTranslations from './translations/en';
+import * as esTranslations from './translations/es';
+import { flattenTranslations } from './utils';
+} from './refactored-types';
+
 /**
  * @fileoverview Refactored i18n context provider with modular translations
  * @module i18n/refactored-context
@@ -6,25 +25,6 @@
  * translation files for better code organization and maintainability.
  */
 
-'use client';
-
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
-
-import * as enTranslations from './translations/en';
-import * as esTranslations from './translations/es';
-import { flattenTranslations } from './utils';
-
-import type {
-  Language,
-  FlattenedTranslations,
-  TranslationNamespace,
-} from './refactored-types';
 
 /**
  * Available language configuration
@@ -82,7 +82,7 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 function getTranslations(language: Language): TranslationNamespace {
   return (language === 'es'
     ? esTranslations
-    : enTranslations) as any as TranslationNamespace;
+    : enTranslations) as unknown as TranslationNamespace;
 }
 
 /**

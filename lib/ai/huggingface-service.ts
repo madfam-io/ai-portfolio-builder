@@ -1,14 +1,4 @@
-/**
- * Hugging Face AI Service Implementation
- * Open-source model integration for content enhancement
- */
-
 import crypto from 'crypto';
-
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
-
-import { promptTemplates } from './prompts';
 import {
   AIService,
   EnhancedContent,
@@ -21,7 +11,16 @@ import {
   ModelUnavailableError,
   QuotaExceededError,
   ModelResponse,
+
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+import { promptTemplates } from './prompts';
 } from './types';
+
+/**
+ * Hugging Face AI Service Implementation
+ * Open-source model integration for content enhancement
+ */
 
 // Available models with live capabilities
 export interface AvailableModel {
@@ -107,7 +106,7 @@ export class HuggingFaceService implements AIService {
    */
   getRecommendedModel(taskType: string): string {
     const recommended = this.availableModels
-      .filter(m => m.capabilities.includes(taskType as any) && m.isRecommended)
+      .filter(m => m.capabilities.includes(taskType as unknown) && m.isRecommended)
       .sort(
         (a, b) =>
           b.qualityRating / b.costPerRequest -
@@ -730,7 +729,7 @@ export class HuggingFaceService implements AIService {
     return Math.ceil(text.length / 4);
   }
 
-  private handleError(error: any, operation: string): AIServiceError {
+  private handleError(error: unknown, operation: string): AIServiceError {
     if (error instanceof AIServiceError) {
       return error;
     }

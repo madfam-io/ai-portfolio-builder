@@ -1,4 +1,3 @@
-
 // Mock implementations for services
 export const mockPortfolioService = {
   getPortfolios: jest.fn().mockResolvedValue([]),
@@ -6,7 +5,7 @@ export const mockPortfolioService = {
   createPortfolio: jest.fn().mockResolvedValue({ id: 'new-id' }),
   updatePortfolio: jest.fn().mockResolvedValue({ id: 'updated-id' }),
   deletePortfolio: jest.fn().mockResolvedValue(true),
-  publishPortfolio: jest.fn().mockResolvedValue({ subdomain: 'test' })
+  publishPortfolio: jest.fn().mockResolvedValue({ subdomain: 'test' }),
 };
 
 export const mockPortfolioRepository = {
@@ -14,15 +13,15 @@ export const mockPortfolioRepository = {
   findById: jest.fn().mockResolvedValue(null),
   create: jest.fn().mockResolvedValue({ id: 'new-id' }),
   update: jest.fn().mockResolvedValue({ id: 'updated-id' }),
-  delete: jest.fn().mockResolvedValue(true)
+  delete: jest.fn().mockResolvedValue(true),
 };
 
 export const mockFeatureFlagService = {
   isEnabled: jest.fn().mockReturnValue(true),
   getVariant: jest.fn().mockReturnValue('control'),
-  getAllFlags: jest.fn().mockReturnValue({})
+  getAllFlags: jest.fn().mockReturnValue({}),
 };
 
 export const mockLazyLoader = {
-  load: jest.fn().mockResolvedValue({ default: () => null })
+  load: jest.fn().mockResolvedValue({ default: () => null }),
 };

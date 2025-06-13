@@ -1,9 +1,6 @@
 'use client';
 
 import React from 'react';
-
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Button } from '@/components/ui/button';
 import {
   Card,
   CardContent,
@@ -11,9 +8,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
+
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
 } from '@/components/ui/card';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
+
 
 interface GlobalErrorBoundaryProps {
   children: React.ReactNode;
@@ -73,17 +74,17 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
       <Card className="max-w-md w-full">
         <CardHeader>
           <CardTitle className="text-destructive">
-            {(t as any).errors?.unexpectedError || 'Unexpected Error'}
+            {(t as unknown).errors?.unexpectedError || 'Unexpected Error'}
           </CardTitle>
           <CardDescription>
-            {(t as any).errors?.somethingWentWrong ||
+            {(t as unknown).errors?.somethingWentWrong ||
               'Something went wrong. Please try again.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
             <AlertTitle>
-              {(t as any).errors?.errorDetails || 'Error Details'}
+              {(t as unknown).errors?.errorDetails || 'Error Details'}
             </AlertTitle>
             <AlertDescription className="mt-2 font-mono text-sm">
               {error?.message || 'Unknown error occurred'}
@@ -92,13 +93,13 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
         </CardContent>
         <CardFooter className="flex gap-2">
           <Button onClick={onReset} variant="default">
-            {(t as any).errors?.tryAgain || 'Try Again'}
+            {(t as unknown).errors?.tryAgain || 'Try Again'}
           </Button>
           <Button
             onClick={() => (window.location.href = '/')}
             variant="outline"
           >
-            {(t as any).navigation?.home || 'Go Home'}
+            {(t as unknown).navigation?.home || 'Go Home'}
           </Button>
         </CardFooter>
       </Card>

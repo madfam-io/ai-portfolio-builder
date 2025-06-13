@@ -1,16 +1,15 @@
-/**
- * Features Component test suite - working version
- */
-
-import { screen } from '@testing-library/react';
 import React from 'react';
-
-import Features from '@/components/landing/Features';
-
+import { screen } from '@testing-library/react';
 import {
   renderWithLanguage,
   createMockUseLanguage,
 } from '../../utils/i18n-test-utils';
+
+import Features from '@/components/landing/Features';
+
+/**
+ * Features Component test suite - working version
+ */
 
 // Mock the useLanguage hook
 jest.mock('@/lib/i18n/refactored-context', () => ({
@@ -28,7 +27,7 @@ describe('Features Component', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     // Clear localStorage to ensure consistent test environment
     localStorage.clear();
 

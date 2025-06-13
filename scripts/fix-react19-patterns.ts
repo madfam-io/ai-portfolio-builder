@@ -1,12 +1,12 @@
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Fix React 19 compatibility issues in test files
  * Focuses on function-as-children patterns that are now stricter
  */
-
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
 
 function findTestFiles(dir: string): string[] {
   const files: string[] = [];

@@ -1,10 +1,10 @@
+import { decrypt } from '@/lib/utils/crypto';
+import { logger } from '@/lib/utils/logger';
+
 /**
  * GitHub Token Manager
  * Handles encryption and decryption of GitHub access tokens
  */
-
-import { decrypt } from '@/lib/utils/crypto';
-import { logger } from '@/lib/utils/logger';
 
 export interface EncryptedTokenData {
   encrypted_access_token: string;
@@ -77,7 +77,7 @@ export function decryptRefreshToken(
  * Check if the integration has encrypted tokens
  */
 export function hasEncryptedTokens(
-  integration: any
+  integration: unknown
 ): integration is EncryptedTokenData {
   return (
     integration &&
@@ -90,6 +90,6 @@ export function hasEncryptedTokens(
 /**
  * Check if the integration has legacy unencrypted tokens
  */
-export function hasLegacyTokens(integration: any): boolean {
+export function hasLegacyTokens(integration: unknown): boolean {
   return integration && typeof integration.access_token === 'string';
 }

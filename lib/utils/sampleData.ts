@@ -1,11 +1,3 @@
-/**
- * @fileoverview Sample Data Generator
- *
- * Generates realistic sample portfolio data for demos and testing.
- * Includes template-specific content and industry-appropriate examples.
- */
-
-import { getTemplateConfig } from '@/lib/templates/templateConfig';
 import {
   Portfolio,
   TemplateType,
@@ -14,7 +6,16 @@ import {
   Education,
   Skill,
   Certification,
+
+import { getTemplateConfig } from '@/lib/templates/templateConfig';
 } from '@/types/portfolio';
+
+/**
+ * @fileoverview Sample Data Generator
+ *
+ * Generates realistic sample portfolio data for demos and testing.
+ * Includes template-specific content and industry-appropriate examples.
+ */
 
 interface SampleDataConfig {
   name: string;

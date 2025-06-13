@@ -1,14 +1,8 @@
-/**
- * @fileoverview Analytics Dashboard Page
- *
- * Main analytics dashboard for GitHub repository insights.
- * Provides overview metrics, repository selection, and visualizations.
- */
-
 'use client';
 
-import { useRouter, useSearchParams } from 'next/navigation';
 import React, { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+} from 'react-icons/fi';
 import {
   FiGithub,
   FiActivity,
@@ -18,7 +12,6 @@ import {
   FiRefreshCw,
   FiTrendingUp,
   FiAlertCircle,
-} from 'react-icons/fi';
 
 import { ContributorsList } from '@/components/analytics/ContributorsList';
 import { RepositoryList } from '@/components/analytics/RepositoryList';
@@ -26,8 +19,15 @@ import { StatsCard } from '@/components/analytics/StatsCard';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { usePerformanceTracking } from '@/lib/utils/performance';
-
 import type { AnalyticsDashboardData } from '@/types/analytics';
+
+/**
+ * @fileoverview Analytics Dashboard Page
+ *
+ * Main analytics dashboard for GitHub repository insights.
+ * Provides overview metrics, repository selection, and visualizations.
+ */
+
 
 interface DashboardApiResponse {
   data?: AnalyticsDashboardData;
@@ -173,7 +173,7 @@ function AnalyticsDashboard(): React.ReactElement {
       }
 
       // Redirect to GitHub OAuth
-      if (result.url !== undefined && result.url !== null) {
+      if (result.url) {
         window.location.href = result.url;
       }
     } catch (error) {

@@ -125,7 +125,7 @@ export const apiClient = {
   /**
    * POST request
    */
-  post: <T = any>(endpoint: string, data?: any, config?: ApiClientConfig) =>
+  post: <T = any>(endpoint: string, data?: unknown, config?: ApiClientConfig) =>
     apiFetch<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
@@ -135,7 +135,7 @@ export const apiClient = {
   /**
    * PUT request
    */
-  put: <T = any>(endpoint: string, data?: any, config?: ApiClientConfig) =>
+  put: <T = any>(endpoint: string, data?: unknown, config?: ApiClientConfig) =>
     apiFetch<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
@@ -145,7 +145,11 @@ export const apiClient = {
   /**
    * PATCH request
    */
-  patch: <T = any>(endpoint: string, data?: any, config?: ApiClientConfig) =>
+  patch: <T = any>(
+    endpoint: string,
+    data?: unknown,
+    config?: ApiClientConfig
+  ) =>
     apiFetch<T>(endpoint, {
       method: 'PATCH',
       body: data ? JSON.stringify(data) : undefined,

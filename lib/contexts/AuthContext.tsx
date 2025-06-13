@@ -1,5 +1,32 @@
 'use client';
 
+} from 'react';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+import {
+  hasPermission,
+  canAccessFeature,
+  canSwitchToAdminMode,
+  isSubscriptionActive as checkSubscriptionActive,
+  getDaysUntilExpiration,
+  getPermissionLevel,
+import {
+  User,
+  SubscriptionPlan,
+  AdminPermission,
+  SessionData,
+
+import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
+} from '@/lib/auth/roles';
+import { logger } from '@/lib/utils/logger';
+} from '@/types/auth';
+
+
 /**
  * Enhanced Authentication Context for PRISMA
  * Handles both customer and admin authentication with role-based access control
@@ -12,32 +39,6 @@
  * - Permission-based access control
  * - Subscription limits and feature flags
  */
-
-import { User as SupabaseUser } from '@supabase/supabase-js';
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useCallback,
-} from 'react';
-
-import { getCurrentUser, onAuthStateChange } from '@/lib/auth/auth';
-import {
-  hasPermission,
-  canAccessFeature,
-  canSwitchToAdminMode,
-  isSubscriptionActive as checkSubscriptionActive,
-  getDaysUntilExpiration,
-  getPermissionLevel,
-} from '@/lib/auth/roles';
-import { logger } from '@/lib/utils/logger';
-import {
-  User,
-  SubscriptionPlan,
-  AdminPermission,
-  SessionData,
-} from '@/types/auth';
 
 interface AuthContextType {
   // Authentication state
@@ -370,7 +371,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const refreshUser = useCallback(async () => {
     if (!supabaseUser) return;
     const freshUser = await loadUserProfile(supabaseUser);
-    if (freshUser !== undefined && freshUser !== null) {
+    if (freshUser) {
       setUser(freshUser);
       setSession(createSession(freshUser));
     }
@@ -389,7 +390,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const canAccessFeatureCheck = useCallback(
     (feature: string): boolean => {
       return effectiveUser
-        ? canAccessFeature(effectiveUser, feature as any)
+        ? canAccessFeature(effectiveUser, feature as unknown)
         : false;
     },
     [effectiveUser]
@@ -427,7 +428,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         if (!error && data.user) {
           setSupabaseUser(data.user);
           const userProfile = await loadUserProfile(data.user);
-          if (userProfile !== undefined && userProfile !== null) {
+          if (userProfile) {
             setUser(userProfile);
             setSession(createSession(userProfile));
           }
@@ -438,10 +439,10 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         const {
           data: { subscription },
         } = onAuthStateChange(async (_event, session) => {
-          if (session?.user !== undefined && session?.user !== null) {
+          if (session?.user) {
             setSupabaseUser(session.user);
             const userProfile = await loadUserProfile(session.user);
-            if (userProfile !== undefined && userProfile !== null) {
+            if (userProfile) {
               setUser(userProfile);
               setSession(createSession(userProfile));
             }

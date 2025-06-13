@@ -1,9 +1,9 @@
+import { KeywordAnalysis, KeywordResearch } from './types';
+
 /**
  * Keyword Analysis and Optimization Module
  * Analyzes content for keyword optimization and provides recommendations
  */
-
-import { KeywordAnalysis, KeywordResearch } from './types';
 
 /**
  * Natural Language Processing utilities for keyword extraction

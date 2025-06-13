@@ -1,3 +1,7 @@
+import { logger } from '@/lib/utils/logger';
+import { getSeedConfig } from './index';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 /**
  * @fileoverview User Seed Data
  * @module data/seeds/users
@@ -5,12 +9,6 @@
  * Generates realistic user accounts for development and testing.
  * Includes users across all subscription tiers with proper relationships.
  */
-
-import { logger } from '@/lib/utils/logger';
-
-import { getSeedConfig } from './index';
-
-import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
  * Predefined user templates for consistent testing
@@ -105,7 +103,7 @@ const USER_TEMPLATES = [
 /**
  * Generate additional users beyond templates
  */
-function generateUser(index: number): any {
+function generateUser(index: number): unknown {
   const languages = ['es', 'en'];
   const currencies = ['MXN', 'USD', 'EUR'];
   const tiers = ['free', 'pro', 'business'];
@@ -186,7 +184,7 @@ function generateUser(index: number): any {
  * Seed users table with realistic test data
  */
 export async function seedUsers(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

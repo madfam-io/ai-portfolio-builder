@@ -1,13 +1,13 @@
-/**
- * Analytics Repositories API
- * Manages repository sync and retrieval for analytics
- */
-
 import { NextResponse } from 'next/server';
 
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Analytics Repositories API
+ * Manages repository sync and retrieval for analytics
+ */
 
 /**
  * Get user's repositories for analytics
@@ -37,7 +37,7 @@ export async function GET(): Promise<Response> {
 
     try {
       await analyticsService.initialize();
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.message.includes('No active GitHub integration')) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },
@@ -94,7 +94,7 @@ export async function POST(request: Request): Promise<Response> {
 
     try {
       await analyticsService.initialize();
-    } catch (error: any) {
+    } catch (error: unknown) {
       if (error.message.includes('No active GitHub integration')) {
         return NextResponse.json(
           { error: 'GitHub integration required', requiresAuth: true },

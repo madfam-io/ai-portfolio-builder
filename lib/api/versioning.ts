@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-
 import {
   API_VERSION_CONFIG,
   createVersionedResponse,
@@ -49,7 +48,7 @@ export function apiError(
   options?: {
     status?: number;
     headers?: HeadersInit;
-    data?: any;
+    data?: unknown;
   }
 ): NextResponse {
   const { status = 400, headers, data } = options || {};
@@ -94,7 +93,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 
       // Replace request in args
       const versionedArgs = [...args] as unknown as Parameters<T>;
-      (versionedArgs as any)[0] = versionedRequest;
+      (versionedArgs as unknown)[0] = versionedRequest;
 
       // Call handler with versioned request
       const result = await handler(...versionedArgs);

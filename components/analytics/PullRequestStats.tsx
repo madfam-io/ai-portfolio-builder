@@ -1,11 +1,11 @@
+'use client';
+
 /**
  * @fileoverview PullRequestStats Component
  *
  * Displays pull request statistics including cycle time,
  * lead time, merge rate, and time to first review
  */
-
-'use client';
 
 interface PullRequestStatsProps {
   stats: {

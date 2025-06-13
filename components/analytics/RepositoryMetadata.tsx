@@ -1,16 +1,16 @@
-/**
- * @fileoverview RepositoryMetadata Component
- *
- * Displays repository metadata including language, stars,
- * forks, commits, and last update time with visual indicators
- */
-
 'use client';
 
 import { formatDistanceToNow } from 'date-fns';
 import { GitFork, Star, Calendar } from 'lucide-react';
 
 import type { Repository } from '@/types/analytics';
+
+/**
+ * @fileoverview RepositoryMetadata Component
+ *
+ * Displays repository metadata including language, stars,
+ * forks, commits, and last update time with visual indicators
+ */
 
 interface RepositoryMetadataProps {
   repo: Repository;

@@ -1,5 +1,9 @@
-
-import { portfolioSchema, projectSchema, experienceSchema, educationSchema } from '@/lib/validations/portfolio';
+import {
+  portfolioSchema,
+  projectSchema,
+  experienceSchema,
+  educationSchema,
+} from '@/lib/validations/portfolio';
 
 describe('Portfolio Validation', () => {
   describe('portfolioSchema', () => {
@@ -9,7 +13,7 @@ describe('Portfolio Validation', () => {
         title: 'Software Engineer',
         bio: 'Experienced developer',
         template: 'developer',
-        subdomain: 'johndoe'
+        subdomain: 'johndoe',
       };
 
       const result = portfolioSchema.safeParse(validPortfolio);
@@ -18,7 +22,7 @@ describe('Portfolio Validation', () => {
 
     it('should fail with missing required fields', () => {
       const invalidPortfolio = {
-        name: 'John Doe'
+        name: 'John Doe',
       };
 
       const result = portfolioSchema.safeParse(invalidPortfolio);
@@ -31,7 +35,7 @@ describe('Portfolio Validation', () => {
       const validProject = {
         title: 'My Project',
         description: 'A great project',
-        technologies: ['React', 'Node.js']
+        technologies: ['React', 'Node.js'],
       };
 
       const result = projectSchema.safeParse(validProject);
@@ -45,7 +49,7 @@ describe('Portfolio Validation', () => {
         company: 'Tech Corp',
         position: 'Developer',
         startDate: '2020-01',
-        current: true
+        current: true,
       };
 
       const result = experienceSchema.safeParse(validExperience);
@@ -60,7 +64,7 @@ describe('Portfolio Validation', () => {
         degree: 'Bachelor',
         field: 'Computer Science',
         startDate: '2016-09',
-        endDate: '2020-05'
+        endDate: '2020-05',
       };
 
       const result = educationSchema.safeParse(validEducation);

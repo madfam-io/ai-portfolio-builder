@@ -1,16 +1,16 @@
+import { User } from '@supabase/supabase-js';
+
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Global Store Types
  * Centralized type definitions for all Zustand stores
  */
 
-import { User } from '@supabase/supabase-js';
-
-import { Portfolio } from '@/types/portfolio';
-
 // Auth Store Types
 export interface AuthState {
   user: User | null;
-  session: any | null;
+  session: unknown | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
@@ -18,11 +18,15 @@ export interface AuthState {
 
 export interface AuthActions {
   setUser: (user: User | null) => void;
-  setSession: (session: any | null) => void;
+  setSession: (session: unknown | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, metadata?: any) => Promise<void>;
+  signUp: (
+    email: string,
+    password: string,
+    metadata?: unknown
+  ) => Promise<void>;
   signOut: () => Promise<void>;
   resetAuth: () => void;
 }
@@ -69,7 +73,7 @@ export interface Toast {
 export interface Modal {
   id: string;
   component: React.ComponentType<any>;
-  props?: any;
+  props?: unknown;
 }
 
 export interface UIState {
@@ -142,7 +146,7 @@ export interface AIActions {
   setError: (error: string | null) => void;
   enhanceBio: (text: string) => Promise<string>;
   enhanceProject: (text: string) => Promise<string>;
-  recommendTemplate: (data: any) => Promise<any>;
+  recommendTemplate: (data: unknown) => Promise<any>;
   loadModels: () => Promise<void>;
 }
 
@@ -158,5 +162,5 @@ export interface RootState {
 export interface PersistConfig {
   name: string;
   version: number;
-  partialize?: (state: any) => any;
+  partialize?: (state: unknown) => any;
 }

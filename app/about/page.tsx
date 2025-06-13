@@ -1,8 +1,8 @@
 'use client';
 
-import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+import { FaHeart, FaRocket, FaStar, FaUsers } from 'react-icons/fa';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';

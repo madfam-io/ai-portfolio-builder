@@ -1,12 +1,12 @@
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
   TemplateCustomization,
-} from '@/types/portfolio';
 
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { logger } from '@/lib/utils/logger';
+} from '@/types/portfolio';
 import { PortfolioRepository } from './portfolio.repository';
 
 /**
@@ -362,8 +362,8 @@ export class PortfolioService {
       const defaultTheme = this.getDefaultThemeForTemplate(template);
 
       const updated = await this.repository.update(portfolioId, {
-        template: template as any,
-        customization: defaultTheme as any,
+        template: template as unknown,
+        customization: defaultTheme as unknown,
       });
 
       return updated;

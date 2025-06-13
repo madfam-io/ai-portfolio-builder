@@ -1,14 +1,8 @@
 'use client';
 
-/**
- * Create New Experiment Page
- *
- * Interface for creating new A/B testing experiments with visual
- * component selection and variant configuration.
- */
-
-import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+} from 'react-icons/fi';
 import {
   FiPlus,
   FiTrash2,
@@ -23,7 +17,11 @@ import {
   FiPercent,
   FiArrowLeft,
   FiSave,
-} from 'react-icons/fi';
+import type {
+  CreateExperimentRequest,
+  ComponentConfig,
+  ComponentLibraryItem,
+  ExperimentTemplate,
 
 import ComponentGallery from '@/components/admin/experiments/ComponentGallery';
 import VariantPreview from '@/components/admin/experiments/VariantPreview';
@@ -31,13 +29,15 @@ import { useAuth } from '@/lib/contexts/AuthContext';
 // import { useLanguage } from '@/lib/i18n/refactored-context'; // TODO: Add translations
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-
-import type {
-  CreateExperimentRequest,
-  ComponentConfig,
-  ComponentLibraryItem,
-  ExperimentTemplate,
 } from '@/types/experiments';
+
+
+/**
+ * Create New Experiment Page
+ *
+ * Interface for creating new A/B testing experiments with visual
+ * component selection and variant configuration.
+ */
 
 interface VariantConfig {
   name: string;
@@ -191,7 +191,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     if (variants.length <= 2) return; // Keep at least 2 variants
     const newVariants = variants.filter((_, i) => i !== index);
     setVariants(newVariants);
-    if (selectedVariantIndex >= newVariants.length) {
+    if (selectedVariantIndex >= newVariants.length > 0) {
       setSelectedVariantIndex(newVariants.length - 1);
     }
   };
@@ -270,7 +270,7 @@ export default function CreateExperimentPage(): React.ReactElement {
     const newIndex =
       direction === 'up' ? componentIndex - 1 : componentIndex + 1;
 
-    if (newIndex < 0 || newIndex >= components.length) return;
+    if (newIndex < 0 || newIndex >= components.length > 0) return;
 
     const temp = components[componentIndex];
     const newComp = components[newIndex];

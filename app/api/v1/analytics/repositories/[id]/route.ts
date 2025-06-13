@@ -1,13 +1,13 @@
-/**
- * Individual Repository Analytics API
- * Manages specific repository analytics and sync
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Individual Repository Analytics API
+ * Manages specific repository analytics and sync
+ */
 
 interface RouteParams {
   params: {

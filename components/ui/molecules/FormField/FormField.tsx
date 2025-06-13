@@ -1,8 +1,5 @@
 import * as React from 'react';
 import { FieldPath, FieldValues } from 'react-hook-form';
-
-import { cn } from '@/lib/utils';
-
 import {
   FormItem,
   FormLabel,
@@ -13,6 +10,8 @@ import {
 } from '../../form';
 import { Input, type InputProps } from '../../input';
 import { Label, type LabelProps } from '../../label';
+
+import { cn } from '@/lib/utils';
 
 // Legacy FormField for direct use (without react-hook-form)
 export interface LegacyFormFieldProps extends InputProps {
@@ -104,7 +103,7 @@ export interface EnhancedFormFieldProps<
   /**
    * The form control instance from react-hook-form
    */
-  control: any; // Will be properly typed when used
+  control: unknown; // Will be properly typed when used
   /**
    * The field name
    */

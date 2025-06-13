@@ -1,8 +1,7 @@
-
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 
 const mockFetch = jest.fn();
-global.fetch = mockFetch as any;
+global.fetch = mockFetch as unknown;
 
 describe('HuggingFaceService', () => {
   let service: HuggingFaceService;
@@ -11,11 +10,11 @@ describe('HuggingFaceService', () => {
     jest.clearAllMocks();
     process.env.HUGGINGFACE_API_KEY = 'test-key';
     service = new HuggingFaceService();
-    
+
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => [{ generated_text: 'Enhanced bio text' }],
-      headers: new Headers()
+      headers: new Headers(),
     });
   });
 
@@ -23,7 +22,7 @@ describe('HuggingFaceService', () => {
     it('should enhance a bio successfully', async () => {
       const result = await service.enhanceBio('Original bio', {
         tone: 'professional',
-        industry: 'tech'
+        industry: 'tech',
       });
 
       expect(result).toBe('Enhanced bio text');
@@ -34,12 +33,10 @@ describe('HuggingFaceService', () => {
       mockFetch.mockResolvedValue({
         ok: false,
         status: 500,
-        statusText: 'Internal Server Error'
+        statusText: 'Internal Server Error',
       });
 
-      await expect(
-        service.enhanceBio('Original bio', {})
-      ).rejects.toThrow();
+      await expect(service.enhanceBio('Original bio', {})).rejects.toThrow();
     });
   });
 
@@ -48,7 +45,7 @@ describe('HuggingFaceService', () => {
       const result = await service.optimizeProject({
         title: 'My Project',
         description: 'Original description',
-        technologies: ['React', 'Node.js']
+        technologies: ['React', 'Node.js'],
       });
 
       expect(result.description).toBe('Enhanced bio text');
@@ -60,13 +57,13 @@ describe('HuggingFaceService', () => {
       mockFetch.mockResolvedValue({
         ok: true,
         json: async () => [{ generated_text: 'Template: developer' }],
-        headers: new Headers()
+        headers: new Headers(),
       });
 
       const result = await service.recommendTemplate({
         industry: 'tech',
         role: 'developer',
-        experience: '5 years'
+        experience: '5 years',
       });
 
       expect(result.template).toBe('developer');

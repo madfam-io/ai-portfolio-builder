@@ -1,14 +1,14 @@
-/**
- * Keyword Research and Suggestions API
- * Provides keyword research and suggestions for SEO optimization
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+/**
+ * Keyword Research and Suggestions API
+ * Provides keyword research and suggestions for SEO optimization
+ */
 
 // Request validation schema
 const keywordResearchSchema = z.object({

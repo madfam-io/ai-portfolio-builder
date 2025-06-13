@@ -1,10 +1,12 @@
+import React, { ReactNode } from 'react';
+import { render as rtlRender, RenderOptions } from '@testing-library/react';
+
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
+import { AppProvider } from '@/lib/contexts/AppContext';
+
 /**
  * i18n test utilities for consistent testing environment
  */
-
-import React, { ReactNode } from 'react';
-
-import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 interface TestLanguageProviderProps {
   children: ReactNode;
@@ -48,9 +50,6 @@ export function TestLanguageProvider({
 /**
  * Custom render function that includes LanguageProvider
  */
-import { render as rtlRender, RenderOptions } from '@testing-library/react';
-import { AppProvider } from '@/lib/contexts/AppContext';
-
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   initialLanguage?: 'es' | 'en';
 }

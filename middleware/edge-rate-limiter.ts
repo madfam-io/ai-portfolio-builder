@@ -1,11 +1,11 @@
+import { NextRequest, NextResponse } from 'next/server';
+
+import { logger } from '@/lib/utils/logger';
+
 /**
  * Edge-compatible rate limiter for Vercel deployment
  * Uses in-memory storage with sliding window algorithm
  */
-
-import { NextRequest, NextResponse } from 'next/server';
-
-import { logger } from '@/lib/utils/logger';
 
 interface RateLimitConfig {
   windowMs: number; // Time window in milliseconds

@@ -1,14 +1,8 @@
-/**
- * @fileoverview Hero component variants for A/B testing
- *
- * Different hero section implementations that can be selected
- * through the experiment system.
- */
-
 'use client';
 
-import Link from 'next/link';
 import React from 'react';
+import Link from 'next/link';
+} from 'react-icons/fa';
 import {
   FaPlay,
   FaCheckCircle,
@@ -16,12 +10,18 @@ import {
   FaStar,
   FaRocket,
   FaArrowRight,
-} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useExperimentTracking } from '@/lib/services/feature-flags/use-experiment';
-
 import type { HeroProps } from '@/types/experiments';
+
+/**
+ * @fileoverview Hero component variants for A/B testing
+ *
+ * Different hero section implementations that can be selected
+ * through the experiment system.
+ */
+
 
 /**
  * Default Hero variant (current implementation)
@@ -105,7 +105,7 @@ export function HeroMinimal(props: HeroProps): React.ReactElement {
   const { t } = useLanguage();
   const { trackClick } = useExperimentTracking();
 
-  const handleCTAClick = () => {
+  const handleCTAClick = (): void => {
     trackClick('hero_cta_minimal', { variant: 'minimal' });
   };
 

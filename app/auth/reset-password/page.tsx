@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { resetPassword } from '@/lib/auth/auth';

@@ -1,10 +1,10 @@
+import { AIClient, AIClientError, AIUtils } from '@/lib/ai/client';
+import { BioContext, UserProfile } from '@/lib/ai/types';
+
 /**
  * Tests for AI Client
  * Tests the frontend client for AI operations
  */
-
-import { AIClient, AIClientError, AIUtils } from '@/lib/ai/client';
-import { BioContext, UserProfile } from '@/lib/ai/types';
 
 // Mock fetch for testing
 global.fetch = jest.fn();
@@ -42,7 +42,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.enhanceBio('Original bio', mockBioContext);
 
@@ -63,7 +63,7 @@ describe('AIClient', () => {
         status: 401,
         json: async () => ({ error: 'Authentication required' }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       await expect(client.enhanceBio('test', mockBioContext)).rejects.toThrow(
         'Authentication required'
@@ -86,7 +86,9 @@ describe('AIClient', () => {
         arrayBuffer: jest.fn(),
       };
 
-      mockFetch.mockImplementation(() => Promise.resolve(mockResponse as any));
+      mockFetch.mockImplementation(() =>
+        Promise.resolve(mockResponse as unknown)
+      );
 
       await expect(client.enhanceBio('test', mockBioContext)).rejects.toThrow(
         'Rate limit exceeded'
@@ -115,7 +117,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.optimizeProject(
         'E-commerce Platform',
@@ -145,7 +147,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const projects = [
         { title: 'Project 1', description: 'Desc 1', technologies: ['React'] },
@@ -185,7 +187,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.recommendTemplate(mockUserProfile);
 
@@ -213,7 +215,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.getTemplates();
 
@@ -241,7 +243,7 @@ describe('AIClient', () => {
           },
         }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       const result = await client.getEnhancementHistory();
 
@@ -264,8 +266,8 @@ describe('AIClient', () => {
       };
 
       mockFetch
-        .mockResolvedValueOnce(failResponse as any)
-        .mockResolvedValueOnce(successResponse as any);
+        .mockResolvedValueOnce(failResponse as unknown)
+        .mockResolvedValueOnce(successResponse as unknown);
 
       const result = await client.enhanceBio('test', {
         title: 'Test',
@@ -285,7 +287,7 @@ describe('AIClient', () => {
         status: 401,
         json: async () => ({ error: 'Unauthorized' }),
       };
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      mockFetch.mockResolvedValueOnce(mockResponse as unknown);
 
       await expect(
         client.enhanceBio('test', {
@@ -335,7 +337,7 @@ describe('AIClient', () => {
         json: async () => ({ error: 'Service unavailable' }),
       };
 
-      mockFetch.mockResolvedValue(failResponse as any);
+      mockFetch.mockResolvedValue(failResponse as unknown);
 
       await expect(
         retryableClient.enhanceBio('test', {

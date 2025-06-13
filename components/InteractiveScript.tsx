@@ -3,7 +3,7 @@ export default function InteractiveScript(): React.ReactElement {
   const scriptContent = `
     (function() {
       'use strict';
-      
+
       // Initialize state from localStorage
       let darkMode = localStorage.getItem('darkMode') === 'true';
       let currency = localStorage.getItem('currency') || 'USD';

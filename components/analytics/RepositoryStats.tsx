@@ -1,12 +1,6 @@
-/**
- * @fileoverview RepositoryStats Component
- *
- * Displays repository statistics in a grid layout
- * including stars, forks, watchers, and other metrics
- */
-
 'use client';
 
+} from 'react-icons/fi';
 import {
   FiStar,
   FiGitBranch,
@@ -14,9 +8,16 @@ import {
   FiUsers,
   FiCode,
   FiActivity,
-} from 'react-icons/fi';
 
 import type { Repository } from '@/types/analytics';
+
+/**
+ * @fileoverview RepositoryStats Component
+ *
+ * Displays repository statistics in a grid layout
+ * including stars, forks, watchers, and other metrics
+ */
+
 
 interface RepositoryStatsProps {
   repository: Repository;

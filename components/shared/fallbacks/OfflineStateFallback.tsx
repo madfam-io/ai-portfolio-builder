@@ -1,18 +1,16 @@
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { FiCloud, FiRefreshCw, FiWifiOff } from 'react-icons/fi';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
 /**
  * @fileoverview Offline State Fallback Components
  *
  * Provides user-friendly offline state displays when the application
  * loses internet connectivity or server connection.
  */
-
-'use client';
-
-import { FiCloud, FiRefreshCw, FiWifiOff } from 'react-icons/fi';
-import React, { useEffect, useState } from 'react';
-
-
-
-import { useLanguage } from '@/lib/i18n/refactored-context';
 
 /**
  * Full Page Offline State
@@ -52,11 +50,11 @@ export function OfflineState({
           </div>
 
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {(t.errors as any)?.offlineTitle || "You're Offline"}
+            {(t.errors as unknown)?.offlineTitle || "You're Offline"}
           </h1>
 
           <p className="text-gray-600 dark:text-gray-400 mb-8">
-            {(t.errors as any)?.offlineDescription ||
+            {(t.errors as unknown)?.offlineDescription ||
               'Check your internet connection and try again'}
           </p>
         </div>
@@ -71,26 +69,28 @@ export function OfflineState({
               className={`w-4 h-4 ${isRetrying ? 'animate-spin' : ''}`}
             />
             {isRetrying
-              ? (t.common as any)?.retrying || 'Retrying...'
-              : (t.errors as any)?.tryAgain || 'Try Again'}
+              ? (t.common as unknown)?.retrying || 'Retrying...'
+              : (t.errors as unknown)?.tryAgain || 'Try Again'}
           </button>
         )}
 
         <div className="mt-8 p-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
           <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {(t.errors as any)?.offlineCapabilities ||
+            {(t.errors as unknown)?.offlineCapabilities ||
               'While offline, you can:'}
           </h3>
           <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
             <li>
-              • {(t.errors as any)?.offlineViewCached || 'View cached content'}
+              •{' '}
+              {(t.errors as unknown)?.offlineViewCached ||
+                'View cached content'}
             </li>
             <li>
-              • {(t.errors as any)?.offlineEditLocal || 'Edit local data'}
+              • {(t.errors as unknown)?.offlineEditLocal || 'Edit local data'}
             </li>
             <li>
               •{' '}
-              {(t.errors as any)?.offlineSyncLater ||
+              {(t.errors as unknown)?.offlineSyncLater ||
                 'Changes will sync when online'}
             </li>
           </ul>
@@ -128,10 +128,10 @@ export function OfflineIndicator() {
         <FiWifiOff className="w-5 h-5 text-red-400" />
         <div className="flex-1">
           <p className="text-sm font-medium">
-            {(t.errors as any)?.offlineMode || 'Offline Mode'}
+            {(t.errors as unknown)?.offlineMode || 'Offline Mode'}
           </p>
           <p className="text-xs text-gray-300">
-            {(t.errors as any)?.offlineModeDescription ||
+            {(t.errors as unknown)?.offlineModeDescription ||
               'Limited functionality available'}
           </p>
         </div>
@@ -170,7 +170,8 @@ export function OfflineBanner() {
           <div className="flex items-center gap-3">
             <FiWifiOff className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
             <p className="text-sm text-yellow-800 dark:text-yellow-200">
-              {(t.errors as any)?.offlineBanner || 'You are currently offline'}
+              {(t.errors as unknown)?.offlineBanner ||
+                'You are currently offline'}
             </p>
           </div>
           <button
@@ -201,11 +202,11 @@ export function OfflineCard({
     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
       <FiCloud className="w-12 h-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
       <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-        {title || (t.errors as any)?.offlineContent || 'Offline Content'}
+        {title || (t.errors as unknown)?.offlineContent || 'Offline Content'}
       </h3>
       <p className="text-sm text-gray-600 dark:text-gray-400">
         {description ||
-          (t.errors as any)?.offlineContentDescription ||
+          (t.errors as unknown)?.offlineContentDescription ||
           'This content is not available offline'}
       </p>
     </div>

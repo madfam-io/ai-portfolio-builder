@@ -1,12 +1,11 @@
-/**
- * Hero Component test suite - final version
- */
-
 import React from 'react';
+import { screen, render } from '../../utils/comprehensive-test-setup';
 
 import Hero from '@/components/landing/Hero';
 
-import { screen, render } from '../../utils/comprehensive-test-setup';
+/**
+ * Hero Component test suite - final version
+ */
 
 describe('Hero Component', () => {
   describe('Content Rendering', () => {

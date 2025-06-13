@@ -1,10 +1,10 @@
+import React from 'react';
+import dynamic from 'next/dynamic';
+
 /**
  * Lazy-loaded editor components for code splitting
  * Only loads editor components when needed by authenticated users
  */
-
-import dynamic from 'next/dynamic';
-import React from 'react';
 
 // Loading component for editor
 const EditorLoader = () => (

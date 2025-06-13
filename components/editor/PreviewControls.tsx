@@ -1,13 +1,7 @@
-/**
- * @fileoverview Preview Controls Component
- *
- * Advanced preview controls for the portfolio editor including responsive testing,
- * zoom controls, section highlighting, and export functionality.
- */
-
 'use client';
 
 import { useState } from 'react';
+} from 'react-icons/fi';
 import {
   FiMonitor,
   FiTablet,
@@ -23,9 +17,16 @@ import {
   FiShare2,
   FiSettings,
   FiRefreshCw,
-} from 'react-icons/fi';
 
 import { PreviewMode, PreviewState } from '@/hooks/useRealTimePreview';
+
+/**
+ * @fileoverview Preview Controls Component
+ *
+ * Advanced preview controls for the portfolio editor including responsive testing,
+ * zoom controls, section highlighting, and export functionality.
+ */
+
 
 interface PreviewControlsProps {
   previewMode: PreviewMode;
@@ -69,7 +70,7 @@ function ResponsiveTestingPanel({
   const [customWidth, setCustomWidth] = useState('');
   const [customHeight, setCustomHeight] = useState('');
 
-  const handleCustomTest = () => {
+  const handleCustomTest = (): void => {
     const width = parseInt(customWidth);
     const height = parseInt(customHeight);
 
@@ -176,15 +177,15 @@ export function PreviewControls({
 
   const zoomPercentage = Math.round(zoomLevel * 100);
 
-  const handleZoomIn = () => {
+  const handleZoomIn = (): void => {
     onZoomChange(Math.min(zoomLevel + 0.1, 2));
   };
 
-  const handleZoomOut = () => {
+  const handleZoomOut = (): void => {
     onZoomChange(Math.max(zoomLevel - 0.1, 0.25));
   };
 
-  const handleZoomReset = () => {
+  const handleZoomReset = (): void => {
     onZoomChange(1);
   };
 

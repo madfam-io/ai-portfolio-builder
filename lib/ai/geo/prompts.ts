@@ -1,9 +1,9 @@
+import { PromptTemplate } from '../types';
+
 /**
  * GEO-Enhanced Prompt Templates
  * SEO-aware prompts for content generation with keyword integration
  */
-
-import { PromptTemplate } from '../types';
 
 export const geoPromptTemplates = {
   /**

@@ -1,8 +1,12 @@
-#!/usr/bin/env tsx
-
 import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
+import { mockSupabaseClient } from '../utils/test-mocks';
+import { mockPortfolioRepository } from '../utils/service-mocks';
+
+import { lazyLoad } from '@/lib/ai/lazy-loader';
+
+#!/usr/bin/env tsx
 
 async function fixTestSuitePhase2() {
   console.log('🧪 Phase 2: Comprehensive Test Suite Fixes...\n');
@@ -11,8 +15,6 @@ async function fixTestSuitePhase2() {
   console.log('Fixing lazy-loader test...');
   try {
     const lazyLoaderTest = `import React from 'react';
-import { lazyLoad } from '@/lib/ai/lazy-loader';
-
 describe('Lazy Loader', () => {
   it('should lazy load a module', async () => {
     const TestComponent = () => React.createElement('div', null, 'Test Component');
@@ -46,9 +48,6 @@ describe('Lazy Loader', () => {
   console.log('\nFixing portfolio service test...');
   try {
     const portfolioServiceTest = `import { PortfolioService } from '@/lib/services/portfolio';
-import { mockSupabaseClient } from '../utils/test-mocks';
-import { mockPortfolioRepository } from '../utils/service-mocks';
-
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => mockSupabaseClient)
 }));

@@ -1,12 +1,5 @@
-/**
- * @fileoverview API endpoints for experiment management
- * GET /api/v1/experiments - List all experiments
- * POST /api/v1/experiments - Create new experiment
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-
 import {
   authenticateUser,
   hasPermission,
@@ -15,8 +8,13 @@ import {
 } from '@/lib/api/middleware/auth';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-
 import type { CreateExperimentRequest } from '@/types/experiments';
+
+/**
+ * @fileoverview API endpoints for experiment management
+ * GET /api/v1/experiments - List all experiments
+ * POST /api/v1/experiments - Create new experiment
+ */
 
 /**
  * Schema for creating experiments
@@ -57,7 +55,7 @@ const createExperimentSchema = z.object({
  * GET /api/v1/experiments
  * List all experiments
  */
-export async function GET(request: NextRequest) {
+export async function GET($1): Promise<Response> {
   try {
     // Authenticate user
     const user = await authenticateUser(request);
@@ -118,11 +116,11 @@ export async function GET(request: NextRequest) {
     // Calculate additional metrics
     const experimentsWithMetrics = experiments?.map(experiment => {
       const totalVisitors = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.visitor_count || 0),
+        (sum: number, v: unknown) => sum + (v.visitor_count || 0),
         0
       );
       const totalConversions = experiment.variants.reduce(
-        (sum: number, v: any) => sum + (v.conversion_count || 0),
+        (sum: number, v: unknown) => sum + (v.conversion_count || 0),
         0
       );
 
@@ -156,7 +154,7 @@ export async function GET(request: NextRequest) {
  * POST /api/v1/experiments
  * Create new experiment
  */
-export async function POST(request: NextRequest) {
+export async function POST($1): Promise<Response> {
   try {
     // Authenticate user
     const user = await authenticateUser(request);

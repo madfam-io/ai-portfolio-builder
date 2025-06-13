@@ -1,16 +1,16 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { FiExternalLink } from 'react-icons/fi';
+
+import type { Repository } from '@/types/analytics';
+
 /**
  * @fileoverview RepositoryList Component
  *
  * Displays a list of GitHub repositories with metadata
  * and navigation to detailed repository analytics
  */
-
-'use client';
-
-import { FiExternalLink } from 'react-icons/fi';
-import { useRouter } from 'next/navigation';
-
-import type { Repository } from '@/types/analytics';
 
 interface RepositoryListProps {
   repositories: Repository[];

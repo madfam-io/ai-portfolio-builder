@@ -1,8 +1,8 @@
 'use client';
 
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState, useEffect, Suspense } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { signUp, signInWithOAuth } from '@/lib/auth/auth';

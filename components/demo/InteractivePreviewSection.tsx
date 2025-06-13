@@ -1,9 +1,8 @@
 'use client';
 
-import { FiArrowLeft, FiCheck } from 'react-icons/fi';
-import Link from 'next/link';
 import React from 'react';
-
+import Link from 'next/link';
+import { FiArrowLeft, FiCheck } from 'react-icons/fi';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -20,7 +19,7 @@ interface InteractivePreviewSectionProps {
     height: string;
     scale: number;
   };
-  t: any; // TODO: Add proper translation type
+  t: unknown; // TODO: Add proper translation type
   onPreviousStep: () => void;
   onExport: () => void;
 }

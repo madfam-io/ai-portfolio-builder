@@ -1,9 +1,8 @@
-import { Inter } from 'next/font/google';
 import React from 'react';
-
+import { Inter } from 'next/font/google';
 import type { Metadata } from 'next';
-
 import './globals.css';
+
 import { GlobalErrorBoundary } from '@/components/shared/error-boundaries/GlobalErrorBoundary';
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';

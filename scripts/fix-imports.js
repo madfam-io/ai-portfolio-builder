@@ -1,3 +1,4 @@
+
 #!/usr/bin/env node
 
 const { execSync } = require('child_process');
@@ -7,7 +8,7 @@ const path = require('path');
 console.log('🔧 Fixing import order violations...\n');
 
 // Get all TypeScript and JavaScript files
-const getAllFiles = (dirPath, arrayOfFiles = []) => {
+const getAllFiles = (dirPath, arrayOfFiles = []): void => {
   const files = fs.readdirSync(dirPath);
 
   files.forEach(file => {

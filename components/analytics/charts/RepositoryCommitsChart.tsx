@@ -1,8 +1,3 @@
-/**
- * Repository Commits Chart Component
- * Dynamically imported chart for repository commit history
- */
-
 import React from 'react';
 import {
   LineChart,
@@ -13,6 +8,11 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
+
+/**
+ * Repository Commits Chart Component
+ * Dynamically imported chart for repository commit history
+ */
 
 interface CommitData {
   date: string;

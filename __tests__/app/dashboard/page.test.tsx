@@ -1,3 +1,11 @@
+import React from 'react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
+
+import DashboardPage from '@/app/dashboard/page';
+import { useAuth } from '@/lib/contexts/AuthContext';
+
 /**
  * Dashboard page test suite
  */
@@ -26,7 +34,7 @@ jest.mock('next/navigation', () => ({
 // Mock Next.js Image component to avoid IntersectionObserver issues
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: function Image(props: any) {
+  default: function Image(props: unknown) {
     // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     return <img {...props} />;
   },
@@ -35,7 +43,7 @@ jest.mock('next/image', () => ({
 // Mock Next.js Link component
 jest.mock('next/link', () => ({
   __esModule: true,
-  default: function Link({ children, href, ...props }: any) {
+  default: function Link({ children, href, ...props }: unknown) {
     return (
       <a href={href} {...props}>
         {children}
@@ -53,15 +61,6 @@ jest.mock('@/components/layouts/BaseLayout', () => ({
 }));
 
 // Import test dependencies after mocks
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-
-import DashboardPage from '@/app/dashboard/page';
-import { useAuth } from '@/lib/contexts/AuthContext';
-
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
-
 // Get the mocked function
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
@@ -177,7 +176,7 @@ describe('Dashboard Page', () => {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;
+    global.localStorage = localStorageMock as unknown;
     jest.clearAllMocks();
     mockPush.mockClear();
 

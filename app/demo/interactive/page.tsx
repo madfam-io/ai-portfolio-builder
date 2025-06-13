@@ -1,8 +1,9 @@
 'use client';
 
-import { HiSparkles } from 'react-icons/hi';
-import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { HiSparkles } from 'react-icons/hi';
+} from 'react-icons/fi';
 import {
   FiArrowLeft,
   FiBookOpen,
@@ -10,7 +11,6 @@ import {
   FiSave,
   FiRefreshCw,
   FiCheck,
-} from 'react-icons/fi';
 
 import { AIModelComparison } from '@/components/demo/AIModelComparison';
 import { AnimatedBioEnhancement } from '@/components/demo/AnimatedBioEnhancement';
@@ -22,6 +22,7 @@ import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
 import { showToast } from '@/lib/utils/toast';
 import { Portfolio, TemplateType } from '@/types/portfolio';
+
 
 export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();

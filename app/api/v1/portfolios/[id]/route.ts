@@ -1,19 +1,18 @@
+import { NextRequest, NextResponse } from 'next/server';
+import {
+  validateUpdatePortfolio,
+  sanitizePortfolioData,
+import { transformApiPortfolioToDb } from '../route';
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+} from '@/lib/validations/portfolio';
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Portfolio API Routes - Individual portfolio operations
  * Handles get, update, and delete operations for specific portfolios
  */
-
-import { NextRequest, NextResponse } from 'next/server';
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import {
-  validateUpdatePortfolio,
-  sanitizePortfolioData,
-} from '@/lib/validations/portfolio';
-import { Portfolio } from '@/types/portfolio';
-
-import { transformApiPortfolioToDb } from '../route';
 
 interface RouteParams {
   params: {
@@ -379,7 +378,7 @@ export async function DELETE(
  * Transforms database portfolio object to API format
  * Converts snake_case to camelCase and adjusts field names
  */
-function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
+function transformDbPortfolioToApi(dbPortfolio: unknown): Portfolio {
   return {
     id: dbPortfolio.id,
     userId: dbPortfolio.user_id,

@@ -1,11 +1,11 @@
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
+
 #!/usr/bin/env tsx
 
 /**
  * Comprehensive test suite fix for React 19 and other issues
  */
-
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
-import { join } from 'path';
 
 const fixes = {
   // Fix 1: Mock localStorage
@@ -19,7 +19,7 @@ const fixes = {
       removeItem: jest.fn(),
       clear: jest.fn(),
     };
-    global.localStorage = localStorageMock as any;`,
+    global.localStorage = localStorageMock as unknown;`,
   },
 
   // Fix 2: Fix store method names
@@ -194,7 +194,7 @@ const localStorageMock = {
   removeItem: jest.fn(),
   clear: jest.fn(),
 };
-global.localStorage = localStorageMock as any;
+global.localStorage = localStorageMock as unknown;
 
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {

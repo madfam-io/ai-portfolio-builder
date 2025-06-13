@@ -1,8 +1,14 @@
+import React from 'react';
 import { createMockPortfolio, createMockUser } from '../utils/test-helpers';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
+
+import PortfolioEditor from '@/components/editor/PortfolioEditor';
 
 // Mock hooks
 jest.mock('@/hooks/useDebounce', () => ({
-  useDebounce: (value: any) => value,
+  useDebounce: (value: unknown) => value,
 }));
 
 jest.mock('@/hooks/useRealTimePreview', () => ({
@@ -18,14 +24,6 @@ jest.mock('@/hooks/useRealTimePreview', () => ({
 /**
  * PortfolioEditor test suite - final version
  */
-
-import { screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import React from 'react';
-
-import PortfolioEditor from '@/components/editor/PortfolioEditor';
-
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 // Mock portfolioService
 jest.mock('@/lib/services/portfolioService', () => ({
@@ -231,7 +229,9 @@ describe('PortfolioEditor', () => {
       renderWithLanguage(<PortfolioEditor portfolioId="1" userId="user-1" />);
 
       await waitFor(() => {
-        expect(screen.queryByText(/error/i) || screen.queryByText(/retry/i)).toBeInTheDocument();
+        expect(
+          screen.queryByText(/error/i) || screen.queryByText(/retry/i)
+        ).toBeInTheDocument();
       });
     });
 

@@ -1,8 +1,4 @@
-/**
- * Section Editor Component
- * Provides editing interface for different portfolio sections with drag-and-drop
- */
-
+import React, { useState } from 'react';
 import {
   Plus,
   Trash2,
@@ -15,14 +11,6 @@ import {
   Code,
   Award,
 } from 'lucide-react';
-import React, { useState } from 'react';
-
-import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import { cn } from '@/components/ui/utils';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-
-import { DraggableItem } from './DraggableItem';
-
 import type {
   Portfolio,
   Experience,
@@ -30,7 +18,17 @@ import type {
   Project,
   Skill,
   Certification,
+
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { cn } from '@/components/ui/utils';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { DraggableItem } from './DraggableItem';
 } from '@/types/portfolio';
+
+/**
+ * Section Editor Component
+ * Provides editing interface for different portfolio sections with drag-and-drop
+ */
 
 // Union type for portfolio section items
 type PortfolioSectionItem =
@@ -60,7 +58,7 @@ export const SectionEditor = React.memo(function SectionEditor({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [isAdding, setIsAdding] = useState(false);
 
-  const getSectionIcon = () => {
+  const getSectionIcon = (): void => {
     switch (section) {
       case 'experience':
         return <Briefcase className="h-5 w-5" />;
@@ -75,7 +73,7 @@ export const SectionEditor = React.memo(function SectionEditor({
     }
   };
 
-  const getSectionTitle = () => {
+  const getSectionTitle = (): void => {
     switch (section) {
       case 'experience':
         return t.experience;
@@ -99,7 +97,7 @@ export const SectionEditor = React.memo(function SectionEditor({
     }
   };
 
-  const handleAdd = () => {
+  const handleAdd = (): void => {
     setIsAdding(true);
     setEditingIndex(null);
   };
@@ -129,7 +127,7 @@ export const SectionEditor = React.memo(function SectionEditor({
     onChange({ [section]: items });
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setEditingIndex(null);
     setIsAdding(false);
   };
@@ -173,7 +171,7 @@ export const SectionEditor = React.memo(function SectionEditor({
                   | 'education'
                   | 'skill',
                 index,
-                data: { ...item } as any,
+                data: { ...item } as unknown,
               }}
               onReorder={handleReorder}
               disabled={editingIndex === index}
@@ -225,7 +223,7 @@ function ItemCard({
 }) {
   const { t } = useLanguage();
 
-  const renderContent = () => {
+  const renderContent = (): void => {
     switch (section) {
       case 'experience':
         const expItem = item as Experience;

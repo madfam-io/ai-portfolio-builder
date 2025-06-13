@@ -1,10 +1,10 @@
+import React from 'react';
+import toast from 'react-hot-toast';
+
 /**
  * Toast notification utility
  * Provides a simple API for showing notifications without using alert()
  */
-
-import React from 'react';
-import toast from 'react-hot-toast';
 
 interface ToastOptions {
   duration?: number;
@@ -66,7 +66,7 @@ export const showToast = {
     } else {
       // Type assertion is necessary due to react-hot-toast types
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast.custom(message as any, { ...defaultOptions, ...options });
+      toast.custom(message as unknown, { ...defaultOptions, ...options });
     }
   },
 };

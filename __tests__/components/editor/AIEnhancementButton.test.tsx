@@ -1,15 +1,14 @@
-/**
- * AIEnhancementButton Component test suite
- */
-
+import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import { AIEnhancementButton } from '@/components/editor/AIEnhancementButton';
 import { aiClient } from '@/lib/ai/client';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * AIEnhancementButton Component test suite
+ */
 
 // Mock the AI client
 jest.mock('@/lib/ai/client', () => ({
@@ -207,7 +206,11 @@ describe('AIEnhancementButton Component', () => {
   describe('Disabled State', () => {
     test('disables button when no content provided', () => {
       renderWithLanguage(
-        <AIEnhancementButton type="bio" content="" onEnhanced={jest.fn() as any} />
+        <AIEnhancementButton
+          type="bio"
+          content=""
+          onEnhanced={jest.fn() as any}
+        />
       );
 
       const button = screen.getByRole('button');

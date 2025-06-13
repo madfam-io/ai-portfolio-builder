@@ -1,11 +1,7 @@
 'use client';
 
-import { FaChartLine, FaCode, FaGitAlt, FaStar, FaUsers } from 'react-icons/fa';
 import React from 'react';
-
-
-
-
+import { FaChartLine, FaCode, FaGitAlt, FaStar, FaUsers } from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { AnalyticsDashboardData } from '@/types/analytics';

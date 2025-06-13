@@ -1,9 +1,9 @@
+import { z } from 'zod';
+
 /**
  * API Input Validation Schemas
  * Comprehensive validation for all API routes
  */
-
-import { z } from 'zod';
 
 // Common schemas
 export const uuidSchema = z.string().uuid('Invalid UUID format');
@@ -152,7 +152,7 @@ export const searchSchema = z.object({
 // Error response helper
 export function createValidationError(errors: z.ZodError): {
   error: string;
-  details: any;
+  details: unknown;
 } {
   return {
     error: 'Validation failed',
@@ -165,7 +165,7 @@ export function safeParseWithLogging<T>(
   schema: z.ZodSchema<T>,
   data: unknown,
   context: string
-): { success: true; data: T } | { success: false; error: any } {
+): { success: true; data: T } | { success: false; error: unknown } {
   const result = schema.safeParse(data);
 
   if (!result.success) {

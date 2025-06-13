@@ -1,16 +1,14 @@
+import React from 'react';
+import { FiMonitor, FiSmartphone, FiTablet } from 'react-icons/fi';
+
+import type { ComponentConfig } from '@/types/experiments';
+
 /**
  * Variant Preview Component
  *
  * Shows a miniature preview of how the variant will look
  * with the configured components and theme.
  */
-
-import { FiMonitor, FiSmartphone, FiTablet } from 'react-icons/fi';
-import React from 'react';
-
-
-
-import type { ComponentConfig } from '@/types/experiments';
 
 interface VariantPreviewProps {
   variant: {
@@ -28,7 +26,7 @@ export default function VariantPreview({
   const [selectedDevice, setSelectedDevice] = React.useState(device);
 
   // Calculate preview dimensions
-  const getPreviewDimensions = () => {
+  const getPreviewDimensions = (): void => {
     switch (selectedDevice) {
       case 'mobile':
         return 'max-w-[375px]';

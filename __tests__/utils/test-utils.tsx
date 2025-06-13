@@ -1,10 +1,9 @@
+import React, { ReactElement } from 'react';
+import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, RenderOptions } from '@testing-library/react';
-import { ThemeProvider } from 'next-themes';
-import React, { ReactElement } from 'react';
 
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
-
 import { setupI18nTestEnvironment } from './i18n-test-helpers';
 
 // Mock Supabase client for testing
@@ -135,7 +134,7 @@ export const mockProject = {
 };
 
 // Test helpers for async operations
-export const waitForLoadingToFinish = () => {
+export const waitForLoadingToFinish = (): void => {
   return new Promise(resolve => setTimeout(resolve, 0));
 };
 
@@ -158,13 +157,13 @@ export const mockFetch = (response: unknown, status = 200) => {
 };
 
 // Helper to reset all mocks
-export const resetAllMocks = () => {
+export const resetAllMocks = (): void => {
   jest.clearAllMocks();
   jest.resetAllMocks();
 };
 
 // Helper to mock console methods without noise
-export const suppressConsole = () => {
+export const suppressConsole = (): void => {
   beforeEach(() => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
     jest.spyOn(console, 'warn').mockImplementation(() => {});

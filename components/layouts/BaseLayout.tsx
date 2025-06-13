@@ -1,3 +1,13 @@
+'use client';
+
+import { ReactNode } from 'react';
+
+import BackToTopButton from '@/components/BackToTopButton';
+import Footer from '@/components/landing/Footer';
+import Header from '@/components/landing/Header';
+import { AuthProvider } from '@/lib/contexts/AuthContext';
+import { LanguageProvider } from '@/lib/i18n/refactored-context';
+
 /**
  * @fileoverview Base Layout Component for MADFAM AI Portfolio Builder
  *
@@ -34,16 +44,6 @@
  * @author MADFAM Development Team
  * @version 2.0.0 - Complete multilingual and navigation unification
  */
-
-'use client';
-
-import { ReactNode } from 'react';
-
-import BackToTopButton from '@/components/BackToTopButton';
-import Footer from '@/components/landing/Footer';
-import Header from '@/components/landing/Header';
-import { AuthProvider } from '@/lib/contexts/AuthContext';
-import { LanguageProvider } from '@/lib/i18n/refactored-context';
 
 /**
  * Props interface for BaseLayout component

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+} from 'react-icons/fa';
 import {
   FaMagic,
   FaLink,
@@ -8,9 +9,9 @@ import {
   FaGlobe,
   FaChartLine,
   FaMobileAlt,
-} from 'react-icons/fa';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 
 export default function Features(): React.ReactElement {
   const { t } = useLanguage();

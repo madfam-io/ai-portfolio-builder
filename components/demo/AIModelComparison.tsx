@@ -1,13 +1,8 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
 import { FiAward, FiClock, FiDollarSign, FiInfo, FiZap } from 'react-icons/fi';
 import { HiSparkles } from 'react-icons/hi';
-import React, { useState, useEffect } from 'react';
-
-
-
-
-
 
 interface AIModel {
   id: string;

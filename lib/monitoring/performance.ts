@@ -1,9 +1,11 @@
+import { useRef, useEffect } from 'react';
+
+import { logger } from '@/lib/utils/logger';
+
 /**
  * Performance monitoring utilities
  * Tracks and reports web vitals and custom metrics
  */
-
-import { logger } from '@/lib/utils/logger';
 
 // Metric types
 export interface PerformanceMetric {
@@ -40,7 +42,7 @@ function getRating(
 /**
  * Report web vitals to analytics
  */
-export function reportWebVitals(metric: any): void {
+export function reportWebVitals(metric: unknown): void {
   const { name, value, id } = metric;
 
   const performanceMetric: PerformanceMetric = {
@@ -328,8 +330,6 @@ export function useRenderTracking(componentName: string): void {
     }
   });
 }
-
-import { useRef, useEffect } from 'react';
 
 // Import for Next.js types
 declare global {

@@ -1,9 +1,9 @@
+import React, { Suspense } from 'react';
+
 /**
  * Chart wrapper component with loading state
  * Handles Suspense for lazy-loaded chart components
  */
-
-import React, { Suspense } from 'react';
 
 interface ChartWrapperProps {
   children: React.ReactNode;

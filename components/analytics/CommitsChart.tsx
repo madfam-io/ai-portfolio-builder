@@ -1,13 +1,3 @@
-/**
- * @fileoverview Commits Trend Chart Component
- *
- * A lazy-loaded chart component for displaying commit trends over time.
- * Optimized for performance with dynamic imports and memoization.
- *
- * @author PRISMA Development Team
- * @version 1.0.0
- */
-
 'use client';
 
 import React, { memo } from 'react';
@@ -22,6 +12,16 @@ import {
 } from 'recharts';
 
 import { usePerformanceTracking } from '@/lib/utils/performance';
+
+/**
+ * @fileoverview Commits Trend Chart Component
+ *
+ * A lazy-loaded chart component for displaying commit trends over time.
+ * Optimized for performance with dynamic imports and memoization.
+ *
+ * @author PRISMA Development Team
+ * @version 1.0.0
+ */
 
 interface CommitsChartProps {
   data: Array<{

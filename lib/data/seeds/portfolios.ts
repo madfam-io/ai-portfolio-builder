@@ -1,3 +1,7 @@
+import { logger } from '@/lib/utils/logger';
+import { getSeedConfig } from './index';
+import type { SeedingOptions } from '@/lib/database/seeder';
+
 /**
  * @fileoverview Portfolio Seed Data
  * @module data/seeds/portfolios
@@ -5,12 +9,6 @@
  * Generates realistic portfolio data for all user types and templates.
  * Creates comprehensive portfolio content including experience, projects, and skills.
  */
-
-import { logger } from '@/lib/utils/logger';
-
-import { getSeedConfig } from './index';
-
-import type { SeedingOptions } from '@/lib/database/seeder';
 
 /**
  * Portfolio templates with comprehensive data
@@ -202,7 +200,11 @@ const PORTFOLIO_TEMPLATES = [
 /**
  * Generate portfolio data for a user
  */
-function generatePortfolio(userId: string, index: number, template?: any): any {
+function generatePortfolio(
+  userId: string,
+  index: number,
+  template?: unknown
+): unknown {
   const templates = ['developer', 'designer', 'consultant'];
   const selectedTemplate =
     template?.template || templates[index % templates.length];
@@ -270,7 +272,7 @@ function generatePortfolio(userId: string, index: number, template?: any): any {
  * Seed portfolios table with realistic data
  */
 export async function seedPortfolios(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -368,7 +370,7 @@ export async function seedPortfolios(
  * Update user portfolio counts after seeding
  */
 async function updateUserPortfolioCounts(
-  client: any,
+  client: unknown,
   users: any[]
 ): Promise<void> {
   try {

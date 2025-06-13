@@ -1,15 +1,24 @@
-#!/usr/bin/env tsx
-
+import { NextRequest, NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
+import { renderHook, act } from '@testing-library/react';
+import { renderHook, act } from '@testing-library/react';
+
+import { portfolioSchema, projectSchema, experienceSchema, educationSchema } from '@/lib/validations/portfolio';
+import { performanceMonitor } from '@/lib/monitoring/performance';
+import { RedisCache } from '@/lib/cache/redis-cache';
+import { HuggingFaceService } from '@/lib/ai/huggingface-service';
+import { apiVersionMiddleware } from '@/middleware/api-version';
+import { useAuthStore } from '@/lib/store/auth-store';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
+
+#!/usr/bin/env tsx
 
 async function fixSpecificFailures() {
   console.log('🔧 Fixing specific test failures...\n');
 
   // Fix 1: Portfolio validation test
   const portfolioValidationFix = `
-import { portfolioSchema, projectSchema, experienceSchema, educationSchema } from '@/lib/validations/portfolio';
-
 describe('Portfolio Validation', () => {
   describe('portfolioSchema', () => {
     it('should validate a complete portfolio', () => {
@@ -86,8 +95,6 @@ describe('Portfolio Validation', () => {
 
   // Fix 2: Performance monitoring test
   const performanceTestFix = `
-import { performanceMonitor } from '@/lib/monitoring/performance';
-
 // Mock timers
 jest.useFakeTimers();
 
@@ -126,8 +133,6 @@ describe('Performance Monitor', () => {
 
   // Fix 3: Redis cache test
   const redisCacheTestFix = `
-import { RedisCache } from '@/lib/cache/redis-cache';
-
 const mockRedisClient = {
   get: jest.fn(),
   set: jest.fn(),
@@ -202,10 +207,8 @@ describe('RedisCache', () => {
 
   // Fix 4: HuggingFace service test
   const huggingfaceTestFix = `
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-
 const mockFetch = jest.fn();
-global.fetch = mockFetch as any;
+global.fetch = mockFetch as unknown;
 
 describe('HuggingFaceService', () => {
   let service: HuggingFaceService;
@@ -285,9 +288,6 @@ describe('HuggingFaceService', () => {
 
   // Fix 5: API middleware test
   const middlewareTestFix = `
-import { NextRequest, NextResponse } from 'next/server';
-import { apiVersionMiddleware } from '@/middleware/api-version';
-
 describe('API Version Middleware', () => {
   it('should add version header to response', async () => {
     const request = new NextRequest('http://localhost:3000/api/v1/test');
@@ -316,9 +316,6 @@ describe('API Version Middleware', () => {
 
   // Fix 6: Store tests with proper mock implementation
   const authStoreTestFix = `
-import { renderHook, act } from '@testing-library/react';
-import { useAuthStore } from '@/lib/store/auth-store';
-
 describe('Auth Store', () => {
   beforeEach(() => {
     const { result } = renderHook(() => useAuthStore());
@@ -379,9 +376,6 @@ describe('Auth Store', () => {
   );
 
   const portfolioStoreTestFix = `
-import { renderHook, act } from '@testing-library/react';
-import { usePortfolioStore } from '@/lib/store/portfolio-store';
-
 describe('Portfolio Store', () => {
   beforeEach(() => {
     const { result } = renderHook(() => usePortfolioStore());

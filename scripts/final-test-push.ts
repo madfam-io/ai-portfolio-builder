@@ -1,7 +1,11 @@
-#!/usr/bin/env tsx
-
 import { promises as fs } from 'fs';
 import path from 'path';
+import { render, screen } from '@testing-library/react';
+import { DragDropContext } from 'react-beautiful-dnd';
+
+import { useAuthStore } from '@/lib/store/auth-store';
+
+#!/usr/bin/env tsx
 
 async function finalTestPush() {
   console.log('🚀 Final push to fix remaining tests...\n');
@@ -101,8 +105,6 @@ describe('Portfolios API', () => {
   console.log('\nFixing store tests...');
   
   const authStoreTest = `import { renderHook, act } from '@testing-library/react';
-import { useAuthStore } from '@/lib/store/auth-store';
-
 describe('Auth Store', () => {
   beforeEach(() => {
     // Reset store
@@ -166,9 +168,6 @@ describe('Auth Store', () => {
 
   // Fix 4: Fix DragDropContext test
   const dragDropTest = `import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { DragDropContext } from 'react-beautiful-dnd';
-
 // Simple test for DragDropContext
 describe('DragDropContext', () => {
   it('should render children', () => {

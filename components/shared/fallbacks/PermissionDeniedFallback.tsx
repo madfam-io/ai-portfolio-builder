@@ -1,21 +1,17 @@
+'use client';
+
+import React from 'react';
+import { useRouter } from 'next/navigation';
+import { FiArrowLeft, FiHome, FiLock, FiMail, FiShield } from 'react-icons/fi';
+
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
 /**
  * @fileoverview Permission Denied Fallback Components
  *
  * Provides user-friendly permission denied displays when users
  * don't have adequate permissions for specific resources or actions.
  */
-
-'use client';
-
-import { FiArrowLeft, FiHome, FiLock, FiMail, FiShield } from 'react-icons/fi';
-import { useRouter } from 'next/navigation';
-import React from 'react';
-
-
-
-
-
-import { useLanguage } from '@/lib/i18n/refactored-context';
 
 /**
  * Full Permission Denied Page
@@ -34,7 +30,7 @@ export function PermissionDeniedPage({
   const { t } = useLanguage();
   const router = useRouter();
 
-  const handleGoHome = () => {
+  const handleGoHome = (): void => {
     if (onGoHome) {
       onGoHome();
     } else {
@@ -42,7 +38,7 @@ export function PermissionDeniedPage({
     }
   };
 
-  const handleGoBack = () => {
+  const handleGoBack = (): void => {
     if (onGoBack) {
       onGoBack();
     } else {
@@ -50,7 +46,7 @@ export function PermissionDeniedPage({
     }
   };
 
-  const handleContactSupport = () => {
+  const handleContactSupport = (): void => {
     const subject = 'Permission Request';
     const body = `
 I need access to: ${resource || 'a specific resource'}
@@ -82,21 +78,21 @@ Please provide the necessary permissions or explain how to gain access.
           {/* Error Message */}
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              {(t.errors as any)?.permissionDeniedTitle ||
+              {(t.errors as unknown)?.permissionDeniedTitle ||
                 'permissionDeniedTitle'}
             </h1>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-4">
               {resource
                 ? (
-                    (t.errors as any)?.permissionDeniedResource ||
+                    (t.errors as unknown)?.permissionDeniedResource ||
                     "You don't have permission to access {resource}"
                   ).replace('{resource}', resource)
-                : (t.errors as any)?.permissionDeniedDescription ||
+                : (t.errors as unknown)?.permissionDeniedDescription ||
                   "You don't have the required permissions"}
             </p>
             {requiredRole && (
               <p className="text-sm text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-900/20 rounded-lg px-4 py-2 inline-block">
-                {(t.errors as any)?.requiredRole || 'requiredRole'}:{' '}
+                {(t.errors as unknown)?.requiredRole || 'requiredRole'}:{' '}
                 <span className="font-medium">{requiredRole}</span>
               </p>
             )}
@@ -109,7 +105,7 @@ Please provide the necessary permissions or explain how to gain access.
               className="w-full flex items-center justify-center gap-3 bg-orange-600 text-white px-6 py-3 rounded-lg hover:bg-orange-700 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
             >
               <FiMail className="w-5 h-5" />
-              {(t.errors as any)?.requestAccess || 'requestAccess'}
+              {(t.errors as unknown)?.requestAccess || 'requestAccess'}
             </button>
 
             <div className="flex flex-col sm:flex-row gap-3">
@@ -118,7 +114,7 @@ Please provide the necessary permissions or explain how to gain access.
                 className="flex-1 flex items-center justify-center gap-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-all transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 <FiArrowLeft className="w-5 h-5" />
-                {(t.errors as any)?.goBack || 'goBack'}
+                {(t.errors as unknown)?.goBack || 'goBack'}
               </button>
 
               <button
@@ -126,7 +122,7 @@ Please provide the necessary permissions or explain how to gain access.
                 className="flex-1 flex items-center justify-center gap-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 px-6 py-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-all"
               >
                 <FiHome className="w-5 h-5" />
-                {(t.errors as any)?.goToHomepage || 'goToHomepage'}
+                {(t.errors as unknown)?.goToHomepage || 'goToHomepage'}
               </button>
             </div>
           </div>
@@ -134,13 +130,17 @@ Please provide the necessary permissions or explain how to gain access.
           {/* Help Text */}
           <div className="mt-8 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
             <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {(t.errors as any)?.needHelp || 'needHelp'}
+              {(t.errors as unknown)?.needHelp || 'needHelp'}
             </h3>
             <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-              <li>• {(t.errors as any)?.contactSupport || 'contactSupport'}</li>
-              <li>• {(t.errors as any)?.checkAccount || 'checkAccount'}</li>
               <li>
-                • {(t.errors as any)?.reviewPermissions || 'reviewPermissions'}
+                • {(t.errors as unknown)?.contactSupport || 'contactSupport'}
+              </li>
+              <li>• {(t.errors as unknown)?.checkAccount || 'checkAccount'}</li>
+              <li>
+                •{' '}
+                {(t.errors as unknown)?.reviewPermissions ||
+                  'reviewPermissions'}
               </li>
             </ul>
           </div>
@@ -171,14 +171,14 @@ export function InlinePermissionDenied({
       <div className="flex items-center justify-center gap-2 py-4 text-orange-600 dark:text-orange-400">
         <FiLock className="w-4 h-4" />
         <span className="text-sm">
-          {(t.errors as any)?.accessDenied || 'accessDenied'}
+          {(t.errors as unknown)?.accessDenied || 'accessDenied'}
         </span>
         {onRequestAccess && (
           <button
             onClick={onRequestAccess}
             className="text-sm underline hover:no-underline"
           >
-            {(t.errors as any)?.requestAccess || 'requestAccess'}
+            {(t.errors as unknown)?.requestAccess || 'requestAccess'}
           </button>
         )}
       </div>
@@ -195,22 +195,22 @@ export function InlinePermissionDenied({
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-orange-800 dark:text-orange-200 mb-2">
-            {(t.errors as any)?.accessDenied || 'accessDenied'}
+            {(t.errors as unknown)?.accessDenied || 'accessDenied'}
           </h3>
           <p className="text-sm text-orange-700 dark:text-orange-300 mb-4">
             {action && resource
               ? (
-                  (t.errors as any)?.permissionActionResource ||
+                  (t.errors as unknown)?.permissionActionResource ||
                   'You cannot {action} this {resource}'
                 )
                   .replace('{action}', action)
                   .replace('{resource}', resource)
               : resource
                 ? (
-                    (t.errors as any)?.permissionResource ||
+                    (t.errors as unknown)?.permissionResource ||
                     "You don't have access to this {resource}"
                   ).replace('{resource}', resource)
-                : (t.errors as any)?.permissionGeneric ||
+                : (t.errors as unknown)?.permissionGeneric ||
                   "You don't have the required permissions"}
           </p>
 
@@ -220,7 +220,7 @@ export function InlinePermissionDenied({
               className="inline-flex items-center gap-2 text-sm bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700 transition-colors"
             >
               <FiMail className="w-4 h-4" />
-              {(t.errors as any)?.requestAccess || 'requestAccess'}
+              {(t.errors as unknown)?.requestAccess || 'requestAccess'}
             </button>
           )}
         </div>
@@ -267,7 +267,7 @@ export function RoleBasedAccess({
 
   return (
     <InlinePermissionDenied
-      resource={`${requiredRole} ${(t.errors as any)?.privileges || 'privileges'}`}
+      resource={`${requiredRole} ${(t.errors as unknown)?.privileges || 'privileges'}`}
       onRequestAccess={() => {
         const subject = 'Role Upgrade Request';
         const body = `

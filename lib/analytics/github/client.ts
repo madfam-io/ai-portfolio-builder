@@ -1,3 +1,20 @@
+import { Octokit } from '@octokit/rest';
+import {
+  decryptAccessToken,
+  hasEncryptedTokens,
+  hasLegacyTokens,
+import type {
+  GitHubIntegration,
+  Repository,
+  PullRequest,
+  Contributor,
+  RateLimitInfo,
+
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+} from './tokenManager';
+} from '@/types/analytics';
+
 /**
  * @fileoverview GitHub Analytics Client
  *
@@ -7,25 +24,6 @@
  * @author PRISMA Development Team
  * @version 0.0.1-alpha
  */
-
-import { Octokit } from '@octokit/rest';
-
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
-import {
-  decryptAccessToken,
-  hasEncryptedTokens,
-  hasLegacyTokens,
-} from './tokenManager';
-
-import type {
-  GitHubIntegration,
-  Repository,
-  PullRequest,
-  Contributor,
-  RateLimitInfo,
-} from '@/types/analytics';
 
 /**
  * GitHub API response types
@@ -167,14 +165,14 @@ export class GitHubAnalyticsClient {
     this.octokit = new Octokit({
       auth: accessToken,
       throttle: {
-        onRateLimit: (retryAfter: number, options: any) => {
+        onRateLimit: (retryAfter: number, options: unknown) => {
           logger.warn(
             `GitHub rate limit hit, retrying after ${retryAfter} seconds`,
             { options }
           );
           return true;
         },
-        onSecondaryRateLimit: (retryAfter: number, options: any) => {
+        onSecondaryRateLimit: (retryAfter: number, options: unknown) => {
           logger.warn(
             `GitHub secondary rate limit hit, retrying after ${retryAfter} seconds`,
             { options }
@@ -396,7 +394,7 @@ export class GitHubAnalyticsClient {
     }
 
     try {
-      const params: any = {
+      const params: unknown = {
         owner,
         repo,
         per_page: options.perPage || 30,
@@ -520,7 +518,7 @@ export class GitHubAnalyticsClient {
 
       await this.checkRateLimit();
       logger.info('Webhook created successfully', { owner, repo });
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Ignore if webhook already exists
       if (error.status !== 422) {
         logger.error('Failed to create webhook', { owner, repo, error });

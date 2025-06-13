@@ -1,14 +1,13 @@
-/**
- * DesignerTemplate Component test suite
- */
-
-import { screen } from '@testing-library/react';
 import React from 'react';
+import { screen } from '@testing-library/react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { Portfolio } from '@/types/portfolio';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * DesignerTemplate Component test suite
+ */
 
 const mockPortfolio: Portfolio = {
   id: 'portfolio-2',

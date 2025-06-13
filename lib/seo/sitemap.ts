@@ -1,9 +1,9 @@
+import { Portfolio } from '@/types/portfolio';
+
 /**
  * Dynamic Sitemap Generation
  * Generates XML sitemaps for portfolios
  */
-
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Generate XML sitemap for a portfolio

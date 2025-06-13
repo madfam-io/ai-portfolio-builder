@@ -1,8 +1,3 @@
-/**
- * Root Store
- * Combines all individual stores into a single root store
- */
-
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
@@ -11,6 +6,11 @@ import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
 import { RootState } from './types';
 import { useUIStore } from './ui-store';
+
+/**
+ * Root Store
+ * Combines all individual stores into a single root store
+ */
 
 /**
  * Root store that combines all individual stores

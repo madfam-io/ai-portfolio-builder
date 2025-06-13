@@ -1,20 +1,19 @@
-/**
- * Draggable Item Component
- * Wrapper component that makes any content draggable
- */
-
-import { GripVertical } from 'lucide-react';
 import React, { useState } from 'react';
-
-import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import { cn } from '@/components/ui/utils';
-
+import { GripVertical } from 'lucide-react';
 import {
   DragItem,
   handleDragStart,
   handleDragOver,
   handleDrop,
+
+import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
+import { cn } from '@/components/ui/utils';
 } from './DragDropContext';
+
+/**
+ * Draggable Item Component
+ * Wrapper component that makes any content draggable
+ */
 
 interface DraggableItemProps {
   item: DragItem;
@@ -42,7 +41,7 @@ export const DraggableItem = React.memo(function DraggableItem({
     handleDragStart(e, item);
   };
 
-  const handleDragEnd = () => {
+  const handleDragEnd = (): void => {
     setIsDragging(false);
     setIsDragOver(false);
   };

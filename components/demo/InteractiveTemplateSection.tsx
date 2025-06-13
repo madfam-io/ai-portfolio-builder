@@ -1,16 +1,14 @@
 'use client';
 
+import React from 'react';
 import { FiCode, FiLayout } from 'react-icons/fi';
 import { FaPalette } from 'react-icons/fa';
-import React from 'react';
-
-
 
 import { TemplateType } from '@/types/portfolio';
 
 interface InteractiveTemplateSectionProps {
   selectedTemplate: TemplateType;
-  t: any; // TODO: Add proper translation type
+  t: unknown; // TODO: Add proper translation type
   onSelectTemplate: (template: TemplateType) => void;
   onNextStep: () => void;
 }

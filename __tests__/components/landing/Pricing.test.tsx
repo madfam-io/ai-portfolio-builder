@@ -1,13 +1,12 @@
-/**
- * Pricing Component test suite - working version
- */
-
-import { screen } from '@testing-library/react';
 import React from 'react';
+import { screen } from '@testing-library/react';
+import { renderWithLanguage } from '../../utils/i18n-test-utils';
 
 import Pricing from '@/components/landing/Pricing';
 
-import { renderWithLanguage } from '../../utils/i18n-test-utils';
+/**
+ * Pricing Component test suite - working version
+ */
 
 describe('Pricing Component', () => {
   describe('Content Rendering', () => {

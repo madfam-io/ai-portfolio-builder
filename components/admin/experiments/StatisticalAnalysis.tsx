@@ -1,20 +1,20 @@
-/**
- * Statistical Analysis Component
- *
- * Displays statistical significance, confidence intervals, and
- * recommendations based on experiment results.
- */
-
 import React from 'react';
+} from 'react-icons/fi';
 import {
   FiCheckCircle,
   FiXCircle,
   FiAlertTriangle,
   FiInfo,
   FiTarget,
-} from 'react-icons/fi';
 
 import type { ExperimentResults } from '@/types/experiments';
+
+/**
+ * Statistical Analysis Component
+ *
+ * Displays statistical significance, confidence intervals, and
+ * recommendations based on experiment results.
+ */
 
 interface StatisticalAnalysisProps {
   results?: ExperimentResults;
