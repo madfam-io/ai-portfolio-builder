@@ -1,7 +1,6 @@
 'use client';
 
 import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
@@ -14,13 +13,14 @@ import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 
 function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
   const { user } = useAuthStore();
   const router = useRouter();
+  const { toast } = useToast();
   const { 
     portfolios, 
     isLoading, 
