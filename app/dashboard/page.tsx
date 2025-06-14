@@ -32,7 +32,7 @@ function DashboardContent(): React.ReactElement {
   // Load user's portfolios on mount
   useEffect(() => {
     loadPortfolios().catch(err => {
-      logger.error('Failed to load portfolios:', err);
+      logger.error('Failed to load portfolios:', err instanceof Error ? err : new Error(String(err)));
       toast({
         title: t.error || 'Error',
         description: t.failedToLoadPortfolios || 'Failed to load portfolios. Please try again.',
@@ -53,7 +53,7 @@ function DashboardContent(): React.ReactElement {
         description: t.portfolioDeleted || 'Portfolio deleted successfully',
       });
     } catch (err) {
-      logger.error('Failed to delete portfolio:', err);
+      logger.error('Failed to delete portfolio:', err instanceof Error ? err : new Error(String(err)));
       toast({
         title: t.error || 'Error',
         description: t.failedToDelete || 'Failed to delete portfolio',
