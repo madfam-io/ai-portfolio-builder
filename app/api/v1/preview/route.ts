@@ -13,7 +13,7 @@ import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import { previewQuerySchema, previewBodySchema } from '@/lib/validations/api';
 
-import type { Portfolio } from '@/types/portfolio';
+import type { Portfolio, TemplateType } from '@/types/portfolio';
 
 /**
  * Portfolio Preview API v1
@@ -156,7 +156,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       certifications: portfolio.certifications || [],
       contact: portfolio.contact || {},
       social: portfolio.social || {},
-      template: portfolio.template ?? template ?? 'developer',
+      template: (portfolio.template ?? template ?? 'developer') as TemplateType,
       customization: portfolio.customization || {},
       status: portfolio.status || 'draft',
       subdomain: null,

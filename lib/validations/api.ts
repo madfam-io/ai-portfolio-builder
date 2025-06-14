@@ -18,7 +18,7 @@ import type {
 export const uuidSchema = z.string().uuid('Invalid UUID format');
 
 export const templateSchema = z
-  .enum(['developer', 'designer', 'consultant'])
+  .enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business', 'minimal', 'modern'])
   .optional()
   .default('developer');
 
@@ -121,7 +121,7 @@ const previewPortfolioSchema = z
     })).optional(),
 
     // Template and customization
-    template: z.string().optional(),
+    template: z.enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business', 'minimal', 'modern']).optional(),
     customization: z.object({
       colors: z.record(z.string()).optional(),
       fonts: z.object({
