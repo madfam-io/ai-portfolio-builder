@@ -67,13 +67,14 @@ const previewPortfolioSchema = z
       company: z.string(),
       position: z.string(),
       location: z.string().optional(),
+      employmentType: z.enum(['full-time', 'part-time', 'contract', 'freelance', 'internship']).optional(),
       startDate: z.string(),
-      endDate: z.string().nullable().optional(),
-      current: z.boolean().optional(),
+      endDate: z.string().optional(),
+      current: z.boolean(),
       description: z.string(),
       highlights: z.array(z.string()).optional(),
       technologies: z.array(z.string()).optional(),
-      logoUrl: z.string().optional(),
+      companyLogo: z.string().optional(),
     })).optional(),
     
     education: z.array(z.object({
@@ -81,15 +82,11 @@ const previewPortfolioSchema = z
       institution: z.string(),
       degree: z.string(),
       field: z.string(),
-      location: z.string().optional(),
       startDate: z.string(),
-      endDate: z.string().nullable().optional(),
+      endDate: z.string().optional(),
       current: z.boolean().optional(),
-      gpa: z.string().optional(),
-      honors: z.array(z.string()).optional(),
-      activities: z.array(z.string()).optional(),
-      coursework: z.array(z.string()).optional(),
-      logoUrl: z.string().optional(),
+      description: z.string().optional(),
+      achievements: z.array(z.string()).optional(),
     })).optional(),
     
     projects: z.array(z.object({
@@ -150,7 +147,7 @@ const previewPortfolioSchema = z
     lastViewedAt: z.string().datetime().optional().or(z.date()).optional(),
     createdAt: z.string().datetime().optional().or(z.date()).optional(),
     updatedAt: z.string().datetime().optional().or(z.date()).optional(),
-    publishedAt: z.string().datetime().optional().or(z.date()).nullable().optional(),
+    publishedAt: z.string().datetime().optional().or(z.date()).optional(),
   })
   .passthrough(); // Allow additional fields for flexibility
 
