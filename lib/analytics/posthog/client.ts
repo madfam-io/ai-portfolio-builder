@@ -23,12 +23,11 @@ const posthogConfig: Partial<PostHogConfig> = {
   persistence: 'localStorage+cookie',
   autocapture: {
     url_ignorelist: [/\/api\//], // Don't capture API calls
-    element_allowlist: ['button', 'a', 'input[type="submit"]'], // Only capture important elements
+    element_allowlist: ['button', 'a', 'input'], // Only capture important elements
     css_selector_allowlist: ['.ph-capture'], // Allow explicit capture
   },
   session_recording: {
     maskAllInputs: true, // Privacy: mask sensitive inputs
-    maskTextContent: false,
   },
   loaded: (posthog) => {
     if (process.env.NODE_ENV === 'development') {
@@ -147,7 +146,9 @@ export const setUserProperties = (properties: Record<string, any>) => {
 export const incrementUserProperty = (property: string, value = 1) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
   
-  posthog.people.increment(property, value);
+  // PostHog JS doesn't have increment, use set with current value + increment
+  const currentValue = posthog.get_property(property) || 0;
+  posthog.people.set({ [property]: currentValue + value });
 };
 
 // Track revenue
@@ -207,9 +208,7 @@ export const usePostHog = () => {
     if (user) {
       identifyUser(user.id, {
         email: user.email,
-        name: user.name,
-        created_at: user.createdAt,
-        plan: user.plan || 'free',
+        created_at: user.created_at,
       });
     } else {
       resetUser();

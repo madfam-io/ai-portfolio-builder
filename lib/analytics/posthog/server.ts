@@ -47,7 +47,7 @@ export const captureServerEvent = async (
     if (!client) return;
 
     // Get request headers for context
-    const headersList = headers();
+    const headersList = await headers();
     const userAgent = headersList.get('user-agent') || '';
     const ip = headersList.get('x-forwarded-for') || 
                headersList.get('x-real-ip') || 
