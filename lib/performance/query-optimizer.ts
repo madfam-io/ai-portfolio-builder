@@ -44,9 +44,9 @@ export function buildPaginationParams(options: QueryOptions = {}) {
     options.limit || QUERY_LIMITS.DEFAULT_PAGE_SIZE,
     QUERY_LIMITS.MAX_PAGE_SIZE
   );
-  
+
   const offset = (page - 1) * limit;
-  
+
   return {
     page,
     limit,
@@ -65,7 +65,7 @@ export function createPaginationMeta(
   limit: number
 ): PaginationResult<any>['pagination'] {
   const totalPages = Math.ceil(total / limit);
-  
+
   return {
     page,
     limit,
@@ -86,13 +86,13 @@ export function optimizeSelectFields(
   if (!requestedFields || requestedFields.length === 0) {
     return '*';
   }
-  
+
   // If allowed fields are specified, filter requested fields
   if (allowedFields) {
-    const validFields = requestedFields.filter(field => 
+    const validFields = requestedFields.filter(field =>
       allowedFields.includes(field)
     );
-    
+
     if (validFields.length === 0) {
       logger.warn('No valid fields requested, returning default set', {
         requested: requestedFields,
@@ -100,10 +100,10 @@ export function optimizeSelectFields(
       });
       return allowedFields.join(',');
     }
-    
+
     return validFields.join(',');
   }
-  
+
   return requestedFields.join(',');
 }
 
@@ -112,8 +112,8 @@ export function optimizeSelectFields(
  */
 export function buildOptimizedQuery(
   baseTable: string,
-  options: QueryOptions & { 
-    joins?: Array<{ table: string; on: string; type?: 'inner' | 'left' }> 
+  options: QueryOptions & {
+    joins?: Array<{ table: string; on: string; type?: 'inner' | 'left' }>;
   } = {}
 ): {
   select: string;
@@ -123,30 +123,33 @@ export function buildOptimizedQuery(
   joins: string;
 } {
   const { limit, offset } = buildPaginationParams(options);
-  
+
   // Build SELECT clause
-  const selectClause = options.select 
+  const selectClause = options.select
     ? `SELECT ${optimizeSelectFields(options.select)}`
     : 'SELECT *';
-    
+
   // Build FROM clause
   const fromClause = `FROM ${baseTable}`;
-  
+
   // Build JOIN clauses
   const joinClauses = options.joins
     ? options.joins
-        .map(join => `${join.type?.toUpperCase() || 'LEFT'} JOIN ${join.table} ON ${join.on}`)
+        .map(
+          join =>
+            `${join.type?.toUpperCase() || 'LEFT'} JOIN ${join.table} ON ${join.on}`
+        )
         .join(' ')
     : '';
-    
+
   // Build ORDER BY clause
   const orderByClause = options.orderBy
     ? `ORDER BY ${options.orderBy} ${options.orderDirection || 'asc'}`
     : '';
-    
+
   // Build LIMIT clause
   const limitClause = `LIMIT ${limit} OFFSET ${offset}`;
-  
+
   return {
     select: selectClause,
     from: fromClause,
@@ -171,15 +174,15 @@ export function generateQueryCacheKey(
     `p${options.page || 1}`,
     `l${options.limit || QUERY_LIMITS.DEFAULT_PAGE_SIZE}`,
   ];
-  
+
   if (options.orderBy) {
     parts.push(`o${options.orderBy}_${options.orderDirection || 'asc'}`);
   }
-  
+
   if (options.select) {
     parts.push(`s${options.select.sort().join('_')}`);
   }
-  
+
   return parts.join(':');
 }
 
@@ -189,19 +192,19 @@ export function generateQueryCacheKey(
 export class BatchLoader<K, V> {
   private batch: Map<K, Array<(value: V | null) => void>> = new Map();
   private scheduled = false;
-  
+
   constructor(
     private loader: (keys: K[]) => Promise<Map<K, V>>,
     private options: { maxBatchSize?: number; delay?: number } = {}
   ) {}
-  
+
   async load(key: K): Promise<V | null> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       // Add to batch
       const callbacks = this.batch.get(key) || [];
       callbacks.push(resolve);
       this.batch.set(key, callbacks);
-      
+
       // Schedule batch execution
       if (!this.scheduled) {
         this.scheduled = true;
@@ -209,18 +212,18 @@ export class BatchLoader<K, V> {
       }
     });
   }
-  
+
   private async executeBatch() {
     const currentBatch = this.batch;
     this.batch = new Map();
     this.scheduled = false;
-    
+
     if (currentBatch.size === 0) return;
-    
+
     try {
       const keys = Array.from(currentBatch.keys());
       const results = await this.loader(keys);
-      
+
       // Resolve all callbacks
       currentBatch.forEach((callbacks, key) => {
         const value = results.get(key) || null;
@@ -228,10 +231,10 @@ export class BatchLoader<K, V> {
       });
     } catch (error) {
       // Reject all callbacks
-      currentBatch.forEach((callbacks) => {
+      currentBatch.forEach(callbacks => {
         callbacks.forEach(callback => callback(null));
       });
-      
+
       logger.error('Batch loader error', error as Error);
     }
   }

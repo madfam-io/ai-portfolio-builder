@@ -98,7 +98,11 @@ export class DeepSeekService implements AIService {
     industryContext?: string
   ): Promise<ProjectEnhancement> {
     try {
-      const prompt = this.buildProjectPrompt(description, technologies, industryContext);
+      const prompt = this.buildProjectPrompt(
+        description,
+        technologies,
+        industryContext
+      );
       const response = await this.callDeepSeek(prompt);
 
       return this.parseProjectResponse(response, description, technologies);
@@ -301,7 +305,9 @@ Please enhance this bio to be more compelling while keeping it authentic. Use re
     technologies: string[],
     industryContext?: string
   ): string {
-    const contextLine = industryContext ? `\nIndustry/Context: "${industryContext}"` : '';
+    const contextLine = industryContext
+      ? `\nIndustry/Context: "${industryContext}"`
+      : '';
     return `${PROJECT_PROMPTS.optimize}
 
 Description: "${description}"
@@ -385,7 +391,11 @@ Also provide specific suggestions for improvement. Use reasoning to explain your
     const impactMetrics = this.extractMetrics(content);
 
     // Calculate confidence based on content quality
-    const confidence = this.calculateConfidence(content, keyAchievements, impactMetrics);
+    const confidence = this.calculateConfidence(
+      content,
+      keyAchievements,
+      impactMetrics
+    );
 
     return {
       original: originalDescription,
@@ -606,7 +616,8 @@ Also provide specific suggestions for improvement. Use reasoning to explain your
     if (content.length > 100) confidence += 0.1;
     if (keyAchievements.length > 0) confidence += 0.15;
     if (impactMetrics.length > 0) confidence += 0.15;
-    if (content.includes('increased') || content.includes('improved')) confidence += 0.1;
+    if (content.includes('increased') || content.includes('improved'))
+      confidence += 0.1;
 
     return Math.min(confidence, 1.0);
   }

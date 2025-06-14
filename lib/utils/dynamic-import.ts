@@ -1,11 +1,12 @@
 /**
  * Dynamic Import Utilities
- * 
+ *
  * Helpers for optimizing bundle size through dynamic imports
  * and code splitting strategies
  */
 
 import dynamic from 'next/dynamic';
+
 import type { ComponentType, ReactNode } from 'react';
 
 /**
@@ -15,7 +16,7 @@ const defaultLoadingFn = () => null;
 
 /**
  * Create a dynamically imported component with loading state
- * 
+ *
  * @param importFn - Function that returns the component import
  * @param options - Dynamic import options
  * @returns Dynamically imported component
@@ -35,10 +36,10 @@ export function createDynamicComponent<P = {}>(
 
 /**
  * Preload a dynamic component
- * 
+ *
  * Useful for preloading components that will be needed soon
  * but not immediately (e.g., on hover, on route change)
- * 
+ *
  * @param importFn - Function that returns the component import
  */
 export function preloadComponent(
@@ -52,7 +53,7 @@ export function preloadComponent(
 
 /**
  * Create a route-based dynamic component
- * 
+ *
  * Automatically handles loading states and error boundaries
  * for route-level components
  */
@@ -81,7 +82,7 @@ export const optimizationStrategies = {
     charts: ['recharts', 'd3-scale', 'd3-shape'],
     utils: ['lodash', 'date-fns', 'clsx'],
   },
-  
+
   /**
    * Components that should always be lazy loaded
    */
@@ -93,13 +94,9 @@ export const optimizationStrategies = {
     'pdf-generators',
     'data-tables',
   ],
-  
+
   /**
    * Routes that benefit from prefetching
    */
-  prefetchRoutes: [
-    '/dashboard',
-    '/editor',
-    '/analytics',
-  ],
+  prefetchRoutes: ['/dashboard', '/editor', '/analytics'],
 };

@@ -146,15 +146,12 @@ export function PreviewStep({
               maxHeight: 'calc(100% - 120px)',
             }}
           >
-            <div
-              className="overflow-y-auto h-full"
-              data-preview-container
-            >
+            <div className="overflow-y-auto h-full" data-preview-container>
               <LazyWrapper
                 component={() =>
-                  import('@/components/editor/PortfolioPreview').then(
-                    mod => ({ default: mod.PortfolioPreview })
-                  )
+                  import('@/components/editor/PortfolioPreview').then(mod => ({
+                    default: mod.PortfolioPreview,
+                  }))
                 }
                 componentProps={{
                   portfolio: portfolio,

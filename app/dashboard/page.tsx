@@ -4,45 +4,56 @@ import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
-import BaseLayout from '@/components/layouts/BaseLayout';
 import { ProtectedRoute } from '@/components/auth/protected-route';
+import BaseLayout from '@/components/layouts/BaseLayout';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
-import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { Badge } from '@/components/ui/badge';
 
 function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
   const { user } = useAuthStore();
   const router = useRouter();
   const { toast } = useToast();
-  const { 
-    portfolios, 
-    isLoading, 
-    error, 
-    loadPortfolios, 
-    deletePortfolio 
-  } = usePortfolioStore();
+  const { portfolios, isLoading, error, loadPortfolios, deletePortfolio } =
+    usePortfolioStore();
 
   // Load user's portfolios on mount
   useEffect(() => {
     loadPortfolios().catch(err => {
-      logger.error('Failed to load portfolios:', err instanceof Error ? err : new Error(String(err)));
+      logger.error(
+        'Failed to load portfolios:',
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast({
         title: t.error || 'Error',
-        description: t.failedToLoadPortfolios || 'Failed to load portfolios. Please try again.',
+        description:
+          t.failedToLoadPortfolios ||
+          'Failed to load portfolios. Please try again.',
         variant: 'destructive',
       });
     });
   }, [loadPortfolios]);
 
   const handleDeletePortfolio = async (portfolioId: string) => {
-    if (!confirm(t.confirmDelete || 'Are you sure you want to delete this portfolio?')) {
+    if (
+      !confirm(
+        t.confirmDelete || 'Are you sure you want to delete this portfolio?'
+      )
+    ) {
       return;
     }
 
@@ -53,7 +64,10 @@ function DashboardContent(): React.ReactElement {
         description: t.portfolioDeleted || 'Portfolio deleted successfully',
       });
     } catch (err) {
-      logger.error('Failed to delete portfolio:', err instanceof Error ? err : new Error(String(err)));
+      logger.error(
+        'Failed to delete portfolio:',
+        err instanceof Error ? err : new Error(String(err))
+      );
       toast({
         title: t.error || 'Error',
         description: t.failedToDelete || 'Failed to delete portfolio',
@@ -72,7 +86,10 @@ function DashboardContent(): React.ReactElement {
 
   const handleViewPortfolio = (portfolio: Portfolio) => {
     if (portfolio.status === 'published' && portfolio.subdomain) {
-      window.open(`${window.location.origin}/p/${portfolio.subdomain}`, '_blank');
+      window.open(
+        `${window.location.origin}/p/${portfolio.subdomain}`,
+        '_blank'
+      );
     } else {
       router.push(`/editor/${portfolio.id}/preview`);
     }
@@ -101,7 +118,8 @@ function DashboardContent(): React.ReactElement {
     if (diffInDays === 0) return t.today || 'Today';
     if (diffInDays === 1) return t.yesterday || 'Yesterday';
     if (diffInDays < 7) return `${diffInDays} ${t.daysAgo || 'days ago'}`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${t.weeksAgo || 'weeks ago'}`;
+    if (diffInDays < 30)
+      return `${Math.floor(diffInDays / 7)} ${t.weeksAgo || 'weeks ago'}`;
 
     return dateObj.toLocaleDateString();
   };
@@ -135,7 +153,8 @@ function DashboardContent(): React.ReactElement {
               {t.myPortfolios || 'My Portfolios'}
             </h2>
             <p className="text-muted-foreground mt-1">
-              {t.managePortfolios || 'Manage and track your professional portfolios'}
+              {t.managePortfolios ||
+                'Manage and track your professional portfolios'}
             </p>
           </div>
           <Button onClick={handleCreatePortfolio} size="lg">
@@ -193,7 +212,10 @@ function DashboardContent(): React.ReactElement {
         {portfolios.length > 0 ? (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {portfolios.map(portfolio => (
-              <Card key={portfolio.id} className="hover:shadow-lg transition-shadow">
+              <Card
+                key={portfolio.id}
+                className="hover:shadow-lg transition-shadow"
+              >
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <CardTitle className="text-lg line-clamp-1">
@@ -204,14 +226,19 @@ function DashboardContent(): React.ReactElement {
                     </Badge>
                   </div>
                   <CardDescription className="line-clamp-2">
-                    {portfolio.title || portfolio.bio || t.noDescription || 'No description'}
+                    {portfolio.title ||
+                      portfolio.bio ||
+                      t.noDescription ||
+                      'No description'}
                   </CardDescription>
                 </CardHeader>
-                
+
                 <CardContent>
                   <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <span className="capitalize">{portfolio.template} template</span>
+                      <span className="capitalize">
+                        {portfolio.template} template
+                      </span>
                     </div>
                     {portfolio.updatedAt && (
                       <div className="flex items-center gap-2">
@@ -222,15 +249,20 @@ function DashboardContent(): React.ReactElement {
                     {portfolio.views && portfolio.views > 0 && (
                       <div className="flex items-center gap-2">
                         <Eye className="h-3 w-3" />
-                        <span>{portfolio.views} {t.views || 'views'}</span>
+                        <span>
+                          {portfolio.views} {t.views || 'views'}
+                        </span>
                       </div>
                     )}
-                    {portfolio.subdomain && portfolio.status === 'published' && (
-                      <div className="flex items-center gap-2">
-                        <Globe className="h-3 w-3" />
-                        <span className="text-xs">{portfolio.subdomain}.prisma.madfam.io</span>
-                      </div>
-                    )}
+                    {portfolio.subdomain &&
+                      portfolio.status === 'published' && (
+                        <div className="flex items-center gap-2">
+                          <Globe className="h-3 w-3" />
+                          <span className="text-xs">
+                            {portfolio.subdomain}.prisma.madfam.io
+                          </span>
+                        </div>
+                      )}
                   </div>
                 </CardContent>
 
@@ -252,22 +284,19 @@ function DashboardContent(): React.ReactElement {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    {portfolio.status === 'published' && portfolio.subdomain && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                      >
-                        <a
-                          href={`https://${portfolio.subdomain}.prisma.madfam.io`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={t.viewLive || 'View live'}
-                        >
-                          <Globe className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
+                    {portfolio.status === 'published' &&
+                      portfolio.subdomain && (
+                        <Button variant="ghost" size="icon" asChild>
+                          <a
+                            href={`https://${portfolio.subdomain}.prisma.madfam.io`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={t.viewLive || 'View live'}
+                          >
+                            <Globe className="h-4 w-4" />
+                          </a>
+                        </Button>
+                      )}
                   </div>
                   <Button
                     variant="ghost"
@@ -293,7 +322,8 @@ function DashboardContent(): React.ReactElement {
                 {t.noPortfoliosYet || 'No portfolios yet'}
               </h3>
               <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-                {t.createFirstPortfolio || 'Create your first portfolio to showcase your professional work'}
+                {t.createFirstPortfolio ||
+                  'Create your first portfolio to showcase your professional work'}
               </p>
               <Button onClick={handleCreatePortfolio} size="lg">
                 <Plus className="mr-2 h-5 w-5" />

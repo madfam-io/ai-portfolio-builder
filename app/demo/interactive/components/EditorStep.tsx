@@ -156,7 +156,7 @@ export function EditorStep({
                   {t.demoProjects}
                 </h3>
                 <div className="space-y-3">
-                  {portfolio.projects.slice(0, 2).map((project) => (
+                  {portfolio.projects.slice(0, 2).map(project => (
                     <div
                       key={project.id}
                       className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
@@ -244,9 +244,9 @@ export function EditorStep({
             <div className="p-8">
               <LazyWrapper
                 component={() =>
-                  import('@/components/editor/PortfolioPreview').then(
-                    mod => ({ default: mod.PortfolioPreview })
-                  )
+                  import('@/components/editor/PortfolioPreview').then(mod => ({
+                    default: mod.PortfolioPreview,
+                  }))
                 }
                 componentProps={{
                   portfolio: portfolio,

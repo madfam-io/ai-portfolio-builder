@@ -1,8 +1,8 @@
 import { consultantSampleData } from './consultant';
 import { designerSampleData } from './designer';
 import { developerSampleData } from './developer';
-import type { SampleDataConfig } from './types';
 
+import type { SampleDataConfig } from './types';
 import type { TemplateType } from '@/types/portfolio';
 
 // Export all sample data configurations

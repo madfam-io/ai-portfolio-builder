@@ -97,7 +97,9 @@ export class PerformanceMonitor {
     try {
       const lcpObserver = new PerformanceObserver(list => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1] as PerformanceEntry & { startTime: number };
+        const lastEntry = entries[entries.length - 1] as PerformanceEntry & {
+          startTime: number;
+        };
         this.metrics.lcp = lastEntry.startTime;
         this.reportMetric('lcp', lastEntry.startTime);
       });
@@ -379,13 +381,15 @@ export function getMemoryUsage(): {
     return null;
   }
 
-  const memory = (window.performance as Performance & { 
-    memory: { 
-      usedJSHeapSize: number; 
-      totalJSHeapSize: number; 
-      jsHeapSizeLimit: number; 
-    } 
-  }).memory;
+  const memory = (
+    window.performance as Performance & {
+      memory: {
+        usedJSHeapSize: number;
+        totalJSHeapSize: number;
+        jsHeapSizeLimit: number;
+      };
+    }
+  ).memory;
   return {
     used: memory.usedJSHeapSize,
     total: memory.totalJSHeapSize,

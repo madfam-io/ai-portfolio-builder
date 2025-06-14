@@ -19,7 +19,10 @@ export const logger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) =>
     config(
-      ((partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: boolean | undefined) => {
+      ((
+        partial: T | Partial<T> | ((state: T) => T | Partial<T>),
+        replace?: boolean | undefined
+      ) => {
         if (process.env.NODE_ENV === 'development') {
           utilLogger.debug('  applying', { partial: partial as unknown });
           (set as any)(partial, replace);
@@ -82,7 +85,10 @@ export const actionLogger =
   ): StateCreator<T, Mps, Mcs, T> =>
   (set, get, api) => {
     const state = config(
-      ((partial: T | Partial<T> | ((state: T) => T | Partial<T>), replace?: boolean | undefined) => {
+      ((
+        partial: T | Partial<T> | ((state: T) => T | Partial<T>),
+        replace?: boolean | undefined
+      ) => {
         if (process.env.NODE_ENV === 'development') {
           // const timestamp = new Date().toISOString();
           // Group logging removed
@@ -107,7 +113,9 @@ export const actionLogger =
           if (process.env.NODE_ENV === 'development') {
             utilLogger.debug(`[${_storeName}] Action: ${key}`, { args });
           }
-          return (state[key as keyof typeof state] as (...args: unknown[]) => unknown)(...args);
+          return (
+            state[key as keyof typeof state] as (...args: unknown[]) => unknown
+          )(...args);
         }) as T[keyof T];
       } else {
         (wrappedState as any)[key] = state[key as keyof typeof state];

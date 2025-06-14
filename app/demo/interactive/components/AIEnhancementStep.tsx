@@ -36,8 +36,8 @@ export function AIEnhancementStep({
           AI-Powered Enhancements
         </h1>
         <p className="text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-          Watch how our AI transforms your content into compelling,
-          professional narratives
+          Watch how our AI transforms your content into compelling, professional
+          narratives
         </p>
       </div>
 
@@ -50,8 +50,7 @@ export function AIEnhancementStep({
               <Sparkles className="w-6 h-6" />
             </div>
             <p className="text-purple-100">
-              Transform basic descriptions into powerful professional
-              summaries
+              Transform basic descriptions into powerful professional summaries
             </p>
           </div>
 
@@ -72,9 +71,7 @@ export function AIEnhancementStep({
         {/* Project Enhancement Demo */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
           <div className="bg-gradient-to-r from-blue-600 to-cyan-600 text-white p-6">
-            <h3 className="text-xl font-bold mb-2">
-              Project Enhancement
-            </h3>
+            <h3 className="text-xl font-bold mb-2">Project Enhancement</h3>
             <p className="text-blue-100">
               Transform project descriptions with STAR format
             </p>

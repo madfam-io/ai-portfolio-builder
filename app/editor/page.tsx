@@ -1,22 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-
-import { EditorLayout } from '@/components/editor/EditorLayout';
-import { EditorSidebar } from '@/components/editor/EditorSidebar';
-import { EditorCanvas } from '@/components/editor/EditorCanvas';
-import { EditorPreview } from '@/components/editor/EditorPreview';
-import { ProtectedRoute } from '@/components/auth/protected-route';
-import { usePortfolioStore } from '@/lib/store/portfolio-store';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Button } from '@/components/ui/button';
 import { Save, Eye, EyeOff, Undo, Redo } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
+
+import { ProtectedRoute } from '@/components/auth/protected-route';
+import { EditorCanvas } from '@/components/editor/EditorCanvas';
+import { EditorLayout } from '@/components/editor/EditorLayout';
+import { EditorPreview } from '@/components/editor/EditorPreview';
+import { EditorSidebar } from '@/components/editor/EditorSidebar';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { SectionType } from '@/types/portfolio';
 
 /**
  * Portfolio Editor Page
- * 
+ *
  * Main editor interface for creating and editing portfolios
  * Features split-screen design with real-time preview
  */
@@ -27,7 +27,7 @@ function EditorContent() {
   const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionType>('hero');
   const [errors] = useState<Record<string, string>>({});
-  
+
   const {
     currentPortfolio,
     savePortfolio,
@@ -118,7 +118,7 @@ function EditorContent() {
           {/* Left side - Portfolio name and actions */}
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-semibold">{currentPortfolio.name}</h1>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
@@ -175,10 +175,7 @@ function EditorContent() {
               <Save className="h-4 w-4 mr-2" />
               {isSaving ? t.saving : t.save}
             </Button>
-            <Button
-              size="sm"
-              onClick={handlePublish}
-            >
+            <Button size="sm" onClick={handlePublish}>
               {t.publish}
             </Button>
           </div>
@@ -188,22 +185,33 @@ function EditorContent() {
       {/* Main Editor Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <EditorSidebar 
+        <EditorSidebar
           portfolio={currentPortfolio}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
           onSectionUpdate={(_section, updates) => {
             // Handle section updates
-            updatePortfolioData(updates as any);
+            if (typeof updates === 'object' && updates !== null) {
+              Object.entries(updates).forEach(([field, value]) => {
+                updatePortfolioData(field, value);
+              });
+            }
           }}
           errors={errors}
         />
 
         {/* Canvas/Form Area */}
         <div className={`flex-1 flex ${showPreview ? 'w-1/2' : 'w-full'}`}>
-          <EditorCanvas 
+          <EditorCanvas
             portfolio={currentPortfolio}
-            onDataChange={updatePortfolioData}
+            onDataChange={data => {
+              // Handle partial portfolio data updates
+              if (data && typeof data === 'object') {
+                Object.entries(data).forEach(([field, value]) => {
+                  updatePortfolioData(`data.${field}`, value);
+                });
+              }
+            }}
           />
         </div>
 

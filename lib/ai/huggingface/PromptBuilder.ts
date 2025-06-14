@@ -110,13 +110,18 @@ export class PromptBuilder {
   private extractAchievements(text: string): string[] {
     const achievements: string[] = [];
     const lines = text.split('\n');
-    
+
     lines.forEach(line => {
       if (line.match(/^\s*[-•*]\s*/) || line.match(/^\d+\.\s*/)) {
-        achievements.push(line.replace(/^\s*[-•*]\s*/, '').replace(/^\d+\.\s*/, '').trim());
+        achievements.push(
+          line
+            .replace(/^\s*[-•*]\s*/, '')
+            .replace(/^\d+\.\s*/, '')
+            .trim()
+        );
       }
     });
-    
+
     return achievements.slice(0, 3); // Top 3 achievements
   }
 
@@ -129,9 +134,9 @@ export class PromptBuilder {
       /(?:using|with|built with|technologies:|tech stack:)\s*([^.]+)/i,
       /\b([A-Z][a-zA-Z0-9]+(?:\.[a-zA-Z]+)?)\b/g, // CamelCase technologies
     ];
-    
+
     const technologies = new Set<string>();
-    
+
     techPatterns.forEach(pattern => {
       const matches = text.matchAll(pattern);
       for (const match of matches) {
@@ -145,7 +150,7 @@ export class PromptBuilder {
         }
       }
     });
-    
+
     return Array.from(technologies).slice(0, 5); // Top 5 technologies
   }
 }

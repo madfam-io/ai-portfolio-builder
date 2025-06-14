@@ -1,5 +1,4 @@
 import { BaseRepository } from '@/lib/services/base';
-import type { QueryOptions } from '@/lib/services/base';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -10,6 +9,8 @@ import {
 
 import { getMockPortfolios } from './__mocks__/portfolio.mock';
 import { PortfolioMapper } from './portfolio.mapper';
+
+import type { QueryOptions } from '@/lib/services/base';
 
 /**
  * Portfolio repository for data access layer

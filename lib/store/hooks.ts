@@ -326,7 +326,7 @@ export function usePortfolios(options?: {
   // Load portfolios on mount
   useEffect(() => {
     if (portfolios.length === 0 && !isLoading && user?.id) {
-      loadPortfolios(user.id).catch(console.error);
+      loadPortfolios().catch(console.error);
     }
   }, [portfolios.length, isLoading, loadPortfolios, user?.id]);
 

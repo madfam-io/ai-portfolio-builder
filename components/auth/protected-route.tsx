@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuthStore } from '@/lib/store/auth-store';
 import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
+import { useAuthStore } from '@/lib/store/auth-store';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,13 +13,13 @@ interface ProtectedRouteProps {
 
 /**
  * ProtectedRoute Component
- * 
+ *
  * Protects routes from unauthenticated access
  * Redirects to signin page if not authenticated
  */
-export function ProtectedRoute({ 
-  children, 
-  redirectTo = '/auth/signin' 
+export function ProtectedRoute({
+  children,
+  redirectTo = '/auth/signin',
 }: ProtectedRouteProps) {
   const router = useRouter();
   const { isAuthenticated, isLoading } = useAuthStore();

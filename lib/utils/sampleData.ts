@@ -1,4 +1,5 @@
 import { getTemplateConfig } from '@/lib/templates/templateConfig';
+
 import { SAMPLE_DATA_BY_TEMPLATE } from './sample-data';
 
 import type { Portfolio, TemplateType } from '@/types/portfolio';

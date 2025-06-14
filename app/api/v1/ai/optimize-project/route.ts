@@ -79,7 +79,12 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    const { title: _title, description, technologies, context } = validationResult.data;
+    const {
+      title: _title,
+      description,
+      technologies,
+      context,
+    } = validationResult.data;
 
     // 3. Initialize AI service
     const aiService = new HuggingFaceService();

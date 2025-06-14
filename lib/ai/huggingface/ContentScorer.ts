@@ -63,7 +63,8 @@ export class ContentScorer {
 
     // Modified Flesch score for professional content (15-25 words per sentence is ideal)
     const idealRange = avgWordsPerSentence >= 15 && avgWordsPerSentence <= 25;
-    const fleschScore = 206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
+    const fleschScore =
+      206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
 
     // Convert to 0-100 scale with bonus for ideal range
     const baseScore = Math.max(0, Math.min(100, fleschScore));
@@ -121,7 +122,9 @@ export class ContentScorer {
     ];
 
     // Action verbs at sentence start
-    const actionStarts = content.match(/^(?:Led|Managed|Developed|Created|Designed|Built|Implemented)/gm);
+    const actionStarts = content.match(
+      /^(?:Led|Managed|Developed|Created|Designed|Built|Implemented)/gm
+    );
     if (actionStarts) score += Math.min(actionStarts.length * 5, 20);
 
     impactPatterns.forEach(pattern => {
@@ -166,7 +169,8 @@ export class ContentScorer {
       },
     };
 
-    const req = requirements[type as keyof typeof requirements] || requirements.bio;
+    const req =
+      requirements[type as keyof typeof requirements] || requirements.bio;
 
     // Word count scoring
     if (wordCount < req.minWords) {
@@ -219,20 +223,28 @@ export class ContentScorer {
     const suggestions: string[] = [];
 
     if (scores.readability !== undefined && scores.readability < 70) {
-      suggestions.push('Consider using shorter sentences for better readability');
+      suggestions.push(
+        'Consider using shorter sentences for better readability'
+      );
     }
     if (scores.professionalism !== undefined && scores.professionalism < 70) {
       suggestions.push('Use more professional language and active voice');
     }
     if (scores.impact !== undefined && scores.impact < 70) {
-      suggestions.push('Add specific metrics and achievements to increase impact');
+      suggestions.push(
+        'Add specific metrics and achievements to increase impact'
+      );
     }
     if (scores.completeness !== undefined && scores.completeness < 70) {
-      suggestions.push('Include more relevant details about your experience and skills');
+      suggestions.push(
+        'Include more relevant details about your experience and skills'
+      );
     }
 
     if (overall >= 85) {
-      suggestions.push('Excellent content! Consider adding unique differentiators');
+      suggestions.push(
+        'Excellent content! Consider adding unique differentiators'
+      );
     }
 
     return suggestions;

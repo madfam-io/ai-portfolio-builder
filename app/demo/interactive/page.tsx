@@ -2,18 +2,18 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { AIEnhancementStep } from './components/AIEnhancementStep';
-import { DemoHeader } from './components/DemoHeader';
-import { EditorStep } from './components/EditorStep';
-import { PreviewStep } from './components/PreviewStep';
-import { TemplateSelectionStep } from './components/TemplateSelectionStep';
-
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
 import { showToast } from '@/lib/utils/toast';
 import { Portfolio, TemplateType } from '@/types/portfolio';
+
+import { AIEnhancementStep } from './components/AIEnhancementStep';
+import { DemoHeader } from './components/DemoHeader';
+import { EditorStep } from './components/EditorStep';
+import { PreviewStep } from './components/PreviewStep';
+import { TemplateSelectionStep } from './components/TemplateSelectionStep';
 
 export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();
@@ -162,9 +162,13 @@ export default function InteractiveDemoPage(): React.ReactElement {
             onTemplateChange={handleTemplateChange}
             onNextStep={handleNextStep}
             translations={{
-              demoChooseYourTemplate: t.demoChooseYourTemplate || 'Choose Your Template',
-              demoStartBySelecting: t.demoStartBySelecting || 'Start by selecting a template that matches your profession',
-              demoLoadingTemplates: t.demoLoadingTemplates || 'Loading templates...',
+              demoChooseYourTemplate:
+                t.demoChooseYourTemplate || 'Choose Your Template',
+              demoStartBySelecting:
+                t.demoStartBySelecting ||
+                'Start by selecting a template that matches your profession',
+              demoLoadingTemplates:
+                t.demoLoadingTemplates || 'Loading templates...',
             }}
           />
         )}
@@ -180,22 +184,31 @@ export default function InteractiveDemoPage(): React.ReactElement {
               demoEditPortfolio: t.demoEditPortfolio || 'Edit Portfolio',
               demoBack: t.demoBack || 'Back',
               demoPreview: t.demoPreview || 'Preview',
-              demoInteractiveDemoMode: t.demoInteractiveDemoMode || 'Interactive Demo Mode',
-              demoThisIsPreview: t.demoThisIsPreview || 'This is a preview of the editor. Sign up to save your portfolio.',
-              demoBasicInformation: t.demoBasicInformation || 'Basic Information',
+              demoInteractiveDemoMode:
+                t.demoInteractiveDemoMode || 'Interactive Demo Mode',
+              demoThisIsPreview:
+                t.demoThisIsPreview ||
+                'This is a preview of the editor. Sign up to save your portfolio.',
+              demoBasicInformation:
+                t.demoBasicInformation || 'Basic Information',
               demoName: t.demoName || 'Name',
               demoTitle: t.demoTitle || 'Title',
               demoBio: t.demoBio || 'Bio',
               demoProjects: t.demoProjects || 'Projects',
               demoAddProject: t.demoAddProject || 'Add Project',
               demoSkills: t.demoSkills || 'Skills',
-              demoAvailableInFullVersion: t.demoAvailableInFullVersion || 'Available in Full Version',
-              demoAiBioEnhancement: t.demoAiBioEnhancement || 'AI Bio Enhancement',
-              demoProjectManagement: t.demoProjectManagement || 'Project Management',
-              demoSkillsExperience: t.demoSkillsExperience || 'Skills & Experience',
+              demoAvailableInFullVersion:
+                t.demoAvailableInFullVersion || 'Available in Full Version',
+              demoAiBioEnhancement:
+                t.demoAiBioEnhancement || 'AI Bio Enhancement',
+              demoProjectManagement:
+                t.demoProjectManagement || 'Project Management',
+              demoSkillsExperience:
+                t.demoSkillsExperience || 'Skills & Experience',
               demoCustomSections: t.demoCustomSections || 'Custom Sections',
               demoLinkedinImport: t.demoLinkedinImport || 'LinkedIn Import',
-              demoGithubIntegration: t.demoGithubIntegration || 'GitHub Integration',
+              demoGithubIntegration:
+                t.demoGithubIntegration || 'GitHub Integration',
               demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
             }}
           />
@@ -218,11 +231,13 @@ export default function InteractiveDemoPage(): React.ReactElement {
             getResponsiveBreakpoints={getResponsiveBreakpoints}
             testResponsiveBreakpoint={testResponsiveBreakpoint}
             translations={{
-              demoLoadingControls: t.demoLoadingControls || 'Loading controls...',
+              demoLoadingControls:
+                t.demoLoadingControls || 'Loading controls...',
               demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
               demoBackToEditor: t.demoBackToEditor || 'Back to Editor',
               demoLoveWhatYouSee: t.demoLoveWhatYouSee || 'Love what you see?',
-              demoGetStartedFreeTrial: t.demoGetStartedFreeTrial || 'Get Started - Free Trial',
+              demoGetStartedFreeTrial:
+                t.demoGetStartedFreeTrial || 'Get Started - Free Trial',
               demoShareDemo: t.demoShareDemo || 'Share Demo',
             }}
           />

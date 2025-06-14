@@ -54,10 +54,7 @@ export function ComponentLayout({
             <p className="text-gray-500 dark:text-gray-400 mb-3">
               No components added yet
             </p>
-            <button
-              onClick={onShowGallery}
-              className="btn-primary text-sm"
-            >
+            <button onClick={onShowGallery} className="btn-primary text-sm">
               Add First Component
             </button>
           </div>

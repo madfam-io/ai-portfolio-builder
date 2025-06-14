@@ -34,7 +34,7 @@ export class HuggingFaceService implements AIService {
 
   constructor(apiKey?: string, userModelPreferences?: Record<string, string>) {
     this.apiKey = apiKey || env.HUGGINGFACE_API_KEY || '';
-    
+
     if (!this.apiKey) {
       logger.warn(
         'Hugging Face API key not provided. Service will operate in demo mode.'
@@ -90,7 +90,7 @@ export class HuggingFaceService implements AIService {
   async enhanceBio(bio: string, context: BioContext): Promise<EnhancedContent> {
     try {
       const cacheKey = this.generateCacheKey('bio', bio, context);
-      
+
       // Check cache
       const cached = await cache.get(cacheKey);
       if (cached) {
@@ -103,7 +103,9 @@ export class HuggingFaceService implements AIService {
 
       // Call AI model
       const response = await this.callModel(model, prompt);
-      const enhanced = this.promptBuilder.extractBioFromResponse(response.content);
+      const enhanced = this.promptBuilder.extractBioFromResponse(
+        response.content
+      );
 
       // Score the result
       const score = await this.contentScorer.scoreContent(enhanced, 'bio');
@@ -319,11 +321,11 @@ export class HuggingFaceService implements AIService {
             // Ignore JSON parse errors
           }
 
-          logger.error(`Model ${modelId} error:`, { status: response.status, error: errorMessage });
-          throw new ModelUnavailableError(
-            'huggingface',
-            modelId
-          );
+          logger.error(`Model ${modelId} error:`, {
+            status: response.status,
+            error: errorMessage,
+          });
+          throw new ModelUnavailableError('huggingface', modelId);
         }
 
         const result = await response.json();
@@ -347,7 +349,11 @@ export class HuggingFaceService implements AIService {
       }
     }
 
-    throw new AIServiceError('Failed to get response from model', 'MODEL_ERROR', 'huggingface');
+    throw new AIServiceError(
+      'Failed to get response from model',
+      'MODEL_ERROR',
+      'huggingface'
+    );
   }
 
   /**
@@ -412,21 +418,28 @@ export class HuggingFaceService implements AIService {
     // Industry match
     const industries = industryMatches[template] || [];
     const profileIndustry = profile.industry?.toLowerCase() || '';
-    if (industries.includes('any') || 
-        (profileIndustry && industries.some(ind => profileIndustry.includes(ind)))) {
+    if (
+      industries.includes('any') ||
+      (profileIndustry && industries.some(ind => profileIndustry.includes(ind)))
+    ) {
       score += 30;
     }
 
     // Experience level match
     if (template === 'minimal' && profile.experienceLevel === 'entry') {
       score += 20;
-    } else if (template === 'business' && profile.experienceLevel === 'senior') {
+    } else if (
+      template === 'business' &&
+      profile.experienceLevel === 'senior'
+    ) {
       score += 20;
     }
 
     // Style preferences
-    if (profile.skills.some(skill => skill.toLowerCase().includes('design')) && 
-        template === 'designer') {
+    if (
+      profile.skills.some(skill => skill.toLowerCase().includes('design')) &&
+      template === 'designer'
+    ) {
       score += 20;
     }
 
@@ -436,7 +449,10 @@ export class HuggingFaceService implements AIService {
   /**
    * Get template reasoning
    */
-  private getTemplateReasoning(template: string, _profile: UserProfile): string {
+  private getTemplateReasoning(
+    template: string,
+    _profile: UserProfile
+  ): string {
     const reasons: Record<string, string> = {
       developer: 'Perfect for showcasing technical projects and code samples',
       designer: 'Ideal for visual portfolios with strong design emphasis',

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+import { apiError } from '@/lib/api/versioning';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { apiError } from '@/lib/api/versioning';
 
 /**
  * @fileoverview Authentication middleware for API routes
@@ -132,16 +132,18 @@ export function withAuth<T extends (...args: any[]) => any>(
   return (async (req: NextRequest, ...args: any[]) => {
     try {
       const user = await authenticateUser(req);
-      
+
       if (!user) {
-        logger.warn('Unauthorized access attempt', { 
-          path: req.nextUrl.pathname 
+        logger.warn('Unauthorized access attempt', {
+          path: req.nextUrl.pathname,
         });
         return unauthorizedResponse('Authentication required');
       }
 
       // Create authenticated request with user
-      const authenticatedReq = Object.assign(req, { user }) as AuthenticatedRequest;
+      const authenticatedReq = Object.assign(req, {
+        user,
+      }) as AuthenticatedRequest;
 
       // Call the original handler with authenticated request
       return handler(authenticatedReq, ...(args as Parameters<T>));

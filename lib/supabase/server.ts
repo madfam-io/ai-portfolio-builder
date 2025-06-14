@@ -23,26 +23,27 @@ export async function createClient() {
     env.NEXT_PUBLIC_SUPABASE_URL!,
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-    cookies: {
-      get(name: string) {
-        return cookieStore.get(name)?.value;
+      cookies: {
+        get(name: string) {
+          return cookieStore.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value, ...options });
+          } catch (error) {
+            // Handle cases where cookies can't be set (e.g., in middleware)
+            logger.warn('Failed to set cookie:', { error });
+          }
+        },
+        remove(name: string, options: CookieOptions) {
+          try {
+            cookieStore.set({ name, value: '', ...options });
+          } catch (error) {
+            // Handle cases where cookies can't be removed
+            logger.warn('Failed to remove cookie:', { error });
+          }
+        },
       },
-      set(name: string, value: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value, ...options });
-        } catch (error) {
-          // Handle cases where cookies can't be set (e.g., in middleware)
-          logger.warn('Failed to set cookie:', { error });
-        }
-      },
-      remove(name: string, options: CookieOptions) {
-        try {
-          cookieStore.set({ name, value: '', ...options });
-        } catch (error) {
-          // Handle cases where cookies can't be removed
-          logger.warn('Failed to remove cookie:', { error });
-        }
-      },
-    },
-  });
+    }
+  );
 }

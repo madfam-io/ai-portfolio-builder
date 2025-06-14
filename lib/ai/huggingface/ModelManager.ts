@@ -20,7 +20,7 @@ export interface AvailableModel {
 export class ModelManager {
   private availableModels: AvailableModel[] = [];
   private selectedModels: Record<string, string> = {};
-  
+
   // Default "best bang for buck" models (updated dynamically)
   private readonly defaultModels = {
     bio: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
@@ -70,14 +70,16 @@ export class ModelManager {
       m.capabilities.includes(taskType as any)
     );
     const recommended = capable.find(m => m.isRecommended);
-    
+
     if (recommended) {
       return recommended.id;
     }
 
     // Fall back to default
-    return this.defaultModels[taskType as keyof typeof this.defaultModels] || 
-           this.defaultModels.bio;
+    return (
+      this.defaultModels[taskType as keyof typeof this.defaultModels] ||
+      this.defaultModels.bio
+    );
   }
 
   /**
@@ -122,7 +124,7 @@ export class ModelManager {
     // For now, return enhanced defaults
     // In production, this would check actual API status
     const models = this.getDefaultAvailableModels();
-    
+
     // Simulate dynamic updates
     return models.map(model => ({
       ...model,

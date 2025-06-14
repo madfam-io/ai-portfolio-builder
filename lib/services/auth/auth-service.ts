@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
+
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 
 export interface AuthResponse<T = any> {
@@ -23,7 +24,10 @@ export class AuthService {
   /**
    * Sign in with email and password
    */
-  async signIn(email: string, password: string): Promise<AuthResponse<{ user: User; session: Session }>> {
+  async signIn(
+    email: string,
+    password: string
+  ): Promise<AuthResponse<{ user: User; session: Session }>> {
     try {
       if (!this.supabase) {
         throw new Error('Authentication service not configured');
@@ -80,7 +84,10 @@ export class AuthService {
       }
 
       logger.info('User signed up successfully', { userId: data.user?.id });
-      return { data: data as { user: User; session: Session | null }, error: null };
+      return {
+        data: data as { user: User; session: Session | null },
+        error: null,
+      };
     } catch (error) {
       logger.error('Sign up exception:', error as Error);
       return {
@@ -148,7 +155,8 @@ export class AuthService {
       return {
         data: null,
         error: {
-          message: error instanceof Error ? error.message : 'Password reset failed',
+          message:
+            error instanceof Error ? error.message : 'Password reset failed',
           status: 500,
         } as AuthError,
       };
@@ -180,7 +188,8 @@ export class AuthService {
       return {
         data: null,
         error: {
-          message: error instanceof Error ? error.message : 'Password update failed',
+          message:
+            error instanceof Error ? error.message : 'Password update failed',
           status: 500,
         } as AuthError,
       };
@@ -209,7 +218,8 @@ export class AuthService {
       return {
         data: null,
         error: {
-          message: error instanceof Error ? error.message : 'Get session failed',
+          message:
+            error instanceof Error ? error.message : 'Get session failed',
           status: 500,
         } as AuthError,
       };
@@ -248,7 +258,9 @@ export class AuthService {
   /**
    * Sign in with OAuth provider
    */
-  async signInWithOAuth(provider: 'google' | 'github'): Promise<AuthResponse<{ url: string }>> {
+  async signInWithOAuth(
+    provider: 'google' | 'github'
+  ): Promise<AuthResponse<{ url: string }>> {
     try {
       if (!this.supabase) {
         throw new Error('Authentication service not configured');
@@ -273,7 +285,8 @@ export class AuthService {
       return {
         data: null,
         error: {
-          message: error instanceof Error ? error.message : 'OAuth sign in failed',
+          message:
+            error instanceof Error ? error.message : 'OAuth sign in failed',
           status: 500,
         } as AuthError,
       };
@@ -283,9 +296,13 @@ export class AuthService {
   /**
    * Listen to auth state changes
    */
-  onAuthStateChange(callback: (event: string, session: Session | null) => void) {
+  onAuthStateChange(
+    callback: (event: string, session: Session | null) => void
+  ) {
     if (!this.supabase) {
-      logger.warn('Cannot listen to auth state changes - service not configured');
+      logger.warn(
+        'Cannot listen to auth state changes - service not configured'
+      );
       return () => {};
     }
 

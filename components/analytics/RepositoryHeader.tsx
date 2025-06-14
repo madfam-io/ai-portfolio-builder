@@ -1,6 +1,5 @@
 'use client';
 
-import { formatDistanceToNow } from '@/lib/utils/date';
 import {
   ArrowLeft,
   Clock,
@@ -9,6 +8,8 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+
+import { formatDistanceToNow } from '@/lib/utils/date';
 
 import type { Repository } from '@/types/analytics';
 

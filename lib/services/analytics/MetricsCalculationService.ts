@@ -25,9 +25,7 @@ export class MetricsCalculationService {
   /**
    * Sync repository metrics
    */
-  async syncRepositoryMetrics(
-    repository: Repository
-  ): Promise<CodeMetrics> {
+  async syncRepositoryMetrics(repository: Repository): Promise<CodeMetrics> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
@@ -160,10 +158,7 @@ export class MetricsCalculationService {
   /**
    * Sync commit analytics for a repository
    */
-  async syncCommitAnalytics(
-    repository: Repository,
-    days = 30
-  ): Promise<void> {
+  async syncCommitAnalytics(repository: Repository, days = 30): Promise<void> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
@@ -324,19 +319,19 @@ export class MetricsCalculationService {
     averageTimeToFirstReview: number;
   } {
     const mergedPRs = pullRequests.filter(pr => pr.state === 'merged');
-    
+
     const avgCycleTime =
       mergedPRs.length > 0
         ? mergedPRs.reduce((sum, pr) => sum + (pr.cycleTimeHours || 0), 0) /
           mergedPRs.length
         : 0;
-        
+
     const avgLeadTime =
       mergedPRs.length > 0
         ? mergedPRs.reduce((sum, pr) => sum + (pr.leadTimeHours || 0), 0) /
           mergedPRs.length
         : 0;
-        
+
     const mergeRate =
       pullRequests.length > 0
         ? (mergedPRs.length / pullRequests.length) * 100

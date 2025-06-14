@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+
 import { authService } from '@/lib/services/auth/auth-service';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { logger } from '@/lib/utils/logger';
@@ -12,7 +13,7 @@ interface AuthProviderProps {
 
 /**
  * AuthProvider Component
- * 
+ *
  * Handles authentication state management and session restoration
  * Listens for auth state changes from Supabase
  */

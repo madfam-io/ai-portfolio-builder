@@ -1,4 +1,3 @@
-import { format } from '@/lib/utils/date';
 import React from 'react';
 import {
   LineChart,
@@ -10,6 +9,8 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
+
+import { format } from '@/lib/utils/date';
 
 /**
  * Conversion Chart Component (Lazy-loaded)

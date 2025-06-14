@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
-import { logger } from '@/lib/utils/logger';
 import { apiError } from '@/lib/api/versioning';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * Centralized API Error Handler
@@ -39,11 +39,11 @@ export function createApiError(
 ): ApiError {
   const error = new Error(message) as ApiError;
   const errorConfig = ERROR_TYPES[type];
-  
+
   error.statusCode = errorConfig.statusCode;
   error.code = errorConfig.code;
   error.metadata = metadata;
-  
+
   return error;
 }
 
@@ -95,7 +95,7 @@ export function handleApiError(
   // Handle Supabase/Database errors
   if (error instanceof Error && 'code' in error) {
     const dbError = error as any;
-    
+
     // Common database error mappings
     switch (dbError.code) {
       case '23505': // Unique constraint violation
@@ -135,7 +135,8 @@ export function handleApiError(
   }
 
   // Default error response
-  const message = error instanceof Error ? error.message : 'An unexpected error occurred';
+  const message =
+    error instanceof Error ? error.message : 'An unexpected error occurred';
   return apiError(message, {
     status: 500,
     data: { code: 'INTERNAL_ERROR' },

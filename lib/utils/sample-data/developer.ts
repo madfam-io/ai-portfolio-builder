@@ -108,7 +108,7 @@ export const developerSampleData: SampleDataConfig = {
       startDate: '2014-09',
       endDate: '2018-05',
       current: false,
-      achievements: ['Dean\'s List', 'ACM Programming Competition Winner'],
+      achievements: ["Dean's List", 'ACM Programming Competition Winner'],
     },
   ],
   skills: [

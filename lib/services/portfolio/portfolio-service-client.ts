@@ -57,7 +57,10 @@ export class PortfolioServiceClient {
     }
   }
 
-  async updatePortfolio(id: string, data: UpdatePortfolioDTO): Promise<Portfolio> {
+  async updatePortfolio(
+    id: string,
+    data: UpdatePortfolioDTO
+  ): Promise<Portfolio> {
     try {
       const response = await fetch(`${this.baseUrl}/${id}`, {
         method: 'PUT',

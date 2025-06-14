@@ -1,9 +1,9 @@
 /**
  * Base Service Class
- * 
+ *
  * Provides common patterns and utilities for all service classes.
  * Implements error handling, logging, and common CRUD operations.
- * 
+ *
  * @module lib/services/base
  */
 
@@ -48,159 +48,145 @@ export class ServiceError extends Error {
 
 /**
  * Abstract base service class
- * 
+ *
  * @template T The entity type this service manages
  */
 export abstract class BaseService<T extends { id: string }> {
   protected abstract serviceName: string;
-  
+
   /**
    * Get the repository instance for this service
    */
   protected abstract getRepository(): BaseRepository<T>;
-  
+
   /**
    * Find all entities with optional filtering
    */
   async findAll(options?: QueryOptions): Promise<T[]> {
     try {
       logger.info(`${this.serviceName}.findAll`, { options });
-      
+
       const items = await this.getRepository().findAll(options);
-      
-      logger.info(`${this.serviceName}.findAll completed`, { 
-        count: items.length 
+
+      logger.info(`${this.serviceName}.findAll completed`, {
+        count: items.length,
       });
-      
+
       return items;
     } catch (error) {
       throw this.handleError('findAll', error);
     }
   }
-  
+
   /**
    * Find entity by ID
    */
   async findById(id: string): Promise<T | null> {
     try {
       logger.info(`${this.serviceName}.findById`, { id });
-      
+
       if (!this.isValidId(id)) {
-        throw new ServiceError(
-          'Invalid ID format',
-          'INVALID_ID',
-          400,
-          { id }
-        );
+        throw new ServiceError('Invalid ID format', 'INVALID_ID', 400, { id });
       }
-      
+
       const item = await this.getRepository().findById(id);
-      
+
       if (!item) {
         logger.warn(`${this.serviceName}.findById: Not found`, { id });
       }
-      
+
       return item;
     } catch (error) {
       throw this.handleError('findById', error);
     }
   }
-  
+
   /**
    * Create new entity
    */
   async create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T> {
     try {
       logger.info(`${this.serviceName}.create`, { data });
-      
+
       // Validate data before creation
       await this.validateCreate(data);
-      
+
       const created = await this.getRepository().create(data);
-      
-      logger.info(`${this.serviceName}.create completed`, { 
-        id: created.id 
+
+      logger.info(`${this.serviceName}.create completed`, {
+        id: created.id,
       });
-      
+
       return created;
     } catch (error) {
       throw this.handleError('create', error);
     }
   }
-  
+
   /**
    * Update existing entity
    */
   async update(id: string, data: Partial<T>): Promise<T | null> {
     try {
       logger.info(`${this.serviceName}.update`, { id, data });
-      
+
       if (!this.isValidId(id)) {
-        throw new ServiceError(
-          'Invalid ID format',
-          'INVALID_ID',
-          400,
-          { id }
-        );
+        throw new ServiceError('Invalid ID format', 'INVALID_ID', 400, { id });
       }
-      
+
       // Validate data before update
       await this.validateUpdate(id, data);
-      
+
       const updated = await this.getRepository().update(id, data);
-      
+
       if (!updated) {
         logger.warn(`${this.serviceName}.update: Not found`, { id });
       }
-      
+
       return updated;
     } catch (error) {
       throw this.handleError('update', error);
     }
   }
-  
+
   /**
    * Delete entity
    */
   async delete(id: string): Promise<boolean> {
     try {
       logger.info(`${this.serviceName}.delete`, { id });
-      
+
       if (!this.isValidId(id)) {
-        throw new ServiceError(
-          'Invalid ID format',
-          'INVALID_ID',
-          400,
-          { id }
-        );
+        throw new ServiceError('Invalid ID format', 'INVALID_ID', 400, { id });
       }
-      
+
       // Check if deletion is allowed
       await this.validateDelete(id);
-      
+
       const deleted = await this.getRepository().delete(id);
-      
-      logger.info(`${this.serviceName}.delete completed`, { 
-        id, 
-        success: deleted 
+
+      logger.info(`${this.serviceName}.delete completed`, {
+        id,
+        success: deleted,
       });
-      
+
       return deleted;
     } catch (error) {
       throw this.handleError('delete', error);
     }
   }
-  
+
   /**
    * Validate ID format
    * Override for custom ID validation
    */
   protected isValidId(id: string): boolean {
     // UUID v4 validation by default
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     return uuidRegex.test(id);
   }
-  
+
   /**
    * Validate data before creation
    * Override for custom validation
@@ -210,18 +196,18 @@ export abstract class BaseService<T extends { id: string }> {
   ): Promise<void> {
     // Override in subclasses for custom validation
   }
-  
+
   /**
    * Validate data before update
    * Override for custom validation
    */
   protected async validateUpdate(
-    _id: string, 
+    _id: string,
     _data: Partial<T>
   ): Promise<void> {
     // Override in subclasses for custom validation
   }
-  
+
   /**
    * Validate before deletion
    * Override for custom validation
@@ -229,7 +215,7 @@ export abstract class BaseService<T extends { id: string }> {
   protected async validateDelete(_id: string): Promise<void> {
     // Override in subclasses for custom validation
   }
-  
+
   /**
    * Handle errors consistently
    */
@@ -238,16 +224,16 @@ export abstract class BaseService<T extends { id: string }> {
       service: this.serviceName,
       operation,
     };
-    
+
     // If already a ServiceError, just log and rethrow
     if (error instanceof ServiceError) {
       logger.error('Service error', { ...context, error });
       return error;
     }
-    
+
     // Log the error
     logger.error('Unexpected service error', { ...context, error });
-    
+
     // Convert to ServiceError
     if (error instanceof Error) {
       return new ServiceError(
@@ -257,7 +243,7 @@ export abstract class BaseService<T extends { id: string }> {
         { originalError: error.message }
       );
     }
-    
+
     return new ServiceError(
       `${this.serviceName} ${operation} failed`,
       'UNKNOWN_ERROR',
@@ -265,42 +251,40 @@ export abstract class BaseService<T extends { id: string }> {
       { error }
     );
   }
-  
+
   /**
    * Batch operations for performance
    */
   async findByIds(ids: string[]): Promise<Map<string, T>> {
     try {
-      logger.info(`${this.serviceName}.findByIds`, { 
-        count: ids.length 
+      logger.info(`${this.serviceName}.findByIds`, {
+        count: ids.length,
       });
-      
+
       // Remove duplicates and validate IDs
       const uniqueIds = [...new Set(ids)].filter(id => this.isValidId(id));
-      
+
       if (uniqueIds.length === 0) {
         return new Map();
       }
-      
+
       // Batch fetch from repository
       const items = await this.batchFetch(uniqueIds);
-      
+
       // Convert to Map for O(1) lookup
-      const itemMap = new Map(
-        items.map(item => [item.id, item])
-      );
-      
-      logger.info(`${this.serviceName}.findByIds completed`, { 
+      const itemMap = new Map(items.map(item => [item.id, item]));
+
+      logger.info(`${this.serviceName}.findByIds completed`, {
         requested: ids.length,
-        found: itemMap.size 
+        found: itemMap.size,
       });
-      
+
       return itemMap;
     } catch (error) {
       throw this.handleError('findByIds', error);
     }
   }
-  
+
   /**
    * Override for custom batch fetching
    */
@@ -308,14 +292,14 @@ export abstract class BaseService<T extends { id: string }> {
     // Default implementation: fetch one by one
     // Override for optimized batch fetching
     const items: T[] = [];
-    
+
     for (const id of ids) {
       const item = await this.getRepository().findById(id);
       if (item) {
         items.push(item);
       }
     }
-    
+
     return items;
   }
 }

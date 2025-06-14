@@ -185,9 +185,7 @@ export class RepositoryAnalyticsService {
       const pullRequests = prData || [];
 
       // Calculate PR stats
-      const mergedPRs = pullRequests.filter(
-        (pr: any) => pr.state === 'merged'
-      );
+      const mergedPRs = pullRequests.filter((pr: any) => pr.state === 'merged');
       const avgCycleTime =
         mergedPRs.length > 0
           ? mergedPRs.reduce(
