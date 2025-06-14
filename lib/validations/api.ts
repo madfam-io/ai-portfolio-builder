@@ -94,31 +94,22 @@ const previewPortfolioSchema = z
     
     projects: z.array(z.object({
       id: z.string(),
-      name: z.string(),
+      title: z.string(),
       description: z.string(),
       technologies: z.array(z.string()),
-      role: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().nullable().optional(),
-      current: z.boolean().optional(),
-      highlights: z.array(z.string()).optional(),
-      links: z.object({
-        demo: z.string().optional(),
-        github: z.string().optional(),
-        website: z.string().optional(),
-        documentation: z.string().optional(),
-      }).optional(),
       imageUrl: z.string().optional(),
+      projectUrl: z.string().optional(),
+      liveUrl: z.string().optional(),
+      githubUrl: z.string().optional(),
+      highlights: z.array(z.string()).optional(),
       featured: z.boolean().optional(),
-      metrics: z.record(z.string()).optional(),
+      order: z.number().optional(),
     })).optional(),
     
     skills: z.array(z.object({
-      id: z.string(),
-      category: z.string(),
-      skills: z.array(z.string()),
+      name: z.string(),
       level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
-      featured: z.boolean().optional(),
+      category: z.string().optional(),
     })).optional(),
     
     certifications: z.array(z.object({
@@ -126,11 +117,9 @@ const previewPortfolioSchema = z
       name: z.string(),
       issuer: z.string(),
       issueDate: z.string(),
-      expiryDate: z.string().nullable().optional(),
+      expiryDate: z.string().optional(),
       credentialId: z.string().optional(),
       credentialUrl: z.string().optional(),
-      description: z.string().optional(),
-      skills: z.array(z.string()).optional(),
       imageUrl: z.string().optional(),
     })).optional(),
 

@@ -145,7 +145,7 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     const { portfolio, template } = validationResult.data;
 
     // Ensure portfolio has required fields for rendering
-    const portfolioForRender = {
+    const portfolioForRender: Portfolio = {
       ...portfolio,
       id: portfolio.id || 'preview', // Provide default ID for preview
       userId: portfolio.userId || 'preview-user',
@@ -159,7 +159,14 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       template: portfolio.template ?? template ?? 'developer',
       customization: portfolio.customization || {},
       status: portfolio.status || 'draft',
-    } as Portfolio;
+      subdomain: null,
+      customDomain: null,
+      views: 0,
+      lastViewedAt: null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      publishedAt: null,
+    };
 
     // Generate HTML based on template
     let html = '';
