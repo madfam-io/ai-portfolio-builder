@@ -219,7 +219,7 @@ function DashboardContent(): React.ReactElement {
                         <span>{formatDate(portfolio.updatedAt)}</span>
                       </div>
                     )}
-                    {portfolio.views > 0 && (
+                    {portfolio.views && portfolio.views > 0 && (
                       <div className="flex items-center gap-2">
                         <Eye className="h-3 w-3" />
                         <span>{portfolio.views} {t.views || 'views'}</span>
