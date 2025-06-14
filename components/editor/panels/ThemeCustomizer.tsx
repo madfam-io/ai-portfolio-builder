@@ -19,7 +19,23 @@ interface ThemeCustomizerProps {
   template: string;
 }
 
-const DEFAULT_THEMES: Record<string, TemplateCustomization> = {
+const DEFAULT_MINIMAL_THEME: TemplateCustomization = {
+  primaryColor: '#000000',
+  secondaryColor: '#6b7280',
+  accentColor: '#3b82f6',
+  backgroundColor: '#ffffff',
+  textColor: '#000000',
+  fontFamily: 'Inter',
+  fontSize: 'small',
+  spacing: 'compact',
+  borderRadius: 'none',
+  headerStyle: 'minimal',
+  darkMode: false,
+};
+
+type ThemeKey = 'developer' | 'designer' | 'consultant' | 'minimal';
+
+const DEFAULT_THEMES: Record<ThemeKey, TemplateCustomization> = {
   developer: {
     primaryColor: '#3b82f6',
     secondaryColor: '#8b5cf6',
@@ -59,19 +75,7 @@ const DEFAULT_THEMES: Record<string, TemplateCustomization> = {
     headerStyle: 'classic',
     darkMode: false,
   },
-  minimal: {
-    primaryColor: '#000000',
-    secondaryColor: '#6b7280',
-    accentColor: '#3b82f6',
-    backgroundColor: '#ffffff',
-    textColor: '#000000',
-    fontFamily: 'Inter',
-    fontSize: 'small',
-    spacing: 'compact',
-    borderRadius: 'none',
-    headerStyle: 'minimal',
-    darkMode: false,
-  },
+  minimal: DEFAULT_MINIMAL_THEME,
 };
 
 const FONT_OPTIONS = [
@@ -106,10 +110,17 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
   
   // Use default theme if customization is undefined
   const getDefaultTheme = (): TemplateCustomization => {
-    if (template in DEFAULT_THEMES) {
-      return DEFAULT_THEMES[template as keyof typeof DEFAULT_THEMES];
+    // Type guard to ensure template is a valid key
+    const isValidTemplateKey = (key: string): key is ThemeKey => {
+      return key in DEFAULT_THEMES;
+    };
+    
+    if (isValidTemplateKey(template)) {
+      return DEFAULT_THEMES[template];
     }
-    return DEFAULT_THEMES.minimal;
+    
+    // Fallback to minimal theme
+    return DEFAULT_MINIMAL_THEME;
   };
   
   const currentCustomization: TemplateCustomization = customization || getDefaultTheme();
