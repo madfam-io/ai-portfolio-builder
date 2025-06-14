@@ -10,8 +10,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Experience, EmploymentType } from '@/types/portfolio';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
 
 interface ExperienceSectionProps {
   experiences: Experience[];
@@ -20,6 +22,7 @@ interface ExperienceSectionProps {
 
 interface ExperienceFormData {
   company: string;
+  companyLogo?: string;
   position: string;
   location?: string;
   employmentType?: EmploymentType;
@@ -33,10 +36,12 @@ interface ExperienceFormData {
 
 export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSectionProps) {
   const { t } = useLanguage();
+  const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<ExperienceFormData>({
     company: '',
+    companyLogo: '',
     position: '',
     location: '',
     employmentType: 'full-time',
@@ -213,6 +218,18 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                   placeholder={t.positionPlaceholder || 'e.g. Senior Software Engineer'}
                 />
               </div>
+            </div>
+
+            <div>
+              <Label>{t.companyLogo || 'Company Logo'}</Label>
+              <ImageUpload
+                value={formData.companyLogo}
+                onChange={(url) => setFormData({ ...formData, companyLogo: url || '' })}
+                type="company"
+                portfolioId={currentPortfolio?.id || ''}
+                aspectRatio="square"
+                className="mt-2 max-w-[200px]"
+              />
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">

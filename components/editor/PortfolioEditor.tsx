@@ -381,7 +381,6 @@ export default function PortfolioEditor({
             activeSection={activeSection}
             onSectionChange={setActiveSection}
             onSectionUpdate={handleSectionUpdate}
-            errors={editorState.errors || {}}
           />
         )}
 

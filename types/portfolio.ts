@@ -79,7 +79,10 @@ export interface ContactInfo {
 export interface Experience {
   id: string;
   company: string;
+  companyLogo?: string;
   position: string;
+  location?: string;
+  employmentType?: EmploymentType;
   startDate: string;
   endDate?: string; // Optional for current positions
   current: boolean;
@@ -132,6 +135,7 @@ export interface Certification {
   expiryDate?: string;
   credentialId?: string;
   credentialUrl?: string;
+  imageUrl?: string;
 }
 
 // Template customization
@@ -171,6 +175,7 @@ export interface Portfolio {
   title: string;
   bio: string;
   tagline?: string;
+  location?: string;
   avatarUrl?: string;
 
   // Contact and social

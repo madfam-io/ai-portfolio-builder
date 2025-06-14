@@ -27,7 +27,6 @@ export function EditorContent() {
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionType>('hero');
-  const [errors] = useState<Record<string, string>>({});
   
   const {
     currentPortfolio,
@@ -225,7 +224,6 @@ export function EditorContent() {
               });
             }
           }}
-          errors={errors}
         />
 
         {/* Canvas/Form Area */}

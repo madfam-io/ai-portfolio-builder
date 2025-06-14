@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, Link, Github, ExternalLink, Star, Upload, X } from 'lucide-react';
+import { Plus, Edit2, Trash2, Link, Github, ExternalLink, Star, MoveUp, MoveDown, X } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Project } from '@/types/portfolio';
 import { useToast } from '@/hooks/use-toast';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -33,9 +35,9 @@ interface ProjectFormData {
 export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
+  const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProjectFormData>({
     title: '',
     description: '',
@@ -60,7 +62,6 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
       highlights: [],
       featured: false,
     });
-    setImagePreview(null);
     setIsAdding(false);
     setEditingId(null);
   };
@@ -85,7 +86,6 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
       highlights: project.highlights || [],
       featured: project.featured || false,
     });
-    setImagePreview(project.imageUrl || null);
   };
 
   const handleSave = () => {
@@ -131,30 +131,6 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
     }
   };
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Check file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast({
-        title: t.error || 'Error',
-        description: t.imageSizeError || 'Image must be less than 5MB',
-        variant: 'destructive',
-      });
-      return;
-    }
-
-    // For now, create a local preview URL
-    // In production, this would upload to Supabase Storage
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setImagePreview(result);
-      setFormData({ ...formData, imageUrl: result });
-    };
-    reader.readAsDataURL(file);
-  };
 
   const handleHighlightChange = (value: string, index: number) => {
     const newHighlights = [...(formData.highlights || [])];
@@ -248,52 +224,14 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
 
             <div>
               <Label>{t.projectImage || 'Project Image'}</Label>
-              <div className="space-y-2">
-                {imagePreview && (
-                  <div className="relative w-full h-48 bg-muted rounded-lg overflow-hidden">
-                    <img
-                      src={imagePreview}
-                      alt="Project preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute top-2 right-2"
-                      onClick={() => {
-                        setImagePreview(null);
-                        setFormData({ ...formData, imageUrl: '' });
-                      }}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                )}
-                <div className="flex gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    asChild
-                  >
-                    <label htmlFor="image-upload" className="cursor-pointer">
-                      <Upload className="h-4 w-4 mr-2" />
-                      {t.uploadImage || 'Upload Image'}
-                      <input
-                        id="image-upload"
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handleImageUpload}
-                      />
-                    </label>
-                  </Button>
-                  <span className="text-xs text-muted-foreground flex items-center">
-                    {t.maxFileSize || 'Max 5MB'}
-                  </span>
-                </div>
-              </div>
+              <ImageUpload
+                value={formData.imageUrl}
+                onChange={(url) => setFormData({ ...formData, imageUrl: url || '' })}
+                type="project"
+                portfolioId={currentPortfolio?.id || ''}
+                aspectRatio="video"
+                className="mt-2"
+              />
             </div>
 
             <div className="grid gap-4 md:grid-cols-3">
@@ -439,7 +377,7 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
                           onClick={() => moveProject(index, 'up')}
                           title={t.moveUp || 'Move up'}
                         >
-                          ↑
+                          <MoveUp className="h-4 w-4" />
                         </Button>
                       )}
                       {index < projects.length - 1 && (
@@ -449,7 +387,7 @@ export function ProjectsSection({ projects = [], onUpdate }: ProjectsSectionProp
                           onClick={() => moveProject(index, 'down')}
                           title={t.moveDown || 'Move down'}
                         >
-                          ↓
+                          <MoveDown className="h-4 w-4" />
                         </Button>
                       )}
                       <Button

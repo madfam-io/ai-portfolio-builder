@@ -13,6 +13,7 @@ import {
 import { useState } from 'react';
 
 import { Portfolio, SectionType } from '@/types/portfolio';
+import { HeroSection } from './sections/HeroSection';
 import { ExperienceSection } from './sections/ExperienceSection';
 import { EducationSection } from './sections/EducationSection';
 import { ProjectsSection } from './sections/ProjectsSection';
@@ -26,7 +27,6 @@ interface EditorSidebarProps {
   activeSection: SectionType;
   onSectionChange: (section: SectionType) => void;
   onSectionUpdate: (section: SectionType, updates: unknown) => void;
-  errors: Record<string, string>;
 }
 
 const SECTION_CONFIG = {
@@ -82,7 +82,6 @@ export function EditorSidebar({
   activeSection,
   onSectionChange,
   onSectionUpdate,
-  errors,
 }: EditorSidebarProps) {
   const [expandedSections, setExpandedSections] = useState<Set<SectionType>>(
     new Set([activeSection])
@@ -99,82 +98,27 @@ export function EditorSidebar({
     onSectionChange(section);
   };
 
-  const renderBasicInfoEditor = () => (
-    <div className="space-y-4 p-4">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Full Name
-        </label>
-        <input
-          type="text"
-          value={portfolio.name || ''}
-          onChange={e =>
-            onSectionUpdate('hero', { ...portfolio, name: e.target.value })
-          }
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Your full name"
-        />
-        {errors.name && (
-          <p className="text-red-500 text-xs mt-1">{errors.name}</p>
-        )}
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Professional Title
-        </label>
-        <input
-          type="text"
-          value={portfolio.title || ''}
-          onChange={e =>
-            onSectionUpdate('hero', { ...portfolio, title: e.target.value })
-          }
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="e.g., Senior Software Developer"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Tagline
-        </label>
-        <input
-          type="text"
-          value={portfolio.tagline || ''}
-          onChange={e =>
-            onSectionUpdate('hero', { ...portfolio, tagline: e.target.value })
-          }
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="A short, catchy tagline"
-        />
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Bio
-        </label>
-        <textarea
-          value={portfolio.bio || ''}
-          onChange={e =>
-            onSectionUpdate('about', { ...portfolio, bio: e.target.value })
-          }
-          rows={4}
-          className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Tell us about yourself..."
-        />
-        <p className="text-xs text-gray-500 mt-1">
-          {portfolio.bio?.length || 0} / 500 characters
-        </p>
-      </div>
-    </div>
-  );
 
 
   const renderSectionContent = (section: SectionType) => {
     switch (section) {
       case 'hero':
       case 'about':
-        return renderBasicInfoEditor();
+        return (
+          <HeroSection
+            data={{
+              name: portfolio.name,
+              title: portfolio.title,
+              bio: portfolio.bio,
+              location: portfolio.location,
+              avatarUrl: portfolio.avatarUrl,
+              headline: portfolio.data?.headline,
+              tagline: portfolio.tagline,
+              social: portfolio.social,
+            }}
+            onUpdate={(updates) => onSectionUpdate('hero', updates)}
+          />
+        );
       case 'experience':
         return (
           <ExperienceSection

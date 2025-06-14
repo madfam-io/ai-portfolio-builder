@@ -9,9 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Certification } from '@/types/portfolio';
 import { cn } from '@/lib/utils';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
 
 interface CertificationsSectionProps {
   certifications: Certification[];
@@ -25,6 +27,7 @@ interface CertificationFormData {
   expiryDate?: string;
   credentialId?: string;
   credentialUrl?: string;
+  imageUrl?: string;
 }
 
 export function CertificationsSection({ 
@@ -32,6 +35,7 @@ export function CertificationsSection({
   onUpdate 
 }: CertificationsSectionProps) {
   const { t } = useLanguage();
+  const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData] = useState<CertificationFormData>({
@@ -41,6 +45,7 @@ export function CertificationsSection({
     expiryDate: '',
     credentialId: '',
     credentialUrl: '',
+    imageUrl: '',
   });
 
   const resetForm = () => {
@@ -51,6 +56,7 @@ export function CertificationsSection({
       expiryDate: '',
       credentialId: '',
       credentialUrl: '',
+      imageUrl: '',
     });
     setIsAdding(false);
     setEditingId(null);
@@ -255,6 +261,18 @@ export function CertificationsSection({
                   placeholder={t.credentialUrlPlaceholder || 'https://...'}
                 />
               </div>
+            </div>
+
+            <div>
+              <Label>{t.certificateImage || 'Certificate Image'}</Label>
+              <ImageUpload
+                value={formData.imageUrl}
+                onChange={(url) => setFormData({ ...formData, imageUrl: url || '' })}
+                type="certificate"
+                portfolioId={currentPortfolio?.id || ''}
+                aspectRatio="auto"
+                className="mt-2"
+              />
             </div>
 
             <div className="flex justify-end gap-2">
