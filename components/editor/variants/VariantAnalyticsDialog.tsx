@@ -81,7 +81,7 @@ export function VariantAnalyticsDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={period} onValueChange={(v) => setPeriod(v as any)}>
+        <Tabs value={period} onValueChange={(v: string) => setPeriod(v as 'day' | 'week' | 'month')}>
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="day">{t.day || 'Day'}</TabsTrigger>
             <TabsTrigger value="week">{t.week || 'Week'}</TabsTrigger>

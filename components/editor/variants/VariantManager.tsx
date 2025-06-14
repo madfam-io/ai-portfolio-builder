@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Copy, Eye, EyeOff, MoreVertical, Users, Sparkles, BarChart } from 'lucide-react';
+import { Plus, Copy, Eye, EyeOff, MoreVertical, Sparkles, BarChart } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,7 +43,6 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     generateOptimizationSuggestions,
   } = usePortfolioVariantsStore();
 
-  const currentVariant = variants.find(v => v.id === currentVariantId);
 
   const handleVariantSwitch = async (variantId: string) => {
     await switchVariant(variantId);
@@ -57,15 +56,15 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     try {
       await updateVariant(variant.id, { isPublished: !variant.isPublished });
       toast({
-        title: variant.isPublished ? t.variantUnpublished : t.variantPublished,
+        title: variant.isPublished ? (t.variantUnpublished || 'Variant unpublished') : (t.variantPublished || 'Variant published'),
         description: variant.isPublished 
-          ? t.variantUnpublishedDesc 
-          : t.variantPublishedDesc,
+          ? (t.variantUnpublishedDesc || 'Variant is now unpublished')
+          : (t.variantPublishedDesc || 'Variant is now live'),
       });
     } catch (error) {
       toast({
-        title: t.error,
-        description: t.failedToUpdateVariant,
+        title: t.error || 'Error',
+        description: t.failedToUpdateVariant || 'Failed to update variant',
         variant: 'destructive',
       });
     }
@@ -77,18 +76,18 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
   };
 
   const handleDelete = async (variantId: string) => {
-    if (!confirm(t.confirmDeleteVariant)) return;
+    if (!confirm(t.confirmDeleteVariant || 'Are you sure you want to delete this variant?')) return;
     
     try {
       await deleteVariant(variantId);
       toast({
-        title: t.variantDeleted,
-        description: t.variantDeletedDesc,
+        title: t.variantDeleted || 'Variant deleted',
+        description: t.variantDeletedDesc || 'The variant has been removed',
       });
     } catch (error) {
       toast({
-        title: t.error,
-        description: t.failedToDeleteVariant,
+        title: t.error || 'Error',
+        description: t.failedToDeleteVariant || 'Failed to delete variant',
         variant: 'destructive',
       });
     }
@@ -98,13 +97,13 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     try {
       const suggestions = await generateOptimizationSuggestions(variantId);
       toast({
-        title: t.optimizationSuggestions,
-        description: `${suggestions.length} ${t.suggestionsGenerated}`,
+        title: t.optimizationSuggestions || 'Optimization suggestions',
+        description: `${suggestions.length} ${t.suggestionsGenerated || 'suggestions generated'}`,
       });
     } catch (error) {
       toast({
-        title: t.error,
-        description: t.failedToGenerateSuggestions,
+        title: t.error || 'Error',
+        description: t.failedToGenerateSuggestions || 'Failed to generate suggestions',
         variant: 'destructive',
       });
     }
@@ -198,20 +197,20 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                     </div>
                   </div>
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuTrigger asChild onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e) => {
+                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         setShowAnalytics(variant.id);
                       }}>
                         <BarChart className="h-4 w-4 mr-2" />
                         {t.viewAnalytics || 'View Analytics'}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
+                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleOptimize(variant.id);
                       }}>
@@ -219,7 +218,7 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                         {t.optimizeContent || 'Optimize Content'}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={(e) => {
+                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleTogglePublish(variant);
                       }}>
@@ -229,7 +228,7 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                           <><Eye className="h-4 w-4 mr-2" /> {t.publish || 'Publish'}</>
                         )}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
+                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
                         handleDuplicate(variant);
                       }}>
@@ -238,7 +237,7 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                       </DropdownMenuItem>
                       {!variant.isDefault && (
                         <DropdownMenuItem 
-                          onClick={(e) => {
+                          onClick={(e: React.MouseEvent) => {
                             e.stopPropagation();
                             handleDelete(variant.id);
                           }}

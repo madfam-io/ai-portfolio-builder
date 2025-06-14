@@ -106,8 +106,8 @@ export function CreateVariantDialog({
   const handleCreate = async () => {
     if (!formData.name || !formData.audienceName) {
       toast({
-        title: t.error,
-        description: t.fillRequiredFields,
+        title: t.error || 'Error',
+        description: t.fillRequiredFields || 'Please fill in all required fields',
         variant: 'destructive',
       });
       return;
@@ -143,8 +143,8 @@ export function CreateVariantDialog({
       resetForm();
     } catch (error) {
       toast({
-        title: t.error,
-        description: t.failedToCreateVariant,
+        title: t.error || 'Error',
+        description: t.failedToCreateVariant || 'Failed to create variant',
         variant: 'destructive',
       });
     } finally {
@@ -175,7 +175,7 @@ export function CreateVariantDialog({
   };
 
   return (
-    <Dialog open={open} onOpenChange={(open) => {
+    <Dialog open={open} onOpenChange={(open: boolean) => {
       onOpenChange(open);
       if (!open) resetForm();
     }}>

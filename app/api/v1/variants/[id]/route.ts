@@ -37,7 +37,8 @@ export const GET = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      if (variant.portfolio.user_id !== request.user.id) {
+      const portfolioData = Array.isArray(variant.portfolio) ? variant.portfolio[0] : variant.portfolio;
+      if (!portfolioData || portfolioData.user_id !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
 
@@ -59,7 +60,7 @@ export const GET = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to get variant:', error);
+      logger.error('Failed to get variant:', error instanceof Error ? error : new Error(String(error)));
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -95,7 +96,8 @@ export const PATCH = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      if (existingVariant.portfolio.user_id !== request.user.id) {
+      const portfolioData = Array.isArray(existingVariant.portfolio) ? existingVariant.portfolio[0] : existingVariant.portfolio;
+      if (!portfolioData || portfolioData.user_id !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
 
@@ -149,7 +151,7 @@ export const PATCH = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to update variant:', error);
+      logger.error('Failed to update variant:', error instanceof Error ? error : new Error(String(error)));
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -185,7 +187,8 @@ export const DELETE = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      if (variant.portfolio.user_id !== request.user.id) {
+      const portfolioDataDelete = Array.isArray(variant.portfolio) ? variant.portfolio[0] : variant.portfolio;
+      if (!portfolioDataDelete || portfolioDataDelete.user_id !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
 
@@ -212,7 +215,7 @@ export const DELETE = versionedApiHandler(
 
       return apiSuccess({ message: 'Variant deleted successfully' });
     } catch (error) {
-      logger.error('Failed to delete variant:', error);
+      logger.error('Failed to delete variant:', error instanceof Error ? error : new Error(String(error)));
       return apiError('Internal server error', { status: 500 });
     }
   })

@@ -85,7 +85,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
               isLoading: false 
             });
           } catch (error) {
-            logger.error('Failed to load variants:', error);
+            logger.error('Failed to load variants:', error instanceof Error ? error : new Error(String(error)));
             set({ isLoading: false });
           }
         },
@@ -99,7 +99,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             const data = await response.json();
             set({ audienceProfiles: data.data.profiles || [] });
           } catch (error) {
-            logger.error('Failed to load audience profiles:', error);
+            logger.error('Failed to load audience profiles:', error instanceof Error ? error : new Error(String(error)));
           }
         },
 
@@ -126,7 +126,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             
             return newVariant;
           } catch (error) {
-            logger.error('Failed to create variant:', error);
+            logger.error('Failed to create variant:', error instanceof Error ? error : new Error(String(error)));
             set({ isCreating: false });
             throw error;
           }
@@ -149,7 +149,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
               ),
             }));
           } catch (error) {
-            logger.error('Failed to update variant:', error);
+            logger.error('Failed to update variant:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -170,7 +170,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
                 : state.currentVariantId,
             }));
           } catch (error) {
-            logger.error('Failed to delete variant:', error);
+            logger.error('Failed to delete variant:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -184,7 +184,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             
             set({ currentVariantId: variantId, isSwitching: false });
           } catch (error) {
-            logger.error('Failed to switch variant:', error);
+            logger.error('Failed to switch variant:', error instanceof Error ? error : new Error(String(error)));
             set({ isSwitching: false });
           }
         },
@@ -202,7 +202,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             
             await get().updateVariant(variantId, { contentOverrides: updatedOverrides });
           } catch (error) {
-            logger.error('Failed to update content override:', error);
+            logger.error('Failed to update content override:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -213,11 +213,12 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             const variant = get().variants.find(v => v.id === variantId);
             if (!variant) throw new Error('Variant not found');
             
-            const { [path]: removed, ...updatedOverrides } = variant.contentOverrides;
+            const updatedOverrides = { ...variant.contentOverrides } as any;
+            delete updatedOverrides[path];
             
             await get().updateVariant(variantId, { contentOverrides: updatedOverrides });
           } catch (error) {
-            logger.error('Failed to remove content override:', error);
+            logger.error('Failed to remove content override:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -231,7 +232,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
               body: JSON.stringify({ visitorInfo }),
             });
           } catch (error) {
-            logger.error('Failed to track view:', error);
+            logger.error('Failed to track view:', error instanceof Error ? error : new Error(String(error)));
           }
         },
 
@@ -247,7 +248,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             const data = await response.json();
             return data.data.analytics;
           } catch (error) {
-            logger.error('Failed to get analytics:', error);
+            logger.error('Failed to get analytics:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -267,7 +268,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             set({ suggestions });
             return suggestions;
           } catch (error) {
-            logger.error('Failed to generate suggestions:', error);
+            logger.error('Failed to generate suggestions:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -289,7 +290,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
               suggestions: state.suggestions.filter(s => s.variantId !== suggestionId),
             }));
           } catch (error) {
-            logger.error('Failed to apply suggestion:', error);
+            logger.error('Failed to apply suggestion:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -305,7 +306,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             
             if (!response.ok) throw new Error('Failed to start comparison');
           } catch (error) {
-            logger.error('Failed to start comparison:', error);
+            logger.error('Failed to start comparison:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },
@@ -321,7 +322,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             
             if (!response.ok) throw new Error('Failed to stop comparison');
           } catch (error) {
-            logger.error('Failed to stop comparison:', error);
+            logger.error('Failed to stop comparison:', error instanceof Error ? error : new Error(String(error)));
             throw error;
           }
         },

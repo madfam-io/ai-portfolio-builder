@@ -71,7 +71,7 @@ export const GET = versionedApiHandler(
 
       return apiSuccess({ variants: transformedVariants });
     } catch (error) {
-      logger.error('Failed to get portfolio variants:', error);
+      logger.error('Failed to get portfolio variants:', error instanceof Error ? error : new Error(String(error)));
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -208,7 +208,7 @@ export const POST = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to create portfolio variant:', error);
+      logger.error('Failed to create portfolio variant:', error instanceof Error ? error : new Error(String(error)));
       return apiError('Internal server error', { status: 500 });
     }
   })
