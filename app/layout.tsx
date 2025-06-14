@@ -8,6 +8,7 @@ import { GlobalErrorBoundary } from '@/components/shared/error-boundaries/Global
 import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';
+import { AuthProvider } from '@/components/providers/auth-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -96,9 +97,11 @@ export default function RootLayout({
           <AppProvider>
             <LanguageProvider>
               <StoreProvider>
-                <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-                  {children}
-                </div>
+                <AuthProvider>
+                  <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                    {children}
+                  </div>
+                </AuthProvider>
               </StoreProvider>
             </LanguageProvider>
           </AppProvider>

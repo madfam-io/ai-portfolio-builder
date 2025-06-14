@@ -29,6 +29,7 @@ export interface AuthActions {
   ) => Promise<void>;
   signOut: () => Promise<void>;
   resetAuth: () => void;
+  initializeAuth: () => Promise<void>;
 }
 
 // Portfolio Store Types

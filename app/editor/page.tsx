@@ -7,6 +7,7 @@ import { EditorLayout } from '@/components/editor/EditorLayout';
 import { EditorSidebar } from '@/components/editor/EditorSidebar';
 import { EditorCanvas } from '@/components/editor/EditorCanvas';
 import { EditorPreview } from '@/components/editor/EditorPreview';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Button } from '@/components/ui/button';
@@ -19,7 +20,7 @@ import { SectionType } from '@/types/portfolio';
  * Main editor interface for creating and editing portfolios
  * Features split-screen design with real-time preview
  */
-export default function EditorPage() {
+function EditorContent() {
   const router = useRouter();
   const { t } = useLanguage();
   const [showPreview, setShowPreview] = useState(true);
@@ -214,5 +215,13 @@ export default function EditorPage() {
         )}
       </div>
     </EditorLayout>
+  );
+}
+
+export default function EditorPage() {
+  return (
+    <ProtectedRoute>
+      <EditorContent />
+    </ProtectedRoute>
   );
 }

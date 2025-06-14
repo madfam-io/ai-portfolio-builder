@@ -2,36 +2,26 @@
 
 import { Edit, Eye, Globe, Loader, Plus, Trash } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
-import { useAuth } from '@/lib/contexts/AuthContext';
+import { ProtectedRoute } from '@/components/auth/protected-route';
+import { useAuthStore } from '@/lib/store/auth-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
 
-export default function Dashboard(): React.ReactElement {
+function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
-  const { user, loading: authLoading } = useAuth();
-  const router = useRouter();
+  const { user } = useAuthStore();
   const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   // Load user's portfolios
   useEffect(() => {
-    // If user is not authenticated, redirect to sign in
-    if (authLoading === false && user === null) {
-      router.push('/auth/signin');
-      return;
-    }
-
-    // Load user's portfolios
-    if (user !== null) {
-      void loadPortfolios();
-    }
-  }, [user, authLoading, router]);
+    void loadPortfolios();
+  }, []);
 
   const loadPortfolios = async (): Promise<void> => {
     try {
@@ -110,8 +100,8 @@ export default function Dashboard(): React.ReactElement {
     return date.toLocaleDateString();
   };
 
-  // Show loading spinner while checking authentication or loading data
-  if (authLoading || loading) {
+  // Show loading spinner while loading data
+  if (loading) {
     return (
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -124,11 +114,6 @@ export default function Dashboard(): React.ReactElement {
         </div>
       </BaseLayout>
     );
-  }
-
-  // If not authenticated (shouldn't reach here due to redirect, but just in case)
-  if (!user) {
-    return <div>Not authenticated</div>;
   }
 
   // Error state
@@ -161,7 +146,7 @@ export default function Dashboard(): React.ReactElement {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {t.hello}, {user.email?.split('@')[0] || 'User'}!
+              {t.hello}, {user?.email?.split('@')[0] || 'User'}!
             </h1>
             <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mt-2">
               {t.myPortfolios}
@@ -312,5 +297,13 @@ export default function Dashboard(): React.ReactElement {
         )}
       </div>
     </BaseLayout>
+  );
+}
+
+export default function Dashboard(): React.ReactElement {
+  return (
+    <ProtectedRoute>
+      <DashboardContent />
+    </ProtectedRoute>
   );
 }
