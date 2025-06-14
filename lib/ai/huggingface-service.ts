@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
 import { env } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
 

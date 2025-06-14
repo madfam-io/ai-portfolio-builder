@@ -1,4 +1,4 @@
-import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
 import {
   GEOSettings,

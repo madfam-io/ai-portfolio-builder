@@ -1,4 +1,4 @@
-import { cache } from '@/lib/cache/redis-cache';
+import { cache } from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
 
 export interface AvailableModel {

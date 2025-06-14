@@ -259,7 +259,7 @@ export class AuthService {
    * Sign in with OAuth provider
    */
   async signInWithOAuth(
-    provider: 'google' | 'github'
+    provider: 'google' | 'github' | 'linkedin_oidc'
   ): Promise<AuthResponse<{ url: string }>> {
     try {
       if (!this.supabase) {

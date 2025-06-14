@@ -157,8 +157,7 @@ const nextConfig = {
 
   // ESLint configuration
   eslint: {
-    // Temporarily allow builds to complete with ESLint warnings for deployment
-    // TODO: Fix remaining ESLint issues in development
+    // Allow builds to complete with ESLint warnings
     ignoreDuringBuilds: true,
   },
 
