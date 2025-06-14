@@ -11,6 +11,7 @@ The PRISMA AI Portfolio Builder demonstrates good performance foundations with s
 ### Key Findings
 
 **✅ Strengths**
+
 - Well-structured caching architecture with Redis and in-memory fallback
 - Atomic design system with component-level code splitting
 - Image optimization with Next.js Image component
@@ -18,6 +19,7 @@ The PRISMA AI Portfolio Builder demonstrates good performance foundations with s
 - Bundle analyzer available for optimization analysis
 
 **⚠️ Areas for Improvement**
+
 - Bundle sizes exceed performance budgets (203KB vs 200KB target)
 - Limited implementation of React optimization hooks (memo, useMemo, useCallback)
 - Caching layer not utilized in API routes
@@ -28,12 +30,12 @@ The PRISMA AI Portfolio Builder demonstrates good performance foundations with s
 
 ### Current Bundle Metrics vs Performance Budgets
 
-| Metric | Current | Budget | Status |
-|--------|---------|--------|--------|
-| First Load JS (Homepage) | 203 KB | 200 KB | ⚠️ Over |
-| Largest Route JS | 322 KB | - | ⚠️ High |
-| Shared Bundle | 103 KB | - | ✅ Good |
-| Middleware | 68.8 KB | - | ✅ Acceptable |
+| Metric                   | Current | Budget | Status        |
+| ------------------------ | ------- | ------ | ------------- |
+| First Load JS (Homepage) | 203 KB  | 200 KB | ⚠️ Over       |
+| Largest Route JS         | 322 KB  | -      | ⚠️ High       |
+| Shared Bundle            | 103 KB  | -      | ✅ Good       |
+| Middleware               | 68.8 KB | -      | ✅ Acceptable |
 
 ### Largest Routes by Bundle Size
 
@@ -45,11 +47,12 @@ The PRISMA AI Portfolio Builder demonstrates good performance foundations with s
 ### Large Dependencies Identified
 
 Based on package.json analysis:
+
 - **recharts**: ~2MB - Heavy charting library
 - **framer-motion**: ~500KB - Animation library
 - **react-icons**: ~1MB - Icon library (tree-shakeable)
-- **@radix-ui/***: Multiple packages, ~50-100KB each
-- **@octokit/***: GitHub API clients ~200KB
+- **@radix-ui/\***: Multiple packages, ~50-100KB each
+- **@octokit/\***: GitHub API clients ~200KB
 
 ## 🚀 Performance Optimizations Implemented
 
@@ -69,6 +72,7 @@ const CACHE_CONFIG = {
 ### 2. Code Splitting ✅ Partial
 
 Found 12 files using dynamic imports:
+
 - Template components lazy loaded
 - Editor components lazy loaded
 - Analytics components lazy loaded
@@ -78,6 +82,7 @@ Found 12 files using dynamic imports:
 ### 3. Image Optimization ✅
 
 Custom `OptimizedImage` component with:
+
 - Lazy loading
 - Blur placeholder
 - Error handling
@@ -106,6 +111,7 @@ const THRESHOLDS = {
 ### 2. Missing React Optimizations
 
 Only 13/100+ components use optimization hooks:
+
 - Limited use of `React.memo`
 - Sparse `useMemo`/`useCallback` usage
 - No virtualization for large lists
@@ -136,6 +142,7 @@ Production builds falling back to in-memory cache
 ### Priority 1: Reduce Bundle Sizes (Target: -20KB)
 
 1. **Replace Heavy Dependencies**
+
    ```bash
    # Replace recharts with lightweight alternative
    pnpm remove recharts
@@ -143,6 +150,7 @@ Production builds falling back to in-memory cache
    ```
 
 2. **Lazy Load Landing Page Components**
+
    ```typescript
    const Hero = dynamic(() => import('./Hero'), {
      loading: () => <HeroSkeleton />
@@ -150,10 +158,11 @@ Production builds falling back to in-memory cache
    ```
 
 3. **Tree-shake Icon Imports**
+
    ```typescript
    // Bad
    import { FaGithub, FaLinkedin } from 'react-icons/fa';
-   
+
    // Good
    import FaGithub from 'react-icons/fa/FaGithub';
    import FaLinkedin from 'react-icons/fa/FaLinkedin';
@@ -167,15 +176,15 @@ import { redisCache, CACHE_KEYS } from '@/lib/cache/redis-cache';
 
 export async function GET(request: NextRequest) {
   const cacheKey = `${CACHE_KEYS.PORTFOLIO}list:${userId}`;
-  
+
   // Try cache first
   const cached = await redisCache.get(cacheKey);
   if (cached) return NextResponse.json(cached);
-  
+
   // Fetch and cache
   const portfolios = await fetchPortfolios(userId);
   await redisCache.set(cacheKey, portfolios, 300); // 5 min TTL
-  
+
   return NextResponse.json(portfolios);
 }
 ```
@@ -194,11 +203,11 @@ export const PortfolioCard = React.memo(({ portfolio }: Props) => {
     () => formatDate(portfolio.createdAt),
     [portfolio.createdAt]
   );
-  
+
   const handleClick = useCallback(() => {
     router.push(`/portfolio/${portfolio.id}`);
   }, [portfolio.id]);
-  
+
   return <div onClick={handleClick}>...</div>;
 });
 ```
@@ -247,13 +256,15 @@ import { reportWebVitals } from '@/lib/monitoring/performance';
 export default function RootLayout({ children }) {
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
-        getCLS(reportWebVitals);
-        getFID(reportWebVitals);
-        getFCP(reportWebVitals);
-        getLCP(reportWebVitals);
-        getTTFB(reportWebVitals);
-      });
+      import('web-vitals').then(
+        ({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {
+          getCLS(reportWebVitals);
+          getFID(reportWebVitals);
+          getFCP(reportWebVitals);
+          getLCP(reportWebVitals);
+          getTTFB(reportWebVitals);
+        }
+      );
     }
   }, []);
 }
@@ -284,24 +295,28 @@ module.exports = {
 ## 🎯 Quick Wins (Implement Today)
 
 1. **Enable Production Source Maps** for better debugging
+
    ```javascript
    // next.config.js
    productionBrowserSourceMaps: true,
    ```
 
 2. **Add Response Compression**
+
    ```javascript
    // next.config.js
    compress: true,
    ```
 
 3. **Implement Static Generation** for marketing pages
+
    ```typescript
    // app/about/page.tsx
    export const revalidate = 3600; // Revalidate every hour
    ```
 
 4. **Add Prefetch Links** for critical navigation
+
    ```typescript
    import Link from 'next/link';
    <Link href="/dashboard" prefetch>Dashboard</Link>
@@ -340,11 +355,13 @@ Found proper cleanup in 17 components with useEffect returns. No obvious memory 
 ## 🚦 Performance Score Estimate
 
 Based on analysis:
+
 - **Current Score**: 75/100
 - **Target Score**: 90/100
 - **Potential Improvement**: +15 points
 
 Implementing the recommended optimizations should achieve:
+
 - LCP < 2.5s (currently ~3s)
 - FID < 100ms (currently good)
 - CLS < 0.1 (currently good)
@@ -360,4 +377,4 @@ Implementing the recommended optimizations should achieve:
 
 ---
 
-*Generated by Performance Analysis Tool v1.0*
+_Generated by Performance Analysis Tool v1.0_

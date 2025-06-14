@@ -8,12 +8,14 @@ Complete API documentation for the PRISMA AI Portfolio Builder platform.
 2. [Authentication](#authentication)
 3. [AI Enhancement APIs](#ai-enhancement-apis)
 4. [Portfolio Management APIs](#portfolio-management-apis)
-5. [GitHub Analytics APIs](#github-analytics-apis)
-6. [Admin APIs](#admin-apis)
-7. [User Management APIs](#user-management-apis)
-8. [Error Handling](#error-handling)
-9. [Rate Limiting](#rate-limiting)
-10. [Examples & SDKs](#examples--sdks)
+5. [Portfolio Variants APIs](#portfolio-variants-apis)
+6. [GitHub Analytics APIs](#github-analytics-apis)
+7. [Experiments APIs](#experiments-apis)
+8. [Admin APIs](#admin-apis)
+9. [User Management APIs](#user-management-apis)
+10. [Error Handling](#error-handling)
+11. [Rate Limiting](#rate-limiting)
+12. [Examples & SDKs](#examples--sdks)
 
 ## 🎯 Overview
 
@@ -429,6 +431,153 @@ Publish portfolio to subdomain.
 {
   subdomain?: string;    // Custom subdomain (if available)
   customDomain?: string; // Custom domain (premium feature)
+}
+```
+
+## 🔀 Portfolio Variants APIs
+
+### Variant Management
+
+#### GET `/api/v1/portfolios/[id]/variants`
+
+Get all variants for a portfolio.
+
+**Response**:
+
+```typescript
+{
+  success: true,
+  data: {
+    variants: Array<{
+      id: string;
+      portfolioId: string;
+      name: string;
+      audience: {
+        type: 'recruiter' | 'client' | 'investor' | 'general';
+        industry?: string;
+        seniority?: string;
+      };
+      customization: {
+        bio?: string;
+        highlights?: string[];
+        projectsOrder?: string[];
+      };
+      performance: {
+        views: number;
+        conversions: number;
+        averageTimeOnPage: number;
+      };
+      isActive: boolean;
+      createdAt: string;
+      updatedAt: string;
+    }>;
+  }
+}
+```
+
+#### POST `/api/v1/portfolios/[id]/variants`
+
+Create a new portfolio variant.
+
+**Request Body**:
+
+```typescript
+{
+  name: string;
+  audience: {
+    type: 'recruiter' | 'client' | 'investor' | 'general';
+    industry?: string;
+    seniority?: string;
+  };
+  customization: {
+    bio?: string;
+    highlights?: string[];
+    projectsOrder?: string[];
+  };
+}
+```
+
+#### PUT `/api/v1/variants/[id]`
+
+Update an existing variant.
+
+#### DELETE `/api/v1/variants/[id]`
+
+Delete a variant.
+
+#### POST `/api/v1/variants/[id]/activate`
+
+Activate a variant for A/B testing.
+
+## 🧪 Experiments APIs
+
+### Experiment Management
+
+#### GET `/api/v1/experiments`
+
+Get all experiments with filtering.
+
+**Query Parameters**:
+
+- `status?: 'draft' | 'running' | 'paused' | 'completed'`
+- `page?: number`
+- `limit?: number`
+
+#### POST `/api/v1/experiments`
+
+Create a new experiment.
+
+**Request Body**:
+
+```typescript
+{
+  name: string;
+  description: string;
+  type: 'ab_test' | 'multivariate' | 'feature_flag';
+  targeting: {
+    audience: string[];
+    percentage: number;
+  };
+  variants: Array<{
+    name: string;
+    weight: number;
+    changes: Record<string, any>;
+  }>;
+}
+```
+
+#### GET `/api/v1/experiments/[id]`
+
+Get experiment details with performance metrics.
+
+#### PUT `/api/v1/experiments/[id]`
+
+Update experiment configuration.
+
+#### POST `/api/v1/experiments/[id]/start`
+
+Start an experiment.
+
+#### POST `/api/v1/experiments/[id]/pause`
+
+Pause a running experiment.
+
+#### POST `/api/v1/experiments/[id]/complete`
+
+Complete an experiment and analyze results.
+
+#### POST `/api/v1/experiments/track`
+
+Track experiment events.
+
+**Request Body**:
+
+```typescript
+{
+  experimentId: string;
+  variantId: string;
+  event: string;
+  properties?: Record<string, any>;
 }
 ```
 

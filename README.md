@@ -4,13 +4,13 @@
 
 **AI-Powered Portfolio Builder for Modern Professionals**
 
-[![Version](https://img.shields.io/badge/version-0.2.0--beta-blue.svg)](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/releases)
+[![Version](https://img.shields.io/badge/version-0.3.0--beta-blue.svg)](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/releases)
 [![License](https://img.shields.io/badge/license-Proprietary-red.svg)](#-license)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](./docs/DOCKER.md)
-[![Tests](https://img.shields.io/badge/Tests-537%20Tests%20%7C%2095%25%20Coverage-green.svg)](#-testing)
-[![Code Quality](https://img.shields.io/badge/Code%20Quality-100%2F100-brightgreen.svg)](#-architecture)
+[![Tests](https://img.shields.io/badge/Tests-40%2B%20Test%20Suites%20%7C%20Growing-yellow.svg)](#-testing)
+[![Code Quality](https://img.shields.io/badge/Code%20Quality-90%2F100-brightgreen.svg)](#-architecture)
 [![Production](https://img.shields.io/badge/Production-Vercel%20Ready-success.svg)](#-deployment)
 
 </div>
@@ -64,11 +64,11 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 <table>
 <tr>
 <td><strong>Version</strong></td>
-<td><code>0.2.0-beta - Enterprise Architecture Complete</code></td>
+<td><code>0.3.0-beta - Core SaaS Features In Progress</code></td>
 </tr>
 <tr>
 <td><strong>Phase</strong></td>
-<td>🏆 100/100 Codebase Score - Production Ready</td>
+<td>Phase 3: Building Core SaaS Features</td>
 </tr>
 <tr>
 <td><strong>Build Status</strong></td>
@@ -76,7 +76,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 </tr>
 <tr>
 <td><strong>Test Coverage</strong></td>
-<td>537+ tests, 95%+ coverage, 40+ test suites</td>
+<td>40+ test suites, coverage growing</td>
 </tr>
 <tr>
 <td><strong>Architecture</strong></td>
@@ -84,7 +84,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 </tr>
 <tr>
 <td><strong>Last Updated</strong></td>
-<td>June 2025</td>
+<td>December 2024</td>
 </tr>
 </table>
 
@@ -94,7 +94,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 
 ## ✨ Features
 
-### 🌟 **Core Features (v0.2.0-beta - ENTERPRISE ARCHITECTURE COMPLETE)**
+### 🌟 **Core Features (v0.3.0-beta)**
 
 <table>
 <tr>
@@ -143,7 +143,36 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 </tr>
 </table>
 
-### 🏆 **NEW: Enterprise Architecture (v0.2.0-beta)**
+### 🏆 **NEW: Enterprise Features (v0.3.0-beta)**
+
+<table>
+<tr>
+<td width="50%">
+
+#### 📊 **PostHog Analytics Integration**
+
+- **Self-Hosted Ready**: Docker infrastructure for privacy-first analytics
+- **User Journey Tracking**: Complete funnel analysis and retention metrics
+- **Feature Flags**: A/B testing and gradual rollouts built-in
+- **Custom Events**: Portfolio views, edits, publishing tracked
+- **Real-time Insights**: Live dashboard for user behavior
+
+</td>
+<td width="50%">
+
+#### 🔀 **Portfolio Variants System**
+
+- **Multi-Audience Targeting**: Create variants for different audiences
+- **A/B Testing**: Built-in experimentation framework
+- **Performance Tracking**: Automatic variant performance analysis
+- **Smart Switching**: Context-aware variant selection
+- **Admin Dashboard**: Complete variant management interface
+
+</td>
+</tr>
+</table>
+
+### 🏆 **Enterprise Architecture**
 
 <table>
 <tr>
@@ -260,6 +289,26 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 | 🌐 Publishing Pipeline               | High     | 📋 Planned     | Q2 2025 |
 
 > 🗺️ **See complete feature roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md) | **Track progress**: [**ISSUES.md**](./docs/ISSUES.md)
+
+---
+
+## 🎮 Demo Mode
+
+The application includes a fully functional demo mode that works without environment variables:
+
+- **🔐 Authentication Pages**: Sign in/up forms display but don't require actual authentication
+- **📝 Portfolio Editor**: Create and preview portfolios with mock data storage
+- **🎨 Template System**: All 6 templates available for preview
+- **🌍 Multilingual**: Full Spanish/English support with geolocation
+- **📊 Analytics**: PostHog integration ready (activates with API key)
+- **🤖 AI Features**: HuggingFace integration ready (requires API key)
+
+To enable full functionality, configure the following services:
+
+- Supabase (authentication & database)
+- HuggingFace (AI content generation)
+- PostHog (analytics)
+- Redis (caching - falls back to in-memory)
 
 ---
 

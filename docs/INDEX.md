@@ -33,6 +33,9 @@ This index provides a comprehensive guide to all documentation in the PRISMA AI 
 
 - **[docs/AI_FEATURES.md](./AI_FEATURES.md)** - AI content generation capabilities
 - **[docs/SECURITY.md](./SECURITY.md)** - Security best practices and implementation
+- **[docs/POSTHOG_INTEGRATION.md](./POSTHOG_INTEGRATION.md)** - Analytics setup and usage
+- **[docs/PORTFOLIO_VARIANTS.md](./PORTFOLIO_VARIANTS.md)** - Multi-audience portfolio system
+- **[docs/EXPERIMENTS.md](./EXPERIMENTS.md)** - A/B testing and feature flags
 
 ## 🌍 Internationalization
 
@@ -96,4 +99,4 @@ When updating documentation:
 
 ---
 
-_Last Updated: June 2025_
+_Last Updated: December 2024_
