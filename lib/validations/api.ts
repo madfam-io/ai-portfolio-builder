@@ -123,24 +123,24 @@ const previewPortfolioSchema = z
     // Template and customization
     template: z.enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business', 'minimal', 'modern']).optional(),
     customization: z.object({
-      colors: z.record(z.string()).optional(),
-      fonts: z.object({
-        heading: z.string().optional(),
-        body: z.string().optional(),
-      }).optional(),
-      layout: z.object({
-        spacing: z.enum(['compact', 'normal', 'relaxed']).optional(),
-        style: z.enum(['modern', 'classic', 'minimal']).optional(),
-      }).optional(),
-      sections: z.object({
-        order: z.array(z.string()).optional(),
-        visibility: z.record(z.boolean()).optional(),
-      }).optional(),
-      custom: z.record(z.unknown()).optional(),
+      primaryColor: z.string().optional(),
+      secondaryColor: z.string().optional(),
+      accentColor: z.string().optional(),
+      backgroundColor: z.string().optional(),
+      textColor: z.string().optional(),
+      fontFamily: z.string().optional(),
+      fontSize: z.enum(['small', 'medium', 'large']).optional(),
+      spacing: z.enum(['compact', 'normal', 'relaxed']).optional(),
+      borderRadius: z.enum(['none', 'small', 'medium', 'large']).optional(),
+      headerStyle: z.enum(['minimal', 'bold', 'creative', 'classic', 'modern']).optional(),
+      sectionOrder: z.array(z.string()).optional(),
+      hiddenSections: z.array(z.string()).optional(),
+      darkMode: z.boolean().optional(),
+      customCSS: z.string().optional(),
     }).optional(),
 
     // Metadata
-    status: z.string().optional(),
+    status: z.enum(['draft', 'published', 'archived']).optional(),
     subdomain: z.string().optional(),
     customDomain: z.string().optional(),
     views: z.number().optional(),
