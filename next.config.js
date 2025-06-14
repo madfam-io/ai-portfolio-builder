@@ -13,9 +13,6 @@ const nextConfig = {
   reactStrictMode: false,
   poweredByHeader: false,
   
-  // Enable SWC minification for smaller bundles
-  swcMinify: true,
-  
   // Optimize production builds
   productionBrowserSourceMaps: false,
   

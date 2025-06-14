@@ -47,7 +47,7 @@ const DevelopmentEnvSchema = BaseEnvSchema.extend({
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().optional(),
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   HUGGINGFACE_API_KEY: z.string().optional(),
-  REDIS_URL: z.string().url().optional(),
+  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
 });
 
 /**
@@ -63,7 +63,7 @@ const ProductionEnvSchema = BaseEnvSchema.extend({
   HUGGINGFACE_API_KEY: z.string().min(1),
   
   // Redis (required in production)
-  REDIS_URL: z.string().url(),
+  REDIS_URL: z.union([z.string().url(), z.literal('')]),
   
   // OAuth (optional, for future use)
   LINKEDIN_CLIENT_ID: z.string().optional(),
@@ -110,14 +110,20 @@ function parseEnv() {
   // Vercel will inject the actual env vars at runtime
   const isVercelBuild = process.env.VERCEL || process.env.CI;
   
-  let schema: z.ZodSchema;
+  // Get schema outside try-catch to ensure it's always assigned
+  const schema = getEnvSchema(nodeEnv);
   
   try {
-    schema = getEnvSchema(nodeEnv);
-    
     // For Vercel builds, use partial validation
-    if (isVercelBuild) {
-      return (schema as any).partial().parse(process.env);
+    // Also check if we're in Next.js build phase
+    if (isVercelBuild || typeof window === 'undefined') {
+      // Clean up empty string values before parsing
+      const cleanedEnv = Object.entries(process.env).reduce((acc, [key, value]) => {
+        acc[key] = value === '' ? undefined : value;
+        return acc;
+      }, {} as Record<string, string | undefined>);
+      
+      return (schema as any).partial().parse(cleanedEnv);
     }
     
     const parsed = schema.parse(process.env);
