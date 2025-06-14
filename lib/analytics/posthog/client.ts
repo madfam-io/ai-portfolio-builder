@@ -55,7 +55,7 @@ export const initializePostHog = () => {
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_POSTHOG === 'true';
   
   if (!posthogKey || !isEnabled) {
-    console.warn('PostHog is not configured or disabled');
+    
     return;
   }
 

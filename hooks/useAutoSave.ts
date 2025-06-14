@@ -61,7 +61,7 @@ export function useAutoSave(
 
         return false;
       } catch (error) {
-        console.error('Auto-save failed:', error);
+        
         return false;
       } finally {
         isAutoSavingRef.current = false;

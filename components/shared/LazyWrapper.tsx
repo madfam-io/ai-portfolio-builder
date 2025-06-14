@@ -56,11 +56,7 @@ class LazyErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error(
-      'LazyWrapper Error Boundary caught an error:',
-      error,
-      errorInfo
-    );
+    
 
     // In production, you might want to send this to an error reporting service
     if (process.env.NODE_ENV === 'production') {

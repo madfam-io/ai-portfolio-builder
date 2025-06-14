@@ -126,9 +126,7 @@ export function useStoreProvider() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   if (typeof window !== 'undefined' && !isAuthenticated) {
-    console.warn(
-      'StoreProvider should wrap your app to ensure proper store initialization'
-    );
+    
   }
 
   return isAuthenticated;

@@ -14,9 +14,7 @@ function createSupabaseClient(): SupabaseClient | null {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn(
-      'Supabase environment variables not configured. Authentication disabled.'
-    );
+    
     return null;
   }
 

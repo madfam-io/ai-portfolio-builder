@@ -55,7 +55,7 @@ export function EditorContent() {
             description: t.changesSaved || 'Your changes have been saved',
           });
         } catch (error) {
-          console.error('Auto-save failed:', error);
+          
         } finally {
           setIsSaving(false);
         }

@@ -27,7 +27,7 @@ async function getPortfolio(subdomain: string): Promise<Portfolio | null> {
     const data = await response.json();
     return data.data?.portfolio || null;
   } catch (error) {
-    console.error('Failed to fetch portfolio:', error);
+    
     return null;
   }
 }

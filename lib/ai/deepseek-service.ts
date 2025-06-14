@@ -61,9 +61,7 @@ export class DeepSeekService implements AIService {
     };
 
     if (!this.config.apiKey) {
-      console.warn(
-        'DeepSeek API key not configured. Service will use mock responses.'
-      );
+      
     }
   }
 

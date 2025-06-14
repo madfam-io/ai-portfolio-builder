@@ -93,7 +93,7 @@ function PublishContent({ params }: PageProps) {
         setSubdomainAvailable(false);
       }
     } catch (error) {
-      console.error('Error checking subdomain:', error);
+      
       setSubdomainAvailable(false);
     } finally {
       setIsCheckingSubdomain(false);

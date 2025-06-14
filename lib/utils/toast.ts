@@ -20,17 +20,17 @@ interface ToastOptions {
 // In production, this would integrate with a proper notification system
 export const showToast = {
   success: (message: string, _options?: ToastOptions) => {
-    console.info(`✅ ${message}`);
+    
     // In production, this would show a toast notification
   },
 
   error: (message: string, _options?: ToastOptions) => {
-    console.error(`❌ ${message}`);
+    
     // In production, this would show a toast notification
   },
 
   loading: (message: string, _options?: ToastOptions) => {
-    console.info(`⏳ ${message}`);
+    
     // Return a mock ID for compatibility
     return `toast-${Date.now()}`;
   },
@@ -44,7 +44,7 @@ export const showToast = {
     },
     _options?: ToastOptions
   ) => {
-    console.info(`⏳ ${messages.loading}`);
+    
 
     return promise
       .then(data => {
@@ -52,7 +52,7 @@ export const showToast = {
           typeof messages.success === 'function'
             ? messages.success(data)
             : messages.success;
-        console.info(`✅ ${successMsg}`);
+        
         return data;
       })
       .catch(err => {
@@ -60,7 +60,7 @@ export const showToast = {
           typeof messages.error === 'function'
             ? messages.error(err)
             : messages.error;
-        console.error(`❌ ${errorMsg}`);
+        
         throw err;
       });
   },
@@ -87,7 +87,7 @@ export const showToast = {
       messageStr = String(message);
     }
 
-    console.info(`ℹ️ ${messageStr}`);
+    
   },
 };
 

@@ -103,7 +103,7 @@ export function ImageUpload({
         description: t.imageUploaded || 'Image uploaded successfully',
       });
     } catch (error) {
-      console.error('Upload error:', error);
+      
       toast({
         title: t.error || 'Error',
         description: error instanceof Error ? error.message : t.uploadFailed || 'Failed to upload image',
@@ -145,7 +145,7 @@ export function ImageUpload({
         description: t.imageRemoved || 'Image removed successfully',
       });
     } catch (error) {
-      console.error('Delete error:', error);
+      
       toast({
         title: t.error || 'Error',
         description: t.deleteFailed || 'Failed to remove image',

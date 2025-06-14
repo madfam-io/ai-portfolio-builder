@@ -47,7 +47,7 @@ export function VariantAnalyticsDialog({
       const data = await getAnalytics(variantId, period);
       setAnalytics(data);
     } catch (error) {
-      console.error('Failed to load analytics:', error);
+      
     } finally {
       setIsLoading(false);
     }

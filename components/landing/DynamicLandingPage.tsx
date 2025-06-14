@@ -167,9 +167,7 @@ export default function DynamicLandingPage(): React.ReactElement {
           const Component = getComponentForConfig(component);
 
           if (!Component) {
-            console.warn(
-              `Component not found for type: ${component.type}, variant: ${component.variant}`
-            );
+            
             return null;
           }
 

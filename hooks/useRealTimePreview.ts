@@ -214,7 +214,7 @@ export function useRealTimePreview({
       // For now, return a placeholder - implement with html2canvas in production
       return 'data:image/png;base64,placeholder-screenshot-data';
     } catch (error) {
-      console.error('Failed to capture screenshot:', error);
+      
       return null;
     }
   }, []);

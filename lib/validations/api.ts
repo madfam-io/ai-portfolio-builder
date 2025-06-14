@@ -1,6 +1,14 @@
 import { z } from 'zod';
 
 import { logger } from '@/lib/utils/logger';
+import type {
+  ExperienceItem,
+  EducationItem,
+  ProjectItem,
+  SkillCategory,
+  CertificationItem,
+  TemplateCustomization,
+} from '@/types/portfolio-sections';
 /**
  * API Input Validation Schemas
  * Comprehensive validation for all API routes
@@ -53,26 +61,107 @@ const previewPortfolioSchema = z
       })
       .optional(),
 
-    // Portfolio sections - allow any structure for flexibility
-    experience: z.array(z.any()).optional(),
-    education: z.array(z.any()).optional(),
-    projects: z.array(z.any()).optional(),
-    skills: z.array(z.any()).optional(),
-    certifications: z.array(z.any()).optional(),
+    // Portfolio sections with proper schemas
+    experience: z.array(z.object({
+      id: z.string(),
+      company: z.string(),
+      position: z.string(),
+      location: z.string().optional(),
+      startDate: z.string(),
+      endDate: z.string().nullable().optional(),
+      current: z.boolean().optional(),
+      description: z.string(),
+      highlights: z.array(z.string()).optional(),
+      technologies: z.array(z.string()).optional(),
+      logoUrl: z.string().optional(),
+    })).optional(),
+    
+    education: z.array(z.object({
+      id: z.string(),
+      institution: z.string(),
+      degree: z.string(),
+      field: z.string(),
+      location: z.string().optional(),
+      startDate: z.string(),
+      endDate: z.string().nullable().optional(),
+      current: z.boolean().optional(),
+      gpa: z.string().optional(),
+      honors: z.array(z.string()).optional(),
+      activities: z.array(z.string()).optional(),
+      coursework: z.array(z.string()).optional(),
+      logoUrl: z.string().optional(),
+    })).optional(),
+    
+    projects: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      description: z.string(),
+      technologies: z.array(z.string()),
+      role: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().nullable().optional(),
+      current: z.boolean().optional(),
+      highlights: z.array(z.string()).optional(),
+      links: z.object({
+        demo: z.string().optional(),
+        github: z.string().optional(),
+        website: z.string().optional(),
+        documentation: z.string().optional(),
+      }).optional(),
+      imageUrl: z.string().optional(),
+      featured: z.boolean().optional(),
+      metrics: z.record(z.string()).optional(),
+    })).optional(),
+    
+    skills: z.array(z.object({
+      id: z.string(),
+      category: z.string(),
+      skills: z.array(z.string()),
+      level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
+      featured: z.boolean().optional(),
+    })).optional(),
+    
+    certifications: z.array(z.object({
+      id: z.string(),
+      name: z.string(),
+      issuer: z.string(),
+      issueDate: z.string(),
+      expiryDate: z.string().nullable().optional(),
+      credentialId: z.string().optional(),
+      credentialUrl: z.string().optional(),
+      description: z.string().optional(),
+      skills: z.array(z.string()).optional(),
+      imageUrl: z.string().optional(),
+    })).optional(),
 
     // Template and customization
     template: z.string().optional(),
-    customization: z.any().optional(),
+    customization: z.object({
+      colors: z.record(z.string()).optional(),
+      fonts: z.object({
+        heading: z.string().optional(),
+        body: z.string().optional(),
+      }).optional(),
+      layout: z.object({
+        spacing: z.enum(['compact', 'normal', 'relaxed']).optional(),
+        style: z.enum(['modern', 'classic', 'minimal']).optional(),
+      }).optional(),
+      sections: z.object({
+        order: z.array(z.string()).optional(),
+        visibility: z.record(z.boolean()).optional(),
+      }).optional(),
+      custom: z.record(z.unknown()).optional(),
+    }).optional(),
 
     // Metadata
     status: z.string().optional(),
     subdomain: z.string().optional(),
     customDomain: z.string().optional(),
     views: z.number().optional(),
-    lastViewedAt: z.any().optional(),
-    createdAt: z.any().optional(),
-    updatedAt: z.any().optional(),
-    publishedAt: z.any().optional(),
+    lastViewedAt: z.string().datetime().optional().or(z.date()).optional(),
+    createdAt: z.string().datetime().optional().or(z.date()).optional(),
+    updatedAt: z.string().datetime().optional().or(z.date()).optional(),
+    publishedAt: z.string().datetime().optional().or(z.date()).nullable().optional(),
   })
   .passthrough(); // Allow additional fields for flexibility
 

@@ -5,7 +5,7 @@
 // Event tracking types
 export interface AnalyticsEvent {
   name: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, string | number | boolean | Date | null | undefined>;
   timestamp?: Date;
   distinctId?: string;
 }
@@ -55,7 +55,7 @@ export interface ConversionEvent {
   type: 'contact_click' | 'resume_download' | 'social_click' | 'project_view' | 'custom';
   count: number;
   conversion_rate: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 // A/B Testing types
@@ -68,7 +68,7 @@ export interface Experiment {
   variants: ExperimentVariant[];
   target_metric: string;
   secondary_metrics?: string[];
-  audience_filters?: Record<string, any>;
+  audience_filters?: Record<string, string | number | boolean | string[]>;
   traffic_allocation?: Record<string, number>; // variant_id -> percentage
   created_at: Date;
   started_at?: Date;
@@ -81,7 +81,7 @@ export interface ExperimentVariant {
   name: string;
   description?: string;
   is_control: boolean;
-  configuration: Record<string, any>;
+  configuration: Record<string, string | number | boolean | string[] | Record<string, unknown>>;
   metrics?: VariantMetrics;
 }
 
@@ -168,7 +168,7 @@ export interface VisitorInfo {
   events: Array<{
     event: string;
     timestamp: Date;
-    properties?: Record<string, any>;
+    properties?: Record<string, string | number | boolean | Date>;
   }>;
   
   is_returning: boolean;
@@ -182,7 +182,7 @@ export interface AnalyticsExport {
   id: string;
   type: 'dashboard' | 'portfolio' | 'variant' | 'experiment';
   format: 'csv' | 'json' | 'pdf';
-  filters?: Record<string, any>;
+  filters?: Record<string, string | number | boolean | string[] | Date>;
   date_range: {
     start: Date;
     end: Date;
@@ -203,13 +203,13 @@ export interface FeatureFlag {
   conditions?: Array<{
     property: string;
     operator: 'equals' | 'contains' | 'greater_than' | 'less_than';
-    value: any;
+    value: string | number | boolean | string[];
   }>;
   variants?: Array<{
     key: string;
     name: string;
     percentage: number;
-    payload?: any;
+    payload?: Record<string, string | number | boolean | string[]>;
   }>;
 }
 

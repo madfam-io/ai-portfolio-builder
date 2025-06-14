@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * @fileoverview Database Seeding Engine
@@ -30,7 +31,7 @@ export interface SeedingResult {
  * Handles intelligent seeding with conflict detection and incremental updates
  */
 export class DatabaseSeeder {
-  private client: any;
+  private client: SupabaseClient | null = null;
   private options: SeedingOptions;
 
   constructor(options: SeedingOptions = { mode: 'demo' }) {
