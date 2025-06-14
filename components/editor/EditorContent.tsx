@@ -13,6 +13,11 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { SectionType } from '@/types/portfolio';
+import { 
+  trackEditorSectionEdited, 
+  trackPortfolioUpdated,
+  trackEditorThemeChanged 
+} from '@/lib/analytics/posthog/events';
 
 /**
  * Portfolio Editor Content Component
@@ -211,16 +216,35 @@ export function EditorContent() {
           portfolio={currentPortfolio}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
-          onSectionUpdate={(_section, updates) => {
+          onSectionUpdate={(section, updates) => {
             // Handle section updates
             if (typeof updates === 'object' && updates !== null) {
               Object.entries(updates).forEach(([field, value]) => {
+                // Track analytics for section edits
+                trackEditorSectionEdited(currentPortfolio.id, section, {
+                  edit_type: 'update',
+                  field,
+                });
+                
+                // Track theme changes specifically
+                if (field === 'customization' || field === 'template') {
+                  trackEditorThemeChanged(currentPortfolio.id, {
+                    customization_type: field,
+                  });
+                }
+                
                 // For nested data fields, we need to update the data object
                 if (['experience', 'education', 'projects', 'skills', 'certifications', 'customization', 'contact', 'social'].includes(field)) {
                   updatePortfolioData(field, value);
                 } else {
                   updatePortfolioData(field, value);
                 }
+              });
+              
+              // Track general portfolio update
+              trackPortfolioUpdated(currentPortfolio.id, {
+                section,
+                update_type: 'manual',
               });
             }
           }}

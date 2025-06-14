@@ -101,6 +101,8 @@
     "lucide-react": "^0.310.0",
     "next": "15.3.3",
     "next-themes": "^0.2.1",
+    "posthog-js": "^1.252.0",
+    "posthog-node": "^5.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.3.8",

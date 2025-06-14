@@ -9,6 +9,7 @@ import { AppProvider } from '@/lib/contexts/AppContext';
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
+import { PostHogProvider } from '@/components/providers/posthog-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -98,9 +99,11 @@ export default function RootLayout({
             <LanguageProvider>
               <StoreProvider>
                 <AuthProvider>
-                  <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-                    {children}
-                  </div>
+                  <PostHogProvider>
+                    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                      {children}
+                    </div>
+                  </PostHogProvider>
                 </AuthProvider>
               </StoreProvider>
             </LanguageProvider>

@@ -1,0 +1,222 @@
+version: '3.8'
+
+services:
+  # PostHog Web Service
+  posthog:
+    image: posthog/posthog:release-1.43.1
+    container_name: prisma_posthog
+    depends_on:
+      - posthog_db
+      - posthog_redis
+      - clickhouse
+      - kafka
+      - object_storage
+    ports:
+      - "8000:8000"
+    environment:
+      SECRET_KEY: ${POSTHOG_SECRET_KEY:-insecure-secret-key-for-dev}
+      DATABASE_URL: postgres://posthog:posthog@posthog_db:5432/posthog
+      REDIS_URL: redis://posthog_redis:6379/
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_DATABASE: posthog
+      KAFKA_URL: kafka://kafka:9092
+      OBJECT_STORAGE_ENDPOINT: http://object_storage:19000
+      OBJECT_STORAGE_ACCESS_KEY_ID: object_storage_root_user
+      OBJECT_STORAGE_SECRET_ACCESS_KEY: object_storage_root_password
+      OBJECT_STORAGE_BUCKET: posthog
+      DISABLE_SECURE_SSL_REDIRECT: 'true'
+      IS_BEHIND_PROXY: 'false'
+      EMAIL_HOST: ${EMAIL_HOST:-localhost}
+      EMAIL_PORT: ${EMAIL_PORT:-25}
+      EMAIL_USE_TLS: ${EMAIL_USE_TLS:-false}
+      EMAIL_USE_SSL: ${EMAIL_USE_SSL:-false}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-noreply@prisma.madfam.io}
+      SITE_URL: ${POSTHOG_SITE_URL:-http://localhost:8000}
+    volumes:
+      - ./posthog-plugins:/plugins
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # PostHog Worker (for async tasks)
+  posthog_worker:
+    image: posthog/posthog:release-1.43.1
+    container_name: prisma_posthog_worker
+    command: ./bin/docker-worker-celery --with-scheduler
+    depends_on:
+      - posthog_db
+      - posthog_redis
+      - clickhouse
+      - kafka
+      - object_storage
+    environment:
+      SECRET_KEY: ${POSTHOG_SECRET_KEY:-insecure-secret-key-for-dev}
+      DATABASE_URL: postgres://posthog:posthog@posthog_db:5432/posthog
+      REDIS_URL: redis://posthog_redis:6379/
+      CLICKHOUSE_HOST: clickhouse
+      CLICKHOUSE_DATABASE: posthog
+      KAFKA_URL: kafka://kafka:9092
+      OBJECT_STORAGE_ENDPOINT: http://object_storage:19000
+      OBJECT_STORAGE_ACCESS_KEY_ID: object_storage_root_user
+      OBJECT_STORAGE_SECRET_ACCESS_KEY: object_storage_root_password
+      OBJECT_STORAGE_BUCKET: posthog
+    volumes:
+      - ./posthog-plugins:/plugins
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # PostHog Plugins Server
+  posthog_plugins:
+    image: posthog/posthog:release-1.43.1
+    container_name: prisma_posthog_plugins
+    command: ./bin/plugin-server --no-restart-loop
+    depends_on:
+      - posthog_db
+      - posthog_redis
+      - clickhouse
+      - kafka
+      - object_storage
+    environment:
+      DATABASE_URL: postgres://posthog:posthog@posthog_db:5432/posthog
+      REDIS_URL: redis://posthog_redis:6379/
+      CLICKHOUSE_HOST: clickhouse
+      KAFKA_URL: kafka://kafka:9092
+      OBJECT_STORAGE_ENDPOINT: http://object_storage:19000
+      OBJECT_STORAGE_ACCESS_KEY_ID: object_storage_root_user
+      OBJECT_STORAGE_SECRET_ACCESS_KEY: object_storage_root_password
+      OBJECT_STORAGE_BUCKET: posthog
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # PostgreSQL for PostHog metadata
+  posthog_db:
+    image: postgres:15-alpine
+    container_name: prisma_posthog_db
+    environment:
+      POSTGRES_USER: posthog
+      POSTGRES_PASSWORD: posthog
+      POSTGRES_DB: posthog
+    volumes:
+      - posthog_postgres_data:/var/lib/postgresql/data
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # Redis for PostHog caching
+  posthog_redis:
+    image: redis:7-alpine
+    container_name: prisma_posthog_redis
+    command: redis-server --maxmemory-policy allkeys-lru --maxmemory 400mb
+    volumes:
+      - posthog_redis_data:/data
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # ClickHouse for analytics data storage
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.6.2-alpine
+    container_name: prisma_clickhouse
+    depends_on:
+      - kafka
+      - zookeeper
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - ./posthog/clickhouse/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
+      - ./posthog/clickhouse/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+      - ./posthog/idl:/idl:ro
+      - clickhouse_data:/var/lib/clickhouse
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # Zookeeper for Kafka coordination
+  zookeeper:
+    image: zookeeper:3.8.1-temurin
+    container_name: prisma_zookeeper
+    volumes:
+      - zookeeper_datalog:/datalog
+      - zookeeper_data:/data
+      - zookeeper_logs:/logs
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper:2888:3888;2181
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # Kafka for event streaming
+  kafka:
+    image: bitnami/kafka:3.4.1-debian-11-r4
+    container_name: prisma_kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1001
+      KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
+      KAFKA_CFG_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_CFG_ZOOKEEPER_CONNECT: zookeeper:2181
+      ALLOW_PLAINTEXT_LISTENER: 'true'
+      KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE: 'true'
+    volumes:
+      - kafka_data:/bitnami/kafka
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # MinIO for object storage (session recordings, etc.)
+  object_storage:
+    image: minio/minio:RELEASE.2023-06-29T05-12-28Z
+    container_name: prisma_minio
+    command: server /data --console-address ":19001"
+    ports:
+      - "19000:9000"
+      - "19001:19001"
+    environment:
+      MINIO_ROOT_USER: object_storage_root_user
+      MINIO_ROOT_PASSWORD: object_storage_root_password
+    volumes:
+      - object_storage_data:/data
+    networks:
+      - posthog-network
+    restart: unless-stopped
+
+  # MinIO client for bucket creation
+  createbuckets:
+    image: minio/mc:RELEASE.2023-06-28T21-54-17Z
+    container_name: prisma_minio_setup
+    depends_on:
+      - object_storage
+    environment:
+      MINIO_ROOT_USER: object_storage_root_user
+      MINIO_ROOT_PASSWORD: object_storage_root_password
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      /usr/bin/mc config host add minio http://object_storage:9000 object_storage_root_user object_storage_root_password;
+      /usr/bin/mc mb minio/posthog --ignore-existing;
+      /usr/bin/mc anonymous set download minio/posthog;
+      exit 0;
+      "
+    networks:
+      - posthog-network
+
+volumes:
+  posthog_postgres_data:
+  posthog_redis_data:
+  clickhouse_data:
+  zookeeper_datalog:
+  zookeeper_data:
+  zookeeper_logs:
+  kafka_data:
+  object_storage_data:
+
+networks:
+  posthog-network:
+    driver: bridge

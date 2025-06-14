@@ -20,6 +20,7 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePortfolioVariantsStore } from '@/lib/store/portfolio-variants-store';
 import { useToast } from '@/hooks/use-toast';
 import type { AudienceType, CreateVariantInput, PortfolioVariant } from '@/types/portfolio-variants';
+import { trackVariantCreated } from '@/lib/analytics/posthog/events';
 
 interface CreateVariantDialogProps {
   open: boolean;
@@ -132,6 +133,13 @@ export function CreateVariantDialog({
       };
 
       const variant = await createVariant(input);
+      
+      // Track variant creation
+      trackVariantCreated(variant.id, {
+        portfolio_id: portfolioId,
+        audience_type: formData.audienceType,
+        based_on_variant: basedOnVariantId || undefined,
+      });
       
       toast({
         title: t.variantCreated || 'Variant created',

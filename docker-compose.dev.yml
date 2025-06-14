@@ -72,3 +72,5 @@ volumes:
 networks:
   dev-network:
     driver: bridge
+  posthog-network:
+    driver: bridge
