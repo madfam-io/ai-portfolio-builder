@@ -7,31 +7,34 @@ import { Portfolio } from '@/types/portfolio';
 
 /**
  * Transforms database portfolio object to API format
- * Converts snake_case to camelCase and adjusts field names
+ * Extracts data from JSONB field and converts snake_case to camelCase
  */
 export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
+  // Extract portfolio content from JSONB data field
+  const data = dbPortfolio.data || {};
+  
   return {
     id: dbPortfolio.id,
     userId: dbPortfolio.user_id,
     name: dbPortfolio.name,
-    title: dbPortfolio.title,
-    bio: dbPortfolio.bio,
-    tagline: dbPortfolio.tagline,
-    avatarUrl: dbPortfolio.avatar_url,
-    contact: dbPortfolio.contact || {},
-    social: dbPortfolio.social || {},
-    experience: dbPortfolio.experience || [],
-    education: dbPortfolio.education || [],
-    projects: dbPortfolio.projects || [],
-    skills: dbPortfolio.skills || [],
-    certifications: dbPortfolio.certifications || [],
+    title: data.title || '',
+    bio: data.bio || '',
+    tagline: data.tagline || '',
+    avatarUrl: data.avatar_url || null,
+    contact: data.contact || {},
+    social: data.social || {},
+    experience: data.experience || [],
+    education: data.education || [],
+    projects: data.projects || [],
+    skills: data.skills || [],
+    certifications: data.certifications || [],
     template: dbPortfolio.template,
     customization: dbPortfolio.customization || {},
-    aiSettings: dbPortfolio.ai_settings,
+    aiSettings: dbPortfolio.ai_settings || {},
     status: dbPortfolio.status,
     subdomain: dbPortfolio.subdomain,
     customDomain: dbPortfolio.custom_domain,
-    views: dbPortfolio.views,
+    views: dbPortfolio.views || 0,
     lastViewedAt: dbPortfolio.last_viewed_at
       ? new Date(dbPortfolio.last_viewed_at)
       : undefined,
@@ -45,53 +48,55 @@ export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
 
 /**
  * Transforms API portfolio object to database format
- * Converts camelCase to snake_case and adjusts field names
+ * Packages portfolio content into JSONB data field
  */
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
 ): any {
   const dbData: any = {};
 
-  // Map API fields to database fields
-  const fieldMapping: Record<string, string> = {
-    userId: 'user_id',
-    name: 'name',
-    title: 'title',
-    bio: 'bio',
-    tagline: 'tagline',
-    avatarUrl: 'avatar_url',
-    contact: 'contact',
-    social: 'social',
-    experience: 'experience',
-    education: 'education',
-    projects: 'projects',
-    skills: 'skills',
-    certifications: 'certifications',
-    template: 'template',
-    customization: 'customization',
-    aiSettings: 'ai_settings',
-    status: 'status',
-    subdomain: 'subdomain',
-    customDomain: 'custom_domain',
-    views: 'views',
-    lastViewedAt: 'last_viewed_at',
-    publishedAt: 'published_at',
+  // Extract content fields for JSONB data field
+  const dataFields = {
+    title: apiPortfolio.title,
+    bio: apiPortfolio.bio,
+    tagline: apiPortfolio.tagline,
+    avatar_url: apiPortfolio.avatarUrl,
+    contact: apiPortfolio.contact,
+    social: apiPortfolio.social,
+    experience: apiPortfolio.experience,
+    education: apiPortfolio.education,
+    projects: apiPortfolio.projects,
+    skills: apiPortfolio.skills,
+    certifications: apiPortfolio.certifications,
   };
 
-  // Transform fields using mapping
-  Object.entries(apiPortfolio).forEach(([key, value]) => {
-    if (key in fieldMapping && value !== undefined) {
-      const dbKey = fieldMapping[key as keyof typeof fieldMapping];
-      if (dbKey) {
-        // Convert dates to ISO strings
-        if (value instanceof Date) {
-          dbData[dbKey] = value.toISOString();
-        } else {
-          dbData[dbKey] = value;
-        }
-      }
-    }
-  });
+  // Root-level fields
+  if (apiPortfolio.id) dbData.id = apiPortfolio.id;
+  if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
+  if (apiPortfolio.name) dbData.name = apiPortfolio.name;
+  if (apiPortfolio.subdomain) dbData.slug = apiPortfolio.subdomain;
+  if (apiPortfolio.template) dbData.template = apiPortfolio.template;
+  if (apiPortfolio.status) dbData.status = apiPortfolio.status;
+  if (apiPortfolio.customization) dbData.customization = apiPortfolio.customization;
+  if (apiPortfolio.aiSettings) dbData.ai_settings = apiPortfolio.aiSettings;
+  if (apiPortfolio.subdomain) dbData.subdomain = apiPortfolio.subdomain;
+  if (apiPortfolio.customDomain) dbData.custom_domain = apiPortfolio.customDomain;
+  if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
+  
+  // Date fields
+  if (apiPortfolio.lastViewedAt) {
+    dbData.last_viewed_at = apiPortfolio.lastViewedAt instanceof Date 
+      ? apiPortfolio.lastViewedAt.toISOString() 
+      : apiPortfolio.lastViewedAt;
+  }
+  if (apiPortfolio.publishedAt) {
+    dbData.published_at = apiPortfolio.publishedAt instanceof Date 
+      ? apiPortfolio.publishedAt.toISOString() 
+      : apiPortfolio.publishedAt;
+  }
+
+  // Package content into data field
+  dbData.data = dataFields;
 
   return dbData;
 }

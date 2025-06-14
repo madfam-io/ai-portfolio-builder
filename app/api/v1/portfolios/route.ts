@@ -69,7 +69,7 @@ export const GET = versionedApiHandler(
     }
     if (search !== undefined && search !== null) {
       query = query.or(
-        `name.ilike.%${search}%,title.ilike.%${search}%,bio.ilike.%${search}%`
+        `name.ilike.%${search}%,data->>title.ilike.%${search}%,data->>bio.ilike.%${search}%`
       );
     }
     // Apply pagination
@@ -158,23 +158,28 @@ export const POST = versionedApiHandler(
       }
       subdomain = uniqueSubdomain;
     }
-    // Prepare portfolio data for insertion
+    // Prepare portfolio data for insertion matching Supabase schema
     const portfolioData = {
       id: uuidv4(),
       user_id: user.id,
       name: sanitizedData.name,
-      title: sanitizedData.title,
-      bio: sanitizedData.bio ?? '',
-      tagline: '',
-      avatar_url: null,
-      contact: {},
-      social: {},
-      experience: [],
-      education: [],
-      projects: [],
-      skills: [],
-      certifications: [],
+      slug: subdomain, // Using subdomain as slug for now
       template: sanitizedData.template,
+      status: 'draft',
+      // Store all portfolio content in the data JSONB field
+      data: {
+        title: sanitizedData.title,
+        bio: sanitizedData.bio ?? '',
+        tagline: '',
+        avatar_url: null,
+        contact: {},
+        social: {},
+        experience: [],
+        education: [],
+        projects: [],
+        skills: [],
+        certifications: [],
+      },
       customization: {
         primaryColor: '#1a73e8',
         secondaryColor: '#34a853',
@@ -188,7 +193,6 @@ export const POST = versionedApiHandler(
         tone: 'professional',
         targetLength: 'concise',
       },
-      status: 'draft',
       subdomain,
       custom_domain: null,
       views: 0,

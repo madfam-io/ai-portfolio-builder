@@ -6,38 +6,34 @@ import { Portfolio } from '@/types/portfolio';
 export class PortfolioMapper {
   /**
    * Transform API format to database format
-   * Converts camelCase to snake_case for database storage
+   * Maps to Supabase schema with JSONB data field
    */
   static toDatabase(portfolio: Partial<Portfolio>): Record<string, any> {
-    return {
-      id: portfolio.id,
-      user_id: portfolio.userId,
-      name: portfolio.name,
+    // Extract portfolio content for JSONB data field
+    const data = {
       title: portfolio.title,
       bio: portfolio.bio,
       tagline: portfolio.tagline,
       avatar_url: portfolio.avatarUrl,
-      contact: portfolio.contact ? JSON.stringify(portfolio.contact) : null,
-      social: portfolio.social ? JSON.stringify(portfolio.social) : null,
-      experience: portfolio.experience
-        ? JSON.stringify(portfolio.experience)
-        : null,
-      education: portfolio.education
-        ? JSON.stringify(portfolio.education)
-        : null,
-      projects: portfolio.projects ? JSON.stringify(portfolio.projects) : null,
-      skills: portfolio.skills ? JSON.stringify(portfolio.skills) : null,
-      certifications: portfolio.certifications
-        ? JSON.stringify(portfolio.certifications)
-        : null,
+      contact: portfolio.contact || {},
+      social: portfolio.social || {},
+      experience: portfolio.experience || [],
+      education: portfolio.education || [],
+      projects: portfolio.projects || [],
+      skills: portfolio.skills || [],
+      certifications: portfolio.certifications || [],
+    };
+
+    return {
+      id: portfolio.id,
+      user_id: portfolio.userId,
+      name: portfolio.name,
+      slug: portfolio.subdomain, // Use subdomain as slug for now
       template: portfolio.template,
-      customization: portfolio.customization
-        ? JSON.stringify(portfolio.customization)
-        : null,
-      ai_settings: portfolio.aiSettings
-        ? JSON.stringify(portfolio.aiSettings)
-        : null,
       status: portfolio.status,
+      data, // JSONB field containing all portfolio content
+      customization: portfolio.customization || getDefaultCustomization(),
+      ai_settings: portfolio.aiSettings || getDefaultAiSettings(),
       subdomain: portfolio.subdomain,
       custom_domain: portfolio.customDomain,
       views: portfolio.views,
@@ -50,37 +46,30 @@ export class PortfolioMapper {
 
   /**
    * Transform database format to API format
-   * Converts snake_case to camelCase for API responses
+   * Extracts data from JSONB field and converts to camelCase
    */
   static fromDatabase(dbPortfolio: any): Portfolio {
+    // Extract portfolio content from JSONB data field
+    const data = dbPortfolio.data || {};
+    
     return {
       id: dbPortfolio.id,
       userId: dbPortfolio.user_id,
       name: dbPortfolio.name,
-      title: dbPortfolio.title,
-      bio: dbPortfolio.bio || '',
-      tagline: dbPortfolio.tagline,
-      avatarUrl: dbPortfolio.avatar_url,
-      contact: dbPortfolio.contact
-        ? JSON.parse(dbPortfolio.contact)
-        : { email: '', location: '' },
-      social: dbPortfolio.social ? JSON.parse(dbPortfolio.social) : {},
-      experience: dbPortfolio.experience
-        ? JSON.parse(dbPortfolio.experience)
-        : [],
-      education: dbPortfolio.education ? JSON.parse(dbPortfolio.education) : [],
-      projects: dbPortfolio.projects ? JSON.parse(dbPortfolio.projects) : [],
-      skills: dbPortfolio.skills ? JSON.parse(dbPortfolio.skills) : [],
-      certifications: dbPortfolio.certifications
-        ? JSON.parse(dbPortfolio.certifications)
-        : [],
+      title: data.title || '',
+      bio: data.bio || '',
+      tagline: data.tagline || '',
+      avatarUrl: data.avatar_url || null,
+      contact: data.contact || { email: '', location: '' },
+      social: data.social || {},
+      experience: data.experience || [],
+      education: data.education || [],
+      projects: data.projects || [],
+      skills: data.skills || [],
+      certifications: data.certifications || [],
       template: dbPortfolio.template,
-      customization: dbPortfolio.customization
-        ? JSON.parse(dbPortfolio.customization)
-        : getDefaultCustomization(),
-      aiSettings: dbPortfolio.ai_settings
-        ? JSON.parse(dbPortfolio.ai_settings)
-        : getDefaultAiSettings(),
+      customization: dbPortfolio.customization || getDefaultCustomization(),
+      aiSettings: dbPortfolio.ai_settings || getDefaultAiSettings(),
       status: dbPortfolio.status,
       subdomain: dbPortfolio.subdomain,
       customDomain: dbPortfolio.custom_domain,
