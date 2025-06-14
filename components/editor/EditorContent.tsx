@@ -216,7 +216,12 @@ export function EditorContent() {
             // Handle section updates
             if (typeof updates === 'object' && updates !== null) {
               Object.entries(updates).forEach(([field, value]) => {
-                updatePortfolioData(field, value);
+                // For nested data fields, we need to update the data object
+                if (['experience', 'education', 'projects', 'skills', 'certifications'].includes(field)) {
+                  updatePortfolioData(field, value);
+                } else {
+                  updatePortfolioData(field, value);
+                }
               });
             }
           }}

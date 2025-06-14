@@ -5,16 +5,19 @@ import {
   Briefcase as FiBriefcase,
   ChevronDown,
   ChevronRight,
-  Edit3,
   Folder as FiFolder,
   Mail as FiMail,
-  Plus,
   Settings as FiSettings,
   User as FiUser,
 } from 'lucide-react';
 import { useState } from 'react';
 
 import { Portfolio, SectionType } from '@/types/portfolio';
+import { ExperienceSection } from './sections/ExperienceSection';
+import { EducationSection } from './sections/EducationSection';
+import { ProjectsSection } from './sections/ProjectsSection';
+import { SkillsSection } from './sections/SkillsSection';
+import { CertificationsSection } from './sections/CertificationsSection';
 
 interface EditorSidebarProps {
   portfolio: Portfolio;
@@ -54,6 +57,11 @@ const SECTION_CONFIG = {
     icon: FiAward,
     label: 'Education',
     description: 'Academic background',
+  },
+  certifications: {
+    icon: FiAward,
+    label: 'Certifications',
+    description: 'Professional certifications',
   },
   contact: {
     icon: FiMail,
@@ -159,125 +167,6 @@ export function EditorSidebar({
     </div>
   );
 
-  const renderExperienceEditor = () => (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-gray-900">Work Experience</h3>
-        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <Plus className="w-4 h-4 inline mr-1" />
-          Add Experience
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {portfolio.experience?.map(exp => (
-          <div key={exp.id} className="border border-gray-200 rounded-lg p-3">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">{exp.company}</h4>
-                <p className="text-sm text-gray-600">{exp.position}</p>
-                <p className="text-xs text-gray-500">
-                  {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
-                </p>
-              </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderProjectsEditor = () => (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-gray-900">Projects</h3>
-        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <Plus className="w-4 h-4 inline mr-1" />
-          Add Project
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {portfolio.projects?.map(project => (
-          <div
-            key={project.id}
-            className="border border-gray-200 rounded-lg p-3"
-          >
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h4 className="font-medium text-gray-900">{project.title}</h4>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {project.description}
-                </p>
-                <div className="flex items-center mt-2 space-x-2">
-                  {project.featured && (
-                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      Featured
-                    </span>
-                  )}
-                  <span className="text-xs text-gray-500">
-                    {project.technologies?.slice(0, 2).join(', ')}
-                    {project.technologies &&
-                      project.technologies.length > 2 &&
-                      '...'}
-                  </span>
-                </div>
-              </div>
-              <button className="text-gray-400 hover:text-gray-600">
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-
-  const renderSkillsEditor = () => (
-    <div className="space-y-4 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="font-medium text-gray-900">Skills</h3>
-        <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-          <Plus className="w-4 h-4 inline mr-1" />
-          Add Skill
-        </button>
-      </div>
-
-      <div className="space-y-3">
-        {Object.entries(
-          portfolio.skills?.reduce(
-            (acc, skill) => {
-              const category = skill.category || 'General';
-              if (!acc[category]) acc[category] = [];
-              acc[category].push(skill);
-              return acc;
-            },
-            {} as Record<string, any[]>
-          ) || {}
-        ).map(([category, skills]) => (
-          <div key={category} className="border border-gray-200 rounded-lg p-3">
-            <h4 className="font-medium text-gray-900 mb-2">{category}</h4>
-            <div className="flex flex-wrap gap-2">
-              {skills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
-                >
-                  {skill.name}
-                  {skill.level && (
-                    <span className="ml-1 text-blue-600">• {skill.level}</span>
-                  )}
-                </span>
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
   const renderSectionContent = (section: SectionType) => {
     switch (section) {
@@ -285,11 +174,40 @@ export function EditorSidebar({
       case 'about':
         return renderBasicInfoEditor();
       case 'experience':
-        return renderExperienceEditor();
+        return (
+          <ExperienceSection
+            experiences={portfolio.experience || []}
+            onUpdate={(experiences) => onSectionUpdate('experience', { experience: experiences })}
+          />
+        );
+      case 'education':
+        return (
+          <EducationSection
+            education={portfolio.education || []}
+            onUpdate={(education) => onSectionUpdate('education', { education })}
+          />
+        );
       case 'projects':
-        return renderProjectsEditor();
+        return (
+          <ProjectsSection
+            projects={portfolio.projects || []}
+            onUpdate={(projects) => onSectionUpdate('projects', { projects })}
+          />
+        );
       case 'skills':
-        return renderSkillsEditor();
+        return (
+          <SkillsSection
+            skills={portfolio.skills || []}
+            onUpdate={(skills) => onSectionUpdate('skills', { skills })}
+          />
+        );
+      case 'certifications':
+        return (
+          <CertificationsSection
+            certifications={portfolio.certifications || []}
+            onUpdate={(certifications) => onSectionUpdate('certifications', { certifications })}
+          />
+        );
       default:
         return (
           <div className="p-4 text-center text-gray-500">

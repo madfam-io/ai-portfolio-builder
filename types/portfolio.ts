@@ -25,6 +25,7 @@ export type SectionType =
   | 'education'
   | 'projects'
   | 'skills'
+  | 'certifications'
   | 'testimonials'
   | 'contact'
   | 'custom';
