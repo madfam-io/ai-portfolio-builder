@@ -43,6 +43,8 @@ export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
     publishedAt: dbPortfolio.published_at
       ? new Date(dbPortfolio.published_at)
       : undefined,
+    // Include the raw data field for dynamic content
+    data: data,
   };
 }
 
@@ -55,8 +57,8 @@ export function transformApiPortfolioToDb(
 ): any {
   const dbData: any = {};
 
-  // Extract content fields for JSONB data field
-  const dataFields = {
+  // If data field is provided, use it directly; otherwise extract from fields
+  const dataFields = apiPortfolio.data || {
     title: apiPortfolio.title,
     bio: apiPortfolio.bio,
     tagline: apiPortfolio.tagline,
@@ -99,8 +101,16 @@ export function transformApiPortfolioToDb(
         : apiPortfolio.publishedAt;
   }
 
-  // Package content into data field
-  dbData.data = dataFields;
+  // Package content into data field, merging with existing data if updating
+  if (apiPortfolio.data && typeof apiPortfolio.data === 'object') {
+    // If raw data updates are provided, merge them
+    dbData.data = { ...dataFields, ...apiPortfolio.data };
+  } else {
+    dbData.data = dataFields;
+  }
+
+  // Always update the updated_at timestamp
+  dbData.updated_at = new Date().toISOString();
 
   return dbData;
 }
