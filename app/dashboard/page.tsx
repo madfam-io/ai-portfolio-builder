@@ -1,138 +1,121 @@
 'use client';
 
-import { Edit, Eye, Globe, Loader, Plus, Trash } from 'lucide-react';
+import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
 import Link from 'next/link';
-import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { useAuthStore } from '@/lib/store/auth-store';
+import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
 
 function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
   const { user } = useAuthStore();
-  const [portfolios, setPortfolios] = useState<Portfolio[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { 
+    portfolios, 
+    isLoading, 
+    error, 
+    loadPortfolios, 
+    deletePortfolio 
+  } = usePortfolioStore();
 
-  // Load user's portfolios
+  // Load user's portfolios on mount
   useEffect(() => {
-    void loadPortfolios();
-  }, []);
-
-  const loadPortfolios = async (): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch('/api/v1/portfolios');
-      if (response.ok === false) {
-        throw new Error('Failed to fetch portfolios');
-      }
-
-      const { data: userPortfolios } = await response.json();
-      setPortfolios(userPortfolios);
-    } catch (err) {
-      logger.error(
-        'Failed to load portfolios',
-        err instanceof Error ? err : { error: err }
-      );
-      setError('Failed to load portfolios');
-    } finally {
-      setLoading(false);
-    }
-  };
+    loadPortfolios().catch(err => {
+      logger.error('Failed to load portfolios:', err);
+      toast({
+        title: t.error || 'Error',
+        description: t.failedToLoadPortfolios || 'Failed to load portfolios. Please try again.',
+        variant: 'destructive',
+      });
+    });
+  }, [loadPortfolios]);
 
   const handleDeletePortfolio = async (portfolioId: string) => {
-    if (!confirm('Are you sure you want to delete this portfolio?')) {
+    if (!confirm(t.confirmDelete || 'Are you sure you want to delete this portfolio?')) {
       return;
     }
 
     try {
-      const response = await fetch(`/api/v1/portfolios/${portfolioId}`, {
-        method: 'DELETE',
+      await deletePortfolio(portfolioId);
+      toast({
+        title: t.success || 'Success',
+        description: t.portfolioDeleted || 'Portfolio deleted successfully',
       });
-
-      if (response.ok) {
-        setPortfolios(prev => prev.filter(p => p.id !== portfolioId));
-      } else {
-        throw new Error('Failed to delete portfolio');
-      }
     } catch (err) {
-      logger.error(
-        'Failed to delete portfolio',
-        err instanceof Error ? err : { error: err }
-      );
-      alert('Failed to delete portfolio');
+      logger.error('Failed to delete portfolio:', err);
+      toast({
+        title: t.error || 'Error',
+        description: t.failedToDelete || 'Failed to delete portfolio',
+        variant: 'destructive',
+      });
+    }
+  };
+
+  const handleCreatePortfolio = () => {
+    router.push('/editor/new');
+  };
+
+  const handleEditPortfolio = (portfolioId: string) => {
+    router.push(`/editor/${portfolioId}`);
+  };
+
+  const handleViewPortfolio = (portfolio: Portfolio) => {
+    if (portfolio.status === 'published' && portfolio.subdomain) {
+      window.open(`${window.location.origin}/p/${portfolio.subdomain}`, '_blank');
+    } else {
+      router.push(`/editor/${portfolio.id}/preview`);
     }
   };
 
   const getStatusBadge = (status: Portfolio['status']) => {
-    const baseClasses =
-      'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium';
-
     switch (status) {
       case 'published':
-        return `${baseClasses} bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200`;
+        return 'default';
       case 'draft':
-        return `${baseClasses} bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200`;
+        return 'secondary';
       case 'archived':
-        return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200`;
+        return 'outline';
       default:
-        return `${baseClasses} bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200`;
+        return 'outline';
     }
   };
 
   const formatDate = (date: Date) => {
     const now = new Date();
+    const dateObj = date instanceof Date ? date : new Date(date);
     const diffInDays = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24)
+      (now.getTime() - dateObj.getTime()) / (1000 * 60 * 60 * 24)
     );
 
-    if (diffInDays === 0) return 'Today';
-    if (diffInDays === 1) return 'Yesterday';
-    if (diffInDays < 7) return `${diffInDays} ${t.daysAgo}`;
-    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${t.weekAgo}`;
+    if (diffInDays === 0) return t.today || 'Today';
+    if (diffInDays === 1) return t.yesterday || 'Yesterday';
+    if (diffInDays < 7) return `${diffInDays} ${t.daysAgo || 'days ago'}`;
+    if (diffInDays < 30) return `${Math.floor(diffInDays / 7)} ${t.weeksAgo || 'weeks ago'}`;
 
-    return date.toLocaleDateString();
+    return dateObj.toLocaleDateString();
   };
 
   // Show loading spinner while loading data
-  if (loading) {
+  if (isLoading && portfolios.length === 0) {
     return (
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <Loader className="animate-spin text-4xl text-purple-600 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">
-              {t.loadingDashboard}
+            <Loader className="animate-spin h-12 w-12 text-primary mx-auto mb-4" />
+            <p className="text-muted-foreground">
+              {t.loadingDashboard || 'Loading your dashboard...'}
             </p>
-          </div>
-        </div>
-      </BaseLayout>
-    );
-  }
-
-  // Error state
-  if (error) {
-    return (
-      <BaseLayout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-          <div className="text-center">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Error
-            </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">{error}</p>
-            <button
-              onClick={loadPortfolios}
-              className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Try Again
-            </button>
           </div>
         </div>
       </BaseLayout>
@@ -145,155 +128,179 @@ function DashboardContent(): React.ReactElement {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-              {t.hello}, {user?.email?.split('@')[0] || 'User'}!
+            <h1 className="text-3xl font-bold text-foreground">
+              {t.hello || 'Hello'}, {user?.email?.split('@')[0] || 'User'}!
             </h1>
-            <h2 className="text-2xl font-semibold text-gray-800 dark:text-gray-200 mt-2">
-              {t.myPortfolios}
+            <h2 className="text-2xl font-semibold text-muted-foreground mt-2">
+              {t.myPortfolios || 'My Portfolios'}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mt-1">
-              {t.managePortfolios}
+            <p className="text-muted-foreground mt-1">
+              {t.managePortfolios || 'Manage and track your professional portfolios'}
             </p>
           </div>
-          <Link
-            href="/editor"
-            className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-          >
-            <Plus className="mr-2" />
-            {t.createNewPortfolio}
-          </Link>
+          <Button onClick={handleCreatePortfolio} size="lg">
+            <Plus className="mr-2 h-5 w-5" />
+            {t.createNewPortfolio || 'Create Portfolio'}
+          </Button>
         </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4 mb-6">
+            <p className="text-destructive">{error}</p>
+          </div>
+        )}
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              {t.totalPortfolios}
-            </h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-              {portfolios.length}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              {t.published}
-            </h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-              {portfolios.filter(p => p.status === 'published').length}
-            </p>
-          </div>
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
-              {t.totalViews}
-            </h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mt-2">
-              {portfolios.reduce((sum, p) => sum + (p.views || 0), 0)}
-            </p>
-          </div>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t.totalPortfolios || 'Total Portfolios'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{portfolios.length}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t.published || 'Published'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {portfolios.filter(p => p.status === 'published').length}
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {t.totalViews || 'Total Views'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">
+                {portfolios.reduce((sum, p) => sum + (p.views || 0), 0)}
+              </p>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Portfolio List */}
+        {/* Portfolio Grid */}
         {portfolios.length > 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-              <h2 className="text-lg font-medium text-gray-900 dark:text-white">
-                {t.yourPortfolios}
-              </h2>
-            </div>
-            <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {portfolios.map(portfolio => (
-                <div
-                  key={portfolio.id}
-                  className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {portfolio.name}
-                        </h3>
-                        <span className={getStatusBadge(portfolio.status)}>
-                          {portfolio.status === 'published'
-                            ? t.statusPublished
-                            : t.statusDraft}
-                        </span>
-                      </div>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
-                        {portfolio.title}
-                      </p>
-                      <div className="flex items-center gap-4 mt-2 text-sm text-gray-500 dark:text-gray-400">
-                        <span>
-                          {t.lastModified} {formatDate(portfolio.updatedAt)}
-                        </span>
-                        <span>•</span>
-                        <span>
-                          {portfolio.views || 0} {t.views}
-                        </span>
-                        {portfolio.subdomain && (
-                          <>
-                            <span>•</span>
-                            <span className="flex items-center gap-1">
-                              <Globe className="text-xs" />
-                              {portfolio.subdomain}.prisma.io
-                            </span>
-                          </>
-                        )}
-                      </div>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {portfolios.map(portfolio => (
+              <Card key={portfolio.id} className="hover:shadow-lg transition-shadow">
+                <CardHeader>
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg line-clamp-1">
+                      {portfolio.name}
+                    </CardTitle>
+                    <Badge variant={getStatusBadge(portfolio.status)}>
+                      {portfolio.status}
+                    </Badge>
+                  </div>
+                  <CardDescription className="line-clamp-2">
+                    {portfolio.title || portfolio.bio || t.noDescription || 'No description'}
+                  </CardDescription>
+                </CardHeader>
+                
+                <CardContent>
+                  <div className="flex flex-col gap-2 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <span className="capitalize">{portfolio.template} template</span>
                     </div>
-                    <div className="flex items-center space-x-2">
-                      {portfolio.status === 'published' && (
+                    {portfolio.updatedAt && (
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-3 w-3" />
+                        <span>{formatDate(portfolio.updatedAt)}</span>
+                      </div>
+                    )}
+                    {portfolio.views > 0 && (
+                      <div className="flex items-center gap-2">
+                        <Eye className="h-3 w-3" />
+                        <span>{portfolio.views} {t.views || 'views'}</span>
+                      </div>
+                    )}
+                    {portfolio.subdomain && portfolio.status === 'published' && (
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-3 w-3" />
+                        <span className="text-xs">{portfolio.subdomain}.prisma.madfam.io</span>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+
+                <CardFooter className="flex items-center justify-between pt-3">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleEditPortfolio(portfolio.id)}
+                      title={t.edit || 'Edit'}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleViewPortfolio(portfolio)}
+                      title={t.preview || 'Preview'}
+                    >
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    {portfolio.status === 'published' && portfolio.subdomain && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                      >
                         <a
-                          href={`https://${portfolio.subdomain}.prisma.io`}
+                          href={`https://${portfolio.subdomain}.prisma.madfam.io`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="p-2 text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                          title="View live portfolio"
+                          title={t.viewLive || 'View live'}
                         >
-                          <Eye />
+                          <Globe className="h-4 w-4" />
                         </a>
-                      )}
-                      <Link
-                        href={`/editor?id=${portfolio.id}`}
-                        className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                        title="Edit portfolio"
-                      >
-                        <Edit />
-                      </Link>
-                      <button
-                        onClick={() => handleDeletePortfolio(portfolio.id)}
-                        className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                        title="Delete portfolio"
-                      >
-                        <Trash />
-                      </button>
-                    </div>
+                      </Button>
+                    )}
                   </div>
-                </div>
-              ))}
-            </div>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleDeletePortfolio(portfolio.id)}
+                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                    title={t.delete || 'Delete'}
+                  >
+                    <Trash className="h-4 w-4" />
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
           </div>
         ) : (
           /* Empty State */
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-            <div className="text-center py-12">
-              <div className="w-24 h-24 bg-gray-100 dark:bg-gray-700 rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <Plus className="text-3xl text-gray-400" />
+          <Card>
+            <CardContent className="text-center py-12">
+              <div className="w-24 h-24 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
+                <Plus className="h-12 w-12 text-muted-foreground" />
               </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                {t.noPortfoliosYet}
+              <h3 className="text-lg font-medium mb-2">
+                {t.noPortfoliosYet || 'No portfolios yet'}
               </h3>
-              <p className="text-gray-500 dark:text-gray-400 mb-6">
-                {t.createFirstPortfolio}
+              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                {t.createFirstPortfolio || 'Create your first portfolio to showcase your professional work'}
               </p>
-              <Link
-                href="/editor"
-                className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="mr-2" />
-                {t.createPortfolio}
-              </Link>
-            </div>
-          </div>
+              <Button onClick={handleCreatePortfolio} size="lg">
+                <Plus className="mr-2 h-5 w-5" />
+                {t.createPortfolio || 'Create Portfolio'}
+              </Button>
+            </CardContent>
+          </Card>
         )}
       </div>
     </BaseLayout>

@@ -1,9 +1,9 @@
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -59,8 +59,8 @@ export const GET = versionedApiHandler(
 
       // Check ownership
       if (portfolio.user_id !== user.id) {
-        return apiError('You can only access your own portfolios', { 
-          status: 403 
+        return apiError('You can only access your own portfolios', {
+          status: 403,
         });
       }
 
@@ -69,7 +69,10 @@ export const GET = versionedApiHandler(
 
       return apiSuccess({ portfolio: responsePortfolio });
     } catch (error) {
-      logger.error('Unexpected error in GET /api/v1/portfolios/[id]:', error as Error);
+      logger.error(
+        'Unexpected error in GET /api/v1/portfolios/[id]:',
+        error as Error
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -101,14 +104,19 @@ export const PUT = versionedApiHandler(
         if (fetchError.code === 'PGRST116') {
           return apiError('Portfolio not found', { status: 404 });
         }
-        logger.error('Database error checking portfolio ownership:', fetchError);
-        return apiError('Failed to verify portfolio ownership', { status: 500 });
+        logger.error(
+          'Database error checking portfolio ownership:',
+          fetchError
+        );
+        return apiError('Failed to verify portfolio ownership', {
+          status: 500,
+        });
       }
 
       // Check ownership
       if (existingPortfolio.user_id !== user.id) {
-        return apiError('You can only modify your own portfolios', { 
-          status: 403 
+        return apiError('You can only modify your own portfolios', {
+          status: 403,
         });
       }
 
@@ -127,7 +135,10 @@ export const PUT = versionedApiHandler(
       const sanitizedData = sanitizePortfolioData(body);
 
       // Handle subdomain uniqueness if being updated
-      if (sanitizedData.subdomain !== undefined && sanitizedData.subdomain !== null) {
+      if (
+        sanitizedData.subdomain !== undefined &&
+        sanitizedData.subdomain !== null
+      ) {
         const { data: existingSubdomain } = await supabase
           .from('portfolios')
           .select('id')
@@ -141,7 +152,10 @@ export const PUT = versionedApiHandler(
       }
 
       // Handle status change to published
-      if (sanitizedData.status === 'published' && existingPortfolio.status !== 'published') {
+      if (
+        sanitizedData.status === 'published' &&
+        existingPortfolio.status !== 'published'
+      ) {
         sanitizedData.publishedAt = new Date();
       }
 
@@ -173,7 +187,10 @@ export const PUT = versionedApiHandler(
         message: 'Portfolio updated successfully',
       });
     } catch (error) {
-      logger.error('Unexpected error in PUT /api/v1/portfolios/[id]:', error as Error);
+      logger.error(
+        'Unexpected error in PUT /api/v1/portfolios/[id]:',
+        error as Error
+      );
       if (error instanceof SyntaxError) {
         return apiError('Invalid JSON in request body', { status: 400 });
       }
@@ -208,14 +225,19 @@ export const DELETE = versionedApiHandler(
         if (fetchError.code === 'PGRST116') {
           return apiError('Portfolio not found', { status: 404 });
         }
-        logger.error('Database error checking portfolio ownership:', fetchError);
-        return apiError('Failed to verify portfolio ownership', { status: 500 });
+        logger.error(
+          'Database error checking portfolio ownership:',
+          fetchError
+        );
+        return apiError('Failed to verify portfolio ownership', {
+          status: 500,
+        });
       }
 
       // Check ownership
       if (existingPortfolio.user_id !== user.id) {
-        return apiError('You can only delete your own portfolios', { 
-          status: 403 
+        return apiError('You can only delete your own portfolios', {
+          status: 403,
         });
       }
 
@@ -233,13 +255,16 @@ export const DELETE = versionedApiHandler(
       // Return success
       return apiSuccess(
         { message: 'Portfolio deleted successfully' },
-        { 
+        {
           status: 200,
-          headers: { 'X-Portfolio-Deleted': existingPortfolio.name }
+          headers: { 'X-Portfolio-Deleted': existingPortfolio.name },
         }
       );
     } catch (error) {
-      logger.error('Unexpected error in DELETE /api/v1/portfolios/[id]:', error as Error);
+      logger.error(
+        'Unexpected error in DELETE /api/v1/portfolios/[id]:',
+        error as Error
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })

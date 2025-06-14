@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
+import { persist } from 'zustand/middleware';
 
-import { portfolioServiceClient } from '@/lib/services/portfolio/portfolio-service-client';
 import { Portfolio } from '@/types/portfolio';
+import { logger } from '@/lib/utils/logger';
 
 import { PortfolioState, PortfolioActions } from './types';
 
@@ -12,42 +13,10 @@ import { PortfolioState, PortfolioActions } from './types';
  * Manages portfolio data, editing state, and portfolio operations
  */
 
-// Mock portfolio for development
-const mockPortfolio: Portfolio = {
-  id: 'mock-portfolio-1',
-  userId: 'mock-user-1',
-  name: 'John Doe Portfolio',
-  title: 'Senior Software Engineer',
-  bio: 'Passionate developer with expertise in web technologies',
-  template: 'developer',
-  status: 'draft',
-  contact: {
-    email: 'john@example.com',
-    phone: '+1234567890',
-    location: 'San Francisco, CA',
-  },
-  social: {
-    linkedin: 'https://linkedin.com/in/johndoe',
-    github: 'https://github.com/johndoe',
-  },
-  experience: [],
-  education: [],
-  projects: [],
-  skills: [],
-  certifications: [],
-  customization: {},
-  createdAt: new Date(),
-  updatedAt: new Date(),
-  data: {
-    headline: 'Building the future of web applications',
-    tagline: 'Full-stack developer passionate about clean code',
-    about: 'I am a senior software engineer with over 8 years of experience...',
-  },
-};
-
 const initialState: PortfolioState = {
   portfolios: [],
-  currentPortfolio: process.env.NODE_ENV === 'development' ? mockPortfolio : null,
+  currentPortfolio: null,
+  currentPortfolioId: null,
   isEditing: false,
   isSaving: false,
   isLoading: false,
@@ -55,7 +24,27 @@ const initialState: PortfolioState = {
   lastSaved: null,
   history: [],
   historyIndex: -1,
+  hasUnsavedChanges: false,
 };
+
+// Helper function to make API calls
+async function apiCall<T>(url: string, options?: RequestInit): Promise<T> {
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Unknown error' }));
+    throw new Error(error.error || `API call failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  return data.data || data;
+}
 
 export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
   devtools(
@@ -72,6 +61,8 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
         setCurrentPortfolio: portfolio =>
           set(state => {
             state.currentPortfolio = portfolio;
+            state.currentPortfolioId = portfolio?.id || null;
+            state.hasUnsavedChanges = false;
           }),
 
         setEditing: isEditing =>
@@ -95,85 +86,105 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           }),
 
         // Portfolio operations
-        loadPortfolios: async (userId: string) => {
+        loadPortfolios: async () => {
           set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            const portfolios = await portfolioServiceClient.getUserPortfolios(userId);
+            const { portfolios } = await apiCall<{ portfolios: Portfolio[] }>(
+              '/api/v1/portfolios'
+            );
+            
             set(state => {
               state.portfolios = portfolios;
               state.isLoading = false;
             });
-          } catch (error: unknown) {
+            
+            return portfolios;
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to load portfolios';
+            logger.error('Failed to load portfolios:', error);
+            
             set(state => {
-              state.error =
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to load portfolios';
+              state.error = errorMessage;
               state.isLoading = false;
             });
+            
             throw error;
           }
         },
 
-        loadPortfolio: async id => {
+        loadPortfolio: async (id: string) => {
           set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            const portfolio = await portfolioServiceClient.getPortfolio(id);
+            const { portfolio } = await apiCall<{ portfolio: Portfolio }>(
+              `/api/v1/portfolios/${id}`
+            );
+            
             set(state => {
               state.currentPortfolio = portfolio;
+              state.currentPortfolioId = id;
               state.isLoading = false;
+              state.hasUnsavedChanges = false;
+              
+              // Reset history when loading a new portfolio
+              state.history = [];
+              state.historyIndex = -1;
             });
-          } catch (error: unknown) {
+            
+            return portfolio;
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to load portfolio';
+            logger.error('Failed to load portfolio:', error);
+            
             set(state => {
-              state.error =
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to load portfolio';
+              state.error = errorMessage;
               state.isLoading = false;
             });
+            
             throw error;
           }
         },
 
-        createPortfolio: async (data, userId) => {
+        createPortfolio: async (data) => {
           set(state => {
             state.isSaving = true;
             state.error = null;
           });
 
           try {
-            const createData = {
-              name: data.name || 'Untitled Portfolio',
-              title: data.title || '',
-              bio: data.bio || '',
-              template: data.template || 'developer',
-              userId,
-            };
-            const portfolio =
-              await portfolioServiceClient.createPortfolio(createData);
+            const { portfolio } = await apiCall<{ portfolio: Portfolio }>(
+              '/api/v1/portfolios',
+              {
+                method: 'POST',
+                body: JSON.stringify(data),
+              }
+            );
+            
             set(state => {
               state.portfolios.push(portfolio);
               state.currentPortfolio = portfolio;
+              state.currentPortfolioId = portfolio.id;
               state.isSaving = false;
-              state.lastSaved = new Date();
+              state.hasUnsavedChanges = false;
             });
+            
             return portfolio;
-          } catch (error: unknown) {
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to create portfolio';
+            logger.error('Failed to create portfolio:', error);
+            
             set(state => {
-              state.error =
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to create portfolio';
+              state.error = errorMessage;
               state.isSaving = false;
             });
+            
             throw error;
           }
         },
@@ -185,83 +196,117 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           });
 
           try {
-            const updated = await portfolioServiceClient.updatePortfolio(id, data);
-            if (updated) {
-              set(state => {
-                const index = state.portfolios.findIndex(p => p.id === id);
-                if (index !== -1) {
-                  state.portfolios[index] = updated;
-                }
-                if (state.currentPortfolio?.id === id) {
-                  state.currentPortfolio = updated;
-                }
-                state.isSaving = false;
-                state.lastSaved = new Date();
-              });
-            }
-          } catch (error: unknown) {
+            const { portfolio } = await apiCall<{ portfolio: Portfolio }>(
+              `/api/v1/portfolios/${id}`,
+              {
+                method: 'PUT',
+                body: JSON.stringify(data),
+              }
+            );
+            
             set(state => {
-              state.error =
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to update portfolio';
+              const index = state.portfolios.findIndex(p => p.id === id);
+              if (index !== -1) {
+                state.portfolios[index] = portfolio;
+              }
+              if (state.currentPortfolio?.id === id) {
+                state.currentPortfolio = portfolio;
+              }
+              state.isSaving = false;
+              state.hasUnsavedChanges = false;
+              state.lastSaved = new Date();
+            });
+            
+            return portfolio;
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to update portfolio';
+            logger.error('Failed to update portfolio:', error);
+            
+            set(state => {
+              state.error = errorMessage;
               state.isSaving = false;
             });
+            
             throw error;
           }
         },
 
-        deletePortfolio: async id => {
+        deletePortfolio: async (id) => {
           set(state => {
             state.isLoading = true;
             state.error = null;
           });
 
           try {
-            await portfolioServiceClient.deletePortfolio(id);
+            await apiCall(`/api/v1/portfolios/${id}`, {
+              method: 'DELETE',
+            });
+            
             set(state => {
               state.portfolios = state.portfolios.filter(p => p.id !== id);
               if (state.currentPortfolio?.id === id) {
                 state.currentPortfolio = null;
+                state.currentPortfolioId = null;
               }
               state.isLoading = false;
             });
-          } catch (error: unknown) {
+          } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Failed to delete portfolio';
+            logger.error('Failed to delete portfolio:', error);
+            
             set(state => {
-              state.error =
-                error instanceof Error
-                  ? error.message
-                  : 'Failed to delete portfolio';
+              state.error = errorMessage;
               state.isLoading = false;
             });
+            
             throw error;
           }
         },
 
         savePortfolio: async () => {
           const { currentPortfolio } = get();
-          if (!currentPortfolio) {
-            throw new Error('No portfolio to save');
-          }
+          if (!currentPortfolio || !get().hasUnsavedChanges) return;
 
-          await get().updatePortfolio(currentPortfolio.id, currentPortfolio);
+          try {
+            await get().updatePortfolio(currentPortfolio.id, currentPortfolio);
+          } catch (error) {
+            // Error already handled in updatePortfolio
+            throw error;
+          }
         },
 
-        updatePortfolioData: (data) => {
+        updatePortfolioData: (field, value) => {
           set(state => {
             if (!state.currentPortfolio) return;
             
             // Save current state to history before updating
-            const currentData = { ...state.currentPortfolio.data };
-            state.history = [...state.history.slice(0, state.historyIndex + 1), currentData];
-            state.historyIndex = state.history.length;
+            if (state.hasUnsavedChanges === false) {
+              const currentState = JSON.parse(JSON.stringify(state.currentPortfolio));
+              state.history = [...state.history.slice(0, state.historyIndex + 1), currentState];
+              state.historyIndex = state.history.length - 1;
+            }
             
-            // Update the data
-            state.currentPortfolio.data = {
-              ...state.currentPortfolio.data,
-              ...data,
-            };
-            state.currentPortfolio.hasUnsavedChanges = true;
+            // Handle nested data fields
+            if (field.includes('.')) {
+              const parts = field.split('.');
+              let target: any = state.currentPortfolio;
+              
+              // Navigate to the parent of the field to update
+              for (let i = 0; i < parts.length - 1; i++) {
+                if (!target[parts[i]]) {
+                  target[parts[i]] = {};
+                }
+                target = target[parts[i]];
+              }
+              
+              // Update the final field
+              target[parts[parts.length - 1]] = value;
+            } else {
+              (state.currentPortfolio as any)[field] = value;
+            }
+            
+            state.isEditing = true;
+            state.hasUnsavedChanges = true;
           });
         },
 
@@ -269,7 +314,9 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           set(state => {
             if (state.historyIndex > 0 && state.currentPortfolio) {
               state.historyIndex--;
-              state.currentPortfolio.data = { ...state.history[state.historyIndex] };
+              const previousState = state.history[state.historyIndex];
+              state.currentPortfolio = JSON.parse(JSON.stringify(previousState));
+              state.hasUnsavedChanges = true;
             }
           });
         },
@@ -278,7 +325,9 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           set(state => {
             if (state.historyIndex < state.history.length - 1 && state.currentPortfolio) {
               state.historyIndex++;
-              state.currentPortfolio.data = { ...state.history[state.historyIndex] };
+              const nextState = state.history[state.historyIndex];
+              state.currentPortfolio = JSON.parse(JSON.stringify(nextState));
+              state.hasUnsavedChanges = true;
             }
           });
         },
@@ -302,6 +351,15 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
   )
 );
 
+// Persist selected state
+const persistedStore = persist(usePortfolioStore, {
+  name: 'portfolio-store-storage',
+  partialize: (state) => ({
+    currentPortfolioId: state.currentPortfolioId,
+    lastSaved: state.lastSaved,
+  }),
+});
+
 // Selectors
 export const selectPortfolios = (state: PortfolioState & PortfolioActions) =>
   state.portfolios;
@@ -312,3 +370,5 @@ export const selectIsEditing = (state: PortfolioState & PortfolioActions) =>
   state.isEditing;
 export const selectIsSaving = (state: PortfolioState & PortfolioActions) =>
   state.isSaving;
+export const selectHasUnsavedChanges = (state: PortfolioState & PortfolioActions) =>
+  state.hasUnsavedChanges;

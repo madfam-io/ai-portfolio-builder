@@ -51,7 +51,7 @@ export class PortfolioMapper {
   static fromDatabase(dbPortfolio: any): Portfolio {
     // Extract portfolio content from JSONB data field
     const data = dbPortfolio.data || {};
-    
+
     return {
       id: dbPortfolio.id,
       userId: dbPortfolio.user_id,

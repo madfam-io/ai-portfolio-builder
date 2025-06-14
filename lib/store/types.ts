@@ -36,6 +36,7 @@ export interface AuthActions {
 export interface PortfolioState {
   portfolios: Portfolio[];
   currentPortfolio: Portfolio | null;
+  currentPortfolioId: string | null;
   isEditing: boolean;
   isSaving: boolean;
   isLoading: boolean;
@@ -43,6 +44,7 @@ export interface PortfolioState {
   lastSaved: Date | null;
   history: any[];
   historyIndex: number;
+  hasUnsavedChanges: boolean;
 }
 
 export interface PortfolioActions {
@@ -52,16 +54,13 @@ export interface PortfolioActions {
   setSaving: (isSaving: boolean) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
-  loadPortfolios: (userId: string) => Promise<void>;
-  loadPortfolio: (id: string) => Promise<void>;
-  createPortfolio: (
-    data: Partial<Portfolio>,
-    userId: string
-  ) => Promise<Portfolio>;
-  updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<void>;
+  loadPortfolios: () => Promise<Portfolio[]>;
+  loadPortfolio: (id: string) => Promise<Portfolio>;
+  createPortfolio: (data: Partial<Portfolio>) => Promise<Portfolio>;
+  updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<Portfolio>;
   deletePortfolio: (id: string) => Promise<void>;
   savePortfolio: () => Promise<void>;
-  updatePortfolioData: (data: Partial<Portfolio['data']>) => void;
+  updatePortfolioData: (field: string, value: any) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;

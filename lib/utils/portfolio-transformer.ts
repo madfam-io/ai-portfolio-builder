@@ -12,7 +12,7 @@ import { Portfolio } from '@/types/portfolio';
 export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
   // Extract portfolio content from JSONB data field
   const data = dbPortfolio.data || {};
-  
+
   return {
     id: dbPortfolio.id,
     userId: dbPortfolio.user_id,
@@ -77,22 +77,26 @@ export function transformApiPortfolioToDb(
   if (apiPortfolio.subdomain) dbData.slug = apiPortfolio.subdomain;
   if (apiPortfolio.template) dbData.template = apiPortfolio.template;
   if (apiPortfolio.status) dbData.status = apiPortfolio.status;
-  if (apiPortfolio.customization) dbData.customization = apiPortfolio.customization;
+  if (apiPortfolio.customization)
+    dbData.customization = apiPortfolio.customization;
   if (apiPortfolio.aiSettings) dbData.ai_settings = apiPortfolio.aiSettings;
   if (apiPortfolio.subdomain) dbData.subdomain = apiPortfolio.subdomain;
-  if (apiPortfolio.customDomain) dbData.custom_domain = apiPortfolio.customDomain;
+  if (apiPortfolio.customDomain)
+    dbData.custom_domain = apiPortfolio.customDomain;
   if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
-  
+
   // Date fields
   if (apiPortfolio.lastViewedAt) {
-    dbData.last_viewed_at = apiPortfolio.lastViewedAt instanceof Date 
-      ? apiPortfolio.lastViewedAt.toISOString() 
-      : apiPortfolio.lastViewedAt;
+    dbData.last_viewed_at =
+      apiPortfolio.lastViewedAt instanceof Date
+        ? apiPortfolio.lastViewedAt.toISOString()
+        : apiPortfolio.lastViewedAt;
   }
   if (apiPortfolio.publishedAt) {
-    dbData.published_at = apiPortfolio.publishedAt instanceof Date 
-      ? apiPortfolio.publishedAt.toISOString() 
-      : apiPortfolio.publishedAt;
+    dbData.published_at =
+      apiPortfolio.publishedAt instanceof Date
+        ? apiPortfolio.publishedAt.toISOString()
+        : apiPortfolio.publishedAt;
   }
 
   // Package content into data field
