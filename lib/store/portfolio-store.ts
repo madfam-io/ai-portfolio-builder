@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { portfolioService } from '@/lib/services/portfolioService';
+import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
 
 import { PortfolioState, PortfolioActions } from './types';
 

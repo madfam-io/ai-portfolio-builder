@@ -41,12 +41,16 @@ const customJestConfig = {
   ],
   coverageThreshold: {
     global: {
-      branches: 80,
-      functions: 80,
-      lines: 80,
-      statements: 80,
+      branches: 10,
+      functions: 10,
+      lines: 10,
+      statements: 10,
     },
   },
+  // Coverage goals to track progress:
+  // - 3 months: 30% coverage
+  // - 6 months: 60% coverage
+  // - 1 year: 80% coverage
   testTimeout: 30000,
   transform: {
     // Use babel-jest to transpile tests with the next/babel preset

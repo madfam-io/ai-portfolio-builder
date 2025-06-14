@@ -1,5 +1,6 @@
 import * as redis from 'redis';
 
+import { env, services } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -113,14 +114,14 @@ class CacheService {
    * Initialize Redis connection
    */
   async connect(): Promise<void> {
-    if (this.connected || !process.env.REDIS_URL) {
-      logger.info('Using in-memory cache (Redis URL not configured)');
+    if (this.connected || !services.redis) {
+      logger.info('Using in-memory cache (Redis service not configured)');
       return;
     }
 
     try {
       this.client = redis.createClient({
-        url: process.env.REDIS_URL,
+        url: env.REDIS_URL,
         socket: {
           reconnectStrategy: retries => {
             if (retries > CACHE_CONFIG.maxRetries) {

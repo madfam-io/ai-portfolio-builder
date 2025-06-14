@@ -1,25 +1,28 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+import { env, services } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
+
 /**
  * Supabase Server Client
- * Server-side Supabase client configuration for API routes
+ * Server-side Supabase client configuration for API routes using centralized environment config
  */
 
 export async function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If Supabase is not configured, return null (graceful degradation)
-  if (!supabaseUrl || !supabaseAnonKey) {
-    logger.warn('Supabase environment variables not configured');
+  // Check if Supabase service is available
+  if (!services.supabase) {
+    logger.warn('Supabase service not configured');
     return null;
   }
 
   const cookieStore = await cookies();
 
-  return createServerClient(supabaseUrl, supabaseAnonKey, {
+  // TypeScript knows these are defined if services.supabase is true
+  return createServerClient(
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
     cookies: {
       get(name: string) {
         return cookieStore.get(name)?.value;

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { apiError } from '@/lib/api/versioning';
 
 /**
  * @fileoverview Authentication middleware for API routes
@@ -9,7 +10,7 @@ import { logger } from '@/lib/utils/logger';
  */
 
 export interface AuthenticatedRequest extends NextRequest {
-  user?: {
+  user: {
     id: string;
     email: string;
     role?: string;
@@ -84,17 +85,17 @@ export function hasPermission(
 }
 
 /**
- * Standard unauthorized response
+ * Standard unauthorized response using centralized error handler
  */
 export function unauthorizedResponse(message = 'Unauthorized') {
-  return NextResponse.json({ error: message }, { status: 401 });
+  return apiError(message, { status: 401 });
 }
 
 /**
- * Standard forbidden response
+ * Standard forbidden response using centralized error handler
  */
 export function forbiddenResponse(message = 'Insufficient permissions') {
-  return NextResponse.json({ error: message }, { status: 403 });
+  return apiError(message, { status: 403 });
 }
 
 /**
@@ -119,4 +120,34 @@ export function requireAuth(
 
     return handler(request, user);
   };
+}
+
+/**
+ * Higher-order function that wraps API route handlers with authentication
+ * Works seamlessly with versionedApiHandler
+ */
+export function withAuth<T extends (...args: any[]) => any>(
+  handler: (req: AuthenticatedRequest, ...args: Parameters<T>) => ReturnType<T>
+): T {
+  return (async (req: NextRequest, ...args: any[]) => {
+    try {
+      const user = await authenticateUser(req);
+      
+      if (!user) {
+        logger.warn('Unauthorized access attempt', { 
+          path: req.nextUrl.pathname 
+        });
+        return unauthorizedResponse('Authentication required');
+      }
+
+      // Create authenticated request with user
+      const authenticatedReq = Object.assign(req, { user }) as AuthenticatedRequest;
+
+      // Call the original handler with authenticated request
+      return handler(authenticatedReq, ...args);
+    } catch (error) {
+      logger.error('Auth middleware error:', error as Error);
+      return apiError('Authentication failed', { status: 500 });
+    }
+  }) as T;
 }

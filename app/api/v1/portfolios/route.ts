@@ -14,6 +14,7 @@ import {
   validatePortfolioQuery,
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { Portfolio } from '@/types/portfolio';
 
 /**
@@ -28,22 +29,18 @@ import { Portfolio } from '@/types/portfolio';
  * GET /api/v1/portfolios
  * Retrieves all portfolios for the authenticated user
  */
-export const GET = versionedApiHandler(async (request: NextRequest) => {
-  try {
-    // Create Supabase client
-    const supabase = await createClient();
+export const GET = versionedApiHandler(
+  withAuth(async (request: AuthenticatedRequest) => {
+    try {
+      // Create Supabase client
+      const supabase = await createClient();
 
-    if (!supabase) {
-      return apiError('Database service not available', { status: 503 });
-    }
-    // Check authentication
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (!user || authError) {
-      return apiError('Unauthorized - Please sign in', { status: 401 });
-    }
+      if (!supabase) {
+        return apiError('Database service not available', { status: 503 });
+      }
+      
+      // User is already authenticated via middleware
+      const { user } = request;
     // Parse and validate query parameters
     const url = new URL(request.url);
     const queryParams = Object.fromEntries(url.searchParams.entries());
@@ -104,31 +101,28 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
         totalPages: Math.ceil((totalCount || 0) / limit),
       },
     });
-  } catch (error) {
-    logger.error('Unexpected error in GET /api/v1/portfolios:', error as Error);
-    return apiError('Internal server error', { status: 500 });
-  }
-});
+    } catch (error) {
+      logger.error('Unexpected error in GET /api/v1/portfolios:', error as Error);
+      return apiError('Internal server error', { status: 500 });
+    }
+  })
+);
 
 /**
  * POST /api/v1/portfolios
  * Creates a new portfolio for the authenticated user
  */
-export const POST = versionedApiHandler(async (request: NextRequest) => {
-  try {
-    // Create Supabase client
-    const supabase = await createClient();
-    if (!supabase) {
-      return apiError('Database not configured', { status: 500 });
-    }
-    // Check authentication
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-    if (!user || authError) {
-      return apiError('Unauthorized - Please sign in', { status: 401 });
-    }
+export const POST = versionedApiHandler(
+  withAuth(async (request: AuthenticatedRequest) => {
+    try {
+      // Create Supabase client
+      const supabase = await createClient();
+      if (!supabase) {
+        return apiError('Database not configured', { status: 500 });
+      }
+      
+      // User is already authenticated via middleware
+      const { user } = request;
     // Parse and validate request body
     const body = await request.json();
     const validation = validateCreatePortfolio(body);
@@ -238,57 +232,15 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
   } catch (error) {
     logger.error('Unexpected error in POST /api/v1/portfolios', error as Error);
 
-    // Handle JSON parsing errors
-    if (error instanceof SyntaxError) {
-      return apiError('Invalid JSON in request body', { status: 400 });
+      // Handle JSON parsing errors
+      if (error instanceof SyntaxError) {
+        return apiError('Invalid JSON in request body', { status: 400 });
+      }
+      return apiError('Internal server error', { status: 500 });
     }
-    return apiError('Internal server error', { status: 500 });
-  }
-});
+  })
+);
 
-// Transformation functions moved to lib/utils/portfolio-transformer.ts
-
-/**
- * Transforms API portfolio object to database format
- * Converts camelCase to snake_case and adjusts field names
- */
-export function transformApiPortfolioToDb(
-  apiPortfolio: Partial<Portfolio>
-): unknown {
-  const dbData: Record<string, unknown> = {};
-
-  if (apiPortfolio.userId) dbData.user_id = apiPortfolio.userId;
-  if (apiPortfolio.name) dbData.name = apiPortfolio.name;
-  if (apiPortfolio.title) dbData.title = apiPortfolio.title;
-  if (apiPortfolio.bio !== undefined) dbData.bio = apiPortfolio.bio;
-  if (apiPortfolio.tagline !== undefined) dbData.tagline = apiPortfolio.tagline;
-  if (apiPortfolio.avatarUrl !== undefined)
-    dbData.avatar_url = apiPortfolio.avatarUrl;
-  if (apiPortfolio.contact) dbData.contact = apiPortfolio.contact;
-  if (apiPortfolio.social) dbData.social = apiPortfolio.social;
-  if (apiPortfolio.experience) dbData.experience = apiPortfolio.experience;
-  if (apiPortfolio.education) dbData.education = apiPortfolio.education;
-  if (apiPortfolio.projects) dbData.projects = apiPortfolio.projects;
-  if (apiPortfolio.skills) dbData.skills = apiPortfolio.skills;
-  if (apiPortfolio.certifications)
-    dbData.certifications = apiPortfolio.certifications;
-  if (apiPortfolio.template) dbData.template = apiPortfolio.template;
-  if (apiPortfolio.customization)
-    dbData.customization = apiPortfolio.customization;
-  if (apiPortfolio.aiSettings) dbData.ai_settings = apiPortfolio.aiSettings;
-  if (apiPortfolio.status) dbData.status = apiPortfolio.status;
-  if (apiPortfolio.subdomain !== undefined)
-    dbData.subdomain = apiPortfolio.subdomain;
-  if (apiPortfolio.customDomain !== undefined)
-    dbData.custom_domain = apiPortfolio.customDomain;
-  if (apiPortfolio.views !== undefined) dbData.views = apiPortfolio.views;
-  if (apiPortfolio.lastViewedAt)
-    dbData.last_viewed_at = apiPortfolio.lastViewedAt.toISOString();
-  if (apiPortfolio.publishedAt)
-    dbData.published_at = apiPortfolio.publishedAt.toISOString();
-
-  // Always update the updated_at timestamp
-  dbData.updated_at = new Date().toISOString();
-
-  return dbData;
-}
+// Transformation functions have been moved to lib/utils/portfolio-transformer.ts
+// Import the transformation function from the centralized location
+export { transformApiPortfolioToDb } from '@/lib/utils/portfolio-transformer';

@@ -1,4 +1,5 @@
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { BaseService, ServiceError } from '@/lib/services/base';
 import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
@@ -11,13 +12,22 @@ import { PortfolioRepository } from './portfolio.repository';
 
 /**
  * Portfolio service for managing portfolio business logic
- * Delegates data access to repository layer
+ * Extends BaseService for common patterns and error handling
  */
-export class PortfolioService {
+export class PortfolioService extends BaseService<Portfolio> {
+  protected serviceName = 'PortfolioService';
   private repository: PortfolioRepository;
 
   constructor() {
+    super();
     this.repository = new PortfolioRepository();
+  }
+
+  /**
+   * Get repository instance for base service
+   */
+  protected getRepository(): PortfolioRepository {
+    return this.repository;
   }
 
   /**
@@ -335,11 +345,14 @@ export class PortfolioService {
 
       if (portfolio) {
         // Increment view count asynchronously
-        this.repository.incrementViews(portfolio.id).catch(err =>
+        try {
+          await this.repository.incrementViews(portfolio.id);
+        } catch (err) {
+          // Log error but don't fail the main operation
           logger.error('Failed to increment views', err as Error, {
             portfolioId: portfolio.id,
-          })
-        );
+          });
+        }
       }
 
       return portfolio;

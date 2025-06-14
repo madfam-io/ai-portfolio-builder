@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
+import { env } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
 
 import { ContentScorer } from './huggingface/ContentScorer';
@@ -32,7 +33,7 @@ export class HuggingFaceService implements AIService {
   private contentScorer: ContentScorer;
 
   constructor(apiKey?: string, userModelPreferences?: Record<string, string>) {
-    this.apiKey = apiKey || process.env.HUGGINGFACE_API_KEY || '';
+    this.apiKey = apiKey || env.HUGGINGFACE_API_KEY || '';
     
     if (!this.apiKey) {
       logger.warn(

@@ -1,15 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
-import {
-  applySecurityHeaders,
-  shouldApplySecurityHeaders,
-} from './middleware/security-headers';
 
 import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
-import { csrfMiddleware } from './middleware/csrf';
-import { edgeRateLimitMiddleware } from './middleware/edge-rate-limiter';
+import { 
+  securityMiddleware, 
+  applySecurityToResponse 
+} from './middleware/security';
 
 /**
  * Middleware for handling authentication, route protection, rate limiting, CSRF, and API versioning
@@ -39,20 +37,10 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     }
   }
 
-  // Apply edge-compatible rate limiting to all API routes
-  if (pathname.startsWith('/api/')) {
-    const rateLimitResponse = edgeRateLimitMiddleware(req);
-    if (rateLimitResponse) {
-      return rateLimitResponse;
-    }
-  }
-
-  // Apply CSRF protection to API routes
-  if (pathname.startsWith('/api/')) {
-    const csrfResponse = csrfMiddleware(req);
-    if (csrfResponse) {
-      return csrfResponse;
-    }
+  // Apply comprehensive security middleware
+  const securityResponse = await securityMiddleware(req);
+  if (securityResponse) {
+    return securityResponse;
   }
   // Create a response that we can modify
   let response = NextResponse.next({
@@ -61,20 +49,22 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     },
   });
 
-  // Check if Supabase environment variables are configured
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  // Import environment config at the top of the function to avoid module initialization issues
+  const { env, services } = await import('@/lib/config');
 
   // If Supabase is not configured, skip authentication checks (development mode)
-  if (!supabaseUrl || !supabaseAnonKey) {
+  if (!services.supabase) {
     logger.warn(
-      'Supabase environment variables not configured. Authentication middleware disabled.'
+      'Supabase service not configured. Authentication middleware disabled.'
     );
     return response;
   }
 
   // Create a Supabase client configured to use cookies
-  const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
+  const supabase = createServerClient(
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
     cookies: {
       get(name: string) {
         return req.cookies.get(name)?.value;
@@ -161,10 +151,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
 
-  // Apply security headers to all responses (except static assets)
-  if (shouldApplySecurityHeaders(pathname)) {
-    response = applySecurityHeaders(req, response);
-  }
+  // Apply comprehensive security headers to response
+  response = applySecurityToResponse(req, response);
 
   return response;
 }

@@ -1,20 +1,22 @@
 import { createBrowserClient } from '@supabase/ssr';
 
+import { env, services } from '@/lib/config';
 import { logger } from '@/lib/utils/logger';
+
 /**
  * Supabase Client
- * Client-side Supabase client configuration
+ * Client-side Supabase client configuration using centralized environment config
  */
-
 export function createClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-  // If Supabase is not configured, return null (graceful degradation)
-  if (!supabaseUrl || !supabaseAnonKey) {
-    logger.warn('Supabase environment variables not configured');
+  // Check if Supabase service is available
+  if (!services.supabase) {
+    logger.warn('Supabase service not configured');
     return null;
   }
 
-  return createBrowserClient(supabaseUrl, supabaseAnonKey);
+  // TypeScript knows these are defined if services.supabase is true
+  return createBrowserClient(
+    env.NEXT_PUBLIC_SUPABASE_URL!,
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
 }

@@ -291,19 +291,7 @@ jest.mock('framer-motion', () => ({
   AnimatePresence: ({ children }) => children,
 }));
 
-// Mock react-hot-toast
-jest.mock('react-hot-toast', () => ({
-  __esModule: true,
-  default: {
-    success: jest.fn(),
-    error: jest.fn(),
-    loading: jest.fn(),
-    dismiss: jest.fn(),
-    custom: jest.fn(),
-    promise: jest.fn(),
-  },
-  Toaster: ({ children }) => children,
-}));
+// Toast utility is mocked in lib/utils/toast.ts - no external dependency needed
 
 // Mock file reading for testing
 global.fetch = jest.fn();

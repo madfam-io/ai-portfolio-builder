@@ -12,6 +12,37 @@ const withBundleAnalyzer =
 const nextConfig = {
   reactStrictMode: false,
   poweredByHeader: false,
+  
+  // Enable SWC minification for smaller bundles
+  swcMinify: true,
+  
+  // Optimize production builds
+  productionBrowserSourceMaps: false,
+  
+  // Module optimization
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/dist/esm/icons/{{member}}',
+    },
+    '@mui/material': {
+      transform: '@mui/material/{{member}}',
+    },
+    lodash: {
+      transform: 'lodash/{{member}}',
+    },
+  },
+  
+  // Experimental features for better performance
+  experimental: {
+    optimizeCss: true,
+    optimizePackageImports: [
+      'lucide-react',
+      'recharts',
+      'date-fns',
+      '@octokit/rest',
+      '@octokit/types',
+    ],
+  },
 
   // Security headers
   async headers() {
@@ -144,6 +175,47 @@ const nextConfig = {
         message: /Critical dependency/,
       },
     ];
+    
+    // Optimize code splitting
+    if (!isServer) {
+      config.optimization = {
+        ...config.optimization,
+        splitChunks: {
+          chunks: 'all',
+          cacheGroups: {
+            // Vendor splitting
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendor',
+              priority: 10,
+              reuseExistingChunk: true,
+            },
+            // Common components
+            common: {
+              minChunks: 2,
+              priority: 5,
+              reuseExistingChunk: true,
+            },
+            // Separate heavy libraries
+            recharts: {
+              test: /[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/,
+              name: 'charts',
+              priority: 20,
+            },
+            octokit: {
+              test: /[\\/]node_modules[\\/]@octokit[\\/]/,
+              name: 'github',
+              priority: 20,
+            },
+            supabase: {
+              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
+              name: 'supabase',
+              priority: 20,
+            },
+          },
+        },
+      };
+    }
 
     // Handle Node.js modules for Redis and other server-only dependencies
     if (!isServer) {

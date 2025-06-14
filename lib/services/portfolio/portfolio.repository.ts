@@ -1,3 +1,5 @@
+import { BaseRepository } from '@/lib/services/base';
+import type { QueryOptions } from '@/lib/services/base';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -11,9 +13,9 @@ import { PortfolioMapper } from './portfolio.mapper';
 
 /**
  * Portfolio repository for data access layer
- * Handles all database operations for portfolios
+ * Implements BaseRepository interface for consistent data access patterns
  */
-export class PortfolioRepository {
+export class PortfolioRepository implements BaseRepository<Portfolio> {
   private supabase: any;
   private useMockData: boolean;
 
@@ -30,9 +32,16 @@ export class PortfolioRepository {
   }
 
   /**
-   * Get all portfolios for a user
+   * Get all portfolios (optionally filtered)
    */
-  async findAll(userId: string): Promise<Portfolio[]> {
+  async findAll(options?: QueryOptions): Promise<Portfolio[]> {
+    // For now, we'll use a default userId from options or return empty array
+    // In a real implementation, this would use proper filtering
+    const userId = options?.filters?.userId as string;
+    if (!userId) {
+      logger.warn('findAll called without userId filter');
+      return [];
+    }
     return this.findByUserId(userId);
   }
 

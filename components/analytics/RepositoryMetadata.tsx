@@ -1,6 +1,6 @@
 'use client';
 
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from '@/lib/utils/date';
 import { GitFork, Star, Calendar } from 'lucide-react';
 
 import type { Repository } from '@/types/analytics';

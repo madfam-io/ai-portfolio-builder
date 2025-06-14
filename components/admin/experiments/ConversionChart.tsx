@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { format } from '@/lib/utils/date';
 import React from 'react';
 import {
   LineChart,

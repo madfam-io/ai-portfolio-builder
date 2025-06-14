@@ -12,10 +12,11 @@ import {
 import { useRouter, useParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
 
+// Use lazy-loaded chart components to reduce bundle size by ~60KB
 import {
   RepositoryCommitsChart,
   RepositoryLanguagesChart,
-} from '@/components/analytics/charts';
+} from '@/components/analytics/charts/index.lazy';
 import { RepositoryHeader } from '@/components/analytics/RepositoryHeader';
 import {
   transformCommitData,
