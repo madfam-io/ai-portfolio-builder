@@ -55,13 +55,11 @@ class LazyErrorBoundary extends React.Component<
     return { hasError: true, error };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    
-
+  componentDidCatch(_error: Error, _errorInfo: React.ErrorInfo) {
     // In production, you might want to send this to an error reporting service
     if (process.env.NODE_ENV === 'production') {
       // Example: Sentry, LogRocket, etc.
-      // errorReportingService.captureException(error, { extra: errorInfo });
+      // errorReportingService.captureException(_error, { extra: _errorInfo });
     }
   }
 

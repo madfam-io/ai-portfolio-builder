@@ -1,14 +1,6 @@
 import { z } from 'zod';
 
 import { logger } from '@/lib/utils/logger';
-import type {
-  ExperienceItem,
-  EducationItem,
-  ProjectItem,
-  SkillCategory,
-  CertificationItem,
-  TemplateCustomization,
-} from '@/types/portfolio-sections';
 /**
  * API Input Validation Schemas
  * Comprehensive validation for all API routes

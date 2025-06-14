@@ -159,13 +159,13 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
       template: (portfolio.template ?? template ?? 'developer') as TemplateType,
       customization: portfolio.customization || {},
       status: portfolio.status || 'draft',
-      subdomain: null,
-      customDomain: null,
+      subdomain: undefined,
+      customDomain: undefined,
       views: 0,
-      lastViewedAt: null,
+      lastViewedAt: undefined,
       createdAt: new Date(),
       updatedAt: new Date(),
-      publishedAt: null,
+      publishedAt: undefined,
     };
 
     // Generate HTML based on template

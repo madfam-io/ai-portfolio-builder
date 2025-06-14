@@ -70,17 +70,20 @@ export async function GET(request: NextRequest) {
   try {
     const { query } = await validateRequest(request, listPortfoliosSchemas);
     
+    // Type assertion for the example since validateRequest returns unknown
+    const typedQuery = query as z.infer<typeof listPortfoliosSchemas.query>;
+    
     // query is now typed with all the fields above
     const portfolios = await getPortfolios({
-      page: query.page,
-      limit: query.limit,
+      page: typedQuery.page,
+      limit: typedQuery.limit,
       filters: {
-        status: query.status,
-        search: query.search,
+        status: typedQuery.status,
+        search: typedQuery.search,
       },
       sort: {
-        by: query.sortBy,
-        order: query.sortOrder,
+        by: typedQuery.sortBy,
+        order: typedQuery.sortOrder,
       },
     });
     
@@ -115,12 +118,21 @@ export async function PATCH(
   try {
     const validated = await validateUpdatePortfolio(request, { params });
     
+    // Type assertions for the example
+    const typedBody = validated.body as {
+      name?: string;
+      title?: string;
+      bio?: string;
+      status?: 'draft' | 'published' | 'archived';
+    };
+    const typedParams = validated.params as { id: string };
+    
     // validated.body contains the update data
     // validated.params.id contains the portfolio ID
     
     const updated = await updatePortfolio(
-      validated.params.id,
-      validated.body
+      typedParams.id,
+      typedBody
     );
     
     return NextResponse.json(updated);
@@ -133,6 +145,8 @@ export async function PATCH(
 // Example 4: Complex validation with custom logic
 // ============================================
 
+// Example of complex validation schemas (commented out as it's just for reference)
+/*
 const complexValidationSchemas = {
   body: z.object({
     email: commonSchemas.email,
@@ -159,6 +173,7 @@ const complexValidationSchemas = {
     'x-request-id': commonSchemas.uuid.optional(),
   }),
 };
+*/
 
 // ============================================
 // Example 5: File upload validation
@@ -207,10 +222,14 @@ export async function handleWebhook(request: NextRequest) {
       }
     );
     
+    // Type assertions for the example
+    const typedBody = validated.body as z.infer<typeof webhookSchemas.body>;
+    const typedHeaders = validated.headers as z.infer<typeof webhookSchemas.headers>;
+    
     // Verify HMAC signature
     const isValid = await verifyWebhookSignature(
-      validated.body,
-      validated.headers['x-webhook-signature']
+      typedBody,
+      typedHeaders['x-webhook-signature']
     );
     
     if (!isValid) {

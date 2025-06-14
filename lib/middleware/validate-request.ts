@@ -118,7 +118,7 @@ function extractQueryParams(request: NextRequest): Record<string, unknown> {
 /**
  * Extract route parameters from NextRequest
  */
-function extractRouteParams(request: NextRequest): Record<string, string> {
+function extractRouteParams(_request: NextRequest): Record<string, string> {
   // Route params are typically passed through the handler function
   // This is a placeholder that would need integration with the route handler
   return {};
@@ -300,7 +300,7 @@ export function createValidationMiddleware<
 ) {
   return async (
     request: NextRequest,
-    context?: { params?: Record<string, string> }
+    _context?: { params?: Record<string, string> }
   ): Promise<ValidatedRequest<TBody, TQuery, TParams, THeaders>> => {
     // If route params are provided in context, we need to handle them
     // This would require modifying the extractRouteParams function

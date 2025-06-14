@@ -62,6 +62,11 @@ export class DatabaseSeeder {
       const tables = ['users', 'portfolios', 'subscription_plans'];
 
       for (const table of tables) {
+        if (!this.client) {
+          logger.error('Database client not initialized');
+          return false;
+        }
+        
         const { count, error } = await this.client
           .from(table)
           .select('*', { count: 'exact', head: true });
@@ -96,6 +101,11 @@ export class DatabaseSeeder {
   async validateDatabase(): Promise<boolean> {
     try {
       // Test basic connectivity
+      if (!this.client) {
+        logger.error('Database client not initialized');
+        return false;
+      }
+      
       const { error } = await this.client
         .from('subscription_plans')
         .select('id')
@@ -198,13 +208,22 @@ export class DatabaseSeeder {
       ];
 
       for (const table of tables) {
+        if (!this.client) {
+          logger.error('Database client not initialized');
+          continue;
+        }
+        
         const { error } = await this.client
           .from(table)
           .delete()
           .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all except system records
 
         if (error) {
-          logger.warn(`Error clearing table ${table}:`, error);
+          logger.warn(`Error clearing table ${table}:`, {
+            error: error.message,
+            code: error.code,
+            details: error.details,
+          });
         } else {
           logger.info(`Cleared table ${table}`);
         }
@@ -241,6 +260,11 @@ export class DatabaseSeeder {
       let totalRecords = 0;
 
       for (const table of tables) {
+        if (!this.client) {
+          logger.error('Database client not initialized');
+          continue;
+        }
+        
         const { count, error } = await this.client
           .from(table)
           .select('*', { count: 'exact', head: true });
