@@ -1,5 +1,5 @@
 import { Inter } from 'next/font/google';
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import type { Metadata } from 'next';
 import './globals.css';
@@ -99,11 +99,13 @@ export default function RootLayout({
             <LanguageProvider>
               <StoreProvider>
                 <AuthProvider>
-                  <PostHogProvider>
-                    <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-                      {children}
-                    </div>
-                  </PostHogProvider>
+                  <Suspense fallback={null}>
+                    <PostHogProvider>
+                      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                        {children}
+                      </div>
+                    </PostHogProvider>
+                  </Suspense>
                 </AuthProvider>
               </StoreProvider>
             </LanguageProvider>
