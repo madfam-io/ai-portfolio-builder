@@ -40,6 +40,8 @@ export interface PortfolioState {
   isLoading: boolean;
   error: string | null;
   lastSaved: Date | null;
+  history: any[];
+  historyIndex: number;
 }
 
 export interface PortfolioActions {
@@ -58,6 +60,11 @@ export interface PortfolioActions {
   updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<void>;
   deletePortfolio: (id: string) => Promise<void>;
   savePortfolio: () => Promise<void>;
+  updatePortfolioData: (data: Partial<Portfolio['data']>) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
   resetPortfolios: () => void;
 }
 

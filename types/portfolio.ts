@@ -202,6 +202,12 @@ export interface Portfolio {
   createdAt: Date;
   updatedAt: Date;
   publishedAt?: Date;
+  
+  // Editor state (not persisted)
+  hasUnsavedChanges?: boolean;
+  
+  // Dynamic data storage
+  data?: Record<string, any>;
 }
 
 // Import data interfaces

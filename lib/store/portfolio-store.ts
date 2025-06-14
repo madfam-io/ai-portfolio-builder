@@ -2,7 +2,8 @@ import { create } from 'zustand';
 import { devtools, subscribeWithSelector } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 
-import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
+import { portfolioServiceClient } from '@/lib/services/portfolio/portfolio-service-client';
+import { Portfolio } from '@/types/portfolio';
 
 import { PortfolioState, PortfolioActions } from './types';
 
@@ -11,14 +12,49 @@ import { PortfolioState, PortfolioActions } from './types';
  * Manages portfolio data, editing state, and portfolio operations
  */
 
+// Mock portfolio for development
+const mockPortfolio: Portfolio = {
+  id: 'mock-portfolio-1',
+  userId: 'mock-user-1',
+  name: 'John Doe Portfolio',
+  title: 'Senior Software Engineer',
+  bio: 'Passionate developer with expertise in web technologies',
+  template: 'developer',
+  status: 'draft',
+  contact: {
+    email: 'john@example.com',
+    phone: '+1234567890',
+    location: 'San Francisco, CA',
+  },
+  social: {
+    linkedin: 'https://linkedin.com/in/johndoe',
+    github: 'https://github.com/johndoe',
+  },
+  experience: [],
+  education: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  customization: {},
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  data: {
+    headline: 'Building the future of web applications',
+    tagline: 'Full-stack developer passionate about clean code',
+    about: 'I am a senior software engineer with over 8 years of experience...',
+  },
+};
+
 const initialState: PortfolioState = {
   portfolios: [],
-  currentPortfolio: null,
+  currentPortfolio: process.env.NODE_ENV === 'development' ? mockPortfolio : null,
   isEditing: false,
   isSaving: false,
   isLoading: false,
   error: null,
   lastSaved: null,
+  history: [],
+  historyIndex: -1,
 };
 
 export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
@@ -66,7 +102,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           });
 
           try {
-            const portfolios = await portfolioService.getUserPortfolios(userId);
+            const portfolios = await portfolioServiceClient.getUserPortfolios(userId);
             set(state => {
               state.portfolios = portfolios;
               state.isLoading = false;
@@ -90,7 +126,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           });
 
           try {
-            const portfolio = await portfolioService.getPortfolio(id);
+            const portfolio = await portfolioServiceClient.getPortfolio(id);
             set(state => {
               state.currentPortfolio = portfolio;
               state.isLoading = false;
@@ -122,7 +158,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
               userId,
             };
             const portfolio =
-              await portfolioService.createPortfolio(createData);
+              await portfolioServiceClient.createPortfolio(createData);
             set(state => {
               state.portfolios.push(portfolio);
               state.currentPortfolio = portfolio;
@@ -149,7 +185,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           });
 
           try {
-            const updated = await portfolioService.updatePortfolio(id, data);
+            const updated = await portfolioServiceClient.updatePortfolio(id, data);
             if (updated) {
               set(state => {
                 const index = state.portfolios.findIndex(p => p.id === id);
@@ -182,7 +218,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           });
 
           try {
-            await portfolioService.deletePortfolio(id);
+            await portfolioServiceClient.deletePortfolio(id);
             set(state => {
               state.portfolios = state.portfolios.filter(p => p.id !== id);
               if (state.currentPortfolio?.id === id) {
@@ -209,6 +245,52 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
           }
 
           await get().updatePortfolio(currentPortfolio.id, currentPortfolio);
+        },
+
+        updatePortfolioData: (data) => {
+          set(state => {
+            if (!state.currentPortfolio) return;
+            
+            // Save current state to history before updating
+            const currentData = { ...state.currentPortfolio.data };
+            state.history = [...state.history.slice(0, state.historyIndex + 1), currentData];
+            state.historyIndex = state.history.length;
+            
+            // Update the data
+            state.currentPortfolio.data = {
+              ...state.currentPortfolio.data,
+              ...data,
+            };
+            state.currentPortfolio.hasUnsavedChanges = true;
+          });
+        },
+
+        undo: () => {
+          set(state => {
+            if (state.historyIndex > 0 && state.currentPortfolio) {
+              state.historyIndex--;
+              state.currentPortfolio.data = { ...state.history[state.historyIndex] };
+            }
+          });
+        },
+
+        redo: () => {
+          set(state => {
+            if (state.historyIndex < state.history.length - 1 && state.currentPortfolio) {
+              state.historyIndex++;
+              state.currentPortfolio.data = { ...state.history[state.historyIndex] };
+            }
+          });
+        },
+
+        get canUndo() {
+          const state = get();
+          return state.historyIndex > 0;
+        },
+
+        get canRedo() {
+          const state = get();
+          return state.historyIndex < state.history.length - 1;
         },
 
         resetPortfolios: () => set(() => initialState),

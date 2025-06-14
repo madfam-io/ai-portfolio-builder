@@ -62,8 +62,8 @@ const ProductionEnvSchema = BaseEnvSchema.extend({
   // AI Services (required in production)
   HUGGINGFACE_API_KEY: z.string().min(1),
   
-  // Redis (required in production)
-  REDIS_URL: z.union([z.string().url(), z.literal('')]),
+  // Redis (optional with fallback to in-memory)
+  REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
   
   // OAuth (optional, for future use)
   LINKEDIN_CLIENT_ID: z.string().optional(),
