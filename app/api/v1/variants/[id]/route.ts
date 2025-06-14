@@ -1,0 +1,219 @@
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
+interface RouteParams {
+  params: { id: string };
+}
+
+/**
+ * GET /api/v1/variants/[id]
+ * Get a specific variant
+ */
+export const GET = versionedApiHandler(
+  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+    try {
+      const variantId = params.id;
+      const supabase = await createClient();
+      
+      if (!supabase) {
+        return apiError('Database service not available', { status: 503 });
+      }
+
+      // Get variant with portfolio to verify ownership
+      const { data: variant, error } = await supabase
+        .from('portfolio_variants')
+        .select(`
+          *,
+          audience_profile:audience_profiles(*),
+          portfolio:portfolios(user_id)
+        `)
+        .eq('id', variantId)
+        .single();
+
+      if (error || !variant) {
+        return apiError('Variant not found', { status: 404 });
+      }
+
+      // Verify user owns the portfolio
+      if (variant.portfolio.user_id !== request.user.id) {
+        return apiError('Unauthorized', { status: 403 });
+      }
+
+      // Transform to match TypeScript types
+      const transformedVariant = {
+        id: variant.id,
+        portfolioId: variant.portfolio_id,
+        name: variant.name,
+        slug: variant.slug,
+        isDefault: variant.is_default,
+        isPublished: variant.is_published,
+        contentOverrides: variant.content_overrides || {},
+        audienceProfile: variant.audience_profile || {},
+        aiOptimization: variant.ai_optimization || {},
+        analytics: variant.analytics || {},
+        createdAt: variant.created_at,
+        updatedAt: variant.updated_at,
+      };
+
+      return apiSuccess({ variant: transformedVariant });
+    } catch (error) {
+      logger.error('Failed to get variant:', error);
+      return apiError('Internal server error', { status: 500 });
+    }
+  })
+);
+
+/**
+ * PATCH /api/v1/variants/[id]
+ * Update a variant
+ */
+export const PATCH = versionedApiHandler(
+  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+    try {
+      const variantId = params.id;
+      const updates = await request.json();
+      const supabase = await createClient();
+      
+      if (!supabase) {
+        return apiError('Database service not available', { status: 503 });
+      }
+
+      // Get variant with portfolio to verify ownership
+      const { data: existingVariant, error: fetchError } = await supabase
+        .from('portfolio_variants')
+        .select(`
+          id,
+          portfolio:portfolios(user_id)
+        `)
+        .eq('id', variantId)
+        .single();
+
+      if (fetchError || !existingVariant) {
+        return apiError('Variant not found', { status: 404 });
+      }
+
+      // Verify user owns the portfolio
+      if (existingVariant.portfolio.user_id !== request.user.id) {
+        return apiError('Unauthorized', { status: 403 });
+      }
+
+      // Prepare updates
+      const dbUpdates: any = {};
+      
+      if ('name' in updates) dbUpdates.name = updates.name;
+      if ('slug' in updates) dbUpdates.slug = updates.slug;
+      if ('isDefault' in updates) dbUpdates.is_default = updates.isDefault;
+      if ('isPublished' in updates) dbUpdates.is_published = updates.isPublished;
+      if ('contentOverrides' in updates) dbUpdates.content_overrides = updates.contentOverrides;
+      if ('aiOptimization' in updates) dbUpdates.ai_optimization = updates.aiOptimization;
+      if ('analytics' in updates) dbUpdates.analytics = updates.analytics;
+
+      // Update the variant
+      const { data: variant, error: updateError } = await supabase
+        .from('portfolio_variants')
+        .update(dbUpdates)
+        .eq('id', variantId)
+        .select(`
+          *,
+          audience_profile:audience_profiles(*)
+        `)
+        .single();
+
+      if (updateError) {
+        logger.error('Failed to update variant:', updateError);
+        return apiError('Failed to update variant', { status: 500 });
+      }
+
+      // Transform to match TypeScript types
+      const transformedVariant = {
+        id: variant.id,
+        portfolioId: variant.portfolio_id,
+        name: variant.name,
+        slug: variant.slug,
+        isDefault: variant.is_default,
+        isPublished: variant.is_published,
+        contentOverrides: variant.content_overrides || {},
+        audienceProfile: variant.audience_profile || {},
+        aiOptimization: variant.ai_optimization || {},
+        analytics: variant.analytics || {},
+        createdAt: variant.created_at,
+        updatedAt: variant.updated_at,
+      };
+
+      logger.info('Updated portfolio variant', {
+        userId: request.user.id,
+        variantId,
+      });
+
+      return apiSuccess({ variant: transformedVariant });
+    } catch (error) {
+      logger.error('Failed to update variant:', error);
+      return apiError('Internal server error', { status: 500 });
+    }
+  })
+);
+
+/**
+ * DELETE /api/v1/variants/[id]
+ * Delete a variant
+ */
+export const DELETE = versionedApiHandler(
+  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+    try {
+      const variantId = params.id;
+      const supabase = await createClient();
+      
+      if (!supabase) {
+        return apiError('Database service not available', { status: 503 });
+      }
+
+      // Get variant with portfolio to verify ownership
+      const { data: variant, error: fetchError } = await supabase
+        .from('portfolio_variants')
+        .select(`
+          id,
+          is_default,
+          portfolio:portfolios(user_id)
+        `)
+        .eq('id', variantId)
+        .single();
+
+      if (fetchError || !variant) {
+        return apiError('Variant not found', { status: 404 });
+      }
+
+      // Verify user owns the portfolio
+      if (variant.portfolio.user_id !== request.user.id) {
+        return apiError('Unauthorized', { status: 403 });
+      }
+
+      // Prevent deleting default variant
+      if (variant.is_default) {
+        return apiError('Cannot delete default variant', { status: 400 });
+      }
+
+      // Delete the variant
+      const { error: deleteError } = await supabase
+        .from('portfolio_variants')
+        .delete()
+        .eq('id', variantId);
+
+      if (deleteError) {
+        logger.error('Failed to delete variant:', deleteError);
+        return apiError('Failed to delete variant', { status: 500 });
+      }
+
+      logger.info('Deleted portfolio variant', {
+        userId: request.user.id,
+        variantId,
+      });
+
+      return apiSuccess({ message: 'Variant deleted successfully' });
+    } catch (error) {
+      logger.error('Failed to delete variant:', error);
+      return apiError('Internal server error', { status: 500 });
+    }
+  })
+);
