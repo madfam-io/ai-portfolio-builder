@@ -105,9 +105,19 @@ function getEnvSchema(nodeEnv: string | undefined): z.ZodSchema {
  */
 function parseEnv() {
   const nodeEnv = process.env.NODE_ENV;
-  const schema = getEnvSchema(nodeEnv);
+  
+  // During build, we can't access all env vars, so use partial validation
+  // Vercel will inject the actual env vars at runtime
+  const isVercelBuild = process.env.VERCEL || process.env.CI;
   
   try {
+    const schema = getEnvSchema(nodeEnv);
+    
+    // For Vercel builds, use partial validation
+    if (isVercelBuild) {
+      return (schema as any).partial().parse(process.env);
+    }
+    
     const parsed = schema.parse(process.env);
     return parsed;
   } catch (error) {

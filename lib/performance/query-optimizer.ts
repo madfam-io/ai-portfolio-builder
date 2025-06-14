@@ -122,7 +122,7 @@ export function buildOptimizedQuery(
   limit: string;
   joins: string;
 } {
-  const { page, limit, offset } = buildPaginationParams(options);
+  const { limit, offset } = buildPaginationParams(options);
   
   // Build SELECT clause
   const selectClause = options.select 

@@ -1,4 +1,3 @@
-import { NextRequest } from 'next/server';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
@@ -15,7 +14,6 @@ import {
   sanitizePortfolioData,
 } from '@/lib/validation/portfolio';
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { Portfolio } from '@/types/portfolio';
 
 /**
  * Portfolio API Routes v1 - Main CRUD operations

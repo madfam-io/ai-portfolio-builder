@@ -14,17 +14,17 @@ import {
  */
 export function getDynamicTranslations() {
   const currentYear = getCurrentYear();
-  const promoDeadline = getPromotionalDeadline(6); // 6 months from now
+  const promoDeadline = getPromotionalDeadline(); // No parameters needed
 
   return {
     es: {
       footerCopyright: `© ${currentYear} PRISMA by MADFAM. Todos los derechos reservados.`,
-      pricingOfferExpires: `La oferta expira el ${promoDeadline.es}`,
+      pricingOfferExpires: `La oferta expira el ${promoDeadline}`,
       termsLastUpdated: `Última actualización: ${getLastUpdatedDateSpanish()}`,
     },
     en: {
       footerCopyright: `© ${currentYear} PRISMA by MADFAM. All rights reserved.`,
-      pricingOfferExpires: `Offer expires ${promoDeadline.en}`,
+      pricingOfferExpires: `Offer expires ${promoDeadline}`,
       termsLastUpdated: `Last updated: ${getLastUpdatedDate()}`,
     },
   };

@@ -1,5 +1,5 @@
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache';
-import { BaseService, ServiceError } from '@/lib/services/base';
+import { BaseService } from '@/lib/services/base';
 import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,

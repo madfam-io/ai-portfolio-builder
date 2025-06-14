@@ -206,7 +206,7 @@ export abstract class BaseService<T extends { id: string }> {
    * Override for custom validation
    */
   protected async validateCreate(
-    data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>
+    _data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>
   ): Promise<void> {
     // Override in subclasses for custom validation
   }
@@ -216,8 +216,8 @@ export abstract class BaseService<T extends { id: string }> {
    * Override for custom validation
    */
   protected async validateUpdate(
-    id: string, 
-    data: Partial<T>
+    _id: string, 
+    _data: Partial<T>
   ): Promise<void> {
     // Override in subclasses for custom validation
   }
@@ -226,7 +226,7 @@ export abstract class BaseService<T extends { id: string }> {
    * Validate before deletion
    * Override for custom validation
    */
-  protected async validateDelete(id: string): Promise<void> {
+  protected async validateDelete(_id: string): Promise<void> {
     // Override in subclasses for custom validation
   }
   

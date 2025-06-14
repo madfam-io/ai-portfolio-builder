@@ -144,7 +144,7 @@ export function withAuth<T extends (...args: any[]) => any>(
       const authenticatedReq = Object.assign(req, { user }) as AuthenticatedRequest;
 
       // Call the original handler with authenticated request
-      return handler(authenticatedReq, ...args);
+      return handler(authenticatedReq, ...(args as Parameters<T>));
     } catch (error) {
       logger.error('Auth middleware error:', error as Error);
       return apiError('Authentication failed', { status: 500 });
