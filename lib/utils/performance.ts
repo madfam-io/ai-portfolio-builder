@@ -192,7 +192,8 @@ export class PerformanceMonitor {
     // Warn about slow components
     if (renderTime > 16) {
       // 60fps threshold
-      }ms`
+      console.warn(
+        `Slow component render: ${componentName} took ${renderTime.toFixed(2)}ms`
       );
     }
   }
