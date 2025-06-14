@@ -110,8 +110,10 @@ function parseEnv() {
   // Vercel will inject the actual env vars at runtime
   const isVercelBuild = process.env.VERCEL || process.env.CI;
   
+  let schema: z.ZodSchema;
+  
   try {
-    const schema = getEnvSchema(nodeEnv);
+    schema = getEnvSchema(nodeEnv);
     
     // For Vercel builds, use partial validation
     if (isVercelBuild) {
