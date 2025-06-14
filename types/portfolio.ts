@@ -28,6 +28,7 @@ export type SectionType =
   | 'certifications'
   | 'testimonials'
   | 'contact'
+  | 'theme'
   | 'custom';
 
 // Employment types

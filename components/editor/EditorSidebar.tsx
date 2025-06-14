@@ -18,6 +18,8 @@ import { EducationSection } from './sections/EducationSection';
 import { ProjectsSection } from './sections/ProjectsSection';
 import { SkillsSection } from './sections/SkillsSection';
 import { CertificationsSection } from './sections/CertificationsSection';
+import { ContactSection } from './sections/ContactSection';
+import { ThemeCustomizer } from './panels/ThemeCustomizer';
 
 interface EditorSidebarProps {
   portfolio: Portfolio;
@@ -68,10 +70,10 @@ const SECTION_CONFIG = {
     label: 'Contact',
     description: 'Contact information',
   },
-  custom: {
+  theme: {
     icon: FiSettings,
-    label: 'Custom Section',
-    description: 'Custom content',
+    label: 'Theme',
+    description: 'Customize appearance',
   },
 };
 
@@ -206,6 +208,25 @@ export function EditorSidebar({
           <CertificationsSection
             certifications={portfolio.certifications || []}
             onUpdate={(certifications) => onSectionUpdate('certifications', { certifications })}
+          />
+        );
+      case 'contact':
+        return (
+          <ContactSection
+            contact={portfolio.contact || {}}
+            social={portfolio.social || {}}
+            onUpdate={(data) => {
+              if (data.contact) onSectionUpdate('contact', { contact: data.contact });
+              if (data.social) onSectionUpdate('contact', { social: data.social });
+            }}
+          />
+        );
+      case 'theme':
+        return (
+          <ThemeCustomizer
+            customization={portfolio.customization || {}}
+            onUpdate={(customization) => onSectionUpdate('theme', { customization })}
+            template={portfolio.template}
           />
         );
       default:

@@ -217,7 +217,7 @@ export function EditorContent() {
             if (typeof updates === 'object' && updates !== null) {
               Object.entries(updates).forEach(([field, value]) => {
                 // For nested data fields, we need to update the data object
-                if (['experience', 'education', 'projects', 'skills', 'certifications'].includes(field)) {
+                if (['experience', 'education', 'projects', 'skills', 'certifications', 'customization', 'contact', 'social'].includes(field)) {
                   updatePortfolioData(field, value);
                 } else {
                   updatePortfolioData(field, value);
