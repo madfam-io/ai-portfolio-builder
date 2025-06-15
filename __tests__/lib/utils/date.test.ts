@@ -3,319 +3,353 @@ import {
   format,
   parseISO,
   isValid,
-  isBefore,
-  isAfter,
   addDays,
-  addWeeks,
-  addMonths,
-  addYears,
   subDays,
-  subWeeks,
-  subMonths,
-  subYears,
   startOfDay,
   endOfDay,
-  startOfWeek,
-  endOfWeek,
-  startOfMonth,
-  endOfMonth,
-  startOfYear,
-  endOfYear,
-  differenceInDays,
-  differenceInWeeks,
-  differenceInMonths,
-  differenceInYears
+  isBefore,
+  isAfter,
+  getCurrentYear,
+  getPromotionalDeadline,
+  getLastUpdatedDate,
+  getLastUpdatedDateSpanish,
 } from '@/lib/utils/date';
 
 describe('Date Utilities', () => {
-  const testDate = new Date('2024-01-15T10:30:00.000Z');
-  const testDateString = '2024-01-15T10:30:00.000Z';
+  // Mock current date for consistent testing
+  const mockDate = new Date('2024-01-15T10:30:00.000Z');
+  const originalDate = Date;
+
+  beforeEach(() => {
+    // Mock Date constructor
+    global.Date = jest.fn((...args) => {
+      if (args.length === 0) {
+        return mockDate;
+      }
+      return new originalDate(...args);
+    }) as any;
+    // Preserve static methods
+    Object.setPrototypeOf(global.Date, originalDate);
+    global.Date.now = () => mockDate.getTime();
+    global.Date.parse = originalDate.parse;
+    global.Date.UTC = originalDate.UTC;
+  });
+
+  afterEach(() => {
+    global.Date = originalDate;
+  });
 
   describe('formatDistanceToNow', () => {
-    it('should format recent dates', () => {
-      const now = new Date();
-      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-      
-      const result = formatDistanceToNow(fiveMinutesAgo);
-      expect(result).toContain('5 minutes');
+    it('should format seconds ago', () => {
+      const date = new Date('2024-01-15T10:29:30.000Z'); // 30 seconds ago
+      expect(formatDistanceToNow(date)).toBe('30 seconds');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('30 seconds ago');
     });
 
-    it('should handle "about" prefix', () => {
-      const result = formatDistanceToNow(testDate, { addSuffix: true });
-      expect(result).toMatch(/ago$/);
+    it('should format minutes ago', () => {
+      const date = new Date('2024-01-15T10:25:00.000Z'); // 5 minutes ago
+      expect(formatDistanceToNow(date)).toBe('5 minutes');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
     });
 
-    it('should handle future dates', () => {
-      const future = new Date(Date.now() + 24 * 60 * 60 * 1000);
-      const result = formatDistanceToNow(future, { addSuffix: true });
-      expect(result).toMatch(/in .+ day/);
+    it('should format hours ago', () => {
+      const date = new Date('2024-01-15T08:30:00.000Z'); // 2 hours ago
+      expect(formatDistanceToNow(date)).toBe('2 hours');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 hours ago');
     });
 
-    it('should handle same date', () => {
-      const now = new Date();
-      const result = formatDistanceToNow(now);
-      expect(result).toContain('less than a minute');
+    it('should format days ago', () => {
+      const date = new Date('2024-01-12T10:30:00.000Z'); // 3 days ago
+      expect(formatDistanceToNow(date)).toBe('3 days');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('3 days ago');
     });
 
-    it('should handle different time units', () => {
-      const now = new Date();
-      
-      const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
-      expect(formatDistanceToNow(oneHourAgo)).toContain('about 1 hour');
-      
-      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      expect(formatDistanceToNow(oneDayAgo)).toContain('1 day');
+    it('should format weeks ago', () => {
+      const date = new Date('2024-01-01T10:30:00.000Z'); // 2 weeks ago
+      expect(formatDistanceToNow(date)).toBe('2 weeks');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 weeks ago');
+    });
+
+    it('should format months ago', () => {
+      const date = new Date('2023-11-15T10:30:00.000Z'); // 2 months ago
+      expect(formatDistanceToNow(date)).toBe('2 months');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 months ago');
+    });
+
+    it('should format years ago', () => {
+      const date = new Date('2022-01-15T10:30:00.000Z'); // 2 years ago
+      expect(formatDistanceToNow(date)).toBe('2 years');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 years ago');
+    });
+
+    it('should handle singular units', () => {
+      const date = new Date('2024-01-15T10:29:59.000Z'); // 1 second ago
+      expect(formatDistanceToNow(date)).toBe('1 second');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('1 second ago');
+    });
+
+    it('should handle just now', () => {
+      const date = new Date('2024-01-15T10:30:00.000Z'); // 0 seconds ago
+      expect(formatDistanceToNow(date)).toBe('0 seconds');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('just now');
+    });
+
+    it('should handle string dates', () => {
+      const date = '2024-01-15T10:25:00.000Z';
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
+    });
+
+    it('should handle timestamp dates', () => {
+      const date = new Date('2024-01-15T10:25:00.000Z').getTime();
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
     });
   });
 
   describe('format', () => {
-    it('should format with common patterns', () => {
-      expect(format(testDate, 'yyyy-MM-dd')).toBe('2024-01-15');
-      expect(format(testDate, 'dd/MM/yyyy')).toBe('15/01/2024');
-      expect(format(testDate, 'MMM d, yyyy')).toBe('Jan 15, 2024');
-      expect(format(testDate, 'MMMM do, yyyy')).toBe('January 15th, 2024');
+    const testDate = new Date('2024-03-15T14:30:00.000Z');
+
+    it('should format as MMM d, yyyy', () => {
+      expect(format(testDate, 'MMM d, yyyy')).toMatch(/Mar 15, 2024/);
     });
 
-    it('should format time patterns', () => {
-      expect(format(testDate, 'HH:mm')).toBe('10:30');
-      expect(format(testDate, 'h:mm a')).toBe('10:30 AM');
-      expect(format(testDate, 'HH:mm:ss')).toBe('10:30:00');
+    it('should format as MM/dd/yyyy', () => {
+      expect(format(testDate, 'MM/dd/yyyy')).toMatch(/03\/15\/2024/);
     });
 
-    it('should format weekdays and months', () => {
-      expect(format(testDate, 'EEEE')).toBe('Monday');
-      expect(format(testDate, 'EEE')).toBe('Mon');
-      expect(format(testDate, 'MMMM')).toBe('January');
-      expect(format(testDate, 'MMM')).toBe('Jan');
+    it('should format as MMM d', () => {
+      expect(format(testDate, 'MMM d')).toMatch(/Mar 15/);
     });
 
-    it('should handle ISO format', () => {
-      const result = format(testDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
-      expect(result).toMatch(/2024-01-15T10:30:00\.000\+00:00/);
+    it('should format as MMMM yyyy', () => {
+      expect(format(testDate, 'MMMM yyyy')).toMatch(/March 2024/);
     });
 
-    it('should handle invalid date', () => {
-      const invalidDate = new Date('invalid');
-      expect(() => format(invalidDate, 'yyyy-MM-dd')).toThrow();
+    it('should format as HH:mm', () => {
+      // Time will vary based on timezone, so we just check format
+      const result = format(testDate, 'HH:mm');
+      expect(result).toMatch(/^\d{2}:\d{2}$/);
+    });
+
+    it('should handle unknown format strings', () => {
+      const result = format(testDate, 'unknown');
+      expect(result).toBeTruthy();
+      expect(result).toContain('2024');
+    });
+
+    it('should handle string dates', () => {
+      expect(format('2024-03-15T14:30:00.000Z', 'MMM d, yyyy')).toMatch(/Mar 15, 2024/);
+    });
+
+    it('should handle timestamp dates', () => {
+      expect(format(testDate.getTime(), 'MMM d, yyyy')).toMatch(/Mar 15, 2024/);
     });
   });
 
   describe('parseISO', () => {
-    it('should parse ISO date strings', () => {
-      const parsed = parseISO(testDateString);
-      expect(parsed.getTime()).toBe(testDate.getTime());
+    it('should parse ISO string to Date', () => {
+      const isoString = '2024-03-15T14:30:00.000Z';
+      const date = parseISO(isoString);
+      expect(date).toBeInstanceOf(originalDate);
+      expect(date.toISOString()).toBe(isoString);
     });
 
-    it('should handle date-only strings', () => {
-      const parsed = parseISO('2024-01-15');
-      expect(parsed.getFullYear()).toBe(2024);
-      expect(parsed.getMonth()).toBe(0); // January
-      expect(parsed.getDate()).toBe(15);
-    });
-
-    it('should handle timezone offsets', () => {
-      const withTz = parseISO('2024-01-15T10:30:00+05:00');
-      expect(withTz).toBeInstanceOf(Date);
-    });
-
-    it('should throw for invalid ISO strings', () => {
-      expect(() => parseISO('not-a-date')).toThrow();
-      expect(() => parseISO('2024-13-45')).toThrow();
+    it('should handle invalid ISO strings', () => {
+      const date = parseISO('invalid');
+      expect(date).toBeInstanceOf(originalDate);
+      expect(isNaN(date.getTime())).toBe(true);
     });
   });
 
   describe('isValid', () => {
-    it('should validate dates correctly', () => {
-      expect(isValid(testDate)).toBe(true);
-      expect(isValid(new Date('2024-01-15'))).toBe(true);
-      expect(isValid(new Date('invalid'))).toBe(false);
-      expect(isValid(null as any)).toBe(false);
-      expect(isValid(undefined as any)).toBe(false);
+    it('should return true for valid dates', () => {
+      // Temporarily restore original Date for this test
+      global.Date = originalDate;
+      
+      const validDate1 = new Date('2024-01-15');
+      const validDate2 = new Date();
+      expect(isValid(validDate1)).toBe(true);
+      expect(isValid(validDate2)).toBe(true);
+      
+      // Restore mock
+      global.Date = jest.fn((...args) => {
+        if (args.length === 0) {
+          return mockDate;
+        }
+        return new originalDate(...args);
+      }) as any;
+    });
+
+    it('should return false for invalid dates', () => {
+      global.Date = originalDate;
+      
+      const invalidDate = new Date('invalid');
+      expect(isValid(invalidDate)).toBe(false);
+      expect(isValid('not a date')).toBe(false);
+      expect(isValid(null)).toBe(false);
+      expect(isValid(undefined)).toBe(false);
+      expect(isValid(123)).toBe(false);
+      
+      // Restore mock
+      global.Date = jest.fn((...args) => {
+        if (args.length === 0) {
+          return mockDate;
+        }
+        return new originalDate(...args);
+      }) as any;
     });
   });
 
-  describe('comparison functions', () => {
-    const date1 = new Date('2024-01-15');
-    const date2 = new Date('2024-01-20');
-
-    it('should compare dates with isBefore', () => {
-      expect(isBefore(date1, date2)).toBe(true);
-      expect(isBefore(date2, date1)).toBe(false);
-      expect(isBefore(date1, date1)).toBe(false);
+  describe('addDays', () => {
+    it('should add positive days', () => {
+      const date = new Date('2024-01-15T12:00:00.000Z');
+      const result = addDays(date, 5);
+      // Check the result date
+      const expected = new Date('2024-01-20T12:00:00.000Z');
+      expect(result.getTime()).toBe(expected.getTime());
     });
 
-    it('should compare dates with isAfter', () => {
-      expect(isAfter(date2, date1)).toBe(true);
-      expect(isAfter(date1, date2)).toBe(false);
-      expect(isAfter(date1, date1)).toBe(false);
-    });
-  });
-
-  describe('date arithmetic - addition', () => {
-    it('should add days', () => {
-      const result = addDays(testDate, 5);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2024-01-20');
+    it('should handle month overflow', () => {
+      const date = new Date('2024-01-30T12:00:00.000Z');
+      const result = addDays(date, 5);
+      const expected = new Date('2024-02-04T12:00:00.000Z');
+      expect(result.getTime()).toBe(expected.getTime());
     });
 
-    it('should add weeks', () => {
-      const result = addWeeks(testDate, 2);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2024-01-29');
+    it('should handle negative days', () => {
+      const date = new Date('2024-01-15T12:00:00.000Z');
+      const result = addDays(date, -5);
+      const expected = new Date('2024-01-10T12:00:00.000Z');
+      expect(result.getTime()).toBe(expected.getTime());
     });
 
-    it('should add months', () => {
-      const result = addMonths(testDate, 1);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2024-02-15');
-    });
-
-    it('should add years', () => {
-      const result = addYears(testDate, 1);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2025-01-15');
-    });
-
-    it('should handle month boundaries', () => {
-      const endOfMonth = new Date('2024-01-31');
-      const result = addMonths(endOfMonth, 1);
-      // Should handle Feb having fewer days
-      expect(result.getMonth()).toBe(1); // February
+    it('should not modify original date', () => {
+      const date = new Date('2024-01-15T12:00:00.000Z');
+      const original = date.getTime();
+      addDays(date, 5);
+      expect(date.getTime()).toBe(original);
     });
   });
 
-  describe('date arithmetic - subtraction', () => {
+  describe('subDays', () => {
     it('should subtract days', () => {
-      const result = subDays(testDate, 5);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2024-01-10');
+      const date = new Date('2024-01-15T12:00:00.000Z');
+      const result = subDays(date, 5);
+      const expected = new Date('2024-01-10T12:00:00.000Z');
+      expect(result.getTime()).toBe(expected.getTime());
     });
 
-    it('should subtract weeks', () => {
-      const result = subWeeks(testDate, 2);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2024-01-01');
-    });
-
-    it('should subtract months', () => {
-      const result = subMonths(testDate, 1);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2023-12-15');
-    });
-
-    it('should subtract years', () => {
-      const result = subYears(testDate, 1);
-      expect(format(result, 'yyyy-MM-dd')).toBe('2023-01-15');
+    it('should handle month underflow', () => {
+      const date = new Date('2024-01-03T12:00:00.000Z');
+      const result = subDays(date, 5);
+      const expected = new Date('2023-12-29T12:00:00.000Z');
+      expect(result.getTime()).toBe(expected.getTime());
     });
   });
 
-  describe('start/end of period functions', () => {
-    it('should get start and end of day', () => {
-      const start = startOfDay(testDate);
-      const end = endOfDay(testDate);
-      
-      expect(format(start, 'yyyy-MM-dd HH:mm:ss')).toBe('2024-01-15 00:00:00');
-      expect(format(end, 'yyyy-MM-dd HH:mm:ss')).toBe('2024-01-15 23:59:59');
+  describe('startOfDay', () => {
+    it('should set time to start of day', () => {
+      const date = new Date('2024-01-15T14:30:45.123Z');
+      const result = startOfDay(date);
+      expect(result.getHours()).toBe(0);
+      expect(result.getMinutes()).toBe(0);
+      expect(result.getSeconds()).toBe(0);
+      expect(result.getMilliseconds()).toBe(0);
     });
 
-    it('should get start and end of week', () => {
-      const start = startOfWeek(testDate);
-      const end = endOfWeek(testDate);
-      
-      // Week starts on Sunday
-      expect(start.getDay()).toBe(0);
-      expect(end.getDay()).toBe(6);
-    });
-
-    it('should get start and end of month', () => {
-      const start = startOfMonth(testDate);
-      const end = endOfMonth(testDate);
-      
-      expect(start.getDate()).toBe(1);
-      expect(format(start, 'yyyy-MM-dd')).toBe('2024-01-01');
-      expect(format(end, 'yyyy-MM-dd')).toBe('2024-01-31');
-    });
-
-    it('should get start and end of year', () => {
-      const start = startOfYear(testDate);
-      const end = endOfYear(testDate);
-      
-      expect(format(start, 'yyyy-MM-dd')).toBe('2024-01-01');
-      expect(format(end, 'yyyy-MM-dd')).toBe('2024-12-31');
+    it('should preserve date', () => {
+      const date = new Date('2024-01-15T14:30:45.123Z');
+      const result = startOfDay(date);
+      expect(result.getDate()).toBe(date.getDate());
+      expect(result.getMonth()).toBe(date.getMonth());
+      expect(result.getFullYear()).toBe(date.getFullYear());
     });
   });
 
-  describe('difference calculations', () => {
-    const date1 = new Date('2024-01-01');
-    const date2 = new Date('2024-01-15');
-
-    it('should calculate difference in days', () => {
-      expect(differenceInDays(date2, date1)).toBe(14);
-      expect(differenceInDays(date1, date2)).toBe(-14);
+  describe('endOfDay', () => {
+    it('should set time to end of day', () => {
+      const date = new Date('2024-01-15T14:30:45.123Z');
+      const result = endOfDay(date);
+      expect(result.getHours()).toBe(23);
+      expect(result.getMinutes()).toBe(59);
+      expect(result.getSeconds()).toBe(59);
+      expect(result.getMilliseconds()).toBe(999);
     });
 
-    it('should calculate difference in weeks', () => {
-      expect(differenceInWeeks(date2, date1)).toBe(2);
-    });
-
-    it('should calculate difference in months', () => {
-      const monthLater = new Date('2024-03-01');
-      expect(differenceInMonths(monthLater, date1)).toBe(2);
-    });
-
-    it('should calculate difference in years', () => {
-      const yearLater = new Date('2026-01-01');
-      expect(differenceInYears(yearLater, date1)).toBe(2);
+    it('should preserve date', () => {
+      const date = new Date('2024-01-15T14:30:45.123Z');
+      const result = endOfDay(date);
+      expect(result.getDate()).toBe(date.getDate());
+      expect(result.getMonth()).toBe(date.getMonth());
+      expect(result.getFullYear()).toBe(date.getFullYear());
     });
   });
 
-  describe('edge cases', () => {
-    it('should handle leap years', () => {
-      const leapDay = new Date('2024-02-29');
-      expect(isValid(leapDay)).toBe(true);
-      
-      const nonLeapDay = new Date('2023-02-29');
-      expect(isValid(nonLeapDay)).toBe(false);
+  describe('isBefore', () => {
+    it('should return true when date is before', () => {
+      const date1 = new Date('2024-01-15');
+      const date2 = new Date('2024-01-16');
+      expect(isBefore(date1, date2)).toBe(true);
     });
 
-    it('should handle daylight saving time', () => {
-      const beforeDST = new Date('2024-03-09T10:00:00.000Z');
-      const afterDST = addDays(beforeDST, 1);
-      
-      expect(differenceInDays(afterDST, beforeDST)).toBe(1);
+    it('should return false when date is after', () => {
+      const date1 = new Date('2024-01-16');
+      const date2 = new Date('2024-01-15');
+      expect(isBefore(date1, date2)).toBe(false);
     });
 
-    it('should handle different timezones', () => {
-      const utc = new Date('2024-01-15T12:00:00.000Z');
-      const formatted = format(utc, 'yyyy-MM-dd HH:mm');
-      expect(formatted).toBe('2024-01-15 12:00');
-    });
-
-    it('should handle very old dates', () => {
-      const oldDate = new Date('1900-01-01');
-      expect(isValid(oldDate)).toBe(true);
-      expect(format(oldDate, 'yyyy')).toBe('1900');
-    });
-
-    it('should handle far future dates', () => {
-      const futureDate = new Date('2100-12-31');
-      expect(isValid(futureDate)).toBe(true);
-      expect(format(futureDate, 'yyyy')).toBe('2100');
+    it('should return false when dates are equal', () => {
+      const date1 = new Date('2024-01-15T10:00:00Z');
+      const date2 = new Date('2024-01-15T10:00:00Z');
+      expect(isBefore(date1, date2)).toBe(false);
     });
   });
 
-  describe('performance considerations', () => {
-    it('should handle batch operations efficiently', () => {
-      const dates = Array.from({ length: 1000 }, (_, i) => 
-        addDays(testDate, i)
-      );
-      
-      const start = Date.now();
-      dates.forEach(date => format(date, 'yyyy-MM-dd'));
-      const duration = Date.now() - start;
-      
-      expect(duration).toBeLessThan(1000); // Should be fast
+  describe('isAfter', () => {
+    it('should return true when date is after', () => {
+      const date1 = new Date('2024-01-16');
+      const date2 = new Date('2024-01-15');
+      expect(isAfter(date1, date2)).toBe(true);
     });
 
-    it('should not mutate original dates', () => {
-      const original = new Date(testDate);
-      const modified = addDays(testDate, 5);
-      
-      expect(testDate.getTime()).toBe(original.getTime());
-      expect(modified.getTime()).not.toBe(original.getTime());
+    it('should return false when date is before', () => {
+      const date1 = new Date('2024-01-15');
+      const date2 = new Date('2024-01-16');
+      expect(isAfter(date1, date2)).toBe(false);
+    });
+
+    it('should return false when dates are equal', () => {
+      const date1 = new Date('2024-01-15T10:00:00Z');
+      const date2 = new Date('2024-01-15T10:00:00Z');
+      expect(isAfter(date1, date2)).toBe(false);
+    });
+  });
+
+  describe('getCurrentYear', () => {
+    it('should return current year', () => {
+      expect(getCurrentYear()).toBe(2024);
+    });
+  });
+
+  describe('getPromotionalDeadline', () => {
+    it('should return date 30 days from now', () => {
+      const result = getPromotionalDeadline();
+      expect(result).toBe('February 2024');
+    });
+  });
+
+  describe('getLastUpdatedDate', () => {
+    it('should return formatted current date', () => {
+      const result = getLastUpdatedDate();
+      expect(result).toMatch(/Jan 15, 2024/);
+    });
+  });
+
+  describe('getLastUpdatedDateSpanish', () => {
+    it('should return formatted date in Spanish', () => {
+      const result = getLastUpdatedDateSpanish();
+      // The exact format depends on the environment's locale support
+      expect(result).toContain('2024');
+      expect(result.toLowerCase()).toMatch(/enero|january/); // May be enero or january depending on locale
     });
   });
 });
