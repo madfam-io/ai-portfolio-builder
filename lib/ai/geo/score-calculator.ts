@@ -45,7 +45,7 @@ export class GEOScoreCalculator {
     };
 
     // Calculate weighted overall score
-    const overall = 
+    const overall =
       scores.keyword * weights.keyword +
       scores.readability * weights.readability +
       scores.structure * weights.structure +
@@ -83,7 +83,7 @@ export class GEOScoreCalculator {
       bio: {
         keyword: 0.15,
         readability: 0.35,
-        structure: 0.20,
+        structure: 0.2,
         length: 0.15,
         uniqueness: 0.15,
       },
@@ -91,21 +91,21 @@ export class GEOScoreCalculator {
         keyword: 0.25,
         readability: 0.25,
         structure: 0.25,
-        length: 0.10,
+        length: 0.1,
         uniqueness: 0.15,
       },
       experience: {
-        keyword: 0.20,
+        keyword: 0.2,
         readability: 0.25,
-        structure: 0.30,
-        length: 0.10,
+        structure: 0.3,
+        length: 0.1,
         uniqueness: 0.15,
       },
       default: {
-        keyword: 0.20,
-        readability: 0.30,
+        keyword: 0.2,
+        readability: 0.3,
         structure: 0.25,
-        length: 0.10,
+        length: 0.1,
         uniqueness: 0.15,
       },
     };
@@ -148,14 +148,16 @@ export class GEOScoreCalculator {
 
     // Simple readability metrics
     const avgWordsPerSentence = words.length / sentences.length;
-    const avgWordLength = words.reduce((sum, word) => sum + word.length, 0) / words.length;
+    const avgWordLength =
+      words.reduce((sum, word) => sum + word.length, 0) / words.length;
 
     // Ideal ranges
     const idealWordsPerSentence = 15;
     const idealWordLength = 5;
 
     // Calculate score based on deviation from ideal
-    const sentenceScore = 100 - Math.abs(avgWordsPerSentence - idealWordsPerSentence) * 2;
+    const sentenceScore =
+      100 - Math.abs(avgWordsPerSentence - idealWordsPerSentence) * 2;
     const wordScore = 100 - Math.abs(avgWordLength - idealWordLength) * 10;
 
     return Math.max(0, Math.min(100, (sentenceScore + wordScore) / 2));
@@ -164,7 +166,10 @@ export class GEOScoreCalculator {
   /**
    * Calculate structure score
    */
-  private calculateStructureScore(content: string, contentType: string): number {
+  private calculateStructureScore(
+    content: string,
+    contentType: string
+  ): number {
     let score = 50; // Base score
 
     // Check for headers
@@ -215,13 +220,16 @@ export class GEOScoreCalculator {
    * Calculate uniqueness score
    */
   private calculateUniquenessScore(content: string): number {
-    const words = content.toLowerCase().split(/\s+/).filter(w => w.length > 3);
+    const words = content
+      .toLowerCase()
+      .split(/\s+/)
+      .filter(w => w.length > 3);
     const uniqueWords = new Set(words);
 
     if (words.length === 0) return 0;
 
     const uniquenessRatio = uniqueWords.size / words.length;
-    
+
     // Optimal uniqueness is around 0.6-0.8
     if (uniquenessRatio < 0.6) {
       return uniquenessRatio * 166.67; // Scale up to 100

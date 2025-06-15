@@ -98,8 +98,6 @@ export function EditorSidebar({
     onSectionChange(section);
   };
 
-
-
   const renderSectionContent = (section: SectionType) => {
     switch (section) {
       case 'hero':
@@ -116,42 +114,46 @@ export function EditorSidebar({
               tagline: portfolio.tagline,
               social: portfolio.social,
             }}
-            onUpdate={(updates) => onSectionUpdate('hero', updates)}
+            onUpdate={updates => onSectionUpdate('hero', updates)}
           />
         );
       case 'experience':
         return (
           <ExperienceSection
             experiences={portfolio.experience || []}
-            onUpdate={(experiences) => onSectionUpdate('experience', { experience: experiences })}
+            onUpdate={experiences =>
+              onSectionUpdate('experience', { experience: experiences })
+            }
           />
         );
       case 'education':
         return (
           <EducationSection
             education={portfolio.education || []}
-            onUpdate={(education) => onSectionUpdate('education', { education })}
+            onUpdate={education => onSectionUpdate('education', { education })}
           />
         );
       case 'projects':
         return (
           <ProjectsSection
             projects={portfolio.projects || []}
-            onUpdate={(projects) => onSectionUpdate('projects', { projects })}
+            onUpdate={projects => onSectionUpdate('projects', { projects })}
           />
         );
       case 'skills':
         return (
           <SkillsSection
             skills={portfolio.skills || []}
-            onUpdate={(skills) => onSectionUpdate('skills', { skills })}
+            onUpdate={skills => onSectionUpdate('skills', { skills })}
           />
         );
       case 'certifications':
         return (
           <CertificationsSection
             certifications={portfolio.certifications || []}
-            onUpdate={(certifications) => onSectionUpdate('certifications', { certifications })}
+            onUpdate={certifications =>
+              onSectionUpdate('certifications', { certifications })
+            }
           />
         );
       case 'contact':
@@ -159,9 +161,11 @@ export function EditorSidebar({
           <ContactSection
             contact={portfolio.contact || {}}
             social={portfolio.social || {}}
-            onUpdate={(data) => {
-              if (data.contact) onSectionUpdate('contact', { contact: data.contact });
-              if (data.social) onSectionUpdate('contact', { social: data.social });
+            onUpdate={data => {
+              if (data.contact)
+                onSectionUpdate('contact', { contact: data.contact });
+              if (data.social)
+                onSectionUpdate('contact', { social: data.social });
             }}
           />
         );
@@ -169,7 +173,9 @@ export function EditorSidebar({
         return (
           <ThemeCustomizer
             customization={portfolio.customization || {}}
-            onUpdate={(customization) => onSectionUpdate('theme', { customization })}
+            onUpdate={customization =>
+              onSectionUpdate('theme', { customization })
+            }
             template={portfolio.template}
           />
         );

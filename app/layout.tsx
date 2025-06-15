@@ -49,7 +49,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${inter.variable} dark`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Theme initialization moved to ThemeScript component below */}
       </head>

@@ -25,7 +25,7 @@ export interface CSPDirectives {
  */
 export function getCSPDirectives(): CSPDirectives {
   const isDevelopment = process.env.NODE_ENV === 'development';
-  
+
   const directives: CSPDirectives = {
     'default-src': ["'self'"],
     'script-src': [
@@ -52,10 +52,7 @@ export function getCSPDirectives(): CSPDirectives {
       'https://lh3.googleusercontent.com',
       'https://platform-lookaside.fbsbx.com',
     ],
-    'font-src': [
-      "'self'",
-      'https://fonts.gstatic.com',
-    ],
+    'font-src': ["'self'", 'https://fonts.gstatic.com'],
     'connect-src': [
       "'self'",
       'https://*.supabase.co',
@@ -84,6 +81,20 @@ export function getCSPDirectives(): CSPDirectives {
   };
 
   return directives;
+}
+
+/**
+ * Format CSP directives as a header string
+ */
+export function formatCSPHeader(directives: CSPDirectives): string {
+  return Object.entries(directives)
+    .map(([key, values]) => {
+      const filteredValues = values.filter(Boolean);
+      if (filteredValues.length === 0) return '';
+      return `${key} ${filteredValues.join(' ')}`;
+    })
+    .filter(Boolean)
+    .join('; ');
 }
 
 /**

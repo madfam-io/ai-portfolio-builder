@@ -7,7 +7,7 @@ import { useAuthStore } from '@/lib/store/auth-store';
 
 /**
  * PostHog Analytics Client
- * 
+ *
  * Provides a centralized client for PostHog analytics with:
  * - Automatic initialization
  * - User identification
@@ -29,7 +29,7 @@ const posthogConfig: Partial<PostHogConfig> = {
   session_recording: {
     maskAllInputs: true, // Privacy: mask sensitive inputs
   },
-  loaded: (posthog) => {
+  loaded: posthog => {
     if (process.env.NODE_ENV === 'development') {
       console.log('PostHog loaded', posthog);
     }
@@ -50,12 +50,11 @@ const posthogConfig: Partial<PostHogConfig> = {
 // Initialize PostHog
 export const initializePostHog = () => {
   if (typeof window === 'undefined') return;
-  
+
   const posthogKey = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   const isEnabled = process.env.NEXT_PUBLIC_ENABLE_POSTHOG === 'true';
-  
+
   if (!posthogKey || !isEnabled) {
-    
     return;
   }
 
@@ -65,9 +64,12 @@ export const initializePostHog = () => {
 };
 
 // Identify user
-export const identifyUser = (userId: string, properties?: Record<string, any>) => {
+export const identifyUser = (
+  userId: string,
+  properties?: Record<string, any>
+) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.identify(userId, {
     ...properties,
     identified_at: new Date().toISOString(),
@@ -77,7 +79,7 @@ export const identifyUser = (userId: string, properties?: Record<string, any>) =
 // Reset user (on logout)
 export const resetUser = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.reset();
 };
 
@@ -87,7 +89,7 @@ export const captureEvent = (
   properties?: Record<string, any>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.capture(eventName, {
     ...properties,
     timestamp: new Date().toISOString(),
@@ -101,7 +103,7 @@ export const captureEnhancedEvent = (
   properties?: Record<string, any>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   const enhancedProperties = {
     ...properties,
     // Page context
@@ -117,44 +119,47 @@ export const captureEnhancedEvent = (
     timestamp: new Date().toISOString(),
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
   };
-  
+
   captureEvent(eventName, enhancedProperties);
 };
 
 // Feature flag check
 export const isFeatureEnabled = (flagName: string): boolean => {
   if (typeof window === 'undefined' || !posthog.__loaded) return false;
-  
+
   return posthog.isFeatureEnabled(flagName) ?? false;
 };
 
 // Get feature flag payload
 export const getFeatureFlagPayload = (flagName: string): any => {
   if (typeof window === 'undefined' || !posthog.__loaded) return null;
-  
+
   return posthog.getFeatureFlagPayload(flagName);
 };
 
 // Set user properties
 export const setUserProperties = (properties: Record<string, any>) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.people.set(properties);
 };
 
 // Increment user property
 export const incrementUserProperty = (property: string, value = 1) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   // PostHog JS doesn't have increment, use set with current value + increment
   const currentValue = posthog.get_property(property) || 0;
   posthog.people.set({ [property]: currentValue + value });
 };
 
 // Track revenue
-export const trackRevenue = (amount: number, properties?: Record<string, any>) => {
+export const trackRevenue = (
+  amount: number,
+  properties?: Record<string, any>
+) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   captureEvent('revenue', {
     revenue: amount,
     currency: 'USD',
@@ -166,45 +171,45 @@ export const trackRevenue = (amount: number, properties?: Record<string, any>) =
 export const startSessionRecording = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
   if (process.env.NODE_ENV === 'development') return;
-  
+
   posthog.startSessionRecording();
 };
 
 // Stop session recording
 export const stopSessionRecording = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.stopSessionRecording();
 };
 
 // Opt user out of tracking
 export const optOut = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.opt_out_capturing();
 };
 
 // Opt user back in to tracking
 export const optIn = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
-  
+
   posthog.opt_in_capturing();
 };
 
 // Check if user has opted out
 export const hasOptedOut = (): boolean => {
   if (typeof window === 'undefined' || !posthog.__loaded) return false;
-  
+
   return posthog.has_opted_out_capturing();
 };
 
 // React hook for PostHog initialization
 export const usePostHog = () => {
   const { user } = useAuthStore();
-  
+
   useEffect(() => {
     initializePostHog();
-    
+
     if (user) {
       identifyUser(user.id, {
         email: user.email,
@@ -226,7 +231,7 @@ export const EVENTS = {
   USER_LOGGED_IN: 'user_logged_in',
   USER_LOGGED_OUT: 'user_logged_out',
   USER_UPDATED_PROFILE: 'user_updated_profile',
-  
+
   // Portfolio events
   PORTFOLIO_CREATED: 'portfolio_created',
   PORTFOLIO_UPDATED: 'portfolio_updated',
@@ -234,31 +239,31 @@ export const EVENTS = {
   PORTFOLIO_UNPUBLISHED: 'portfolio_unpublished',
   PORTFOLIO_DELETED: 'portfolio_deleted',
   PORTFOLIO_VIEWED: 'portfolio_viewed',
-  
+
   // Editor events
   EDITOR_OPENED: 'editor_opened',
   EDITOR_SECTION_EDITED: 'editor_section_edited',
   EDITOR_THEME_CHANGED: 'editor_theme_changed',
   EDITOR_PREVIEW_TOGGLED: 'editor_preview_toggled',
-  
+
   // Variant events
   VARIANT_CREATED: 'variant_created',
   VARIANT_UPDATED: 'variant_updated',
   VARIANT_DELETED: 'variant_deleted',
   VARIANT_SWITCHED: 'variant_switched',
   VARIANT_PUBLISHED: 'variant_published',
-  
+
   // AI events
   AI_CONTENT_GENERATED: 'ai_content_generated',
   AI_SUGGESTION_ACCEPTED: 'ai_suggestion_accepted',
   AI_SUGGESTION_REJECTED: 'ai_suggestion_rejected',
-  
+
   // Engagement events
   CONTACT_CLICKED: 'contact_clicked',
   RESUME_DOWNLOADED: 'resume_downloaded',
   SOCIAL_LINK_CLICKED: 'social_link_clicked',
   PROJECT_VIEWED: 'project_viewed',
-  
+
   // Revenue events
   SUBSCRIPTION_STARTED: 'subscription_started',
   SUBSCRIPTION_CANCELLED: 'subscription_cancelled',

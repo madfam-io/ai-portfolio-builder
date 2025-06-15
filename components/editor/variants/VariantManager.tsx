@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Copy, Eye, EyeOff, MoreVertical, Sparkles, BarChart } from 'lucide-react';
+import {
+  Plus,
+  Copy,
+  Eye,
+  EyeOff,
+  MoreVertical,
+  Sparkles,
+  BarChart,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,13 +34,18 @@ interface VariantManagerProps {
   onVariantChange?: (variant: PortfolioVariant) => void;
 }
 
-export function VariantManager({ portfolioId, onVariantChange }: VariantManagerProps) {
+export function VariantManager({
+  portfolioId,
+  onVariantChange,
+}: VariantManagerProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [showAnalytics, setShowAnalytics] = useState<string | null>(null);
-  const [duplicatingVariant, setDuplicatingVariant] = useState<string | null>(null);
-  
+  const [duplicatingVariant, setDuplicatingVariant] = useState<string | null>(
+    null
+  );
+
   const {
     variants,
     currentVariantId,
@@ -42,7 +55,6 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     deleteVariant,
     generateOptimizationSuggestions,
   } = usePortfolioVariantsStore();
-
 
   const handleVariantSwitch = async (variantId: string) => {
     await switchVariant(variantId);
@@ -56,10 +68,12 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     try {
       await updateVariant(variant.id, { isPublished: !variant.isPublished });
       toast({
-        title: variant.isPublished ? (t.variantUnpublished || 'Variant unpublished') : (t.variantPublished || 'Variant published'),
-        description: variant.isPublished 
-          ? (t.variantUnpublishedDesc || 'Variant is now unpublished')
-          : (t.variantPublishedDesc || 'Variant is now live'),
+        title: variant.isPublished
+          ? t.variantUnpublished || 'Variant unpublished'
+          : t.variantPublished || 'Variant published',
+        description: variant.isPublished
+          ? t.variantUnpublishedDesc || 'Variant is now unpublished'
+          : t.variantPublishedDesc || 'Variant is now live',
       });
     } catch (error) {
       toast({
@@ -76,8 +90,14 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
   };
 
   const handleDelete = async (variantId: string) => {
-    if (!confirm(t.confirmDeleteVariant || 'Are you sure you want to delete this variant?')) return;
-    
+    if (
+      !confirm(
+        t.confirmDeleteVariant ||
+          'Are you sure you want to delete this variant?'
+      )
+    )
+      return;
+
     try {
       await deleteVariant(variantId);
       toast({
@@ -103,7 +123,8 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToGenerateSuggestions || 'Failed to generate suggestions',
+        description:
+          t.failedToGenerateSuggestions || 'Failed to generate suggestions',
         variant: 'destructive',
       });
     }
@@ -130,10 +151,10 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
   const getPerformanceTrend = (variant: PortfolioVariant) => {
     const views = variant.analytics?.views || 0;
     const conversion = variant.analytics?.conversionRate || 0;
-    
+
     if (views < 10) return 'neutral';
     if (conversion > 0.15) return 'excellent';
-    if (conversion > 0.10) return 'good';
+    if (conversion > 0.1) return 'good';
     if (conversion > 0.05) return 'average';
     return 'poor';
   };
@@ -158,9 +179,12 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">{t.portfolioVariants || 'Portfolio Variants'}</h3>
+          <h3 className="text-lg font-semibold">
+            {t.portfolioVariants || 'Portfolio Variants'}
+          </h3>
           <p className="text-sm text-muted-foreground">
-            {t.variantsDescription || 'Create different versions for different audiences'}
+            {t.variantsDescription ||
+              'Create different versions for different audiences'}
           </p>
         </div>
         <Button onClick={() => setShowCreateDialog(true)} size="sm">
@@ -173,9 +197,9 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
         {variants.map(variant => {
           const isActive = variant.id === currentVariantId;
           const performance = getPerformanceTrend(variant);
-          
+
           return (
-            <Card 
+            <Card
               key={variant.id}
               className={cn(
                 'relative cursor-pointer transition-all hover:shadow-md',
@@ -190,53 +214,72 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                       {getAudienceIcon(variant.audienceProfile.type)}
                     </span>
                     <div>
-                      <CardTitle className="text-base">{variant.name}</CardTitle>
+                      <CardTitle className="text-base">
+                        {variant.name}
+                      </CardTitle>
                       <p className="text-xs text-muted-foreground">
                         {variant.audienceProfile.name}
                       </p>
                     </div>
                   </div>
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e: React.MouseEvent) => e.stopPropagation()}>
+                    <DropdownMenuTrigger
+                      asChild
+                      onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    >
                       <Button variant="ghost" size="icon" className="h-8 w-8">
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        setShowAnalytics(variant.id);
-                      }}>
+                      <DropdownMenuItem
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          setShowAnalytics(variant.id);
+                        }}
+                      >
                         <BarChart className="h-4 w-4 mr-2" />
                         {t.viewAnalytics || 'View Analytics'}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handleOptimize(variant.id);
-                      }}>
+                      <DropdownMenuItem
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          handleOptimize(variant.id);
+                        }}
+                      >
                         <Sparkles className="h-4 w-4 mr-2" />
                         {t.optimizeContent || 'Optimize Content'}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handleTogglePublish(variant);
-                      }}>
+                      <DropdownMenuItem
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          handleTogglePublish(variant);
+                        }}
+                      >
                         {variant.isPublished ? (
-                          <><EyeOff className="h-4 w-4 mr-2" /> {t.unpublish || 'Unpublish'}</>
+                          <>
+                            <EyeOff className="h-4 w-4 mr-2" />{' '}
+                            {t.unpublish || 'Unpublish'}
+                          </>
                         ) : (
-                          <><Eye className="h-4 w-4 mr-2" /> {t.publish || 'Publish'}</>
+                          <>
+                            <Eye className="h-4 w-4 mr-2" />{' '}
+                            {t.publish || 'Publish'}
+                          </>
                         )}
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e: React.MouseEvent) => {
-                        e.stopPropagation();
-                        handleDuplicate(variant);
-                      }}>
+                      <DropdownMenuItem
+                        onClick={(e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          handleDuplicate(variant);
+                        }}
+                      >
                         <Copy className="h-4 w-4 mr-2" />
                         {t.duplicate || 'Duplicate'}
                       </DropdownMenuItem>
                       {!variant.isDefault && (
-                        <DropdownMenuItem 
+                        <DropdownMenuItem
                           onClick={(e: React.MouseEvent) => {
                             e.stopPropagation();
                             handleDelete(variant.id);
@@ -254,10 +297,14 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 flex-wrap">
                     {variant.isDefault && (
-                      <Badge variant="secondary">{t.default || 'Default'}</Badge>
+                      <Badge variant="secondary">
+                        {t.default || 'Default'}
+                      </Badge>
                     )}
                     {variant.isPublished ? (
-                      <Badge variant="default">{t.published || 'Published'}</Badge>
+                      <Badge variant="default">
+                        {t.published || 'Published'}
+                      </Badge>
                     ) : (
                       <Badge variant="outline">{t.draft || 'Draft'}</Badge>
                     )}
@@ -270,21 +317,37 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
 
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t.views || 'Views'}</span>
-                      <span className="font-medium">{variant.analytics?.views || 0}</span>
+                      <span className="text-muted-foreground">
+                        {t.views || 'Views'}
+                      </span>
+                      <span className="font-medium">
+                        {variant.analytics?.views || 0}
+                      </span>
                     </div>
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">{t.conversion || 'Conversion'}</span>
-                      <span className={cn('font-medium', performanceColors[performance])}>
-                        {((variant.analytics?.conversionRate || 0) * 100).toFixed(1)}%
+                      <span className="text-muted-foreground">
+                        {t.conversion || 'Conversion'}
+                      </span>
+                      <span
+                        className={cn(
+                          'font-medium',
+                          performanceColors[performance]
+                        )}
+                      >
+                        {(
+                          (variant.analytics?.conversionRate || 0) * 100
+                        ).toFixed(1)}
+                        %
                       </span>
                     </div>
                   </div>
 
                   {variant.aiOptimization?.lastOptimized && (
                     <p className="text-xs text-muted-foreground">
-                      {t.lastOptimized || 'Last optimized'}: {' '}
-                      {new Date(variant.aiOptimization.lastOptimized).toLocaleDateString()}
+                      {t.lastOptimized || 'Last optimized'}:{' '}
+                      {new Date(
+                        variant.aiOptimization.lastOptimized
+                      ).toLocaleDateString()}
                     </p>
                   )}
                 </div>
@@ -294,13 +357,15 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
         })}
 
         {/* Add variant card */}
-        <Card 
+        <Card
           className="border-dashed cursor-pointer hover:bg-muted/50 transition-colors"
           onClick={() => setShowCreateDialog(true)}
         >
           <CardContent className="flex flex-col items-center justify-center h-full min-h-[200px] text-muted-foreground">
             <Plus className="h-8 w-8 mb-2" />
-            <p className="text-sm font-medium">{t.addVariant || 'Add Variant'}</p>
+            <p className="text-sm font-medium">
+              {t.addVariant || 'Add Variant'}
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -311,7 +376,7 @@ export function VariantManager({ portfolioId, onVariantChange }: VariantManagerP
         onOpenChange={setShowCreateDialog}
         portfolioId={portfolioId}
         basedOnVariantId={duplicatingVariant}
-        onCreated={(variant) => {
+        onCreated={variant => {
           setShowCreateDialog(false);
           setDuplicatingVariant(null);
           handleVariantSwitch(variant.id);

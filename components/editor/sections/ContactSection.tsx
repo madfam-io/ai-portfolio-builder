@@ -1,10 +1,27 @@
 'use client';
 
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Globe, Linkedin, Github, Twitter, Instagram, Youtube, Link } from 'lucide-react';
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Linkedin,
+  Github,
+  Twitter,
+  Instagram,
+  Youtube,
+  Link,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -18,65 +35,69 @@ interface ContactSectionProps {
 }
 
 const SOCIAL_PLATFORMS = [
-  { 
-    key: 'linkedin' as keyof SocialLinks, 
-    label: 'LinkedIn', 
-    icon: Linkedin, 
+  {
+    key: 'linkedin' as keyof SocialLinks,
+    label: 'LinkedIn',
+    icon: Linkedin,
     placeholder: 'https://linkedin.com/in/yourname',
-    color: 'text-[#0077B5]' 
+    color: 'text-[#0077B5]',
   },
-  { 
-    key: 'github' as keyof SocialLinks, 
-    label: 'GitHub', 
-    icon: Github, 
+  {
+    key: 'github' as keyof SocialLinks,
+    label: 'GitHub',
+    icon: Github,
     placeholder: 'https://github.com/yourname',
-    color: 'text-gray-900' 
+    color: 'text-gray-900',
   },
-  { 
-    key: 'twitter' as keyof SocialLinks, 
-    label: 'Twitter', 
-    icon: Twitter, 
+  {
+    key: 'twitter' as keyof SocialLinks,
+    label: 'Twitter',
+    icon: Twitter,
     placeholder: 'https://twitter.com/yourname',
-    color: 'text-[#1DA1F2]' 
+    color: 'text-[#1DA1F2]',
   },
-  { 
-    key: 'instagram' as keyof SocialLinks, 
-    label: 'Instagram', 
-    icon: Instagram, 
+  {
+    key: 'instagram' as keyof SocialLinks,
+    label: 'Instagram',
+    icon: Instagram,
     placeholder: 'https://instagram.com/yourname',
-    color: 'text-[#E4405F]' 
+    color: 'text-[#E4405F]',
   },
-  { 
-    key: 'youtube' as keyof SocialLinks, 
-    label: 'YouTube', 
-    icon: Youtube, 
+  {
+    key: 'youtube' as keyof SocialLinks,
+    label: 'YouTube',
+    icon: Youtube,
     placeholder: 'https://youtube.com/@yourname',
-    color: 'text-[#FF0000]' 
+    color: 'text-[#FF0000]',
   },
-  { 
-    key: 'website' as keyof SocialLinks, 
-    label: 'Website', 
-    icon: Globe, 
+  {
+    key: 'website' as keyof SocialLinks,
+    label: 'Website',
+    icon: Globe,
     placeholder: 'https://yourwebsite.com',
-    color: 'text-blue-600' 
+    color: 'text-blue-600',
   },
-  { 
-    key: 'dribbble' as keyof SocialLinks, 
-    label: 'Dribbble', 
-    icon: Globe, 
+  {
+    key: 'dribbble' as keyof SocialLinks,
+    label: 'Dribbble',
+    icon: Globe,
     placeholder: 'https://dribbble.com/yourname',
-    color: 'text-[#EA4C89]' 
+    color: 'text-[#EA4C89]',
   },
-  { 
-    key: 'behance' as keyof SocialLinks, 
-    label: 'Behance', 
-    icon: Globe, 
+  {
+    key: 'behance' as keyof SocialLinks,
+    label: 'Behance',
+    icon: Globe,
     placeholder: 'https://behance.net/yourname',
-    color: 'text-[#1769FF]' 
+    color: 'text-[#1769FF]',
   },
 ];
 
-export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactSectionProps) {
+export function ContactSection({
+  contact = {},
+  social = {},
+  onUpdate,
+}: ContactSectionProps) {
   const { t } = useLanguage();
   const [showCustomLink, setShowCustomLink] = useState(false);
   const [customLink, setCustomLink] = useState({ label: '', url: '' });
@@ -142,9 +163,12 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
       {/* Contact Information */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t.contactDetails || 'Contact Details'}</CardTitle>
+          <CardTitle className="text-base">
+            {t.contactDetails || 'Contact Details'}
+          </CardTitle>
           <CardDescription>
-            {t.contactDetailsDescription || 'Your professional contact information'}
+            {t.contactDetailsDescription ||
+              'Your professional contact information'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -161,7 +185,12 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                 <Switch
                   id="showEmail"
                   checked={contactVisibility.email}
-                  onCheckedChange={(checked) => setContactVisibility({ ...contactVisibility, email: checked })}
+                  onCheckedChange={checked =>
+                    setContactVisibility({
+                      ...contactVisibility,
+                      email: checked,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -169,7 +198,7 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
               id="email"
               type="email"
               value={contact.email || ''}
-              onChange={(e) => handleContactChange('email', e.target.value)}
+              onChange={e => handleContactChange('email', e.target.value)}
               placeholder={t.emailPlaceholder || 'your@email.com'}
             />
           </div>
@@ -187,7 +216,12 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                 <Switch
                   id="showPhone"
                   checked={contactVisibility.phone}
-                  onCheckedChange={(checked) => setContactVisibility({ ...contactVisibility, phone: checked })}
+                  onCheckedChange={checked =>
+                    setContactVisibility({
+                      ...contactVisibility,
+                      phone: checked,
+                    })
+                  }
                 />
               </div>
             </div>
@@ -195,7 +229,7 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
               id="phone"
               type="tel"
               value={contact.phone || ''}
-              onChange={(e) => handleContactChange('phone', e.target.value)}
+              onChange={e => handleContactChange('phone', e.target.value)}
               placeholder={t.phonePlaceholder || '+1 (555) 123-4567'}
             />
           </div>
@@ -213,14 +247,19 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                 <Switch
                   id="showLocation"
                   checked={contactVisibility.location}
-                  onCheckedChange={(checked) => setContactVisibility({ ...contactVisibility, location: checked })}
+                  onCheckedChange={checked =>
+                    setContactVisibility({
+                      ...contactVisibility,
+                      location: checked,
+                    })
+                  }
                 />
               </div>
             </div>
             <Input
               id="location"
               value={contact.location || ''}
-              onChange={(e) => handleContactChange('location', e.target.value)}
+              onChange={e => handleContactChange('location', e.target.value)}
               placeholder={t.locationPlaceholder || 'San Francisco, CA'}
             />
           </div>
@@ -233,8 +272,12 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
             <Input
               id="availability"
               value={contact.availability || ''}
-              onChange={(e) => handleContactChange('availability', e.target.value)}
-              placeholder={t.availabilityPlaceholder || 'Available for freelance work'}
+              onChange={e =>
+                handleContactChange('availability', e.target.value)
+              }
+              placeholder={
+                t.availabilityPlaceholder || 'Available for freelance work'
+              }
               className="mt-2"
             />
           </div>
@@ -244,17 +287,22 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
       {/* Social Links */}
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">{t.socialLinks || 'Social Links'}</CardTitle>
+          <CardTitle className="text-base">
+            {t.socialLinks || 'Social Links'}
+          </CardTitle>
           <CardDescription>
             {t.socialLinksDescription || 'Connect your social media profiles'}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {SOCIAL_PLATFORMS.map((platform) => {
+          {SOCIAL_PLATFORMS.map(platform => {
             const Icon = platform.icon;
             return (
               <div key={platform.key}>
-                <Label htmlFor={platform.key} className="flex items-center gap-2 mb-2">
+                <Label
+                  htmlFor={platform.key}
+                  className="flex items-center gap-2 mb-2"
+                >
                   <Icon className={`h-4 w-4 ${platform.color}`} />
                   {platform.label}
                 </Label>
@@ -262,7 +310,9 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                   id={platform.key}
                   type="url"
                   value={(social[platform.key] as string) || ''}
-                  onChange={(e) => handleSocialChange(platform.key, e.target.value)}
+                  onChange={e =>
+                    handleSocialChange(platform.key, e.target.value)
+                  }
                   placeholder={platform.placeholder}
                 />
               </div>
@@ -277,7 +327,9 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                 <div key={index} className="flex items-center gap-2">
                   <Link className="h-4 w-4 text-muted-foreground" />
                   <span className="text-sm font-medium">{link.label}:</span>
-                  <span className="text-sm text-muted-foreground flex-1 truncate">{link.url}</span>
+                  <span className="text-sm text-muted-foreground flex-1 truncate">
+                    {link.url}
+                  </span>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -298,13 +350,17 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
                 <Input
                   placeholder={t.linkLabel || 'Link Label'}
                   value={customLink.label}
-                  onChange={(e) => setCustomLink({ ...customLink, label: e.target.value })}
+                  onChange={e =>
+                    setCustomLink({ ...customLink, label: e.target.value })
+                  }
                 />
                 <Input
                   type="url"
                   placeholder={t.linkUrl || 'https://...'}
                   value={customLink.url}
-                  onChange={(e) => setCustomLink({ ...customLink, url: e.target.value })}
+                  onChange={e =>
+                    setCustomLink({ ...customLink, url: e.target.value })
+                  }
                 />
                 <div className="flex gap-2">
                   <Button
@@ -345,7 +401,9 @@ export function ContactSection({ contact = {}, social = {}, onUpdate }: ContactS
       <Card className="bg-muted/50">
         <CardContent className="py-4">
           <p className="text-sm text-muted-foreground">
-            <strong>{t.privacyNote || 'Privacy Note'}:</strong> {t.contactPrivacyMessage || 'Only the information you mark as visible will be displayed on your public portfolio. Email addresses can be protected with a contact form.'}
+            <strong>{t.privacyNote || 'Privacy Note'}:</strong>{' '}
+            {t.contactPrivacyMessage ||
+              'Only the information you mark as visible will be displayed on your public portfolio. Email addresses can be protected with a contact form.'}
           </p>
         </CardContent>
       </Card>

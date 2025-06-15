@@ -82,7 +82,11 @@ const FONT_OPTIONS = [
   { value: 'Inter', label: 'Inter', className: 'font-sans' },
   { value: 'Roboto', label: 'Roboto', className: 'font-sans' },
   { value: 'Poppins', label: 'Poppins', className: 'font-sans' },
-  { value: 'Playfair Display', label: 'Playfair Display', className: 'font-serif' },
+  {
+    value: 'Playfair Display',
+    label: 'Playfair Display',
+    className: 'font-serif',
+  },
   { value: 'Montserrat', label: 'Montserrat', className: 'font-sans' },
   { value: 'Open Sans', label: 'Open Sans', className: 'font-sans' },
   { value: 'Lato', label: 'Lato', className: 'font-sans' },
@@ -104,28 +108,38 @@ const PRESET_COLORS = [
   '#a855f7', // Violet
 ];
 
-export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCustomizerProps) {
+export function ThemeCustomizer({
+  customization,
+  onUpdate,
+  template,
+}: ThemeCustomizerProps) {
   const { t } = useLanguage();
-  const [activeTab, setActiveTab] = useState<'colors' | 'typography' | 'layout'>('colors');
-  
+  const [activeTab, setActiveTab] = useState<
+    'colors' | 'typography' | 'layout'
+  >('colors');
+
   // Use default theme if customization is undefined
   const getDefaultTheme = (): TemplateCustomization => {
     // Type guard to ensure template is a valid key
     const isValidTemplateKey = (key: string): key is ThemeKey => {
       return key in DEFAULT_THEMES;
     };
-    
+
     if (isValidTemplateKey(template)) {
       return DEFAULT_THEMES[template];
     }
-    
+
     // Fallback to minimal theme
     return DEFAULT_MINIMAL_THEME;
   };
-  
-  const currentCustomization: TemplateCustomization = customization || getDefaultTheme();
 
-  const handleColorChange = (field: keyof TemplateCustomization, value: string) => {
+  const currentCustomization: TemplateCustomization =
+    customization || getDefaultTheme();
+
+  const handleColorChange = (
+    field: keyof TemplateCustomization,
+    value: string
+  ) => {
     onUpdate({
       ...currentCustomization,
       [field]: value,
@@ -142,7 +156,7 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
     description?: string
   ) => {
     const currentValue = (currentCustomization?.[field] || '') as string;
-    
+
     return (
       <div className="space-y-2">
         <Label>{label}</Label>
@@ -153,24 +167,24 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
           <Input
             type="color"
             value={currentValue || '#000000'}
-            onChange={(e) => handleColorChange(field, e.target.value)}
+            onChange={e => handleColorChange(field, e.target.value)}
             className="w-16 h-9 p-1 cursor-pointer"
           />
           <Input
             type="text"
             value={currentValue || ''}
-            onChange={(e) => handleColorChange(field, e.target.value)}
+            onChange={e => handleColorChange(field, e.target.value)}
             placeholder="#000000"
             className="flex-1 font-mono text-sm"
           />
         </div>
         <div className="flex flex-wrap gap-1 mt-2">
-          {PRESET_COLORS.map((color) => (
+          {PRESET_COLORS.map(color => (
             <button
               key={color}
               className={cn(
-                "w-6 h-6 rounded border-2 transition-all",
-                currentValue === color ? "border-primary" : "border-transparent"
+                'w-6 h-6 rounded border-2 transition-all',
+                currentValue === color ? 'border-primary' : 'border-transparent'
               )}
               style={{ backgroundColor: color }}
               onClick={() => handleColorChange(field, color)}
@@ -191,14 +205,11 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
             {t.themeCustomization || 'Theme Customization'}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {t.themeDescription || 'Customize the look and feel of your portfolio'}
+            {t.themeDescription ||
+              'Customize the look and feel of your portfolio'}
           </p>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleResetToDefault}
-        >
+        <Button variant="outline" size="sm" onClick={handleResetToDefault}>
           <RotateCcw className="h-4 w-4 mr-2" />
           {t.resetToDefault || 'Reset'}
         </Button>
@@ -208,10 +219,10 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
       <div className="flex gap-1 p-1 bg-muted rounded-lg">
         <button
           className={cn(
-            "flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors",
-            activeTab === 'colors' 
-              ? "bg-background text-foreground shadow-sm" 
-              : "text-muted-foreground hover:text-foreground"
+            'flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors',
+            activeTab === 'colors'
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={() => setActiveTab('colors')}
         >
@@ -220,10 +231,10 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
         </button>
         <button
           className={cn(
-            "flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors",
-            activeTab === 'typography' 
-              ? "bg-background text-foreground shadow-sm" 
-              : "text-muted-foreground hover:text-foreground"
+            'flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors',
+            activeTab === 'typography'
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={() => setActiveTab('typography')}
         >
@@ -232,10 +243,10 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
         </button>
         <button
           className={cn(
-            "flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors",
-            activeTab === 'layout' 
-              ? "bg-background text-foreground shadow-sm" 
-              : "text-muted-foreground hover:text-foreground"
+            'flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors',
+            activeTab === 'layout'
+              ? 'bg-background text-foreground shadow-sm'
+              : 'text-muted-foreground hover:text-foreground'
           )}
           onClick={() => setActiveTab('layout')}
         >
@@ -274,11 +285,13 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                 'textColor',
                 t.textColorDesc || 'Primary text color'
               )}
-              
+
               <div className="pt-4 border-t">
                 <div className="flex items-center justify-between">
                   <div>
-                    <Label htmlFor="darkMode">{t.darkMode || 'Dark Mode'}</Label>
+                    <Label htmlFor="darkMode">
+                      {t.darkMode || 'Dark Mode'}
+                    </Label>
                     <p className="text-xs text-muted-foreground">
                       {t.darkModeDesc || 'Enable dark theme variant'}
                     </p>
@@ -286,10 +299,12 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                   <Switch
                     id="darkMode"
                     checked={currentCustomization.darkMode || false}
-                    onCheckedChange={(checked) => onUpdate({
-                      ...currentCustomization,
-                      darkMode: checked,
-                    })}
+                    onCheckedChange={checked =>
+                      onUpdate({
+                        ...currentCustomization,
+                        darkMode: checked,
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -299,21 +314,28 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
           {activeTab === 'typography' && (
             <div className="space-y-6">
               <div>
-                <Label htmlFor="fontFamily">{t.fontFamily || 'Font Family'}</Label>
+                <Label htmlFor="fontFamily">
+                  {t.fontFamily || 'Font Family'}
+                </Label>
                 <RadioGroup
                   value={currentCustomization.fontFamily || 'Inter'}
-                  onValueChange={(value: string) => onUpdate({
-                    ...currentCustomization,
-                    fontFamily: value,
-                  })}
+                  onValueChange={(value: string) =>
+                    onUpdate({
+                      ...currentCustomization,
+                      fontFamily: value,
+                    })
+                  }
                   className="mt-2 space-y-2"
                 >
-                  {FONT_OPTIONS.map((font) => (
-                    <div key={font.value} className="flex items-center space-x-2">
+                  {FONT_OPTIONS.map(font => (
+                    <div
+                      key={font.value}
+                      className="flex items-center space-x-2"
+                    >
                       <RadioGroupItem value={font.value} id={font.value} />
-                      <Label 
-                        htmlFor={font.value} 
-                        className={cn("cursor-pointer", font.className)}
+                      <Label
+                        htmlFor={font.value}
+                        className={cn('cursor-pointer', font.className)}
                         style={{ fontFamily: font.value }}
                       >
                         {font.label}
@@ -327,10 +349,12 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                 <Label>{t.fontSize || 'Font Size'}</Label>
                 <RadioGroup
                   value={currentCustomization.fontSize || 'medium'}
-                  onValueChange={(value: string) => onUpdate({
-                    ...currentCustomization,
-                    fontSize: value as 'small' | 'medium' | 'large',
-                  })}
+                  onValueChange={(value: string) =>
+                    onUpdate({
+                      ...currentCustomization,
+                      fontSize: value as 'small' | 'medium' | 'large',
+                    })
+                  }
                   className="mt-2 space-y-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -362,10 +386,12 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                 <Label>{t.spacing || 'Spacing'}</Label>
                 <RadioGroup
                   value={currentCustomization.spacing || 'normal'}
-                  onValueChange={(value: string) => onUpdate({
-                    ...currentCustomization,
-                    spacing: value as 'compact' | 'normal' | 'relaxed',
-                  })}
+                  onValueChange={(value: string) =>
+                    onUpdate({
+                      ...currentCustomization,
+                      spacing: value as 'compact' | 'normal' | 'relaxed',
+                    })
+                  }
                   className="mt-2 space-y-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -393,10 +419,16 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                 <Label>{t.borderRadius || 'Border Radius'}</Label>
                 <RadioGroup
                   value={currentCustomization.borderRadius || 'medium'}
-                  onValueChange={(value: string) => onUpdate({
-                    ...currentCustomization,
-                    borderRadius: value as 'none' | 'small' | 'medium' | 'large',
-                  })}
+                  onValueChange={(value: string) =>
+                    onUpdate({
+                      ...currentCustomization,
+                      borderRadius: value as
+                        | 'none'
+                        | 'small'
+                        | 'medium'
+                        | 'large',
+                    })
+                  }
                   className="mt-2 space-y-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -430,10 +462,17 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
                 <Label>{t.headerStyle || 'Header Style'}</Label>
                 <RadioGroup
                   value={currentCustomization.headerStyle || 'modern'}
-                  onValueChange={(value: string) => onUpdate({
-                    ...currentCustomization,
-                    headerStyle: value as 'minimal' | 'bold' | 'creative' | 'classic' | 'modern',
-                  })}
+                  onValueChange={(value: string) =>
+                    onUpdate({
+                      ...currentCustomization,
+                      headerStyle: value as
+                        | 'minimal'
+                        | 'bold'
+                        | 'creative'
+                        | 'classic'
+                        | 'modern',
+                    })
+                  }
                   className="mt-2 space-y-2"
                 >
                   <div className="flex items-center space-x-2">
@@ -478,7 +517,8 @@ export function ThemeCustomizer({ customization, onUpdate, template }: ThemeCust
         <CardContent className="py-4">
           <p className="text-sm text-center">
             <Sparkles className="h-4 w-4 inline mr-1" />
-            {t.themePreviewHint || 'Changes will be reflected in the preview panel immediately'}
+            {t.themePreviewHint ||
+              'Changes will be reflected in the preview panel immediately'}
           </p>
         </CardContent>
       </Card>

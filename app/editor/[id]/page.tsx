@@ -15,13 +15,9 @@ function EditorPageContent() {
   const router = useRouter();
   const { t } = useLanguage();
   const portfolioId = params.id as string;
-  
-  const {
-    currentPortfolio,
-    isLoading,
-    error,
-    loadPortfolio,
-  } = usePortfolioStore();
+
+  const { currentPortfolio, isLoading, error, loadPortfolio } =
+    usePortfolioStore();
 
   useEffect(() => {
     if (portfolioId) {
@@ -60,7 +56,9 @@ function EditorPageContent() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">{t.portfolioNotFound || 'Portfolio not found'}</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            {t.portfolioNotFound || 'Portfolio not found'}
+          </h2>
           <Button onClick={() => router.push('/dashboard')}>
             {t.backToDashboard || 'Back to Dashboard'}
           </Button>

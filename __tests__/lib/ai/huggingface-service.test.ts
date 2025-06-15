@@ -1,369 +1,480 @@
+/**
+ * @jest-environment node
+ */
+
+// Mock dependencies first
+jest.mock('@/lib/cache/redis-cache.server', () => ({
+  cache: {
+    get: jest.fn(),
+    set: jest.fn(),
+    del: jest.fn()
+  },
+  CACHE_KEYS: {
+    AI_RESULT: 'ai:result:'
+  }
+}));
+
+jest.mock('@/lib/config', () => ({
+  env: {
+    HUGGINGFACE_API_KEY: 'test-api-key'
+  }
+}));
+
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn()
+  }
+}));
+
+jest.mock('@/lib/ai/huggingface/ModelManager');
+jest.mock('@/lib/ai/huggingface/PromptBuilder');
+jest.mock('@/lib/ai/huggingface/ContentScorer');
+
+// Import after mocks
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { cache } from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
-import { env } from '@/lib/config';
-import { 
-  AIServiceError, 
+import { ModelManager } from '@/lib/ai/huggingface/ModelManager';
+import { PromptBuilder } from '@/lib/ai/huggingface/PromptBuilder';
+import { ContentScorer } from '@/lib/ai/huggingface/ContentScorer';
+import {
+  BioContext,
+  AIServiceError,
   ModelUnavailableError,
-  ContentGenerationError,
-  ValidationError 
+  QuotaExceededError
 } from '@/lib/ai/types';
-
-// Mock dependencies
-jest.mock('@/lib/cache/redis-cache.server');
-jest.mock('@/lib/utils/logger');
-jest.mock('@/lib/config', () => ({
-  env: {
-    HUGGINGFACE_API_KEY: 'test-api-key',
-  },
-}));
-
-// Mock the API client
-jest.mock('@/lib/ai/huggingface/api-client', () => ({
-  APIClient: jest.fn().mockImplementation(() => ({
-    callModel: jest.fn(),
-  })),
-}));
 
 describe('HuggingFaceService', () => {
   let service: HuggingFaceService;
-  let mockCache: jest.Mocked<typeof cache>;
-  let mockLogger: jest.Mocked<typeof logger>;
+  let mockModelManager: any;
+  let mockPromptBuilder: any;
+  let mockContentScorer: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCache = cache as jest.Mocked<typeof cache>;
-    mockLogger = logger as jest.Mocked<typeof logger>;
-    
-    // Reset cache mock implementations
-    mockCache.get.mockResolvedValue(null);
-    mockCache.set.mockResolvedValue(undefined);
-    
+
+    // Setup mocks
+    mockModelManager = {
+      getAvailableModels: jest.fn(),
+      getSelectedModels: jest.fn(),
+      updateModelSelection: jest.fn(),
+      selectModel: jest.fn()
+    };
+
+    mockPromptBuilder = {
+      buildBioEnhancementPrompt: jest.fn(),
+      buildProjectOptimizationPrompt: jest.fn(),
+      buildTemplateRecommendationPrompt: jest.fn()
+    };
+
+    mockContentScorer = {
+      scoreContent: jest.fn()
+    };
+
+    (ModelManager as jest.Mock).mockImplementation(() => mockModelManager);
+    (PromptBuilder as jest.Mock).mockImplementation(() => mockPromptBuilder);
+    (ContentScorer as jest.Mock).mockImplementation(() => mockContentScorer);
+
     service = new HuggingFaceService();
   });
 
-  describe('enhanceBio', () => {
-    const mockContext = {
-      currentBio: 'I am a developer',
-      experience: '5 years',
-      skills: ['JavaScript', 'React'],
-      achievements: ['Built amazing apps'],
-    };
-
-    it('should enhance bio successfully with caching', async () => {
-      const mockResponse = {
-        generated_text: 'I am an experienced software developer with 5 years of expertise in JavaScript and React. I have built amazing applications that deliver exceptional user experiences.',
-      };
-
-      // Mock API response
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
-
-      const result = await service.enhanceBio(mockContext);
-
-      expect(result.enhancedBio).toContain('experienced software developer');
-      expect(result.qualityScore).toBeGreaterThan(0);
-      expect(result.qualityScore).toBeLessThanOrEqual(100);
-      expect(result.wordCount).toBeGreaterThan(0);
-      expect(mockCache.set).toHaveBeenCalled();
+  describe('constructor', () => {
+    it('should initialize with API key from environment', () => {
+      expect(ModelManager).toHaveBeenCalled();
+      expect(PromptBuilder).toHaveBeenCalled();
+      expect(ContentScorer).toHaveBeenCalled();
     });
 
-    it('should return cached result if available', async () => {
-      const cachedResult = {
-        enhancedBio: 'Cached bio content',
-        qualityScore: 85,
-        improvements: ['Added quantifiable metrics'],
-        wordCount: 50,
-      };
-
-      mockCache.get.mockResolvedValue(cachedResult);
-
-      const result = await service.enhanceBio(mockContext);
-
-      expect(result).toEqual(cachedResult);
-      expect(mockCache.get).toHaveBeenCalled();
-      // API should not be called when cache hit
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      expect(mockApiClient).not.toHaveBeenCalled();
+    it('should warn when no API key is provided', () => {
+      jest.clearAllMocks();
+      const { env } = require('@/lib/config');
+      env.HUGGINGFACE_API_KEY = '';
+      
+      new HuggingFaceService();
+      
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Hugging Face API key not provided. Service will operate in demo mode.'
+      );
     });
 
-    it('should handle empty bio context', async () => {
-      const emptyContext = {
-        currentBio: '',
-        experience: '',
-        skills: [],
-        achievements: [],
-      };
-
-      await expect(service.enhanceBio(emptyContext)).rejects.toThrow(ValidationError);
-    });
-
-    it('should handle API errors gracefully', async () => {
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockRejectedValue(new Error('API Error')),
-      }));
-
-      await expect(service.enhanceBio(mockContext)).rejects.toThrow(AIServiceError);
-      expect(mockLogger.error).toHaveBeenCalled();
-    });
-
-    it('should enforce word count limits', async () => {
-      const longBioResponse = {
-        generated_text: 'Lorem ipsum '.repeat(100), // Very long text
-      };
-
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(longBioResponse),
-      }));
-
-      const result = await service.enhanceBio(mockContext);
-
-      expect(result.wordCount).toBeLessThanOrEqual(150);
-      expect(result.enhancedBio.split(' ').length).toBeLessThanOrEqual(150);
+    it('should accept custom API key and model preferences', () => {
+      const customApiKey = 'custom-key';
+      const preferences = { bioEnhancement: 'custom-model' };
+      
+      new HuggingFaceService(customApiKey, preferences);
+      
+      expect(ModelManager).toHaveBeenCalledWith(preferences);
     });
   });
 
-  describe('enhanceProject', () => {
-    const mockProject = {
-      title: 'E-commerce Platform',
-      description: 'Built an online store',
-      technologies: ['React', 'Node.js'],
-      duration: '6 months',
-      teamSize: 5,
+  describe('getAvailableModels', () => {
+    it('should return available models from ModelManager', async () => {
+      const mockModels = [
+        { id: 'model1', name: 'Model 1' },
+        { id: 'model2', name: 'Model 2' }
+      ];
+      mockModelManager.getAvailableModels.mockResolvedValue(mockModels);
+
+      const models = await service.getAvailableModels();
+
+      expect(models).toEqual(mockModels);
+      expect(mockModelManager.getAvailableModels).toHaveBeenCalled();
+    });
+  });
+
+  describe('getSelectedModels', () => {
+    it('should return selected models from ModelManager', () => {
+      const mockSelection = {
+        bioEnhancement: 'model1',
+        projectOptimization: 'model2'
+      };
+      mockModelManager.getSelectedModels.mockReturnValue(mockSelection);
+
+      const selection = service.getSelectedModels();
+
+      expect(selection).toEqual(mockSelection);
+      expect(mockModelManager.getSelectedModels).toHaveBeenCalled();
+    });
+  });
+
+  describe('updateModelSelection', () => {
+    it('should update model selection through ModelManager', () => {
+      service.updateModelSelection('bioEnhancement', 'new-model');
+
+      expect(mockModelManager.updateModelSelection).toHaveBeenCalledWith(
+        'bioEnhancement',
+        'new-model'
+      );
+    });
+  });
+
+  describe('enhanceBio', () => {
+    const mockBio = 'I am a software developer';
+    const mockContext: BioContext = {
+      title: 'Senior Developer',
+      skills: ['JavaScript', 'React'],
+      tone: 'professional',
+      targetLength: 'concise'
     };
 
-    it('should enhance project description successfully', async () => {
-      const mockResponse = {
-        generated_text: 'Developed a comprehensive e-commerce platform using React and Node.js. Led a team of 5 developers over 6 months to deliver a scalable solution that increased sales by 40%.',
+    it('should return cached result if available', async () => {
+      const cachedResult = {
+        content: 'Enhanced bio content',
+        qualityScore: 0.9
       };
+      (cache.get as jest.Mock).mockResolvedValue(JSON.stringify(cachedResult));
 
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
+      const result = await service.enhanceBio(mockBio, mockContext);
 
-      const result = await service.enhanceProject(mockProject);
-
-      expect(result.enhancedDescription).toContain('e-commerce platform');
-      expect(result.metrics).toContain('40%');
-      expect(result.impact).toBeTruthy();
-      expect(result.qualityScore).toBeGreaterThan(0);
+      expect(result).toEqual(cachedResult);
+      expect(cache.get).toHaveBeenCalled();
     });
 
-    it('should extract metrics from enhanced description', async () => {
-      const mockResponse = {
-        generated_text: 'Achieved 95% test coverage, reduced load time by 50%, and served 10,000 daily users.',
-      };
+    it('should enhance bio when not cached', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
 
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
+      mockPromptBuilder.buildBioEnhancementPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
 
-      const result = await service.enhanceProject(mockProject);
+      // Mock fetch
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          generated_text: 'Enhanced bio content'
+        })
+      });
 
-      expect(result.metrics).toContain('95%');
-      expect(result.metrics).toContain('50%');
-      expect(result.metrics).toContain('10,000');
+      mockContentScorer.scoreContent.mockResolvedValue({
+        overall: 0.85,
+        criteria: {
+          clarity: 0.9,
+          relevance: 0.8
+        }
+      });
+
+      const result = await service.enhanceBio(mockBio, mockContext);
+
+      expect(result).toEqual({
+        content: 'Enhanced bio content',
+        qualityScore: 0.85,
+        confidence: 1,
+        modelUsed: 'test-model',
+        processingTime: expect.any(Number)
+      });
+
+      expect(cache.set).toHaveBeenCalled();
     });
 
-    it('should handle projects without technologies', async () => {
-      const projectWithoutTech = {
-        ...mockProject,
-        technologies: [],
-      };
+    it('should handle API errors gracefully', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
 
-      const mockResponse = {
-        generated_text: 'Developed a comprehensive e-commerce platform over 6 months.',
-      };
+      mockPromptBuilder.buildBioEnhancementPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
 
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 503,
+        statusText: 'Service Unavailable'
+      });
 
-      const result = await service.enhanceProject(projectWithoutTech);
+      await expect(service.enhanceBio(mockBio, mockContext)).rejects.toThrow(
+        ModelUnavailableError
+      );
+    });
 
-      expect(result.enhancedDescription).toBeTruthy();
-      expect(result.qualityScore).toBeGreaterThan(0);
+    it('should handle quota exceeded errors', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
+
+      mockPromptBuilder.buildBioEnhancementPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: false,
+        status: 429,
+        statusText: 'Too Many Requests'
+      });
+
+      await expect(service.enhanceBio(mockBio, mockContext)).rejects.toThrow(
+        QuotaExceededError
+      );
+    });
+
+    it('should log errors when enhancement fails', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockRejectedValue(new Error('Model selection failed'));
+
+      await expect(service.enhanceBio(mockBio, mockContext)).rejects.toThrow();
+      
+      expect(logger.error).toHaveBeenCalledWith(
+        'Bio enhancement failed:',
+        expect.any(Error)
+      );
+    });
+  });
+
+  describe('optimizeProjectDescription', () => {
+    const mockDescription = 'Built a web app';
+    const mockTechnologies = ['React', 'Node.js'];
+    const mockIndustry = 'Technology';
+
+    it('should optimize project description', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
+
+      mockPromptBuilder.buildProjectOptimizationPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          generated_text: 'Optimized project description'
+        })
+      });
+
+      const result = await service.optimizeProjectDescription(
+        mockDescription,
+        mockTechnologies,
+        mockIndustry
+      );
+
+      expect(result).toEqual({
+        enhanced: 'Optimized project description',
+        improvements: expect.any(Array),
+        modelUsed: 'test-model',
+        processingTime: expect.any(Number)
+      });
+
+      expect(mockPromptBuilder.buildProjectOptimizationPrompt).toHaveBeenCalledWith(
+        mockDescription,
+        mockTechnologies,
+        mockIndustry
+      );
+    });
+
+    it('should cache optimization results', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
+
+      mockPromptBuilder.buildProjectOptimizationPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          generated_text: 'Optimized description'
+        })
+      });
+
+      await service.optimizeProjectDescription(
+        mockDescription,
+        mockTechnologies,
+        mockIndustry
+      );
+
+      expect(cache.set).toHaveBeenCalledWith(
+        expect.stringContaining('ai:result:project:'),
+        expect.any(String),
+        3600 // 1 hour TTL
+      );
     });
   });
 
   describe('recommendTemplate', () => {
     const mockProfile = {
-      experience: 'Senior Software Developer with 8 years experience',
-      skills: ['React', 'Node.js', 'Python', 'AWS'],
-      industry: 'Technology',
-      preferences: {
-        style: 'modern',
-        colorScheme: 'professional',
-      },
+      title: 'Software Developer',
+      skills: ['JavaScript', 'Python'],
+      projectCount: 5,
+      hasDesignWork: false,
+      experienceLevel: 'mid' as const
     };
 
-    it('should recommend appropriate template based on profile', async () => {
-      const mockResponse = {
-        generated_text: 'Based on your technology background and modern preferences, I recommend the "developer" template with its clean code-inspired design.',
-      };
+    it('should recommend template based on profile', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
 
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
+      mockPromptBuilder.buildTemplateRecommendationPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          generated_text: JSON.stringify({
+            template: 'developer',
+            confidence: 0.9,
+            reasoning: 'Technical background'
+          })
+        })
+      });
 
       const result = await service.recommendTemplate(mockProfile);
 
-      expect(result.recommendedTemplate).toBe('developer');
-      expect(result.reasoning).toContain('technology background');
+      expect(result).toEqual({
+        recommendedTemplate: 'developer',
+        confidence: 0.9,
+        reasoning: ['Technical background'],
+        alternatives: expect.any(Array),
+        modelUsed: 'test-model',
+        processingTime: expect.any(Number)
+      });
+    });
+
+    it('should handle invalid JSON response', async () => {
+      (cache.get as jest.Mock).mockResolvedValue(null);
+      
+      mockModelManager.selectModel.mockResolvedValue({
+        modelId: 'test-model',
+        endpoint: 'https://api.example.com/test-model'
+      });
+
+      mockPromptBuilder.buildTemplateRecommendationPrompt.mockReturnValue({
+        system: 'System prompt',
+        user: 'User prompt'
+      });
+
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({
+          generated_text: 'Not valid JSON'
+        })
+      });
+
+      const result = await service.recommendTemplate(mockProfile);
+
+      // Should fall back to default recommendation
+      expect(result.recommendedTemplate).toBeDefined();
       expect(result.confidence).toBeGreaterThan(0);
-      expect(result.confidence).toBeLessThanOrEqual(100);
-    });
-
-    it('should handle creative industry profiles', async () => {
-      const creativeProfile = {
-        ...mockProfile,
-        experience: 'Graphic Designer with 5 years experience',
-        skills: ['Photoshop', 'Illustrator', 'Figma'],
-        industry: 'Design',
-      };
-
-      const mockResponse = {
-        generated_text: 'For a creative professional, the "designer" template showcases visual work beautifully.',
-      };
-
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
-
-      const result = await service.recommendTemplate(creativeProfile);
-
-      expect(result.recommendedTemplate).toBe('designer');
-      expect(result.alternativeTemplates).toContain('creative');
-    });
-
-    it('should provide alternative template suggestions', async () => {
-      const mockResponse = {
-        generated_text: 'The "consultant" template is ideal, but "business" and "modern" templates would also work well.',
-      };
-
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue(mockResponse),
-      }));
-
-      const result = await service.recommendTemplate(mockProfile);
-
-      expect(result.recommendedTemplate).toBe('consultant');
-      expect(result.alternativeTemplates).toContain('business');
-      expect(result.alternativeTemplates).toContain('modern');
     });
   });
 
-  describe('getAvailableModels', () => {
-    it('should return list of available models', async () => {
-      const models = await service.getAvailableModels();
+  describe('scoreContent', () => {
+    it('should score content using ContentScorer', async () => {
+      const mockContent = 'Sample content to score';
+      const mockType = 'bio';
+      const mockScore = {
+        overall: 0.8,
+        criteria: {
+          clarity: 0.85,
+          relevance: 0.75
+        },
+        suggestions: ['Add more details']
+      };
 
-      expect(Array.isArray(models)).toBe(true);
-      expect(models.length).toBeGreaterThan(0);
-      
-      const model = models[0];
-      expect(model).toHaveProperty('id');
-      expect(model).toHaveProperty('name');
-      expect(model).toHaveProperty('capabilities');
-      expect(model).toHaveProperty('costPerRequest');
+      mockContentScorer.scoreContent.mockResolvedValue(mockScore);
+
+      const result = await service.scoreContent(mockContent, mockType);
+
+      expect(result).toEqual(mockScore);
+      expect(mockContentScorer.scoreContent).toHaveBeenCalledWith(
+        mockContent,
+        mockType
+      );
     });
+  });
 
-    it('should filter models by capability', async () => {
-      const bioModels = await service.getAvailableModels('bio');
-
-      expect(bioModels.length).toBeGreaterThan(0);
-      bioModels.forEach(model => {
-        expect(model.capabilities).toContain('bio');
+  describe('healthCheck', () => {
+    it('should return true when service is healthy', async () => {
+      global.fetch = jest.fn().mockResolvedValue({
+        ok: true,
+        json: jest.fn().mockResolvedValue({ status: 'ok' })
       });
-    });
-  });
 
-  describe('error handling', () => {
-    it('should throw ModelUnavailableError when model is not available', async () => {
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockRejectedValue(new ModelUnavailableError('Model not available')),
-      }));
+      const isHealthy = await service.healthCheck();
 
-      await expect(service.enhanceBio(mockContext)).rejects.toThrow(ModelUnavailableError);
+      expect(isHealthy).toBe(true);
     });
 
-    it('should handle rate limiting gracefully', async () => {
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockRejectedValue(new Error('Rate limit exceeded')),
-      }));
+    it('should return false when service is unhealthy', async () => {
+      global.fetch = jest.fn().mockRejectedValue(new Error('Network error'));
 
-      await expect(service.enhanceBio(mockContext)).rejects.toThrow(AIServiceError);
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        expect.stringContaining('Failed to enhance bio'),
+      const isHealthy = await service.healthCheck();
+
+      expect(isHealthy).toBe(false);
+      expect(logger.error).toHaveBeenCalledWith(
+        'Health check failed:',
         expect.any(Error)
-      );
-    });
-
-    it('should validate API key presence', async () => {
-      // Temporarily remove API key
-      const originalKey = env.HUGGINGFACE_API_KEY;
-      (env as any).HUGGINGFACE_API_KEY = '';
-
-      const serviceWithoutKey = new HuggingFaceService();
-
-      await expect(serviceWithoutKey.enhanceBio(mockContext)).rejects.toThrow(
-        'HuggingFace API key not configured'
-      );
-
-      // Restore API key
-      (env as any).HUGGINGFACE_API_KEY = originalKey;
-    });
-  });
-
-  describe('caching behavior', () => {
-    it('should generate consistent cache keys', async () => {
-      const context1 = { currentBio: 'Test', experience: '5 years', skills: ['JS'], achievements: [] };
-      const context2 = { currentBio: 'Test', experience: '5 years', skills: ['JS'], achievements: [] };
-
-      // Mock to capture cache key
-      let capturedKey1: string = '';
-      let capturedKey2: string = '';
-      
-      mockCache.get.mockImplementation((key) => {
-        if (!capturedKey1) capturedKey1 = key;
-        else capturedKey2 = key;
-        return Promise.resolve(null);
-      });
-
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue({ generated_text: 'Enhanced bio' }),
-      }));
-
-      await service.enhanceBio(context1);
-      await service.enhanceBio(context2);
-
-      expect(capturedKey1).toBe(capturedKey2);
-    });
-
-    it('should set appropriate cache TTL', async () => {
-      const mockApiClient = require('@/lib/ai/huggingface/api-client').APIClient;
-      mockApiClient.mockImplementation(() => ({
-        callModel: jest.fn().mockResolvedValue({ generated_text: 'Enhanced bio' }),
-      }));
-
-      await service.enhanceBio(mockContext);
-
-      expect(mockCache.set).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.any(Object),
-        3600 // 1 hour TTL
       );
     });
   });

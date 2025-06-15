@@ -10,7 +10,16 @@ import { logger } from '@/lib/utils/logger';
 export const uuidSchema = z.string().uuid('Invalid UUID format');
 
 export const templateSchema = z
-  .enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business', 'minimal', 'modern'])
+  .enum([
+    'developer',
+    'designer',
+    'consultant',
+    'educator',
+    'creative',
+    'business',
+    'minimal',
+    'modern',
+  ])
   .optional()
   .default('developer');
 
@@ -54,82 +63,127 @@ const previewPortfolioSchema = z
       .optional(),
 
     // Portfolio sections with proper schemas
-    experience: z.array(z.object({
-      id: z.string(),
-      company: z.string(),
-      position: z.string(),
-      location: z.string().optional(),
-      employmentType: z.enum(['full-time', 'part-time', 'contract', 'freelance', 'internship']).optional(),
-      startDate: z.string(),
-      endDate: z.string().optional(),
-      current: z.boolean(),
-      description: z.string(),
-      highlights: z.array(z.string()).optional(),
-      technologies: z.array(z.string()).optional(),
-      companyLogo: z.string().optional(),
-    })).optional(),
-    
-    education: z.array(z.object({
-      id: z.string(),
-      institution: z.string(),
-      degree: z.string(),
-      field: z.string(),
-      startDate: z.string(),
-      endDate: z.string().optional(),
-      current: z.boolean().optional(),
-      description: z.string().optional(),
-      achievements: z.array(z.string()).optional(),
-    })).optional(),
-    
-    projects: z.array(z.object({
-      id: z.string(),
-      title: z.string(),
-      description: z.string(),
-      technologies: z.array(z.string()),
-      imageUrl: z.string().optional(),
-      projectUrl: z.string().optional(),
-      liveUrl: z.string().optional(),
-      githubUrl: z.string().optional(),
-      highlights: z.array(z.string()).optional(),
-      featured: z.boolean().optional(),
-      order: z.number().optional(),
-    })).optional(),
-    
-    skills: z.array(z.object({
-      name: z.string(),
-      level: z.enum(['beginner', 'intermediate', 'advanced', 'expert']).optional(),
-      category: z.string().optional(),
-    })).optional(),
-    
-    certifications: z.array(z.object({
-      id: z.string(),
-      name: z.string(),
-      issuer: z.string(),
-      issueDate: z.string(),
-      expiryDate: z.string().optional(),
-      credentialId: z.string().optional(),
-      credentialUrl: z.string().optional(),
-      imageUrl: z.string().optional(),
-    })).optional(),
+    experience: z
+      .array(
+        z.object({
+          id: z.string(),
+          company: z.string(),
+          position: z.string(),
+          location: z.string().optional(),
+          employmentType: z
+            .enum([
+              'full-time',
+              'part-time',
+              'contract',
+              'freelance',
+              'internship',
+            ])
+            .optional(),
+          startDate: z.string(),
+          endDate: z.string().optional(),
+          current: z.boolean(),
+          description: z.string(),
+          highlights: z.array(z.string()).optional(),
+          technologies: z.array(z.string()).optional(),
+          companyLogo: z.string().optional(),
+        })
+      )
+      .optional(),
+
+    education: z
+      .array(
+        z.object({
+          id: z.string(),
+          institution: z.string(),
+          degree: z.string(),
+          field: z.string(),
+          startDate: z.string(),
+          endDate: z.string().optional(),
+          current: z.boolean().optional(),
+          description: z.string().optional(),
+          achievements: z.array(z.string()).optional(),
+        })
+      )
+      .optional(),
+
+    projects: z
+      .array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          description: z.string(),
+          technologies: z.array(z.string()),
+          imageUrl: z.string().optional(),
+          projectUrl: z.string().optional(),
+          liveUrl: z.string().optional(),
+          githubUrl: z.string().optional(),
+          highlights: z.array(z.string()).optional(),
+          featured: z.boolean().optional(),
+          order: z.number().optional(),
+        })
+      )
+      .optional(),
+
+    skills: z
+      .array(
+        z.object({
+          name: z.string(),
+          level: z
+            .enum(['beginner', 'intermediate', 'advanced', 'expert'])
+            .optional(),
+          category: z.string().optional(),
+        })
+      )
+      .optional(),
+
+    certifications: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          issuer: z.string(),
+          issueDate: z.string(),
+          expiryDate: z.string().optional(),
+          credentialId: z.string().optional(),
+          credentialUrl: z.string().optional(),
+          imageUrl: z.string().optional(),
+        })
+      )
+      .optional(),
 
     // Template and customization
-    template: z.enum(['developer', 'designer', 'consultant', 'educator', 'creative', 'business', 'minimal', 'modern']).optional(),
-    customization: z.object({
-      primaryColor: z.string().optional(),
-      secondaryColor: z.string().optional(),
-      accentColor: z.string().optional(),
-      backgroundColor: z.string().optional(),
-      textColor: z.string().optional(),
-      fontFamily: z.string().optional(),
-      fontSize: z.enum(['small', 'medium', 'large']).optional(),
-      spacing: z.enum(['compact', 'normal', 'relaxed']).optional(),
-      borderRadius: z.enum(['none', 'small', 'medium', 'large']).optional(),
-      headerStyle: z.enum(['minimal', 'bold', 'creative', 'classic', 'modern']).optional(),
-      sectionOrder: z.array(z.string()).optional(),
-      hiddenSections: z.array(z.string()).optional(),
-      darkMode: z.boolean().optional(),
-      customCSS: z.string().optional(),
-    }).optional(),
+    template: z
+      .enum([
+        'developer',
+        'designer',
+        'consultant',
+        'educator',
+        'creative',
+        'business',
+        'minimal',
+        'modern',
+      ])
+      .optional(),
+    customization: z
+      .object({
+        primaryColor: z.string().optional(),
+        secondaryColor: z.string().optional(),
+        accentColor: z.string().optional(),
+        backgroundColor: z.string().optional(),
+        textColor: z.string().optional(),
+        fontFamily: z.string().optional(),
+        fontSize: z.enum(['small', 'medium', 'large']).optional(),
+        spacing: z.enum(['compact', 'normal', 'relaxed']).optional(),
+        borderRadius: z.enum(['none', 'small', 'medium', 'large']).optional(),
+        headerStyle: z
+          .enum(['minimal', 'bold', 'creative', 'classic', 'modern'])
+          .optional(),
+        sectionOrder: z.array(z.string()).optional(),
+        hiddenSections: z.array(z.string()).optional(),
+        darkMode: z.boolean().optional(),
+        customCSS: z.string().optional(),
+      })
+      .optional(),
 
     // Metadata
     status: z.enum(['draft', 'published', 'archived']).optional(),

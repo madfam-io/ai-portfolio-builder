@@ -2,7 +2,14 @@
 
 import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Globe, Search, Sparkles, CheckCircle, AlertCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Globe,
+  Search,
+  Sparkles,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
@@ -25,13 +32,16 @@ function PublishContent({ params }: PageProps) {
   const router = useRouter();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { loadPortfolio, updatePortfolio, currentPortfolio } = usePortfolioStore();
+  const { loadPortfolio, updatePortfolio, currentPortfolio } =
+    usePortfolioStore();
 
   const [step, setStep] = useState<'subdomain' | 'seo' | 'review'>('subdomain');
   const [isPublishing, setIsPublishing] = useState(false);
   const [isCheckingSubdomain, setIsCheckingSubdomain] = useState(false);
-  const [subdomainAvailable, setSubdomainAvailable] = useState<boolean | null>(null);
-  
+  const [subdomainAvailable, setSubdomainAvailable] = useState<boolean | null>(
+    null
+  );
+
   const [publishData, setPublishData] = useState({
     subdomain: '',
     seo: {
@@ -43,18 +53,22 @@ function PublishContent({ params }: PageProps) {
 
   useEffect(() => {
     if (portfolioId) {
-      loadPortfolio(portfolioId).then(() => {
-        if (currentPortfolio) {
-          setPublishData({
-            subdomain: currentPortfolio.subdomain || generateSubdomain(currentPortfolio.name),
-            seo: {
-              title: `${currentPortfolio.title} - ${currentPortfolio.name}`,
-              description: currentPortfolio.bio || '',
-              keywords: '',
-            },
-          });
-        }
-      }).catch(console.error);
+      loadPortfolio(portfolioId)
+        .then(() => {
+          if (currentPortfolio) {
+            setPublishData({
+              subdomain:
+                currentPortfolio.subdomain ||
+                generateSubdomain(currentPortfolio.name),
+              seo: {
+                title: `${currentPortfolio.title} - ${currentPortfolio.name}`,
+                description: currentPortfolio.bio || '',
+                keywords: '',
+              },
+            });
+          }
+        })
+        .catch(console.error);
     }
   }, [portfolioId, loadPortfolio, currentPortfolio?.id]);
 
@@ -86,14 +100,13 @@ function PublishContent({ params }: PageProps) {
       });
 
       const data = await response.json();
-      
+
       if (response.ok && data.success) {
         setSubdomainAvailable(data.data.available);
       } else {
         setSubdomainAvailable(false);
       }
     } catch (error) {
-      
       setSubdomainAvailable(false);
     } finally {
       setIsCheckingSubdomain(false);
@@ -105,7 +118,7 @@ function PublishContent({ params }: PageProps) {
       .toLowerCase()
       .replace(/[^a-z0-9-]/g, '')
       .replace(/^-+/, '');
-    
+
     setPublishData({ ...publishData, subdomain: cleaned });
     setSubdomainAvailable(null);
   };
@@ -127,16 +140,22 @@ function PublishContent({ params }: PageProps) {
 
       toast({
         title: t.success || 'Success',
-        description: t.portfolioPublished || 'Your portfolio has been published successfully!',
+        description:
+          t.portfolioPublished ||
+          'Your portfolio has been published successfully!',
       });
 
       // Redirect to the public portfolio
-      window.open(`${window.location.origin}/p/${publishData.subdomain}`, '_blank');
+      window.open(
+        `${window.location.origin}/p/${publishData.subdomain}`,
+        '_blank'
+      );
       router.push('/dashboard');
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToPublish || 'Failed to publish portfolio. Please try again.',
+        description:
+          t.failedToPublish || 'Failed to publish portfolio. Please try again.',
         variant: 'destructive',
       });
     } finally {
@@ -149,7 +168,9 @@ function PublishContent({ params }: PageProps) {
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">{t.portfolioNotFound || 'Portfolio not found'}</h2>
+            <h2 className="text-2xl font-bold mb-4">
+              {t.portfolioNotFound || 'Portfolio not found'}
+            </h2>
             <Button onClick={() => router.push('/dashboard')}>
               {t.backToDashboard || 'Back to Dashboard'}
             </Button>
@@ -162,9 +183,10 @@ function PublishContent({ params }: PageProps) {
   const isReadyToPublish = () => {
     // Check if portfolio has minimum required content
     const hasBasicInfo = currentPortfolio.title && currentPortfolio.bio;
-    const hasContent = (currentPortfolio.experience?.length || 0) > 0 || 
-                      (currentPortfolio.projects?.length || 0) > 0 ||
-                      (currentPortfolio.education?.length || 0) > 0;
+    const hasContent =
+      (currentPortfolio.experience?.length || 0) > 0 ||
+      (currentPortfolio.projects?.length || 0) > 0 ||
+      (currentPortfolio.education?.length || 0) > 0;
     return hasBasicInfo && hasContent;
   };
 
@@ -178,7 +200,8 @@ function PublishContent({ params }: PageProps) {
                 {t.chooseYourWebAddress || 'Choose your web address'}
               </h2>
               <p className="text-muted-foreground">
-                {t.subdomainDescription || 'This will be your portfolio\'s public URL'}
+                {t.subdomainDescription ||
+                  "This will be your portfolio's public URL"}
               </p>
             </div>
 
@@ -189,13 +212,13 @@ function PublishContent({ params }: PageProps) {
                   <Input
                     id="subdomain"
                     value={publishData.subdomain}
-                    onChange={(e) => handleSubdomainChange(e.target.value)}
+                    onChange={e => handleSubdomainChange(e.target.value)}
                     onBlur={checkSubdomainAvailability}
                     placeholder="yourname"
                     className={cn(
-                      "pr-10",
-                      subdomainAvailable === true && "border-green-500",
-                      subdomainAvailable === false && "border-red-500"
+                      'pr-10',
+                      subdomainAvailable === true && 'border-green-500',
+                      subdomainAvailable === false && 'border-red-500'
                     )}
                   />
                   {isCheckingSubdomain && (
@@ -213,17 +236,21 @@ function PublishContent({ params }: PageProps) {
                 <span className="text-muted-foreground">.prisma.madfam.io</span>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {t.subdomainHint || 'Use letters, numbers, and hyphens. At least 3 characters.'}
+                {t.subdomainHint ||
+                  'Use letters, numbers, and hyphens. At least 3 characters.'}
               </p>
               {subdomainAvailable === false && (
                 <p className="text-sm text-red-500 mt-1">
-                  {t.subdomainTaken || 'This subdomain is already taken or reserved'}
+                  {t.subdomainTaken ||
+                    'This subdomain is already taken or reserved'}
                 </p>
               )}
             </div>
 
             <div className="rounded-lg border p-4 bg-muted/50">
-              <p className="text-sm font-medium mb-1">{t.yourPortfolioUrl || 'Your portfolio URL will be:'}</p>
+              <p className="text-sm font-medium mb-1">
+                {t.yourPortfolioUrl || 'Your portfolio URL will be:'}
+              </p>
               <p className="text-lg font-mono">
                 https://{publishData.subdomain || 'yourname'}.prisma.madfam.io
               </p>
@@ -239,7 +266,9 @@ function PublishContent({ params }: PageProps) {
               </Button>
               <Button
                 onClick={() => setStep('seo')}
-                disabled={!publishData.subdomain || subdomainAvailable === false}
+                disabled={
+                  !publishData.subdomain || subdomainAvailable === false
+                }
               >
                 {t.continue || 'Continue'}
               </Button>
@@ -255,7 +284,8 @@ function PublishContent({ params }: PageProps) {
                 {t.seoSettings || 'SEO Settings'}
               </h2>
               <p className="text-muted-foreground">
-                {t.seoDescription || 'Help people find your portfolio on search engines'}
+                {t.seoDescription ||
+                  'Help people find your portfolio on search engines'}
               </p>
             </div>
 
@@ -265,33 +295,46 @@ function PublishContent({ params }: PageProps) {
                 <Input
                   id="seoTitle"
                   value={publishData.seo.title}
-                  onChange={(e) => setPublishData({
-                    ...publishData,
-                    seo: { ...publishData.seo, title: e.target.value }
-                  })}
-                  placeholder={t.seoTitlePlaceholder || 'John Doe - Senior Developer'}
+                  onChange={e =>
+                    setPublishData({
+                      ...publishData,
+                      seo: { ...publishData.seo, title: e.target.value },
+                    })
+                  }
+                  placeholder={
+                    t.seoTitlePlaceholder || 'John Doe - Senior Developer'
+                  }
                   maxLength={60}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {publishData.seo.title.length}/60 {t.characters || 'characters'}
+                  {publishData.seo.title.length}/60{' '}
+                  {t.characters || 'characters'}
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="seoDescription">{t.metaDescription || 'Meta Description'}</Label>
+                <Label htmlFor="seoDescription">
+                  {t.metaDescription || 'Meta Description'}
+                </Label>
                 <Textarea
                   id="seoDescription"
                   value={publishData.seo.description}
-                  onChange={(e) => setPublishData({
-                    ...publishData,
-                    seo: { ...publishData.seo, description: e.target.value }
-                  })}
-                  placeholder={t.seoDescriptionPlaceholder || 'A brief description of your professional background and expertise...'}
+                  onChange={e =>
+                    setPublishData({
+                      ...publishData,
+                      seo: { ...publishData.seo, description: e.target.value },
+                    })
+                  }
+                  placeholder={
+                    t.seoDescriptionPlaceholder ||
+                    'A brief description of your professional background and expertise...'
+                  }
                   rows={3}
                   maxLength={160}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {publishData.seo.description.length}/160 {t.characters || 'characters'}
+                  {publishData.seo.description.length}/160{' '}
+                  {t.characters || 'characters'}
                 </p>
               </div>
 
@@ -300,11 +343,15 @@ function PublishContent({ params }: PageProps) {
                 <Input
                   id="seoKeywords"
                   value={publishData.seo.keywords}
-                  onChange={(e) => setPublishData({
-                    ...publishData,
-                    seo: { ...publishData.seo, keywords: e.target.value }
-                  })}
-                  placeholder={t.keywordsPlaceholder || 'web developer, react, portfolio'}
+                  onChange={e =>
+                    setPublishData({
+                      ...publishData,
+                      seo: { ...publishData.seo, keywords: e.target.value },
+                    })
+                  }
+                  placeholder={
+                    t.keywordsPlaceholder || 'web developer, react, portfolio'
+                  }
                 />
                 <p className="text-xs text-muted-foreground mt-1">
                   {t.keywordsHint || 'Separate keywords with commas'}
@@ -328,23 +375,21 @@ function PublishContent({ params }: PageProps) {
                     https://{publishData.subdomain}.prisma.madfam.io
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    {publishData.seo.description || currentPortfolio.bio || t.noDescription || 'No description provided'}
+                    {publishData.seo.description ||
+                      currentPortfolio.bio ||
+                      t.noDescription ||
+                      'No description provided'}
                   </p>
                 </div>
               </CardContent>
             </Card>
 
             <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => setStep('subdomain')}
-              >
+              <Button variant="outline" onClick={() => setStep('subdomain')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t.back || 'Back'}
               </Button>
-              <Button
-                onClick={() => setStep('review')}
-              >
+              <Button onClick={() => setStep('review')}>
                 {t.continue || 'Continue'}
               </Button>
             </div>
@@ -353,7 +398,7 @@ function PublishContent({ params }: PageProps) {
 
       case 'review':
         const ready = isReadyToPublish();
-        
+
         return (
           <div className="space-y-6">
             <div>
@@ -361,7 +406,8 @@ function PublishContent({ params }: PageProps) {
                 {t.reviewAndPublish || 'Review and Publish'}
               </h2>
               <p className="text-muted-foreground">
-                {t.reviewDescription || 'Review your settings before publishing'}
+                {t.reviewDescription ||
+                  'Review your settings before publishing'}
               </p>
             </div>
 
@@ -375,7 +421,8 @@ function PublishContent({ params }: PageProps) {
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-yellow-700 mb-2">
-                    {t.incompleteMessage || 'Your portfolio needs more content before publishing:'}
+                    {t.incompleteMessage ||
+                      'Your portfolio needs more content before publishing:'}
                   </p>
                   <ul className="text-sm text-yellow-700 space-y-1">
                     {!currentPortfolio.title && (
@@ -384,11 +431,15 @@ function PublishContent({ params }: PageProps) {
                     {!currentPortfolio.bio && (
                       <li>• {t.missingBio || 'Add a bio/description'}</li>
                     )}
-                    {(!currentPortfolio.experience?.length && 
-                      !currentPortfolio.projects?.length && 
-                      !currentPortfolio.education?.length) && (
-                      <li>• {t.missingContent || 'Add at least one experience, project, or education entry'}</li>
-                    )}
+                    {!currentPortfolio.experience?.length &&
+                      !currentPortfolio.projects?.length &&
+                      !currentPortfolio.education?.length && (
+                        <li>
+                          •{' '}
+                          {t.missingContent ||
+                            'Add at least one experience, project, or education entry'}
+                        </li>
+                      )}
                   </ul>
                 </CardContent>
               </Card>
@@ -418,16 +469,22 @@ function PublishContent({ params }: PageProps) {
                 </CardHeader>
                 <CardContent className="space-y-2">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{t.title || 'Title'}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {t.title || 'Title'}
+                    </p>
                     <p className="text-sm">{publishData.seo.title}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">{t.description || 'Description'}</p>
+                    <p className="text-sm font-medium text-muted-foreground">
+                      {t.description || 'Description'}
+                    </p>
                     <p className="text-sm">{publishData.seo.description}</p>
                   </div>
                   {publishData.seo.keywords && (
                     <div>
-                      <p className="text-sm font-medium text-muted-foreground">{t.keywords || 'Keywords'}</p>
+                      <p className="text-sm font-medium text-muted-foreground">
+                        {t.keywords || 'Keywords'}
+                      </p>
                       <p className="text-sm">{publishData.seo.keywords}</p>
                     </div>
                   )}
@@ -436,21 +493,32 @@ function PublishContent({ params }: PageProps) {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">{t.whatHappensNext || 'What happens next?'}</CardTitle>
+                  <CardTitle className="text-base">
+                    {t.whatHappensNext || 'What happens next?'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>{t.publishStep1 || 'Your portfolio will be live immediately'}</span>
+                      <span>
+                        {t.publishStep1 ||
+                          'Your portfolio will be live immediately'}
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>{t.publishStep2 || 'Search engines will start indexing your portfolio'}</span>
+                      <span>
+                        {t.publishStep2 ||
+                          'Search engines will start indexing your portfolio'}
+                      </span>
                     </li>
                     <li className="flex items-start gap-2">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
-                      <span>{t.publishStep3 || 'You can update your portfolio anytime'}</span>
+                      <span>
+                        {t.publishStep3 ||
+                          'You can update your portfolio anytime'}
+                      </span>
                     </li>
                   </ul>
                 </CardContent>
@@ -458,10 +526,7 @@ function PublishContent({ params }: PageProps) {
             </div>
 
             <div className="flex justify-between">
-              <Button
-                variant="outline"
-                onClick={() => setStep('seo')}
-              >
+              <Button variant="outline" onClick={() => setStep('seo')}>
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 {t.back || 'Back'}
               </Button>
@@ -495,49 +560,73 @@ function PublishContent({ params }: PageProps) {
           {/* Progress Indicator */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <div className={cn(
-                "flex items-center gap-2",
-                step === 'subdomain' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  step === 'subdomain' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  step === 'subdomain'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    step === 'subdomain'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   1
                 </div>
                 <span className="text-sm">{t.webAddress || 'Web Address'}</span>
               </div>
-              <div className={cn(
-                "flex items-center gap-2",
-                step === 'seo' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  step === 'seo' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  step === 'seo' ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    step === 'seo'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   2
                 </div>
                 <span className="text-sm">{t.seoSettings || 'SEO'}</span>
               </div>
-              <div className={cn(
-                "flex items-center gap-2",
-                step === 'review' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  step === 'review' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  step === 'review' ? 'text-primary' : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    step === 'review'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   3
                 </div>
                 <span className="text-sm">{t.review || 'Review'}</span>
               </div>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-primary transition-all duration-300"
                 style={{
-                  width: step === 'subdomain' ? '33%' : 
-                         step === 'seo' ? '66%' : '100%'
+                  width:
+                    step === 'subdomain'
+                      ? '33%'
+                      : step === 'seo'
+                        ? '66%'
+                        : '100%',
                 }}
               />
             </div>
@@ -545,9 +634,7 @@ function PublishContent({ params }: PageProps) {
 
           {/* Main Content */}
           <Card>
-            <CardContent className="pt-6">
-              {renderStep()}
-            </CardContent>
+            <CardContent className="pt-6">{renderStep()}</CardContent>
           </Card>
         </div>
       </div>

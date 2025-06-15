@@ -35,8 +35,16 @@ const DEFAULT_CATEGORIES = [
 
 const SKILL_LEVELS = [
   { value: 'beginner', label: 'Beginner', color: 'bg-gray-100 text-gray-800' },
-  { value: 'intermediate', label: 'Intermediate', color: 'bg-blue-100 text-blue-800' },
-  { value: 'advanced', label: 'Advanced', color: 'bg-green-100 text-green-800' },
+  {
+    value: 'intermediate',
+    label: 'Intermediate',
+    color: 'bg-blue-100 text-blue-800',
+  },
+  {
+    value: 'advanced',
+    label: 'Advanced',
+    color: 'bg-green-100 text-green-800',
+  },
   { value: 'expert', label: 'Expert', color: 'bg-purple-100 text-purple-800' },
 ];
 
@@ -55,7 +63,7 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
   const categories = Array.from(
     new Set([
       ...DEFAULT_CATEGORIES,
-      ...skills.map(s => s.category).filter(Boolean) as string[],
+      ...(skills.map(s => s.category).filter(Boolean) as string[]),
     ])
   ).sort();
 
@@ -106,7 +114,9 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
       );
     } else {
       // Check if skill already exists
-      if (skills.some(s => s.name.toLowerCase() === newSkill.name.toLowerCase())) {
+      if (
+        skills.some(s => s.name.toLowerCase() === newSkill.name.toLowerCase())
+      ) {
         return;
       }
       updatedSkills = [...skills, newSkill];
@@ -128,16 +138,19 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
 
   const handleBulkAdd = () => {
     const skillsText = prompt(
-      t.bulkAddPrompt || 'Enter skills separated by commas (e.g., React, Node.js, TypeScript):'
+      t.bulkAddPrompt ||
+        'Enter skills separated by commas (e.g., React, Node.js, TypeScript):'
     );
-    
+
     if (!skillsText) return;
 
     const newSkills = skillsText
       .split(',')
       .map(s => s.trim())
       .filter(Boolean)
-      .filter(name => !skills.some(s => s.name.toLowerCase() === name.toLowerCase()))
+      .filter(
+        name => !skills.some(s => s.name.toLowerCase() === name.toLowerCase())
+      )
       .map(name => ({
         name,
         level: 'intermediate' as const,
@@ -149,12 +162,15 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
     }
   };
 
-  const groupedSkills = skills.reduce((acc, skill) => {
-    const category = skill.category || 'Other';
-    if (!acc[category]) acc[category] = [];
-    acc[category].push(skill);
-    return acc;
-  }, {} as Record<string, Skill[]>);
+  const groupedSkills = skills.reduce(
+    (acc, skill) => {
+      const category = skill.category || 'Other';
+      if (!acc[category]) acc[category] = [];
+      acc[category].push(skill);
+      return acc;
+    },
+    {} as Record<string, Skill[]>
+  );
 
   const getLevelInfo = (level?: string) => {
     return SKILL_LEVELS.find(l => l.value === level) || SKILL_LEVELS[1];
@@ -164,11 +180,10 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold">
-            {t.skills || 'Skills'}
-          </h3>
+          <h3 className="text-lg font-semibold">{t.skills || 'Skills'}</h3>
           <p className="text-sm text-muted-foreground">
-            {t.skillsDescription || 'List your professional skills and expertise'}
+            {t.skillsDescription ||
+              'List your professional skills and expertise'}
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -190,17 +205,23 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {editingSkill ? t.editSkill || 'Edit Skill' : t.addSkill || 'Add Skill'}
+              {editingSkill
+                ? t.editSkill || 'Edit Skill'
+                : t.addSkill || 'Add Skill'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-3">
               <div>
-                <Label htmlFor="skillName">{t.skillName || 'Skill Name'} *</Label>
+                <Label htmlFor="skillName">
+                  {t.skillName || 'Skill Name'} *
+                </Label>
                 <Input
                   id="skillName"
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   onKeyDown={handleQuickAdd}
                   placeholder={t.skillPlaceholder || 'e.g. JavaScript'}
                   autoFocus
@@ -212,22 +233,34 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
                   id="category"
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
                 >
-                  <option value="">{t.selectCategory || 'Select category'}</option>
+                  <option value="">
+                    {t.selectCategory || 'Select category'}
+                  </option>
                   {categories.map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
                   ))}
-                  <option value="new">{t.newCategory || '+ New category'}</option>
+                  <option value="new">
+                    {t.newCategory || '+ New category'}
+                  </option>
                 </select>
               </div>
               <div>
-                <Label htmlFor="level">{t.proficiencyLevel || 'Proficiency Level'}</Label>
+                <Label htmlFor="level">
+                  {t.proficiencyLevel || 'Proficiency Level'}
+                </Label>
                 <select
                   id="level"
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.level}
-                  onChange={(e) => setFormData({ ...formData, level: e.target.value as any })}
+                  onChange={e =>
+                    setFormData({ ...formData, level: e.target.value as any })
+                  }
                 >
                   {SKILL_LEVELS.map(level => (
                     <option key={level.value} value={level.value}>
@@ -240,11 +273,15 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
 
             {formData.category === 'new' && (
               <div>
-                <Label htmlFor="newCategory">{t.newCategoryName || 'New Category Name'}</Label>
+                <Label htmlFor="newCategory">
+                  {t.newCategoryName || 'New Category Name'}
+                </Label>
                 <Input
                   id="newCategory"
                   placeholder={t.enterCategoryName || 'Enter category name'}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
                 />
               </div>
             )}
@@ -254,7 +291,9 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
                 {t.cancel || 'Cancel'}
               </Button>
               <Button onClick={handleSave} disabled={!formData.name.trim()}>
-                {editingSkill ? t.saveChanges || 'Save Changes' : t.addSkill || 'Add Skill'}
+                {editingSkill
+                  ? t.saveChanges || 'Save Changes'
+                  : t.addSkill || 'Add Skill'}
               </Button>
             </div>
           </CardContent>
@@ -269,13 +308,16 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
               <div className="flex items-center justify-between">
                 <CardTitle className="text-base">{category}</CardTitle>
                 <span className="text-sm text-muted-foreground">
-                  {categorySkills.length} {categorySkills.length === 1 ? t.skill || 'skill' : t.skills || 'skills'}
+                  {categorySkills.length}{' '}
+                  {categorySkills.length === 1
+                    ? t.skill || 'skill'
+                    : t.skills || 'skills'}
                 </span>
               </div>
             </CardHeader>
             <CardContent>
               <div className="flex flex-wrap gap-2">
-                {categorySkills.map((skill) => {
+                {categorySkills.map(skill => {
                   const levelInfo = getLevelInfo(skill.level);
                   return (
                     <div
@@ -285,7 +327,7 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
                       <Badge
                         variant="secondary"
                         className={cn(
-                          "pr-8 transition-colors",
+                          'pr-8 transition-colors',
                           skill.level && levelInfo?.color
                         )}
                       >
@@ -354,10 +396,16 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
       {skills.length > 0 && (
         <Card>
           <CardContent className="py-4">
-            <p className="text-sm text-muted-foreground mb-2">{t.proficiencyLevels || 'Proficiency Levels:'}</p>
+            <p className="text-sm text-muted-foreground mb-2">
+              {t.proficiencyLevels || 'Proficiency Levels:'}
+            </p>
             <div className="flex flex-wrap gap-2">
               {SKILL_LEVELS.map(level => (
-                <Badge key={level.value} variant="secondary" className={level.color}>
+                <Badge
+                  key={level.value}
+                  variant="secondary"
+                  className={level.color}
+                >
                   {level.label}
                 </Badge>
               ))}

@@ -10,7 +10,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
@@ -78,7 +84,7 @@ function NewPortfolioContent() {
 
   const [currentStep, setCurrentStep] = useState<Step>('basic');
   const [isCreating, setIsCreating] = useState(false);
-  
+
   // Form data
   const [formData, setFormData] = useState({
     name: '',
@@ -125,7 +131,9 @@ function NewPortfolioContent() {
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToCreatePortfolio || 'Failed to create portfolio. Please try again.',
+        description:
+          t.failedToCreatePortfolio ||
+          'Failed to create portfolio. Please try again.',
         variant: 'destructive',
       });
       setIsCreating(false);
@@ -142,29 +150,40 @@ function NewPortfolioContent() {
                 {t.letsGetStarted || "Let's get started"}
               </h2>
               <p className="text-muted-foreground">
-                {t.basicInfoDescription || 'Tell us a bit about yourself and your portfolio'}
+                {t.basicInfoDescription ||
+                  'Tell us a bit about yourself and your portfolio'}
               </p>
             </div>
 
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">{t.portfolioName || 'Portfolio Name'}</Label>
+                <Label htmlFor="name">
+                  {t.portfolioName || 'Portfolio Name'}
+                </Label>
                 <Input
                   id="name"
-                  placeholder={t.portfolioNamePlaceholder || 'My Professional Portfolio'}
+                  placeholder={
+                    t.portfolioNamePlaceholder || 'My Professional Portfolio'
+                  }
                   value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, name: e.target.value })
+                  }
                   className="mt-1"
                 />
               </div>
 
               <div>
-                <Label htmlFor="title">{t.yourTitle || 'Your Professional Title'}</Label>
+                <Label htmlFor="title">
+                  {t.yourTitle || 'Your Professional Title'}
+                </Label>
                 <Input
                   id="title"
                   placeholder={t.titlePlaceholder || 'Senior Software Engineer'}
                   value={formData.title}
-                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, title: e.target.value })
+                  }
                   className="mt-1"
                 />
               </div>
@@ -173,16 +192,21 @@ function NewPortfolioContent() {
                 <Label htmlFor="bio">{t.shortBio || 'Short Bio'}</Label>
                 <Textarea
                   id="bio"
-                  placeholder={t.bioPlaceholder || 'Tell us about your experience and what makes you unique...'}
+                  placeholder={
+                    t.bioPlaceholder ||
+                    'Tell us about your experience and what makes you unique...'
+                  }
                   value={formData.bio}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setFormData({ ...formData, bio: e.target.value })}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setFormData({ ...formData, bio: e.target.value })
+                  }
                   className="mt-1"
                   rows={4}
                 />
               </div>
             </div>
 
-            <Button 
+            <Button
               onClick={handleNext}
               disabled={!formData.name || !formData.title}
               className="w-full"
@@ -201,25 +225,30 @@ function NewPortfolioContent() {
                 {t.chooseTemplate || 'Choose your template'}
               </h2>
               <p className="text-muted-foreground">
-                {t.templateDescription || 'Select a design that matches your style and industry'}
+                {t.templateDescription ||
+                  'Select a design that matches your style and industry'}
               </p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              {templates.map((template) => (
+              {templates.map(template => (
                 <Card
                   key={template.id}
                   className={cn(
-                    "cursor-pointer transition-all hover:shadow-md",
-                    formData.template === template.id && "ring-2 ring-primary"
+                    'cursor-pointer transition-all hover:shadow-md',
+                    formData.template === template.id && 'ring-2 ring-primary'
                   )}
-                  onClick={() => setFormData({ ...formData, template: template.id })}
+                  onClick={() =>
+                    setFormData({ ...formData, template: template.id })
+                  }
                 >
                   <CardHeader>
                     <div className="flex items-center gap-3">
                       <span className="text-3xl">{template.icon}</span>
                       <div>
-                        <CardTitle className="text-lg">{template.name}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {template.name}
+                        </CardTitle>
                         <CardDescription className="text-sm">
                           {template.description}
                         </CardDescription>
@@ -260,17 +289,20 @@ function NewPortfolioContent() {
                 {t.importYourData || 'Import your data'}
               </h2>
               <p className="text-muted-foreground">
-                {t.importDescription || 'Speed up the process by importing from existing profiles'}
+                {t.importDescription ||
+                  'Speed up the process by importing from existing profiles'}
               </p>
             </div>
 
             <div className="grid gap-4">
               <Card
                 className={cn(
-                  "cursor-pointer transition-all hover:shadow-md",
-                  formData.importSource === 'linkedin' && "ring-2 ring-primary"
+                  'cursor-pointer transition-all hover:shadow-md',
+                  formData.importSource === 'linkedin' && 'ring-2 ring-primary'
                 )}
-                onClick={() => setFormData({ ...formData, importSource: 'linkedin' })}
+                onClick={() =>
+                  setFormData({ ...formData, importSource: 'linkedin' })
+                }
               >
                 <CardHeader>
                   <div className="flex items-center gap-3">
@@ -280,7 +312,8 @@ function NewPortfolioContent() {
                     <div>
                       <CardTitle className="text-lg">LinkedIn</CardTitle>
                       <CardDescription>
-                        {t.importFromLinkedIn || 'Import your professional experience'}
+                        {t.importFromLinkedIn ||
+                          'Import your professional experience'}
                       </CardDescription>
                     </div>
                   </div>
@@ -289,10 +322,12 @@ function NewPortfolioContent() {
 
               <Card
                 className={cn(
-                  "cursor-pointer transition-all hover:shadow-md",
-                  formData.importSource === 'github' && "ring-2 ring-primary"
+                  'cursor-pointer transition-all hover:shadow-md',
+                  formData.importSource === 'github' && 'ring-2 ring-primary'
                 )}
-                onClick={() => setFormData({ ...formData, importSource: 'github' })}
+                onClick={() =>
+                  setFormData({ ...formData, importSource: 'github' })
+                }
               >
                 <CardHeader>
                   <div className="flex items-center gap-3">
@@ -302,7 +337,8 @@ function NewPortfolioContent() {
                     <div>
                       <CardTitle className="text-lg">GitHub</CardTitle>
                       <CardDescription>
-                        {t.importFromGitHub || 'Import your projects and contributions'}
+                        {t.importFromGitHub ||
+                          'Import your projects and contributions'}
                       </CardDescription>
                     </div>
                   </div>
@@ -311,8 +347,8 @@ function NewPortfolioContent() {
 
               <Card
                 className={cn(
-                  "cursor-pointer transition-all hover:shadow-md",
-                  formData.importSource === 'cv' && "ring-2 ring-primary"
+                  'cursor-pointer transition-all hover:shadow-md',
+                  formData.importSource === 'cv' && 'ring-2 ring-primary'
                 )}
                 onClick={() => setFormData({ ...formData, importSource: 'cv' })}
               >
@@ -320,9 +356,12 @@ function NewPortfolioContent() {
                   <div className="flex items-center gap-3">
                     <Upload className="h-7 w-7 text-muted-foreground" />
                     <div>
-                      <CardTitle className="text-lg">{t.uploadCV || 'Upload CV'}</CardTitle>
+                      <CardTitle className="text-lg">
+                        {t.uploadCV || 'Upload CV'}
+                      </CardTitle>
                       <CardDescription>
-                        {t.uploadCVDescription || 'Upload your resume (PDF/DOC)'}
+                        {t.uploadCVDescription ||
+                          'Upload your resume (PDF/DOC)'}
                       </CardDescription>
                     </div>
                   </div>
@@ -331,18 +370,23 @@ function NewPortfolioContent() {
 
               <Card
                 className={cn(
-                  "cursor-pointer transition-all hover:shadow-md",
-                  formData.importSource === 'manual' && "ring-2 ring-primary"
+                  'cursor-pointer transition-all hover:shadow-md',
+                  formData.importSource === 'manual' && 'ring-2 ring-primary'
                 )}
-                onClick={() => setFormData({ ...formData, importSource: 'manual' })}
+                onClick={() =>
+                  setFormData({ ...formData, importSource: 'manual' })
+                }
               >
                 <CardHeader>
                   <div className="flex items-center gap-3">
                     <FileText className="h-7 w-7 text-muted-foreground" />
                     <div>
-                      <CardTitle className="text-lg">{t.manualEntry || 'Manual Entry'}</CardTitle>
+                      <CardTitle className="text-lg">
+                        {t.manualEntry || 'Manual Entry'}
+                      </CardTitle>
                       <CardDescription>
-                        {t.manualEntryDescription || 'Enter your information manually'}
+                        {t.manualEntryDescription ||
+                          'Enter your information manually'}
                       </CardDescription>
                     </div>
                   </div>
@@ -370,7 +414,8 @@ function NewPortfolioContent() {
                 {t.enhanceWithAI || 'Enhance with AI'}
               </h2>
               <p className="text-muted-foreground">
-                {t.enhanceDescription || 'Let our AI help you create compelling content'}
+                {t.enhanceDescription ||
+                  'Let our AI help you create compelling content'}
               </p>
             </div>
 
@@ -381,9 +426,12 @@ function NewPortfolioContent() {
                     <Sparkles className="h-6 w-6" />
                   </div>
                   <div>
-                    <CardTitle>{t.aiContentEnhancement || 'AI Content Enhancement'}</CardTitle>
+                    <CardTitle>
+                      {t.aiContentEnhancement || 'AI Content Enhancement'}
+                    </CardTitle>
                     <CardDescription>
-                      {t.aiEnhancementDescription || 'Automatically improve your bio, project descriptions, and more'}
+                      {t.aiEnhancementDescription ||
+                        'Automatically improve your bio, project descriptions, and more'}
                     </CardDescription>
                   </div>
                 </div>
@@ -392,25 +440,36 @@ function NewPortfolioContent() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm">
                     <Wand2 className="h-4 w-4 text-primary" />
-                    <span>{t.professionalBioWriting || 'Professional bio writing'}</span>
+                    <span>
+                      {t.professionalBioWriting || 'Professional bio writing'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Wand2 className="h-4 w-4 text-primary" />
-                    <span>{t.projectDescriptionOptimization || 'Project description optimization'}</span>
+                    <span>
+                      {t.projectDescriptionOptimization ||
+                        'Project description optimization'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Wand2 className="h-4 w-4 text-primary" />
-                    <span>{t.skillsExtraction || 'Skills extraction and highlighting'}</span>
+                    <span>
+                      {t.skillsExtraction ||
+                        'Skills extraction and highlighting'}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Wand2 className="h-4 w-4 text-primary" />
-                    <span>{t.achievementHighlighting || 'Achievement highlighting'}</span>
+                    <span>
+                      {t.achievementHighlighting || 'Achievement highlighting'}
+                    </span>
                   </div>
                 </div>
 
                 <div className="mt-6 p-4 bg-muted rounded-lg">
                   <p className="text-sm text-center">
-                    {t.aiEnhancementNote || 'You can always edit and customize the AI-generated content'}
+                    {t.aiEnhancementNote ||
+                      'You can always edit and customize the AI-generated content'}
                   </p>
                 </div>
               </CardContent>
@@ -420,8 +479,8 @@ function NewPortfolioContent() {
               <Button variant="outline" onClick={handleBack} className="flex-1">
                 {t.back || 'Back'}
               </Button>
-              <Button 
-                onClick={handleCreatePortfolio} 
+              <Button
+                onClick={handleCreatePortfolio}
                 disabled={isCreating}
                 className="flex-1"
               >
@@ -447,62 +506,99 @@ function NewPortfolioContent() {
           {/* Progress indicator */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-2">
-              <div className={cn(
-                "flex items-center gap-2",
-                currentStep === 'basic' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 'basic' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  currentStep === 'basic'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    currentStep === 'basic'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   1
                 </div>
                 <span className="text-sm">{t.basicInfo || 'Basic Info'}</span>
               </div>
-              <div className={cn(
-                "flex items-center gap-2",
-                currentStep === 'template' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 'template' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  currentStep === 'template'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    currentStep === 'template'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   2
                 </div>
                 <span className="text-sm">{t.template || 'Template'}</span>
               </div>
-              <div className={cn(
-                "flex items-center gap-2",
-                currentStep === 'import' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 'import' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  currentStep === 'import'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    currentStep === 'import'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   3
                 </div>
                 <span className="text-sm">{t.import || 'Import'}</span>
               </div>
-              <div className={cn(
-                "flex items-center gap-2",
-                currentStep === 'enhance' ? "text-primary" : "text-muted-foreground"
-              )}>
-                <div className={cn(
-                  "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium",
-                  currentStep === 'enhance' ? "bg-primary text-primary-foreground" : "bg-muted"
-                )}>
+              <div
+                className={cn(
+                  'flex items-center gap-2',
+                  currentStep === 'enhance'
+                    ? 'text-primary'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <div
+                  className={cn(
+                    'w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium',
+                    currentStep === 'enhance'
+                      ? 'bg-primary text-primary-foreground'
+                      : 'bg-muted'
+                  )}
+                >
                   4
                 </div>
                 <span className="text-sm">{t.enhance || 'Enhance'}</span>
               </div>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div 
+              <div
                 className="h-full bg-primary transition-all duration-300"
                 style={{
-                  width: currentStep === 'basic' ? '25%' : 
-                         currentStep === 'template' ? '50%' :
-                         currentStep === 'import' ? '75%' : '100%'
+                  width:
+                    currentStep === 'basic'
+                      ? '25%'
+                      : currentStep === 'template'
+                        ? '50%'
+                        : currentStep === 'import'
+                          ? '75%'
+                          : '100%',
                 }}
               />
             </div>
@@ -510,9 +606,7 @@ function NewPortfolioContent() {
 
           {/* Step content */}
           <Card>
-            <CardContent className="pt-6">
-              {renderStep()}
-            </CardContent>
+            <CardContent className="pt-6">{renderStep()}</CardContent>
           </Card>
         </div>
       </div>

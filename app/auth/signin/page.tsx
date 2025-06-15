@@ -61,7 +61,9 @@ export default function SignInPage(): React.ReactElement {
     }
   };
 
-  const handleOAuthSignIn = async (provider: 'google' | 'github' | 'linkedin_oidc') => {
+  const handleOAuthSignIn = async (
+    provider: 'google' | 'github' | 'linkedin_oidc'
+  ) => {
     try {
       setLoading(true);
       setError('');

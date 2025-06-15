@@ -1,6 +1,14 @@
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
-import { uploadFile, generateFilePath, STORAGE_BUCKETS } from '@/lib/supabase/storage';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/response-helpers';
+import {
+  uploadFile,
+  generateFilePath,
+  STORAGE_BUCKETS,
+} from '@/lib/supabase/storage';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -80,7 +88,6 @@ export const POST = versionedApiHandler(
         path,
         type,
       });
-
     } catch (error) {
       logger.error('Unexpected error in image upload:', error as Error);
       return apiError('Internal server error', { status: 500 });
@@ -131,7 +138,7 @@ export const DELETE = versionedApiHandler(
 
       // Import deleteFile function
       const { deleteFile } = await import('@/lib/supabase/storage');
-      
+
       const success = await deleteFile(bucket, path);
 
       if (!success) {
@@ -145,7 +152,6 @@ export const DELETE = versionedApiHandler(
       });
 
       return apiSuccess({ message: 'File deleted successfully' });
-
     } catch (error) {
       logger.error('Unexpected error in image delete:', error as Error);
       return apiError('Internal server error', { status: 500 });

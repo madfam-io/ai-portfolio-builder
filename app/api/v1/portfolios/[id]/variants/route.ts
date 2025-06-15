@@ -1,5 +1,9 @@
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
@@ -17,7 +21,7 @@ export const GET = versionedApiHandler(
     try {
       const portfolioId = params.id;
       const supabase = await createClient();
-      
+
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -37,10 +41,12 @@ export const GET = versionedApiHandler(
       // Get all variants with audience profiles
       const { data: variants, error: variantsError } = await supabase
         .from('portfolio_variants')
-        .select(`
+        .select(
+          `
           *,
           audience_profile:audience_profiles(*)
-        `)
+        `
+        )
         .eq('portfolio_id', portfolioId)
         .order('created_at', { ascending: true });
 
@@ -50,28 +56,32 @@ export const GET = versionedApiHandler(
       }
 
       // Transform to match TypeScript types
-      const transformedVariants = variants?.map(variant => ({
-        id: variant.id,
-        portfolioId: variant.portfolio_id,
-        name: variant.name,
-        slug: variant.slug,
-        isDefault: variant.is_default,
-        isPublished: variant.is_published,
-        contentOverrides: variant.content_overrides || {},
-        audienceProfile: variant.audience_profile || {
-          id: variant.audience_profile_id,
-          type: 'general',
-          name: 'General Audience',
-        },
-        aiOptimization: variant.ai_optimization || {},
-        analytics: variant.analytics || {},
-        createdAt: variant.created_at,
-        updatedAt: variant.updated_at,
-      })) || [];
+      const transformedVariants =
+        variants?.map(variant => ({
+          id: variant.id,
+          portfolioId: variant.portfolio_id,
+          name: variant.name,
+          slug: variant.slug,
+          isDefault: variant.is_default,
+          isPublished: variant.is_published,
+          contentOverrides: variant.content_overrides || {},
+          audienceProfile: variant.audience_profile || {
+            id: variant.audience_profile_id,
+            type: 'general',
+            name: 'General Audience',
+          },
+          aiOptimization: variant.ai_optimization || {},
+          analytics: variant.analytics || {},
+          createdAt: variant.created_at,
+          updatedAt: variant.updated_at,
+        })) || [];
 
       return apiSuccess({ variants: transformedVariants });
     } catch (error) {
-      logger.error('Failed to get portfolio variants:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to get portfolio variants:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -87,7 +97,7 @@ export const POST = versionedApiHandler(
       const portfolioId = params.id;
       const body: CreateVariantInput = await request.json();
       const supabase = await createClient();
-      
+
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -151,7 +161,7 @@ export const POST = versionedApiHandler(
           .select('content_overrides')
           .eq('id', body.basedOnVariant)
           .single();
-        
+
         if (baseVariant) {
           contentOverrides = baseVariant.content_overrides || {};
         }
@@ -169,10 +179,12 @@ export const POST = versionedApiHandler(
           is_published: false,
           content_overrides: contentOverrides,
         })
-        .select(`
+        .select(
+          `
           *,
           audience_profile:audience_profiles(*)
-        `)
+        `
+        )
         .single();
 
       if (variantError) {
@@ -208,7 +220,10 @@ export const POST = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to create portfolio variant:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to create portfolio variant:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })

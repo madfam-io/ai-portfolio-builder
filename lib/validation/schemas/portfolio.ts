@@ -12,15 +12,9 @@ const nameSchema = z
   .max(100, 'Name must be less than 100 characters')
   .regex(/^[a-zA-ZÀ-ÿ\s'-]+$/, 'Name contains invalid characters');
 
-const emailSchema = z
-  .string()
-  .email('Invalid email format')
-  .toLowerCase();
+const emailSchema = z.string().email('Invalid email format').toLowerCase();
 
-const urlSchema = z
-  .string()
-  .url('Invalid URL format')
-  .or(z.literal(''));
+const urlSchema = z.string().url('Invalid URL format').or(z.literal(''));
 
 const bioSchema = z
   .string()
@@ -44,10 +38,14 @@ const socialLinksSchema = z.object({
   website: urlSchema.optional(),
   dribbble: urlSchema.optional(),
   behance: urlSchema.optional(),
-  custom: z.array(z.object({
-    name: z.string(),
-    url: urlSchema,
-  })).optional(),
+  custom: z
+    .array(
+      z.object({
+        name: z.string(),
+        url: urlSchema,
+      })
+    )
+    .optional(),
 });
 
 // Project schema
@@ -77,16 +75,32 @@ const settingsSchema = z.object({
   showPhone: z.boolean().default(false),
   showLocation: z.boolean().default(true),
   showSocial: z.boolean().default(true),
-  customColors: z.object({
-    primary: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-    secondary: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-    background: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-    text: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-  }).optional(),
-  customFonts: z.object({
-    heading: z.string().optional(),
-    body: z.string().optional(),
-  }).optional(),
+  customColors: z
+    .object({
+      primary: z
+        .string()
+        .regex(/^#[0-9A-F]{6}$/i)
+        .optional(),
+      secondary: z
+        .string()
+        .regex(/^#[0-9A-F]{6}$/i)
+        .optional(),
+      background: z
+        .string()
+        .regex(/^#[0-9A-F]{6}$/i)
+        .optional(),
+      text: z
+        .string()
+        .regex(/^#[0-9A-F]{6}$/i)
+        .optional(),
+    })
+    .optional(),
+  customFonts: z
+    .object({
+      heading: z.string().optional(),
+      body: z.string().optional(),
+    })
+    .optional(),
 });
 
 /**
@@ -133,7 +147,9 @@ export const portfolioQuerySchema = z.object({
   status: z.enum(['all', 'published', 'draft']).optional(),
   template: templateSchema.optional(),
   search: z.string().optional(),
-  sortBy: z.enum(['createdAt', 'updatedAt', 'name', 'views']).default('updatedAt'),
+  sortBy: z
+    .enum(['createdAt', 'updatedAt', 'name', 'views'])
+    .default('updatedAt'),
   sortOrder: z.enum(['asc', 'desc']).default('desc'),
 });
 
@@ -145,7 +161,10 @@ export const subdomainCheckSchema = z.object({
     .string()
     .min(3, 'Subdomain must be at least 3 characters')
     .max(63, 'Subdomain must be less than 63 characters')
-    .regex(/^[a-z0-9-]+$/, 'Subdomain can only contain lowercase letters, numbers, and hyphens')
+    .regex(
+      /^[a-z0-9-]+$/,
+      'Subdomain can only contain lowercase letters, numbers, and hyphens'
+    )
     .regex(/^[a-z0-9]/, 'Subdomain must start with a letter or number')
     .regex(/[a-z0-9]$/, 'Subdomain must end with a letter or number'),
 });

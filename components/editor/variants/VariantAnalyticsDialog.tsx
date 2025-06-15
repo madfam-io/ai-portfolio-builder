@@ -1,7 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { BarChart, Eye, MousePointer, TrendingUp, Users, Globe, Smartphone } from 'lucide-react';
+import {
+  BarChart,
+  Eye,
+  MousePointer,
+  TrendingUp,
+  Users,
+  Globe,
+  Smartphone,
+} from 'lucide-react';
 
 import {
   Dialog,
@@ -47,7 +55,6 @@ export function VariantAnalyticsDialog({
       const data = await getAnalytics(variantId, period);
       setAnalytics(data);
     } catch (error) {
-      
     } finally {
       setIsLoading(false);
     }
@@ -61,11 +68,16 @@ export function VariantAnalyticsDialog({
 
   const getConversionIcon = (type: string) => {
     switch (type) {
-      case 'contact_click': return '📧';
-      case 'download_resume': return '📄';
-      case 'social_click': return '🔗';
-      case 'project_view': return '🔍';
-      default: return '📊';
+      case 'contact_click':
+        return '📧';
+      case 'download_resume':
+        return '📄';
+      case 'social_click':
+        return '🔗';
+      case 'project_view':
+        return '🔍';
+      default:
+        return '📊';
     }
   };
 
@@ -81,7 +93,12 @@ export function VariantAnalyticsDialog({
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs value={period} onValueChange={(v: string) => setPeriod(v as 'day' | 'week' | 'month')}>
+        <Tabs
+          value={period}
+          onValueChange={(v: string) =>
+            setPeriod(v as 'day' | 'week' | 'month')
+          }
+        >
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="day">{t.day || 'Day'}</TabsTrigger>
             <TabsTrigger value="week">{t.week || 'Week'}</TabsTrigger>
@@ -104,7 +121,9 @@ export function VariantAnalyticsDialog({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-2xl font-bold">{formatNumber(analytics.metrics.totalViews)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatNumber(analytics.metrics.totalViews)}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -116,7 +135,9 @@ export function VariantAnalyticsDialog({
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-2xl font-bold">{formatNumber(analytics.metrics.uniqueVisitors)}</p>
+                    <p className="text-2xl font-bold">
+                      {formatNumber(analytics.metrics.uniqueVisitors)}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -129,7 +150,11 @@ export function VariantAnalyticsDialog({
                   </CardHeader>
                   <CardContent>
                     <p className="text-2xl font-bold">
-                      {Math.floor(analytics.metrics.avgTimeOnPage / 60)}:{String(analytics.metrics.avgTimeOnPage % 60).padStart(2, '0')}
+                      {Math.floor(analytics.metrics.avgTimeOnPage / 60)}:
+                      {String(analytics.metrics.avgTimeOnPage % 60).padStart(
+                        2,
+                        '0'
+                      )}
                     </p>
                   </CardContent>
                 </Card>
@@ -152,14 +177,23 @@ export function VariantAnalyticsDialog({
               {/* Conversion Events */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">{t.conversionEvents || 'Conversion Events'}</CardTitle>
+                  <CardTitle className="text-base">
+                    {t.conversionEvents || 'Conversion Events'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
-                  {analytics.metrics.conversionEvents.map((event) => (
-                    <div key={event.type} className="flex items-center justify-between">
+                  {analytics.metrics.conversionEvents.map(event => (
+                    <div
+                      key={event.type}
+                      className="flex items-center justify-between"
+                    >
                       <div className="flex items-center gap-2">
-                        <span className="text-xl">{getConversionIcon(event.type)}</span>
-                        <span className="text-sm">{event.type.replace(/_/g, ' ')}</span>
+                        <span className="text-xl">
+                          {getConversionIcon(event.type)}
+                        </span>
+                        <span className="text-sm">
+                          {event.type.replace(/_/g, ' ')}
+                        </span>
                       </div>
                       <span className="font-medium">{event.count}</span>
                     </div>
@@ -172,18 +206,31 @@ export function VariantAnalyticsDialog({
                 {/* Top Companies */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">{t.topCompanies || 'Top Companies'}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t.topCompanies || 'Top Companies'}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {analytics.visitorInsights.topCompanies.slice(0, 5).map((company, index) => (
-                      <div key={company.name} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">#{index + 1}</span>
-                          <span className="text-sm font-medium">{company.name}</span>
+                    {analytics.visitorInsights.topCompanies
+                      .slice(0, 5)
+                      .map((company, index) => (
+                        <div
+                          key={company.name}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">
+                              #{index + 1}
+                            </span>
+                            <span className="text-sm font-medium">
+                              {company.name}
+                            </span>
+                          </div>
+                          <span className="text-sm">
+                            {company.count} visits
+                          </span>
                         </div>
-                        <span className="text-sm">{company.count} visits</span>
-                      </div>
-                    ))}
+                      ))}
                   </CardContent>
                 </Card>
 
@@ -196,36 +243,54 @@ export function VariantAnalyticsDialog({
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {analytics.visitorInsights.topLocations.slice(0, 5).map((location, index) => (
-                      <div key={location.location} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">#{index + 1}</span>
-                          <span className="text-sm font-medium">{location.location}</span>
+                    {analytics.visitorInsights.topLocations
+                      .slice(0, 5)
+                      .map((location, index) => (
+                        <div
+                          key={location.location}
+                          className="flex items-center justify-between"
+                        >
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">
+                              #{index + 1}
+                            </span>
+                            <span className="text-sm font-medium">
+                              {location.location}
+                            </span>
+                          </div>
+                          <span className="text-sm">
+                            {location.count} visits
+                          </span>
                         </div>
-                        <span className="text-sm">{location.count} visits</span>
-                      </div>
-                    ))}
+                      ))}
                   </CardContent>
                 </Card>
 
                 {/* Traffic Sources */}
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">{t.trafficSources || 'Traffic Sources'}</CardTitle>
+                    <CardTitle className="text-base">
+                      {t.trafficSources || 'Traffic Sources'}
+                    </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {analytics.visitorInsights.topReferrers.slice(0, 5).map((referrer) => (
-                      <div key={referrer.source} className="space-y-1">
-                        <div className="flex justify-between text-sm">
-                          <span>{referrer.source}</span>
-                          <span>{referrer.count}</span>
+                    {analytics.visitorInsights.topReferrers
+                      .slice(0, 5)
+                      .map(referrer => (
+                        <div key={referrer.source} className="space-y-1">
+                          <div className="flex justify-between text-sm">
+                            <span>{referrer.source}</span>
+                            <span>{referrer.count}</span>
+                          </div>
+                          <Progress
+                            value={
+                              (referrer.count / analytics.metrics.totalViews) *
+                              100
+                            }
+                            className="h-2"
+                          />
                         </div>
-                        <Progress 
-                          value={(referrer.count / analytics.metrics.totalViews) * 100} 
-                          className="h-2" 
-                        />
-                      </div>
-                    ))}
+                      ))}
                   </CardContent>
                 </Card>
 
@@ -238,18 +303,21 @@ export function VariantAnalyticsDialog({
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
-                    {Object.entries(analytics.visitorInsights.deviceTypes).map(([device, count]) => {
-                      const percentage = (count / analytics.metrics.totalViews) * 100;
-                      return (
-                        <div key={device} className="space-y-1">
-                          <div className="flex justify-between text-sm">
-                            <span className="capitalize">{device}</span>
-                            <span>{percentage.toFixed(1)}%</span>
+                    {Object.entries(analytics.visitorInsights.deviceTypes).map(
+                      ([device, count]) => {
+                        const percentage =
+                          (count / analytics.metrics.totalViews) * 100;
+                        return (
+                          <div key={device} className="space-y-1">
+                            <div className="flex justify-between text-sm">
+                              <span className="capitalize">{device}</span>
+                              <span>{percentage.toFixed(1)}%</span>
+                            </div>
+                            <Progress value={percentage} className="h-2" />
                           </div>
-                          <Progress value={percentage} className="h-2" />
-                        </div>
-                      );
-                    })}
+                        );
+                      }
+                    )}
                   </CardContent>
                 </Card>
               </div>
@@ -257,27 +325,43 @@ export function VariantAnalyticsDialog({
               {/* Engagement Metrics */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">{t.engagementMetrics || 'Engagement Metrics'}</CardTitle>
+                  <CardTitle className="text-base">
+                    {t.engagementMetrics || 'Engagement Metrics'}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="grid gap-4 md:grid-cols-3">
                   <div>
-                    <p className="text-sm text-muted-foreground">{t.bounceRate || 'Bounce Rate'}</p>
-                    <p className="text-2xl font-bold">{(analytics.metrics.bounceRate * 100).toFixed(1)}%</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t.bounceRate || 'Bounce Rate'}
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {(analytics.metrics.bounceRate * 100).toFixed(1)}%
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t.scrollDepth || 'Avg. Scroll Depth'}</p>
-                    <p className="text-2xl font-bold">{(analytics.metrics.scrollDepth * 100).toFixed(0)}%</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t.scrollDepth || 'Avg. Scroll Depth'}
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {(analytics.metrics.scrollDepth * 100).toFixed(0)}%
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">{t.clickThrough || 'Click-through Rate'}</p>
-                    <p className="text-2xl font-bold">{(analytics.metrics.clickThroughRate * 100).toFixed(1)}%</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t.clickThrough || 'Click-through Rate'}
+                    </p>
+                    <p className="text-2xl font-bold">
+                      {(analytics.metrics.clickThroughRate * 100).toFixed(1)}%
+                    </p>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
           ) : (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">{t.noAnalyticsData || 'No analytics data available'}</p>
+              <p className="text-muted-foreground">
+                {t.noAnalyticsData || 'No analytics data available'}
+              </p>
             </div>
           )}
         </Tabs>

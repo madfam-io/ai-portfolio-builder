@@ -34,7 +34,10 @@ interface ExperienceFormData {
   technologies?: string[];
 }
 
-export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSectionProps) {
+export function ExperienceSection({
+  experiences = [],
+  onUpdate,
+}: ExperienceSectionProps) {
   const { t } = useLanguage();
   const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
@@ -139,7 +142,12 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
   };
 
   const handleDelete = (id: string) => {
-    if (confirm(t.confirmDeleteExperience || 'Are you sure you want to delete this experience?')) {
+    if (
+      confirm(
+        t.confirmDeleteExperience ||
+          'Are you sure you want to delete this experience?'
+      )
+    ) {
       onUpdate(experiences.filter(exp => exp.id !== id));
     }
   };
@@ -158,7 +166,8 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
   };
 
   const removeHighlight = (index: number) => {
-    const newHighlights = formData.highlights?.filter((_, i) => i !== index) || [];
+    const newHighlights =
+      formData.highlights?.filter((_, i) => i !== index) || [];
     setFormData({ ...formData, highlights: newHighlights });
   };
 
@@ -179,7 +188,8 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
             {t.workExperience || 'Work Experience'}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {t.workExperienceDescription || 'Add your professional work history'}
+            {t.workExperienceDescription ||
+              'Add your professional work history'}
           </p>
         </div>
         {!isAdding && !editingId && (
@@ -195,7 +205,9 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {editingId ? t.editExperience || 'Edit Experience' : t.addExperience || 'Add Experience'}
+              {editingId
+                ? t.editExperience || 'Edit Experience'
+                : t.addExperience || 'Add Experience'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -205,7 +217,9 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                 <Input
                   id="company"
                   value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, company: e.target.value })
+                  }
                   placeholder={t.companyPlaceholder || 'e.g. Google'}
                 />
               </div>
@@ -214,8 +228,12 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                 <Input
                   id="position"
                   value={formData.position}
-                  onChange={(e) => setFormData({ ...formData, position: e.target.value })}
-                  placeholder={t.positionPlaceholder || 'e.g. Senior Software Engineer'}
+                  onChange={e =>
+                    setFormData({ ...formData, position: e.target.value })
+                  }
+                  placeholder={
+                    t.positionPlaceholder || 'e.g. Senior Software Engineer'
+                  }
                 />
               </div>
             </div>
@@ -224,7 +242,9 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
               <Label>{t.companyLogo || 'Company Logo'}</Label>
               <ImageUpload
                 value={formData.companyLogo}
-                onChange={(url) => setFormData({ ...formData, companyLogo: url || '' })}
+                onChange={url =>
+                  setFormData({ ...formData, companyLogo: url || '' })
+                }
                 type="company"
                 portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="square"
@@ -238,17 +258,28 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                 <Input
                   id="location"
                   value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder={t.locationPlaceholder || 'e.g. San Francisco, CA'}
+                  onChange={e =>
+                    setFormData({ ...formData, location: e.target.value })
+                  }
+                  placeholder={
+                    t.locationPlaceholder || 'e.g. San Francisco, CA'
+                  }
                 />
               </div>
               <div>
-                <Label htmlFor="employmentType">{t.employmentType || 'Employment Type'}</Label>
+                <Label htmlFor="employmentType">
+                  {t.employmentType || 'Employment Type'}
+                </Label>
                 <select
                   id="employmentType"
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.employmentType}
-                  onChange={(e) => setFormData({ ...formData, employmentType: e.target.value as EmploymentType })}
+                  onChange={e =>
+                    setFormData({
+                      ...formData,
+                      employmentType: e.target.value as EmploymentType,
+                    })
+                  }
                 >
                   {employmentTypes.map(type => (
                     <option key={type.value} value={type.value}>
@@ -261,12 +292,16 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label htmlFor="startDate">{t.startDate || 'Start Date'} *</Label>
+                <Label htmlFor="startDate">
+                  {t.startDate || 'Start Date'} *
+                </Label>
                 <Input
                   id="startDate"
                   type="month"
                   value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
                 />
               </div>
               <div>
@@ -276,9 +311,14 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                     <Switch
                       id="current"
                       checked={formData.current}
-                      onCheckedChange={(checked) => setFormData({ ...formData, current: checked })}
+                      onCheckedChange={checked =>
+                        setFormData({ ...formData, current: checked })
+                      }
                     />
-                    <Label htmlFor="current" className="text-sm font-normal cursor-pointer">
+                    <Label
+                      htmlFor="current"
+                      className="text-sm font-normal cursor-pointer"
+                    >
                       {t.currentlyWorking || 'Currently working here'}
                     </Label>
                   </div>
@@ -287,19 +327,28 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                   id="endDate"
                   type="month"
                   value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
                   disabled={formData.current}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="description">{t.description || 'Description'}</Label>
+              <Label htmlFor="description">
+                {t.description || 'Description'}
+              </Label>
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder={t.descriptionPlaceholder || 'Describe your role and responsibilities...'}
+                onChange={e =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder={
+                  t.descriptionPlaceholder ||
+                  'Describe your role and responsibilities...'
+                }
                 rows={4}
               />
             </div>
@@ -322,8 +371,12 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                   <div key={index} className="flex items-center gap-2">
                     <Input
                       value={highlight}
-                      onChange={(e) => handleHighlightChange(e.target.value, index)}
-                      placeholder={t.highlightPlaceholder || 'e.g. Led team of 5 engineers'}
+                      onChange={e =>
+                        handleHighlightChange(e.target.value, index)
+                      }
+                      placeholder={
+                        t.highlightPlaceholder || 'e.g. Led team of 5 engineers'
+                      }
                     />
                     <Button
                       type="button"
@@ -339,15 +392,24 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
             </div>
 
             <div>
-              <Label htmlFor="technologies">{t.technologies || 'Technologies Used'}</Label>
+              <Label htmlFor="technologies">
+                {t.technologies || 'Technologies Used'}
+              </Label>
               <Input
                 id="technologies"
                 value={formData.technologies?.join(', ') || ''}
-                onChange={(e) => setFormData({ 
-                  ...formData, 
-                  technologies: e.target.value.split(',').map(t => t.trim()).filter(Boolean) 
-                })}
-                placeholder={t.technologiesPlaceholder || 'e.g. React, Node.js, PostgreSQL'}
+                onChange={e =>
+                  setFormData({
+                    ...formData,
+                    technologies: e.target.value
+                      .split(',')
+                      .map(t => t.trim())
+                      .filter(Boolean),
+                  })
+                }
+                placeholder={
+                  t.technologiesPlaceholder || 'e.g. React, Node.js, PostgreSQL'
+                }
               />
               <p className="text-xs text-muted-foreground mt-1">
                 {t.technologiesHint || 'Separate with commas'}
@@ -359,7 +421,9 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                 {t.cancel || 'Cancel'}
               </Button>
               <Button onClick={handleSave}>
-                {editingId ? t.saveChanges || 'Save Changes' : t.addExperience || 'Add Experience'}
+                {editingId
+                  ? t.saveChanges || 'Save Changes'
+                  : t.addExperience || 'Add Experience'}
               </Button>
             </div>
           </CardContent>
@@ -368,7 +432,7 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
 
       {/* Experience List */}
       <div className="space-y-4">
-        {experiences.map((experience) => (
+        {experiences.map(experience => (
           <Card key={experience.id} className="group relative">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -381,40 +445,44 @@ export function ExperienceSection({ experiences = [], onUpdate }: ExperienceSect
                       </span>
                     )}
                   </div>
-                  <p className="text-muted-foreground mb-1">{experience.company}</p>
+                  <p className="text-muted-foreground mb-1">
+                    {experience.company}
+                  </p>
                   <p className="text-sm text-muted-foreground">
-                    {formatDateForDisplay(experience.startDate)} - {
-                      experience.current 
-                        ? t.present || 'Present' 
-                        : formatDateForDisplay(experience.endDate || '')
-                    }
-                    {(experience as any).location && ` • ${(experience as any).location}`}
+                    {formatDateForDisplay(experience.startDate)} -{' '}
+                    {experience.current
+                      ? t.present || 'Present'
+                      : formatDateForDisplay(experience.endDate || '')}
+                    {(experience as any).location &&
+                      ` • ${(experience as any).location}`}
                   </p>
                   {experience.description && (
                     <p className="mt-3 text-sm">{experience.description}</p>
                   )}
-                  {experience.highlights && experience.highlights.length > 0 && (
-                    <ul className="mt-3 space-y-1">
-                      {experience.highlights.map((highlight, i) => (
-                        <li key={i} className="text-sm flex items-start">
-                          <span className="text-primary mr-2">•</span>
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {experience.technologies && experience.technologies.length > 0 && (
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {experience.technologies.map((tech, i) => (
-                        <span
-                          key={i}
-                          className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  )}
+                  {experience.highlights &&
+                    experience.highlights.length > 0 && (
+                      <ul className="mt-3 space-y-1">
+                        {experience.highlights.map((highlight, i) => (
+                          <li key={i} className="text-sm flex items-start">
+                            <span className="text-primary mr-2">•</span>
+                            <span>{highlight}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  {experience.technologies &&
+                    experience.technologies.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {experience.technologies.map((tech, i) => (
+                          <span
+                            key={i}
+                            className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button

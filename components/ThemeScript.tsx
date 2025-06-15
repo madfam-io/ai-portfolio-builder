@@ -3,7 +3,7 @@ import Script from 'next/script';
 /**
  * Theme initialization script that runs before React hydration
  * This prevents FOUC (Flash of Unstyled Content)
- * 
+ *
  * Uses Next.js Script component with beforeInteractive strategy
  * which is safer than dangerouslySetInnerHTML
  */

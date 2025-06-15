@@ -4,7 +4,7 @@ import { logger } from '@/lib/utils/logger';
 
 /**
  * PostHog Server-Side Analytics Client
- * 
+ *
  * Provides server-side event tracking for:
  * - API endpoints
  * - Background jobs
@@ -23,14 +23,11 @@ export const getPostHogClient = (): PostHog | null => {
   }
 
   if (!posthogClient) {
-    posthogClient = new PostHog(
-      process.env.NEXT_PUBLIC_POSTHOG_KEY,
-      {
-        host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
-        flushAt: 20, // Batch size
-        flushInterval: 10000, // 10 seconds
-      }
-    );
+    posthogClient = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY, {
+      host: process.env.NEXT_PUBLIC_POSTHOG_HOST || 'https://app.posthog.com',
+      flushAt: 20, // Batch size
+      flushInterval: 10000, // 10 seconds
+    });
   }
 
   return posthogClient;
@@ -49,9 +46,10 @@ export const captureServerEvent = async (
     // Get request headers for context
     const headersList = await headers();
     const userAgent = headersList.get('user-agent') || '';
-    const ip = headersList.get('x-forwarded-for') || 
-               headersList.get('x-real-ip') || 
-               'unknown';
+    const ip =
+      headersList.get('x-forwarded-for') ||
+      headersList.get('x-real-ip') ||
+      'unknown';
 
     client.capture({
       distinctId,
@@ -135,20 +133,26 @@ export const trackServerError = async (
   context?: Record<string, any>
 ) => {
   try {
-    const errorDetails = error instanceof Error ? {
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-    } : {
-      message: String(error),
-    };
+    const errorDetails =
+      error instanceof Error
+        ? {
+            message: error.message,
+            name: error.name,
+            stack: error.stack,
+          }
+        : {
+            message: String(error),
+          };
 
     await captureServerEvent(userId, 'server_error', {
       ...errorDetails,
       ...context,
     });
   } catch (trackingError) {
-    logger.error('Failed to track error in PostHog', { trackingError, originalError: error });
+    logger.error('Failed to track error in PostHog', {
+      trackingError,
+      originalError: error,
+    });
   }
 };
 
@@ -231,7 +235,7 @@ export const withPostHogTracking = (
         method: req.method,
         duration_ms: duration,
       });
-      
+
       throw error;
     }
   };

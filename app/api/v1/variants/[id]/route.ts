@@ -1,5 +1,9 @@
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
@@ -16,7 +20,7 @@ export const GET = versionedApiHandler(
     try {
       const variantId = params.id;
       const supabase = await createClient();
-      
+
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -24,11 +28,13 @@ export const GET = versionedApiHandler(
       // Get variant with portfolio to verify ownership
       const { data: variant, error } = await supabase
         .from('portfolio_variants')
-        .select(`
+        .select(
+          `
           *,
           audience_profile:audience_profiles(*),
           portfolio:portfolios(user_id)
-        `)
+        `
+        )
         .eq('id', variantId)
         .single();
 
@@ -37,7 +43,9 @@ export const GET = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      const portfolioData = Array.isArray(variant.portfolio) ? variant.portfolio[0] : variant.portfolio;
+      const portfolioData = Array.isArray(variant.portfolio)
+        ? variant.portfolio[0]
+        : variant.portfolio;
       if (!portfolioData || portfolioData.user_id !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
@@ -60,7 +68,10 @@ export const GET = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to get variant:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to get variant:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -76,7 +87,7 @@ export const PATCH = versionedApiHandler(
       const variantId = params.id;
       const updates = await request.json();
       const supabase = await createClient();
-      
+
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -84,10 +95,12 @@ export const PATCH = versionedApiHandler(
       // Get variant with portfolio to verify ownership
       const { data: existingVariant, error: fetchError } = await supabase
         .from('portfolio_variants')
-        .select(`
+        .select(
+          `
           id,
           portfolio:portfolios(user_id)
-        `)
+        `
+        )
         .eq('id', variantId)
         .single();
 
@@ -96,7 +109,9 @@ export const PATCH = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      const portfolioData = Array.isArray(existingVariant.portfolio) ? existingVariant.portfolio[0] : existingVariant.portfolio;
+      const portfolioData = Array.isArray(existingVariant.portfolio)
+        ? existingVariant.portfolio[0]
+        : existingVariant.portfolio;
       if (!portfolioData || portfolioData.user_id !== request.user.id) {
         return apiError('Unauthorized', { status: 403 });
       }
@@ -111,13 +126,16 @@ export const PATCH = versionedApiHandler(
         ai_optimization: Record<string, unknown>;
         analytics: Record<string, unknown>;
       }> = {};
-      
+
       if ('name' in updates) dbUpdates.name = updates.name;
       if ('slug' in updates) dbUpdates.slug = updates.slug;
       if ('isDefault' in updates) dbUpdates.is_default = updates.isDefault;
-      if ('isPublished' in updates) dbUpdates.is_published = updates.isPublished;
-      if ('contentOverrides' in updates) dbUpdates.content_overrides = updates.contentOverrides;
-      if ('aiOptimization' in updates) dbUpdates.ai_optimization = updates.aiOptimization;
+      if ('isPublished' in updates)
+        dbUpdates.is_published = updates.isPublished;
+      if ('contentOverrides' in updates)
+        dbUpdates.content_overrides = updates.contentOverrides;
+      if ('aiOptimization' in updates)
+        dbUpdates.ai_optimization = updates.aiOptimization;
       if ('analytics' in updates) dbUpdates.analytics = updates.analytics;
 
       // Update the variant
@@ -125,10 +143,12 @@ export const PATCH = versionedApiHandler(
         .from('portfolio_variants')
         .update(dbUpdates)
         .eq('id', variantId)
-        .select(`
+        .select(
+          `
           *,
           audience_profile:audience_profiles(*)
-        `)
+        `
+        )
         .single();
 
       if (updateError) {
@@ -159,7 +179,10 @@ export const PATCH = versionedApiHandler(
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
-      logger.error('Failed to update variant:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to update variant:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })
@@ -174,7 +197,7 @@ export const DELETE = versionedApiHandler(
     try {
       const variantId = params.id;
       const supabase = await createClient();
-      
+
       if (!supabase) {
         return apiError('Database service not available', { status: 503 });
       }
@@ -182,11 +205,13 @@ export const DELETE = versionedApiHandler(
       // Get variant with portfolio to verify ownership
       const { data: variant, error: fetchError } = await supabase
         .from('portfolio_variants')
-        .select(`
+        .select(
+          `
           id,
           is_default,
           portfolio:portfolios(user_id)
-        `)
+        `
+        )
         .eq('id', variantId)
         .single();
 
@@ -195,8 +220,13 @@ export const DELETE = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      const portfolioDataDelete = Array.isArray(variant.portfolio) ? variant.portfolio[0] : variant.portfolio;
-      if (!portfolioDataDelete || portfolioDataDelete.user_id !== request.user.id) {
+      const portfolioDataDelete = Array.isArray(variant.portfolio)
+        ? variant.portfolio[0]
+        : variant.portfolio;
+      if (
+        !portfolioDataDelete ||
+        portfolioDataDelete.user_id !== request.user.id
+      ) {
         return apiError('Unauthorized', { status: 403 });
       }
 
@@ -223,7 +253,10 @@ export const DELETE = versionedApiHandler(
 
       return apiSuccess({ message: 'Variant deleted successfully' });
     } catch (error) {
-      logger.error('Failed to delete variant:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to delete variant:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return apiError('Internal server error', { status: 500 });
     }
   })

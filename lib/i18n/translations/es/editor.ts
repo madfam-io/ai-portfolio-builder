@@ -8,7 +8,7 @@ export default {
   portfolioBuilder: 'Constructor de Portafolios',
   portfolioEditor: 'Editor de Portafolio',
   portfolioName: 'Nombre del Portafolio',
-  
+
   // New Portfolio Creation
   letsGetStarted: 'Comencemos',
   basicInfoDescription: 'Cuéntanos un poco sobre ti y tu portafolio',
@@ -19,7 +19,8 @@ export default {
   bioPlaceholder: 'Cuéntanos sobre tu experiencia y qué te hace único...',
   continueButton: 'Continuar',
   back: 'Atrás',
-  templateDescription: 'Selecciona un diseño que coincida con tu estilo e industria',
+  templateDescription:
+    'Selecciona un diseño que coincida con tu estilo e industria',
   importYourData: 'Importa tus datos',
   importDescription: 'Acelera el proceso importando desde perfiles existentes',
   importFromLinkedIn: 'Importa tu experiencia profesional',
@@ -28,19 +29,23 @@ export default {
   uploadCVDescription: 'Sube tu currículum (PDF/DOC)',
   manualEntry: 'Entrada Manual',
   manualEntryDescription: 'Ingresa tu información manualmente',
-  enhanceDescription: 'Deja que nuestra IA te ayude a crear contenido atractivo',
+  enhanceDescription:
+    'Deja que nuestra IA te ayude a crear contenido atractivo',
   aiContentEnhancement: 'Mejora de Contenido con IA',
-  aiEnhancementDescription: 'Mejora automáticamente tu biografía, descripciones de proyectos y más',
+  aiEnhancementDescription:
+    'Mejora automáticamente tu biografía, descripciones de proyectos y más',
   professionalBioWriting: 'Redacción profesional de biografía',
   projectDescriptionOptimization: 'Optimización de descripciones de proyectos',
   skillsExtraction: 'Extracción y resaltado de habilidades',
   achievementHighlighting: 'Resaltado de logros',
-  aiEnhancementNote: 'Siempre puedes editar y personalizar el contenido generado por IA',
+  aiEnhancementNote:
+    'Siempre puedes editar y personalizar el contenido generado por IA',
   createPortfolio: 'Crear Portafolio',
   creatingPortfolio: 'Creando portafolio...',
   portfolioCreated: '¡Tu portafolio ha sido creado!',
-  failedToCreatePortfolio: 'Error al crear el portafolio. Por favor intenta de nuevo.',
-  
+  failedToCreatePortfolio:
+    'Error al crear el portafolio. Por favor intenta de nuevo.',
+
   // Editor
   loadingPortfolio: 'Cargando tu portafolio...',
   portfolioNotFound: 'Portafolio no encontrado',

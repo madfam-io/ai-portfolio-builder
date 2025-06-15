@@ -6,7 +6,11 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
-import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE, validateFile } from '@/lib/supabase/storage';
+import {
+  ALLOWED_IMAGE_TYPES,
+  MAX_FILE_SIZE,
+  validateFile,
+} from '@/lib/supabase/storage';
 
 interface ImageUploadProps {
   value?: string;
@@ -52,18 +56,21 @@ export function ImageUpload({
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragActive(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragActive(false);
 
-    if (disabled || isUploading) return;
+      if (disabled || isUploading) return;
 
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      handleFile(files[0]);
-    }
-  }, [disabled, isUploading]);
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    },
+    [disabled, isUploading]
+  );
 
   const handleFile = async (file: File | undefined) => {
     if (!file) return;
@@ -103,10 +110,12 @@ export function ImageUpload({
         description: t.imageUploaded || 'Image uploaded successfully',
       });
     } catch (error) {
-      
       toast({
         title: t.error || 'Error',
-        description: error instanceof Error ? error.message : t.uploadFailed || 'Failed to upload image',
+        description:
+          error instanceof Error
+            ? error.message
+            : t.uploadFailed || 'Failed to upload image',
         variant: 'destructive',
       });
     } finally {
@@ -129,9 +138,12 @@ export function ImageUpload({
     const path = url.pathname.split('/').slice(-3).join('/'); // Get last 3 segments
 
     try {
-      const response = await fetch(`/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       const data = await response.json();
 
@@ -145,7 +157,6 @@ export function ImageUpload({
         description: t.imageRemoved || 'Image removed successfully',
       });
     } catch (error) {
-      
       toast({
         title: t.error || 'Error',
         description: t.deleteFailed || 'Failed to remove image',
@@ -197,11 +208,15 @@ export function ImageUpload({
         <div
           className={cn(
             'border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors',
-            isDragActive ? 'border-primary bg-primary/5' : 'border-gray-300 hover:border-gray-400',
+            isDragActive
+              ? 'border-primary bg-primary/5'
+              : 'border-gray-300 hover:border-gray-400',
             disabled && 'opacity-50 cursor-not-allowed',
             aspectClasses[aspectRatio]
           )}
-          onClick={() => !disabled && !isUploading && fileInputRef.current?.click()}
+          onClick={() =>
+            !disabled && !isUploading && fileInputRef.current?.click()
+          }
           onDragEnter={handleDragEnter}
           onDragLeave={handleDragLeave}
           onDragOver={handleDragOver}
@@ -210,15 +225,21 @@ export function ImageUpload({
           {isUploading ? (
             <div className="flex flex-col items-center gap-2">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">{t.uploading || 'Uploading...'}</p>
+              <p className="text-sm text-muted-foreground">
+                {t.uploading || 'Uploading...'}
+              </p>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-2">
               {value ? (
                 <>
                   <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                  <p className="text-sm font-medium">{value.split('/').pop()}</p>
-                  <p className="text-xs text-muted-foreground">{t.clickToChange || 'Click to change'}</p>
+                  <p className="text-sm font-medium">
+                    {value.split('/').pop()}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {t.clickToChange || 'Click to change'}
+                  </p>
                 </>
               ) : (
                 <>
@@ -227,7 +248,7 @@ export function ImageUpload({
                     {t.dropImageHere || 'Drop image here or click to upload'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    {t.maxFileSize || `Max ${MAX_FILE_SIZE / 1024 / 1024}MB`} • 
+                    {t.maxFileSize || `Max ${MAX_FILE_SIZE / 1024 / 1024}MB`} •
                     {' ' + (t.allowedFormats || 'JPG, PNG, WebP, GIF')}
                   </p>
                 </>

@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { captureServerEvent, trackAPIPerformance, trackServerError } from './server';
+import {
+  captureServerEvent,
+  trackAPIPerformance,
+  trackServerError,
+} from './server';
 import { logger } from '@/lib/utils/logger';
 
 /**
  * PostHog Analytics Middleware
- * 
+ *
  * Tracks:
  * - API request performance
  * - Error rates
@@ -116,18 +120,17 @@ export async function analyticsMiddleware(
 }
 
 // Helper to extract common properties from request
-export function extractRequestProperties(request: NextRequest): Record<string, any> {
+export function extractRequestProperties(
+  request: NextRequest
+): Record<string, any> {
   const headers = request.headers;
-  
+
   return {
     user_agent: headers.get('user-agent') || 'unknown',
     referer: headers.get('referer') || null,
-    ip: headers.get('x-forwarded-for') || 
-        headers.get('x-real-ip') || 
-        'unknown',
-    country: headers.get('cf-ipcountry') || 
-             headers.get('x-vercel-ip-country') || 
-             null,
+    ip: headers.get('x-forwarded-for') || headers.get('x-real-ip') || 'unknown',
+    country:
+      headers.get('cf-ipcountry') || headers.get('x-vercel-ip-country') || null,
     region: headers.get('x-vercel-ip-country-region') || null,
     city: headers.get('x-vercel-ip-city') || null,
     platform: detectPlatform(headers.get('user-agent') || ''),
@@ -138,13 +141,13 @@ export function extractRequestProperties(request: NextRequest): Record<string, a
 // Detect platform from user agent
 function detectPlatform(userAgent: string): string {
   const ua = userAgent.toLowerCase();
-  
+
   if (/android/.test(ua)) return 'android';
   if (/iphone|ipad|ipod/.test(ua)) return 'ios';
   if (/windows/.test(ua)) return 'windows';
   if (/mac/.test(ua)) return 'macos';
   if (/linux/.test(ua)) return 'linux';
-  
+
   return 'unknown';
 }
 
@@ -162,6 +165,6 @@ function isBot(userAgent: string): boolean {
     'twitter',
     'linkedin',
   ];
-  
+
   return botPatterns.some(pattern => ua.includes(pattern));
 }

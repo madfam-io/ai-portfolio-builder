@@ -1,7 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Edit2, Trash2, Award, ExternalLink, Calendar } from 'lucide-react';
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  Award,
+  ExternalLink,
+  Calendar,
+} from 'lucide-react';
 import { format } from 'date-fns';
 
 import { Button } from '@/components/ui/button';
@@ -30,9 +37,9 @@ interface CertificationFormData {
   imageUrl?: string;
 }
 
-export function CertificationsSection({ 
-  certifications = [], 
-  onUpdate 
+export function CertificationsSection({
+  certifications = [],
+  onUpdate,
 }: CertificationsSectionProps) {
   const { t } = useLanguage();
   const { currentPortfolio } = usePortfolioStore();
@@ -106,8 +113,9 @@ export function CertificationsSection({
     }
 
     // Sort by issue date (newest first)
-    updatedCertifications.sort((a, b) => 
-      new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
+    updatedCertifications.sort(
+      (a, b) =>
+        new Date(b.issueDate).getTime() - new Date(a.issueDate).getTime()
     );
 
     onUpdate(updatedCertifications);
@@ -115,7 +123,12 @@ export function CertificationsSection({
   };
 
   const handleDelete = (id: string) => {
-    if (confirm(t.confirmDeleteCertification || 'Are you sure you want to delete this certification?')) {
+    if (
+      confirm(
+        t.confirmDeleteCertification ||
+          'Are you sure you want to delete this certification?'
+      )
+    ) {
       onUpdate(certifications.filter(cert => cert.id !== id));
     }
   };
@@ -170,7 +183,8 @@ export function CertificationsSection({
             {t.certifications || 'Certifications'}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {t.certificationsDescription || 'Professional certifications and credentials'}
+            {t.certificationsDescription ||
+              'Professional certifications and credentials'}
           </p>
         </div>
         {!isAdding && !editingId && (
@@ -186,26 +200,39 @@ export function CertificationsSection({
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {editingId ? t.editCertification || 'Edit Certification' : t.addCertification || 'Add Certification'}
+              {editingId
+                ? t.editCertification || 'Edit Certification'
+                : t.addCertification || 'Add Certification'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="name">{t.certificationName || 'Certification Name'} *</Label>
+              <Label htmlFor="name">
+                {t.certificationName || 'Certification Name'} *
+              </Label>
               <Input
                 id="name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                placeholder={t.certNamePlaceholder || 'e.g. AWS Certified Solutions Architect'}
+                onChange={e =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
+                placeholder={
+                  t.certNamePlaceholder ||
+                  'e.g. AWS Certified Solutions Architect'
+                }
               />
             </div>
 
             <div>
-              <Label htmlFor="issuer">{t.issuingOrganization || 'Issuing Organization'} *</Label>
+              <Label htmlFor="issuer">
+                {t.issuingOrganization || 'Issuing Organization'} *
+              </Label>
               <Input
                 id="issuer"
                 value={formData.issuer}
-                onChange={(e) => setFormData({ ...formData, issuer: e.target.value })}
+                onChange={e =>
+                  setFormData({ ...formData, issuer: e.target.value })
+                }
                 placeholder={t.issuerPlaceholder || 'e.g. Amazon Web Services'}
                 list="issuer-suggestions"
               />
@@ -218,46 +245,65 @@ export function CertificationsSection({
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label htmlFor="issueDate">{t.issueDate || 'Issue Date'} *</Label>
+                <Label htmlFor="issueDate">
+                  {t.issueDate || 'Issue Date'} *
+                </Label>
                 <Input
                   id="issueDate"
                   type="month"
                   value={formData.issueDate}
-                  onChange={(e) => setFormData({ ...formData, issueDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, issueDate: e.target.value })
+                  }
                 />
               </div>
               <div>
-                <Label htmlFor="expiryDate">{t.expiryDate || 'Expiry Date'}</Label>
+                <Label htmlFor="expiryDate">
+                  {t.expiryDate || 'Expiry Date'}
+                </Label>
                 <Input
                   id="expiryDate"
                   type="month"
                   value={formData.expiryDate}
-                  onChange={(e) => setFormData({ ...formData, expiryDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, expiryDate: e.target.value })
+                  }
                   min={formData.issueDate}
                 />
                 <p className="text-xs text-muted-foreground mt-1">
-                  {t.leaveEmptyIfNoExpiry || 'Leave empty if certification does not expire'}
+                  {t.leaveEmptyIfNoExpiry ||
+                    'Leave empty if certification does not expire'}
                 </p>
               </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label htmlFor="credentialId">{t.credentialId || 'Credential ID'}</Label>
+                <Label htmlFor="credentialId">
+                  {t.credentialId || 'Credential ID'}
+                </Label>
                 <Input
                   id="credentialId"
                   value={formData.credentialId}
-                  onChange={(e) => setFormData({ ...formData, credentialId: e.target.value })}
-                  placeholder={t.credentialIdPlaceholder || 'e.g. ABCD-1234-EFGH-5678'}
+                  onChange={e =>
+                    setFormData({ ...formData, credentialId: e.target.value })
+                  }
+                  placeholder={
+                    t.credentialIdPlaceholder || 'e.g. ABCD-1234-EFGH-5678'
+                  }
                 />
               </div>
               <div>
-                <Label htmlFor="credentialUrl">{t.credentialUrl || 'Credential URL'}</Label>
+                <Label htmlFor="credentialUrl">
+                  {t.credentialUrl || 'Credential URL'}
+                </Label>
                 <Input
                   id="credentialUrl"
                   type="url"
                   value={formData.credentialUrl}
-                  onChange={(e) => setFormData({ ...formData, credentialUrl: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, credentialUrl: e.target.value })
+                  }
                   placeholder={t.credentialUrlPlaceholder || 'https://...'}
                 />
               </div>
@@ -267,7 +313,9 @@ export function CertificationsSection({
               <Label>{t.certificateImage || 'Certificate Image'}</Label>
               <ImageUpload
                 value={formData.imageUrl}
-                onChange={(url) => setFormData({ ...formData, imageUrl: url || '' })}
+                onChange={url =>
+                  setFormData({ ...formData, imageUrl: url || '' })
+                }
                 type="certificate"
                 portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="auto"
@@ -280,7 +328,9 @@ export function CertificationsSection({
                 {t.cancel || 'Cancel'}
               </Button>
               <Button onClick={handleSave}>
-                {editingId ? t.saveChanges || 'Save Changes' : t.addCertification || 'Add Certification'}
+                {editingId
+                  ? t.saveChanges || 'Save Changes'
+                  : t.addCertification || 'Add Certification'}
               </Button>
             </div>
           </CardContent>
@@ -289,17 +339,14 @@ export function CertificationsSection({
 
       {/* Certifications List */}
       <div className="space-y-4">
-        {certifications.map((cert) => {
+        {certifications.map(cert => {
           const expired = isExpired(cert.expiryDate);
           const expiringSoon = isExpiringSoon(cert.expiryDate);
 
           return (
-            <Card 
-              key={cert.id} 
-              className={cn(
-                "group relative",
-                expired && "opacity-60"
-              )}
+            <Card
+              key={cert.id}
+              className={cn('group relative', expired && 'opacity-60')}
             >
               <CardContent className="p-6">
                 <div className="flex items-start justify-between">
@@ -310,12 +357,18 @@ export function CertificationsSection({
                         <h4 className="font-semibold flex items-center gap-2">
                           {cert.name}
                           {expired && (
-                            <Badge variant="secondary" className="bg-red-100 text-red-800">
+                            <Badge
+                              variant="secondary"
+                              className="bg-red-100 text-red-800"
+                            >
                               {t.expired || 'Expired'}
                             </Badge>
                           )}
                           {expiringSoon && (
-                            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
+                            <Badge
+                              variant="secondary"
+                              className="bg-yellow-100 text-yellow-800"
+                            >
                               {t.expiringSoon || 'Expiring Soon'}
                             </Badge>
                           )}
@@ -323,20 +376,22 @@ export function CertificationsSection({
                         <p className="text-muted-foreground">{cert.issuer}</p>
                       </div>
                     </div>
-                    
+
                     <div className="ml-8 space-y-1">
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-3 w-3" />
                           <span>
-                            {t.issued || 'Issued'}: {formatDateForDisplay(cert.issueDate)}
+                            {t.issued || 'Issued'}:{' '}
+                            {formatDateForDisplay(cert.issueDate)}
                           </span>
                         </div>
                         {cert.expiryDate && (
                           <div className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
                             <span>
-                              {t.expires || 'Expires'}: {formatDateForDisplay(cert.expiryDate)}
+                              {t.expires || 'Expires'}:{' '}
+                              {formatDateForDisplay(cert.expiryDate)}
                             </span>
                           </div>
                         )}
@@ -344,7 +399,8 @@ export function CertificationsSection({
 
                       {cert.credentialId && (
                         <p className="text-sm text-muted-foreground">
-                          {t.credentialId || 'Credential ID'}: {cert.credentialId}
+                          {t.credentialId || 'Credential ID'}:{' '}
+                          {cert.credentialId}
                         </p>
                       )}
 
@@ -361,7 +417,7 @@ export function CertificationsSection({
                       )}
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
                       variant="ghost"
@@ -405,7 +461,9 @@ export function CertificationsSection({
         <Card>
           <CardContent className="py-4">
             <p className="text-sm text-muted-foreground">
-              <strong>{t.tip || 'Tip'}:</strong> {t.certificationTip || 'Keep your certifications up to date. Expired certifications are shown but marked clearly. Consider renewing certifications that are expiring soon.'}
+              <strong>{t.tip || 'Tip'}:</strong>{' '}
+              {t.certificationTip ||
+                'Keep your certifications up to date. Expired certifications are shown but marked clearly. Consider renewing certifications that are expiring soon.'}
             </p>
           </CardContent>
         </Card>

@@ -13,15 +13,15 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { SectionType } from '@/types/portfolio';
-import { 
-  trackEditorSectionEdited, 
+import {
+  trackEditorSectionEdited,
   trackPortfolioUpdated,
-  trackEditorThemeChanged 
+  trackEditorThemeChanged,
 } from '@/lib/analytics/posthog/events';
 
 /**
  * Portfolio Editor Content Component
- * 
+ *
  * Main editor interface for creating and editing portfolios
  * Features split-screen design with real-time preview
  */
@@ -32,7 +32,7 @@ export function EditorContent() {
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionType>('hero');
-  
+
   const {
     currentPortfolio,
     savePortfolio,
@@ -55,7 +55,6 @@ export function EditorContent() {
             description: t.changesSaved || 'Your changes have been saved',
           });
         } catch (error) {
-          
         } finally {
           setIsSaving(false);
         }
@@ -125,7 +124,9 @@ export function EditorContent() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-4">{t.noPortfolioSelected || 'No portfolio selected'}</h2>
+          <h2 className="text-2xl font-bold mb-4">
+            {t.noPortfolioSelected || 'No portfolio selected'}
+          </h2>
           <Button onClick={() => router.push('/dashboard')}>
             {t.backToDashboard || 'Back to Dashboard'}
           </Button>
@@ -142,7 +143,7 @@ export function EditorContent() {
           {/* Left side - Portfolio name and actions */}
           <div className="flex items-center gap-4">
             <h1 className="text-lg font-semibold">{currentPortfolio.name}</h1>
-            
+
             <div className="flex items-center gap-2">
               <Button
                 size="sm"
@@ -199,10 +200,7 @@ export function EditorContent() {
               <Save className="h-4 w-4 mr-2" />
               {isSaving ? t.saving || 'Saving...' : t.save || 'Save'}
             </Button>
-            <Button
-              size="sm"
-              onClick={handlePublish}
-            >
+            <Button size="sm" onClick={handlePublish}>
               {t.publish || 'Publish'}
             </Button>
           </div>
@@ -212,7 +210,7 @@ export function EditorContent() {
       {/* Main Editor Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <EditorSidebar 
+        <EditorSidebar
           portfolio={currentPortfolio}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
@@ -225,22 +223,33 @@ export function EditorContent() {
                   edit_type: 'update',
                   field,
                 });
-                
+
                 // Track theme changes specifically
                 if (field === 'customization' || field === 'template') {
                   trackEditorThemeChanged(currentPortfolio.id, {
                     customization_type: field,
                   });
                 }
-                
+
                 // For nested data fields, we need to update the data object
-                if (['experience', 'education', 'projects', 'skills', 'certifications', 'customization', 'contact', 'social'].includes(field)) {
+                if (
+                  [
+                    'experience',
+                    'education',
+                    'projects',
+                    'skills',
+                    'certifications',
+                    'customization',
+                    'contact',
+                    'social',
+                  ].includes(field)
+                ) {
                   updatePortfolioData(field, value);
                 } else {
                   updatePortfolioData(field, value);
                 }
               });
-              
+
               // Track general portfolio update
               trackPortfolioUpdated(currentPortfolio.id, {
                 section,
@@ -252,9 +261,9 @@ export function EditorContent() {
 
         {/* Canvas/Form Area */}
         <div className={`flex-1 flex ${showPreview ? 'w-1/2' : 'w-full'}`}>
-          <EditorCanvas 
+          <EditorCanvas
             portfolio={currentPortfolio}
-            onDataChange={(data) => {
+            onDataChange={data => {
               // Handle partial portfolio data updates
               if (data && typeof data === 'object') {
                 Object.entries(data).forEach(([field, value]) => {

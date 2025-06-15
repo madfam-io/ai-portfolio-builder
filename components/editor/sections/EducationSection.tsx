@@ -29,7 +29,10 @@ interface EducationFormData {
   achievements?: string[];
 }
 
-export function EducationSection({ education = [], onUpdate }: EducationSectionProps) {
+export function EducationSection({
+  education = [],
+  onUpdate,
+}: EducationSectionProps) {
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -81,7 +84,12 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
   };
 
   const handleSave = () => {
-    if (!formData.institution || !formData.degree || !formData.field || !formData.startDate) {
+    if (
+      !formData.institution ||
+      !formData.degree ||
+      !formData.field ||
+      !formData.startDate
+    ) {
       return;
     }
 
@@ -111,7 +119,12 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
   };
 
   const handleDelete = (id: string) => {
-    if (confirm(t.confirmDeleteEducation || 'Are you sure you want to delete this education?')) {
+    if (
+      confirm(
+        t.confirmDeleteEducation ||
+          'Are you sure you want to delete this education?'
+      )
+    ) {
       onUpdate(education.filter(edu => edu.id !== id));
     }
   };
@@ -130,7 +143,8 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
   };
 
   const removeAchievement = (index: number) => {
-    const newAchievements = formData.achievements?.filter((_, i) => i !== index) || [];
+    const newAchievements =
+      formData.achievements?.filter((_, i) => i !== index) || [];
     setFormData({ ...formData, achievements: newAchievements });
   };
 
@@ -160,7 +174,8 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
             {t.education || 'Education'}
           </h3>
           <p className="text-sm text-muted-foreground">
-            {t.educationDescription || 'Add your academic background and achievements'}
+            {t.educationDescription ||
+              'Add your academic background and achievements'}
           </p>
         </div>
         {!isAdding && !editingId && (
@@ -176,17 +191,25 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
         <Card>
           <CardHeader>
             <CardTitle className="text-base">
-              {editingId ? t.editEducation || 'Edit Education' : t.addEducation || 'Add Education'}
+              {editingId
+                ? t.editEducation || 'Edit Education'
+                : t.addEducation || 'Add Education'}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="institution">{t.institution || 'Institution'} *</Label>
+              <Label htmlFor="institution">
+                {t.institution || 'Institution'} *
+              </Label>
               <Input
                 id="institution"
                 value={formData.institution}
-                onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
-                placeholder={t.institutionPlaceholder || 'e.g. Stanford University'}
+                onChange={e =>
+                  setFormData({ ...formData, institution: e.target.value })
+                }
+                placeholder={
+                  t.institutionPlaceholder || 'e.g. Stanford University'
+                }
               />
             </div>
 
@@ -196,8 +219,12 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                 <Input
                   id="degree"
                   value={formData.degree}
-                  onChange={(e) => setFormData({ ...formData, degree: e.target.value })}
-                  placeholder={t.degreePlaceholder || 'e.g. Bachelor of Science'}
+                  onChange={e =>
+                    setFormData({ ...formData, degree: e.target.value })
+                  }
+                  placeholder={
+                    t.degreePlaceholder || 'e.g. Bachelor of Science'
+                  }
                   list="degree-suggestions"
                 />
                 <datalist id="degree-suggestions">
@@ -207,11 +234,15 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                 </datalist>
               </div>
               <div>
-                <Label htmlFor="field">{t.fieldOfStudy || 'Field of Study'} *</Label>
+                <Label htmlFor="field">
+                  {t.fieldOfStudy || 'Field of Study'} *
+                </Label>
                 <Input
                   id="field"
                   value={formData.field}
-                  onChange={(e) => setFormData({ ...formData, field: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, field: e.target.value })
+                  }
                   placeholder={t.fieldPlaceholder || 'e.g. Computer Science'}
                 />
               </div>
@@ -219,12 +250,16 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
 
             <div className="grid gap-4 md:grid-cols-2">
               <div>
-                <Label htmlFor="startDate">{t.startDate || 'Start Date'} *</Label>
+                <Label htmlFor="startDate">
+                  {t.startDate || 'Start Date'} *
+                </Label>
                 <Input
                   id="startDate"
                   type="month"
                   value={formData.startDate}
-                  onChange={(e) => setFormData({ ...formData, startDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, startDate: e.target.value })
+                  }
                 />
               </div>
               <div>
@@ -234,9 +269,14 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                     <Switch
                       id="current"
                       checked={formData.current}
-                      onCheckedChange={(checked) => setFormData({ ...formData, current: checked })}
+                      onCheckedChange={checked =>
+                        setFormData({ ...formData, current: checked })
+                      }
                     />
-                    <Label htmlFor="current" className="text-sm font-normal cursor-pointer">
+                    <Label
+                      htmlFor="current"
+                      className="text-sm font-normal cursor-pointer"
+                    >
                       {t.currentlyStudying || 'Currently studying'}
                     </Label>
                   </div>
@@ -245,19 +285,28 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                   id="endDate"
                   type="month"
                   value={formData.endDate}
-                  onChange={(e) => setFormData({ ...formData, endDate: e.target.value })}
+                  onChange={e =>
+                    setFormData({ ...formData, endDate: e.target.value })
+                  }
                   disabled={formData.current}
                 />
               </div>
             </div>
 
             <div>
-              <Label htmlFor="description">{t.description || 'Description'}</Label>
+              <Label htmlFor="description">
+                {t.description || 'Description'}
+              </Label>
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                placeholder={t.educationDescriptionPlaceholder || 'Describe your studies, focus areas, thesis topic, etc.'}
+                onChange={e =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
+                placeholder={
+                  t.educationDescriptionPlaceholder ||
+                  'Describe your studies, focus areas, thesis topic, etc.'
+                }
                 rows={3}
               />
             </div>
@@ -280,8 +329,13 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                   <div key={index} className="flex items-center gap-2">
                     <Input
                       value={achievement}
-                      onChange={(e) => handleAchievementChange(e.target.value, index)}
-                      placeholder={t.achievementPlaceholder || 'e.g. Dean\'s List, GPA 3.9/4.0, Student Council President'}
+                      onChange={e =>
+                        handleAchievementChange(e.target.value, index)
+                      }
+                      placeholder={
+                        t.achievementPlaceholder ||
+                        "e.g. Dean's List, GPA 3.9/4.0, Student Council President"
+                      }
                     />
                     <Button
                       type="button"
@@ -301,7 +355,9 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                 {t.cancel || 'Cancel'}
               </Button>
               <Button onClick={handleSave}>
-                {editingId ? t.saveChanges || 'Save Changes' : t.addEducation || 'Add Education'}
+                {editingId
+                  ? t.saveChanges || 'Save Changes'
+                  : t.addEducation || 'Add Education'}
               </Button>
             </div>
           </CardContent>
@@ -310,7 +366,7 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
 
       {/* Education List */}
       <div className="space-y-4">
-        {education.map((edu) => (
+        {education.map(edu => (
           <Card key={edu.id} className="group relative">
             <CardContent className="p-6">
               <div className="flex items-start justify-between">
@@ -318,7 +374,9 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                   <div className="flex items-center gap-3 mb-2">
                     <GraduationCap className="h-5 w-5 text-muted-foreground" />
                     <div>
-                      <h4 className="font-semibold">{edu.degree} in {edu.field}</h4>
+                      <h4 className="font-semibold">
+                        {edu.degree} in {edu.field}
+                      </h4>
                       <p className="text-muted-foreground">{edu.institution}</p>
                     </div>
                     {edu.current && (
@@ -328,11 +386,10 @@ export function EducationSection({ education = [], onUpdate }: EducationSectionP
                     )}
                   </div>
                   <p className="text-sm text-muted-foreground ml-8">
-                    {formatDateForDisplay(edu.startDate)} - {
-                      edu.current 
-                        ? t.present || 'Present' 
-                        : formatDateForDisplay(edu.endDate || '')
-                    }
+                    {formatDateForDisplay(edu.startDate)} -{' '}
+                    {edu.current
+                      ? t.present || 'Present'
+                      : formatDateForDisplay(edu.endDate || '')}
                   </p>
                   {edu.description && (
                     <p className="mt-3 text-sm ml-8">{edu.description}</p>

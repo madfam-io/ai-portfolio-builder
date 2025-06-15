@@ -61,17 +61,21 @@ export function validateFile(file: File): { valid: boolean; error?: string } {
 /**
  * Generates a unique file path with timestamp
  */
-export function generateFilePath(userId: string, filename: string, prefix?: string): string {
+export function generateFilePath(
+  userId: string,
+  filename: string,
+  prefix?: string
+): string {
   const timestamp = Date.now();
   const sanitizedFilename = filename.replace(/[^a-zA-Z0-9.-]/g, '_');
   const parts = [userId];
-  
+
   if (prefix) {
     parts.push(prefix);
   }
-  
+
   parts.push(`${timestamp}_${sanitizedFilename}`);
-  
+
   return parts.join('/');
 }
 
@@ -86,7 +90,7 @@ export async function uploadFile({
 }: UploadOptions): Promise<UploadResult> {
   try {
     const supabase = createClient();
-    
+
     if (!supabase) {
       return {
         success: false,
@@ -120,9 +124,9 @@ export async function uploadFile({
     }
 
     // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from(STORAGE_BUCKETS[bucket])
-      .getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from(STORAGE_BUCKETS[bucket]).getPublicUrl(path);
 
     return {
       success: true,
@@ -140,10 +144,13 @@ export async function uploadFile({
 /**
  * Deletes a file from Supabase Storage
  */
-export async function deleteFile(bucket: keyof typeof STORAGE_BUCKETS, path: string): Promise<boolean> {
+export async function deleteFile(
+  bucket: keyof typeof STORAGE_BUCKETS,
+  path: string
+): Promise<boolean> {
   try {
     const supabase = createClient();
-    
+
     if (!supabase) {
       logger.warn('Storage service not available');
       return false;
@@ -168,16 +175,19 @@ export async function deleteFile(bucket: keyof typeof STORAGE_BUCKETS, path: str
 /**
  * Gets the public URL for a file
  */
-export function getPublicUrl(bucket: keyof typeof STORAGE_BUCKETS, path: string): string | null {
+export function getPublicUrl(
+  bucket: keyof typeof STORAGE_BUCKETS,
+  path: string
+): string | null {
   const supabase = createClient();
-  
+
   if (!supabase) {
     return null;
   }
 
-  const { data: { publicUrl } } = supabase.storage
-    .from(STORAGE_BUCKETS[bucket])
-    .getPublicUrl(path);
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from(STORAGE_BUCKETS[bucket]).getPublicUrl(path);
 
   return publicUrl;
 }

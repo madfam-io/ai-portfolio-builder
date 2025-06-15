@@ -9,7 +9,6 @@ import {
   ReadabilityMetrics,
   GEOContent,
   GEOScore,
-  GEOSuggestion,
   OptimizeContentRequest,
   OptimizeContentResponse,
 } from './types';
@@ -63,7 +62,8 @@ export class ContentOptimizer {
     }
 
     // Readability optimization
-    optimizedContent = this.readabilityOptimizer.improveReadability(optimizedContent);
+    optimizedContent =
+      this.readabilityOptimizer.improveReadability(optimizedContent);
     appliedOptimizations.push('readability');
 
     // Keyword optimization
@@ -85,9 +85,9 @@ export class ContentOptimizer {
     // Calculate improved score
     const keywords = [
       request.settings.primaryKeyword,
-      ...(request.settings.secondaryKeywords || [])
+      ...(request.settings.secondaryKeywords || []),
     ].filter(Boolean);
-    
+
     const improvedScore = this.scoreCalculator.calculateGEOScore(
       request.content,
       optimizedContent,
@@ -124,8 +124,10 @@ export class ContentOptimizer {
       paragraphCount: paragraphs.length,
       sentenceCount: sentences.length,
       wordCount: words.length,
-      avgSentenceLength: sentences.length > 0 ? words.length / sentences.length : 0,
-      avgParagraphLength: paragraphs.length > 0 ? words.length / paragraphs.length : 0,
+      avgSentenceLength:
+        sentences.length > 0 ? words.length / sentences.length : 0,
+      avgParagraphLength:
+        paragraphs.length > 0 ? words.length / paragraphs.length : 0,
       hasProperHierarchy: this.checkHeadingHierarchy(headings),
       listCount: (content.match(/^[•\-*]\s/gm) || []).length,
     };
@@ -135,11 +137,13 @@ export class ContentOptimizer {
    * Calculate readability metrics
    */
   calculateReadability(content: string): ReadabilityMetrics {
-    const readabilityScore = this.readabilityOptimizer.calculateReadabilityScore(content);
+    const readabilityScore =
+      this.readabilityOptimizer.calculateReadabilityScore(content);
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const words = content.split(/\s+/).filter(w => w.length > 0);
-    
-    const avgWordsPerSentence = sentences.length > 0 ? words.length / sentences.length : 0;
+
+    const avgWordsPerSentence =
+      sentences.length > 0 ? words.length / sentences.length : 0;
     const complexWords = words.filter(w => this.countSyllables(w) > 2).length;
     const level = this.getReadabilityLevel(readabilityScore);
 
@@ -191,7 +195,7 @@ export class ContentOptimizer {
 
     const keywordList = [
       geoSettings.primaryKeyword,
-      ...(geoSettings.secondaryKeywords || [])
+      ...(geoSettings.secondaryKeywords || []),
     ].filter(Boolean);
 
     const scoreBreakdown = this.scoreCalculator.calculateGEOScore(
@@ -235,9 +239,9 @@ export class ContentOptimizer {
     const geoSettings = settings as any;
     const keywords = [
       geoSettings.primaryKeyword,
-      ...(geoSettings.secondaryKeywords || [])
+      ...(geoSettings.secondaryKeywords || []),
     ].filter(Boolean);
-    
+
     const scoreBreakdown = this.scoreCalculator.calculateGEOScore(
       content,
       content,

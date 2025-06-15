@@ -1,14 +1,13 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useUIStore } from '@/lib/store/ui-store';
 
 /**
  * Safe interactive handlers that avoid dangerouslySetInnerHTML
  * This component sets up all the interactive functionality using React hooks
  */
 export default function InteractiveHandlers() {
-  const { theme, setTheme } = useUIStore();
+  // Theme is handled by UI store in other components
 
   useEffect(() => {
     // Currency state
@@ -16,8 +15,16 @@ export default function InteractiveHandlers() {
     let mobileMenuOpen = false;
 
     // Currency conversion rates
-    const exchangeRates: Record<string, number> = { USD: 1.0, MXN: 20.0, EUR: 0.85 };
-    const currencySymbols: Record<string, string> = { USD: '$', MXN: '$', EUR: '€' };
+    const exchangeRates: Record<string, number> = {
+      USD: 1.0,
+      MXN: 20.0,
+      EUR: 0.85,
+    };
+    const currencySymbols: Record<string, string> = {
+      USD: '$',
+      MXN: '$',
+      EUR: '€',
+    };
 
     // Currency toggle
     function toggleCurrency() {
@@ -31,7 +38,9 @@ export default function InteractiveHandlers() {
     // Mobile menu toggle
     function toggleMobileMenu() {
       mobileMenuOpen = !mobileMenuOpen;
-      const mobileMenu = document.querySelector('[data-mobile-menu]') as HTMLElement;
+      const mobileMenu = document.querySelector(
+        '[data-mobile-menu]'
+      ) as HTMLElement;
       if (mobileMenu) {
         mobileMenu.style.display = mobileMenuOpen ? 'block' : 'none';
       }
@@ -44,7 +53,7 @@ export default function InteractiveHandlers() {
 
     function updateCurrencyDisplay() {
       const symbol = currencySymbols[currency];
-      
+
       document.querySelectorAll('[data-currency-display]').forEach(el => {
         el.textContent = currency;
       });
@@ -59,13 +68,13 @@ export default function InteractiveHandlers() {
     // Event handler
     function handleClick(e: MouseEvent) {
       const target = e.target as HTMLElement;
-      
+
       // Currency button
       if (target.closest('[data-currency-toggle]')) {
         e.preventDefault();
         toggleCurrency();
       }
-      
+
       // Mobile menu button
       if (target.closest('[data-mobile-menu-toggle]')) {
         e.preventDefault();
@@ -91,7 +100,7 @@ export default function InteractiveHandlers() {
 
     // Initial updates
     updateCurrencyDisplay();
-    
+
     // Set initial icon states
     document.querySelectorAll('[data-mobile-menu-icon]').forEach(el => {
       el.setAttribute('data-open', 'false');

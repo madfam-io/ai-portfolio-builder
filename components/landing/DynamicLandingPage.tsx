@@ -167,7 +167,6 @@ export default function DynamicLandingPage(): React.ReactElement {
           const Component = getComponentForConfig(component);
 
           if (!Component) {
-            
             return null;
           }
 

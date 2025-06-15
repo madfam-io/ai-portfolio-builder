@@ -110,7 +110,7 @@ export class StructureOptimizer {
 
     for (let i = 0; i < paragraphs.length; i++) {
       const para = paragraphs[i].trim();
-      
+
       if (para.length > 200) {
         // Break long paragraphs
         const sentences = para.match(/[^.!?]+[.!?]+/g) || [para];

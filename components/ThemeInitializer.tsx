@@ -2,6 +2,15 @@
 
 import { useEffect } from 'react';
 
+// Helper function to safely parse JSON
+function safeJsonParse(str: string) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Client-side theme initializer that avoids FOUC (Flash of Unstyled Content)
  * This component must be rendered as early as possible in the app
@@ -14,24 +23,23 @@ export default function ThemeInitializer() {
         // Check UI store for theme preference
         const uiStore = localStorage.getItem('ui-store');
         let theme = 'dark'; // default
-        
+
         if (uiStore) {
-          try {
-            const parsed = JSON.parse(uiStore);
-            if (parsed.state && parsed.state.theme) {
-              theme = parsed.state.theme;
-            }
-          } catch (e) {
-            // Silent fallback if parsing fails
+          const parsed = safeJsonParse(uiStore);
+          if (parsed?.state?.theme) {
+            theme = parsed.state.theme;
           }
         }
-        
+
         // Apply theme
         const root = document.documentElement;
         root.classList.remove('light', 'dark');
-        
+
         if (theme === 'system') {
-          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          const systemTheme = window.matchMedia('(prefers-color-scheme: dark)')
+            .matches
+            ? 'dark'
+            : 'light';
           root.classList.add(systemTheme);
         } else {
           root.classList.add(theme);

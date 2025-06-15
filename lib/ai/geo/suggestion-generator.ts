@@ -44,7 +44,9 @@ export class SuggestionGenerator {
     }
 
     if (scoreBreakdown.structure < 70) {
-      suggestions.push(...this.generateStructureSuggestions(metrics, contentType));
+      suggestions.push(
+        ...this.generateStructureSuggestions(metrics, contentType)
+      );
     }
 
     if (scoreBreakdown.length < 70) {
@@ -54,7 +56,8 @@ export class SuggestionGenerator {
     // Sort by priority and impact
     return suggestions.sort((a, b) => {
       const priorityOrder = { high: 3, medium: 2, low: 1 };
-      const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
+      const priorityDiff =
+        priorityOrder[b.priority] - priorityOrder[a.priority];
       return priorityDiff !== 0 ? priorityDiff : b.impact - a.impact;
     });
   }
@@ -65,7 +68,7 @@ export class SuggestionGenerator {
   private analyzeContent(content: string, keywords: string[]): AnalysisMetrics {
     const words = content.split(/\s+/).filter(w => w.length > 0);
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    
+
     let keywordCount = 0;
     const contentLower = content.toLowerCase();
     for (const keyword of keywords) {
@@ -82,7 +85,8 @@ export class SuggestionGenerator {
       uniquenessScore: 0,
       wordCount: words.length,
       sentenceCount: sentences.length,
-      keywordDensity: words.length > 0 ? (keywordCount / words.length) * 100 : 0,
+      keywordDensity:
+        words.length > 0 ? (keywordCount / words.length) * 100 : 0,
     };
   }
 
@@ -115,7 +119,7 @@ export class SuggestionGenerator {
       suggestions.push({
         type: 'keyword',
         priority: 'high',
-        message: 'Your content doesn\'t include any of the target keywords',
+        message: "Your content doesn't include any of the target keywords",
         impact: 30,
       });
     }
@@ -126,9 +130,12 @@ export class SuggestionGenerator {
   /**
    * Generate readability suggestions
    */
-  private generateReadabilitySuggestions(metrics: AnalysisMetrics): Suggestion[] {
+  private generateReadabilitySuggestions(
+    metrics: AnalysisMetrics
+  ): Suggestion[] {
     const suggestions: Suggestion[] = [];
-    const avgWordsPerSentence = metrics.wordCount / Math.max(1, metrics.sentenceCount);
+    const avgWordsPerSentence =
+      metrics.wordCount / Math.max(1, metrics.sentenceCount);
 
     if (avgWordsPerSentence > 20) {
       suggestions.push({
@@ -178,7 +185,8 @@ export class SuggestionGenerator {
 
     // Check for basic structure elements
     const hasHeaders = /^#{1,3}\s/m.test(contentType);
-    const hasLists = /^[•\-*]\s/m.test(contentType) || /^\d+\.\s/m.test(contentType);
+    const hasLists =
+      /^[•\-*]\s/m.test(contentType) || /^\d+\.\s/m.test(contentType);
 
     if (!hasHeaders && metrics.wordCount > 100) {
       suggestions.push({
@@ -193,7 +201,8 @@ export class SuggestionGenerator {
       suggestions.push({
         type: 'structure',
         priority: 'high',
-        message: 'Use bullet points to highlight achievements and responsibilities',
+        message:
+          'Use bullet points to highlight achievements and responsibilities',
         impact: 20,
       });
     }
@@ -307,10 +316,10 @@ export class SuggestionGenerator {
     const casualIndicators = ['gonna', 'wanna', 'hey', 'cool', 'awesome'];
     const formalIndicators = ['furthermore', 'moreover', 'therefore', 'hence'];
 
-    const hasCasual = casualIndicators.some(word => 
+    const hasCasual = casualIndicators.some(word =>
       new RegExp(`\\b${word}\\b`, 'i').test(content)
     );
-    const hasFormal = formalIndicators.some(word => 
+    const hasFormal = formalIndicators.some(word =>
       new RegExp(`\\b${word}\\b`, 'i').test(content)
     );
 

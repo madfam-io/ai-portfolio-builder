@@ -14,7 +14,6 @@ function createSupabaseClient(): SupabaseClient | null {
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!supabaseUrl || !supabaseAnonKey) {
-    
     return null;
   }
 

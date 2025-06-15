@@ -1,28 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, createMockPortfolio } from '@/__tests__/utils/comprehensive-test-setup';
 
 import { EditorHeader } from '@/components/editor/EditorHeader';
-import { Portfolio } from '@/types/portfolio';
 
-const mockPortfolio: Portfolio = {
-  id: 'test-portfolio-1',
-  userId: 'user-1',
+const mockPortfolio = createMockPortfolio({
   name: 'Test Portfolio',
   title: 'Software Developer',
-  bio: 'Test bio',
-  contact: { email: 'test@example.com' },
-  social: {},
-  experience: [],
-  education: [],
-  projects: [],
-  skills: [],
-  certifications: [],
-  template: 'developer',
-  customization: {},
-  status: 'draft',
-  createdAt: new Date(),
-  updatedAt: new Date(),
-};
+  status: 'draft'
+});
 
 const defaultProps = {
   portfolio: mockPortfolio,
@@ -49,7 +34,7 @@ describe('EditorHeader', () => {
     });
 
     it('should display fallback for untitled portfolio', () => {
-      const portfolioWithoutName = { ...mockPortfolio, name: '' };
+      const portfolioWithoutName = createMockPortfolio({ name: '' });
       render(
         <EditorHeader {...defaultProps} portfolio={portfolioWithoutName} />
       );
@@ -67,10 +52,7 @@ describe('EditorHeader', () => {
     });
 
     it('should display published status', () => {
-      const publishedPortfolio = {
-        ...mockPortfolio,
-        status: 'published' as const,
-      };
+      const publishedPortfolio = createMockPortfolio({ status: 'published' });
       render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
       expect(screen.getByText('Published')).toBeInTheDocument();
     });
@@ -165,10 +147,7 @@ describe('EditorHeader', () => {
     });
 
     it('should render unpublish button for published portfolio', () => {
-      const publishedPortfolio = {
-        ...mockPortfolio,
-        status: 'published' as const,
-      };
+      const publishedPortfolio = createMockPortfolio({ status: 'published' });
       render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
       expect(screen.getByText('Unpublish')).toBeInTheDocument();
     });
@@ -258,10 +237,7 @@ describe('EditorHeader', () => {
 
   describe('Visual Styling', () => {
     it('should apply published status styling', () => {
-      const publishedPortfolio = {
-        ...mockPortfolio,
-        status: 'published' as const,
-      };
+      const publishedPortfolio = createMockPortfolio({ status: 'published' });
       render(<EditorHeader {...defaultProps} portfolio={publishedPortfolio} />);
 
       const statusBadge = screen.getByText('Published');

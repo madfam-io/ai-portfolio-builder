@@ -7,7 +7,7 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 
 function EditorRedirect() {
   const router = useRouter();
-  
+
   // Redirect to dashboard - this page should not be accessed directly
   useEffect(() => {
     router.push('/dashboard');

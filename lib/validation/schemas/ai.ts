@@ -49,11 +49,15 @@ export const recommendTemplateSchema = z.object({
   industry: z.string().min(1).max(100),
   experience: z.enum(['entry', 'mid', 'senior', 'executive']),
   skills: z.array(z.string()).min(1).max(20),
-  preferences: z.object({
-    style: z.enum(['minimal', 'modern', 'creative', 'traditional']).optional(),
-    colorScheme: z.enum(['light', 'dark', 'colorful']).optional(),
-    layout: z.enum(['single-page', 'multi-section', 'grid']).optional(),
-  }).optional(),
+  preferences: z
+    .object({
+      style: z
+        .enum(['minimal', 'modern', 'creative', 'traditional'])
+        .optional(),
+      colorScheme: z.enum(['light', 'dark', 'colorful']).optional(),
+      layout: z.enum(['single-page', 'multi-section', 'grid']).optional(),
+    })
+    .optional(),
   model: aiModelSchema.optional(),
 });
 
@@ -72,20 +76,25 @@ export const generateContentSchema = z.object({
  * Schema for batch AI operations
  */
 export const batchAIOperationSchema = z.object({
-  operations: z.array(z.discriminatedUnion('type', [
-    z.object({
-      type: z.literal('enhance_bio'),
-      data: enhanceBioSchema,
-    }),
-    z.object({
-      type: z.literal('optimize_project'),
-      data: optimizeProjectSchema,
-    }),
-    z.object({
-      type: z.literal('generate_content'),
-      data: generateContentSchema,
-    }),
-  ])).min(1).max(10),
+  operations: z
+    .array(
+      z.discriminatedUnion('type', [
+        z.object({
+          type: z.literal('enhance_bio'),
+          data: enhanceBioSchema,
+        }),
+        z.object({
+          type: z.literal('optimize_project'),
+          data: optimizeProjectSchema,
+        }),
+        z.object({
+          type: z.literal('generate_content'),
+          data: generateContentSchema,
+        }),
+      ])
+    )
+    .min(1)
+    .max(10),
   model: aiModelSchema.optional(),
 });
 

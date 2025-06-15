@@ -1,404 +1,507 @@
-import React, { ReactNode } from 'react';
-import { render as rtlRender, RenderOptions } from '@testing-library/react';
+import React from 'react';
+import { render, RenderOptions } from '@testing-library/react';
 
-import type { Language } from '@/lib/i18n/refactored-types';
-
-/**
- * Comprehensive test setup utilities for PRISMA Portfolio Builder
- *
- * This module provides all necessary mocks and utilities for testing
- * the bilingual (Spanish/English) application with proper context providers
- */
-
-// Comprehensive mock translations covering all components
-export const mockTranslations = {
-  es: {
-    // Common translations
-    loading: 'Cargando...',
-    error: 'Error',
-    success: 'Éxito',
-    save: 'Guardar',
-    cancel: 'Cancelar',
-    delete: 'Eliminar',
-    edit: 'Editar',
-    view: 'Ver',
-    back: 'Volver',
-    next: 'Siguiente',
-    previous: 'Anterior',
-    close: 'Cerrar',
-
-    // Landing page translations
-    heroTitle: 'Convierte tu CV en un',
-    heroTitle2: 'Portafolio Profesional',
-    heroTitle3: 'que Impresiona',
-    heroDesc:
-      'PRISMA by MADFAM utiliza inteligencia artificial para transformar tu experiencia en un portafolio deslumbrante que destaca entre la competencia.',
-    poweredByAi: 'Potenciado por IA',
-    startFreeTrial: 'Comenzar gratis',
-    watchDemo: 'Ver demo',
-    features: 'Características',
-    whatPrismaDoes: 'Qué hace PRISMA',
-    pricing: 'Precios',
-    getStartedToday: 'Accede hoy.',
-
-    // How it works
-    howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
-    step1Number: '01',
-    step1Title: 'Sube tu CV',
-    step1Desc:
-      'Nuestro analizador impulsado por IA extrae y organiza tu información profesional automáticamente.',
-    step2Number: '02',
-    step2Title: 'La IA lo mejora',
-    step2Desc:
-      'PRISMA optimiza tu contenido, sugiere mejoras y crea descripciones impactantes que resaltan tus logros.',
-    step3Number: '03',
-    step3Title: 'Publica y comparte',
-    step3Desc:
-      'Tu portafolio está listo al instante con un enlace personalizado. Comparte y destaca profesionalmente.',
-    step4Number: '04',
-    step4Title: 'Listo para el mundo',
-    step4Desc:
-      'Tu portafolio profesional está en línea y optimizado para destacar.',
-
-    // Features
-    feature1Title: 'Análisis inteligente de CV',
-    feature1Description:
-      'Extrae automáticamente tu experiencia, habilidades y logros profesionales',
-    feature2Title: 'Mejora con IA',
-    feature2Description:
-      'Optimiza descripciones y destaca tus mejores cualidades profesionales',
-    feature3Title: 'Plantillas profesionales',
-    feature3Description:
-      'Diseños modernos adaptados a tu industria y estilo personal',
-    feature4Title: 'Publicación instantánea',
-    feature4Description:
-      'Tu portafolio en línea con dominio personalizado en minutos',
-    feature5Title: 'Optimizado para móviles',
-    feature5Description: 'Se ve perfecto en cualquier dispositivo, siempre',
-    feature6Title: 'SEO incluido',
-    feature6Description:
-      'Mejor posicionamiento en Google para que te encuentren fácilmente',
-
-    // Templates
-    templatesTitle: 'Elige tu estilo perfecto',
-    templatesSubtitle: 'Plantillas profesionales diseñadas para impresionar',
-    developerTemplate: 'Desarrollador',
-    developerTemplateDesc: 'Perfecto para programadores y profesionales tech',
-    consultantTemplate: 'Consultor',
-    consultantTemplateDesc: 'Ideal para consultores y asesores profesionales',
-    designerTemplate: 'Diseñador',
-    designerTemplateDesc: 'Creativo y visual para diseñadores y artistas',
-    viewAllTemplates: 'Ver todas las plantillas',
-
-    // Pricing
-    pricingTitle: 'Planes y precios',
-    pricingSubtitle: 'Elige el plan perfecto para ti',
-    freeTitle: 'Gratis',
-    freePrice: '$0',
-    pricePerMonth: '/mes',
-    starterTitle: 'Starter',
-    starterPrice: '$99',
-    professionalTitle: 'Profesional',
-    professionalPrice: '$299',
-    choosePlan: 'Elegir plan',
-
-    // Dashboard
-    dashboardTitle: 'Panel de Control',
-    welcome: 'Bienvenido',
-    createPortfolio: 'Crear Portafolio',
-    myPortfolios: 'Mis Portafolios',
-    noPortfolios: 'No tienes portafolios aún',
-    published: 'Publicado',
-    draft: 'Borrador',
-
-    // Editor
-    editorTitle: 'Editor de Portafolio',
-    editorSave: 'Guardar',
-    editorPublish: 'Publicar',
-    editorPreview: 'Vista Previa',
-    editorUnpublish: 'Despublicar',
-    editorSaving: 'Guardando...',
-    editorPublished: 'Publicado',
-    editorDraft: 'Borrador',
-    editorLastSaved: 'Último guardado',
-
-    // Auth
-    signIn: 'Iniciar sesión',
-    signUp: 'Registrarse',
-    signOut: 'Cerrar sesión',
-    email: 'Correo electrónico',
-    password: 'Contraseña',
-    confirmPassword: 'Confirmar contraseña',
-    forgotPassword: '¿Olvidaste tu contraseña?',
-    alreadyHaveAccount: '¿Ya tienes cuenta?',
-    dontHaveAccount: '¿No tienes cuenta?',
-
-    // Footer
-    aboutUs: 'Acerca de',
-    careers: 'Carreras',
-    blog: 'Blog',
-    contact: 'Contacto',
-    privacyPolicy: 'Política de privacidad',
-    termsOfService: 'Términos de servicio',
-    copyright: '© 2024 PRISMA by MADFAM. Todos los derechos reservados.',
+// Mock the i18n context
+const mockUseLanguage = {
+  language: 'en' as const,
+  setLanguage: jest.fn(),
+  t: {
+    // Landing page
+    welcomeMessage: 'Welcome to PRISMA',
+    heroTitle: 'Create Your Professional Portfolio in Minutes',
+    heroSubtitle: 'AI-powered portfolio builder for professionals',
+    getStarted: 'Get Started',
+    viewDemo: 'View Demo',
     
-    // Hero additional translations
-    noCreditCard: 'Sin tarjeta de crédito',
-    joinProfessionals: 'Únete a miles de profesionales',
-    rating: '4.9/5 Calificación',
-  },
-  en: {
-    // Common translations
+    // Common
+    save: 'Save',
+    cancel: 'Cancel',
+    edit: 'Edit',
+    delete: 'Delete',
     loading: 'Loading...',
     error: 'Error',
     success: 'Success',
-    save: 'Save',
-    cancel: 'Cancel',
-    delete: 'Delete',
-    edit: 'Edit',
-    view: 'View',
-    back: 'Back',
-    next: 'Next',
-    previous: 'Previous',
-    close: 'Close',
-
-    // Landing page translations
-    heroTitle: 'Turn Your CV Into a',
-    heroTitle2: 'Professional Portfolio',
-    heroTitle3: 'That Stands Out',
-    heroDesc:
-      'PRISMA by MADFAM uses artificial intelligence to transform your experience into a stunning portfolio that stands out from the competition.',
-    poweredByAi: 'AI-Powered',
-    startFreeTrial: 'Start free',
-    watchDemo: 'Watch demo',
-    features: 'Features',
-    whatPrismaDoes: 'What PRISMA Does',
-    pricing: 'Pricing',
-    getStartedToday: 'Get started today.',
-
-    // How it works
-    howItWorksTitle: 'From CV to portfolio in 3 simple steps',
-    step1Number: '01',
-    step1Title: 'Upload your CV',
-    step1Desc:
-      'Our AI-powered analyzer extracts and organizes your professional information automatically.',
-    step2Number: '02',
-    step2Title: 'AI enhances it',
-    step2Desc:
-      'PRISMA optimizes your content, suggests improvements and creates impactful descriptions that highlight your achievements.',
-    step3Number: '03',
-    step3Title: 'Publish and share',
-    step3Desc:
-      'Your portfolio is instantly ready with a custom link. Share and stand out professionally.',
-    step4Number: '04',
-    step4Title: 'Ready for the world',
-    step4Desc:
-      'Your professional portfolio is online and optimized to stand out.',
-
-    // Features
-    feature1Title: 'Smart CV Analysis',
-    feature1Description:
-      'Automatically extracts your experience, skills and professional achievements',
-    feature2Title: 'AI Enhancement',
-    feature2Description:
-      'Optimizes descriptions and highlights your best professional qualities',
-    feature3Title: 'Professional Templates',
-    feature3Description:
-      'Modern designs tailored to your industry and personal style',
-    feature4Title: 'Instant Publishing',
-    feature4Description: 'Your portfolio online with custom domain in minutes',
-    feature5Title: 'Mobile Optimized',
-    feature5Description: 'Looks perfect on any device, always',
-    feature6Title: 'SEO Included',
-    feature6Description: 'Better Google ranking so you can be found easily',
-
-    // Templates
-    templatesTitle: 'Choose your perfect style',
-    templatesSubtitle: 'Professional templates designed to impress',
-    developerTemplate: 'Developer',
-    developerTemplateDesc: 'Perfect for programmers and tech professionals',
-    consultantTemplate: 'Consultant',
-    consultantTemplateDesc: 'Ideal for consultants and professional advisors',
-    designerTemplate: 'Designer',
-    designerTemplateDesc: 'Creative and visual for designers and artists',
-    viewAllTemplates: 'View all templates',
-
-    // Pricing
-    pricingTitle: 'Plans and pricing',
-    pricingSubtitle: 'Choose the perfect plan for you',
-    freeTitle: 'Free',
-    freePrice: '$0',
-    pricePerMonth: '/month',
-    starterTitle: 'Starter',
-    starterPrice: '$9',
-    professionalTitle: 'Professional',
-    professionalPrice: '$29',
-    choosePlan: 'Choose plan',
-
-    // Dashboard
-    dashboardTitle: 'Dashboard',
-    welcome: 'Welcome',
-    createPortfolio: 'Create Portfolio',
-    myPortfolios: 'My Portfolios',
-    noPortfolios: 'You have no portfolios yet',
-    published: 'Published',
-    draft: 'Draft',
-
-    // Editor
-    editorTitle: 'Portfolio Editor',
-    editorSave: 'Save',
-    editorPublish: 'Publish',
-    editorPreview: 'Preview',
-    editorUnpublish: 'Unpublish',
-    editorSaving: 'Saving...',
-    editorPublished: 'Published',
-    editorDraft: 'Draft',
-    editorLastSaved: 'Last saved',
-
-    // Auth
-    signIn: 'Sign In',
-    signUp: 'Sign Up',
-    signOut: 'Sign Out',
-    email: 'Email',
-    password: 'Password',
-    confirmPassword: 'Confirm Password',
-    forgotPassword: 'Forgot password?',
-    alreadyHaveAccount: 'Already have an account?',
-    dontHaveAccount: "Don't have an account?",
-
-    // Footer
-    aboutUs: 'About',
-    careers: 'Careers',
-    blog: 'Blog',
-    contact: 'Contact',
-    privacyPolicy: 'Privacy Policy',
-    termsOfService: 'Terms of Service',
-    copyright: '© 2024 PRISMA by MADFAM. All rights reserved.',
     
-    // Hero additional translations
-    noCreditCard: 'No credit card required',
-    joinProfessionals: 'Join thousands of professionals',
-    rating: '4.9/5 Rating',
+    // Navigation
+    home: 'Home',
+    about: 'About',
+    contact: 'Contact',
+    dashboard: 'Dashboard',
+    editor: 'Editor',
+    analytics: 'Analytics',
+    
+    // Portfolio
+    portfolio: 'Portfolio',
+    portfolios: 'Portfolios',
+    createPortfolio: 'Create Portfolio',
+    editPortfolio: 'Edit Portfolio',
+    deletePortfolio: 'Delete Portfolio',
+    publishPortfolio: 'Publish Portfolio',
+    
+    // AI
+    enhanceWithAI: 'Enhance with AI',
+    aiProcessing: 'AI Processing...',
+    aiEnhancement: 'AI Enhancement',
+    
+    // Editor
+    preview: 'Preview',
+    publish: 'Publish',
+    unpublish: 'Unpublish',
+    saving: 'Saving...',
+    saved: 'Saved',
+    unsavedChanges: 'Unsaved changes',
+    
+    // Templates
+    template: 'Template',
+    templates: 'Templates',
+    selectTemplate: 'Select Template',
+    
+    // Forms
+    name: 'Name',
+    email: 'Email',
+    phone: 'Phone',
+    location: 'Location',
+    title: 'Title',
+    description: 'Description',
+    
+    // Status
+    draft: 'Draft',
+    published: 'Published',
+    archived: 'Archived'
   },
+  isLoading: false
 };
 
-// Mock context values
-export const mockAppContextValue = {
-  isDarkMode: false,
-  toggleDarkMode: jest.fn(),
-  isMobileMenuOpen: false,
-  setMobileMenuOpen: jest.fn(),
-  currency: 'MXN' as const,
-  setCurrency: jest.fn(),
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => mockUseLanguage,
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+// Mock Next.js modules
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    refresh: jest.fn(),
+    pathname: '/',
+    query: {},
+    asPath: '/',
+    route: '/'
+  }),
+  usePathname: () => '/',
+  useSearchParams: () => new URLSearchParams(),
+  notFound: jest.fn()
+}));
+
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    const { src, alt, ...rest } = props;
+    return <img src={src} alt={alt} {...rest} />;
+  }
+}));
+
+// Mock Supabase
+const mockSupabase = {
+  auth: {
+    getSession: jest.fn().mockResolvedValue({
+      data: { session: null },
+      error: null
+    }),
+    getUser: jest.fn().mockResolvedValue({
+      data: { user: null },
+      error: null
+    }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({
+      data: { subscription: { unsubscribe: jest.fn() } }
+    }))
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockReturnThis(),
+    then: jest.fn()
+  }))
 };
 
-export const mockAuthContextValue = {
+jest.mock('@/lib/supabase/client', () => ({
+  supabase: mockSupabase
+}));
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: () => mockSupabase
+}));
+
+// NextAuth is mocked via manual mocks in __mocks__ directory
+const mockSession = {
+  user: {
+    id: 'test-user-id',
+    email: 'test@example.com',
+    name: 'Test User',
+    image: null
+  },
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+};
+
+// Mock Lucide React icons
+jest.mock('lucide-react', () => {
+  const icons = [
+    'CheckCircle', 'Eye', 'Loader', 'RotateCcw', 'RotateCw', 'Save', 'Share2',
+    'Settings', 'User', 'Home', 'PlusCircle', 'Edit', 'Trash2', 'Download',
+    'Upload', 'Search', 'Filter', 'SortAsc', 'SortDesc', 'ChevronDown',
+    'ChevronUp', 'ChevronLeft', 'ChevronRight', 'X', 'Menu', 'Bell', 'Mail',
+    'Phone', 'MapPin', 'ExternalLink', 'Github', 'Linkedin', 'Twitter',
+    'Instagram', 'Youtube', 'Globe', 'Calendar', 'Clock', 'Star', 'Heart',
+    'ThumbsUp', 'MessageSquare', 'Bookmark', 'Share', 'Copy', 'Check',
+    'AlertCircle', 'AlertTriangle', 'Info', 'HelpCircle', 'Zap', 'Rocket',
+    'Target', 'TrendingUp', 'Award', 'Shield', 'Lock', 'Unlock', 'Key',
+    'Database', 'Server', 'Cloud', 'Monitor', 'Smartphone', 'Tablet',
+    'Layout', 'Grid', 'List', 'Image', 'File', 'FileText', 'Folder',
+    'Archive', 'Package', 'Tag', 'Layers', 'Code', 'Terminal', 'Play',
+    'Pause', 'Stop', 'Repeat', 'Shuffle', 'Volume2', 'VolumeX', 'Mic',
+    'Camera', 'Video', 'Headphones', 'Radio', 'Tv', 'Cast', 'Wifi',
+    'Bluetooth', 'Battery', 'Power', 'RefreshCw', 'MoreHorizontal',
+    'MoreVertical', 'Maximize2', 'Minimize2', 'RotateCcw', 'RotateCw'
+  ];
+
+  const mockIcon = ({ className, ...props }: any) => (
+    <svg
+      className={className}
+      {...props}
+      data-testid="mock-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect width="24" height="24" />
+    </svg>
+  );
+
+  const exports: any = {};
+  icons.forEach(icon => {
+    exports[icon] = mockIcon;
+  });
+  
+  return exports;
+});
+
+// Mock PostHog
+jest.mock('posthog-js', () => ({
+  capture: jest.fn(),
+  identify: jest.fn(),
+  reset: jest.fn(),
+  onFeatureFlags: jest.fn(),
+  isFeatureEnabled: jest.fn().mockReturnValue(false),
+  getFeatureFlag: jest.fn().mockReturnValue(false)
+}));
+
+// Mock stores
+const mockPortfolioStore = {
+  portfolios: [],
+  currentPortfolio: null,
+  isLoading: false,
+  error: null,
+  fetchPortfolios: jest.fn(),
+  createPortfolio: jest.fn(),
+  updatePortfolio: jest.fn(),
+  deletePortfolio: jest.fn(),
+  setCurrentPortfolio: jest.fn(),
+  clearError: jest.fn()
+};
+
+const mockAuthStore = {
   user: null,
-  loading: false,
+  session: null,
+  isLoading: false,
   error: null,
   signIn: jest.fn(),
-  signUp: jest.fn(),
   signOut: jest.fn(),
+  signUp: jest.fn(),
+  clearError: jest.fn()
 };
 
-// Language context type
-interface LanguageContextValue {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: typeof mockTranslations.es | typeof mockTranslations.en;
-  availableLanguages: Array<{ code: Language; name: string; flag: string }>;
-  getNamespace: () => Record<string, never>;
-  isLoaded: boolean;
-}
-
-// Create mock context - MUST be defined before it's used
-const MockLanguageContext = React.createContext<LanguageContextValue | null>(
-  null
-);
-
-// Language Context Provider for tests
-export const TestLanguageProvider = ({
-  children,
-  initialLanguage = 'es',
-}: {
-  children: ReactNode;
-  initialLanguage?: Language;
-}): React.ReactElement => {
-  const [language, setLanguage] = React.useState<Language>(initialLanguage);
-  const t = mockTranslations[language];
-
-  const value = {
-    language,
-    setLanguage,
-    t,
-    availableLanguages: [
-      { code: 'es' as Language, name: 'Español', flag: '🇲🇽' },
-      { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
-    ],
-    getNamespace: () => ({}),
-    isLoaded: true,
-  };
-
-  return (
-    <MockLanguageContext.Provider value={value}>
-      {children}
-    </MockLanguageContext.Provider>
-  );
+const mockUIStore = {
+  theme: 'light' as const,
+  language: 'en' as const,
+  sidebarOpen: false,
+  notifications: [],
+  setTheme: jest.fn(),
+  setLanguage: jest.fn(),
+  toggleSidebar: jest.fn(),
+  addNotification: jest.fn(),
+  removeNotification: jest.fn()
 };
 
-// Mock hook
-export const useTestLanguage = (): LanguageContextValue => {
-  const context = React.useContext(MockLanguageContext);
-  if (context === null) {
-    return {
-      language: 'es' as Language,
-      setLanguage: jest.fn(),
-      t: mockTranslations.es,
-      availableLanguages: [
-        { code: 'es' as Language, name: 'Español', flag: '🇲🇽' },
-        { code: 'en' as Language, name: 'English', flag: '🇺🇸' },
-      ],
-      getNamespace: () => ({}),
-      isLoaded: true,
-    };
-  }
-  return context;
+const mockAIStore = {
+  selectedModel: 'meta-llama/Llama-3.1-8B-Instruct',
+  isProcessing: false,
+  error: null,
+  setSelectedModel: jest.fn(),
+  enhanceBio: jest.fn(),
+  enhanceProject: jest.fn(),
+  recommendTemplate: jest.fn(),
+  clearError: jest.fn()
 };
 
-// Complete test wrapper with all providers
-export const AllProviders = ({
-  children,
-  initialLanguage = 'es',
-}: {
-  children: ReactNode;
-  initialLanguage?: Language;
-}): React.ReactElement => {
-  return (
-    <TestLanguageProvider initialLanguage={initialLanguage}>
-      {children}
-    </TestLanguageProvider>
-  );
+jest.mock('@/lib/store/portfolio-store', () => ({
+  usePortfolioStore: jest.fn(() => mockPortfolioStore)
+}));
+
+jest.mock('@/lib/store/auth-store', () => ({
+  useAuthStore: jest.fn(() => mockAuthStore)
+}));
+
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: jest.fn(() => mockUIStore)
+}));
+
+jest.mock('@/lib/store/ai-store', () => ({
+  useAIStore: jest.fn(() => mockAIStore)
+}));
+
+// Mock hooks
+jest.mock('@/hooks/useAutoSave', () => ({
+  useAutoSave: () => ({
+    isDirty: false,
+    isSaving: false,
+    lastSaved: null,
+    save: jest.fn(),
+    reset: jest.fn()
+  })
+}));
+
+jest.mock('@/hooks/useEditorHistory', () => ({
+  useEditorHistory: () => ({
+    canUndo: false,
+    canRedo: false,
+    undo: jest.fn(),
+    redo: jest.fn(),
+    pushState: jest.fn(),
+    clearHistory: jest.fn()
+  })
+}));
+
+jest.mock('@/hooks/useRealTimePreview', () => ({
+  useRealTimePreview: () => ({
+    previewUrl: 'http://localhost:3000/preview/test',
+    isGenerating: false,
+    generatePreview: jest.fn(),
+    refreshPreview: jest.fn()
+  })
+}));
+
+// Mock AI services
+jest.mock('@/lib/ai/client', () => ({
+  enhanceBio: jest.fn().mockResolvedValue({
+    enhancedBio: 'Enhanced bio content',
+    confidence: 0.9,
+    suggestions: ['Add more specific achievements', 'Include technical skills']
+  }),
+  enhanceProject: jest.fn().mockResolvedValue({
+    enhancedDescription: 'Enhanced project description',
+    suggestedHighlights: ['Implemented scalable architecture', 'Improved performance by 40%'],
+    extractedSkills: ['React', 'Node.js', 'PostgreSQL']
+  }),
+  recommendTemplate: jest.fn().mockResolvedValue({
+    recommendedTemplate: 'developer',
+    confidence: 0.85,
+    reasoning: 'Based on technical skills and project portfolio',
+    alternatives: [
+      { template: 'minimal', score: 0.7 },
+      { template: 'modern', score: 0.6 }
+    ]
+  })
+}));
+
+// Mock analytics
+jest.mock('@/lib/analytics/posthog/client', () => ({
+  track: jest.fn(),
+  identify: jest.fn(),
+  reset: jest.fn()
+}));
+
+// Create a simple test provider
+const TestProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  return <div data-testid="test-provider">{children}</div>;
 };
 
-// Custom render with all providers
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  initialLanguage?: Language;
-}
-
-export function renderWithProviders(
+// Enhanced render function
+const customRender = (
   ui: React.ReactElement,
-  options?: CustomRenderOptions
-): ReturnType<typeof rtlRender> {
-  const { initialLanguage = 'es', ...renderOptions } = options || {};
-
-  return rtlRender(ui, {
-    wrapper: ({ children }) => (
-      <AllProviders initialLanguage={initialLanguage}>{children}</AllProviders>
-    ),
-    ...renderOptions,
+  options?: Omit<RenderOptions, 'wrapper'>
+) => {
+  return render(ui, {
+    wrapper: TestProviders,
+    ...options
   });
-}
+};
 
-// Re-export everything from testing library
+// Test data factories
+export const createMockPortfolio = (overrides: Partial<any> = {}) => ({
+  id: 'test-portfolio-1',
+  userId: 'user-1',
+  name: 'Test Portfolio',
+  title: 'Software Developer',
+  bio: 'Experienced software developer with expertise in React and Node.js',
+  tagline: 'Building amazing web applications',
+  location: 'San Francisco, CA',
+  avatarUrl: 'https://example.com/avatar.jpg',
+  contact: {
+    email: 'test@example.com',
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA'
+  },
+  social: {
+    linkedin: 'https://linkedin.com/in/testuser',
+    github: 'https://github.com/testuser',
+    twitter: 'https://twitter.com/testuser'
+  },
+  experience: [],
+  education: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  template: 'developer' as const,
+  customization: {},
+  status: 'draft' as const,
+  subdomain: 'testuser',
+  views: 0,
+  createdAt: new Date('2024-01-01'),
+  updatedAt: new Date('2024-01-15'),
+  ...overrides
+});
+
+export const createMockProject = (overrides: Partial<any> = {}) => ({
+  id: 'project-1',
+  title: 'E-commerce Platform',
+  description: 'A full-stack e-commerce solution built with React and Node.js',
+  imageUrl: 'https://example.com/project.jpg',
+  liveUrl: 'https://example.com',
+  githubUrl: 'https://github.com/user/project',
+  technologies: ['React', 'Node.js', 'PostgreSQL'],
+  highlights: ['Scalable architecture', 'Real-time features'],
+  featured: true,
+  order: 1,
+  ...overrides
+});
+
+export const createMockExperience = (overrides: Partial<any> = {}) => ({
+  id: 'exp-1',
+  company: 'Tech Corp',
+  companyLogo: 'https://example.com/logo.jpg',
+  position: 'Senior Developer',
+  location: 'San Francisco, CA',
+  employmentType: 'full-time' as const,
+  startDate: '2020-01-01',
+  endDate: '2023-12-31',
+  current: false,
+  description: 'Led development of web applications using React and Node.js',
+  highlights: ['Improved performance by 40%', 'Mentored junior developers'],
+  technologies: ['React', 'Node.js', 'AWS'],
+  ...overrides
+});
+
+export const createMockUser = (overrides: Partial<any> = {}) => ({
+  id: 'user-1',
+  email: 'test@example.com',
+  name: 'Test User',
+  image: 'https://example.com/avatar.jpg',
+  ...overrides
+});
+
+export const createMockSession = (overrides: Partial<any> = {}) => ({
+  user: createMockUser(overrides.user),
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+  ...overrides
+});
+
+// Export everything
 export * from '@testing-library/react';
-export { renderWithProviders as render };
+export {
+  customRender as render,
+  TestProviders,
+  mockSupabase,
+  mockSession,
+  mockPortfolioStore,
+  mockAuthStore,
+  mockUIStore,
+  mockAIStore,
+  mockUseLanguage
+};
+
+// Reset all mocks after each test
+afterEach(() => {
+  jest.clearAllMocks();
+});
+
+// Global test setup
+beforeAll(() => {
+  // Mock window.matchMedia
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn()
+    }))
+  });
+
+  // Mock IntersectionObserver
+  global.IntersectionObserver = jest.fn().mockImplementation(() => ({
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn()
+  }));
+
+  // Mock ResizeObserver
+  global.ResizeObserver = jest.fn().mockImplementation(() => ({
+    observe: jest.fn(),
+    unobserve: jest.fn(),
+    disconnect: jest.fn()
+  }));
+
+  // Mock fetch
+  global.fetch = jest.fn().mockResolvedValue({
+    ok: true,
+    json: () => Promise.resolve({}),
+    text: () => Promise.resolve(''),
+    status: 200,
+    statusText: 'OK'
+  });
+
+  // Suppress console warnings in tests
+  const originalWarn = console.warn;
+  console.warn = (...args: any[]) => {
+    const message = args[0];
+    if (
+      typeof message === 'string' &&
+      (
+        message.includes('React.createElement') ||
+        message.includes('componentWillReceiveProps') ||
+        message.includes('componentWillUpdate') ||
+        message.includes('findDOMNode')
+      )
+    ) {
+      return;
+    }
+    originalWarn.apply(console, args);
+  };
+});

@@ -126,7 +126,6 @@ export function useStoreProvider() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   if (typeof window !== 'undefined' && !isAuthenticated) {
-    
   }
 
   return isAuthenticated;

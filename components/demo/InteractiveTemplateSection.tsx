@@ -59,7 +59,8 @@ export function InteractiveTemplateSection({
         {t.demoChooseTemplate || 'Choose a Template'}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 mb-8">
-        {t.demoTemplateDescription || 'Select the template that best fits your profession'}
+        {t.demoTemplateDescription ||
+          'Select the template that best fits your profession'}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

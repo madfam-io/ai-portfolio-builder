@@ -8,7 +8,7 @@ export default {
   portfolioBuilder: 'Portfolio Builder',
   portfolioEditor: 'Portfolio Editor',
   portfolioName: 'Portfolio Name',
-  
+
   // New Portfolio Creation
   letsGetStarted: "Let's get started",
   basicInfoDescription: 'Tell us a bit about yourself and your portfolio',
@@ -30,17 +30,19 @@ export default {
   manualEntryDescription: 'Enter your information manually',
   enhanceDescription: 'Let our AI help you create compelling content',
   aiContentEnhancement: 'AI Content Enhancement',
-  aiEnhancementDescription: 'Automatically improve your bio, project descriptions, and more',
+  aiEnhancementDescription:
+    'Automatically improve your bio, project descriptions, and more',
   professionalBioWriting: 'Professional bio writing',
   projectDescriptionOptimization: 'Project description optimization',
   skillsExtraction: 'Skills extraction and highlighting',
   achievementHighlighting: 'Achievement highlighting',
-  aiEnhancementNote: 'You can always edit and customize the AI-generated content',
+  aiEnhancementNote:
+    'You can always edit and customize the AI-generated content',
   createPortfolio: 'Create Portfolio',
   creatingPortfolio: 'Creating portfolio...',
   portfolioCreated: 'Your portfolio has been created!',
   failedToCreatePortfolio: 'Failed to create portfolio. Please try again.',
-  
+
   // Editor
   loadingPortfolio: 'Loading your portfolio...',
   portfolioNotFound: 'Portfolio not found',

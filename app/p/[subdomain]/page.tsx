@@ -27,14 +27,15 @@ async function getPortfolio(subdomain: string): Promise<Portfolio | null> {
     const data = await response.json();
     return data.data?.portfolio || null;
   } catch (error) {
-    
     return null;
   }
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const portfolio = await getPortfolio(params.subdomain);
-  
+
   if (!portfolio) {
     return {
       title: 'Portfolio Not Found',
@@ -45,25 +46,35 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   // Extract SEO data from portfolio
   const seoData = portfolio.data?.seo || {};
   const title = seoData.title || `${portfolio.name} - ${portfolio.title}`;
-  const description = seoData.description || portfolio.bio || `Professional portfolio of ${portfolio.name}`;
+  const description =
+    seoData.description ||
+    portfolio.bio ||
+    `Professional portfolio of ${portfolio.name}`;
   const keywords = seoData.keywords || '';
 
   return {
     title,
     description,
-    keywords: keywords.split(',').map((k: string) => k.trim()).filter(Boolean),
+    keywords: keywords
+      .split(',')
+      .map((k: string) => k.trim())
+      .filter(Boolean),
     openGraph: {
       title,
       description,
       type: 'website',
       url: `https://${params.subdomain}.prisma.madfam.io`,
       siteName: 'PRISMA Portfolio',
-      images: portfolio.avatarUrl ? [{
-        url: portfolio.avatarUrl,
-        width: 1200,
-        height: 630,
-        alt: portfolio.name,
-      }] : [],
+      images: portfolio.avatarUrl
+        ? [
+            {
+              url: portfolio.avatarUrl,
+              width: 1200,
+              height: 630,
+              alt: portfolio.name,
+            },
+          ]
+        : [],
     },
     twitter: {
       card: 'summary_large_image',
@@ -116,9 +127,5 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
     }
   };
 
-  return (
-    <PublicPortfolioLayout>
-      {renderTemplate()}
-    </PublicPortfolioLayout>
-  );
+  return <PublicPortfolioLayout>{renderTemplate()}</PublicPortfolioLayout>;
 }

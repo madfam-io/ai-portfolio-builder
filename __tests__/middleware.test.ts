@@ -1,15 +1,52 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { middleware } from '@/middleware';
-import { getToken } from 'next-auth/jwt';
+import { createServerClient } from '@supabase/ssr';
 
-jest.mock('next-auth/jwt');
+// Mock dependencies
+jest.mock('@supabase/ssr');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    warn: jest.fn(),
+    error: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+jest.mock('@/middleware/api-version', () => ({
+  apiVersionMiddleware: jest.fn().mockResolvedValue(
+    new NextResponse(null, { status: 200 })
+  ),
+}));
+jest.mock('@/middleware/security', () => ({
+  securityMiddleware: jest.fn().mockResolvedValue(null),
+  applySecurityToResponse: jest.fn((req, res) => res),
+}));
+jest.mock('@/lib/config', () => ({
+  env: {
+    NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+  },
+  services: {
+    supabase: true,
+  },
+}));
 
 describe('Main Middleware', () => {
-  const mockGetToken = getToken as jest.Mock;
+  const mockCreateServerClient = createServerClient as jest.Mock;
+  let mockSupabaseClient: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
     process.env.NODE_ENV = 'test';
+    
+    // Setup default Supabase client mock
+    mockSupabaseClient = {
+      auth: {
+        getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
+      },
+    };
+    
+    mockCreateServerClient.mockReturnValue(mockSupabaseClient);
   });
 
   describe('Public Routes', () => {
@@ -50,162 +87,132 @@ describe('Main Middleware', () => {
 
   describe('Protected Routes', () => {
     it('should redirect to signin when accessing dashboard without auth', async () => {
-      mockGetToken.mockResolvedValue(null);
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { session: null } 
+      });
 
       const request = new NextRequest('http://localhost:3000/dashboard');
       const response = await middleware(request);
 
       expect(response).toBeInstanceOf(NextResponse);
       expect(response?.status).toBe(307);
-      expect(response?.headers.get('location')).toContain('/auth/signin');
+      const location = response?.headers.get('location');
+      expect(location).toContain('/auth/signin');
+      expect(location).toContain('redirectTo=%2Fdashboard');
     });
 
     it('should allow authenticated access to dashboard', async () => {
-      mockGetToken.mockResolvedValue({ 
-        sub: 'user-123',
-        email: 'test@example.com' 
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { 
+          session: {
+            user: { id: 'user-123', email: 'test@example.com' },
+            access_token: 'test-token',
+          } 
+        } 
       });
 
       const request = new NextRequest('http://localhost:3000/dashboard');
       const response = await middleware(request);
 
-      expect(response).not.toBeDefined(); // Allow request to continue
+      expect(response).toBeDefined();
+      expect(response?.status).toBe(200); // NextResponse.next() returns 200
     });
 
     it('should protect editor routes', async () => {
-      mockGetToken.mockResolvedValue(null);
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { session: null } 
+      });
 
       const request = new NextRequest('http://localhost:3000/editor/portfolio-123');
+      const response = await middleware(request);
+
+      expect(response?.status).toBe(307);
+      const location = response?.headers.get('location');
+      expect(location).toContain('/auth/signin');
+      expect(location).toContain('redirectTo=%2Feditor%2Fportfolio-123');
+    });
+
+    it('should preserve pathname when redirecting', async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { session: null } 
+      });
+
+      const request = new NextRequest('http://localhost:3000/dashboard?tab=analytics');
+      const response = await middleware(request);
+
+      const location = response?.headers.get('location');
+      expect(location).toContain('/auth/signin');
+      expect(location).toContain('redirectTo=%2Fdashboard');
+    });
+  });
+
+  describe('Auth Route Handling', () => {
+    it('should redirect authenticated users away from signin page', async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { 
+          session: {
+            user: { id: 'user-123', email: 'test@example.com' },
+            access_token: 'test-token',
+          } 
+        } 
+      });
+
+      const request = new NextRequest('http://localhost:3000/auth/signin');
+      const response = await middleware(request);
+
+      expect(response?.status).toBe(307);
+      expect(response?.headers.get('location')).toContain('/dashboard');
+    });
+
+    it('should redirect to specified URL after signin', async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { 
+          session: {
+            user: { id: 'user-123', email: 'test@example.com' },
+            access_token: 'test-token',
+          } 
+        } 
+      });
+
+      const request = new NextRequest('http://localhost:3000/auth/signin?redirectTo=/editor');
+      const response = await middleware(request);
+
+      expect(response?.status).toBe(307);
+      expect(response?.headers.get('location')).toBe('http://localhost:3000/editor');
+    });
+  });
+
+  describe('Protected Routes', () => {
+    it('should protect profile route', async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { session: null } 
+      });
+
+      const request = new NextRequest('http://localhost:3000/profile');
       const response = await middleware(request);
 
       expect(response?.status).toBe(307);
       expect(response?.headers.get('location')).toContain('/auth/signin');
     });
 
-    it('should preserve query parameters when redirecting', async () => {
-      mockGetToken.mockResolvedValue(null);
+    it('should allow access to public routes', async () => {
+      mockSupabaseClient.auth.getSession.mockResolvedValue({ 
+        data: { session: null } 
+      });
 
-      const request = new NextRequest('http://localhost:3000/dashboard?tab=analytics');
-      const response = await middleware(request);
-
-      expect(response?.headers.get('location')).toContain('?from=%2Fdashboard%3Ftab%3Danalytics');
-    });
-  });
-
-  describe('API Routes Protection', () => {
-    it('should return 401 for unauthenticated API requests', async () => {
-      mockGetToken.mockResolvedValue(null);
-
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios');
-      const response = await middleware(request);
-
-      expect(response?.status).toBe(401);
-      const body = await response?.json();
-      expect(body.error).toContain('Unauthorized');
-    });
-
-    it('should allow authenticated API requests', async () => {
-      mockGetToken.mockResolvedValue({ sub: 'user-123' });
-
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios');
-      const response = await middleware(request);
-
-      expect(response).not.toBeDefined(); // Allow request to continue
-    });
-
-    it('should allow public API endpoints', async () => {
-      const publicEndpoints = ['/api/health', '/api/status'];
-
-      for (const endpoint of publicEndpoints) {
-        const request = new NextRequest(`http://localhost:3000${endpoint}`);
+      const publicRoutes = ['/', '/about', '/pricing', '/templates'];
+      
+      for (const route of publicRoutes) {
+        const request = new NextRequest(`http://localhost:3000${route}`);
         const response = await middleware(request);
-        expect(response).not.toBeDefined();
+        expect(response?.status).toBe(200);
       }
     });
   });
 
-  describe('CORS Headers', () => {
-    it('should add CORS headers to API responses', async () => {
-      mockGetToken.mockResolvedValue({ sub: 'user-123' });
-
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios', {
-        headers: {
-          'origin': 'https://app.example.com'
-        }
-      });
-
-      const response = await middleware(request);
-
-      // In a real implementation, middleware might add CORS headers
-      // This test would verify those headers are set correctly
-      expect(response).not.toBeDefined();
-    });
-
-    it('should handle preflight OPTIONS requests', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios', {
-        method: 'OPTIONS',
-        headers: {
-          'access-control-request-method': 'POST',
-          'origin': 'https://app.example.com'
-        }
-      });
-
-      const response = await middleware(request);
-
-      // Preflight requests should be handled appropriately
-      expect(response).not.toBeDefined();
-    });
-  });
-
-  describe('Rate Limiting', () => {
-    it('should add rate limit headers', async () => {
-      mockGetToken.mockResolvedValue({ sub: 'user-123' });
-
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/enhance-bio');
-      const response = await middleware(request);
-
-      // In a real implementation, rate limit headers would be added
-      expect(response).not.toBeDefined();
-    });
-  });
-
-  describe('Security Headers', () => {
-    it('should add security headers to responses', async () => {
-      const request = new NextRequest('http://localhost:3000/');
-      const response = await middleware(request);
-
-      // Security headers would be added by middleware
-      expect(response).not.toBeDefined();
-    });
-  });
-
-  describe('Locale Handling', () => {
-    it('should handle locale prefixes', async () => {
-      const request = new NextRequest('http://localhost:3000/es/dashboard');
-      mockGetToken.mockResolvedValue({ sub: 'user-123' });
-
-      const response = await middleware(request);
-
-      expect(response).not.toBeDefined();
-    });
-
-    it('should detect and redirect to appropriate locale', async () => {
-      const request = new NextRequest('http://localhost:3000/', {
-        headers: {
-          'accept-language': 'en-US,en;q=0.9'
-        }
-      });
-
-      const response = await middleware(request);
-
-      // Locale detection logic would be tested here
-      expect(response).not.toBeDefined();
-    });
-  });
-
   describe('Error Handling', () => {
-    it('should handle errors gracefully', async () => {
-      mockGetToken.mockRejectedValue(new Error('Token error'));
+    it('should handle Supabase errors gracefully', async () => {
+      mockSupabaseClient.auth.getSession.mockRejectedValue(new Error('Session error'));
 
       const request = new NextRequest('http://localhost:3000/dashboard');
       const response = await middleware(request);
@@ -214,23 +221,45 @@ describe('Main Middleware', () => {
       expect(response?.status).toBe(307);
       expect(response?.headers.get('location')).toContain('/auth/signin');
     });
+
+    it('should skip auth when Supabase is not configured', async () => {
+      // Mock config without Supabase
+      const { middleware: middlewareWithoutSupabase } = await import('@/middleware');
+      jest.doMock('@/lib/config', () => ({
+        env: {},
+        services: { supabase: false },
+      }));
+
+      const request = new NextRequest('http://localhost:3000/dashboard');
+      const response = await middlewareWithoutSupabase(request);
+
+      // Without Supabase, middleware should allow request to continue
+      expect(response?.status).toBe(200);
+    });
   });
 
-  describe('Matcher Configuration', () => {
-    it('should skip middleware for excluded paths', async () => {
-      const excludedPaths = [
-        '/_next/image',
-        '/api/auth/providers',
-        '/.well-known/security.txt'
-      ];
+  describe('Cookie Handling', () => {
+    it('should properly handle cookies for session management', async () => {
+      const request = new NextRequest('http://localhost:3000/dashboard');
+      
+      // Mock cookie operations
+      const mockCookieSet = jest.fn();
+      (request.cookies as any).set = mockCookieSet;
 
-      // These paths would be handled by the matcher config
-      // and middleware wouldn't run for them
-      for (const path of excludedPaths) {
-        const request = new NextRequest(`http://localhost:3000${path}`);
-        const response = await middleware(request);
-        expect(response).not.toBeDefined();
-      }
+      await middleware(request);
+
+      // Verify Supabase client was created with proper cookie handling
+      expect(mockCreateServerClient).toHaveBeenCalledWith(
+        'https://test.supabase.co',
+        'test-anon-key',
+        expect.objectContaining({
+          cookies: expect.objectContaining({
+            get: expect.any(Function),
+            set: expect.any(Function),
+            remove: expect.any(Function),
+          }),
+        })
+      );
     });
   });
 });

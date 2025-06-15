@@ -66,7 +66,7 @@ export class DatabaseSeeder {
           logger.error('Database client not initialized');
           return false;
         }
-        
+
         const { count, error } = await this.client
           .from(table)
           .select('*', { count: 'exact', head: true });
@@ -105,7 +105,7 @@ export class DatabaseSeeder {
         logger.error('Database client not initialized');
         return false;
       }
-      
+
       const { error } = await this.client
         .from('subscription_plans')
         .select('id')
@@ -212,7 +212,7 @@ export class DatabaseSeeder {
           logger.error('Database client not initialized');
           continue;
         }
-        
+
         const { error } = await this.client
           .from(table)
           .delete()
@@ -264,7 +264,7 @@ export class DatabaseSeeder {
           logger.error('Database client not initialized');
           continue;
         }
-        
+
         const { count, error } = await this.client
           .from(table)
           .select('*', { count: 'exact', head: true });

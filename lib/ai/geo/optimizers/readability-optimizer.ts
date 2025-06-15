@@ -53,12 +53,12 @@ export class ReadabilityOptimizer {
    */
   private removeJargon(content: string): string {
     const jargonMap: Record<string, string> = {
-      'leverage': 'use',
-      'utilize': 'use',
-      'synergize': 'work together',
-      'ideate': 'brainstorm',
+      leverage: 'use',
+      utilize: 'use',
+      synergize: 'work together',
+      ideate: 'brainstorm',
       'circle back': 'follow up',
-      'bandwidth': 'capacity',
+      bandwidth: 'capacity',
       'paradigm shift': 'major change',
       'core competency': 'main skill',
       'value proposition': 'benefit',
@@ -66,7 +66,7 @@ export class ReadabilityOptimizer {
     };
 
     let cleaned = content;
-    
+
     for (const [jargon, replacement] of Object.entries(jargonMap)) {
       const regex = new RegExp(`\\b${jargon}\\b`, 'gi');
       cleaned = cleaned.replace(regex, replacement);
@@ -86,7 +86,11 @@ export class ReadabilityOptimizer {
       const sentence = sentences[i];
       const prevSentence = sentences[i - 1];
 
-      if (i > 0 && prevSentence && this.needsTransition(prevSentence, sentence)) {
+      if (
+        i > 0 &&
+        prevSentence &&
+        this.needsTransition(prevSentence, sentence)
+      ) {
         // Add appropriate transition
         const transition = this.selectTransition(prevSentence, sentence);
         improved.push(transition + ' ' + sentence);
@@ -107,8 +111,8 @@ export class ReadabilityOptimizer {
     const currentWords = current.toLowerCase().split(/\s+/);
 
     // Check for shared topics
-    const sharedWords = prevWords.filter(word => 
-      currentWords.includes(word) && word.length > 4
+    const sharedWords = prevWords.filter(
+      word => currentWords.includes(word) && word.length > 4
     );
 
     // If sentences share content but don't have transitions
@@ -120,8 +124,14 @@ export class ReadabilityOptimizer {
    */
   private hasTransition(sentence: string): boolean {
     const transitions = [
-      'however', 'therefore', 'moreover', 'furthermore',
-      'additionally', 'consequently', 'nevertheless', 'thus'
+      'however',
+      'therefore',
+      'moreover',
+      'furthermore',
+      'additionally',
+      'consequently',
+      'nevertheless',
+      'thus',
     ];
 
     const firstWord = sentence.split(/\s+/)[0].toLowerCase();
@@ -133,10 +143,16 @@ export class ReadabilityOptimizer {
    */
   private selectTransition(prev: string, current: string): string {
     // Simple logic for demonstration
-    if (current.toLowerCase().includes('but') || current.toLowerCase().includes('however')) {
+    if (
+      current.toLowerCase().includes('but') ||
+      current.toLowerCase().includes('however')
+    ) {
       return 'However,';
     }
-    if (current.toLowerCase().includes('also') || current.toLowerCase().includes('too')) {
+    if (
+      current.toLowerCase().includes('also') ||
+      current.toLowerCase().includes('too')
+    ) {
       return 'Additionally,';
     }
     return 'Furthermore,';
@@ -171,7 +187,10 @@ export class ReadabilityOptimizer {
   calculateReadabilityScore(content: string): number {
     const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
     const words = content.split(/\s+/).filter(w => w.length > 0);
-    const syllables = words.reduce((count, word) => count + this.countSyllables(word), 0);
+    const syllables = words.reduce(
+      (count, word) => count + this.countSyllables(word),
+      0
+    );
 
     if (sentences.length === 0 || words.length === 0) return 0;
 
@@ -179,7 +198,8 @@ export class ReadabilityOptimizer {
     const avgWordsPerSentence = words.length / sentences.length;
     const avgSyllablesPerWord = syllables / words.length;
 
-    const score = 206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
+    const score =
+      206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
 
     // Normalize to 0-100
     return Math.max(0, Math.min(100, score));
@@ -190,23 +210,23 @@ export class ReadabilityOptimizer {
    */
   private countSyllables(word: string): number {
     word = word.toLowerCase().replace(/[^a-z]/g, '');
-    
+
     if (word.length <= 3) return 1;
-    
+
     // Count vowel groups
     const vowelGroups = word.match(/[aeiouy]+/g) || [];
     let count = vowelGroups.length;
-    
+
     // Adjust for silent e
     if (word.endsWith('e') && count > 1) {
       count--;
     }
-    
+
     // Adjust for common patterns
     if (word.endsWith('le') && count > 1) {
       count++;
     }
-    
+
     return Math.max(1, count);
   }
 }

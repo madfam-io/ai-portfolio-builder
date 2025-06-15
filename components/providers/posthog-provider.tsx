@@ -2,11 +2,15 @@
 
 import { useEffect } from 'react';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { usePostHog, captureEvent, EVENTS } from '@/lib/analytics/posthog/client';
+import {
+  usePostHog,
+  captureEvent,
+  EVENTS,
+} from '@/lib/analytics/posthog/client';
 
 /**
  * PostHog Provider Component
- * 
+ *
  * Handles:
  * - PostHog initialization
  * - Automatic page view tracking
@@ -17,10 +21,10 @@ import { usePostHog, captureEvent, EVENTS } from '@/lib/analytics/posthog/client
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  
+
   // Initialize PostHog and handle user identification
   usePostHog();
-  
+
   // Track page views on route change
   useEffect(() => {
     if (pathname) {
@@ -30,13 +34,15 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
         $pathname: pathname,
         $search: searchParams?.toString() || '',
         $referrer: document.referrer,
-        $referring_domain: document.referrer ? new URL(document.referrer).hostname : null,
+        $referring_domain: document.referrer
+          ? new URL(document.referrer).hostname
+          : null,
         viewport_width: window.innerWidth,
         viewport_height: window.innerHeight,
         screen_width: window.screen.width,
         screen_height: window.screen.height,
       });
-      
+
       // Track specific page types
       if (pathname.startsWith('/editor')) {
         captureEvent(EVENTS.EDITOR_OPENED, {
@@ -50,6 +56,6 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [pathname, searchParams]);
-  
+
   return <>{children}</>;
 }

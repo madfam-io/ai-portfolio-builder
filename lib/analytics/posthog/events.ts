@@ -1,6 +1,6 @@
 /**
  * PostHog Event Tracking Utilities
- * 
+ *
  * Centralized event tracking functions for consistent analytics
  */
 
@@ -26,44 +26,56 @@ export const trackUserLogout = () => {
 };
 
 // Portfolio Events
-export const trackPortfolioCreated = (portfolioId: string, properties?: {
-  template?: string;
-  ai_assisted?: boolean;
-  sections?: string[];
-}) => {
+export const trackPortfolioCreated = (
+  portfolioId: string,
+  properties?: {
+    template?: string;
+    ai_assisted?: boolean;
+    sections?: string[];
+  }
+) => {
   captureEnhancedEvent(EVENTS.PORTFOLIO_CREATED, {
     portfolio_id: portfolioId,
     ...properties,
   });
 };
 
-export const trackPortfolioUpdated = (portfolioId: string, properties?: {
-  section?: string;
-  field?: string;
-  update_type?: 'manual' | 'ai_generated';
-}) => {
+export const trackPortfolioUpdated = (
+  portfolioId: string,
+  properties?: {
+    section?: string;
+    field?: string;
+    update_type?: 'manual' | 'ai_generated';
+  }
+) => {
   captureEvent(EVENTS.PORTFOLIO_UPDATED, {
     portfolio_id: portfolioId,
     ...properties,
   });
 };
 
-export const trackPortfolioPublished = (portfolioId: string, properties?: {
-  subdomain?: string;
-  custom_domain?: string;
-  variant_count?: number;
-}) => {
+export const trackPortfolioPublished = (
+  portfolioId: string,
+  properties?: {
+    subdomain?: string;
+    custom_domain?: string;
+    variant_count?: number;
+  }
+) => {
   captureEnhancedEvent(EVENTS.PORTFOLIO_PUBLISHED, {
     portfolio_id: portfolioId,
     ...properties,
   });
 };
 
-export const trackPortfolioViewed = (portfolioSlug: string, properties?: {
-  variant_id?: string;
-  referrer?: string;
-  is_owner?: boolean;
-}) => {
+export const trackPortfolioViewed = (
+  portfolioSlug: string,
+  properties?: {
+    variant_id?: string;
+    referrer?: string;
+    is_owner?: boolean;
+  }
+) => {
   captureEvent(EVENTS.PORTFOLIO_VIEWED, {
     portfolio_slug: portfolioSlug,
     ...properties,
@@ -71,11 +83,15 @@ export const trackPortfolioViewed = (portfolioSlug: string, properties?: {
 };
 
 // Editor Events
-export const trackEditorSectionEdited = (portfolioId: string, section: string, properties?: {
-  edit_type?: 'add' | 'update' | 'delete' | 'reorder';
-  ai_assisted?: boolean;
-  field?: string;
-}) => {
+export const trackEditorSectionEdited = (
+  portfolioId: string,
+  section: string,
+  properties?: {
+    edit_type?: 'add' | 'update' | 'delete' | 'reorder';
+    ai_assisted?: boolean;
+    field?: string;
+  }
+) => {
   captureEvent(EVENTS.EDITOR_SECTION_EDITED, {
     portfolio_id: portfolioId,
     section,
@@ -83,11 +99,14 @@ export const trackEditorSectionEdited = (portfolioId: string, section: string, p
   });
 };
 
-export const trackEditorThemeChanged = (portfolioId: string, properties?: {
-  from_theme?: string;
-  to_theme?: string;
-  customization_type?: string;
-}) => {
+export const trackEditorThemeChanged = (
+  portfolioId: string,
+  properties?: {
+    from_theme?: string;
+    to_theme?: string;
+    customization_type?: string;
+  }
+) => {
   captureEvent(EVENTS.EDITOR_THEME_CHANGED, {
     portfolio_id: portfolioId,
     ...properties,
@@ -95,21 +114,27 @@ export const trackEditorThemeChanged = (portfolioId: string, properties?: {
 };
 
 // Variant Events
-export const trackVariantCreated = (variantId: string, properties?: {
-  portfolio_id?: string;
-  audience_type?: string;
-  based_on_variant?: string;
-}) => {
+export const trackVariantCreated = (
+  variantId: string,
+  properties?: {
+    portfolio_id?: string;
+    audience_type?: string;
+    based_on_variant?: string;
+  }
+) => {
   captureEnhancedEvent(EVENTS.VARIANT_CREATED, {
     variant_id: variantId,
     ...properties,
   });
 };
 
-export const trackVariantUpdated = (variantId: string, properties?: {
-  update_type?: string;
-  fields_updated?: string[];
-}) => {
+export const trackVariantUpdated = (
+  variantId: string,
+  properties?: {
+    update_type?: string;
+    fields_updated?: string[];
+  }
+) => {
   captureEvent(EVENTS.VARIANT_UPDATED, {
     variant_id: variantId,
     ...properties,
@@ -124,10 +149,13 @@ export const trackVariantSwitched = (properties?: {
   captureEvent(EVENTS.VARIANT_SWITCHED, properties);
 };
 
-export const trackVariantPublished = (variantId: string, properties?: {
-  portfolio_id?: string;
-  audience_type?: string;
-}) => {
+export const trackVariantPublished = (
+  variantId: string,
+  properties?: {
+    portfolio_id?: string;
+    audience_type?: string;
+  }
+) => {
   captureEnhancedEvent(EVENTS.VARIANT_PUBLISHED, {
     variant_id: variantId,
     ...properties,
@@ -165,42 +193,55 @@ export const trackAISuggestionRejected = (properties?: {
 };
 
 // Engagement Events
-export const trackContactClicked = (portfolioSlug: string, properties?: {
-  contact_type?: 'email' | 'phone' | 'linkedin' | 'twitter' | 'github';
-  variant_id?: string;
-}) => {
+export const trackContactClicked = (
+  portfolioSlug: string,
+  properties?: {
+    contact_type?: 'email' | 'phone' | 'linkedin' | 'twitter' | 'github';
+    variant_id?: string;
+  }
+) => {
   captureEnhancedEvent(EVENTS.CONTACT_CLICKED, {
     portfolio_slug: portfolioSlug,
     ...properties,
   });
 };
 
-export const trackResumeDownloaded = (portfolioSlug: string, properties?: {
-  format?: 'pdf' | 'docx';
-  variant_id?: string;
-}) => {
+export const trackResumeDownloaded = (
+  portfolioSlug: string,
+  properties?: {
+    format?: 'pdf' | 'docx';
+    variant_id?: string;
+  }
+) => {
   captureEnhancedEvent(EVENTS.RESUME_DOWNLOADED, {
     portfolio_slug: portfolioSlug,
     ...properties,
   });
 };
 
-export const trackSocialLinkClicked = (portfolioSlug: string, properties?: {
-  platform?: string;
-  variant_id?: string;
-}) => {
+export const trackSocialLinkClicked = (
+  portfolioSlug: string,
+  properties?: {
+    platform?: string;
+    variant_id?: string;
+  }
+) => {
   captureEvent(EVENTS.SOCIAL_LINK_CLICKED, {
     portfolio_slug: portfolioSlug,
     ...properties,
   });
 };
 
-export const trackProjectViewed = (portfolioSlug: string, projectId: string, properties?: {
-  project_name?: string;
-  has_demo?: boolean;
-  has_github?: boolean;
-  variant_id?: string;
-}) => {
+export const trackProjectViewed = (
+  portfolioSlug: string,
+  projectId: string,
+  properties?: {
+    project_name?: string;
+    has_demo?: boolean;
+    has_github?: boolean;
+    variant_id?: string;
+  }
+) => {
   captureEvent(EVENTS.PROJECT_VIEWED, {
     portfolio_slug: portfolioSlug,
     project_id: projectId,
@@ -236,7 +277,11 @@ export const trackPaymentCompleted = (properties?: {
 };
 
 // Funnel tracking
-export const trackOnboardingStep = (step: number, stepName: string, properties?: Record<string, any>) => {
+export const trackOnboardingStep = (
+  step: number,
+  stepName: string,
+  properties?: Record<string, any>
+) => {
   captureEvent('onboarding_step_completed', {
     step_number: step,
     step_name: stepName,
@@ -244,7 +289,15 @@ export const trackOnboardingStep = (step: number, stepName: string, properties?:
   });
 };
 
-export const trackConversionFunnel = (stage: 'landed' | 'signed_up' | 'created_portfolio' | 'published' | 'upgraded', properties?: Record<string, any>) => {
+export const trackConversionFunnel = (
+  stage:
+    | 'landed'
+    | 'signed_up'
+    | 'created_portfolio'
+    | 'published'
+    | 'upgraded',
+  properties?: Record<string, any>
+) => {
   captureEvent('conversion_funnel', {
     stage,
     ...properties,

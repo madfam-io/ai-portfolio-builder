@@ -1,5 +1,9 @@
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
@@ -21,28 +25,52 @@ export const POST = versionedApiHandler(
       // Check subdomain requirements
       const subdomainRegex = /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/;
       if (!subdomainRegex.test(subdomain)) {
-        return apiError('Invalid subdomain format', { 
+        return apiError('Invalid subdomain format', {
           status: 400,
-          data: { 
-            requirements: 'Subdomain must be 3-63 characters, start and end with a letter or number, and contain only lowercase letters, numbers, and hyphens'
-          }
+          data: {
+            requirements:
+              'Subdomain must be 3-63 characters, start and end with a letter or number, and contain only lowercase letters, numbers, and hyphens',
+          },
         });
       }
 
       // Reserved subdomains
       const reservedSubdomains = [
-        'www', 'app', 'api', 'admin', 'dashboard', 'auth', 
-        'login', 'signup', 'about', 'contact', 'help', 'support',
-        'blog', 'news', 'press', 'media', 'static', 'assets',
-        'public', 'private', 'secure', 'portal', 'account',
-        'profile', 'settings', 'config', 'test', 'demo'
+        'www',
+        'app',
+        'api',
+        'admin',
+        'dashboard',
+        'auth',
+        'login',
+        'signup',
+        'about',
+        'contact',
+        'help',
+        'support',
+        'blog',
+        'news',
+        'press',
+        'media',
+        'static',
+        'assets',
+        'public',
+        'private',
+        'secure',
+        'portal',
+        'account',
+        'profile',
+        'settings',
+        'config',
+        'test',
+        'demo',
       ];
 
       if (reservedSubdomains.includes(subdomain)) {
-        return apiSuccess({ 
-          available: false, 
+        return apiSuccess({
+          available: false,
           reason: 'reserved',
-          message: 'This subdomain is reserved' 
+          message: 'This subdomain is reserved',
         });
       }
 
@@ -60,22 +88,26 @@ export const POST = versionedApiHandler(
 
       if (fetchError) {
         logger.error('Database error checking subdomain:', fetchError);
-        return apiError('Failed to check subdomain availability', { status: 500 });
+        return apiError('Failed to check subdomain availability', {
+          status: 500,
+        });
       }
 
       // Check if subdomain is available
-      const isAvailable = !existingPortfolios || existingPortfolios.length === 0 || 
-        (existingPortfolios.length === 1 && existingPortfolios[0]?.id === currentPortfolioId);
+      const isAvailable =
+        !existingPortfolios ||
+        existingPortfolios.length === 0 ||
+        (existingPortfolios.length === 1 &&
+          existingPortfolios[0]?.id === currentPortfolioId);
 
-      return apiSuccess({ 
+      return apiSuccess({
         available: isAvailable,
         subdomain,
         reason: isAvailable ? null : 'taken',
-        message: isAvailable 
-          ? 'Subdomain is available' 
-          : 'This subdomain is already taken'
+        message: isAvailable
+          ? 'Subdomain is available'
+          : 'This subdomain is already taken',
       });
-
     } catch (error) {
       logger.error('Unexpected error in check-subdomain:', error as Error);
       if (error instanceof SyntaxError) {
