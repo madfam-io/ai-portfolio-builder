@@ -4,7 +4,7 @@ import { useRouter, useParams } from 'next/navigation';
 import React, { useState, useEffect, useCallback } from 'react';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { createClient } from '@/lib/supabase/client';
 import {
   calculateExperimentResults,
@@ -32,7 +32,7 @@ import type {
 
 export default function ExperimentDetailsPage(): React.ReactElement {
   const { isAdmin, canAccess } = useAuth();
-  // const { t } = useLanguage(); // _TODO: Add translations
+  const { t } = useLanguage();
   const router = useRouter();
   const params = useParams();
   const experimentId = params.id as string;
@@ -267,7 +267,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <p className="text-gray-500 _dark:text-gray-400">
-          Experiment not found
+          {t.experimentsNotFound}
         </p>
       </div>
     );

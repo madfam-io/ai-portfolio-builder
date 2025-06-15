@@ -296,7 +296,7 @@ export class DatabaseSeeder {
 /**
  * Quick seeding function for development
  */
-export async function quickSeed(
+async function quickSeed(
   options?: Partial<SeedingOptions>
 ): Promise<SeedingResult> {
   const seeder = new DatabaseSeeder({
@@ -305,14 +305,14 @@ export async function quickSeed(
   });
 
   await seeder.initialize();
-  return await seeder.seed();
+  return seeder.seed();
 }
 
 /**
  * Check if database needs seeding (utility function)
  */
-export async function isDatabaseEmpty(): Promise<boolean> {
+async function isDatabaseEmpty(): Promise<boolean> {
   const seeder = new DatabaseSeeder();
   await seeder.initialize();
-  return await seeder.needsSeeding();
+  return seeder.needsSeeding();
 }

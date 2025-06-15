@@ -474,7 +474,7 @@ export async function seedRepositories(
 /**
  * Combined seeding function for GitHub data
  */
-export async function seedGitHubData(
+async function seedGitHubData(
   client: any,
   options: SeedingOptions
 ): Promise<number> {

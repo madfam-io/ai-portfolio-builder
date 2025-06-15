@@ -25,7 +25,7 @@ export class GEOScoreCalculator {
    * Calculate overall GEO score
    */
   calculateGEOScore(
-    original: string,
+    _original: string,
     optimized: string,
     keywords: string[],
     contentType: string
@@ -33,7 +33,13 @@ export class GEOScoreCalculator {
     const metrics = this.calculateMetrics(optimized, keywords, contentType);
 
     // Weight factors based on content type
-    const weights = this.getWeights(contentType);
+    const weights = this.getWeights(contentType) || {
+      keyword: 0.2,
+      readability: 0.25,
+      structure: 0.2,
+      length: 0.15,
+      uniqueness: 0.2,
+    };
 
     // Calculate individual scores
     const scores = {
@@ -46,11 +52,11 @@ export class GEOScoreCalculator {
 
     // Calculate weighted overall score
     const overall =
-      scores.keyword * weights.keyword +
-      scores.readability * weights.readability +
-      scores.structure * weights.structure +
-      scores.length * weights.length +
-      scores.uniqueness * weights.uniqueness;
+      scores.keyword * (weights.keyword ?? 0.2) +
+      scores.readability * (weights.readability ?? 0.25) +
+      scores.structure * (weights.structure ?? 0.2) +
+      scores.length * (weights.length ?? 0.15) +
+      scores.uniqueness * (weights.uniqueness ?? 0.2);
 
     return {
       overall: Math.round(overall),
@@ -110,7 +116,16 @@ export class GEOScoreCalculator {
       },
     };
 
-    return weights[contentType] || weights.default;
+    return (
+      weights[contentType] ||
+      weights.default || {
+        keyword: 0.2,
+        readability: 0.25,
+        structure: 0.2,
+        length: 0.15,
+        uniqueness: 0.2,
+      }
+    );
   }
 
   /**
@@ -205,6 +220,10 @@ export class GEOScoreCalculator {
     };
 
     const ideal = idealLengths[contentType] || idealLengths.default;
+
+    if (!ideal) {
+      return 75; // Default score if no ideal found
+    }
 
     if (wordCount < ideal.min) {
       return (wordCount / ideal.min) * 100;

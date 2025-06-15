@@ -299,7 +299,7 @@ export async function seedUsers(
 /**
  * Get user templates for referencing in other seeds
  */
-export function getUserTemplates() {
+function getUserTemplates() {
   return USER_TEMPLATES.map((template, index) => ({
     ...template,
     id: `00000000-0000-0000-0000-00000000000${index + 1}`,

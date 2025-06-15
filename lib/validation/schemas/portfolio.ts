@@ -178,8 +178,8 @@ export const publishPortfolioSchema = z.object({
 });
 
 // Export types
-export type CreatePortfolioInput = z.infer<typeof createPortfolioSchema>;
-export type UpdatePortfolioInput = z.infer<typeof updatePortfolioSchema>;
-export type PortfolioQueryInput = z.infer<typeof portfolioQuerySchema>;
-export type SubdomainCheckInput = z.infer<typeof subdomainCheckSchema>;
-export type PublishPortfolioInput = z.infer<typeof publishPortfolioSchema>;
+type CreatePortfolioInput = z.infer<typeof createPortfolioSchema>;
+type UpdatePortfolioInput = z.infer<typeof updatePortfolioSchema>;
+type PortfolioQueryInput = z.infer<typeof portfolioQuerySchema>;
+type SubdomainCheckInput = z.infer<typeof subdomainCheckSchema>;
+type PublishPortfolioInput = z.infer<typeof publishPortfolioSchema>;

@@ -2,6 +2,9 @@
 
 Complete guide for developing, testing, and contributing to the PRISMA AI Portfolio Builder platform.
 
+**Last Updated**: June 15, 2025  
+**Version**: v0.3.0-beta
+
 ## 📋 Table of Contents
 
 1. [Quick Start](#quick-start)
@@ -1015,3 +1018,7 @@ export function DebugInfo() {
 ---
 
 This development guide provides everything needed to contribute effectively to PRISMA. For additional questions, check our [Architecture Guide](./ARCHITECTURE.md) or [create an issue](https://github.com/aldoruizluna/ai-portfolio-builder/issues).
+
+---
+
+_Development guide last updated: June 15, 2025_

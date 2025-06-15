@@ -10,7 +10,7 @@ import { showErrorToast, showSuccessToast } from './ui-store';
 /**
  * Async action wrapper with loading and error handling
  */
-export function createAsyncAction<T extends any[], R>(
+function createAsyncAction<T extends any[], R>(
   action: (...args: T) => Promise<R>,
   options?: {
     loadingMessage?: string;
@@ -68,7 +68,7 @@ export interface LoadingActions {
   resetLoading: () => void;
 }
 
-export const createLoadingSlice = <T extends object>(
+const createLoadingSlice = <T extends object>(
   initialState?: Partial<LoadingState>
 ): StateCreator<
   T & LoadingState & LoadingActions,
@@ -136,7 +136,7 @@ export interface ErrorActions {
   hasError: (key?: string) => boolean;
 }
 
-export const createErrorSlice = <T extends object>(
+const createErrorSlice = <T extends object>(
   initialState?: Partial<ErrorState>
 ): StateCreator<
   T & ErrorState & ErrorActions,
@@ -195,7 +195,7 @@ export const createErrorSlice = <T extends object>(
 /**
  * Optimistic update helper
  */
-export function createOptimisticUpdate<T, R>(
+function createOptimisticUpdate<T, R>(
   optimisticUpdate: (state: T) => void,
   actualUpdate: () => Promise<R>,
   rollback: (state: T, error: Error) => void
@@ -228,7 +228,7 @@ export function createOptimisticUpdate<T, R>(
 /**
  * Debounced action creator
  */
-export function createDebouncedAction<T extends any[], R>(
+function createDebouncedAction<T extends any[], R>(
   action: (...args: T) => R | Promise<R>,
   delay: number = 300
 ) {
@@ -255,7 +255,7 @@ export function createDebouncedAction<T extends any[], R>(
 /**
  * Store reset helper
  */
-export function createResetAction<T extends object>(
+function createResetAction<T extends object>(
   initialState: T
 ): StateCreator<T & { reset: () => void }, [], [], { reset: () => void }> {
   return set => ({
@@ -273,7 +273,7 @@ export interface PersistOptions<T> {
   partialize?: (state: T) => Partial<T>;
 }
 
-export function createPersistConfig<T>(options: PersistOptions<T>) {
+function createPersistConfig<T>(options: PersistOptions<T>) {
   return {
     name: options.name,
     version: options.version || 1,

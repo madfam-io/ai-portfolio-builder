@@ -84,17 +84,17 @@ export class ReadabilityOptimizer {
 
     for (let i = 0; i < sentences.length; i++) {
       const sentence = sentences[i];
-      const prevSentence = sentences[i - 1];
+      const prevSentence = i > 0 ? sentences[i - 1] : undefined;
 
       if (
-        i > 0 &&
         prevSentence &&
+        sentence &&
         this.needsTransition(prevSentence, sentence)
       ) {
         // Add appropriate transition
         const transition = this.selectTransition(prevSentence, sentence);
         improved.push(transition + ' ' + sentence);
-      } else {
+      } else if (sentence) {
         improved.push(sentence);
       }
     }
@@ -134,14 +134,14 @@ export class ReadabilityOptimizer {
       'thus',
     ];
 
-    const firstWord = sentence.split(/\s+/)[0].toLowerCase();
+    const firstWord = sentence.split(/\s+/)[0]?.toLowerCase() || '';
     return transitions.includes(firstWord.replace(/[.,!?]/, ''));
   }
 
   /**
    * Select appropriate transition
    */
-  private selectTransition(prev: string, current: string): string {
+  private selectTransition(_prev: string, current: string): string {
     // Simple logic for demonstration
     if (
       current.toLowerCase().includes('but') ||

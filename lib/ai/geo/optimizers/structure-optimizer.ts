@@ -41,8 +41,9 @@ export class StructureOptimizer {
 
     // Add remaining sections
     for (let i = 1; i < sections.length; i++) {
-      if (sections[i].length > 30) {
-        structured += sections[i] + '\n\n';
+      const section = sections[i];
+      if (section && section.length > 30) {
+        structured += section + '\n\n';
       }
     }
 
@@ -109,7 +110,7 @@ export class StructureOptimizer {
     let structured = '';
 
     for (let i = 0; i < paragraphs.length; i++) {
-      const para = paragraphs[i].trim();
+      const para = paragraphs[i]?.trim() || '';
 
       if (para.length > 200) {
         // Break long paragraphs

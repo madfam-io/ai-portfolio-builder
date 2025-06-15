@@ -66,7 +66,7 @@ export class WidgetErrorBoundary extends Component<
     // Reset error boundary when resetKeys change
     if (props.resetKeys && state.lastResetKeys) {
       const hasChanged = props.resetKeys.some(
-        (key, index) => key !== state.lastResetKeys![index]
+        (key, index) => key !== state.lastResetKeys?.[index]
       );
 
       if (hasChanged) {

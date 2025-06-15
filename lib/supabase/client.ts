@@ -15,8 +15,13 @@ export function createClient() {
   }
 
   // TypeScript knows these are defined if services.supabase is true
-  return createBrowserClient(
-    env.NEXT_PUBLIC_SUPABASE_URL!,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const url = env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!url || !anonKey) {
+    logger.warn('Supabase URL or ANON_KEY not configured');
+    return null;
+  }
+  
+  return createBrowserClient(url, anonKey);
 }

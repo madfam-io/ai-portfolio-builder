@@ -50,7 +50,7 @@ export async function authenticateUser(_request: NextRequest) {
 
     return {
       id: user.id,
-      email: user.email!,
+      email: user.email || '',
       role: profile?.role || 'user',
     };
   } catch (error) {
@@ -103,7 +103,7 @@ export function forbiddenResponse(message = 'Insufficient permissions') {
  * @param handler - The route handler function
  * @param requiredPermission - Optional permission requirement
  */
-export function requireAuth(
+function requireAuth(
   handler: (request: NextRequest, user: unknown) => Promise<NextResponse>,
   requiredPermission?: string
 ) {

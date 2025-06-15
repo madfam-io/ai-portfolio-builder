@@ -202,7 +202,7 @@ export function validateRequest(options: ValidationOptions) {
 /**
  * Common validation schemas
  */
-export const commonSchemas = {
+const commonSchemas = {
   // ID validation
   id: z.string().uuid('Invalid ID format'),
 
@@ -259,7 +259,7 @@ export const commonSchemas = {
 /**
  * Helper function to create validated API route handler
  */
-export function createValidatedHandler<T extends ValidationOptions>(
+function createValidatedHandler<T extends ValidationOptions>(
   validation: T,
   handler: (
     request: NextRequest & { validated: unknown },

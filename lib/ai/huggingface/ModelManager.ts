@@ -85,7 +85,7 @@ export class ModelManager {
   /**
    * Load available models from cache or defaults
    */
-  private async loadAvailableModels(): Promise<void> {
+  private loadAvailableModels(): void {
     // Initialize with defaults immediately
     this.availableModels = this.getDefaultAvailableModels();
   }
@@ -98,12 +98,12 @@ export class ModelManager {
       // Check cache first
       const cached = await cache.get('huggingface:available_models');
       if (cached) {
-        this.availableModels = JSON.parse(cached);
+        this.availableModels = JSON.parse(cached as string);
         return;
       }
 
       // Fetch latest models
-      const models = await this.fetchLatestModels();
+      const models = this.fetchLatestModels();
       this.availableModels = models;
 
       // Cache for 1 hour
@@ -120,7 +120,7 @@ export class ModelManager {
   /**
    * Fetch latest model status from HuggingFace
    */
-  private async fetchLatestModels(): Promise<AvailableModel[]> {
+  private fetchLatestModels(): AvailableModel[] {
     // For now, return enhanced defaults
     // In production, this would check actual API status
     const models = this.getDefaultAvailableModels();

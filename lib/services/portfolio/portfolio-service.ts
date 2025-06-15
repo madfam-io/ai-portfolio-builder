@@ -53,19 +53,15 @@ export class PortfolioService extends BaseService<Portfolio> {
       logger.info('Fetching portfolio', { portfolioId: id });
 
       // Check cache first
-      const cacheKey = `${CACHE_KEYS.PORTFOLIO}${id}`;
-      const cached = await cache.get<Portfolio>(cacheKey);
-      if (cached) {
-        logger.debug('Portfolio cache hit', { portfolioId: id });
-        return cached;
-      }
+      const cached = await this.getPortfolioFromCache(id);
+      if (cached) return cached;
 
       // Fetch from database
       const portfolio = await this.repository.findById(id);
-
-      // Cache the result
+      
+      // Cache the result if found
       if (portfolio) {
-        await cache.set(cacheKey, portfolio, 300); // 5 minutes
+        await this.cachePortfolio(id, portfolio);
       }
 
       return portfolio;
@@ -75,6 +71,28 @@ export class PortfolioService extends BaseService<Portfolio> {
       });
       throw error;
     }
+  }
+
+  /**
+   * Get portfolio from cache
+   */
+  private async getPortfolioFromCache(id: string): Promise<Portfolio | null> {
+    const cacheKey = `${CACHE_KEYS.PORTFOLIO}${id}`;
+    const cached = await cache.get<Portfolio>(cacheKey);
+    
+    if (cached) {
+      logger.debug('Portfolio cache hit', { portfolioId: id });
+    }
+    
+    return cached;
+  }
+
+  /**
+   * Cache portfolio data
+   */
+  private async cachePortfolio(id: string, portfolio: Portfolio): Promise<void> {
+    const cacheKey = `${CACHE_KEYS.PORTFOLIO}${id}`;
+    await cache.set(cacheKey, portfolio, 300); // 5 minutes
   }
 
   /**

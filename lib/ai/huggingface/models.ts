@@ -15,7 +15,7 @@ export interface AvailableModel {
   lastUpdated: string;
 }
 
-export class ModelManager {
+class ModelManager {
   private availableModels: AvailableModel[] = [];
   private selectedModels: Record<string, string> = {};
 
@@ -169,7 +169,7 @@ export class ModelManager {
   /**
    * Refresh available models (placeholder for future API integration)
    */
-  async refreshAvailableModels(): Promise<void> {
+  refreshAvailableModels(): void {
     // In the future, this could fetch live model availability from HuggingFace
     // For now, we use the static list
     this.loadAvailableModels();

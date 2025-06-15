@@ -103,7 +103,7 @@ export function formatCSPHeader(directives: CSPDirectives): string {
 export function generateCSPHeader(directives: CSPDirectives): string {
   return Object.entries(directives)
     .map(([key, values]) => {
-      const validValues = values.filter(v => v !== '');
+      const validValues = values.filter((v: string) => v !== '');
       return validValues.length > 0 ? `${key} ${validValues.join(' ')}` : '';
     })
     .filter(directive => directive !== '')
@@ -114,8 +114,8 @@ export function generateCSPHeader(directives: CSPDirectives): string {
  * Generate nonce for inline scripts
  */
 export function generateNonce(): string {
-  if (typeof crypto !== 'undefined' && crypto.randomBytes) {
-    return crypto.randomBytes(16).toString('base64');
+  if (typeof crypto !== 'undefined' && 'randomBytes' in crypto) {
+    return (crypto as any).randomBytes(16).toString('base64');
   }
   // Fallback for environments without crypto
   return Buffer.from(Math.random().toString()).toString('base64');

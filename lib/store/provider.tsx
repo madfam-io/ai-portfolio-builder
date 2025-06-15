@@ -49,7 +49,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
         // Listen for auth changes
         const {
           data: { subscription },
-        } = supabase.auth.onAuthStateChange(async (event, session) => {
+        } = supabase.auth.onAuthStateChange((event, session) => {
           setSession(session);
           setUser(session?.user || null);
 
@@ -122,7 +122,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
 }
 
 // Export a hook to ensure provider is used
-export function useStoreProvider() {
+function useStoreProvider() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   if (typeof window !== 'undefined' && !isAuthenticated) {

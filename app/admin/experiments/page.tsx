@@ -20,7 +20,7 @@ import { useRouter } from 'next/navigation';
 import React, { useState, useEffect } from 'react';
 
 import { useAuth } from '@/lib/contexts/AuthContext';
-// import { useLanguage } from '@/lib/i18n/refactored-context'; // _TODO: Add translations
+import { useLanguage } from '@/lib/i18n/refactored-context';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 
@@ -50,7 +50,7 @@ interface ExperimentWithVariants extends LandingPageExperiment {
 }
 export default function AdminExperimentsPage(): JSX.Element {
   const { isAdmin, canAccess } = useAuth();
-  // const { t } = useLanguage(); // _TODO: Add translations
+  const { t } = useLanguage();
   const router = useRouter();
   const [experiments, setExperiments] = useState<ExperimentWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
@@ -195,10 +195,10 @@ export default function AdminExperimentsPage(): JSX.Element {
           <div className="flex items-center justify-between h-16">
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                A/B Testing Experiments
+                {t.experimentsTitle}
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Manage landing page experiments and track performance
+                {t.experimentsDescription}
               </p>
             </div>
             <Link
@@ -206,7 +206,7 @@ export default function AdminExperimentsPage(): JSX.Element {
               className="btn-primary inline-flex items-center"
             >
               <Plus className="mr-2" />
-              New Experiment
+              {t.experimentsNewExperiment}
             </Link>
           </div>
         </div>
@@ -220,7 +220,7 @@ export default function AdminExperimentsPage(): JSX.Element {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search experiments..."
+                placeholder={t.experimentsSearchPlaceholder}
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
@@ -236,12 +236,12 @@ export default function AdminExperimentsPage(): JSX.Element {
               }
               className="px-4 py-2 border border-gray-300 _dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
-              <option value="all">All Status</option>
-              <option value="active">Active</option>
-              <option value="paused">Paused</option>
-              <option value="completed">Completed</option>
-              <option value="draft">Draft</option>
-              <option value="archived">Archived</option>
+              <option value="all">{t.experimentsAllStatus}</option>
+              <option value="active">{t.experimentsActive}</option>
+              <option value="paused">{t.experimentsPaused}</option>
+              <option value="completed">{t.experimentsCompleted}</option>
+              <option value="draft">{t.experimentsDraft}</option>
+              <option value="archived">{t.experimentsArchived}</option>
             </select>
           </div>
         </div>
@@ -294,16 +294,16 @@ export default function AdminExperimentsPage(): JSX.Element {
                       <div className="flex items-center gap-6 text-sm text-gray-500 _dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
-                          <span>{totalVisitors.toLocaleString()} visitors</span>
+                          <span>{totalVisitors.toLocaleString()} {t.experimentsVisitors}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <TrendingUp className="w-4 h-4" />
-                          <span>{overallConversionRate} conversion</span>
+                          <span>{overallConversionRate} {t.experimentsConversion}</span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
                           <span>
-                            Created{' '}
+                            {t.experimentsCreated}{' '}
                             {new Date(
                               experiment.createdAt
                             ).toLocaleDateString()}
@@ -319,7 +319,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                             handleStatusChange(experiment.id, 'paused')
                           }
                           className="p-2 text-yellow-600 _hover:bg-yellow-50 dark:hover:bg-yellow-900/20 rounded-lg transition-colors"
-                          title="Pause Experiment"
+                          title={t.experimentsPauseTitle}
                         >
                           <Pause className="w-5 h-5" />
                         </button>
@@ -330,7 +330,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                             handleStatusChange(experiment.id, 'active')
                           }
                           className="p-2 text-green-600 _hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
-                          title="Resume Experiment"
+                          title={t.experimentsResumeTitle}
                         >
                           <Play className="w-5 h-5" />
                         </button>
@@ -338,14 +338,14 @@ export default function AdminExperimentsPage(): JSX.Element {
                       <Link
                         href={`/admin/experiments/${experiment.id}`}
                         className="p-2 text-gray-600 _hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                        title="View Details"
+                        title={t.experimentsViewDetails}
                       >
                         <BarChart2 className="w-5 h-5" />
                       </Link>
                       <Link
                         href={`/admin/experiments/${experiment.id}/edit`}
                         className="p-2 text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors"
-                        title="Edit Experiment"
+                        title={t.experimentsEditTitle}
                       >
                         <Edit className="w-5 h-5" />
                       </Link>
@@ -372,7 +372,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                               className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <CheckCircle className="w-4 h-4" />
-                              Mark as Completed
+                              {t.experimentsMarkCompleted}
                             </button>
                             <button
                               onClick={() => {
@@ -382,7 +382,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                               className="w-full px-4 py-2 text-left text-sm text-gray-700 _dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 flex items-center gap-2"
                             >
                               <Archive className="w-4 h-4" />
-                              Archive
+                              {t.experimentsArchive}
                             </button>
                           </div>
                         )}
@@ -394,7 +394,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                 {/* Variants Performance */}
                 <div className="p-6">
                   <h4 className="text-sm font-medium text-gray-900 _dark:text-gray-100 mb-4">
-                    Variant Performance
+                    {t.experimentsVariantPerformance}
                   </h4>
                   <div className="space-y-3">
                     {experiment.variants?.map((variant: VariantFromDB) => {
@@ -422,24 +422,24 @@ export default function AdminExperimentsPage(): JSX.Element {
                                 </span>
                                 {variant.is_control && (
                                   <span className="px-2 py-0.5 text-xs bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 rounded">
-                                    Control
+                                    {t.experimentsControl}
                                   </span>
                                 )}
                                 {isWinning && (
                                   <span className="px-2 py-0.5 text-xs bg-green-200 _dark:bg-green-800 text-green-700 dark:text-green-300 rounded">
-                                    Winner
+                                    {t.experimentsWinner}
                                   </span>
                                 )}
                               </div>
                               <div className="text-sm text-gray-500 _dark:text-gray-400 mt-1">
-                                {variant.traffic_percentage}% traffic allocation
+                                {variant.traffic_percentage}% {t.experimentsTrafficAllocation}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-6">
                             <div className="text-right">
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                Visitors
+                                {t.experimentsVisitors && t.experimentsVisitors.charAt(0).toUpperCase() + t.experimentsVisitors.slice(1)}
                               </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
                                 {variant.visitors.toLocaleString()}
@@ -447,7 +447,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                             </div>
                             <div className="text-right">
                               <div className="text-sm text-gray-500 _dark:text-gray-400">
-                                Conversions
+                                {t.experimentsConversions}
                               </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
                                 {variant.conversions.toLocaleString()}
@@ -455,7 +455,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                             </div>
                             <div className="text-right">
                               <div className="text-sm text-gray-500 _dark:text-gray-400">
-                                Rate
+                                {t.experimentsRate}
                               </div>
                               <div className="font-medium text-lg text-gray-900 dark:text-gray-100">
                                 {conversionRate}
@@ -474,8 +474,8 @@ export default function AdminExperimentsPage(): JSX.Element {
             <div className="text-center py-12">
               <p className="text-gray-500 _dark:text-gray-400 mb-4">
                 {searchTerm || statusFilter !== 'all'
-                  ? 'No experiments found matching your filters.'
-                  : 'No experiments created yet.'}
+                  ? t.experimentsNoResults
+                  : t.experimentsEmpty}
               </p>
               {!searchTerm && statusFilter === 'all' && (
                 <Link
@@ -483,7 +483,7 @@ export default function AdminExperimentsPage(): JSX.Element {
                   className="btn-primary inline-flex items-center"
                 >
                   <Plus className="mr-2" />
-                  Create Your First Experiment
+                  {t.experimentsCreateFirst}
                 </Link>
               )}
             </div>

@@ -181,7 +181,7 @@ export interface KeywordResearch {
 /**
  * Content template with GEO
  */
-export interface GEOTemplate {
+interface GEOTemplate {
   id: string;
   name: string;
   contentType: string;
@@ -201,7 +201,7 @@ export interface GEOTemplate {
 /**
  * GEO analytics data
  */
-export interface GEOAnalytics {
+interface GEOAnalytics {
   contentId: string;
   impressions: number;
   clicks: number;
@@ -220,7 +220,7 @@ export interface GEOAnalytics {
 /**
  * Platform-specific optimization
  */
-export interface PlatformOptimization {
+interface PlatformOptimization {
   platform: 'google' | 'bing' | 'linkedin' | 'twitter' | 'facebook';
   requirements: {
     titleLength: { min: number; max: number };
@@ -234,7 +234,7 @@ export interface PlatformOptimization {
 /**
  * AI content disclosure
  */
-export interface AIContentDisclosure {
+interface AIContentDisclosure {
   isAIGenerated: boolean;
   isAIAssisted: boolean;
   humanReviewed: boolean;

@@ -17,23 +17,24 @@ export const CACHE_KEYS = {
 export class RedisCache {
   private store = new Map<string, unknown>();
 
-  async connect(): Promise<void> {
+  connect(): void {
     // Mock implementation
   }
 
-  async get<T = unknown>(key: string): Promise<T | null> {
-    return this.store.get(key) || null;
+  get<T = unknown>(key: string): T | null {
+    const value = this.store.get(key);
+    return (value as T) ?? null;
   }
 
-  async set<T = unknown>(key: string, value: T, _ttl?: number): Promise<void> {
+  set<T = unknown>(key: string, value: T, _ttl?: number): void {
     this.store.set(key, value);
   }
 
-  async del(key: string): Promise<void> {
+  del(key: string): void {
     this.store.delete(key);
   }
 
-  async clearPattern(pattern: string): Promise<void> {
+  clearPattern(pattern: string): void {
     const regex = new RegExp(pattern.replace('*', '.*'));
     for (const key of this.store.keys()) {
       if (regex.test(key)) {
@@ -42,7 +43,7 @@ export class RedisCache {
     }
   }
 
-  async disconnect(): Promise<void> {
+  disconnect(): void {
     this.store.clear();
   }
 }

@@ -262,7 +262,7 @@ export class SuggestionGenerator {
 
     const range = idealRanges[contentType] || idealRanges.default;
 
-    if (metrics.wordCount < range.min) {
+    if (range && metrics.wordCount < range.min) {
       const deficit = range.min - metrics.wordCount;
       suggestions.push({
         type: 'length',
@@ -287,7 +287,7 @@ export class SuggestionGenerator {
           impact: 15,
         });
       }
-    } else if (metrics.wordCount > range.max) {
+    } else if (range && metrics.wordCount > range.max) {
       suggestions.push({
         type: 'length',
         priority: 'medium',

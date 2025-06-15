@@ -111,7 +111,7 @@ export class PerformanceMonitor {
       return 0;
     }
 
-    const duration = endTime! - startTime;
+    const duration = (endTime ?? 0) - startTime;
 
     const metric: PerformanceMetric = {
       name,
@@ -189,7 +189,7 @@ class PerformanceMonitorSingleton extends PerformanceMonitor {
   }
 }
 
-export const perfMonitor = PerformanceMonitorSingleton.getInstance();
+const perfMonitor = PerformanceMonitorSingleton.getInstance();
 
 // Performance stats storage
 const performanceStats: Record<
@@ -260,7 +260,7 @@ export async function measureAsyncOperation<T>(
 /**
  * Track API call performance
  */
-export async function trackApiCall(
+async function trackApiCall(
   endpoint: string,
   options?: RequestInit
 ): Promise<Response> {
@@ -281,7 +281,7 @@ export async function trackApiCall(
     }
 
     // Track in stats
-    await measureAsyncOperation(operationName, async () => response);
+    await measureAsyncOperation(operationName, () => Promise.resolve(response));
 
     return response;
   } catch (error) {
@@ -298,14 +298,14 @@ export async function trackApiCall(
 /**
  * Get performance statistics
  */
-export function getPerformanceStats() {
+function getPerformanceStats() {
   return { ...performanceStats };
 }
 
 /**
  * Reset performance statistics
  */
-export function resetStats(): void {
+function resetStats(): void {
   Object.keys(performanceStats).forEach(key => {
     delete performanceStats[key];
   });
@@ -314,7 +314,7 @@ export function resetStats(): void {
 /**
  * Hook for component render tracking
  */
-export function useRenderTracking(componentName: string): void {
+function useRenderTracking(componentName: string): void {
   const renderCount = useRef(0);
 
   useEffect(() => {

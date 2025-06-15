@@ -60,21 +60,21 @@ export class AnalyticsService {
   /**
    * Sync repositories from GitHub
    */
-  async syncRepositories(): Promise<Repository[]> {
+  syncRepositories(): Promise<Repository[]> {
     return this.repositoryService.syncRepositories();
   }
 
   /**
    * Get user's repositories
    */
-  async getRepositories(): Promise<Repository[]> {
+  getRepositories(): Promise<Repository[]> {
     return this.repositoryService.getRepositories();
   }
 
   /**
    * Get repository by ID
    */
-  async getRepository(repositoryId: string): Promise<Repository | null> {
+  getRepository(repositoryId: string): Promise<Repository | null> {
     return this.repositoryService.getRepository(repositoryId);
   }
 
@@ -138,7 +138,7 @@ export class AnalyticsService {
   /**
    * Get repository analytics
    */
-  async getRepositoryAnalytics(
+  getRepositoryAnalytics(
     repositoryId: string
   ): Promise<RepositoryAnalytics | null> {
     return this.repositoryService.getRepositoryAnalytics(repositoryId);

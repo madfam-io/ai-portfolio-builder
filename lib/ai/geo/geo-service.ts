@@ -217,10 +217,10 @@ export class GEOService {
   /**
    * Generate SEO metadata for content
    */
-  async generateMetadata(
+  generateMetadata(
     content: string,
     settings: Partial<GEOSettings>
-  ): Promise<SEOMetadata> {
+  ): SEOMetadata {
     const defaultSettings = {
       primaryKeyword: '',
       secondaryKeywords: [],

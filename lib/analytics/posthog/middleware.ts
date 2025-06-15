@@ -16,7 +16,38 @@ import { logger } from '@/lib/utils/logger';
  * - Feature usage
  */
 
-export async function analyticsMiddleware(
+async function trackSuccessEvents(
+  userId: string,
+  endpoint: string,
+  method: string
+): Promise<void> {
+  switch (endpoint) {
+    case '/api/v1/portfolios':
+      if (method === 'POST') {
+        await captureServerEvent(userId, 'api_portfolio_created', {
+          endpoint,
+          method,
+        });
+      }
+      break;
+
+    case '/api/v1/auth/login':
+      await captureServerEvent(userId, 'api_user_logged_in', {
+        endpoint,
+        method,
+      });
+      break;
+
+    case '/api/v1/auth/signup':
+      await captureServerEvent(userId, 'api_user_signed_up', {
+        endpoint,
+        method,
+      });
+      break;
+  }
+}
+
+async function analyticsMiddleware(
   request: NextRequest,
   response: NextResponse
 ): Promise<NextResponse> {
@@ -53,41 +84,17 @@ export async function analyticsMiddleware(
   try {
     // Track API request
     const duration = Date.now() - startTime;
-    await trackAPIPerformance(
-      userId,
+    await trackAPIPerformance(userId, {
       endpoint,
       method,
-      response.status,
-      duration
-    );
+      statusCode: response.status,
+      duration,
+    });
 
     // Track specific API events
     if (response.status >= 200 && response.status < 300) {
       // Success events
-      switch (endpoint) {
-        case '/api/v1/portfolios':
-          if (method === 'POST') {
-            await captureServerEvent(userId, 'api_portfolio_created', {
-              endpoint,
-              method,
-            });
-          }
-          break;
-
-        case '/api/v1/auth/login':
-          await captureServerEvent(userId, 'api_user_logged_in', {
-            endpoint,
-            method,
-          });
-          break;
-
-        case '/api/v1/auth/signup':
-          await captureServerEvent(userId, 'api_user_signed_up', {
-            endpoint,
-            method,
-          });
-          break;
-      }
+      await trackSuccessEvents(userId, endpoint, method);
     } else if (response.status >= 400) {
       // Error tracking
       await trackServerError(
@@ -120,7 +127,7 @@ export async function analyticsMiddleware(
 }
 
 // Helper to extract common properties from request
-export function extractRequestProperties(
+function extractRequestProperties(
   request: NextRequest
 ): Record<string, any> {
   const headers = request.headers;

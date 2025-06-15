@@ -8,6 +8,30 @@ import { AppError } from '@/types/errors';
  * Provides comprehensive input validation for API routes
  */
 
+// Helper function to parse JSON body
+async function parseJSONBody(
+  request: NextRequest,
+  maxBodySize?: number
+): Promise<unknown> {
+  try {
+    const text = await request.text();
+
+    // Check body size
+    if (maxBodySize && text.length > maxBodySize) {
+      throw new AppError(
+        'Request body too large',
+        'PAYLOAD_TOO_LARGE',
+        413
+      );
+    }
+
+    return text ? JSON.parse(text) : {};
+  } catch (error) {
+    if (error instanceof AppError) throw error;
+    throw new AppError('Invalid JSON in request body', 'INVALID_JSON', 400);
+  }
+}
+
 // Validation options
 export interface ValidationOptions {
   // Which parts of the request to validate
@@ -168,23 +192,7 @@ export async function validateRequest<
       let bodyData: unknown = {};
 
       // Parse JSON body
-      try {
-        const text = await request.text();
-
-        // Check body size
-        if (opts.maxBodySize && text.length > opts.maxBodySize) {
-          throw new AppError(
-            'Request body too large',
-            'PAYLOAD_TOO_LARGE',
-            413
-          );
-        }
-
-        bodyData = text ? JSON.parse(text) : {};
-      } catch (error) {
-        if (error instanceof AppError) throw error;
-        throw new AppError('Invalid JSON in request body', 'INVALID_JSON', 400);
-      }
+      bodyData = await parseJSONBody(request, opts.maxBodySize);
 
       // Sanitize if enabled
       if (opts.sanitize) {
@@ -278,16 +286,16 @@ export async function validateRequest<
 /**
  * Create a validation middleware for API routes
  */
-export function createValidationMiddleware<
+function createValidationMiddleware<
   TBody = unknown,
   TQuery = unknown,
   TParams = unknown,
   THeaders = unknown,
 >(schemas: RequestSchemas, options: ValidationOptions = {}) {
-  return async (
+  return (
     request: NextRequest,
     _context?: { params?: Record<string, string> }
-  ): Promise<ValidatedRequest<TBody, TQuery, TParams, THeaders>> => {
+  ): ValidatedRequest<TBody, TQuery, TParams, THeaders> => {
     // If route params are provided in context, we need to handle them
     // This would require modifying the extractRouteParams function
     return validateRequest<TBody, TQuery, TParams, THeaders>(
@@ -301,7 +309,7 @@ export function createValidationMiddleware<
 /**
  * Helper to create error response
  */
-export function validationErrorResponse(error: unknown): NextResponse {
+function validationErrorResponse(error: unknown): NextResponse {
   if (error instanceof AppError) {
     return NextResponse.json(
       {
@@ -323,7 +331,7 @@ export function validationErrorResponse(error: unknown): NextResponse {
 }
 
 // Common validation schemas
-export const commonSchemas = {
+const commonSchemas = {
   // UUID validation
   uuid: z.string().uuid('Invalid UUID format'),
 

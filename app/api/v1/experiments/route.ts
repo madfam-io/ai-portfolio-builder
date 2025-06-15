@@ -1,13 +1,12 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-// TODO: Implement auth functions
-// import {
-//   authenticateUser,
-//   hasPermission,
-//   unauthorizedResponse,
-//   forbiddenResponse,
-// } from '@/lib/auth/server';
+import {
+  authenticateUser,
+  hasPermission,
+  unauthorizedResponse,
+  forbiddenResponse,
+} from '@/lib/api/middleware/auth';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
@@ -61,16 +60,14 @@ const createExperimentSchema = z.object({
  */
 export async function GET(request: Request): Promise<Response> {
   try {
-    // TODO: Implement authentication
-    // const user = await authenticateUser(request);
-    // if (!user) {
-    //   return unauthorizedResponse();
-    // }
+    const user = await authenticateUser(request as any);
+    if (!user) {
+      return unauthorizedResponse();
+    }
 
-    // TODO: Check permissions
-    // if (!hasPermission(user, 'experiments:view')) {
-    //   return forbiddenResponse();
-    // }
+    if (!hasPermission(user, 'experiments:view')) {
+      return forbiddenResponse();
+    }
 
     const supabase = await createClient();
 
@@ -162,16 +159,14 @@ export async function GET(request: Request): Promise<Response> {
  */
 export async function POST(request: Request): Promise<Response> {
   try {
-    // TODO: Implement authentication
-    // const user = await authenticateUser(request);
-    // if (!user) {
-    //   return unauthorizedResponse();
-    // }
+    const user = await authenticateUser(request as any);
+    if (!user) {
+      return unauthorizedResponse();
+    }
 
-    // TODO: Check permissions
-    // if (!hasPermission(user, 'experiments:manage')) {
-    //   return forbiddenResponse();
-    // }
+    if (!hasPermission(user, 'experiments:manage')) {
+      return forbiddenResponse();
+    }
 
     const supabase = await createClient();
 
@@ -213,7 +208,7 @@ export async function POST(request: Request): Promise<Response> {
         secondary_metrics: validatedData.secondaryMetrics || [],
         start_date: validatedData.startDate,
         end_date: validatedData.endDate,
-        // created_by: user.id, // TODO: Add authentication
+        created_by: user.id,
       })
       .select()
       .single();

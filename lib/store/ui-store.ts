@@ -128,12 +128,12 @@ export const useUIStore = create<UIState & UIActions>()(
 );
 
 // Selectors
-export const selectTheme = (state: UIState & UIActions) => state.theme;
-export const selectSidebarOpen = (state: UIState & UIActions) =>
+const selectTheme = (state: UIState & UIActions) => state.theme;
+const selectSidebarOpen = (state: UIState & UIActions) =>
   state.sidebarOpen;
-export const selectModals = (state: UIState & UIActions) => state.modals;
-export const selectToasts = (state: UIState & UIActions) => state.toasts;
-export const selectGlobalLoading = (state: UIState & UIActions) =>
+const selectModals = (state: UIState & UIActions) => state.modals;
+const selectToasts = (state: UIState & UIActions) => state.toasts;
+const selectGlobalLoading = (state: UIState & UIActions) =>
   state.globalLoading;
 
 // Utility functions for common toast patterns
@@ -153,7 +153,7 @@ export const showErrorToast = (title: string, description?: string) => {
   });
 };
 
-export const showWarningToast = (title: string, description?: string) => {
+const showWarningToast = (title: string, description?: string) => {
   useUIStore.getState().showToast({
     title,
     description,
@@ -161,7 +161,7 @@ export const showWarningToast = (title: string, description?: string) => {
   });
 };
 
-export const showInfoToast = (title: string, description?: string) => {
+const showInfoToast = (title: string, description?: string) => {
   useUIStore.getState().showToast({
     title,
     description,

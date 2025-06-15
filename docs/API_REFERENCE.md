@@ -2,6 +2,10 @@
 
 Complete API documentation for the PRISMA AI Portfolio Builder platform.
 
+**Last Updated**: June 15, 2025  
+**Version**: v0.3.0-beta  
+**API Version**: v1
+
 ## 📋 Table of Contents
 
 1. [Overview](#overview)
@@ -48,14 +52,14 @@ interface APIResponse<T> {
 {
   "data": { ... },
   "message": "Portfolio created successfully",
-  "timestamp": "2025-01-11T10:30:00Z",
+  "timestamp": "2025-06-15T10:30:00Z",
   "version": "v1"
 }
 
 // Error Response
 {
   "error": "Portfolio not found",
-  "timestamp": "2025-01-11T10:30:00Z",
+  "timestamp": "2025-06-15T10:30:00Z",
   "version": "v1"
 }
 ```
@@ -1173,3 +1177,7 @@ result = prisma.enhance_bio(
 ---
 
 This API reference covers all current and planned endpoints for the PRISMA platform. For additional help, see our [Development Guide](./DEVELOPMENT.md) or [AI Features Documentation](./AI_FEATURES.md).
+
+---
+
+_API Reference last updated: June 15, 2025_

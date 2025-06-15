@@ -51,7 +51,7 @@ const VALIDATION_RULES = {
  * @param portfolio - Portfolio to validate
  * @returns Validation result with errors and warnings
  */
-export function validatePortfolio(portfolio: Portfolio): ValidationResult {
+function validatePortfolio(portfolio: Portfolio): ValidationResult {
   const errors: ValidationResult['errors'] = [];
   const warnings: ValidationResult['warnings'] = [];
 
@@ -284,7 +284,7 @@ export function sanitizePortfolioData<T extends Partial<Portfolio>>(
     ];
 
     urlFields.forEach(field => {
-      const value = sanitized.social![field as keyof typeof sanitized.social];
+      const value = sanitized.social?.[field as keyof typeof sanitized.social];
       if (typeof value === 'string') {
         (sanitized.social as any)[field] = sanitizeUrl(value);
       }

@@ -111,11 +111,11 @@ type SanitizableValue = string | number | boolean | null | undefined |
  */
 export function sanitizeObject<T extends SanitizableValue>(obj: T): T {
   if (typeof obj === 'string') {
-    return sanitizeString(obj);
+    return sanitizeString(obj) as T;
   }
   
   if (Array.isArray(obj)) {
-    return obj.map(item => sanitizeObject(item));
+    return obj.map(item => sanitizeObject(item)) as T;
   }
   
   if (obj !== null && typeof obj === 'object') {

@@ -10,7 +10,7 @@ export class ContentScorer {
   /**
    * Score content quality
    */
-  async scoreContent(content: string, type: string): Promise<QualityScore> {
+  scoreContent(content: string, type: string): QualityScore {
     try {
       // Basic quality metrics
       const readability = this.calculateReadabilityScore(content);

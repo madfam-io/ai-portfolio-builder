@@ -44,13 +44,16 @@ export async function generateMetadata({
   }
 
   // Extract SEO data from portfolio
-  const seoData = portfolio.data?.seo || {};
-  const title = seoData.title || `${portfolio.name} - ${portfolio.title}`;
+  const seoTitle = portfolio.data?.seoTitle as string | undefined;
+  const seoDescription = portfolio.data?.seoDescription as string | undefined;
+  const seoKeywords = portfolio.data?.seoKeywords as string | undefined;
+
+  const title = seoTitle || `${portfolio.name} - ${portfolio.title}`;
   const description =
-    seoData.description ||
+    seoDescription ||
     portfolio.bio ||
     `Professional portfolio of ${portfolio.name}`;
-  const keywords = seoData.keywords || '';
+  const keywords = seoKeywords || '';
 
   return {
     title,

@@ -25,7 +25,7 @@ export function OfflineState({
   const { t } = useLanguage();
   const [isRetrying, setIsRetrying] = useState(false);
 
-  const handleRetry = async () => {
+  const handleRetry = () => {
     setIsRetrying(true);
 
     // Check if we're back online

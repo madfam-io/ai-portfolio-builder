@@ -194,7 +194,8 @@ export class MetricsCalculationService {
         if (!commitsByDate.has(date)) {
           commitsByDate.set(date, []);
         }
-        commitsByDate.get(date)!.push(commit);
+        const commits = commitsByDate.get(date);
+        if (commits) commits.push(commit);
       });
 
       // Create analytics entries

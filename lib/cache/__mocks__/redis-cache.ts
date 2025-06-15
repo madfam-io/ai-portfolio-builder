@@ -13,23 +13,23 @@ export const CACHE_KEYS = {
 class MockCacheService {
   private mockCache = new Map<string, any>();
 
-  async connect(): Promise<void> {
+  connect(): void {
     // Mock connection
   }
 
-  async get<T = any>(key: string): Promise<T | null> {
+  get<T = any>(key: string): T | null {
     return this.mockCache.get(key) || null;
   }
 
-  async set<T = any>(key: string, value: T, _ttl?: number): Promise<void> {
+  set<T = any>(key: string, value: T, _ttl?: number): void {
     this.mockCache.set(key, value);
   }
 
-  async del(key: string): Promise<void> {
+  del(key: string): void {
     this.mockCache.delete(key);
   }
 
-  async clearPattern(pattern: string): Promise<void> {
+  clearPattern(pattern: string): void {
     const keys = Array.from(this.mockCache.keys());
     keys.forEach(key => {
       if (key.includes(pattern.replace('*', ''))) {
@@ -38,7 +38,7 @@ class MockCacheService {
     });
   }
 
-  async disconnect(): Promise<void> {
+  disconnect(): void {
     this.mockCache.clear();
   }
 }

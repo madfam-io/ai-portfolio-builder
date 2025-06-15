@@ -11,6 +11,8 @@ import {
   MAX_FILE_SIZE,
   validateFile,
 } from '@/lib/supabase/storage';
+import { useAsyncForm } from '@/lib/hooks/useAsyncError';
+import { errorLogger, ValidationError, ExternalServiceError } from '@/lib/services/error';
 
 interface ImageUploadProps {
   value?: string;
@@ -36,7 +38,6 @@ export function ImageUpload({
   const { t } = useLanguage();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -72,55 +73,53 @@ export function ImageUpload({
     [disabled, isUploading]
   );
 
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
+  const uploadForm = useAsyncForm(async (file: File) => {
     // Validate file
     const validation = validateFile(file);
     if (!validation.valid) {
-      toast({
-        title: t.error || 'Error',
-        description: validation.error,
-        variant: 'destructive',
-      });
-      return;
+      throw new ValidationError(validation.error || 'Invalid file');
     }
 
-    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('type', type);
+    formData.append('portfolioId', portfolioId);
 
-    try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('type', type);
-      formData.append('portfolioId', portfolioId);
+    const response = await fetch('/api/v1/upload/image', {
+      method: 'POST',
+      body: formData,
+    });
 
-      const response = await fetch('/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+    const data = await response.json();
 
-      const data = await response.json();
+    if (!response.ok || !data.success) {
+      throw new ExternalServiceError('Upload API', new Error(data.error || 'Upload failed'));
+    }
 
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Upload failed');
-      }
-
-      onChange(data.data.url);
+    return data.data.url;
+  }, {
+    onSuccess: (url) => {
+      onChange(url);
       toast({
         title: t.success || 'Success',
         description: t.imageUploaded || 'Image uploaded successfully',
       });
-    } catch (error) {
+    },
+    onError: (error) => {
       toast({
         title: t.error || 'Error',
         description:
-          error instanceof Error
+          error instanceof ValidationError
             ? error.message
             : t.uploadFailed || 'Failed to upload image',
         variant: 'destructive',
       });
-    } finally {
-      setIsUploading(false);
-    }
+    },
+  });
+
+  const handleFile = async (file: File | undefined) => {
+    if (!file) return;
+    await uploadForm.submit(file);
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,40 +129,53 @@ export function ImageUpload({
     }
   };
 
-  const handleRemove = async () => {
-    if (!value || isUploading) return;
+  const deleteForm = useAsyncForm(async () => {
+    if (!value) throw new Error('No image to delete');
 
     // Extract path from URL
     const url = new URL(value);
     const path = url.pathname.split('/').slice(-3).join('/'); // Get last 3 segments
 
-    try {
-      const response = await fetch(
-        `/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`,
-        {
-          method: 'DELETE',
-        }
-      );
-
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || 'Delete failed');
+    const response = await fetch(
+      `/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`,
+      {
+        method: 'DELETE',
       }
+    );
 
+    const data = await response.json();
+
+    if (!response.ok || !data.success) {
+      throw new ExternalServiceError('Delete API', new Error(data.error || 'Delete failed'));
+    }
+  }, {
+    onSuccess: () => {
       onChange(undefined);
       toast({
         title: t.success || 'Success',
         description: t.imageRemoved || 'Image removed successfully',
       });
-    } catch (error) {
+    },
+    onError: (error) => {
+      errorLogger.logError(error, {
+        component: 'ImageUpload',
+        action: 'delete_image',
+        metadata: { value, type },
+      });
       toast({
         title: t.error || 'Error',
         description: t.deleteFailed || 'Failed to remove image',
         variant: 'destructive',
       });
-    }
+    },
+  });
+
+  const handleRemove = async () => {
+    if (!value || uploadForm.isSubmitting || deleteForm.isSubmitting) return;
+    await deleteForm.submit();
   };
+
+  const isUploading = uploadForm.isSubmitting || deleteForm.isSubmitting;
 
   const aspectClasses = {
     square: 'aspect-square',
@@ -211,7 +223,7 @@ export function ImageUpload({
             isDragActive
               ? 'border-primary bg-primary/5'
               : 'border-gray-300 hover:border-gray-400',
-            disabled && 'opacity-50 cursor-not-allowed',
+            (disabled || isUploading) && 'opacity-50 cursor-not-allowed',
             aspectClasses[aspectRatio]
           )}
           onClick={() =>

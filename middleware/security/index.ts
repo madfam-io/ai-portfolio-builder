@@ -237,7 +237,7 @@ export function applySecurityToResponse(
 /**
  * Security utilities for use in API routes
  */
-export const securityUtils = {
+const securityUtils = {
   /**
    * Validate API key
    */

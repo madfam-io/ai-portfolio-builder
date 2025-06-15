@@ -47,7 +47,7 @@ export const SEED_CONFIG: SeedConfig[] = [
     dependencies: ['subscription_plans'],
     fn: async (client, options) => {
       const { seedUsers } = await import('./users');
-      return await seedUsers(client, options);
+      return seedUsers(client, options);
     },
     critical: true,
   },
@@ -56,7 +56,7 @@ export const SEED_CONFIG: SeedConfig[] = [
     dependencies: ['users'],
     fn: async (client, options) => {
       const { seedPortfolios } = await import('./portfolios');
-      return await seedPortfolios(client, options);
+      return seedPortfolios(client, options);
     },
     critical: false,
   },
@@ -65,7 +65,7 @@ export const SEED_CONFIG: SeedConfig[] = [
     dependencies: ['users'],
     fn: async (client, options) => {
       const { seedGitHubIntegrations } = await import('./github-data');
-      return await seedGitHubIntegrations(client, options);
+      return seedGitHubIntegrations(client, options);
     },
     critical: false,
   },
@@ -74,7 +74,7 @@ export const SEED_CONFIG: SeedConfig[] = [
     dependencies: ['github_integrations'],
     fn: async (client, options) => {
       const { seedRepositories } = await import('./github-data');
-      return await seedRepositories(client, options);
+      return seedRepositories(client, options);
     },
     critical: false,
   },
@@ -83,7 +83,7 @@ export const SEED_CONFIG: SeedConfig[] = [
     dependencies: ['portfolios', 'repositories'],
     fn: async (client, options) => {
       const { seedAnalytics } = await import('./analytics');
-      return await seedAnalytics(client, options);
+      return seedAnalytics(client, options);
     },
     critical: false,
   },
@@ -143,6 +143,25 @@ export async function executeSeeding(
   return result;
 }
 
+// Helper function to process node dependencies
+function processNodeDependencies(
+  current: string,
+  graph: Map<string, string[]>,
+  inDegree: Map<string, number>,
+  queue: string[]
+): void {
+  for (const [node, dependencies] of graph) {
+    if (dependencies.includes(current)) {
+      const newDegree = (inDegree.get(node) ?? 0) - 1;
+      inDegree.set(node, newDegree);
+
+      if (newDegree === 0) {
+        queue.push(node);
+      }
+    }
+  }
+}
+
 /**
  * Resolve dependency order using topological sort
  */
@@ -168,20 +187,12 @@ function resolveDependencies(configs: SeedConfig[]): string[] {
   }
 
   while (queue.length > 0) {
-    const current = queue.shift()!;
+    const current = queue.shift();
+    if (!current) continue;
     result.push(current);
 
     // Remove edges from current node
-    for (const [node, dependencies] of graph) {
-      if (dependencies.includes(current)) {
-        const newDegree = inDegree.get(node)! - 1;
-        inDegree.set(node, newDegree);
-
-        if (newDegree === 0) {
-          queue.push(node);
-        }
-      }
-    }
+    processNodeDependencies(current, graph, inDegree, queue);
   }
 
   // Check for circular dependencies

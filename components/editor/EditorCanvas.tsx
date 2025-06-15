@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
 import { Portfolio } from '@/types/portfolio';
@@ -22,6 +23,28 @@ export function EditorCanvas({
   className,
 }: EditorCanvasProps) {
   const { t } = useLanguage();
+  const [showProjectModal, setShowProjectModal] = useState(false);
+  const [newProject, setNewProject] = useState({
+    title: '',
+    description: '',
+    technologies: [] as string[],
+    link: '',
+  });
+
+  const handleAddProject = () => {
+    if (newProject.title && newProject.description) {
+      const currentProjects = (portfolio.data?.projects as any[]) || [];
+      const project = {
+        id: `project-${Date.now()}`,
+        ...newProject,
+      };
+      onDataChange({ 
+        projects: [...currentProjects, project] 
+      });
+      setNewProject({ title: '', description: '', technologies: [], link: '' });
+      setShowProjectModal(false);
+    }
+  };
 
   return (
     <div className={cn('flex-1 overflow-y-auto bg-background', className)}>
@@ -45,7 +68,7 @@ export function EditorCanvas({
                   <input
                     type="text"
                     className="w-full px-3 py-2 border rounded-md"
-                    value={portfolio.data?.headline || ''}
+                    value={(portfolio.data?.headline as string) || ''}
                     onChange={e => onDataChange({ headline: e.target.value })}
                     placeholder={t.enterHeadline || 'Enter your headline'}
                   />
@@ -58,7 +81,7 @@ export function EditorCanvas({
                   <input
                     type="text"
                     className="w-full px-3 py-2 border rounded-md"
-                    value={portfolio.data?.tagline || ''}
+                    value={(portfolio.data?.tagline as string) || ''}
                     onChange={e => onDataChange({ tagline: e.target.value })}
                     placeholder={t.enterTagline || 'A short, memorable tagline'}
                   />
@@ -78,7 +101,7 @@ export function EditorCanvas({
                 <textarea
                   className="w-full px-3 py-2 border rounded-md"
                   rows={6}
-                  value={portfolio.data?.about || ''}
+                  value={(portfolio.data?.about as string) || ''}
                   onChange={e => onDataChange({ about: e.target.value })}
                   placeholder={
                     t.tellAboutYourself || 'Tell us about yourself...'
@@ -93,8 +116,8 @@ export function EditorCanvas({
                 {t.projectsSection || 'Projects'}
               </h2>
               <div className="space-y-4">
-                {portfolio.data?.projects?.map(
-                  (project: any, index: number) => (
+                {Array.isArray(portfolio.data?.projects) &&
+                  portfolio.data.projects.map((project: any, index: number) => (
                     <div
                       key={project.id || index}
                       className="p-4 border rounded-md"
@@ -104,13 +127,10 @@ export function EditorCanvas({
                         {project.description}
                       </p>
                     </div>
-                  )
-                )}
+                  ))}
                 <button
                   className="w-full py-2 border-2 border-dashed rounded-md hover:border-primary transition-colors"
-                  onClick={() => {
-                    // TODO: Add project modal
-                  }}
+                  onClick={() => setShowProjectModal(true)}
                 >
                   {t.addProject || '+ Add Project'}
                 </button>
@@ -119,6 +139,70 @@ export function EditorCanvas({
           </div>
         </div>
       </div>
+
+      {/* Project Modal */}
+      {showProjectModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-background rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4">
+              {t.addNewProject || 'Add New Project'}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  {t.projectTitle || 'Project Title'}
+                </label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={newProject.title}
+                  onChange={e => setNewProject({ ...newProject, title: e.target.value })}
+                  placeholder={t.enterProjectTitle || 'Enter project title'}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  {t.projectDescription || 'Description'}
+                </label>
+                <textarea
+                  className="w-full px-3 py-2 border rounded-md"
+                  rows={3}
+                  value={newProject.description}
+                  onChange={e => setNewProject({ ...newProject, description: e.target.value })}
+                  placeholder={t.describeProject || 'Describe your project...'}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">
+                  {t.projectLink || 'Project Link (optional)'}
+                </label>
+                <input
+                  type="url"
+                  className="w-full px-3 py-2 border rounded-md"
+                  value={newProject.link}
+                  onChange={e => setNewProject({ ...newProject, link: e.target.value })}
+                  placeholder="https://..."
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                className="flex-1 px-4 py-2 border rounded-md hover:bg-muted"
+                onClick={() => setShowProjectModal(false)}
+              >
+                {t.cancel || 'Cancel'}
+              </button>
+              <button
+                className="flex-1 px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+                onClick={handleAddProject}
+                disabled={!newProject.title || !newProject.description}
+              >
+                {t.addProject || 'Add Project'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

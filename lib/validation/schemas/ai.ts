@@ -109,9 +109,9 @@ export const aiFeedbackSchema = z.object({
 });
 
 // Export types
-export type EnhanceBioInput = z.infer<typeof enhanceBioSchema>;
-export type OptimizeProjectInput = z.infer<typeof optimizeProjectSchema>;
-export type RecommendTemplateInput = z.infer<typeof recommendTemplateSchema>;
-export type GenerateContentInput = z.infer<typeof generateContentSchema>;
-export type BatchAIOperationInput = z.infer<typeof batchAIOperationSchema>;
-export type AIFeedbackInput = z.infer<typeof aiFeedbackSchema>;
+type EnhanceBioInput = z.infer<typeof enhanceBioSchema>;
+type OptimizeProjectInput = z.infer<typeof optimizeProjectSchema>;
+type RecommendTemplateInput = z.infer<typeof recommendTemplateSchema>;
+type GenerateContentInput = z.infer<typeof generateContentSchema>;
+type BatchAIOperationInput = z.infer<typeof batchAIOperationSchema>;
+type AIFeedbackInput = z.infer<typeof aiFeedbackSchema>;

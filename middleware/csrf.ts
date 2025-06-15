@@ -123,7 +123,7 @@ export function csrfMiddleware(request: NextRequest): NextResponse | null {
 /**
  * Helper to get CSRF token for client-side requests
  */
-export function getCSRFToken(): string | null {
+function getCSRFToken(): string | null {
   if (typeof document === 'undefined') return null;
 
   const cookies = document.cookie.split(';');

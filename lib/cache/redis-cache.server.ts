@@ -35,7 +35,7 @@ class InMemoryCache {
   private maxMemory = 50 * 1024 * 1024; // 50MB maximum memory
   private currentMemory = 0;
 
-  async get(key: string): Promise<string | null> {
+  get(key: string): string | null {
     const item = this.cache.get(key);
     if (!item) return null;
 
@@ -48,7 +48,7 @@ class InMemoryCache {
     return JSON.stringify(item.value);
   }
 
-  async set(key: string, value: string, ttl?: number): Promise<void> {
+  set(key: string, value: string, ttl?: number): void {
     const expiry = Date.now() + (ttl || CACHE_CONFIG.defaultTTL) * 1000;
     const parsedValue = JSON.parse(value);
     const size = new TextEncoder().encode(value).length;
@@ -58,7 +58,7 @@ class InMemoryCache {
       this.cache.size >= this.maxSize ||
       this.currentMemory + size > this.maxMemory
     ) {
-      await this.evictOldestEntries();
+      this.evictOldestEntries();
     }
 
     // Remove old entry if exists
@@ -71,7 +71,7 @@ class InMemoryCache {
     this.currentMemory += size;
   }
 
-  private async evictOldestEntries(): Promise<void> {
+  private evictOldestEntries(): void {
     // Sort entries by expiry time
     const entries = Array.from(this.cache.entries()).sort(
       (a, b) => a[1].expiry - b[1].expiry
@@ -83,13 +83,15 @@ class InMemoryCache {
         this.currentMemory > this.maxMemory * 0.9) &&
       entries.length > 0
     ) {
-      const [key, item] = entries.shift()!;
+      const entry = entries.shift();
+      if (!entry) break;
+      const [key, item] = entry;
       this.currentMemory -= item.size;
       this.cache.delete(key);
     }
   }
 
-  async del(key: string): Promise<void> {
+  del(key: string): void {
     const item = this.cache.get(key);
     if (item) {
       this.currentMemory -= item.size;
@@ -97,7 +99,7 @@ class InMemoryCache {
     }
   }
 
-  async clear(): Promise<void> {
+  clear(): void {
     this.cache.clear();
     this.currentMemory = 0;
   }
@@ -158,7 +160,7 @@ class CacheService {
       const value =
         this.client && this.connected
           ? await this.client.get(key)
-          : await this.fallback.get(key);
+          : this.fallback.get(key);
 
       if (!value) return null;
 
@@ -183,7 +185,7 @@ class CacheService {
       if (this.client && this.connected) {
         await this.client.setEx(key, ttl, serialized);
       } else {
-        await this.fallback.set(key, serialized, ttl);
+        this.fallback.set(key, serialized, ttl);
       }
     } catch (error: unknown) {
       logger.error('Cache set error', error as Error, { key });
@@ -198,7 +200,7 @@ class CacheService {
       if (this.client && this.connected) {
         await this.client.del(key);
       } else {
-        await this.fallback.del(key);
+        this.fallback.del(key);
       }
     } catch (error: unknown) {
       logger.error('Cache delete error', error as Error, { key });
@@ -217,7 +219,7 @@ class CacheService {
         }
       } else {
         // For in-memory cache, clear all (pattern matching not supported)
-        await this.fallback.clear();
+        this.fallback.clear();
       }
     } catch (error: unknown) {
       logger.error('Cache clear pattern error', error as Error, { pattern });
@@ -255,7 +257,7 @@ process.on('SIGINT', async () => {
 /**
  * Cache decorator for methods
  */
-export function Cacheable(keyPrefix: string, ttl?: number) {
+function Cacheable(keyPrefix: string, ttl?: number) {
   return function (
     _target: unknown,
     propertyName: string,

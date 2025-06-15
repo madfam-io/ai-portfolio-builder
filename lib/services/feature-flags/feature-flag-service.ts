@@ -177,6 +177,127 @@ export class FeatureFlagService {
   }
 
   /**
+   * Process a single experiment for visitor
+   */
+  private static processExperiment(data: {
+    experiment: any;
+    visitorId: string;
+    visitorContext: any;
+    storedAssignments: any;
+    supabase: any;
+  }): Promise<GetActiveExperimentResponse | null> {
+    const { experiment, visitorId, visitorContext, storedAssignments, supabase } = data;
+    // Check if visitor is already assigned to this experiment
+    const existingAssignment = storedAssignments[experiment.id];
+    if (existingAssignment) {
+      const result = this.processExistingAssignment(
+        experiment,
+        existingAssignment
+      );
+      if (result) return result;
+    }
+
+    // Check targeting criteria
+    if (
+      !this.matchesTargeting(
+        experiment.target_audience,
+        visitorContext || {}
+      )
+    ) {
+      return null;
+    }
+
+    // Check traffic percentage for experiment
+    const experimentHash = this.hashToPercentage(
+      `${visitorId}-${experiment.id}`
+    );
+    if (experimentHash >= experiment.traffic_percentage) {
+      return null;
+    }
+
+    // Assign variant based on traffic allocation
+    const variantHash = this.hashToPercentage(
+      `${visitorId}-${experiment.id}-variant`
+    );
+    let cumulativePercentage = 0;
+
+    for (const variant of experiment.variants) {
+      cumulativePercentage += variant.traffic_percentage;
+
+      if (variantHash < cumulativePercentage) {
+        return this.assignAndRecordVariant({
+          experiment,
+          variant,
+          visitorId,
+          visitorContext,
+          supabase,
+        });
+      }
+    }
+
+    return null;
+  }
+
+  /**
+   * Process existing variant assignment
+   */
+  private static processExistingAssignment(
+    experiment: any,
+    existingAssignment: any
+  ): GetActiveExperimentResponse | null {
+    const variant = experiment.variants.find(
+      (v: any) => v.id === existingAssignment.variantId
+    );
+
+    if (variant) {
+      return {
+        experimentId: experiment.id,
+        variantId: variant.id,
+        variantName: variant.name,
+        components: variant.components,
+        themeOverrides: variant.theme_overrides,
+      };
+    }
+    return null;
+  }
+
+  /**
+   * Assign and record variant for visitor
+   */
+  private static async assignAndRecordVariant(
+    data: {
+      experiment: any;
+      variant: any;
+      visitorId: string;
+      visitorContext: any;
+      supabase: any;
+    }
+  ): Promise<GetActiveExperimentResponse> {
+    const { experiment, variant, visitorId, visitorContext, supabase } = data;
+    // Store assignment
+    await this.storeAssignment(experiment.id, variant.id);
+
+    // Record visitor in analytics
+    if (supabase) {
+      await supabase.rpc('record_landing_page_event', {
+        p_session_id: visitorId,
+        p_experiment_id: experiment.id,
+        p_variant_id: variant.id,
+        p_event_type: 'assignment',
+        p_event_data: { visitorContext },
+      });
+    }
+
+    return {
+      experimentId: experiment.id,
+      variantId: variant.id,
+      variantName: variant.name,
+      components: variant.components,
+      themeOverrides: variant.theme_overrides,
+    };
+  }
+
+  /**
    * Get active experiment and variant for the current visitor
    */
   static async getActiveExperiment(visitorContext?: {
@@ -216,76 +337,14 @@ export class FeatureFlagService {
 
       // Find the first matching experiment
       for (const experiment of experiments) {
-        // Check if visitor is already assigned to this experiment
-        const existingAssignment = storedAssignments[experiment.id];
-        if (existingAssignment) {
-          // Find the assigned variant
-          const variant = experiment.variants.find(
-            (v: any) => v.id === existingAssignment.variantId
-          );
-
-          if (variant) {
-            return {
-              experimentId: experiment.id,
-              variantId: variant.id,
-              variantName: variant.name,
-              components: variant.components,
-              themeOverrides: variant.theme_overrides,
-            };
-          }
-        }
-
-        // Check targeting criteria
-        if (
-          !this.matchesTargeting(
-            experiment.target_audience,
-            visitorContext || {}
-          )
-        ) {
-          continue;
-        }
-
-        // Check traffic percentage for experiment
-        const experimentHash = this.hashToPercentage(
-          `${visitorId}-${experiment.id}`
-        );
-        if (experimentHash >= experiment.traffic_percentage) {
-          continue;
-        }
-
-        // Assign variant based on traffic allocation
-        const variantHash = this.hashToPercentage(
-          `${visitorId}-${experiment.id}-variant`
-        );
-        let cumulativePercentage = 0;
-
-        for (const variant of experiment.variants) {
-          cumulativePercentage += variant.traffic_percentage;
-
-          if (variantHash < cumulativePercentage) {
-            // Store assignment
-            await this.storeAssignment(experiment.id, variant.id);
-
-            // Record visitor in analytics
-            if (supabase) {
-              await supabase.rpc('record_landing_page_event', {
-                p_session_id: visitorId,
-                p_experiment_id: experiment.id,
-                p_variant_id: variant.id,
-                p_event_type: 'assignment',
-                p_event_data: { visitorContext },
-              });
-            }
-
-            return {
-              experimentId: experiment.id,
-              variantId: variant.id,
-              variantName: variant.name,
-              components: variant.components,
-              themeOverrides: variant.theme_overrides,
-            };
-          }
-        }
+        const result = this.processExperiment({
+          experiment,
+          visitorId,
+          visitorContext,
+          storedAssignments,
+          supabase,
+        });
+        if (result) return result;
       }
 
       return null;
@@ -363,8 +422,8 @@ export class FeatureFlagService {
   /**
    * Get all active assignments for the current visitor
    */
-  static async getAssignments(): Promise<Record<string, VisitorAssignment>> {
-    return await this.getStoredAssignments();
+  static getAssignments(): Promise<Record<string, VisitorAssignment>> {
+    return this.getStoredAssignments();
   }
 
   /**

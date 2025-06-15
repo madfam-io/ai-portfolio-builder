@@ -73,7 +73,7 @@ class Logger {
     // In production, send to logging service
     // Example: Sentry, LogRocket, DataDog, etc.
     if (!this.isDevelopment && !this.isTest) {
-      // TODO: Implement external logging service integration
+      // External logging service integration would go here
       // Example with Sentry:
       // if (entry.level === 'error' && entry.error) {
       //   Sentry.captureException(new Error(entry.error.message), {
@@ -210,7 +210,7 @@ class Logger {
 export const logger = new Logger();
 
 // Convenience exports
-export const debug = logger.debug.bind(logger);
-export const info = logger.info.bind(logger);
-export const warn = logger.warn.bind(logger);
-export const error = logger.error.bind(logger);
+const debug = logger.debug.bind(logger);
+const info = logger.info.bind(logger);
+const warn = logger.warn.bind(logger);
+const error = logger.error.bind(logger);

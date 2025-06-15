@@ -1,14 +1,16 @@
 import { Octokit } from '@octokit/rest';
-
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-
 import {
   decryptAccessToken,
   hasEncryptedTokens,
   hasLegacyTokens,
 } from './tokenManager';
-
+import { RateLimitManager } from './rate-limit-manager';
+import { RepositoryResource } from './resources/repositories';
+import { PullRequestResource } from './resources/pull-requests';
+import { CommitResource } from './resources/commits';
+import { ContributorResource } from './resources/contributors';
 import type {
   GitHubIntegration,
   Repository,
@@ -16,6 +18,12 @@ import type {
   Contributor,
   RateLimitInfo,
 } from '@/types/analytics';
+import type {
+  GitHubRepository,
+  GitHubPullRequest,
+  GitHubCommit,
+  GitHubContributor,
+} from './types';
 
 /**
  * @fileoverview GitHub Analytics Client
@@ -28,87 +36,6 @@ import type {
  */
 
 /**
- * GitHub API response types
- */
-interface GitHubRepository {
-  id: number;
-  owner: {
-    login: string;
-    avatar_url: string;
-  };
-  name: string;
-  full_name: string;
-  description: string | null;
-  homepage: string | null;
-  private: boolean;
-  visibility: 'public' | 'private' | 'internal';
-  default_branch: string;
-  language: string | null;
-  topics?: string[];
-  size: number;
-  stargazers_count: number;
-  watchers_count: number;
-  forks_count: number;
-  open_issues_count: number;
-  created_at: string;
-  updated_at: string;
-}
-
-interface GitHubPullRequest {
-  id: number;
-  number: number;
-  title: string;
-  body: string | null;
-  state: 'open' | 'closed';
-  draft: boolean;
-  user: {
-    login: string;
-    avatar_url: string;
-  };
-  created_at: string;
-  updated_at: string;
-  closed_at: string | null;
-  merged_at: string | null;
-  additions?: number;
-  deletions?: number;
-  changed_files?: number;
-  commits?: number;
-  review_comments?: number;
-  labels: Array<{
-    name: string;
-    color: string;
-  }>;
-}
-
-interface GitHubCommit {
-  sha: string;
-  commit: {
-    author: {
-      name: string;
-      email: string;
-      date: string;
-    };
-    message: string;
-  };
-  author: {
-    login: string;
-    avatar_url: string;
-  } | null;
-  stats?: {
-    additions: number;
-    deletions: number;
-    total: number;
-  };
-}
-
-interface GitHubContributor {
-  login: string;
-  id: number;
-  avatar_url: string;
-  contributions: number;
-}
-
-/**
  * GitHub Analytics Client
  *
  * Provides methods to interact with GitHub API for analytics purposes.
@@ -117,12 +44,13 @@ interface GitHubContributor {
 export class GitHubAnalyticsClient {
   private octokit: Octokit | null = null;
   private integration: GitHubIntegration | null = null;
-  private rateLimitInfo: RateLimitInfo = {
-    limit: 5000,
-    remaining: 5000,
-    reset: new Date(),
-    used: 0,
-  };
+  private rateLimitManager: RateLimitManager | null = null;
+  
+  // Resource handlers
+  private repositories: RepositoryResource | null = null;
+  private pullRequests: PullRequestResource | null = null;
+  private commits: CommitResource | null = null;
+  private contributors: ContributorResource | null = null;
 
   /**
    * Initialize the client with a user's GitHub integration
@@ -184,79 +112,39 @@ export class GitHubAnalyticsClient {
       },
     });
 
+    // Initialize resources and managers
+    this.rateLimitManager = new RateLimitManager(this.octokit, this.integration);
+    this.repositories = new RepositoryResource(this.octokit);
+    this.pullRequests = new PullRequestResource(this.octokit);
+    this.commits = new CommitResource(this.octokit);
+    this.contributors = new ContributorResource(this.octokit);
+
     // Check rate limit
-    await this.checkRateLimit();
+    await this.rateLimitManager.checkRateLimit();
   }
 
-  /**
-   * Check and update rate limit information
-   */
-  private async checkRateLimit(): Promise<RateLimitInfo> {
-    if (!this.octokit) {
-      throw new Error('GitHub client not initialized');
-    }
-
-    try {
-      const { data } = await this.octokit.rateLimit.get();
-
-      this.rateLimitInfo = {
-        limit: data.resources.core.limit,
-        remaining: data.resources.core.remaining,
-        reset: new Date(data.resources.core.reset * 1000),
-        used: data.resources.core.limit - data.resources.core.remaining,
-      };
-
-      // Update rate limit in database
-      if (this.integration) {
-        const supabase = await createClient();
-        if (!supabase) {
-          throw new Error('Database connection not available');
-        }
-        await supabase
-          .from('github_integrations')
-          .update({
-            rate_limit_remaining: this.rateLimitInfo.remaining,
-            rate_limit_reset_at: this.rateLimitInfo.reset.toISOString(),
-          })
-          .eq('id', this.integration.id);
-      }
-
-      return this.rateLimitInfo;
-    } catch (error) {
-      logger.error('Failed to check rate limit', { error });
-      throw error;
-    }
-  }
 
   /**
    * Get rate limit information
    */
   getRateLimit(): RateLimitInfo {
-    return this.rateLimitInfo;
+    if (!this.rateLimitManager) {
+      throw new Error('GitHub client not initialized');
+    }
+    return this.rateLimitManager.getRateLimit();
   }
 
   /**
    * Fetch user's repositories
    */
   async fetchRepositories(page = 1, perPage = 30): Promise<GitHubRepository[]> {
-    if (!this.octokit) {
+    if (!this.repositories || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.repos.listForAuthenticatedUser({
-        per_page: perPage,
-        page,
-        sort: 'updated',
-        direction: 'desc',
-      });
-
-      await this.checkRateLimit();
-      return data as GitHubRepository[];
-    } catch (error) {
-      logger.error('Failed to fetch repositories', { error });
-      throw error;
-    }
+    const result = await this.repositories.fetchRepositories(page, perPage);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -266,18 +154,13 @@ export class GitHubAnalyticsClient {
     owner: string,
     repo: string
   ): Promise<GitHubRepository> {
-    if (!this.octokit) {
+    if (!this.repositories || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.repos.get({ owner, repo });
-      await this.checkRateLimit();
-      return data as GitHubRepository;
-    } catch (error) {
-      logger.error('Failed to fetch repository', { owner, repo, error });
-      throw error;
-    }
+    const result = await this.repositories.fetchRepository(owner, repo);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -287,18 +170,13 @@ export class GitHubAnalyticsClient {
     owner: string,
     repo: string
   ): Promise<Record<string, number>> {
-    if (!this.octokit) {
+    if (!this.repositories || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.repos.listLanguages({ owner, repo });
-      await this.checkRateLimit();
-      return data;
-    } catch (error) {
-      logger.error('Failed to fetch languages', { owner, repo, error });
-      throw error;
-    }
+    const result = await this.repositories.fetchLanguages(owner, repo);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -314,35 +192,13 @@ export class GitHubAnalyticsClient {
       since?: Date;
     } = {}
   ): Promise<GitHubPullRequest[]> {
-    if (!this.octokit) {
+    if (!this.pullRequests || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.pulls.list({
-        owner,
-        repo,
-        state: options.state || 'all',
-        per_page: options.perPage || 30,
-        page: options.page || 1,
-        sort: 'created',
-        direction: 'desc',
-      });
-
-      // Filter by date if provided
-      let pullRequests = data as GitHubPullRequest[];
-      if (options.since) {
-        pullRequests = pullRequests.filter(
-          pr => new Date(pr.created_at) >= options.since!
-        );
-      }
-
-      await this.checkRateLimit();
-      return pullRequests;
-    } catch (error) {
-      logger.error('Failed to fetch pull requests', { owner, repo, error });
-      throw error;
-    }
+    const result = await this.pullRequests.fetchPullRequests(owner, repo, options);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -353,28 +209,13 @@ export class GitHubAnalyticsClient {
     repo: string,
     pullNumber: number
   ): Promise<GitHubPullRequest> {
-    if (!this.octokit) {
+    if (!this.pullRequests || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.pulls.get({
-        owner,
-        repo,
-        pull_number: pullNumber,
-      });
-
-      await this.checkRateLimit();
-      return data as GitHubPullRequest;
-    } catch (error) {
-      logger.error('Failed to fetch pull request details', {
-        owner,
-        repo,
-        pullNumber,
-        error,
-      });
-      throw error;
-    }
+    const result = await this.pullRequests.fetchPullRequestDetails(owner, repo, pullNumber);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -391,35 +232,13 @@ export class GitHubAnalyticsClient {
       author?: string;
     } = {}
   ): Promise<GitHubCommit[]> {
-    if (!this.octokit) {
+    if (!this.commits || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const params: Parameters<typeof this.octokit.repos.listCommits>[0] = {
-        owner,
-        repo,
-        per_page: options.perPage || 30,
-        page: options.page || 1,
-      };
-
-      if (options.since) {
-        params.since = options.since.toISOString();
-      }
-      if (options.until) {
-        params.until = options.until.toISOString();
-      }
-      if (options.author) {
-        params.author = options.author;
-      }
-
-      const { data } = await this.octokit.repos.listCommits(params);
-      await this.checkRateLimit();
-      return data as GitHubCommit[];
-    } catch (error) {
-      logger.error('Failed to fetch commits', { owner, repo, error });
-      throw error;
-    }
+    const result = await this.commits.fetchCommits(owner, repo, options);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -434,62 +253,26 @@ export class GitHubAnalyticsClient {
       anon?: boolean;
     } = {}
   ): Promise<GitHubContributor[]> {
-    if (!this.octokit) {
+    if (!this.contributors || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.repos.listContributors({
-        owner,
-        repo,
-        per_page: options.perPage || 30,
-        page: options.page || 1,
-        anon: options.anon ? '1' : '0',
-      });
-
-      await this.checkRateLimit();
-      return data as GitHubContributor[];
-    } catch (error) {
-      logger.error('Failed to fetch contributors', { owner, repo, error });
-      throw error;
-    }
+    const result = await this.contributors.fetchContributors(owner, repo, options);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
    * Fetch user details
    */
   async fetchUser(username: string): Promise<Contributor> {
-    if (!this.octokit) {
+    if (!this.contributors || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      const { data } = await this.octokit.users.getByUsername({ username });
-
-      await this.checkRateLimit();
-
-      return {
-        id: '', // Will be set by database
-        githubId: data.id,
-        login: data.login,
-        name: data.name || undefined,
-        email: data.email || undefined,
-        avatarUrl: data.avatar_url || undefined,
-        company: data.company || undefined,
-        location: data.location || undefined,
-        bio: data.bio || undefined,
-        publicRepos: data.public_repos,
-        followers: data.followers,
-        following: data.following,
-        githubCreatedAt: new Date(data.created_at),
-        lastSeenAt: new Date(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-    } catch (error) {
-      logger.error('Failed to fetch user', { username, error });
-      throw error;
-    }
+    const result = await this.contributors.fetchUser(username);
+    await this.rateLimitManager.checkRateLimit();
+    return result;
   }
 
   /**
@@ -501,32 +284,12 @@ export class GitHubAnalyticsClient {
     webhookUrl: string,
     secret: string
   ): Promise<void> {
-    if (!this.octokit) {
+    if (!this.repositories || !this.rateLimitManager) {
       throw new Error('GitHub client not initialized');
     }
 
-    try {
-      await this.octokit.repos.createWebhook({
-        owner,
-        repo,
-        config: {
-          url: webhookUrl,
-          content_type: 'json',
-          secret,
-        },
-        events: ['push', 'pull_request', 'issues', 'repository'],
-        active: true,
-      });
-
-      await this.checkRateLimit();
-      logger.info('Webhook created successfully', { owner, repo });
-    } catch (error: unknown) {
-      // Ignore if webhook already exists
-      if ((error as any).status !== 422) {
-        logger.error('Failed to create webhook', { owner, repo, error });
-        throw error;
-      }
-    }
+    await this.repositories.setupWebhook(owner, repo, webhookUrl, secret);
+    await this.rateLimitManager.checkRateLimit();
   }
 
   /**
@@ -537,27 +300,7 @@ export class GitHubAnalyticsClient {
     userId: string,
     integrationId: string
   ): Partial<Repository> {
-    return {
-      userId,
-      githubIntegrationId: integrationId,
-      githubId: githubRepo.id,
-      owner: githubRepo.owner.login,
-      name: githubRepo.name,
-      fullName: githubRepo.full_name,
-      description: githubRepo.description || undefined,
-      homepage: githubRepo.homepage || undefined,
-      visibility: githubRepo.visibility,
-      defaultBranch: githubRepo.default_branch,
-      language: githubRepo.language || undefined,
-      topics: githubRepo.topics,
-      sizeKb: githubRepo.size,
-      stargazersCount: githubRepo.stargazers_count,
-      watchersCount: githubRepo.watchers_count,
-      forksCount: githubRepo.forks_count,
-      openIssuesCount: githubRepo.open_issues_count,
-      githubCreatedAt: new Date(githubRepo.created_at),
-      githubUpdatedAt: new Date(githubRepo.updated_at),
-    };
+    return RepositoryResource.transformRepository(githubRepo, userId, integrationId);
   }
 
   /**
@@ -567,43 +310,6 @@ export class GitHubAnalyticsClient {
     githubPR: GitHubPullRequest,
     repositoryId: string
   ): Partial<PullRequest> {
-    const createdAt = new Date(githubPR.created_at);
-    const mergedAt = githubPR.merged_at
-      ? new Date(githubPR.merged_at)
-      : undefined;
-    const closedAt = githubPR.closed_at
-      ? new Date(githubPR.closed_at)
-      : undefined;
-
-    return {
-      repositoryId,
-      githubPrId: githubPR.id,
-      number: githubPR.number,
-      title: githubPR.title,
-      body: githubPR.body || undefined,
-      authorLogin: githubPR.user.login,
-      authorAvatarUrl: githubPR.user.avatar_url,
-      state: githubPR.merged_at
-        ? 'merged'
-        : githubPR.state === 'open'
-          ? 'open'
-          : 'closed',
-      draft: githubPR.draft,
-      additions: githubPR.additions || 0,
-      deletions: githubPR.deletions || 0,
-      changedFiles: githubPR.changed_files || 0,
-      commits: githubPR.commits || 0,
-      reviewComments: githubPR.review_comments || 0,
-      createdAt,
-      updatedAt: new Date(githubPR.updated_at),
-      mergedAt,
-      closedAt,
-      labels: githubPR.labels.map(label => label.name),
-      metadata: {},
-      // Calculate cycle time if merged
-      cycleTimeHours: mergedAt
-        ? (mergedAt.getTime() - createdAt.getTime()) / (1000 * 60 * 60)
-        : undefined,
-    };
+    return PullRequestResource.transformPullRequest(githubPR, repositoryId);
   }
 }

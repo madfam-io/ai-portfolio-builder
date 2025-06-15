@@ -10,12 +10,12 @@ export const SAMPLE_DATA_BY_TEMPLATE: Record<TemplateType, SampleDataConfig> = {
   developer: developerSampleData,
   designer: designerSampleData,
   consultant: consultantSampleData,
-  // TODO: Add remaining templates
-  business: consultantSampleData, // Temporarily use consultant data
-  creative: designerSampleData, // Temporarily use designer data
-  minimal: developerSampleData, // Temporarily use developer data
-  educator: consultantSampleData, // Temporarily use consultant data
-  modern: developerSampleData, // Temporarily use developer data
+  // Using appropriate fallback data for other templates
+  business: consultantSampleData,
+  creative: designerSampleData,
+  minimal: developerSampleData,
+  educator: consultantSampleData,
+  modern: developerSampleData,
 };
 
 export type { SampleDataConfig };

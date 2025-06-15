@@ -110,7 +110,7 @@ export function EditorSidebar({
               bio: portfolio.bio,
               location: portfolio.location,
               avatarUrl: portfolio.avatarUrl,
-              headline: portfolio.data?.headline,
+              headline: (portfolio.data?.headline as string) || undefined,
               tagline: portfolio.tagline,
               social: portfolio.social,
             }}

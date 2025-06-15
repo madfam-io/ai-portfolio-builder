@@ -4,7 +4,7 @@
  */
 
 // Key prefixes for different cache types
-export const CACHE_KEYS = {
+const CACHE_KEYS = {
   PORTFOLIO: 'portfolio:',
   AI_RESULT: 'ai:',
   ANALYTICS: 'analytics:',
@@ -16,42 +16,38 @@ export const CACHE_KEYS = {
  * No-op cache service for client-side
  */
 class ClientCacheService {
-  async connect(): Promise<void> {
+  connect(): void {
     // No-op
   }
 
-  async get<T = unknown>(_key: string): Promise<T | null> {
+  get<T = unknown>(_key: string): T | null {
     return null;
   }
 
-  async set<T = unknown>(
-    _key: string,
-    _value: T,
-    _ttl?: number
-  ): Promise<void> {
+  set<T = unknown>(_key: string, _value: T, _ttl?: number): void {
     // No-op
   }
 
-  async del(_key: string): Promise<void> {
+  del(_key: string): void {
     // No-op
   }
 
-  async clearPattern(_pattern: string): Promise<void> {
+  clearPattern(_pattern: string): void {
     // No-op
   }
 
-  async disconnect(): Promise<void> {
+  disconnect(): void {
     // No-op
   }
 }
 
 // Export singleton instance
-export const cache = new ClientCacheService();
+const cache = new ClientCacheService();
 
 /**
  * No-op cache decorator for client-side
  */
-export function Cacheable(_keyPrefix: string, _ttl?: number) {
+function Cacheable(_keyPrefix: string, _ttl?: number) {
   return function (
     _target: unknown,
     _propertyName: string,

@@ -74,7 +74,7 @@ export function flattenTranslations(
  * @param path - Dot-separated path to the translation (e.g., 'common.save')
  * @returns Translation value or the path if not found
  */
-export function getTranslation(
+function getTranslation(
   translations: TranslationNamespace,
   path: string
 ): string {
@@ -101,7 +101,7 @@ export function getTranslation(
  * @param enTranslations - English translations
  * @returns Array of missing keys per language
  */
-export function validateTranslations(
+function validateTranslations(
   esTranslations: TranslationNamespace,
   enTranslations: TranslationNamespace
 ): {
@@ -156,7 +156,7 @@ export function validateTranslations(
  * @param options - Intl.NumberFormat options
  * @returns Formatted number string
  */
-export function formatNumber(
+function formatNumber(
   value: number,
   language: string,
   options?: Intl.NumberFormatOptions
@@ -173,7 +173,7 @@ export function formatNumber(
  * @param options - Intl.DateTimeFormat options
  * @returns Formatted date string
  */
-export function formatDate(
+function formatDate(
   date: Date | string,
   language: string,
   options?: Intl.DateTimeFormatOptions
@@ -189,7 +189,7 @@ export function formatDate(
  * @param language - Current language code
  * @returns Currency symbol
  */
-export function getCurrencySymbol(language: string): string {
+function getCurrencySymbol(language: string): string {
   return language === 'es' ? '$' : '$';
 }
 
@@ -199,6 +199,6 @@ export function getCurrencySymbol(language: string): string {
  * @param language - Current language code
  * @returns Currency code (MXN for Spanish, USD for English)
  */
-export function getCurrencyCode(language: string): 'MXN' | 'USD' {
+function getCurrencyCode(language: string): 'MXN' | 'USD' {
   return language === 'es' ? 'MXN' : 'USD';
 }

@@ -110,7 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
    * For now, we'll create a mock admin user for demonstration
    */
   const loadUserProfile = useCallback(
-    async (supabaseUser: SupabaseUser): Promise<User | null> => {
+    (supabaseUser: SupabaseUser): User | null => {
       try {
         // Mock implementation - in real app, this would query the database
         const isAdminEmail =
@@ -223,7 +223,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }, []);
 
   const signUp = useCallback(
-    async (email: string, _password: string, name: string) => {
+    (email: string, _password: string, name: string) => {
       logger.info('Sign up attempt', { email, name });
       // Implementation would go here
     },
@@ -249,7 +249,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     }
   }, []);
 
-  const resetPassword = useCallback(async (email: string) => {
+  const resetPassword = useCallback((email: string) => {
     logger.info('Reset password for', { email });
     // Implementation would go here
   }, []);
@@ -257,7 +257,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   /**
    * Admin mode switching
    */
-  const switchToAdminMode = useCallback(async () => {
+  const switchToAdminMode = useCallback(() => {
     if (!user || !canSwitchToAdminMode(user)) {
       throw new Error('Cannot switch to admin mode');
     }
@@ -265,7 +265,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     const updatedUser = {
       ...user,
       adminProfile: {
-        ...user.adminProfile!,
+        ...(user.adminProfile || {}),
         isInAdminMode: true,
         lastViewSwitchAt: new Date(),
       },
@@ -277,7 +277,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     logger.info('Switched to admin mode');
   }, [user, createSession]);
 
-  const switchToUserMode = useCallback(async () => {
+  const switchToUserMode = useCallback(() => {
     if (!user || !user.adminProfile) {
       throw new Error('Cannot switch to user mode');
     }
@@ -304,7 +304,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
    * User impersonation (admin only)
    */
   const impersonateUser = useCallback(
-    async (targetUserId: string) => {
+    (targetUserId: string) => {
       if (!user || !hasPermission(user, 'impersonation:users')) {
         throw new Error('No permission to impersonate users');
       }
@@ -341,7 +341,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     [user]
   );
 
-  const stopImpersonation = useCallback(async () => {
+  const stopImpersonation = useCallback(() => {
     if (impersonatedUser) {
       logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
@@ -352,7 +352,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
    * Profile management (stub implementations)
    */
   const updateProfile = useCallback(
-    async (updates: Partial<User>) => {
+    (updates: Partial<User>) => {
       if (!user) return;
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
@@ -361,7 +361,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     [user]
   );
 
-  const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
+  const upgradeSubscription = useCallback((plan: SubscriptionPlan) => {
     logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
   }, []);

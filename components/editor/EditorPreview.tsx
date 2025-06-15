@@ -65,14 +65,14 @@ export function EditorPreview({ portfolio, className }: EditorPreviewProps) {
               )}
 
               {/* Projects Section Preview */}
-              {portfolio.data?.projects &&
+              {Array.isArray(portfolio.data?.projects) &&
                 portfolio.data.projects.length > 0 && (
                   <div className="mb-12">
                     <h2 className="text-2xl font-semibold mb-4">
                       {t.projects || 'Projects'}
                     </h2>
                     <div className="grid gap-6">
-                      {portfolio.data?.projects.map(
+                      {portfolio.data.projects.map(
                         (project: any, index: number) => (
                           <div
                             key={project.id || index}

@@ -35,7 +35,7 @@ export class PortfolioRepository implements BaseRepository<Portfolio> {
   /**
    * Get all portfolios (optionally filtered)
    */
-  async findAll(options?: QueryOptions): Promise<Portfolio[]> {
+  findAll(options?: QueryOptions): Portfolio[] {
     // For now, we'll use a default userId from options or return empty array
     // In a real implementation, this would use proper filtering
     const userId = options?.filters?.userId as string;
@@ -265,7 +265,7 @@ export class PortfolioRepository implements BaseRepository<Portfolio> {
   /**
    * Check subdomain availability
    */
-  async checkSubdomainAvailability(subdomain: string): Promise<boolean> {
+  checkSubdomainAvailability(subdomain: string): boolean {
     return this.isSubdomainAvailable(subdomain);
   }
 

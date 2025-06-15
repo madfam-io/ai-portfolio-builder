@@ -149,7 +149,7 @@ export class DashboardAnalyticsService {
       mostActiveRepository: mostActiveRepository
         ? {
             repository: mostActiveRepository,
-            commitCount: repoActivity.get(mostActiveRepoId!) || 0,
+            commitCount: mostActiveRepoId ? (repoActivity.get(mostActiveRepoId) || 0) : 0,
           }
         : undefined,
       topContributors:
@@ -192,7 +192,8 @@ export class DashboardAnalyticsService {
         prsByWeek.set(week, { opened: 0, merged: 0, closed: 0 });
       }
 
-      const weekData = prsByWeek.get(week)!;
+      const weekData = prsByWeek.get(week);
+      if (!weekData) continue;
       weekData.opened++;
       if (pr.state === 'merged') weekData.merged++;
       if (pr.state === 'closed') weekData.closed++;

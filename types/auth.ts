@@ -184,7 +184,7 @@ export interface SessionData {
 /**
  * API request context for authorization middleware
  */
-export interface RequestContext {
+interface RequestContext {
   user: User;
   session: SessionData;
   ipAddress: string;

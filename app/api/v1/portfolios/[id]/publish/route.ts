@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// TODO: Fix auth imports
-// import {
-//   authenticateUser,
-//   unauthorizedResponse,
-// } from '@/lib/auth/server';
+import {
+  authenticateUser,
+  unauthorizedResponse,
+} from '@/lib/api/middleware/auth';
 
 import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
 import { logger } from '@/lib/utils/logger';
 
 export async function POST(
-  _request: NextRequest,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ): Promise<Response> {
   try {
     const { id } = params;
 
-    // TODO: Authenticate user
-    // const user = await authenticateUser(request);
-    // if (!user) {
-    //   return unauthorizedResponse();
-    // }
+    const user = await authenticateUser(request);
+    if (!user) {
+      return unauthorizedResponse();
+    }
 
     // Verify user owns this portfolio
     const portfolio = await portfolioService.getPortfolio(id);

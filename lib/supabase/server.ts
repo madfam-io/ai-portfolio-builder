@@ -19,9 +19,17 @@ export async function createClient() {
   const cookieStore = await cookies();
 
   // TypeScript knows these are defined if services.supabase is true
+  const url = env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!url || !anonKey) {
+    logger.warn('Supabase URL or ANON_KEY not configured');
+    return null;
+  }
+  
   return createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL!,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    anonKey,
     {
       cookies: {
         get(name: string) {

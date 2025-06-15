@@ -66,7 +66,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Get all available models with live updates
    */
-  async getAvailableModels() {
+  getAvailableModels() {
     return this.modelManager.getAvailableModels();
   }
 
@@ -94,7 +94,7 @@ export class HuggingFaceService implements AIService {
       // Check cache
       const cached = await cache.get(cacheKey);
       if (cached) {
-        return JSON.parse(cached);
+        return JSON.parse(cached as string);
       }
 
       // Select model and build prompt
@@ -146,7 +146,7 @@ export class HuggingFaceService implements AIService {
       // Check cache
       const cached = await cache.get(cacheKey);
       if (cached) {
-        return JSON.parse(cached);
+        return JSON.parse(cached as string);
       }
 
       // Select model and build prompt
@@ -183,9 +183,9 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  async recommendTemplate(
+  recommendTemplate(
     profile: UserProfile
-  ): Promise<TemplateRecommendation> {
+  ): TemplateRecommendation {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -233,7 +233,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  async scoreContent(content: string, type: string): Promise<QualityScore> {
+  scoreContent(content: string, type: string): QualityScore {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -259,7 +259,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  async getUsageStats() {
+  getUsageStats() {
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
@@ -281,64 +281,17 @@ export class HuggingFaceService implements AIService {
 
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
-        const response = await fetch(`${this.baseUrl}/${modelId}`, {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${this.apiKey}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            inputs: prompt,
-            parameters: {
-              max_new_tokens: 250,
-              temperature: 0.7,
-              top_p: 0.9,
-              do_sample: true,
-            },
-            options: {
-              wait_for_model: true,
-            },
-          }),
-        });
-
-        if (!response.ok) {
-          if (response.status === 503 && attempt < retries) {
-            // Model loading, wait and retry
-            await new Promise(resolve => setTimeout(resolve, 5000));
-            continue;
-          }
-
-          if (response.status === 429) {
-            throw new QuotaExceededError('huggingface');
-          }
-
-          // Try to get error details if available
-          let errorMessage = response.statusText;
-          try {
-            const errorData = await response.json();
-            errorMessage = errorData.error || errorMessage;
-          } catch {
-            // Ignore JSON parse errors
-          }
-
-          logger.error(`Model ${modelId} error:`, {
-            status: response.status,
-            error: errorMessage,
-          });
-          throw new ModelUnavailableError('huggingface', modelId);
-        }
-
-        const result = await response.json();
-        const text = Array.isArray(result)
-          ? result[0]?.generated_text || ''
-          : result.generated_text || result;
-
+        const response = await this.makeModelRequest(modelId, prompt);
+        const result = await this.handleModelResponse(response, modelId, attempt, retries);
+        
+        if (!result) continue; // Retry needed
+        
         return {
-          content: text,
+          content: result.text,
           metadata: {
             model: modelId,
             provider: 'huggingface',
-            tokens: Math.round(text.split(/\s+/).length * 1.3), // Rough estimate
+            tokens: Math.round(result.text.split(/\s+/).length * 1.3), // Rough estimate
             cost: 0, // HuggingFace free tier
             responseTime: Date.now() - startTime,
           },
@@ -354,6 +307,80 @@ export class HuggingFaceService implements AIService {
       'MODEL_ERROR',
       'huggingface'
     );
+  }
+
+  /**
+   * Make HTTP request to model API
+   */
+  private makeModelRequest(modelId: string, prompt: string): Promise<Response> {
+    return fetch(`${this.baseUrl}/${modelId}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${this.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: prompt,
+        parameters: {
+          max_new_tokens: 250,
+          temperature: 0.7,
+          top_p: 0.9,
+          do_sample: true,
+        },
+        options: {
+          wait_for_model: true,
+        },
+      }),
+    });
+  }
+
+  /**
+   * Handle model API response
+   */
+  private async handleModelResponse(
+    response: Response,
+    modelId: string,
+    attempt: number,
+    maxRetries: number
+  ): Promise<{ text: string } | null> {
+    if (response.ok) {
+      const result = await response.json();
+      const text = Array.isArray(result)
+        ? result[0]?.generated_text || ''
+        : result.generated_text || result;
+      return { text };
+    }
+
+    // Handle model loading retry
+    if (response.status === 503 && attempt < maxRetries) {
+      await new Promise(resolve => setTimeout(resolve, 5000));
+      return null; // Signal retry needed
+    }
+
+    // Handle quota exceeded
+    if (response.status === 429) {
+      throw new QuotaExceededError('huggingface');
+    }
+
+    // Extract error details and throw
+    const errorMessage = await this.extractErrorMessage(response);
+    logger.error(`Model ${modelId} error:`, {
+      status: response.status,
+      error: errorMessage,
+    });
+    throw new ModelUnavailableError('huggingface', modelId);
+  }
+
+  /**
+   * Extract error message from response
+   */
+  private async extractErrorMessage(response: Response): Promise<string> {
+    try {
+      const errorData = await response.json();
+      return errorData.error || response.statusText;
+    } catch {
+      return response.statusText;
+    }
   }
 
   /**

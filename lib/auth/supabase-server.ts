@@ -6,12 +6,12 @@ import { createServerClient } from '@supabase/ssr';
  * Create a Supabase client for server-side operations
  * This client automatically handles cookies and authentication
  */
-export function createSupabaseServerClient() {
-  const cookieStore = cookies();
+async function createSupabaseServerClient() {
+  const cookieStore = await cookies();
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     {
       cookies: {
         getAll() {
@@ -37,10 +37,10 @@ export function createSupabaseServerClient() {
  * Create a Supabase client for server-side operations with service role
  * This client has admin privileges and should only be used for server-side operations
  */
-export function createSupabaseServiceClient() {
+function createSupabaseServiceClient() {
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || '',
     {
       cookies: {
         getAll() {

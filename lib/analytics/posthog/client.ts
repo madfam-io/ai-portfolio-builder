@@ -124,28 +124,28 @@ export const captureEnhancedEvent = (
 };
 
 // Feature flag check
-export const isFeatureEnabled = (flagName: string): boolean => {
+const isFeatureEnabled = (flagName: string): boolean => {
   if (typeof window === 'undefined' || !posthog.__loaded) return false;
 
   return posthog.isFeatureEnabled(flagName) ?? false;
 };
 
 // Get feature flag payload
-export const getFeatureFlagPayload = (flagName: string): any => {
+const getFeatureFlagPayload = (flagName: string): any => {
   if (typeof window === 'undefined' || !posthog.__loaded) return null;
 
   return posthog.getFeatureFlagPayload(flagName);
 };
 
 // Set user properties
-export const setUserProperties = (properties: Record<string, any>) => {
+const setUserProperties = (properties: Record<string, any>) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   posthog.people.set(properties);
 };
 
 // Increment user property
-export const incrementUserProperty = (property: string, value = 1) => {
+const incrementUserProperty = (property: string, value = 1) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   // PostHog JS doesn't have increment, use set with current value + increment
@@ -154,7 +154,7 @@ export const incrementUserProperty = (property: string, value = 1) => {
 };
 
 // Track revenue
-export const trackRevenue = (
+const trackRevenue = (
   amount: number,
   properties?: Record<string, any>
 ) => {
@@ -168,7 +168,7 @@ export const trackRevenue = (
 };
 
 // Start session recording
-export const startSessionRecording = () => {
+const startSessionRecording = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
   if (process.env.NODE_ENV === 'development') return;
 
@@ -176,28 +176,28 @@ export const startSessionRecording = () => {
 };
 
 // Stop session recording
-export const stopSessionRecording = () => {
+const stopSessionRecording = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   posthog.stopSessionRecording();
 };
 
 // Opt user out of tracking
-export const optOut = () => {
+const optOut = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   posthog.opt_out_capturing();
 };
 
 // Opt user back in to tracking
-export const optIn = () => {
+const optIn = () => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   posthog.opt_in_capturing();
 };
 
 // Check if user has opted out
-export const hasOptedOut = (): boolean => {
+const hasOptedOut = (): boolean => {
   if (typeof window === 'undefined' || !posthog.__loaded) return false;
 
   return posthog.has_opted_out_capturing();
@@ -271,7 +271,7 @@ export const EVENTS = {
 } as const;
 
 // User property constants
-export const USER_PROPERTIES = {
+const USER_PROPERTIES = {
   TOTAL_PORTFOLIOS: 'total_portfolios',
   TOTAL_VARIANTS: 'total_variants',
   TOTAL_PUBLISHES: 'total_publishes',

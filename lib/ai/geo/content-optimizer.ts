@@ -9,6 +9,7 @@ import {
   ReadabilityMetrics,
   GEOContent,
   GEOScore,
+  GEOSuggestion,
   OptimizeContentRequest,
   OptimizeContentResponse,
 } from './types';
@@ -88,12 +89,21 @@ export class ContentOptimizer {
       ...(request.settings.secondaryKeywords || []),
     ].filter(Boolean);
 
-    const improvedScore = this.scoreCalculator.calculateGEOScore(
+    const improvedScoreBreakdown = this.scoreCalculator.calculateGEOScore(
       request.content,
       optimizedContent,
       keywords,
       request.contentType
     );
+
+    const improvedScore: GEOScore = {
+      overall: improvedScoreBreakdown.overall,
+      keyword: improvedScoreBreakdown.keyword,
+      readability: improvedScoreBreakdown.readability,
+      structure: improvedScoreBreakdown.structure,
+      technical: 80, // Default technical score
+      uniqueness: improvedScoreBreakdown.uniqueness,
+    };
 
     return {
       optimizedContent: geoContent,
@@ -113,6 +123,8 @@ export class ContentOptimizer {
       h2: this.extractHeadings(content, 2),
       h3: this.extractHeadings(content, 3),
       h4: this.extractHeadings(content, 4),
+      h5: this.extractHeadings(content, 5),
+      h6: this.extractHeadings(content, 6),
     };
 
     const paragraphs = content.split(/\n\n+/).filter(p => p.trim().length > 0);
@@ -122,14 +134,12 @@ export class ContentOptimizer {
     return {
       headings,
       paragraphCount: paragraphs.length,
-      sentenceCount: sentences.length,
-      wordCount: words.length,
+      listCount: (content.match(/^[•\-*]\s/gm) || []).length,
       avgSentenceLength:
         sentences.length > 0 ? words.length / sentences.length : 0,
       avgParagraphLength:
         paragraphs.length > 0 ? words.length / paragraphs.length : 0,
       hasProperHierarchy: this.checkHeadingHierarchy(headings),
-      listCount: (content.match(/^[•\-*]\s/gm) || []).length,
     };
   }
 
@@ -147,7 +157,29 @@ export class ContentOptimizer {
     const complexWords = words.filter(w => this.countSyllables(w) > 2).length;
     const level = this.getReadabilityLevel(readabilityScore);
 
+    const avgSyllablesPerWord =
+      words.length > 0
+        ? words.reduce((sum, word) => sum + this.countSyllables(word), 0) /
+          words.length
+        : 0;
+
     return {
+      fleschKincaid: this.calculateFleschKincaid(
+        avgWordsPerSentence,
+        avgSyllablesPerWord
+      ),
+      fleschReading: this.calculateFleschReading(
+        avgWordsPerSentence,
+        avgSyllablesPerWord
+      ),
+      gunningFog: this.calculateGunningFog(
+        avgWordsPerSentence,
+        complexWords,
+        words.length
+      ),
+      avgWordsPerSentence,
+      avgSyllablesPerWord,
+      complexWordCount: complexWords,
       score: readabilityScore,
       level,
       suggestions: this.generateReadabilitySuggestions(
@@ -214,12 +246,21 @@ export class ContentOptimizer {
       uniqueness: scoreBreakdown.uniqueness,
     };
 
-    const suggestions = this.suggestionGenerator.generateSuggestions(
+    const rawSuggestions = this.suggestionGenerator.generateSuggestions(
       content,
       keywordList,
       scoreBreakdown,
       geoSettings.contentType || 'default'
     );
+
+    // Convert Suggestion[] to GEOSuggestion[]
+    const suggestions: GEOSuggestion[] = rawSuggestions.map(s => ({
+      type: s.type as any,
+      priority: s.priority,
+      message: s.message,
+      impact: s.impact,
+      action: this.generateActionForSuggestion(s),
+    }));
 
     return {
       content,
@@ -251,9 +292,11 @@ export class ContentOptimizer {
 
     return {
       overall: scoreBreakdown.overall,
-      contentQuality: scoreBreakdown.readability,
-      technicalSEO: scoreBreakdown.structure,
-      userEngagement: scoreBreakdown.uniqueness,
+      keyword: scoreBreakdown.keyword,
+      readability: scoreBreakdown.readability,
+      structure: scoreBreakdown.structure,
+      technical: 80, // Default technical score
+      uniqueness: scoreBreakdown.uniqueness,
     };
   }
 
@@ -293,6 +336,30 @@ export class ContentOptimizer {
     return Math.max(1, count);
   }
 
+  private calculateFleschKincaid(
+    avgWordsPerSentence: number,
+    avgSyllablesPerWord: number
+  ): number {
+    return 206.835 - 1.015 * avgWordsPerSentence - 84.6 * avgSyllablesPerWord;
+  }
+
+  private calculateFleschReading(
+    avgWordsPerSentence: number,
+    avgSyllablesPerWord: number
+  ): number {
+    return 0.39 * avgWordsPerSentence + 11.8 * avgSyllablesPerWord - 15.59;
+  }
+
+  private calculateGunningFog(
+    avgWordsPerSentence: number,
+    complexWords: number,
+    totalWords: number
+  ): number {
+    const percentageComplexWords =
+      totalWords > 0 ? (complexWords / totalWords) * 100 : 0;
+    return 0.4 * (avgWordsPerSentence + percentageComplexWords);
+  }
+
   private getReadabilityLevel(
     score: number
   ): 'very-easy' | 'easy' | 'medium' | 'hard' | 'very-hard' {
@@ -323,5 +390,22 @@ export class ContentOptimizer {
     }
 
     return suggestions;
+  }
+
+  private generateActionForSuggestion(suggestion: any): string {
+    switch (suggestion.type) {
+      case 'keyword':
+        return 'Add or adjust keyword usage';
+      case 'readability':
+        return 'Simplify sentence structure';
+      case 'structure':
+        return 'Reorganize content hierarchy';
+      case 'length':
+        return 'Adjust content length';
+      case 'style':
+        return 'Refine writing style';
+      default:
+        return 'Review and improve content';
+    }
   }
 }

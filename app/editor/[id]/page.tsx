@@ -21,7 +21,9 @@ function EditorPageContent() {
 
   useEffect(() => {
     if (portfolioId) {
-      loadPortfolio(portfolioId).catch(console.error);
+      loadPortfolio(portfolioId).catch(() => {
+        // Error is already handled by the store
+      });
     }
   }, [portfolioId, loadPortfolio]);
 

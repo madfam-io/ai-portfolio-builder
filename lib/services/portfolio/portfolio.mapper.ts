@@ -90,7 +90,7 @@ export class PortfolioMapper {
    * Removes sensitive information
    */
   static toPublic(portfolio: Portfolio): Partial<Portfolio> {
-    const { userId, ...publicData } = portfolio;
+    const { userId: _userId, ...publicData } = portfolio;
     return publicData;
   }
 }

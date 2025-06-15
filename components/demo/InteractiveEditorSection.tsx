@@ -14,15 +14,13 @@ import React from 'react';
 import { SmartImportOptions } from '@/components/demo/SmartImportOptions';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
-
-// ;
-// ;
+import type { FlattenedTranslations } from '@/lib/i18n/refactored-types';
 
 interface InteractiveEditorSectionProps {
   portfolio: Portfolio;
   activeSection: string;
   showImportOptions: boolean;
-  t: unknown; // TODO: Add proper translation type
+  t: FlattenedTranslations;
   onPortfolioChange: (portfolio: Portfolio) => void;
   onSectionChange: (section: string) => void;
   onToggleImportOptions: () => void;
@@ -56,13 +54,13 @@ export function InteractiveEditorSection({
   };
 
   const sections = [
-    { id: 'bio', label: (t as any).demoSectionBio, icon: FiUser },
+    { id: 'bio', label: t.demoSectionBio, icon: FiUser },
     {
       id: 'experience',
-      label: (t as any).demoSectionExperience,
+      label: t.demoSectionExperience,
       icon: FiBriefcase,
     },
-    { id: 'skills', label: (t as any).demoSectionSkills, icon: FiAward },
+    { id: 'skills', label: t.demoSectionSkills, icon: FiAward },
   ];
 
   return (
@@ -70,7 +68,7 @@ export function InteractiveEditorSection({
       {/* Sidebar */}
       <div className="w-64 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 p-4">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-          {(t as any).demoSections}
+          {t.demoSections}
         </h3>
         <div className="space-y-2">
           {sections.map(section => (
@@ -93,7 +91,7 @@ export function InteractiveEditorSection({
           >
             <Plus className="w-4 h-4" />
             <span className="text-sm font-medium">
-              {(t as any).demoAddSection}
+              {t.demoAddSection}
             </span>
           </button>
         </div>
@@ -101,20 +99,20 @@ export function InteractiveEditorSection({
         {/* Tools Section */}
         <div className="mt-8">
           <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
-            {(t as any).demoTools}
+            {t.demoTools}
           </h4>
           <div className="space-y-2">
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
               <Palette className="w-4 h-4" />
-              <span className="text-sm">{(t as any).demoCustomizeTheme}</span>
+              <span className="text-sm">{t.demoCustomizeTheme}</span>
             </button>
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
               <Layout className="w-4 h-4" />
-              <span className="text-sm">{(t as any).demoChangeLayout}</span>
+              <span className="text-sm">{t.demoChangeLayout}</span>
             </button>
             <button className="w-full flex items-center space-x-3 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors">
               <Settings className="w-4 h-4" />
-              <span className="text-sm">{(t as any).demoSettings}</span>
+              <span className="text-sm">{t.demoSettings}</span>
             </button>
           </div>
         </div>
@@ -124,10 +122,10 @@ export function InteractiveEditorSection({
       <div className="flex-1 p-6">
         <div className="mb-6">
           <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            {(t as any).demoEditPortfolio}
+            {t.demoEditPortfolio}
           </h3>
           <p className="text-gray-600 dark:text-gray-400">
-            {(t as any).demoEditorDescription}
+            {t.demoEditorDescription}
           </p>
         </div>
 
@@ -162,13 +160,13 @@ export function InteractiveEditorSection({
             onClick={onPreviousStep}
             className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
           >
-            {(t as any).demoBackToAI}
+            {t.demoBackToAI}
           </button>
           <button
             onClick={onNextStep}
             className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors"
           >
-            {(t as any).demoPreviewPortfolio}
+            {t.demoPreviewPortfolio}
           </button>
         </div>
       </div>

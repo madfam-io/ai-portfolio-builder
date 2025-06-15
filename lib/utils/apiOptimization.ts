@@ -213,8 +213,9 @@ class APIMetricsCollector {
     if (options?.timeRange) {
       filtered = filtered.filter(
         m =>
-          m.timestamp >= options.timeRange!.start &&
-          m.timestamp <= options.timeRange!.end
+          options.timeRange &&
+          m.timestamp >= options.timeRange.start &&
+          m.timestamp <= options.timeRange.end
       );
     }
 
@@ -451,7 +452,7 @@ export function withMetrics() {
  *
  * Combines multiple optimization strategies into a single decorator.
  */
-export function withOptimization(options: {
+function withOptimization(options: {
   cache?: CacheConfig;
   rateLimit?: RateLimitConfig;
   metrics?: boolean;
@@ -483,11 +484,11 @@ export function withOptimization(options: {
 /**
  * Database Query Optimization Utilities
  */
-export class QueryOptimizer {
+class QueryOptimizer {
   /**
    * Batch multiple database queries
    */
-  static async batchQueries<T>(queries: (() => Promise<T>)[]): Promise<T[]> {
+  static batchQueries<T>(queries: (() => Promise<T>)[]): Promise<T[]> {
     return Promise.all(queries.map(query => query()));
   }
 
@@ -514,11 +515,14 @@ export class QueryOptimizer {
    */
   static buildPaginatedResponse<T>(
     data: T[],
-    total: number,
-    page: number,
-    limit: number,
-    baseUrl?: string
+    paginationOptions: {
+      total: number;
+      page: number;
+      limit: number;
+      baseUrl?: string;
+    }
   ) {
+    const { total, page, limit, baseUrl } = paginationOptions;
     const totalPages = Math.ceil(total / limit);
     const hasNext = page < totalPages;
     const hasPrev = page > 1;
@@ -548,7 +552,7 @@ export class QueryOptimizer {
 /**
  * Get API metrics and cache stats
  */
-export function getAPIStats() {
+function getAPIStats() {
   return {
     metrics: metricsCollector.getStats(),
     cache: memoryCache.stats(),
@@ -558,14 +562,14 @@ export function getAPIStats() {
 /**
  * Clear all caches
  */
-export function clearCaches() {
+function clearCaches() {
   memoryCache.clear();
 }
 
 /**
  * Invalidate cache by tag
  */
-export function invalidateCache(tag: string): number {
+function invalidateCache(tag: string): number {
   return memoryCache.invalidateByTag(tag);
 }
 

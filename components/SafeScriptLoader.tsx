@@ -36,6 +36,7 @@ export default function SafeScriptLoader({
         document.body.removeChild(script);
       };
     }
+    return undefined;
   }, [src, onLoad, strategy]);
 
   // For beforeInteractive scripts, return null as they should be in <head>
@@ -49,7 +50,10 @@ export default function SafeScriptLoader({
 /**
  * Hook to safely execute client-side scripts
  */
-export function useClientScript(scriptFn: () => void, deps: React.DependencyList = []) {
+export function useClientScript(
+  scriptFn: () => void,
+  deps: React.DependencyList = []
+) {
   useEffect(() => {
     // Only run on client side
     if (typeof window !== 'undefined') {

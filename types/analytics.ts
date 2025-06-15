@@ -256,7 +256,7 @@ export type AnalyticsCacheData =
 /**
  * Analytics cache entry
  */
-export interface AnalyticsCache {
+interface AnalyticsCache {
   id: string;
   cacheKey: string;
   cacheType: 'dashboard' | 'repository' | 'contributor';
@@ -271,7 +271,7 @@ export interface AnalyticsCache {
 /**
  * GitHub OAuth callback response
  */
-export interface GitHubOAuthCallbackResponse {
+interface GitHubOAuthCallbackResponse {
   success: boolean;
   integration?: GitHubIntegration;
   error?: string;
@@ -280,7 +280,7 @@ export interface GitHubOAuthCallbackResponse {
 /**
  * Repository sync request
  */
-export interface RepositorySyncRequest {
+interface RepositorySyncRequest {
   repositoryIds?: string[]; // If empty, sync all
   force?: boolean; // Force sync even if recently synced
 }
@@ -288,7 +288,7 @@ export interface RepositorySyncRequest {
 /**
  * Repository sync response
  */
-export interface RepositorySyncResponse {
+interface RepositorySyncResponse {
   success: boolean;
   syncedCount: number;
   errors?: Array<{
@@ -378,7 +378,7 @@ export interface RepositoryAnalytics {
 /**
  * Contributor analytics detail
  */
-export interface ContributorAnalytics {
+interface ContributorAnalytics {
   contributor: Contributor;
   repositories: Array<{
     repository: Repository;
@@ -418,7 +418,7 @@ export interface AnalyticsFilters {
 /**
  * Analytics export request
  */
-export interface AnalyticsExportRequest {
+interface AnalyticsExportRequest {
   format: 'pdf' | 'csv' | 'json';
   type: 'dashboard' | 'repository' | 'contributor';
   entityId?: string; // Repository or contributor ID
@@ -498,7 +498,7 @@ export interface GitHubInstallationObject {
 /**
  * Analytics webhook payload
  */
-export interface GitHubWebhookPayload {
+interface GitHubWebhookPayload {
   action: string;
   repository?: GitHubRepositoryObject;
   pull_request?: GitHubPullRequestObject;
@@ -519,7 +519,7 @@ export interface RateLimitInfo {
 /**
  * Analytics error
  */
-export interface AnalyticsError {
+interface AnalyticsError {
   code: string;
   message: string;
   details?: Record<string, unknown>;

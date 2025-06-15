@@ -22,7 +22,7 @@ class RequestQueue {
   private readonly minDelay = 1000; // Minimum delay between requests (ms)
   private lastRequestTime = 0;
 
-  async add<T>(request: () => Promise<T>): Promise<T> {
+  add<T>(request: () => Promise<T>): Promise<T> {
     return new Promise((resolve, reject) => {
       this.queue.push(async () => {
         try {
@@ -65,7 +65,7 @@ class RequestQueue {
   }
 }
 
-export class HuggingFaceAPIClient {
+class HuggingFaceAPIClient {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://api-inference.huggingface.co/models';
   private readonly requestQueue = new RequestQueue();
@@ -79,7 +79,7 @@ export class HuggingFaceAPIClient {
   /**
    * Make a request to HuggingFace API
    */
-  async makeRequest(
+  makeRequest(
     modelId: string,
     prompt: string,
     parameters: Record<string, any> = {}

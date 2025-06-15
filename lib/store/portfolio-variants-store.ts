@@ -65,7 +65,7 @@ interface PortfolioVariantsState {
   reset: () => void;
 }
 
-export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
+const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
   devtools(
     persist(
       (set, get) => ({
@@ -217,7 +217,7 @@ export const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
         },
 
         // Switch current variant
-        switchVariant: async (variantId: string) => {
+        switchVariant: (variantId: string) => {
           set({ isSwitching: true });
           try {
             const variant = get().variants.find(v => v.id === variantId);

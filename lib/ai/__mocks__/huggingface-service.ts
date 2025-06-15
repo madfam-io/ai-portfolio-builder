@@ -3,7 +3,7 @@
  */
 
 export class HuggingFaceService {
-  async enhanceBio(bio: string, _context: unknown) {
+  enhanceBio(bio: string, _context: unknown) {
     return {
       content: 'Enhanced bio: ' + bio,
       confidence: 0.85,
@@ -14,7 +14,7 @@ export class HuggingFaceService {
     };
   }
 
-  async optimizeProjectDescription(
+  optimizeProjectDescription(
     title: string,
     description: string,
     technologies: string[]
@@ -34,7 +34,7 @@ export class HuggingFaceService {
     };
   }
 
-  async recommendTemplate(_profile: unknown) {
+  recommendTemplate(_profile: unknown) {
     return {
       recommendedTemplate: 'developer',
       confidence: 0.9,
@@ -45,7 +45,7 @@ export class HuggingFaceService {
     };
   }
 
-  async scoreContent(_content: string, _type: string) {
+  scoreContent(_content: string, _type: string) {
     return {
       overall: 85,
       readability: 90,
@@ -56,7 +56,7 @@ export class HuggingFaceService {
     };
   }
 
-  async getAvailableModels() {
+  getAvailableModels() {
     return [
       {
         id: 'mock-model',
@@ -72,7 +72,7 @@ export class HuggingFaceService {
     ];
   }
 
-  async healthCheck() {
+  healthCheck() {
     return true;
   }
 }

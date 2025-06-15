@@ -84,7 +84,7 @@ export function VariantManager({
     }
   };
 
-  const handleDuplicate = async (variant: PortfolioVariant) => {
+  const handleDuplicate = (variant: PortfolioVariant) => {
     setDuplicatingVariant(variant.id);
     setShowCreateDialog(true);
   };

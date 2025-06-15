@@ -267,13 +267,13 @@ export const useAIStore = create<AIState & AIActions>()(
 );
 
 // Selectors
-export const selectSelectedModels = (state: AIState & AIActions) =>
+const selectSelectedModels = (state: AIState & AIActions) =>
   state.selectedModels;
-export const selectAvailableModels = (state: AIState & AIActions) =>
+const selectAvailableModels = (state: AIState & AIActions) =>
   state.availableModels;
-export const selectEnhancementHistory = (state: AIState & AIActions) =>
+const selectEnhancementHistory = (state: AIState & AIActions) =>
   state.enhancementHistory;
-export const selectAIQuota = (state: AIState & AIActions) => ({
+const selectAIQuota = (state: AIState & AIActions) => ({
   used: state.quotaUsed,
   limit: state.quotaLimit,
   remaining: state.quotaLimit - state.quotaUsed,

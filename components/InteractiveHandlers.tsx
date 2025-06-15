@@ -30,7 +30,7 @@ export default function InteractiveHandlers() {
     function toggleCurrency() {
       const currencies = ['USD', 'MXN', 'EUR'];
       const currentIndex = currencies.indexOf(currency);
-      currency = currencies[(currentIndex + 1) % currencies.length];
+      currency = currencies[(currentIndex + 1) % currencies.length] || 'USD';
       localStorage.setItem('currency', currency);
       updateCurrencyDisplay();
     }
@@ -60,8 +60,11 @@ export default function InteractiveHandlers() {
 
       document.querySelectorAll('[data-price]').forEach(el => {
         const usdPrice = parseFloat(el.getAttribute('data-price') || '0');
-        const convertedPrice = Math.round(usdPrice * exchangeRates[currency]);
-        el.textContent = symbol + convertedPrice;
+        const rate = exchangeRates[currency];
+        if (rate !== undefined) {
+          const convertedPrice = Math.round(usdPrice * rate);
+          el.textContent = (symbol || '$') + convertedPrice;
+        }
       });
     }
 

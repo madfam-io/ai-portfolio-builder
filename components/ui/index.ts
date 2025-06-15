@@ -28,9 +28,3 @@ export * from './atoms';
 
 // Molecules - Simple groups of atoms
 export * from './molecules';
-
-// TODO: Organisms - Complex UI components
-// export * from './organisms';
-
-// TODO: Templates - Page-level components
-// export * from './templates';

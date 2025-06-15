@@ -315,7 +315,7 @@ export const TEMPLATE_PROMPTS = {
     promptTemplates.templateRecommendation.user,
 };
 
-export class PromptBuilder {
+class PromptBuilder {
   static buildBioPrompt(
     bio: string,
     context: {
@@ -369,7 +369,7 @@ export class PromptBuilder {
 /**
  * Prompt validation and safety
  */
-export class PromptValidator {
+class PromptValidator {
   private static readonly MAX_PROMPT_LENGTH = 4000;
   private static readonly FORBIDDEN_PATTERNS = [
     /ignore previous instructions/i,

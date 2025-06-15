@@ -198,7 +198,7 @@ export function withLazyLoading<P extends object>(
  * Provides more granular control over lazy loading behavior.
  * Useful when you need to conditionally load components.
  */
-export function useLazyComponent<T extends ComponentType<any>>(
+function useLazyComponent<T extends ComponentType<any>>(
   importComponent: () => Promise<{ default: T }>,
   shouldLoad: boolean = true
 ) {
