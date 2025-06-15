@@ -54,7 +54,7 @@ export interface Repository {
   openIssuesCount: number;
   isActive: boolean;
   syncEnabled: boolean;
-  metadata: Record<string, any>;
+  metadata: Record<string, string | number | boolean | null>;
   githubCreatedAt?: Date;
   githubUpdatedAt?: Date;
   lastSyncedAt?: Date;
@@ -108,7 +108,7 @@ export interface PullRequest {
   cycleTimeHours?: number;
   timeToFirstReviewHours?: number;
   labels: string[];
-  metadata: Record<string, any>;
+  metadata: Record<string, string | number | boolean | null>;
 }
 
 /**

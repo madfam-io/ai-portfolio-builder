@@ -12,6 +12,11 @@ import { z, ZodError, ZodSchema } from 'zod';
 
 import { logger } from '@/lib/utils/logger';
 
+// Extend NextRequest to include validated data
+interface ValidatedRequest extends NextRequest {
+  validatedData?: unknown;
+}
+
 /**
  * Common validation schemas
  */
@@ -98,10 +103,13 @@ export function sanitizeString(input: string): string {
     .slice(0, 1000); // Limit length
 }
 
+type SanitizableValue = string | number | boolean | null | undefined | 
+  SanitizableValue[] | { [key: string]: SanitizableValue };
+
 /**
  * Deep sanitize object
  */
-export function sanitizeObject(obj: any): any {
+export function sanitizeObject<T extends SanitizableValue>(obj: T): T {
   if (typeof obj === 'string') {
     return sanitizeString(obj);
   }
@@ -111,13 +119,13 @@ export function sanitizeObject(obj: any): any {
   }
   
   if (obj !== null && typeof obj === 'object') {
-    const sanitized: any = {};
+    const sanitized: Record<string, SanitizableValue> = {};
     for (const [key, value] of Object.entries(obj)) {
       // Sanitize key as well
       const safeKey = sanitizeString(key);
       sanitized[safeKey] = sanitizeObject(value);
     }
-    return sanitized;
+    return sanitized as T;
   }
   
   return obj;
@@ -213,7 +221,7 @@ export function validateQueryParams<T>(
 ): { data: T; error: null } | { data: null; error: NextResponse } {
   try {
     const { searchParams } = new URL(request.url);
-    const params: Record<string, any> = {};
+    const params: Record<string, string> = {};
     
     // Convert URLSearchParams to object
     for (const [key, value] of searchParams) {
@@ -297,7 +305,7 @@ export function createValidationMiddleware<T>(
     }
     
     // Attach validated data to request for use in route handler
-    (request as any).validatedData = result.data;
+    (request as ValidatedRequest).validatedData = result.data;
     
     return null;
   };

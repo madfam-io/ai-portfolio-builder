@@ -44,10 +44,10 @@ const createExperimentSchema = z.object({
             order: z.number(),
             visible: z.boolean(),
             variant: z.string(),
-            props: z.record(z.any()),
+            props: z.record(z.unknown()),
           })
         ),
-        themeOverrides: z.record(z.any()).default({}),
+        themeOverrides: z.record(z.unknown()).default({}),
       })
     )
     .min(2), // At least 2 variants required

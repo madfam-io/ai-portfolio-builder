@@ -6,6 +6,7 @@ import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
+import { DemoTranslations } from '@/types/translations';
 
 interface InteractivePreviewSectionProps {
   portfolio: Portfolio;
@@ -19,7 +20,7 @@ interface InteractivePreviewSectionProps {
     height: string;
     scale: number;
   };
-  t: unknown; // TODO: Add proper translation type
+  t: DemoTranslations;
   onPreviousStep: () => void;
   onExport: () => void;
 }
@@ -73,7 +74,7 @@ export function InteractivePreviewSection({
                         ⟳
                       </div>
                       <p className="text-gray-600 dark:text-gray-400">
-                        {(t as any).demoLoadingPreview}
+                        {t.demoLoadingPreview}
                       </p>
                     </div>
                   </div>
@@ -115,18 +116,18 @@ export function InteractivePreviewSection({
               onClick={onPreviousStep}
               className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
             >
-              {(t as any).demoBackToEditor}
+              {t.demoBackToEditor}
             </button>
 
             <div className="text-center">
               <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                {(t as any).demoLoveWhatYouSee}
+                {t.demoLoveWhatYouSee}
               </p>
               <Link
                 href="/auth/signup"
                 className="bg-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-purple-700 transition-colors inline-flex items-center space-x-2"
               >
-                <span>{(t as any).demoGetStartedFreeTrial}</span>
+                <span>{t.demoGetStartedFreeTrial}</span>
                 <ArrowLeft className="w-4 h-4 rotate-180" />
               </Link>
             </div>

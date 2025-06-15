@@ -141,6 +141,11 @@ export const mockTranslations = {
     privacyPolicy: 'Política de privacidad',
     termsOfService: 'Términos de servicio',
     copyright: '© 2024 PRISMA by MADFAM. Todos los derechos reservados.',
+    
+    // Hero additional translations
+    noCreditCard: 'Sin tarjeta de crédito',
+    joinProfessionals: 'Únete a miles de profesionales',
+    rating: '4.9/5 Calificación',
   },
   en: {
     // Common translations
@@ -269,6 +274,11 @@ export const mockTranslations = {
     privacyPolicy: 'Privacy Policy',
     termsOfService: 'Terms of Service',
     copyright: '© 2024 PRISMA by MADFAM. All rights reserved.',
+    
+    // Hero additional translations
+    noCreditCard: 'No credit card required',
+    joinProfessionals: 'Join thousands of professionals',
+    rating: '4.9/5 Rating',
   },
 };
 

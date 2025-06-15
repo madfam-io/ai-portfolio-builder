@@ -28,6 +28,8 @@ const customJestConfig = {
     // Mock lucide-react icons
     'lucide-react/dist/esm/icons/(.*)': '<rootDir>/__mocks__/lucide-react.js',
     'lucide-react': '<rootDir>/__mocks__/lucide-react.js',
+    // Mock Redis cache
+    '^@/lib/cache/redis-cache$': '<rootDir>/__mocks__/lib/cache/redis-cache.ts',
   },
   collectCoverageFrom: [
     '**/*.{ts,tsx}',

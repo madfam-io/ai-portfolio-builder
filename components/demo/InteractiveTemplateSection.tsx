@@ -8,10 +8,11 @@ import {
 import React from 'react';
 
 import { TemplateType } from '@/types/portfolio';
+import { DemoTranslations } from '@/types/translations';
 
 interface InteractiveTemplateSectionProps {
   selectedTemplate: TemplateType;
-  t: unknown; // TODO: Add proper translation type
+  t: DemoTranslations;
   onSelectTemplate: (template: TemplateType) => void;
   onNextStep: () => void;
 }
@@ -25,27 +26,27 @@ export function InteractiveTemplateSection({
   const templates = [
     {
       id: 'developer' as TemplateType,
-      name: (t as any).demoTemplates?.developer?.name || 'Developer',
+      name: t.demoTemplates?.developer?.name || 'Developer',
       description:
-        (t as any).demoTemplates?.developer?.description ||
+        t.demoTemplates?.developer?.description ||
         'Clean and modern template for software developers',
       icon: FiCode,
       color: 'purple',
     },
     {
       id: 'designer' as TemplateType,
-      name: (t as any).demoTemplates?.designer?.name || 'Designer',
+      name: t.demoTemplates?.designer?.name || 'Designer',
       description:
-        (t as any).demoTemplates?.designer?.description ||
+        t.demoTemplates?.designer?.description ||
         'Creative and visual template for designers',
       icon: FaPalette,
       color: 'pink',
     },
     {
       id: 'consultant' as TemplateType,
-      name: (t as any).demoTemplates?.consultant?.name || 'Consultant',
+      name: t.demoTemplates?.consultant?.name || 'Consultant',
       description:
-        (t as any).demoTemplates?.consultant?.description ||
+        t.demoTemplates?.consultant?.description ||
         'Professional template for business consultants',
       icon: FiLayout,
       color: 'blue',
@@ -55,10 +56,10 @@ export function InteractiveTemplateSection({
   return (
     <div className="px-8 py-6">
       <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-        {(t as any).demoChooseTemplate}
+        {t.demoChooseTemplate || 'Choose a Template'}
       </h3>
       <p className="text-gray-600 dark:text-gray-400 mb-8">
-        {(t as any).demoTemplateDescription}
+        {t.demoTemplateDescription || 'Select the template that best fits your profession'}
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

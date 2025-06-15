@@ -58,8 +58,13 @@
         "**/*.test.ts",
         "**/*.test.tsx",
         "**/*.spec.ts",
-        "**/*.spec.tsx"
+        "**/*.spec.tsx",
+        "__tests__/**/*",
+        "__mocks__/**/*"
       ],
+      "parserOptions": {
+        "project": "./tsconfig.test.json"
+      },
       "rules": {
         "no-console": "off",
         "@typescript-eslint/no-explicit-any": "off",

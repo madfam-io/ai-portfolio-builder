@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { getCSPDirectives, generateCSPHeader } from '@/lib/security/csp';
 
 /**
  * Security Headers Middleware
@@ -34,35 +35,15 @@ export function applySecurityHeaders(
   );
 
   // Content-Security-Policy: Comprehensive CSP
-  const isDevelopment = process.env.NODE_ENV === 'development';
-
-  const cspDirectives = [
-    "default-src 'self'",
-    // Scripts: self, Next.js inline scripts, and trusted CDNs
-    `script-src 'self' ${isDevelopment ? "'unsafe-eval'" : ''} 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com`,
-    // Styles: self, inline styles for Tailwind
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    // Images: self, data URIs, and common image CDNs
-    "img-src 'self' data: blob: https: http://localhost:*",
-    // Fonts: self and Google Fonts
-    "font-src 'self' https://fonts.gstatic.com",
-    // Connect: API endpoints and analytics
-    `connect-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL} https://api.github.com https://api.huggingface.co wss://*.supabase.co ${isDevelopment ? 'ws://localhost:*' : ''}`,
-    // Media: self
-    "media-src 'self'",
-    // Objects: none
-    "object-src 'none'",
-    // Base URI: self
-    "base-uri 'self'",
-    // Form action: self
-    "form-action 'self'",
-    // Frame ancestors: none (same as X-Frame-Options: DENY)
-    "frame-ancestors 'none'",
-    // Upgrade insecure requests in production
-    ...(isDevelopment ? [] : ['upgrade-insecure-requests']),
-  ];
-
-  headers.set('Content-Security-Policy', cspDirectives.join('; '));
+  const cspDirectives = getCSPDirectives();
+  const cspHeader = generateCSPHeader(cspDirectives);
+  
+  // Add upgrade-insecure-requests for production
+  const finalCSP = process.env.NODE_ENV === 'production' 
+    ? `${cspHeader}; upgrade-insecure-requests`
+    : cspHeader;
+    
+  headers.set('Content-Security-Policy', finalCSP);
 
   // Strict-Transport-Security: Force HTTPS (only in production)
   if (process.env.NODE_ENV === 'production') {

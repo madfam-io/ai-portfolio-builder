@@ -17,7 +17,7 @@ const trackEventSchema = z.object({
   experimentId: z.string().uuid(),
   variantId: z.string().uuid(),
   eventType: z.enum(['click', 'conversion', 'engagement', 'pageview']),
-  eventData: z.record(z.any()).optional(),
+  eventData: z.record(z.union([z.string(), z.number(), z.boolean(), z.null()])).optional(),
 });
 
 /**

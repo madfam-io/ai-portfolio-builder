@@ -20,11 +20,11 @@ class ClientCacheService {
     // No-op
   }
 
-  async get<T = any>(_key: string): Promise<T | null> {
+  async get<T = unknown>(_key: string): Promise<T | null> {
     return null;
   }
 
-  async set<T = any>(_key: string, _value: T, _ttl?: number): Promise<void> {
+  async set<T = unknown>(_key: string, _value: T, _ttl?: number): Promise<void> {
     // No-op
   }
 

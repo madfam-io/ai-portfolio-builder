@@ -362,19 +362,18 @@ jest.mock('@/lib/contexts/AuthContext', () => ({
 jest.mock('@/lib/i18n/refactored-context', () => {
   const React = require('react');
 
-  // Inline mock to avoid circular dependency issues
-  return {
-    useLanguage: () => ({
-      language: 'es',
-      setLanguage: jest.fn(),
-      t: {
-        // Common translations
-        loading: 'Cargando...',
-        error: 'Error',
-        success: 'Éxito',
-        save: 'Guardar',
-        cancel: 'Cancelar',
-        hello: 'Hola',
+  // Track current language state
+  let currentLanguage = 'es';
+
+  const translations = {
+    es: {
+      // Common translations
+      loading: 'Cargando...',
+      error: 'Error',
+      success: 'Éxito',
+      save: 'Guardar',
+      cancel: 'Cancelar',
+      hello: 'Hola',
         // Dashboard translations
         loadingDashboard: 'Cargando tu panel...',
         myPortfolios: 'Mis Portafolios',
@@ -393,41 +392,83 @@ jest.mock('@/lib/i18n/refactored-context', () => {
         views: 'vistas',
         noPortfoliosYet: 'Aún no tienes portafolios',
         createFirstPortfolio: 'Crea tu primer portafolio para comenzar',
+        // HowItWorks translations
+        howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
+        howItWorksSubtitle: 'Transforma tu experiencia en una presentación profesional',
+        step1Title: 'Sube tu CV',
+        step1Desc: 'Sube tu CV en formato PDF o completa tu información manualmente',
+        step2Title: 'Elige tu plantilla',
+        step2Desc: 'Selecciona una plantilla profesional que se adapte a tu estilo',
+        step3Title: 'Personaliza',
+        step3Desc: 'Ajusta colores, fuentes y contenido a tu gusto',
+        step4Title: 'Publica',
+        step4Desc: 'Obtén tu portafolio en línea con un enlace único',
         // Add more translations as needed by tests
       },
-      availableLanguages: [
-        { code: 'es', name: 'Español', flag: '🇲🇽' },
-        { code: 'en', name: 'English', flag: '🇺🇸' },
-      ],
-      getNamespace: () => ({}),
-      isLoaded: true,
-    }),
-    LanguageProvider: ({ children }) => children,
-  };
-});
+      en: {
+        // Common translations
+        loading: 'Loading...',
+        error: 'Error',
+        success: 'Success',
+        save: 'Save',
+        cancel: 'Cancel',
+        hello: 'Hello',
+        // Dashboard translations
+        loadingDashboard: 'Loading your dashboard...',
+        myPortfolios: 'My Portfolios',
+        managePortfolios: 'Manage and create your professional portfolios',
+        createNewPortfolio: 'Create New Portfolio',
+        createPortfolio: 'Create Portfolio',
+        totalPortfolios: 'Total Portfolios',
+        published: 'Published',
+        totalViews: 'Total Views',
+        yourPortfolios: 'Your Portfolios',
+        statusPublished: 'Published',
+        statusDraft: 'Draft',
+        lastModified: 'Modified',
+        daysAgo: 'ago',
+        weekAgo: '1 week ago',
+        views: 'views',
+        noPortfoliosYet: 'You don\'t have any portfolios yet',
+        createFirstPortfolio: 'Create your first portfolio to get started',
+        // HowItWorks translations
+        howItWorksTitle: 'From CV to portfolio in 3 simple steps',
+        howItWorksSubtitle: 'Transform your experience into a professional presentation',
+        step1Title: 'Upload your CV',
+        step1Desc: 'Upload your CV in PDF format or fill in your information manually',
+        step2Title: 'Choose your template',
+        step2Desc: 'Select a professional template that suits your style',
+        step3Title: 'Customize',
+        step3Desc: 'Adjust colors, fonts and content to your liking',
+        step4Title: 'Publish',
+        step4Desc: 'Get your portfolio online with a unique link',
+      }
+    };
+
+    return {
+      useLanguage: () => ({
+        language: currentLanguage,
+        setLanguage: jest.fn((lang) => { currentLanguage = lang; }),
+        t: translations[currentLanguage] || translations.es,
+        availableLanguages: [
+          { code: 'es', name: 'Español', flag: '🇲🇽' },
+          { code: 'en', name: 'English', flag: '🇺🇸' },
+        ],
+        getNamespace: () => ({}),
+        isLoaded: true,
+      }),
+      LanguageProvider: ({ children, initialLanguage }) => {
+        if (initialLanguage) {
+          currentLanguage = initialLanguage;
+        }
+        return children;
+      },
+    };
+  });
 
 jest.mock('@/lib/i18n/minimal-context', () => {
-  return {
-    useLanguage: () => ({
-      language: 'es',
-      setLanguage: jest.fn(),
-      t: {
-        loading: 'Cargando...',
-        error: 'Error',
-        success: 'Éxito',
-        save: 'Guardar',
-        cancel: 'Cancelar',
-        // Add more translations as needed by tests
-      },
-      availableLanguages: [
-        { code: 'es', name: 'Español', flag: '🇲🇽' },
-        { code: 'en', name: 'English', flag: '🇺🇸' },
-      ],
-      getNamespace: () => ({}),
-      isLoaded: true,
-    }),
-    LanguageProvider: ({ children }) => children,
-  };
+  // Reuse the same mock as refactored-context
+  return jest.requireMock('@/lib/i18n/refactored-context');
 });
 
 // IntersectionObserver already mocked at the top of the file

@@ -49,46 +49,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }): React.ReactElement {
   return (
-    <html lang="en" className={`${inter.variable} dark`}>
+    <html lang="en" className={`${inter.variable} dark`} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              (function() {
-                try {
-                  // Check UI store for theme preference
-                  var uiStore = localStorage.getItem('ui-store');
-                  var theme = 'dark'; // default
-                  
-                  if (uiStore) {
-                    try {
-                      var parsed = JSON.parse(uiStore);
-                      if (parsed.state && parsed.state.theme) {
-                        theme = parsed.state.theme;
-                      }
-                    } catch (e) {
-                      // Silent fallback if parsing fails
-                    }
-                  }
-                  
-                  // Apply theme
-                  var root = document.documentElement;
-                  root.classList.remove('light', 'dark');
-                  
-                  if (theme === 'system') {
-                    var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-                    root.classList.add(systemTheme);
-                  } else {
-                    root.classList.add(theme);
-                  }
-                } catch (e) {
-                  // Default to dark mode if localStorage is not available
-                  document.documentElement.classList.add('dark');
-                }
-              })();
-            `,
-          }}
-        />
+        {/* Theme initialization moved to ThemeScript component below */}
       </head>
       <body
         className={`${inter.className} font-sans dark:bg-gray-900 bg-white`}

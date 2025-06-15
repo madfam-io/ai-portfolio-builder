@@ -153,7 +153,7 @@ class CacheService {
   /**
    * Get value from cache
    */
-  async get<T = any>(key: string): Promise<T | null> {
+  async get<T = unknown>(key: string): Promise<T | null> {
     try {
       const value =
         this.client && this.connected
@@ -172,7 +172,7 @@ class CacheService {
   /**
    * Set value in cache
    */
-  async set<T = any>(
+  async set<T = unknown>(
     key: string,
     value: T,
     ttl: number = CACHE_CONFIG.defaultTTL
@@ -263,7 +263,7 @@ export function Cacheable(keyPrefix: string, ttl?: number) {
   ) {
     const originalMethod = descriptor.value;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = async function (...args: unknown[]) {
       const cacheKey = `${keyPrefix}:${propertyName}:${JSON.stringify(args)}`;
 
       // Try to get from cache

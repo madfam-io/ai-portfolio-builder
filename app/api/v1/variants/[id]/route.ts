@@ -102,7 +102,15 @@ export const PATCH = versionedApiHandler(
       }
 
       // Prepare updates
-      const dbUpdates: any = {};
+      const dbUpdates: Partial<{
+        name: string;
+        slug: string;
+        is_default: boolean;
+        is_published: boolean;
+        content_overrides: Record<string, unknown>;
+        ai_optimization: Record<string, unknown>;
+        analytics: Record<string, unknown>;
+      }> = {};
       
       if ('name' in updates) dbUpdates.name = updates.name;
       if ('slug' in updates) dbUpdates.slug = updates.slug;

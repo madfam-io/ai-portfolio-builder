@@ -214,7 +214,7 @@ export interface Portfolio {
   hasUnsavedChanges?: boolean;
   
   // Dynamic data storage
-  data?: Record<string, any>;
+  data?: Record<string, string | number | boolean | null | undefined>;
 }
 
 // Import data interfaces
@@ -378,11 +378,11 @@ export interface PortfolioSection {
   type: SectionType;
   title?: string;
   subtitle?: string;
-  content: Record<string, any>;
+  content: Record<string, string | number | boolean | null | undefined>;
   isVisible: boolean;
   orderIndex: number;
   layout?: LayoutType;
-  styles?: Record<string, any>;
+  styles?: Record<string, string | number>;
   createdAt: Date;
   updatedAt: Date;
 }
