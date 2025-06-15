@@ -279,17 +279,7 @@ jest.mock('crypto', () => ({
   }),
 }));
 
-// Mock Framer Motion
-jest.mock('framer-motion', () => ({
-  motion: {
-    div: 'div',
-    span: 'span',
-    button: 'button',
-    section: 'section',
-    article: 'article',
-  },
-  AnimatePresence: ({ children }) => children,
-}));
+// Framer Motion mock removed - library not installed
 
 // Toast utility is mocked in lib/utils/toast.ts - no external dependency needed
 

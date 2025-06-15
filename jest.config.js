@@ -25,6 +25,9 @@ const customJestConfig = {
     '^@/lib/(.*)$': '<rootDir>/lib/$1',
     '^@/hooks/(.*)$': '<rootDir>/hooks/$1',
     '^@/types/(.*)$': '<rootDir>/types/$1',
+    // Mock lucide-react icons
+    'lucide-react/dist/esm/icons/(.*)': '<rootDir>/__mocks__/lucide-react.js',
+    'lucide-react': '<rootDir>/__mocks__/lucide-react.js',
   },
   collectCoverageFrom: [
     '**/*.{ts,tsx}',
@@ -58,7 +61,7 @@ const customJestConfig = {
     '^.+\\.(js|jsx|ts|tsx)$': ['babel-jest', { presets: ['next/babel'] }],
   },
   transformIgnorePatterns: [
-    '/node_modules/',
+    '/node_modules/(?!(lucide-react)/)',
     '^.+\\.module\\.(css|sass|scss)$',
   ],
   // Enable manual mocks
