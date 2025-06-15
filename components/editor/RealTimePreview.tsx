@@ -10,7 +10,7 @@ import {
 import React, { useState, useEffect, useRef } from 'react';
 
 import { WidgetErrorBoundary } from '@/components/shared/error-boundaries';
-import { cn } from '@/components/ui/utils';
+import { cn } from '@/lib/utils';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
 

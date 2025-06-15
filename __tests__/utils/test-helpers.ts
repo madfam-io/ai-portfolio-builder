@@ -1,10 +1,9 @@
-import { ReactElement } from 'react';
+import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
-
 
 // Test providers wrapper
 export function AllTheProviders({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return React.createElement(React.Fragment, null, children);
 }
 
 export function renderWithProviders(
@@ -28,7 +27,7 @@ export function createMockPortfolio(overrides = {}) {
     views: 0,
     createdAt: new Date(),
     updatedAt: new Date(),
-    ...overrides
+    ...overrides,
   };
 }
 
@@ -38,6 +37,6 @@ export function createMockUser(overrides = {}) {
     email: 'test@example.com',
     name: 'Test User',
     createdAt: new Date(),
-    ...overrides
+    ...overrides,
   };
 }

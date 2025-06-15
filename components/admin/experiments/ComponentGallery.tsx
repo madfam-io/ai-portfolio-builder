@@ -58,7 +58,7 @@ export default function ComponentGallery({
       if (!acc[component.type]) {
         acc[component.type] = [];
       }
-      acc[component.type]!.push(component);
+      acc[component.type]?.push(component);
       return acc;
     },
     {} as Record<string, ComponentLibraryItem[]>
