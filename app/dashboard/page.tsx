@@ -35,7 +35,7 @@ function DashboardContent(): React.ReactElement {
   const { toast } = useToast();
   const { portfolios, isLoading, error, loadPortfolios, deletePortfolio } =
     usePortfolioStore();
-  const { limits } = useSubscription();
+  const { limits, canCreatePortfolio, isFreeTier } = useSubscription();
   const {
     showModal,
     modalReason,
@@ -91,7 +91,7 @@ function DashboardContent(): React.ReactElement {
 
   const handleCreatePortfolio = () => {
     // Check if user can create more portfolios
-    if (limits && !limits.canCreatePortfolio) {
+    if (!canCreatePortfolio) {
       const shown = checkAndShowPrompt('portfolio_limit');
       if (!shown) {
         toast({
@@ -197,22 +197,22 @@ function DashboardContent(): React.ReactElement {
         )}
 
         {/* Upgrade Banners */}
-        {limits?.isFreeTier && shouldShowPrompt('portfolio_limit') && (
+        {isFreeTier && shouldShowPrompt('portfolio_limit') && (
           <div className="mb-6">
             <UpgradeBanner
               type="portfolio_limit"
               title="Portfolio Limit Reached"
-              description={`You've created ${limits.current_usage.portfolios} of ${limits.limits.max_portfolios} portfolios. Upgrade to create more professional portfolios.`}
+              description={`You've created ${limits?.current_usage.portfolios || 0} of ${limits?.limits.max_portfolios || 0} portfolios. Upgrade to create more professional portfolios.`}
             />
           </div>
         )}
 
-        {limits?.isFreeTier && shouldShowPrompt('ai_limit') && (
+        {isFreeTier && shouldShowPrompt('ai_limit') && (
           <div className="mb-6">
             <UpgradeBanner
               type="ai_limit"
               title="AI Enhancements Used Up"
-              description={`You've used ${limits.current_usage.ai_requests} of ${limits.limits.max_ai_requests} AI enhancements this month. Upgrade for unlimited AI features.`}
+              description={`You've used ${limits?.current_usage.ai_requests || 0} of ${limits?.limits.max_ai_requests || 0} AI enhancements this month. Upgrade for unlimited AI features.`}
             />
           </div>
         )}

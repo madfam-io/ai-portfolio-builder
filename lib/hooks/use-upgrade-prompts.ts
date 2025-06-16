@@ -19,7 +19,7 @@ const PROMPT_COOLDOWN = 24 * 60 * 60 * 1000; // 24 hours
 const STORAGE_KEY = 'upgrade-prompts-state';
 
 export function useUpgradePrompts() {
-  const { limits, isUpgradeRequired } = useSubscription();
+  const { isUpgradeRequired, isPaidTier } = useSubscription();
   const [promptState, setPromptState] = useState<UpgradePromptState>({
     showModal: false,
     modalReason: null,
@@ -60,7 +60,7 @@ export function useUpgradePrompts() {
   const shouldShowPrompt = useCallback(
     (type: 'ai_limit' | 'portfolio_limit'): boolean => {
       // Don't show if user is on a paid plan
-      if (limits?.isPaidTier) return false;
+      if (isPaidTier) return false;
 
       // Don't show if already shown today
       const today = new Date().toDateString();
@@ -74,7 +74,7 @@ export function useUpgradePrompts() {
       return isUpgradeRequired(type === 'ai_limit' ? 'ai' : 'portfolio');
     },
     [
-      limits?.isPaidTier,
+      isPaidTier,
       promptState.dismissedToday,
       promptState.lastShown,
       isUpgradeRequired,

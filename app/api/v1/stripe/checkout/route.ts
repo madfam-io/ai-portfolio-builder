@@ -45,7 +45,7 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     const { planId, trialDays } = CreateCheckoutSchema.parse(body);
 
     // Get authenticated user
-    const { user } = request.auth;
+    const { user } = request;
     if (!user?.email) {
       throw new AppError(
         'USER_EMAIL_REQUIRED',

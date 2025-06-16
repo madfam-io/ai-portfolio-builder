@@ -19,7 +19,7 @@ import { logger } from '@/lib/utils/logger';
  */
 async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
-    const { user } = request.auth;
+    const { user } = request;
     const supabase = await createClient();
     if (!supabase) {
       throw new AppError(

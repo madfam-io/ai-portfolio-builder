@@ -3,7 +3,6 @@ import {
   CircuitBreaker,
   createDebouncedRetry,
   withTimeout,
-  RetryOptions,
 } from '@/lib/services/error/retry-handler';
 import { AppError, ExternalServiceError } from '@/types/errors';
 import { errorLogger } from '@/lib/services/error/error-logger';
@@ -93,23 +92,20 @@ describe('Retry Handler', () => {
         .mockRejectedValueOnce(new ExternalServiceError('Error'))
         .mockResolvedValue('success');
 
-      const promise = retry(mockFn, {
-        initialDelay: 100,
+      // Use real timers for this test to avoid timeout issues
+      jest.useRealTimers();
+      
+      const result = await retry(mockFn, {
+        initialDelay: 10,
         backoffMultiplier: 2,
+        maxAttempts: 3,
       });
-
-      // First retry after 100ms
-      jest.advanceTimersByTime(100);
-      await Promise.resolve();
-
-      // Second retry after 200ms (100 * 2)
-      jest.advanceTimersByTime(200);
-      await Promise.resolve();
-
-      const result = await promise;
 
       expect(result).toBe('success');
       expect(mockFn).toHaveBeenCalledTimes(3);
+      
+      // Restore fake timers for other tests
+      jest.useFakeTimers();
     });
 
     it('should respect max delay', async () => {
@@ -353,7 +349,7 @@ describe('Retry Handler', () => {
   describe('createDebouncedRetry', () => {
     it('should debounce multiple calls', async () => {
       const mockFn = jest.fn().mockResolvedValue('success');
-      const debouncedFn = createDebouncedRetry(mockFn, 100);
+      const debouncedFn = createDebouncedRetry(mockFn, 10); // Reduce delay for faster test
 
       // Make multiple calls
       const promise1 = debouncedFn('arg1');
@@ -361,7 +357,8 @@ describe('Retry Handler', () => {
       const promise3 = debouncedFn('arg3');
 
       // Fast-forward past debounce delay
-      jest.advanceTimersByTime(100);
+      jest.advanceTimersByTime(20);
+      await Promise.resolve(); // Allow promises to resolve
 
       const results = await Promise.all([promise1, promise2, promise3]);
 

@@ -2,7 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { stripeService, SUBSCRIPTION_PLANS, getPlan, formatPrice } from '@/lib/services/stripe/stripe';
+import {
+  stripeService,
+  SUBSCRIPTION_PLANS,
+  getPlan,
+  formatPrice,
+} from '@/lib/services/stripe/stripe';
 
 // Mock Stripe
 jest.mock('stripe', () => {
@@ -172,7 +177,7 @@ describe('Stripe Error Handling', () => {
   it('should handle service unavailable', () => {
     // Mock service as unavailable
     jest.spyOn(stripeService, 'isAvailable').mockReturnValue(false);
-    
+
     expect(() => {
       stripeService.getPlanFeatures('pro');
     }).not.toThrow();

@@ -3,7 +3,10 @@
  */
 
 import { renderHook, waitFor } from '@testing-library/react';
-import { useSubscription, useCanPerformAction } from '@/lib/hooks/use-subscription';
+import {
+  useSubscription,
+  useCanPerformAction,
+} from '@/lib/hooks/use-subscription';
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -194,10 +197,11 @@ describe('useSubscription Hook', () => {
       })
       .mockResolvedValueOnce({
         ok: true,
-        json: () => Promise.resolve({
-          ...mockLimitsResponse,
-          current_usage: { portfolios: 0, ai_requests: 1 },
-        }),
+        json: () =>
+          Promise.resolve({
+            ...mockLimitsResponse,
+            current_usage: { portfolios: 0, ai_requests: 1 },
+          }),
       });
 
     const { result } = renderHook(() => useSubscription());

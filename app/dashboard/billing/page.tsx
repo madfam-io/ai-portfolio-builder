@@ -46,7 +46,17 @@ import { useToast } from '@/hooks/use-toast';
 function BillingContent() {
   const { t: _t } = useLanguage();
   const { toast } = useToast();
-  const { limits, loading, error, refresh } = useSubscription();
+  const {
+    limits,
+    loading,
+    error,
+    refresh,
+    isPaidTier,
+    isFreeTier,
+    planName,
+    portfolioUsagePercentage,
+    aiUsagePercentage,
+  } = useSubscription();
   const [isUpgrading, setIsUpgrading] = useState<string | null>(null);
   const [isRedirectingToPortal, setIsRedirectingToPortal] = useState(false);
 
@@ -173,7 +183,7 @@ function BillingContent() {
             Manage your subscription and view your usage statistics
           </p>
         </div>
-        {limits?.isPaidTier && (
+        {isPaidTier && (
           <Button
             onClick={handleManageBilling}
             disabled={isRedirectingToPortal}
@@ -205,8 +215,8 @@ function BillingContent() {
                 variant={currentPlan === 'free' ? 'secondary' : 'default'}
                 className="text-sm"
               >
-                {limits?.isFreeTier && <Crown className="h-3 w-3 mr-1" />}
-                {planConfig?.name}
+                {isFreeTier && <Crown className="h-3 w-3 mr-1" />}
+                {planName}
               </Badge>
               <span className="text-2xl font-bold">
                 {formatPrice(planConfig?.price || 0)}/month
@@ -275,10 +285,7 @@ function BillingContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Progress
-                value={limits?.portfolioUsagePercentage}
-                className="h-2"
-              />
+              <Progress value={portfolioUsagePercentage} className="h-2" />
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{limits?.current_usage.portfolios} portfolios</span>
                 <span>
@@ -309,7 +316,7 @@ function BillingContent() {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <Progress value={limits?.aiUsagePercentage} className="h-2" />
+              <Progress value={aiUsagePercentage} className="h-2" />
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{limits?.current_usage.ai_requests} requests</span>
                 <span>
@@ -325,7 +332,7 @@ function BillingContent() {
       </div>
 
       {/* Upgrade Options */}
-      {limits?.isFreeTier && (
+      {isFreeTier && (
         <>
           <Separator />
           <div className="space-y-4">

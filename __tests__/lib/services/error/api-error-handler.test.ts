@@ -1,4 +1,4 @@
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import {
   handleApiError,
   withErrorHandler,
@@ -185,7 +185,7 @@ describe('API Error Handler', () => {
       }
 
       const handler = createApiHandler<Params, Response>(
-        async (req, { params }) => {
+        (req, { params }) => {
           return NextResponse.json({ data: params.id });
         }
       );
@@ -196,7 +196,7 @@ describe('API Error Handler', () => {
     });
 
     it('should handle errors in typed handler', async () => {
-      const handler = createApiHandler(async () => {
+      const handler = createApiHandler(() => {
         throw new AppError('Test error', 'TEST_ERROR', 400);
       });
 

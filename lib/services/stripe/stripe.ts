@@ -96,7 +96,7 @@ class StripeService {
 
     try {
       this.stripe = new Stripe(env.STRIPE_SECRET_KEY, {
-        apiVersion: '2024-06-20',
+        apiVersion: '2025-05-28.basil',
         typescript: true,
       });
       this.initialized = true;

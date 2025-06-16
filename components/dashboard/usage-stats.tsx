@@ -36,7 +36,14 @@ export function UsageStats({
   showUpgradePrompts = true,
   className = '',
 }: UsageStatsProps) {
-  const { limits, loading, error } = useSubscription();
+  const {
+    limits,
+    loading,
+    error,
+    portfolioUsagePercentage,
+    aiUsagePercentage,
+    isFreeTier,
+  } = useSubscription();
   const { toast } = useToast();
   const [isUpgrading, setIsUpgrading] = useState(false);
 
@@ -128,22 +135,19 @@ export function UsageStats({
               </span>
               {limits.limits.max_portfolios !== -1 && (
                 <span
-                  className={`text-sm font-medium ${getUsageColor(limits.portfolioUsagePercentage)}`}
+                  className={`text-sm font-medium ${getUsageColor(portfolioUsagePercentage)}`}
                 >
-                  {limits.portfolioUsagePercentage}%
+                  {portfolioUsagePercentage}%
                 </span>
               )}
             </div>
 
             {limits.limits.max_portfolios !== -1 && (
               <div className="space-y-1">
-                <Progress
-                  value={limits.portfolioUsagePercentage}
-                  className="h-2"
-                />
-                {limits.portfolioUsagePercentage >= 80 &&
+                <Progress value={portfolioUsagePercentage} className="h-2" />
+                {portfolioUsagePercentage >= 80 &&
                   showUpgradePrompts &&
-                  limits.isFreeTier && (
+                  isFreeTier && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">
                         Almost at limit
@@ -186,19 +190,19 @@ export function UsageStats({
               </span>
               {limits.limits.max_ai_requests !== -1 && (
                 <span
-                  className={`text-sm font-medium ${getUsageColor(limits.aiUsagePercentage)}`}
+                  className={`text-sm font-medium ${getUsageColor(aiUsagePercentage)}`}
                 >
-                  {limits.aiUsagePercentage}%
+                  {aiUsagePercentage}%
                 </span>
               )}
             </div>
 
             {limits.limits.max_ai_requests !== -1 && (
               <div className="space-y-1">
-                <Progress value={limits.aiUsagePercentage} className="h-2" />
-                {limits.aiUsagePercentage >= 80 &&
+                <Progress value={aiUsagePercentage} className="h-2" />
+                {aiUsagePercentage >= 80 &&
                   showUpgradePrompts &&
-                  limits.isFreeTier && (
+                  isFreeTier && (
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-muted-foreground">
                         Almost at limit
@@ -230,15 +234,15 @@ export function UsageStats({
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Badge variant={limits.isFreeTier ? 'secondary' : 'default'}>
-                {limits.planName}
+              <Badge variant={isFreeTier ? 'secondary' : 'default'}>
+                {limits?.subscription_tier || 'free'}
               </Badge>
-              {limits.isFreeTier && (
+              {isFreeTier && (
                 <span className="text-sm text-muted-foreground">Free</span>
               )}
             </div>
 
-            {limits.isFreeTier && showUpgradePrompts && (
+            {isFreeTier && showUpgradePrompts && (
               <div className="space-y-2">
                 <p className="text-xs text-muted-foreground">
                   Upgrade for unlimited features
@@ -264,18 +268,16 @@ export function UsageStats({
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Calendar className="h-4 w-4 text-green-500" />
-            {limits.isFreeTier ? 'AI Resets' : 'Next Billing'}
+            {isFreeTier ? 'AI Resets' : 'Next Billing'}
           </CardTitle>
           <CardDescription>
-            {limits.isFreeTier
-              ? 'AI requests reset monthly'
-              : 'Next billing cycle'}
+            {isFreeTier ? 'AI requests reset monthly' : 'Next billing cycle'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
             <div className="text-center">
-              {limits.isFreeTier ? (
+              {isFreeTier ? (
                 <>
                   <span className="text-lg font-bold block">
                     {new Date(
@@ -311,7 +313,7 @@ export function UsageStats({
  * Compact usage summary for smaller spaces
  */
 export function UsageSummary({ className = '' }: { className?: string }) {
-  const { limits, loading } = useSubscription();
+  const { limits, loading, isFreeTier } = useSubscription();
 
   if (loading || !limits) {
     return (
@@ -340,11 +342,8 @@ export function UsageSummary({ className = '' }: { className?: string }) {
           ? '∞'
           : limits.limits.max_ai_requests}
       </span>
-      <Badge
-        variant={limits.isFreeTier ? 'secondary' : 'default'}
-        className="text-xs"
-      >
-        {limits.planName}
+      <Badge variant={isFreeTier ? 'secondary' : 'default'} className="text-xs">
+        {limits?.subscription_tier || 'free'}
       </Badge>
     </div>
   );

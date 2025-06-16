@@ -11,8 +11,15 @@ describe('useEditorHistory', () => {
     bio: 'Test bio',
     tagline: 'Test tagline',
     avatarUrl: 'https://example.com/avatar.jpg',
-    contact: { email: 'test@example.com', phone: '123-456-7890', location: 'New York' },
-    social: { github: 'https://github.com/test', linkedin: 'https://linkedin.com/in/test' },
+    contact: {
+      email: 'test@example.com',
+      phone: '123-456-7890',
+      location: 'New York',
+    },
+    social: {
+      github: 'https://github.com/test',
+      linkedin: 'https://linkedin.com/in/test',
+    },
     experience: [],
     education: [],
     projects: [],
@@ -45,7 +52,7 @@ describe('useEditorHistory', () => {
     const editorState = createInitialState();
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -57,7 +64,7 @@ describe('useEditorHistory', () => {
     const editorState = createInitialState();
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -103,7 +110,7 @@ describe('useEditorHistory', () => {
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -145,7 +152,7 @@ describe('useEditorHistory', () => {
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -167,13 +174,15 @@ describe('useEditorHistory', () => {
   it('should not undo when at beginning of history', () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
-      history: [{ timestamp: new Date(), action: 'Initial', state: mockPortfolio }],
+      history: [
+        { timestamp: new Date(), action: 'Initial', state: mockPortfolio },
+      ],
       historyIndex: 0,
     };
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -193,13 +202,15 @@ describe('useEditorHistory', () => {
   it('should not redo when at end of history', () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
-      history: [{ timestamp: new Date(), action: 'Initial', state: mockPortfolio }],
+      history: [
+        { timestamp: new Date(), action: 'Initial', state: mockPortfolio },
+      ],
       historyIndex: 0,
     };
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -220,7 +231,7 @@ describe('useEditorHistory', () => {
     const editorState = createInitialState();
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -243,8 +254,16 @@ describe('useEditorHistory', () => {
   it('should clear future history when pushing after undo', () => {
     const history = [
       { timestamp: new Date(), action: 'Action 1', state: mockPortfolio },
-      { timestamp: new Date(), action: 'Action 2', state: { ...mockPortfolio, name: 'Version 2' } },
-      { timestamp: new Date(), action: 'Action 3', state: { ...mockPortfolio, name: 'Version 3' } },
+      {
+        timestamp: new Date(),
+        action: 'Action 2',
+        state: { ...mockPortfolio, name: 'Version 2' },
+      },
+      {
+        timestamp: new Date(),
+        action: 'Action 3',
+        state: { ...mockPortfolio, name: 'Version 3' },
+      },
     ];
 
     const editorState: PortfolioEditorState = {
@@ -255,7 +274,7 @@ describe('useEditorHistory', () => {
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -311,7 +330,7 @@ describe('useEditorHistory', () => {
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
@@ -329,10 +348,14 @@ describe('useEditorHistory', () => {
   it('should merge portfolio states correctly during undo/redo', () => {
     const basePortfolio = mockPortfolio;
     const partialUpdate = { name: 'Partial Update', bio: 'New bio' };
-    
+
     const history = [
-      { timestamp: new Date()ion: 'Initial', state: basePortfolio },
-      { timestamp: new Date()ion: 'Update', state: partialUpdate as Portfolio },
+      { timestamp: new Date(), description: 'Initial', state: basePortfolio },
+      {
+        timestamp: new Date(),
+        description: 'Update',
+        state: partialUpdate as Portfolio,
+      },
     ];
 
     const editorState: PortfolioEditorState = {
@@ -344,7 +367,7 @@ describe('useEditorHistory', () => {
 
     const setEditorState = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 

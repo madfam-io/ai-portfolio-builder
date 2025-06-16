@@ -171,7 +171,7 @@ export const POST = versionedApiHandler(
         throw new ValidationError('Invalid JSON in request body');
       }
 
-      const validation = validateCreatePortfolio(body);
+      const validation = validateCreatePortfolio(body as any);
 
       if (!validation.isValid) {
         throw new ValidationError('Invalid portfolio data', {
@@ -180,7 +180,7 @@ export const POST = versionedApiHandler(
       }
 
       // Sanitize input data
-      const sanitizedData = sanitizePortfolioData(body);
+      const sanitizedData = sanitizePortfolioData(body as any);
 
       // Generate unique subdomain if not provided
       let subdomain = sanitizedData.name

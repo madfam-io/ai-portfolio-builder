@@ -33,7 +33,7 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     }
 
     // Get authenticated user
-    const { user } = request.auth;
+    const { user } = request;
 
     // Get user's Stripe customer ID from database
     const supabase = await createClient();
