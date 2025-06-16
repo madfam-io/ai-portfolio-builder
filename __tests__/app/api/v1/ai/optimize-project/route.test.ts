@@ -40,37 +40,48 @@ describe('/api/v1/ai/optimize-project', () => {
       optimizeProjectDescription: jest.fn(),
     };
 
-    (HuggingFaceService as jest.Mock).mockImplementation(() => mockHuggingFaceInstance);
+    (HuggingFaceService as jest.Mock).mockImplementation(
+      () => mockHuggingFaceInstance
+    );
   });
 
   describe('POST /api/v1/ai/optimize-project', () => {
     it('should optimize project description successfully', async () => {
       const mockOptimizedResult = {
         enhancedDescription: 'Enhanced description with better details',
-        highlights: ['Built scalable architecture', 'Improved performance by 50%'],
+        highlights: [
+          'Built scalable architecture',
+          'Improved performance by 50%',
+        ],
         extractedSkills: ['React', 'Node.js', 'MongoDB'],
         confidence: 0.85,
       };
 
-      mockHuggingFaceInstance.optimizeProjectDescription.mockResolvedValue(mockOptimizedResult);
+      mockHuggingFaceInstance.optimizeProjectDescription.mockResolvedValue(
+        mockOptimizedResult
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'E-commerce Platform',
-          description: 'Built an e-commerce platform with payment integration',
-          technologies: ['React', 'Node.js', 'Stripe'],
-          context: {
-            industry: 'retail',
-            projectType: 'web',
-            targetAudience: 'employers',
-            emphasize: 'technical',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            title: 'E-commerce Platform',
+            description:
+              'Built an e-commerce platform with payment integration',
+            technologies: ['React', 'Node.js', 'Stripe'],
+            context: {
+              industry: 'retail',
+              projectType: 'web',
+              targetAudience: 'employers',
+              emphasize: 'technical',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(200);
@@ -81,10 +92,13 @@ describe('/api/v1/ai/optimize-project', () => {
         highlights: mockOptimizedResult.highlights,
         extractedSkills: mockOptimizedResult.extractedSkills,
         confidence: mockOptimizedResult.confidence,
-        originalDescription: 'Built an e-commerce platform with payment integration',
+        originalDescription:
+          'Built an e-commerce platform with payment integration',
       });
 
-      expect(mockHuggingFaceInstance.optimizeProjectDescription).toHaveBeenCalledWith(
+      expect(
+        mockHuggingFaceInstance.optimizeProjectDescription
+      ).toHaveBeenCalledWith(
         'Built an e-commerce platform with payment integration',
         ['React', 'Node.js', 'Stripe'],
         'retail'
@@ -92,22 +106,25 @@ describe('/api/v1/ai/optimize-project', () => {
     });
 
     it('should handle authentication errors', async () => {
-      mockSupabaseClient.auth.getUser.mockResolvedValue({ 
+      mockSupabaseClient.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: new Error('Not authenticated') 
+        error: new Error('Not authenticated'),
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Test description',
-          technologies: ['React'],
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Test description',
+            technologies: ['React'],
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(401);
@@ -117,17 +134,20 @@ describe('/api/v1/ai/optimize-project', () => {
     });
 
     it('should validate request body', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: '', // Invalid: empty title
-          description: 'Short', // Invalid: too short
-          technologies: [], // Invalid: empty array
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: '', // Invalid: empty title
+            description: 'Short', // Invalid: too short
+            technologies: [], // Invalid: empty array
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(400);
@@ -139,20 +159,27 @@ describe('/api/v1/ai/optimize-project', () => {
 
     it('should handle AI service errors', async () => {
       mockHuggingFaceInstance.optimizeProjectDescription.mockRejectedValue(
-        new AIServiceError('Model unavailable', 'SERVICE_UNAVAILABLE', 'huggingface')
+        new AIServiceError(
+          'Model unavailable',
+          'SERVICE_UNAVAILABLE',
+          'huggingface'
+        )
       );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Test description that needs optimization',
-          technologies: ['React'],
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Test description that needs optimization',
+            technologies: ['React'],
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(503);
@@ -166,17 +193,20 @@ describe('/api/v1/ai/optimize-project', () => {
         new QuotaExceededError('Monthly quota exceeded', 30, 30)
       );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Test description that needs optimization',
-          technologies: ['React'],
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Test description that needs optimization',
+            technologies: ['React'],
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(429);
@@ -193,17 +223,20 @@ describe('/api/v1/ai/optimize-project', () => {
     it('should handle Supabase service unavailable', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Test description',
-          technologies: ['React'],
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Test description',
+            technologies: ['React'],
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(503);
@@ -220,19 +253,24 @@ describe('/api/v1/ai/optimize-project', () => {
         confidence: 0.9,
       };
 
-      mockHuggingFaceInstance.optimizeProjectDescription.mockResolvedValue(mockOptimizedResult);
+      mockHuggingFaceInstance.optimizeProjectDescription.mockResolvedValue(
+        mockOptimizedResult
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Test description that needs optimization',
-          technologies: ['React'],
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Test description that needs optimization',
+            technologies: ['React'],
+          }),
+        }
+      );
 
       await POST(request);
 
@@ -266,21 +304,24 @@ describe('/api/v1/ai/optimize-project', () => {
           confidence: 0.8,
         });
 
-        const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            title: 'Test Project',
-            description: 'Test description for different project types',
-            technologies: ['Python'],
-            context: {
-              projectType: testCase.projectType,
-              industry: testCase.expectedIndustry,
+        const _request = new NextRequest(
+          'http://localhost:3000/api/v1/ai/optimize-project',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          }),
-        });
+            body: JSON.stringify({
+              title: 'Test Project',
+              description: 'Test description for different project types',
+              technologies: ['Python'],
+              context: {
+                projectType: testCase.projectType,
+                industry: testCase.expectedIndustry,
+              },
+            }),
+          }
+        );
 
         const response = await POST(request);
         expect(response.status).toBe(200);
@@ -295,23 +336,28 @@ describe('/api/v1/ai/optimize-project', () => {
         confidence: 0.75,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/optimize-project', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          title: 'Test Project',
-          description: 'Basic project description',
-          technologies: ['JavaScript'],
-          // No context provided
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/optimize-project',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            title: 'Test Project',
+            description: 'Basic project description',
+            technologies: ['JavaScript'],
+            // No context provided
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(200);
 
-      expect(mockHuggingFaceInstance.optimizeProjectDescription).toHaveBeenCalledWith(
+      expect(
+        mockHuggingFaceInstance.optimizeProjectDescription
+      ).toHaveBeenCalledWith(
         'Basic project description',
         ['JavaScript'],
         undefined

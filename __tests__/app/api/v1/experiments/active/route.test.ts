@@ -41,9 +41,13 @@ describe('GET /api/v1/experiments/active', () => {
       },
     };
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(mockExperiment);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      mockExperiment
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     const response = await GET(request);
     const data = await response.json();
 
@@ -59,11 +63,18 @@ describe('GET /api/v1/experiments/active', () => {
   });
 
   it('should detect mobile device from user agent', async () => {
-    mockHeaders.set('user-agent', 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)');
+    mockHeaders.set(
+      'user-agent',
+      'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)'
+    );
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -74,11 +85,18 @@ describe('GET /api/v1/experiments/active', () => {
   });
 
   it('should detect tablet device from user agent', async () => {
-    mockHeaders.set('user-agent', 'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)');
+    mockHeaders.set(
+      'user-agent',
+      'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X)'
+    );
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -91,9 +109,13 @@ describe('GET /api/v1/experiments/active', () => {
   it('should extract country from Vercel headers', async () => {
     mockHeaders.set('x-vercel-ip-country', 'US');
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -106,9 +128,13 @@ describe('GET /api/v1/experiments/active', () => {
   it('should extract country from Cloudflare headers', async () => {
     mockHeaders.set('cf-ipcountry', 'CA');
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -119,9 +145,13 @@ describe('GET /api/v1/experiments/active', () => {
   });
 
   it('should extract UTM parameters from URL', async () => {
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active?utm_source=facebook');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active?utm_source=facebook'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -134,9 +164,13 @@ describe('GET /api/v1/experiments/active', () => {
   it('should extract language from accept-language header', async () => {
     mockHeaders.set('accept-language', 'es-MX,es;q=0.9,en;q=0.8');
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -149,9 +183,13 @@ describe('GET /api/v1/experiments/active', () => {
   it('should default to Spanish when no language preference', async () => {
     mockHeaders.delete('accept-language');
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(
@@ -162,9 +200,13 @@ describe('GET /api/v1/experiments/active', () => {
   });
 
   it('should return null when no active experiment', async () => {
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     const response = await GET(request);
     const data = await response.json();
 
@@ -175,9 +217,13 @@ describe('GET /api/v1/experiments/active', () => {
   it('should handle missing headers gracefully', async () => {
     mockHeaders.clear();
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     const response = await GET(request);
 
     expect(response.status).toBe(200);
@@ -192,24 +238,38 @@ describe('GET /api/v1/experiments/active', () => {
 
   it('should handle service errors', async () => {
     const error = new Error('Service unavailable');
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockRejectedValue(error);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockRejectedValue(
+      error
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     const response = await GET(request);
     const data = await response.json();
 
     expect(response.status).toBe(500);
     expect(data.error).toBe('Failed to get active experiment');
-    expect(logger.error).toHaveBeenCalledWith('Failed to get active experiment', error);
+    expect(logger.error).toHaveBeenCalledWith(
+      'Failed to get active experiment',
+      error
+    );
   });
 
   it('should handle complex user agents', async () => {
     // Android Chrome
-    mockHeaders.set('user-agent', 'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36');
+    mockHeaders.set(
+      'user-agent',
+      'Mozilla/5.0 (Linux; Android 10; SM-G973F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.120 Mobile Safari/537.36'
+    );
 
-    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(null);
+    (FeatureFlagService.getActiveExperiment as jest.Mock).mockResolvedValue(
+      null
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/active');
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/active'
+    );
     await GET(request);
 
     expect(FeatureFlagService.getActiveExperiment).toHaveBeenCalledWith(

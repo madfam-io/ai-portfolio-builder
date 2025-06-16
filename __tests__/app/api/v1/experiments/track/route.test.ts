@@ -46,23 +46,29 @@ describe('POST /api/v1/experiments/track', () => {
   it('should track click event successfully', async () => {
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(validTrackData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(validTrackData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
 
     expect(response.status).toBe(200);
     expect(data.success).toBe(true);
-    expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('record_landing_page_event', {
-      p_session_id: 'visitor-123',
-      p_experiment_id: validTrackData.experimentId,
-      p_variant_id: validTrackData.variantId,
-      p_event_type: validTrackData.eventType,
-      p_event_data: validTrackData.eventData,
-    });
+    expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
+      'record_landing_page_event',
+      {
+        p_session_id: 'visitor-123',
+        p_experiment_id: validTrackData.experimentId,
+        p_variant_id: validTrackData.variantId,
+        p_event_type: validTrackData.eventType,
+        p_event_data: validTrackData.eventData,
+      }
+    );
   });
 
   it('should track conversion event and update variant count', async () => {
@@ -76,7 +82,7 @@ describe('POST /api/v1/experiments/track', () => {
     };
 
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
-    
+
     const mockSelect = {
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
@@ -85,7 +91,7 @@ describe('POST /api/v1/experiments/track', () => {
         error: null,
       }),
     };
-    
+
     const mockUpdate = {
       update: jest.fn().mockReturnThis(),
       eq: jest.fn().mockResolvedValue({ error: null }),
@@ -95,10 +101,13 @@ describe('POST /api/v1/experiments/track', () => {
       .mockReturnValueOnce(mockSelect) // Select current conversions
       .mockReturnValueOnce(mockUpdate); // Update conversions
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(conversionData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(conversionData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -122,10 +131,13 @@ describe('POST /api/v1/experiments/track', () => {
 
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(pageviewData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(pageviewData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -146,10 +158,13 @@ describe('POST /api/v1/experiments/track', () => {
 
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(engagementData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(engagementData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -167,10 +182,13 @@ describe('POST /api/v1/experiments/track', () => {
 
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(minimalData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(minimalData),
+      }
+    );
 
     const response = await POST(request);
 
@@ -186,10 +204,13 @@ describe('POST /api/v1/experiments/track', () => {
   it('should return 400 when visitor ID not found', async () => {
     mockCookieStore.get.mockReturnValue(null);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(validTrackData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(validTrackData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -204,10 +225,13 @@ describe('POST /api/v1/experiments/track', () => {
       experimentId: 'invalid-uuid',
     };
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(invalidData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(invalidData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -223,10 +247,13 @@ describe('POST /api/v1/experiments/track', () => {
       variantId: 'not-a-uuid',
     };
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(invalidData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(invalidData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -241,10 +268,13 @@ describe('POST /api/v1/experiments/track', () => {
       eventType: 'invalid-type',
     };
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(invalidData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(invalidData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -256,10 +286,13 @@ describe('POST /api/v1/experiments/track', () => {
   it('should handle database connection errors', async () => {
     (createClient as jest.Mock).mockResolvedValue(null);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(validTrackData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(validTrackData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -272,17 +305,23 @@ describe('POST /api/v1/experiments/track', () => {
     const dbError = new Error('RPC function not found');
     mockSupabaseClient.rpc.mockResolvedValue({ error: dbError });
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(validTrackData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(validTrackData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
 
     expect(response.status).toBe(500);
     expect(data.error).toBe('Failed to track event');
-    expect(logger.error).toHaveBeenCalledWith('Failed to track experiment event', dbError);
+    expect(logger.error).toHaveBeenCalledWith(
+      'Failed to track experiment event',
+      dbError
+    );
   });
 
   it('should handle conversion update errors gracefully', async () => {
@@ -292,7 +331,7 @@ describe('POST /api/v1/experiments/track', () => {
     };
 
     mockSupabaseClient.rpc.mockResolvedValue({ error: null });
-    
+
     const mockSelect = {
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
@@ -304,10 +343,13 @@ describe('POST /api/v1/experiments/track', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: JSON.stringify(conversionData),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: JSON.stringify(conversionData),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -318,10 +360,13 @@ describe('POST /api/v1/experiments/track', () => {
   });
 
   it('should handle invalid JSON in request body', async () => {
-    const request = new NextRequest('http://localhost:3000/api/v1/experiments/track', {
-      method: 'POST',
-      body: 'invalid-json',
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments/track',
+      {
+        method: 'POST',
+        body: 'invalid-json',
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();

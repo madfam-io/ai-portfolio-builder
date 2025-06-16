@@ -1,4 +1,8 @@
-import { getCSPDirectives, formatCSPHeader, generateNonce } from '@/lib/security/csp';
+import {
+  getCSPDirectives,
+  formatCSPHeader,
+  generateNonce,
+} from '@/lib/security/csp';
 
 describe('Content Security Policy', () => {
   const originalEnv = process.env.NODE_ENV;
@@ -37,15 +41,23 @@ describe('Content Security Policy', () => {
       expect(directives['connect-src']).toContain('https://*.supabase.co');
 
       // Check for Google Analytics
-      expect(directives['script-src']).toContain('https://www.googletagmanager.com');
-      expect(directives['connect-src']).toContain('https://www.google-analytics.com');
+      expect(directives['script-src']).toContain(
+        'https://www.googletagmanager.com'
+      );
+      expect(directives['connect-src']).toContain(
+        'https://www.google-analytics.com'
+      );
 
       // Check for fonts
       expect(directives['font-src']).toContain('https://fonts.gstatic.com');
 
       // Check for social login providers
-      expect(directives['img-src']).toContain('https://avatars.githubusercontent.com');
-      expect(directives['img-src']).toContain('https://lh3.googleusercontent.com');
+      expect(directives['img-src']).toContain(
+        'https://avatars.githubusercontent.com'
+      );
+      expect(directives['img-src']).toContain(
+        'https://lh3.googleusercontent.com'
+      );
     });
 
     it('should include WebSocket support for development', () => {

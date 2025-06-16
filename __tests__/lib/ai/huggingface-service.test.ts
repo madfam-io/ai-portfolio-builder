@@ -1,5 +1,5 @@
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { cache } from '@/lib/cache/redis-cache.server';
+import { _cache } from '@/lib/cache/redis-cache.server';
 import {
   AIServiceError,
   ModelUnavailableError,
@@ -26,7 +26,7 @@ describe('HuggingFaceService', () => {
     jest.clearAllMocks();
     mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
     service = new HuggingFaceService();
-    
+
     // Mock cache methods
     (cache.get as jest.Mock).mockResolvedValue(null);
     (cache.set as jest.Mock).mockResolvedValue(undefined);
@@ -128,9 +128,9 @@ describe('HuggingFaceService', () => {
     });
 
     it('should handle empty bio input', async () => {
-      await expect(
-        service.enhanceBio('', mockBioContext)
-      ).rejects.toThrow('Bio cannot be empty');
+      await expect(service.enhanceBio('', mockBioContext)).rejects.toThrow(
+        'Bio cannot be empty'
+      );
     });
   });
 
@@ -161,7 +161,8 @@ describe('HuggingFaceService', () => {
 
     it('should extract skills from technologies', async () => {
       const mockResponse = {
-        generated_text: 'Developed scalable microservices architecture using Node.js',
+        generated_text:
+          'Developed scalable microservices architecture using Node.js',
       };
 
       mockFetch.mockResolvedValueOnce({
@@ -234,13 +235,16 @@ describe('HuggingFaceService', () => {
 
       const result = await service.recommendTemplate(techProfile);
 
-      expect(['developer', 'modern', 'minimal']).toContain(result.recommendedTemplate);
+      expect(['developer', 'modern', 'minimal']).toContain(
+        result.recommendedTemplate
+      );
     });
   });
 
   describe('scoreContent', () => {
     it('should score content quality', async () => {
-      const content = 'This is a well-written professional bio with clear objectives.';
+      const content =
+        'This is a well-written professional bio with clear objectives.';
 
       const result = await service.scoreContent(content, 'bio');
 
@@ -257,7 +261,10 @@ describe('HuggingFaceService', () => {
 
     it('should provide different scoring for different content types', async () => {
       const bioScore = await service.scoreContent('Short bio', 'bio');
-      const projectScore = await service.scoreContent('Short project', 'project');
+      const projectScore = await service.scoreContent(
+        'Short project',
+        'project'
+      );
 
       expect(bioScore.feedback).not.toEqual(projectScore.feedback);
     });

@@ -1,7 +1,12 @@
 import { NextRequest } from 'next/server';
 import { POST, DELETE } from '@/app/api/v1/upload/image/route';
 import { withAuth } from '@/lib/api/middleware/auth';
-import { uploadFile, deleteFile, generateFilePath, STORAGE_BUCKETS } from '@/lib/supabase/storage';
+import {
+  uploadFile,
+  deleteFile,
+  generateFilePath,
+  STORAGE_BUCKETS,
+} from '@/lib/supabase/storage';
 import { logger } from '@/lib/utils/logger';
 
 // Mock dependencies
@@ -25,7 +30,7 @@ describe('Image Upload API Routes', () => {
     jest.clearAllMocks();
 
     // Mock auth middleware to pass through with user
-    (withAuth as jest.Mock).mockImplementation((handler) => {
+    (withAuth as jest.Mock).mockImplementation(handler => {
       return (request: any) => {
         request.user = mockUser;
         return handler(request);
@@ -37,14 +42,17 @@ describe('Image Upload API Routes', () => {
     (logger.error as jest.Mock).mockImplementation(() => {});
 
     // Mock generateFilePath
-    (generateFilePath as jest.Mock).mockReturnValue('user-123/profile/test-image-123.jpg');
+    (generateFilePath as jest.Mock).mockReturnValue(
+      'user-123/profile/test-image-123.jpg'
+    );
   });
 
   describe('POST /api/v1/upload/image', () => {
     it('should upload avatar image successfully', async () => {
       const mockUploadResult = {
         success: true,
-        publicUrl: 'https://storage.example.com/avatars/user-123/profile/test-image-123.jpg',
+        publicUrl:
+          'https://storage.example.com/avatars/user-123/profile/test-image-123.jpg',
       };
 
       (uploadFile as jest.Mock).mockResolvedValue(mockUploadResult);
@@ -54,10 +62,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'avatar');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -78,21 +89,27 @@ describe('Image Upload API Routes', () => {
     it('should upload project image successfully', async () => {
       const mockUploadResult = {
         success: true,
-        publicUrl: 'https://storage.example.com/projects/user-123/portfolio-123/test-image-123.jpg',
+        publicUrl:
+          'https://storage.example.com/projects/user-123/portfolio-123/test-image-123.jpg',
       };
 
       (uploadFile as jest.Mock).mockResolvedValue(mockUploadResult);
-      (generateFilePath as jest.Mock).mockReturnValue('user-123/portfolio-123/test-image-123.jpg');
+      (generateFilePath as jest.Mock).mockReturnValue(
+        'user-123/portfolio-123/test-image-123.jpg'
+      );
 
       const formData = new FormData();
       formData.append('file', mockFile);
       formData.append('type', 'project');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -103,13 +120,18 @@ describe('Image Upload API Routes', () => {
         path: 'user-123/portfolio-123/test-image-123.jpg',
         file: mockFile,
       });
-      expect(generateFilePath).toHaveBeenCalledWith('user-123', 'test-image.jpg', 'portfolio-123');
+      expect(generateFilePath).toHaveBeenCalledWith(
+        'user-123',
+        'test-image.jpg',
+        'portfolio-123'
+      );
     });
 
     it('should upload certificate image successfully', async () => {
       const mockUploadResult = {
         success: true,
-        publicUrl: 'https://storage.example.com/certificates/user-123/portfolio-123/cert-123.jpg',
+        publicUrl:
+          'https://storage.example.com/certificates/user-123/portfolio-123/cert-123.jpg',
       };
 
       (uploadFile as jest.Mock).mockResolvedValue(mockUploadResult);
@@ -119,10 +141,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'certificate');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
 
@@ -137,7 +162,8 @@ describe('Image Upload API Routes', () => {
     it('should upload company logo successfully', async () => {
       const mockUploadResult = {
         success: true,
-        publicUrl: 'https://storage.example.com/companies/user-123/portfolio-123/logo-123.jpg',
+        publicUrl:
+          'https://storage.example.com/companies/user-123/portfolio-123/logo-123.jpg',
       };
 
       (uploadFile as jest.Mock).mockResolvedValue(mockUploadResult);
@@ -147,10 +173,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'company');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
 
@@ -167,10 +196,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'avatar');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -184,10 +216,13 @@ describe('Image Upload API Routes', () => {
       formData.append('file', mockFile);
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -201,10 +236,13 @@ describe('Image Upload API Routes', () => {
       formData.append('file', mockFile);
       formData.append('type', 'avatar');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -219,10 +257,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'invalid-type');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -242,10 +283,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'avatar');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -262,10 +306,13 @@ describe('Image Upload API Routes', () => {
       formData.append('type', 'avatar');
       formData.append('portfolioId', 'portfolio-123');
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image', {
-        method: 'POST',
-        body: formData,
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image',
+        {
+          method: 'POST',
+          body: formData,
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -280,22 +327,31 @@ describe('Image Upload API Routes', () => {
     it('should delete image successfully', async () => {
       (deleteFile as jest.Mock).mockResolvedValue(true);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=user-123/profile/test-image.jpg&type=avatar', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=user-123/profile/test-image.jpg&type=avatar',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data.data.message).toBe('File deleted successfully');
-      expect(deleteFile).toHaveBeenCalledWith('AVATARS', 'user-123/profile/test-image.jpg');
+      expect(deleteFile).toHaveBeenCalledWith(
+        'AVATARS',
+        'user-123/profile/test-image.jpg'
+      );
     });
 
     it('should return 400 when path is missing', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?type=avatar', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?type=avatar',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -305,9 +361,12 @@ describe('Image Upload API Routes', () => {
     });
 
     it('should return 400 when type is missing', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=user-123/profile/test.jpg', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=user-123/profile/test.jpg',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -317,9 +376,12 @@ describe('Image Upload API Routes', () => {
     });
 
     it('should return 403 when user does not own the file', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=other-user-456/profile/test.jpg&type=avatar', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=other-user-456/profile/test.jpg&type=avatar',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -338,9 +400,12 @@ describe('Image Upload API Routes', () => {
       ];
 
       for (const { type, bucket } of types) {
-        const request = new NextRequest(`http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=${type}`, {
-          method: 'DELETE',
-        });
+        const _request = new NextRequest(
+          `http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=${type}`,
+          {
+            method: 'DELETE',
+          }
+        );
 
         const response = await DELETE(request);
         expect(response.status).toBe(200);
@@ -349,9 +414,12 @@ describe('Image Upload API Routes', () => {
     });
 
     it('should return 400 for invalid type', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=invalid', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=invalid',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -363,9 +431,12 @@ describe('Image Upload API Routes', () => {
     it('should handle deletion failure', async () => {
       (deleteFile as jest.Mock).mockResolvedValue(false);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=avatar', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=avatar',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -377,9 +448,12 @@ describe('Image Upload API Routes', () => {
     it('should handle unexpected errors', async () => {
       (deleteFile as jest.Mock).mockRejectedValue(new Error('Storage error'));
 
-      const request = new NextRequest('http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=avatar', {
-        method: 'DELETE',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/upload/image?path=user-123/test.jpg&type=avatar',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const response = await DELETE(request);
       const data = await response.json();

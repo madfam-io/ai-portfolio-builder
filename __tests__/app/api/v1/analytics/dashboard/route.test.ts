@@ -25,7 +25,9 @@ describe('/api/v1/analytics/dashboard', () => {
     // Setup mock Supabase client
     mockSupabaseClient = {
       auth: {
-        getUser: jest.fn().mockResolvedValue({ data: { user: mockUser }, error: null }),
+        getUser: jest
+          .fn()
+          .mockResolvedValue({ data: { user: mockUser }, error: null }),
       },
     };
 
@@ -37,7 +39,9 @@ describe('/api/v1/analytics/dashboard', () => {
       getDashboardData: jest.fn(),
     };
 
-    (AnalyticsService as jest.Mock).mockImplementation(() => mockAnalyticsService);
+    (AnalyticsService as jest.Mock).mockImplementation(
+      () => mockAnalyticsService
+    );
   });
 
   describe('GET /api/v1/analytics/dashboard', () => {
@@ -68,7 +72,9 @@ describe('/api/v1/analytics/dashboard', () => {
         },
       };
 
-      mockAnalyticsService.getDashboardData.mockResolvedValue(mockDashboardData);
+      mockAnalyticsService.getDashboardData.mockResolvedValue(
+        mockDashboardData
+      );
 
       const response = await GET();
       expect(response.status).toBe(200);
@@ -152,7 +158,9 @@ describe('/api/v1/analytics/dashboard', () => {
         },
       };
 
-      mockAnalyticsService.getDashboardData.mockResolvedValue(emptyDashboardData);
+      mockAnalyticsService.getDashboardData.mockResolvedValue(
+        emptyDashboardData
+      );
 
       const response = await GET();
       expect(response.status).toBe(200);
@@ -177,7 +185,9 @@ describe('/api/v1/analytics/dashboard', () => {
         trends: { commitsPerDay: [], pullRequestsPerWeek: [] },
       };
 
-      mockAnalyticsService.getDashboardData.mockResolvedValue(mockDashboardData);
+      mockAnalyticsService.getDashboardData.mockResolvedValue(
+        mockDashboardData
+      );
 
       // First request
       await GET();

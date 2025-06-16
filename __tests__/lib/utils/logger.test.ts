@@ -40,11 +40,11 @@ describe('Logger', () => {
       process.env.NODE_ENV = 'development';
       process.env.ENABLE_DEBUG = 'true';
       process.env.SHOW_LOGS = 'true';
-      
+
       // Create a new logger instance to pick up env changes
       jest.resetModules();
       const { logger: devLogger } = require('@/lib/utils/logger');
-      
+
       devLogger.debug('Debug message', { feature: 'test' });
 
       expect(consoleDebugSpy).toHaveBeenCalledWith(
@@ -64,7 +64,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Info message');
       expect(parsedLog.context?.userId).toBe('123');
       expect(parsedLog.level).toBe('info');
@@ -75,7 +75,7 @@ describe('Logger', () => {
 
       const logCall = consoleWarnSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Warning message');
       expect(parsedLog.context?.action).toBe('test-action');
       expect(parsedLog.level).toBe('warn');
@@ -86,7 +86,7 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Error message');
       expect(parsedLog.context?.requestId).toBe('req-123');
       expect(parsedLog.level).toBe('error');
@@ -100,7 +100,7 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Operation failed');
       expect(parsedLog.error?.message).toBe('Test error');
       expect(parsedLog.error?.stack).toBeDefined();
@@ -113,7 +113,7 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.error?.message).toBe('Custom error');
       expect(parsedLog.error?.code).toBe('ERR_CUSTOM');
     });
@@ -126,7 +126,7 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.context?.errorCode).toBe('E001');
       expect(parsedLog.context?.severity).toBe('high');
     });
@@ -201,7 +201,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.context?.userId).toBe('user-123');
       expect(parsedLog.context?.feature).toBe('auth');
     });
@@ -213,7 +213,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.context?.userId).toBe('user-123');
       expect(parsedLog.context?.action).toBe('create-portfolio');
     });
@@ -226,7 +226,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.context?.requestId).toBe('req-123');
       expect(parsedLog.context?.userId).toBe('user-456');
     });
@@ -239,10 +239,10 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Failed to create portfolio');
       expect(parsedLog.error?.message).toBe('Portfolio error');
-      
+
       // When error is passed as Error object, context is not included
       // This is a limitation of the current implementation
     });
@@ -254,7 +254,7 @@ describe('Logger', () => {
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('Failed to create portfolio');
       expect(parsedLog.context?.feature).toBe('portfolio');
       expect(parsedLog.context?.errorCode).toBe('E001');
@@ -267,7 +267,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       // Check for ISO timestamp format
       expect(parsedLog.timestamp).toMatch(
         /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
@@ -298,7 +298,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.context).toEqual(metadata);
     });
 
@@ -326,7 +326,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe('');
       expect(parsedLog.context?.context).toBe('empty message');
     });
@@ -337,7 +337,7 @@ describe('Logger', () => {
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
       const parsedLog = JSON.parse(logCall);
-      
+
       expect(parsedLog.message).toBe(longMessage);
     });
   });

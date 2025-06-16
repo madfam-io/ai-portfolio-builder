@@ -43,19 +43,25 @@ describe('Date Utilities', () => {
     it('should format seconds ago', () => {
       const date = new Date('2024-01-15T10:29:30.000Z'); // 30 seconds ago
       expect(formatDistanceToNow(date)).toBe('30 seconds');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('30 seconds ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '30 seconds ago'
+      );
     });
 
     it('should format minutes ago', () => {
       const date = new Date('2024-01-15T10:25:00.000Z'); // 5 minutes ago
       expect(formatDistanceToNow(date)).toBe('5 minutes');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '5 minutes ago'
+      );
     });
 
     it('should format hours ago', () => {
       const date = new Date('2024-01-15T08:30:00.000Z'); // 2 hours ago
       expect(formatDistanceToNow(date)).toBe('2 hours');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 hours ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '2 hours ago'
+      );
     });
 
     it('should format days ago', () => {
@@ -67,25 +73,33 @@ describe('Date Utilities', () => {
     it('should format weeks ago', () => {
       const date = new Date('2024-01-01T10:30:00.000Z'); // 2 weeks ago
       expect(formatDistanceToNow(date)).toBe('2 weeks');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 weeks ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '2 weeks ago'
+      );
     });
 
     it('should format months ago', () => {
       const date = new Date('2023-11-15T10:30:00.000Z'); // 2 months ago
       expect(formatDistanceToNow(date)).toBe('2 months');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 months ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '2 months ago'
+      );
     });
 
     it('should format years ago', () => {
       const date = new Date('2022-01-15T10:30:00.000Z'); // 2 years ago
       expect(formatDistanceToNow(date)).toBe('2 years');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('2 years ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '2 years ago'
+      );
     });
 
     it('should handle singular units', () => {
       const date = new Date('2024-01-15T10:29:59.000Z'); // 1 second ago
       expect(formatDistanceToNow(date)).toBe('1 second');
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('1 second ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '1 second ago'
+      );
     });
 
     it('should handle just now', () => {
@@ -96,12 +110,16 @@ describe('Date Utilities', () => {
 
     it('should handle string dates', () => {
       const date = '2024-01-15T10:25:00.000Z';
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '5 minutes ago'
+      );
     });
 
     it('should handle timestamp dates', () => {
       const date = new Date('2024-01-15T10:25:00.000Z').getTime();
-      expect(formatDistanceToNow(date, { addSuffix: true })).toBe('5 minutes ago');
+      expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
+        '5 minutes ago'
+      );
     });
   });
 
@@ -137,7 +155,9 @@ describe('Date Utilities', () => {
     });
 
     it('should handle string dates', () => {
-      expect(format('2024-03-15T14:30:00.000Z', 'MMM d, yyyy')).toMatch(/Mar 15, 2024/);
+      expect(format('2024-03-15T14:30:00.000Z', 'MMM d, yyyy')).toMatch(
+        /Mar 15, 2024/
+      );
     });
 
     it('should handle timestamp dates', () => {
@@ -164,12 +184,12 @@ describe('Date Utilities', () => {
     it('should return true for valid dates', () => {
       // Temporarily restore original Date for this test
       global.Date = originalDate;
-      
+
       const validDate1 = new Date('2024-01-15');
       const validDate2 = new Date();
       expect(isValid(validDate1)).toBe(true);
       expect(isValid(validDate2)).toBe(true);
-      
+
       // Restore mock
       global.Date = jest.fn((...args) => {
         if (args.length === 0) {
@@ -181,14 +201,14 @@ describe('Date Utilities', () => {
 
     it('should return false for invalid dates', () => {
       global.Date = originalDate;
-      
+
       const invalidDate = new Date('invalid');
       expect(isValid(invalidDate)).toBe(false);
       expect(isValid('not a date')).toBe(false);
       expect(isValid(null)).toBe(false);
       expect(isValid(undefined)).toBe(false);
       expect(isValid(123)).toBe(false);
-      
+
       // Restore mock
       global.Date = jest.fn((...args) => {
         if (args.length === 0) {

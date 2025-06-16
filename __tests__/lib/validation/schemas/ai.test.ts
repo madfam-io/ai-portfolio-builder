@@ -71,7 +71,8 @@ describe('AI Validation Schemas', () => {
     it('should validate valid project optimization request', () => {
       const validData = {
         title: 'E-commerce Platform',
-        description: 'Built a scalable e-commerce platform using React and Node.js',
+        description:
+          'Built a scalable e-commerce platform using React and Node.js',
       };
 
       const result = optimizeProjectSchema.parse(validData);
@@ -87,7 +88,8 @@ describe('AI Validation Schemas', () => {
     it('should accept all parameters', () => {
       const validData = {
         title: 'Mobile App',
-        description: 'Developed a cross-platform mobile application for iOS and Android',
+        description:
+          'Developed a cross-platform mobile application for iOS and Android',
         model: 'mistralai/Mistral-7B-Instruct-v0.2',
         format: 'CAR',
         includeMetrics: false,
@@ -310,7 +312,9 @@ describe('AI Validation Schemas', () => {
       };
 
       const result = aiFeedbackSchema.parse(validData);
-      expect(result.feedback).toBe('Great improvement, but could be more concise');
+      expect(result.feedback).toBe(
+        'Great improvement, but could be more concise'
+      );
     });
 
     it('should validate rating range', () => {

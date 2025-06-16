@@ -35,7 +35,8 @@ describe('Retry Handler', () => {
     });
 
     it('should retry on failure and succeed', async () => {
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValueOnce(new ExternalServiceError('Service unavailable'))
         .mockRejectedValueOnce(new ExternalServiceError('Service unavailable'))
         .mockResolvedValue('success');
@@ -76,17 +77,18 @@ describe('Retry Handler', () => {
     it('should use custom retry condition', async () => {
       const error = new Error('Custom error');
       const mockFn = jest.fn().mockRejectedValue(error);
-      
+
       const retryCondition = jest.fn().mockReturnValue(false);
-      
+
       await expect(retry(mockFn, { retryCondition })).rejects.toThrow(error);
-      
+
       expect(retryCondition).toHaveBeenCalledWith(error);
       expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should apply exponential backoff', async () => {
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValueOnce(new ExternalServiceError('Error'))
         .mockRejectedValueOnce(new ExternalServiceError('Error'))
         .mockResolvedValue('success');
@@ -111,7 +113,8 @@ describe('Retry Handler', () => {
     });
 
     it('should respect max delay', async () => {
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValue(new ExternalServiceError('Error'));
 
       const promise = retry(mockFn, {
@@ -135,7 +138,8 @@ describe('Retry Handler', () => {
     it('should call onRetry callback', async () => {
       const onRetry = jest.fn();
       const error = new ExternalServiceError('Error');
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValueOnce(error)
         .mockResolvedValue('success');
 
@@ -149,7 +153,8 @@ describe('Retry Handler', () => {
 
     it('should retry on network errors', async () => {
       const networkError = new Error('network timeout');
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValueOnce(networkError)
         .mockResolvedValue('success');
 
@@ -164,7 +169,8 @@ describe('Retry Handler', () => {
 
     it('should retry on 5xx errors', async () => {
       const serverError = new AppError('Server error', 'SERVER_ERROR', 503);
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValueOnce(serverError)
         .mockResolvedValue('success');
 
@@ -224,11 +230,11 @@ describe('Retry Handler', () => {
 
       // Should reject without calling function
       mockFn.mockClear();
-      
+
       await expect(circuitBreaker.execute(mockFn)).rejects.toThrow(
         'Service temporarily unavailable'
       );
-      
+
       expect(mockFn).not.toHaveBeenCalled();
     });
 
@@ -250,7 +256,8 @@ describe('Retry Handler', () => {
     });
 
     it('should transition to half-open after timeout', async () => {
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValue(new Error('Failure'))
         .mockRejectedValue(new Error('Failure'))
         .mockRejectedValue(new Error('Failure'))
@@ -298,7 +305,8 @@ describe('Retry Handler', () => {
     });
 
     it('should reset on successful execution in half-open', async () => {
-      const mockFn = jest.fn()
+      const mockFn = jest
+        .fn()
         .mockRejectedValue(new Error('Failure'))
         .mockRejectedValue(new Error('Failure'))
         .mockRejectedValue(new Error('Failure'))
@@ -336,7 +344,7 @@ describe('Retry Handler', () => {
 
       const promise = circuitBreaker.execute(mockFn, asyncFallback);
       jest.advanceTimersByTime(100);
-      
+
       const result = await promise;
       expect(result).toBe('async fallback');
     });
@@ -398,9 +406,9 @@ describe('Retry Handler', () => {
   describe('withTimeout', () => {
     it('should resolve if promise completes before timeout', async () => {
       const promise = Promise.resolve('success');
-      
+
       const result = await withTimeout(promise, 1000);
-      
+
       expect(result).toBe('success');
     });
 

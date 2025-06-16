@@ -163,21 +163,26 @@ describe('/api/v1/portfolios/[id]', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: 'Updated Portfolio',
-          title: 'Senior Developer',
-          bio: 'Updated bio',
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: 'Updated Portfolio',
+            title: 'Senior Developer',
+            bio: 'Updated bio',
+          }),
+        }
+      );
 
       (request as any).user = mockUser;
 
-      const response = await PUT(request as AuthenticatedRequest, { params: { id: 'portfolio-123' } });
+      const response = await PUT(request as AuthenticatedRequest, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(200);
 
       const data = await response.json();
@@ -197,21 +202,26 @@ describe('/api/v1/portfolios/[id]', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: '', // Invalid: empty name
-          title: 'A'.repeat(201), // Invalid: too long
-          invalidField: 'should be removed', // Should be sanitized
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: '', // Invalid: empty name
+            title: 'A'.repeat(201), // Invalid: too long
+            invalidField: 'should be removed', // Should be sanitized
+          }),
+        }
+      );
 
       (request as any).user = mockUser;
 
-      const response = await PUT(request as AuthenticatedRequest, { params: { id: 'portfolio-123' } });
+      const response = await PUT(request as AuthenticatedRequest, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(400);
 
       const data = await response.json();
@@ -244,19 +254,24 @@ describe('/api/v1/portfolios/[id]', () => {
         error: null,
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          bio: 'Updated bio only',
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            bio: 'Updated bio only',
+          }),
+        }
+      );
 
       (request as any).user = mockUser;
 
-      const response = await PUT(request as AuthenticatedRequest, { params: { id: 'portfolio-123' } });
+      const response = await PUT(request as AuthenticatedRequest, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(200);
 
       const data = await response.json();
@@ -282,19 +297,24 @@ describe('/api/v1/portfolios/[id]', () => {
         error: { code: '23505', message: 'Unique constraint violation' },
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          subdomain: 'existing-subdomain',
-        }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            subdomain: 'existing-subdomain',
+          }),
+        }
+      );
 
       (request as any).user = mockUser;
 
-      const response = await PUT(request as AuthenticatedRequest, { params: { id: 'portfolio-123' } });
+      const response = await PUT(request as AuthenticatedRequest, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(409);
 
       const data = await response.json();
@@ -326,7 +346,9 @@ describe('/api/v1/portfolios/[id]', () => {
         method: 'DELETE',
       } as unknown as AuthenticatedRequest;
 
-      const response = await DELETE(request, { params: { id: 'portfolio-123' } });
+      const response = await DELETE(request, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(200);
 
       const data = await response.json();
@@ -353,11 +375,15 @@ describe('/api/v1/portfolios/[id]', () => {
         method: 'DELETE',
       } as unknown as AuthenticatedRequest;
 
-      const response = await DELETE(request, { params: { id: 'portfolio-123' } });
+      const response = await DELETE(request, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(400);
 
       const data = await response.json();
-      expect(data.error).toBe('Cannot delete published portfolio. Please unpublish first.');
+      expect(data.error).toBe(
+        'Cannot delete published portfolio. Please unpublish first.'
+      );
     });
 
     it('should handle deletion of non-existent portfolio', async () => {
@@ -372,7 +398,9 @@ describe('/api/v1/portfolios/[id]', () => {
         method: 'DELETE',
       } as unknown as AuthenticatedRequest;
 
-      const response = await DELETE(request, { params: { id: 'non-existent' } });
+      const response = await DELETE(request, {
+        params: { id: 'non-existent' },
+      });
       expect(response.status).toBe(404);
 
       const data = await response.json();
@@ -403,7 +431,9 @@ describe('/api/v1/portfolios/[id]', () => {
         method: 'DELETE',
       } as unknown as AuthenticatedRequest;
 
-      const response = await DELETE(request, { params: { id: 'portfolio-123' } });
+      const response = await DELETE(request, {
+        params: { id: 'portfolio-123' },
+      });
       expect(response.status).toBe(500);
 
       const data = await response.json();

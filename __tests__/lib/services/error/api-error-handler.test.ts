@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import {
   handleApiError,
   withErrorHandler,
@@ -18,14 +18,14 @@ describe('API Error Handler', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock NextRequest
     mockRequest = {
       url: 'http://localhost:3000/api/test',
       method: 'GET',
       headers: new Headers({
         'user-agent': 'Test Agent',
-        'referer': 'http://localhost:3000',
+        referer: 'http://localhost:3000',
         'x-forwarded-for': '192.168.1.1',
       }),
       json: jest.fn(),
@@ -37,12 +37,9 @@ describe('API Error Handler', () => {
 
   describe('handleApiError', () => {
     it('should handle AppError correctly', () => {
-      const appError = new AppError(
-        'Test error',
-        'TEST_ERROR',
-        400,
-        { field: 'test' }
-      );
+      const appError = new AppError('Test error', 'TEST_ERROR', 400, {
+        field: 'test',
+      });
 
       const response = handleApiError(appError, mockRequest);
 
@@ -50,7 +47,7 @@ describe('API Error Handler', () => {
       expect(response.status).toBe(400);
 
       // Check response body
-      const responseData = response as unknown as { _body: ApiErrorResponse };
+      const _responseData = response as unknown as { _body: ApiErrorResponse };
       expect(errorLogger.logError).toHaveBeenCalledWith(
         appError,
         expect.objectContaining({
@@ -228,20 +225,22 @@ describe('API Error Handler', () => {
         expect(error).toBeInstanceOf(AppError);
         expect((error as AppError).statusCode).toBe(405);
         expect((error as AppError).code).toBe('METHOD_NOT_ALLOWED');
-        expect((error as AppError).details).toEqual({ allowed: ['POST', 'PUT'] });
+        expect((error as AppError).details).toEqual({
+          allowed: ['POST', 'PUT'],
+        });
       }
     });
 
     it('should handle different HTTP methods', () => {
       const methods = ['POST', 'PUT', 'DELETE', 'PATCH'];
-      
+
       methods.forEach(method => {
         const req = { ...mockRequest, method } as NextRequest;
-        
+
         expect(() => {
           validateMethod(req, [method]);
         }).not.toThrow();
-        
+
         expect(() => {
           validateMethod(req, ['OTHER']);
         }).toThrow(AppError);
@@ -260,7 +259,9 @@ describe('API Error Handler', () => {
     });
 
     it('should throw AppError for invalid JSON', async () => {
-      mockRequest.json = jest.fn().mockRejectedValue(new SyntaxError('Invalid JSON'));
+      mockRequest.json = jest
+        .fn()
+        .mockRejectedValue(new SyntaxError('Invalid JSON'));
 
       await expect(parseJsonBody(mockRequest)).rejects.toThrow(AppError);
 

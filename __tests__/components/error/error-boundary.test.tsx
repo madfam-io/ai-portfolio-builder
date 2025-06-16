@@ -4,7 +4,10 @@
 
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ErrorBoundary, ComponentErrorBoundary } from '@/components/error/error-boundary';
+import {
+  ErrorBoundary,
+  ComponentErrorBoundary,
+} from '@/components/error/error-boundary';
 import { errorLogger } from '@/lib/services/error/error-logger';
 
 // Mock error logger
@@ -15,7 +18,9 @@ jest.mock('@/lib/services/error/error-logger', () => ({
 }));
 
 // Component that throws an error
-const ThrowError: React.FC<{ shouldThrow?: boolean }> = ({ shouldThrow = true }) => {
+const ThrowError: React.FC<{ shouldThrow?: boolean }> = ({
+  shouldThrow = true,
+}) => {
   if (shouldThrow) {
     throw new Error('Test error');
   }
@@ -59,7 +64,11 @@ describe('ErrorBoundary', () => {
     );
 
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
-    expect(screen.getByText('We apologize for the inconvenience. An unexpected error occurred.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'We apologize for the inconvenience. An unexpected error occurred.'
+      )
+    ).toBeInTheDocument();
   });
 
   it('should log errors with context', () => {
@@ -203,7 +212,11 @@ describe('ErrorBoundary', () => {
       );
     }
 
-    expect(screen.getByText('Multiple errors detected. The page will refresh automatically in a few seconds.')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Multiple errors detected. The page will refresh automatically in a few seconds.'
+      )
+    ).toBeInTheDocument();
 
     // Fast-forward timers
     jest.advanceTimersByTime(5000);
@@ -250,7 +263,9 @@ describe('ComponentErrorBoundary', () => {
       </ComponentErrorBoundary>
     );
 
-    expect(screen.getByText('Failed to load TestComponent')).toBeInTheDocument();
+    expect(
+      screen.getByText('Failed to load TestComponent')
+    ).toBeInTheDocument();
   });
 
   it('should use custom fallback', () => {

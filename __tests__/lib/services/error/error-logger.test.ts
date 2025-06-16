@@ -3,7 +3,11 @@
  */
 
 import { ErrorLogger, errorLogger } from '@/lib/services/error/error-logger';
-import { AppError, ValidationError, ExternalServiceError } from '@/types/errors';
+import {
+  AppError,
+  ValidationError,
+  ExternalServiceError,
+} from '@/types/errors';
 
 describe('ErrorLogger', () => {
   let consoleSpy: jest.SpyInstance;
@@ -55,7 +59,7 @@ describe('ErrorLogger', () => {
       const error = new AppError('Test app error', 'TEST_ERROR', 400, {
         field: 'test',
       });
-      
+
       errorLogger.logError(error);
 
       expect(consoleSpy).toHaveBeenCalled();
@@ -81,7 +85,7 @@ describe('ErrorLogger', () => {
     it('should handle non-Error objects', () => {
       errorLogger.logError('String error');
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       errorLogger.logError({ message: 'Object error' });
       expect(consoleSpy).toHaveBeenCalledTimes(2);
     });
@@ -89,7 +93,7 @@ describe('ErrorLogger', () => {
     it('should suppress logs in test environment when ENABLE_TEST_LOGS is not set', () => {
       process.env.NODE_ENV = 'test';
       delete process.env.ENABLE_TEST_LOGS;
-      
+
       errorLogger.logError(new Error('Test error'));
       expect(consoleSpy).not.toHaveBeenCalled();
     });
@@ -97,10 +101,10 @@ describe('ErrorLogger', () => {
     it('should show logs in test environment when ENABLE_TEST_LOGS is set', () => {
       process.env.NODE_ENV = 'test';
       process.env.ENABLE_TEST_LOGS = 'true';
-      
+
       errorLogger.logError(new Error('Test error'));
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       delete process.env.ENABLE_TEST_LOGS;
     });
   });
@@ -108,7 +112,7 @@ describe('ErrorLogger', () => {
   describe('logWarning', () => {
     it('should log warning messages', () => {
       errorLogger.logWarning('Test warning');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       expect(logCall).toContain('WARN');
@@ -119,7 +123,7 @@ describe('ErrorLogger', () => {
       errorLogger.logWarning('Warning with context', {
         component: 'TestComponent',
       });
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       expect(logCall).toContain('Component: TestComponent');
@@ -129,7 +133,7 @@ describe('ErrorLogger', () => {
   describe('logInfo', () => {
     it('should log info messages', () => {
       errorLogger.logInfo('Test info');
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       expect(logCall).toContain('INFO');
@@ -140,9 +144,9 @@ describe('ErrorLogger', () => {
   describe('development vs production logging', () => {
     it('should use colored output in development', () => {
       process.env.NODE_ENV = 'development';
-      
+
       errorLogger.logError(new Error('Dev error'));
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       expect(logCall).toContain('\x1b[31m'); // Red color code
@@ -150,9 +154,9 @@ describe('ErrorLogger', () => {
 
     it('should use JSON format in production', () => {
       process.env.NODE_ENV = 'production';
-      
+
       errorLogger.logError(new Error('Prod error'));
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       const parsed = JSON.parse(logCall);
@@ -162,10 +166,10 @@ describe('ErrorLogger', () => {
 
     it('should include stack trace in development', () => {
       process.env.NODE_ENV = 'development';
-      
+
       const error = new Error('Stack error');
       errorLogger.logError(error);
-      
+
       expect(consoleSpy).toHaveBeenCalledTimes(3); // Main log + "Stack trace:" + actual stack
       expect(consoleSpy.mock.calls[1][0]).toContain('Stack trace:');
     });
@@ -177,23 +181,23 @@ describe('ErrorLogger', () => {
         field: 'email',
         reason: 'invalid format',
       });
-      
+
       errorLogger.logError(error);
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       if (process.env.NODE_ENV === 'development') {
-        expect(consoleSpy.mock.calls.some(call => 
-          call[0].includes('Details:')
-        )).toBe(true);
+        expect(
+          consoleSpy.mock.calls.some(call => call[0].includes('Details:'))
+        ).toBe(true);
       }
     });
 
     it('should handle ExternalServiceError', () => {
       const originalError = new Error('Connection failed');
       const error = new ExternalServiceError('Database', originalError);
-      
+
       errorLogger.logError(error);
-      
+
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       expect(logCall).toContain('External service error: Database');

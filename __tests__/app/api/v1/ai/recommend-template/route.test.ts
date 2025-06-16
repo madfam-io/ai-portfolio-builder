@@ -40,7 +40,9 @@ describe('/api/v1/ai/recommend-template', () => {
       recommendTemplate: jest.fn(),
     };
 
-    (HuggingFaceService as jest.Mock).mockImplementation(() => mockHuggingFaceInstance);
+    (HuggingFaceService as jest.Mock).mockImplementation(
+      () => mockHuggingFaceInstance
+    );
   });
 
   describe('POST /api/v1/ai/recommend-template', () => {
@@ -48,36 +50,42 @@ describe('/api/v1/ai/recommend-template', () => {
       const mockRecommendation = {
         recommendedTemplate: 'developer',
         confidence: 0.92,
-        reasoning: 'Strong technical background with multiple development projects',
+        reasoning:
+          'Strong technical background with multiple development projects',
         alternatives: [
           { template: 'modern', score: 0.85 },
           { template: 'minimal', score: 0.78 },
         ],
       };
 
-      mockHuggingFaceInstance.recommendTemplate.mockResolvedValue(mockRecommendation);
+      mockHuggingFaceInstance.recommendTemplate.mockResolvedValue(
+        mockRecommendation
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Full Stack Developer',
-            skills: ['React', 'Node.js', 'Python', 'AWS'],
-            projectCount: 8,
-            hasDesignWork: false,
-            industry: 'technology',
-            experienceLevel: 'senior',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          preferences: {
-            style: 'modern',
-            targetAudience: 'employers',
-            priority: 'content_heavy',
-          },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Full Stack Developer',
+              skills: ['React', 'Node.js', 'Python', 'AWS'],
+              projectCount: 8,
+              hasDesignWork: false,
+              industry: 'technology',
+              experienceLevel: 'senior',
+            },
+            preferences: {
+              style: 'modern',
+              targetAudience: 'employers',
+              priority: 'content_heavy',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(200);
@@ -101,26 +109,29 @@ describe('/api/v1/ai/recommend-template', () => {
     });
 
     it('should handle authentication errors', async () => {
-      mockSupabaseClient.auth.getUser.mockResolvedValue({ 
+      mockSupabaseClient.auth.getUser.mockResolvedValue({
         data: { user: null },
-        error: new Error('Not authenticated') 
+        error: new Error('Not authenticated'),
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Developer',
-            skills: ['JavaScript'],
-            projectCount: 1,
-            hasDesignWork: false,
-            experienceLevel: 'entry',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Developer',
+              skills: ['JavaScript'],
+              projectCount: 1,
+              hasDesignWork: false,
+              experienceLevel: 'entry',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(401);
@@ -143,7 +154,7 @@ describe('/api/v1/ai/recommend-template', () => {
           body: {
             profile: {
               title: '', // Empty title
-              skills: [],  // Empty skills array
+              skills: [], // Empty skills array
               projectCount: -1, // Negative count
               hasDesignWork: false,
               experienceLevel: 'expert', // Invalid enum value
@@ -154,13 +165,16 @@ describe('/api/v1/ai/recommend-template', () => {
       ];
 
       for (const testCase of testCases) {
-        const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(testCase.body),
-        });
+        const _request = new NextRequest(
+          'http://localhost:3000/api/v1/ai/recommend-template',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(testCase.body),
+          }
+        );
 
         const response = await POST(request);
         expect(response.status).toBe(400);
@@ -172,24 +186,31 @@ describe('/api/v1/ai/recommend-template', () => {
 
     it('should handle AI service errors', async () => {
       mockHuggingFaceInstance.recommendTemplate.mockRejectedValue(
-        new AIServiceError('Model unavailable', 'SERVICE_UNAVAILABLE', 'huggingface')
+        new AIServiceError(
+          'Model unavailable',
+          'SERVICE_UNAVAILABLE',
+          'huggingface'
+        )
       );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Designer',
-            skills: ['Figma', 'Sketch'],
-            projectCount: 5,
-            hasDesignWork: true,
-            experienceLevel: 'mid',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Designer',
+              skills: ['Figma', 'Sketch'],
+              projectCount: 5,
+              hasDesignWork: true,
+              experienceLevel: 'mid',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(503);
@@ -201,21 +222,24 @@ describe('/api/v1/ai/recommend-template', () => {
     it('should handle database connection failure', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Developer',
-            skills: ['Python'],
-            projectCount: 3,
-            hasDesignWork: false,
-            experienceLevel: 'mid',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Developer',
+              skills: ['Python'],
+              projectCount: 3,
+              hasDesignWork: false,
+              experienceLevel: 'mid',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(500);
@@ -232,23 +256,28 @@ describe('/api/v1/ai/recommend-template', () => {
         alternatives: [],
       };
 
-      mockHuggingFaceInstance.recommendTemplate.mockResolvedValue(mockRecommendation);
+      mockHuggingFaceInstance.recommendTemplate.mockResolvedValue(
+        mockRecommendation
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'UX Designer',
-            skills: ['Figma', 'Adobe XD'],
-            projectCount: 10,
-            hasDesignWork: true,
-            experienceLevel: 'senior',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'UX Designer',
+              skills: ['Figma', 'Adobe XD'],
+              projectCount: 10,
+              hasDesignWork: true,
+              experienceLevel: 'senior',
+            },
+          }),
+        }
+      );
 
       await POST(request);
 
@@ -278,21 +307,24 @@ describe('/api/v1/ai/recommend-template', () => {
           alternatives: [],
         });
 
-        const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            profile: {
-              title: 'Software Engineer',
-              skills: ['JavaScript'],
-              projectCount: 5,
-              hasDesignWork: false,
-              experienceLevel: level,
+        const _request = new NextRequest(
+          'http://localhost:3000/api/v1/ai/recommend-template',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
             },
-          }),
-        });
+            body: JSON.stringify({
+              profile: {
+                title: 'Software Engineer',
+                skills: ['JavaScript'],
+                projectCount: 5,
+                hasDesignWork: false,
+                experienceLevel: level,
+              },
+            }),
+          }
+        );
 
         const response = await POST(request);
         expect(response.status).toBe(200);
@@ -307,22 +339,25 @@ describe('/api/v1/ai/recommend-template', () => {
         alternatives: [],
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Consultant',
-            skills: ['Business Analysis', 'Project Management'],
-            projectCount: 15,
-            hasDesignWork: false,
-            experienceLevel: 'lead',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          // No preferences provided
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Consultant',
+              skills: ['Business Analysis', 'Project Management'],
+              projectCount: 15,
+              hasDesignWork: false,
+              experienceLevel: 'lead',
+            },
+            // No preferences provided
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(200);
@@ -336,32 +371,33 @@ describe('/api/v1/ai/recommend-template', () => {
         recommendedTemplate: 'creative',
         confidence: 0.95,
         reasoning: 'Strong design portfolio with visual work',
-        alternatives: [
-          { template: 'designer', score: 0.92 },
-        ],
+        alternatives: [{ template: 'designer', score: 0.92 }],
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/recommend-template', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          profile: {
-            title: 'Creative Director',
-            skills: ['Photoshop', 'Illustrator', 'After Effects'],
-            projectCount: 20,
-            hasDesignWork: true,
-            industry: 'advertising',
-            experienceLevel: 'lead',
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/recommend-template',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
           },
-          preferences: {
-            style: 'creative',
-            targetAudience: 'clients',
-            priority: 'visual_impact',
-          },
-        }),
-      });
+          body: JSON.stringify({
+            profile: {
+              title: 'Creative Director',
+              skills: ['Photoshop', 'Illustrator', 'After Effects'],
+              projectCount: 20,
+              hasDesignWork: true,
+              industry: 'advertising',
+              experienceLevel: 'lead',
+            },
+            preferences: {
+              style: 'creative',
+              targetAudience: 'clients',
+              priority: 'visual_impact',
+            },
+          }),
+        }
+      );
 
       const response = await POST(request);
       expect(response.status).toBe(200);

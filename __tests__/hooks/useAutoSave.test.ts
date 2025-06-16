@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react';
 import { useAutoSave } from '@/hooks/useAutoSave';
-import { Portfolio } from '@/types/portfolio';
+import type { Portfolio } from '@/types/portfolio';
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -46,13 +46,13 @@ describe('useAutoSave', () => {
       useAutoSave('portfolio-123', mockPortfolio, false)
     );
 
-    expect(result.current.lastSaved).toBeUndefined();
+    expect(result.current.lastSaved).toBeNull();
   });
 
   it('should save portfolio successfully', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ success: true }),
+      json: () => ({ success: true }),
     });
 
     const { result } = renderHook(() => 
@@ -97,7 +97,7 @@ describe('useAutoSave', () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: false,
       status: 400,
-      json: async () => ({ error: 'Bad request' }),
+      json: () => ({ error: 'Bad request' }),
     });
 
     const { result } = renderHook(() => 
@@ -139,7 +139,7 @@ describe('useAutoSave', () => {
       .mockReturnValueOnce(firstCallPromise)
       .mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ success: true }),
+        json: () => ({ success: true }),
       });
 
     const { result } = renderHook(() => 
@@ -164,7 +164,7 @@ describe('useAutoSave', () => {
 
     // Complete first save
     await act(async () => {
-      resolveFirst!({ ok: true, json: async () => ({ success: true }) });
+      resolveFirst!({ ok: true, json: () => ({ success: true }) });
       await firstSavePromise!;
     });
   });
@@ -188,7 +188,7 @@ describe('useAutoSave', () => {
   it('should use correct portfolio ID from hook parameter', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ success: true }),
+      json: () => ({ success: true }),
     });
 
     const { result } = renderHook(() => 
@@ -225,7 +225,7 @@ describe('useAutoSave', () => {
   it('should update lastSaved timestamp on successful save', async () => {
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ success: true }),
+      json: () => ({ success: true }),
     });
 
     const { result } = renderHook(() => 
@@ -261,7 +261,7 @@ describe('useAutoSave', () => {
 
     (global.fetch as jest.Mock).mockResolvedValue({
       ok: true,
-      json: async () => ({ success: true }),
+      json: () => ({ success: true }),
     });
 
     const { result } = renderHook(() => 
@@ -313,6 +313,7 @@ describe('useAutoSave', () => {
       isDirty: true,
     });
 
+    expect(result.current.autoSave).toBeDefined();
     expect(result.current.autoSave).not.toBe(firstAutoSave);
   });
 });

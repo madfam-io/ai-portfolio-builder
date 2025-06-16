@@ -40,12 +40,19 @@ describe('/api/v1/portfolios/[id]/publish', () => {
         publishedAt: new Date().toISOString(),
       };
 
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(mockPortfolio);
-      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(mockPublishedPortfolio);
+      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
+        mockPortfolio
+      );
+      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(
+        mockPublishedPortfolio
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(200);
@@ -54,16 +61,23 @@ describe('/api/v1/portfolios/[id]/publish', () => {
       expect(data.data).toEqual(mockPublishedPortfolio);
       expect(data.message).toBe('Portfolio published successfully');
 
-      expect(portfolioService.getPortfolio).toHaveBeenCalledWith('portfolio-123');
-      expect(portfolioService.publishPortfolio).toHaveBeenCalledWith('portfolio-123');
+      expect(portfolioService.getPortfolio).toHaveBeenCalledWith(
+        'portfolio-123'
+      );
+      expect(portfolioService.publishPortfolio).toHaveBeenCalledWith(
+        'portfolio-123'
+      );
     });
 
     it('should handle unauthenticated requests', async () => {
       (authenticateUser as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(401);
@@ -75,9 +89,12 @@ describe('/api/v1/portfolios/[id]/publish', () => {
     it('should prevent publishing portfolios not owned by user', async () => {
       (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(403);
@@ -92,12 +109,17 @@ describe('/api/v1/portfolios/[id]/publish', () => {
         user_id: 'test-user-123',
       };
 
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(mockPortfolio);
+      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
+        mockPortfolio
+      );
       (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(404);
@@ -111,9 +133,12 @@ describe('/api/v1/portfolios/[id]/publish', () => {
         new Error('Database connection failed')
       );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(500);
@@ -130,12 +155,19 @@ describe('/api/v1/portfolios/[id]/publish', () => {
         publishedAt: '2025-06-15T10:00:00Z',
       };
 
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(mockPublishedPortfolio);
-      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(mockPublishedPortfolio);
+      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
+        mockPublishedPortfolio
+      );
+      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(
+        mockPublishedPortfolio
+      );
 
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/portfolio-123/publish', {
-        method: 'POST',
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
+        {
+          method: 'POST',
+        }
+      );
 
       const response = await POST(request, { params: { id: 'portfolio-123' } });
       expect(response.status).toBe(200);

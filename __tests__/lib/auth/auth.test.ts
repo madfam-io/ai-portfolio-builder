@@ -31,7 +31,7 @@ describe('Auth Service', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset environment variables
     process.env = { ...mockEnv };
 
@@ -398,7 +398,9 @@ describe('Auth Service', () => {
         data: { session: mockSession },
         error: null,
       });
-      expect(mockAuth.exchangeCodeForSession).toHaveBeenCalledWith('auth-code-123');
+      expect(mockAuth.exchangeCodeForSession).toHaveBeenCalledWith(
+        'auth-code-123'
+      );
     });
   });
 

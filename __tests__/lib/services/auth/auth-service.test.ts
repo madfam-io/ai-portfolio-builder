@@ -57,7 +57,7 @@ describe('AuthService', () => {
     };
 
     (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
-    
+
     // Create new instance for each test
     authService = new AuthService();
   });
@@ -69,7 +69,10 @@ describe('AuthService', () => {
         error: null,
       });
 
-      const result = await authService.signIn('test@example.com', 'password123');
+      const result = await authService.signIn(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.data).toEqual({ user: mockUser, session: mockSession });
       expect(result.error).toBeNull();
@@ -77,10 +80,9 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password123',
       });
-      expect(logger.info).toHaveBeenCalledWith(
-        'User signed in successfully',
-        { userId: 'user-123' }
-      );
+      expect(logger.info).toHaveBeenCalledWith('User signed in successfully', {
+        userId: 'user-123',
+      });
     });
 
     it('should handle sign in error', async () => {
@@ -94,7 +96,10 @@ describe('AuthService', () => {
         error: authError,
       });
 
-      const result = await authService.signIn('test@example.com', 'wrongpassword');
+      const result = await authService.signIn(
+        'test@example.com',
+        'wrongpassword'
+      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
@@ -106,7 +111,10 @@ describe('AuthService', () => {
         new Error('Network error')
       );
 
-      const result = await authService.signIn('test@example.com', 'password123');
+      const result = await authService.signIn(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual({
@@ -123,7 +131,10 @@ describe('AuthService', () => {
       (createClient as jest.Mock).mockReturnValue(null);
       authService = new AuthService();
 
-      const result = await authService.signIn('test@example.com', 'password123');
+      const result = await authService.signIn(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual({
@@ -159,10 +170,9 @@ describe('AuthService', () => {
         password: 'password123',
         options: { data: metadata },
       });
-      expect(logger.info).toHaveBeenCalledWith(
-        'User signed up successfully',
-        { userId: 'user-123' }
-      );
+      expect(logger.info).toHaveBeenCalledWith('User signed up successfully', {
+        userId: 'user-123',
+      });
     });
 
     it('should handle sign up without metadata', async () => {
@@ -171,7 +181,10 @@ describe('AuthService', () => {
         error: null,
       });
 
-      const result = await authService.signUp('test@example.com', 'password123');
+      const result = await authService.signUp(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.data).toEqual({ user: mockUser, session: null });
       expect(mockAuthClient.signUp).toHaveBeenCalledWith({
@@ -192,7 +205,10 @@ describe('AuthService', () => {
         error: authError,
       });
 
-      const result = await authService.signUp('test@example.com', 'password123');
+      const result = await authService.signUp(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
@@ -248,10 +264,9 @@ describe('AuthService', () => {
           redirectTo: 'http://localhost:3000/auth/reset-password',
         }
       );
-      expect(logger.info).toHaveBeenCalledWith(
-        'Password reset email sent',
-        { email: 'test@example.com' }
-      );
+      expect(logger.info).toHaveBeenCalledWith('Password reset email sent', {
+        email: 'test@example.com',
+      });
     });
 
     it('should handle password reset error', async () => {
@@ -268,7 +283,10 @@ describe('AuthService', () => {
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
-      expect(logger.error).toHaveBeenCalledWith('Password reset error:', authError);
+      expect(logger.error).toHaveBeenCalledWith(
+        'Password reset error:',
+        authError
+      );
     });
   });
 
@@ -304,7 +322,10 @@ describe('AuthService', () => {
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
-      expect(logger.error).toHaveBeenCalledWith('Password update error:', authError);
+      expect(logger.error).toHaveBeenCalledWith(
+        'Password update error:',
+        authError
+      );
     });
   });
 
@@ -390,10 +411,9 @@ describe('AuthService', () => {
           redirectTo: 'http://localhost:3000/auth/callback',
         },
       });
-      expect(logger.info).toHaveBeenCalledWith(
-        'OAuth sign in initiated',
-        { provider: 'google' }
-      );
+      expect(logger.info).toHaveBeenCalledWith('OAuth sign in initiated', {
+        provider: 'google',
+      });
     });
 
     it('should handle different OAuth providers', async () => {
@@ -432,7 +452,10 @@ describe('AuthService', () => {
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
-      expect(logger.error).toHaveBeenCalledWith('OAuth sign in error:', authError);
+      expect(logger.error).toHaveBeenCalledWith(
+        'OAuth sign in error:',
+        authError
+      );
     });
   });
 
@@ -475,7 +498,10 @@ describe('AuthService', () => {
     it('should handle non-Error exceptions', async () => {
       mockAuthClient.signInWithPassword.mockRejectedValue('String error');
 
-      const result = await authService.signIn('test@example.com', 'password123');
+      const result = await authService.signIn(
+        'test@example.com',
+        'password123'
+      );
 
       expect(result.error).toEqual({
         message: 'Sign in failed',
@@ -495,7 +521,9 @@ describe('AuthService', () => {
       ];
 
       for (const { method, args } of methods) {
-        const authMethod = mockAuthClient[method] || mockAuthClient[method.replace(/^(get|update)/, '$1')];
+        const authMethod =
+          mockAuthClient[method] ||
+          mockAuthClient[method.replace(/^(get|update)/, '$1')];
         if (authMethod) {
           authMethod.mockRejectedValue(new Error('Test error'));
         }

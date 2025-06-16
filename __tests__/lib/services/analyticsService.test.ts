@@ -47,17 +47,34 @@ describe('AnalyticsService', () => {
     jest.clearAllMocks();
 
     // Create mock instances
-    mockGithubClient = new GitHubAnalyticsClient() as jest.Mocked<GitHubAnalyticsClient>;
-    mockRepositoryService = new RepositoryAnalyticsService(userId, mockGithubClient) as jest.Mocked<RepositoryAnalyticsService>;
-    mockMetricsService = new MetricsCalculationService(userId, mockGithubClient) as jest.Mocked<MetricsCalculationService>;
-    mockDashboardService = new DashboardAnalyticsService(userId) as jest.Mocked<DashboardAnalyticsService>;
+    mockGithubClient =
+      new GitHubAnalyticsClient() as jest.Mocked<GitHubAnalyticsClient>;
+    mockRepositoryService = new RepositoryAnalyticsService(
+      userId,
+      mockGithubClient
+    ) as jest.Mocked<RepositoryAnalyticsService>;
+    mockMetricsService = new MetricsCalculationService(
+      userId,
+      mockGithubClient
+    ) as jest.Mocked<MetricsCalculationService>;
+    mockDashboardService = new DashboardAnalyticsService(
+      userId
+    ) as jest.Mocked<DashboardAnalyticsService>;
 
     // Setup default mock implementations
     mockGithubClient.initialize = jest.fn().mockResolvedValue(undefined);
-    mockRepositoryService.syncRepositories = jest.fn().mockResolvedValue([mockRepository]);
-    mockRepositoryService.getRepositories = jest.fn().mockResolvedValue([mockRepository]);
-    mockRepositoryService.getRepository = jest.fn().mockResolvedValue(mockRepository);
-    mockRepositoryService.getRepositoryAnalytics = jest.fn().mockResolvedValue(null);
+    mockRepositoryService.syncRepositories = jest
+      .fn()
+      .mockResolvedValue([mockRepository]);
+    mockRepositoryService.getRepositories = jest
+      .fn()
+      .mockResolvedValue([mockRepository]);
+    mockRepositoryService.getRepository = jest
+      .fn()
+      .mockResolvedValue(mockRepository);
+    mockRepositoryService.getRepositoryAnalytics = jest
+      .fn()
+      .mockResolvedValue(null);
 
     // Mock logger
     (logger.error as jest.Mock).mockImplementation(() => {});
@@ -96,7 +113,9 @@ describe('AnalyticsService', () => {
     it('should get repository by ID', async () => {
       const repository = await analyticsService.getRepository('repo-123');
 
-      expect(mockRepositoryService.getRepository).toHaveBeenCalledWith('repo-123');
+      expect(mockRepositoryService.getRepository).toHaveBeenCalledWith(
+        'repo-123'
+      );
       expect(repository).toEqual(mockRepository);
     });
 
@@ -118,20 +137,27 @@ describe('AnalyticsService', () => {
         lastAnalyzed: new Date(),
       };
 
-      mockMetricsService.syncRepositoryMetrics = jest.fn().mockResolvedValue(mockMetrics);
+      mockMetricsService.syncRepositoryMetrics = jest
+        .fn()
+        .mockResolvedValue(mockMetrics);
 
       const metrics = await analyticsService.syncRepositoryMetrics('repo-123');
 
-      expect(mockRepositoryService.getRepository).toHaveBeenCalledWith('repo-123');
-      expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(mockRepository);
+      expect(mockRepositoryService.getRepository).toHaveBeenCalledWith(
+        'repo-123'
+      );
+      expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(
+        mockRepository
+      );
       expect(metrics).toEqual(mockMetrics);
     });
 
     it('should throw error for non-existent repository', async () => {
       mockRepositoryService.getRepository.mockResolvedValue(null);
 
-      await expect(analyticsService.syncRepositoryMetrics('non-existent'))
-        .rejects.toThrow('Repository not found');
+      await expect(
+        analyticsService.syncRepositoryMetrics('non-existent')
+      ).rejects.toThrow('Repository not found');
     });
   });
 
@@ -152,61 +178,82 @@ describe('AnalyticsService', () => {
         },
       ];
 
-      mockMetricsService.syncPullRequests = jest.fn().mockResolvedValue(mockPullRequests);
+      mockMetricsService.syncPullRequests = jest
+        .fn()
+        .mockResolvedValue(mockPullRequests);
 
       const pullRequests = await analyticsService.syncPullRequests('repo-123');
 
-      expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(mockRepository);
+      expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(
+        mockRepository
+      );
       expect(pullRequests).toEqual(mockPullRequests);
     });
 
     it('should throw error for non-existent repository', async () => {
       mockRepositoryService.getRepository.mockResolvedValue(null);
 
-      await expect(analyticsService.syncPullRequests('non-existent'))
-        .rejects.toThrow('Repository not found');
+      await expect(
+        analyticsService.syncPullRequests('non-existent')
+      ).rejects.toThrow('Repository not found');
     });
   });
 
   describe('syncContributors', () => {
     it('should sync contributors for existing repository', async () => {
-      mockMetricsService.syncContributors = jest.fn().mockResolvedValue(undefined);
+      mockMetricsService.syncContributors = jest
+        .fn()
+        .mockResolvedValue(undefined);
 
       await analyticsService.syncContributors('repo-123');
 
-      expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(mockRepository);
+      expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(
+        mockRepository
+      );
     });
 
     it('should throw error for non-existent repository', async () => {
       mockRepositoryService.getRepository.mockResolvedValue(null);
 
-      await expect(analyticsService.syncContributors('non-existent'))
-        .rejects.toThrow('Repository not found');
+      await expect(
+        analyticsService.syncContributors('non-existent')
+      ).rejects.toThrow('Repository not found');
     });
   });
 
   describe('syncCommitAnalytics', () => {
     it('should sync commit analytics with default days', async () => {
-      mockMetricsService.syncCommitAnalytics = jest.fn().mockResolvedValue(undefined);
+      mockMetricsService.syncCommitAnalytics = jest
+        .fn()
+        .mockResolvedValue(undefined);
 
       await analyticsService.syncCommitAnalytics('repo-123');
 
-      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(mockRepository, 30);
+      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
+        mockRepository,
+        30
+      );
     });
 
     it('should sync commit analytics with custom days', async () => {
-      mockMetricsService.syncCommitAnalytics = jest.fn().mockResolvedValue(undefined);
+      mockMetricsService.syncCommitAnalytics = jest
+        .fn()
+        .mockResolvedValue(undefined);
 
       await analyticsService.syncCommitAnalytics('repo-123', 60);
 
-      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(mockRepository, 60);
+      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
+        mockRepository,
+        60
+      );
     });
 
     it('should throw error for non-existent repository', async () => {
       mockRepositoryService.getRepository.mockResolvedValue(null);
 
-      await expect(analyticsService.syncCommitAnalytics('non-existent'))
-        .rejects.toThrow('Repository not found');
+      await expect(
+        analyticsService.syncCommitAnalytics('non-existent')
+      ).rejects.toThrow('Repository not found');
     });
   });
 
@@ -244,21 +291,32 @@ describe('AnalyticsService', () => {
         },
       };
 
-      mockDashboardService.getDashboardData = jest.fn().mockResolvedValue(mockDashboardData);
+      mockDashboardService.getDashboardData = jest
+        .fn()
+        .mockResolvedValue(mockDashboardData);
 
       const dashboardData = await analyticsService.getDashboardData();
 
       expect(mockRepositoryService.getRepositories).toHaveBeenCalled();
-      expect(mockDashboardService.getDashboardData).toHaveBeenCalledWith([mockRepository]);
+      expect(mockDashboardService.getDashboardData).toHaveBeenCalledWith([
+        mockRepository,
+      ]);
       expect(dashboardData).toEqual(mockDashboardData);
     });
 
     it('should handle errors and rethrow', async () => {
       const error = new Error('Dashboard error');
-      mockDashboardService.getDashboardData = jest.fn().mockRejectedValue(error);
+      mockDashboardService.getDashboardData = jest
+        .fn()
+        .mockRejectedValue(error);
 
-      await expect(analyticsService.getDashboardData()).rejects.toThrow('Dashboard error');
-      expect(logger.error).toHaveBeenCalledWith('Failed to get dashboard data', { error });
+      await expect(analyticsService.getDashboardData()).rejects.toThrow(
+        'Dashboard error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to get dashboard data',
+        { error }
+      );
     });
   });
 
@@ -272,30 +330,49 @@ describe('AnalyticsService', () => {
         commits: [],
       };
 
-      mockRepositoryService.getRepositoryAnalytics.mockResolvedValue(mockAnalytics);
+      mockRepositoryService.getRepositoryAnalytics.mockResolvedValue(
+        mockAnalytics
+      );
 
-      const analytics = await analyticsService.getRepositoryAnalytics('repo-123');
+      const analytics =
+        await analyticsService.getRepositoryAnalytics('repo-123');
 
-      expect(mockRepositoryService.getRepositoryAnalytics).toHaveBeenCalledWith('repo-123');
+      expect(mockRepositoryService.getRepositoryAnalytics).toHaveBeenCalledWith(
+        'repo-123'
+      );
       expect(analytics).toEqual(mockAnalytics);
     });
   });
 
   describe('syncRepositoryData', () => {
     beforeEach(() => {
-      mockMetricsService.syncRepositoryMetrics = jest.fn().mockResolvedValue({});
+      mockMetricsService.syncRepositoryMetrics = jest
+        .fn()
+        .mockResolvedValue({});
       mockMetricsService.syncPullRequests = jest.fn().mockResolvedValue([]);
-      mockMetricsService.syncContributors = jest.fn().mockResolvedValue(undefined);
-      mockMetricsService.syncCommitAnalytics = jest.fn().mockResolvedValue(undefined);
+      mockMetricsService.syncContributors = jest
+        .fn()
+        .mockResolvedValue(undefined);
+      mockMetricsService.syncCommitAnalytics = jest
+        .fn()
+        .mockResolvedValue(undefined);
     });
 
     it('should sync all data by default', async () => {
       await analyticsService.syncRepositoryData('repo-123');
 
-      expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(mockRepository);
-      expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(mockRepository);
-      expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(mockRepository);
-      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(mockRepository);
+      expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(
+        mockRepository
+      );
+      expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(
+        mockRepository
+      );
+      expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(
+        mockRepository
+      );
+      expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
+        mockRepository
+      );
     });
 
     it('should sync only specified data types', async () => {
@@ -315,32 +392,53 @@ describe('AnalyticsService', () => {
     it('should throw error for non-existent repository', async () => {
       mockRepositoryService.getRepository.mockResolvedValue(null);
 
-      await expect(analyticsService.syncRepositoryData('non-existent'))
-        .rejects.toThrow('Repository not found');
+      await expect(
+        analyticsService.syncRepositoryData('non-existent')
+      ).rejects.toThrow('Repository not found');
     });
 
     it('should handle partial sync failures', async () => {
-      mockMetricsService.syncRepositoryMetrics.mockRejectedValue(new Error('Metrics error'));
+      mockMetricsService.syncRepositoryMetrics.mockRejectedValue(
+        new Error('Metrics error')
+      );
 
       // Should not throw - Promise.all will handle the error
-      await expect(analyticsService.syncRepositoryData('repo-123', {
-        syncMetrics: true,
-        syncPullRequests: false,
-        syncContributors: false,
-        syncCommits: false,
-      })).rejects.toThrow('Metrics error');
+      await expect(
+        analyticsService.syncRepositoryData('repo-123', {
+          syncMetrics: true,
+          syncPullRequests: false,
+          syncContributors: false,
+          syncCommits: false,
+        })
+      ).rejects.toThrow('Metrics error');
     });
 
     it('should run all syncs in parallel', async () => {
-      const metricsPromise = new Promise(resolve => setTimeout(() => resolve({}), 100));
-      const pullRequestsPromise = new Promise(resolve => setTimeout(() => resolve([]), 50));
-      const contributorsPromise = new Promise(resolve => setTimeout(() => resolve(undefined), 75));
-      const commitsPromise = new Promise(resolve => setTimeout(() => resolve(undefined), 25));
+      const metricsPromise = new Promise(resolve =>
+        setTimeout(() => resolve({}), 100)
+      );
+      const pullRequestsPromise = new Promise(resolve =>
+        setTimeout(() => resolve([]), 50)
+      );
+      const contributorsPromise = new Promise(resolve =>
+        setTimeout(() => resolve(undefined), 75)
+      );
+      const commitsPromise = new Promise(resolve =>
+        setTimeout(() => resolve(undefined), 25)
+      );
 
-      mockMetricsService.syncRepositoryMetrics.mockReturnValue(metricsPromise as any);
-      mockMetricsService.syncPullRequests.mockReturnValue(pullRequestsPromise as any);
-      mockMetricsService.syncContributors.mockReturnValue(contributorsPromise as any);
-      mockMetricsService.syncCommitAnalytics.mockReturnValue(commitsPromise as any);
+      mockMetricsService.syncRepositoryMetrics.mockReturnValue(
+        metricsPromise as any
+      );
+      mockMetricsService.syncPullRequests.mockReturnValue(
+        pullRequestsPromise as any
+      );
+      mockMetricsService.syncContributors.mockReturnValue(
+        contributorsPromise as any
+      );
+      mockMetricsService.syncCommitAnalytics.mockReturnValue(
+        commitsPromise as any
+      );
 
       const startTime = Date.now();
       await analyticsService.syncRepositoryData('repo-123');

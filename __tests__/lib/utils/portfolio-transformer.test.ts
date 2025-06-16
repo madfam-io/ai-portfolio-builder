@@ -4,7 +4,7 @@ import {
   transformDbPortfoliosToApi,
   sanitizePortfolioData,
 } from '@/lib/utils/portfolio-transformer';
-import { Portfolio } from '@/types/portfolio';
+import { _Portfolio } from '@/types/portfolio';
 
 describe('Portfolio Transformer Utilities', () => {
   describe('transformDbPortfolioToApi', () => {

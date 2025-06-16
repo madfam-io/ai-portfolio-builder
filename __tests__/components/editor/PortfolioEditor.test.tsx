@@ -1,6 +1,11 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+} from '@testing-library/react';
+import _userEvent from '@testing-library/user-event';
 import { PortfolioEditor } from '@/components/editor/PortfolioEditor';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useDebounce } from '@/hooks/useDebounce';
@@ -17,7 +22,7 @@ jest.mock('@/lib/utils/logger');
 jest.mock('@/components/editor/EditorHeader', () => ({
   EditorHeader: ({ portfolio, onSave }: any) => (
     <div data-testid="editor-header">
-      <button onClick={() => onSave(portfolio)}>Save</button>
+      <button onClick={() => onSave(_portfolio)}>Save</button>
     </div>
   ),
 }));
@@ -25,8 +30,12 @@ jest.mock('@/components/editor/EditorHeader', () => ({
 jest.mock('@/components/editor/EditorSidebar', () => ({
   EditorSidebar: ({ portfolio, onUpdate, onSectionSelect }: any) => (
     <div data-testid="editor-sidebar">
-      <button onClick={() => onUpdate({ name: 'Updated Name' })}>Update Name</button>
-      <button onClick={() => onSectionSelect('projects')}>Select Projects</button>
+      <button onClick={() => onUpdate({ name: 'Updated Name' })}>
+        Update Name
+      </button>
+      <button onClick={() => onSectionSelect('projects')}>
+        Select Projects
+      </button>
     </div>
   ),
 }));
@@ -34,7 +43,9 @@ jest.mock('@/components/editor/EditorSidebar', () => ({
 jest.mock('@/components/editor/EditorToolbar', () => ({
   EditorToolbar: ({ onTemplateChange, onPreviewModeChange }: any) => (
     <div data-testid="editor-toolbar">
-      <button onClick={() => onTemplateChange('modern')}>Change Template</button>
+      <button onClick={() => onTemplateChange('modern')}>
+        Change Template
+      </button>
       <button onClick={() => onPreviewModeChange('tablet')}>Tablet View</button>
     </div>
   ),
@@ -81,7 +92,7 @@ describe('PortfolioEditor', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock hooks
     (useAutoSave as jest.Mock).mockImplementation(({ data, onSave }) => ({
       isSaving: false,
@@ -89,7 +100,7 @@ describe('PortfolioEditor', () => {
       error: null,
     }));
 
-    (useDebounce as jest.Mock).mockImplementation((value) => value);
+    (useDebounce as jest.Mock).mockImplementation(value => value);
 
     (useEditorHistory as jest.Mock).mockReturnValue({
       canUndo: true,
@@ -202,7 +213,8 @@ describe('PortfolioEditor', () => {
 
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ ...mockPortfolio, name: 'Saved Portfolio' }),
+      json: () =>
+        Promise.resolve({ ...mockPortfolio, name: 'Saved Portfolio' }),
     });
 
     const saveButton = screen.getByText('Save');
@@ -357,7 +369,7 @@ describe('PortfolioEditor', () => {
 
   it('should debounce rapid updates', async () => {
     let debouncedValue: any;
-    (useDebounce as jest.Mock).mockImplementation((value) => {
+    (useDebounce as jest.Mock).mockImplementation(value => {
       debouncedValue = value;
       return value;
     });

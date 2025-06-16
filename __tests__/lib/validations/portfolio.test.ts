@@ -44,7 +44,7 @@ describe('Portfolio Validation Schemas', () => {
         const hasTitleError = result.error.issues.some(
           issue => issue.path.includes('title') && issue.code === 'invalid_type'
         );
-        
+
         expect(hasNameError).toBe(true);
         expect(hasTitleError).toBe(true);
       }
@@ -113,7 +113,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -141,7 +141,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -170,7 +170,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -192,14 +192,14 @@ describe('Portfolio Validation Schemas', () => {
             endDate: '2020-06',
             current: false,
             description: 'Focus on software engineering',
-            achievements: ['Dean\'s List', 'Magna Cum Laude'],
+            achievements: ["Dean's List", 'Magna Cum Laude'],
           },
         ],
         createdAt: new Date(),
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -229,7 +229,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -257,7 +257,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -284,7 +284,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -312,7 +312,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -335,7 +335,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(portfolio);
+      const result = portfolioSchema.safeParse(_portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -355,7 +355,9 @@ describe('Portfolio Validation Schemas', () => {
       // Test valid subdomains
       const validSubdomains = ['john-doe', 'user123', 'a', 'test-portfolio'];
       validSubdomains.forEach(subdomain => {
-        const result = portfolioSchema.safeParse(createPortfolioWithSubdomain(subdomain));
+        const result = portfolioSchema.safeParse(
+          createPortfolioWithSubdomain(subdomain)
+        );
         expect(result.success).toBe(true);
       });
 
@@ -370,7 +372,9 @@ describe('Portfolio Validation Schemas', () => {
         'a'.repeat(64), // too long
       ];
       invalidSubdomains.forEach(subdomain => {
-        const result = portfolioSchema.safeParse(createPortfolioWithSubdomain(subdomain));
+        const result = portfolioSchema.safeParse(
+          createPortfolioWithSubdomain(subdomain)
+        );
         expect(result.success).toBe(false);
       });
     });
@@ -505,7 +509,7 @@ describe('Portfolio Validation Schemas', () => {
       };
 
       const sanitized = sanitizePortfolioData(data);
-      
+
       // The sanitizePortfolioData should strip HTML tags
       expect(sanitized).toBeDefined();
       expect(sanitized.name).toBeDefined();
@@ -526,10 +530,7 @@ describe('Portfolio Validation Schemas', () => {
           'Normal achievement',
           '<b>Bold</b> achievement',
         ],
-        achievements: [
-          'Award <img src=x>',
-          'Clean award',
-        ],
+        achievements: ['Award <img src=x>', 'Clean award'],
       };
 
       const sanitized = sanitizePortfolioData(data);
@@ -560,12 +561,14 @@ describe('Portfolio Validation Schemas', () => {
       // Root level fields in textFields list are sanitized
       expect(sanitized.name).toBe('Portfolioalert(1)');
       expect(sanitized.description).toBe('Description with bold');
-      
+
       // Nested objects are recursively processed
       expect(sanitized.experience).toBeDefined();
       expect(sanitized.experience.title).toBe('Title with italic'); // title is in textFields
-      expect(sanitized.experience.description).toBe('Nested description with bold'); // description is in textFields
-      
+      expect(sanitized.experience.description).toBe(
+        'Nested description with bold'
+      ); // description is in textFields
+
       // Double nested
       expect(sanitized.experience.nested.name).toBe('Nested name field'); // name is in textFields
       expect(sanitized.experience.nested.bio).toBe('Nested bio text'); // bio is in textFields
@@ -590,7 +593,13 @@ describe('Portfolio Validation Schemas', () => {
 
     it('should handle non-string values in arrays', () => {
       const data = {
-        highlights: ['String highlight', 123, null, undefined, { obj: 'value' }],
+        highlights: [
+          'String highlight',
+          123,
+          null,
+          undefined,
+          { obj: 'value' },
+        ],
       };
 
       const sanitized = sanitizePortfolioData(data);
@@ -625,12 +634,24 @@ describe('Portfolio Validation Schemas', () => {
 
     it('should reject invalid date formats', () => {
       // Test specific invalid dates
-      expect(experienceSchema.safeParse(createExperienceData('2023-1')).success).toBe(false); // Missing leading zero
-      expect(experienceSchema.safeParse(createExperienceData('2023-13')).success).toBe(true); // Regex doesn't validate month range
-      expect(experienceSchema.safeParse(createExperienceData('23-01')).success).toBe(false); // Wrong year format
-      expect(experienceSchema.safeParse(createExperienceData('2023/01')).success).toBe(false); // Wrong separator
-      expect(experienceSchema.safeParse(createExperienceData('2023-01-01')).success).toBe(false); // Includes day
-      expect(experienceSchema.safeParse(createExperienceData('January 2023')).success).toBe(false); // Text format
+      expect(
+        experienceSchema.safeParse(createExperienceData('2023-1')).success
+      ).toBe(false); // Missing leading zero
+      expect(
+        experienceSchema.safeParse(createExperienceData('2023-13')).success
+      ).toBe(true); // Regex doesn't validate month range
+      expect(
+        experienceSchema.safeParse(createExperienceData('23-01')).success
+      ).toBe(false); // Wrong year format
+      expect(
+        experienceSchema.safeParse(createExperienceData('2023/01')).success
+      ).toBe(false); // Wrong separator
+      expect(
+        experienceSchema.safeParse(createExperienceData('2023-01-01')).success
+      ).toBe(false); // Includes day
+      expect(
+        experienceSchema.safeParse(createExperienceData('January 2023')).success
+      ).toBe(false); // Text format
     });
   });
 
@@ -727,7 +748,7 @@ describe('Type Exports', () => {
     const updateDTO: TestUpdateDTO = {} as any;
     const query: TestQuery = {} as any;
 
-    expect(portfolio).toBeDefined();
+    expect(_portfolio).toBeDefined();
     expect(createDTO).toBeDefined();
     expect(updateDTO).toBeDefined();
     expect(query).toBeDefined();
@@ -750,7 +771,9 @@ const experienceSchema = z.object({
   id: z.string(),
   company: z.string().min(1).max(100),
   position: z.string().min(1).max(100),
-  startDate: z.string().regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format'),
+  startDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format'),
   endDate: z
     .string()
     .regex(/^\d{4}-\d{2}$/, 'Date must be in YYYY-MM format')
@@ -783,9 +806,18 @@ const contactInfoSchema = z
 
 const templateCustomizationSchema = z
   .object({
-    primaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-    secondaryColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
-    accentColor: z.string().regex(/^#[0-9A-F]{6}$/i).optional(),
+    primaryColor: z
+      .string()
+      .regex(/^#[0-9A-F]{6}$/i)
+      .optional(),
+    secondaryColor: z
+      .string()
+      .regex(/^#[0-9A-F]{6}$/i)
+      .optional(),
+    accentColor: z
+      .string()
+      .regex(/^#[0-9A-F]{6}$/i)
+      .optional(),
     fontFamily: z.string().max(50).optional(),
     fontSize: z.enum(['small', 'medium', 'large']).optional(),
     darkMode: z.boolean().optional(),

@@ -31,12 +31,18 @@ describe('Portfolio Preview API Routes', () => {
     (logger.error as jest.Mock).mockImplementation(() => {});
 
     // Mock template renderers
-    (renderDeveloperTemplate as jest.Mock).mockReturnValue('<div>Developer Template</div>');
-    (renderDesignerTemplate as jest.Mock).mockReturnValue('<div>Designer Template</div>');
-    (renderConsultantTemplate as jest.Mock).mockReturnValue('<div>Consultant Template</div>');
+    (renderDeveloperTemplate as jest.Mock).mockReturnValue(
+      '<div>Developer Template</div>'
+    );
+    (renderDesignerTemplate as jest.Mock).mockReturnValue(
+      '<div>Designer Template</div>'
+    );
+    (renderConsultantTemplate as jest.Mock).mockReturnValue(
+      '<div>Consultant Template</div>'
+    );
 
     // Mock transformer
-    (transformDbPortfolioToApi as jest.Mock).mockImplementation((db) => ({
+    (transformDbPortfolioToApi as jest.Mock).mockImplementation(db => ({
       ...db,
       transformed: true,
     }));
@@ -64,7 +70,9 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer'
+      );
       const response = await GET(request);
       const html = await response.text();
 
@@ -93,7 +101,9 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=designer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=designer'
+      );
       const response = await GET(request);
       const html = await response.text();
 
@@ -114,7 +124,9 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=consultant');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=consultant'
+      );
       const response = await GET(request);
       const html = await response.text();
 
@@ -135,11 +147,13 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer'
+      );
       const response = await GET(request);
       const html = await response.text();
 
-      expect(html).toContain('window.addEventListener(\'message\'');
+      expect(html).toContain("window.addEventListener('message'");
       expect(html).toContain('UPDATE_PORTFOLIO');
       expect(html).toContain('PREVIEW_READY');
     });
@@ -156,7 +170,9 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer'
+      );
       const response = await GET(request);
       const html = await response.text();
 
@@ -165,7 +181,9 @@ describe('Portfolio Preview API Routes', () => {
     });
 
     it('should return 400 for missing portfolioId', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?template=developer'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -175,7 +193,9 @@ describe('Portfolio Preview API Routes', () => {
     });
 
     it('should return 400 for missing template', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -195,7 +215,9 @@ describe('Portfolio Preview API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=nonexistent&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=nonexistent&template=developer'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -206,7 +228,9 @@ describe('Portfolio Preview API Routes', () => {
     it('should handle database connection errors', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -229,7 +253,9 @@ describe('Portfolio Preview API Routes', () => {
         throw new Error('Template error');
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer');
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/preview?portfolioId=portfolio-123&template=developer'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -262,7 +288,7 @@ describe('Portfolio Preview API Routes', () => {
     };
 
     it('should generate preview HTML from portfolio data', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify(validPortfolioData),
       });
@@ -282,7 +308,7 @@ describe('Portfolio Preview API Routes', () => {
     });
 
     it('should handle designer template', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify({
           ...validPortfolioData,
@@ -299,7 +325,7 @@ describe('Portfolio Preview API Routes', () => {
     });
 
     it('should handle consultant template', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify({
           ...validPortfolioData,
@@ -325,7 +351,7 @@ describe('Portfolio Preview API Routes', () => {
         template: 'developer',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify(minimalPortfolio),
       });
@@ -361,7 +387,7 @@ describe('Portfolio Preview API Routes', () => {
         template: 'developer',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify(invalidData),
       });
@@ -379,7 +405,7 @@ describe('Portfolio Preview API Routes', () => {
         throw new Error('Render error');
       });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: JSON.stringify(validPortfolioData),
       });
@@ -393,7 +419,7 @@ describe('Portfolio Preview API Routes', () => {
     });
 
     it('should handle invalid JSON', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/preview', {
+      const _request = new NextRequest('http://localhost:3000/api/v1/preview', {
         method: 'POST',
         body: 'invalid-json',
       });

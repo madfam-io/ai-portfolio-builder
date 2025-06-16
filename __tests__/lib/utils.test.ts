@@ -32,7 +32,7 @@ describe('cn utility', () => {
     const result = cn({
       'px-2': true,
       'py-1': true,
-      'hidden': false,
+      hidden: false,
     });
     expect(result).toBe('px-2 py-1');
   });

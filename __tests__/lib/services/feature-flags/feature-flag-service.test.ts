@@ -61,9 +61,7 @@ describe('FeatureFlagService', () => {
           id: 'var-test',
           name: 'Test',
           traffic_percentage: 50,
-          components: [
-            { type: 'hero', variant: 'modern', visible: true },
-          ],
+          components: [{ type: 'hero', variant: 'modern', visible: true }],
           theme_overrides: { primaryColor: '#0066cc' },
         },
       ],
@@ -89,7 +87,7 @@ describe('FeatureFlagService', () => {
       expect(result).toBeTruthy();
       expect(result?.experimentId).toBe('exp-123');
       expect(['var-control', 'var-test']).toContain(result?.variantId);
-      
+
       // Should create visitor ID
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         'prisma_visitor_id',
@@ -129,8 +127,8 @@ describe('FeatureFlagService', () => {
 
       mockCookieStore.get
         .mockReturnValueOnce({ value: 'existing-visitor-id' }) // Visitor ID
-        .mockReturnValueOnce({ 
-          value: encodeURIComponent(JSON.stringify(existingAssignments)) 
+        .mockReturnValueOnce({
+          value: encodeURIComponent(JSON.stringify(existingAssignments)),
         }); // Assignments
 
       const mockQuery = {
@@ -274,7 +272,9 @@ describe('FeatureFlagService', () => {
       const result = await FeatureFlagService.getActiveExperiment();
 
       expect(result).toBeNull();
-      expect(logger.error).toHaveBeenCalledWith('Failed to create Supabase client');
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to create Supabase client'
+      );
     });
 
     it('should respect traffic percentage for experiment', async () => {
@@ -298,7 +298,8 @@ describe('FeatureFlagService', () => {
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
       // Mock hash function to return value outside traffic percentage
-      jest.spyOn(FeatureFlagService as any, 'hashToPercentage')
+      jest
+        .spyOn(FeatureFlagService as any, 'hashToPercentage')
         .mockReturnValueOnce(50); // 50% > 10% traffic, should exclude
 
       const result = await FeatureFlagService.getActiveExperiment();
@@ -354,9 +355,14 @@ describe('FeatureFlagService', () => {
     it('should record click event', async () => {
       mockCookieStore.get.mockReturnValue({ value: 'test-visitor-id' });
 
-      await FeatureFlagService.recordClick('exp-123', 'var-test', 'cta-button', {
-        section: 'hero',
-      });
+      await FeatureFlagService.recordClick(
+        'exp-123',
+        'var-test',
+        'cta-button',
+        {
+          section: 'hero',
+        }
+      );
 
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
         'record_landing_page_event',
@@ -438,7 +444,10 @@ describe('FeatureFlagService', () => {
         themeOverrides: {},
       });
 
-      const result = await FeatureFlagService.isFeatureEnabled('hero', 'modern');
+      const result = await FeatureFlagService.isFeatureEnabled(
+        'hero',
+        'modern'
+      );
 
       expect(result).toBe(true);
     });
@@ -448,9 +457,7 @@ describe('FeatureFlagService', () => {
         experimentId: 'exp-123',
         variantId: 'var-test',
         variantName: 'Test',
-        components: [
-          { type: 'cta', variant: 'large', visible: false },
-        ],
+        components: [{ type: 'cta', variant: 'large', visible: false }],
         themeOverrides: {},
       });
 
@@ -460,9 +467,14 @@ describe('FeatureFlagService', () => {
     });
 
     it('should return false when no experiment active', async () => {
-      jest.spyOn(FeatureFlagService, 'getActiveExperiment').mockResolvedValue(null);
+      jest
+        .spyOn(FeatureFlagService, 'getActiveExperiment')
+        .mockResolvedValue(null);
 
-      const result = await FeatureFlagService.isFeatureEnabled('hero', 'modern');
+      const result = await FeatureFlagService.isFeatureEnabled(
+        'hero',
+        'modern'
+      );
 
       expect(result).toBe(false);
     });
@@ -476,7 +488,10 @@ describe('FeatureFlagService', () => {
         themeOverrides: {},
       });
 
-      const result = await FeatureFlagService.isFeatureEnabled('hero', 'modern');
+      const result = await FeatureFlagService.isFeatureEnabled(
+        'hero',
+        'modern'
+      );
 
       expect(result).toBe(false);
     });

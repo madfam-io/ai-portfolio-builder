@@ -60,7 +60,7 @@ describe('/api/v1/ai/enhance-bio', () => {
 
   describe('POST /api/v1/ai/enhance-bio', () => {
     it('should enhance bio successfully for authenticated user', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -121,7 +121,7 @@ describe('/api/v1/ai/enhance-bio', () => {
         data: { user: null },
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -147,7 +147,7 @@ describe('/api/v1/ai/enhance-bio', () => {
     });
 
     it('should return 400 for invalid request body', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -176,7 +176,7 @@ describe('/api/v1/ai/enhance-bio', () => {
     it('should handle AI service unavailability', async () => {
       mockHuggingFaceService.prototype.healthCheck.mockResolvedValue(false);
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -207,7 +207,7 @@ describe('/api/v1/ai/enhance-bio', () => {
     it('should handle database connection failure', async () => {
       mockCreateClient.mockResolvedValue(null);
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -236,7 +236,7 @@ describe('/api/v1/ai/enhance-bio', () => {
     it('should validate bio length constraints', async () => {
       const longBio = 'a'.repeat(1001); // Exceeds max length
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'POST',
@@ -286,7 +286,7 @@ describe('/api/v1/ai/enhance-bio', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'GET',
@@ -322,7 +322,7 @@ describe('/api/v1/ai/enhance-bio', () => {
         data: { user: null },
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'GET',
@@ -343,7 +343,7 @@ describe('/api/v1/ai/enhance-bio', () => {
         error: new Error('Database query failed'),
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'GET',
@@ -364,7 +364,7 @@ describe('/api/v1/ai/enhance-bio', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/ai/enhance-bio',
         {
           method: 'GET',

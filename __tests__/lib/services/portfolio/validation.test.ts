@@ -3,7 +3,11 @@ import {
   validateUpdatePortfolio,
   sanitizePortfolioData,
 } from '@/lib/services/portfolio/validation';
-import { CreatePortfolioDTO, UpdatePortfolioDTO, Portfolio } from '@/types/portfolio';
+import {
+  CreatePortfolioDTO,
+  UpdatePortfolioDTO,
+  Portfolio,
+} from '@/types/portfolio';
 
 describe('Portfolio Validation', () => {
   describe('validateCreatePortfolio', () => {
@@ -80,7 +84,11 @@ describe('Portfolio Validation', () => {
 
       expect(result.isValid).toBe(false);
       expect(result.errors).toHaveLength(3);
-      expect(result.errors.map(e => e.field)).toEqual(['name', 'title', 'template']);
+      expect(result.errors.map(e => e.field)).toEqual([
+        'name',
+        'title',
+        'template',
+      ]);
     });
   });
 
@@ -207,7 +215,9 @@ describe('Portfolio Validation', () => {
       const sanitized = sanitizePortfolioData(dataWithUrls);
 
       expect(sanitized.avatarUrl).toBe('https://example.com/avatar.jpg');
-      expect(sanitized.social?.linkedin).toBe('https://linkedin.com/in/johndoe');
+      expect(sanitized.social?.linkedin).toBe(
+        'https://linkedin.com/in/johndoe'
+      );
       expect(sanitized.social?.github).toBe('https://github.com/johndoe');
       expect(sanitized.social?.website).toBe('https://johndoe.com');
     });
@@ -223,7 +233,9 @@ describe('Portfolio Validation', () => {
       const sanitized = sanitizePortfolioData(dataWithHttpsUrls);
 
       expect(sanitized.avatarUrl).toBe('https://example.com/avatar.jpg');
-      expect(sanitized.social?.linkedin).toBe('https://linkedin.com/in/johndoe');
+      expect(sanitized.social?.linkedin).toBe(
+        'https://linkedin.com/in/johndoe'
+      );
     });
 
     it('should preserve http URLs', () => {
@@ -306,7 +318,9 @@ describe('Portfolio Validation', () => {
 
       const sanitized = sanitizePortfolioData(dataWithMixedSocial);
 
-      expect(sanitized.social?.linkedin).toBe('https://linkedin.com/in/johndoe');
+      expect(sanitized.social?.linkedin).toBe(
+        'https://linkedin.com/in/johndoe'
+      );
       expect((sanitized.social as any)?.verified).toBe(true);
       expect((sanitized.social as any)?.followers).toBe(1000);
     });

@@ -20,10 +20,12 @@ describe('GET /api/v1/ai/models', () => {
       getAvailableModels: jest.fn(),
     };
 
-    (HuggingFaceService as jest.Mock).mockImplementation(() => mockHuggingFaceInstance);
+    (HuggingFaceService as jest.Mock).mockImplementation(
+      () => mockHuggingFaceInstance
+    );
 
     // Mock cache functions
-    (withCacheHeaders as jest.Mock).mockImplementation((response) => response);
+    (withCacheHeaders as jest.Mock).mockImplementation(response => response);
     (generateETag as jest.Mock).mockReturnValue('test-etag');
 
     // Mock logger
@@ -69,7 +71,7 @@ describe('GET /api/v1/ai/models', () => {
   it('should return available models successfully', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
@@ -88,7 +90,7 @@ describe('GET /api/v1/ai/models', () => {
   it('should apply cache headers to response', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     await GET();
 
     expect(withCacheHeaders).toHaveBeenCalled();
@@ -105,24 +107,30 @@ describe('GET /api/v1/ai/models', () => {
   it('should return recommended models first', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
-    const recommendedModels = data.data.models.filter((m: any) => m.isRecommended);
+    const recommendedModels = data.data.models.filter(
+      (m: any) => m.isRecommended
+    );
     expect(recommendedModels).toHaveLength(2);
-    expect(recommendedModels[0].id).toBe('meta-llama/Meta-Llama-3.1-8B-Instruct');
+    expect(recommendedModels[0].id).toBe(
+      'meta-llama/Meta-Llama-3.1-8B-Instruct'
+    );
     expect(recommendedModels[1].id).toBe('microsoft/Phi-3.5-mini-instruct');
   });
 
   it('should include model capabilities', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
-    const llamaModel = data.data.models.find((m: any) => m.id.includes('Llama'));
+    const llamaModel = data.data.models.find((m: any) =>
+      m.id.includes('Llama')
+    );
     expect(llamaModel.capabilities).toContain('bio');
     expect(llamaModel.capabilities).toContain('project');
     expect(llamaModel.capabilities).toContain('template');
@@ -132,7 +140,7 @@ describe('GET /api/v1/ai/models', () => {
     const error = new Error('API unavailable');
     mockHuggingFaceInstance.getAvailableModels.mockRejectedValue(error);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
@@ -154,13 +162,16 @@ describe('GET /api/v1/ai/models', () => {
         totalModels: 2,
       },
     });
-    expect(logger.error).toHaveBeenCalledWith('Failed to fetch available models', error);
+    expect(logger.error).toHaveBeenCalledWith(
+      'Failed to fetch available models',
+      error
+    );
   });
 
   it('should include cost information', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
@@ -174,7 +185,7 @@ describe('GET /api/v1/ai/models', () => {
   it('should include performance metrics', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
@@ -190,7 +201,7 @@ describe('GET /api/v1/ai/models', () => {
   it('should handle empty models list', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue([]);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
@@ -202,18 +213,22 @@ describe('GET /api/v1/ai/models', () => {
   it('should include lastUpdated timestamp', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockResolvedValue(mockModels);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 
     expect(data.data.lastUpdated).toBeDefined();
-    expect(new Date(data.data.lastUpdated).toISOString()).toBe(data.data.lastUpdated);
+    expect(new Date(data.data.lastUpdated).toISOString()).toBe(
+      data.data.lastUpdated
+    );
   });
 
   it('should handle non-Error exceptions', async () => {
-    mockHuggingFaceInstance.getAvailableModels.mockRejectedValue('String error');
+    mockHuggingFaceInstance.getAvailableModels.mockRejectedValue(
+      'String error'
+    );
 
-    const request = new NextRequest('http://localhost:3000/api/v1/ai/models');
+    const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
     const data = await response.json();
 

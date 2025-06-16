@@ -1,6 +1,6 @@
 import { PortfolioService } from '@/lib/services/portfolio/portfolio-service';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
-import { cache } from '@/lib/cache/redis-cache.server';
+import { _cache } from '@/lib/cache/redis-cache.server';
 import {
   Portfolio,
   CreatePortfolioDTO,
@@ -41,13 +41,14 @@ describe('PortfolioService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Create service instance
     service = new PortfolioService();
-    
+
     // Get the mocked repository
-    mockRepository = (service as any).repository as jest.Mocked<PortfolioRepository>;
-    
+    mockRepository = (service as any)
+      .repository as jest.Mocked<PortfolioRepository>;
+
     // Setup cache mocks
     (cache.get as jest.Mock).mockResolvedValue(null);
     (cache.set as jest.Mock).mockResolvedValue(undefined);
@@ -74,9 +75,13 @@ describe('PortfolioService', () => {
     });
 
     it('should handle repository errors', async () => {
-      mockRepository.findByUserId.mockRejectedValue(new Error('Database error'));
+      mockRepository.findByUserId.mockRejectedValue(
+        new Error('Database error')
+      );
 
-      await expect(service.getUserPortfolios('user-123')).rejects.toThrow('Database error');
+      await expect(service.getUserPortfolios('user-123')).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -190,7 +195,10 @@ describe('PortfolioService', () => {
       const result = await service.updatePortfolio('portfolio-123', updateDto);
 
       expect(result).toEqual(updatedPortfolio);
-      expect(mockRepository.update).toHaveBeenCalledWith('portfolio-123', updateDto);
+      expect(mockRepository.update).toHaveBeenCalledWith(
+        'portfolio-123',
+        updateDto
+      );
       expect(cache.del).toHaveBeenCalled(); // Cache invalidation
     });
 
@@ -206,11 +214,17 @@ describe('PortfolioService', () => {
     it('should handle partial updates', async () => {
       const partialUpdate = { bio: 'Only bio updated' };
       mockRepository.findById.mockResolvedValue(mockPortfolio);
-      mockRepository.update.mockResolvedValue({ ...mockPortfolio, ...partialUpdate });
+      mockRepository.update.mockResolvedValue({
+        ...mockPortfolio,
+        ...partialUpdate,
+      });
 
       await service.updatePortfolio('portfolio-123', partialUpdate);
 
-      expect(mockRepository.update).toHaveBeenCalledWith('portfolio-123', partialUpdate);
+      expect(mockRepository.update).toHaveBeenCalledWith(
+        'portfolio-123',
+        partialUpdate
+      );
     });
   });
 
@@ -227,11 +241,15 @@ describe('PortfolioService', () => {
     });
 
     it('should not delete published portfolios', async () => {
-      const publishedPortfolio = { ...mockPortfolio, status: 'published' as PortfolioStatus };
+      const publishedPortfolio = {
+        ...mockPortfolio,
+        status: 'published' as PortfolioStatus,
+      };
       mockRepository.findById.mockResolvedValue(publishedPortfolio);
 
-      await expect(service.deletePortfolio('portfolio-123'))
-        .rejects.toThrow('Cannot delete published portfolio');
+      await expect(service.deletePortfolio('portfolio-123')).rejects.toThrow(
+        'Cannot delete published portfolio'
+      );
 
       expect(mockRepository.delete).not.toHaveBeenCalled();
     });
@@ -248,7 +266,10 @@ describe('PortfolioService', () => {
 
   describe('publishPortfolio', () => {
     it('should publish portfolio successfully', async () => {
-      const draftPortfolio = { ...mockPortfolio, status: 'draft' as PortfolioStatus };
+      const draftPortfolio = {
+        ...mockPortfolio,
+        status: 'draft' as PortfolioStatus,
+      };
       const publishedPortfolio = {
         ...draftPortfolio,
         status: 'published' as PortfolioStatus,
@@ -272,7 +293,10 @@ describe('PortfolioService', () => {
     });
 
     it('should generate subdomain if not provided', async () => {
-      const portfolioWithoutSubdomain = { ...mockPortfolio, subdomain: undefined };
+      const portfolioWithoutSubdomain = {
+        ...mockPortfolio,
+        subdomain: undefined,
+      };
       mockRepository.findById.mockResolvedValue(portfolioWithoutSubdomain);
       mockRepository.update.mockResolvedValue({
         ...portfolioWithoutSubdomain,
@@ -330,10 +354,9 @@ describe('PortfolioService', () => {
       const result = await service.unpublishPortfolio('portfolio-123');
 
       expect(result).toEqual(unpublishedPortfolio);
-      expect(mockRepository.update).toHaveBeenCalledWith(
-        'portfolio-123',
-        { status: 'draft' }
-      );
+      expect(mockRepository.update).toHaveBeenCalledWith('portfolio-123', {
+        status: 'draft',
+      });
     });
   });
 
@@ -344,7 +367,9 @@ describe('PortfolioService', () => {
       const result = await service.findBySubdomain('my-portfolio');
 
       expect(result).toEqual(mockPortfolio);
-      expect(mockRepository.findBySubdomain).toHaveBeenCalledWith('my-portfolio');
+      expect(mockRepository.findBySubdomain).toHaveBeenCalledWith(
+        'my-portfolio'
+      );
     });
 
     it('should return null for non-existent subdomain', async () => {

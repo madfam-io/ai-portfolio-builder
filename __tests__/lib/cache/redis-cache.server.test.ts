@@ -1,5 +1,9 @@
 import * as redis from 'redis';
-import { cache, CACHE_KEYS, CacheService } from '@/lib/cache/redis-cache.server';
+import {
+  cache,
+  CACHE_KEYS,
+  CacheService,
+} from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
 
 // Mock dependencies
@@ -186,7 +190,11 @@ describe('Redis Cache Service', () => {
       await cacheService.initialize();
       await cacheService.del(['key1', 'key2', 'key3']);
 
-      expect(mockRedisClient.del).toHaveBeenCalledWith(['key1', 'key2', 'key3']);
+      expect(mockRedisClient.del).toHaveBeenCalledWith([
+        'key1',
+        'key2',
+        'key3',
+      ]);
     });
 
     it('should handle Redis errors gracefully', async () => {
@@ -253,7 +261,7 @@ describe('Redis Cache Service', () => {
 
     it('should respect TTL in memory cache', async () => {
       jest.useFakeTimers();
-      
+
       await inMemoryService.set('test-key', { data: 'test' }, 1); // 1 second TTL
 
       // Advance time by 2 seconds
@@ -297,8 +305,8 @@ describe('Redis Cache Service', () => {
 
   describe('error handling', () => {
     it('should reconnect on connection loss', async () => {
-      const reconnectStrategy = (redis.createClient as jest.Mock).mock.calls[0][0]
-        .socket.reconnectStrategy;
+      const reconnectStrategy = (redis.createClient as jest.Mock).mock
+        .calls[0][0].socket.reconnectStrategy;
 
       // Test reconnect strategy
       expect(reconnectStrategy(1)).toBe(Math.min(1 * 100, 3000));

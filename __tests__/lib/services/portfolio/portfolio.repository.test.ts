@@ -55,8 +55,10 @@ describe('PortfolioRepository', () => {
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
     // Setup mock mapper
-    (PortfolioMapper.fromDatabase as jest.Mock).mockImplementation((data) => data);
-    (PortfolioMapper.toDatabase as jest.Mock).mockImplementation((data) => data);
+    (PortfolioMapper.fromDatabase as jest.Mock).mockImplementation(
+      data => data
+    );
+    (PortfolioMapper.toDatabase as jest.Mock).mockImplementation(data => data);
 
     // Mock logger
     (logger.error as jest.Mock).mockImplementation(() => {});
@@ -71,7 +73,9 @@ describe('PortfolioRepository', () => {
       const result = repository.findAll();
 
       expect(result).toEqual([]);
-      expect(logger.warn).toHaveBeenCalledWith('findAll called without userId filter');
+      expect(logger.warn).toHaveBeenCalledWith(
+        'findAll called without userId filter'
+      );
     });
 
     it('should call findByUserId when userId filter provided', async () => {
@@ -101,7 +105,9 @@ describe('PortfolioRepository', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('portfolios');
       expect(mockQuery.eq).toHaveBeenCalledWith('user_id', 'user-123');
-      expect(mockQuery.order).toHaveBeenCalledWith('updated_at', { ascending: false });
+      expect(mockQuery.order).toHaveBeenCalledWith('updated_at', {
+        ascending: false,
+      });
       expect(result).toEqual([mockPortfolio]);
     });
 
@@ -109,14 +115,19 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.order.mockResolvedValue({ data: null, error });
 
-      await expect(repository.findByUserId('user-123')).rejects.toThrow('Database error');
-      expect(logger.error).toHaveBeenCalledWith('Error fetching portfolios:', error);
+      await expect(repository.findByUserId('user-123')).rejects.toThrow(
+        'Database error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error fetching portfolios:',
+        error
+      );
     });
 
     it('should use mock data in development without Supabase', async () => {
       process.env.NODE_ENV = 'development';
       delete process.env.SUPABASE_URL;
-      
+
       const mockPortfolios = [
         { ...mockPortfolio, userId: 'user-123' },
         { ...mockPortfolio, id: 'portfolio-456', userId: 'user-456' },
@@ -160,8 +171,13 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.single.mockResolvedValue({ data: null, error });
 
-      await expect(repository.findById('portfolio-123')).rejects.toThrow('Database error');
-      expect(logger.error).toHaveBeenCalledWith('Error fetching portfolio:', error);
+      await expect(repository.findById('portfolio-123')).rejects.toThrow(
+        'Database error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error fetching portfolio:',
+        error
+      );
     });
   });
 
@@ -209,8 +225,13 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.single.mockResolvedValue({ data: null, error });
 
-      await expect(repository.create(createData)).rejects.toThrow('Database error');
-      expect(logger.error).toHaveBeenCalledWith('Error creating portfolio:', error);
+      await expect(repository.create(createData)).rejects.toThrow(
+        'Database error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error creating portfolio:',
+        error
+      );
     });
 
     it('should use mock data in development', async () => {
@@ -270,8 +291,13 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.single.mockResolvedValue({ data: null, error });
 
-      await expect(repository.update('portfolio-123', updateData)).rejects.toThrow('Database error');
-      expect(logger.error).toHaveBeenCalledWith('Error updating portfolio:', error);
+      await expect(
+        repository.update('portfolio-123', updateData)
+      ).rejects.toThrow('Database error');
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error updating portfolio:',
+        error
+      );
     });
   });
 
@@ -292,8 +318,13 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.eq.mockResolvedValue({ error });
 
-      await expect(repository.delete('portfolio-123')).rejects.toThrow('Database error');
-      expect(logger.error).toHaveBeenCalledWith('Error deleting portfolio:', error);
+      await expect(repository.delete('portfolio-123')).rejects.toThrow(
+        'Database error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error deleting portfolio:',
+        error
+      );
     });
   });
 
@@ -350,7 +381,9 @@ describe('PortfolioRepository', () => {
       const error = new Error('Database error');
       mockQuery.single.mockResolvedValue({ data: null, error });
 
-      await expect(repository.isSubdomainAvailable('test')).rejects.toThrow('Database error');
+      await expect(repository.isSubdomainAvailable('test')).rejects.toThrow(
+        'Database error'
+      );
     });
   });
 
@@ -391,17 +424,25 @@ describe('PortfolioRepository', () => {
 
       await repository.incrementViews('portfolio-123');
 
-      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith('increment_portfolio_views', {
-        portfolio_id: 'portfolio-123',
-      });
+      expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
+        'increment_portfolio_views',
+        {
+          portfolio_id: 'portfolio-123',
+        }
+      );
     });
 
     it('should handle RPC errors', async () => {
       const error = new Error('RPC error');
       mockSupabaseClient.rpc.mockResolvedValue({ error });
 
-      await expect(repository.incrementViews('portfolio-123')).rejects.toThrow('RPC error');
-      expect(logger.error).toHaveBeenCalledWith('Error incrementing views:', error);
+      await expect(repository.incrementViews('portfolio-123')).rejects.toThrow(
+        'RPC error'
+      );
+      expect(logger.error).toHaveBeenCalledWith(
+        'Error incrementing views:',
+        error
+      );
     });
 
     it('should skip in mock mode', async () => {
@@ -418,28 +459,35 @@ describe('PortfolioRepository', () => {
   describe('generateSubdomain', () => {
     it('should generate subdomain from name', () => {
       // Access private method through any type casting
-      const generateSubdomain = (repository as any).generateSubdomain.bind(repository);
+      const generateSubdomain = (repository as any).generateSubdomain.bind(
+        repository
+      );
 
       const subdomain = generateSubdomain('Test Portfolio Name');
-      
+
       expect(subdomain).toMatch(/^testportfolioname\d{4}$/);
       expect(subdomain.length).toBeLessThanOrEqual(24); // 20 chars + 4 digits
     });
 
     it('should handle special characters', () => {
-      const generateSubdomain = (repository as any).generateSubdomain.bind(repository);
+      const generateSubdomain = (repository as any).generateSubdomain.bind(
+        repository
+      );
 
       const subdomain = generateSubdomain('Portfolio @ #123!');
-      
+
       expect(subdomain).toMatch(/^portfolio123\d{4}$/);
     });
 
     it('should truncate long names', () => {
-      const generateSubdomain = (repository as any).generateSubdomain.bind(repository);
+      const generateSubdomain = (repository as any).generateSubdomain.bind(
+        repository
+      );
 
-      const longName = 'This is a very long portfolio name that should be truncated';
+      const longName =
+        'This is a very long portfolio name that should be truncated';
       const subdomain = generateSubdomain(longName);
-      
+
       expect(subdomain.length).toBe(24); // 20 + 4
       expect(subdomain).toMatch(/^thisisaverylongportf\d{4}$/);
     });

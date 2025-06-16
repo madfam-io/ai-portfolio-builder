@@ -31,10 +31,10 @@ describe('Dynamic Import Utilities', () => {
 
   describe('createDynamicComponent', () => {
     it('should create a dynamic component with default options', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
-      
-      const DynamicComponent = createDynamicComponent(mockImportFn);
+
+      const _DynamicComponent = createDynamicComponent(mockImportFn);
 
       expect(mockDynamic).toHaveBeenCalledWith(mockImportFn, {
         loading: expect.any(Function),
@@ -53,11 +53,11 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should use custom loading component', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
       const customLoading = () => 'Loading...';
 
-      const DynamicComponent = createDynamicComponent(mockImportFn, {
+      const _DynamicComponent = createDynamicComponent(mockImportFn, {
         loading: customLoading,
       });
 
@@ -68,7 +68,7 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should disable SSR when specified', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
       createDynamicComponent(mockImportFn, {
@@ -87,9 +87,9 @@ describe('Dynamic Import Utilities', () => {
         age: number;
       }
 
-      const mockImportFn = () => 
-        Promise.resolve({ 
-          default: ((props: TestProps) => null) as ComponentType<TestProps> 
+      const mockImportFn = () =>
+        Promise.resolve({
+          default: ((props: TestProps) => null) as ComponentType<TestProps>,
         });
 
       createDynamicComponent<TestProps>(mockImportFn);
@@ -114,21 +114,29 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should silently handle import failures', async () => {
-      const mockImportFn = jest.fn().mockRejectedValue(new Error('Import failed'));
-      
+      const mockImportFn = jest
+        .fn()
+        .mockRejectedValue(new Error('Import failed'));
+
       // Should not throw
       expect(() => preloadComponent(mockImportFn)).not.toThrow();
-      
+
       // Wait for promise to settle
       await new Promise(resolve => setTimeout(resolve, 0));
-      
+
       expect(mockImportFn).toHaveBeenCalled();
     });
 
     it('should work with multiple preloads', () => {
-      const mockImportFn1 = jest.fn().mockResolvedValue({ default: () => null });
-      const mockImportFn2 = jest.fn().mockResolvedValue({ default: () => null });
-      const mockImportFn3 = jest.fn().mockResolvedValue({ default: () => null });
+      const mockImportFn1 = jest
+        .fn()
+        .mockResolvedValue({ default: () => null });
+      const mockImportFn2 = jest
+        .fn()
+        .mockResolvedValue({ default: () => null });
+      const mockImportFn3 = jest
+        .fn()
+        .mockResolvedValue({ default: () => null });
 
       preloadComponent(mockImportFn1);
       preloadComponent(mockImportFn2);
@@ -142,10 +150,10 @@ describe('Dynamic Import Utilities', () => {
 
   describe('createRouteComponent', () => {
     it('should create a route component with default options', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
-      const RouteComponent = createRouteComponent(mockImportFn);
+      const _RouteComponent = createRouteComponent(mockImportFn);
 
       expect(mockDynamic).toHaveBeenCalledWith(mockImportFn, {
         loading: expect.any(Function),
@@ -158,11 +166,11 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should use custom fallback component', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
       const customFallback = () => 'Route Loading...';
 
-      const RouteComponent = createRouteComponent(mockImportFn, {
+      const _RouteComponent = createRouteComponent(mockImportFn, {
         fallback: customFallback,
       });
 
@@ -173,7 +181,7 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should always enable SSR for route components', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
       createRouteComponent(mockImportFn);
@@ -187,10 +195,18 @@ describe('Dynamic Import Utilities', () => {
     it('should have vendor chunk splitting configuration', () => {
       expect(optimizationStrategies.splitVendorChunks).toBeDefined();
       expect(optimizationStrategies.splitVendorChunks.react).toContain('react');
-      expect(optimizationStrategies.splitVendorChunks.react).toContain('react-dom');
-      expect(optimizationStrategies.splitVendorChunks.ui).toContain('@mui/material');
-      expect(optimizationStrategies.splitVendorChunks.charts).toContain('recharts');
-      expect(optimizationStrategies.splitVendorChunks.utils).toContain('lodash');
+      expect(optimizationStrategies.splitVendorChunks.react).toContain(
+        'react-dom'
+      );
+      expect(optimizationStrategies.splitVendorChunks.ui).toContain(
+        '@mui/material'
+      );
+      expect(optimizationStrategies.splitVendorChunks.charts).toContain(
+        'recharts'
+      );
+      expect(optimizationStrategies.splitVendorChunks.utils).toContain(
+        'lodash'
+      );
     });
 
     it('should have list of components to lazy load', () => {
@@ -227,12 +243,12 @@ describe('Dynamic Import Utilities', () => {
         children: React.ReactNode;
       }
 
-      const mockImportFn = () => 
-        Promise.resolve({ 
-          default: ((props: ButtonProps) => null) as ComponentType<ButtonProps>
+      const mockImportFn = () =>
+        Promise.resolve({
+          default: ((props: ButtonProps) => null) as ComponentType<ButtonProps>,
         });
 
-      const DynamicButton = createDynamicComponent<ButtonProps>(mockImportFn, {
+      const _DynamicButton = createDynamicComponent<ButtonProps>(mockImportFn, {
         loading: () => 'Loading button...',
         ssr: false,
       });
@@ -247,12 +263,12 @@ describe('Dynamic Import Utilities', () => {
     });
 
     it('should handle route component with error boundary pattern', () => {
-      const mockImportFn = () => 
+      const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
-      
+
       const errorFallback = () => 'Error loading route';
-      
-      const RouteComponent = createRouteComponent(mockImportFn, {
+
+      const _RouteComponent = createRouteComponent(mockImportFn, {
         fallback: errorFallback,
       });
 

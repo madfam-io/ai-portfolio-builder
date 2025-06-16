@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { middleware } from '@/middleware';
 import { createServerClient } from '@supabase/ssr';
 
@@ -70,7 +70,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
       const response = await middleware(request);
@@ -88,7 +88,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/editor/new')
       );
       const response = await middleware(request);
@@ -100,7 +100,7 @@ describe('middleware', () => {
     });
 
     it('should allow authenticated users to access protected routes', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
       const response = await middleware(request);
@@ -117,7 +117,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/editor/123?template=developer')
       );
       const response = await middleware(request);
@@ -131,7 +131,7 @@ describe('middleware', () => {
 
   describe('Auth Routes', () => {
     it('should redirect authenticated users from signin to dashboard', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/auth/signin')
       );
       const response = await middleware(request);
@@ -143,7 +143,7 @@ describe('middleware', () => {
     });
 
     it('should redirect authenticated users from signup to dashboard', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/auth/signup')
       );
       const response = await middleware(request);
@@ -155,7 +155,7 @@ describe('middleware', () => {
     });
 
     it('should respect redirectTo parameter for authenticated users', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/auth/signin?redirectTo=/editor/new')
       );
       const response = await middleware(request);
@@ -167,7 +167,7 @@ describe('middleware', () => {
     });
 
     it('should not redirect to non-protected routes from redirectTo', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/auth/signin?redirectTo=/about')
       );
       const response = await middleware(request);
@@ -185,7 +185,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/auth/signin')
       );
       const response = await middleware(request);
@@ -204,7 +204,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(new URL('http://localhost:3000/'));
+      const _request = new NextRequest(new URL('http://localhost:3000/'));
       const response = await middleware(request);
 
       expect(response.status).toBe(200);
@@ -218,7 +218,7 @@ describe('middleware', () => {
         error: null,
       });
 
-      const request = new NextRequest(new URL('http://localhost:3000/about'));
+      const _request = new NextRequest(new URL('http://localhost:3000/about'));
       const response = await middleware(request);
 
       expect(response.status).toBe(200);
@@ -230,7 +230,7 @@ describe('middleware', () => {
     it('should handle API versioning for API routes', async () => {
       const { apiVersionMiddleware } = require('@/middleware/api-version');
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/api/v1/portfolios')
       );
       await middleware(request);
@@ -248,7 +248,7 @@ describe('middleware', () => {
         )
       );
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/api/portfolios')
       );
       const response = await middleware(request);
@@ -263,7 +263,7 @@ describe('middleware', () => {
     it('should apply security middleware to all requests', async () => {
       const { securityMiddleware } = require('@/middleware/security');
 
-      const request = new NextRequest(new URL('http://localhost:3000/'));
+      const _request = new NextRequest(new URL('http://localhost:3000/'));
       await middleware(request);
 
       expect(securityMiddleware).toHaveBeenCalledWith(request);
@@ -272,7 +272,7 @@ describe('middleware', () => {
     it('should apply security headers to response', async () => {
       const { applySecurityToResponse } = require('@/middleware/security');
 
-      const request = new NextRequest(new URL('http://localhost:3000/'));
+      const _request = new NextRequest(new URL('http://localhost:3000/'));
       await middleware(request);
 
       expect(applySecurityToResponse).toHaveBeenCalled();
@@ -287,7 +287,7 @@ describe('middleware', () => {
       });
       securityMiddleware.mockResolvedValueOnce(rateLimitResponse);
 
-      const request = new NextRequest(new URL('http://localhost:3000/'));
+      const _request = new NextRequest(new URL('http://localhost:3000/'));
       const response = await middleware(request);
 
       expect(response.status).toBe(429);
@@ -296,7 +296,7 @@ describe('middleware', () => {
 
   describe('Cookie Management', () => {
     it('should properly handle cookie operations', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
 
@@ -336,7 +336,7 @@ describe('middleware', () => {
         new Error('Session error')
       );
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
       const response = await middleware(request);
@@ -357,7 +357,7 @@ describe('middleware', () => {
         },
       }));
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
       const response = await middleware(request);

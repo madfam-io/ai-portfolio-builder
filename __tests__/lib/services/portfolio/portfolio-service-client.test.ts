@@ -1,6 +1,10 @@
 import { PortfolioServiceClient } from '@/lib/services/portfolio/portfolio-service-client';
 import { logger } from '@/lib/utils/logger';
-import { Portfolio, CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
+import {
+  Portfolio,
+  CreatePortfolioDTO,
+  UpdatePortfolioDTO,
+} from '@/types/portfolio';
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger');
@@ -10,7 +14,7 @@ global.fetch = jest.fn();
 
 describe('PortfolioServiceClient', () => {
   let portfolioServiceClient: PortfolioServiceClient;
-  
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -19,8 +23,15 @@ describe('PortfolioServiceClient', () => {
     bio: 'Test bio',
     tagline: 'Test tagline',
     avatarUrl: 'https://example.com/avatar.jpg',
-    contact: { email: 'test@example.com', phone: '123-456-7890', location: 'New York' },
-    social: { github: 'https://github.com/test', linkedin: 'https://linkedin.com/in/test' },
+    contact: {
+      email: 'test@example.com',
+      phone: '123-456-7890',
+      location: 'New York',
+    },
+    social: {
+      github: 'https://github.com/test',
+      linkedin: 'https://linkedin.com/in/test',
+    },
     experience: [],
     education: [],
     projects: [],
@@ -47,13 +58,15 @@ describe('PortfolioServiceClient', () => {
       const mockPortfolios = [mockPortfolio];
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => mockPortfolios,
+        json: () => mockPortfolios,
       });
 
       const result = await portfolioServiceClient.getUserPortfolios('user-123');
 
       expect(result).toEqual(mockPortfolios);
-      expect(global.fetch).toHaveBeenCalledWith('/api/v1/portfolios?userId=user-123');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/v1/portfolios?userId=user-123'
+      );
     });
 
     it('should handle fetch error', async () => {
@@ -91,13 +104,15 @@ describe('PortfolioServiceClient', () => {
     it('should fetch portfolio successfully', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => mockPortfolio,
+        json: () => mockPortfolio,
       });
 
       const result = await portfolioServiceClient.getPortfolio('portfolio-123');
 
       expect(result).toEqual(mockPortfolio);
-      expect(global.fetch).toHaveBeenCalledWith('/api/v1/portfolios/portfolio-123');
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/v1/portfolios/portfolio-123'
+      );
     });
 
     it('should handle fetch error', async () => {
@@ -128,7 +143,7 @@ describe('PortfolioServiceClient', () => {
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => mockPortfolio,
+        json: () => mockPortfolio,
       });
 
       const result = await portfolioServiceClient.createPortfolio(createData);
@@ -176,20 +191,26 @@ describe('PortfolioServiceClient', () => {
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => ({ ...mockPortfolio, ...updateData }),
+        json: () => ({ ...mockPortfolio, ...updateData }),
       });
 
-      const result = await portfolioServiceClient.updatePortfolio('portfolio-123', updateData);
+      const result = await portfolioServiceClient.updatePortfolio(
+        'portfolio-123',
+        updateData
+      );
 
       expect(result.name).toBe('Updated Portfolio');
       expect(result.bio).toBe('Updated bio');
-      expect(global.fetch).toHaveBeenCalledWith('/api/v1/portfolios/portfolio-123', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updateData),
-      });
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/v1/portfolios/portfolio-123',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updateData),
+        }
+      );
     });
 
     it('should handle update error', async () => {
@@ -221,9 +242,12 @@ describe('PortfolioServiceClient', () => {
 
       await portfolioServiceClient.deletePortfolio('portfolio-123');
 
-      expect(global.fetch).toHaveBeenCalledWith('/api/v1/portfolios/portfolio-123', {
-        method: 'DELETE',
-      });
+      expect(global.fetch).toHaveBeenCalledWith(
+        '/api/v1/portfolios/portfolio-123',
+        {
+          method: 'DELETE',
+        }
+      );
     });
 
     it('should handle deletion error', async () => {
@@ -257,7 +281,7 @@ describe('PortfolioServiceClient', () => {
     it('should handle JSON parsing errors', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => {
+        json: () => {
           throw new Error('Invalid JSON');
         },
       });
@@ -270,7 +294,7 @@ describe('PortfolioServiceClient', () => {
     it('should handle empty response bodies', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => null,
+        json: () => null,
       });
 
       const result = await portfolioServiceClient.getPortfolio('portfolio-123');
@@ -282,7 +306,7 @@ describe('PortfolioServiceClient', () => {
     it('should not include Content-Type header for GET requests', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => mockPortfolio,
+        json: () => mockPortfolio,
       });
 
       await portfolioServiceClient.getPortfolio('portfolio-123');
@@ -310,11 +334,38 @@ describe('PortfolioServiceClient', () => {
 
   describe('Response status codes', () => {
     const testCases = [
-      { method: 'getUserPortfolios', args: ['user-123'], status: 401, error: 'Failed to fetch portfolios' },
-      { method: 'getPortfolio', args: ['portfolio-123'], status: 404, error: 'Failed to fetch portfolio' },
-      { method: 'createPortfolio', args: [{ name: 'Test', title: 'Dev', bio: 'Bio', template: 'developer' }], status: 400, error: 'Failed to create portfolio' },
-      { method: 'updatePortfolio', args: ['portfolio-123', { name: 'Updated' }], status: 403, error: 'Failed to update portfolio' },
-      { method: 'deletePortfolio', args: ['portfolio-123'], status: 403, error: 'Failed to delete portfolio' },
+      {
+        method: 'getUserPortfolios',
+        args: ['user-123'],
+        status: 401,
+        error: 'Failed to fetch portfolios',
+      },
+      {
+        method: 'getPortfolio',
+        args: ['portfolio-123'],
+        status: 404,
+        error: 'Failed to fetch portfolio',
+      },
+      {
+        method: 'createPortfolio',
+        args: [
+          { name: 'Test', title: 'Dev', bio: 'Bio', template: 'developer' },
+        ],
+        status: 400,
+        error: 'Failed to create portfolio',
+      },
+      {
+        method: 'updatePortfolio',
+        args: ['portfolio-123', { name: 'Updated' }],
+        status: 403,
+        error: 'Failed to update portfolio',
+      },
+      {
+        method: 'deletePortfolio',
+        args: ['portfolio-123'],
+        status: 403,
+        error: 'Failed to delete portfolio',
+      },
     ];
 
     testCases.forEach(({ method, args, status, error }) => {

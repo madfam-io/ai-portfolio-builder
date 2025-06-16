@@ -42,7 +42,9 @@ describe('Portfolio Validation Schemas', () => {
 
       const result = createPortfolioSchema.parse(validData);
       expect(result.projects).toHaveLength(1);
-      expect(result.socialLinks?.linkedin).toBe('https://linkedin.com/in/johndoe');
+      expect(result.socialLinks?.linkedin).toBe(
+        'https://linkedin.com/in/johndoe'
+      );
     });
 
     it('should reject invalid name', () => {

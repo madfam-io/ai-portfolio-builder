@@ -131,7 +131,9 @@ describe('Experiment Calculation Utilities', () => {
   });
 
   describe('calculateExperimentResults', () => {
-    const createVariant = (overrides: Partial<DetailedVariant>): DetailedVariant => ({
+    const createVariant = (
+      overrides: Partial<DetailedVariant>
+    ): DetailedVariant => ({
       id: 'variant-1',
       name: 'Variant 1',
       description: 'Test variant',
@@ -178,13 +180,17 @@ describe('Experiment Calculation Utilities', () => {
       const results = calculateExperimentResults(variants);
       expect(results).toBeDefined();
       expect(results?.variantResults).toHaveLength(2);
-      
-      const control = results?.variantResults.find(v => v.variantId === 'control');
+
+      const control = results?.variantResults.find(
+        v => v.variantId === 'control'
+      );
       expect(control?.conversionRate).toBe(10);
       expect(control?.uplift).toBe(0);
       expect(control?.pValue).toBe(1);
 
-      const variantB = results?.variantResults.find(v => v.variantId === 'variant-b');
+      const variantB = results?.variantResults.find(
+        v => v.variantId === 'variant-b'
+      );
       expect(variantB?.conversionRate).toBe(12);
       expect(variantB?.uplift).toBe(20); // 20% uplift
       expect(variantB?.pValue).toBeGreaterThan(0);
@@ -216,7 +222,9 @@ describe('Experiment Calculation Utilities', () => {
         expect(results.confidence).toBeGreaterThan(0);
       } else {
         // If no winner, at least verify the calculation was done
-        const winnerVariant = results?.variantResults.find(v => v.variantId === 'winner');
+        const winnerVariant = results?.variantResults.find(
+          v => v.variantId === 'winner'
+        );
         expect(winnerVariant?.uplift).toBe(50);
       }
     });
@@ -272,7 +280,9 @@ describe('Experiment Calculation Utilities', () => {
       expect(results?.totalVisitors).toBe(4000);
       expect(results?.totalConversions).toBe(420);
 
-      const variantC = results?.variantResults.find(v => v.variantId === 'variant-c');
+      const variantC = results?.variantResults.find(
+        v => v.variantId === 'variant-c'
+      );
       expect(variantC?.uplift).toBe(-10); // Negative uplift
     });
 
@@ -293,7 +303,7 @@ describe('Experiment Calculation Utilities', () => {
 
       const results = calculateExperimentResults(variants);
       expect(results).toBeDefined();
-      
+
       results?.variantResults.forEach(result => {
         expect(result.conversionRate).toBe(0);
         // With zero visitors, confidence interval calculation results in NaN
@@ -314,10 +324,14 @@ describe('Experiment Calculation Utilities', () => {
 
       const results = calculateExperimentResults(variants);
       const control = results?.variantResults[0];
-      
+
       expect(control?.confidenceInterval).toBeDefined();
-      expect(control?.confidenceInterval[0]).toBeLessThan(control?.conversionRate || 0);
-      expect(control?.confidenceInterval[1]).toBeGreaterThan(control?.conversionRate || 0);
+      expect(control?.confidenceInterval[0]).toBeLessThan(
+        control?.conversionRate || 0
+      );
+      expect(control?.confidenceInterval[1]).toBeGreaterThan(
+        control?.conversionRate || 0
+      );
     });
 
     it('should pick highest uplift winner among significant results', () => {
@@ -359,8 +373,16 @@ describe('Experiment Calculation Utilities', () => {
       analytics: {
         totalViews: 1000,
         conversionsByDay: [
-          { date: new Date().toISOString().split('T')[0], visitors: 100, conversions: 10 },
-          { date: new Date(Date.now() - 86400000).toISOString().split('T')[0], visitors: 150, conversions: 15 },
+          {
+            date: new Date().toISOString().split('T')[0],
+            visitors: 100,
+            conversions: 10,
+          },
+          {
+            date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+            visitors: 150,
+            conversions: 15,
+          },
         ],
         viewsByDay: [],
       },
@@ -404,9 +426,7 @@ describe('Experiment Calculation Utilities', () => {
           id: 'v1',
           analytics: {
             totalViews: 100,
-            conversionsByDay: [
-              { date: today, visitors: 50, conversions: 5 },
-            ],
+            conversionsByDay: [{ date: today, visitors: 50, conversions: 5 }],
             viewsByDay: [],
           },
         },
@@ -415,9 +435,7 @@ describe('Experiment Calculation Utilities', () => {
           id: 'v2',
           analytics: {
             totalViews: 100,
-            conversionsByDay: [
-              { date: today, visitors: 60, conversions: 6 },
-            ],
+            conversionsByDay: [{ date: today, visitors: 60, conversions: 6 }],
             viewsByDay: [],
           },
         },
@@ -445,7 +463,7 @@ describe('Experiment Calculation Utilities', () => {
       ];
 
       const timeline = generateTimeline(variants, '7d');
-      
+
       timeline.forEach(day => {
         expect(day.visitors).toBe(0);
         expect(day.conversions).toBe(0);

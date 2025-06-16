@@ -93,7 +93,7 @@ describe('/api/v1/portfolios', () => {
         }
       );
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -139,7 +139,7 @@ describe('/api/v1/portfolios', () => {
         }
       );
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios?page=3&limit=20'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -166,7 +166,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios?status=published'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -183,7 +183,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios?template=developer'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -203,7 +203,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios?search=john'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -222,7 +222,7 @@ describe('/api/v1/portfolios', () => {
         error: new Error('Database error'),
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios'
       ) as AuthenticatedRequest;
       request.user = mockUser;
@@ -274,7 +274,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -335,7 +335,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -361,7 +361,7 @@ describe('/api/v1/portfolios', () => {
         template: 'developer',
       };
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -380,7 +380,7 @@ describe('/api/v1/portfolios', () => {
     });
 
     it('should handle invalid JSON', async () => {
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -417,7 +417,7 @@ describe('/api/v1/portfolios', () => {
         error: new Error('Insert failed'),
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -456,7 +456,7 @@ describe('/api/v1/portfolios', () => {
         error: uniqueError,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',
@@ -493,7 +493,7 @@ describe('/api/v1/portfolios', () => {
         error: null,
       });
 
-      const request = new NextRequest(
+      const _request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios',
         {
           method: 'POST',

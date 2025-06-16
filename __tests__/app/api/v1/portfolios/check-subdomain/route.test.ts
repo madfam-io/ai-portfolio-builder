@@ -17,7 +17,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     jest.clearAllMocks();
 
     // Mock auth middleware
-    (withAuth as jest.Mock).mockImplementation((handler) => {
+    (withAuth as jest.Mock).mockImplementation(handler => {
       return (request: any) => {
         request.user = mockUser;
         return handler(request);
@@ -45,12 +45,15 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({
-        subdomain: 'john-doe-portfolio',
-      }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          subdomain: 'john-doe-portfolio',
+        }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -62,7 +65,10 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       reason: null,
       message: 'Subdomain is available',
     });
-    expect(mockSelect.eq).toHaveBeenCalledWith('subdomain', 'john-doe-portfolio');
+    expect(mockSelect.eq).toHaveBeenCalledWith(
+      'subdomain',
+      'john-doe-portfolio'
+    );
   });
 
   it('should return unavailable for taken subdomain', async () => {
@@ -76,12 +82,15 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({
-        subdomain: 'john-doe',
-      }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          subdomain: 'john-doe',
+        }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -106,13 +115,16 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({
-        subdomain: 'my-portfolio',
-        currentPortfolioId: 'portfolio-123',
-      }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          subdomain: 'my-portfolio',
+          currentPortfolioId: 'portfolio-123',
+        }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -123,13 +135,23 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
   });
 
   it('should reject reserved subdomains', async () => {
-    const reservedSubdomains = ['www', 'api', 'admin', 'dashboard', 'auth', 'login'];
+    const reservedSubdomains = [
+      'www',
+      'api',
+      'admin',
+      'dashboard',
+      'auth',
+      'login',
+    ];
 
     for (const subdomain of reservedSubdomains) {
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-        method: 'POST',
-        body: JSON.stringify({ subdomain }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/check-subdomain',
+        {
+          method: 'POST',
+          body: JSON.stringify({ subdomain }),
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -157,10 +179,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     ];
 
     for (const subdomain of invalidSubdomains) {
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-        method: 'POST',
-        body: JSON.stringify({ subdomain }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/check-subdomain',
+        {
+          method: 'POST',
+          body: JSON.stringify({ subdomain }),
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -196,10 +221,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
     for (const subdomain of validSubdomains) {
-      const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-        method: 'POST',
-        body: JSON.stringify({ subdomain }),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/portfolios/check-subdomain',
+        {
+          method: 'POST',
+          body: JSON.stringify({ subdomain }),
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -210,10 +238,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
   });
 
   it('should return 400 for missing subdomain', async () => {
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({}),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({}),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -223,10 +254,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
   });
 
   it('should return 400 for non-string subdomain', async () => {
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({ subdomain: 123 }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({ subdomain: 123 }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -238,10 +272,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
   it('should handle database connection errors', async () => {
     (createClient as jest.Mock).mockResolvedValue(null);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({ subdomain: 'test' }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({ subdomain: 'test' }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -261,10 +298,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({ subdomain: 'test' }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({ subdomain: 'test' }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -275,10 +315,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
   });
 
   it('should handle invalid JSON in request body', async () => {
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: 'invalid-json',
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: 'invalid-json',
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -298,10 +341,13 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const request = new NextRequest('http://localhost:3000/api/v1/portfolios/check-subdomain', {
-      method: 'POST',
-      body: JSON.stringify({ subdomain: 'test' }),
-    });
+    const _request = new NextRequest(
+      'http://localhost:3000/api/v1/portfolios/check-subdomain',
+      {
+        method: 'POST',
+        body: JSON.stringify({ subdomain: 'test' }),
+      }
+    );
 
     const response = await POST(request);
     const data = await response.json();

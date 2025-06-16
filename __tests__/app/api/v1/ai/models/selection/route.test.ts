@@ -182,10 +182,13 @@ describe('AI Model Selection API Routes', () => {
         .mockReturnValueOnce(mockUpsert) // Update preferences
         .mockReturnValueOnce(mockInsert); // Log usage
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -241,10 +244,13 @@ describe('AI Model Selection API Routes', () => {
         .mockReturnValueOnce(mockUpsert)
         .mockReturnValueOnce(mockInsert);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -258,10 +264,13 @@ describe('AI Model Selection API Routes', () => {
     it('should return 401 when not authenticated', async () => {
       mockAuth.getUser.mockResolvedValue({ data: { user: null } });
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -278,10 +287,13 @@ describe('AI Model Selection API Routes', () => {
         modelId: 'some-model',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(invalidData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(invalidData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -299,10 +311,13 @@ describe('AI Model Selection API Routes', () => {
         modelId: '',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(invalidData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(invalidData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -314,10 +329,13 @@ describe('AI Model Selection API Routes', () => {
     it('should handle database connection errors', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -348,10 +366,13 @@ describe('AI Model Selection API Routes', () => {
         .mockReturnValueOnce(mockSelect)
         .mockReturnValueOnce(mockUpsert);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -388,10 +409,13 @@ describe('AI Model Selection API Routes', () => {
         .mockReturnValueOnce(mockUpsert)
         .mockReturnValueOnce(mockInsert);
 
-      const request = new NextRequest('http://localhost:3000/api/v1/ai/models/selection', {
-        method: 'PUT',
-        body: JSON.stringify(validUpdateData),
-      });
+      const _request = new NextRequest(
+        'http://localhost:3000/api/v1/ai/models/selection',
+        {
+          method: 'PUT',
+          body: JSON.stringify(validUpdateData),
+        }
+      );
 
       const response = await PUT(request);
       const data = await response.json();

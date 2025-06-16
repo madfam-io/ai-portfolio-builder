@@ -109,7 +109,7 @@ describe('Crypto Utilities', () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
-      
+
       // Tamper with the encrypted data
       const tamperedData = {
         ...encrypted,
@@ -123,7 +123,7 @@ describe('Crypto Utilities', () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
-      
+
       // Tamper with the auth tag
       const tamperedData = {
         ...encrypted,
@@ -137,7 +137,7 @@ describe('Crypto Utilities', () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
-      
+
       // Use invalid IV
       const tamperedData = {
         ...encrypted,
@@ -153,7 +153,9 @@ describe('Crypto Utilities', () => {
       delete process.env.ENCRYPTION_KEY;
       process.env.NODE_ENV = 'production';
 
-      expect(() => encrypt('test')).toThrow('ENCRYPTION_KEY must be set in production environment');
+      expect(() => encrypt('test')).toThrow(
+        'ENCRYPTION_KEY must be set in production environment'
+      );
       expect(logger.error).toHaveBeenCalledWith(
         'CRITICAL: ENCRYPTION_KEY not set in production environment'
       );
@@ -165,8 +167,12 @@ describe('Crypto Utilities', () => {
 
       const result = encrypt('test');
       expect(result).toHaveProperty('encrypted');
-      expect(logger.warn).toHaveBeenCalledWith(expect.stringContaining('ENCRYPTION_KEY not found'));
-      expect(logger.info).toHaveBeenCalledWith(expect.stringContaining('Generated development encryption key'));
+      expect(logger.warn).toHaveBeenCalledWith(
+        expect.stringContaining('ENCRYPTION_KEY not found')
+      );
+      expect(logger.info).toHaveBeenCalledWith(
+        expect.stringContaining('Generated development encryption key')
+      );
     });
 
     it('should reuse same development key during runtime', () => {
@@ -190,7 +196,9 @@ describe('Crypto Utilities', () => {
     it('should validate encryption key format', () => {
       process.env.ENCRYPTION_KEY = 'invalid-key-format';
 
-      expect(() => encrypt('test')).toThrow('ENCRYPTION_KEY must be a 64-character hexadecimal string');
+      expect(() => encrypt('test')).toThrow(
+        'ENCRYPTION_KEY must be a 64-character hexadecimal string'
+      );
     });
 
     it('should accept valid 64-char hex key', () => {
@@ -225,12 +233,12 @@ describe('Crypto Utilities', () => {
     it('should handle JSON data', () => {
       process.env.ENCRYPTION_KEY = testKey;
 
-      const jsonData = JSON.stringify({ 
-        user: 'test', 
+      const jsonData = JSON.stringify({
+        user: 'test',
         token: 'secret-token',
-        nested: { data: true }
+        nested: { data: true },
       });
-      
+
       const encrypted = encrypt(jsonData);
       const decrypted = decrypt(encrypted);
 
@@ -252,7 +260,7 @@ describe('Crypto Utilities', () => {
 
       const binaryData = crypto.randomBytes(100);
       const base64Text = binaryData.toString('base64');
-      
+
       const encrypted = encrypt(base64Text);
       const decrypted = decrypt(encrypted);
 

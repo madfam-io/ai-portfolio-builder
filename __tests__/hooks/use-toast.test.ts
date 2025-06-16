@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook } from '@testing-library/react';
 import { useToast } from '@/hooks/use-toast';
 import { useUIStore } from '@/lib/store/ui-store';
 

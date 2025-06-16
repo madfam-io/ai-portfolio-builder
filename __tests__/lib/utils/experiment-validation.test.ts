@@ -6,7 +6,9 @@ import type { VariantConfig } from '@/components/admin/experiments/create/Varian
 
 describe('Experiment Validation Utilities', () => {
   describe('validateExperimentForm', () => {
-    const createVariant = (overrides: Partial<VariantConfig> = {}): VariantConfig => ({
+    const createVariant = (
+      overrides: Partial<VariantConfig> = {}
+    ): VariantConfig => ({
       id: '1',
       name: 'Variant A',
       description: 'Test variant',
@@ -18,12 +20,17 @@ describe('Experiment Validation Utilities', () => {
 
     it('should pass validation for valid experiment', () => {
       const variants: VariantConfig[] = [
-        createVariant({ id: '1', name: 'Control', isControl: true, trafficPercentage: 50 }),
+        createVariant({
+          id: '1',
+          name: 'Control',
+          isControl: true,
+          trafficPercentage: 50,
+        }),
         createVariant({ id: '2', name: 'Variant B', trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors).toEqual({});
     });
 
@@ -32,9 +39,9 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: true, trafficPercentage: 50 }),
         createVariant({ trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('', variants);
-      
+
       expect(errors.name).toBe('Experiment name is required');
     });
 
@@ -43,9 +50,9 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: true, trafficPercentage: 50 }),
         createVariant({ trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('   ', variants);
-      
+
       expect(errors.name).toBe('Experiment name is required');
     });
 
@@ -53,17 +60,17 @@ describe('Experiment Validation Utilities', () => {
       const variants: VariantConfig[] = [
         createVariant({ isControl: true, trafficPercentage: 100 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors.variants).toBe('At least 2 variants are required');
     });
 
     it('should require 0 variants to show error', () => {
       const variants: VariantConfig[] = [];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors.variants).toBe('At least 2 variants are required');
     });
 
@@ -72,10 +79,12 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: true, trafficPercentage: 30 }),
         createVariant({ trafficPercentage: 40 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
-      expect(errors.traffic).toBe('Traffic allocation must equal 100% (currently 70%)');
+
+      expect(errors.traffic).toBe(
+        'Traffic allocation must equal 100% (currently 70%)'
+      );
     });
 
     it('should validate traffic allocation over 100%', () => {
@@ -83,10 +92,12 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: true, trafficPercentage: 60 }),
         createVariant({ trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
-      expect(errors.traffic).toBe('Traffic allocation must equal 100% (currently 110%)');
+
+      expect(errors.traffic).toBe(
+        'Traffic allocation must equal 100% (currently 110%)'
+      );
     });
 
     it('should require a control variant', () => {
@@ -94,9 +105,9 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: false, trafficPercentage: 50 }),
         createVariant({ isControl: false, trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors.control).toBe('One variant must be marked as control');
     });
 
@@ -104,12 +115,14 @@ describe('Experiment Validation Utilities', () => {
       const variants: VariantConfig[] = [
         createVariant({ isControl: false, trafficPercentage: 30 }),
       ];
-      
+
       const errors = validateExperimentForm('', variants);
-      
+
       expect(errors.name).toBe('Experiment name is required');
       expect(errors.variants).toBe('At least 2 variants are required');
-      expect(errors.traffic).toBe('Traffic allocation must equal 100% (currently 30%)');
+      expect(errors.traffic).toBe(
+        'Traffic allocation must equal 100% (currently 30%)'
+      );
       expect(errors.control).toBe('One variant must be marked as control');
     });
 
@@ -119,9 +132,9 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ trafficPercentage: 33.33 }),
         createVariant({ trafficPercentage: 33.34 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors).toEqual({});
     });
 
@@ -130,9 +143,9 @@ describe('Experiment Validation Utilities', () => {
         createVariant({ isControl: true, trafficPercentage: 50 }),
         createVariant({ isControl: true, trafficPercentage: 50 }),
       ];
-      
+
       const errors = validateExperimentForm('Test Experiment', variants);
-      
+
       expect(errors.control).toBeUndefined();
     });
   });
@@ -169,28 +182,19 @@ describe('Experiment Validation Utilities', () => {
     });
 
     it('should return 0 when traffic is fully allocated', () => {
-      const variants = [
-        createVariant(50),
-        createVariant(50),
-      ];
+      const variants = [createVariant(50), createVariant(50)];
       const remaining = getRemainingTrafficPercentage(variants);
       expect(remaining).toBe(0);
     });
 
     it('should return negative value when over-allocated', () => {
-      const variants = [
-        createVariant(60),
-        createVariant(50),
-      ];
+      const variants = [createVariant(60), createVariant(50)];
       const remaining = getRemainingTrafficPercentage(variants);
       expect(remaining).toBe(-10);
     });
 
     it('should handle decimal percentages', () => {
-      const variants = [
-        createVariant(33.33),
-        createVariant(33.33),
-      ];
+      const variants = [createVariant(33.33), createVariant(33.33)];
       const remaining = getRemainingTrafficPercentage(variants);
       expect(remaining).toBeCloseTo(33.34, 2);
     });
