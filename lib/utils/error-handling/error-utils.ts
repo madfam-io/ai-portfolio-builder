@@ -329,7 +329,7 @@ function getErrorRecoveryStrategy(
 /**
  * Format error for display
  */
-function formatErrorForDisplay(error: unknown): {
+export function formatErrorForDisplay(error: unknown): {
   title: string;
   description: string;
   details?: string;
@@ -358,7 +358,7 @@ function formatErrorForDisplay(error: unknown): {
 /**
  * Aggregate multiple errors
  */
-class AggregateError extends Error {
+export class AggregateError extends Error {
   public errors: Error[];
 
   constructor(errors: Error[], message?: string) {

@@ -32,7 +32,7 @@ export {
 
 // Error monitoring
 export {
-  default as errorMonitoring,
+  errorMonitoring,
   captureError,
   commonFilters,
 } from './error-monitoring';

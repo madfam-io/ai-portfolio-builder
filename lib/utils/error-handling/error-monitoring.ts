@@ -336,7 +336,7 @@ export const errorMonitoring = new ErrorMonitoringService({
 /**
  * Convenience function to capture errors
  */
-function captureError(
+export function captureError(
   error: unknown,
   context?: Record<string, any>
 ): Promise<string | null> {
@@ -346,7 +346,7 @@ function captureError(
 /**
  * Common error filters
  */
-const commonFilters = {
+export const commonFilters = {
   // Filter out cancelled requests
   ignoreCancelled: (error: Error) => {
     return !error.message.toLowerCase().includes('cancelled');
