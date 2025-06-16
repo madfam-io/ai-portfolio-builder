@@ -26,6 +26,7 @@ This guide helps you resolve common issues when developing or deploying PRISMA.
 **Problem**: `Error: listen EADDRINUSE: address already in use :::3000`
 
 **Solution**:
+
 ```bash
 # Find and kill the process
 lsof -ti:3000 | xargs kill -9
@@ -39,6 +40,7 @@ pnpm dev:clean
 **Problem**: `Module not found: Can't resolve '@/components/...'`
 
 **Solution**:
+
 ```bash
 # Clear Next.js cache
 rm -rf .next
@@ -51,6 +53,7 @@ pnpm dev
 **Problem**: Type errors in IDE but build works
 
 **Solution**:
+
 ```bash
 # Restart TypeScript server in VS Code
 Cmd+Shift+P -> "TypeScript: Restart TS Server"
@@ -64,9 +67,11 @@ pnpm type-check
 **Problem**: Changes not reflecting in browser
 
 **Solution**:
+
 1. Check if file is in `.next` cache
 2. Clear browser cache
 3. Restart dev server:
+
 ```bash
 pnpm dev:clean
 ```
@@ -80,6 +85,7 @@ pnpm dev:clean
 **Common Solutions**:
 
 1. **Environment Variables**
+
 ```bash
 # Ensure all required vars are set
 cp .env.example .env.local
@@ -87,6 +93,7 @@ cp .env.example .env.local
 ```
 
 2. **Dependencies**
+
 ```bash
 # Clean install
 rm -rf node_modules pnpm-lock.yaml
@@ -94,6 +101,7 @@ pnpm install
 ```
 
 3. **Memory Issues**
+
 ```bash
 # Increase Node memory
 NODE_OPTIONS="--max-old-space-size=4096" pnpm build
@@ -106,6 +114,7 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 **Solutions**:
 
 1. **Check Build Command**
+
 ```json
 // vercel.json
 {
@@ -115,10 +124,12 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 ```
 
 2. **Environment Variables**
+
 - Add all variables from `.env.local` to Vercel dashboard
 - Ensure variable names match exactly
 
 3. **Node Version**
+
 ```json
 // package.json
 {
@@ -137,14 +148,16 @@ NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 **Solutions**:
 
 1. **Dynamic Imports**
+
 ```typescript
 // For client-only components
 const ClientComponent = dynamic(() => import('./ClientComponent'), {
-  ssr: false
+  ssr: false,
 });
 ```
 
 2. **Conditional Rendering**
+
 ```typescript
 // Use useEffect for client-only code
 const [mounted, setMounted] = useState(false);
@@ -161,6 +174,7 @@ if (!mounted) return null;
 **Problem**: `Access to fetch at '...' from origin '...' has been blocked by CORS`
 
 **Solution**:
+
 ```typescript
 // app/api/[...]/route.ts
 export async function OPTIONS(request: Request) {
@@ -184,6 +198,7 @@ export async function OPTIONS(request: Request) {
 **Solutions**:
 
 1. **Docker Running**
+
 ```bash
 # Check if containers are running
 docker ps
@@ -193,12 +208,14 @@ docker ps
 ```
 
 2. **Connection String**
+
 ```env
 # .env.local
 DATABASE_URL="postgresql://postgres:password@localhost:5432/prisma_dev"
 ```
 
 3. **Network Issues**
+
 ```bash
 # Test connection
 psql -h localhost -U postgres -d prisma_dev
@@ -230,12 +247,14 @@ pnpm prisma generate
 **Solutions**:
 
 1. **Check Supabase Connection**
+
 ```typescript
 // Verify environment variables
 console.log('Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
 ```
 
 2. **Session Storage**
+
 ```typescript
 // Clear corrupted sessions
 localStorage.clear();
@@ -243,6 +262,7 @@ sessionStorage.clear();
 ```
 
 3. **OAuth Redirect**
+
 ```env
 # Ensure correct redirect URLs
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -253,10 +273,11 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 **Problem**: Unauthorized access to protected routes
 
 **Solution**:
+
 ```typescript
 // middleware.ts
 export const config = {
-  matcher: ['/dashboard/:path*', '/editor/:path*']
+  matcher: ['/dashboard/:path*', '/editor/:path*'],
 };
 ```
 
@@ -269,12 +290,14 @@ export const config = {
 **Solutions**:
 
 1. **API Key**
+
 ```env
 # Check API key is set
 HUGGINGFACE_API_KEY=hf_xxxxxxxxxxxx
 ```
 
 2. **Rate Limiting**
+
 ```typescript
 // Implement retry logic
 const MAX_RETRIES = 3;
@@ -286,7 +309,9 @@ async function enhanceWithRetry(content: string) {
       return await enhance(content);
     } catch (error) {
       if (i < MAX_RETRIES - 1) {
-        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY * (i + 1)));
+        await new Promise(resolve =>
+          setTimeout(resolve, RETRY_DELAY * (i + 1))
+        );
       } else {
         throw error;
       }
@@ -296,6 +321,7 @@ async function enhanceWithRetry(content: string) {
 ```
 
 3. **Fallback to Mock Data**
+
 ```typescript
 // Use mock data in development
 if (!process.env.HUGGINGFACE_API_KEY) {
@@ -312,12 +338,14 @@ if (!process.env.HUGGINGFACE_API_KEY) {
 **Solutions**:
 
 1. **Check Bundle Size**
+
 ```bash
 pnpm build
 pnpm analyze
 ```
 
 2. **Optimize Images**
+
 ```typescript
 // Use Next.js Image component
 import Image from 'next/image';
@@ -332,6 +360,7 @@ import Image from 'next/image';
 ```
 
 3. **Enable Caching**
+
 ```typescript
 // API route caching
 export async function GET() {
@@ -350,20 +379,22 @@ export async function GET() {
 **Solutions**:
 
 1. **Clean Up Effects**
+
 ```typescript
 useEffect(() => {
   const timer = setInterval(() => {}, 1000);
-  
+
   // Cleanup
   return () => clearInterval(timer);
 }, []);
 ```
 
 2. **Unsubscribe from Stores**
+
 ```typescript
 useEffect(() => {
   const unsubscribe = store.subscribe(() => {});
-  
+
   return unsubscribe;
 }, []);
 ```
@@ -377,17 +408,20 @@ useEffect(() => {
 **Solutions**:
 
 1. **Environment Consistency**
+
 ```bash
 # Use same Node version
 nvm use 18.17.0
 ```
 
 2. **Clear Test Cache**
+
 ```bash
 pnpm test -- --clearCache
 ```
 
 3. **Mock External Services**
+
 ```typescript
 // __mocks__/next/navigation.js
 module.exports = {
@@ -404,6 +438,7 @@ module.exports = {
 **Problem**: Low test coverage
 
 **Solution**:
+
 ```bash
 # Generate coverage report
 pnpm test:coverage
@@ -423,6 +458,7 @@ pnpm test:coverage
 **Solutions**:
 
 1. **Check Docker Desktop**
+
 ```bash
 # Ensure Docker is running
 docker --version
@@ -430,6 +466,7 @@ docker ps
 ```
 
 2. **Clean Restart**
+
 ```bash
 # Remove all containers and volumes
 docker-compose down -v
@@ -437,6 +474,7 @@ docker-compose down -v
 ```
 
 3. **Port Conflicts**
+
 ```bash
 # Check for port conflicts
 lsof -ti:3000,5432,6379,5050
@@ -447,6 +485,7 @@ lsof -ti:3000,5432,6379,5050
 **Problem**: App can't connect to PostgreSQL in Docker
 
 **Solution**:
+
 ```env
 # Use Docker service name
 DATABASE_URL="postgresql://postgres:password@postgres:5432/prisma_dev"
@@ -457,11 +496,13 @@ DATABASE_URL="postgresql://postgres:password@postgres:5432/prisma_dev"
 ### "fetch failed"
 
 **Causes**:
+
 - Network connectivity issues
 - API endpoint down
 - CORS problems
 
 **Solution**:
+
 ```typescript
 // Add error handling
 try {
@@ -478,6 +519,7 @@ try {
 ### "Invalid environment variables"
 
 **Solution**:
+
 ```bash
 # Validate environment
 pnpm env:validate
@@ -494,11 +536,13 @@ Required:
 ### Before Asking for Help
 
 1. **Check Documentation**
+
    - README.md
    - API_REFERENCE.md
    - This troubleshooting guide
 
 2. **Search Issues**
+
    - GitHub Issues
    - Stack Overflow
 
@@ -510,11 +554,13 @@ Required:
 ### Where to Get Help
 
 1. **GitHub Issues**
+
    - Bug reports
    - Feature requests
    - Documentation issues
 
 2. **Community**
+
    - Discord (coming soon)
    - Stack Overflow tag: `prisma-portfolio`
 
@@ -525,6 +571,7 @@ Required:
 ### Reporting Bugs
 
 Include:
+
 - Node version: `node --version`
 - pnpm version: `pnpm --version`
 - OS and version

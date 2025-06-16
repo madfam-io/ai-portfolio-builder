@@ -87,8 +87,7 @@ export function SubdomainStep({
           {t.chooseYourWebAddress || 'Choose your web address'}
         </h2>
         <p className="text-muted-foreground">
-          {t.subdomainDescription ||
-            "This will be your portfolio's public URL"}
+          {t.subdomainDescription || "This will be your portfolio's public URL"}
         </p>
       </div>
 
@@ -128,8 +127,7 @@ export function SubdomainStep({
         </p>
         {subdomainAvailable === false && (
           <p className="text-sm text-red-500 mt-1">
-            {t.subdomainTaken ||
-              'This subdomain is already taken or reserved'}
+            {t.subdomainTaken || 'This subdomain is already taken or reserved'}
           </p>
         )}
       </div>

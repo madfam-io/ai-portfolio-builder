@@ -63,7 +63,7 @@ export function generateSamplePortfolio(template: TemplateType): Portfolio {
 /**
  * Get sample projects for a specific template
  */
-export function getSampleProjects(template: TemplateType) {
+function getSampleProjects(template: TemplateType) {
   const sampleData = SAMPLE_DATA_BY_TEMPLATE[template];
   return sampleData?.projects || [];
 }
@@ -71,7 +71,7 @@ export function getSampleProjects(template: TemplateType) {
 /**
  * Get sample experience for a specific template
  */
-export function getSampleExperience(template: TemplateType) {
+function getSampleExperience(template: TemplateType) {
   const sampleData = SAMPLE_DATA_BY_TEMPLATE[template];
   return sampleData?.experience || [];
 }
@@ -79,7 +79,7 @@ export function getSampleExperience(template: TemplateType) {
 /**
  * Get sample skills for a specific template
  */
-export function getSampleSkills(template: TemplateType) {
+function getSampleSkills(template: TemplateType) {
   const sampleData = SAMPLE_DATA_BY_TEMPLATE[template];
   return sampleData?.skills || [];
 }
@@ -87,13 +87,13 @@ export function getSampleSkills(template: TemplateType) {
 /**
  * Generate random avatars for demo purposes
  */
-export function getRandomAvatar(seed: string): string {
+function getRandomAvatar(seed: string): string {
   return `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
 }
 
 /**
  * Generate placeholder images for projects
  */
-export function getProjectPlaceholder(index: number): string {
+function getProjectPlaceholder(index: number): string {
   return `https://picsum.photos/seed/project${index}/800/600`;
 }

@@ -54,7 +54,7 @@ export function canAccessFeature(
 /**
  * Check if user has reached their plan limits
  */
-export function hasReachedLimit(
+function hasReachedLimit(
   user: User,
   limitType: 'portfolios' | 'aiEnhancements',
   currentUsage: number
@@ -117,17 +117,14 @@ export function getPermissionLevel(user: User): string {
 /**
  * Get all permissions for an admin role
  */
-export function getRolePermissions(role: AdminRole): AdminPermission[] {
+function getRolePermissions(role: AdminRole): AdminPermission[] {
   return ADMIN_PERMISSIONS[role] || [];
 }
 
 /**
  * Check if admin role can perform specific actions
  */
-export function canPerformAction(
-  role: AdminRole,
-  action: AdminPermission
-): boolean {
+function canPerformAction(role: AdminRole, action: AdminPermission): boolean {
   return ADMIN_PERMISSIONS[role]?.includes(action) || false;
 }
 
@@ -145,14 +142,14 @@ export function canSwitchToAdminMode(user: User): boolean {
 /**
  * Validate if user can impersonate other users
  */
-export function canImpersonateUsers(user: User): boolean {
+function canImpersonateUsers(user: User): boolean {
   return hasPermission(user, 'impersonation:users');
 }
 
 /**
  * Get subscription plan display name
  */
-export function getPlanDisplayName(plan: SubscriptionPlan): string {
+function getPlanDisplayName(plan: SubscriptionPlan): string {
   const displayNames: Record<SubscriptionPlan, string> = {
     free: 'PRISMA Free',
     pro: 'PRISMA Pro',
@@ -165,7 +162,7 @@ export function getPlanDisplayName(plan: SubscriptionPlan): string {
 /**
  * Get plan pricing information
  */
-export function getPlanPricing(
+function getPlanPricing(
   plan: SubscriptionPlan,
   currency: 'USD' | 'MXN' | 'EUR'
 ) {
@@ -235,7 +232,7 @@ export function getDaysUntilExpiration(user: User): number | null {
 /**
  * Generate permission context for the current user
  */
-export function createPermissionContext(user: User): PermissionContext {
+function createPermissionContext(user: User): PermissionContext {
   const isAdmin = user.accountType === 'admin';
   const isInAdminMode = (isAdmin && user.adminProfile?.isInAdminMode) || false;
   const permissions =
@@ -276,14 +273,14 @@ export const ADMIN_ROLE_HIERARCHY: Record<AdminRole, number> = {
 /**
  * Check if one admin role is higher than another
  */
-export function isHigherRole(role1: AdminRole, role2: AdminRole): boolean {
+function isHigherRole(role1: AdminRole, role2: AdminRole): boolean {
   return ADMIN_ROLE_HIERARCHY[role1] > ADMIN_ROLE_HIERARCHY[role2];
 }
 
 /**
  * Get required role for specific permission
  */
-export function getRequiredRoleForPermission(
+function getRequiredRoleForPermission(
   permission: AdminPermission
 ): AdminRole | null {
   for (const [role, permissions] of Object.entries(ADMIN_PERMISSIONS)) {

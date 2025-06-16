@@ -10,7 +10,7 @@ import { StoreApi } from 'zustand';
 /**
  * Create a mock store for testing
  */
-export function createMockStore<T>(initialState: T): StoreApi<T> {
+function createMockStore<T>(initialState: T): StoreApi<T> {
   let state = initialState;
   const listeners = new Set<(state: T, prevState: T) => void>();
 
@@ -39,7 +39,7 @@ export function createMockStore<T>(initialState: T): StoreApi<T> {
 /**
  * Wait for async store actions to complete
  */
-export function waitForStoreUpdate<T>(
+function waitForStoreUpdate<T>(
   store: StoreApi<T>,
   predicate: (state: T) => boolean,
   timeout = 5000
@@ -69,7 +69,7 @@ export function waitForStoreUpdate<T>(
 /**
  * Test helper for store actions
  */
-export async function testStoreAction<T, R>(
+async function testStoreAction<T, R>(
   store: StoreApi<T>,
   action: (state: T) => R | Promise<R>,
   expectedChanges?: Partial<T>
@@ -90,7 +90,7 @@ export async function testStoreAction<T, R>(
 /**
  * Create a test wrapper for stores with providers
  */
-export function createStoreWrapper(stores: Record<string, any>) {
+function createStoreWrapper(stores: Record<string, any>) {
   return function StoreWrapper({ children }: { children: React.ReactNode }) {
     // Initialize stores if needed
     Object.values(stores).forEach(store => {
@@ -106,7 +106,7 @@ export function createStoreWrapper(stores: Record<string, any>) {
 /**
  * Reset all stores to initial state
  */
-export function resetStores(...stores: Array<{ getState: () => any }>) {
+function resetStores(...stores: Array<{ getState: () => any }>) {
   stores.forEach(store => {
     const state = store.getState();
     if (typeof state.reset === 'function') {
@@ -122,7 +122,7 @@ export function resetStores(...stores: Array<{ getState: () => any }>) {
 /**
  * Mock Supabase client for auth testing
  */
-export const mockSupabaseClient = {
+const mockSupabaseClient = {
   auth: {
     getSession: jest.fn().mockResolvedValue({ data: { session: null } }),
     signInWithPassword: jest.fn(),
@@ -138,7 +138,7 @@ export const mockSupabaseClient = {
 /**
  * Mock portfolio service
  */
-export const mockPortfolioService = {
+const mockPortfolioService = {
   getAllPortfolios: jest.fn().mockResolvedValue([]),
   getPortfolioById: jest.fn(),
   createPortfolio: jest.fn(),
@@ -149,7 +149,7 @@ export const mockPortfolioService = {
 /**
  * Mock AI service responses
  */
-export const mockAIResponses = {
+const mockAIResponses = {
   enhanceBio: {
     enhancedBio: 'Enhanced professional bio text',
     qualityScore: 0.85,
@@ -170,7 +170,7 @@ export const mockAIResponses = {
 /**
  * Test data generators
  */
-export const generateTestUser = (overrides = {}) => ({
+const generateTestUser = (overrides = {}) => ({
   id: 'test-user-id',
   email: 'test@example.com',
   user_metadata: {
@@ -180,7 +180,7 @@ export const generateTestUser = (overrides = {}) => ({
   ...overrides,
 });
 
-export const generateTestPortfolio = (overrides = {}) => ({
+const generateTestPortfolio = (overrides = {}) => ({
   id: 'test-portfolio-id',
   userId: 'test-user-id',
   title: 'Test Portfolio',

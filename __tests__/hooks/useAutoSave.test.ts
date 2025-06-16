@@ -1,6 +1,11 @@
 import { renderHook, act } from '@testing-library/react';
-import { useAutoSave } from '@/hooks/useAutoSave';
 import type { Portfolio } from '@/types/portfolio';
+
+// Clear any existing mocks of useAutoSave
+jest.unmock('@/hooks/useAutoSave');
+
+// Import the actual hook after clearing mocks
+import { useAutoSave } from '@/hooks/useAutoSave';
 
 // Mock fetch
 global.fetch = jest.fn();
@@ -14,8 +19,15 @@ describe('useAutoSave', () => {
     bio: 'Test bio',
     tagline: 'Test tagline',
     avatarUrl: 'https://example.com/avatar.jpg',
-    contact: { email: 'test@example.com', phone: '123-456-7890', location: 'New York' },
-    social: { github: 'https://github.com/test', linkedin: 'https://linkedin.com/in/test' },
+    contact: {
+      email: 'test@example.com',
+      phone: '123-456-7890',
+      location: 'New York',
+    },
+    social: {
+      github: 'https://github.com/test',
+      linkedin: 'https://linkedin.com/in/test',
+    },
     experience: [],
     education: [],
     projects: [],
@@ -42,11 +54,11 @@ describe('useAutoSave', () => {
   });
 
   it('should initialize with undefined lastSaved', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, false)
     );
 
-    expect(result.current.lastSaved).toBeNull();
+    expect(result.current.lastSaved).toBeUndefined();
   });
 
   it('should save portfolio successfully', async () => {
@@ -55,7 +67,7 @@ describe('useAutoSave', () => {
       json: () => ({ success: true }),
     });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -100,7 +112,7 @@ describe('useAutoSave', () => {
       json: () => ({ error: 'Bad request' }),
     });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -116,7 +128,7 @@ describe('useAutoSave', () => {
   it('should handle network errors', async () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'));
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -142,7 +154,7 @@ describe('useAutoSave', () => {
         json: () => ({ success: true }),
       });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -172,7 +184,7 @@ describe('useAutoSave', () => {
   it('should not save portfolio without ID', async () => {
     const portfolioWithoutId = { ...mockPortfolio, id: '' };
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', portfolioWithoutId, true)
     );
 
@@ -191,7 +203,7 @@ describe('useAutoSave', () => {
       json: () => ({ success: true }),
     });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('different-portfolio-456', mockPortfolio, true)
     );
 
@@ -207,8 +219,8 @@ describe('useAutoSave', () => {
 
   it('should clear timeout on clearAutoSave', () => {
     const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
-    
-    const { result } = renderHook(() => 
+
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -228,7 +240,7 @@ describe('useAutoSave', () => {
       json: () => ({ success: true }),
     });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, true)
     );
 
@@ -243,8 +255,12 @@ describe('useAutoSave', () => {
     const afterSave = new Date();
 
     expect(result.current.lastSaved).toBeDefined();
-    expect(result.current.lastSaved!.getTime()).toBeGreaterThanOrEqual(beforeSave.getTime());
-    expect(result.current.lastSaved!.getTime()).toBeLessThanOrEqual(afterSave.getTime());
+    expect(result.current.lastSaved!.getTime()).toBeGreaterThanOrEqual(
+      beforeSave.getTime()
+    );
+    expect(result.current.lastSaved!.getTime()).toBeLessThanOrEqual(
+      afterSave.getTime()
+    );
   });
 
   it('should handle empty portfolio data gracefully', async () => {
@@ -264,7 +280,7 @@ describe('useAutoSave', () => {
       json: () => ({ success: true }),
     });
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useAutoSave('portfolio-123', emptyPortfolio, true)
     );
 
@@ -284,7 +300,7 @@ describe('useAutoSave', () => {
 
   it('should maintain autoSave function reference across renders', () => {
     const { result, rerender } = renderHook(
-      ({ portfolioId, portfolio, isDirty }) => 
+      ({ portfolioId, portfolio, isDirty }) =>
         useAutoSave(portfolioId, portfolio, isDirty),
       {
         initialProps: {

@@ -7,6 +7,7 @@
 ## Context
 
 PRISMA requires a robust state management solution for:
+
 - User authentication state
 - Portfolio data and drafts
 - UI preferences and settings
@@ -14,6 +15,7 @@ PRISMA requires a robust state management solution for:
 - Real-time collaboration features (future)
 
 We evaluated several options:
+
 - Redux Toolkit: Powerful but complex, too much boilerplate
 - Context API: Simple but performance concerns at scale
 - Jotai: Good but less community support
@@ -56,10 +58,10 @@ interface AuthStore {
 const useAuthStore = create<AuthStore>()(
   devtools(
     persist(
-      (set) => ({
+      set => ({
         user: null,
         isLoading: false,
-        login: async (credentials) => {
+        login: async credentials => {
           // Implementation
         },
         // ...

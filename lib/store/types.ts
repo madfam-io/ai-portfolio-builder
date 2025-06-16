@@ -166,7 +166,7 @@ export interface RootState {
 }
 
 // Persist Config Type
-export interface PersistConfig {
+interface PersistConfig {
   name: string;
   version: number;
   partialize?: (state: unknown) => any;

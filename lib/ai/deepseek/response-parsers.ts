@@ -1,14 +1,14 @@
 /**
  * DeepSeek Response Parsers
- * 
+ *
  * Parse and transform DeepSeek API responses into domain models
  */
 
-import { 
-  EnhancedContent, 
-  ProjectEnhancement, 
-  TemplateRecommendation, 
-  QualityScore 
+import {
+  EnhancedContent,
+  ProjectEnhancement,
+  TemplateRecommendation,
+  QualityScore,
 } from '../types';
 import { DeepSeekResponse } from './types';
 

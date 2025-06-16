@@ -12,10 +12,10 @@ const withBundleAnalyzer =
 const nextConfig = {
   reactStrictMode: false,
   poweredByHeader: false,
-  
+
   // Optimize production builds
   productionBrowserSourceMaps: false,
-  
+
   // Module optimization
   modularizeImports: {
     'lucide-react': {
@@ -28,7 +28,7 @@ const nextConfig = {
       transform: 'lodash/{{member}}',
     },
   },
-  
+
   // Experimental features for better performance
   experimental: {
     // optimizeCss: true, // Disabled - requires 'critters' package
@@ -171,7 +171,7 @@ const nextConfig = {
         message: /Critical dependency/,
       },
     ];
-    
+
     // Optimize code splitting
     if (!isServer) {
       config.optimization = {

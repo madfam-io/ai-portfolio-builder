@@ -104,7 +104,7 @@ function NewPortfolioContent() {
         return (
           <TemplateStep
             selectedTemplate={formData.template}
-            onSelectTemplate={(template) => updateFormData({ template })}
+            onSelectTemplate={template => updateFormData({ template })}
             onNext={handleNext}
             onBack={handleBack}
             t={t}
@@ -115,7 +115,7 @@ function NewPortfolioContent() {
         return (
           <ImportStep
             selectedSource={formData.importSource}
-            onSelectSource={(source) => updateFormData({ importSource: source })}
+            onSelectSource={source => updateFormData({ importSource: source })}
             onNext={handleNext}
             onBack={handleBack}
             t={t}

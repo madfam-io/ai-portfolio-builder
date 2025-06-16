@@ -4,10 +4,7 @@ import { SectionProps } from '../types';
 
 export function CertificationsSection({ portfolio }: SectionProps) {
   return (
-    <section
-      id="certifications-section"
-      data-testid="certifications-section"
-    >
+    <section id="certifications-section" data-testid="certifications-section">
       <h2 className="text-2xl font-bold mb-4">Certifications</h2>
       <div className="grid gap-4">
         {portfolio.certifications.map(cert => (
@@ -27,9 +24,7 @@ export function CertificationsSection({ portfolio }: SectionProps) {
             ) : (
               <h3 className="text-lg font-semibold">{cert.name}</h3>
             )}
-            <p className="text-gray-600 dark:text-gray-400">
-              {cert.issuer}
-            </p>
+            <p className="text-gray-600 dark:text-gray-400">{cert.issuer}</p>
             <p className="text-sm text-gray-500 dark:text-gray-500">
               Issued: {cert.issueDate}
               {cert.expiryDate && ` • Expires: ${cert.expiryDate}`}

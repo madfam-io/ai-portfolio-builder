@@ -2,7 +2,11 @@
 
 import React from 'react';
 import { PortfolioPreviewProps } from './PortfolioPreview/types';
-import { getContainerClasses, getCustomStyles, getVisibleSections } from './PortfolioPreview/utils';
+import {
+  getContainerClasses,
+  getCustomStyles,
+  getVisibleSections,
+} from './PortfolioPreview/utils';
 import { PortfolioHeader } from './PortfolioPreview/Header';
 import { AboutSection } from './PortfolioPreview/sections/AboutSection';
 import { ExperienceSection } from './PortfolioPreview/sections/ExperienceSection';

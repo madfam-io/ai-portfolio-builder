@@ -84,7 +84,8 @@ export default {
 
   // Experiments
   experimentsTitle: 'A/B Testing Experiments',
-  experimentsDescription: 'Manage landing page experiments and track performance',
+  experimentsDescription:
+    'Manage landing page experiments and track performance',
   experimentsNewExperiment: 'New Experiment',
   experimentsSearchPlaceholder: 'Search experiments...',
   experimentsAllStatus: 'All Status',

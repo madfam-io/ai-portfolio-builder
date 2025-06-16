@@ -39,9 +39,7 @@ export function BasicInfoStep({
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="name">
-            {t.portfolioName || 'Portfolio Name'}
-          </Label>
+          <Label htmlFor="name">{t.portfolioName || 'Portfolio Name'}</Label>
           <Input
             id="name"
             placeholder={

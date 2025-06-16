@@ -44,25 +44,25 @@ function requireSupabaseClient(): SupabaseClient {
 }
 
 // For testing: allow setting a mock client
-export function setSupabaseClient(client: SupabaseClient): void {
+function setSupabaseClient(client: SupabaseClient): void {
   supabaseInstance = client;
   supabaseInitialized = true;
 }
 
 // For testing: reset to default client
-export function resetSupabaseClient(): void {
+function resetSupabaseClient(): void {
   supabaseInstance = null;
   supabaseInitialized = false;
 }
 
 // Types for authentication
-export interface SignUpCredentials {
+interface SignUpCredentials {
   email: string;
   password: string;
   fullName?: string;
 }
 
-export interface SignInCredentials {
+interface SignInCredentials {
   email: string;
   password: string;
 }
@@ -107,9 +107,7 @@ function isValidPassword(password: string): boolean {
 /**
  * Get password strength rating
  */
-export function getPasswordStrength(
-  password: string
-): 'weak' | 'medium' | 'strong' {
+function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
   if (password.length < 8) return 'weak';
   if (password.length < 12) return 'medium';
   if (!isValidPassword(password)) return 'medium';
@@ -225,7 +223,7 @@ export async function getCurrentUser(): Promise<{
 /**
  * Get the current session
  */
-export async function getCurrentSession(): Promise<{
+async function getCurrentSession(): Promise<{
   data: { session: Session | null };
   error: AuthError | null;
 }> {

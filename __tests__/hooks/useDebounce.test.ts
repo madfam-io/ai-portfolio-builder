@@ -60,7 +60,7 @@ describe('useDebounce', () => {
 
     // Make rapid changes
     rerender({ value: 'second', delay: 500 });
-    
+
     act(() => {
       jest.advanceTimersByTime(200);
     });
@@ -157,7 +157,7 @@ describe('useDebounce', () => {
 
   it('should clean up timeout on unmount', () => {
     const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
-    
+
     const { unmount, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {

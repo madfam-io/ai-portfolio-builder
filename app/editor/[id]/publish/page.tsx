@@ -134,7 +134,6 @@ function PublishContent({ params }: PageProps) {
     );
   }
 
-
   const renderStep = () => {
     switch (step) {
       case 'subdomain':

@@ -31,6 +31,7 @@ Once your project is created:
 ## Step 3: Configure Environment Variables
 
 1. Copy `.env.example` to `.env.local`:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -97,16 +98,19 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
 ### Option B: Using Migration Files
 
 1. Install Supabase CLI:
+
    ```bash
    npm install -g supabase
    ```
 
 2. Initialize Supabase:
+
    ```bash
    supabase init
    ```
 
 3. Link to your project:
+
    ```bash
    supabase link --project-ref your-project-ref
    ```
@@ -125,6 +129,7 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
 3. Configure OAuth providers:
 
 #### GitHub OAuth
+
 1. Enable GitHub provider
 2. Add redirect URL: `https://your-project.supabase.co/auth/v1/callback`
 3. Create GitHub OAuth App:
@@ -133,6 +138,7 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
    - Copy Client ID and Secret to Supabase
 
 #### LinkedIn OAuth
+
 1. Enable LinkedIn provider
 2. Follow similar steps as GitHub
 
@@ -140,6 +146,7 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
 
 1. Go to Storage in Supabase dashboard
 2. Create a new bucket called `avatars`:
+
    ```sql
    INSERT INTO storage.buckets (id, name, public)
    VALUES ('avatars', 'avatars', true);
@@ -154,11 +161,13 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
 ## Step 7: Test Your Setup
 
 1. Start the development server:
+
    ```bash
    pnpm dev
    ```
 
 2. Test authentication:
+
    - Try signing up with email
    - Test OAuth providers if configured
 
@@ -171,11 +180,13 @@ CREATE POLICY "Published portfolios are publicly viewable" ON portfolios
 ### Common Issues
 
 1. **"Invalid API key"**
+
    - Double-check your environment variables
    - Ensure no extra spaces in keys
    - Restart your dev server
 
 2. **"Database connection failed"**
+
    - Check if your project is paused (free tier pauses after 1 week)
    - Verify your project URL is correct
 

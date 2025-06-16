@@ -47,9 +47,7 @@ export function decryptAccessToken(
 /**
  * Decrypt a GitHub refresh token
  */
-export function decryptRefreshToken(
-  tokenData: EncryptedTokenData
-): string | null {
+function decryptRefreshToken(tokenData: EncryptedTokenData): string | null {
   try {
     if (
       !tokenData.encrypted_refresh_token ||

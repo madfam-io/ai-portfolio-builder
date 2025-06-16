@@ -101,8 +101,7 @@ export function ImportStep({
                   {t.uploadCV || 'Upload CV'}
                 </CardTitle>
                 <CardDescription>
-                  {t.uploadCVDescription ||
-                    'Upload your resume (PDF/DOC)'}
+                  {t.uploadCVDescription || 'Upload your resume (PDF/DOC)'}
                 </CardDescription>
               </div>
             </div>

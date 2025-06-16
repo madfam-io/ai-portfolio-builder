@@ -12,7 +12,7 @@ const mockUseLanguage = {
     heroSubtitle: 'AI-powered portfolio builder for professionals',
     getStarted: 'Get Started',
     viewDemo: 'View Demo',
-    
+
     // Common
     save: 'Save',
     cancel: 'Cancel',
@@ -21,7 +21,7 @@ const mockUseLanguage = {
     loading: 'Loading...',
     error: 'Error',
     success: 'Success',
-    
+
     // Navigation
     home: 'Home',
     about: 'About',
@@ -29,7 +29,7 @@ const mockUseLanguage = {
     dashboard: 'Dashboard',
     editor: 'Editor',
     analytics: 'Analytics',
-    
+
     // Portfolio
     portfolio: 'Portfolio',
     portfolios: 'Portfolios',
@@ -37,12 +37,12 @@ const mockUseLanguage = {
     editPortfolio: 'Edit Portfolio',
     deletePortfolio: 'Delete Portfolio',
     publishPortfolio: 'Publish Portfolio',
-    
+
     // AI
     enhanceWithAI: 'Enhance with AI',
     aiProcessing: 'AI Processing...',
     aiEnhancement: 'AI Enhancement',
-    
+
     // Editor
     preview: 'Preview',
     publish: 'Publish',
@@ -50,12 +50,12 @@ const mockUseLanguage = {
     saving: 'Saving...',
     saved: 'Saved',
     unsavedChanges: 'Unsaved changes',
-    
+
     // Templates
     template: 'Template',
     templates: 'Templates',
     selectTemplate: 'Select Template',
-    
+
     // Forms
     name: 'Name',
     email: 'Email',
@@ -63,18 +63,18 @@ const mockUseLanguage = {
     location: 'Location',
     title: 'Title',
     description: 'Description',
-    
+
     // Status
     draft: 'Draft',
     published: 'Published',
-    archived: 'Archived'
+    archived: 'Archived',
   },
-  isLoading: false
+  isLoading: false,
 };
 
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => mockUseLanguage,
-  LanguageProvider: ({ children }: { children: React.ReactNode }) => children
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => children,
 }));
 
 // Mock Next.js modules
@@ -88,11 +88,11 @@ jest.mock('next/navigation', () => ({
     pathname: '/',
     query: {},
     asPath: '/',
-    route: '/'
+    route: '/',
   }),
   usePathname: () => '/',
   useSearchParams: () => new URLSearchParams(),
-  notFound: jest.fn()
+  notFound: jest.fn(),
 }));
 
 jest.mock('next/image', () => ({
@@ -100,7 +100,7 @@ jest.mock('next/image', () => ({
   default: (props: any) => {
     const { src, alt, ...rest } = props;
     return <img src={src} alt={alt} {...rest} />;
-  }
+  },
 }));
 
 // Mock Supabase
@@ -108,18 +108,18 @@ const mockSupabase = {
   auth: {
     getSession: jest.fn().mockResolvedValue({
       data: { session: null },
-      error: null
+      error: null,
     }),
     getUser: jest.fn().mockResolvedValue({
       data: { user: null },
-      error: null
+      error: null,
     }),
     signInWithPassword: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
     onAuthStateChange: jest.fn(() => ({
-      data: { subscription: { unsubscribe: jest.fn() } }
-    }))
+      data: { subscription: { unsubscribe: jest.fn() } },
+    })),
   },
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
@@ -128,16 +128,16 @@ const mockSupabase = {
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
     single: jest.fn().mockReturnThis(),
-    then: jest.fn()
-  }))
+    then: jest.fn(),
+  })),
 };
 
 jest.mock('@/lib/supabase/client', () => ({
-  supabase: mockSupabase
+  supabase: mockSupabase,
 }));
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: () => mockSupabase
+  createClient: () => mockSupabase,
 }));
 
 // NextAuth is mocked via manual mocks in __mocks__ directory
@@ -146,30 +146,117 @@ const mockSession = {
     id: 'test-user-id',
     email: 'test@example.com',
     name: 'Test User',
-    image: null
+    image: null,
   },
-  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString() // 24 hours from now
+  expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24 hours from now
 };
 
 // Mock Lucide React icons
 jest.mock('lucide-react', () => {
   const icons = [
-    'CheckCircle', 'Eye', 'Loader', 'RotateCcw', 'RotateCw', 'Save', 'Share2',
-    'Settings', 'User', 'Home', 'PlusCircle', 'Edit', 'Trash2', 'Download',
-    'Upload', 'Search', 'Filter', 'SortAsc', 'SortDesc', 'ChevronDown',
-    'ChevronUp', 'ChevronLeft', 'ChevronRight', 'X', 'Menu', 'Bell', 'Mail',
-    'Phone', 'MapPin', 'ExternalLink', 'Github', 'Linkedin', 'Twitter',
-    'Instagram', 'Youtube', 'Globe', 'Calendar', 'Clock', 'Star', 'Heart',
-    'ThumbsUp', 'MessageSquare', 'Bookmark', 'Share', 'Copy', 'Check',
-    'AlertCircle', 'AlertTriangle', 'Info', 'HelpCircle', 'Zap', 'Rocket',
-    'Target', 'TrendingUp', 'Award', 'Shield', 'Lock', 'Unlock', 'Key',
-    'Database', 'Server', 'Cloud', 'Monitor', 'Smartphone', 'Tablet',
-    'Layout', 'Grid', 'List', 'Image', 'File', 'FileText', 'Folder',
-    'Archive', 'Package', 'Tag', 'Layers', 'Code', 'Terminal', 'Play',
-    'Pause', 'Stop', 'Repeat', 'Shuffle', 'Volume2', 'VolumeX', 'Mic',
-    'Camera', 'Video', 'Headphones', 'Radio', 'Tv', 'Cast', 'Wifi',
-    'Bluetooth', 'Battery', 'Power', 'RefreshCw', 'MoreHorizontal',
-    'MoreVertical', 'Maximize2', 'Minimize2', 'RotateCcw', 'RotateCw'
+    'CheckCircle',
+    'Eye',
+    'Loader',
+    'RotateCcw',
+    'RotateCw',
+    'Save',
+    'Share2',
+    'Settings',
+    'User',
+    'Home',
+    'PlusCircle',
+    'Edit',
+    'Trash2',
+    'Download',
+    'Upload',
+    'Search',
+    'Filter',
+    'SortAsc',
+    'SortDesc',
+    'ChevronDown',
+    'ChevronUp',
+    'ChevronLeft',
+    'ChevronRight',
+    'X',
+    'Menu',
+    'Bell',
+    'Mail',
+    'Phone',
+    'MapPin',
+    'ExternalLink',
+    'Github',
+    'Linkedin',
+    'Twitter',
+    'Instagram',
+    'Youtube',
+    'Globe',
+    'Calendar',
+    'Clock',
+    'Star',
+    'Heart',
+    'ThumbsUp',
+    'MessageSquare',
+    'Bookmark',
+    'Share',
+    'Copy',
+    'Check',
+    'AlertCircle',
+    'AlertTriangle',
+    'Info',
+    'HelpCircle',
+    'Zap',
+    'Rocket',
+    'Target',
+    'TrendingUp',
+    'Award',
+    'Shield',
+    'Lock',
+    'Unlock',
+    'Key',
+    'Database',
+    'Server',
+    'Cloud',
+    'Monitor',
+    'Smartphone',
+    'Tablet',
+    'Layout',
+    'Grid',
+    'List',
+    'Image',
+    'File',
+    'FileText',
+    'Folder',
+    'Archive',
+    'Package',
+    'Tag',
+    'Layers',
+    'Code',
+    'Terminal',
+    'Play',
+    'Pause',
+    'Stop',
+    'Repeat',
+    'Shuffle',
+    'Volume2',
+    'VolumeX',
+    'Mic',
+    'Camera',
+    'Video',
+    'Headphones',
+    'Radio',
+    'Tv',
+    'Cast',
+    'Wifi',
+    'Bluetooth',
+    'Battery',
+    'Power',
+    'RefreshCw',
+    'MoreHorizontal',
+    'MoreVertical',
+    'Maximize2',
+    'Minimize2',
+    'RotateCcw',
+    'RotateCw',
   ];
 
   const mockIcon = ({ className, ...props }: any) => (
@@ -194,7 +281,7 @@ jest.mock('lucide-react', () => {
   icons.forEach(icon => {
     exports[icon] = mockIcon;
   });
-  
+
   return exports;
 });
 
@@ -205,7 +292,7 @@ jest.mock('posthog-js', () => ({
   reset: jest.fn(),
   onFeatureFlags: jest.fn(),
   isFeatureEnabled: jest.fn().mockReturnValue(false),
-  getFeatureFlag: jest.fn().mockReturnValue(false)
+  getFeatureFlag: jest.fn().mockReturnValue(false),
 }));
 
 // Mock stores
@@ -219,7 +306,7 @@ const mockPortfolioStore = {
   updatePortfolio: jest.fn(),
   deletePortfolio: jest.fn(),
   setCurrentPortfolio: jest.fn(),
-  clearError: jest.fn()
+  clearError: jest.fn(),
 };
 
 const mockAuthStore = {
@@ -230,7 +317,7 @@ const mockAuthStore = {
   signIn: jest.fn(),
   signOut: jest.fn(),
   signUp: jest.fn(),
-  clearError: jest.fn()
+  clearError: jest.fn(),
 };
 
 const mockUIStore = {
@@ -242,7 +329,7 @@ const mockUIStore = {
   setLanguage: jest.fn(),
   toggleSidebar: jest.fn(),
   addNotification: jest.fn(),
-  removeNotification: jest.fn()
+  removeNotification: jest.fn(),
 };
 
 const mockAIStore = {
@@ -253,23 +340,23 @@ const mockAIStore = {
   enhanceBio: jest.fn(),
   enhanceProject: jest.fn(),
   recommendTemplate: jest.fn(),
-  clearError: jest.fn()
+  clearError: jest.fn(),
 };
 
 jest.mock('@/lib/store/portfolio-store', () => ({
-  usePortfolioStore: jest.fn(() => mockPortfolioStore)
+  usePortfolioStore: jest.fn(() => mockPortfolioStore),
 }));
 
 jest.mock('@/lib/store/auth-store', () => ({
-  useAuthStore: jest.fn(() => mockAuthStore)
+  useAuthStore: jest.fn(() => mockAuthStore),
 }));
 
 jest.mock('@/lib/store/ui-store', () => ({
-  useUIStore: jest.fn(() => mockUIStore)
+  useUIStore: jest.fn(() => mockUIStore),
 }));
 
 jest.mock('@/lib/store/ai-store', () => ({
-  useAIStore: jest.fn(() => mockAIStore)
+  useAIStore: jest.fn(() => mockAIStore),
 }));
 
 // Mock hooks
@@ -279,8 +366,8 @@ jest.mock('@/hooks/useAutoSave', () => ({
     isSaving: false,
     lastSaved: null,
     save: jest.fn(),
-    reset: jest.fn()
-  })
+    reset: jest.fn(),
+  }),
 }));
 
 jest.mock('@/hooks/useEditorHistory', () => ({
@@ -290,8 +377,8 @@ jest.mock('@/hooks/useEditorHistory', () => ({
     undo: jest.fn(),
     redo: jest.fn(),
     pushState: jest.fn(),
-    clearHistory: jest.fn()
-  })
+    clearHistory: jest.fn(),
+  }),
 }));
 
 jest.mock('@/hooks/useRealTimePreview', () => ({
@@ -299,8 +386,8 @@ jest.mock('@/hooks/useRealTimePreview', () => ({
     previewUrl: 'http://localhost:3000/preview/test',
     isGenerating: false,
     generatePreview: jest.fn(),
-    refreshPreview: jest.fn()
-  })
+    refreshPreview: jest.fn(),
+  }),
 }));
 
 // Mock AI services
@@ -308,12 +395,15 @@ jest.mock('@/lib/ai/client', () => ({
   enhanceBio: jest.fn().mockResolvedValue({
     enhancedBio: 'Enhanced bio content',
     confidence: 0.9,
-    suggestions: ['Add more specific achievements', 'Include technical skills']
+    suggestions: ['Add more specific achievements', 'Include technical skills'],
   }),
   enhanceProject: jest.fn().mockResolvedValue({
     enhancedDescription: 'Enhanced project description',
-    suggestedHighlights: ['Implemented scalable architecture', 'Improved performance by 40%'],
-    extractedSkills: ['React', 'Node.js', 'PostgreSQL']
+    suggestedHighlights: [
+      'Implemented scalable architecture',
+      'Improved performance by 40%',
+    ],
+    extractedSkills: ['React', 'Node.js', 'PostgreSQL'],
   }),
   recommendTemplate: jest.fn().mockResolvedValue({
     recommendedTemplate: 'developer',
@@ -321,20 +411,22 @@ jest.mock('@/lib/ai/client', () => ({
     reasoning: 'Based on technical skills and project portfolio',
     alternatives: [
       { template: 'minimal', score: 0.7 },
-      { template: 'modern', score: 0.6 }
-    ]
-  })
+      { template: 'modern', score: 0.6 },
+    ],
+  }),
 }));
 
 // Mock analytics
 jest.mock('@/lib/analytics/posthog/client', () => ({
   track: jest.fn(),
   identify: jest.fn(),
-  reset: jest.fn()
+  reset: jest.fn(),
 }));
 
 // Create a simple test provider
-const TestProviders: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const TestProviders: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   return <div data-testid="test-provider">{children}</div>;
 };
 
@@ -345,7 +437,7 @@ const customRender = (
 ) => {
   return render(ui, {
     wrapper: TestProviders,
-    ...options
+    ...options,
   });
 };
 
@@ -362,12 +454,12 @@ export const createMockPortfolio = (overrides: Partial<any> = {}) => ({
   contact: {
     email: 'test@example.com',
     phone: '+1 (555) 123-4567',
-    location: 'San Francisco, CA'
+    location: 'San Francisco, CA',
   },
   social: {
     linkedin: 'https://linkedin.com/in/testuser',
     github: 'https://github.com/testuser',
-    twitter: 'https://twitter.com/testuser'
+    twitter: 'https://twitter.com/testuser',
   },
   experience: [],
   education: [],
@@ -381,7 +473,7 @@ export const createMockPortfolio = (overrides: Partial<any> = {}) => ({
   views: 0,
   createdAt: new Date('2024-01-01'),
   updatedAt: new Date('2024-01-15'),
-  ...overrides
+  ...overrides,
 });
 
 export const createMockProject = (overrides: Partial<any> = {}) => ({
@@ -395,7 +487,7 @@ export const createMockProject = (overrides: Partial<any> = {}) => ({
   highlights: ['Scalable architecture', 'Real-time features'],
   featured: true,
   order: 1,
-  ...overrides
+  ...overrides,
 });
 
 export const createMockExperience = (overrides: Partial<any> = {}) => ({
@@ -411,7 +503,7 @@ export const createMockExperience = (overrides: Partial<any> = {}) => ({
   description: 'Led development of web applications using React and Node.js',
   highlights: ['Improved performance by 40%', 'Mentored junior developers'],
   technologies: ['React', 'Node.js', 'AWS'],
-  ...overrides
+  ...overrides,
 });
 
 export const createMockUser = (overrides: Partial<any> = {}) => ({
@@ -419,13 +511,13 @@ export const createMockUser = (overrides: Partial<any> = {}) => ({
   email: 'test@example.com',
   name: 'Test User',
   image: 'https://example.com/avatar.jpg',
-  ...overrides
+  ...overrides,
 });
 
 export const createMockSession = (overrides: Partial<any> = {}) => ({
   user: createMockUser(overrides.user),
   expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-  ...overrides
+  ...overrides,
 });
 
 // Export everything
@@ -439,7 +531,7 @@ export {
   mockAuthStore,
   mockUIStore,
   mockAIStore,
-  mockUseLanguage
+  mockUseLanguage,
 };
 
 // Reset all mocks after each test
@@ -460,22 +552,22 @@ beforeAll(() => {
       removeListener: jest.fn(),
       addEventListener: jest.fn(),
       removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn()
-    }))
+      dispatchEvent: jest.fn(),
+    })),
   });
 
   // Mock IntersectionObserver
   global.IntersectionObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
     unobserve: jest.fn(),
-    disconnect: jest.fn()
+    disconnect: jest.fn(),
   }));
 
   // Mock ResizeObserver
   global.ResizeObserver = jest.fn().mockImplementation(() => ({
     observe: jest.fn(),
     unobserve: jest.fn(),
-    disconnect: jest.fn()
+    disconnect: jest.fn(),
   }));
 
   // Mock fetch
@@ -484,7 +576,7 @@ beforeAll(() => {
     json: () => Promise.resolve({}),
     text: () => Promise.resolve(''),
     status: 200,
-    statusText: 'OK'
+    statusText: 'OK',
   });
 
   // Suppress console warnings in tests
@@ -493,12 +585,10 @@ beforeAll(() => {
     const message = args[0];
     if (
       typeof message === 'string' &&
-      (
-        message.includes('React.createElement') ||
+      (message.includes('React.createElement') ||
         message.includes('componentWillReceiveProps') ||
         message.includes('componentWillUpdate') ||
-        message.includes('findDOMNode')
-      )
+        message.includes('findDOMNode'))
     ) {
       return;
     }

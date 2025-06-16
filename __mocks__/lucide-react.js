@@ -2,7 +2,7 @@
 const React = require('react');
 
 // Create a mock component for each icon
-const createMockIcon = (name) => {
+const createMockIcon = name => {
   const MockIcon = React.forwardRef((props, ref) => {
     return React.createElement('svg', {
       ...props,

@@ -15,7 +15,7 @@ export interface AvailableModel {
   lastUpdated: string;
 }
 
-export class ModelManager {
+class ModelManager {
   private availableModels: AvailableModel[] = [];
   private selectedModels: Record<string, string> = {};
 

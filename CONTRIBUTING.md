@@ -41,6 +41,7 @@ By participating in this project, you agree to abide by our Code of Conduct:
 ### First Steps
 
 1. **Fork the Repository**
+
    ```bash
    # Click the "Fork" button on GitHub
    # Clone your fork
@@ -49,10 +50,11 @@ By participating in this project, you agree to abide by our Code of Conduct:
    ```
 
 2. **Set Up Git**
+
    ```bash
    # Add upstream remote
    git remote add upstream https://github.com/aldoruizluna/labspace/ai-portfolio-builder.git
-   
+
    # Configure Git
    git config user.name "Your Name"
    git config user.email "your.email@example.com"
@@ -111,26 +113,31 @@ cp .env.example .env.local
 ### Types of Contributions
 
 1. **🐛 Bug Fixes**
+
    - Check existing [issues](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/issues)
    - Create a test that reproduces the bug
    - Fix the bug and ensure all tests pass
 
 2. **✨ New Features**
+
    - Check the [roadmap](./docs/ROADMAP.md) for planned features
    - Discuss major features in an issue first
    - Follow the existing code patterns
 
 3. **📚 Documentation**
+
    - Improve existing documentation
    - Add missing documentation
    - Fix typos and clarify confusing sections
 
 4. **🧪 Tests**
+
    - Add missing tests
    - Improve test coverage
    - Fix flaky tests
 
 5. **🎨 UI/UX Improvements**
+
    - Follow the existing design system
    - Ensure accessibility (WCAG 2.1 AA)
    - Test on multiple devices and browsers
@@ -178,7 +185,7 @@ interface ButtonProps {
 
 export function Button({ onClick, children, variant = 'primary' }: ButtonProps) {
   return (
-    <button 
+    <button
       onClick={onClick}
       className={cn('btn', `btn-${variant}`)}
     >
@@ -235,7 +242,7 @@ describe('ComponentName', () => {
   it('should handle user interactions', async () => {
     const user = userEvent.setup();
     render(<Component />);
-    
+
     await user.click(screen.getByRole('button'));
     expect(mockFunction).toHaveBeenCalled();
   });
@@ -314,20 +321,24 @@ When creating a PR, include:
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Documentation update
 - [ ] Performance improvement
 
 ## Testing
+
 - [ ] Unit tests pass
 - [ ] E2E tests pass
 - [ ] Manual testing completed
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Documentation updated
@@ -354,25 +365,31 @@ Brief description of changes
 
 ```markdown
 ## Bug Description
+
 Clear description of the bug
 
 ## Steps to Reproduce
+
 1. Go to '...'
 2. Click on '...'
 3. See error
 
 ## Expected Behavior
+
 What should happen
 
 ## Actual Behavior
+
 What actually happens
 
 ## Environment
-- Browser: 
-- OS: 
-- Version: 
+
+- Browser:
+- OS:
+- Version:
 
 ## Screenshots
+
 If applicable
 ```
 
@@ -388,18 +405,23 @@ If applicable
 
 ```markdown
 ## Feature Description
+
 Clear description of the feature
 
 ## Use Case
+
 Why is this feature needed?
 
 ## Proposed Solution
+
 How could this be implemented?
 
 ## Alternatives Considered
+
 Other approaches you've thought about
 
 ## Additional Context
+
 Any other relevant information
 ```
 

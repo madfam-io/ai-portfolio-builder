@@ -26,14 +26,20 @@ function getUncoveredFiles(): string[] {
       stdio: 'pipe',
     });
 
-    const coveragePath = path.join(process.cwd(), 'coverage', 'coverage-final.json');
-    
+    const coveragePath = path.join(
+      process.cwd(),
+      'coverage',
+      'coverage-final.json'
+    );
+
     if (!fs.existsSync(coveragePath)) {
       console.error('Coverage report not found. Running tests first...');
       return [];
     }
 
-    const coverageData: CoverageData = JSON.parse(fs.readFileSync(coveragePath, 'utf8'));
+    const coverageData: CoverageData = JSON.parse(
+      fs.readFileSync(coveragePath, 'utf8')
+    );
     const uncoveredFiles: string[] = [];
 
     // Find files with less than 50% coverage
@@ -43,7 +49,11 @@ function getUncoveredFiles(): string[] {
       const total = statements.length;
       const coverage = total > 0 ? (covered / total) * 100 : 0;
 
-      if (coverage < 50 && !filePath.includes('__tests__') && !filePath.includes('.test.')) {
+      if (
+        coverage < 50 &&
+        !filePath.includes('__tests__') &&
+        !filePath.includes('.test.')
+      ) {
         uncoveredFiles.push(filePath);
       }
     }
@@ -61,7 +71,8 @@ function getUncoveredFiles(): string[] {
 function generateTestTemplate(filePath: string): string {
   const fileName = path.basename(filePath);
   const fileNameWithoutExt = fileName.replace(/\.(ts|tsx|js|jsx)$/, '');
-  const isComponent = filePath.includes('/components/') || fileName.endsWith('.tsx');
+  const isComponent =
+    filePath.includes('/components/') || fileName.endsWith('.tsx');
   const isApiRoute = filePath.includes('/api/');
   const relativePath = path.relative(process.cwd(), filePath);
 
@@ -160,7 +171,11 @@ describe('${fileNameWithoutExt}', () => {
  */
 function createTestFile(filePath: string): void {
   const relativePath = path.relative(process.cwd(), filePath);
-  const testDir = path.join(process.cwd(), '__tests__', path.dirname(relativePath));
+  const testDir = path.join(
+    process.cwd(),
+    '__tests__',
+    path.dirname(relativePath)
+  );
   const fileName = path.basename(filePath);
   const testFileName = fileName.replace(/\.(ts|tsx|js|jsx)$/, '.test.$1');
   const testFilePath = path.join(testDir, testFileName);
@@ -177,7 +192,7 @@ function createTestFile(filePath: string): void {
   // Generate and write test template
   const testContent = generateTestTemplate(filePath);
   fs.writeFileSync(testFilePath, testContent);
-  
+
   console.log(`Created test: ${testFilePath}`);
 }
 
@@ -188,7 +203,7 @@ async function main() {
   console.log('🧪 Generating tests for uncovered files...\n');
 
   const uncoveredFiles = getUncoveredFiles();
-  
+
   if (uncoveredFiles.length === 0) {
     console.log('No files with low coverage found!');
     return;
@@ -197,12 +212,15 @@ async function main() {
   console.log(`Found ${uncoveredFiles.length} files with < 50% coverage:\n`);
 
   // Group files by directory
-  const filesByDir = uncoveredFiles.reduce((acc, file) => {
-    const dir = path.dirname(file);
-    if (!acc[dir]) acc[dir] = [];
-    acc[dir].push(file);
-    return acc;
-  }, {} as Record<string, string[]>);
+  const filesByDir = uncoveredFiles.reduce(
+    (acc, file) => {
+      const dir = path.dirname(file);
+      if (!acc[dir]) acc[dir] = [];
+      acc[dir].push(file);
+      return acc;
+    },
+    {} as Record<string, string[]>
+  );
 
   // Display files and create tests
   let created = 0;

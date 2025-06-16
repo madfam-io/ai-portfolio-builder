@@ -6,7 +6,11 @@
 export * from '@/types/errors';
 
 // Export error logger
-export { errorLogger, type ErrorContext, type ErrorLogEntry } from './error-logger';
+export {
+  errorLogger,
+  type ErrorContext,
+  type ErrorLogEntry,
+} from './error-logger';
 
 // Export API error handler
 export {
@@ -31,4 +35,8 @@ export {
 export { globalErrorHandler } from './global-error-handler';
 
 // Export React error boundary components
-export { ErrorBoundary, ComponentErrorBoundary, useErrorHandler } from '@/components/error/error-boundary';
+export {
+  ErrorBoundary,
+  ComponentErrorBoundary,
+  useErrorHandler,
+} from '@/components/error/error-boundary';

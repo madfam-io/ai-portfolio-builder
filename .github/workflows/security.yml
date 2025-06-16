@@ -166,7 +166,7 @@ jobs:
         run: |
           echo "## 🔒 Security Scan Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           echo "### Scan Results" >> $GITHUB_STEP_SUMMARY
           echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
@@ -176,7 +176,7 @@ jobs:
           echo "| OWASP Check | ${{ needs.owasp-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "| License Check | ${{ needs.license-check.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          
+
           if [[ "${{ needs.codeql.result }}" != "success" || 
                 "${{ needs.dependency-scan.result }}" != "success" || 
                 "${{ needs.secret-scan.result }}" != "success" ]]; then

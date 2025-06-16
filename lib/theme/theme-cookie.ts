@@ -7,7 +7,7 @@ const THEME_COOKIE_NAME = 'theme-preference';
 /**
  * Get theme preference from cookie (server-side)
  */
-export async function getThemeFromCookie(): Promise<Theme> {
+async function getThemeFromCookie(): Promise<Theme> {
   const cookieStore = await cookies();
   const themeCookie = cookieStore.get(THEME_COOKIE_NAME);
 
@@ -21,6 +21,6 @@ export async function getThemeFromCookie(): Promise<Theme> {
 /**
  * Set theme preference in cookie (client-side)
  */
-export function setThemeCookie(theme: Theme) {
+function setThemeCookie(theme: Theme) {
   document.cookie = `${THEME_COOKIE_NAME}=${theme}; path=/; max-age=31536000; SameSite=Lax`;
 }

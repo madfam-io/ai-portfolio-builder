@@ -1,10 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import {
-  apiSuccess,
-  versionedApiHandler,
-} from '@/lib/api/response-helpers';
+import { apiSuccess, versionedApiHandler } from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
@@ -39,12 +36,15 @@ export const GET = versionedApiHandler(
       const supabase = await createClient();
 
       if (!supabase) {
-        throw new ExternalServiceError('Supabase', new Error('Database service not available'));
+        throw new ExternalServiceError(
+          'Supabase',
+          new Error('Database service not available')
+        );
       }
 
       // User is already authenticated via middleware
       const { user } = request;
-      
+
       // Parse and validate query parameters
       const url = new URL(request.url);
       const queryParams = Object.fromEntries(url.searchParams.entries());
@@ -82,7 +82,7 @@ export const GET = versionedApiHandler(
           `name.ilike.%${search}%,data->>title.ilike.%${search}%,data->>bio.ilike.%${search}%`
         );
       }
-      
+
       // Apply pagination
       const from = (page - 1) * limit;
       const to = from + limit - 1;
@@ -99,7 +99,7 @@ export const GET = versionedApiHandler(
         });
         throw new ExternalServiceError('Supabase', fetchError);
       }
-      
+
       // Get total count for pagination
       const { count: totalCount } = await supabase
         .from('portfolios')
@@ -129,12 +129,15 @@ export const POST = versionedApiHandler(
       // Create Supabase client
       const supabase = await createClient();
       if (!supabase) {
-        throw new ExternalServiceError('Supabase', new Error('Database not configured'));
+        throw new ExternalServiceError(
+          'Supabase',
+          new Error('Database not configured')
+        );
       }
 
       // User is already authenticated via middleware
       const { user } = request;
-      
+
       // Parse and validate request body
       let body: any;
       try {
@@ -150,7 +153,7 @@ export const POST = versionedApiHandler(
           errors: validation.errors,
         });
       }
-      
+
       // Sanitize input data
       const sanitizedData = sanitizePortfolioData(body);
 
@@ -239,11 +242,13 @@ export const POST = versionedApiHandler(
         // Handle specific errors
         if (insertError.code === '23505') {
           // Unique constraint violation
-          throw new ConflictError('A portfolio with this subdomain already exists');
+          throw new ConflictError(
+            'A portfolio with this subdomain already exists'
+          );
         }
         throw new ExternalServiceError('Supabase', insertError);
       }
-      
+
       // Transform database response to API format
       const responsePortfolio = transformDbPortfolioToApi(portfolio);
 

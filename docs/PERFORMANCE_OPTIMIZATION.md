@@ -17,21 +17,21 @@ This guide covers performance optimization strategies implemented in PRISMA and 
 
 ### Core Web Vitals
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| **LCP** (Largest Contentful Paint) | < 2.5s | 2.3s | ✅ |
-| **FID** (First Input Delay) | < 100ms | 85ms | ✅ |
-| **CLS** (Cumulative Layout Shift) | < 0.1 | 0.08 | ✅ |
-| **TTI** (Time to Interactive) | < 3.5s | 3.2s | ✅ |
+| Metric                             | Target  | Current | Status |
+| ---------------------------------- | ------- | ------- | ------ |
+| **LCP** (Largest Contentful Paint) | < 2.5s  | 2.3s    | ✅     |
+| **FID** (First Input Delay)        | < 100ms | 85ms    | ✅     |
+| **CLS** (Cumulative Layout Shift)  | < 0.1   | 0.08    | ✅     |
+| **TTI** (Time to Interactive)      | < 3.5s  | 3.2s    | ✅     |
 
 ### Application Metrics
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| **Bundle Size** (JS) | < 200KB | 185KB | ✅ |
-| **Bundle Size** (CSS) | < 50KB | 42KB | ✅ |
-| **API Response** (p95) | < 500ms | 450ms | ✅ |
-| **AI Processing** | < 5s | 4.2s | ✅ |
+| Metric                 | Target  | Current | Status |
+| ---------------------- | ------- | ------- | ------ |
+| **Bundle Size** (JS)   | < 200KB | 185KB   | ✅     |
+| **Bundle Size** (CSS)  | < 50KB  | 42KB    | ✅     |
+| **API Response** (p95) | < 500ms | 450ms   | ✅     |
+| **AI Processing**      | < 5s    | 4.2s    | ✅     |
 
 ## 📦 Bundle Optimization
 
@@ -100,7 +100,7 @@ const MemoizedComponent = memo(ExpensiveComponent, (prevProps, nextProps) => {
 
 ```typescript
 // Zustand selective subscriptions
-const user = useAuthStore((state) => state.user);
+const user = useAuthStore(state => state.user);
 // Instead of
 const { user, isLoading, error } = useAuthStore();
 
@@ -132,7 +132,7 @@ import { FixedSizeList } from 'react-window';
 const { data, error } = useSWR('/api/portfolios', fetcher, {
   revalidateOnFocus: false,
   revalidateOnReconnect: false,
-  refreshInterval: 300000 // 5 minutes
+  refreshInterval: 300000, // 5 minutes
 });
 
 // 2. React Query for complex caching
@@ -140,7 +140,7 @@ const { data } = useQuery({
   queryKey: ['portfolio', id],
   queryFn: fetchPortfolio,
   staleTime: 5 * 60 * 1000, // 5 minutes
-  cacheTime: 10 * 60 * 1000 // 10 minutes
+  cacheTime: 10 * 60 * 1000, // 10 minutes
 });
 ```
 
@@ -150,22 +150,22 @@ const { data } = useQuery({
 // API Route caching
 export async function GET(request: Request) {
   const cacheKey = `portfolio:${id}`;
-  
+
   // Check cache
   const cached = await cache.get(cacheKey);
   if (cached) {
     return Response.json(cached, {
       headers: {
         'X-Cache': 'HIT',
-        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600'
-      }
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
     });
   }
-  
+
   // Fetch and cache
   const data = await fetchData();
   await cache.set(cacheKey, data, 300);
-  
+
   return Response.json(data);
 }
 ```
@@ -179,7 +179,7 @@ export const revalidate = 3600; // Revalidate every hour
 // Generate static params for dynamic routes
 export async function generateStaticParams() {
   const templates = await getTemplates();
-  return templates.map((template) => ({
+  return templates.map(template => ({
     slug: template.slug,
   }));
 }
@@ -222,7 +222,7 @@ import Image from 'next/image';
 const LazyImage = ({ src, alt }) => {
   const [isIntersecting, setIsIntersecting] = useState(false);
   const imgRef = useRef(null);
-  
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -233,14 +233,14 @@ const LazyImage = ({ src, alt }) => {
       },
       { threshold: 0.1 }
     );
-    
+
     if (imgRef.current) {
       observer.observe(imgRef.current);
     }
-    
+
     return () => observer.disconnect();
   }, []);
-  
+
   return (
     <div ref={imgRef}>
       {isIntersecting && <img src={src} alt={alt} />}
@@ -272,7 +272,7 @@ model Portfolio {
   userId    String
   title     String
   createdAt DateTime @default(now())
-  
+
   @@index([userId, createdAt]) // Composite index
 }
 
@@ -326,7 +326,11 @@ getLCP(sendToAnalytics);
 performance.mark('portfolio-load-start');
 // ... load portfolio
 performance.mark('portfolio-load-end');
-performance.measure('portfolio-load', 'portfolio-load-start', 'portfolio-load-end');
+performance.measure(
+  'portfolio-load',
+  'portfolio-load-start',
+  'portfolio-load-end'
+);
 ```
 
 ### Lighthouse CI
@@ -371,13 +375,15 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const page = parseInt(searchParams.get('page') || '1');
   const limit = Math.min(parseInt(searchParams.get('limit') || '10'), 50);
-  
+
   const portfolios = await prisma.portfolio.findMany({
     skip: (page - 1) * limit,
     take: limit,
-    select: { /* minimal fields */ }
+    select: {
+      /* minimal fields */
+    },
   });
-  
+
   return Response.json({ portfolios, page, limit });
 }
 

@@ -21,37 +21,33 @@ export async function createClient() {
   // TypeScript knows these are defined if services.supabase is true
   const url = env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
+
   if (!url || !anonKey) {
     logger.warn('Supabase URL or ANON_KEY not configured');
     return null;
   }
-  
-  return createServerClient(
-    url,
-    anonKey,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {
-            // Handle cases where cookies can't be set (e.g., in middleware)
-            logger.warn('Failed to set cookie:', { error });
-          }
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: '', ...options });
-          } catch (error) {
-            // Handle cases where cookies can't be removed
-            logger.warn('Failed to remove cookie:', { error });
-          }
-        },
+
+  return createServerClient(url, anonKey, {
+    cookies: {
+      get(name: string) {
+        return cookieStore.get(name)?.value;
       },
-    }
-  );
+      set(name: string, value: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value, ...options });
+        } catch (error) {
+          // Handle cases where cookies can't be set (e.g., in middleware)
+          logger.warn('Failed to set cookie:', { error });
+        }
+      },
+      remove(name: string, options: CookieOptions) {
+        try {
+          cookieStore.set({ name, value: '', ...options });
+        } catch (error) {
+          // Handle cases where cookies can't be removed
+          logger.warn('Failed to remove cookie:', { error });
+        }
+      },
+    },
+  });
 }

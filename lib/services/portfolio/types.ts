@@ -8,7 +8,7 @@ import type { Portfolio } from '@/types/portfolio';
 /**
  * Portfolio service configuration options
  */
-export interface PortfolioServiceConfig {
+interface PortfolioServiceConfig {
   /**
    * Use mock data instead of real API calls
    * @default true in development, false in production
@@ -30,7 +30,7 @@ export interface PortfolioServiceConfig {
 /**
  * Portfolio query options for filtering and pagination
  */
-export interface PortfolioQueryOptions {
+interface PortfolioQueryOptions {
   /**
    * Filter by user ID
    */
@@ -73,7 +73,7 @@ export interface PortfolioQueryOptions {
 /**
  * Portfolio service response wrapper
  */
-export interface ServiceResponse<T> {
+interface ServiceResponse<T> {
   /**
    * Response data
    */
@@ -103,7 +103,7 @@ export interface ServiceResponse<T> {
 /**
  * Portfolio analytics data
  */
-export interface PortfolioAnalytics {
+interface PortfolioAnalytics {
   portfolioId: string;
   totalViews: number;
   uniqueVisitors: number;
@@ -140,7 +140,7 @@ export interface ValidationResult {
 /**
  * Portfolio export options
  */
-export interface ExportOptions {
+interface ExportOptions {
   format: 'pdf' | 'json' | 'html';
   includeAnalytics?: boolean;
   includePrivateData?: boolean;
@@ -150,7 +150,7 @@ export interface ExportOptions {
 /**
  * Portfolio import result
  */
-export interface ImportResult {
+interface ImportResult {
   success: boolean;
   portfolio?: Portfolio;
   errors?: string[];

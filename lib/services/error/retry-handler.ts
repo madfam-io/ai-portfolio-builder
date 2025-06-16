@@ -20,7 +20,7 @@ const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
   initialDelay: 1000,
   maxDelay: 10000,
   backoffMultiplier: 2,
-  retryCondition: (error) => {
+  retryCondition: error => {
     // Retry on network errors and 5xx status codes
     if (error instanceof ExternalServiceError) {
       return true;
@@ -29,9 +29,11 @@ const DEFAULT_RETRY_OPTIONS: Required<RetryOptions> = {
       return error.statusCode >= 500 && error.statusCode < 600;
     }
     if (error instanceof Error) {
-      return error.message.includes('network') || 
-             error.message.includes('timeout') ||
-             error.message.includes('ECONNREFUSED');
+      return (
+        error.message.includes('network') ||
+        error.message.includes('timeout') ||
+        error.message.includes('ECONNREFUSED')
+      );
     }
     return false;
   },
@@ -122,16 +124,16 @@ export class CircuitBreaker {
 
     try {
       const result = await fn();
-      
+
       // Reset on success
       if (this.state === 'half-open') {
         this.reset();
       }
-      
+
       return result;
     } catch (error) {
       this.recordFailure();
-      
+
       if (this.failureCount >= this.threshold) {
         this.trip();
       }
@@ -176,10 +178,9 @@ export class CircuitBreaker {
 /**
  * Debounced retry for user-triggered actions
  */
-export function createDebouncedRetry<T extends (...args: any[]) => Promise<any>>(
-  fn: T,
-  delay: number = 1000
-): T {
+export function createDebouncedRetry<
+  T extends (...args: any[]) => Promise<any>,
+>(fn: T, delay: number = 1000): T {
   let timeoutId: NodeJS.Timeout | null = null;
   let lastArgs: any[] | null = null;
 
@@ -225,11 +226,11 @@ export async function withTimeout<T>(
     setTimeout(() => {
       reject(
         timeoutError ||
-        new AppError(
-          `Operation timed out after ${timeoutMs}ms`,
-          'TIMEOUT',
-          408
-        )
+          new AppError(
+            `Operation timed out after ${timeoutMs}ms`,
+            'TIMEOUT',
+            408
+          )
       );
     }, timeoutMs);
   });

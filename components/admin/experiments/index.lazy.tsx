@@ -24,6 +24,6 @@ export const ConversionChart = dynamic(
 );
 
 // Preload admin components
-export function preloadAdminComponents(): Promise<void> {
+function preloadAdminComponents(): Promise<void> {
   return Promise.all([import('./charts/ConversionChart')]).then(() => {});
 }

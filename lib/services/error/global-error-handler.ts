@@ -32,7 +32,10 @@ class GlobalErrorHandler {
     window.addEventListener('error', this.handleError);
 
     // Handle unhandled promise rejections
-    window.addEventListener('unhandledrejection', this.handleUnhandledRejection);
+    window.addEventListener(
+      'unhandledrejection',
+      this.handleUnhandledRejection
+    );
 
     // Log initialization
     errorLogger.logInfo('Global error handler initialized');
@@ -47,7 +50,10 @@ class GlobalErrorHandler {
     }
 
     window.removeEventListener('error', this.handleError);
-    window.removeEventListener('unhandledrejection', this.handleUnhandledRejection);
+    window.removeEventListener(
+      'unhandledrejection',
+      this.handleUnhandledRejection
+    );
 
     this.initialized = false;
   }
@@ -80,9 +86,10 @@ class GlobalErrorHandler {
    * Handle unhandled promise rejections
    */
   private handleUnhandledRejection = (event: PromiseRejectionEvent): void => {
-    const error = event.reason instanceof Error 
-      ? event.reason 
-      : new Error(String(event.reason));
+    const error =
+      event.reason instanceof Error
+        ? event.reason
+        : new Error(String(event.reason));
 
     errorLogger.logError(error, {
       component: 'GlobalErrorHandler',

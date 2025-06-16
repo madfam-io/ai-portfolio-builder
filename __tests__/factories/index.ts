@@ -16,7 +16,9 @@ export const createUser = (overrides = {}) => ({
 });
 
 // Portfolio factory
-export const createPortfolio = (overrides: Partial<Portfolio> = {}): Portfolio => ({
+export const createPortfolio = (
+  overrides: Partial<Portfolio> = {}
+): Portfolio => ({
   id: `portfolio-${Math.random().toString(36).substr(2, 9)}`,
   userId: 'user-123',
   title: 'My Professional Portfolio',
@@ -50,7 +52,8 @@ export const createPortfolio = (overrides: Partial<Portfolio> = {}): Portfolio =
     },
     about: {
       title: 'About Me',
-      content: 'Passionate developer with 5+ years of experience in building scalable web applications.',
+      content:
+        'Passionate developer with 5+ years of experience in building scalable web applications.',
       highlights: [
         '5+ years of professional experience',
         'Full stack development expertise',
@@ -75,7 +78,8 @@ export const createPortfolio = (overrides: Partial<Portfolio> = {}): Portfolio =
       {
         id: 'proj-1',
         title: 'E-commerce Platform',
-        description: 'Built a scalable e-commerce platform serving 10k+ users daily',
+        description:
+          'Built a scalable e-commerce platform serving 10k+ users daily',
         technologies: ['React', 'Node.js', 'PostgreSQL'],
         link: 'https://example.com',
         image: '/images/project1.jpg',
@@ -160,7 +164,7 @@ export const createEducation = (overrides = {}) => ({
   year: '2019',
   description: 'Computer Science major',
   gpa: '3.8',
-  honors: ['Dean\'s List', 'Cum Laude'],
+  honors: ["Dean's List", 'Cum Laude'],
   ...overrides,
 });
 
@@ -273,7 +277,11 @@ export const createApiSuccess = <T = any>(data: T, meta = {}) => ({
   },
 });
 
-export const createApiError = (message: string, code = 'UNKNOWN_ERROR', details = {}) => ({
+export const createApiError = (
+  message: string,
+  code = 'UNKNOWN_ERROR',
+  details = {}
+) => ({
   success: false,
   data: null,
   error: {
@@ -293,7 +301,7 @@ export const createFile = (overrides: Partial<File> = {}): File => {
     type: 'text/plain',
     lastModified: Date.now(),
   });
-  
+
   Object.assign(file, overrides);
   return file;
 };
@@ -309,7 +317,9 @@ export const createImageFile = (name = 'test.jpg'): File => {
 
 // PDF file factory
 export const createPDFFile = (name = 'resume.pdf'): File => {
-  const blob = new Blob(['%PDF-1.4 fake pdf content'], { type: 'application/pdf' });
+  const blob = new Blob(['%PDF-1.4 fake pdf content'], {
+    type: 'application/pdf',
+  });
   return new File([blob], name, {
     type: 'application/pdf',
     lastModified: Date.now(),

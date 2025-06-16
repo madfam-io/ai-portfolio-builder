@@ -182,7 +182,7 @@ export const createMockTranslations = (overrides?: any) => ({
     next: 'Siguiente',
     previous: 'Anterior',
     close: 'Cerrar',
-    
+
     // Additional keys for specific components
     publish: 'Publicar',
     unpublish: 'Despublicar',
@@ -191,20 +191,20 @@ export const createMockTranslations = (overrides?: any) => ({
     share: 'Compartir',
     copy: 'Copiar',
     copied: 'Copiado',
-    
+
     // Form validations
     required: 'Este campo es requerido',
     invalidEmail: 'Email inválido',
     minLength: 'Mínimo {min} caracteres',
     maxLength: 'Máximo {max} caracteres',
-    
+
     // API responses
     savedSuccessfully: 'Guardado exitosamente',
     publishedSuccessfully: 'Publicado exitosamente',
     deletedSuccessfully: 'Eliminado exitosamente',
     somethingWentWrong: 'Algo salió mal',
     tryAgainLater: 'Intenta nuevamente más tarde',
-    
+
     ...(overrides?.es || {}),
   },
   en: {
@@ -221,7 +221,7 @@ export const createMockTranslations = (overrides?: any) => ({
     next: 'Next',
     previous: 'Previous',
     close: 'Close',
-    
+
     // Additional keys
     publish: 'Publish',
     unpublish: 'Unpublish',
@@ -230,20 +230,20 @@ export const createMockTranslations = (overrides?: any) => ({
     share: 'Share',
     copy: 'Copy',
     copied: 'Copied',
-    
+
     // Form validations
     required: 'This field is required',
     invalidEmail: 'Invalid email',
     minLength: 'Minimum {min} characters',
     maxLength: 'Maximum {max} characters',
-    
+
     // API responses
     savedSuccessfully: 'Saved successfully',
     publishedSuccessfully: 'Published successfully',
     deletedSuccessfully: 'Deleted successfully',
     somethingWentWrong: 'Something went wrong',
     tryAgainLater: 'Please try again later',
-    
+
     ...(overrides?.en || {}),
   },
 });
@@ -258,9 +258,7 @@ export const createTestWrapper = ({
   session?: Session | null;
   router?: Partial<NextRouter>;
 } = {}) => {
-  const Wrapper = ({ children }: { children: ReactNode }) => (
-    <>{children}</>
-  );
+  const Wrapper = ({ children }: { children: ReactNode }) => <>{children}</>;
 
   return Wrapper;
 };
@@ -280,7 +278,7 @@ export const renderWithOptions = (
   } = {}
 ) => {
   const Wrapper = createTestWrapper({ initialLanguage, session, router });
-  
+
   return rtlRender(ui, {
     wrapper: Wrapper,
     ...renderOptions,
@@ -288,12 +286,13 @@ export const renderWithOptions = (
 };
 
 // Wait for async operations
-export const waitForAsync = () => new Promise(resolve => setTimeout(resolve, 0));
+export const waitForAsync = () =>
+  new Promise(resolve => setTimeout(resolve, 0));
 
 // Mock console methods
 export const mockConsole = () => {
   const originalConsole = { ...console };
-  
+
   beforeAll(() => {
     global.console = {
       ...console,
@@ -302,11 +301,11 @@ export const mockConsole = () => {
       log: jest.fn(),
     };
   });
-  
+
   afterAll(() => {
     global.console = originalConsole;
   });
-  
+
   return {
     expectNoErrors: () => {
       expect(console.error).not.toHaveBeenCalled();
@@ -325,7 +324,7 @@ export const mockWindow = () => {
     prompt: window.prompt,
     location: window.location,
   };
-  
+
   beforeAll(() => {
     window.alert = jest.fn();
     window.confirm = jest.fn(() => true);
@@ -339,7 +338,7 @@ export const mockWindow = () => {
       replace: jest.fn(),
     };
   });
-  
+
   afterAll(() => {
     window.alert = originalWindow.alert;
     window.confirm = originalWindow.confirm;
@@ -357,12 +356,12 @@ export const factories = {
     createdAt: new Date().toISOString(),
     ...overrides,
   }),
-  
+
   portfolio: (overrides = {}) => ({
     ...mockPortfolioData,
     ...overrides,
   }),
-  
+
   project: (overrides = {}) => ({
     id: 'project-123',
     title: 'Test Project',
@@ -372,7 +371,7 @@ export const factories = {
     image: '/images/project.jpg',
     ...overrides,
   }),
-  
+
   analytics: (overrides = {}) => ({
     ...mockAnalyticsData,
     ...overrides,
@@ -380,20 +379,22 @@ export const factories = {
 };
 
 // API route test helpers
-export const createMockRequest = (options: {
-  method?: string;
-  headers?: Record<string, string>;
-  body?: any;
-  query?: Record<string, string>;
-  cookies?: Record<string, string>;
-} = {}) => {
+export const createMockRequest = (
+  options: {
+    method?: string;
+    headers?: Record<string, string>;
+    body?: any;
+    query?: Record<string, string>;
+    cookies?: Record<string, string>;
+  } = {}
+) => {
   const url = new URL('http://localhost:3000/api/test');
   if (options.query) {
     Object.entries(options.query).forEach(([key, value]) => {
       url.searchParams.set(key, value);
     });
   }
-  
+
   return new Request(url.toString(), {
     method: options.method || 'GET',
     headers: new Headers({
@@ -408,7 +409,7 @@ export const createMockResponse = () => {
   let statusCode = 200;
   let headers = new Headers();
   let body: any = null;
-  
+
   const response = {
     status: (code: number) => {
       statusCode = code;
@@ -434,7 +435,7 @@ export const createMockResponse = () => {
     getBody: () => body,
     getHeaders: () => headers,
   };
-  
+
   return response;
 };
 

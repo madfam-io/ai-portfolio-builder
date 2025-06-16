@@ -149,7 +149,9 @@ export class DashboardAnalyticsService {
       mostActiveRepository: mostActiveRepository
         ? {
             repository: mostActiveRepository,
-            commitCount: mostActiveRepoId ? (repoActivity.get(mostActiveRepoId) || 0) : 0,
+            commitCount: mostActiveRepoId
+              ? repoActivity.get(mostActiveRepoId) || 0
+              : 0,
           }
         : undefined,
       topContributors:

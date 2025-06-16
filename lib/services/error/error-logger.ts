@@ -178,7 +178,10 @@ export class ErrorLogger {
       console.error(`${color}Details:${reset}`, entry.details);
     }
 
-    if (entry.context?.metadata && Object.keys(entry.context.metadata).length > 0) {
+    if (
+      entry.context?.metadata &&
+      Object.keys(entry.context.metadata).length > 0
+    ) {
       console.error(`${color}Metadata:${reset}`, entry.context.metadata);
     }
   }

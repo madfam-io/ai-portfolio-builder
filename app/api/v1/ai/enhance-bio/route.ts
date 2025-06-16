@@ -50,7 +50,10 @@ export const POST = createApiHandler(async (request: NextRequest) => {
   // 1. Authenticate user
   const supabase = await createClient();
   if (!supabase) {
-    throw new ExternalServiceError('Supabase', new Error('Database connection failed'));
+    throw new ExternalServiceError(
+      'Supabase',
+      new Error('Database connection failed')
+    );
   }
 
   const {
@@ -79,7 +82,10 @@ export const POST = createApiHandler(async (request: NextRequest) => {
   // 4. Check service health
   const isHealthy = await aiService.healthCheck();
   if (!isHealthy) {
-    throw new ExternalServiceError('HuggingFace', new Error('AI service temporarily unavailable'));
+    throw new ExternalServiceError(
+      'HuggingFace',
+      new Error('AI service temporarily unavailable')
+    );
   }
 
   // 5. Enhance bio using AI
@@ -111,7 +117,10 @@ export const POST = createApiHandler(async (request: NextRequest) => {
 export const GET = createApiHandler(async () => {
   const supabase = await createClient();
   if (!supabase) {
-    throw new ExternalServiceError('Supabase', new Error('Database connection failed'));
+    throw new ExternalServiceError(
+      'Supabase',
+      new Error('Database connection failed')
+    );
   }
 
   const {

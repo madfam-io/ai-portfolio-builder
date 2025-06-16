@@ -1,6 +1,13 @@
 'use client';
 
-import { ArrowLeft, Globe, Search, CheckCircle, AlertCircle, Sparkles } from 'lucide-react';
+import {
+  ArrowLeft,
+  Globe,
+  Search,
+  CheckCircle,
+  AlertCircle,
+  Sparkles,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Portfolio } from '@/types/portfolio';
@@ -31,7 +38,7 @@ export function ReviewStep({
 }: ReviewStepProps) {
   const isReadyToPublish = () => {
     if (!currentPortfolio) return false;
-    
+
     // Check if portfolio has minimum required content
     const hasBasicInfo = currentPortfolio.title && currentPortfolio.bio;
     const hasContent =
@@ -50,8 +57,7 @@ export function ReviewStep({
           {t.reviewAndPublish || 'Review and Publish'}
         </h2>
         <p className="text-muted-foreground">
-          {t.reviewDescription ||
-            'Review your settings before publishing'}
+          {t.reviewDescription || 'Review your settings before publishing'}
         </p>
       </div>
 
@@ -146,8 +152,7 @@ export function ReviewStep({
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
                 <span>
-                  {t.publishStep1 ||
-                    'Your portfolio will be live immediately'}
+                  {t.publishStep1 || 'Your portfolio will be live immediately'}
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -160,8 +165,7 @@ export function ReviewStep({
               <li className="flex items-start gap-2">
                 <CheckCircle className="h-4 w-4 text-green-500 mt-0.5" />
                 <span>
-                  {t.publishStep3 ||
-                    'You can update your portfolio anytime'}
+                  {t.publishStep3 || 'You can update your portfolio anytime'}
                 </span>
               </li>
             </ul>

@@ -16,7 +16,10 @@ The AI Portfolio Builder uses a comprehensive validation system to ensure data i
 ### Method 1: Using createValidatedHandler
 
 ```typescript
-import { createValidatedHandler, commonSchemas } from '@/lib/api/middleware/validation';
+import {
+  createValidatedHandler,
+  commonSchemas,
+} from '@/lib/api/middleware/validation';
 import { createPortfolioSchema } from '@/lib/validation/schemas/portfolio';
 import { z } from 'zod';
 
@@ -32,10 +35,10 @@ export const POST = createValidatedHandler(
   async (request, context) => {
     // Access validated data
     const { body, query } = request.validated;
-    
+
     // Your route logic here
     const portfolio = await createPortfolio(body);
-    
+
     return NextResponse.json(portfolio);
   }
 );
@@ -53,18 +56,18 @@ export async function POST(request: NextRequest) {
     body: enhanceBioSchema,
     sanitize: true, // Enable XSS sanitization
   });
-  
+
   const validationResult = await validation(request);
   if (validationResult) {
     return validationResult; // Return validation error
   }
-  
+
   // Access validated data
   const { text, model, tone } = (request as any).validated.body;
-  
+
   // Your route logic here
   const enhanced = await enhanceBio(text, { model, tone });
-  
+
   return NextResponse.json({ enhanced });
 }
 ```
@@ -80,13 +83,13 @@ export async function GET(request: NextRequest) {
     // Parse query parameters
     const { searchParams } = new URL(request.url);
     const query = Object.fromEntries(searchParams.entries());
-    
+
     // Validate
     const validated = portfolioQuerySchema.parse(query);
-    
+
     // Use validated data
     const portfolios = await getPortfolios(validated);
-    
+
     return apiSuccess(portfolios);
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -95,7 +98,7 @@ export async function GET(request: NextRequest) {
         errors: error.errors,
       });
     }
-    
+
     return apiError('Internal server error');
   }
 }
@@ -134,13 +137,13 @@ import {
 import { commonSchemas } from '@/lib/api/middleware/validation';
 
 // Available schemas:
-commonSchemas.id          // UUID validation
-commonSchemas.email       // Email validation
-commonSchemas.password    // Strong password validation
-commonSchemas.url         // URL validation
-commonSchemas.pagination  // Pagination params
-commonSchemas.dateRange   // Date range validation
-commonSchemas.fileUpload  // File upload validation
+commonSchemas.id; // UUID validation
+commonSchemas.email; // Email validation
+commonSchemas.password; // Strong password validation
+commonSchemas.url; // URL validation
+commonSchemas.pagination; // Pagination params
+commonSchemas.dateRange; // Date range validation
+commonSchemas.fileUpload; // File upload validation
 ```
 
 ## Security Features
@@ -209,13 +212,14 @@ function processPortfolio(data: CreatePortfolioInput) {
 5. **Custom validation**: Add refinements for business logic
 
 ```typescript
-const customSchema = z.object({
-  startDate: z.date(),
-  endDate: z.date(),
-}).refine(
-  (data) => data.endDate > data.startDate,
-  { message: "End date must be after start date" }
-);
+const customSchema = z
+  .object({
+    startDate: z.date(),
+    endDate: z.date(),
+  })
+  .refine(data => data.endDate > data.startDate, {
+    message: 'End date must be after start date',
+  });
 ```
 
 ## Testing Validation
@@ -230,17 +234,17 @@ describe('Portfolio Validation', () => {
       template: 'developer',
       email: 'john@example.com',
     };
-    
+
     expect(() => createPortfolioSchema.parse(valid)).not.toThrow();
   });
-  
+
   it('should reject invalid data', () => {
     const invalid = {
       name: 'J', // Too short
       template: 'invalid', // Not in enum
       email: 'not-an-email',
     };
-    
+
     expect(() => createPortfolioSchema.parse(invalid)).toThrow();
   });
 });

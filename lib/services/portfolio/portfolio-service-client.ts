@@ -94,4 +94,4 @@ export class PortfolioServiceClient {
   }
 }
 
-export const portfolioServiceClient = new PortfolioServiceClient();
+const portfolioServiceClient = new PortfolioServiceClient();

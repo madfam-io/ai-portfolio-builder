@@ -14,7 +14,7 @@ import { useUIStore } from './ui-store';
 /**
  * Hook for authenticated user data with loading state
  */
-export function useUser() {
+function useUser() {
   const { user, isLoading, isAuthenticated } = useAuthStore(
     state => ({
       user: state.user,
@@ -35,7 +35,7 @@ export function useUser() {
 /**
  * Hook for current portfolio with auto-save
  */
-export function useCurrentPortfolio() {
+function useCurrentPortfolio() {
   const {
     currentPortfolio,
     isEditing,
@@ -104,7 +104,7 @@ export function useCurrentPortfolio() {
 /**
  * Hook for theme management with system detection
  */
-export function useTheme() {
+function useTheme() {
   const { theme, setTheme } = useUIStore(
     state => ({
       theme: state.theme,
@@ -164,7 +164,7 @@ export function useTheme() {
 /**
  * Hook for AI model selection with quota tracking
  */
-export function useAIModels() {
+function useAIModels() {
   const {
     selectedModels,
     availableModels,
@@ -214,7 +214,7 @@ export function useAIModels() {
 /**
  * Hook for modal management
  */
-export function useModal(modalId: string) {
+function useModal(modalId: string) {
   const { modals, openModal, closeModal } = useUIStore(
     state => ({
       modals: state.modals,
@@ -247,7 +247,7 @@ export function useModal(modalId: string) {
 /**
  * Hook for toast notifications
  */
-export function useToasts() {
+function useToasts() {
   const { toasts, showToast, removeToast, clearToasts } = useUIStore(
     state => ({
       toasts: state.toasts,
@@ -277,7 +277,7 @@ export function useToasts() {
 /**
  * Hook for global loading state
  */
-export function useGlobalLoading() {
+function useGlobalLoading() {
   const { globalLoading, loadingMessage, setGlobalLoading } = useUIStore(
     state => ({
       globalLoading: state.globalLoading,
@@ -310,7 +310,7 @@ export function useGlobalLoading() {
 /**
  * Hook for portfolio list with filtering and sorting
  */
-export function usePortfolios(options?: {
+function usePortfolios(options?: {
   filter?: (portfolio: unknown) => boolean;
   sort?: (a: unknown, b: unknown) => number;
 }) {

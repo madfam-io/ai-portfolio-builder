@@ -38,8 +38,8 @@ export function EditorCanvas({
         ...newProject,
       };
       const updatedProjects = [...portfolio.projects, project];
-      onDataChange({ 
-        projects: updatedProjects
+      onDataChange({
+        projects: updatedProjects,
       });
       setNewProject({ title: '', description: '', technologies: [], link: '' });
       setShowProjectModal(false);
@@ -155,7 +155,9 @@ export function EditorCanvas({
                   type="text"
                   className="w-full px-3 py-2 border rounded-md"
                   value={newProject.title}
-                  onChange={e => setNewProject({ ...newProject, title: e.target.value })}
+                  onChange={e =>
+                    setNewProject({ ...newProject, title: e.target.value })
+                  }
                   placeholder={t.enterProjectTitle || 'Enter project title'}
                 />
               </div>
@@ -167,7 +169,12 @@ export function EditorCanvas({
                   className="w-full px-3 py-2 border rounded-md"
                   rows={3}
                   value={newProject.description}
-                  onChange={e => setNewProject({ ...newProject, description: e.target.value })}
+                  onChange={e =>
+                    setNewProject({
+                      ...newProject,
+                      description: e.target.value,
+                    })
+                  }
                   placeholder={t.describeProject || 'Describe your project...'}
                 />
               </div>
@@ -179,7 +186,9 @@ export function EditorCanvas({
                   type="url"
                   className="w-full px-3 py-2 border rounded-md"
                   value={newProject.link}
-                  onChange={e => setNewProject({ ...newProject, link: e.target.value })}
+                  onChange={e =>
+                    setNewProject({ ...newProject, link: e.target.value })
+                  }
                   placeholder="https://..."
                 />
               </div>

@@ -1,11 +1,11 @@
 /**
  * Portfolio Variants Types
- * 
+ *
  * Enables professionals to create multiple versions of their portfolio
  * tailored to different audiences and use cases
  */
 
-export type AudienceType = 
+export type AudienceType =
   | 'recruiter'
   | 'hiring-manager'
   | 'client'
@@ -42,26 +42,26 @@ export interface AudienceProfile {
   type: AudienceType;
   name: string;
   description?: string;
-  
+
   // Target characteristics
   industry?: IndustryCategory;
   companySize?: 'startup' | 'small' | 'medium' | 'large' | 'enterprise';
   experienceLevel?: ExperienceLevel;
-  
+
   // Geographic and cultural
   location?: string;
   language?: string;
   culturalContext?: string;
-  
+
   // Decision factors
   keyPriorities?: string[];
   painPoints?: string[];
   decisionCriteria?: string[];
-  
+
   // Keywords and phrases
   importantKeywords?: string[];
   avoidKeywords?: string[];
-  
+
   // Tone and style preferences
   communicationStyle?: 'formal' | 'casual' | 'technical' | 'creative';
   preferredLength?: 'concise' | 'detailed' | 'comprehensive';
@@ -72,47 +72,53 @@ export interface PortfolioVariant {
   portfolioId: string;
   name: string;
   slug: string; // URL-friendly identifier
-  
+
   // Audience targeting
   audienceProfile: AudienceProfile;
-  
+
   // Variant settings
   isDefault: boolean;
   isPublished: boolean;
-  
+
   // Content overrides (partial updates to base portfolio)
   contentOverrides: {
     title?: string;
     tagline?: string;
     bio?: string;
     headline?: string;
-    
+
     // Section visibility
     hiddenSections?: string[];
     sectionOrder?: string[];
-    
+
     // Project selection and ordering
     featuredProjects?: string[];
     projectOrder?: string[];
-    projectOverrides?: Record<string, {
-      description?: string;
-      highlights?: string[];
-      hidden?: boolean;
-    }>;
-    
+    projectOverrides?: Record<
+      string,
+      {
+        description?: string;
+        highlights?: string[];
+        hidden?: boolean;
+      }
+    >;
+
     // Experience emphasis
-    experienceOverrides?: Record<string, {
-      description?: string;
-      highlights?: string[];
-      emphasis?: 'high' | 'normal' | 'low';
-    }>;
-    
+    experienceOverrides?: Record<
+      string,
+      {
+        description?: string;
+        highlights?: string[];
+        emphasis?: 'high' | 'normal' | 'low';
+      }
+    >;
+
     // Skill prioritization
     primarySkills?: string[];
     secondarySkills?: string[];
     hiddenSkills?: string[];
   };
-  
+
   // AI optimization settings
   aiOptimization?: {
     autoOptimize: boolean;
@@ -120,7 +126,7 @@ export interface PortfolioVariant {
     lastOptimized?: Date;
     performanceScore?: number;
   };
-  
+
   // Analytics
   analytics?: {
     views: number;
@@ -129,13 +135,13 @@ export interface PortfolioVariant {
     conversionRate: number;
     lastViewed?: Date;
   };
-  
+
   // Metadata
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface VariantComparison {
+interface VariantComparison {
   variantA: string;
   variantB: string;
   metrics: {
@@ -169,7 +175,11 @@ export interface VariantAnalytics {
     scrollDepth: number;
     clickThroughRate: number;
     conversionEvents: Array<{
-      type: 'contact_click' | 'download_resume' | 'social_click' | 'project_view';
+      type:
+        | 'contact_click'
+        | 'download_resume'
+        | 'social_click'
+        | 'project_view';
       count: number;
     }>;
   };
@@ -191,7 +201,7 @@ export interface CreateVariantInput {
 }
 
 // Type for variant preview/comparison
-export interface VariantPreview {
+interface VariantPreview {
   id: string;
   name: string;
   audienceType: AudienceType;

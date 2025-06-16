@@ -61,7 +61,7 @@ export class DeepSeekService implements AIService {
     try {
       const prompt = buildBioPrompt(bio, context);
       const response = await this.apiClient.callAPI(prompt);
-      
+
       this.updateUsageStats(response, Date.now() - startTime);
       return parseBioResponse(response, bio);
     } catch (error) {
@@ -95,7 +95,7 @@ export class DeepSeekService implements AIService {
         industryContext
       );
       const response = await this.apiClient.callAPI(prompt);
-      
+
       this.updateUsageStats(response, Date.now() - startTime);
       return parseProjectResponse(response, description, technologies);
     } catch (error) {
@@ -123,7 +123,7 @@ export class DeepSeekService implements AIService {
     try {
       const prompt = buildTemplatePrompt(profile);
       const response = await this.apiClient.callAPI(prompt);
-      
+
       this.updateUsageStats(response, Date.now() - startTime);
       return parseTemplateResponse(response);
     } catch (error) {
@@ -149,7 +149,7 @@ export class DeepSeekService implements AIService {
     try {
       const prompt = buildScoringPrompt(content, type);
       const response = await this.apiClient.callAPI(prompt);
-      
+
       this.updateUsageStats(response, Date.now() - startTime);
       return parseScoringResponse(response);
     } catch (error) {
@@ -201,9 +201,10 @@ export class DeepSeekService implements AIService {
   private updateUsageStats(response: any, responseTime: number): void {
     this.usageStats.successfulRequests++;
     this.usageStats.totalResponseTime += responseTime;
-    this.usageStats.costToday += this.calculateCost(response.usage?.total_tokens || 0);
+    this.usageStats.costToday += this.calculateCost(
+      response.usage?.total_tokens || 0
+    );
   }
-
 
   /**
    * Calculate cost based on token usage
@@ -215,4 +216,4 @@ export class DeepSeekService implements AIService {
 }
 
 // Export singleton instance
-export const deepSeekService = new DeepSeekService();
+const deepSeekService = new DeepSeekService();

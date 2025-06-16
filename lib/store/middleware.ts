@@ -9,7 +9,7 @@ import { logger as utilLogger } from '@/lib/utils/logger';
 /**
  * Logger middleware for development
  */
-export const logger =
+const logger =
   <
     T extends unknown,
     Mps extends [StoreMutatorIdentifier, unknown][] = [],
@@ -74,7 +74,7 @@ export const logger =
 /**
  * Action logger middleware
  */
-export const actionLogger =
+const actionLogger =
   <
     T extends unknown,
     Mps extends [StoreMutatorIdentifier, unknown][] = [],

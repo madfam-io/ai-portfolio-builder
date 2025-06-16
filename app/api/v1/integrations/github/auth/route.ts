@@ -37,7 +37,7 @@ export async function GET(): Promise<Response> {
 
     // GitHub OAuth configuration
     const clientId = process.env.GITHUB_CLIENT_ID;
-    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/integrations/github/callback`;
+    const redirectUri = `${process.env.NEXT_PUBLIC_APP_URL}/api/v1/integrations/github/callback`;
     const scope = 'repo,read:user,user:email';
 
     // Generate cryptographically secure state parameter

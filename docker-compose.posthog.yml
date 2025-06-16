@@ -12,7 +12,7 @@ services:
       - kafka
       - object_storage
     ports:
-      - "8000:8000"
+      - '8000:8000'
     environment:
       SECRET_KEY: ${POSTHOG_SECRET_KEY:-insecure-secret-key-for-dev}
       DATABASE_URL: postgres://posthog:posthog@posthog_db:5432/posthog
@@ -123,8 +123,8 @@ services:
       - kafka
       - zookeeper
     ports:
-      - "8123:8123"
-      - "9000:9000"
+      - '8123:8123'
+      - '9000:9000'
     volumes:
       - ./posthog/clickhouse/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
       - ./posthog/clickhouse/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
@@ -156,7 +156,7 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
+      - '9092:9092'
     environment:
       KAFKA_BROKER_ID: 1001
       KAFKA_CFG_LISTENERS: PLAINTEXT://:9092
@@ -176,8 +176,8 @@ services:
     container_name: prisma_minio
     command: server /data --console-address ":19001"
     ports:
-      - "19000:9000"
-      - "19001:19001"
+      - '19000:9000'
+      - '19001:19001'
     environment:
       MINIO_ROOT_USER: object_storage_root_user
       MINIO_ROOT_PASSWORD: object_storage_root_password

@@ -24,27 +24,40 @@ function fixImportSyntax(content) {
 
   // Fix standalone closing braces that should be part of imports
   fixed = fixed.replace(/^} from ['"][^'"]+['"];?\s*$/gm, '');
-  
+
   // Fix specific pattern: } from 'react-icons/fi' at the start of an import block
-  fixed = fixed.replace(/^} from 'react-icons\/fi';\s*\nimport \{/gm, 'import {');
-  fixed = fixed.replace(/^} from 'react-icons\/fa';\s*\nimport \{/gm, 'import {');
-  
+  fixed = fixed.replace(
+    /^} from 'react-icons\/fi';\s*\nimport \{/gm,
+    'import {'
+  );
+  fixed = fixed.replace(
+    /^} from 'react-icons\/fa';\s*\nimport \{/gm,
+    'import {'
+  );
+
   // Fix imports that start with just a closing brace on its own line
   fixed = fixed.replace(/^}\s*from ['"][^'"]+['"];\s*$/gm, '');
-  
+
   // Fix malformed import blocks where import and } are separated
-  fixed = fixed.replace(/import\s+BackToTopButton from[^;]+;\s*\n\s*} from/g, '} from');
-  
+  fixed = fixed.replace(
+    /import\s+BackToTopButton from[^;]+;\s*\n\s*} from/g,
+    '} from'
+  );
+
   // Fix malformed React imports
   fixed = fixed.replace(/^} from 'react';\s*\nimport React/gm, 'import React');
-  
+
   // Fix incomplete import statements that end without proper closing
   fixed = fixed.replace(/^import \{\s*\n([^}]+)\n\s*$/gm, (match, imports) => {
     if (imports.includes('from ')) {
       return match; // Already has 'from', leave as is
     }
     // Try to determine the source based on import names
-    if (imports.includes('createContext') || imports.includes('useState') || imports.includes('useEffect')) {
+    if (
+      imports.includes('createContext') ||
+      imports.includes('useState') ||
+      imports.includes('useEffect')
+    ) {
       return `import {\n${imports}\n} from 'react';`;
     }
     if (imports.includes('Fi') && imports.includes(',')) {
@@ -57,15 +70,21 @@ function fixImportSyntax(content) {
   });
 
   // Fix imports where the import statement and source are mixed up
-  fixed = fixed.replace(/import ([^{]+) from ([^;]+);\s*\n\s*} from ([^;]+);/g, 'import {$1} from $3;');
-  
+  fixed = fixed.replace(
+    /import ([^{]+) from ([^;]+);\s*\n\s*} from ([^;]+);/g,
+    'import {$1} from $3;'
+  );
+
   // Fix missing opening braces
-  fixed = fixed.replace(/^import\s+([A-Z][a-zA-Z0-9_,\s]*)\s+from\s+['"][^'"]+['"];?$/gm, (match, imports) => {
-    if (!imports.includes('{') && imports.includes(',')) {
-      return match.replace(imports, `{${imports}}`);
+  fixed = fixed.replace(
+    /^import\s+([A-Z][a-zA-Z0-9_,\s]*)\s+from\s+['"][^'"]+['"];?$/gm,
+    (match, imports) => {
+      if (!imports.includes('{') && imports.includes(',')) {
+        return match.replace(imports, `{${imports}}`);
+      }
+      return match;
     }
-    return match;
-  });
+  );
 
   return fixed;
 }
@@ -78,7 +97,7 @@ function fixFileSyntax() {
     try {
       const content = fs.readFileSync(filePath, 'utf8');
       const fixed = fixImportSyntax(content);
-      
+
       if (fixed !== content) {
         fs.writeFileSync(filePath, fixed, 'utf8');
         fixedCount++;

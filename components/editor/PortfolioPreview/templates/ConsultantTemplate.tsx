@@ -29,9 +29,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
             <h4 className="text-sm font-medium text-gray-600 dark:text-gray-400">
               Experience
             </h4>
-            <p className="text-sm">
-              {portfolio.experience.length} positions
-            </p>
+            <p className="text-sm">{portfolio.experience.length} positions</p>
           </div>
         </div>
       </div>

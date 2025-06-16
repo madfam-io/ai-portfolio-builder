@@ -186,7 +186,13 @@ export class FeatureFlagService {
     storedAssignments: any;
     supabase: any;
   }): Promise<GetActiveExperimentResponse | null> {
-    const { experiment, visitorId, visitorContext, storedAssignments, supabase } = data;
+    const {
+      experiment,
+      visitorId,
+      visitorContext,
+      storedAssignments,
+      supabase,
+    } = data;
     // Check if visitor is already assigned to this experiment
     const existingAssignment = storedAssignments[experiment.id];
     if (existingAssignment) {
@@ -199,10 +205,7 @@ export class FeatureFlagService {
 
     // Check targeting criteria
     if (
-      !this.matchesTargeting(
-        experiment.target_audience,
-        visitorContext || {}
-      )
+      !this.matchesTargeting(experiment.target_audience, visitorContext || {})
     ) {
       return Promise.resolve(null);
     }
@@ -264,15 +267,13 @@ export class FeatureFlagService {
   /**
    * Assign and record variant for visitor
    */
-  private static async assignAndRecordVariant(
-    data: {
-      experiment: any;
-      variant: any;
-      visitorId: string;
-      visitorContext: any;
-      supabase: any;
-    }
-  ): Promise<GetActiveExperimentResponse> {
+  private static async assignAndRecordVariant(data: {
+    experiment: any;
+    variant: any;
+    visitorId: string;
+    visitorContext: any;
+    supabase: any;
+  }): Promise<GetActiveExperimentResponse> {
     const { experiment, variant, visitorId, visitorContext, supabase } = data;
     // Store assignment
     await this.storeAssignment(experiment.id, variant.id);

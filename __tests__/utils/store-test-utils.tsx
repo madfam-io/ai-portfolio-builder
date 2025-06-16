@@ -42,16 +42,17 @@ export function createMockStore<T extends object>(
   const api: StoreApi<T> = {
     getState: () => state,
     setState: (partial, replace) => {
-      const nextState = typeof partial === 'function' 
-        ? (partial as (state: T) => T)(state)
-        : partial;
-      
+      const nextState =
+        typeof partial === 'function'
+          ? (partial as (state: T) => T)(state)
+          : partial;
+
       const prevState = state;
       state = replace ? (nextState as T) : { ...state, ...nextState };
-      
+
       listeners.forEach(listener => listener(state, prevState));
     },
-    subscribe: (listener) => {
+    subscribe: listener => {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
@@ -226,39 +227,35 @@ export function createStoreMiddleware<T extends object>(
   middleware: (config: any) => any
 ) {
   const logs: any[] = [];
-  
-  const testMiddleware = (config: any) => (
-    set: any,
-    get: any,
-    api: any
-  ) => {
+
+  const testMiddleware = (config: any) => (set: any, get: any, api: any) => {
     const wrappedSet = (...args: any[]) => {
       logs.push({ type: 'set', args, state: get() });
       return set(...args);
     };
-    
+
     return middleware(config)(wrappedSet, get, api);
   };
-  
+
   return {
     middleware: testMiddleware,
     getLogs: () => logs,
-    clearLogs: () => logs.length = 0,
+    clearLogs: () => (logs.length = 0),
   };
 }
 
 // Store snapshot testing
 export function createStoreSnapshot<T extends object>(store: StoreApi<T>) {
   const snapshots: T[] = [];
-  
-  const unsubscribe = store.subscribe((state) => {
+
+  const unsubscribe = store.subscribe(state => {
     snapshots.push({ ...state });
   });
-  
+
   return {
     getSnapshots: () => snapshots,
     getLatestSnapshot: () => snapshots[snapshots.length - 1],
-    clearSnapshots: () => snapshots.length = 0,
+    clearSnapshots: () => (snapshots.length = 0),
     unsubscribe,
   };
 }

@@ -45,7 +45,7 @@ export class GitHubAnalyticsClient {
   private octokit: Octokit | null = null;
   private integration: GitHubIntegration | null = null;
   private rateLimitManager: RateLimitManager | null = null;
-  
+
   // Resource handlers
   private repositories: RepositoryResource | null = null;
   private pullRequests: PullRequestResource | null = null;
@@ -113,7 +113,10 @@ export class GitHubAnalyticsClient {
     });
 
     // Initialize resources and managers
-    this.rateLimitManager = new RateLimitManager(this.octokit, this.integration);
+    this.rateLimitManager = new RateLimitManager(
+      this.octokit,
+      this.integration
+    );
     this.repositories = new RepositoryResource(this.octokit);
     this.pullRequests = new PullRequestResource(this.octokit);
     this.commits = new CommitResource(this.octokit);
@@ -122,7 +125,6 @@ export class GitHubAnalyticsClient {
     // Check rate limit
     await this.rateLimitManager.checkRateLimit();
   }
-
 
   /**
    * Get rate limit information
@@ -196,7 +198,11 @@ export class GitHubAnalyticsClient {
       throw new Error('GitHub client not initialized');
     }
 
-    const result = await this.pullRequests.fetchPullRequests(owner, repo, options);
+    const result = await this.pullRequests.fetchPullRequests(
+      owner,
+      repo,
+      options
+    );
     await this.rateLimitManager.checkRateLimit();
     return result;
   }
@@ -213,7 +219,11 @@ export class GitHubAnalyticsClient {
       throw new Error('GitHub client not initialized');
     }
 
-    const result = await this.pullRequests.fetchPullRequestDetails(owner, repo, pullNumber);
+    const result = await this.pullRequests.fetchPullRequestDetails(
+      owner,
+      repo,
+      pullNumber
+    );
     await this.rateLimitManager.checkRateLimit();
     return result;
   }
@@ -257,7 +267,11 @@ export class GitHubAnalyticsClient {
       throw new Error('GitHub client not initialized');
     }
 
-    const result = await this.contributors.fetchContributors(owner, repo, options);
+    const result = await this.contributors.fetchContributors(
+      owner,
+      repo,
+      options
+    );
     await this.rateLimitManager.checkRateLimit();
     return result;
   }
@@ -300,7 +314,11 @@ export class GitHubAnalyticsClient {
     userId: string,
     integrationId: string
   ): Partial<Repository> {
-    return RepositoryResource.transformRepository(githubRepo, userId, integrationId);
+    return RepositoryResource.transformRepository(
+      githubRepo,
+      userId,
+      integrationId
+    );
   }
 
   /**

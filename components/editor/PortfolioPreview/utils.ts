@@ -65,7 +65,7 @@ export const skillLevelToPercentage = {
  */
 export function getVisibleSections(portfolio: Portfolio) {
   const hiddenSections = portfolio.customization.hiddenSections || [];
-  
+
   return {
     about: Boolean(portfolio.bio) && !hiddenSections.includes('about'),
     experience:

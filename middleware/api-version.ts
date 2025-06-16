@@ -67,7 +67,7 @@ export async function apiVersionMiddleware(
   // If no version specified, redirect to current version
   const isApiRootPath = !version && pathname === '/api/';
   const isNonVersionedApiPath = pathname.match(/^\/api\/[^v]/) !== null;
-  
+
   if (isApiRootPath || isNonVersionedApiPath) {
     const newPathname = pathname.replace(
       '/api/',

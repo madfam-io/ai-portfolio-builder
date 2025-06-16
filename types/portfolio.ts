@@ -40,12 +40,7 @@ export type EmploymentType =
   | 'internship';
 
 // Skill categories
-export type SkillCategory =
-  | 'technical'
-  | 'soft'
-  | 'language'
-  | 'tool'
-  | 'framework';
+type SkillCategory = 'technical' | 'soft' | 'language' | 'tool' | 'framework';
 
 // Layout types for sections
 export type LayoutType = 'default' | 'grid' | 'timeline' | 'cards' | 'minimal';
@@ -209,10 +204,10 @@ export interface Portfolio {
   createdAt: Date;
   updatedAt: Date;
   publishedAt?: Date;
-  
+
   // Editor state (not persisted)
   hasUnsavedChanges?: boolean;
-  
+
   // Dynamic data storage
   data?: Record<string, string | number | boolean | null | undefined>;
 }
@@ -318,7 +313,7 @@ export interface UpdatePortfolioDTO {
 }
 
 // AI enhancement request/response types
-export interface EnhanceBioRequest {
+interface EnhanceBioRequest {
   originalBio: string;
   targetTone: AIEnhancementSettings['tone'];
   targetLength: AIEnhancementSettings['targetLength'];
@@ -329,13 +324,13 @@ export interface EnhanceBioRequest {
   };
 }
 
-export interface EnhanceBioResponse {
+interface EnhanceBioResponse {
   enhancedBio: string;
   confidence: number; // 0-1
   suggestions?: string[];
 }
 
-export interface EnhanceProjectRequest {
+interface EnhanceProjectRequest {
   project: {
     title: string;
     description: string;
@@ -344,14 +339,14 @@ export interface EnhanceProjectRequest {
   targetTone: AIEnhancementSettings['tone'];
 }
 
-export interface EnhanceProjectResponse {
+interface EnhanceProjectResponse {
   enhancedDescription: string;
   suggestedHighlights: string[];
   extractedSkills: string[];
 }
 
 // Template recommendation types
-export interface TemplateRecommendationRequest {
+interface TemplateRecommendationRequest {
   userProfile: {
     title: string;
     skills: string[];
@@ -361,7 +356,7 @@ export interface TemplateRecommendationRequest {
   };
 }
 
-export interface TemplateRecommendationResponse {
+interface TemplateRecommendationResponse {
   recommendedTemplate: TemplateType;
   confidence: number;
   reasoning: string;
@@ -372,7 +367,7 @@ export interface TemplateRecommendationResponse {
 }
 
 // Portfolio Section - for dynamic content management
-export interface PortfolioSection {
+interface PortfolioSection {
   id: string;
   portfolioId: string;
   type: SectionType;
@@ -388,7 +383,7 @@ export interface PortfolioSection {
 }
 
 // Enhanced Project interface with more details
-export interface EnhancedProject extends Project {
+interface EnhancedProject extends Project {
   shortDescription?: string;
   role?: string;
   demoUrl?: string;
@@ -404,7 +399,7 @@ export interface EnhancedProject extends Project {
 }
 
 // Enhanced Experience interface
-export interface EnhancedExperience extends Experience {
+interface EnhancedExperience extends Experience {
   location?: string;
   employmentType?: EmploymentType;
   responsibilities?: string[];
@@ -414,7 +409,7 @@ export interface EnhancedExperience extends Experience {
 }
 
 // Portfolio Analytics
-export interface PortfolioAnalytics {
+interface PortfolioAnalytics {
   id: string;
   portfolioId: string;
   date: Date;
@@ -450,7 +445,7 @@ export interface PortfolioHistoryEntry {
 }
 
 // Publishing Options
-export interface PublishOptions {
+interface PublishOptions {
   subdomain?: string;
   customDomain?: string;
   seo?: {
@@ -466,7 +461,7 @@ export interface PublishOptions {
 }
 
 // Template Configuration
-export interface TemplateConfig {
+interface TemplateConfig {
   id: TemplateType;
   name: string;
   description: string;
@@ -479,14 +474,14 @@ export interface TemplateConfig {
 }
 
 // Section Content Types
-export interface AboutSectionContent {
+interface AboutSectionContent {
   heading?: string;
   content: string;
   image?: string;
   highlights?: string[];
 }
 
-export interface ContactSectionContent {
+interface ContactSectionContent {
   heading?: string;
   subheading?: string;
   showEmail?: boolean;
@@ -496,7 +491,7 @@ export interface ContactSectionContent {
   contactForm?: boolean;
 }
 
-export interface CustomSectionContent {
+interface CustomSectionContent {
   heading?: string;
   content: string;
   layout?: 'text' | 'html' | 'markdown';
@@ -508,7 +503,7 @@ export interface CustomSectionContent {
 }
 
 // Form validation schemas (for use with Zod)
-export interface PortfolioValidationRules {
+interface PortfolioValidationRules {
   name: { min: 1; max: 100 };
   title: { min: 1; max: 200 };
   bio: { min: 0; max: 2000 };

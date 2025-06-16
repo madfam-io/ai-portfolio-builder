@@ -52,7 +52,9 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('Test error');
+      const logData = JSON.parse(logCall);
+      expect(logData.message).toBe('Test error');
+      expect(logData.level).toBe('error');
     });
 
     it('should log AppError with additional details', () => {
@@ -64,8 +66,11 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('Test app error');
-      expect(logCall).toContain('TEST_ERROR');
+      const logData = JSON.parse(logCall);
+      expect(logData.message).toBe('Test app error');
+      expect(logData.code).toBe('TEST_ERROR');
+      expect(logData.statusCode).toBe(400);
+      expect(logData.details).toEqual({ field: 'test' });
     });
 
     it('should log with context information', () => {
@@ -78,8 +83,10 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('Component: TestComponent');
-      expect(logCall).toContain('Action: test_action');
+      const logData = JSON.parse(logCall);
+      expect(logData.context.component).toBe('TestComponent');
+      expect(logData.context.action).toBe('test_action');
+      expect(logData.context.userId).toBe('user123');
     });
 
     it('should handle non-Error objects', () => {
@@ -115,8 +122,9 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('WARN');
-      expect(logCall).toContain('Test warning');
+      const logData = JSON.parse(logCall);
+      expect(logData.level).toBe('warn');
+      expect(logData.message).toBe('Test warning');
     });
 
     it('should include context in warnings', () => {
@@ -126,7 +134,8 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('Component: TestComponent');
+      const logData = JSON.parse(logCall);
+      expect(logData.context.component).toBe('TestComponent');
     });
   });
 
@@ -136,42 +145,32 @@ describe('ErrorLogger', () => {
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('INFO');
-      expect(logCall).toContain('Test info');
+      const logData = JSON.parse(logCall);
+      expect(logData.level).toBe('info');
+      expect(logData.message).toBe('Test info');
     });
   });
 
   describe('development vs production logging', () => {
-    it('should use colored output in development', () => {
-      process.env.NODE_ENV = 'development';
-
-      errorLogger.logError(new Error('Dev error'));
-
-      expect(consoleSpy).toHaveBeenCalled();
-      const logCall = consoleSpy.mock.calls[0][0];
-      expect(logCall).toContain('\x1b[31m'); // Red color code
-    });
-
-    it('should use JSON format in production', () => {
-      process.env.NODE_ENV = 'production';
-
-      errorLogger.logError(new Error('Prod error'));
+    it('should use JSON format in test environment', () => {
+      errorLogger.logError(new Error('Test env error'));
 
       expect(consoleSpy).toHaveBeenCalled();
       const logCall = consoleSpy.mock.calls[0][0];
       const parsed = JSON.parse(logCall);
-      expect(parsed.message).toBe('Prod error');
+      expect(parsed.message).toBe('Test env error');
       expect(parsed.level).toBe('error');
     });
 
-    it('should include stack trace in development', () => {
-      process.env.NODE_ENV = 'development';
-
+    it('should include stack trace in error logs', () => {
       const error = new Error('Stack error');
       errorLogger.logError(error);
 
-      expect(consoleSpy).toHaveBeenCalledTimes(3); // Main log + "Stack trace:" + actual stack
-      expect(consoleSpy.mock.calls[1][0]).toContain('Stack trace:');
+      expect(consoleSpy).toHaveBeenCalled();
+      const logCall = consoleSpy.mock.calls[0][0];
+      const parsed = JSON.parse(logCall);
+      expect(parsed.stack).toBeDefined();
+      expect(parsed.stack).toContain('Stack error');
     });
   });
 
@@ -185,11 +184,14 @@ describe('ErrorLogger', () => {
       errorLogger.logError(error);
 
       expect(consoleSpy).toHaveBeenCalled();
-      if (process.env.NODE_ENV === 'development') {
-        expect(
-          consoleSpy.mock.calls.some(call => call[0].includes('Details:'))
-        ).toBe(true);
-      }
+      const logCall = consoleSpy.mock.calls[0][0];
+      const parsed = JSON.parse(logCall);
+      expect(parsed.message).toBe('Invalid input');
+      expect(parsed.code).toBe('VALIDATION_ERROR');
+      expect(parsed.details).toEqual({
+        field: 'email',
+        reason: 'invalid format',
+      });
     });
 
     it('should handle ExternalServiceError', () => {

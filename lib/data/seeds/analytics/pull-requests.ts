@@ -4,7 +4,10 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 /**
  * Generate pull requests for a repository
  */
-export function generatePullRequests(repositoryId: string, count: number): any[] {
+export function generatePullRequests(
+  repositoryId: string,
+  count: number
+): any[] {
   const states = ['open', 'closed', 'merged'];
   const titles = [
     'Add new feature for user authentication',

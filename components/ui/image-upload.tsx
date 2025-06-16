@@ -12,7 +12,11 @@ import {
   validateFile,
 } from '@/lib/supabase/storage';
 import { useAsyncForm } from '@/lib/hooks/useAsyncError';
-import { errorLogger, ValidationError, ExternalServiceError } from '@/lib/services/error';
+import {
+  errorLogger,
+  ValidationError,
+  ExternalServiceError,
+} from '@/lib/services/error';
 
 interface ImageUploadProps {
   value?: string;
@@ -58,54 +62,63 @@ export function ImageUpload({
   }, []);
 
   // Need to define handleFile before handleDrop
-  const uploadForm = useAsyncForm(async (file: File) => {
-    // Validate file
-    const validation = validateFile(file);
-    if (!validation.valid) {
-      throw new ValidationError(validation.error || 'Invalid file');
-    }
+  const uploadForm = useAsyncForm(
+    async (file: File) => {
+      // Validate file
+      const validation = validateFile(file);
+      if (!validation.valid) {
+        throw new ValidationError(validation.error || 'Invalid file');
+      }
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', type);
-    formData.append('portfolioId', portfolioId);
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', type);
+      formData.append('portfolioId', portfolioId);
 
-    const response = await fetch('/api/v1/upload/image', {
-      method: 'POST',
-      body: formData,
-    });
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new ExternalServiceError('Upload API', new Error(data.error || 'Upload failed'));
-    }
-
-    return data.data.url;
-  }, {
-    onSuccess: (url) => {
-      onChange(url as string);
-      toast({
-        title: t.success || 'Success',
-        description: t.imageUploaded || 'Image uploaded successfully',
+      const response = await fetch('/api/v1/upload/image', {
+        method: 'POST',
+        body: formData,
       });
-    },
-    onError: (error) => {
-      toast({
-        title: t.error || 'Error',
-        description:
-          error instanceof ValidationError
-            ? error.message
-            : t.uploadFailed || 'Failed to upload image',
-        variant: 'destructive',
-      });
-    },
-  });
 
-  const handleFile = useCallback(async (file: File | undefined) => {
-    if (!file) return;
-    await uploadForm.submit(file);
-  }, [uploadForm]);
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new ExternalServiceError(
+          'Upload API',
+          new Error(data.error || 'Upload failed')
+        );
+      }
+
+      return data.data.url;
+    },
+    {
+      onSuccess: url => {
+        onChange(url as string);
+        toast({
+          title: t.success || 'Success',
+          description: t.imageUploaded || 'Image uploaded successfully',
+        });
+      },
+      onError: error => {
+        toast({
+          title: t.error || 'Error',
+          description:
+            error instanceof ValidationError
+              ? error.message
+              : t.uploadFailed || 'Failed to upload image',
+          variant: 'destructive',
+        });
+      },
+    }
+  );
+
+  const handleFile = useCallback(
+    async (file: File | undefined) => {
+      if (!file) return;
+      await uploadForm.submit(file);
+    },
+    [uploadForm]
+  );
 
   const handleDrop = useCallback(
     (e: React.DragEvent) => {
@@ -130,46 +143,52 @@ export function ImageUpload({
     }
   };
 
-  const deleteForm = useAsyncForm(async () => {
-    if (!value) throw new Error('No image to delete');
+  const deleteForm = useAsyncForm(
+    async () => {
+      if (!value) throw new Error('No image to delete');
 
-    // Extract path from URL
-    const url = new URL(value);
-    const path = url.pathname.split('/').slice(-3).join('/'); // Get last 3 segments
+      // Extract path from URL
+      const url = new URL(value);
+      const path = url.pathname.split('/').slice(-3).join('/'); // Get last 3 segments
 
-    const response = await fetch(
-      `/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`,
-      {
-        method: 'DELETE',
+      const response = await fetch(
+        `/api/v1/upload/image?path=${encodeURIComponent(path)}&type=${type}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new ExternalServiceError(
+          'Delete API',
+          new Error(data.error || 'Delete failed')
+        );
       }
-    );
-
-    const data = await response.json();
-
-    if (!response.ok || !data.success) {
-      throw new ExternalServiceError('Delete API', new Error(data.error || 'Delete failed'));
+    },
+    {
+      onSuccess: () => {
+        onChange(undefined);
+        toast({
+          title: t.success || 'Success',
+          description: t.imageRemoved || 'Image removed successfully',
+        });
+      },
+      onError: error => {
+        errorLogger.logError(error, {
+          component: 'ImageUpload',
+          action: 'delete_image',
+          metadata: { value, type },
+        });
+        toast({
+          title: t.error || 'Error',
+          description: t.deleteFailed || 'Failed to remove image',
+          variant: 'destructive',
+        });
+      },
     }
-  }, {
-    onSuccess: () => {
-      onChange(undefined);
-      toast({
-        title: t.success || 'Success',
-        description: t.imageRemoved || 'Image removed successfully',
-      });
-    },
-    onError: (error) => {
-      errorLogger.logError(error, {
-        component: 'ImageUpload',
-        action: 'delete_image',
-        metadata: { value, type },
-      });
-      toast({
-        title: t.error || 'Error',
-        description: t.deleteFailed || 'Failed to remove image',
-        variant: 'destructive',
-      });
-    },
-  });
+  );
 
   const handleRemove = async () => {
     if (!value || uploadForm.isSubmitting || deleteForm.isSubmitting) return;

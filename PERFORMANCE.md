@@ -23,21 +23,21 @@ This guide provides comprehensive strategies and techniques for optimizing the P
 
 ### Core Web Vitals Targets
 
-| Metric | Target | Current | Status |
-|--------|--------|---------|--------|
-| **LCP** (Largest Contentful Paint) | < 2.5s | 2.3s | ✅ |
-| **FID** (First Input Delay) | < 100ms | 85ms | ✅ |
-| **CLS** (Cumulative Layout Shift) | < 0.1 | 0.08 | ✅ |
-| **TTFB** (Time to First Byte) | < 600ms | 520ms | ✅ |
+| Metric                             | Target  | Current | Status |
+| ---------------------------------- | ------- | ------- | ------ |
+| **LCP** (Largest Contentful Paint) | < 2.5s  | 2.3s    | ✅     |
+| **FID** (First Input Delay)        | < 100ms | 85ms    | ✅     |
+| **CLS** (Cumulative Layout Shift)  | < 0.1   | 0.08    | ✅     |
+| **TTFB** (Time to First Byte)      | < 600ms | 520ms   | ✅     |
 
 ### Application-Specific Targets
 
-| Feature | Target | Current | Status |
-|---------|--------|---------|--------|
-| Portfolio Generation | < 30s | 25s | ✅ |
-| AI Enhancement | < 5s | 4.2s | ✅ |
-| Image Upload | < 3s | 2.8s | ✅ |
-| API Response (p95) | < 500ms | 450ms | ✅ |
+| Feature              | Target  | Current | Status |
+| -------------------- | ------- | ------- | ------ |
+| Portfolio Generation | < 30s   | 25s     | ✅     |
+| AI Enhancement       | < 5s    | 4.2s    | ✅     |
+| Image Upload         | < 3s    | 2.8s    | ✅     |
+| API Response (p95)   | < 500ms | 450ms   | ✅     |
 
 ## 📊 Current Performance Metrics
 
@@ -146,7 +146,7 @@ export default function RootLayout() {
 // Debounce expensive operations
 import { useDebouncedCallback } from 'use-debounce';
 
-const handleSearch = useDebouncedCallback((value) => {
+const handleSearch = useDebouncedCallback(value => {
   performSearch(value);
 }, 300);
 
@@ -183,9 +183,9 @@ const portfolios = await prisma.portfolio.findMany({
     id: true,
     title: true,
     status: true,
-    updatedAt: true
+    updatedAt: true,
   },
-  take: 20
+  take: 20,
 });
 
 // Use indexes for common queries
@@ -195,9 +195,9 @@ const portfolios = await prisma.portfolio.findMany({
 const portfoliosWithProjects = await prisma.portfolio.findMany({
   include: {
     projects: {
-      select: { id: true, title: true }
-    }
-  }
+      select: { id: true, title: true },
+    },
+  },
 });
 ```
 
@@ -213,7 +213,7 @@ export async function getPortfolio(id: string) {
 
   const portfolio = await fetchPortfolio(id);
   await cache.set(`portfolio:${id}`, portfolio, 300); // 5 min TTL
-  
+
   return portfolio;
 }
 ```
@@ -224,15 +224,15 @@ export async function getPortfolio(id: string) {
 
 ```sql
 -- Composite indexes for common queries
-CREATE INDEX idx_portfolio_user_status 
+CREATE INDEX idx_portfolio_user_status
   ON portfolios(user_id, status, updated_at DESC);
 
-CREATE INDEX idx_projects_portfolio 
+CREATE INDEX idx_projects_portfolio
   ON projects(portfolio_id, order);
 
 -- Partial indexes for specific conditions
-CREATE INDEX idx_published_portfolios 
-  ON portfolios(subdomain) 
+CREATE INDEX idx_published_portfolios
+  ON portfolios(subdomain)
   WHERE status = 'published';
 ```
 
@@ -254,9 +254,9 @@ datasource db {
 // Store computed values to avoid runtime calculations
 interface Portfolio {
   // ...
-  projectCount: number;      // Denormalized
-  lastPublishedAt: Date;     // Denormalized
-  totalViews: number;        // Denormalized
+  projectCount: number; // Denormalized
+  lastPublishedAt: Date; // Denormalized
+  totalViews: number; // Denormalized
 }
 ```
 
@@ -307,10 +307,7 @@ async function getData(key: string) {
 
 // Write-through pattern
 async function updateData(key: string, value: any) {
-  await Promise.all([
-    updateDB(value),
-    redis.setex(key, 300, value)
-  ]);
+  await Promise.all([updateDB(value), redis.setex(key, 300, value)]);
 }
 ```
 
@@ -324,9 +321,9 @@ module.exports = {
   images: {
     domains: ['cdn.prisma.madfam.io'],
     loader: 'cloudinary',
-    path: 'https://res.cloudinary.com/prisma/'
+    path: 'https://res.cloudinary.com/prisma/',
   },
-  assetPrefix: isProd ? 'https://cdn.prisma.madfam.io' : ''
+  assetPrefix: isProd ? 'https://cdn.prisma.madfam.io' : '',
 };
 ```
 
@@ -360,7 +357,7 @@ export function reportWebVitals(metric: NextWebVitalsMetric) {
     analytics.track('Web Vital', {
       metric: metric.name,
       value: metric.value,
-      rating: metric.rating
+      rating: metric.rating,
     });
   }
 }
@@ -379,7 +376,7 @@ export async function trackAPIPerformance(
     endpoint,
     duration,
     status,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 }
 ```
@@ -390,12 +387,9 @@ export async function trackAPIPerformance(
 // Sentry integration for performance monitoring
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  integrations: [
-    new Sentry.BrowserTracing(),
-    new Sentry.Replay()
-  ],
+  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   tracesSampleRate: 0.1,
-  replaysSessionSampleRate: 0.1
+  replaysSessionSampleRate: 0.1,
 });
 ```
 

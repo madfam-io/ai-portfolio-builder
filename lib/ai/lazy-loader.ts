@@ -25,7 +25,7 @@ async function getHuggingFaceService(): Promise<any> {
 /**
  * Enhance bio with AI - lazy loaded
  */
-export async function enhanceBioLazy(
+async function enhanceBioLazy(
   bio: string,
   context: BioContext,
   selectedModel?: string
@@ -37,7 +37,7 @@ export async function enhanceBioLazy(
 /**
  * Optimize project description - lazy loaded
  */
-export async function optimizeProjectLazy(
+async function optimizeProjectLazy(
   title: string,
   description: string,
   technologies: string[],
@@ -55,7 +55,7 @@ export async function optimizeProjectLazy(
 /**
  * Recommend template - lazy loaded
  */
-export async function recommendTemplateLazy(
+async function recommendTemplateLazy(
   profile: UserProfile,
   selectedModel?: string
 ): Promise<any> {
@@ -66,7 +66,7 @@ export async function recommendTemplateLazy(
 /**
  * Get available models - lazy loaded
  */
-export async function getAvailableModelsLazy(task?: string): Promise<any[]> {
+async function getAvailableModelsLazy(task?: string): Promise<any[]> {
   const service = await getHuggingFaceService();
   return service.getAvailableModels(task);
 }
@@ -74,14 +74,14 @@ export async function getAvailableModelsLazy(task?: string): Promise<any[]> {
 /**
  * Preload AI services (useful for predictive loading)
  */
-export async function preloadAIServices(): Promise<void> {
+async function preloadAIServices(): Promise<void> {
   await getHuggingFaceService();
 }
 
 /**
  * Clear service cache (useful for memory management)
  */
-export function clearAIServiceCache(): void {
+function clearAIServiceCache(): void {
   huggingFaceService = null;
   logger.info('AI service cache cleared');
 }

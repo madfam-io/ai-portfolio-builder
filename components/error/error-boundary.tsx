@@ -127,7 +127,12 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     const { hasError, error, errorCount } = this.state;
-    const { children, fallback, showDetails = false, isolate = false } = this.props;
+    const {
+      children,
+      fallback,
+      showDetails = false,
+      isolate = false,
+    } = this.props;
 
     if (hasError && error) {
       // Use custom fallback if provided
@@ -137,7 +142,9 @@ export class ErrorBoundary extends Component<Props, State> {
 
       // Default error UI
       return (
-        <div className={`${isolate ? '' : 'min-h-screen'} flex items-center justify-center p-4`}>
+        <div
+          className={`${isolate ? '' : 'min-h-screen'} flex items-center justify-center p-4`}
+        >
           <Card className="max-w-lg w-full p-6 space-y-4">
             <div className="flex items-center space-x-2 text-destructive">
               <AlertCircle className="h-6 w-6" />
@@ -163,7 +170,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
             {errorCount > 2 && (
               <p className="text-sm text-amber-600">
-                Multiple errors detected. The page will refresh automatically in a few seconds.
+                Multiple errors detected. The page will refresh automatically in
+                a few seconds.
               </p>
             )}
 
@@ -217,11 +225,14 @@ export function ComponentErrorBoundary({
 /**
  * Hook to wrap async operations with error handling
  */
-export function useErrorHandler() {
-  return React.useCallback((error: Error, context?: Record<string, unknown>) => {
-    errorLogger.logError(error, {
-      component: 'useErrorHandler',
-      metadata: context,
-    });
-  }, []);
+function useErrorHandler() {
+  return React.useCallback(
+    (error: Error, context?: Record<string, unknown>) => {
+      errorLogger.logError(error, {
+        component: 'useErrorHandler',
+        metadata: context,
+      });
+    },
+    []
+  );
 }

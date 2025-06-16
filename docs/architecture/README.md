@@ -199,11 +199,13 @@ User Input → Validation → AI Enhancement → Preview → Save → Publish
 ### Security Layers
 
 1. **Network Security**
+
    - HTTPS everywhere
    - CORS configuration
    - Rate limiting
 
 2. **Application Security**
+
    - Input validation (Zod)
    - SQL injection prevention (Prisma)
    - XSS protection (React)
@@ -223,7 +225,7 @@ export const middleware = [
   rateLimitMiddleware,
   authMiddleware,
   validationMiddleware,
-  loggingMiddleware
+  loggingMiddleware,
 ];
 ```
 
@@ -238,17 +240,17 @@ services:
     - Next.js development server
     - Hot reload enabled
     - Port 3000
-  
+
   postgres:
     - PostgreSQL 14
     - Port 5432
     - Persistent volume
-  
+
   redis:
     - Redis 7
     - Port 6379
     - Memory cache
-  
+
   pgadmin:
     - pgAdmin 4
     - Port 5050

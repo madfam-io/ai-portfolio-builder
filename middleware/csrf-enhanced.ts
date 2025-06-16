@@ -200,7 +200,7 @@ export async function verifyCSRFToken(request: NextRequest): Promise<boolean> {
 /**
  * Enhanced CSRF protection middleware
  */
-export async function csrfMiddleware(
+async function csrfMiddleware(
   request: NextRequest
 ): Promise<NextResponse | null> {
   // Generate CSRF token for GET requests (to set cookie)
@@ -269,7 +269,7 @@ export function getCSRFToken(): string | null {
 /**
  * Hook to include CSRF token in requests
  */
-export function useCSRFToken(): {
+function useCSRFToken(): {
   token: string | null;
   headers: { [key: string]: string };
 } {

@@ -70,8 +70,7 @@ export function EnhanceStep({
             <div className="flex items-center gap-2 text-sm">
               <Wand2 className="h-4 w-4 text-primary" />
               <span>
-                {t.skillsExtraction ||
-                  'Skills extraction and highlighting'}
+                {t.skillsExtraction || 'Skills extraction and highlighting'}
               </span>
             </div>
             <div className="flex items-center gap-2 text-sm">

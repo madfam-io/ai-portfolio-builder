@@ -85,7 +85,8 @@ export default {
 
   // Experiments
   experimentsTitle: 'Experimentos A/B',
-  experimentsDescription: 'Gestiona experimentos de páginas de destino y rastrea el rendimiento',
+  experimentsDescription:
+    'Gestiona experimentos de páginas de destino y rastrea el rendimiento',
   experimentsNewExperiment: 'Nuevo Experimento',
   experimentsSearchPlaceholder: 'Buscar experimentos...',
   experimentsAllStatus: 'Todos los Estados',
@@ -109,7 +110,8 @@ export default {
   experimentsTrafficAllocation: 'asignación de tráfico',
   experimentsConversions: 'Conversiones',
   experimentsRate: 'Tasa',
-  experimentsNoResults: 'No se encontraron experimentos que coincidan con tus filtros.',
+  experimentsNoResults:
+    'No se encontraron experimentos que coincidan con tus filtros.',
   experimentsEmpty: 'Aún no se han creado experimentos.',
   experimentsCreateFirst: 'Crea Tu Primer Experimento',
   experimentsNotFound: 'Experimento no encontrado',

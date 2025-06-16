@@ -7,6 +7,7 @@
 ## Context
 
 PRISMA needs an efficient caching strategy to:
+
 - Reduce API response times
 - Minimize database queries
 - Handle AI enhancement results caching
@@ -14,6 +15,7 @@ PRISMA needs an efficient caching strategy to:
 - Maintain performance without Redis in development
 
 Key requirements:
+
 - Sub-500ms API response times
 - Graceful degradation if Redis is unavailable
 - Cost-effective for startup phase
@@ -30,14 +32,14 @@ Implement a two-tier caching strategy with Redis as primary and in-memory fallba
 class CacheService {
   private memoryCache: Map<string, CacheEntry>;
   private redisClient?: RedisClient;
-  
+
   async get(key: string): Promise<T | null> {
     // Try Redis first
     if (this.redisClient?.isReady) {
       const data = await this.redisClient.get(key);
       if (data) return JSON.parse(data);
     }
-    
+
     // Fallback to memory
     return this.memoryCache.get(key)?.data || null;
   }
@@ -47,16 +49,19 @@ class CacheService {
 ### Caching Policies
 
 1. **AI Enhancements**
+
    - TTL: 7 days
    - Key: `ai:enhance:{hash(content)}`
    - Rationale: AI results are deterministic for same input
 
 2. **Portfolio Data**
+
    - TTL: 5 minutes
    - Key: `portfolio:{userId}:{portfolioId}`
    - Rationale: Balance freshness vs performance
 
 3. **GitHub Analytics**
+
    - TTL: 1 hour
    - Key: `github:repo:{repoId}:metrics`
    - Rationale: Expensive to compute, changes slowly
@@ -67,6 +72,7 @@ class CacheService {
    - Rationale: Rarely changes
 
 ### Memory Cache Limits
+
 - Max size: 100MB
 - LRU eviction policy
 - Max entries: 10,000
@@ -98,23 +104,23 @@ class CacheService {
 // Usage in API route
 export async function GET(request: Request) {
   const cacheKey = `portfolio:${userId}:${portfolioId}`;
-  
+
   // Try cache first
   const cached = await cache.get(cacheKey);
   if (cached) {
     return Response.json(cached, {
-      headers: { 'X-Cache': 'HIT' }
+      headers: { 'X-Cache': 'HIT' },
     });
   }
-  
+
   // Fetch from database
   const data = await db.portfolio.findUnique({ where: { id } });
-  
+
   // Cache for next time
   await cache.set(cacheKey, data, 300); // 5 minutes
-  
+
   return Response.json(data, {
-    headers: { 'X-Cache': 'MISS' }
+    headers: { 'X-Cache': 'MISS' },
   });
 }
 ```

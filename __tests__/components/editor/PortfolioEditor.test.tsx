@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-} from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import _userEvent from '@testing-library/user-event';
 import { PortfolioEditor } from '@/components/editor/PortfolioEditor';
 import { useAutoSave } from '@/hooks/useAutoSave';

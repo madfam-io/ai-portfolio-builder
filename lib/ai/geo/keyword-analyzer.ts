@@ -348,10 +348,7 @@ export class KeywordAnalyzer {
   /**
    * Research keywords (mock implementation - would connect to real API)
    */
-  researchKeywords(
-    seed: string,
-    industry?: string
-  ): KeywordResearch[] {
+  researchKeywords(seed: string, industry?: string): KeywordResearch[] {
     // This would typically call an external API like Google Keyword Planner
     // For now, we'll return mock data based on common patterns
 

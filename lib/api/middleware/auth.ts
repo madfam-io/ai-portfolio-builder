@@ -103,7 +103,7 @@ export function forbiddenResponse(message = 'Insufficient permissions') {
  * @param handler - The route handler function
  * @param requiredPermission - Optional permission requirement
  */
-export function requireAuth(
+function requireAuth(
   handler: (request: NextRequest, user: unknown) => Promise<NextResponse>,
   requiredPermission?: string
 ) {

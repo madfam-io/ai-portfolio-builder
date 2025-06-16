@@ -167,7 +167,7 @@ describe('useEditorHistory', () => {
   it('should not undo when at beginning of history', () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
-      history: [{ timestamp: new Date()ion: 'Initial', state: mockPortfolio }],
+      history: [{ timestamp: new Date(), action: 'Initial', state: mockPortfolio }],
       historyIndex: 0,
     };
 
@@ -193,7 +193,7 @@ describe('useEditorHistory', () => {
   it('should not redo when at end of history', () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
-      history: [{ timestamp: new Date()ion: 'Initial', state: mockPortfolio }],
+      history: [{ timestamp: new Date(), action: 'Initial', state: mockPortfolio }],
       historyIndex: 0,
     };
 
@@ -242,9 +242,9 @@ describe('useEditorHistory', () => {
 
   it('should clear future history when pushing after undo', () => {
     const history = [
-      { timestamp: new Date()ion: 'Action 1', state: mockPortfolio },
-      { timestamp: new Date()ion: 'Action 2', state: { ...mockPortfolio, name: 'Version 2' } },
-      { timestamp: new Date()ion: 'Action 3', state: { ...mockPortfolio, name: 'Version 3' } },
+      { timestamp: new Date(), action: 'Action 1', state: mockPortfolio },
+      { timestamp: new Date(), action: 'Action 2', state: { ...mockPortfolio, name: 'Version 2' } },
+      { timestamp: new Date(), action: 'Action 3', state: { ...mockPortfolio, name: 'Version 3' } },
     ];
 
     const editorState: PortfolioEditorState = {

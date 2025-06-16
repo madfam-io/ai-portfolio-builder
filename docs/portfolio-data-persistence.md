@@ -7,12 +7,14 @@ We've successfully implemented the foundation for portfolio data persistence usi
 ## What's Been Implemented
 
 ### 1. Database Schema
+
 - Created comprehensive portfolios table with JSONB data field
 - Implemented Row Level Security (RLS) policies
 - Added helper functions for slug and subdomain generation
 - Set up automatic timestamp updates
 
 ### 2. API Updates
+
 - Updated `/api/v1/portfolios` routes to use Supabase
 - Integrated authentication middleware with all portfolio endpoints
 - Modified data mappers to handle JSONB structure
@@ -21,6 +23,7 @@ We've successfully implemented the foundation for portfolio data persistence usi
 ### 3. Key Changes
 
 #### Portfolio Schema Structure
+
 ```sql
 portfolios
 ├── id (UUID)
@@ -39,6 +42,7 @@ portfolios
 ```
 
 #### Data JSONB Structure
+
 ```json
 {
   "title": "Professional Title",
@@ -66,11 +70,13 @@ portfolios
 ## Migration Instructions
 
 ### Option 1: Supabase Dashboard (Recommended)
+
 1. Go to: https://app.supabase.com/project/djdioapdziwrjqbqzykf/sql/new
 2. Copy the SQL from: `supabase/migrations/001_create_portfolios_table.sql`
 3. Paste and run in the SQL editor
 
 ### Option 2: Supabase CLI
+
 ```bash
 npm install -g supabase
 supabase login
@@ -81,7 +87,9 @@ supabase db push
 ## Testing the Implementation
 
 ### 1. Sign In
+
 First, authenticate using the sign-in page:
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/auth/signin \
   -H "Content-Type: application/json" \
@@ -89,6 +97,7 @@ curl -X POST http://localhost:3000/api/v1/auth/signin \
 ```
 
 ### 2. Create Portfolio
+
 ```bash
 curl -X POST http://localhost:3000/api/v1/portfolios \
   -H "Content-Type: application/json" \
@@ -102,12 +111,14 @@ curl -X POST http://localhost:3000/api/v1/portfolios \
 ```
 
 ### 3. List Portfolios
+
 ```bash
 curl http://localhost:3000/api/v1/portfolios \
   -H "Cookie: <auth-cookie-from-signin>"
 ```
 
 ### 4. Update Portfolio
+
 ```bash
 curl -X PUT http://localhost:3000/api/v1/portfolios/{id} \
   -H "Content-Type: application/json" \
@@ -127,24 +138,28 @@ curl -X PUT http://localhost:3000/api/v1/portfolios/{id} \
 ## Next Steps
 
 ### Phase 1: Complete Portfolio CRUD (Current)
+
 - [ ] Apply the migration to Supabase
 - [ ] Test all CRUD operations
 - [ ] Add portfolio validation middleware
 - [ ] Implement portfolio duplication
 
 ### Phase 2: Connect Editor
+
 - [ ] Update portfolio editor to use real data
 - [ ] Implement auto-save functionality
 - [ ] Add real-time preview updates
 - [ ] Create portfolio version history
 
 ### Phase 3: Dashboard Integration
+
 - [ ] Create portfolio list component
 - [ ] Add portfolio analytics
 - [ ] Implement quick actions (publish, duplicate, delete)
 - [ ] Add portfolio search and filtering
 
 ### Phase 4: Publishing System
+
 - [ ] Implement subdomain routing
 - [ ] Create public portfolio view
 - [ ] Add SEO optimization
@@ -170,10 +185,12 @@ curl -X PUT http://localhost:3000/api/v1/portfolios/{id} \
 ### Common Issues
 
 1. **"Database service not available"**
+
    - Check Supabase environment variables
    - Ensure Supabase project is active
 
 2. **"Unauthorized"**
+
    - Ensure user is signed in
    - Check auth cookie is being sent
 
@@ -182,7 +199,9 @@ curl -X PUT http://localhost:3000/api/v1/portfolios/{id} \
    - Check user owns the portfolio
 
 ### Debug Mode
+
 Enable debug logging:
+
 ```bash
 DEBUG=prisma:* pnpm dev
 ```

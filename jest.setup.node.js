@@ -24,7 +24,7 @@ global.testUtils = {
         }
       }, 100);
     });
-  }
+  },
 };
 
 // Increase timeout for API tests

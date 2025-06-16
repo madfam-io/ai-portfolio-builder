@@ -86,7 +86,7 @@ export function createMockNextRequest(
  */
 export function mockAuth(user?: any) {
   const mockGetToken = getToken as jest.MockedFunction<typeof getToken>;
-  
+
   if (user) {
     mockGetToken.mockResolvedValue({
       sub: user.id || 'user-123',
@@ -97,7 +97,7 @@ export function mockAuth(user?: any) {
   } else {
     mockGetToken.mockResolvedValue(null);
   }
-  
+
   return mockGetToken;
 }
 
@@ -170,7 +170,7 @@ export function assertApiResponse(
   expectedBody?: any
 ) {
   expect(response.status).toBe(expectedStatus);
-  
+
   if (expectedBody !== undefined) {
     return response.json().then(body => {
       expect(body).toEqual(expectedBody);
@@ -183,14 +183,14 @@ export function assertApiResponse(
  */
 export function mockEnv(vars: Record<string, string>) {
   const original = process.env;
-  
+
   beforeAll(() => {
     process.env = {
       ...original,
       ...vars,
     };
   });
-  
+
   afterAll(() => {
     process.env = original;
   });
@@ -201,7 +201,7 @@ export function mockEnv(vars: Record<string, string>) {
  */
 export function mockRedis() {
   const cache = new Map<string, any>();
-  
+
   return {
     get: jest.fn(async (key: string) => cache.get(key) || null),
     setEx: jest.fn(async (key: string, ttl: number, value: string) => {
@@ -227,11 +227,11 @@ export function mockRedis() {
  */
 export function mockSupabase() {
   const data: Record<string, any[]> = {};
-  
+
   const createQueryBuilder = (table: string) => {
     let query: any = data[table] || [];
     let filters: Array<(item: any) => boolean> = [];
-    
+
     const builder = {
       select: jest.fn((columns?: string) => builder),
       insert: jest.fn((values: any | any[]) => {
@@ -255,7 +255,9 @@ export function mockSupabase() {
       }),
       delete: jest.fn(() => {
         if (data[table]) {
-          const toDelete = data[table].filter(item => filters.every(f => f(item)));
+          const toDelete = data[table].filter(item =>
+            filters.every(f => f(item))
+          );
           data[table] = data[table].filter(item => !filters.some(f => f(item)));
           query = toDelete;
         }
@@ -274,7 +276,9 @@ export function mockSupabase() {
         return builder;
       }),
       single: jest.fn(async () => {
-        const filtered = query.filter((item: any) => filters.every(f => f(item)));
+        const filtered = query.filter((item: any) =>
+          filters.every(f => f(item))
+        );
         if (filtered.length === 0) {
           throw new Error('No rows returned');
         }
@@ -295,14 +299,16 @@ export function mockSupabase() {
         return builder;
       }),
       then: async (resolve: Function) => {
-        const filtered = query.filter((item: any) => filters.every(f => f(item)));
+        const filtered = query.filter((item: any) =>
+          filters.every(f => f(item))
+        );
         resolve({ data: filtered, error: null });
       },
     };
-    
+
     return builder;
   };
-  
+
   return {
     from: jest.fn((table: string) => createQueryBuilder(table)),
     auth: {
@@ -313,7 +319,10 @@ export function mockSupabase() {
       signInWithPassword: jest.fn(async ({ email, password }) => ({
         data: {
           user: { id: 'user-123', email },
-          session: { access_token: 'token-123', user: { id: 'user-123', email } },
+          session: {
+            access_token: 'token-123',
+            user: { id: 'user-123', email },
+          },
         },
         error: null,
       })),

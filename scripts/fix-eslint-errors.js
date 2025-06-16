@@ -16,24 +16,24 @@ function fixPrettierErrors(filePath, content) {
   let changesMade = false;
 
   // Fix import formatting - multi-line imports
-  fixed = fixed.replace(
-    /import \{ ([^}]+) \} from/g,
-    (match, imports) => {
-      const importList = imports.split(',').map(i => i.trim()).filter(Boolean);
-      if (importList.length > 3 || imports.length > 80) {
-        changesMade = true;
-        return `import {\n  ${importList.join(',\n  ')},\n} from`;
-      }
-      return match;
+  fixed = fixed.replace(/import \{ ([^}]+) \} from/g, (match, imports) => {
+    const importList = imports
+      .split(',')
+      .map(i => i.trim())
+      .filter(Boolean);
+    if (importList.length > 3 || imports.length > 80) {
+      changesMade = true;
+      return `import {\n  ${importList.join(',\n  ')},\n} from`;
     }
-  );
+    return match;
+  });
 
   // Fix double semicolons and empty lines
   fixed = fixed.replace(/;\s*\n\s*\n/g, ';\n');
   if (fixed !== content) changesMade = true;
 
   // Remove trailing semicolons after imports
-  fixed = fixed.replace(/from ['"][^'"]+['"]\s*;\s*\n;\s*\n/g, (match) => {
+  fixed = fixed.replace(/from ['"][^'"]+['"]\s*;\s*\n;\s*\n/g, match => {
     changesMade = true;
     return match.replace(/;\s*\n;\s*\n/, ';\n');
   });
@@ -49,32 +49,38 @@ function fixStrictBooleanExpressions(filePath, content) {
   let changesMade = false;
 
   // Fix conditional any values - add explicit checks
-  fixed = fixed.replace(
-    /if \(([^)]+)\)/g,
-    (match, condition) => {
-      // Skip if already has explicit comparison
-      if (condition.includes('===') || condition.includes('!==') || 
-          condition.includes('>') || condition.includes('<') ||
-          condition.includes('typeof') || condition.includes('instanceof')) {
-        return match;
-      }
-
-      // Check if it's likely an any/unknown value that needs explicit check
-      if (condition.match(/\w+\.\w+/) || condition.match(/\w+\[\w+\]/)) {
-        changesMade = true;
-        return `if (${condition} !== undefined && ${condition} !== null)`;
-      }
-
+  fixed = fixed.replace(/if \(([^)]+)\)/g, (match, condition) => {
+    // Skip if already has explicit comparison
+    if (
+      condition.includes('===') ||
+      condition.includes('!==') ||
+      condition.includes('>') ||
+      condition.includes('<') ||
+      condition.includes('typeof') ||
+      condition.includes('instanceof')
+    ) {
       return match;
     }
-  );
+
+    // Check if it's likely an any/unknown value that needs explicit check
+    if (condition.match(/\w+\.\w+/) || condition.match(/\w+\[\w+\]/)) {
+      changesMade = true;
+      return `if (${condition} !== undefined && ${condition} !== null)`;
+    }
+
+    return match;
+  });
 
   // Fix ternary operators with any values
   fixed = fixed.replace(
     /(\w+(?:\.\w+)*(?:\[\w+\])*)\s*\?\s*/g,
     (match, variable) => {
       // Skip if it's already in a proper boolean context
-      if (content.substring(content.indexOf(match) - 50, content.indexOf(match)).includes('!!')) {
+      if (
+        content
+          .substring(content.indexOf(match) - 50, content.indexOf(match))
+          .includes('!!')
+      ) {
         return match;
       }
       changesMade = true;
@@ -98,14 +104,20 @@ function fixExplicitAny(filePath, content) {
     { pattern: /catch \(error: any\)/g, replacement: 'catch (error: unknown)' },
     { pattern: /\(error: any\) =>/g, replacement: '(error: unknown) =>' },
     { pattern: /\(err: any\) =>/g, replacement: '(err: unknown) =>' },
-    
+
     // Response types
     { pattern: /\(response: any\)/g, replacement: '(response: unknown)' },
     { pattern: /\(data: any\)/g, replacement: '(data: unknown)' },
-    
+
     // Event handlers
-    { pattern: /\(e: any\)/g, replacement: '(e: React.ChangeEvent<HTMLInputElement>)' },
-    { pattern: /\(event: any\)/g, replacement: '(event: React.ChangeEvent<HTMLInputElement>)' },
+    {
+      pattern: /\(e: any\)/g,
+      replacement: '(e: React.ChangeEvent<HTMLInputElement>)',
+    },
+    {
+      pattern: /\(event: any\)/g,
+      replacement: '(event: React.ChangeEvent<HTMLInputElement>)',
+    },
   ];
 
   replacements.forEach(({ pattern, replacement }) => {
@@ -195,7 +207,9 @@ console.log(`\n📊 Summary: Fixed ${fixes.length} files`);
 console.log('\n🎨 Running Prettier to ensure consistent formatting...');
 const { execSync } = require('child_process');
 try {
-  execSync('npx prettier --write "app/**/*.{ts,tsx,js,jsx}"', { stdio: 'inherit' });
+  execSync('npx prettier --write "app/**/*.{ts,tsx,js,jsx}"', {
+    stdio: 'inherit',
+  });
   console.log('✅ Prettier formatting complete');
 } catch (error) {
   console.error('❌ Prettier formatting failed:', error.message);

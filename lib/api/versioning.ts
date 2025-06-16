@@ -122,7 +122,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 /**
  * Helper to create route imports that support versioning
  */
-export function createVersionedRoute(routePath: string) {
+function createVersionedRoute(routePath: string) {
   return {
     v1: `/api/v1/${routePath}`,
     current: `/api/${API_VERSION_CONFIG._currentVersion}/${routePath}`,
@@ -133,7 +133,7 @@ export function createVersionedRoute(routePath: string) {
 /**
  * Utility to generate API documentation headers
  */
-export function generateApiDocHeaders(
+function generateApiDocHeaders(
   endpoint: string,
   methods: string[]
 ): Record<string, string> {

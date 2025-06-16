@@ -7,6 +7,7 @@
 ## Context
 
 As PRISMA evolves, we need a clear strategy for API versioning to ensure:
+
 - Backward compatibility for existing integrations
 - Clear deprecation paths
 - Support for multiple API versions simultaneously
@@ -15,6 +16,7 @@ As PRISMA evolves, we need a clear strategy for API versioning to ensure:
 ## Decision
 
 We will implement explicit URL-based API versioning with the following structure:
+
 - All API routes will be prefixed with `/api/v{version}/`
 - Version 1 will be `/api/v1/`
 - Legacy routes without version will redirect to v1 with deprecation warnings
@@ -35,6 +37,7 @@ app/api/v1/
 ```
 
 ### Deprecation Policy
+
 - 6 months notice before version sunset
 - Clear migration guides provided
 - Deprecation warnings in responses

@@ -184,7 +184,7 @@ function extractTwitterHandle(twitterUrl?: string): string | undefined {
 /**
  * Generate metadata for specific page types
  */
-export function generatePageMetadata(
+function generatePageMetadata(
   pageType: 'home' | 'about' | 'projects' | 'contact' | 'blog',
   portfolio: Portfolio,
   _additionalData?: unknown
@@ -239,14 +239,14 @@ export function generatePageMetadata(
 /**
  * Generate JSON-LD script tag
  */
-export function generateJSONLDScript(data: unknown): string {
+function generateJSONLDScript(data: unknown): string {
   return `<script type="application/ld+json">${JSON.stringify(data, null, 2)}</script>`;
 }
 
 /**
  * Generate all meta tags as HTML
  */
-export function generateMetaTags(metadata: SEOMetadata): string {
+function generateMetaTags(metadata: SEOMetadata): string {
   const tags: string[] = [];
 
   // Basic meta tags
@@ -330,7 +330,7 @@ function escapeHtml(text: string): string {
 /**
  * Generate hreflang tags for multilingual support
  */
-export function generateHreflangTags(
+function generateHreflangTags(
   currentUrl: string,
   languages: Array<{ code: string; url: string }>
 ): string {
@@ -350,7 +350,7 @@ export function generateHreflangTags(
 /**
  * Generate sitemap entry
  */
-export function generateSitemapEntry(
+function generateSitemapEntry(
   url: string,
   lastModified: Date,
   changeFrequency:

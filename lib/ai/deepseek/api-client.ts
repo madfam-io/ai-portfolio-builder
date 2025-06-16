@@ -1,13 +1,13 @@
 /**
  * DeepSeek API Client
- * 
+ *
  * Handles low-level API communication with DeepSeek
  */
 
-import { 
-  AIServiceError, 
-  ModelUnavailableError, 
-  QuotaExceededError 
+import {
+  AIServiceError,
+  ModelUnavailableError,
+  QuotaExceededError,
 } from '../types';
 import { DeepSeekConfig, DeepSeekResponse } from './types';
 import { getMockResponse } from './mock-responses';

@@ -1,6 +1,7 @@
 # 🎯 Test Coverage Plan - Path to 100%
 
 ## Current Status
+
 - **Coverage**: ~3.91%
 - **Test Files**: 21 (+3 new)
 - **Source Files**: 451
@@ -8,7 +9,9 @@
 - **New Tests Added**: optimize-project, recommend-template, portfolios/[id]
 
 ## Phase 1: Fix Infrastructure & Core Tests (Current)
+
 ### ✅ Completed
+
 - [x] Remove @tanstack/react-query mock
 - [x] Fix ErrorLogger tests (enable test logs)
 - [x] Fix retry handler tests (use fake timers)
@@ -16,11 +19,14 @@
 - [x] Fix Supabase mocks
 
 ### 🚧 In Progress
+
 - [ ] Fix remaining 68 failing tests
 - [ ] Stabilize test environment
 
 ## Phase 2: API Route Tests (20% coverage target)
+
 ### Priority 1 - Core API Routes
+
 - [x] `/api/v1/ai/optimize-project/route.ts` ✅
 - [x] `/api/v1/ai/recommend-template/route.ts` ✅
 - [x] `/api/v1/portfolios/[id]/route.ts` ✅
@@ -33,12 +39,15 @@
 - [ ] `/api/v1/user/profile/route.ts`
 
 ### Priority 2 - Additional Routes
+
 - [ ] `/api/v1/ai/analyze-portfolio/route.ts`
 - [ ] `/api/v1/templates/route.ts`
 - [ ] `/api/webhooks/posthog/route.ts`
 
 ## Phase 3: Service Layer Tests (40% coverage target)
+
 ### AI Services
+
 - [ ] `lib/ai/huggingface-service.ts`
 - [ ] `lib/ai/deepseek-service.ts`
 - [ ] `lib/ai/unified-ai-service.ts`
@@ -46,6 +55,7 @@
 - [ ] `lib/ai/geo/keyword-extractor.ts`
 
 ### Core Services
+
 - [ ] `lib/services/portfolio/portfolio-service.ts`
 - [ ] `lib/services/portfolio/portfolio-validator.ts`
 - [ ] `lib/services/portfolio/portfolio-transformer.ts`
@@ -54,6 +64,7 @@
 - [ ] `lib/services/user/user-service.ts`
 
 ### Infrastructure Services
+
 - [ ] `lib/cache/redis-cache.ts`
 - [ ] `lib/cache/memory-cache.ts`
 - [ ] `lib/auth/auth.ts`
@@ -62,7 +73,9 @@
 - [ ] `lib/supabase/server.ts`
 
 ## Phase 4: Component Tests (80% coverage target)
+
 ### Editor Components
+
 - [ ] `components/editor/PortfolioEditor.tsx`
 - [ ] `components/editor/EditorCanvas.tsx`
 - [ ] `components/editor/EditorSidebar.tsx`
@@ -70,6 +83,7 @@
 - [ ] `components/editor/sections/*.tsx`
 
 ### UI Components
+
 - [ ] All `components/ui/*.tsx` (shadcn components)
 - [ ] `components/common/*.tsx`
 - [ ] `components/auth/*.tsx`
@@ -77,10 +91,13 @@
 - [ ] `components/admin/*.tsx`
 
 ### Provider Components
+
 - [ ] `components/providers/*.tsx`
 
 ## Phase 5: Utility & Hook Tests (100% coverage target)
+
 ### Utilities
+
 - [ ] `lib/utils/api-helpers.ts`
 - [ ] `lib/utils/apiOptimization.ts`
 - [ ] `lib/utils/validation.ts`
@@ -89,6 +106,7 @@
 - [ ] `lib/utils/url.ts`
 
 ### Hooks
+
 - [ ] `hooks/useAuth.ts`
 - [ ] `hooks/usePortfolio.ts`
 - [ ] `hooks/useAnalytics.ts`
@@ -96,6 +114,7 @@
 - [ ] `hooks/useAsync.ts`
 
 ### Middleware
+
 - [ ] `middleware.ts`
 - [ ] `middleware/api-version.ts`
 - [ ] `middleware/security-headers.ts`
@@ -104,6 +123,7 @@
 ## Testing Strategy
 
 ### 1. API Route Testing Pattern
+
 ```typescript
 describe('/api/v1/[route]', () => {
   // Test all HTTP methods
@@ -116,6 +136,7 @@ describe('/api/v1/[route]', () => {
 ```
 
 ### 2. Service Testing Pattern
+
 ```typescript
 describe('ServiceName', () => {
   // Test initialization
@@ -127,6 +148,7 @@ describe('ServiceName', () => {
 ```
 
 ### 3. Component Testing Pattern
+
 ```typescript
 describe('ComponentName', () => {
   // Test rendering
@@ -138,6 +160,7 @@ describe('ComponentName', () => {
 ```
 
 ### 4. Utility Testing Pattern
+
 ```typescript
 describe('utilityName', () => {
   // Test with various inputs
@@ -149,13 +172,13 @@ describe('utilityName', () => {
 
 ## Test Coverage Goals by Phase
 
-| Phase | Target Coverage | Files to Test | Estimated Time |
-|-------|----------------|---------------|----------------|
-| Phase 1 | 5% | Fix existing | 2 hours |
-| Phase 2 | 20% | 25 API routes | 8 hours |
-| Phase 3 | 40% | 30 services | 10 hours |
-| Phase 4 | 80% | 100 components | 20 hours |
-| Phase 5 | 100% | 50 utils/hooks | 10 hours |
+| Phase   | Target Coverage | Files to Test  | Estimated Time |
+| ------- | --------------- | -------------- | -------------- |
+| Phase 1 | 5%              | Fix existing   | 2 hours        |
+| Phase 2 | 20%             | 25 API routes  | 8 hours        |
+| Phase 3 | 40%             | 30 services    | 10 hours       |
+| Phase 4 | 80%             | 100 components | 20 hours       |
+| Phase 5 | 100%            | 50 utils/hooks | 10 hours       |
 
 ## Commands
 

@@ -122,7 +122,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
 }
 
 // Export a hook to ensure provider is used
-export function useStoreProvider() {
+function useStoreProvider() {
   const isAuthenticated = useAuthStore(state => state.isAuthenticated);
 
   if (typeof window !== 'undefined' && !isAuthenticated) {

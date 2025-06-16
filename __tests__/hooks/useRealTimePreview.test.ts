@@ -11,8 +11,15 @@ describe('useRealTimePreview', () => {
     bio: 'Test bio',
     tagline: 'Test tagline',
     avatarUrl: 'https://example.com/avatar.jpg',
-    contact: { email: 'test@example.com', phone: '123-456-7890', location: 'New York' },
-    social: { github: 'https://github.com/test', linkedin: 'https://linkedin.com/in/test' },
+    contact: {
+      email: 'test@example.com',
+      phone: '123-456-7890',
+      location: 'New York',
+    },
+    social: {
+      github: 'https://github.com/test',
+      linkedin: 'https://linkedin.com/in/test',
+    },
     experience: [],
     education: [],
     projects: [],
@@ -43,7 +50,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should initialize with default preview config', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -65,7 +72,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should change preview mode', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -93,7 +100,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should change preview state', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -111,7 +118,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should toggle fullscreen', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -129,7 +136,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should set active section', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -147,7 +154,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should highlight section', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -165,7 +172,7 @@ describe('useRealTimePreview', () => {
       mockElement.scrollIntoView = scrollIntoViewMock;
     }
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -182,7 +189,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should handle scrolling to non-existent section', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -195,7 +202,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should set zoom level with clamping', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -222,7 +229,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should toggle section borders', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -242,7 +249,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should toggle interactive elements', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -256,7 +263,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should get responsive breakpoints', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -276,7 +283,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should test responsive breakpoint', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -293,7 +300,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should capture preview screenshot', async () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -303,13 +310,15 @@ describe('useRealTimePreview', () => {
     });
 
     // Should return placeholder data for now
-    expect(screenshot).toBe('data:image/png;base64,placeholder-screenshot-data');
+    expect(screenshot).toBe(
+      'data:image/png;base64,placeholder-screenshot-data'
+    );
   });
 
   it('should handle screenshot capture with no preview element', async () => {
     document.body.innerHTML = ''; // Remove preview container
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -322,7 +331,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should export preview HTML', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -338,7 +347,7 @@ describe('useRealTimePreview', () => {
   it('should handle export HTML with no preview element', () => {
     document.body.innerHTML = '';
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -354,7 +363,7 @@ describe('useRealTimePreview', () => {
       subdomain: 'my-portfolio',
     };
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: publishedPortfolio })
     );
 
@@ -364,7 +373,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should return null preview URL for draft portfolio', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -376,7 +385,7 @@ describe('useRealTimePreview', () => {
   it('should call onPreviewChange callback', () => {
     const onPreviewChange = jest.fn();
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio, onPreviewChange })
     );
 
@@ -393,7 +402,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should reset custom dimensions when changing mode', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -414,7 +423,7 @@ describe('useRealTimePreview', () => {
   });
 
   it('should apply zoom to custom dimensions', () => {
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
@@ -437,7 +446,7 @@ describe('useRealTimePreview', () => {
       title: 'Developer',
     };
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: portfolioWithName })
     );
 
@@ -453,7 +462,7 @@ describe('useRealTimePreview', () => {
       title: 'Senior Developer',
     };
 
-    const { result } = renderHook(() => 
+    const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: portfolioWithoutName })
     );
 

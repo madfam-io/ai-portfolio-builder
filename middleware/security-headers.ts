@@ -37,12 +37,13 @@ export function applySecurityHeaders(
   // Content-Security-Policy: Comprehensive CSP
   const cspDirectives = getCSPDirectives();
   const cspHeader = generateCSPHeader(cspDirectives);
-  
+
   // Add upgrade-insecure-requests for production
-  const finalCSP = process.env.NODE_ENV === 'production' 
-    ? `${cspHeader}; upgrade-insecure-requests`
-    : cspHeader;
-    
+  const finalCSP =
+    process.env.NODE_ENV === 'production'
+      ? `${cspHeader}; upgrade-insecure-requests`
+      : cspHeader;
+
   headers.set('Content-Security-Policy', finalCSP);
 
   // Strict-Transport-Security: Force HTTPS (only in production)
@@ -66,7 +67,7 @@ export function applySecurityHeaders(
  * Check if the request path should have security headers applied
  * Skip for Next.js internal routes and static assets
  */
-export function shouldApplySecurityHeaders(pathname: string): boolean {
+function shouldApplySecurityHeaders(pathname: string): boolean {
   // Skip Next.js internal routes
   if (pathname.startsWith('/_next/')) {
     return false;

@@ -8,7 +8,7 @@ import { Portfolio } from '@/types/portfolio';
 /**
  * Generate XML sitemap for a portfolio
  */
-export function generatePortfolioSitemap(
+function generatePortfolioSitemap(
   portfolio: Portfolio,
   baseUrl: string = 'https://prisma.madfam.io'
 ): string {
@@ -91,7 +91,7 @@ export function generatePortfolioSitemap(
 /**
  * Generate sitemap index for multiple portfolios
  */
-export function generateSitemapIndex(
+function generateSitemapIndex(
   portfolios: Portfolio[],
   baseUrl: string = 'https://prisma.madfam.io'
 ): string {
@@ -171,7 +171,7 @@ function escapeXml(text: string): string {
 /**
  * Generate robots.txt content
  */
-export function generateRobotsTxt(
+function generateRobotsTxt(
   sitemapUrl: string,
   disallowPaths: string[] = []
 ): string {
@@ -211,7 +211,7 @@ export function generateRobotsTxt(
 /**
  * Generate news sitemap for blog posts
  */
-export function generateNewsSitemap(
+function generateNewsSitemap(
   posts: Array<{
     title: string;
     url: string;
@@ -257,7 +257,7 @@ ${newsElements.join('')}
 /**
  * Generate image sitemap
  */
-export function generateImageSitemap(
+function generateImageSitemap(
   images: Array<{
     pageUrl: string;
     imageUrl: string;

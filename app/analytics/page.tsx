@@ -7,6 +7,7 @@ import {
   GitPullRequest,
   Github,
   RefreshCw,
+  Settings,
   TrendingUp,
   Users,
 } from 'lucide-react';
@@ -307,6 +308,13 @@ function AnalyticsDashboard(): React.ReactElement {
                 </p>
               </div>
               <div className="flex items-center gap-4">
+                <button
+                  onClick={() => router.push('/settings/integrations/github')}
+                  className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  <Settings className="mr-2" size={18} />
+                  Settings
+                </button>
                 <button
                   onClick={() => syncRepositories()}
                   disabled={dashboard.syncing}

@@ -4,9 +4,9 @@ import { createServerClient, type CookieOptions } from '@supabase/ssr';
 
 import { logger } from '@/lib/utils/logger';
 import { apiVersionMiddleware } from './middleware/api-version';
-import { 
-  securityMiddleware, 
-  applySecurityToResponse 
+import {
+  securityMiddleware,
+  applySecurityToResponse,
 } from './middleware/security';
 
 /**
@@ -65,46 +65,47 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     env.NEXT_PUBLIC_SUPABASE_URL!,
     env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
-    cookies: {
-      get(name: string) {
-        return req.cookies.get(name)?.value;
+      cookies: {
+        get(name: string) {
+          return req.cookies.get(name)?.value;
+        },
+        set(name: string, value: string, options: CookieOptions) {
+          req.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: req.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          });
+        },
+        remove(name: string, options: CookieOptions) {
+          req.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+          response = NextResponse.next({
+            request: {
+              headers: req.headers,
+            },
+          });
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          });
+        },
       },
-      set(name: string, value: string, options: CookieOptions) {
-        req.cookies.set({
-          name,
-          value,
-          ...options,
-        });
-        response = NextResponse.next({
-          request: {
-            headers: req.headers,
-          },
-        });
-        response.cookies.set({
-          name,
-          value,
-          ...options,
-        });
-      },
-      remove(name: string, options: CookieOptions) {
-        req.cookies.set({
-          name,
-          value: '',
-          ...options,
-        });
-        response = NextResponse.next({
-          request: {
-            headers: req.headers,
-          },
-        });
-        response.cookies.set({
-          name,
-          value: '',
-          ...options,
-        });
-      },
-    },
-  });
+    }
+  );
 
   // Refresh session if expired - required for Server Components
   let session = null;

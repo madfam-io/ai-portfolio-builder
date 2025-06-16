@@ -90,7 +90,7 @@ export function useAsync<T>(
 
     try {
       const data = await asyncFunction();
-      
+
       if (!mounted.current) return;
 
       setState({
@@ -106,7 +106,8 @@ export function useAsync<T>(
     } catch (error) {
       if (!mounted.current) return;
 
-      const errorObj = error instanceof Error ? error : new Error(getErrorMessage(error));
+      const errorObj =
+        error instanceof Error ? error : new Error(getErrorMessage(error));
 
       // Log error if enabled
       if (logErrors) {
@@ -140,7 +141,15 @@ export function useAsync<T>(
 
       onError?.(errorObj);
     }
-  }, [asyncFunction, retry, retryCount, retryDelay, onError, onSuccess, logErrors]);
+  }, [
+    asyncFunction,
+    retry,
+    retryCount,
+    retryDelay,
+    onError,
+    onSuccess,
+    logErrors,
+  ]);
 
   const reset = useCallback(() => {
     setState({
@@ -163,7 +172,7 @@ export function useAsync<T>(
 /**
  * Hook for handling async operations that run on mount
  */
-export function useAsyncEffect<T>(
+function useAsyncEffect<T>(
   asyncFunction: () => Promise<T>,
   deps: React.DependencyList = [],
   options: UseAsyncOptions = {}
@@ -199,17 +208,18 @@ export function useAsyncForm<TData, TResponse>(
         options.onSuccess?.(result);
         return result;
       } catch (error) {
-        const errorObj = error instanceof Error ? error : new Error(getErrorMessage(error));
-        
+        const errorObj =
+          error instanceof Error ? error : new Error(getErrorMessage(error));
+
         setError(errorObj);
-        
+
         if (options.logErrors !== false) {
           errorLogger.logError(errorObj, {
             component: 'useAsyncForm',
             action: 'form_submission',
           });
         }
-        
+
         options.onError?.(errorObj);
         throw errorObj;
       } finally {
@@ -239,7 +249,7 @@ export function useAsyncForm<TData, TResponse>(
 /**
  * Hook for handling errors in event handlers
  */
-export function useErrorHandler() {
+function useErrorHandler() {
   return useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
     errorLogger.logError(error, {
       component: 'useErrorHandler',

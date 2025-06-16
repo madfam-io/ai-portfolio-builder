@@ -98,10 +98,10 @@ jobs:
           name: Release v${{ steps.package_version.outputs.version }}
           body: |
             ## 🚀 Release v${{ steps.package_version.outputs.version }}
-            
+
             ### What's Changed
             See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md) for detailed changes.
-            
+
             ### Installation
             ```bash
             git clone https://github.com/${{ github.repository }}.git
@@ -109,12 +109,12 @@ jobs:
             git checkout v${{ steps.package_version.outputs.version }}
             pnpm install
             ```
-            
+
             ### Docker
             ```bash
             docker pull ghcr.io/${{ github.repository }}:${{ steps.package_version.outputs.version }}
             ```
-            
+
             ---
             Full Changelog: https://github.com/${{ github.repository }}/compare/v${{ steps.package_version.outputs.previous_version }}...v${{ steps.package_version.outputs.version }}
           draft: false

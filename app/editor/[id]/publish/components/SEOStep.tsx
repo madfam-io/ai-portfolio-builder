@@ -56,14 +56,11 @@ export function SEOStep({
                 seo: { ...publishData.seo, title: e.target.value },
               })
             }
-            placeholder={
-              t.seoTitlePlaceholder || 'John Doe - Senior Developer'
-            }
+            placeholder={t.seoTitlePlaceholder || 'John Doe - Senior Developer'}
             maxLength={60}
           />
           <p className="text-xs text-muted-foreground mt-1">
-            {publishData.seo.title.length}/60{' '}
-            {t.characters || 'characters'}
+            {publishData.seo.title.length}/60 {t.characters || 'characters'}
           </p>
         </div>
 
@@ -144,9 +141,7 @@ export function SEOStep({
           <ArrowLeft className="h-4 w-4 mr-2" />
           {t.back || 'Back'}
         </Button>
-        <Button onClick={onNext}>
-          {t.continue || 'Continue'}
-        </Button>
+        <Button onClick={onNext}>{t.continue || 'Continue'}</Button>
       </div>
     </div>
   );

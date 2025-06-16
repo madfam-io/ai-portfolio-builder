@@ -236,5 +236,3 @@ export function withLazyLoading<P extends object>(
 //     },
 //   };
 // }
-
-export default LazyWrapper;

@@ -4,7 +4,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
  * @fileoverview Analytics and Metrics Seed Data
  * @module data/seeds/analytics
  *
- * Orchestrates seeding of realistic analytics data including portfolio views, 
+ * Orchestrates seeding of realistic analytics data including portfolio views,
  * code metrics, commit analytics, pull requests, and performance metrics.
  */
 

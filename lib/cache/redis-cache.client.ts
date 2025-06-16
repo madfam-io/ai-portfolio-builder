@@ -4,7 +4,7 @@
  */
 
 // Key prefixes for different cache types
-export const CACHE_KEYS = {
+const CACHE_KEYS = {
   PORTFOLIO: 'portfolio:',
   AI_RESULT: 'ai:',
   ANALYTICS: 'analytics:',
@@ -42,12 +42,12 @@ class ClientCacheService {
 }
 
 // Export singleton instance
-export const cache = new ClientCacheService();
+const cache = new ClientCacheService();
 
 /**
  * No-op cache decorator for client-side
  */
-export function Cacheable(_keyPrefix: string, _ttl?: number) {
+function Cacheable(_keyPrefix: string, _ttl?: number) {
   return function (
     _target: unknown,
     _propertyName: string,

@@ -169,6 +169,8 @@ export async function GET(request: NextRequest): Promise<Response> {
         user_id: user.id,
         github_user_id: githubUser.id,
         github_username: githubUser.login,
+        github_email: githubUser.email || null,
+        avatar_url: githubUser.avatar_url || null,
         encrypted_access_token: encryptedToken.encrypted,
         access_token_iv: encryptedToken.iv,
         access_token_tag: encryptedToken.tag,

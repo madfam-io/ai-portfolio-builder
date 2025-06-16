@@ -1,13 +1,13 @@
 /**
  * Comprehensive Security Middleware
- * 
+ *
  * Combines all security features into a single middleware:
  * - CSRF protection
  * - Rate limiting
  * - Security headers
  * - Request validation
  * - IP blocking
- * 
+ *
  * @module middleware/security
  */
 
@@ -26,18 +26,18 @@ import { applySecurityHeaders } from '../security-headers';
 const SECURITY_CONFIG = {
   // Blocked IPs (could be loaded from database)
   blockedIPs: new Set<string>(),
-  
+
   // Suspicious patterns in URLs
   suspiciousPatterns: [
-    /\.\.\//g,  // Directory traversal
+    /\.\.\//g, // Directory traversal
     /<script/gi, // Script injection
     /javascript:/gi, // JavaScript protocol
     /on\w+=/gi, // Event handlers
   ],
-  
+
   // Maximum request size (10MB)
   maxRequestSize: 10 * 1024 * 1024,
-  
+
   // Allowed origins for CORS
   allowedOrigins: env.CORS_ALLOWED_ORIGINS?.split(',') || [],
 };
@@ -46,10 +46,11 @@ const SECURITY_CONFIG = {
  * Check if IP is blocked
  */
 function isIPBlocked(request: NextRequest): boolean {
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             'unknown';
-  
+  const ip =
+    request.headers.get('x-forwarded-for') ||
+    request.headers.get('x-real-ip') ||
+    'unknown';
+
   return SECURITY_CONFIG.blockedIPs.has(ip);
 }
 
@@ -59,14 +60,14 @@ function isIPBlocked(request: NextRequest): boolean {
 function hasSuspiciousContent(request: NextRequest): boolean {
   const url = request.url;
   const pathname = new URL(url).pathname;
-  
+
   // Check URL for suspicious patterns
   for (const pattern of SECURITY_CONFIG.suspiciousPatterns) {
     if (pattern.test(url) || pattern.test(pathname)) {
       return true;
     }
   }
-  
+
   // Check query parameters
   const searchParams = new URL(url).searchParams;
   for (const [key, value] of searchParams) {
@@ -76,7 +77,7 @@ function hasSuspiciousContent(request: NextRequest): boolean {
       }
     }
   }
-  
+
   return false;
 }
 
@@ -85,37 +86,47 @@ function hasSuspiciousContent(request: NextRequest): boolean {
  */
 async function isRequestTooLarge(request: NextRequest): Promise<boolean> {
   const contentLength = request.headers.get('content-length');
-  
+
   if (contentLength) {
     const size = parseInt(contentLength, 10);
     if (size > SECURITY_CONFIG.maxRequestSize) {
       return true;
     }
   }
-  
+
   return false;
 }
 
 /**
  * Apply CORS headers based on configuration
  */
-function applyCORSHeaders(request: NextRequest, response: NextResponse): NextResponse {
+function applyCORSHeaders(
+  request: NextRequest,
+  response: NextResponse
+): NextResponse {
   const origin = request.headers.get('origin');
-  
+
   // Allow configured origins or same origin
-  if (origin && (
-    SECURITY_CONFIG.allowedOrigins.includes(origin) ||
-    origin === new URL(request.url).origin
-  )) {
+  if (
+    origin &&
+    (SECURITY_CONFIG.allowedOrigins.includes(origin) ||
+      origin === new URL(request.url).origin)
+  ) {
     response.headers.set('Access-Control-Allow-Origin', origin);
     response.headers.set('Access-Control-Allow-Credentials', 'true');
   }
-  
+
   // Set other CORS headers
-  response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-CSRF-Token');
+  response.headers.set(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, OPTIONS'
+  );
+  response.headers.set(
+    'Access-Control-Allow-Headers',
+    'Content-Type, Authorization, X-CSRF-Token'
+  );
   response.headers.set('Access-Control-Max-Age', '86400'); // 24 hours
-  
+
   return response;
 }
 
@@ -127,10 +138,11 @@ function logSecurityEvent(
   request: NextRequest,
   details?: Record<string, any>
 ) {
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             'unknown';
-  
+  const ip =
+    request.headers.get('x-forwarded-for') ||
+    request.headers.get('x-real-ip') ||
+    'unknown';
+
   logger.warn(`Security Event: ${event}`, {
     ip,
     method: request.method,
@@ -152,16 +164,13 @@ export async function securityMiddleware(
       logSecurityEvent('BLOCKED_IP', request);
       return new NextResponse(null, { status: 403 });
     }
-    
+
     // 2. Check for suspicious content
     if (hasSuspiciousContent(request)) {
       logSecurityEvent('SUSPICIOUS_CONTENT', request);
-      return NextResponse.json(
-        { error: 'Invalid request' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
     }
-    
+
     // 3. Check request size
     if (await isRequestTooLarge(request)) {
       logSecurityEvent('REQUEST_TOO_LARGE', request);
@@ -170,14 +179,14 @@ export async function securityMiddleware(
         { status: 413 }
       );
     }
-    
+
     // 4. Apply rate limiting
     const rateLimitResponse = edgeRateLimitMiddleware(request);
     if (rateLimitResponse) {
       logSecurityEvent('RATE_LIMITED', request);
       return rateLimitResponse;
     }
-    
+
     // 5. Apply CSRF protection for API routes
     if (request.nextUrl.pathname.startsWith('/api/')) {
       const csrfResponse = csrfMiddleware(request);
@@ -186,13 +195,13 @@ export async function securityMiddleware(
         return csrfResponse;
       }
     }
-    
+
     // 6. Handle preflight requests
     if (request.method === 'OPTIONS') {
       const response = new NextResponse(null, { status: 204 });
       return applyCORSHeaders(request, response);
     }
-    
+
     // Request passed all security checks
     return null;
   } catch (error) {
@@ -214,23 +223,23 @@ export function applySecurityToResponse(
 ): NextResponse {
   // Apply security headers
   response = applySecurityHeaders(request, response);
-  
+
   // Apply CORS headers
   response = applyCORSHeaders(request, response);
-  
+
   // Add additional security headers
   response.headers.set('X-Content-Type-Options', 'nosniff');
   response.headers.set('X-Frame-Options', 'DENY');
   response.headers.set('X-XSS-Protection', '1; mode=block');
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  
+
   if (env.NODE_ENV === 'production') {
     response.headers.set(
       'Strict-Transport-Security',
       'max-age=31536000; includeSubDomains'
     );
   }
-  
+
   return response;
 }
 
@@ -245,27 +254,31 @@ export const securityUtils = {
     const providedKey = request.headers.get('x-api-key');
     return providedKey === apiKey;
   },
-  
+
   /**
    * Get client IP address
    */
   getClientIP(request: NextRequest): string {
-    return request.headers.get('x-forwarded-for') || 
-           request.headers.get('x-real-ip') || 
-           'unknown';
+    return (
+      request.headers.get('x-forwarded-for') ||
+      request.headers.get('x-real-ip') ||
+      'unknown'
+    );
   },
-  
+
   /**
    * Check if request is from allowed origin
    */
   isAllowedOrigin(request: NextRequest): boolean {
     const origin = request.headers.get('origin');
     if (!origin) return true; // Same-origin requests
-    
-    return SECURITY_CONFIG.allowedOrigins.includes(origin) ||
-           origin === new URL(request.url).origin;
+
+    return (
+      SECURITY_CONFIG.allowedOrigins.includes(origin) ||
+      origin === new URL(request.url).origin
+    );
   },
-  
+
   /**
    * Add IP to blocklist
    */
@@ -273,7 +286,7 @@ export const securityUtils = {
     SECURITY_CONFIG.blockedIPs.add(ip);
     logger.warn('IP added to blocklist', { ip });
   },
-  
+
   /**
    * Remove IP from blocklist
    */

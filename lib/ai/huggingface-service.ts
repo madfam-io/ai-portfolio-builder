@@ -282,10 +282,15 @@ export class HuggingFaceService implements AIService {
     for (let attempt = 0; attempt <= retries; attempt++) {
       try {
         const response = await this.makeModelRequest(modelId, prompt);
-        const result = await this.handleModelResponse(response, modelId, attempt, retries);
-        
+        const result = await this.handleModelResponse(
+          response,
+          modelId,
+          attempt,
+          retries
+        );
+
         if (!result) continue; // Retry needed
-        
+
         return {
           content: result.text,
           metadata: {

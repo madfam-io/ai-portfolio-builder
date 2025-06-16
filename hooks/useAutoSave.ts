@@ -61,7 +61,6 @@ export function useAutoSave(
 
         return false;
       } catch (error) {
-        
         return false;
       } finally {
         isAutoSavingRef.current = false;

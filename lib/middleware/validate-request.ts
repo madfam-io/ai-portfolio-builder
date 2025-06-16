@@ -18,11 +18,7 @@ async function parseJSONBody(
 
     // Check body size
     if (maxBodySize && text.length > maxBodySize) {
-      throw new AppError(
-        'Request body too large',
-        'PAYLOAD_TOO_LARGE',
-        413
-      );
+      throw new AppError('Request body too large', 'PAYLOAD_TOO_LARGE', 413);
     }
 
     return text ? JSON.parse(text) : {};

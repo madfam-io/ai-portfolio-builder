@@ -9,10 +9,7 @@ export class MetadataGenerator {
   /**
    * Generate comprehensive SEO metadata
    */
-  generateMetadata(
-    content: string,
-    settings: GEOSettings
-  ): SEOMetadata {
+  generateMetadata(content: string, settings: GEOSettings): SEOMetadata {
     const title = this.generateTitle(content, settings);
     const metaDescription = this.generateMetaDescription(content, settings);
     const slug = this.generateSlug(title);

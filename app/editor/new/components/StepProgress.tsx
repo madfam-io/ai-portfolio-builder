@@ -33,14 +33,12 @@ export function StepProgress({ currentStep, t }: StepProgressProps) {
   return (
     <div className="mb-8">
       <div className="flex items-center justify-between mb-2">
-        {steps.map((step) => (
+        {steps.map(step => (
           <div
             key={step.id}
             className={cn(
               'flex items-center gap-2',
-              step.id === currentStep
-                ? 'text-primary'
-                : 'text-muted-foreground'
+              step.id === currentStep ? 'text-primary' : 'text-muted-foreground'
             )}
           >
             <div

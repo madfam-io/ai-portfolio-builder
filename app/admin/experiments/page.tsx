@@ -294,11 +294,16 @@ export default function AdminExperimentsPage(): JSX.Element {
                       <div className="flex items-center gap-6 text-sm text-gray-500 _dark:text-gray-400">
                         <div className="flex items-center gap-1">
                           <Users className="w-4 h-4" />
-                          <span>{totalVisitors.toLocaleString()} {t.experimentsVisitors}</span>
+                          <span>
+                            {totalVisitors.toLocaleString()}{' '}
+                            {t.experimentsVisitors}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <TrendingUp className="w-4 h-4" />
-                          <span>{overallConversionRate} {t.experimentsConversion}</span>
+                          <span>
+                            {overallConversionRate} {t.experimentsConversion}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Clock className="w-4 h-4" />
@@ -432,14 +437,19 @@ export default function AdminExperimentsPage(): JSX.Element {
                                 )}
                               </div>
                               <div className="text-sm text-gray-500 _dark:text-gray-400 mt-1">
-                                {variant.traffic_percentage}% {t.experimentsTrafficAllocation}
+                                {variant.traffic_percentage}%{' '}
+                                {t.experimentsTrafficAllocation}
                               </div>
                             </div>
                           </div>
                           <div className="flex items-center gap-6">
                             <div className="text-right">
                               <div className="text-sm text-gray-500 dark:text-gray-400">
-                                {t.experimentsVisitors && t.experimentsVisitors.charAt(0).toUpperCase() + t.experimentsVisitors.slice(1)}
+                                {t.experimentsVisitors &&
+                                  t.experimentsVisitors
+                                    .charAt(0)
+                                    .toUpperCase() +
+                                    t.experimentsVisitors.slice(1)}
                               </div>
                               <div className="font-medium text-gray-900 dark:text-gray-100">
                                 {variant.visitors.toLocaleString()}

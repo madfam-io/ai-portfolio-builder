@@ -213,7 +213,7 @@ export function getErrorContext() {
 /**
  * Create error with additional context
  */
-export function createContextualError(
+function createContextualError(
   message: string,
   type: ErrorType,
   context?: Record<string, any>
@@ -264,7 +264,7 @@ export interface ErrorRecoveryStrategy {
   maxAttempts?: number;
 }
 
-export function getErrorRecoveryStrategy(
+function getErrorRecoveryStrategy(
   error: unknown,
   context?: {
     onRetry?: () => void | Promise<void>;
@@ -329,7 +329,7 @@ export function getErrorRecoveryStrategy(
 /**
  * Format error for display
  */
-export function formatErrorForDisplay(error: unknown): {
+function formatErrorForDisplay(error: unknown): {
   title: string;
   description: string;
   details?: string;
@@ -358,7 +358,7 @@ export function formatErrorForDisplay(error: unknown): {
 /**
  * Aggregate multiple errors
  */
-export class AggregateError extends Error {
+class AggregateError extends Error {
   public errors: Error[];
 
   constructor(errors: Error[], message?: string) {

@@ -5,6 +5,7 @@ This guide explains how to set up Supabase Storage for the AI Portfolio Builder 
 ## Overview
 
 The application uses Supabase Storage to handle image uploads for:
+
 - **Avatar images** - Profile pictures for portfolios
 - **Project images** - Screenshots and thumbnails for projects
 - **Certificate images** - Certification and credential images
@@ -24,6 +25,7 @@ If you haven't already, create a Supabase project at [supabase.com](https://supa
 4. Paste and run the script in the SQL Editor
 
 This script will:
+
 - Create four storage buckets (avatars, project-images, certificates, company-logos)
 - Set appropriate file size limits and allowed MIME types
 - Configure Row Level Security (RLS) policies for secure access
@@ -79,6 +81,7 @@ company-logos/
 ### Row Level Security (RLS)
 
 The storage buckets use RLS policies to ensure:
+
 - Users can only upload/update/delete their own files
 - Files are organized by user ID in the path
 - Public read access for all images (since portfolios are public)
@@ -86,6 +89,7 @@ The storage buckets use RLS policies to ensure:
 ### File Validation
 
 The application validates files before upload:
+
 - **File types**: Only specific image formats allowed (JPEG, PNG, WebP, GIF)
 - **File size**: Maximum 5MB for most images, 2MB for logos
 - **Client-side validation**: Files are checked before upload
@@ -102,11 +106,11 @@ import { ImageUpload } from '@/components/ui/image-upload';
 
 <ImageUpload
   value={imageUrl}
-  onChange={(url) => setImageUrl(url)}
+  onChange={url => setImageUrl(url)}
   type="project" // 'avatar' | 'project' | 'certificate' | 'company'
   portfolioId={portfolioId}
   aspectRatio="video" // 'square' | 'video' | 'auto'
-/>
+/>;
 ```
 
 ### API Endpoints
@@ -119,10 +123,12 @@ import { ImageUpload } from '@/components/ui/image-upload';
 ### Common Issues
 
 1. **"Storage service not available"**
+
    - Ensure environment variables are set correctly
    - Check that Supabase project is active
 
 2. **"Unauthorized" errors**
+
    - Verify RLS policies are created correctly
    - Ensure user is authenticated
 

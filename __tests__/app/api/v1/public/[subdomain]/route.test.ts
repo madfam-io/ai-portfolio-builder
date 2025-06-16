@@ -52,7 +52,8 @@ describe('/api/v1/public/[subdomain]', () => {
     },
     seo: {
       title: 'John Doe - Senior Software Developer Portfolio',
-      description: 'Portfolio of John Doe, a senior software developer specializing in web applications',
+      description:
+        'Portfolio of John Doe, a senior software developer specializing in web applications',
       keywords: ['developer', 'portfolio', 'software engineer'],
     },
     analytics: {
@@ -82,7 +83,9 @@ describe('/api/v1/public/[subdomain]', () => {
 
   describe('GET /api/v1/public/[subdomain]', () => {
     it('should retrieve a published portfolio by subdomain', async () => {
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -105,7 +108,9 @@ describe('/api/v1/public/[subdomain]', () => {
       ];
 
       for (const subdomain of invalidSubdomains) {
-        mockRequest = new NextRequest(`http://localhost:3000/api/v1/public/${subdomain}`);
+        mockRequest = new NextRequest(
+          `http://localhost:3000/api/v1/public/${subdomain}`
+        );
         const params = { subdomain };
 
         const response = await GET(mockRequest, { params });
@@ -123,7 +128,9 @@ describe('/api/v1/public/[subdomain]', () => {
         }),
       });
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/nonexistent');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/nonexistent'
+      );
       const params = { subdomain: 'nonexistent' };
 
       const response = await GET(mockRequest, { params });
@@ -133,7 +140,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
     it('should return 404 for unpublished portfolio', async () => {
       const unpublishedPortfolio = { ...mockPortfolio, isPublished: false };
-      
+
       mockSupabase.from.mockReturnValue({
         select: jest.fn().mockReturnThis(),
         eq: jest.fn().mockReturnThis(),
@@ -143,7 +150,9 @@ describe('/api/v1/public/[subdomain]', () => {
         }),
       });
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -155,7 +164,9 @@ describe('/api/v1/public/[subdomain]', () => {
       const { redisCache } = require('@/lib/cache/redis-cache.server');
       redisCache.get.mockResolvedValue(JSON.stringify(mockPortfolio));
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -163,7 +174,9 @@ describe('/api/v1/public/[subdomain]', () => {
 
       expect(response.status).toBe(200);
       expect(data.subdomain).toBe('johndoe');
-      expect(redisCache.get).toHaveBeenCalledWith('portfolio:subdomain:johndoe');
+      expect(redisCache.get).toHaveBeenCalledWith(
+        'portfolio:subdomain:johndoe'
+      );
       expect(mockSupabase.from).not.toHaveBeenCalled();
     });
 
@@ -171,7 +184,9 @@ describe('/api/v1/public/[subdomain]', () => {
       const { redisCache } = require('@/lib/cache/redis-cache.server');
       redisCache.get.mockResolvedValue(null);
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -185,12 +200,15 @@ describe('/api/v1/public/[subdomain]', () => {
     });
 
     it('should track portfolio views', async () => {
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe', {
-        headers: {
-          'user-agent': 'Mozilla/5.0',
-          'x-forwarded-for': '192.168.1.1',
-        },
-      });
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe',
+        {
+          headers: {
+            'user-agent': 'Mozilla/5.0',
+            'x-forwarded-for': '192.168.1.1',
+          },
+        }
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -242,18 +260,23 @@ describe('/api/v1/public/[subdomain]', () => {
     });
 
     it('should include CORS headers for public access', async () => {
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe', {
-        headers: {
-          origin: 'https://external-site.com',
-        },
-      });
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe',
+        {
+          headers: {
+            origin: 'https://external-site.com',
+          },
+        }
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
 
       expect(response.status).toBe(200);
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
-      expect(response.headers.get('Access-Control-Allow-Methods')).toContain('GET');
+      expect(response.headers.get('Access-Control-Allow-Methods')).toContain(
+        'GET'
+      );
     });
 
     it('should sanitize portfolio data for public access', async () => {
@@ -275,7 +298,9 @@ describe('/api/v1/public/[subdomain]', () => {
         }),
       });
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -289,7 +314,9 @@ describe('/api/v1/public/[subdomain]', () => {
 
   describe('SEO and Meta Tags', () => {
     it('should include SEO metadata in response', async () => {
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -315,7 +342,9 @@ describe('/api/v1/public/[subdomain]', () => {
         }),
       });
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -335,11 +364,14 @@ describe('/api/v1/public/[subdomain]', () => {
         checkRateLimit: mockRateLimiter,
       }));
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe', {
-        headers: {
-          'x-forwarded-for': '192.168.1.1',
-        },
-      });
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe',
+        {
+          headers: {
+            'x-forwarded-for': '192.168.1.1',
+          },
+        }
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -348,7 +380,9 @@ describe('/api/v1/public/[subdomain]', () => {
     });
 
     it('should set appropriate cache headers', async () => {
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -370,7 +404,9 @@ describe('/api/v1/public/[subdomain]', () => {
         }),
       });
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -382,7 +418,9 @@ describe('/api/v1/public/[subdomain]', () => {
       const { redisCache } = require('@/lib/cache/redis-cache.server');
       redisCache.get.mockRejectedValue(new Error('Redis connection failed'));
 
-      mockRequest = new NextRequest('http://localhost:3000/api/v1/public/johndoe');
+      mockRequest = new NextRequest(
+        'http://localhost:3000/api/v1/public/johndoe'
+      );
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });

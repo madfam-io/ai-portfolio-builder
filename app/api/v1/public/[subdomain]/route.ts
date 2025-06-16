@@ -1,4 +1,8 @@
-import { apiSuccess, apiError, versionedApiHandler } from '@/lib/api/response-helpers';
+import {
+  apiSuccess,
+  apiError,
+  versionedApiHandler,
+} from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
@@ -51,9 +55,9 @@ export const GET = versionedApiHandler(
       // Update view count
       const { error: updateError } = await supabase
         .from('portfolios')
-        .update({ 
+        .update({
           views: (portfolio.views || 0) + 1,
-          last_viewed_at: new Date().toISOString()
+          last_viewed_at: new Date().toISOString(),
         })
         .eq('id', portfolio.id);
 
@@ -72,16 +76,18 @@ export const GET = versionedApiHandler(
         aiSettings: undefined,
       };
 
-      return apiSuccess({ 
+      return apiSuccess({
         portfolio: publicPortfolio,
         meta: {
           views: portfolio.views || 0,
           publishedAt: portfolio.published_at,
-        }
+        },
       });
-
     } catch (error) {
-      logger.error('Unexpected error in GET /api/v1/public/[subdomain]:', error as Error);
+      logger.error(
+        'Unexpected error in GET /api/v1/public/[subdomain]:',
+        error as Error
+      );
       return apiError('Internal server error', { status: 500 });
     }
   }

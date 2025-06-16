@@ -2,7 +2,7 @@
 /**
  * @fileoverview Supabase Migration Runner
  * @module scripts/run-migration
- * 
+ *
  * Script to run SQL migrations against the Supabase database
  */
 
@@ -30,8 +30,12 @@ async function runMigration() {
     // Get migration file path from command line argument
     const migrationFile = process.argv[2];
     if (!migrationFile) {
-      console.error('Usage: pnpm tsx scripts/run-migration.ts <migration-file>');
-      console.error('Example: pnpm tsx scripts/run-migration.ts supabase/migrations/001_create_portfolios_table.sql');
+      console.error(
+        'Usage: pnpm tsx scripts/run-migration.ts <migration-file>'
+      );
+      console.error(
+        'Example: pnpm tsx scripts/run-migration.ts supabase/migrations/001_create_portfolios_table.sql'
+      );
       process.exit(1);
     }
 
@@ -51,7 +55,7 @@ async function runMigration() {
     if (error) {
       // If exec_sql doesn't exist, try direct execution
       console.log('exec_sql RPC not available, trying alternative method...');
-      
+
       // Split migration into individual statements
       const statements = migrationSQL
         .split(';')
@@ -62,15 +66,21 @@ async function runMigration() {
 
       // Note: Direct SQL execution is not available in Supabase client
       // You'll need to run migrations through Supabase Dashboard or CLI
-      console.error('\n⚠️  Direct SQL execution is not available through the Supabase JS client.');
-      console.error('Please run this migration using one of the following methods:');
+      console.error(
+        '\n⚠️  Direct SQL execution is not available through the Supabase JS client.'
+      );
+      console.error(
+        'Please run this migration using one of the following methods:'
+      );
       console.error('\n1. Supabase Dashboard:');
-      console.error('   - Go to https://app.supabase.com/project/djdioapdziwrjqbqzykf/sql/new');
+      console.error(
+        '   - Go to https://app.supabase.com/project/djdioapdziwrjqbqzykf/sql/new'
+      );
       console.error('   - Paste the migration SQL and run it');
       console.error('\n2. Supabase CLI:');
       console.error('   - Install: npm install -g supabase');
       console.error('   - Run: supabase db push');
-      
+
       console.log('\n📋 Migration file location:', migrationPath);
       process.exit(1);
     }

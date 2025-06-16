@@ -5,7 +5,10 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 /**
  * Generate code metrics for a repository
  */
-export function generateCodeMetrics(repositoryId: string, daysBack: number): any[] {
+export function generateCodeMetrics(
+  repositoryId: string,
+  daysBack: number
+): any[] {
   const metrics = [];
   const languages = {
     JavaScript: Math.floor(Math.random() * 10000) + 5000,

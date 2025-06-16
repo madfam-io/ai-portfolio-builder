@@ -69,6 +69,7 @@ const ProductionEnvSchema = BaseEnvSchema.extend({
   // OAuth (optional, for future use)
   LINKEDIN_CLIENT_ID: z.string().optional(),
   LINKEDIN_CLIENT_SECRET: z.string().optional(),
+  NEXT_PUBLIC_LINKEDIN_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GITHUB_APP_ID: z.string().optional(),
@@ -174,19 +175,19 @@ export const env = parseEnv();
 /**
  * Type-safe environment variable access
  */
-export type Env = typeof env;
+type Env = typeof env;
 
 /**
  * Environment checks
  */
-export const isDevelopment = env.NODE_ENV === 'development';
+const isDevelopment = env.NODE_ENV === 'development';
 export const isProduction = env.NODE_ENV === 'production';
-export const isTest = env.NODE_ENV === 'test';
+const isTest = env.NODE_ENV === 'test';
 
 /**
  * Feature flags
  */
-export const features = {
+const features = {
   ai: env.NEXT_PUBLIC_ENABLE_AI ?? true,
   analytics: env.NEXT_PUBLIC_ENABLE_ANALYTICS ?? true,
 } as const;
@@ -209,7 +210,7 @@ export const services = {
 /**
  * Get the application URL based on environment
  */
-export function getAppUrl(): string {
+function getAppUrl(): string {
   if (env.NEXT_PUBLIC_APP_URL) {
     return env.NEXT_PUBLIC_APP_URL;
   }
