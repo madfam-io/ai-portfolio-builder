@@ -213,7 +213,7 @@ export function getErrorContext() {
 /**
  * Create error with additional context
  */
-function createContextualError(
+export function createContextualError(
   message: string,
   type: ErrorType,
   context?: Record<string, any>
@@ -264,7 +264,7 @@ export interface ErrorRecoveryStrategy {
   maxAttempts?: number;
 }
 
-function getErrorRecoveryStrategy(
+export function getErrorRecoveryStrategy(
   error: unknown,
   context?: {
     onRetry?: () => void | Promise<void>;

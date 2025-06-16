@@ -356,3 +356,15 @@ function usePortfolios(options?: {
     isEmpty: filteredAndSorted.length === 0,
   };
 }
+
+// Export all hooks
+export {
+  useUser,
+  useCurrentPortfolio,
+  useTheme,
+  useAIModels,
+  useModal,
+  useToasts,
+  useGlobalLoading,
+  usePortfolios,
+};

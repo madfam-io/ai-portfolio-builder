@@ -42,12 +42,12 @@ class ClientCacheService {
 }
 
 // Export singleton instance
-const cache = new ClientCacheService();
+export const cache = new ClientCacheService();
 
 /**
  * No-op cache decorator for client-side
  */
-function Cacheable(_keyPrefix: string, _ttl?: number) {
+export function Cacheable(_keyPrefix: string, _ttl?: number) {
   return function (
     _target: unknown,
     _propertyName: string,
@@ -56,3 +56,6 @@ function Cacheable(_keyPrefix: string, _ttl?: number) {
     return descriptor;
   };
 }
+
+// Export cache keys for consistency with server implementation
+export { CACHE_KEYS };

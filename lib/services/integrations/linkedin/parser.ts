@@ -87,7 +87,10 @@ export class LinkedInParser {
         },
       };
     } catch (error) {
-      logger.error('LinkedIn profile parsing failed:', error);
+      logger.error(
+        'LinkedIn profile parsing failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return {
         success: false,
         error:
@@ -103,7 +106,7 @@ export class LinkedInParser {
    */
   private static parsePositions(
     positions: LinkedInPosition[]
-  ): LinkedInImportResult['data']['experience'] {
+  ): NonNullable<LinkedInImportResult['data']>['experience'] {
     return positions.map(position => {
       const startDate = this.formatDate(position.startDate);
       const endDate = position.endDate
@@ -132,7 +135,7 @@ export class LinkedInParser {
    */
   private static parseEducation(
     education: LinkedInEducation[]
-  ): LinkedInImportResult['data']['education'] {
+  ): NonNullable<LinkedInImportResult['data']>['education'] {
     return education.map(edu => ({
       institution: edu.schoolName,
       degree: edu.degreeName || '',
@@ -150,7 +153,7 @@ export class LinkedInParser {
    */
   private static parseProjects(
     projects: LinkedInProject[]
-  ): LinkedInImportResult['data']['projects'] {
+  ): NonNullable<LinkedInImportResult['data']>['projects'] {
     return projects.map(project => {
       const technologies: string[] = [];
 
@@ -179,7 +182,7 @@ export class LinkedInParser {
    */
   private static parseCertifications(
     certifications: LinkedInCertification[]
-  ): LinkedInImportResult['data']['certifications'] {
+  ): NonNullable<LinkedInImportResult['data']>['certifications'] {
     return certifications.map(cert => ({
       name: cert.name,
       issuer: cert.authority,

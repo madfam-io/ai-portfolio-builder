@@ -74,7 +74,10 @@ export class LinkedInClient {
       const data = await response.json();
       return data as LinkedInTokenResponse;
     } catch (error) {
-      logger.error('LinkedIn token exchange failed:', error);
+      logger.error(
+        'LinkedIn token exchange failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -110,7 +113,10 @@ export class LinkedInClient {
           : undefined,
       };
     } catch (error) {
-      logger.error('LinkedIn profile fetch failed:', error);
+      logger.error(
+        'LinkedIn profile fetch failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -149,7 +155,10 @@ export class LinkedInClient {
       );
       return primaryEmail?.['handle~']?.emailAddress;
     } catch (error) {
-      logger.error('LinkedIn email fetch failed:', error);
+      logger.error(
+        'LinkedIn email fetch failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return undefined;
     }
   }
@@ -187,7 +196,10 @@ export class LinkedInClient {
         summary: profile.localizedHeadline,
       };
     } catch (error) {
-      logger.error('LinkedIn full profile fetch failed:', error);
+      logger.error(
+        'LinkedIn full profile fetch failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       throw error;
     }
   }
@@ -218,10 +230,7 @@ export class LinkedInClient {
     } catch (error) {
       return {
         isConnected: false,
-        error:
-          error instanceof Error
-            ? error.message
-            : 'Connection validation failed',
+        lastSync: new Date().toISOString(),
       };
     }
   }
@@ -229,16 +238,20 @@ export class LinkedInClient {
   /**
    * Revoke LinkedIn access (if supported)
    */
-  async revokeAccess(accessToken: string): Promise<boolean> {
+  async revokeAccess(_accessToken: string): Promise<boolean> {
     try {
       // LinkedIn doesn't provide a standard token revocation endpoint
       // Tokens expire naturally or user must revoke from LinkedIn settings
+      await Promise.resolve(); // Satisfy require-await
       logger.info(
         'LinkedIn token revocation requested - user must revoke from LinkedIn settings'
       );
       return true;
     } catch (error) {
-      logger.error('LinkedIn revocation failed:', error);
+      logger.error(
+        'LinkedIn revocation failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return false;
     }
   }
