@@ -241,14 +241,20 @@ export async function POST(request: NextRequest) {
         });
       }
     } catch (error) {
-      logger.error('LinkedIn import failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'LinkedIn import failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return NextResponse.json(
         { error: 'Failed to import LinkedIn data' },
         { status: 500 }
       );
     }
   } catch (error) {
-    logger.error('LinkedIn import endpoint error:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'LinkedIn import endpoint error:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

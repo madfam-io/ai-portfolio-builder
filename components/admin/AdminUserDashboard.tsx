@@ -68,7 +68,10 @@ export default function AdminUserDashboard(): React.ReactElement {
         await switchToAdminMode();
       }
     } catch (error) {
-      logger.error('Failed to switch admin mode', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to switch admin mode',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   };
 
@@ -82,7 +85,10 @@ export default function AdminUserDashboard(): React.ReactElement {
         setSelectedUser(userId);
       }
     } catch (error) {
-      logger.error('Failed to impersonate user', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to impersonate user',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   };
 

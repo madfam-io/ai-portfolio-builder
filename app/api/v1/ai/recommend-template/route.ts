@@ -75,10 +75,38 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     const { profile, preferences } = validationResult.data;
 
-    // 3. Initialize AI service
+    // 3. Check AI usage limits
+    const { data: canUseAI, error: limitsError } = await supabase.rpc(
+      'increment_ai_usage',
+      { user_uuid: user.id }
+    );
+
+    if (limitsError) {
+      logger.error('Failed to check AI limits', {
+        error: limitsError,
+        userId: user.id,
+      });
+      return NextResponse.json(
+        { error: 'Failed to check usage limits' },
+        { status: 500 }
+      );
+    }
+
+    if (!canUseAI) {
+      return NextResponse.json(
+        {
+          error:
+            'AI usage limit exceeded. Please upgrade your plan to continue.',
+          code: 'AI_LIMIT_EXCEEDED',
+        },
+        { status: 403 }
+      );
+    }
+
+    // 4. Initialize AI service
     const aiService = new HuggingFaceService();
 
-    // 4. Check service health
+    // 5. Check service health
     const isHealthy = await aiService.healthCheck();
     if (!isHealthy) {
       return NextResponse.json(
@@ -87,17 +115,17 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    // 5. Get template recommendation
+    // 6. Get template recommendation
     const recommendation = await aiService.recommendTemplate(profile);
 
-    // 6. Enhance recommendation with additional context
+    // 7. Enhance recommendation with additional context
     const enhancedRecommendation = await enhanceRecommendation(
       recommendation,
       profile,
       preferences
     );
 
-    // 7. Log usage for analytics
+    // 8. Log usage for analytics
     await logAIUsage(user.id, 'template_recommendation', {
       recommendedTemplate: recommendation.recommendedTemplate,
       confidence: recommendation.confidence,
@@ -111,7 +139,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       preferences,
     });
 
-    // 8. Return recommendation
+    // 9. Return recommendation
     return NextResponse.json({
       success: true,
       data: enhancedRecommendation,

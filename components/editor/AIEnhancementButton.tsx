@@ -218,7 +218,10 @@ export function ModelSelectionModal({
       const models = await aiClient.getAvailableModels();
       setAvailableModels(models.filter(m => m.capabilities.includes(taskType)));
     } catch (error) {
-      logger.error('Failed to load AI models', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to load AI models',
+        error instanceof Error ? error : new Error(String(error))
+      );
     } finally {
       setLoading(false);
     }
@@ -236,7 +239,10 @@ export function ModelSelectionModal({
       onModelChange(modelId);
       onClose();
     } catch (error) {
-      logger.error('Failed to update AI model selection', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to update AI model selection',
+        error instanceof Error ? error : new Error(String(error))
+      );
     }
   };
 

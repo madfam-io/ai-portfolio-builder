@@ -86,10 +86,38 @@ export async function POST(request: NextRequest): Promise<Response> {
       context,
     } = validationResult.data;
 
-    // 3. Initialize AI service
+    // 3. Check AI usage limits
+    const { data: canUseAI, error: limitsError } = await supabase.rpc(
+      'increment_ai_usage',
+      { user_uuid: user.id }
+    );
+
+    if (limitsError) {
+      logger.error('Failed to check AI limits', {
+        error: limitsError,
+        userId: user.id,
+      });
+      return NextResponse.json(
+        { error: 'Failed to check usage limits' },
+        { status: 500 }
+      );
+    }
+
+    if (!canUseAI) {
+      return NextResponse.json(
+        {
+          error:
+            'AI usage limit exceeded. Please upgrade your plan to continue.',
+          code: 'AI_LIMIT_EXCEEDED',
+        },
+        { status: 403 }
+      );
+    }
+
+    // 4. Initialize AI service
     const aiService = new HuggingFaceService();
 
-    // 4. Check service health
+    // 5. Check service health
     const isHealthy = await aiService.healthCheck();
     if (!isHealthy) {
       return NextResponse.json(
@@ -98,20 +126,20 @@ export async function POST(request: NextRequest): Promise<Response> {
       );
     }
 
-    // 5. Optimize project description using AI
+    // 6. Optimize project description using AI
     const optimizedProject = await aiService.optimizeProjectDescription(
       description,
       technologies,
       context?.industry
     );
 
-    // 6. Score the optimized content
+    // 7. Score the optimized content
     const qualityScore = await aiService.scoreContent(
       optimizedProject.enhanced,
       'project'
     );
 
-    // 7. Log usage for analytics
+    // 8. Log usage for analytics
     await logAIUsage(user.id, 'project_optimization', {
       originalLength: description.length,
       optimizedLength: optimizedProject.enhanced.length,
@@ -120,7 +148,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       context,
     });
 
-    // 8. Return optimized content
+    // 9. Return optimized content
     return NextResponse.json({
       success: true,
       data: {

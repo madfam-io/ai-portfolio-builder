@@ -138,8 +138,33 @@ export const POST = versionedApiHandler(
       // User is already authenticated via middleware
       const { user } = request;
 
+      // Check portfolio creation limits
+      const { data: limitsData, error: limitsError } = await supabase.rpc(
+        'check_user_plan_limits',
+        { user_uuid: user.id }
+      );
+
+      if (limitsError) {
+        errorLogger.logError(limitsError, {
+          action: 'check_portfolio_limits',
+          userId: user.id,
+        });
+        throw new ExternalServiceError('Database', limitsError);
+      }
+
+      if (limitsData?.error) {
+        throw new ValidationError(limitsData.error);
+      }
+
+      if (!limitsData?.can_create_portfolio) {
+        throw new ValidationError(
+          'Portfolio creation limit exceeded. Please upgrade your plan to create more portfolios.',
+          { code: 'PORTFOLIO_LIMIT_EXCEEDED' }
+        );
+      }
+
       // Parse and validate request body
-      let body: any;
+      let body: unknown;
       try {
         body = await request.json();
       } catch (error) {

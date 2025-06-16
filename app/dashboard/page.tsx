@@ -8,6 +8,9 @@ import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { UpgradeBanner } from '@/components/billing/upgrade-banner';
+import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { UsageStats } from '@/components/dashboard/usage-stats';
 import {
   Card,
   CardContent,
@@ -20,6 +23,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
+import { useSubscription } from '@/lib/hooks/use-subscription';
+import { useUpgradePrompts } from '@/lib/hooks/use-upgrade-prompts';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
 
@@ -30,6 +35,14 @@ function DashboardContent(): React.ReactElement {
   const { toast } = useToast();
   const { portfolios, isLoading, error, loadPortfolios, deletePortfolio } =
     usePortfolioStore();
+  const { limits } = useSubscription();
+  const {
+    showModal,
+    modalReason,
+    hideUpgradeModal,
+    checkAndShowPrompt,
+    shouldShowPrompt,
+  } = useUpgradePrompts();
 
   // Load user's portfolios on mount
   useEffect(() => {
@@ -77,6 +90,19 @@ function DashboardContent(): React.ReactElement {
   };
 
   const handleCreatePortfolio = () => {
+    // Check if user can create more portfolios
+    if (limits && !limits.canCreatePortfolio) {
+      const shown = checkAndShowPrompt('portfolio_limit');
+      if (!shown) {
+        toast({
+          title: 'Portfolio Limit Reached',
+          description: 'Please upgrade your plan to create more portfolios.',
+          variant: 'destructive',
+        });
+      }
+      return;
+    }
+
     router.push('/editor/new');
   };
 
@@ -170,7 +196,33 @@ function DashboardContent(): React.ReactElement {
           </div>
         )}
 
-        {/* Stats */}
+        {/* Upgrade Banners */}
+        {limits?.isFreeTier && shouldShowPrompt('portfolio_limit') && (
+          <div className="mb-6">
+            <UpgradeBanner
+              type="portfolio_limit"
+              title="Portfolio Limit Reached"
+              description={`You've created ${limits.current_usage.portfolios} of ${limits.limits.max_portfolios} portfolios. Upgrade to create more professional portfolios.`}
+            />
+          </div>
+        )}
+
+        {limits?.isFreeTier && shouldShowPrompt('ai_limit') && (
+          <div className="mb-6">
+            <UpgradeBanner
+              type="ai_limit"
+              title="AI Enhancements Used Up"
+              description={`You've used ${limits.current_usage.ai_requests} of ${limits.limits.max_ai_requests} AI enhancements this month. Upgrade for unlimited AI features.`}
+            />
+          </div>
+        )}
+
+        {/* Usage Stats */}
+        <div className="mb-8">
+          <UsageStats />
+        </div>
+
+        {/* Portfolio Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <Card>
             <CardHeader className="pb-3">
@@ -331,6 +383,16 @@ function DashboardContent(): React.ReactElement {
               </Button>
             </CardContent>
           </Card>
+        )}
+
+        {/* Upgrade Modal */}
+        {showModal && modalReason && (
+          <UpgradeModal
+            isOpen={showModal}
+            onClose={hideUpgradeModal}
+            reason={modalReason}
+            currentPlan={limits?.subscription_tier || 'free'}
+          />
         )}
       </div>
     </BaseLayout>

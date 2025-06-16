@@ -86,14 +86,20 @@ export async function GET() {
         lastSync: new Date().toISOString(),
       });
     } catch (error) {
-      logger.error('LinkedIn profile fetch failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'LinkedIn profile fetch failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       return NextResponse.json(
         { error: 'Failed to fetch LinkedIn profile' },
         { status: 500 }
       );
     }
   } catch (error) {
-    logger.error('LinkedIn profile endpoint error:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'LinkedIn profile endpoint error:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -166,7 +172,10 @@ export async function DELETE() {
       message: 'LinkedIn disconnected successfully',
     });
   } catch (error) {
-    logger.error('LinkedIn disconnect error:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'LinkedIn disconnect error:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

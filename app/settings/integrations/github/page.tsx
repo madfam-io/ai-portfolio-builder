@@ -85,7 +85,10 @@ export default function GitHubIntegrationPage() {
         }
       }
     } catch (error) {
-      logger.error('Failed to check GitHub connection status:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Failed to check GitHub connection status:',
+        error instanceof Error ? error : new Error(String(error))
+      );
     } finally {
       setLoading(false);
     }
@@ -101,7 +104,10 @@ export default function GitHubIntegrationPage() {
         showToast.error('Failed to initiate GitHub connection');
       }
     } catch (error) {
-      logger.error('GitHub connection failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'GitHub connection failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       showToast.error('Failed to connect to GitHub');
     }
   };
@@ -129,7 +135,10 @@ export default function GitHubIntegrationPage() {
         showToast.error('Failed to disconnect GitHub');
       }
     } catch (error) {
-      logger.error('GitHub disconnect failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'GitHub disconnect failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       showToast.error('Failed to disconnect GitHub');
     } finally {
       setDisconnecting(false);
@@ -154,7 +163,10 @@ export default function GitHubIntegrationPage() {
         showToast.error('Failed to sync repositories');
       }
     } catch (error) {
-      logger.error('Repository sync failed:', error instanceof Error ? error : new Error(String(error)));
+      logger.error(
+        'Repository sync failed:',
+        error instanceof Error ? error : new Error(String(error))
+      );
       showToast.error('Failed to sync repositories');
     } finally {
       setSyncing(false);

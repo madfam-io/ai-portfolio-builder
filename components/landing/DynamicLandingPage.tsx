@@ -154,7 +154,10 @@ export default function DynamicLandingPage(): React.ReactElement {
 
   // Show error state
   if (error) {
-    logger.error('Failed to load experiment configuration:', error instanceof Error ? error : new Error(String(error)));
+    logger.error(
+      'Failed to load experiment configuration:',
+      error instanceof Error ? error : new Error(String(error))
+    );
     // Fall back to default components on error
   }
 

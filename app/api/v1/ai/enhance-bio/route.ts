@@ -76,10 +76,35 @@ export const POST = createApiHandler(async (request: NextRequest) => {
 
   const { bio, context } = validationResult.data;
 
-  // 3. Initialize AI service
+  // 3. Check AI usage limits
+  const { data: canUseAI, error: limitsError } = await supabase.rpc(
+    'increment_ai_usage',
+    { user_uuid: user.id }
+  );
+
+  if (limitsError) {
+    errorLogger.logError(limitsError, {
+      action: 'check_ai_limits',
+      userId: user.id,
+    });
+    throw new ExternalServiceError('Database', limitsError);
+  }
+
+  if (!canUseAI) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'AI usage limit exceeded. Please upgrade your plan to continue.',
+        code: 'AI_LIMIT_EXCEEDED',
+      },
+      { status: 403 }
+    );
+  }
+
+  // 4. Initialize AI service
   const aiService = new HuggingFaceService();
 
-  // 4. Check service health
+  // 5. Check service health
   const isHealthy = await aiService.healthCheck();
   if (!isHealthy) {
     throw new ExternalServiceError(
@@ -88,10 +113,10 @@ export const POST = createApiHandler(async (request: NextRequest) => {
     );
   }
 
-  // 5. Enhance bio using AI
+  // 6. Enhance bio using AI
   const enhancedContent = await aiService.enhanceBio(bio, context);
 
-  // 6. Log usage for analytics
+  // 7. Log usage for analytics
   await logAIUsage(user.id, 'bio_enhancement', {
     originalLength: bio.length,
     enhancedLength: enhancedContent.content.length,
@@ -99,7 +124,7 @@ export const POST = createApiHandler(async (request: NextRequest) => {
     confidence: enhancedContent.confidence,
   });
 
-  // 7. Return enhanced content
+  // 8. Return enhanced content
   return NextResponse.json({
     success: true,
     data: enhancedContent,
