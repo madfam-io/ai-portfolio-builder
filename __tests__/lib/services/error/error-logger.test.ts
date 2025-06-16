@@ -7,16 +7,30 @@ import { AppError, ValidationError, ExternalServiceError } from '@/types/errors'
 
 describe('ErrorLogger', () => {
   let consoleSpy: jest.SpyInstance;
+  let consoleLogSpy: jest.SpyInstance;
   let originalEnv: string | undefined;
+  let originalTestLogs: string | undefined;
 
   beforeEach(() => {
     consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+    consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     originalEnv = process.env.NODE_ENV;
+    originalTestLogs = process.env.ENABLE_TEST_LOGS;
+    // Enable logs for testing
+    process.env.ENABLE_TEST_LOGS = 'true';
+    // Reset singleton instance for each test
+    (ErrorLogger as any).instance = undefined;
   });
 
   afterEach(() => {
     consoleSpy.mockRestore();
+    consoleLogSpy.mockRestore();
     process.env.NODE_ENV = originalEnv;
+    if (originalTestLogs !== undefined) {
+      process.env.ENABLE_TEST_LOGS = originalTestLogs;
+    } else {
+      delete process.env.ENABLE_TEST_LOGS;
+    }
   });
 
   describe('getInstance', () => {

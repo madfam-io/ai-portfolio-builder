@@ -35,8 +35,8 @@ function createMockRequest(options: {
     url,
     method,
     headers: new Headers(headers),
-    json: async () => body,
-  } as NextRequest;
+    json: jest.fn().mockResolvedValue(body),
+  } as unknown as NextRequest;
 
   return mockRequest;
 }
@@ -142,7 +142,7 @@ describe('API Error Handler', () => {
 
     it('should pass through successful responses', async () => {
       const successResponse = NextResponse.json({ success: true });
-      const handler = withErrorHandler(async () => successResponse);
+      const handler = withErrorHandler(() => Promise.resolve(successResponse));
 
       const result = await handler();
       expect(result).toBe(successResponse);
@@ -150,7 +150,7 @@ describe('API Error Handler', () => {
 
     it('should extract request from arguments', async () => {
       const request = createMockRequest();
-      const handler = withErrorHandler(async (req: NextRequest) => {
+      const handler = withErrorHandler(async (_req: NextRequest) => {
         throw new Error('Test error');
       });
 
@@ -230,8 +230,8 @@ describe('API Error Handler', () => {
     it('should throw ValidationError for invalid JSON', async () => {
       const request = createMockRequest();
       // Override json method to throw
-      (request as any).json = async () => {
-        throw new SyntaxError('Invalid JSON');
+      (request as any).json = () => {
+        return Promise.reject(new SyntaxError('Invalid JSON'));
       };
       
       await expect(parseJsonBody(request)).rejects.toThrow(ValidationError);

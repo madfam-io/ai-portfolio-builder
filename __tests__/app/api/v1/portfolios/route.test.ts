@@ -10,11 +10,6 @@ jest.mock('uuid', () => ({
   v4: jest.fn(() => 'test-uuid-123'),
 }));
 
-// Mock createClient
-const mockCreateClient = createClient as jest.MockedFunction<
-  typeof createClient
->;
-
 describe('/api/v1/portfolios', () => {
   let mockSupabaseClient: any;
   let mockUser: any;
@@ -41,7 +36,8 @@ describe('/api/v1/portfolios', () => {
       single: jest.fn(),
     };
 
-    mockCreateClient.mockResolvedValue(mockSupabaseClient as any);
+    // Mock createClient to return the mock Supabase client
+    (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
   });
 
   describe('GET /api/v1/portfolios', () => {

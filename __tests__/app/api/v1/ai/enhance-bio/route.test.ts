@@ -44,7 +44,7 @@ describe('/api/v1/ai/enhance-bio', () => {
       insert: jest.fn().mockResolvedValue({ error: null }),
     };
 
-    mockCreateClient.mockResolvedValue(mockSupabaseClient as any);
+    (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
     // Setup HuggingFace service mock
     mockHuggingFaceService.prototype.healthCheck = jest
