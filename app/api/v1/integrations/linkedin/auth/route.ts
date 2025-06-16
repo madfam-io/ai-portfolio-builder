@@ -81,7 +81,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    logger.error('LinkedIn auth initialization failed:', error);
+    logger.error('LinkedIn auth initialization failed:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Failed to initialize LinkedIn authentication' },
       { status: 500 }

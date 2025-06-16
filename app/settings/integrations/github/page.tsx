@@ -5,17 +5,13 @@ import { useRouter } from 'next/navigation';
 import {
   Github,
   Check,
-  X,
   RefreshCw,
   Database,
-  AlertCircle,
   Activity,
   GitBranch,
   GitCommit,
   GitPullRequest,
   Users,
-  Clock,
-  Trash2,
   Settings,
   Link,
   Unlink,
@@ -50,7 +46,7 @@ interface RepositoryStats {
 }
 
 export default function GitHubIntegrationPage() {
-  const { t } = useLanguage();
+  const {} = useLanguage();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -239,7 +235,7 @@ export default function GitHubIntegrationPage() {
                   {connectionStatus.scope && (
                     <div className="flex flex-wrap gap-2 mt-2">
                       {connectionStatus.scope.map(scope => (
-                        <Badge key={scope} variant="secondary" size="sm">
+                        <Badge key={scope} variant="secondary">
                           {scope}
                         </Badge>
                       ))}
@@ -258,7 +254,7 @@ export default function GitHubIntegrationPage() {
           <div>
             {connectionStatus.isConnected ? (
               <Button
-                variant="danger"
+                variant="destructive"
                 size="sm"
                 onClick={handleDisconnect}
                 disabled={disconnecting}
@@ -276,7 +272,7 @@ export default function GitHubIntegrationPage() {
                 )}
               </Button>
             ) : (
-              <Button variant="primary" onClick={handleConnect}>
+              <Button variant="default" onClick={handleConnect}>
                 <Link className="w-4 h-4 mr-2" />
                 Connect GitHub
               </Button>
@@ -496,7 +492,7 @@ export default function GitHubIntegrationPage() {
           </div>
 
           <Button
-            variant="primary"
+            variant="default"
             size="lg"
             className="mt-6"
             onClick={handleConnect}

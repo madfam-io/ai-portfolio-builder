@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { LinkedInParser } from '@/lib/services/integrations/linkedin/parser';
@@ -8,7 +8,7 @@ import { logger } from '@/lib/utils/logger';
  * GET /api/v1/integrations/linkedin/profile
  * Fetch LinkedIn profile data for authenticated user
  */
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient();
 
@@ -86,14 +86,14 @@ export async function GET(request: NextRequest) {
         lastSync: new Date().toISOString(),
       });
     } catch (error) {
-      logger.error('LinkedIn profile fetch failed:', error);
+      logger.error('LinkedIn profile fetch failed:', error instanceof Error ? error : new Error(String(error)));
       return NextResponse.json(
         { error: 'Failed to fetch LinkedIn profile' },
         { status: 500 }
       );
     }
   } catch (error) {
-    logger.error('LinkedIn profile endpoint error:', error);
+    logger.error('LinkedIn profile endpoint error:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -105,7 +105,7 @@ export async function GET(request: NextRequest) {
  * DELETE /api/v1/integrations/linkedin/profile
  * Disconnect LinkedIn integration
  */
-export async function DELETE(request: NextRequest) {
+export async function DELETE() {
   try {
     const supabase = await createClient();
 
@@ -166,7 +166,7 @@ export async function DELETE(request: NextRequest) {
       message: 'LinkedIn disconnected successfully',
     });
   } catch (error) {
-    logger.error('LinkedIn disconnect error:', error);
+    logger.error('LinkedIn disconnect error:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

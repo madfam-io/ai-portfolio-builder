@@ -75,7 +75,7 @@ export async function GET(request: NextRequest) {
     try {
       tokenData = await linkedInClient.exchangeCodeForToken(code);
     } catch (error) {
-      logger.error('Token exchange failed:', error);
+      logger.error('Token exchange failed:', error instanceof Error ? error : new Error(String(error)));
       return NextResponse.redirect(
         new URL(
           '/dashboard/integrations?error=token_exchange_failed',
@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
     try {
       profile = await linkedInClient.fetchProfile(tokenData.access_token);
     } catch (error) {
-      logger.error('Profile fetch failed:', error);
+      logger.error('Profile fetch failed:', error instanceof Error ? error : new Error(String(error)));
       return NextResponse.redirect(
         new URL(
           '/dashboard/integrations?error=profile_fetch_failed',
@@ -135,7 +135,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    logger.error('LinkedIn callback error:', error);
+    logger.error('LinkedIn callback error:', error instanceof Error ? error : new Error(String(error)));
     return NextResponse.redirect(
       new URL('/dashboard/integrations?error=callback_failed', request.url)
     );
