@@ -103,7 +103,7 @@ export default function AdminExperimentsPage(): JSX.Element {
           setExperiments(data);
         }
       } catch (error) {
-        logger.error('Failed to fetch experiments', error as Error);
+        logger.error('Failed to fetch experiments', error instanceof Error ? error : new Error(String(error)));
       } finally {
         setLoading(false);
       }
@@ -176,7 +176,7 @@ export default function AdminExperimentsPage(): JSX.Element {
         )
       );
     } catch (error) {
-      logger.error('Failed to update experiment status', error as Error);
+      logger.error('Failed to update experiment status', error instanceof Error ? error : new Error(String(error)));
     }
   };
 

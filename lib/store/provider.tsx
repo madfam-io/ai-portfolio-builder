@@ -75,7 +75,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
           subscription.unsubscribe();
         };
       } catch (error) {
-        logger.error('Auth initialization error', error as Error);
+        logger.error('Auth initialization error', error instanceof Error ? error : new Error(String(error)));
         setLoading(false);
       }
     };
@@ -99,7 +99,7 @@ export function StoreProvider({ children }: StoreProviderProps) {
           setTheme(parsed.state.theme);
         }
       } catch (error) {
-        logger.error('Failed to parse saved theme:', error as Error);
+        logger.error('Failed to parse saved theme:', error instanceof Error ? error : new Error(String(error)));
       }
     }
 

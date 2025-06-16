@@ -189,7 +189,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
         return mockUser;
       } catch (error) {
-        logger.error('Failed to load user profile', error as Error);
+        logger.error('Failed to load user profile', error instanceof Error ? error : new Error(String(error)));
         return null;
       }
     },

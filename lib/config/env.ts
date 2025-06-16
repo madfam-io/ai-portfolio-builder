@@ -180,14 +180,14 @@ type Env = typeof env;
 /**
  * Environment checks
  */
-const isDevelopment = env.NODE_ENV === 'development';
+export const isDevelopment = env.NODE_ENV === 'development';
 export const isProduction = env.NODE_ENV === 'production';
-const isTest = env.NODE_ENV === 'test';
+export const isTest = env.NODE_ENV === 'test';
 
 /**
  * Feature flags
  */
-const features = {
+export const features = {
   ai: env.NEXT_PUBLIC_ENABLE_AI ?? true,
   analytics: env.NEXT_PUBLIC_ENABLE_ANALYTICS ?? true,
 } as const;
@@ -210,7 +210,7 @@ export const services = {
 /**
  * Get the application URL based on environment
  */
-function getAppUrl(): string {
+export function getAppUrl(): string {
   if (env.NEXT_PUBLIC_APP_URL) {
     return env.NEXT_PUBLIC_APP_URL;
   }

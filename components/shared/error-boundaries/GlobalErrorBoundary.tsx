@@ -39,7 +39,7 @@ export class GlobalErrorBoundary extends React.Component<
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log error to monitoring service
-    logger.error('Global error boundary caught error', error, {
+    logger.error('Global error boundary caught error', error instanceof Error ? error : new Error(String(error)), {
       componentStack: errorInfo.componentStack,
       digest: errorInfo.digest,
     });

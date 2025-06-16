@@ -119,7 +119,7 @@ export default function PortfolioEditor({
       // Initialize history with loaded state
       pushToHistory('load', portfolio);
     } catch (err) {
-      logger.error('Error loading portfolio:', err as Error);
+      logger.error('Error loading portfolio:', err instanceof Error ? err : new Error(String(err)));
       setError(err instanceof Error ? err.message : 'Failed to load portfolio');
     } finally {
       setIsLoading(false);
@@ -148,7 +148,7 @@ export default function PortfolioEditor({
         }));
       }
     } catch (err) {
-      logger.error('Auto-save failed:', err as Error);
+      logger.error('Auto-save failed:', err instanceof Error ? err : new Error(String(err)));
       setEditorState(prev => ({ ...prev, isSaving: false }));
     }
   }, [
@@ -219,7 +219,7 @@ export default function PortfolioEditor({
         onSave?.(updated);
       }
     } catch (err) {
-      logger.error('Save failed:', err as Error);
+      logger.error('Save failed:', err instanceof Error ? err : new Error(String(err)));
       setError('Failed to save portfolio');
       setEditorState(prev => ({ ...prev, isSaving: false }));
     }
@@ -255,7 +255,7 @@ export default function PortfolioEditor({
         onPublish?.(published);
       }
     } catch (err) {
-      logger.error('Publish failed:', err as Error);
+      logger.error('Publish failed:', err instanceof Error ? err : new Error(String(err)));
       setError('Failed to publish portfolio');
     }
   };
@@ -285,7 +285,7 @@ export default function PortfolioEditor({
         updatePortfolio(updated, `change_template_${template}`);
       }
     } catch (err) {
-      logger.error('Template change failed:', err as Error);
+      logger.error('Template change failed:', err instanceof Error ? err : new Error(String(err)));
       setError('Failed to change template');
     }
   };

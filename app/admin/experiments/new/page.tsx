@@ -118,7 +118,7 @@ export default function CreateExperimentPage(): JSX.Element {
           setTemplates(templateData);
         }
       } catch (error) {
-        logger.error('Failed to load component library', error as Error);
+        logger.error('Failed to load component library', error instanceof Error ? error : new Error(String(error)));
       }
     };
 
@@ -341,7 +341,7 @@ export default function CreateExperimentPage(): JSX.Element {
 
       router.push('/admin/experiments');
     } catch (error) {
-      logger.error('Failed to create experiment', error as Error);
+      logger.error('Failed to create experiment', error instanceof Error ? error : new Error(String(error)));
       setErrors({ _submit: 'Failed to create experiment. Please try again.' });
     } finally {
       setLoading(false);

@@ -225,7 +225,7 @@ export function ComponentErrorBoundary({
 /**
  * Hook to wrap async operations with error handling
  */
-function useErrorHandler() {
+export function useErrorHandler() {
   return React.useCallback(
     (error: Error, context?: Record<string, unknown>) => {
       errorLogger.logError(error, {

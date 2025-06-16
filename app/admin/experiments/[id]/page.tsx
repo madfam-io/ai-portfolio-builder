@@ -179,7 +179,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         }
       }
     } catch (error) {
-      logger.error('Failed to fetch experiment data', error as Error);
+      logger.error('Failed to fetch experiment data', error instanceof Error ? error : new Error(String(error)));
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -215,7 +215,7 @@ export default function ExperimentDetailsPage(): React.ReactElement {
         prev ? { ...prev, _status: newStatus as ExperimentStatus } : null
       );
     } catch (error) {
-      logger.error('Failed to update experiment status', error as Error);
+      logger.error('Failed to update experiment status', error instanceof Error ? error : new Error(String(error)));
     }
   };
 
