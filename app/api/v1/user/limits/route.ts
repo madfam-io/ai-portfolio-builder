@@ -7,8 +7,8 @@
 
 import { NextResponse } from 'next/server';
 
-import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
-import { createServerSupabaseClient } from '@/lib/auth/server';
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { createClient } from '@/lib/supabase/server';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 
@@ -20,7 +20,14 @@ import { logger } from '@/lib/utils/logger';
 async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
   try {
     const { user } = request.auth;
-    const supabase = createServerSupabaseClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new AppError(
+        'DATABASE_NOT_AVAILABLE',
+        'Database service unavailable',
+        503
+      );
+    }
 
     // Call the database function to get limits
     const { data, error } = await supabase.rpc('check_user_plan_limits', {

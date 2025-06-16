@@ -12,7 +12,7 @@ import Stripe from 'stripe';
 import { stripeService } from '@/lib/services/stripe/stripe';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
-import { createServerSupabaseClient } from '@/lib/auth/server';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * POST /api/v1/stripe/webhook
@@ -125,7 +125,14 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     return;
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    logger.error('Database not available for checkout completion', {
+      userId,
+      sessionId: session.id,
+    });
+    return;
+  }
 
   try {
     // Update user subscription status
@@ -178,7 +185,14 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    logger.error('Database not available for subscription creation', {
+      userId,
+      subscriptionId: subscription.id,
+    });
+    return;
+  }
 
   try {
     // Calculate subscription end date
@@ -232,7 +246,14 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    logger.error('Database not available for subscription update', {
+      userId,
+      subscriptionId: subscription.id,
+    });
+    return;
+  }
 
   try {
     const subscriptionEnd = new Date(subscription.current_period_end * 1000);
@@ -283,7 +304,14 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
     return;
   }
 
-  const supabase = createServerSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    logger.error('Database not available for subscription deletion', {
+      userId,
+      subscriptionId: subscription.id,
+    });
+    return;
+  }
 
   try {
     const { error } = await supabase

@@ -8,11 +8,11 @@
 import { NextResponse } from 'next/server';
 
 import { stripeService } from '@/lib/services/stripe/stripe';
-import { withAuth, AuthenticatedRequest } from '@/middleware/auth';
+import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
-import { createServerSupabaseClient } from '@/lib/auth/server';
+import { createClient } from '@/lib/supabase/server';
 
 /**
  * POST /api/v1/stripe/portal
@@ -36,7 +36,15 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     const { user } = request.auth;
 
     // Get user's Stripe customer ID from database
-    const supabase = createServerSupabaseClient();
+    const supabase = await createClient();
+    if (!supabase) {
+      throw new AppError(
+        'DATABASE_NOT_AVAILABLE',
+        'Database service unavailable',
+        503
+      );
+    }
+
     const { data: userData, error } = await supabase
       .from('users')
       .select('stripe_customer_id, subscription_status')

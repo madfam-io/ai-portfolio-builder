@@ -5,8 +5,8 @@
 import { GET } from '@/app/api/v1/user/limits/route';
 
 // Mock the auth middleware
-jest.mock('@/middleware/auth', () => ({
-  withAuth: jest.fn((handler) => handler),
+jest.mock('@/lib/api/middleware/auth', () => ({
+  withAuth: jest.fn(handler => handler),
 }));
 
 // Mock Supabase client
@@ -14,8 +14,8 @@ const mockSupabase = {
   rpc: jest.fn(),
 };
 
-jest.mock('@/lib/auth/server', () => ({
-  createServerSupabaseClient: jest.fn(() => mockSupabase),
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
 }));
 
 // Mock logger
@@ -65,11 +65,10 @@ describe('/api/v1/user/limits', () => {
 
       expect(response.status).toBe(200);
       expect(data).toEqual(mockLimitsResponse);
-      
-      expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'check_user_plan_limits', 
-        { user_uuid: 'user123' }
-      );
+
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
+        user_uuid: 'user123',
+      });
     });
 
     it('should handle database errors', async () => {
@@ -224,10 +223,9 @@ describe('/api/v1/user/limits', () => {
       const request = mockRequest({ id: 'specific-user-id' });
       await GET(request);
 
-      expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'check_user_plan_limits',
-        { user_uuid: 'specific-user-id' }
-      );
+      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
+        user_uuid: 'specific-user-id',
+      });
     });
 
     it('should handle RPC function throwing error', async () => {

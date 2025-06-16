@@ -14,8 +14,8 @@ jest.mock('@/lib/services/stripe/stripe', () => ({
 }));
 
 // Mock auth middleware
-jest.mock('@/middleware/auth', () => ({
-  withAuth: jest.fn((handler) => handler),
+jest.mock('@/lib/api/middleware/auth', () => ({
+  withAuth: jest.fn(handler => handler),
 }));
 
 // Mock environment
@@ -31,7 +31,10 @@ jest.mock('@/lib/utils/logger', () => ({
   },
 }));
 
-const mockRequest = (body: any, user = { id: 'user123', email: 'test@example.com' }) => {
+const mockRequest = (
+  body: any,
+  user = { id: 'user123', email: 'test@example.com' }
+) => {
   return {
     json: () => Promise.resolve(body),
     auth: { user },
@@ -52,7 +55,9 @@ describe('/api/v1/stripe/checkout', () => {
         amount_total: 1500,
       };
 
-      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(mockSession);
+      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(
+        mockSession
+      );
 
       const request = mockRequest({
         planId: 'pro',
@@ -72,7 +77,8 @@ describe('/api/v1/stripe/checkout', () => {
         planId: 'pro',
         userId: 'user123',
         userEmail: 'test@example.com',
-        successUrl: 'http://localhost:3000/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
+        successUrl:
+          'http://localhost:3000/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
         cancelUrl: 'http://localhost:3000/pricing?canceled=true',
         trialDays: 7,
       });
@@ -138,7 +144,9 @@ describe('/api/v1/stripe/checkout', () => {
         amount_total: 1500,
       };
 
-      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(mockSession);
+      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(
+        mockSession
+      );
 
       const request = mockRequest({
         planId: 'pro',
@@ -186,7 +194,7 @@ describe('/api/v1/stripe/checkout', () => {
 
     it('should validate plan IDs correctly', async () => {
       const validPlans = ['pro', 'business', 'enterprise'];
-      
+
       for (const planId of validPlans) {
         const mockSession = {
           id: `cs_test_${planId}`,
@@ -194,7 +202,9 @@ describe('/api/v1/stripe/checkout', () => {
           amount_total: 1500,
         };
 
-        (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(mockSession);
+        (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(
+          mockSession
+        );
 
         const request = mockRequest({ planId });
         const response = await POST(request);
@@ -222,7 +232,9 @@ describe('/api/v1/stripe/checkout', () => {
         amount_total: 1500,
       };
 
-      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(mockSession);
+      (stripeService.createCheckoutSession as jest.Mock).mockResolvedValue(
+        mockSession
+      );
 
       const request = mockRequest({
         planId: 'pro',
@@ -230,12 +242,13 @@ describe('/api/v1/stripe/checkout', () => {
 
       await POST(request);
 
-      const callArgs = (stripeService.createCheckoutSession as jest.Mock).mock.calls[0][0];
-      
+      const callArgs = (stripeService.createCheckoutSession as jest.Mock).mock
+        .calls[0][0];
+
       expect(callArgs.successUrl).toContain('/dashboard/billing');
       expect(callArgs.successUrl).toContain('session_id={CHECKOUT_SESSION_ID}');
       expect(callArgs.successUrl).toContain('success=true');
-      
+
       expect(callArgs.cancelUrl).toContain('/pricing');
       expect(callArgs.cancelUrl).toContain('canceled=true');
     });
