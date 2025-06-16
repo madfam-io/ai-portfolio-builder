@@ -47,7 +47,7 @@ async function trackSuccessEvents(
   }
 }
 
-async function analyticsMiddleware(
+export async function analyticsMiddleware(
   request: NextRequest,
   response: NextResponse
 ): Promise<NextResponse> {
@@ -127,7 +127,7 @@ async function analyticsMiddleware(
 }
 
 // Helper to extract common properties from request
-function extractRequestProperties(
+export function extractRequestProperties(
   request: NextRequest
 ): Record<string, any> {
   const headers = request.headers;

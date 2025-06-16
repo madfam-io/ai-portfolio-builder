@@ -204,7 +204,7 @@ export const API_ENDPOINTS = {
 /**
  * Hook for using the API client in React components
  */
-function useApiClient(config?: ApiClientConfig) {
+export function useApiClient(config?: ApiClientConfig) {
   return {
     client: apiClient,
     endpoints: API_ENDPOINTS,

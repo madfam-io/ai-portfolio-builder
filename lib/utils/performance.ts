@@ -331,7 +331,7 @@ export function usePerformanceTracking(componentName: string) {
 /**
  * Debounce utility for performance optimization
  */
-function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number,
   immediate = false
@@ -356,7 +356,7 @@ function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle utility for performance optimization
  */
-function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: any[]) => any>(
   func: T,
   limit: number
 ): T {
@@ -402,7 +402,7 @@ export function getMemoryUsage(): {
 /**
  * Bundle size analysis utility
  */
-function analyzeBundleSize(): Promise<BundleAnalysis> {
+export function analyzeBundleSize(): Promise<BundleAnalysis> {
   return new Promise(resolve => {
     // In a real implementation, this would analyze the actual bundle
     // For now, we'll provide a mock analysis based on the build output
@@ -441,7 +441,7 @@ export interface PerformanceBudget {
   minPerformanceScore: number; // 0-100
 }
 
-function checkPerformanceBudget(budget: PerformanceBudget): {
+export function checkPerformanceBudget(budget: PerformanceBudget): {
   passed: boolean;
   violations: string[];
 } {

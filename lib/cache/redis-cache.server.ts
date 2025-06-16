@@ -257,7 +257,7 @@ process.on('SIGINT', async () => {
 /**
  * Cache decorator for methods
  */
-function Cacheable(keyPrefix: string, ttl?: number) {
+export function Cacheable(keyPrefix: string, ttl?: number) {
   return function (
     _target: unknown,
     propertyName: string,

@@ -47,7 +47,7 @@ export interface ErrorReport {
 /**
  * Error boundary configuration
  */
-interface ErrorBoundaryConfig {
+export interface ErrorBoundaryConfig {
   fallback?: React.ComponentType<{ error: Error }>;
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
   enableLogging?: boolean;
@@ -62,7 +62,7 @@ interface ErrorBoundaryConfig {
 /**
  * Error recovery options
  */
-interface ErrorRecoveryOptions {
+export interface ErrorRecoveryOptions {
   retry?: {
     enabled: boolean;
     maxAttempts: number;
@@ -95,4 +95,4 @@ export type ErrorFilter = (error: Error) => boolean;
 /**
  * Error transformer function type
  */
-type ErrorTransformer = (error: Error) => Error;
+export type ErrorTransformer = (error: Error) => Error;

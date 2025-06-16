@@ -286,7 +286,7 @@ export async function validateRequest<
 /**
  * Create a validation middleware for API routes
  */
-function createValidationMiddleware<
+export function createValidationMiddleware<
   TBody = unknown,
   TQuery = unknown,
   TParams = unknown,
@@ -295,7 +295,7 @@ function createValidationMiddleware<
   return (
     request: NextRequest,
     _context?: { params?: Record<string, string> }
-  ): ValidatedRequest<TBody, TQuery, TParams, THeaders> => {
+  ): Promise<ValidatedRequest<TBody, TQuery, TParams, THeaders>> => {
     // If route params are provided in context, we need to handle them
     // This would require modifying the extractRouteParams function
     return validateRequest<TBody, TQuery, TParams, THeaders>(
@@ -309,7 +309,7 @@ function createValidationMiddleware<
 /**
  * Helper to create error response
  */
-function validationErrorResponse(error: unknown): NextResponse {
+export function validationErrorResponse(error: unknown): NextResponse {
   if (error instanceof AppError) {
     return NextResponse.json(
       {
@@ -331,7 +331,7 @@ function validationErrorResponse(error: unknown): NextResponse {
 }
 
 // Common validation schemas
-const commonSchemas = {
+export const commonSchemas = {
   // UUID validation
   uuid: z.string().uuid('Invalid UUID format'),
 

@@ -7,7 +7,7 @@
 import { captureEvent, captureEnhancedEvent, EVENTS } from './client';
 
 // User Journey Events
-const trackUserSignUp = (properties?: {
+export const trackUserSignUp = (properties?: {
   method?: 'email' | 'google' | 'github' | 'linkedin';
   source?: string;
   referrer?: string;
@@ -15,18 +15,18 @@ const trackUserSignUp = (properties?: {
   captureEnhancedEvent(EVENTS.USER_SIGNED_UP, properties);
 };
 
-const trackUserLogin = (properties?: {
+export const trackUserLogin = (properties?: {
   method?: 'email' | 'google' | 'github' | 'linkedin';
 }) => {
   captureEvent(EVENTS.USER_LOGGED_IN, properties);
 };
 
-const trackUserLogout = () => {
+export const trackUserLogout = () => {
   captureEvent(EVENTS.USER_LOGGED_OUT);
 };
 
 // Portfolio Events
-const trackPortfolioCreated = (
+export const trackPortfolioCreated = (
   portfolioId: string,
   properties?: {
     template?: string;
@@ -54,7 +54,7 @@ export const trackPortfolioUpdated = (
   });
 };
 
-const trackPortfolioPublished = (
+export const trackPortfolioPublished = (
   portfolioId: string,
   properties?: {
     subdomain?: string;
@@ -68,7 +68,7 @@ const trackPortfolioPublished = (
   });
 };
 
-const trackPortfolioViewed = (
+export const trackPortfolioViewed = (
   portfolioSlug: string,
   properties?: {
     variant_id?: string;
@@ -114,7 +114,7 @@ export const trackEditorThemeChanged = (
 };
 
 // Variant Events
-const trackVariantCreated = (
+export const trackVariantCreated = (
   variantId: string,
   properties?: {
     portfolio_id?: string;
@@ -128,7 +128,7 @@ const trackVariantCreated = (
   });
 };
 
-const trackVariantUpdated = (
+export const trackVariantUpdated = (
   variantId: string,
   properties?: {
     update_type?: string;
@@ -141,7 +141,7 @@ const trackVariantUpdated = (
   });
 };
 
-const trackVariantSwitched = (properties?: {
+export const trackVariantSwitched = (properties?: {
   from_variant?: string;
   to_variant?: string;
   portfolio_id?: string;
@@ -149,7 +149,7 @@ const trackVariantSwitched = (properties?: {
   captureEvent(EVENTS.VARIANT_SWITCHED, properties);
 };
 
-const trackVariantPublished = (
+export const trackVariantPublished = (
   variantId: string,
   properties?: {
     portfolio_id?: string;
@@ -163,7 +163,7 @@ const trackVariantPublished = (
 };
 
 // AI Events
-const trackAIContentGenerated = (properties?: {
+export const trackAIContentGenerated = (properties?: {
   content_type?: 'bio' | 'project' | 'experience' | 'skills';
   model?: string;
   word_count?: number;
@@ -173,7 +173,7 @@ const trackAIContentGenerated = (properties?: {
   captureEvent(EVENTS.AI_CONTENT_GENERATED, properties);
 };
 
-const trackAISuggestionAccepted = (properties?: {
+export const trackAISuggestionAccepted = (properties?: {
   suggestion_type?: string;
   section?: string;
   confidence_score?: number;
@@ -182,7 +182,7 @@ const trackAISuggestionAccepted = (properties?: {
   captureEvent(EVENTS.AI_SUGGESTION_ACCEPTED, properties);
 };
 
-const trackAISuggestionRejected = (properties?: {
+export const trackAISuggestionRejected = (properties?: {
   suggestion_type?: string;
   section?: string;
   confidence_score?: number;
@@ -193,7 +193,7 @@ const trackAISuggestionRejected = (properties?: {
 };
 
 // Engagement Events
-const trackContactClicked = (
+export const trackContactClicked = (
   portfolioSlug: string,
   properties?: {
     contact_type?: 'email' | 'phone' | 'linkedin' | 'twitter' | 'github';
@@ -206,7 +206,7 @@ const trackContactClicked = (
   });
 };
 
-const trackResumeDownloaded = (
+export const trackResumeDownloaded = (
   portfolioSlug: string,
   properties?: {
     format?: 'pdf' | 'docx';
@@ -219,7 +219,7 @@ const trackResumeDownloaded = (
   });
 };
 
-const trackSocialLinkClicked = (
+export const trackSocialLinkClicked = (
   portfolioSlug: string,
   properties?: {
     platform?: string;
@@ -232,7 +232,7 @@ const trackSocialLinkClicked = (
   });
 };
 
-const trackProjectViewed = (
+export const trackProjectViewed = (
   portfolioSlug: string,
   projectId: string,
   properties?: {
@@ -250,7 +250,7 @@ const trackProjectViewed = (
 };
 
 // Revenue Events
-const trackSubscriptionStarted = (properties?: {
+export const trackSubscriptionStarted = (properties?: {
   plan?: 'starter' | 'professional' | 'business';
   billing_period?: 'monthly' | 'yearly';
   amount?: number;
@@ -259,7 +259,7 @@ const trackSubscriptionStarted = (properties?: {
   captureEnhancedEvent(EVENTS.SUBSCRIPTION_STARTED, properties);
 };
 
-const trackSubscriptionCancelled = (properties?: {
+export const trackSubscriptionCancelled = (properties?: {
   plan?: string;
   reason?: string;
   churn_survey_response?: Record<string, any>;
@@ -267,7 +267,7 @@ const trackSubscriptionCancelled = (properties?: {
   captureEnhancedEvent(EVENTS.SUBSCRIPTION_CANCELLED, properties);
 };
 
-const trackPaymentCompleted = (properties?: {
+export const trackPaymentCompleted = (properties?: {
   amount?: number;
   currency?: string;
   payment_method?: string;
@@ -277,7 +277,7 @@ const trackPaymentCompleted = (properties?: {
 };
 
 // Funnel tracking
-const trackOnboardingStep = (
+export const trackOnboardingStep = (
   step: number,
   stepName: string,
   properties?: Record<string, any>
@@ -289,7 +289,7 @@ const trackOnboardingStep = (
   });
 };
 
-const trackConversionFunnel = (
+export const trackConversionFunnel = (
   stage:
     | 'landed'
     | 'signed_up'

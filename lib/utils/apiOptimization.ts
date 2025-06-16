@@ -452,7 +452,7 @@ export function withMetrics() {
  *
  * Combines multiple optimization strategies into a single decorator.
  */
-function withOptimization(options: {
+export function withOptimization(options: {
   cache?: CacheConfig;
   rateLimit?: RateLimitConfig;
   metrics?: boolean;
@@ -484,7 +484,7 @@ function withOptimization(options: {
 /**
  * Database Query Optimization Utilities
  */
-class QueryOptimizer {
+export class QueryOptimizer {
   /**
    * Batch multiple database queries
    */
@@ -552,7 +552,7 @@ class QueryOptimizer {
 /**
  * Get API metrics and cache stats
  */
-function getAPIStats() {
+export function getAPIStats() {
   return {
     metrics: metricsCollector.getStats(),
     cache: memoryCache.stats(),
@@ -562,14 +562,14 @@ function getAPIStats() {
 /**
  * Clear all caches
  */
-function clearCaches() {
+export function clearCaches() {
   memoryCache.clear();
 }
 
 /**
  * Invalidate cache by tag
  */
-function invalidateCache(tag: string): number {
+export function invalidateCache(tag: string): number {
   return memoryCache.invalidateByTag(tag);
 }
 

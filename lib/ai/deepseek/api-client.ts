@@ -4,7 +4,6 @@
  * Handles low-level API communication with DeepSeek
  */
 
-import { logger } from '@/lib/utils/logger';
 import { 
   AIServiceError, 
   ModelUnavailableError, 

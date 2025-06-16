@@ -3,11 +3,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
-  apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 import {
   validateCreatePortfolio,
@@ -52,10 +50,8 @@ export const GET = versionedApiHandler(
       const queryParams = Object.fromEntries(url.searchParams.entries());
       const queryValidation = validatePortfolioQuery(queryParams);
 
-      if (!queryValidation.isValid) {
-        throw new ValidationError('Invalid query parameters', {
-          errors: queryValidation.errors,
-        });
+      if (!queryValidation.success) {
+        throw new ValidationError('Invalid query parameters');
       }
 
       // Query validation always succeeds based on the implementation

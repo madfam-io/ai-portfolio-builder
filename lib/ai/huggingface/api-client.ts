@@ -65,7 +65,7 @@ class RequestQueue {
   }
 }
 
-class HuggingFaceAPIClient {
+export class HuggingFaceAPIClient {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://api-inference.huggingface.co/models';
   private readonly requestQueue = new RequestQueue();

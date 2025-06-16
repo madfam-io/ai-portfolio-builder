@@ -40,7 +40,7 @@ export type EmploymentType =
   | 'internship';
 
 // Skill categories
-type SkillCategory =
+export type SkillCategory =
   | 'technical'
   | 'soft'
   | 'language'
@@ -318,7 +318,7 @@ export interface UpdatePortfolioDTO {
 }
 
 // AI enhancement request/response types
-interface EnhanceBioRequest {
+export interface EnhanceBioRequest {
   originalBio: string;
   targetTone: AIEnhancementSettings['tone'];
   targetLength: AIEnhancementSettings['targetLength'];
@@ -329,13 +329,13 @@ interface EnhanceBioRequest {
   };
 }
 
-interface EnhanceBioResponse {
+export interface EnhanceBioResponse {
   enhancedBio: string;
   confidence: number; // 0-1
   suggestions?: string[];
 }
 
-interface EnhanceProjectRequest {
+export interface EnhanceProjectRequest {
   project: {
     title: string;
     description: string;
@@ -344,14 +344,14 @@ interface EnhanceProjectRequest {
   targetTone: AIEnhancementSettings['tone'];
 }
 
-interface EnhanceProjectResponse {
+export interface EnhanceProjectResponse {
   enhancedDescription: string;
   suggestedHighlights: string[];
   extractedSkills: string[];
 }
 
 // Template recommendation types
-interface TemplateRecommendationRequest {
+export interface TemplateRecommendationRequest {
   userProfile: {
     title: string;
     skills: string[];
@@ -361,7 +361,7 @@ interface TemplateRecommendationRequest {
   };
 }
 
-interface TemplateRecommendationResponse {
+export interface TemplateRecommendationResponse {
   recommendedTemplate: TemplateType;
   confidence: number;
   reasoning: string;
@@ -372,7 +372,7 @@ interface TemplateRecommendationResponse {
 }
 
 // Portfolio Section - for dynamic content management
-interface PortfolioSection {
+export interface PortfolioSection {
   id: string;
   portfolioId: string;
   type: SectionType;
@@ -388,7 +388,7 @@ interface PortfolioSection {
 }
 
 // Enhanced Project interface with more details
-interface EnhancedProject extends Project {
+export interface EnhancedProject extends Project {
   shortDescription?: string;
   role?: string;
   demoUrl?: string;
@@ -404,7 +404,7 @@ interface EnhancedProject extends Project {
 }
 
 // Enhanced Experience interface
-interface EnhancedExperience extends Experience {
+export interface EnhancedExperience extends Experience {
   location?: string;
   employmentType?: EmploymentType;
   responsibilities?: string[];
@@ -414,7 +414,7 @@ interface EnhancedExperience extends Experience {
 }
 
 // Portfolio Analytics
-interface PortfolioAnalytics {
+export interface PortfolioAnalytics {
   id: string;
   portfolioId: string;
   date: Date;
@@ -431,7 +431,7 @@ interface PortfolioAnalytics {
 }
 
 // Editor State Management
-interface PortfolioEditorState {
+export interface PortfolioEditorState {
   portfolio: Portfolio;
   isDirty: boolean;
   isSaving: boolean;
@@ -450,7 +450,7 @@ export interface PortfolioHistoryEntry {
 }
 
 // Publishing Options
-interface PublishOptions {
+export interface PublishOptions {
   subdomain?: string;
   customDomain?: string;
   seo?: {
@@ -466,7 +466,7 @@ interface PublishOptions {
 }
 
 // Template Configuration
-interface TemplateConfig {
+export interface TemplateConfig {
   id: TemplateType;
   name: string;
   description: string;
@@ -479,14 +479,14 @@ interface TemplateConfig {
 }
 
 // Section Content Types
-interface AboutSectionContent {
+export interface AboutSectionContent {
   heading?: string;
   content: string;
   image?: string;
   highlights?: string[];
 }
 
-interface ContactSectionContent {
+export interface ContactSectionContent {
   heading?: string;
   subheading?: string;
   showEmail?: boolean;
@@ -496,7 +496,7 @@ interface ContactSectionContent {
   contactForm?: boolean;
 }
 
-interface CustomSectionContent {
+export interface CustomSectionContent {
   heading?: string;
   content: string;
   layout?: 'text' | 'html' | 'markdown';
@@ -508,7 +508,7 @@ interface CustomSectionContent {
 }
 
 // Form validation schemas (for use with Zod)
-interface PortfolioValidationRules {
+export interface PortfolioValidationRules {
   name: { min: 1; max: 100 };
   title: { min: 1; max: 200 };
   bio: { min: 0; max: 2000 };

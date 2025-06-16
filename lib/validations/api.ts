@@ -30,7 +30,7 @@ export const previewQuerySchema = z.object({
 });
 
 // For preview, we need a more permissive schema that allows partial portfolio data
-const previewPortfolioSchema = z
+export const previewPortfolioSchema = z
   .object({
     // Required fields
     name: z.string().min(1, 'Name is required'),
@@ -203,7 +203,7 @@ export const previewBodySchema = z.object({
 });
 
 // GitHub Integration schemas
-const githubCallbackSchema = z.object({
+export const githubCallbackSchema = z.object({
   code: z.string().min(1, 'Authorization code is required'),
   state: z.string().uuid('Invalid state parameter'),
   error: z.string().optional(),
@@ -211,15 +211,15 @@ const githubCallbackSchema = z.object({
 });
 
 // Analytics schemas
-const syncRepositoriesSchema = z.object({
+export const syncRepositoriesSchema = z.object({
   force: z.boolean().optional().default(false),
 });
 
-const repositoryParamsSchema = z.object({
+export const repositoryParamsSchema = z.object({
   id: uuidSchema,
 });
 
-const syncOptionsSchema = z.object({
+export const syncOptionsSchema = z.object({
   syncMetrics: z.boolean().optional().default(true),
   syncPullRequests: z.boolean().optional().default(true),
   syncContributors: z.boolean().optional().default(true),
@@ -228,17 +228,17 @@ const syncOptionsSchema = z.object({
 });
 
 // AI Model selection schemas
-const modelSelectionSchema = z.object({
+export const modelSelectionSchema = z.object({
   modelId: z.string().min(1, 'Model ID is required'),
   taskType: z.enum(['bio', 'project', 'template']),
 });
 
 // Portfolio API schemas
-const portfolioIdSchema = z.object({
+export const portfolioIdSchema = z.object({
   id: uuidSchema,
 });
 
-const publishPortfolioSchema = z.object({
+export const publishPortfolioSchema = z.object({
   subdomain: z
     .string()
     .min(3, 'Subdomain must be at least 3 characters')
@@ -251,7 +251,7 @@ const publishPortfolioSchema = z.object({
 });
 
 // Pagination schemas
-const paginationSchema = z.object({
+export const paginationSchema = z.object({
   page: z.coerce.number().int().min(1).optional().default(1),
   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
   sortBy: z.string().optional(),
@@ -259,7 +259,7 @@ const paginationSchema = z.object({
 });
 
 // Search schemas
-const searchSchema = z.object({
+export const searchSchema = z.object({
   query: z.string().min(1).max(100).optional(),
   filters: z
     .object({
@@ -272,7 +272,7 @@ const searchSchema = z.object({
 });
 
 // Error response helper
-function createValidationError(errors: z.ZodError): {
+export function createValidationError(errors: z.ZodError): {
   error: string;
   details: unknown;
 } {
@@ -283,7 +283,7 @@ function createValidationError(errors: z.ZodError): {
 }
 
 // Safe parse helper with logging
-function safeParseWithLogging<T>(
+export function safeParseWithLogging<T>(
   schema: z.ZodSchema<T>,
   data: unknown,
   context: string

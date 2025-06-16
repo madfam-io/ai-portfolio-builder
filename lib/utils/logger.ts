@@ -210,7 +210,7 @@ class Logger {
 export const logger = new Logger();
 
 // Convenience exports
-const debug = logger.debug.bind(logger);
-const info = logger.info.bind(logger);
-const warn = logger.warn.bind(logger);
-const error = logger.error.bind(logger);
+export const debug = logger.debug.bind(logger);
+export const info = logger.info.bind(logger);
+export const warn = logger.warn.bind(logger);
+export const error = logger.error.bind(logger);

@@ -194,7 +194,7 @@ export class FeatureFlagService {
         experiment,
         existingAssignment
       );
-      if (result) return result;
+      if (result) return Promise.resolve(result);
     }
 
     // Check targeting criteria
@@ -204,7 +204,7 @@ export class FeatureFlagService {
         visitorContext || {}
       )
     ) {
-      return null;
+      return Promise.resolve(null);
     }
 
     // Check traffic percentage for experiment
@@ -212,7 +212,7 @@ export class FeatureFlagService {
       `${visitorId}-${experiment.id}`
     );
     if (experimentHash >= experiment.traffic_percentage) {
-      return null;
+      return Promise.resolve(null);
     }
 
     // Assign variant based on traffic allocation
@@ -235,7 +235,7 @@ export class FeatureFlagService {
       }
     }
 
-    return null;
+    return Promise.resolve(null);
   }
 
   /**
@@ -315,7 +315,7 @@ export class FeatureFlagService {
       // Get active experiments
       if (!supabase) {
         logger.error('Failed to create Supabase client');
-        return null;
+        return Promise.resolve(null);
       }
 
       const { data: experiments, error: experimentsError } = await supabase
@@ -332,7 +332,7 @@ export class FeatureFlagService {
         .order('created_at', { ascending: false });
 
       if (experimentsError || !experiments || experiments.length === 0) {
-        return null;
+        return Promise.resolve(null);
       }
 
       // Find the first matching experiment
@@ -347,10 +347,10 @@ export class FeatureFlagService {
         if (result) return result;
       }
 
-      return null;
+      return Promise.resolve(null);
     } catch (error) {
       logger.error('Failed to get active experiment', error as Error);
-      return null;
+      return Promise.resolve(null);
     }
   }
 

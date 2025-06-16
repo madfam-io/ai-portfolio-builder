@@ -35,7 +35,7 @@ export type LandingComponentType =
 /**
  * Component variant names for each component type
  */
-interface ComponentVariants {
+export interface ComponentVariants {
   hero: 'default' | 'video' | 'minimal' | 'split' | 'animated';
   features: 'grid' | 'carousel' | 'list' | 'tabs';
   pricing: 'default' | 'comparison' | 'slider' | 'minimal';
@@ -120,7 +120,7 @@ export interface LandingPageVariant {
 /**
  * Analytics event tracking
  */
-interface AnalyticsEvent {
+export interface AnalyticsEvent {
   sessionId: string;
   visitorId?: string;
   userId?: string;
@@ -275,7 +275,7 @@ export interface HeroProps {
   showStats?: boolean;
 }
 
-interface FeaturesProps {
+export interface FeaturesProps {
   columns?: number;
   showIcons?: boolean;
   layout?: 'grid' | 'list' | 'carousel';
@@ -286,7 +286,7 @@ interface FeaturesProps {
   }>;
 }
 
-interface PricingProps {
+export interface PricingProps {
   plans?: Array<{
     name: string;
     price: number;
@@ -322,7 +322,7 @@ export interface CreateExperimentRequest {
   endDate?: Date;
 }
 
-interface UpdateExperimentRequest {
+export interface UpdateExperimentRequest {
   name?: string;
   description?: string;
   status?: ExperimentStatus;
@@ -352,7 +352,7 @@ export interface ExperimentAnalyticsResponse {
 /**
  * Conversion metrics
  */
-type ConversionMetric =
+export type ConversionMetric =
   | 'signup_rate'
   | 'demo_click_rate'
   | 'cta_click_rate'

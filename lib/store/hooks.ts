@@ -14,7 +14,7 @@ import { useUIStore } from './ui-store';
 /**
  * Hook for authenticated user data with loading state
  */
-function useUser() {
+export function useUser() {
   const { user, isLoading, isAuthenticated } = useAuthStore(
     state => ({
       user: state.user,
@@ -35,7 +35,7 @@ function useUser() {
 /**
  * Hook for current portfolio with auto-save
  */
-function useCurrentPortfolio() {
+export function useCurrentPortfolio() {
   const {
     currentPortfolio,
     isEditing,
@@ -104,7 +104,7 @@ function useCurrentPortfolio() {
 /**
  * Hook for theme management with system detection
  */
-function useTheme() {
+export function useTheme() {
   const { theme, setTheme } = useUIStore(
     state => ({
       theme: state.theme,
@@ -164,7 +164,7 @@ function useTheme() {
 /**
  * Hook for AI model selection with quota tracking
  */
-function useAIModels() {
+export function useAIModels() {
   const {
     selectedModels,
     availableModels,
@@ -214,7 +214,7 @@ function useAIModels() {
 /**
  * Hook for modal management
  */
-function useModal(modalId: string) {
+export function useModal(modalId: string) {
   const { modals, openModal, closeModal } = useUIStore(
     state => ({
       modals: state.modals,
@@ -247,7 +247,7 @@ function useModal(modalId: string) {
 /**
  * Hook for toast notifications
  */
-function useToasts() {
+export function useToasts() {
   const { toasts, showToast, removeToast, clearToasts } = useUIStore(
     state => ({
       toasts: state.toasts,
@@ -277,7 +277,7 @@ function useToasts() {
 /**
  * Hook for global loading state
  */
-function useGlobalLoading() {
+export function useGlobalLoading() {
   const { globalLoading, loadingMessage, setGlobalLoading } = useUIStore(
     state => ({
       globalLoading: state.globalLoading,
@@ -310,7 +310,7 @@ function useGlobalLoading() {
 /**
  * Hook for portfolio list with filtering and sorting
  */
-function usePortfolios(options?: {
+export function usePortfolios(options?: {
   filter?: (portfolio: unknown) => boolean;
   sort?: (a: unknown, b: unknown) => number;
 }) {

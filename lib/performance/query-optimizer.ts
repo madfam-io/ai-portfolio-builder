@@ -59,7 +59,7 @@ export function buildPaginationParams(options: QueryOptions = {}) {
 /**
  * Create pagination response metadata
  */
-function createPaginationMeta(
+export function createPaginationMeta(
   total: number,
   page: number,
   limit: number
@@ -110,7 +110,7 @@ export function optimizeSelectFields(
 /**
  * Build optimized query with relations to avoid N+1 queries
  */
-function buildOptimizedQuery(
+export function buildOptimizedQuery(
   baseTable: string,
   options: QueryOptions & {
     joins?: Array<{ table: string; on: string; type?: 'inner' | 'left' }>;
@@ -162,7 +162,7 @@ function buildOptimizedQuery(
 /**
  * Cache key generator for query results
  */
-function generateQueryCacheKey(
+export function generateQueryCacheKey(
   table: string,
   options: QueryOptions,
   userId?: string
@@ -189,7 +189,7 @@ function generateQueryCacheKey(
 /**
  * Batch loader to prevent N+1 queries
  */
-class BatchLoader<K, V> {
+export class BatchLoader<K, V> {
   private batch: Map<K, Array<(value: V | null) => void>> = new Map();
   private scheduled = false;
 

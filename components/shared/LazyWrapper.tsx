@@ -192,49 +192,49 @@ export function withLazyLoading<P extends object>(
   };
 }
 
-/**
- * Hook for Lazy Loading with Manual Control
- *
- * Provides more granular control over lazy loading behavior.
- * Useful when you need to conditionally load components.
- */
-function useLazyComponent<T extends ComponentType<any>>(
-  importComponent: () => Promise<{ default: T }>,
-  shouldLoad: boolean = true
-) {
-  const [LazyComponent, setLazyComponent] = React.useState<T | null>(null);
-  const [isLoading, setIsLoading] = React.useState(false);
-  const [error, setError] = React.useState<Error | null>(null);
+// /**
+//  * Hook for Lazy Loading with Manual Control
+//  *
+//  * Provides more granular control over lazy loading behavior.
+//  * Useful when you need to conditionally load components.
+//  */
+// function useLazyComponent<T extends ComponentType<any>>(
+//   importComponent: () => Promise<{ default: T }>,
+//   shouldLoad: boolean = true
+// ) {
+//   const [LazyComponent, setLazyComponent] = React.useState<T | null>(null);
+//   const [isLoading, setIsLoading] = React.useState(false);
+//   const [error, setError] = React.useState<Error | null>(null);
 
-  React.useEffect(() => {
-    if (!shouldLoad || LazyComponent) return;
+//   React.useEffect(() => {
+//     if (!shouldLoad || LazyComponent) return;
 
-    setIsLoading(true);
-    setError(null);
+//     setIsLoading(true);
+//     setError(null);
 
-    importComponent()
-      .then(module => {
-        setLazyComponent(() => module.default);
-      })
-      .catch(err => {
-        setError(
-          err instanceof Error ? err : new Error('Failed to load component')
-        );
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, [shouldLoad, LazyComponent, importComponent]);
+//     importComponent()
+//       .then(module => {
+//         setLazyComponent(() => module.default);
+//       })
+//       .catch(err => {
+//         setError(
+//           err instanceof Error ? err : new Error('Failed to load component')
+//         );
+//       })
+//       .finally(() => {
+//         setIsLoading(false);
+//       });
+//   }, [shouldLoad, LazyComponent, importComponent]);
 
-  return {
-    LazyComponent,
-    isLoading,
-    error,
-    reload: () => {
-      setLazyComponent(null);
-      setError(null);
-    },
-  };
-}
+//   return {
+//     LazyComponent,
+//     isLoading,
+//     error,
+//     reload: () => {
+//       setLazyComponent(null);
+//       setError(null);
+//     },
+//   };
+// }
 
 export default LazyWrapper;

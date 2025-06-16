@@ -147,7 +147,7 @@ export interface LanguageDetectionResult {
  *
  * @returns Promise resolving to country code or null if detection fails
  */
-async function detectCountryFromIP(): Promise<string | null> {
+export async function detectCountryFromIP(): Promise<string | null> {
   try {
     // Using ipapi.co for free IP geolocation (1000 requests/day limit)
     const response = await fetch('https://ipapi.co/country/', {
@@ -182,7 +182,7 @@ async function detectCountryFromIP(): Promise<string | null> {
  *
  * @returns Estimated country code or null
  */
-function detectCountryFromTimezone(): string | null {
+export function detectCountryFromTimezone(): string | null {
   try {
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -231,7 +231,7 @@ function detectCountryFromTimezone(): string | null {
  *
  * @returns Detected language code or null
  */
-function detectLanguageFromBrowser(): 'es' | 'en' | null {
+export function detectLanguageFromBrowser(): 'es' | 'en' | null {
   try {
     // Get browser language preferences
     const browserLanguages = [
@@ -263,7 +263,7 @@ function detectLanguageFromBrowser(): 'es' | 'en' | null {
  * @param countryCode - ISO 3166-1 alpha-2 country code
  * @returns Language code and confidence level
  */
-function getLanguageFromCountry(countryCode: string): {
+export function getLanguageFromCountry(countryCode: string): {
   language: 'es' | 'en';
   confident: boolean;
 } {
@@ -286,7 +286,7 @@ function getLanguageFromCountry(countryCode: string): {
  * @param language - Language code
  * @returns Flag emoji
  */
-function getFlag(
+export function getFlag(
   countryCode: string | undefined,
   language: 'es' | 'en'
 ): string {
@@ -313,7 +313,7 @@ function getFlag(
  *
  * @returns Promise resolving to language detection result
  */
-async function detectUserLanguage(): Promise<LanguageDetectionResult> {
+export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
   // Method 1: Try IP-based geolocation first
   try {
     const countryCode = await detectCountryFromIP();
@@ -372,7 +372,7 @@ async function detectUserLanguage(): Promise<LanguageDetectionResult> {
  *
  * @returns Language detection result (synchronous)
  */
-function detectUserLanguageSync(): LanguageDetectionResult {
+export function detectUserLanguageSync(): LanguageDetectionResult {
   // Try timezone detection first
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {

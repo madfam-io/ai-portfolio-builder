@@ -1,285 +1,437 @@
-/**
- * Tests for Retry Handler
- */
-
 import {
   retry,
   CircuitBreaker,
   createDebouncedRetry,
   withTimeout,
+  RetryOptions,
 } from '@/lib/services/error/retry-handler';
 import { AppError, ExternalServiceError } from '@/types/errors';
+import { errorLogger } from '@/lib/services/error/error-logger';
 
-// Helper to create a function that fails n times then succeeds
-function createFailingFunction<T>(failCount: number, successValue: T) {
-  let attempts = 0;
-  return jest.fn(() => {
-    attempts++;
-    if (attempts <= failCount) {
-      return Promise.reject(new ExternalServiceError(`Attempt ${attempts} failed`));
-    }
-    return Promise.resolve(successValue);
-  });
-}
+// Mock dependencies
+jest.mock('@/lib/services/error/error-logger');
+
+// Mock timers
+jest.useFakeTimers();
 
 describe('Retry Handler', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    jest.clearAllMocks();
+    jest.clearAllTimers();
   });
 
   afterEach(() => {
-    jest.useRealTimers();
+    jest.runOnlyPendingTimers();
   });
 
   describe('retry', () => {
-    it('should retry failed operations', async () => {
-      const fn = createFailingFunction(2, 'success');
-      
-      const retryPromise = retry(fn, { 
-        maxAttempts: 3,
-        initialDelay: 100,
-      });
+    it('should succeed on first attempt', async () => {
+      const mockFn = jest.fn().mockResolvedValue('success');
 
-      // Wait for initial attempt
-      await jest.runOnlyPendingTimersAsync();
-      // Wait for first retry
-      await jest.runOnlyPendingTimersAsync();
-      // Wait for second retry (successful)
-      await jest.runOnlyPendingTimersAsync();
-      
-      const result = await retryPromise;
+      const result = await retry(mockFn);
+
       expect(result).toBe('success');
-      expect(fn).toHaveBeenCalledTimes(3);
+      expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
-    it('should throw after max attempts', async () => {
-      const fn = createFailingFunction(5, 'success');
-      
-      const retryPromise = retry(fn, { 
-        maxAttempts: 3,
-        initialDelay: 100,
-      });
+    it('should retry on failure and succeed', async () => {
+      const mockFn = jest.fn()
+        .mockRejectedValueOnce(new ExternalServiceError('Service unavailable'))
+        .mockRejectedValueOnce(new ExternalServiceError('Service unavailable'))
+        .mockResolvedValue('success');
 
-      // Run all timers
+      const promise = retry(mockFn);
+
+      // Fast-forward through retries
       await jest.runAllTimersAsync();
-      
-      await expect(retryPromise).rejects.toThrow('Attempt 3 failed');
-      expect(fn).toHaveBeenCalledTimes(3);
+
+      const result = await promise;
+
+      expect(result).toBe('success');
+      expect(mockFn).toHaveBeenCalledTimes(3);
+      expect(errorLogger.logWarning).toHaveBeenCalledTimes(2);
     });
 
-    it('should respect retry condition', async () => {
-      let attempts = 0;
-      const fn = jest.fn(() => {
-        attempts++;
-        if (attempts === 1) {
-          return Promise.reject(new AppError('Client error', 400));
-        }
-        return Promise.resolve('success');
-      });
+    it('should fail after max attempts', async () => {
+      const error = new ExternalServiceError('Service unavailable');
+      const mockFn = jest.fn().mockRejectedValue(error);
 
-      const retryPromise = retry(fn, { maxAttempts: 3 });
-      
+      const promise = retry(mockFn, { maxAttempts: 3 });
+
+      // Fast-forward through all retries
       await jest.runAllTimersAsync();
+
+      await expect(promise).rejects.toThrow(error);
+      expect(mockFn).toHaveBeenCalledTimes(3);
+    });
+
+    it('should not retry on non-retryable errors', async () => {
+      const error = new AppError('Bad request', 'BAD_REQUEST', 400);
+      const mockFn = jest.fn().mockRejectedValue(error);
+
+      await expect(retry(mockFn)).rejects.toThrow(error);
+      expect(mockFn).toHaveBeenCalledTimes(1);
+    });
+
+    it('should use custom retry condition', async () => {
+      const error = new Error('Custom error');
+      const mockFn = jest.fn().mockRejectedValue(error);
       
-      // Should not retry on 4xx errors
-      await expect(retryPromise).rejects.toThrow('Client error');
-      expect(fn).toHaveBeenCalledTimes(1);
+      const retryCondition = jest.fn().mockReturnValue(false);
+      
+      await expect(retry(mockFn, { retryCondition })).rejects.toThrow(error);
+      
+      expect(retryCondition).toHaveBeenCalledWith(error);
+      expect(mockFn).toHaveBeenCalledTimes(1);
     });
 
     it('should apply exponential backoff', async () => {
-      const fn = createFailingFunction(3, 'success');
-      const delays: number[] = [];
+      const mockFn = jest.fn()
+        .mockRejectedValueOnce(new ExternalServiceError('Error'))
+        .mockRejectedValueOnce(new ExternalServiceError('Error'))
+        .mockResolvedValue('success');
 
-      const retryPromise = retry(fn, {
-        maxAttempts: 4,
+      const promise = retry(mockFn, {
         initialDelay: 100,
         backoffMultiplier: 2,
-        onRetry: (_error, _attempt) => {
-          const currentTime = jest.now();
-          delays.push(currentTime);
-        }
       });
 
-      await jest.runAllTimersAsync();
-      await retryPromise;
+      // First retry after 100ms
+      jest.advanceTimersByTime(100);
+      await Promise.resolve();
 
-      expect(fn).toHaveBeenCalledTimes(4);
-      // Verify exponential backoff
-      if (delays.length >= 2) {
-        const firstDelay = delays[1] - delays[0];
-        const secondDelay = delays[2] - delays[1];
-        expect(secondDelay).toBeGreaterThan(firstDelay);
-      }
+      // Second retry after 200ms (100 * 2)
+      jest.advanceTimersByTime(200);
+      await Promise.resolve();
+
+      const result = await promise;
+
+      expect(result).toBe('success');
+      expect(mockFn).toHaveBeenCalledTimes(3);
     });
 
     it('should respect max delay', async () => {
-      const fn = createFailingFunction(5, 'success');
-      
-      const retryPromise = retry(fn, {
-        maxAttempts: 6,
-        initialDelay: 100,
-        maxDelay: 200,
+      const mockFn = jest.fn()
+        .mockRejectedValue(new ExternalServiceError('Error'));
+
+      const promise = retry(mockFn, {
+        maxAttempts: 5,
+        initialDelay: 1000,
+        maxDelay: 2000,
         backoffMultiplier: 10,
       });
 
+      // Fast-forward through all retries
       await jest.runAllTimersAsync();
-      await retryPromise;
 
-      expect(fn).toHaveBeenCalledTimes(6);
+      await expect(promise).rejects.toThrow();
+
+      // Check that delay was capped at maxDelay
+      const logCalls = (errorLogger.logWarning as jest.Mock).mock.calls;
+      const lastDelay = logCalls[logCalls.length - 1][1].metadata.delay;
+      expect(lastDelay).toBe(2000);
     });
 
     it('should call onRetry callback', async () => {
-      const fn = createFailingFunction(2, 'success');
       const onRetry = jest.fn();
+      const error = new ExternalServiceError('Error');
+      const mockFn = jest.fn()
+        .mockRejectedValueOnce(error)
+        .mockResolvedValue('success');
 
-      const retryPromise = retry(fn, {
-        maxAttempts: 3,
-        initialDelay: 100,
-        onRetry,
-      });
+      const promise = retry(mockFn, { onRetry });
 
       await jest.runAllTimersAsync();
-      await retryPromise;
+      await promise;
 
-      expect(onRetry).toHaveBeenCalledTimes(2);
-      expect(onRetry).toHaveBeenCalledWith(expect.any(Error), 1);
-      expect(onRetry).toHaveBeenCalledWith(expect.any(Error), 2);
+      expect(onRetry).toHaveBeenCalledWith(error, 1);
+    });
+
+    it('should retry on network errors', async () => {
+      const networkError = new Error('network timeout');
+      const mockFn = jest.fn()
+        .mockRejectedValueOnce(networkError)
+        .mockResolvedValue('success');
+
+      const promise = retry(mockFn);
+
+      await jest.runAllTimersAsync();
+      const result = await promise;
+
+      expect(result).toBe('success');
+      expect(mockFn).toHaveBeenCalledTimes(2);
+    });
+
+    it('should retry on 5xx errors', async () => {
+      const serverError = new AppError('Server error', 'SERVER_ERROR', 503);
+      const mockFn = jest.fn()
+        .mockRejectedValueOnce(serverError)
+        .mockResolvedValue('success');
+
+      const promise = retry(mockFn);
+
+      await jest.runAllTimersAsync();
+      const result = await promise;
+
+      expect(result).toBe('success');
+      expect(mockFn).toHaveBeenCalledTimes(2);
     });
   });
 
   describe('CircuitBreaker', () => {
-    it('should open circuit after failure threshold', async () => {
-      const fn = jest.fn(() => {
-        return Promise.reject(new ExternalServiceError('Service error'));
-      });
+    let circuitBreaker: CircuitBreaker;
 
-      const breaker = new CircuitBreaker(fn, {
-        failureThreshold: 2,
-        resetTimeout: 1000,
-      });
+    beforeEach(() => {
+      circuitBreaker = new CircuitBreaker(3, 60000, 30000);
+    });
 
-      // First two calls should fail normally
-      await expect(breaker.call()).rejects.toThrow('Service error');
-      await expect(breaker.call()).rejects.toThrow('Service error');
+    it('should execute function when closed', async () => {
+      const mockFn = jest.fn().mockResolvedValue('success');
+
+      const result = await circuitBreaker.execute(mockFn);
+
+      expect(result).toBe('success');
+      expect(mockFn).toHaveBeenCalled();
+      expect(circuitBreaker.getState()).toBe('closed');
+    });
+
+    it('should trip after threshold failures', async () => {
+      const mockFn = jest.fn().mockRejectedValue(new Error('Failure'));
+
+      // Fail threshold times
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
+
+      expect(circuitBreaker.getState()).toBe('open');
+      expect(errorLogger.logWarning).toHaveBeenCalledWith(
+        'Circuit breaker tripped',
+        expect.any(Object)
+      );
+    });
+
+    it('should reject immediately when open', async () => {
+      const mockFn = jest.fn().mockRejectedValue(new Error('Failure'));
+
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
+
+      // Should reject without calling function
+      mockFn.mockClear();
       
-      // Circuit should now be open
-      await expect(breaker.call()).rejects.toThrow('Circuit breaker is open');
-      expect(fn).toHaveBeenCalledTimes(2);
+      await expect(circuitBreaker.execute(mockFn)).rejects.toThrow(
+        'Service temporarily unavailable'
+      );
+      
+      expect(mockFn).not.toHaveBeenCalled();
+    });
+
+    it('should use fallback when open', async () => {
+      const mockFn = jest.fn().mockRejectedValue(new Error('Failure'));
+      const fallback = jest.fn().mockResolvedValue('fallback');
+
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
+
+      const result = await circuitBreaker.execute(mockFn, fallback);
+
+      expect(result).toBe('fallback');
+      expect(fallback).toHaveBeenCalled();
     });
 
     it('should transition to half-open after timeout', async () => {
-      const fn = jest.fn()
-        .mockRejectedValueOnce(new Error('Error 1'))
-        .mockRejectedValueOnce(new Error('Error 2'))
-        .mockResolvedValueOnce('success');
-
-      const breaker = new CircuitBreaker(fn, {
-        failureThreshold: 2,
-        resetTimeout: 1000,
-      });
-
-      // Open the circuit
-      await expect(breaker.call()).rejects.toThrow('Error 1');
-      await expect(breaker.call()).rejects.toThrow('Error 2');
-      await expect(breaker.call()).rejects.toThrow('Circuit breaker is open');
-
-      // Wait for reset timeout
-      await jest.advanceTimersByTimeAsync(1000);
-
-      // Circuit should be half-open, next call should succeed
-      const result = await breaker.call();
-      expect(result).toBe('success');
-      expect(fn).toHaveBeenCalledTimes(3);
-    });
-
-    it('should close circuit after successful call in half-open state', async () => {
-      const fn = jest.fn()
-        .mockRejectedValueOnce(new Error('Error 1'))
-        .mockRejectedValueOnce(new Error('Error 2'))
+      const mockFn = jest.fn()
+        .mockRejectedValue(new Error('Failure'))
+        .mockRejectedValue(new Error('Failure'))
+        .mockRejectedValue(new Error('Failure'))
         .mockResolvedValue('success');
 
-      const breaker = new CircuitBreaker(fn, {
-        failureThreshold: 2,
-        resetTimeout: 1000,
-      });
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
 
-      // Open the circuit
-      await expect(breaker.call()).rejects.toThrow();
-      await expect(breaker.call()).rejects.toThrow();
+      expect(circuitBreaker.getState()).toBe('open');
 
-      // Wait and transition to half-open
-      await jest.advanceTimersByTimeAsync(1000);
+      // Advance time past retry timeout
+      jest.advanceTimersByTime(30001);
 
-      // Successful call should close the circuit
-      await breaker.call();
-      
-      // Circuit should be closed, multiple calls should work
-      await expect(breaker.call()).resolves.toBe('success');
-      await expect(breaker.call()).resolves.toBe('success');
+      // Should try again in half-open state
+      const result = await circuitBreaker.execute(mockFn);
+
+      expect(result).toBe('success');
+      expect(circuitBreaker.getState()).toBe('closed');
+      expect(errorLogger.logInfo).toHaveBeenCalledWith('Circuit breaker reset');
     });
 
-    it('should report current state', async () => {
-      const fn = jest.fn(() => {
-        return Promise.reject(new ExternalServiceError('Service error'));
+    it('should re-open if half-open attempt fails', async () => {
+      const mockFn = jest.fn().mockRejectedValue(new Error('Failure'));
+
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
+
+      // Advance to half-open
+      jest.advanceTimersByTime(30001);
+
+      // Fail in half-open state
+      try {
+        await circuitBreaker.execute(mockFn);
+      } catch {}
+
+      expect(circuitBreaker.getState()).toBe('open');
+    });
+
+    it('should reset on successful execution in half-open', async () => {
+      const mockFn = jest.fn()
+        .mockRejectedValue(new Error('Failure'))
+        .mockRejectedValue(new Error('Failure'))
+        .mockRejectedValue(new Error('Failure'))
+        .mockResolvedValue('success');
+
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
+
+      // Advance to half-open
+      jest.advanceTimersByTime(30001);
+
+      // Succeed in half-open state
+      await circuitBreaker.execute(mockFn);
+
+      expect(circuitBreaker.getState()).toBe('closed');
+    });
+
+    it('should handle async fallback functions', async () => {
+      const mockFn = jest.fn().mockRejectedValue(new Error('Failure'));
+      const asyncFallback = jest.fn().mockImplementation(async () => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return 'async fallback';
       });
 
-      const breaker = new CircuitBreaker(fn, {
-        failureThreshold: 1,
-      });
+      // Trip the breaker
+      for (let i = 0; i < 3; i++) {
+        try {
+          await circuitBreaker.execute(mockFn);
+        } catch {}
+      }
 
-      // Initially closed
-      expect(breaker.getState()).toBe('closed');
-
-      // Open after failure
-      await expect(breaker.call()).rejects.toThrow('Service error');
-      expect(breaker.getState()).toBe('open');
+      const promise = circuitBreaker.execute(mockFn, asyncFallback);
+      jest.advanceTimersByTime(100);
+      
+      const result = await promise;
+      expect(result).toBe('async fallback');
     });
   });
 
   describe('createDebouncedRetry', () => {
-    it('should debounce retries', async () => {
-      const fn = jest.fn(async (value: string) => value);
-      const debounced = createDebouncedRetry(fn as any, 200);
+    it('should debounce multiple calls', async () => {
+      const mockFn = jest.fn().mockResolvedValue('success');
+      const debouncedFn = createDebouncedRetry(mockFn, 100);
 
-      // Multiple calls in quick succession
-      const promise1 = debounced('first');
-      const promise2 = debounced('second');
-      const promise3 = debounced('third');
+      // Make multiple calls
+      const promise1 = debouncedFn('arg1');
+      const promise2 = debouncedFn('arg2');
+      const promise3 = debouncedFn('arg3');
 
-      await jest.runAllTimersAsync();
+      // Fast-forward past debounce delay
+      jest.advanceTimersByTime(100);
 
-      // Only the last call should execute
       const results = await Promise.all([promise1, promise2, promise3]);
-      expect(results).toEqual(['third', 'third', 'third']);
-      expect(fn).toHaveBeenCalledTimes(1);
-      expect(fn).toHaveBeenCalledWith('third');
+
+      // Only last call should execute
+      expect(mockFn).toHaveBeenCalledTimes(1);
+      expect(mockFn).toHaveBeenCalledWith('arg3');
+      expect(results).toEqual(['success', 'success', 'success']);
+    });
+
+    it('should handle errors in debounced function', async () => {
+      const error = new Error('Test error');
+      const mockFn = jest.fn().mockRejectedValue(error);
+      const debouncedFn = createDebouncedRetry(mockFn, 100);
+
+      const promise = debouncedFn();
+
+      jest.advanceTimersByTime(100);
+
+      await expect(promise).rejects.toThrow(error);
+    });
+
+    it('should reset state after execution', async () => {
+      const mockFn = jest.fn().mockResolvedValue('success');
+      const debouncedFn = createDebouncedRetry(mockFn, 100);
+
+      // First call
+      const promise1 = debouncedFn('arg1');
+      jest.advanceTimersByTime(100);
+      await promise1;
+
+      // Second call after reset
+      const promise2 = debouncedFn('arg2');
+      jest.advanceTimersByTime(100);
+      await promise2;
+
+      expect(mockFn).toHaveBeenCalledTimes(2);
+      expect(mockFn).toHaveBeenNthCalledWith(1, 'arg1');
+      expect(mockFn).toHaveBeenNthCalledWith(2, 'arg2');
     });
   });
 
   describe('withTimeout', () => {
-    it('should timeout long-running operations', async () => {
-      const longRunningPromise = new Promise((resolve) => {
-        setTimeout(() => resolve('success'), 5000);
+    it('should resolve if promise completes before timeout', async () => {
+      const promise = Promise.resolve('success');
+      
+      const result = await withTimeout(promise, 1000);
+      
+      expect(result).toBe('success');
+    });
+
+    it('should reject if promise times out', async () => {
+      const slowPromise = new Promise(resolve => {
+        setTimeout(() => resolve('success'), 2000);
       });
 
-      const promise = withTimeout(longRunningPromise, 1000);
-      
-      await jest.advanceTimersByTimeAsync(1001);
+      const promise = withTimeout(slowPromise, 1000);
+
+      jest.advanceTimersByTime(1000);
 
       await expect(promise).rejects.toThrow('Operation timed out after 1000ms');
     });
 
-    it('should return result if operation completes in time', async () => {
-      const quickPromise = new Promise((resolve) => {
-        setTimeout(() => resolve('success'), 500);
-      });
+    it('should use custom timeout error', async () => {
+      const slowPromise = new Promise(() => {});
+      const customError = new Error('Custom timeout');
 
-      const promise = withTimeout(quickPromise, 1000);
-      
-      await jest.advanceTimersByTimeAsync(500);
+      const promise = withTimeout(slowPromise, 100, customError);
 
-      const result = await promise;
-      expect(result).toBe('success');
+      jest.advanceTimersByTime(100);
+
+      await expect(promise).rejects.toThrow(customError);
+    });
+
+    it('should handle already rejected promises', async () => {
+      const error = new Error('Original error');
+      const rejectedPromise = Promise.reject(error);
+
+      await expect(withTimeout(rejectedPromise, 1000)).rejects.toThrow(error);
     });
   });
 });

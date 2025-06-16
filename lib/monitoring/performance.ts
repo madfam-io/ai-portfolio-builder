@@ -189,7 +189,7 @@ class PerformanceMonitorSingleton extends PerformanceMonitor {
   }
 }
 
-const perfMonitor = PerformanceMonitorSingleton.getInstance();
+export const perfMonitor = PerformanceMonitorSingleton.getInstance();
 
 // Performance stats storage
 const performanceStats: Record<
@@ -260,7 +260,7 @@ export async function measureAsyncOperation<T>(
 /**
  * Track API call performance
  */
-async function trackApiCall(
+export async function trackApiCall(
   endpoint: string,
   options?: RequestInit
 ): Promise<Response> {
@@ -298,14 +298,14 @@ async function trackApiCall(
 /**
  * Get performance statistics
  */
-function getPerformanceStats() {
+export function getPerformanceStats() {
   return { ...performanceStats };
 }
 
 /**
  * Reset performance statistics
  */
-function resetStats(): void {
+export function resetStats(): void {
   Object.keys(performanceStats).forEach(key => {
     delete performanceStats[key];
   });
@@ -314,7 +314,7 @@ function resetStats(): void {
 /**
  * Hook for component render tracking
  */
-function useRenderTracking(componentName: string): void {
+export function useRenderTracking(componentName: string): void {
   const renderCount = useRef(0);
 
   useEffect(() => {

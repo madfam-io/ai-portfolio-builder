@@ -62,7 +62,7 @@ export const showToast = {
 };
 
 // Export a mock toast object for compatibility
-const toast = {
+export const toast = {
   success: showToast.success,
   error: showToast.error,
   loading: showToast.loading,

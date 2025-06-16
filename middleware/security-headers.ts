@@ -66,7 +66,7 @@ export function applySecurityHeaders(
  * Check if the request path should have security headers applied
  * Skip for Next.js internal routes and static assets
  */
-function shouldApplySecurityHeaders(pathname: string): boolean {
+export function shouldApplySecurityHeaders(pathname: string): boolean {
   // Skip Next.js internal routes
   if (pathname.startsWith('/_next/')) {
     return false;

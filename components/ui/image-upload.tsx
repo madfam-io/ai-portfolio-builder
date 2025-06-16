@@ -57,22 +57,7 @@ export function ImageUpload({
     e.stopPropagation();
   }, []);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setIsDragActive(false);
-
-      if (disabled || isUploading) return;
-
-      const files = e.dataTransfer.files;
-      if (files && files.length > 0) {
-        handleFile(files[0]);
-      }
-    },
-    [disabled, isUploading]
-  );
-
+  // Need to define handleFile before handleDrop
   const uploadForm = useAsyncForm(async (file: File) => {
     // Validate file
     const validation = validateFile(file);
@@ -99,7 +84,7 @@ export function ImageUpload({
     return data.data.url;
   }, {
     onSuccess: (url) => {
-      onChange(url);
+      onChange(url as string);
       toast({
         title: t.success || 'Success',
         description: t.imageUploaded || 'Image uploaded successfully',
@@ -117,10 +102,26 @@ export function ImageUpload({
     },
   });
 
-  const handleFile = async (file: File | undefined) => {
+  const handleFile = useCallback(async (file: File | undefined) => {
     if (!file) return;
     await uploadForm.submit(file);
-  };
+  }, [uploadForm]);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragActive(false);
+
+      if (disabled) return;
+
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    },
+    [disabled, handleFile]
+  );
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -172,7 +173,7 @@ export function ImageUpload({
 
   const handleRemove = async () => {
     if (!value || uploadForm.isSubmitting || deleteForm.isSubmitting) return;
-    await deleteForm.submit();
+    await deleteForm.submit(undefined);
   };
 
   const isUploading = uploadForm.isSubmitting || deleteForm.isSubmitting;

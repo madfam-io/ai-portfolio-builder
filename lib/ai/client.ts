@@ -231,7 +231,7 @@ export const aiClient = new AIClient();
 /**
  * React hooks for AI operations
  */
-function useAIEnhancement() {
+export function useAIEnhancement() {
   return {
     enhanceBio: aiClient.enhanceBio.bind(aiClient),
     optimizeProject: aiClient.optimizeProject.bind(aiClient),
@@ -245,7 +245,7 @@ function useAIEnhancement() {
 /**
  * Utility functions for AI operations
  */
-const AIUtils = {
+export const AIUtils = {
   /**
    * Extract user profile from portfolio data
    */

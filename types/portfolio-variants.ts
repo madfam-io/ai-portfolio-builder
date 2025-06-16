@@ -135,7 +135,7 @@ export interface PortfolioVariant {
   updatedAt: Date;
 }
 
-interface VariantComparison {
+export interface VariantComparison {
   variantA: string;
   variantB: string;
   metrics: {
@@ -191,7 +191,7 @@ export interface CreateVariantInput {
 }
 
 // Type for variant preview/comparison
-interface VariantPreview {
+export interface VariantPreview {
   id: string;
   name: string;
   audienceType: AudienceType;

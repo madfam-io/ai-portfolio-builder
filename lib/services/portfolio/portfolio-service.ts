@@ -1,5 +1,5 @@
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
-import { BaseService } from '@/lib/services/base';
+import { BaseService, BaseRepository } from '@/lib/services/base';
 import { logger } from '@/lib/utils/logger';
 import {
   Portfolio,
@@ -26,8 +26,8 @@ export class PortfolioService extends BaseService<Portfolio> {
   /**
    * Get repository instance for base service
    */
-  protected getRepository(): PortfolioRepository {
-    return this.repository;
+  protected getRepository(): BaseRepository<Portfolio> {
+    return this.repository as unknown as BaseRepository<Portfolio>;
   }
 
   /**

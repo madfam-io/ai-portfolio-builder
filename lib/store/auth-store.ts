@@ -204,9 +204,9 @@ export const useAuthStore = create<AuthState & AuthActions>()(
 );
 
 // Selectors
-const selectUser = (state: AuthState & AuthActions) => state.user;
-const selectIsAuthenticated = (state: AuthState & AuthActions) =>
+export const selectUser = (state: AuthState & AuthActions) => state.user;
+export const selectIsAuthenticated = (state: AuthState & AuthActions) =>
   state.isAuthenticated;
-const selectAuthLoading = (state: AuthState & AuthActions) =>
+export const selectAuthLoading = (state: AuthState & AuthActions) =>
   state.isLoading;
-const selectAuthError = (state: AuthState & AuthActions) => state.error;
+export const selectAuthError = (state: AuthState & AuthActions) => state.error;

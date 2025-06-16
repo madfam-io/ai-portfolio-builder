@@ -387,15 +387,15 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
 // Currently disabled to avoid localStorage conflicts
 
 // Selectors
-const selectPortfolios = (state: PortfolioState & PortfolioActions) =>
+export const selectPortfolios = (state: PortfolioState & PortfolioActions) =>
   state.portfolios;
-const selectCurrentPortfolio = (
+export const selectCurrentPortfolio = (
   state: PortfolioState & PortfolioActions
 ) => state.currentPortfolio;
-const selectIsEditing = (state: PortfolioState & PortfolioActions) =>
+export const selectIsEditing = (state: PortfolioState & PortfolioActions) =>
   state.isEditing;
-const selectIsSaving = (state: PortfolioState & PortfolioActions) =>
+export const selectIsSaving = (state: PortfolioState & PortfolioActions) =>
   state.isSaving;
-const selectHasUnsavedChanges = (
+export const selectHasUnsavedChanges = (
   state: PortfolioState & PortfolioActions
 ) => state.hasUnsavedChanges;

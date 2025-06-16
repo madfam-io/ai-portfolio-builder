@@ -2,9 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { AIServiceError, QuotaExceededError } from '@/lib/ai/types';
 import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
 import {
   createApiHandler,
   parseJsonBody,
@@ -110,7 +108,7 @@ export const POST = createApiHandler(async (request: NextRequest) => {
 /**
  * Get enhancement history for user
  */
-export const GET = createApiHandler(async (request: NextRequest) => {
+export const GET = createApiHandler(async () => {
   const supabase = await createClient();
   if (!supabase) {
     throw new ExternalServiceError('Supabase', new Error('Database connection failed'));
@@ -175,14 +173,14 @@ async function logAIUsage(
     if (error) {
       errorLogger.logWarning('Failed to log AI usage', {
         userId,
-        operationType,
+        action: operationType,
         metadata: { error },
       });
     }
   } catch (error) {
     errorLogger.logWarning('Failed to log AI usage', {
       userId,
-      operationType,
+      action: operationType,
       metadata: { error },
     });
     // Don't throw - logging failure shouldn't break the main operation

@@ -221,7 +221,7 @@ export function useExperimentTracking(): {
 /**
  * Hook to check if a specific component variant is active
  */
-function useComponentVariant(componentType: string): {
+export function useComponentVariant(componentType: string): {
   variant: string | null;
   props: Record<string, string | number | boolean | Record<string, unknown>>;
   isVisible: boolean;
@@ -293,7 +293,7 @@ export function useExperimentTheme(): Record<
 /**
  * Get component configuration by type
  */
-function getComponentConfig(
+export function getComponentConfig(
   components: ComponentConfig[],
   type: string
 ): ComponentConfig | undefined {

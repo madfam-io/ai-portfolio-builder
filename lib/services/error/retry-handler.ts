@@ -96,7 +96,7 @@ export class CircuitBreaker {
 
   constructor(
     private readonly threshold: number = 5,
-    private readonly timeout: number = 60000, // 1 minute
+    public readonly timeout: number = 60000, // 1 minute
     private readonly retryTimeout: number = 30000 // 30 seconds
   ) {}
 
@@ -136,8 +136,8 @@ export class CircuitBreaker {
         this.trip();
       }
 
-      // Use fallback if available
-      if (fallback && this.state === 'open') {
+      // Use fallback if available when circuit trips to open state
+      if (fallback && this.failureCount >= this.threshold) {
         return await fallback();
       }
 

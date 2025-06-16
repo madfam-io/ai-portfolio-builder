@@ -3,7 +3,7 @@
  * Handles error logging with proper context and formatting
  */
 
-import { AppError, isAppError, getErrorMessage, getErrorCode } from '@/types/errors';
+import { isAppError, getErrorMessage, getErrorCode } from '@/types/errors';
 
 export interface ErrorContext {
   userId?: string;
@@ -186,10 +186,11 @@ export class ErrorLogger {
   /**
    * Send error to external monitoring service
    */
-  private sendToExternalService(entry: ErrorLogEntry): void {
+  public sendToExternalService(entry: ErrorLogEntry): void {
     // TODO: Implement integration with error monitoring service
     // Example: Sentry, LogRocket, Datadog, etc.
     // This would be configured based on environment variables
+    console.debug('Would send error to external service:', entry.timestamp);
   }
 }
 

@@ -175,7 +175,7 @@ export async function deleteFile(
 /**
  * Gets the public URL for a file
  */
-function getPublicUrl(
+export function getPublicUrl(
   bucket: keyof typeof STORAGE_BUCKETS,
   path: string
 ): string | null {

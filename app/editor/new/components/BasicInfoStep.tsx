@@ -6,13 +6,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
+interface FormDataType {
+  name: string;
+  title: string;
+  bio: string;
+}
+
 interface BasicInfoStepProps {
-  formData: {
-    name: string;
-    title: string;
-    bio: string;
-  };
-  updateFormData: (data: Partial<typeof formData>) => void;
+  formData: FormDataType;
+  updateFormData: (data: Partial<FormDataType>) => void;
   onNext: () => void;
   t: any; // Translation object
 }

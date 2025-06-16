@@ -9,7 +9,7 @@ import type { Repository, PullRequest, Contributor } from '@/types/analytics';
  * Fixes N+1 query problems and improves performance
  */
 
-class OptimizedAnalyticsService {
+export class OptimizedAnalyticsService {
   private userId: string;
   private githubClient: GitHubAnalyticsClient | null = null;
 

@@ -215,4 +215,4 @@ export class DeepSeekService implements AIService {
 }
 
 // Export singleton instance
-const deepSeekService = new DeepSeekService();
+export const deepSeekService = new DeepSeekService();

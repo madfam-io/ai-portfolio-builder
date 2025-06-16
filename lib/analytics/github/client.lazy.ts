@@ -28,7 +28,7 @@ export async function getGitHubClient(): Promise<GitHubAnalyticsClient> {
  *
  * Provides the same interface as GitHubAnalyticsClient but loads it on demand
  */
-const lazyGitHubClient = {
+export const lazyGitHubClient = {
   async initialize(userId: string) {
     const client = await getGitHubClient();
     return client.initialize(userId);

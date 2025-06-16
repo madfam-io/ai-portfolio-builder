@@ -32,7 +32,7 @@ const ERROR_TYPES = {
 /**
  * Creates a standardized API error
  */
-function createApiError(
+export function createApiError(
   message: string,
   type: keyof typeof ERROR_TYPES = 'INTERNAL_ERROR',
   metadata?: Record<string, any>
@@ -147,7 +147,7 @@ export function handleApiError(
  * Async error wrapper for route handlers
  * Automatically catches and handles errors
  */
-function withErrorHandler<T extends (...args: any[]) => any>(
+export function withErrorHandler<T extends (...args: any[]) => any>(
   handler: T,
   context?: Record<string, any>
 ): T {
@@ -174,7 +174,7 @@ export function isApiError(error: unknown): error is ApiError {
 /**
  * Extract error details for logging
  */
-function extractErrorDetails(error: unknown): {
+export function extractErrorDetails(error: unknown): {
   message: string;
   stack?: string;
   code?: string;

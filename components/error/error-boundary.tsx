@@ -49,7 +49,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
     // Log error with context
     errorLogger.logError(error, {
-      component: errorInfo.componentStack,
+      component: errorInfo.componentStack || undefined,
       metadata: {
         errorCount: errorCount + 1,
         errorInfo: errorInfo,
@@ -217,7 +217,7 @@ export function ComponentErrorBoundary({
 /**
  * Hook to wrap async operations with error handling
  */
-function useErrorHandler() {
+export function useErrorHandler() {
   return React.useCallback((error: Error, context?: Record<string, unknown>) => {
     errorLogger.logError(error, {
       component: 'useErrorHandler',

@@ -193,7 +193,7 @@ export class DashboardAnalyticsService {
       }
 
       const weekData = prsByWeek.get(week);
-      if (!weekData) continue;
+      if (!weekData) return;
       weekData.opened++;
       if (pr.state === 'merged') weekData.merged++;
       if (pr.state === 'closed') weekData.closed++;

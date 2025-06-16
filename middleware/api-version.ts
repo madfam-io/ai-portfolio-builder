@@ -160,7 +160,7 @@ export function createVersionedResponse<T>(
 /**
  * Helper to handle version-specific logic in route handlers
  */
-function withApiVersion<T extends (...args: unknown[]) => unknown>(
+export function withApiVersion<T extends (...args: unknown[]) => unknown>(
   _handler: T,
   options?: {
     minVersion?: string;

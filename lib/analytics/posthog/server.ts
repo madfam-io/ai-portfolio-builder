@@ -68,7 +68,7 @@ export const captureServerEvent = async (
 };
 
 // Identify user server-side
-const identifyServerUser = (
+export const identifyServerUser = (
   userId: string,
   properties?: Record<string, any>
 ) => {
@@ -90,7 +90,7 @@ const identifyServerUser = (
 };
 
 // Track feature flag usage
-const trackFeatureFlagUsage = async (
+export const trackFeatureFlagUsage = async (
   userId: string,
   flagName: string,
   variant: string | boolean
@@ -160,7 +160,7 @@ export const trackServerError = async (
 };
 
 // Batch events
-const batchServerEvents = async (
+export const batchServerEvents = async (
   events: Array<{
     distinctId: string;
     event: string;
@@ -191,7 +191,7 @@ const batchServerEvents = async (
 };
 
 // Shutdown gracefully
-const shutdownPostHog = async () => {
+export const shutdownPostHog = async () => {
   try {
     const client = getPostHogClient();
     if (!client) return;
@@ -204,7 +204,7 @@ const shutdownPostHog = async () => {
 };
 
 // Middleware helper for automatic API tracking
-const withPostHogTracking = (
+export const withPostHogTracking = (
   handler: (req: Request, ...args: any[]) => Promise<Response>
 ) => {
   return async (req: Request, ...args: any[]): Promise<Response> => {
@@ -221,13 +221,12 @@ const withPostHogTracking = (
 
       // Track successful API call
       const duration = Date.now() - startTime;
-      await trackAPIPerformance(
-        userId,
-        req.url,
-        req.method,
-        response.status,
-        duration
-      );
+      await trackAPIPerformance(userId, {
+        endpoint: req.url || '',
+        method: req.method || 'GET',
+        statusCode: response.status || 200,
+        duration: duration,
+      });
 
       return response;
     } catch (error) {

@@ -28,7 +28,7 @@ const EXEMPT_ROUTES = [
 /**
  * Generate a cryptographically secure CSRF token
  */
-function generateCSRFToken(): string {
+export function generateCSRFToken(): string {
   const buffer = new Uint8Array(CSRF_TOKEN_LENGTH);
   crypto.getRandomValues(buffer);
   return Array.from(buffer)
@@ -123,7 +123,7 @@ export function csrfMiddleware(request: NextRequest): NextResponse | null {
 /**
  * Helper to get CSRF token for client-side requests
  */
-function getCSRFToken(): string | null {
+export function getCSRFToken(): string | null {
   if (typeof document === 'undefined') return null;
 
   const cookies = document.cookie.split(';');

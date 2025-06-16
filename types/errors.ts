@@ -47,14 +47,14 @@ export class AuthenticationError extends AppError {
   }
 }
 
-class AuthorizationError extends AppError {
+export class AuthorizationError extends AppError {
   constructor(message: string = 'Insufficient permissions') {
     super(message, 'AUTHORIZATION_ERROR', 403);
     this.name = 'AuthorizationError';
   }
 }
 
-class NotFoundError extends AppError {
+export class NotFoundError extends AppError {
   constructor(resource: string) {
     super(`${resource} not found`, 'NOT_FOUND', 404);
     this.name = 'NotFoundError';
@@ -68,7 +68,7 @@ export class ConflictError extends AppError {
   }
 }
 
-class RateLimitError extends AppError {
+export class RateLimitError extends AppError {
   constructor(retryAfter?: number) {
     super('Too many requests', 'RATE_LIMIT_EXCEEDED', 429, { retryAfter });
     this.name = 'RateLimitError';

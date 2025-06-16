@@ -89,14 +89,14 @@ useAIStore.subscribe(state => {
 });
 
 // Export convenience methods for accessing root store slices
-const useAuth = () => useRootStore(state => state.auth);
-const usePortfolio = () => useRootStore(state => state.portfolio);
-const useUI = () => useRootStore(state => state.ui);
-const useAI = () => useRootStore(state => state.ai);
+export const useAuth = () => useRootStore(state => state.auth);
+export const usePortfolio = () => useRootStore(state => state.portfolio);
+export const useUI = () => useRootStore(state => state.ui);
+export const useAI = () => useRootStore(state => state.ai);
 
 // Export for direct access outside of React components
 export const getRootStore = () => useRootStore.getState();
-const getAuthStore = () => useRootStore.getState().auth;
-const getPortfolioStore = () => useRootStore.getState().portfolio;
-const getUIStore = () => useRootStore.getState().ui;
-const getAIStore = () => useRootStore.getState().ai;
+export const getAuthStore = () => useRootStore.getState().auth;
+export const getPortfolioStore = () => useRootStore.getState().portfolio;
+export const getUIStore = () => useRootStore.getState().ui;
+export const getAIStore = () => useRootStore.getState().ai;

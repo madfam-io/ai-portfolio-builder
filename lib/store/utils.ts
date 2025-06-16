@@ -10,7 +10,7 @@ import { showErrorToast, showSuccessToast } from './ui-store';
 /**
  * Async action wrapper with loading and error handling
  */
-function createAsyncAction<T extends any[], R>(
+export function createAsyncAction<T extends any[], R>(
   action: (...args: T) => Promise<R>,
   options?: {
     loadingMessage?: string;
@@ -68,7 +68,7 @@ export interface LoadingActions {
   resetLoading: () => void;
 }
 
-const createLoadingSlice = <T extends object>(
+export const createLoadingSlice = <T extends object>(
   initialState?: Partial<LoadingState>
 ): StateCreator<
   T & LoadingState & LoadingActions,
@@ -136,7 +136,7 @@ export interface ErrorActions {
   hasError: (key?: string) => boolean;
 }
 
-const createErrorSlice = <T extends object>(
+export const createErrorSlice = <T extends object>(
   initialState?: Partial<ErrorState>
 ): StateCreator<
   T & ErrorState & ErrorActions,
@@ -195,7 +195,7 @@ const createErrorSlice = <T extends object>(
 /**
  * Optimistic update helper
  */
-function createOptimisticUpdate<T, R>(
+export function createOptimisticUpdate<T, R>(
   optimisticUpdate: (state: T) => void,
   actualUpdate: () => Promise<R>,
   rollback: (state: T, error: Error) => void
@@ -228,7 +228,7 @@ function createOptimisticUpdate<T, R>(
 /**
  * Debounced action creator
  */
-function createDebouncedAction<T extends any[], R>(
+export function createDebouncedAction<T extends any[], R>(
   action: (...args: T) => R | Promise<R>,
   delay: number = 300
 ) {
@@ -255,7 +255,7 @@ function createDebouncedAction<T extends any[], R>(
 /**
  * Store reset helper
  */
-function createResetAction<T extends object>(
+export function createResetAction<T extends object>(
   initialState: T
 ): StateCreator<T & { reset: () => void }, [], [], { reset: () => void }> {
   return set => ({
@@ -273,7 +273,7 @@ export interface PersistOptions<T> {
   partialize?: (state: T) => Partial<T>;
 }
 
-function createPersistConfig<T>(options: PersistOptions<T>) {
+export function createPersistConfig<T>(options: PersistOptions<T>) {
   return {
     name: options.name,
     version: options.version || 1,

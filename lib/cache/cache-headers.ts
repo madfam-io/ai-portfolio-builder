@@ -157,7 +157,7 @@ export function generateETag(content: unknown): string {
 /**
  * Check if request has valid cache
  */
-function checkCacheValidity(
+export function checkCacheValidity(
   request: Request,
   etag?: string,
   lastModified?: Date
@@ -187,6 +187,6 @@ function checkCacheValidity(
 /**
  * Create 304 Not Modified response
  */
-function notModifiedResponse(): NextResponse {
+export function notModifiedResponse(): NextResponse {
   return new NextResponse(null, { status: 304 });
 }

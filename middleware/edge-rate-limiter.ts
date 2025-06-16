@@ -39,7 +39,7 @@ const defaultConfigs = {
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 // Cleanup function that runs on each request
-function cleanupExpiredEntries(): void {
+export function cleanupExpiredEntries(): void {
   const now = Date.now();
   const maxSize = 10000; // Prevent unbounded growth
 
@@ -64,7 +64,7 @@ function cleanupExpiredEntries(): void {
 /**
  * Get client identifier from request
  */
-function getClientId(request: NextRequest): string {
+export function getClientId(request: NextRequest): string {
   // Try to get real IP from various headers
   const forwardedFor = request.headers.get('x-forwarded-for');
   const realIp = request.headers.get('x-real-ip');
@@ -85,7 +85,7 @@ function getClientId(request: NextRequest): string {
 /**
  * Determine rate limit config based on path
  */
-function getConfigForPath(path: string): RateLimitConfig {
+export function getConfigForPath(path: string): RateLimitConfig {
   if (path.startsWith('/api/auth/')) {
     return defaultConfigs.auth;
   }
@@ -188,6 +188,6 @@ export function edgeRateLimitMiddleware(
 /**
  * Create a custom rate limiter with specific configuration
  */
-function createRateLimiter(config: RateLimitConfig) {
+export function createRateLimiter(config: RateLimitConfig) {
   return (request: NextRequest) => edgeRateLimitMiddleware(request, config);
 }

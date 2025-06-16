@@ -19,7 +19,7 @@ export interface GEOContent {
   optimizationScore: number;
 }
 
-interface OptimizeContentRequest {
+export interface OptimizeContentRequest {
   content: string;
   targetLocale: string;
   keywords: string[];
@@ -44,7 +44,7 @@ export interface KeywordResearch {
   suggestions: string[];
 }
 
-interface GEOAnalysisResult {
+export interface GEOAnalysisResult {
   content: GEOContent;
   suggestions: string[];
   optimizationTips: string[];

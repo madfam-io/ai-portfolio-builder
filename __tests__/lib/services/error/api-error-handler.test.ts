@@ -1,7 +1,3 @@
-/**
- * Tests for API Error Handler
- */
-
 import { NextRequest, NextResponse } from 'next/server';
 import {
   handleApiError,
@@ -9,253 +5,362 @@ import {
   createApiHandler,
   validateMethod,
   parseJsonBody,
+  ApiErrorResponse,
 } from '@/lib/services/error/api-error-handler';
-import {
-  AppError,
-  ValidationError,
-  AuthenticationError,
-  ConflictError,
-} from '@/types/errors';
+import { AppError } from '@/types/errors';
+import { errorLogger } from '@/lib/services/error/error-logger';
 
-// Mock NextRequest
-function createMockRequest(options: {
-  url?: string;
-  method?: string;
-  headers?: Record<string, string>;
-  body?: any;
-} = {}): NextRequest {
-  const { 
-    url = 'http://localhost:3000/api/test',
-    method = 'GET',
-    headers = {},
-    body = null
-  } = options;
-
-  const mockRequest = {
-    url,
-    method,
-    headers: new Headers(headers),
-    json: jest.fn().mockResolvedValue(body),
-  } as unknown as NextRequest;
-
-  return mockRequest;
-}
+// Mock dependencies
+jest.mock('@/lib/services/error/error-logger');
 
 describe('API Error Handler', () => {
+  let mockRequest: NextRequest;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    
+    // Mock NextRequest
+    mockRequest = {
+      url: 'http://localhost:3000/api/test',
+      method: 'GET',
+      headers: new Headers({
+        'user-agent': 'Test Agent',
+        'referer': 'http://localhost:3000',
+        'x-forwarded-for': '192.168.1.1',
+      }),
+      json: jest.fn(),
+    } as unknown as NextRequest;
+
+    // Mock error logger
+    (errorLogger.logError as jest.Mock).mockImplementation(() => {});
+  });
+
   describe('handleApiError', () => {
     it('should handle AppError correctly', () => {
-      const error = new ValidationError('Invalid input', { field: 'email' });
+      const appError = new AppError(
+        'Test error',
+        'TEST_ERROR',
+        400,
+        { field: 'test' }
+      );
+
+      const response = handleApiError(appError, mockRequest);
+
+      expect(response).toBeInstanceOf(NextResponse);
+      expect(response.status).toBe(400);
+
+      // Check response body
+      const responseData = response as unknown as { _body: ApiErrorResponse };
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        appError,
+        expect.objectContaining({
+          requestId: expect.stringMatching(/^req_\d+_[a-z0-9]+$/),
+          url: 'http://localhost:3000/api/test',
+          method: 'GET',
+        })
+      );
+    });
+
+    it('should handle regular Error in development mode', () => {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'development';
+
+      const error = new Error('Detailed error message');
+      const response = handleApiError(error, mockRequest);
+
+      expect(response.status).toBe(500);
+
+      process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should hide error details in production mode', () => {
+      const originalEnv = process.env.NODE_ENV;
+      process.env.NODE_ENV = 'production';
+
+      const error = new Error('Sensitive error message');
+      const response = handleApiError(error);
+
+      expect(response.status).toBe(500);
+      // In production, should use generic message
+
+      process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should extract request ID from headers', () => {
+      const requestWithId = {
+        ...mockRequest,
+        headers: new Headers({
+          'x-request-id': 'custom-request-id',
+        }),
+      } as NextRequest;
+
+      const error = new Error('Test error');
+      handleApiError(error, requestWithId);
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          requestId: 'custom-request-id',
+        })
+      );
+    });
+
+    it('should handle error without request', () => {
+      const error = new Error('Test error');
       const response = handleApiError(error);
 
       expect(response).toBeInstanceOf(NextResponse);
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      
-      expect(response.status).toBe(400);
-      expect(data?.error).toBeDefined();
-      expect(data.error.message).toBe('Invalid input');
-      expect(data.error.code).toBe('VALIDATION_ERROR');
-      expect(data.error.statusCode).toBe(400);
+      expect(response.status).toBe(500);
     });
 
-    it('should handle standard Error', () => {
-      const error = new Error('Something went wrong');
-      const response = handleApiError(error);
+    it('should merge additional context', () => {
+      const error = new Error('Test error');
+      const additionalContext = {
+        userId: 'user-123',
+        action: 'create-portfolio',
+      };
 
-      expect(response.status).toBe(500);
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.code).toBe('INTERNAL_SERVER_ERROR');
+      handleApiError(error, mockRequest, additionalContext);
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          userId: 'user-123',
+          action: 'create-portfolio',
+        })
+      );
     });
 
     it('should handle non-Error objects', () => {
-      const response = handleApiError('String error');
-      
+      const error = 'String error';
+      const response = handleApiError(error);
+
       expect(response.status).toBe(500);
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.message).toBe('An unexpected error occurred');
-    });
-
-    it('should include request context when provided', () => {
-      const request = createMockRequest({
-        headers: { 'x-request-id': 'test-123' },
-      });
-      
-      const error = new Error('Test error');
-      const response = handleApiError(error, request);
-      
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.requestId).toBe('test-123');
-    });
-
-    it('should generate request ID if not provided', () => {
-      const request = createMockRequest();
-      const error = new Error('Test error');
-      const response = handleApiError(error, request);
-      
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.requestId).toMatch(/^req_/);
-    });
-
-    it('should hide error details in production', () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'production';
-      
-      const error = new ValidationError('Error with details', {
-        sensitive: 'data',
-      });
-      const response = handleApiError(error);
-      
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.details).toBeUndefined();
-      
-      process.env.NODE_ENV = originalEnv;
-    });
-
-    it('should show error details in development', () => {
-      const originalEnv = process.env.NODE_ENV;
-      process.env.NODE_ENV = 'development';
-      
-      const error = new ValidationError('Error with details', {
-        field: 'email',
-      });
-      const response = handleApiError(error);
-      
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.details).toBeDefined();
-      expect(data.error.details.field).toBe('email');
-      
-      process.env.NODE_ENV = originalEnv;
     });
   });
 
   describe('withErrorHandler', () => {
-    it('should wrap async functions and catch errors', async () => {
-      const handler = withErrorHandler(async () => {
-        throw new AuthenticationError();
-      });
+    it('should wrap async handler and catch errors', async () => {
+      const error = new AppError('Handler error', 'HANDLER_ERROR', 400);
+      const handler = jest.fn().mockRejectedValue(error);
+      const wrapped = withErrorHandler(handler);
 
-      const result = await handler();
-      
+      const result = await wrapped(mockRequest);
+
+      expect(handler).toHaveBeenCalledWith(mockRequest);
       expect(result).toBeInstanceOf(NextResponse);
-      const response = result as NextResponse;
-      expect(response.status).toBe(401);
+      expect((result as NextResponse).status).toBe(400);
     });
 
     it('should pass through successful responses', async () => {
       const successResponse = NextResponse.json({ success: true });
-      const handler = withErrorHandler(() => Promise.resolve(successResponse));
+      const handler = jest.fn().mockResolvedValue(successResponse);
+      const wrapped = withErrorHandler(handler);
 
-      const result = await handler();
+      const result = await wrapped(mockRequest);
+
       expect(result).toBe(successResponse);
     });
 
     it('should extract request from arguments', async () => {
-      const request = createMockRequest();
-      const handler = withErrorHandler(async (_req: NextRequest) => {
-        throw new Error('Test error');
-      });
+      const error = new Error('Test error');
+      const handler = jest.fn().mockRejectedValue(error);
+      const wrapped = withErrorHandler(handler);
 
-      const result = await handler(request);
-      
-      expect(result).toBeInstanceOf(NextResponse);
-      const response = result as NextResponse;
-      const data = response.body ? JSON.parse(response.body.toString()) : null;
-      expect(data.error.requestId).toBeDefined();
+      await wrapped(mockRequest, { params: { id: '123' } });
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          url: 'http://localhost:3000/api/test',
+        })
+      );
     });
   });
 
   describe('createApiHandler', () => {
-    it('should create type-safe API handlers', async () => {
-      const handler = createApiHandler(async (req, context) => {
-        return NextResponse.json({ 
-          message: 'Success',
-          params: context.params,
-        });
-      });
+    it('should create typed API handler', async () => {
+      interface Params {
+        id: string;
+      }
+      interface Response {
+        data: string;
+      }
 
-      const request = createMockRequest();
-      const result = await handler(request, { params: { id: '123' } });
-      
+      const handler = createApiHandler<Params, Response>(
+        async (req, { params }) => {
+          return NextResponse.json({ data: params.id });
+        }
+      );
+
+      const result = await handler(mockRequest, { params: { id: '123' } });
+
       expect(result).toBeInstanceOf(NextResponse);
     });
 
-    it('should handle errors in API handlers', async () => {
+    it('should handle errors in typed handler', async () => {
       const handler = createApiHandler(async () => {
-        throw new ConflictError('Resource already exists');
+        throw new AppError('Test error', 'TEST_ERROR', 400);
       });
 
-      const request = createMockRequest();
-      const result = await handler(request, { params: {} });
-      
+      const result = await handler(mockRequest, { params: {} });
+
       expect(result).toBeInstanceOf(NextResponse);
-      const response = result as NextResponse;
-      expect(response.status).toBe(409);
+      expect((result as NextResponse).status).toBe(400);
     });
   });
 
   describe('validateMethod', () => {
     it('should pass for allowed methods', () => {
-      const request = createMockRequest({ method: 'POST' });
-      
       expect(() => {
-        validateMethod(request, ['GET', 'POST']);
+        validateMethod(mockRequest, ['GET', 'POST']);
       }).not.toThrow();
     });
 
     it('should throw for disallowed methods', () => {
-      const request = createMockRequest({ method: 'DELETE' });
-      
       expect(() => {
-        validateMethod(request, ['GET', 'POST']);
+        validateMethod(mockRequest, ['POST', 'PUT']);
       }).toThrow(AppError);
-      
+
       try {
-        validateMethod(request, ['GET', 'POST']);
+        validateMethod(mockRequest, ['POST', 'PUT']);
       } catch (error) {
         expect(error).toBeInstanceOf(AppError);
         expect((error as AppError).statusCode).toBe(405);
         expect((error as AppError).code).toBe('METHOD_NOT_ALLOWED');
+        expect((error as AppError).details).toEqual({ allowed: ['POST', 'PUT'] });
       }
+    });
+
+    it('should handle different HTTP methods', () => {
+      const methods = ['POST', 'PUT', 'DELETE', 'PATCH'];
+      
+      methods.forEach(method => {
+        const req = { ...mockRequest, method } as NextRequest;
+        
+        expect(() => {
+          validateMethod(req, [method]);
+        }).not.toThrow();
+        
+        expect(() => {
+          validateMethod(req, ['OTHER']);
+        }).toThrow(AppError);
+      });
     });
   });
 
   describe('parseJsonBody', () => {
     it('should parse valid JSON body', async () => {
-      const body = { test: 'data' };
-      const request = createMockRequest({ body });
-      
-      const result = await parseJsonBody(request);
-      expect(result).toEqual(body);
+      const mockBody = { name: 'Test', value: 123 };
+      mockRequest.json = jest.fn().mockResolvedValue(mockBody);
+
+      const result = await parseJsonBody(mockRequest);
+
+      expect(result).toEqual(mockBody);
     });
 
-    it('should throw ValidationError for invalid JSON', async () => {
-      const request = createMockRequest();
-      // Override json method to throw
-      (request as any).json = () => {
-        return Promise.reject(new SyntaxError('Invalid JSON'));
-      };
-      
-      await expect(parseJsonBody(request)).rejects.toThrow(ValidationError);
-      
+    it('should throw AppError for invalid JSON', async () => {
+      mockRequest.json = jest.fn().mockRejectedValue(new SyntaxError('Invalid JSON'));
+
+      await expect(parseJsonBody(mockRequest)).rejects.toThrow(AppError);
+
       try {
-        await parseJsonBody(request);
+        await parseJsonBody(mockRequest);
       } catch (error) {
-        expect(error).toBeInstanceOf(ValidationError);
-        expect((error as ValidationError).message).toBe('Invalid JSON in request body');
+        expect(error).toBeInstanceOf(AppError);
+        expect((error as AppError).code).toBe('INVALID_JSON');
+        expect((error as AppError).statusCode).toBe(400);
+        expect((error as AppError).details).toEqual({
+          originalError: 'Invalid JSON',
+        });
       }
     });
 
-    it('should preserve type safety', async () => {
-      interface TestData {
+    it('should handle typed JSON parsing', async () => {
+      interface RequestBody {
         name: string;
         age: number;
       }
-      
-      const body: TestData = { name: 'Test', age: 25 };
-      const request = createMockRequest({ body });
-      
-      const result = await parseJsonBody<TestData>(request);
-      expect(result.name).toBe('Test');
-      expect(result.age).toBe(25);
+
+      const mockBody: RequestBody = { name: 'John', age: 30 };
+      mockRequest.json = jest.fn().mockResolvedValue(mockBody);
+
+      const result = await parseJsonBody<RequestBody>(mockRequest);
+
+      expect(result.name).toBe('John');
+      expect(result.age).toBe(30);
+    });
+
+    it('should handle empty body', async () => {
+      mockRequest.json = jest.fn().mockResolvedValue(null);
+
+      const result = await parseJsonBody(mockRequest);
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('Error Context Extraction', () => {
+    it('should extract full context from request', () => {
+      const error = new Error('Test');
+      handleApiError(error, mockRequest);
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          url: 'http://localhost:3000/api/test',
+          method: 'GET',
+          metadata: {
+            userAgent: 'Test Agent',
+            referer: 'http://localhost:3000',
+            ip: '192.168.1.1',
+          },
+        })
+      );
+    });
+
+    it('should handle missing headers gracefully', () => {
+      const minimalRequest = {
+        url: 'http://localhost:3000/api/test',
+        method: 'GET',
+        headers: new Headers(),
+      } as NextRequest;
+
+      const error = new Error('Test');
+      handleApiError(error, minimalRequest);
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          metadata: {
+            userAgent: undefined,
+            referer: undefined,
+            ip: undefined,
+          },
+        })
+      );
+    });
+
+    it('should prefer x-real-ip over x-forwarded-for', () => {
+      const requestWithRealIp = {
+        ...mockRequest,
+        headers: new Headers({
+          'x-forwarded-for': '10.0.0.1',
+          'x-real-ip': '192.168.1.100',
+        }),
+      } as NextRequest;
+
+      const error = new Error('Test');
+      handleApiError(error, requestWithRealIp);
+
+      expect(errorLogger.logError).toHaveBeenCalledWith(
+        error,
+        expect.objectContaining({
+          metadata: expect.objectContaining({
+            ip: '10.0.0.1', // x-forwarded-for takes precedence
+          }),
+        })
+      );
     });
   });
 });

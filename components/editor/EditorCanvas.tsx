@@ -7,7 +7,7 @@ import { Portfolio } from '@/types/portfolio';
 
 interface EditorCanvasProps {
   portfolio: Portfolio;
-  onDataChange: (data: Partial<Portfolio['data']>) => void;
+  onDataChange: (data: Partial<Portfolio>) => void;
   className?: string;
 }
 
@@ -33,13 +33,13 @@ export function EditorCanvas({
 
   const handleAddProject = () => {
     if (newProject.title && newProject.description) {
-      const currentProjects = (portfolio.data?.projects as any[]) || [];
       const project = {
         id: `project-${Date.now()}`,
         ...newProject,
       };
+      const updatedProjects = [...portfolio.projects, project];
       onDataChange({ 
-        projects: [...currentProjects, project] 
+        projects: updatedProjects
       });
       setNewProject({ title: '', description: '', technologies: [], link: '' });
       setShowProjectModal(false);
@@ -68,8 +68,8 @@ export function EditorCanvas({
                   <input
                     type="text"
                     className="w-full px-3 py-2 border rounded-md"
-                    value={(portfolio.data?.headline as string) || ''}
-                    onChange={e => onDataChange({ headline: e.target.value })}
+                    value={portfolio.title || ''}
+                    onChange={e => onDataChange({ title: e.target.value })}
                     placeholder={t.enterHeadline || 'Enter your headline'}
                   />
                 </div>
@@ -81,7 +81,7 @@ export function EditorCanvas({
                   <input
                     type="text"
                     className="w-full px-3 py-2 border rounded-md"
-                    value={(portfolio.data?.tagline as string) || ''}
+                    value={portfolio.tagline || ''}
                     onChange={e => onDataChange({ tagline: e.target.value })}
                     placeholder={t.enterTagline || 'A short, memorable tagline'}
                   />
@@ -101,8 +101,8 @@ export function EditorCanvas({
                 <textarea
                   className="w-full px-3 py-2 border rounded-md"
                   rows={6}
-                  value={(portfolio.data?.about as string) || ''}
-                  onChange={e => onDataChange({ about: e.target.value })}
+                  value={portfolio.bio || ''}
+                  onChange={e => onDataChange({ bio: e.target.value })}
                   placeholder={
                     t.tellAboutYourself || 'Tell us about yourself...'
                   }
@@ -116,18 +116,17 @@ export function EditorCanvas({
                 {t.projectsSection || 'Projects'}
               </h2>
               <div className="space-y-4">
-                {Array.isArray(portfolio.data?.projects) &&
-                  portfolio.data.projects.map((project: any, index: number) => (
-                    <div
-                      key={project.id || index}
-                      className="p-4 border rounded-md"
-                    >
-                      <h3 className="font-medium">{project.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {project.description}
-                      </p>
-                    </div>
-                  ))}
+                {portfolio.projects.map((project, index) => (
+                  <div
+                    key={project.id || index}
+                    className="p-4 border rounded-md"
+                  >
+                    <h3 className="font-medium">{project.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {project.description}
+                    </p>
+                  </div>
+                ))}
                 <button
                   className="w-full py-2 border-2 border-dashed rounded-md hover:border-primary transition-colors"
                   onClick={() => setShowProjectModal(true)}
