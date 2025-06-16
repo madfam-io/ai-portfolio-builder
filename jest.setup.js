@@ -228,34 +228,7 @@ jest.mock('@supabase/supabase-js', () => ({
 //   })),
 // }));
 
-// Mock React Query
-jest.mock('@tanstack/react-query', () => ({
-  useQuery: jest.fn(() => ({
-    data: undefined,
-    error: null,
-    isLoading: false,
-    isError: false,
-    isSuccess: true,
-  })),
-  useMutation: jest.fn(() => ({
-    mutate: jest.fn(),
-    mutateAsync: jest.fn(),
-    isLoading: false,
-    isError: false,
-    isSuccess: false,
-    error: null,
-    data: undefined,
-  })),
-  useQueryClient: jest.fn(() => ({
-    invalidateQueries: jest.fn(),
-    setQueryData: jest.fn(),
-  })),
-  QueryClient: jest.fn(() => ({
-    invalidateQueries: jest.fn(),
-    setQueryData: jest.fn(),
-  })),
-  QueryClientProvider: ({ children }) => children,
-}));
+// React Query is not used in this project - removed mock
 
 // Mock Redis
 jest.mock('redis', () => ({
@@ -374,97 +347,104 @@ jest.mock('@/lib/i18n/refactored-context', () => {
       save: 'Guardar',
       cancel: 'Cancelar',
       hello: 'Hola',
-        // Dashboard translations
-        loadingDashboard: 'Cargando tu panel...',
-        myPortfolios: 'Mis Portafolios',
-        managePortfolios: 'Gestiona y crea tus portafolios profesionales',
-        createNewPortfolio: 'Crear Nuevo Portafolio',
-        createPortfolio: 'Crear Portafolio',
-        totalPortfolios: 'Total de Portafolios',
-        published: 'Publicados',
-        totalViews: 'Vistas Totales',
-        yourPortfolios: 'Tus Portafolios',
-        statusPublished: 'Publicado',
-        statusDraft: 'Borrador',
-        lastModified: 'Modificado',
-        daysAgo: 'hace',
-        weekAgo: 'hace 1 semana',
-        views: 'vistas',
-        noPortfoliosYet: 'Aún no tienes portafolios',
-        createFirstPortfolio: 'Crea tu primer portafolio para comenzar',
-        // HowItWorks translations
-        howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
-        howItWorksSubtitle: 'Transforma tu experiencia en una presentación profesional',
-        step1Title: 'Sube tu CV',
-        step1Desc: 'Sube tu CV en formato PDF o completa tu información manualmente',
-        step2Title: 'Elige tu plantilla',
-        step2Desc: 'Selecciona una plantilla profesional que se adapte a tu estilo',
-        step3Title: 'Personaliza',
-        step3Desc: 'Ajusta colores, fuentes y contenido a tu gusto',
-        step4Title: 'Publica',
-        step4Desc: 'Obtén tu portafolio en línea con un enlace único',
-        // Add more translations as needed by tests
-      },
-      en: {
-        // Common translations
-        loading: 'Loading...',
-        error: 'Error',
-        success: 'Success',
-        save: 'Save',
-        cancel: 'Cancel',
-        hello: 'Hello',
-        // Dashboard translations
-        loadingDashboard: 'Loading your dashboard...',
-        myPortfolios: 'My Portfolios',
-        managePortfolios: 'Manage and create your professional portfolios',
-        createNewPortfolio: 'Create New Portfolio',
-        createPortfolio: 'Create Portfolio',
-        totalPortfolios: 'Total Portfolios',
-        published: 'Published',
-        totalViews: 'Total Views',
-        yourPortfolios: 'Your Portfolios',
-        statusPublished: 'Published',
-        statusDraft: 'Draft',
-        lastModified: 'Modified',
-        daysAgo: 'ago',
-        weekAgo: '1 week ago',
-        views: 'views',
-        noPortfoliosYet: 'You don\'t have any portfolios yet',
-        createFirstPortfolio: 'Create your first portfolio to get started',
-        // HowItWorks translations
-        howItWorksTitle: 'From CV to portfolio in 3 simple steps',
-        howItWorksSubtitle: 'Transform your experience into a professional presentation',
-        step1Title: 'Upload your CV',
-        step1Desc: 'Upload your CV in PDF format or fill in your information manually',
-        step2Title: 'Choose your template',
-        step2Desc: 'Select a professional template that suits your style',
-        step3Title: 'Customize',
-        step3Desc: 'Adjust colors, fonts and content to your liking',
-        step4Title: 'Publish',
-        step4Desc: 'Get your portfolio online with a unique link',
-      }
-    };
+      // Dashboard translations
+      loadingDashboard: 'Cargando tu panel...',
+      myPortfolios: 'Mis Portafolios',
+      managePortfolios: 'Gestiona y crea tus portafolios profesionales',
+      createNewPortfolio: 'Crear Nuevo Portafolio',
+      createPortfolio: 'Crear Portafolio',
+      totalPortfolios: 'Total de Portafolios',
+      published: 'Publicados',
+      totalViews: 'Vistas Totales',
+      yourPortfolios: 'Tus Portafolios',
+      statusPublished: 'Publicado',
+      statusDraft: 'Borrador',
+      lastModified: 'Modificado',
+      daysAgo: 'hace',
+      weekAgo: 'hace 1 semana',
+      views: 'vistas',
+      noPortfoliosYet: 'Aún no tienes portafolios',
+      createFirstPortfolio: 'Crea tu primer portafolio para comenzar',
+      // HowItWorks translations
+      howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
+      howItWorksSubtitle:
+        'Transforma tu experiencia en una presentación profesional',
+      step1Title: 'Sube tu CV',
+      step1Desc:
+        'Sube tu CV en formato PDF o completa tu información manualmente',
+      step2Title: 'Elige tu plantilla',
+      step2Desc:
+        'Selecciona una plantilla profesional que se adapte a tu estilo',
+      step3Title: 'Personaliza',
+      step3Desc: 'Ajusta colores, fuentes y contenido a tu gusto',
+      step4Title: 'Publica',
+      step4Desc: 'Obtén tu portafolio en línea con un enlace único',
+      // Add more translations as needed by tests
+    },
+    en: {
+      // Common translations
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      save: 'Save',
+      cancel: 'Cancel',
+      hello: 'Hello',
+      // Dashboard translations
+      loadingDashboard: 'Loading your dashboard...',
+      myPortfolios: 'My Portfolios',
+      managePortfolios: 'Manage and create your professional portfolios',
+      createNewPortfolio: 'Create New Portfolio',
+      createPortfolio: 'Create Portfolio',
+      totalPortfolios: 'Total Portfolios',
+      published: 'Published',
+      totalViews: 'Total Views',
+      yourPortfolios: 'Your Portfolios',
+      statusPublished: 'Published',
+      statusDraft: 'Draft',
+      lastModified: 'Modified',
+      daysAgo: 'ago',
+      weekAgo: '1 week ago',
+      views: 'views',
+      noPortfoliosYet: "You don't have any portfolios yet",
+      createFirstPortfolio: 'Create your first portfolio to get started',
+      // HowItWorks translations
+      howItWorksTitle: 'From CV to portfolio in 3 simple steps',
+      howItWorksSubtitle:
+        'Transform your experience into a professional presentation',
+      step1Title: 'Upload your CV',
+      step1Desc:
+        'Upload your CV in PDF format or fill in your information manually',
+      step2Title: 'Choose your template',
+      step2Desc: 'Select a professional template that suits your style',
+      step3Title: 'Customize',
+      step3Desc: 'Adjust colors, fonts and content to your liking',
+      step4Title: 'Publish',
+      step4Desc: 'Get your portfolio online with a unique link',
+    },
+  };
 
-    return {
-      useLanguage: () => ({
-        language: currentLanguage,
-        setLanguage: jest.fn((lang) => { currentLanguage = lang; }),
-        t: translations[currentLanguage] || translations.es,
-        availableLanguages: [
-          { code: 'es', name: 'Español', flag: '🇲🇽' },
-          { code: 'en', name: 'English', flag: '🇺🇸' },
-        ],
-        getNamespace: () => ({}),
-        isLoaded: true,
+  return {
+    useLanguage: () => ({
+      language: currentLanguage,
+      setLanguage: jest.fn(lang => {
+        currentLanguage = lang;
       }),
-      LanguageProvider: ({ children, initialLanguage }) => {
-        if (initialLanguage) {
-          currentLanguage = initialLanguage;
-        }
-        return children;
-      },
-    };
-  });
+      t: translations[currentLanguage] || translations.es,
+      availableLanguages: [
+        { code: 'es', name: 'Español', flag: '🇲🇽' },
+        { code: 'en', name: 'English', flag: '🇺🇸' },
+      ],
+      getNamespace: () => ({}),
+      isLoaded: true,
+    }),
+    LanguageProvider: ({ children, initialLanguage }) => {
+      if (initialLanguage) {
+        currentLanguage = initialLanguage;
+      }
+      return children;
+    },
+  };
+});
 
 jest.mock('@/lib/i18n/minimal-context', () => {
   // Reuse the same mock as refactored-context

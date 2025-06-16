@@ -1,6 +1,5 @@
 import React, { ReactElement } from 'react';
 import { ThemeProvider } from 'next-themes';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, RenderOptions } from '@testing-library/react';
 
 import { LanguageProvider } from '@/lib/i18n/refactored-context';
@@ -35,47 +34,28 @@ export const mockSupabaseClient = {
   },
 };
 
-// Create a test query client
-const createTestQueryClient = () =>
-  new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false,
-        gcTime: Infinity,
-      },
-      mutations: {
-        retry: false,
-      },
-    },
-  });
-
 // Custom render function that includes providers
-interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
-  queryClient?: QueryClient;
-}
+interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {}
 
 export function renderWithProviders(
   ui: ReactElement,
   options: CustomRenderOptions = {}
 ) {
-  const { queryClient = createTestQueryClient(), ...renderOptions } = options;
+  const { ...renderOptions } = options;
 
   // Setup i18n test environment with Spanish as default
   setupI18nTestEnvironment('es');
 
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          <LanguageProvider initialLanguage="es">{children}</LanguageProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
+      <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
+        <LanguageProvider initialLanguage="es">{children}</LanguageProvider>
+      </ThemeProvider>
     );
   }
 
   return {
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
-    queryClient,
   };
 }
 
