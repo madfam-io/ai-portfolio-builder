@@ -2,691 +2,590 @@
  * @jest-environment node
  */
 
-import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { cache } from '@/lib/cache/redis-cache.server';
-import { logger } from '@/lib/utils/logger';
-import { env } from '@/lib/config';
+import { jest } from '@jest/globals';
 import {
-  AIServiceError,
-  ModelUnavailableError,
-  QuotaExceededError,
-  BioContext,
-  UserProfile,
-  ProjectEnhancement,
-  EnhancedContent,
-  TemplateRecommendation,
-  QualityScore,
-} from '@/lib/ai/types';
+  enhanceBio,
+  optimizeProjectDescription,
+  recommendTemplate,
+  generateTechStack,
+  improveSection,
+  assessContentQuality,
+  AIModel,
+  AI_MODELS,
+} from '@/lib/ai/huggingface-service';
+import { HfInference } from '@huggingface/inference';
+import { logger } from '@/lib/utils/logger';
 
 // Mock dependencies
-jest.mock('@/lib/cache/redis-cache.server', () => ({
-  cache: {
-    get: jest.fn(),
-    set: jest.fn(),
-  },
-  CACHE_KEYS: {
-    AI_RESULT: 'ai:result:',
-  },
-}));
+jest.mock('@huggingface/inference');
+jest.mock('@/lib/utils/logger');
 
-jest.mock('@/lib/utils/logger', () => ({
-  logger: {
-    warn: jest.fn(),
-    error: jest.fn(),
-    info: jest.fn(),
-  },
-}));
+const mockHfInference = jest.mocked(HfInference);
+const mockLogger = jest.mocked(logger);
 
-jest.mock('@/lib/config', () => ({
-  env: {
-    HUGGINGFACE_API_KEY: 'test-api-key',
-  },
-}));
-
-// Mock submodules
-jest.mock('@/lib/ai/huggingface/ModelManager', () => ({
-  ModelManager: jest.fn().mockImplementation(() => ({
-    getAvailableModels: jest.fn().mockReturnValue([
-      { id: 'microsoft/DialoGPT-medium', status: 'loaded' },
-      { id: 'microsoft/phi-3-mini', status: 'loaded' },
-    ]),
-    getSelectedModels: jest.fn().mockReturnValue({
-      bio: 'microsoft/DialoGPT-medium',
-      project: 'microsoft/phi-3-mini',
-    }),
-    getRecommendedModel: jest.fn().mockReturnValue('microsoft/DialoGPT-medium'),
-    updateModelSelection: jest.fn(),
-  })),
-}));
-
-jest.mock('@/lib/ai/huggingface/PromptBuilder', () => ({
-  PromptBuilder: jest.fn().mockImplementation(() => ({
-    buildBioPrompt: jest.fn().mockReturnValue('Enhanced bio prompt'),
-    buildProjectPrompt: jest.fn().mockReturnValue('Enhanced project prompt'),
-    extractBioFromResponse: jest.fn().mockImplementation((text) => text || 'Enhanced bio content'),
-    parseProjectResponse: jest.fn().mockReturnValue({
-      enhanced: 'Enhanced project description',
-      keyAchievements: ['Achievement 1', 'Achievement 2'],
-      technologies: ['React', 'Node.js'],
-      impactMetrics: ['50% performance improvement'],
-    }),
-  })),
-}));
-
-jest.mock('@/lib/ai/huggingface/ContentScorer', () => ({
-  ContentScorer: jest.fn().mockImplementation(() => ({
-    scoreContent: jest.fn().mockResolvedValue({
-      overall: 85,
-      readability: 80,
-      professionalism: 90,
-      impact: 85,
-      completeness: 80,
-      suggestions: ['Consider adding more specific metrics'],
-    }),
-  })),
-}));
-
-// Mock fetch globally
-global.fetch = jest.fn();
-
-describe('HuggingFaceService', () => {
-  let service: HuggingFaceService;
-  let mockFetch: jest.MockedFunction<typeof fetch>;
-  let mockCache: jest.Mocked<typeof cache>;
-  let mockLogger: jest.Mocked<typeof logger>;
+describe('HuggingFace AI Service', () => {
+  let mockHf: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
-    mockFetch = global.fetch as jest.MockedFunction<typeof fetch>;
-    mockCache = cache as jest.Mocked<typeof cache>;
-    mockLogger = logger as jest.Mocked<typeof logger>;
-    
-    // Default cache miss
-    mockCache.get.mockResolvedValue(null);
-    mockCache.set.mockResolvedValue(undefined);
-    
-    service = new HuggingFaceService();
-  });
 
-  describe('constructor', () => {
-    it('should initialize with API key from environment', () => {
-      expect(service).toBeDefined();
-      expect(service.getAvailableModels()).toBeDefined();
-    });
+    // Setup HuggingFace mock
+    mockHf = {
+      textGeneration: jest.fn(),
+      featureExtraction: jest.fn(),
+      textClassification: jest.fn(),
+    };
 
-    it('should accept custom API key', () => {
-      const customService = new HuggingFaceService('custom-api-key');
-      expect(customService).toBeDefined();
-    });
+    mockHfInference.mockImplementation(() => mockHf);
 
-    it('should accept user model preferences', () => {
-      const preferences = { bio: 'custom-model' };
-      const customService = new HuggingFaceService(undefined, preferences);
-      expect(customService).toBeDefined();
-    });
-
-    it('should warn when no API key is provided', () => {
-      const customService = new HuggingFaceService('');
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Hugging Face API key not provided. Service will operate in demo mode.'
-      );
-    });
-  });
-
-  describe('Model Management', () => {
-    it('should get available models', () => {
-      const models = service.getAvailableModels();
-      expect(models).toEqual([
-        { id: 'microsoft/DialoGPT-medium', status: 'loaded' },
-        { id: 'microsoft/phi-3-mini', status: 'loaded' },
-      ]);
-    });
-
-    it('should get selected models', () => {
-      const selected = service.getSelectedModels();
-      expect(selected).toEqual({
-        bio: 'microsoft/DialoGPT-medium',
-        project: 'microsoft/phi-3-mini',
-      });
-    });
-
-    it('should update model selection', () => {
-      service.updateModelSelection('bio', 'new-model');
-      // Verify that the update method was called (mocked)
-      expect(service).toBeDefined();
-    });
+    // Mock logger
+    mockLogger.info = jest.fn();
+    mockLogger.error = jest.fn();
+    mockLogger.warn = jest.fn();
   });
 
   describe('enhanceBio', () => {
-    const mockBioContext: BioContext = {
-      title: 'Software Engineer',
-      skills: ['JavaScript', 'React', 'Node.js'],
-      experience: [
-        {
-          company: 'Tech Corp',
-          position: 'Senior Developer',
-          yearsExperience: 3,
-        },
-      ],
-      industry: 'technology',
-      tone: 'professional',
-      targetLength: 'detailed',
-    };
+    const originalBio = 'I am a software developer with 5 years of experience.';
 
-    it('should enhance bio successfully', async () => {
-      const mockResponse = {
-        ok: true,
-        json: () => Promise.resolve([{
-          generated_text: 'Enhanced bio text with improved clarity and professional impact',
-        }]),
-      };
+    it('should enhance bio with default model', async () => {
+      const enhancedBio =
+        'Experienced software developer with 5+ years crafting innovative solutions. Specialized in full-stack development, cloud architecture, and agile methodologies. Passionate about building scalable applications that solve real-world problems.';
 
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
-
-      const result = await service.enhanceBio('Original bio text', mockBioContext);
-
-      expect(result).toMatchObject({
-        content: expect.any(String),
-        confidence: expect.any(Number),
-        wordCount: expect.any(Number),
-        qualityScore: expect.any(Number),
-        enhancementType: 'bio',
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: `Enhanced bio: ${enhancedBio}`,
       });
 
-      expect(result.confidence).toBeGreaterThan(0);
-      expect(result.confidence).toBeLessThanOrEqual(1);
-      expect(result.qualityScore).toBe(85);
+      const result = await enhanceBio(originalBio);
 
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('huggingface.co'),
+      expect(result).toEqual({
+        enhanced: enhancedBio,
+        quality: expect.any(Number),
+        model: 'llama-3.1-70b',
+        error: null,
+      });
+
+      expect(mockHf.textGeneration).toHaveBeenCalledWith({
+        model: AI_MODELS['llama-3.1-70b'].id,
+        inputs: expect.stringContaining(originalBio),
+        parameters: {
+          max_new_tokens: 150,
+          temperature: 0.7,
+          top_p: 0.9,
+          do_sample: true,
+        },
+      });
+
+      expect(result.quality).toBeGreaterThan(0);
+      expect(result.quality).toBeLessThanOrEqual(100);
+    });
+
+    it('should use specified AI model', async () => {
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: 'Enhanced bio: Professional developer...',
+      });
+
+      await enhanceBio(originalBio, 'phi-3.5');
+
+      expect(mockHf.textGeneration).toHaveBeenCalledWith(
         expect.objectContaining({
-          method: 'POST',
-          headers: expect.objectContaining({
-            Authorization: 'Bearer test-api-key',
-            'Content-Type': 'application/json',
-          }),
+          model: AI_MODELS['phi-3.5'].id,
         })
       );
     });
 
-    it('should use cached result when available', async () => {
-      const cachedResult: EnhancedContent = {
-        content: 'Cached enhanced bio',
-        confidence: 0.9,
-        wordCount: 25,
-        qualityScore: 85,
-        enhancementType: 'bio',
-        suggestions: ['Cached suggestion'],
-      };
+    it('should enforce word limit', async () => {
+      const longBio = 'word '.repeat(200); // Very long response
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: `Enhanced bio: ${longBio}`,
+      });
 
-      mockCache.get.mockResolvedValueOnce(JSON.stringify(cachedResult));
+      const result = await enhanceBio(originalBio);
 
-      const result = await service.enhanceBio('Original bio', mockBioContext);
-
-      expect(result).toEqual(cachedResult);
-      expect(mockFetch).not.toHaveBeenCalled();
-      expect(mockCache.get).toHaveBeenCalled();
+      const wordCount = result.enhanced.split(/\s+/).length;
+      expect(wordCount).toBeLessThanOrEqual(150);
     });
 
-    it('should cache results after successful enhancement', async () => {
-      const mockResponse = {
-        ok: true,
-        json: () => Promise.resolve([{
-          generated_text: 'Enhanced bio text',
-        }]),
-      };
+    it('should calculate quality score', async () => {
+      const testCases = [
+        {
+          bio: 'Developer.',
+          expectedQuality: 20, // Too short
+        },
+        {
+          bio: 'Experienced software engineer with expertise in React, Node.js, and cloud technologies. Passionate about creating innovative solutions.',
+          expectedQuality: 80, // Good
+        },
+        {
+          bio: 'I I I am am developer developer with with experience experience.',
+          expectedQuality: 40, // Repetitive
+        },
+      ];
 
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+      for (const testCase of testCases) {
+        mockHf.textGeneration.mockResolvedValue({
+          generated_text: `Enhanced bio: ${testCase.bio}`,
+        });
 
-      await service.enhanceBio('Original bio', mockBioContext);
+        const result = await enhanceBio('original');
+        expect(result.quality).toBeCloseTo(testCase.expectedQuality, -1);
+      }
+    });
 
-      expect(mockCache.set).toHaveBeenCalledWith(
-        expect.stringContaining('ai:result:bio:'),
-        expect.any(String),
-        86400 // 24 hours
+    it('should handle API errors gracefully', async () => {
+      mockHf.textGeneration.mockRejectedValue(
+        new Error('HuggingFace API error')
       );
-    });
 
-    it('should handle model unavailable error (503)', async () => {
-      const errorResponse = {
-        ok: false,
-        status: 503,
-        json: () => Promise.resolve({ error: 'Model is loading' }),
-        statusText: 'Service Unavailable',
-      };
+      const result = await enhanceBio(originalBio);
 
-      mockFetch.mockResolvedValueOnce(errorResponse as any);
-
-      await expect(
-        service.enhanceBio('Original bio', mockBioContext)
-      ).rejects.toThrow(ModelUnavailableError);
-
-      expect(mockLogger.error).toHaveBeenCalled();
-    });
-
-    it('should handle quota exceeded error (429)', async () => {
-      const errorResponse = {
-        ok: false,
-        status: 429,
-        json: () => Promise.resolve({ error: 'Rate limit exceeded' }),
-        statusText: 'Too Many Requests',
-      };
-
-      mockFetch.mockResolvedValueOnce(errorResponse as any);
-
-      await expect(
-        service.enhanceBio('Original bio', mockBioContext)
-      ).rejects.toThrow(QuotaExceededError);
-    });
-
-    it('should handle network errors', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
-
-      await expect(
-        service.enhanceBio('Original bio', mockBioContext)
-      ).rejects.toThrow(AIServiceError);
+      expect(result).toEqual({
+        enhanced: originalBio, // Return original on error
+        quality: 0,
+        model: 'llama-3.1-70b',
+        error: 'Failed to enhance bio',
+      });
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Bio enhancement failed',
+        'Failed to enhance bio',
         expect.any(Error)
       );
     });
 
-    it('should retry on transient failures', async () => {
-      // First call fails with 503, then succeeds
-      mockFetch
-        .mockResolvedValueOnce({
-          ok: false,
-          status: 503,
-          json: () => Promise.resolve({ error: 'Model loading' }),
-          statusText: 'Service Unavailable',
-        } as any)
-        .mockResolvedValueOnce({
-          ok: true,
-          json: () => Promise.resolve([{ generated_text: 'Success on retry' }]),
-        } as any);
+    it('should validate model selection', async () => {
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: 'Enhanced bio: Professional...',
+      });
 
-      const result = await service.enhanceBio('Bio text', mockBioContext);
+      await enhanceBio(originalBio, 'invalid-model' as AIModel);
 
-      expect(result.content).toBe('Success on retry');
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-    });
-
-    it('should generate bio suggestions', async () => {
-      const mockResponse = {
-        ok: true,
-        json: () => Promise.resolve([{
-          generated_text: 'Enhanced bio text',
-        }]),
-      };
-
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
-
-      const result = await service.enhanceBio('Short bio', mockBioContext);
-
-      expect(result.suggestions).toContain('Consider adding more details about your expertise');
+      // Should fallback to default model
+      expect(mockHf.textGeneration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: AI_MODELS['llama-3.1-70b'].id,
+        })
+      );
     });
   });
 
   describe('optimizeProjectDescription', () => {
-    it('should optimize project description successfully', async () => {
-      const mockResponse = {
-        ok: true,
-        json: () => Promise.resolve([{
-          generated_text: 'Optimized project description with STAR format and clear impact metrics',
-        }]),
-      };
+    const projectInfo = {
+      title: 'E-commerce Platform',
+      description: 'Built an online store',
+      technologies: ['React', 'Node.js', 'MongoDB'],
+      duration: '3 months',
+    };
 
-      mockFetch.mockResolvedValueOnce(mockResponse as any);
+    it('should optimize project description using STAR format', async () => {
+      const optimizedDescription = `
+        Situation: Led development of a comprehensive e-commerce platform for a growing retail business.
+        Task: Design and implement a scalable online store with real-time inventory management.
+        Action: Built full-stack solution using React, Node.js, and MongoDB. Implemented secure payment processing and responsive design.
+        Result: Delivered platform processing 1000+ daily transactions with 99.9% uptime, increasing client revenue by 150%.
+      `;
 
-      const result = await service.optimizeProjectDescription(
-        'Built a web application',
-        ['React', 'Node.js'],
-        'technology'
-      );
-
-      expect(result).toMatchObject({
-        original: 'Built a web application',
-        enhanced: 'Enhanced project description',
-        keyAchievements: expect.arrayContaining(['Achievement 1', 'Achievement 2']),
-        technologies: expect.arrayContaining(['React', 'Node.js']),
-        impactMetrics: expect.arrayContaining(['50% performance improvement']),
-        confidence: expect.any(Number),
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: `Optimized: ${optimizedDescription}`,
       });
 
-      expect(result.confidence).toBeGreaterThan(0);
-      expect(result.confidence).toBeLessThanOrEqual(1);
+      const result = await optimizeProjectDescription(projectInfo);
+
+      expect(result).toEqual({
+        optimized: expect.stringContaining('Situation:'),
+        metrics: expect.arrayContaining([
+          expect.stringContaining('1000'),
+          expect.stringContaining('99.9%'),
+          expect.stringContaining('150%'),
+        ]),
+        quality: expect.any(Number),
+        error: null,
+      });
+
+      expect(mockHf.textGeneration).toHaveBeenCalledWith({
+        model: AI_MODELS['llama-3.1-70b'].id,
+        inputs: expect.stringContaining('STAR method'),
+        parameters: {
+          max_new_tokens: 200,
+          temperature: 0.6,
+          top_p: 0.85,
+          do_sample: true,
+        },
+      });
     });
 
-    it('should use cached result for project optimization', async () => {
-      const cachedResult: ProjectEnhancement = {
-        original: 'Original project description',
-        enhanced: 'Cached enhanced description',
-        keyAchievements: ['Cached achievement'],
-        technologies: ['Cached tech'],
-        impactMetrics: ['Cached metric'],
-        confidence: 0.85,
-      };
+    it('should extract metrics from description', async () => {
+      const descriptionWithMetrics = `
+        Achieved 50% performance improvement, reduced costs by $10,000,
+        managed team of 5 developers, delivered 2 weeks early.
+      `;
 
-      mockCache.get.mockResolvedValueOnce(JSON.stringify(cachedResult));
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: `Optimized: ${descriptionWithMetrics}`,
+      });
 
-      const result = await service.optimizeProjectDescription(
-        'Original project description',
-        ['React'],
-        'tech'
-      );
+      const result = await optimizeProjectDescription(projectInfo);
 
-      expect(result).toEqual(cachedResult);
-      expect(mockFetch).not.toHaveBeenCalled();
+      expect(result.metrics).toEqual([
+        '50% performance improvement',
+        '$10,000',
+        '5 developers',
+        '2 weeks early',
+      ]);
     });
 
-    it('should handle project optimization errors', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('API error'));
+    it('should handle projects without metrics', async () => {
+      const descriptionNoMetrics = 'Built a web application for internal use.';
 
-      await expect(
-        service.optimizeProjectDescription('Project desc', ['React'])
-      ).rejects.toThrow(AIServiceError);
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: `Optimized: ${descriptionNoMetrics}`,
+      });
 
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Project optimization failed',
-        expect.any(Error)
-      );
+      const result = await optimizeProjectDescription(projectInfo);
+
+      expect(result.metrics).toEqual([]);
+      expect(result.quality).toBeLessThan(70); // Lower quality without metrics
     });
   });
 
   describe('recommendTemplate', () => {
-    const mockUserProfile: UserProfile = {
-      title: 'UX Designer',
-      skills: ['Figma', 'Sketch', 'Adobe XD', 'User Research'],
-      projectCount: 8,
-      hasDesignWork: true,
-      industry: 'design',
-      experienceLevel: 'senior',
+    const userProfile = {
+      profession: 'Full Stack Developer',
+      experience: '5 years',
+      skills: ['React', 'Node.js', 'Python', 'AWS'],
+      style: 'modern and minimal',
     };
 
-    it('should recommend template successfully', async () => {
-      const result = await service.recommendTemplate(mockUserProfile);
+    it('should recommend appropriate template', async () => {
+      mockHf.textClassification = jest.fn().mockResolvedValue([
+        { label: 'developer', score: 0.85 },
+        { label: 'designer', score: 0.1 },
+        { label: 'consultant', score: 0.05 },
+      ]);
 
-      expect(result).toMatchObject({
-        recommendedTemplate: expect.any(String),
-        confidence: expect.any(Number),
-        reasoning: expect.any(String),
-        alternatives: expect.arrayContaining([
-          expect.objectContaining({
-            template: expect.any(String),
-            score: expect.any(Number),
-            reasons: expect.arrayContaining([expect.any(String)]),
-          }),
-        ]),
+      const result = await recommendTemplate(userProfile);
+
+      expect(result).toEqual({
+        template: 'developer',
+        confidence: 85,
+        reasoning: expect.stringContaining('technical background'),
+        alternatives: [
+          { template: 'designer', confidence: 10 },
+          { template: 'consultant', confidence: 5 },
+        ],
+        error: null,
+      });
+    });
+
+    it('should provide reasoning for recommendation', async () => {
+      mockHf.textClassification = jest
+        .fn()
+        .mockResolvedValue([{ label: 'designer', score: 0.75 }]);
+
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text:
+          'Reasoning: Your creative background and portfolio focus suggest the designer template would best showcase your visual work.',
       });
 
-      expect(result.confidence).toBeGreaterThan(0);
-      expect(result.confidence).toBeLessThanOrEqual(1);
+      const result = await recommendTemplate({
+        profession: 'UI/UX Designer',
+        experience: '3 years',
+        skills: ['Figma', 'Sketch', 'Adobe XD'],
+        style: 'creative and bold',
+      });
+
+      expect(result.reasoning).toContain('creative background');
+      expect(result.reasoning).toContain('visual work');
+    });
+
+    it('should handle low confidence recommendations', async () => {
+      mockHf.textClassification = jest.fn().mockResolvedValue([
+        { label: 'developer', score: 0.4 },
+        { label: 'designer', score: 0.35 },
+        { label: 'consultant', score: 0.25 },
+      ]);
+
+      const result = await recommendTemplate(userProfile);
+
+      expect(result.confidence).toBe(40);
       expect(result.alternatives).toHaveLength(2);
-    });
-
-    it('should recommend designer template for design profile', async () => {
-      const result = await service.recommendTemplate(mockUserProfile);
-
-      expect(['designer', 'creative', 'modern']).toContain(result.recommendedTemplate);
-      expect(result.reasoning).toContain('design');
-    });
-
-    it('should recommend developer template for technical profile', async () => {
-      const techProfile: UserProfile = {
-        title: 'Full Stack Developer',
-        skills: ['React', 'Node.js', 'Python', 'PostgreSQL'],
-        projectCount: 15,
-        hasDesignWork: false,
-        industry: 'technology',
-        experienceLevel: 'senior',
-      };
-
-      const result = await service.recommendTemplate(techProfile);
-
-      expect(['developer', 'modern', 'minimal']).toContain(result.recommendedTemplate);
-    });
-
-    it('should recommend minimal template for entry level', async () => {
-      const entryProfile: UserProfile = {
-        title: 'Junior Developer',
-        skills: ['HTML', 'CSS', 'JavaScript'],
-        projectCount: 3,
-        hasDesignWork: false,
-        experienceLevel: 'entry',
-      };
-
-      const result = await service.recommendTemplate(entryProfile);
-
-      // Entry level should get good recommendation
-      expect(result.confidence).toBeGreaterThan(0.5);
-    });
-
-    it('should handle template recommendation errors', async () => {
-      // Simulate error by making the scoring throw
-      const invalidProfile = null as any;
-
-      await expect(
-        service.recommendTemplate(invalidProfile)
-      ).rejects.toThrow(AIServiceError);
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Template recommendation failed',
-        expect.any(Error)
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Low confidence template recommendation',
+        expect.objectContaining({ confidence: 40 })
       );
     });
   });
 
-  describe('scoreContent', () => {
-    it('should score content quality', async () => {
-      const content = 'This is a well-written professional bio with clear objectives and strong impact metrics.';
+  describe('generateTechStack', () => {
+    it('should generate tech stack from project description', async () => {
+      const projectDescription = `
+        Built a real-time chat application using React for the frontend,
+        Node.js and Socket.io for the backend, with MongoDB for data storage.
+        Deployed on AWS EC2 with Docker containers.
+      `;
 
-      const result = await service.scoreContent(content, 'bio');
+      mockHf.featureExtraction = jest.fn().mockResolvedValue([
+        [0.9, 0.1, 0.05], // React
+        [0.85, 0.15, 0.1], // Node.js
+        [0.8, 0.2, 0.1], // Socket.io
+        [0.75, 0.25, 0.15], // MongoDB
+        [0.7, 0.3, 0.2], // AWS
+        [0.65, 0.35, 0.25], // Docker
+      ]);
 
-      expect(result).toMatchObject({
-        overall: 85,
-        readability: 80,
-        professionalism: 90,
-        impact: 85,
-        completeness: 80,
-        suggestions: expect.arrayContaining([expect.any(String)]),
+      const result = await generateTechStack(projectDescription);
+
+      expect(result).toEqual({
+        technologies: expect.arrayContaining([
+          'React',
+          'Node.js',
+          'Socket.io',
+          'MongoDB',
+          'AWS',
+          'Docker',
+        ]),
+        categories: {
+          frontend: ['React'],
+          backend: ['Node.js', 'Socket.io'],
+          database: ['MongoDB'],
+          cloud: ['AWS'],
+          devops: ['Docker'],
+        },
+        confidence: expect.any(Number),
+        error: null,
       });
-
-      expect(result.overall).toBeGreaterThanOrEqual(0);
-      expect(result.overall).toBeLessThanOrEqual(100);
     });
 
-    it('should provide different scoring for different content types', async () => {
-      const bioResult = await service.scoreContent('Professional bio content', 'bio');
-      const projectResult = await service.scoreContent('Project description', 'project');
+    it('should categorize technologies correctly', async () => {
+      const description =
+        'Vue.js frontend, Django REST API, PostgreSQL database';
 
-      expect(bioResult).toMatchObject({
-        overall: expect.any(Number),
-        suggestions: expect.any(Array),
-      });
-      
-      expect(projectResult).toMatchObject({
-        overall: expect.any(Number),
-        suggestions: expect.any(Array),
+      mockHf.featureExtraction = jest.fn().mockResolvedValue([
+        [0.9, 0.1, 0.05],
+        [0.85, 0.15, 0.1],
+        [0.8, 0.2, 0.1],
+      ]);
+
+      const result = await generateTechStack(description);
+
+      expect(result.categories).toEqual({
+        frontend: ['Vue.js'],
+        backend: ['Django'],
+        database: ['PostgreSQL'],
+        cloud: [],
+        devops: [],
       });
     });
   });
 
-  describe('healthCheck', () => {
-    it('should return true when service is healthy', async () => {
-      mockFetch.mockResolvedValueOnce({
-        status: 200,
-        ok: true,
-      } as any);
+  describe('improveSection', () => {
+    it('should improve about section', async () => {
+      const originalContent = 'I like coding and building things.';
 
-      const result = await service.healthCheck();
-      
-      expect(result).toBe(true);
-      expect(mockFetch).toHaveBeenCalledWith(
-        expect.stringContaining('huggingface.co'),
-        expect.objectContaining({
-          method: 'GET',
-          headers: expect.objectContaining({
-            Authorization: 'Bearer test-api-key',
-          }),
-        })
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text:
+          'Improved: Passionate software engineer dedicated to crafting elegant solutions to complex problems. I thrive on transforming ideas into robust, scalable applications that make a meaningful impact.',
+      });
+
+      const result = await improveSection('about', originalContent);
+
+      expect(result).toEqual({
+        improved: expect.stringContaining('Passionate software engineer'),
+        suggestions: expect.arrayContaining([
+          expect.stringContaining('specific'),
+        ]),
+        quality: expect.any(Number),
+        error: null,
+      });
+    });
+
+    it('should provide section-specific suggestions', async () => {
+      const sectionTests = [
+        {
+          section: 'skills',
+          suggestions: ['proficiency levels', 'categories'],
+        },
+        {
+          section: 'experience',
+          suggestions: ['achievements', 'metrics'],
+        },
+        {
+          section: 'education',
+          suggestions: ['relevant coursework', 'honors'],
+        },
+      ];
+
+      for (const test of sectionTests) {
+        mockHf.textGeneration.mockResolvedValue({
+          generated_text: 'Improved content',
+        });
+
+        const result = await improveSection(test.section as any, 'content');
+
+        for (const keyword of test.suggestions) {
+          expect(
+            result.suggestions.some(s => s.toLowerCase().includes(keyword))
+          ).toBe(true);
+        }
+      }
+    });
+  });
+
+  describe('assessContentQuality', () => {
+    it('should assess high quality content', async () => {
+      const highQualityContent = {
+        bio: 'Experienced full-stack developer with 8+ years building scalable web applications. Specialized in React, Node.js, and cloud architecture. Led teams of 5-10 developers on enterprise projects.',
+        projects: [
+          {
+            description:
+              'Developed e-commerce platform handling $1M+ monthly transactions with 99.9% uptime.',
+          },
+          {
+            description:
+              'Built real-time analytics dashboard processing 100K events/second.',
+          },
+        ],
+        skills: ['React', 'Node.js', 'AWS', 'Docker', 'PostgreSQL'],
+      };
+
+      const result = await assessContentQuality(highQualityContent);
+
+      expect(result).toEqual({
+        overall: expect.any(Number),
+        breakdown: {
+          completeness: expect.any(Number),
+          professionalism: expect.any(Number),
+          specificity: expect.any(Number),
+          impact: expect.any(Number),
+        },
+        suggestions: expect.any(Array),
+        strengths: expect.arrayContaining([expect.stringContaining('metrics')]),
+        error: null,
+      });
+
+      expect(result.overall).toBeGreaterThan(80);
+    });
+
+    it('should identify content weaknesses', async () => {
+      const weakContent = {
+        bio: 'I am developer',
+        projects: [],
+        skills: ['coding'],
+      };
+
+      const result = await assessContentQuality(weakContent);
+
+      expect(result.overall).toBeLessThan(40);
+      expect(result.breakdown.completeness).toBeLessThan(30);
+      expect(result.suggestions).toContain(expect.stringContaining('bio'));
+      expect(result.suggestions).toContain(expect.stringContaining('projects'));
+    });
+
+    it('should provide actionable suggestions', async () => {
+      const mediumContent = {
+        bio: 'Software developer with experience in web development.',
+        projects: [
+          {
+            description: 'Built a website for a client.',
+          },
+        ],
+        skills: ['JavaScript', 'HTML', 'CSS'],
+      };
+
+      const result = await assessContentQuality(mediumContent);
+
+      expect(result.suggestions).toContain(
+        expect.stringContaining('specific years')
       );
-    });
-
-    it('should return false when service is unhealthy', async () => {
-      mockFetch.mockResolvedValueOnce({
-        status: 500,
-        ok: false,
-      } as any);
-
-      const result = await service.healthCheck();
-      expect(result).toBe(false);
-    });
-
-    it('should return false on network error', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'));
-
-      const result = await service.healthCheck();
-      expect(result).toBe(false);
-    });
-  });
-
-  describe('getUsageStats', () => {
-    it('should return usage statistics', async () => {
-      const stats = await service.getUsageStats();
-
-      expect(stats).toMatchObject({
-        requestsToday: expect.any(Number),
-        costToday: expect.any(Number),
-        avgResponseTime: expect.any(Number),
-        successRate: expect.any(Number),
-      });
-
-      expect(stats.successRate).toBeGreaterThanOrEqual(0);
-      expect(stats.successRate).toBeLessThanOrEqual(1);
+      expect(result.suggestions).toContain(expect.stringContaining('metrics'));
+      expect(result.suggestions).toContain(
+        expect.stringContaining('technologies')
+      );
     });
   });
 
   describe('Error Handling', () => {
-    it('should handle malformed API responses', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve({ unexpected: 'format' }),
-      } as any);
+    it('should handle rate limiting', async () => {
+      const rateLimitError = new Error('Rate limit exceeded');
+      (rateLimitError as any).status = 429;
 
-      await expect(
-        service.enhanceBio('Bio text', {
-          title: 'Developer',
-          skills: ['JS'],
-          experience: [],
-          tone: 'professional',
-          targetLength: 'concise',
-        })
-      ).rejects.toThrow(AIServiceError);
-    });
+      mockHf.textGeneration.mockRejectedValue(rateLimitError);
 
-    it('should handle JSON parsing errors', async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.reject(new Error('Invalid JSON')),
-      } as any);
+      const result = await enhanceBio('test bio');
 
-      await expect(
-        service.enhanceBio('Bio text', {
-          title: 'Developer',
-          skills: ['JS'],
-          experience: [],
-          tone: 'professional',
-          targetLength: 'concise',
-        })
-      ).rejects.toThrow(AIServiceError);
-    });
-
-    it('should retry multiple times before giving up', async () => {
-      // Fail 3 times (max retries = 2, so 3 total attempts)
-      mockFetch
-        .mockRejectedValueOnce(new Error('Network error 1'))
-        .mockRejectedValueOnce(new Error('Network error 2'))
-        .mockRejectedValueOnce(new Error('Network error 3'));
-
-      await expect(
-        service.enhanceBio('Bio text', {
-          title: 'Developer',
-          skills: ['JS'],
-          experience: [],
-          tone: 'professional',
-          targetLength: 'concise',
-        })
-      ).rejects.toThrow('Network error 3');
-
-      expect(mockFetch).toHaveBeenCalledTimes(3);
-    });
-
-    it('should handle AIServiceError instances', async () => {
-      const customError = new AIServiceError(
-        'Custom AI error',
-        'CUSTOM_ERROR',
-        'huggingface'
+      expect(result.error).toContain('rate limit');
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'HuggingFace rate limit hit',
+        expect.any(Object)
       );
+    });
 
-      mockFetch.mockRejectedValueOnce(customError);
+    it('should handle model unavailability', async () => {
+      const modelError = new Error('Model loading failed');
+      (modelError as any).status = 503;
 
-      await expect(
-        service.enhanceBio('Bio text', {
-          title: 'Developer',
-          skills: ['JS'],
-          experience: [],
-          tone: 'professional',
-          targetLength: 'concise',
-        })
-      ).rejects.toThrow('Custom AI error');
+      mockHf.textGeneration
+        .mockRejectedValueOnce(modelError) // First model fails
+        .mockResolvedValueOnce({
+          // Fallback model works
+          generated_text: 'Enhanced: Fallback result',
+        });
+
+      const result = await enhanceBio('test bio', 'llama-3.1-70b');
+
+      expect(result.error).toBeNull();
+      expect(result.model).not.toBe('llama-3.1-70b'); // Should use fallback
+    });
+
+    it('should handle API key issues', async () => {
+      const authError = new Error('Invalid API key');
+      (authError as any).status = 401;
+
+      mockHf.textGeneration.mockRejectedValue(authError);
+
+      const result = await enhanceBio('test bio');
+
+      expect(result.error).toContain('configuration');
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'HuggingFace API authentication failed',
+        expect.any(Object)
+      );
     });
   });
 
-  describe('Cache Integration', () => {
-    it('should generate consistent cache keys', async () => {
-      const context: BioContext = {
-        title: 'Developer',
-        skills: ['JS'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
-      };
+  describe('Performance', () => {
+    it('should timeout long-running requests', async () => {
+      jest.useFakeTimers();
 
-      mockFetch.mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve([{ generated_text: 'Enhanced' }]),
-      } as any);
+      mockHf.textGeneration.mockImplementation(
+        () =>
+          new Promise(resolve => {
+            setTimeout(
+              () => resolve({ generated_text: 'Late response' }),
+              30000
+            );
+          })
+      );
 
-      // Call twice with same inputs
-      await service.enhanceBio('Same bio', context);
-      await service.enhanceBio('Same bio', context);
+      const promise = enhanceBio('test bio');
+      jest.advanceTimersByTime(15000); // 15 second timeout
 
-      // Should check cache twice with same key
-      expect(mockCache.get).toHaveBeenCalledTimes(2);
-      const cacheKey1 = (mockCache.get as jest.Mock).mock.calls[0][0];
-      const cacheKey2 = (mockCache.get as jest.Mock).mock.calls[1][0];
-      expect(cacheKey1).toBe(cacheKey2);
+      const result = await promise;
+      expect(result.error).toContain('timeout');
+
+      jest.useRealTimers();
     });
 
-    it('should handle cache errors gracefully', async () => {
-      mockCache.get.mockRejectedValueOnce(new Error('Cache error'));
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        json: () => Promise.resolve([{ generated_text: 'Enhanced' }]),
-      } as any);
-
-      const result = await service.enhanceBio('Bio text', {
-        title: 'Developer',
-        skills: ['JS'],
-        experience: [],
-        tone: 'professional',
-        targetLength: 'concise',
+    it('should cache repeated requests', async () => {
+      mockHf.textGeneration.mockResolvedValue({
+        generated_text: 'Enhanced: Cached result',
       });
 
-      // Should still work despite cache error
-      expect(result.content).toBe('Enhanced');
+      // First call
+      await enhanceBio('same bio');
+      expect(mockHf.textGeneration).toHaveBeenCalledTimes(1);
+
+      // Second call with same input
+      await enhanceBio('same bio');
+      expect(mockHf.textGeneration).toHaveBeenCalledTimes(1); // Should use cache
     });
   });
 });

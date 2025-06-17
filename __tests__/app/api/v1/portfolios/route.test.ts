@@ -1,518 +1,536 @@
+/**
+ * @jest-environment node
+ */
+
+import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/v1/portfolios/route';
-import { createClient } from '@/lib/supabase/server';
-import { AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { getUserSession } from '@/lib/auth/session';
+import { withAuth } from '@/lib/api/middleware/auth';
+import { withRateLimit } from '@/lib/api/middleware/rate-limit';
+import { logger } from '@/lib/utils/logger';
 
-// Mock dependencies - UUID only since others are mocked globally
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => 'test-uuid-123'),
-}));
+// Mock dependencies
+jest.mock('@/lib/supabase/server');
+jest.mock('@/lib/auth/session');
+jest.mock('@/lib/api/middleware/auth');
+jest.mock('@/lib/api/middleware/rate-limit');
+jest.mock('@/lib/utils/logger');
 
-describe('/api/v1/portfolios', () => {
-  let mockSupabaseClient: any;
-  let mockUser: any;
+const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
+const mockGetUserSession = jest.mocked(getUserSession);
+const mockWithAuth = jest.mocked(withAuth);
+const mockWithRateLimit = jest.mocked(withRateLimit);
+const mockLogger = jest.mocked(logger);
+
+describe('Portfolios API Route', () => {
+  let mockSupabase: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Setup mock user
-    mockUser = {
-      id: 'test-user-123',
-      email: 'test@example.com',
-    };
-
-    // Setup mock Supabase client with chainable methods
-    mockSupabaseClient = {
-      auth: {
-        getUser: jest.fn().mockResolvedValue({
-          data: { user: mockUser },
-          error: null,
-        }),
-      },
+    // Setup Supabase mock
+    mockSupabase = {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      or: jest.fn().mockReturnThis(),
-      like: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      range: jest.fn().mockReturnThis(),
+      single: jest.fn(),
       insert: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+      order: jest.fn().mockReturnThis(),
+      limit: jest.fn().mockReturnThis(),
+      range: jest.fn().mockReturnThis(),
+      count: jest.fn().mockReturnThis(),
     };
 
-    // Update the global mock to return our specific mock client
-    (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
+    mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
+
+    // Mock auth middleware to pass through
+    mockWithAuth.mockImplementation(handler => handler);
+    mockWithRateLimit.mockImplementation(handler => handler);
+
+    // Mock logger
+    mockLogger.info = jest.fn();
+    mockLogger.error = jest.fn();
+    mockLogger.warn = jest.fn();
   });
 
+  const createMockRequest = (
+    method: string,
+    url: string,
+    body?: any
+  ): NextRequest => {
+    const request = new NextRequest(url, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    // Mock JSON method
+    if (body) {
+      request.json = jest.fn().mockResolvedValue(body);
+    }
+
+    return request;
+  };
+
   describe('GET /api/v1/portfolios', () => {
-    it('should return portfolios for authenticated user', async () => {
+    const mockUserId = 'user_123';
+    const mockSession = {
+      user: { id: mockUserId, email: 'test@example.com' },
+    };
+
+    beforeEach(() => {
+      mockGetUserSession.mockResolvedValue(mockSession);
+    });
+
+    it('should list user portfolios', async () => {
       const mockPortfolios = [
         {
-          id: 'portfolio-1',
-          user_id: 'test-user-123',
-          name: 'My Portfolio',
-          slug: 'my-portfolio',
-          template: 'developer',
-          status: 'published',
-          data: {
-            title: 'John Doe',
-            bio: 'Full-stack developer',
-          },
-          subdomain: 'johndoe',
-          views: 100,
+          id: 'portfolio_1',
+          title: 'Portfolio 1',
+          slug: 'portfolio-1',
+          is_published: true,
           created_at: '2024-01-01T00:00:00Z',
-          updated_at: '2024-01-01T00:00:00Z',
+          view_count: 100,
         },
         {
-          id: 'portfolio-2',
-          user_id: 'test-user-123',
-          name: 'Design Portfolio',
-          slug: 'design-portfolio',
-          template: 'designer',
-          status: 'draft',
-          data: {
-            title: 'Jane Designer',
-            bio: 'Creative designer',
-          },
-          subdomain: 'janedesigner',
-          views: 50,
+          id: 'portfolio_2',
+          title: 'Portfolio 2',
+          slug: 'portfolio-2',
+          is_published: false,
           created_at: '2024-01-02T00:00:00Z',
-          updated_at: '2024-01-02T00:00:00Z',
+          view_count: 50,
         },
       ];
 
-      // Mock successful query
-      mockSupabaseClient.range.mockResolvedValue({
+      mockSupabase.count.mockReturnValue({
         data: mockPortfolios,
         error: null,
+        count: 2,
       });
 
-      // Mock count query
-      mockSupabaseClient.select.mockImplementation(
-        (columns: string, options?: any) => {
-          if (options?.count === 'exact' && options?.head === true) {
-            return Promise.resolve({ count: 2, error: null });
-          }
-          return mockSupabaseClient;
-        }
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios'
       );
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
       const response = await GET(request);
-      const data = await response.json();
+      const result = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data.portfolios).toHaveLength(2);
-      expect(data.data.portfolios[0]).toEqual(mockPortfolios[0]);
-      expect(data.data.pagination).toEqual({
-        page: 1,
-        limit: 10,
+      expect(result).toEqual({
+        portfolios: mockPortfolios,
         total: 2,
+        page: 1,
         totalPages: 1,
       });
 
-      // Verify correct queries were made
-      expect(mockSupabaseClient.from).toHaveBeenCalledWith('portfolios');
-      expect(mockSupabaseClient.eq).toHaveBeenCalledWith(
-        'user_id',
-        'test-user-123'
-      );
-      expect(mockSupabaseClient.order).toHaveBeenCalledWith('updated_at', {
+      expect(mockSupabase.eq).toHaveBeenCalledWith('user_id', mockUserId);
+      expect(mockSupabase.order).toHaveBeenCalledWith('created_at', {
         ascending: false,
       });
-      expect(mockSupabaseClient.range).toHaveBeenCalledWith(0, 9);
     });
 
-    it('should handle pagination parameters', async () => {
-      mockSupabaseClient.range.mockResolvedValue({
+    it('should support pagination', async () => {
+      mockSupabase.count.mockReturnValue({
         data: [],
         error: null,
+        count: 50,
       });
 
-      mockSupabaseClient.select.mockImplementation(
-        (columns: string, options?: any) => {
-          if (options?.count === 'exact' && options?.head === true) {
-            return Promise.resolve({ count: 50, error: null });
-          }
-          return mockSupabaseClient;
-        }
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios?page=2&limit=20'
       );
+      await GET(request);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios?page=3&limit=20'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
+      expect(mockSupabase.range).toHaveBeenCalledWith(20, 39); // Page 2, items 21-40
+    });
 
+    it('should filter by published status', async () => {
+      mockSupabase.count.mockReturnValue({
+        data: [],
+        error: null,
+        count: 0,
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios?published=true'
+      );
+      await GET(request);
+
+      expect(mockSupabase.eq).toHaveBeenCalledWith('is_published', true);
+    });
+
+    it('should sort by different fields', async () => {
+      mockSupabase.count.mockReturnValue({
+        data: [],
+        error: null,
+        count: 0,
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios?sortBy=view_count&sortOrder=desc'
+      );
+      await GET(request);
+
+      expect(mockSupabase.order).toHaveBeenCalledWith('view_count', {
+        ascending: false,
+      });
+    });
+
+    it('should handle authentication failure', async () => {
+      mockGetUserSession.mockResolvedValue(null);
+
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios'
+      );
       const response = await GET(request);
-      const data = await response.json();
+      const result = await response.json();
 
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-      expect(data.data.pagination).toEqual({
-        page: 3,
-        limit: 20,
-        total: 50,
-        totalPages: 3,
-      });
-
-      // Verify pagination was applied correctly
-      expect(mockSupabaseClient.range).toHaveBeenCalledWith(40, 59); // (page-1)*limit to from+limit-1
-    });
-
-    it('should filter by status', async () => {
-      mockSupabaseClient.range.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios?status=published'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      await GET(request);
-
-      // Verify status filter was applied
-      expect(mockSupabaseClient.eq).toHaveBeenCalledWith('status', 'published');
-    });
-
-    it('should filter by template', async () => {
-      mockSupabaseClient.range.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios?template=developer'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      await GET(request);
-
-      // Verify template filter was applied
-      expect(mockSupabaseClient.eq).toHaveBeenCalledWith(
-        'template',
-        'developer'
-      );
-    });
-
-    it('should handle search parameter', async () => {
-      mockSupabaseClient.range.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios?search=john'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      await GET(request);
-
-      // Verify search filter was applied
-      expect(mockSupabaseClient.or).toHaveBeenCalledWith(
-        'name.ilike.%john%,data->>title.ilike.%john%,data->>bio.ilike.%john%'
-      );
+      expect(response.status).toBe(401);
+      expect(result.error).toBe('Unauthorized');
     });
 
     it('should handle database errors', async () => {
-      mockSupabaseClient.range.mockResolvedValue({
+      mockSupabase.count.mockReturnValue({
         data: null,
-        error: new Error('Database error'),
+        error: { code: 'PGRST000', message: 'Database error' },
       });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios'
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios'
+      );
       const response = await GET(request);
-      const data = await response.json();
+      const result = await response.json();
 
-      expect(response.status).toBe(503);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('EXTERNAL_SERVICE_ERROR');
+      expect(response.status).toBe(500);
+      expect(result.error).toBe('Failed to fetch portfolios');
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Failed to fetch portfolios',
+        expect.any(Object)
+      );
     });
   });
 
   describe('POST /api/v1/portfolios', () => {
-    it('should create a new portfolio successfully', async () => {
-      const newPortfolio = {
-        name: 'My New Portfolio',
-        template: 'developer',
-        title: 'John Developer',
-        bio: 'Experienced full-stack developer',
-      };
+    const mockUserId = 'user_123';
+    const mockSession = {
+      user: { id: mockUserId, email: 'test@example.com' },
+    };
 
-      const createdPortfolio = {
-        id: 'test-uuid-123',
-        user_id: 'test-user-123',
-        name: 'My New Portfolio',
-        slug: 'my-new-portfolio',
-        template: 'developer',
-        status: 'draft',
-        data: {
-          title: 'John Developer',
-          bio: 'Experienced full-stack developer',
-        },
-        subdomain: 'my-new-portfolio',
-        views: 0,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-      };
+    beforeEach(() => {
+      mockGetUserSession.mockResolvedValue(mockSession);
+    });
 
-      // Mock subdomain check
-      mockSupabaseClient.like.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      // Mock insert
-      mockSupabaseClient.single.mockResolvedValue({
-        data: createdPortfolio,
-        error: null,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
+    it('should create a new portfolio', async () => {
+      const portfolioData = {
+        title: 'My New Portfolio',
+        description: 'A professional portfolio',
+        template_id: 'developer',
+        sections: {
+          hero: {
+            title: 'John Doe',
+            subtitle: 'Full Stack Developer',
           },
-          body: JSON.stringify(newPortfolio),
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
+          about: {
+            content: 'Experienced developer with 5+ years...',
+          },
+        },
+      };
 
+      const mockCreatedPortfolio = {
+        id: 'portfolio_new',
+        user_id: mockUserId,
+        ...portfolioData,
+        slug: 'my-new-portfolio',
+        is_published: false,
+        created_at: '2024-01-01T00:00:00Z',
+      };
+
+      // Mock user check for portfolio limit
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          id: mockUserId,
+          subscription_plan: 'pro',
+          portfolio_count: 2,
+        },
+        error: null,
+      });
+
+      // Mock portfolio creation
+      mockSupabase.single.mockResolvedValueOnce({
+        data: mockCreatedPortfolio,
+        error: null,
+      });
+
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        portfolioData
+      );
       const response = await POST(request);
-      const data = await response.json();
+      const result = await response.json();
 
       expect(response.status).toBe(201);
-      expect(data.success).toBe(true);
-      expect(data.data.message).toBe('Portfolio created successfully');
-      expect(data.data.portfolio).toBeDefined();
-      expect(data.data.portfolio.id).toBe('test-uuid-123');
+      expect(result).toEqual({
+        portfolio: mockCreatedPortfolio,
+      });
 
-      // Verify subdomain uniqueness check
-      expect(mockSupabaseClient.like).toHaveBeenCalledWith(
-        'subdomain',
-        'my-new-portfolio%'
+      expect(mockSupabase.insert).toHaveBeenCalledWith({
+        user_id: mockUserId,
+        ...portfolioData,
+        slug: expect.any(String),
+        is_published: false,
+        metadata: {
+          version: 1,
+          created_with: 'api',
+        },
+      });
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Portfolio created via API',
+        {
+          portfolioId: 'portfolio_new',
+          userId: mockUserId,
+        }
       );
+    });
 
-      // Verify insert was called with correct data
-      expect(mockSupabaseClient.insert).toHaveBeenCalledWith(
+    it('should validate required fields', async () => {
+      const invalidData = {
+        // Missing title
+        description: 'A portfolio',
+        template_id: 'developer',
+      };
+
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        invalidData
+      );
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(result.error).toContain('title');
+    });
+
+    it('should enforce portfolio limits', async () => {
+      // Mock user at limit
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          id: mockUserId,
+          subscription_plan: 'free',
+          portfolio_count: 1, // At limit for free plan
+        },
+        error: null,
+      });
+
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        {
+          title: 'Another Portfolio',
+          template_id: 'designer',
+        }
+      );
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(403);
+      expect(result.error).toContain('Portfolio limit reached');
+    });
+
+    it('should validate template ID', async () => {
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        {
+          title: 'Portfolio',
+          template_id: 'invalid_template',
+        }
+      );
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(result.error).toContain('Invalid template');
+    });
+
+    it('should generate unique slug', async () => {
+      // Mock user check
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          id: mockUserId,
+          subscription_plan: 'pro',
+          portfolio_count: 0,
+        },
+        error: null,
+      });
+
+      // Mock slug collision check
+      mockSupabase.single
+        .mockResolvedValueOnce({
+          data: { slug: 'my-portfolio' }, // Exists
+          error: null,
+        })
+        .mockResolvedValueOnce({
+          data: null, // Available with suffix
+          error: { code: 'PGRST116' },
+        });
+
+      // Mock portfolio creation
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          id: 'portfolio_123',
+          slug: 'my-portfolio-2',
+        },
+        error: null,
+      });
+
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        {
+          title: 'My Portfolio',
+          template_id: 'developer',
+        }
+      );
+      await POST(request);
+
+      // Should check for slug with number suffix
+      expect(mockSupabase.eq).toHaveBeenCalledWith('slug', 'my-portfolio-2');
+    });
+
+    it('should sanitize input data', async () => {
+      const maliciousData = {
+        title: '<script>alert("XSS")</script>My Portfolio',
+        description: 'Normal description',
+        template_id: 'developer',
+        sections: {
+          hero: {
+            title: '<img src=x onerror=alert("XSS")>',
+          },
+        },
+      };
+
+      // Mock user check
+      mockSupabase.single.mockResolvedValueOnce({
+        data: {
+          id: mockUserId,
+          subscription_plan: 'pro',
+          portfolio_count: 0,
+        },
+        error: null,
+      });
+
+      // Mock portfolio creation
+      mockSupabase.single.mockResolvedValueOnce({
+        data: { id: 'portfolio_123' },
+        error: null,
+      });
+
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
+        maliciousData
+      );
+      await POST(request);
+
+      // Should sanitize HTML in title
+      expect(mockSupabase.insert).toHaveBeenCalledWith(
         expect.objectContaining({
-          id: 'test-uuid-123',
-          user_id: 'test-user-123',
-          name: 'My New Portfolio',
-          template: 'developer',
-          subdomain: 'my-new-portfolio',
+          title: 'My Portfolio', // Script tags removed
+          sections: expect.objectContaining({
+            hero: expect.objectContaining({
+              title: expect.not.stringContaining('<img'),
+            }),
+          }),
         })
       );
     });
 
-    it('should handle subdomain conflicts', async () => {
-      const newPortfolio = {
-        name: 'My Portfolio',
-        template: 'designer',
-        title: 'Jane Designer',
-      };
-
-      // Mock existing subdomains
-      mockSupabaseClient.like.mockResolvedValue({
-        data: [{ subdomain: 'my-portfolio' }, { subdomain: 'my-portfolio-1' }],
-        error: null,
-      });
-
-      // Mock successful insert with unique subdomain
-      mockSupabaseClient.single.mockResolvedValue({
+    it('should handle database errors gracefully', async () => {
+      // Mock user check success
+      mockSupabase.single.mockResolvedValueOnce({
         data: {
-          id: 'test-uuid-123',
-          subdomain: 'my-portfolio-2',
+          id: mockUserId,
+          subscription_plan: 'pro',
+          portfolio_count: 0,
         },
         error: null,
       });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          body: JSON.stringify(newPortfolio),
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(201);
-      expect(data.success).toBe(true);
-
-      // Verify the generated subdomain in the insert call
-      const insertCall = mockSupabaseClient.insert.mock.calls[0][0];
-      expect(insertCall.subdomain).toBe('my-portfolio-2');
-    });
-
-    it('should validate required fields', async () => {
-      const invalidPortfolio = {
-        // Missing required fields
-        template: 'developer',
-      };
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          body: JSON.stringify(invalidPortfolio),
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
-      expect(data.error.details.errors).toBeDefined();
-    });
-
-    it('should handle invalid JSON', async () => {
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          body: 'Invalid JSON',
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('VALIDATION_ERROR');
-      expect(data.error.message).toContain('Invalid JSON');
-    });
-
-    it('should handle database insert errors', async () => {
-      const newPortfolio = {
-        name: 'My Portfolio',
-        template: 'consultant',
-        title: 'John Consultant',
-      };
-
-      // Mock subdomain check
-      mockSupabaseClient.like.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      // Mock insert error
-      mockSupabaseClient.single.mockResolvedValue({
+      // Mock portfolio creation failure
+      mockSupabase.single.mockResolvedValueOnce({
         data: null,
-        error: new Error('Insert failed'),
+        error: {
+          code: '23505',
+          message: 'Duplicate key violation',
+        },
       });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
+      const request = createMockRequest(
+        'POST',
+        'https://example.com/api/v1/portfolios',
         {
-          method: 'POST',
-          body: JSON.stringify(newPortfolio),
+          title: 'Portfolio',
+          template_id: 'developer',
         }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(503);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('EXTERNAL_SERVICE_ERROR');
-    });
-
-    it('should handle unique constraint violations', async () => {
-      const newPortfolio = {
-        name: 'My Portfolio',
-        template: 'developer',
-        title: 'John Developer',
-      };
-
-      // Mock subdomain check
-      mockSupabaseClient.like.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      // Mock unique constraint error
-      const uniqueError: any = new Error('Unique constraint violation');
-      uniqueError.code = '23505';
-
-      mockSupabaseClient.single.mockResolvedValue({
-        data: null,
-        error: uniqueError,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          body: JSON.stringify(newPortfolio),
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(409);
-      expect(data.success).toBe(false);
-      expect(data.error.code).toBe('CONFLICT_ERROR');
-      expect(data.error.message).toContain('subdomain already exists');
-    });
-
-    it('should sanitize portfolio name for subdomain', async () => {
-      const newPortfolio = {
-        name: 'My Awesome Portfolio!!!   With Special @#$ Characters',
-        template: 'designer',
-        title: 'Creative Designer',
-      };
-
-      // Mock subdomain check
-      mockSupabaseClient.like.mockResolvedValue({
-        data: [],
-        error: null,
-      });
-
-      // Mock insert
-      mockSupabaseClient.single.mockResolvedValue({
-        data: { id: 'test-uuid-123' },
-        error: null,
-      });
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios',
-        {
-          method: 'POST',
-          body: JSON.stringify(newPortfolio),
-        }
-      ) as AuthenticatedRequest;
-      request.user = mockUser;
-
-      await POST(request);
-
-      // Verify subdomain was properly sanitized
-      const insertCall = mockSupabaseClient.insert.mock.calls[0][0];
-      expect(insertCall.subdomain).toBe(
-        'my-awesome-portfolio-with-special-characters'
       );
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(result.error).toBe('Failed to create portfolio');
+
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Failed to create portfolio',
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('Rate Limiting', () => {
+    it('should apply rate limiting to GET requests', async () => {
+      // Mock rate limit exceeded
+      mockWithRateLimit.mockImplementationOnce(() => {
+        return () => {
+          return new Response(
+            JSON.stringify({
+              error: 'Too many requests',
+              retryAfter: 60,
+            }),
+            {
+              status: 429,
+              headers: {
+                'Retry-After': '60',
+                'X-RateLimit-Limit': '100',
+                'X-RateLimit-Remaining': '0',
+              },
+            }
+          );
+        };
+      });
+
+      const request = createMockRequest(
+        'GET',
+        'https://example.com/api/v1/portfolios'
+      );
+      const response = await GET(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(result.error).toBe('Too many requests');
+      expect(response.headers.get('Retry-After')).toBe('60');
     });
   });
 });
