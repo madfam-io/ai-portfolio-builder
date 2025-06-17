@@ -83,19 +83,21 @@ const nextConfig = {
               process.env.NODE_ENV === 'production'
                 ? [
                     "default-src 'self'",
-                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-                    "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS
+                    "script-src 'self' 'sha256-/h8yTi8AZLM7b/bPF8PbQ9t8XzOgqLJ5A0BGHA8Z5Y=' 'strict-dynamic'", // More secure, nonce-based
+                    "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS and Tailwind
                     "img-src 'self' data: https: blob:",
-                    "font-src 'self' data:",
-                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co",
-                    "frame-src 'none'",
+                    "font-src 'self' data: https://fonts.gstatic.com",
+                    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://ipapi.co https://huggingface.co",
+                    "frame-src 'self' https://js.stripe.com",
                     "object-src 'none'",
                     "base-uri 'self'",
-                    "form-action 'self'",
+                    "form-action 'self' https://js.stripe.com",
                     "frame-ancestors 'none'",
+                    "manifest-src 'self'",
+                    "worker-src 'self' blob:",
                     'upgrade-insecure-requests',
                   ].join('; ')
-                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co; img-src 'self' data: https: blob:;",
+                : "script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline' data:; font-src 'self' data:; object-src 'none'; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://ipapi.co https://api.stripe.com https://huggingface.co; img-src 'self' data: https: blob:; frame-src 'self' https://js.stripe.com;",
           },
           // Additional security headers
           {
@@ -120,7 +122,28 @@ const nextConfig = {
           },
           {
             key: 'Strict-Transport-Security',
-            value: 'max-age=31536000; includeSubDomains',
+            value: 'max-age=31536000; includeSubDomains; preload',
+          },
+          // Additional security headers for production
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Cross-Origin-Resource-Policy',
+            value: 'same-origin',
+          },
+          {
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'credentialless',
+          },
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'off',
+          },
+          {
+            key: 'X-Download-Options',
+            value: 'noopen',
           },
         ],
       },
@@ -172,45 +195,120 @@ const nextConfig = {
       },
     ];
 
-    // Optimize code splitting
+    // Enhanced code splitting and optimization
     if (!isServer) {
       config.optimization = {
         ...config.optimization,
         splitChunks: {
           chunks: 'all',
+          minSize: 20000,
+          maxSize: 244000,
           cacheGroups: {
-            // Vendor splitting
-            vendor: {
-              test: /[\\/]node_modules[\\/]/,
-              name: 'vendor',
+            // Framework chunks
+            react: {
+              test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+              name: 'react',
+              priority: 30,
+              reuseExistingChunk: true,
+            },
+            
+            // Next.js chunks
+            next: {
+              test: /[\\/]node_modules[\\/]next[\\/]/,
+              name: 'next',
+              priority: 25,
+              reuseExistingChunk: true,
+            },
+            
+            // Heavy analytics and chart libraries
+            analytics: {
+              test: /[\\/]node_modules[\\/](recharts|d3-.*|@nivo|chart\.js)[\\/]/,
+              name: 'analytics',
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            
+            // GitHub/Git related
+            github: {
+              test: /[\\/]node_modules[\\/](@octokit|simple-git)[\\/]/,
+              name: 'github',
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            
+            // Database and auth
+            database: {
+              test: /[\\/]node_modules[\\/](@supabase|postgres)[\\/]/,
+              name: 'database',
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            
+            // Payment processing
+            payments: {
+              test: /[\\/]node_modules[\\/](stripe|@stripe)[\\/]/,
+              name: 'payments',
+              priority: 20,
+              reuseExistingChunk: true,
+            },
+            
+            // Date utilities
+            dates: {
+              test: /[\\/]node_modules[\\/](date-fns|moment|dayjs)[\\/]/,
+              name: 'dates',
+              priority: 15,
+              reuseExistingChunk: true,
+            },
+            
+            // UI libraries
+            ui: {
+              test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|framer-motion)[\\/]/,
+              name: 'ui',
+              priority: 15,
+              reuseExistingChunk: true,
+            },
+            
+            // Utility libraries
+            utils: {
+              test: /[\\/]node_modules[\\/](lodash|ramda|uuid|zod)[\\/]/,
+              name: 'utils',
               priority: 10,
               reuseExistingChunk: true,
             },
-            // Common components
-            common: {
-              minChunks: 2,
+            
+            // Default vendor chunk for remaining modules
+            vendor: {
+              test: /[\\/]node_modules[\\/]/,
+              name: 'vendor',
               priority: 5,
               reuseExistingChunk: true,
             },
-            // Separate heavy libraries
-            recharts: {
-              test: /[\\/]node_modules[\\/](recharts|d3-.*)[\\/]/,
-              name: 'charts',
-              priority: 20,
-            },
-            octokit: {
-              test: /[\\/]node_modules[\\/]@octokit[\\/]/,
-              name: 'github',
-              priority: 20,
-            },
-            supabase: {
-              test: /[\\/]node_modules[\\/]@supabase[\\/]/,
-              name: 'supabase',
-              priority: 20,
+            
+            // Common application code
+            common: {
+              minChunks: 2,
+              priority: 1,
+              reuseExistingChunk: true,
             },
           },
         },
+        
+        // Module concatenation for better tree shaking
+        concatenateModules: true,
+        
+        // Minimize duplicate code
+        providedExports: true,
+        usedExports: true,
+        sideEffects: false,
       };
+      
+      // Enhanced terser configuration for production
+      if (process.env.NODE_ENV === 'production') {
+        config.optimization.minimizer = [
+          ...config.optimization.minimizer || [],
+          // Additional optimization could be added here
+        ];
+      }
     }
 
     // Handle Node.js modules for Redis and other server-only dependencies

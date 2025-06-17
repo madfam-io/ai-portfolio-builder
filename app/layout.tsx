@@ -10,6 +10,7 @@ import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { PostHogProvider } from '@/components/providers/posthog-provider';
+import { initializeAllMonitoring } from '@/lib/monitoring';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -48,6 +49,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }): React.ReactElement {
+  // Initialize monitoring systems on app start
+  React.useEffect(() => {
+    initializeAllMonitoring();
+  }, []);
+
   return (
     <html
       lang="en"

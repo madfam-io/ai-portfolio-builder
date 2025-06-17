@@ -3,9 +3,7 @@ import { GET, POST } from '@/app/api/v1/portfolios/route';
 import { createClient } from '@/lib/supabase/server';
 import { AuthenticatedRequest } from '@/lib/api/middleware/auth';
 
-// Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+// Mock dependencies - UUID only since others are mocked globally
 jest.mock('uuid', () => ({
   v4: jest.fn(() => 'test-uuid-123'),
 }));
@@ -23,8 +21,14 @@ describe('/api/v1/portfolios', () => {
       email: 'test@example.com',
     };
 
-    // Setup mock Supabase client
+    // Setup mock Supabase client with chainable methods
     mockSupabaseClient = {
+      auth: {
+        getUser: jest.fn().mockResolvedValue({
+          data: { user: mockUser },
+          error: null,
+        }),
+      },
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
@@ -33,10 +37,10 @@ describe('/api/v1/portfolios', () => {
       order: jest.fn().mockReturnThis(),
       range: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
     };
 
-    // Mock createClient to return the mock Supabase client
+    // Update the global mock to return our specific mock client
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
   });
 

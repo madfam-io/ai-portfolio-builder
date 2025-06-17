@@ -163,17 +163,26 @@ process.env = {
   NEXT_PUBLIC_APP_URL: process.env.TEST_APP_URL || 'http://localhost:3000',
 };
 
-// Mock Supabase client
+// Mock Supabase client with improved responses
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     auth: {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signInWithOAuth: jest.fn(),
-      signOut: jest.fn(),
-      getUser: jest.fn(),
-      getSession: jest.fn(),
-      onAuthStateChange: jest.fn(),
+      signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithOAuth: jest.fn().mockResolvedValue({ data: { url: 'mock-url' }, error: null }),
+      signOut: jest.fn().mockResolvedValue({ error: null }),
+      getUser: jest.fn().mockResolvedValue({
+        data: { 
+          user: {
+            id: 'test-user-id',
+            email: 'test@example.com',
+            name: 'Test User',
+          }
+        }, 
+        error: null 
+      }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -181,17 +190,46 @@ jest.mock('@supabase/supabase-js', () => ({
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      then: jest.fn((callback) => callback({ data: [], error: null })),
     })),
     storage: {
       from: jest.fn(() => ({
-        upload: jest.fn(),
-        download: jest.fn(),
-        remove: jest.fn(),
-        getPublicUrl: jest.fn(),
+        upload: jest.fn().mockResolvedValue({ data: {}, error: null }),
+        download: jest.fn().mockResolvedValue({ data: {}, error: null }),
+        remove: jest.fn().mockResolvedValue({ data: {}, error: null }),
+        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'mock-url' } }),
       })),
     },
   })),
+}));
+
+// Mock Supabase server client
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockResolvedValue({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({
+        data: { 
+          user: {
+            id: 'test-user-id',
+            email: 'test@example.com',
+            name: 'Test User',
+          }
+        }, 
+        error: null 
+      }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      then: jest.fn((callback) => callback({ data: [], error: null })),
+    })),
+  }),
 }));
 
 // Mock OpenAI - Commented out as we use HuggingFace instead
@@ -256,8 +294,116 @@ jest.mock('crypto', () => ({
 
 // Toast utility is mocked in lib/utils/toast.ts - no external dependency needed
 
+// Mock common services that API routes use
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    info: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+
+jest.mock('@/lib/services/error/error-logger', () => ({
+  errorLogger: {
+    logError: jest.fn(),
+    logInfo: jest.fn(),
+    logWarn: jest.fn(),
+    logDebug: jest.fn(),
+  },
+  ErrorLogger: jest.fn(() => ({
+    logError: jest.fn(),
+    logInfo: jest.fn(),
+    logWarn: jest.fn(),
+    logDebug: jest.fn(),
+  })),
+}));
+
+jest.mock('@/lib/services/error/api-error-handler', () => ({
+  handleAPIError: jest.fn(),
+}));
+
+jest.mock('@/lib/services/error/global-error-handler', () => ({
+  GlobalErrorHandler: {
+    getInstance: jest.fn(() => ({
+      initialize: jest.fn(),
+      cleanup: jest.fn(),
+    })),
+  },
+}));
+
+jest.mock('@/lib/services/error/index', () => ({
+  initializeErrorHandling: jest.fn(),
+  globalErrorHandler: {
+    initialize: jest.fn(),
+    cleanup: jest.fn(),
+  },
+  withErrorHandler: jest.fn((handler) => handler),
+  ValidationError: jest.fn((message) => ({ message, name: 'ValidationError' })),
+  ConflictError: jest.fn((message) => ({ message, name: 'ConflictError' })),
+  ExternalServiceError: jest.fn((service, message) => ({ message, name: 'ExternalServiceError', service })),
+  errorLogger: {
+    logError: jest.fn(),
+    logInfo: jest.fn(),
+    logWarn: jest.fn(),
+    logDebug: jest.fn(),
+  },
+}));
+
+jest.mock('@/lib/ai/geo/geo-service', () => ({
+  getGEOService: jest.fn(() => ({
+    researchKeywords: jest.fn().mockResolvedValue([
+      {
+        keyword: 'test keyword',
+        searchVolume: 1000,
+        difficulty: 50,
+        trends: 'stable',
+        relatedKeywords: ['related1', 'related2'],
+        questions: ['question1', 'question2'],
+      },
+    ]),
+  })),
+}));
+
+jest.mock('@/lib/cache/redis-cache', () => ({
+  cache: {
+    get: jest.fn().mockResolvedValue(null),
+    set: jest.fn().mockResolvedValue(true),
+    del: jest.fn().mockResolvedValue(true),
+  },
+}));
+
+// Mock API middleware and helpers
+jest.mock('@/lib/api/middleware/auth', () => ({
+  withAuth: jest.fn((handler) => handler),
+  AuthenticatedRequest: jest.fn(),
+}));
+
+jest.mock('@/lib/api/response-helpers', () => ({
+  apiSuccess: jest.fn((data) => ({ success: true, data })),
+  apiError: jest.fn((message, code) => ({ success: false, error: message, code })),
+  versionedApiHandler: jest.fn((handler) => handler),
+}));
+
+jest.mock('@/lib/validation/portfolio', () => ({
+  validateCreatePortfolio: jest.fn((data) => ({ success: true, data })),
+  validatePortfolioQuery: jest.fn((data) => ({ success: true, data })),
+  sanitizePortfolioData: jest.fn((data) => data),
+}));
+
+jest.mock('@/lib/utils/portfolio-transformer', () => ({
+  transformDbPortfolioToApi: jest.fn((portfolio) => portfolio),
+  transformApiPortfolioToDb: jest.fn((portfolio) => portfolio),
+}));
+
 // Mock file reading for testing
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockResolvedValue({
+  ok: true,
+  status: 200,
+  statusText: 'OK',
+  json: () => Promise.resolve({ success: true, data: {} }),
+  text: () => Promise.resolve(''),
+});
 
 // Setup window.matchMedia mock
 Object.defineProperty(window, 'matchMedia', {

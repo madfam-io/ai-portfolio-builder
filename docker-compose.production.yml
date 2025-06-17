@@ -1,0 +1,301 @@
+version: '3.8'
+
+services:
+  # Next.js Application (Production)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runner
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_ENVIRONMENT=production
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - NEXT_PUBLIC_APP_URL=https://prisma.madfam.io
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://production-redis-cluster:6379
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - APM_ENABLED=true
+      - ENABLE_PERFORMANCE_MONITORING=true
+      - SENTRY_DSN=${SENTRY_DSN}
+    depends_on:
+      production-postgres:
+        condition: service_healthy
+      production-redis-cluster:
+        condition: service_healthy
+    volumes:
+      - ./.env.production:/app/.env.local:ro
+    networks:
+      - production-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health/live"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.production-app.rule=Host(`prisma.madfam.io`) || Host(`www.prisma.madfam.io`)"
+      - "traefik.http.routers.production-app.tls=true"
+      - "traefik.http.routers.production-app.tls.certresolver=letsencrypt"
+      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www.prisma.madfam.io/(.*)"
+      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://prisma.madfam.io/$${1}"
+
+  # PostgreSQL Database (Production - Primary)
+  production-postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5434:5432'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-prisma_production}
+      POSTGRES_USER: ${POSTGRES_USER:-prisma_production}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - production_postgres_data:/var/lib/postgresql/data
+      - production_postgres_backups:/backups
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+      - ./scripts/setup-storage.sql:/docker-entrypoint-initdb.d/99-setup-storage.sql:ro
+      - ./config/postgres/postgresql.production.conf:/etc/postgresql/postgresql.conf:ro
+    networks:
+      - production-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prisma_production} -d ${POSTGRES_DB:-prisma_production}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      postgres 
+      -c config_file=/etc/postgresql/postgresql.conf
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+
+  # PostgreSQL Read Replica (Production)
+  production-postgres-replica:
+    image: postgres:15-alpine
+    ports:
+      - '5435:5432'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-prisma_production}
+      POSTGRES_USER: ${POSTGRES_USER:-prisma_production}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      PGUSER: ${POSTGRES_USER:-prisma_production}
+    volumes:
+      - production_postgres_replica_data:/var/lib/postgresql/data
+      - ./config/postgres/recovery.conf:/var/lib/postgresql/data/recovery.conf:ro
+    networks:
+      - production-network
+    restart: unless-stopped
+    depends_on:
+      production-postgres:
+        condition: service_healthy
+
+  # Redis Cluster (Production)
+  production-redis-cluster:
+    image: redis:7-alpine
+    ports:
+      - '6381:6379'
+    volumes:
+      - production_redis_data:/data
+      - ./config/redis/production.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - production-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: redis-server /usr/local/etc/redis/redis.conf
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+
+  # Redis Sentinel (Production)
+  production-redis-sentinel:
+    image: redis:7-alpine
+    ports:
+      - '26379:26379'
+    volumes:
+      - ./config/redis/sentinel.conf:/usr/local/etc/redis/sentinel.conf:ro
+    networks:
+      - production-network
+    restart: unless-stopped
+    depends_on:
+      - production-redis-cluster
+    command: redis-sentinel /usr/local/etc/redis/sentinel.conf
+
+  # Nginx Load Balancer (Production)
+  production-nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/nginx/production.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/ssl:/etc/nginx/ssl:ro
+      - production_nginx_logs:/var/log/nginx
+      - production_nginx_cache:/var/cache/nginx
+    depends_on:
+      - app
+    networks:
+      - production-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+
+  # Production Monitoring Stack
+  production-prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9091:9090'
+    volumes:
+      - ./config/prometheus/production.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/prometheus/rules:/etc/prometheus/rules:ro
+      - production_prometheus_data:/prometheus
+    networks:
+      - production-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+
+  production-grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3002:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=monitoring.prisma.madfam.io
+      - GF_SECURITY_COOKIE_SECURE=true
+      - GF_SECURITY_STRICT_TRANSPORT_SECURITY=true
+    volumes:
+      - production_grafana_data:/var/lib/grafana
+      - ./config/grafana/production.ini:/etc/grafana/grafana.ini:ro
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+    depends_on:
+      - production-prometheus
+    networks:
+      - production-network
+    restart: unless-stopped
+
+  # Backup Service (Production)
+  production-backup:
+    image: postgres:15-alpine
+    volumes:
+      - production_postgres_backups:/backups
+      - ./scripts/backup.sh:/usr/local/bin/backup.sh:ro
+    environment:
+      - POSTGRES_HOST=production-postgres
+      - POSTGRES_DB=${POSTGRES_DB:-prisma_production}
+      - POSTGRES_USER=${POSTGRES_USER:-prisma_production}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - BACKUP_RETENTION_DAYS=30
+    networks:
+      - production-network
+    restart: unless-stopped
+    depends_on:
+      production-postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+        while true; do
+          echo 'Running daily backup...'
+          /usr/local/bin/backup.sh
+          echo 'Backup completed. Sleeping for 24 hours...'
+          sleep 86400
+        done
+      "
+
+  # Log aggregation (Production)
+  production-fluentd:
+    image: fluent/fluentd:v1.16-debian-1
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
+    volumes:
+      - ./config/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
+      - production_logs:/var/log
+    networks:
+      - production-network
+    restart: unless-stopped
+
+volumes:
+  production_postgres_data:
+    driver: local
+  production_postgres_replica_data:
+    driver: local
+  production_postgres_backups:
+    driver: local
+  production_redis_data:
+    driver: local
+  production_nginx_logs:
+    driver: local
+  production_nginx_cache:
+    driver: local
+  production_prometheus_data:
+    driver: local
+  production_grafana_data:
+    driver: local
+  production_logs:
+    driver: local
+
+networks:
+  production-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16

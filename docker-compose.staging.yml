@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  # Next.js Application (Staging)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+      target: runner
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=staging
+      - NEXT_PUBLIC_ENVIRONMENT=staging
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - HUGGINGFACE_API_KEY=${HUGGINGFACE_API_KEY}
+      - NEXT_PUBLIC_APP_URL=https://staging.prisma.madfam.io
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=redis://staging-redis:6379
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY}
+      - APM_ENABLED=true
+      - ENABLE_PERFORMANCE_MONITORING=true
+    depends_on:
+      staging-postgres:
+        condition: service_healthy
+      staging-redis:
+        condition: service_healthy
+    volumes:
+      - ./.env.staging:/app/.env.local:ro
+    networks:
+      - staging-network
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.staging-app.rule=Host(`staging.prisma.madfam.io`)"
+      - "traefik.http.routers.staging-app.tls=true"
+      - "traefik.http.routers.staging-app.tls.certresolver=letsencrypt"
+
+  # PostgreSQL Database (Staging)
+  staging-postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5433:5432'
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-prisma_staging}
+      POSTGRES_USER: ${POSTGRES_USER:-prisma_staging}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - staging_postgres_data:/var/lib/postgresql/data
+      - ./supabase/migrations:/docker-entrypoint-initdb.d:ro
+      - ./scripts/setup-storage.sql:/docker-entrypoint-initdb.d/99-setup-storage.sql:ro
+    networks:
+      - staging-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prisma_staging} -d ${POSTGRES_DB:-prisma_staging}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: >
+      postgres 
+      -c shared_preload_libraries=pg_stat_statements
+      -c pg_stat_statements.track=all
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c effective_cache_size=1GB
+
+  # Redis for caching (Staging)
+  staging-redis:
+    image: redis:7-alpine
+    ports:
+      - '6380:6379'
+    volumes:
+      - staging_redis_data:/data
+      - ./redis.staging.conf:/usr/local/etc/redis/redis.conf:ro
+    networks:
+      - staging-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    command: redis-server /usr/local/etc/redis/redis.conf
+
+  # pgAdmin for database management (Staging)
+  staging-pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - '5051:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@staging.prisma.madfam.io}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      PGADMIN_CONFIG_SERVER_MODE: 'True'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    volumes:
+      - staging_pgadmin_data:/var/lib/pgadmin
+      - ./config/pgadmin/servers.staging.json:/pgadmin4/servers.json:ro
+    depends_on:
+      staging-postgres:
+        condition: service_healthy
+    networks:
+      - staging-network
+    restart: unless-stopped
+
+  # Nginx reverse proxy (Staging)
+  staging-nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./config/nginx/staging.conf:/etc/nginx/nginx.conf:ro
+      - ./config/nginx/ssl:/etc/nginx/ssl:ro
+      - staging_nginx_logs:/var/log/nginx
+    depends_on:
+      - app
+    networks:
+      - staging-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  # Monitoring stack (Staging)
+  staging-prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - '9090:9090'
+    volumes:
+      - ./config/prometheus/staging.yml:/etc/prometheus/prometheus.yml:ro
+      - staging_prometheus_data:/prometheus
+    networks:
+      - staging-network
+    restart: unless-stopped
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=15d'
+      - '--web.enable-lifecycle'
+
+  staging-grafana:
+    image: grafana/grafana:latest
+    ports:
+      - '3001:3000'
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-staging123}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_DOMAIN=staging-monitoring.prisma.madfam.io
+    volumes:
+      - staging_grafana_data:/var/lib/grafana
+      - ./config/grafana/staging.ini:/etc/grafana/grafana.ini:ro
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    depends_on:
+      - staging-prometheus
+    networks:
+      - staging-network
+    restart: unless-stopped
+
+volumes:
+  staging_postgres_data:
+    driver: local
+  staging_redis_data:
+    driver: local
+  staging_pgadmin_data:
+    driver: local
+  staging_nginx_logs:
+    driver: local
+  staging_prometheus_data:
+    driver: local
+  staging_grafana_data:
+    driver: local
+
+networks:
+  staging-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
