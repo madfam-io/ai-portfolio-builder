@@ -22,7 +22,7 @@ describe('AICreditPacks', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockUseLanguage.mockReturnValue({
       t: {
         error: 'Error',
@@ -51,8 +51,12 @@ describe('AICreditPacks', () => {
       // Check that all packs from AI_CREDIT_PACKS are displayed
       Object.values(AI_CREDIT_PACKS).forEach(pack => {
         expect(screen.getByText(pack.name)).toBeInTheDocument();
-        expect(screen.getByText(`${pack.credits} AI enhancement credits`)).toBeInTheDocument();
-        expect(screen.getByText(`Buy ${pack.credits} Credits`)).toBeInTheDocument();
+        expect(
+          screen.getByText(`${pack.credits} AI enhancement credits`)
+        ).toBeInTheDocument();
+        expect(
+          screen.getByText(`Buy ${pack.credits} Credits`)
+        ).toBeInTheDocument();
       });
     });
 
@@ -60,7 +64,9 @@ describe('AICreditPacks', () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('How credits work:')).toBeInTheDocument();
-      expect(screen.getByText(/Each AI enhancement.*uses 1 credit/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Each AI enhancement.*uses 1 credit/)
+      ).toBeInTheDocument();
       expect(screen.getByText(/Credits never expire/)).toBeInTheDocument();
     });
 
@@ -68,9 +74,13 @@ describe('AICreditPacks', () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('Pro Tips')).toBeInTheDocument();
-      expect(screen.getByText(/Use AI enhancement on your most important projects/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Use AI enhancement on your most important projects/)
+      ).toBeInTheDocument();
       expect(screen.getByText(/Try different AI models/)).toBeInTheDocument();
-      expect(screen.getByText(/Save credits by writing a good first draft/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Save credits by writing a good first draft/)
+      ).toBeInTheDocument();
     });
 
     it('should highlight popular pack', () => {
@@ -104,10 +114,10 @@ describe('AICreditPacks', () => {
 
       // Small pack: $5.00 / 10 credits = $0.50 per credit
       expect(screen.getByText('$0.50 per credit')).toBeInTheDocument();
-      
+
       // Medium pack: $10.00 / 25 credits = $0.40 per credit
       expect(screen.getByText('$0.40 per credit')).toBeInTheDocument();
-      
+
       // Large pack: $20.00 / 60 credits = $0.33 per credit
       expect(screen.getByText('$0.33 per credit')).toBeInTheDocument();
     });
@@ -126,13 +136,13 @@ describe('AICreditPacks', () => {
 
     it('should show loading state during purchase', async () => {
       const user = userEvent.setup();
-      
+
       // Mock onPurchase to return a pending promise
       let resolvePurchase: () => void;
       const purchasePromise = new Promise<void>(resolve => {
         resolvePurchase = resolve;
       });
-      
+
       mockOnPurchase.mockReturnValue(purchasePromise);
 
       render(<AICreditPacks {...defaultProps} />);
@@ -259,7 +269,9 @@ describe('AICreditPacks', () => {
       const neverExpireElements = screen.getAllByText('Never expire');
       expect(neverExpireElements).toHaveLength(3);
 
-      const useAcrossPortfoliosElements = screen.getAllByText('Use across all portfolios');
+      const useAcrossPortfoliosElements = screen.getAllByText(
+        'Use across all portfolios'
+      );
       expect(useAcrossPortfoliosElements).toHaveLength(3);
     });
   });
@@ -268,11 +280,13 @@ describe('AICreditPacks', () => {
     it('should use correct button variants for popular and regular packs', () => {
       render(<AICreditPacks {...defaultProps} />);
 
-      const buyButtons = screen.getAllByRole('button', { name: /Buy \d+ Credits/ });
-      
+      const buyButtons = screen.getAllByRole('button', {
+        name: /Buy \d+ Credits/,
+      });
+
       // Should have 3 buy buttons
       expect(buyButtons).toHaveLength(3);
-      
+
       // Medium pack (popular) should have default variant
       // Others should have outline variant
       buyButtons.forEach(button => {
@@ -286,9 +300,15 @@ describe('AICreditPacks', () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Check that buttons have proper text
-      expect(screen.getByRole('button', { name: 'Buy 10 Credits' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Buy 25 Credits' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Buy 60 Credits' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Buy 10 Credits' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Buy 25 Credits' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Buy 60 Credits' })
+      ).toBeInTheDocument();
     });
 
     it('should maintain focus management during loading states', async () => {
@@ -314,12 +334,12 @@ describe('AICreditPacks', () => {
 
     it('should handle simultaneous purchase attempts', async () => {
       const user = userEvent.setup();
-      
+
       let resolveFirst: () => void;
       const firstPurchase = new Promise<void>(resolve => {
         resolveFirst = resolve;
       });
-      
+
       mockOnPurchase.mockReturnValue(firstPurchase);
 
       render(<AICreditPacks {...defaultProps} />);

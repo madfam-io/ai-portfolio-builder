@@ -15,7 +15,9 @@ jest.mock('@/lib/monitoring/apm', () => ({
   withAPMTracking: (handler: any) => handler,
 }));
 
-const mockHandleHealthCheck = handleHealthCheck as jest.MockedFunction<typeof handleHealthCheck>;
+const mockHandleHealthCheck = handleHealthCheck as jest.MockedFunction<
+  typeof handleHealthCheck
+>;
 
 describe('/api/v1/health', () => {
   beforeEach(() => {
@@ -108,7 +110,7 @@ describe('/api/v1/health', () => {
       mockHandleHealthCheck.mockRejectedValue(new Error('Health check failed'));
 
       const request = createRequest();
-      
+
       // The error tracking middleware would handle this, but since we mocked it
       // the error will propagate
       await expect(GET(request)).rejects.toThrow('Health check failed');
@@ -127,13 +129,13 @@ describe('/api/v1/health', () => {
 
     it('should have minimal response time for load balancer checks', async () => {
       const startTime = Date.now();
-      
+
       const request = createRequest('HEAD');
       await HEAD(request);
-      
+
       const endTime = Date.now();
       const responseTime = endTime - startTime;
-      
+
       // Should be very fast (under 10ms for a simple response)
       expect(responseTime).toBeLessThan(100);
     });
@@ -142,12 +144,12 @@ describe('/api/v1/health', () => {
   describe('Integration', () => {
     it('should support health check monitoring workflow', async () => {
       // Simulate monitoring system workflow
-      
+
       // 1. Quick HEAD check first
       const headRequest = createRequest('HEAD');
       const headResponse = await HEAD(headRequest);
       expect(headResponse.status).toBe(200);
-      
+
       // 2. If HEAD passes, do comprehensive GET check
       const healthData = {
         status: 'healthy',
@@ -168,9 +170,9 @@ describe('/api/v1/health', () => {
 
       const getRequest = createRequest('GET');
       const getResponse = await GET(getRequest);
-      
+
       expect(getResponse.status).toBe(200);
-      
+
       const responseData = await getResponse.json();
       expect(responseData.status).toBe('healthy');
       expect(responseData.services.database.status).toBe('healthy');
@@ -185,10 +187,7 @@ describe('/api/v1/health', () => {
           redis: { status: 'unhealthy', error: 'Connection refused' },
           ai: { status: 'healthy', responseTime: 200 },
         },
-        alerts: [
-          'Redis service is down',
-          'Some features may be unavailable',
-        ],
+        alerts: ['Redis service is down', 'Some features may be unavailable'],
       };
 
       const mockResponse = new Response(JSON.stringify(degradedHealthData), {
@@ -200,9 +199,9 @@ describe('/api/v1/health', () => {
 
       const request = createRequest();
       const response = await GET(request);
-      
+
       expect(response.status).toBe(503);
-      
+
       const responseData = await response.json();
       expect(responseData.status).toBe('degraded');
       expect(responseData.services.redis.status).toBe('unhealthy');
@@ -235,17 +234,19 @@ describe('/api/v1/health', () => {
 
       const request = createRequest();
       const response = await GET(request);
-      
+
       const responseData = await response.json();
-      
+
       // Verify required fields are present
       expect(responseData).toHaveProperty('status');
       expect(responseData).toHaveProperty('timestamp');
       expect(responseData).toHaveProperty('services');
       expect(responseData.services).toHaveProperty('database');
-      
+
       // Verify status is one of expected values
-      expect(['healthy', 'degraded', 'unhealthy']).toContain(responseData.status);
+      expect(['healthy', 'degraded', 'unhealthy']).toContain(
+        responseData.status
+      );
     });
   });
 
@@ -255,7 +256,7 @@ describe('/api/v1/health', () => {
 
       const request = createRequest();
       const response = await GET(request);
-      
+
       // Response should handle null gracefully
       expect(response).toBeNull();
     });
@@ -270,7 +271,7 @@ describe('/api/v1/health', () => {
 
       const request = createRequest();
       const response = await GET(request);
-      
+
       // Response should still be passed through
       expect(response).toBe(malformedResponse);
     });
@@ -279,7 +280,7 @@ describe('/api/v1/health', () => {
   describe('Performance', () => {
     it('should track performance metrics', async () => {
       const startTime = Date.now();
-      
+
       const healthData = {
         status: 'healthy',
         timestamp: new Date().toISOString(),
@@ -295,10 +296,10 @@ describe('/api/v1/health', () => {
 
       const request = createRequest();
       await GET(request);
-      
+
       const endTime = Date.now();
       const totalTime = endTime - startTime;
-      
+
       // Health check should be reasonably fast
       expect(totalTime).toBeLessThan(1000);
     });

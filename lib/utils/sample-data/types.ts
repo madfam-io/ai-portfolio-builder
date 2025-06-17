@@ -6,19 +6,35 @@ import type {
   Certification,
 } from '@/types/portfolio';
 
-export interface SampleDataConfig {
+export interface PersonalInfo {
   name: string;
   title: string;
   bio: string;
-  tagline: string;
-  location: string;
   email: string;
   phone: string;
+  location: string;
+  website?: string;
+  avatarUrl?: string;
+}
+
+export interface SkillGroup {
+  technical: Skill[];
+  soft: Skill[];
+}
+
+export interface Testimonial {
+  id: string;
+  name: string;
+  role: string;
+  content: string;
+}
+
+export interface SampleDataConfig {
+  personal: PersonalInfo;
+  skills: SkillGroup;
   experience: Experience[];
-  projects: Project[];
   education: Education[];
-  skills: Skill[];
-  certifications: Certification[];
+  projects: Project[];
   social: {
     linkedin?: string;
     github?: string;
@@ -29,4 +45,6 @@ export interface SampleDataConfig {
     dribbble?: string;
     behance?: string;
   };
+  testimonials?: Testimonial[];
+  certifications?: Certification[];
 }

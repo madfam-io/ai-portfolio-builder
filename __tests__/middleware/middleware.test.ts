@@ -48,12 +48,15 @@ jest.mock('@supabase/ssr', () => ({
 
 // Import mocked modules
 import { apiVersionMiddleware } from '../../middleware/api-version';
-import { securityMiddleware, applySecurityToResponse } from '../../middleware/security';
+import {
+  securityMiddleware,
+  applySecurityToResponse,
+} from '../../middleware/security';
 
 describe('Middleware', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Default mock implementations
     (apiVersionMiddleware as jest.Mock).mockResolvedValue(
       new NextResponse(null, { status: 200 })
@@ -85,7 +88,7 @@ describe('Middleware', () => {
         fullPath += '?' + searchParams.toString();
       }
     }
-    
+
     const url = new URL(`https://example.com${fullPath}`);
 
     const headers = new Headers(options.headers);
@@ -107,27 +110,29 @@ describe('Middleware', () => {
   describe('API Route Handling', () => {
     it('should apply API versioning middleware to API routes', async () => {
       const request = createRequest('/api/v1/test');
-      
+
       await middleware(request);
-      
+
       expect(apiVersionMiddleware).toHaveBeenCalledWith(request);
     });
 
     it('should return version middleware response if it redirects', async () => {
-      const redirectResponse = NextResponse.redirect('https://example.com/api/v2/test');
+      const redirectResponse = NextResponse.redirect(
+        'https://example.com/api/v2/test'
+      );
       (apiVersionMiddleware as jest.Mock).mockResolvedValue(redirectResponse);
-      
+
       const request = createRequest('/api/v1/test');
       const result = await middleware(request);
-      
+
       expect(result).toBe(redirectResponse);
     });
 
     it('should skip API versioning for non-API routes', async () => {
       const request = createRequest('/dashboard');
-      
+
       await middleware(request);
-      
+
       expect(apiVersionMiddleware).not.toHaveBeenCalled();
     });
   });
@@ -135,19 +140,19 @@ describe('Middleware', () => {
   describe('Security Middleware', () => {
     it('should apply security middleware to all requests', async () => {
       const request = createRequest('/dashboard');
-      
+
       await middleware(request);
-      
+
       expect(securityMiddleware).toHaveBeenCalledWith(request);
     });
 
     it('should return security middleware response if it blocks request', async () => {
       const blockedResponse = new NextResponse(null, { status: 403 });
       (securityMiddleware as jest.Mock).mockResolvedValue(blockedResponse);
-      
+
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       expect(result).toBe(blockedResponse);
     });
   });
@@ -155,9 +160,9 @@ describe('Middleware', () => {
   describe('Authentication with Supabase', () => {
     it('should create Supabase client with correct configuration', async () => {
       const request = createRequest('/dashboard');
-      
+
       await middleware(request);
-      
+
       const { createServerClient } = require('@supabase/ssr');
       expect(createServerClient).toHaveBeenCalledWith(
         'https://test.supabase.co',
@@ -176,10 +181,10 @@ describe('Middleware', () => {
       mockSupabaseClient.auth.getSession.mockRejectedValue(
         new Error('Session error')
       );
-      
+
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       // Should still process the request despite session error
       expect(result).toBeDefined();
     });
@@ -197,7 +202,7 @@ describe('Middleware', () => {
 
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       expect(result).toBeDefined();
       expect(mockSupabaseClient.auth.getSession).not.toHaveBeenCalled();
     });
@@ -215,12 +220,14 @@ describe('Middleware', () => {
 
         const request = createRequest(route);
         const result = await middleware(request);
-        
+
         expect(result).toBeInstanceOf(NextResponse);
         expect(result?.status).toBe(307); // Temporary redirect
-        
+
         const location = result?.headers.get('location');
-        expect(location).toBe(`https://example.com/auth/signin?redirectTo=${encodeURIComponent(route)}`);
+        expect(location).toBe(
+          `https://example.com/auth/signin?redirectTo=${encodeURIComponent(route)}`
+        );
       });
 
       it(`should allow authenticated users to access ${route}`, async () => {
@@ -236,7 +243,7 @@ describe('Middleware', () => {
 
         const request = createRequest(route);
         const result = await middleware(request);
-        
+
         // The middleware should continue processing and return a response
         expect(result).toBeInstanceOf(NextResponse);
         // Should not be a redirect
@@ -248,15 +255,17 @@ describe('Middleware', () => {
           data: { session: null },
           error: null,
         });
-        
+
         const request = createRequest(route, {
-          searchParams: { tab: 'settings', id: '123' }
+          searchParams: { tab: 'settings', id: '123' },
         });
         const result = await middleware(request);
-        
+
         const location = result?.headers.get('location');
         const expectedPath = `${route}?tab=settings&id=123`;
-        expect(location).toContain(`redirectTo=${encodeURIComponent(expectedPath)}`);
+        expect(location).toContain(
+          `redirectTo=${encodeURIComponent(expectedPath)}`
+        );
       });
     });
   });
@@ -278,10 +287,12 @@ describe('Middleware', () => {
 
         const request = createRequest(route);
         const result = await middleware(request);
-        
+
         expect(result).toBeInstanceOf(NextResponse);
         expect(result?.status).toBe(307);
-        expect(result?.headers.get('location')).toBe('https://example.com/dashboard');
+        expect(result?.headers.get('location')).toBe(
+          'https://example.com/dashboard'
+        );
       });
 
       it(`should allow unauthenticated users to access ${route}`, async () => {
@@ -292,7 +303,7 @@ describe('Middleware', () => {
 
         const request = createRequest(route);
         const result = await middleware(request);
-        
+
         expect(result).toBeInstanceOf(NextResponse);
         expect(result.status).not.toBe(307); // Should not redirect
       });
@@ -312,8 +323,10 @@ describe('Middleware', () => {
           searchParams: { redirectTo: '/dashboard/billing' },
         });
         const result = await middleware(request);
-        
-        expect(result?.headers.get('location')).toBe('https://example.com/dashboard/billing');
+
+        expect(result?.headers.get('location')).toBe(
+          'https://example.com/dashboard/billing'
+        );
       });
 
       it(`should not redirect to non-protected routes`, async () => {
@@ -331,8 +344,10 @@ describe('Middleware', () => {
           searchParams: { redirectTo: '/about' },
         });
         const result = await middleware(request);
-        
-        expect(result?.headers.get('location')).toBe('https://example.com/dashboard');
+
+        expect(result?.headers.get('location')).toBe(
+          'https://example.com/dashboard'
+        );
       });
     });
   });
@@ -344,7 +359,7 @@ describe('Middleware', () => {
       it(`should allow access to ${route} regardless of authentication`, async () => {
         const request = createRequest(route);
         const result = await middleware(request);
-        
+
         expect(result).toBeInstanceOf(NextResponse);
         expect(result.status).not.toBe(307); // Should not redirect
       });
@@ -354,12 +369,12 @@ describe('Middleware', () => {
   describe('Cookie Management', () => {
     it('should handle cookie setting in Supabase client', async () => {
       const request = createRequest('/dashboard');
-      
+
       await middleware(request);
-      
+
       const { createServerClient } = require('@supabase/ssr');
       const cookieConfig = createServerClient.mock.calls[0][2];
-      
+
       expect(cookieConfig.cookies).toHaveProperty('get');
       expect(cookieConfig.cookies).toHaveProperty('set');
       expect(cookieConfig.cookies).toHaveProperty('remove');
@@ -369,12 +384,12 @@ describe('Middleware', () => {
       const request = createRequest('/dashboard', {
         cookies: { 'test-cookie': 'test-value' },
       });
-      
+
       await middleware(request);
-      
+
       const { createServerClient } = require('@supabase/ssr');
       const cookieConfig = createServerClient.mock.calls[0][2];
-      
+
       const getValue = cookieConfig.cookies.get('test-cookie');
       expect(getValue).toBe('test-value');
     });
@@ -384,10 +399,10 @@ describe('Middleware', () => {
     it('should handle middleware errors gracefully', async () => {
       // Reset the mock to not throw an error for this test
       (securityMiddleware as jest.Mock).mockResolvedValue(null);
-      
+
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       // Should handle error gracefully and return a response
       expect(result).toBeInstanceOf(NextResponse);
     });
@@ -395,12 +410,12 @@ describe('Middleware', () => {
     it('should handle Supabase configuration errors', async () => {
       // Temporarily disable Supabase
       mockConfig.services.supabase = false;
-      
+
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       expect(result).toBeInstanceOf(NextResponse);
-      
+
       // Restore Supabase for other tests
       mockConfig.services.supabase = true;
     });
@@ -410,7 +425,7 @@ describe('Middleware', () => {
     it('should apply security headers to all responses', async () => {
       const request = createRequest('/dashboard');
       const result = await middleware(request);
-      
+
       // Middleware should return a response with security headers applied
       expect(result).toBeInstanceOf(NextResponse);
     });
@@ -420,12 +435,12 @@ describe('Middleware', () => {
         headers: {
           'x-forwarded-for': '192.168.1.1',
           'user-agent': 'Test Browser',
-          'accept': 'text/html',
+          accept: 'text/html',
         },
       });
-      
+
       const result = await middleware(request);
-      
+
       expect(result).toBeInstanceOf(NextResponse);
       expect(securityMiddleware).toHaveBeenCalledWith(request);
     });
@@ -436,11 +451,11 @@ describe('Middleware', () => {
       const requests = Array.from({ length: 10 }, (_, i) =>
         createRequest(`/dashboard/page-${i}`)
       );
-      
+
       const results = await Promise.all(
         requests.map(request => middleware(request))
       );
-      
+
       expect(results).toHaveLength(10);
       results.forEach(result => {
         expect(result).toBeInstanceOf(NextResponse);
@@ -450,18 +465,18 @@ describe('Middleware', () => {
     it('should handle very long URLs', async () => {
       const longPath = '/dashboard/' + 'a'.repeat(1000);
       const request = createRequest(longPath);
-      
+
       const result = await middleware(request);
-      
+
       expect(result).toBeInstanceOf(NextResponse);
     });
 
     it('should handle special characters in URLs', async () => {
       const specialPath = '/dashboard/user%20name/portfolio@2024';
       const request = createRequest(specialPath);
-      
+
       const result = await middleware(request);
-      
+
       expect(result).toBeInstanceOf(NextResponse);
     });
   });

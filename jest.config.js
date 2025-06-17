@@ -34,20 +34,26 @@ const customJestConfig = {
     // Mock Redis cache
     '^@/lib/cache/redis-cache$': '<rootDir>/__mocks__/lib/cache/redis-cache.ts',
     // Mock new services
-    '^@/lib/services/auth/mfa-service$': '<rootDir>/__mocks__/lib/services/auth/mfa-service.ts',
-    '^@/lib/services/stripe/stripe-enhanced$': '<rootDir>/__mocks__/lib/services/stripe/stripe-enhanced.ts',
-    '^@/lib/services/audit/audit-logger$': '<rootDir>/__mocks__/lib/services/audit/audit-logger.ts',
-    '^@/lib/services/gdpr/gdpr-service$': '<rootDir>/__mocks__/lib/services/gdpr/gdpr-service.ts',
-    '^@/lib/cache/redis-client$': '<rootDir>/__mocks__/lib/cache/redis-client.ts',
+    '^@/lib/services/auth/mfa-service$':
+      '<rootDir>/__mocks__/lib/services/auth/mfa-service.ts',
+    '^@/lib/services/stripe/stripe-enhanced$':
+      '<rootDir>/__mocks__/lib/services/stripe/stripe-enhanced.ts',
+    '^@/lib/services/audit/audit-logger$':
+      '<rootDir>/__mocks__/lib/services/audit/audit-logger.ts',
+    '^@/lib/services/gdpr/gdpr-service$':
+      '<rootDir>/__mocks__/lib/services/gdpr/gdpr-service.ts',
+    '^@/lib/cache/redis-client$':
+      '<rootDir>/__mocks__/lib/cache/redis-client.ts',
     '^@/lib/ui/toast$': '<rootDir>/__mocks__/lib/ui/toast.ts',
-    '^@/lib/services/error/error-logger$': '<rootDir>/__mocks__/lib/services/error/error-logger.ts',
+    '^@/lib/services/error/error-logger$':
+      '<rootDir>/__mocks__/lib/services/error/error-logger.ts',
     // Mock UI components
     '^@/components/ui/button$': '<rootDir>/__mocks__/components/ui/button.tsx',
     '^@/components/ui/card$': '<rootDir>/__mocks__/components/ui/card.tsx',
     // Mock external dependencies
-    'otpauth': '<rootDir>/__mocks__/otpauth.ts',
-    'qrcode': '<rootDir>/__mocks__/qrcode.ts',
-    'ioredis': '<rootDir>/__mocks__/ioredis.ts',
+    otpauth: '<rootDir>/__mocks__/otpauth.ts',
+    qrcode: '<rootDir>/__mocks__/qrcode.ts',
+    ioredis: '<rootDir>/__mocks__/ioredis.ts',
   },
   collectCoverageFrom: [
     '**/*.{ts,tsx}',

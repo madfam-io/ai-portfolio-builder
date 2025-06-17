@@ -10,14 +10,14 @@ export const mockGDPRService = {
     granted: true,
     timestamp: new Date(),
   }),
-  
+
   requestDataExport: jest.fn().mockResolvedValue({
     id: 'export_123',
     userId: 'user_123',
     status: 'processing',
     requestedAt: new Date(),
   }),
-  
+
   requestDataDeletion: jest.fn().mockResolvedValue({
     id: 'deletion_123',
     userId: 'user_123',
@@ -25,7 +25,7 @@ export const mockGDPRService = {
     requestedAt: new Date(),
     scheduledFor: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
   }),
-  
+
   getUserConsents: jest.fn().mockResolvedValue([
     {
       consentType: 'analytics',
@@ -38,7 +38,7 @@ export const mockGDPRService = {
       timestamp: new Date(),
     },
   ]),
-  
+
   updateConsent: jest.fn().mockResolvedValue({
     success: true,
     consentType: 'analytics',

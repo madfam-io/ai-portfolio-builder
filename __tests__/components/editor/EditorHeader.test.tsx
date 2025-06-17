@@ -89,7 +89,7 @@ describe('EditorHeader', () => {
 
     it('should render all action buttons', () => {
       renderEditorHeader();
-      
+
       expect(screen.getByText('Save')).toBeInTheDocument();
       expect(screen.getByText('Publish')).toBeInTheDocument();
       expect(screen.getByText('Preview')).toBeInTheDocument();
@@ -296,7 +296,7 @@ describe('EditorHeader', () => {
       });
 
       fireEvent.keyDown(document, { key: 's', ctrlKey: true });
-      
+
       expect(mockProps.onSave).toHaveBeenCalledTimes(1);
     });
 
@@ -307,7 +307,7 @@ describe('EditorHeader', () => {
       });
 
       fireEvent.keyDown(document, { key: 'z', ctrlKey: true });
-      
+
       expect(mockProps.onUndo).toHaveBeenCalledTimes(1);
     });
 
@@ -318,7 +318,7 @@ describe('EditorHeader', () => {
       });
 
       fireEvent.keyDown(document, { key: 'y', ctrlKey: true });
-      
+
       expect(mockProps.onRedo).toHaveBeenCalledTimes(1);
     });
 
@@ -333,7 +333,7 @@ describe('EditorHeader', () => {
       fireEvent.keyDown(document, { key: 's', ctrlKey: true });
       fireEvent.keyDown(document, { key: 'z', ctrlKey: true });
       fireEvent.keyDown(document, { key: 'y', ctrlKey: true });
-      
+
       expect(mockProps.onSave).not.toHaveBeenCalled();
       expect(mockProps.onUndo).not.toHaveBeenCalled();
       expect(mockProps.onRedo).not.toHaveBeenCalled();
@@ -377,8 +377,12 @@ describe('EditorHeader', () => {
       renderEditorHeader();
 
       expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Publish' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Preview' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Publish' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Preview' })
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Undo' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
     });
@@ -401,16 +405,20 @@ describe('EditorHeader', () => {
       renderEditorHeader();
 
       const buttons = screen.getAllByRole('button');
-      
+
       // Focus first button
       buttons[0].focus();
       expect(document.activeElement).toBe(buttons[0]);
 
       // Tab to next button
       fireEvent.keyDown(buttons[0], { key: 'Tab' });
-      
+
       // Should be able to navigate between buttons
-      expect(buttons.every(button => button.tabIndex >= 0 || button.hasAttribute('disabled'))).toBe(true);
+      expect(
+        buttons.every(
+          button => button.tabIndex >= 0 || button.hasAttribute('disabled')
+        )
+      ).toBe(true);
     });
   });
 
@@ -433,7 +441,7 @@ describe('EditorHeader', () => {
       });
 
       const saveButton = screen.getByText('Save');
-      
+
       // Rapid clicks
       await user.click(saveButton);
       await user.click(saveButton);
@@ -483,7 +491,7 @@ describe('EditorHeader', () => {
 
       // Same props should not cause re-render
       rerender(<EditorHeader {...mockProps} />);
-      
+
       expect(screen.getByText('My Portfolio')).toBeInTheDocument();
     });
 
@@ -492,12 +500,12 @@ describe('EditorHeader', () => {
 
       // Update only isDirty
       rerender(<EditorHeader {...mockProps} isDirty={true} />);
-      
+
       expect(screen.getByText('Unsaved changes')).toBeInTheDocument();
 
       // Update only isSaving
       rerender(<EditorHeader {...mockProps} isDirty={true} isSaving={true} />);
-      
+
       expect(screen.getByText('Saving...')).toBeInTheDocument();
     });
   });

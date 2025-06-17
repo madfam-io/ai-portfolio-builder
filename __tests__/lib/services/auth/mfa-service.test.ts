@@ -38,7 +38,9 @@ jest.mock('otpauth', () => ({
 
 // Mock the createClient import
 import { createClient } from '@/lib/supabase/client';
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 describe('MFA Service', () => {
   beforeEach(() => {
@@ -219,7 +221,9 @@ describe('MFA Service', () => {
         error: { message: 'Challenge failed' },
       });
 
-      await expect(mfaService.challengeMFA('factor_123')).rejects.toThrow(AppError);
+      await expect(mfaService.challengeMFA('factor_123')).rejects.toThrow(
+        AppError
+      );
     });
   });
 
@@ -258,7 +262,9 @@ describe('MFA Service', () => {
         error: null,
       });
 
-      await expect(mfaService.disableMFA('factor_123')).resolves.toBeUndefined();
+      await expect(
+        mfaService.disableMFA('factor_123')
+      ).resolves.toBeUndefined();
       expect(mockSupabase.auth.mfa.unenroll).toHaveBeenCalledWith({
         factorId: 'factor_123',
       });
@@ -269,7 +275,9 @@ describe('MFA Service', () => {
         error: { message: 'Disable failed' },
       });
 
-      await expect(mfaService.disableMFA('factor_123')).rejects.toThrow(AppError);
+      await expect(mfaService.disableMFA('factor_123')).rejects.toThrow(
+        AppError
+      );
     });
   });
 
@@ -297,13 +305,19 @@ describe('MFA Service', () => {
       const service = new MFAService();
       (service as any).supabase = null;
 
-      await expect(service.getMFAStatus()).rejects.toThrow('MFA service not available');
+      await expect(service.getMFAStatus()).rejects.toThrow(
+        'MFA service not available'
+      );
     });
 
     test('should handle network errors gracefully', async () => {
-      mockSupabase.auth.mfa.listFactors.mockRejectedValue(new Error('Network error'));
+      mockSupabase.auth.mfa.listFactors.mockRejectedValue(
+        new Error('Network error')
+      );
 
-      await expect(mfaService.getMFAStatus()).rejects.toThrow('Failed to get MFA status');
+      await expect(mfaService.getMFAStatus()).rejects.toThrow(
+        'Failed to get MFA status'
+      );
     });
   });
 });

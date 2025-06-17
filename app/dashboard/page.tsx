@@ -2,6 +2,7 @@
 
 import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import React, { useEffect } from 'react';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
@@ -381,6 +382,15 @@ function DashboardContent(): React.ReactElement {
                 <Plus className="mr-2 h-5 w-5" />
                 {t.createPortfolio || 'Create Portfolio'}
               </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                {t.orTryQuickStart || 'Or try our'}{' '}
+                <Link
+                  href="/quick-start"
+                  className="text-primary hover:underline"
+                >
+                  {t.quickStartTemplates || 'Quick Start Templates'}
+                </Link>
+              </p>
             </CardContent>
           </Card>
         )}

@@ -18,14 +18,30 @@ jest.mock('@/lib/utils', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Sparkles: ({ className }: any) => <div className={className} data-testid="sparkles-icon" />,
-  Zap: ({ className }: any) => <div className={className} data-testid="zap-icon" />,
-  Palette: ({ className }: any) => <div className={className} data-testid="palette-icon" />,
-  Eye: ({ className }: any) => <div className={className} data-testid="eye-icon" />,
-  Globe: ({ className }: any) => <div className={className} data-testid="globe-icon" />,
-  Shield: ({ className }: any) => <div className={className} data-testid="shield-icon" />,
-  ArrowRight: ({ className }: any) => <div className={className} data-testid="arrow-right-icon" />,
-  CheckCircle: ({ className }: any) => <div className={className} data-testid="check-circle-icon" />,
+  Sparkles: ({ className }: any) => (
+    <div className={className} data-testid="sparkles-icon" />
+  ),
+  Zap: ({ className }: any) => (
+    <div className={className} data-testid="zap-icon" />
+  ),
+  Palette: ({ className }: any) => (
+    <div className={className} data-testid="palette-icon" />
+  ),
+  Eye: ({ className }: any) => (
+    <div className={className} data-testid="eye-icon" />
+  ),
+  Globe: ({ className }: any) => (
+    <div className={className} data-testid="globe-icon" />
+  ),
+  Shield: ({ className }: any) => (
+    <div className={className} data-testid="shield-icon" />
+  ),
+  ArrowRight: ({ className }: any) => (
+    <div className={className} data-testid="arrow-right-icon" />
+  ),
+  CheckCircle: ({ className }: any) => (
+    <div className={className} data-testid="check-circle-icon" />
+  ),
 }));
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
@@ -35,17 +51,23 @@ describe('Features', () => {
     features: 'Features',
     featuresSubtitle: 'Everything you need to create a stunning portfolio',
     aiPoweredTitle: 'AI-Powered Content',
-    aiPoweredDescription: 'Generate professional content with advanced AI assistance',
+    aiPoweredDescription:
+      'Generate professional content with advanced AI assistance',
     templateLibraryTitle: 'Professional Templates',
-    templateLibraryDescription: 'Choose from dozens of industry-specific templates',
+    templateLibraryDescription:
+      'Choose from dozens of industry-specific templates',
     realTimePreviewTitle: 'Real-time Preview',
-    realTimePreviewDescription: 'See changes instantly as you build your portfolio',
+    realTimePreviewDescription:
+      'See changes instantly as you build your portfolio',
     customizationTitle: 'Full Customization',
-    customizationDescription: 'Customize colors, fonts, and layouts to match your brand',
+    customizationDescription:
+      'Customize colors, fonts, and layouts to match your brand',
     publishingTitle: 'One-Click Publishing',
-    publishingDescription: 'Deploy your portfolio instantly with custom domains',
+    publishingDescription:
+      'Deploy your portfolio instantly with custom domains',
     securityTitle: 'Enterprise Security',
-    securityDescription: 'Bank-level security to protect your professional data',
+    securityDescription:
+      'Bank-level security to protect your professional data',
     learnMore: 'Learn More',
     tryFeature: 'Try This Feature',
     viewDemo: 'View Demo',
@@ -74,9 +96,11 @@ describe('Features', () => {
   describe('Initial Rendering', () => {
     it('should render features section title', () => {
       renderFeatures();
-      
+
       expect(screen.getByText('Features')).toBeInTheDocument();
-      expect(screen.getByText('Everything you need to create a stunning portfolio')).toBeInTheDocument();
+      expect(
+        screen.getByText('Everything you need to create a stunning portfolio')
+      ).toBeInTheDocument();
     });
 
     it('should render all feature cards', () => {
@@ -93,12 +117,30 @@ describe('Features', () => {
     it('should render feature descriptions', () => {
       renderFeatures();
 
-      expect(screen.getByText('Generate professional content with advanced AI assistance')).toBeInTheDocument();
-      expect(screen.getByText('Choose from dozens of industry-specific templates')).toBeInTheDocument();
-      expect(screen.getByText('See changes instantly as you build your portfolio')).toBeInTheDocument();
-      expect(screen.getByText('Customize colors, fonts, and layouts to match your brand')).toBeInTheDocument();
-      expect(screen.getByText('Deploy your portfolio instantly with custom domains')).toBeInTheDocument();
-      expect(screen.getByText('Bank-level security to protect your professional data')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Generate professional content with advanced AI assistance'
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Choose from dozens of industry-specific templates')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('See changes instantly as you build your portfolio')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Customize colors, fonts, and layouts to match your brand'
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Deploy your portfolio instantly with custom domains')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Bank-level security to protect your professional data'
+        )
+      ).toBeInTheDocument();
     });
 
     it('should render feature icons', () => {
@@ -117,8 +159,11 @@ describe('Features', () => {
 
       const section = screen.getByRole('region', { name: /features/i });
       expect(section).toBeInTheDocument();
-      
-      const heading = screen.getByRole('heading', { level: 2, name: 'Features' });
+
+      const heading = screen.getByRole('heading', {
+        level: 2,
+        name: 'Features',
+      });
       expect(heading).toBeInTheDocument();
     });
   });
@@ -128,10 +173,12 @@ describe('Features', () => {
       const user = userEvent.setup();
       renderFeatures();
 
-      const aiFeatureCard = screen.getByText('AI-Powered Content').closest('.group');
-      
+      const aiFeatureCard = screen
+        .getByText('AI-Powered Content')
+        .closest('.group');
+
       await user.hover(aiFeatureCard!);
-      
+
       // Should apply hover styling
       expect(aiFeatureCard).toHaveClass('group');
     });
@@ -140,11 +187,13 @@ describe('Features', () => {
       const user = userEvent.setup();
       renderFeatures();
 
-      const templateFeatureCard = screen.getByText('Professional Templates').closest('[data-testid="feature-card"]');
-      
+      const templateFeatureCard = screen
+        .getByText('Professional Templates')
+        .closest('[data-testid="feature-card"]');
+
       if (templateFeatureCard) {
         await user.click(templateFeatureCard);
-        
+
         // Should trigger feature interaction
         expect(templateFeatureCard).toBeInTheDocument();
       }
@@ -166,10 +215,10 @@ describe('Features', () => {
       renderFeatures();
 
       const learnMoreButtons = screen.getAllByText('Learn More');
-      
+
       if (learnMoreButtons.length > 0) {
         await user.click(learnMoreButtons[0]);
-        
+
         // Should navigate to feature details
         expect(learnMoreButtons[0]).toBeInTheDocument();
       }
@@ -183,9 +232,11 @@ describe('Features', () => {
       // Mock intersection observer callback
       const mockCallback = jest.fn();
       const mockObserver = new IntersectionObserver(mockCallback);
-      
-      const featureCards = screen.getAllByText(/AI-Powered|Professional|Real-time|Full|One-Click|Enterprise/);
-      
+
+      const featureCards = screen.getAllByText(
+        /AI-Powered|Professional|Real-time|Full|One-Click|Enterprise/
+      );
+
       featureCards.forEach(card => {
         mockObserver.observe(card);
       });
@@ -196,8 +247,10 @@ describe('Features', () => {
     it('should have staggered animation delays', () => {
       renderFeatures();
 
-      const featureCards = document.querySelectorAll('[data-testid="feature-card"]');
-      
+      const featureCards = document.querySelectorAll(
+        '[data-testid="feature-card"]'
+      );
+
       featureCards.forEach((card, index) => {
         expect(card).toHaveStyle(`animation-delay: ${index * 0.1}s`);
       });
@@ -231,8 +284,10 @@ describe('Features', () => {
 
       renderFeatures();
 
-      const featureCards = document.querySelectorAll('[data-testid="feature-card"]');
-      
+      const featureCards = document.querySelectorAll(
+        '[data-testid="feature-card"]'
+      );
+
       featureCards.forEach(card => {
         expect(card).not.toHaveClass('animate-fade-in');
       });
@@ -285,8 +340,10 @@ describe('Features', () => {
     it('should maintain readability across screen sizes', () => {
       renderFeatures();
 
-      const descriptions = screen.getAllByText(/Generate|Choose|See changes|Customize|Deploy|Bank-level/);
-      
+      const descriptions = screen.getAllByText(
+        /Generate|Choose|See changes|Customize|Deploy|Bank-level/
+      );
+
       descriptions.forEach(desc => {
         expect(desc).toHaveClass('text-gray-600');
         expect(desc).not.toHaveStyle('font-size: 8px'); // Should not be too small
@@ -306,7 +363,9 @@ describe('Features', () => {
       ];
 
       coreFeatures.forEach(feature => {
-        expect(feature.closest('[data-testid="feature-card"]')).toHaveClass('bg-white');
+        expect(feature.closest('[data-testid="feature-card"]')).toHaveClass(
+          'bg-white'
+        );
       });
     });
 
@@ -329,7 +388,7 @@ describe('Features', () => {
       renderFeatures();
 
       const features = screen.getAllByText(/AI-Powered|Professional|Real-time/);
-      
+
       features.forEach(feature => {
         const card = feature.closest('[data-testid="feature-card"]');
         expect(card).toContainElement(screen.getByTestId('check-circle-icon'));
@@ -343,7 +402,7 @@ describe('Features', () => {
 
       const section = screen.getByRole('region', { name: /features/i });
       expect(section).toHaveAttribute('aria-labelledby');
-      
+
       const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toHaveAttribute('id');
     });
@@ -352,7 +411,7 @@ describe('Features', () => {
       renderFeatures();
 
       const interactiveElements = screen.getAllByRole('button');
-      
+
       interactiveElements.forEach(element => {
         expect(element.tabIndex).toBeGreaterThanOrEqual(0);
       });
@@ -361,7 +420,10 @@ describe('Features', () => {
     it('should have proper heading hierarchy', () => {
       renderFeatures();
 
-      const mainHeading = screen.getByRole('heading', { level: 2, name: 'Features' });
+      const mainHeading = screen.getByRole('heading', {
+        level: 2,
+        name: 'Features',
+      });
       expect(mainHeading).toBeInTheDocument();
 
       const featureHeadings = screen.getAllByRole('heading', { level: 3 });
@@ -372,7 +434,7 @@ describe('Features', () => {
       renderFeatures();
 
       const icons = document.querySelectorAll('[data-testid*="icon"]');
-      
+
       icons.forEach(icon => {
         expect(icon).toHaveAttribute('aria-hidden', 'true');
       });
@@ -381,8 +443,10 @@ describe('Features', () => {
     it('should support screen readers', () => {
       renderFeatures();
 
-      const featureCards = document.querySelectorAll('[data-testid="feature-card"]');
-      
+      const featureCards = document.querySelectorAll(
+        '[data-testid="feature-card"]'
+      );
+
       featureCards.forEach(card => {
         expect(card).toHaveAttribute('role', 'article');
         expect(card).toHaveAttribute('aria-label');
@@ -395,13 +459,13 @@ describe('Features', () => {
       renderFeatures();
 
       const aiFeature = screen.getByText('AI-Powered Content');
-      
+
       // Demo should not be loaded initially
       expect(screen.queryByTestId('ai-demo')).not.toBeInTheDocument();
-      
+
       // Should load after interaction
       fireEvent.click(aiFeature);
-      
+
       await waitFor(() => {
         expect(screen.getByTestId('ai-demo')).toBeInTheDocument();
       });
@@ -411,7 +475,7 @@ describe('Features', () => {
       renderFeatures();
 
       const images = document.querySelectorAll('img');
-      
+
       images.forEach(img => {
         expect(img.loading).toBe('lazy');
         expect(img.src).toContain('_next/image');
@@ -422,10 +486,10 @@ describe('Features', () => {
       renderFeatures();
 
       const preloadLinks = document.querySelectorAll('link[rel="preload"]');
-      const iconPreloads = Array.from(preloadLinks).filter(link => 
+      const iconPreloads = Array.from(preloadLinks).filter(link =>
         link.getAttribute('href')?.includes('icon')
       );
-      
+
       expect(iconPreloads.length).toBeGreaterThan(0);
     });
   });
@@ -442,8 +506,14 @@ describe('Features', () => {
     it('should use translated feature descriptions', () => {
       renderFeatures();
 
-      expect(screen.getByText('Generate professional content with advanced AI assistance')).toBeInTheDocument();
-      expect(screen.getByText('Choose from dozens of industry-specific templates')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Generate professional content with advanced AI assistance'
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Choose from dozens of industry-specific templates')
+      ).toBeInTheDocument();
     });
 
     it('should handle missing translations gracefully', () => {
@@ -518,7 +588,9 @@ describe('Features', () => {
       await user.click(aiFeature);
 
       await waitFor(() => {
-        expect(screen.getByText('Demo temporarily unavailable')).toBeInTheDocument();
+        expect(
+          screen.getByText('Demo temporarily unavailable')
+        ).toBeInTheDocument();
       });
     });
 
@@ -565,7 +637,9 @@ describe('Features', () => {
       renderFeatures();
 
       // Should apply A/B test variants
-      const experimentVariant = document.querySelector('[data-experiment="features-layout"]');
+      const experimentVariant = document.querySelector(
+        '[data-experiment="features-layout"]'
+      );
       expect(experimentVariant).toBeInTheDocument();
     });
 
@@ -573,8 +647,10 @@ describe('Features', () => {
       renderFeatures();
 
       // Should respect user motion preferences
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      
+      const prefersReducedMotion = window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+      ).matches;
+
       if (prefersReducedMotion) {
         const animatedElements = document.querySelectorAll('.animate-fade-in');
         expect(animatedElements.length).toBe(0);

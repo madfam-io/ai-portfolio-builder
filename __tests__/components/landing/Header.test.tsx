@@ -18,13 +18,25 @@ jest.mock('@/lib/utils', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Menu: ({ className }: any) => <div className={className} data-testid="menu-icon" />,
+  Menu: ({ className }: any) => (
+    <div className={className} data-testid="menu-icon" />
+  ),
   X: ({ className }: any) => <div className={className} data-testid="x-icon" />,
-  ChevronDown: ({ className }: any) => <div className={className} data-testid="chevron-down-icon" />,
-  Globe: ({ className }: any) => <div className={className} data-testid="globe-icon" />,
-  User: ({ className }: any) => <div className={className} data-testid="user-icon" />,
-  LogIn: ({ className }: any) => <div className={className} data-testid="login-icon" />,
-  UserPlus: ({ className }: any) => <div className={className} data-testid="signup-icon" />,
+  ChevronDown: ({ className }: any) => (
+    <div className={className} data-testid="chevron-down-icon" />
+  ),
+  Globe: ({ className }: any) => (
+    <div className={className} data-testid="globe-icon" />
+  ),
+  User: ({ className }: any) => (
+    <div className={className} data-testid="user-icon" />
+  ),
+  LogIn: ({ className }: any) => (
+    <div className={className} data-testid="login-icon" />
+  ),
+  UserPlus: ({ className }: any) => (
+    <div className={className} data-testid="signup-icon" />
+  ),
 }));
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
@@ -87,14 +99,14 @@ describe('Header', () => {
   describe('Initial Rendering', () => {
     it('should render brand logo and name', () => {
       renderHeader();
-      
+
       expect(screen.getByText('PRISMA')).toBeInTheDocument();
       expect(screen.getByAltText('PRISMA Logo')).toBeInTheDocument();
     });
 
     it('should render main navigation links', () => {
       renderHeader();
-      
+
       expect(screen.getByText('Features')).toBeInTheDocument();
       expect(screen.getByText('Pricing')).toBeInTheDocument();
       expect(screen.getByText('Templates')).toBeInTheDocument();
@@ -103,30 +115,30 @@ describe('Header', () => {
 
     it('should render authentication buttons for non-authenticated users', () => {
       renderHeader();
-      
+
       expect(screen.getByText('Login')).toBeInTheDocument();
       expect(screen.getByText('Sign Up')).toBeInTheDocument();
     });
 
     it('should render language selector', () => {
       renderHeader();
-      
+
       expect(screen.getByTestId('globe-icon')).toBeInTheDocument();
       expect(screen.getByTestId('chevron-down-icon')).toBeInTheDocument();
     });
 
     it('should render mobile menu toggle', () => {
       renderHeader();
-      
+
       expect(screen.getByTestId('menu-icon')).toBeInTheDocument();
     });
 
     it('should have proper header structure', () => {
       renderHeader();
-      
+
       const header = screen.getByRole('banner');
       expect(header).toBeInTheDocument();
-      
+
       const nav = screen.getByRole('navigation', { name: /main navigation/i });
       expect(nav).toBeInTheDocument();
     });
@@ -248,7 +260,7 @@ describe('Header', () => {
     it('should handle logout action', async () => {
       const user = userEvent.setup();
       const mockOnLogout = jest.fn();
-      
+
       renderHeader({
         ...mockProps,
         isAuthenticated: true,
@@ -300,7 +312,7 @@ describe('Header', () => {
 
     it('should switch to English', async () => {
       const user = userEvent.setup();
-      
+
       // Start with Spanish
       mockUseLanguage.mockReturnValue({
         t: mockTranslations,
@@ -440,7 +452,9 @@ describe('Header', () => {
 
       renderHeader();
 
-      const mobileMenuButton = screen.getByTestId('menu-icon').closest('button');
+      const mobileMenuButton = screen
+        .getByTestId('menu-icon')
+        .closest('button');
       expect(mobileMenuButton).toBeInTheDocument();
     });
 
@@ -512,10 +526,10 @@ describe('Header', () => {
 
       const nav = screen.getByRole('navigation');
       expect(nav).toHaveAttribute('aria-label', 'Main navigation');
-      
+
       const menuButton = screen.getByTestId('menu-icon').closest('button');
       expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
-      
+
       const languageButton = screen.getByTestId('globe-icon').closest('button');
       expect(languageButton).toHaveAttribute('aria-label', 'Change language');
     });
@@ -523,9 +537,10 @@ describe('Header', () => {
     it('should support keyboard navigation', () => {
       renderHeader();
 
-      const focusableElements = screen.getAllByRole('button')
+      const focusableElements = screen
+        .getAllByRole('button')
         .concat(screen.getAllByRole('link'));
-      
+
       focusableElements.forEach(element => {
         expect(element.tabIndex).toBeGreaterThanOrEqual(0);
       });
@@ -544,11 +559,11 @@ describe('Header', () => {
       renderHeader();
 
       const menuButton = screen.getByTestId('menu-icon').closest('button');
-      
+
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
-      
+
       await user.click(menuButton!);
-      
+
       expect(menuButton).toHaveAttribute('aria-expanded', 'true');
     });
 
@@ -561,7 +576,7 @@ describe('Header', () => {
 
       const mobileMenu = screen.getByTestId('mobile-menu');
       const focusableElements = mobileMenu.querySelectorAll('button, a');
-      
+
       expect(focusableElements.length).toBeGreaterThan(0);
     });
 
@@ -570,7 +585,7 @@ describe('Header', () => {
 
       const logo = screen.getByText('PRISMA');
       const styles = window.getComputedStyle(logo);
-      
+
       // Should have high contrast
       expect(styles.color).toBeDefined();
     });
@@ -611,11 +626,12 @@ describe('Header', () => {
       renderHeader();
 
       const preloadLinks = document.querySelectorAll('link[rel="preload"]');
-      const navAssets = Array.from(preloadLinks).filter(link => 
-        link.getAttribute('href')?.includes('nav') || 
-        link.getAttribute('href')?.includes('header')
+      const navAssets = Array.from(preloadLinks).filter(
+        link =>
+          link.getAttribute('href')?.includes('nav') ||
+          link.getAttribute('href')?.includes('header')
       );
-      
+
       expect(navAssets.length).toBeGreaterThan(0);
     });
   });
@@ -690,9 +706,11 @@ describe('Header', () => {
 
     it('should handle language switching errors', async () => {
       const user = userEvent.setup();
-      
-      const failingOnLanguageChange = jest.fn().mockRejectedValue(new Error('Language change failed'));
-      
+
+      const failingOnLanguageChange = jest
+        .fn()
+        .mockRejectedValue(new Error('Language change failed'));
+
       renderHeader({
         onLanguageChange: failingOnLanguageChange,
       });
@@ -757,7 +775,9 @@ describe('Header', () => {
         experiment: 'header_v2',
       });
 
-      const experimentVariant = document.querySelector('[data-experiment="header_v2"]');
+      const experimentVariant = document.querySelector(
+        '[data-experiment="header_v2"]'
+      );
       expect(experimentVariant).toBeInTheDocument();
     });
   });

@@ -52,18 +52,18 @@ services:
       - production-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:3000/api/v1/health/live"]
+      test: ['CMD', 'curl', '-f', 'http://localhost:3000/api/v1/health/live']
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.production-app.rule=Host(`prisma.madfam.io`) || Host(`www.prisma.madfam.io`)"
-      - "traefik.http.routers.production-app.tls=true"
-      - "traefik.http.routers.production-app.tls.certresolver=letsencrypt"
-      - "traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www.prisma.madfam.io/(.*)"
-      - "traefik.http.middlewares.redirect-www.redirectregex.replacement=https://prisma.madfam.io/$${1}"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.production-app.rule=Host(`prisma.madfam.io`) || Host(`www.prisma.madfam.io`)'
+      - 'traefik.http.routers.production-app.tls=true'
+      - 'traefik.http.routers.production-app.tls.certresolver=letsencrypt'
+      - 'traefik.http.middlewares.redirect-www.redirectregex.regex=^https://www.prisma.madfam.io/(.*)'
+      - 'traefik.http.middlewares.redirect-www.redirectregex.replacement=https://prisma.madfam.io/$${1}'
 
   # PostgreSQL Database (Production - Primary)
   production-postgres:
@@ -85,7 +85,11 @@ services:
       - production-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prisma_production} -d ${POSTGRES_DB:-prisma_production}"]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-prisma_production} -d ${POSTGRES_DB:-prisma_production}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -134,7 +138,7 @@ services:
       - production-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -180,7 +184,7 @@ services:
       - production-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ['CMD', 'nginx', '-t']
       interval: 30s
       timeout: 3s
       retries: 3
@@ -264,8 +268,8 @@ services:
   production-fluentd:
     image: fluent/fluentd:v1.16-debian-1
     ports:
-      - "24224:24224"
-      - "24224:24224/udp"
+      - '24224:24224'
+      - '24224:24224/udp'
     volumes:
       - ./config/fluentd/fluent.conf:/fluentd/etc/fluent.conf:ro
       - production_logs:/var/log

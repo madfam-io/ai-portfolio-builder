@@ -24,7 +24,9 @@ jest.mock('@/lib/api/middleware/auth', () => ({
   AuthenticatedRequest: {},
 }));
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('/api/v1/user/limits', () => {
@@ -33,12 +35,15 @@ describe('/api/v1/user/limits', () => {
   });
 
   const createAuthenticatedRequest = (userId: string = 'user-123') => {
-    const request = new NextRequest('http://localhost:3000/api/v1/user/limits', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const request = new NextRequest(
+      'http://localhost:3000/api/v1/user/limits',
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
 
     // Mock the authenticated user from withAuth middleware
     (request as any).user = {
@@ -262,7 +267,9 @@ describe('/api/v1/user/limits', () => {
     });
 
     it('should handle unexpected errors', async () => {
-      mockCreateClient.mockRejectedValue(new Error('Network connection failed'));
+      mockCreateClient.mockRejectedValue(
+        new Error('Network connection failed')
+      );
 
       const request = createAuthenticatedRequest();
       const response = await GET(request as any);
@@ -370,7 +377,7 @@ describe('/api/v1/user/limits', () => {
       expect(response.status).toBe(200);
 
       const responseData = await response.json();
-      
+
       // Verify high usage scenarios
       expect(responseData.current_usage.portfolios).toBe(9);
       expect(responseData.limits.max_portfolios).toBe(10);
@@ -412,7 +419,7 @@ describe('/api/v1/user/limits', () => {
       expect(response.status).toBe(200);
 
       const responseData = await response.json();
-      
+
       // Verify zero usage
       expect(responseData.current_usage.portfolios).toBe(0);
       expect(responseData.current_usage.ai_requests).toBe(0);
@@ -517,7 +524,7 @@ describe('/api/v1/user/limits', () => {
 
       const userAId = 'user-a-123';
       const request = createAuthenticatedRequest(userAId);
-      
+
       await GET(request as any);
 
       // Verify the RPC call uses the authenticated user's ID
@@ -526,9 +533,12 @@ describe('/api/v1/user/limits', () => {
       });
 
       // Should not be able to query other users
-      expect(mockSupabase.rpc).not.toHaveBeenCalledWith('check_user_plan_limits', {
-        user_uuid: 'user-b-456',
-      });
+      expect(mockSupabase.rpc).not.toHaveBeenCalledWith(
+        'check_user_plan_limits',
+        {
+          user_uuid: 'user-b-456',
+        }
+      );
     });
 
     it('should validate user exists in system', async () => {

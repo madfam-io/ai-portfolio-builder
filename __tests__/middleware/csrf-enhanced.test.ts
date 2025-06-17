@@ -20,7 +20,7 @@ jest.mock('crypto', () => mockCrypto);
 describe('Enhanced CSRF Middleware', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock Date for consistent testing
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2024-01-01T00:00:00Z'));
@@ -32,8 +32,8 @@ describe('Enhanced CSRF Middleware', () => {
 
   const createRequest = (
     url: string = 'https://example.com/api/v1/test',
-    options: { 
-      headers?: Record<string, string>; 
+    options: {
+      headers?: Record<string, string>;
       method?: string;
       body?: string | FormData;
     } = {}
@@ -51,7 +51,7 @@ describe('Enhanced CSRF Middleware', () => {
       const response = await csrfEnhanced(request);
 
       expect(response).toBeInstanceOf(NextResponse);
-      
+
       const responseData = await response?.json();
       expect(responseData).toHaveProperty('csrfToken');
       expect(responseData.csrfToken).toBeDefined();
@@ -75,7 +75,7 @@ describe('Enhanced CSRF Middleware', () => {
 
       const request1 = createRequest('https://example.com/api/v1/csrf-token');
       const request2 = createRequest('https://example.com/api/v1/csrf-token');
-      
+
       const response1 = await csrfEnhanced(request1);
       const response2 = await csrfEnhanced(request2);
 
@@ -96,9 +96,9 @@ describe('Enhanced CSRF Middleware', () => {
 
     it('should handle token rotation', async () => {
       const request = createRequest('https://example.com/api/v1/csrf-token', {
-        headers: { 'Cookie': 'csrf-token=old-token' },
+        headers: { Cookie: 'csrf-token=old-token' },
       });
-      
+
       const response = await csrfEnhanced(request);
       const responseData = await response?.json();
 
@@ -113,7 +113,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: 'Test Portfolio' }),
@@ -131,7 +131,7 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
         body: formData,
       });
@@ -163,7 +163,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'invalid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: 'Test Portfolio' }),
@@ -186,7 +186,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'expired-token',
-          'Cookie': 'csrf-token=expired-token',
+          Cookie: 'csrf-token=expired-token',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: 'Test Portfolio' }),
@@ -205,12 +205,12 @@ describe('Enhanced CSRF Middleware', () => {
   describe('Double Submit Cookie Pattern', () => {
     it('should validate double submit cookie pattern', async () => {
       const token = 'matching-token';
-      
+
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
           'X-CSRF-Token': token,
-          'Cookie': `csrf-token=${token}`,
+          Cookie: `csrf-token=${token}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: 'Test Portfolio' }),
@@ -227,7 +227,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'header-token',
-          'Cookie': 'csrf-token=cookie-token',
+          Cookie: 'csrf-token=cookie-token',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ name: 'Test Portfolio' }),
@@ -261,10 +261,10 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
-          'Origin': 'https://example.com',
-          'Referer': 'https://example.com/dashboard',
+          Origin: 'https://example.com',
+          Referer: 'https://example.com/dashboard',
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -276,9 +276,9 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
-          'Origin': 'https://malicious-site.com',
+          Origin: 'https://malicious-site.com',
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -295,9 +295,9 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
-          'Referer': 'https://malicious-site.com/attack',
+          Referer: 'https://malicious-site.com/attack',
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -312,7 +312,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -338,29 +338,38 @@ describe('Enhanced CSRF Middleware', () => {
     });
 
     it('should protect PUT requests', async () => {
-      const request = createRequest('https://example.com/api/v1/portfolios/123', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = createRequest(
+        'https://example.com/api/v1/portfolios/123',
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeInstanceOf(NextResponse);
     });
 
     it('should protect DELETE requests', async () => {
-      const request = createRequest('https://example.com/api/v1/portfolios/123', {
-        method: 'DELETE',
-      });
+      const request = createRequest(
+        'https://example.com/api/v1/portfolios/123',
+        {
+          method: 'DELETE',
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeInstanceOf(NextResponse);
     });
 
     it('should protect PATCH requests', async () => {
-      const request = createRequest('https://example.com/api/v1/portfolios/123', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-      });
+      const request = createRequest(
+        'https://example.com/api/v1/portfolios/123',
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeInstanceOf(NextResponse);
@@ -396,19 +405,25 @@ describe('Enhanced CSRF Middleware', () => {
 
   describe('Route Exclusions', () => {
     it('should skip CSRF protection for public API routes', async () => {
-      const request = createRequest('https://example.com/api/v1/public/templates', {
-        method: 'POST',
-      });
+      const request = createRequest(
+        'https://example.com/api/v1/public/templates',
+        {
+          method: 'POST',
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeUndefined();
     });
 
     it('should skip CSRF protection for webhook endpoints', async () => {
-      const request = createRequest('https://example.com/api/v1/webhooks/stripe', {
-        method: 'POST',
-        headers: { 'stripe-signature': 'valid-signature' },
-      });
+      const request = createRequest(
+        'https://example.com/api/v1/webhooks/stripe',
+        {
+          method: 'POST',
+          headers: { 'stripe-signature': 'valid-signature' },
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeUndefined();
@@ -424,9 +439,12 @@ describe('Enhanced CSRF Middleware', () => {
     });
 
     it('should skip CSRF protection for auth callback routes', async () => {
-      const request = createRequest('https://example.com/api/auth/callback/google', {
-        method: 'POST',
-      });
+      const request = createRequest(
+        'https://example.com/api/auth/callback/google',
+        {
+          method: 'POST',
+        }
+      );
 
       const result = await csrfEnhanced(request);
       expect(result).toBeUndefined();
@@ -449,7 +467,7 @@ describe('Enhanced CSRF Middleware', () => {
         headers: {
           'Content-Type': 'application/json',
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
         body: JSON.stringify({ name: 'Test' }),
       });
@@ -463,7 +481,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
         body: '_csrf=valid-token&name=Test',
       });
@@ -480,7 +498,7 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/upload', {
         method: 'POST',
         headers: {
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
         body: formData,
       });
@@ -494,7 +512,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -543,7 +561,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'malformed-token-!@#$%',
-          'Cookie': 'csrf-token=malformed-token-!@#$%',
+          Cookie: 'csrf-token=malformed-token-!@#$%',
         },
       });
 
@@ -555,12 +573,12 @@ describe('Enhanced CSRF Middleware', () => {
 
     it('should handle very long tokens', async () => {
       const longToken = 'a'.repeat(10000);
-      
+
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
         headers: {
           'X-CSRF-Token': longToken,
-          'Cookie': `csrf-token=${longToken}`,
+          Cookie: `csrf-token=${longToken}`,
         },
       });
 
@@ -577,7 +595,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'test-token',
-          'Cookie': 'csrf-token=test-token',
+          Cookie: 'csrf-token=test-token',
         },
       });
 
@@ -597,7 +615,10 @@ describe('Enhanced CSRF Middleware', () => {
       const request = createRequest('https://example.com/api/v1/csrf-token');
       await csrfEnhanced(request);
 
-      expect(mockCrypto.createHmac).toHaveBeenCalledWith('sha256', expect.any(String));
+      expect(mockCrypto.createHmac).toHaveBeenCalledWith(
+        'sha256',
+        expect.any(String)
+      );
     });
 
     it('should rotate tokens periodically', async () => {
@@ -605,7 +626,7 @@ describe('Enhanced CSRF Middleware', () => {
       jest.advanceTimersByTime(12 * 60 * 60 * 1000); // 12 hours
 
       const request = createRequest('https://example.com/api/v1/portfolios', {
-        headers: { 'Cookie': 'csrf-token=old-token' },
+        headers: { Cookie: 'csrf-token=old-token' },
       });
 
       const result = await csrfEnhanced(request);
@@ -622,13 +643,13 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'cached-token',
-          'Cookie': 'csrf-token=cached-token',
+          Cookie: 'csrf-token=cached-token',
         },
       });
 
       // First validation
       await csrfEnhanced(request);
-      
+
       // Second validation should use cache
       await csrfEnhanced(request);
 
@@ -637,12 +658,12 @@ describe('Enhanced CSRF Middleware', () => {
     });
 
     it('should handle concurrent requests efficiently', async () => {
-      const requests = Array.from({ length: 10 }, (_, i) => 
+      const requests = Array.from({ length: 10 }, (_, i) =>
         createRequest('https://example.com/api/v1/portfolios', {
           method: 'POST',
           headers: {
             'X-CSRF-Token': `token-${i}`,
-            'Cookie': `csrf-token=token-${i}`,
+            Cookie: `csrf-token=token-${i}`,
           },
         })
       );
@@ -654,11 +675,13 @@ describe('Enhanced CSRF Middleware', () => {
 
     it('should minimize memory usage for large numbers of tokens', async () => {
       // Generate many tokens
-      const requests = Array.from({ length: 1000 }, (_, i) => 
+      const requests = Array.from({ length: 1000 }, (_, i) =>
         createRequest('https://example.com/api/v1/csrf-token')
       );
 
-      const responses = await Promise.all(requests.map(req => csrfEnhanced(req)));
+      const responses = await Promise.all(
+        requests.map(req => csrfEnhanced(req))
+      );
 
       expect(responses).toHaveLength(1000);
       expect(mockCrypto.randomBytes).toHaveBeenCalledTimes(1000);
@@ -671,7 +694,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-Custom-CSRF': 'valid-token',
-          'Cookie': 'csrf-token=valid-token',
+          Cookie: 'csrf-token=valid-token',
         },
       });
 
@@ -688,7 +711,7 @@ describe('Enhanced CSRF Middleware', () => {
 
       const request = createRequest('https://example.com/api/v1/portfolios', {
         method: 'POST',
-        headers: { 'Cookie': 'csrf-token=valid-token' },
+        headers: { Cookie: 'csrf-token=valid-token' },
         body: formData,
       });
 
@@ -704,7 +727,7 @@ describe('Enhanced CSRF Middleware', () => {
         method: 'POST',
         headers: {
           'X-CSRF-Token': 'valid-token',
-          'Cookie': 'custom-csrf=valid-token',
+          Cookie: 'custom-csrf=valid-token',
         },
       });
 

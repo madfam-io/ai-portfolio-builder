@@ -87,7 +87,10 @@ jest.mock('@/components/landing/Pricing', () => ({
       <button onClick={() => onPlanSelect('pro')} data-testid="pro-plan">
         Pro Plan
       </button>
-      <button onClick={() => onPlanSelect('business')} data-testid="business-plan">
+      <button
+        onClick={() => onPlanSelect('business')}
+        data-testid="business-plan"
+      >
         Business Plan
       </button>
     </div>
@@ -201,9 +204,9 @@ describe('DynamicLandingPage', () => {
       // Check that sections appear in DOM order
       sections.forEach((section, index) => {
         if (index > 0) {
-          expect(
-            section.compareDocumentPosition(sections[index - 1])
-          ).toBe(Node.DOCUMENT_POSITION_PRECEDING);
+          expect(section.compareDocumentPosition(sections[index - 1])).toBe(
+            Node.DOCUMENT_POSITION_PRECEDING
+          );
         }
       });
     });
@@ -450,7 +453,9 @@ describe('DynamicLandingPage', () => {
     it('should have meta description', () => {
       renderDynamicLandingPage();
 
-      const metaDescription = document.querySelector('meta[name="description"]');
+      const metaDescription = document.querySelector(
+        'meta[name="description"]'
+      );
       expect(metaDescription).toBeInTheDocument();
     });
 
@@ -458,8 +463,10 @@ describe('DynamicLandingPage', () => {
       renderDynamicLandingPage();
 
       const ogTitle = document.querySelector('meta[property="og:title"]');
-      const ogDescription = document.querySelector('meta[property="og:description"]');
-      
+      const ogDescription = document.querySelector(
+        'meta[property="og:description"]'
+      );
+
       expect(ogTitle).toBeInTheDocument();
       expect(ogDescription).toBeInTheDocument();
     });
@@ -467,7 +474,9 @@ describe('DynamicLandingPage', () => {
     it('should have structured data', () => {
       renderDynamicLandingPage();
 
-      const structuredData = document.querySelector('script[type="application/ld+json"]');
+      const structuredData = document.querySelector(
+        'script[type="application/ld+json"]'
+      );
       expect(structuredData).toBeInTheDocument();
     });
   });
@@ -501,7 +510,11 @@ describe('DynamicLandingPage', () => {
       await user.click(ctaButton);
 
       // Should track click event
-      expect(window.gtag).toHaveBeenCalledWith('event', 'click', expect.any(Object));
+      expect(window.gtag).toHaveBeenCalledWith(
+        'event',
+        'click',
+        expect.any(Object)
+      );
     });
   });
 
@@ -515,7 +528,7 @@ describe('DynamicLandingPage', () => {
       // Should have h1, h2, h3 in proper order
       const h1 = screen.getByRole('heading', { level: 1 });
       const h2s = screen.getAllByRole('heading', { level: 2 });
-      
+
       expect(h1).toBeInTheDocument();
       expect(h2s.length).toBeGreaterThan(0);
     });
@@ -531,7 +544,7 @@ describe('DynamicLandingPage', () => {
       renderDynamicLandingPage();
 
       const focusableElements = screen.getAllByRole('button');
-      
+
       focusableElements.forEach(element => {
         expect(element.tabIndex).toBeGreaterThanOrEqual(0);
       });
@@ -566,7 +579,7 @@ describe('DynamicLandingPage', () => {
 
       // Should not crash the entire page
       expect(screen.getByTestId('header')).toBeInTheDocument();
-      
+
       spy.mockRestore();
     });
 
@@ -644,7 +657,7 @@ describe('DynamicLandingPage', () => {
 
     it('should handle very long content', () => {
       const longTitle = 'A'.repeat(200);
-      
+
       renderDynamicLandingPage();
 
       // Should handle overflow gracefully

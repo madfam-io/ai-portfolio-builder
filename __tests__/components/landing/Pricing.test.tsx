@@ -18,13 +18,25 @@ jest.mock('@/lib/utils', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  Check: ({ className }: any) => <div className={className} data-testid="check-icon" />,
+  Check: ({ className }: any) => (
+    <div className={className} data-testid="check-icon" />
+  ),
   X: ({ className }: any) => <div className={className} data-testid="x-icon" />,
-  Star: ({ className }: any) => <div className={className} data-testid="star-icon" />,
-  Crown: ({ className }: any) => <div className={className} data-testid="crown-icon" />,
-  Zap: ({ className }: any) => <div className={className} data-testid="zap-icon" />,
-  Shield: ({ className }: any) => <div className={className} data-testid="shield-icon" />,
-  ArrowRight: ({ className }: any) => <div className={className} data-testid="arrow-right-icon" />,
+  Star: ({ className }: any) => (
+    <div className={className} data-testid="star-icon" />
+  ),
+  Crown: ({ className }: any) => (
+    <div className={className} data-testid="crown-icon" />
+  ),
+  Zap: ({ className }: any) => (
+    <div className={className} data-testid="zap-icon" />
+  ),
+  Shield: ({ className }: any) => (
+    <div className={className} data-testid="shield-icon" />
+  ),
+  ArrowRight: ({ className }: any) => (
+    <div className={className} data-testid="arrow-right-icon" />
+  ),
 }));
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
@@ -50,13 +62,13 @@ describe('Pricing', () => {
     upgradeNow: 'Upgrade Now',
     contactSales: 'Contact Sales',
     currentPlan: 'Current Plan',
-    
+
     // Free plan features
     freePortfolios: '3 portfolios',
     freeTemplates: 'Basic templates',
     freeSupport: 'Community support',
     freeStorage: '100MB storage',
-    
+
     // Pro plan features
     proPortfolios: '10 portfolios',
     proTemplates: 'Premium templates',
@@ -65,7 +77,7 @@ describe('Pricing', () => {
     proCustomDomain: 'Custom domain',
     proAnalytics: 'Portfolio analytics',
     proAICredits: '100 AI credits/month',
-    
+
     // Business plan features
     businessPortfolios: '25 portfolios',
     businessTemplates: 'All templates',
@@ -76,25 +88,27 @@ describe('Pricing', () => {
     businessAICredits: '500 AI credits/month',
     businessTeam: 'Team collaboration',
     businessWhiteLabel: 'White-label options',
-    
+
     // Enterprise features
     enterpriseUnlimited: 'Unlimited everything',
     enterpriseSSO: 'SSO integration',
     enterpriseAPI: 'API access',
     enterpriseSLA: 'SLA guarantee',
-    
+
     // Billing
     perMonth: '/month',
     perYear: '/year',
     billedMonthly: 'Billed monthly',
     billedYearly: 'Billed yearly',
-    
+
     // FAQ
     faqTitle: 'Frequently Asked Questions',
     canIChangeMyPlan: 'Can I change my plan anytime?',
-    changeplanAnswer: 'Yes, you can upgrade or downgrade your plan at any time.',
+    changeplanAnswer:
+      'Yes, you can upgrade or downgrade your plan at any time.',
     whatIfIExceedLimits: 'What happens if I exceed my limits?',
-    exceedLimitsAnswer: 'We\'ll notify you and help you upgrade to a suitable plan.',
+    exceedLimitsAnswer:
+      "We'll notify you and help you upgrade to a suitable plan.",
   };
 
   beforeEach(() => {
@@ -120,9 +134,11 @@ describe('Pricing', () => {
   describe('Initial Rendering', () => {
     it('should render pricing section title', () => {
       renderPricing();
-      
+
       expect(screen.getByText('Pricing')).toBeInTheDocument();
-      expect(screen.getByText('Choose the perfect plan for your professional needs')).toBeInTheDocument();
+      expect(
+        screen.getByText('Choose the perfect plan for your professional needs')
+      ).toBeInTheDocument();
     });
 
     it('should render all pricing plans', () => {
@@ -156,7 +172,7 @@ describe('Pricing', () => {
 
       const popularBadge = screen.getByText('Most Popular');
       expect(popularBadge).toBeInTheDocument();
-      
+
       const proPlan = popularBadge.closest('[data-testid="pricing-card"]');
       expect(proPlan).toHaveClass('border-primary');
     });
@@ -209,7 +225,10 @@ describe('Pricing', () => {
       await user.click(yearlyToggle);
 
       // Should store preference
-      expect(localStorage.setItem).toHaveBeenCalledWith('billing_period', 'yearly');
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'billing_period',
+        'yearly'
+      );
     });
   });
 
@@ -333,7 +352,7 @@ describe('Pricing', () => {
 
       const currentPlanBadge = screen.getByText('Current Plan');
       expect(currentPlanBadge).toBeInTheDocument();
-      
+
       const proPlan = currentPlanBadge.closest('[data-testid="pricing-card"]');
       expect(proPlan).toHaveClass('bg-primary/5');
     });
@@ -356,7 +375,7 @@ describe('Pricing', () => {
 
       const upgradeButtons = screen.getAllByText('Upgrade Now');
       expect(upgradeButtons.length).toBeGreaterThan(0);
-      
+
       upgradeButtons.forEach(button => {
         expect(button).not.toBeDisabled();
       });
@@ -431,7 +450,7 @@ describe('Pricing', () => {
 
       // Pro plan: $19 * 12 * 0.8 = $182.4 (rounded to $182)
       expect(screen.getByText('$182')).toBeInTheDocument();
-      
+
       // Business plan: $49 * 12 * 0.8 = $470.4 (rounded to $470)
       expect(screen.getByText('$470')).toBeInTheDocument();
     });
@@ -476,7 +495,9 @@ describe('Pricing', () => {
       const compareButton = screen.getByText('Compare Features');
       await user.click(compareButton);
 
-      expect(screen.getByTestId('feature-comparison-table')).toBeInTheDocument();
+      expect(
+        screen.getByTestId('feature-comparison-table')
+      ).toBeInTheDocument();
     });
 
     it('should highlight differences between plans', async () => {
@@ -513,10 +534,10 @@ describe('Pricing', () => {
 
       const pricingSection = screen.getByRole('region', { name: /pricing/i });
       expect(pricingSection).toBeInTheDocument();
-      
+
       const planCards = screen.getAllByRole('article');
       expect(planCards.length).toBe(4);
-      
+
       planCards.forEach(card => {
         expect(card).toHaveAttribute('aria-label');
       });
@@ -526,7 +547,7 @@ describe('Pricing', () => {
       renderPricing();
 
       const buttons = screen.getAllByRole('button');
-      
+
       buttons.forEach(button => {
         expect(button.tabIndex).toBeGreaterThanOrEqual(0);
       });
@@ -535,7 +556,10 @@ describe('Pricing', () => {
     it('should have proper heading hierarchy', () => {
       renderPricing();
 
-      const mainHeading = screen.getByRole('heading', { level: 2, name: 'Pricing' });
+      const mainHeading = screen.getByRole('heading', {
+        level: 2,
+        name: 'Pricing',
+      });
       expect(mainHeading).toBeInTheDocument();
 
       const planHeadings = screen.getAllByRole('heading', { level: 3 });
@@ -547,11 +571,11 @@ describe('Pricing', () => {
       renderPricing();
 
       const yearlyToggle = screen.getByText('Yearly');
-      
+
       expect(yearlyToggle).toHaveAttribute('aria-live', 'polite');
-      
+
       await user.click(yearlyToggle);
-      
+
       // Price changes should be announced
       expect(yearlyToggle).toHaveAttribute('aria-expanded', 'true');
     });
@@ -599,18 +623,24 @@ describe('Pricing', () => {
       const compareButton = screen.getByText('Compare Features');
       await user.click(compareButton);
 
-      expect(window.gtag).toHaveBeenCalledWith('event', 'feature_comparison_view', {
-        section: 'pricing',
-      });
+      expect(window.gtag).toHaveBeenCalledWith(
+        'event',
+        'feature_comparison_view',
+        {
+          section: 'pricing',
+        }
+      );
     });
   });
 
   describe('Error Handling', () => {
     it('should handle plan selection errors gracefully', async () => {
       const user = userEvent.setup();
-      
-      const failingOnPlanSelect = jest.fn().mockRejectedValue(new Error('Selection failed'));
-      
+
+      const failingOnPlanSelect = jest
+        .fn()
+        .mockRejectedValue(new Error('Selection failed'));
+
       renderPricing({
         onPlanSelect: failingOnPlanSelect,
       });
@@ -625,7 +655,9 @@ describe('Pricing', () => {
 
     it('should handle pricing API errors', async () => {
       // Mock pricing API failure
-      global.fetch = jest.fn().mockRejectedValue(new Error('Pricing API failed'));
+      global.fetch = jest
+        .fn()
+        .mockRejectedValue(new Error('Pricing API failed'));
 
       renderPricing();
 
@@ -674,7 +706,9 @@ describe('Pricing', () => {
       });
 
       // Should show experimental pricing layout
-      const experimentVariant = document.querySelector('[data-experiment="pricing_v2"]');
+      const experimentVariant = document.querySelector(
+        '[data-experiment="pricing_v2"]'
+      );
       expect(experimentVariant).toBeInTheDocument();
     });
   });
@@ -682,7 +716,7 @@ describe('Pricing', () => {
   describe('Edge Cases', () => {
     it('should handle missing onPlanSelect prop', async () => {
       const user = userEvent.setup();
-      
+
       renderPricing({
         ...mockProps,
         onPlanSelect: undefined as any,

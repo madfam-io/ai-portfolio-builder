@@ -8,7 +8,8 @@ export const PROMOTIONAL_CONFIG = {
   durationMonths: 3,
   maxRedemptions: 100,
   code: 'EARLY50',
-  description: '50% off for the first 3 months - Limited to first 100 customers!',
+  description:
+    '50% off for the first 3 months - Limited to first 100 customers!',
   validUntil: new Date('2025-12-31'),
 };
 
@@ -62,20 +63,26 @@ const mockEnhancedStripeService = {
     eligible: true,
     remainingSlots: 75,
   }),
-  getEnhancedPlanFeatures: jest.fn().mockImplementation((planId) => 
-    SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS]
-  ),
+  getEnhancedPlanFeatures: jest
+    .fn()
+    .mockImplementation(
+      planId => SUBSCRIPTION_PLANS[planId as keyof typeof SUBSCRIPTION_PLANS]
+    ),
 };
 
 export const enhancedStripeService = mockEnhancedStripeService;
 
-export const formatPriceWithPromotion = jest.fn().mockImplementation(
-  (amount, promotionalAmount) => ({
+export const formatPriceWithPromotion = jest
+  .fn()
+  .mockImplementation((amount, promotionalAmount) => ({
     original: `$${(amount / 100).toFixed(2)}`,
-    promotional: promotionalAmount ? `$${(promotionalAmount / 100).toFixed(2)}` : undefined,
-    savings: promotionalAmount ? `$${((amount - promotionalAmount) / 100).toFixed(2)}` : undefined,
-  })
-);
+    promotional: promotionalAmount
+      ? `$${(promotionalAmount / 100).toFixed(2)}`
+      : undefined,
+    savings: promotionalAmount
+      ? `$${((amount - promotionalAmount) / 100).toFixed(2)}`
+      : undefined,
+  }));
 
 export const calculatePromotionalEndDate = jest.fn().mockImplementation(() => {
   const endDate = new Date();

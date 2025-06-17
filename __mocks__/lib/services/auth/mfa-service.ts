@@ -8,16 +8,16 @@ export const mockMFAService = {
     qrCodeUrl: 'data:image/png;base64,MOCK_QR_CODE',
     backupCodes: ['123456', '789012'],
   }),
-  
+
   verifyMFASetup: jest.fn().mockResolvedValue(true),
-  
+
   verifyMFAToken: jest.fn().mockResolvedValue({
     valid: true,
     remainingBackupCodes: 2,
   }),
-  
+
   generateBackupCodes: jest.fn().mockResolvedValue(['123456', '789012']),
-  
+
   disableMFA: jest.fn().mockResolvedValue({ success: true }),
 };
 

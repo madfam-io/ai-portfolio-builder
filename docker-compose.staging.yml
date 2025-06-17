@@ -34,10 +34,10 @@ services:
       - staging-network
     restart: unless-stopped
     labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.staging-app.rule=Host(`staging.prisma.madfam.io`)"
-      - "traefik.http.routers.staging-app.tls=true"
-      - "traefik.http.routers.staging-app.tls.certresolver=letsencrypt"
+      - 'traefik.enable=true'
+      - 'traefik.http.routers.staging-app.rule=Host(`staging.prisma.madfam.io`)'
+      - 'traefik.http.routers.staging-app.tls=true'
+      - 'traefik.http.routers.staging-app.tls.certresolver=letsencrypt'
 
   # PostgreSQL Database (Staging)
   staging-postgres:
@@ -57,7 +57,11 @@ services:
       - staging-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-prisma_staging} -d ${POSTGRES_DB:-prisma_staging}"]
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U ${POSTGRES_USER:-prisma_staging} -d ${POSTGRES_DB:-prisma_staging}',
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -82,7 +86,7 @@ services:
       - staging-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
+      test: ['CMD', 'redis-cli', 'ping']
       interval: 10s
       timeout: 5s
       retries: 5
@@ -125,7 +129,7 @@ services:
       - staging-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ['CMD', 'nginx', '-t']
       interval: 30s
       timeout: 3s
       retries: 3

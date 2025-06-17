@@ -24,17 +24,19 @@ jest.mock('@/lib/api/middleware/auth', () => ({
 const mockStripeService = stripeService as jest.Mocked<typeof stripeService>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockGetAppUrl = getAppUrl as jest.MockedFunction<typeof getAppUrl>;
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 
 describe('/api/v1/stripe/portal', () => {
   let mockSupabase: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockStripeService.isAvailable.mockReturnValue(true);
     mockGetAppUrl.mockReturnValue('https://app.example.com');
-    
+
     // Mock Supabase client
     mockSupabase = {
       from: jest.fn().mockReturnThis(),
@@ -42,7 +44,7 @@ describe('/api/v1/stripe/portal', () => {
       eq: jest.fn().mockReturnThis(),
       single: jest.fn(),
     };
-    
+
     mockCreateClient.mockResolvedValue(mockSupabase);
   });
 
@@ -53,10 +55,13 @@ describe('/api/v1/stripe/portal', () => {
   };
 
   const mockAuthenticatedRequest = () => {
-    const request = new NextRequest('http://localhost:3000/api/v1/stripe/portal', {
-      method: 'POST',
-    });
-    
+    const request = new NextRequest(
+      'http://localhost:3000/api/v1/stripe/portal',
+      {
+        method: 'POST',
+      }
+    );
+
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
     return request;
@@ -69,7 +74,9 @@ describe('/api/v1/stripe/portal', () => {
     };
 
     beforeEach(() => {
-      mockStripeService.createPortalSession.mockResolvedValue(mockPortalSession as any);
+      mockStripeService.createPortalSession.mockResolvedValue(
+        mockPortalSession as any
+      );
     });
 
     it('should create portal session for user with valid Stripe customer', async () => {
@@ -93,7 +100,9 @@ describe('/api/v1/stripe/portal', () => {
       });
 
       expect(mockSupabase.from).toHaveBeenCalledWith('users');
-      expect(mockSupabase.select).toHaveBeenCalledWith('stripe_customer_id, subscription_status');
+      expect(mockSupabase.select).toHaveBeenCalledWith(
+        'stripe_customer_id, subscription_status'
+      );
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', mockUser.id);
 
       expect(mockStripeService.createPortalSession).toHaveBeenCalledWith({
@@ -309,7 +318,7 @@ describe('/api/v1/stripe/portal', () => {
 
       for (const status of subscriptionStatuses) {
         jest.clearAllMocks();
-        
+
         const mockUserData = {
           stripe_customer_id: `cus_test_${status}`,
           subscription_status: status,
@@ -320,7 +329,9 @@ describe('/api/v1/stripe/portal', () => {
           error: null,
         });
 
-        mockStripeService.createPortalSession.mockResolvedValue(mockPortalSession as any);
+        mockStripeService.createPortalSession.mockResolvedValue(
+          mockPortalSession as any
+        );
 
         const request = mockAuthenticatedRequest();
         const response = await POST(request as any);
@@ -342,9 +353,12 @@ describe('/api/v1/stripe/portal', () => {
         name: 'Custom User',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/portal', {
-        method: 'POST',
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/portal',
+        {
+          method: 'POST',
+        }
+      );
 
       (request as any).user = customUser;
 

@@ -114,10 +114,10 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
-      
+
       try {
         const response = await middleware(request);
-        
+
         // Should not redirect
         expect(response).toBeDefined();
         expect(response.status).toBe(200);

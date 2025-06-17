@@ -20,7 +20,9 @@ jest.mock('@/lib/api/middleware/rate-limit', () => ({
   withRateLimit: (handler: any) => (req: any) => handler(req),
 }));
 
-const mockEnhancedStripeService = enhancedStripeService as jest.Mocked<typeof enhancedStripeService>;
+const mockEnhancedStripeService = enhancedStripeService as jest.Mocked<
+  typeof enhancedStripeService
+>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('/api/v1/stripe/check-promotion', () => {
@@ -36,13 +38,16 @@ describe('/api/v1/stripe/check-promotion', () => {
         'Content-Type': 'application/json',
       },
     };
-    
+
     // Only add body for methods that support it
     if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
       config.body = JSON.stringify(body);
     }
-    
-    return new NextRequest('http://localhost:3000/api/v1/stripe/check-promotion', config);
+
+    return new NextRequest(
+      'http://localhost:3000/api/v1/stripe/check-promotion',
+      config
+    );
   };
 
   describe('POST', () => {
@@ -52,7 +57,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         remainingSlots: 50,
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'test@example.com' });
       const response = await POST(request);
@@ -72,9 +79,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         },
       });
 
-      expect(mockEnhancedStripeService.checkPromotionalEligibility).toHaveBeenCalledWith(
-        'test@example.com'
-      );
+      expect(
+        mockEnhancedStripeService.checkPromotionalEligibility
+      ).toHaveBeenCalledWith('test@example.com');
     });
 
     it('should return ineligible status with reason', async () => {
@@ -83,7 +90,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         reason: 'Already used promotion',
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'used@example.com' });
       const response = await POST(request);
@@ -104,7 +113,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         reason: 'Promotion expired',
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'late@example.com' });
       const response = await POST(request);
@@ -123,7 +134,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         remainingSlots: 0,
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'full@example.com' });
       const response = await POST(request);
@@ -144,7 +157,9 @@ describe('/api/v1/stripe/check-promotion', () => {
       expect(response.status).toBe(400);
       expect(data.error).toBe('Invalid request data');
       expect(data.details).toBeDefined();
-      expect(mockEnhancedStripeService.checkPromotionalEligibility).not.toHaveBeenCalled();
+      expect(
+        mockEnhancedStripeService.checkPromotionalEligibility
+      ).not.toHaveBeenCalled();
     });
 
     it('should return 400 for missing email', async () => {
@@ -180,12 +195,16 @@ describe('/api/v1/stripe/check-promotion', () => {
         promotion: null,
       });
 
-      expect(mockEnhancedStripeService.checkPromotionalEligibility).not.toHaveBeenCalled();
+      expect(
+        mockEnhancedStripeService.checkPromotionalEligibility
+      ).not.toHaveBeenCalled();
     });
 
     it('should handle service errors', async () => {
       const serviceError = new Error('Stripe API error');
-      mockEnhancedStripeService.checkPromotionalEligibility.mockRejectedValue(serviceError);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockRejectedValue(
+        serviceError
+      );
 
       const request = createRequest({ email: 'error@example.com' });
       const response = await POST(request);
@@ -201,13 +220,16 @@ describe('/api/v1/stripe/check-promotion', () => {
     });
 
     it('should handle malformed JSON', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/check-promotion', {
-        method: 'POST',
-        body: 'invalid-json',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/check-promotion',
+        {
+          method: 'POST',
+          body: 'invalid-json',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -235,15 +257,19 @@ describe('/api/v1/stripe/check-promotion', () => {
 
       // Test valid emails
       for (const email of validEmails) {
-        mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue({
-          eligible: true,
-        });
+        mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+          {
+            eligible: true,
+          }
+        );
 
         const request = createRequest({ email });
         const response = await POST(request);
 
         expect(response.status).toBe(200);
-        expect(mockEnhancedStripeService.checkPromotionalEligibility).toHaveBeenCalledWith(email);
+        expect(
+          mockEnhancedStripeService.checkPromotionalEligibility
+        ).toHaveBeenCalledWith(email);
         jest.clearAllMocks();
       }
 
@@ -255,7 +281,9 @@ describe('/api/v1/stripe/check-promotion', () => {
 
         expect(response.status).toBe(400);
         expect(data.error).toBe('Invalid request data');
-        expect(mockEnhancedStripeService.checkPromotionalEligibility).not.toHaveBeenCalled();
+        expect(
+          mockEnhancedStripeService.checkPromotionalEligibility
+        ).not.toHaveBeenCalled();
         jest.clearAllMocks();
       }
     });
@@ -266,7 +294,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         remainingSlots: 25,
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'slots@example.com' });
       const response = await POST(request);
@@ -283,7 +313,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         remainingSlots: undefined,
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'unlimited@example.com' });
       const response = await POST(request);
@@ -299,7 +331,9 @@ describe('/api/v1/stripe/check-promotion', () => {
         eligible: true,
       };
 
-      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(eligibility);
+      mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
+        eligibility
+      );
 
       const request = createRequest({ email: 'config@example.com' });
       const response = await POST(request);
@@ -317,7 +351,7 @@ describe('/api/v1/stripe/check-promotion', () => {
 
     it('should handle case-sensitive email validation', async () => {
       const email = 'Test.User@Example.COM';
-      
+
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue({
         eligible: true,
       });
@@ -326,7 +360,9 @@ describe('/api/v1/stripe/check-promotion', () => {
       const response = await POST(request);
 
       expect(response.status).toBe(200);
-      expect(mockEnhancedStripeService.checkPromotionalEligibility).toHaveBeenCalledWith(email);
+      expect(
+        mockEnhancedStripeService.checkPromotionalEligibility
+      ).toHaveBeenCalledWith(email);
     });
   });
 });

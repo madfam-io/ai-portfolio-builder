@@ -65,14 +65,14 @@ describe('PortfolioPreview', () => {
     title: 'Software Developer',
     tagline: 'Building amazing web applications',
     bio: 'Experienced developer with passion for creating user-friendly applications.',
-    contact: { 
+    contact: {
       email: 'test@example.com',
       phone: '+1-555-0123',
-      location: 'San Francisco, CA'
+      location: 'San Francisco, CA',
     },
     social: {
       linkedin: 'https://linkedin.com/in/test',
-      github: 'https://github.com/test'
+      github: 'https://github.com/test',
     },
     experience: [
       {
@@ -82,8 +82,8 @@ describe('PortfolioPreview', () => {
         startDate: '2022-01-01',
         endDate: '2024-12-31',
         description: 'Led development of key features',
-        current: false
-      }
+        current: false,
+      },
     ],
     education: [
       {
@@ -92,17 +92,18 @@ describe('PortfolioPreview', () => {
         degree: 'Computer Science',
         startDate: '2018-09-01',
         endDate: '2022-05-31',
-        description: 'Bachelor of Science'
-      }
+        description: 'Bachelor of Science',
+      },
     ],
     projects: [
       {
         id: 'project-1',
         title: 'E-commerce Platform',
-        description: 'Full-stack e-commerce application built with React and Node.js',
+        description:
+          'Full-stack e-commerce application built with React and Node.js',
         technologies: ['React', 'Node.js', 'MongoDB'],
-        link: 'https://github.com/test/ecommerce'
-      }
+        link: 'https://github.com/test/ecommerce',
+      },
     ],
     skills: ['JavaScript', 'React', 'Node.js', 'TypeScript'],
     certifications: [
@@ -111,8 +112,8 @@ describe('PortfolioPreview', () => {
         name: 'AWS Certified Developer',
         issuer: 'Amazon Web Services',
         date: '2023-06-01',
-        expiryDate: '2026-06-01'
-      }
+        expiryDate: '2026-06-01',
+      },
     ],
     template: 'developer',
     customization: {
@@ -162,10 +163,12 @@ describe('PortfolioPreview', () => {
   describe('Initial Rendering', () => {
     it('should render developer template by default', () => {
       renderPortfolioPreview();
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
-      expect(screen.getByText('Building amazing web applications')).toBeInTheDocument();
+      expect(
+        screen.getByText('Building amazing web applications')
+      ).toBeInTheDocument();
     });
 
     it('should render designer template when specified', () => {
@@ -176,7 +179,7 @@ describe('PortfolioPreview', () => {
           template: 'designer',
         },
       });
-      
+
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
     });
 
@@ -188,7 +191,7 @@ describe('PortfolioPreview', () => {
           template: 'consultant',
         },
       });
-      
+
       expect(screen.getByTestId('consultant-template')).toBeInTheDocument();
     });
 
@@ -198,7 +201,8 @@ describe('PortfolioPreview', () => {
         mode: 'mobile',
       });
 
-      const previewContainer = screen.getByTestId('developer-template').parentElement;
+      const previewContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(previewContainer).toHaveClass('max-w-sm'); // Mobile width
     });
 
@@ -208,7 +212,8 @@ describe('PortfolioPreview', () => {
         mode: 'tablet',
       });
 
-      const previewContainer = screen.getByTestId('developer-template').parentElement;
+      const previewContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(previewContainer).toHaveClass('max-w-2xl'); // Tablet width
     });
 
@@ -218,7 +223,8 @@ describe('PortfolioPreview', () => {
         mode: 'desktop',
       });
 
-      const previewContainer = screen.getByTestId('developer-template').parentElement;
+      const previewContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(previewContainer).toHaveClass('max-w-6xl'); // Desktop width
     });
   });
@@ -226,26 +232,32 @@ describe('PortfolioPreview', () => {
   describe('Template Rendering', () => {
     it('should pass portfolio data to template', () => {
       renderPortfolioPreview();
-      
+
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
-      expect(screen.getByText('Building amazing web applications')).toBeInTheDocument();
+      expect(
+        screen.getByText('Building amazing web applications')
+      ).toBeInTheDocument();
     });
 
     it('should handle template switching', () => {
       const { rerender } = renderPortfolioPreview();
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
-      
-      rerender(<PortfolioPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          template: 'designer',
-        }}
-      />);
-      
+
+      rerender(
+        <PortfolioPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            template: 'designer',
+          }}
+        />
+      );
+
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
-      expect(screen.queryByTestId('developer-template')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('developer-template')
+      ).not.toBeInTheDocument();
     });
 
     it('should handle unknown template gracefully', () => {
@@ -258,22 +270,26 @@ describe('PortfolioPreview', () => {
       });
 
       // Should fallback to developer template or show error
-      expect(screen.getByText(/template not found|Software Developer/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/template not found|Software Developer/i)
+      ).toBeInTheDocument();
     });
 
     it('should re-render when portfolio data changes', () => {
       const { rerender } = renderPortfolioPreview();
-      
+
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
-      
-      rerender(<PortfolioPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          title: 'Full Stack Developer',
-        }}
-      />);
-      
+
+      rerender(
+        <PortfolioPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            title: 'Full Stack Developer',
+          }}
+        />
+      );
+
       expect(screen.getByText('Full Stack Developer')).toBeInTheDocument();
     });
   });
@@ -339,9 +355,9 @@ describe('PortfolioPreview', () => {
       });
 
       const heroSection = screen.getByTestId('hero-section');
-      
+
       await user.hover(heroSection);
-      
+
       // Should have interactive styling
       expect(heroSection).toHaveClass('cursor-pointer');
     });
@@ -366,18 +382,15 @@ describe('PortfolioPreview', () => {
 
       let heroSection = screen.getByTestId('hero-section');
       let aboutSection = screen.getByTestId('about-section');
-      
+
       expect(heroSection).toHaveClass('ring-2');
       expect(aboutSection).not.toHaveClass('ring-2');
 
-      rerender(<PortfolioPreview 
-        {...mockProps} 
-        activeSection="about"
-      />);
+      rerender(<PortfolioPreview {...mockProps} activeSection="about" />);
 
       heroSection = screen.getByTestId('hero-section');
       aboutSection = screen.getByTestId('about-section');
-      
+
       expect(heroSection).not.toHaveClass('ring-2');
       expect(aboutSection).toHaveClass('ring-2');
     });
@@ -442,7 +455,7 @@ describe('PortfolioPreview', () => {
       expect(container).toHaveClass('max-w-6xl');
 
       rerender(<PortfolioPreview {...mockProps} mode="mobile" />);
-      
+
       container = screen.getByTestId('developer-template').parentElement;
       expect(container).toHaveClass('max-w-sm');
     });
@@ -540,7 +553,10 @@ describe('PortfolioPreview', () => {
       });
 
       const heroSection = screen.getByTestId('hero-section');
-      expect(heroSection).toHaveAttribute('aria-label', 'Click to edit hero section');
+      expect(heroSection).toHaveAttribute(
+        'aria-label',
+        'Click to edit hero section'
+      );
     });
 
     it('should support keyboard navigation for interactive sections', () => {
@@ -550,10 +566,10 @@ describe('PortfolioPreview', () => {
       });
 
       const heroSection = screen.getByTestId('hero-section');
-      
+
       heroSection.focus();
       fireEvent.keyDown(heroSection, { key: 'Enter' });
-      
+
       expect(mockProps.onSectionClick).toHaveBeenCalledWith('hero');
     });
 
@@ -564,10 +580,10 @@ describe('PortfolioPreview', () => {
       });
 
       const aboutSection = screen.getByTestId('about-section');
-      
+
       aboutSection.focus();
       fireEvent.keyDown(aboutSection, { key: ' ' });
-      
+
       expect(mockProps.onSectionClick).toHaveBeenCalledWith('about');
     });
 
@@ -612,7 +628,7 @@ describe('PortfolioPreview', () => {
 
       // Same props should not cause re-render
       rerender(<PortfolioPreview {...mockProps} />);
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
@@ -623,7 +639,7 @@ describe('PortfolioPreview', () => {
       rerender(<PortfolioPreview {...mockProps} mode="tablet" />);
       rerender(<PortfolioPreview {...mockProps} mode="mobile" />);
       rerender(<PortfolioPreview {...mockProps} mode="desktop" />);
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
@@ -632,7 +648,7 @@ describe('PortfolioPreview', () => {
 
       // Only preview mode change, template should not re-render
       rerender(<PortfolioPreview {...mockProps} mode="tablet" />);
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
   });

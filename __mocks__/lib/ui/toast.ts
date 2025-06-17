@@ -11,8 +11,10 @@ export const toast = {
   dismiss: jest.fn(),
 };
 
-export const showToast = jest.fn().mockImplementation((message, type = 'info') => {
-  console.log(`Toast: [${type}] ${message}`);
-});
+export const showToast = jest
+  .fn()
+  .mockImplementation((message, type = 'info') => {
+    console.log(`Toast: [${type}] ${message}`);
+  });
 
 export default toast;

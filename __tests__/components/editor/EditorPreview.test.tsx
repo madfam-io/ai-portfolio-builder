@@ -61,14 +61,14 @@ describe('EditorPreview', () => {
     title: 'Software Developer',
     tagline: 'Building amazing web applications',
     bio: 'Experienced developer with passion for creating user-friendly applications.',
-    contact: { 
+    contact: {
       email: 'test@example.com',
       phone: '+1-555-0123',
-      location: 'San Francisco, CA'
+      location: 'San Francisco, CA',
     },
     social: {
       linkedin: 'https://linkedin.com/in/test',
-      github: 'https://github.com/test'
+      github: 'https://github.com/test',
     },
     experience: [
       {
@@ -78,8 +78,8 @@ describe('EditorPreview', () => {
         startDate: '2022-01-01',
         endDate: '2024-12-31',
         description: 'Led development of key features',
-        current: false
-      }
+        current: false,
+      },
     ],
     education: [],
     projects: [
@@ -88,15 +88,15 @@ describe('EditorPreview', () => {
         title: 'E-commerce Platform',
         description: 'Full-stack e-commerce application',
         technologies: ['React', 'Node.js'],
-        link: 'https://github.com/test/ecommerce'
+        link: 'https://github.com/test/ecommerce',
       },
       {
         id: 'project-2',
         title: 'Portfolio Website',
         description: 'Personal portfolio built with Next.js',
         technologies: ['Next.js', 'TypeScript'],
-        link: 'https://github.com/test/portfolio'
-      }
+        link: 'https://github.com/test/portfolio',
+      },
     ],
     skills: ['JavaScript', 'React', 'Node.js'],
     certifications: [],
@@ -140,17 +140,19 @@ describe('EditorPreview', () => {
   describe('Initial Rendering', () => {
     it('should render the preview container', () => {
       renderEditorPreview();
-      
+
       const previewContainer = screen.getByRole('region', { name: /preview/i });
       expect(previewContainer).toBeInTheDocument();
     });
 
     it('should render the correct template based on portfolio', () => {
       renderEditorPreview();
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
-      expect(screen.getByText('Building amazing web applications')).toBeInTheDocument();
+      expect(
+        screen.getByText('Building amazing web applications')
+      ).toBeInTheDocument();
     });
 
     it('should render designer template when specified', () => {
@@ -161,9 +163,11 @@ describe('EditorPreview', () => {
           template: 'designer',
         },
       });
-      
+
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
-      expect(screen.queryByTestId('developer-template')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('developer-template')
+      ).not.toBeInTheDocument();
     });
 
     it('should render consultant template when specified', () => {
@@ -174,9 +178,11 @@ describe('EditorPreview', () => {
           template: 'consultant',
         },
       });
-      
+
       expect(screen.getByTestId('consultant-template')).toBeInTheDocument();
-      expect(screen.queryByTestId('developer-template')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('developer-template')
+      ).not.toBeInTheDocument();
     });
 
     it('should apply custom className', () => {
@@ -184,7 +190,7 @@ describe('EditorPreview', () => {
         ...mockProps,
         className: 'custom-preview-class',
       });
-      
+
       const previewContainer = screen.getByRole('region', { name: /preview/i });
       expect(previewContainer).toHaveClass('custom-preview-class');
     });
@@ -197,7 +203,8 @@ describe('EditorPreview', () => {
         previewMode: 'desktop',
       });
 
-      const templateContainer = screen.getByTestId('developer-template').parentElement;
+      const templateContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(templateContainer).toHaveClass('w-full'); // Desktop full width
     });
 
@@ -207,7 +214,8 @@ describe('EditorPreview', () => {
         previewMode: 'tablet',
       });
 
-      const templateContainer = screen.getByTestId('developer-template').parentElement;
+      const templateContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(templateContainer).toHaveClass('max-w-3xl'); // Tablet max width
     });
 
@@ -217,7 +225,8 @@ describe('EditorPreview', () => {
         previewMode: 'mobile',
       });
 
-      const templateContainer = screen.getByTestId('developer-template').parentElement;
+      const templateContainer =
+        screen.getByTestId('developer-template').parentElement;
       expect(templateContainer).toHaveClass('max-w-sm'); // Mobile max width
     });
 
@@ -231,7 +240,7 @@ describe('EditorPreview', () => {
       expect(container).toHaveClass('w-full');
 
       rerender(<EditorPreview {...mockProps} previewMode="mobile" />);
-      
+
       container = screen.getByTestId('developer-template').parentElement;
       expect(container).toHaveClass('max-w-sm');
       expect(container).toHaveClass('transition-all'); // Smooth transition
@@ -239,14 +248,15 @@ describe('EditorPreview', () => {
 
     it('should center content in all preview modes', () => {
       const modes = ['desktop', 'tablet', 'mobile'] as const;
-      
+
       modes.forEach(mode => {
         const { rerender } = renderEditorPreview({
           ...mockProps,
           previewMode: mode,
         });
 
-        const container = screen.getByTestId('developer-template').parentElement;
+        const container =
+          screen.getByTestId('developer-template').parentElement;
         expect(container).toHaveClass('mx-auto'); // Centered
       });
     });
@@ -255,28 +265,36 @@ describe('EditorPreview', () => {
   describe('Template Data Rendering', () => {
     it('should pass complete portfolio data to template', () => {
       renderEditorPreview();
-      
+
       // Check that portfolio data is rendered
       expect(screen.getByText('Hero: Software Developer')).toBeInTheDocument();
-      expect(screen.getByText(/About:.*Experienced developer/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/About:.*Experienced developer/)
+      ).toBeInTheDocument();
       expect(screen.getByText('Projects: 2')).toBeInTheDocument();
     });
 
     it('should update template when portfolio data changes', () => {
       const { rerender } = renderEditorPreview();
-      
+
       expect(screen.getByText('Hero: Software Developer')).toBeInTheDocument();
-      
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          title: 'Full Stack Developer',
-        }}
-      />);
-      
-      expect(screen.getByText('Hero: Full Stack Developer')).toBeInTheDocument();
-      expect(screen.queryByText('Hero: Software Developer')).not.toBeInTheDocument();
+
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            title: 'Full Stack Developer',
+          }}
+        />
+      );
+
+      expect(
+        screen.getByText('Hero: Full Stack Developer')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText('Hero: Software Developer')
+      ).not.toBeInTheDocument();
     });
 
     it('should handle portfolio with missing data gracefully', () => {
@@ -310,24 +328,32 @@ describe('EditorPreview', () => {
   describe('Real-time Updates', () => {
     it('should reflect changes immediately', () => {
       const { rerender } = renderEditorPreview();
-      
-      expect(screen.getByText('Building amazing web applications')).toBeInTheDocument();
-      
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          tagline: 'Creating innovative solutions',
-        }}
-      />);
-      
-      expect(screen.getByText('Creating innovative solutions')).toBeInTheDocument();
-      expect(screen.queryByText('Building amazing web applications')).not.toBeInTheDocument();
+
+      expect(
+        screen.getByText('Building amazing web applications')
+      ).toBeInTheDocument();
+
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            tagline: 'Creating innovative solutions',
+          }}
+        />
+      );
+
+      expect(
+        screen.getByText('Creating innovative solutions')
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByText('Building amazing web applications')
+      ).not.toBeInTheDocument();
     });
 
     it('should handle rapid updates efficiently', () => {
       const { rerender } = renderEditorPreview();
-      
+
       // Simulate rapid typing/editing
       const updates = [
         'Dev',
@@ -337,35 +363,39 @@ describe('EditorPreview', () => {
       ];
 
       updates.forEach(title => {
-        rerender(<EditorPreview 
-          {...mockProps} 
-          portfolio={{
-            ...mockPortfolio,
-            title,
-          }}
-        />);
-        
+        rerender(
+          <EditorPreview
+            {...mockProps}
+            portfolio={{
+              ...mockPortfolio,
+              title,
+            }}
+          />
+        );
+
         expect(screen.getByText(`Hero: ${title}`)).toBeInTheDocument();
       });
     });
 
     it('should maintain scroll position during updates', () => {
       renderEditorPreview();
-      
+
       const previewContainer = screen.getByRole('region', { name: /preview/i });
-      
+
       // Simulate scroll
       fireEvent.scroll(previewContainer, { target: { scrollTop: 100 } });
-      
+
       // Update content
-      const { rerender } = render(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          title: 'Updated Title',
-        }}
-      />);
-      
+      const { rerender } = render(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            title: 'Updated Title',
+          }}
+        />
+      );
+
       // Scroll position should be maintained
       expect(previewContainer.scrollTop).toBe(100);
     });
@@ -374,35 +404,43 @@ describe('EditorPreview', () => {
   describe('Template Switching', () => {
     it('should switch templates correctly', () => {
       const { rerender } = renderEditorPreview();
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
-      
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          template: 'designer',
-        }}
-      />);
-      
+
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            template: 'designer',
+          }}
+        />
+      );
+
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
-      expect(screen.queryByTestId('developer-template')).not.toBeInTheDocument();
+      expect(
+        screen.queryByTestId('developer-template')
+      ).not.toBeInTheDocument();
     });
 
     it('should preserve data across template switches', () => {
       const { rerender } = renderEditorPreview();
-      
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          template: 'designer',
-        }}
-      />);
-      
+
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            template: 'designer',
+          }}
+        />
+      );
+
       // Data should still be passed to new template
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
-      expect(screen.getByText('Building amazing web applications')).toBeInTheDocument();
+      expect(
+        screen.getByText('Building amazing web applications')
+      ).toBeInTheDocument();
     });
 
     it('should handle unknown template types', () => {
@@ -415,29 +453,33 @@ describe('EditorPreview', () => {
       });
 
       // Should fallback to default template or show error
-      expect(screen.getByText(/template.*not.*found|developer-template/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/template.*not.*found|developer-template/i)
+      ).toBeInTheDocument();
     });
   });
 
   describe('Performance Optimization', () => {
     it('should not re-render template when preview mode changes', () => {
       const { rerender } = renderEditorPreview();
-      
+
       const template = screen.getByTestId('developer-template');
       const templateHTML = template.innerHTML;
-      
+
       rerender(<EditorPreview {...mockProps} previewMode="tablet" />);
-      
+
       // Template content should remain the same
-      expect(screen.getByTestId('developer-template').innerHTML).toBe(templateHTML);
+      expect(screen.getByTestId('developer-template').innerHTML).toBe(
+        templateHTML
+      );
     });
 
     it('should only re-render when portfolio data changes', () => {
       const { rerender } = renderEditorPreview();
-      
+
       // Change only preview mode (no portfolio data change)
       rerender(<EditorPreview {...mockProps} previewMode="mobile" />);
-      
+
       // Template should not re-render
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
@@ -495,30 +537,32 @@ describe('EditorPreview', () => {
 
       // Recovery with valid data
       const { rerender } = render(<EditorPreview {...mockProps} />);
-      
+
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
-      expect(screen.queryByText('Error loading preview')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText('Error loading preview')
+      ).not.toBeInTheDocument();
     });
   });
 
   describe('Accessibility', () => {
     it('should have proper ARIA labels', () => {
       renderEditorPreview();
-      
+
       const previewRegion = screen.getByRole('region', { name: /preview/i });
       expect(previewRegion).toHaveAttribute('aria-label', 'Portfolio preview');
     });
 
     it('should announce preview mode changes to screen readers', () => {
       renderEditorPreview();
-      
+
       const previewRegion = screen.getByRole('region', { name: /preview/i });
       expect(previewRegion).toHaveAttribute('aria-live', 'polite');
     });
 
     it('should have proper heading structure', () => {
       renderEditorPreview();
-      
+
       // Template should have proper heading structure
       const heading = screen.getByRole('heading', { level: 1 });
       expect(heading).toHaveTextContent('Software Developer');
@@ -526,7 +570,7 @@ describe('EditorPreview', () => {
 
     it('should be keyboard navigable', () => {
       renderEditorPreview();
-      
+
       const previewContainer = screen.getByRole('region', { name: /preview/i });
       expect(previewContainer.tabIndex).toBeGreaterThanOrEqual(0);
     });
@@ -577,37 +621,43 @@ describe('EditorPreview', () => {
   describe('Integration', () => {
     it('should work with external state management', () => {
       const { rerender } = renderEditorPreview();
-      
+
       // Simulate external state change
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          title: 'Updated by external state',
-        }}
-        previewMode="tablet"
-      />);
-      
-      expect(screen.getByText('Hero: Updated by external state')).toBeInTheDocument();
-      
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            title: 'Updated by external state',
+          }}
+          previewMode="tablet"
+        />
+      );
+
+      expect(
+        screen.getByText('Hero: Updated by external state')
+      ).toBeInTheDocument();
+
       const container = screen.getByTestId('developer-template').parentElement;
       expect(container).toHaveClass('max-w-3xl'); // Tablet mode
     });
 
     it('should handle concurrent updates', () => {
       const { rerender } = renderEditorPreview();
-      
+
       // Simulate multiple concurrent updates
-      rerender(<EditorPreview 
-        {...mockProps} 
-        portfolio={{
-          ...mockPortfolio,
-          title: 'Update 1',
-          tagline: 'Tagline 1',
-        }}
-        previewMode="mobile"
-      />);
-      
+      rerender(
+        <EditorPreview
+          {...mockProps}
+          portfolio={{
+            ...mockPortfolio,
+            title: 'Update 1',
+            tagline: 'Tagline 1',
+          }}
+          previewMode="mobile"
+        />
+      );
+
       expect(screen.getByText('Hero: Update 1')).toBeInTheDocument();
       expect(screen.getByText('Tagline 1')).toBeInTheDocument();
     });
@@ -616,7 +666,7 @@ describe('EditorPreview', () => {
   describe('Edge Cases', () => {
     it('should handle extremely long content', () => {
       const longContent = 'A'.repeat(1000);
-      
+
       renderEditorPreview({
         ...mockProps,
         portfolio: {

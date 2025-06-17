@@ -65,7 +65,7 @@ describe('EditorToolbar', () => {
   describe('Initial Rendering', () => {
     it('should render preview mode selector', () => {
       renderEditorToolbar();
-      
+
       expect(screen.getByText('View Mode')).toBeInTheDocument();
       expect(screen.getByText('Desktop')).toBeInTheDocument();
       expect(screen.getByText('Tablet')).toBeInTheDocument();
@@ -74,14 +74,14 @@ describe('EditorToolbar', () => {
 
     it('should render template selector', () => {
       renderEditorToolbar();
-      
+
       expect(screen.getByText('Template')).toBeInTheDocument();
       expect(screen.getByText('Developer')).toBeInTheDocument();
     });
 
     it('should render preview toggle button', () => {
       renderEditorToolbar();
-      
+
       expect(screen.getByText('Show Preview')).toBeInTheDocument();
     });
 
@@ -146,10 +146,10 @@ describe('EditorToolbar', () => {
 
       // Change to mobile
       rerender(<EditorToolbar {...mockProps} previewMode="mobile" />);
-      
+
       const mobileButton = screen.getByText('Mobile');
       expect(mobileButton).toHaveClass('bg-primary');
-      
+
       desktopButton = screen.getByText('Desktop');
       expect(desktopButton).not.toHaveClass('bg-primary');
     });
@@ -167,7 +167,7 @@ describe('EditorToolbar', () => {
   describe('Template Selection', () => {
     it('should render template dropdown', () => {
       renderEditorToolbar();
-      
+
       expect(screen.getByText('Template')).toBeInTheDocument();
       expect(screen.getByText('Developer')).toBeInTheDocument();
     });
@@ -209,7 +209,7 @@ describe('EditorToolbar', () => {
 
       // Change to designer template
       rerender(<EditorToolbar {...mockProps} template="designer" />);
-      
+
       expect(screen.getByText('Designer')).toBeInTheDocument();
     });
 
@@ -264,7 +264,7 @@ describe('EditorToolbar', () => {
       renderEditorToolbar();
 
       const previewButton = screen.getByText('Show Preview');
-      
+
       // Rapid clicks
       await user.click(previewButton);
       await user.click(previewButton);
@@ -279,7 +279,7 @@ describe('EditorToolbar', () => {
       renderEditorToolbar();
 
       const buttons = screen.getAllByRole('button');
-      
+
       // Focus first button
       buttons[0].focus();
       expect(document.activeElement).toBe(buttons[0]);
@@ -295,9 +295,9 @@ describe('EditorToolbar', () => {
 
       const tabletButton = screen.getByText('Tablet');
       tabletButton.focus();
-      
+
       fireEvent.keyDown(tabletButton, { key: 'Enter' });
-      
+
       expect(mockProps.onPreviewModeChange).toHaveBeenCalledWith('tablet');
     });
 
@@ -306,9 +306,9 @@ describe('EditorToolbar', () => {
 
       const previewButton = screen.getByText('Show Preview');
       previewButton.focus();
-      
+
       fireEvent.keyDown(previewButton, { key: ' ' });
-      
+
       expect(mockProps.onTogglePreview).toHaveBeenCalledTimes(1);
     });
 
@@ -317,10 +317,10 @@ describe('EditorToolbar', () => {
 
       const desktopButton = screen.getByText('Desktop');
       desktopButton.focus();
-      
+
       // Arrow right should move to tablet
       fireEvent.keyDown(desktopButton, { key: 'ArrowRight' });
-      
+
       expect(document.activeElement).toBe(screen.getByText('Tablet'));
     });
   });
@@ -349,7 +349,9 @@ describe('EditorToolbar', () => {
     it('should have proper role attributes', () => {
       renderEditorToolbar();
 
-      const previewModeGroup = screen.getByRole('group', { name: /view mode/i });
+      const previewModeGroup = screen.getByRole('group', {
+        name: /view mode/i,
+      });
       expect(previewModeGroup).toBeInTheDocument();
 
       const templateGroup = screen.getByRole('group', { name: /template/i });
@@ -372,8 +374,10 @@ describe('EditorToolbar', () => {
       expect(previewButton).toHaveAttribute('aria-pressed', 'false');
 
       // After toggle, should update aria-pressed
-      const { rerender } = render(<EditorToolbar {...mockProps} showPreview={true} />);
-      
+      const { rerender } = render(
+        <EditorToolbar {...mockProps} showPreview={true} />
+      );
+
       const hidePreviewButton = screen.getByText('Hide Preview');
       expect(hidePreviewButton).toHaveAttribute('aria-pressed', 'true');
     });
@@ -406,7 +410,7 @@ describe('EditorToolbar', () => {
 
     it('should maintain functionality on small screens', async () => {
       const user = userEvent.setup();
-      
+
       // Mock tablet viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -454,9 +458,9 @@ describe('EditorToolbar', () => {
       renderEditorToolbar();
 
       const mobileButton = screen.getByText('Mobile');
-      
+
       await user.hover(mobileButton);
-      
+
       // Hover state should be applied (tested via CSS classes)
       expect(mobileButton).toHaveClass('hover:bg-primary/20');
     });
@@ -506,12 +510,14 @@ describe('EditorToolbar', () => {
       const { rerender } = renderEditorToolbar();
 
       // External state change
-      rerender(<EditorToolbar 
-        {...mockProps} 
-        previewMode="mobile" 
-        template="creative" 
-        showPreview={true} 
-      />);
+      rerender(
+        <EditorToolbar
+          {...mockProps}
+          previewMode="mobile"
+          template="creative"
+          showPreview={true}
+        />
+      );
 
       expect(screen.getByText('Mobile')).toHaveClass('bg-primary');
       expect(screen.getByText('Creative')).toBeInTheDocument();
@@ -565,7 +571,7 @@ describe('EditorToolbar', () => {
 
       // Same props should not cause unnecessary re-renders
       rerender(<EditorToolbar {...mockProps} />);
-      
+
       expect(screen.getByText('Desktop')).toBeInTheDocument();
     });
 
@@ -574,11 +580,11 @@ describe('EditorToolbar', () => {
       renderEditorToolbar();
 
       const tabletButton = screen.getByText('Tablet');
-      
+
       // Multiple rapid clicks
       await user.click(tabletButton);
       await user.click(tabletButton);
-      
+
       // Should handle all clicks properly
       expect(mockProps.onPreviewModeChange).toHaveBeenCalledTimes(2);
     });

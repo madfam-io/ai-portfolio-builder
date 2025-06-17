@@ -18,12 +18,24 @@ jest.mock('@/lib/utils', () => ({
 }));
 
 jest.mock('lucide-react', () => ({
-  ArrowRight: ({ className }: any) => <div className={className} data-testid="arrow-right-icon" />,
-  Sparkles: ({ className }: any) => <div className={className} data-testid="sparkles-icon" />,
-  Zap: ({ className }: any) => <div className={className} data-testid="zap-icon" />,
-  Star: ({ className }: any) => <div className={className} data-testid="star-icon" />,
-  Clock: ({ className }: any) => <div className={className} data-testid="clock-icon" />,
-  Users: ({ className }: any) => <div className={className} data-testid="users-icon" />,
+  ArrowRight: ({ className }: any) => (
+    <div className={className} data-testid="arrow-right-icon" />
+  ),
+  Sparkles: ({ className }: any) => (
+    <div className={className} data-testid="sparkles-icon" />
+  ),
+  Zap: ({ className }: any) => (
+    <div className={className} data-testid="zap-icon" />
+  ),
+  Star: ({ className }: any) => (
+    <div className={className} data-testid="star-icon" />
+  ),
+  Clock: ({ className }: any) => (
+    <div className={className} data-testid="clock-icon" />
+  ),
+  Users: ({ className }: any) => (
+    <div className={className} data-testid="users-icon" />
+  ),
 }));
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
@@ -35,7 +47,8 @@ describe('CTA', () => {
 
   const mockTranslations = {
     ctaTitle: 'Ready to Create Your Professional Portfolio?',
-    ctaSubtitle: 'Join thousands of professionals who have built stunning portfolios with PRISMA',
+    ctaSubtitle:
+      'Join thousands of professionals who have built stunning portfolios with PRISMA',
     getStartedButton: 'Start Building Your Portfolio',
     watchDemo: 'Watch Demo',
     freeToStart: 'Free to start',
@@ -43,7 +56,8 @@ describe('CTA', () => {
     setupInMinutes: 'Setup in 5 minutes',
     joinProfessionals: 'Join 10,000+ professionals',
     trustedByCompanies: 'Trusted by leading companies',
-    testimonialQuote: 'PRISMA helped me create a stunning portfolio that landed my dream job!',
+    testimonialQuote:
+      'PRISMA helped me create a stunning portfolio that landed my dream job!',
     testimonialAuthor: 'Sarah Johnson',
     testimonialRole: 'Senior Developer at Google',
     urgencyText: 'Limited time: Get premium templates free',
@@ -81,14 +95,20 @@ describe('CTA', () => {
   describe('Initial Rendering', () => {
     it('should render CTA title and subtitle', () => {
       renderCTA();
-      
-      expect(screen.getByText('Ready to Create Your Professional Portfolio?')).toBeInTheDocument();
-      expect(screen.getByText('Join thousands of professionals who have built stunning portfolios with PRISMA')).toBeInTheDocument();
+
+      expect(
+        screen.getByText('Ready to Create Your Professional Portfolio?')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Join thousands of professionals who have built stunning portfolios with PRISMA'
+        )
+      ).toBeInTheDocument();
     });
 
     it('should render primary CTA button', () => {
       renderCTA();
-      
+
       const primaryButton = screen.getByText('Start Building Your Portfolio');
       expect(primaryButton).toBeInTheDocument();
       expect(primaryButton).toHaveAttribute('role', 'button');
@@ -96,14 +116,14 @@ describe('CTA', () => {
 
     it('should render secondary CTA button', () => {
       renderCTA();
-      
+
       const secondaryButton = screen.getByText('Watch Demo');
       expect(secondaryButton).toBeInTheDocument();
     });
 
     it('should render trust indicators', () => {
       renderCTA();
-      
+
       expect(screen.getByText('Free to start')).toBeInTheDocument();
       expect(screen.getByText('No credit card required')).toBeInTheDocument();
       expect(screen.getByText('Setup in 5 minutes')).toBeInTheDocument();
@@ -111,14 +131,18 @@ describe('CTA', () => {
 
     it('should render social proof elements', () => {
       renderCTA();
-      
-      expect(screen.getByText('Join 10,000+ professionals')).toBeInTheDocument();
-      expect(screen.getByText('★★★★★ Rated 5 stars by users')).toBeInTheDocument();
+
+      expect(
+        screen.getByText('Join 10,000+ professionals')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('★★★★★ Rated 5 stars by users')
+      ).toBeInTheDocument();
     });
 
     it('should have proper section structure', () => {
       renderCTA();
-      
+
       const section = screen.getByRole('region', { name: /call to action/i });
       expect(section).toBeInTheDocument();
     });
@@ -151,7 +175,7 @@ describe('CTA', () => {
       renderCTA();
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
-      
+
       // Rapid double click
       await user.click(primaryButton);
       await user.click(primaryButton);
@@ -162,11 +186,13 @@ describe('CTA', () => {
 
     it('should show loading state during action', async () => {
       const user = userEvent.setup();
-      
-      const slowOnGetStarted = jest.fn().mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 1000))
-      );
-      
+
+      const slowOnGetStarted = jest
+        .fn()
+        .mockImplementation(
+          () => new Promise(resolve => setTimeout(resolve, 1000))
+        );
+
       renderCTA({ onGetStarted: slowOnGetStarted });
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
@@ -219,9 +245,9 @@ describe('CTA', () => {
       renderCTA();
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
-      
+
       await user.hover(primaryButton);
-      
+
       expect(primaryButton).toHaveClass('hover:bg-primary/90');
     });
 
@@ -249,37 +275,53 @@ describe('CTA', () => {
     it('should display customer testimonial', () => {
       renderCTA();
 
-      expect(screen.getByText('PRISMA helped me create a stunning portfolio that landed my dream job!')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'PRISMA helped me create a stunning portfolio that landed my dream job!'
+        )
+      ).toBeInTheDocument();
       expect(screen.getByText('Sarah Johnson')).toBeInTheDocument();
-      expect(screen.getByText('Senior Developer at Google')).toBeInTheDocument();
+      expect(
+        screen.getByText('Senior Developer at Google')
+      ).toBeInTheDocument();
     });
 
     it('should show user count with real-time updates', () => {
       renderCTA();
 
-      expect(screen.getByText('Join 10,000+ professionals')).toBeInTheDocument();
+      expect(
+        screen.getByText('Join 10,000+ professionals')
+      ).toBeInTheDocument();
     });
 
     it('should display company logos', () => {
       renderCTA();
 
-      expect(screen.getByText('Trusted by leading companies')).toBeInTheDocument();
-      
-      const companyLogos = document.querySelectorAll('[data-testid="company-logo"]');
+      expect(
+        screen.getByText('Trusted by leading companies')
+      ).toBeInTheDocument();
+
+      const companyLogos = document.querySelectorAll(
+        '[data-testid="company-logo"]'
+      );
       expect(companyLogos.length).toBeGreaterThan(0);
     });
 
     it('should show guarantee badge', () => {
       renderCTA();
 
-      expect(screen.getByText('30-day money-back guarantee')).toBeInTheDocument();
+      expect(
+        screen.getByText('30-day money-back guarantee')
+      ).toBeInTheDocument();
     });
 
     it('should display star ratings', () => {
       renderCTA();
 
-      expect(screen.getByText('★★★★★ Rated 5 stars by users')).toBeInTheDocument();
-      
+      expect(
+        screen.getByText('★★★★★ Rated 5 stars by users')
+      ).toBeInTheDocument();
+
       const starIcons = screen.getAllByTestId('star-icon');
       expect(starIcons.length).toBe(5);
     });
@@ -289,7 +331,9 @@ describe('CTA', () => {
     it('should show urgency message', () => {
       renderCTA();
 
-      expect(screen.getByText('Limited time: Get premium templates free')).toBeInTheDocument();
+      expect(
+        screen.getByText('Limited time: Get premium templates free')
+      ).toBeInTheDocument();
     });
 
     it('should display countdown timer', () => {
@@ -304,7 +348,7 @@ describe('CTA', () => {
 
     it('should update countdown in real-time', async () => {
       jest.useFakeTimers();
-      
+
       renderCTA({
         ...mockProps,
         showCountdown: true,
@@ -340,7 +384,9 @@ describe('CTA', () => {
         variant: 'A',
       });
 
-      expect(screen.getByText('Start Building Your Portfolio')).toBeInTheDocument();
+      expect(
+        screen.getByText('Start Building Your Portfolio')
+      ).toBeInTheDocument();
     });
 
     it('should render variant B with alternative copy', () => {
@@ -358,7 +404,9 @@ describe('CTA', () => {
         variant: 'C',
       });
 
-      expect(screen.getByText('Start My Free Portfolio - Limited Time')).toBeInTheDocument();
+      expect(
+        screen.getByText('Start My Free Portfolio - Limited Time')
+      ).toBeInTheDocument();
     });
 
     it('should track variant impressions', () => {
@@ -385,9 +433,11 @@ describe('CTA', () => {
 
       renderCTA();
 
-      const ctaContainer = document.querySelector('[data-testid="cta-container"]');
+      const ctaContainer = document.querySelector(
+        '[data-testid="cta-container"]'
+      );
       expect(ctaContainer).toHaveClass('px-4');
-      
+
       const buttons = document.querySelectorAll('button');
       buttons.forEach(button => {
         expect(button).toHaveClass('w-full');
@@ -404,7 +454,9 @@ describe('CTA', () => {
 
       renderCTA();
 
-      const ctaContainer = document.querySelector('[data-testid="cta-container"]');
+      const ctaContainer = document.querySelector(
+        '[data-testid="cta-container"]'
+      );
       expect(ctaContainer).toHaveClass('px-8');
     });
 
@@ -418,7 +470,9 @@ describe('CTA', () => {
 
       renderCTA();
 
-      const title = screen.getByText('Ready to Create Your Professional Portfolio?');
+      const title = screen.getByText(
+        'Ready to Create Your Professional Portfolio?'
+      );
       expect(title).toHaveClass('text-lg'); // Smaller on mobile
     });
 
@@ -432,7 +486,9 @@ describe('CTA', () => {
 
       renderCTA();
 
-      const buttonContainer = document.querySelector('[data-testid="button-container"]');
+      const buttonContainer = document.querySelector(
+        '[data-testid="button-container"]'
+      );
       expect(buttonContainer).toHaveClass('flex-col');
     });
   });
@@ -441,18 +497,26 @@ describe('CTA', () => {
     it('should have proper ARIA labels', () => {
       renderCTA();
 
-      const ctaSection = screen.getByRole('region', { name: /call to action/i });
-      expect(ctaSection).toHaveAttribute('aria-label', 'Call to action section');
-      
+      const ctaSection = screen.getByRole('region', {
+        name: /call to action/i,
+      });
+      expect(ctaSection).toHaveAttribute(
+        'aria-label',
+        'Call to action section'
+      );
+
       const primaryButton = screen.getByText('Start Building Your Portfolio');
-      expect(primaryButton).toHaveAttribute('aria-label', 'Start building your portfolio now');
+      expect(primaryButton).toHaveAttribute(
+        'aria-label',
+        'Start building your portfolio now'
+      );
     });
 
     it('should support keyboard navigation', () => {
       renderCTA();
 
       const buttons = screen.getAllByRole('button');
-      
+
       buttons.forEach(button => {
         expect(button.tabIndex).toBeGreaterThanOrEqual(0);
       });
@@ -462,14 +526,16 @@ describe('CTA', () => {
       renderCTA();
 
       const heading = screen.getByRole('heading', { level: 2 });
-      expect(heading).toHaveTextContent('Ready to Create Your Professional Portfolio?');
+      expect(heading).toHaveTextContent(
+        'Ready to Create Your Professional Portfolio?'
+      );
     });
 
     it('should provide alternative text for icons', () => {
       renderCTA();
 
       const icons = document.querySelectorAll('[data-testid*="icon"]');
-      
+
       icons.forEach(icon => {
         expect(icon).toHaveAttribute('aria-hidden', 'true');
       });
@@ -477,11 +543,13 @@ describe('CTA', () => {
 
     it('should announce loading states to screen readers', async () => {
       const user = userEvent.setup();
-      
-      const slowOnGetStarted = jest.fn().mockImplementation(
-        () => new Promise(resolve => setTimeout(resolve, 1000))
-      );
-      
+
+      const slowOnGetStarted = jest
+        .fn()
+        .mockImplementation(
+          () => new Promise(resolve => setTimeout(resolve, 1000))
+        );
+
       renderCTA({ onGetStarted: slowOnGetStarted });
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
@@ -495,7 +563,7 @@ describe('CTA', () => {
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
       const styles = window.getComputedStyle(primaryButton);
-      
+
       // Should have high contrast (testing with mock styles)
       expect(styles.backgroundColor).not.toBe(styles.color);
     });
@@ -505,8 +573,10 @@ describe('CTA', () => {
     it('should lazy load testimonial images', () => {
       renderCTA();
 
-      const testimonialImages = document.querySelectorAll('[data-testid="testimonial-image"]');
-      
+      const testimonialImages = document.querySelectorAll(
+        '[data-testid="testimonial-image"]'
+      );
+
       testimonialImages.forEach(img => {
         expect(img).toHaveAttribute('loading', 'lazy');
       });
@@ -516,10 +586,10 @@ describe('CTA', () => {
       renderCTA();
 
       const preloadLinks = document.querySelectorAll('link[rel="preload"]');
-      const ctaAssets = Array.from(preloadLinks).filter(link => 
+      const ctaAssets = Array.from(preloadLinks).filter(link =>
         link.getAttribute('href')?.includes('cta')
       );
-      
+
       expect(ctaAssets.length).toBeGreaterThan(0);
     });
 
@@ -528,7 +598,7 @@ describe('CTA', () => {
       renderCTA();
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
-      
+
       // Rapid clicks
       await user.click(primaryButton);
       await user.click(primaryButton);
@@ -579,7 +649,9 @@ describe('CTA', () => {
       const user = userEvent.setup();
       renderCTA();
 
-      const testimonial = screen.getByText('PRISMA helped me create a stunning portfolio that landed my dream job!');
+      const testimonial = screen.getByText(
+        'PRISMA helped me create a stunning portfolio that landed my dream job!'
+      );
       await user.click(testimonial);
 
       expect(window.gtag).toHaveBeenCalledWith('event', 'testimonial_click', {
@@ -592,22 +664,26 @@ describe('CTA', () => {
   describe('Error Handling', () => {
     it('should handle onGetStarted errors gracefully', async () => {
       const user = userEvent.setup();
-      
-      const failingOnGetStarted = jest.fn().mockRejectedValue(new Error('Action failed'));
-      
+
+      const failingOnGetStarted = jest
+        .fn()
+        .mockRejectedValue(new Error('Action failed'));
+
       renderCTA({ onGetStarted: failingOnGetStarted });
 
       const primaryButton = screen.getByText('Start Building Your Portfolio');
       await user.click(primaryButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Something went wrong. Please try again.')).toBeInTheDocument();
+        expect(
+          screen.getByText('Something went wrong. Please try again.')
+        ).toBeInTheDocument();
       });
     });
 
     it('should handle demo loading failures', async () => {
       const user = userEvent.setup();
-      
+
       // Mock demo API failure
       global.fetch = jest.fn().mockRejectedValue(new Error('Demo failed'));
 
@@ -617,7 +693,9 @@ describe('CTA', () => {
       await user.click(demoButton);
 
       await waitFor(() => {
-        expect(screen.getByText('Demo temporarily unavailable')).toBeInTheDocument();
+        expect(
+          screen.getByText('Demo temporarily unavailable')
+        ).toBeInTheDocument();
       });
     });
 
@@ -637,7 +715,7 @@ describe('CTA', () => {
   describe('Integration', () => {
     it('should integrate with authentication system', async () => {
       const user = userEvent.setup();
-      
+
       renderCTA({
         ...mockProps,
         isAuthenticated: false,
@@ -647,7 +725,9 @@ describe('CTA', () => {
       await user.click(primaryButton);
 
       // Should redirect to signup
-      expect(mockProps.onGetStarted).toHaveBeenCalledWith({ requiresAuth: true });
+      expect(mockProps.onGetStarted).toHaveBeenCalledWith({
+        requiresAuth: true,
+      });
     });
 
     it('should integrate with experiment platform', () => {
@@ -675,7 +755,7 @@ describe('CTA', () => {
   describe('Edge Cases', () => {
     it('should handle missing onGetStarted prop', async () => {
       const user = userEvent.setup();
-      
+
       renderCTA({
         onGetStarted: undefined as any,
       });
@@ -689,7 +769,7 @@ describe('CTA', () => {
 
     it('should handle extremely long text gracefully', () => {
       const longTitle = 'A'.repeat(200);
-      
+
       mockUseLanguage.mockReturnValue({
         t: {
           ...mockTranslations,
@@ -712,7 +792,9 @@ describe('CTA', () => {
       });
 
       // Should fallback to default variant
-      expect(screen.getByText('Start Building Your Portfolio')).toBeInTheDocument();
+      expect(
+        screen.getByText('Start Building Your Portfolio')
+      ).toBeInTheDocument();
     });
   });
 });

@@ -475,9 +475,7 @@ describe('GDPR Service Integration', () => {
 
     // Simulate data collection for export
     mockSupabase.select.mockResolvedValue({
-      data: [
-        { id: 1, name: 'Test Portfolio' },
-      ],
+      data: [{ id: 1, name: 'Test Portfolio' }],
       error: null,
     });
 

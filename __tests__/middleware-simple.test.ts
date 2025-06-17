@@ -7,18 +7,18 @@ jest.mock('@supabase/ssr', () => ({
     auth: {
       getSession: jest.fn().mockResolvedValue({
         data: { session: { user: { id: 'test-user' } } },
-        error: null
-      })
-    }
-  }))
+        error: null,
+      }),
+    },
+  })),
 }));
 
 jest.mock('@/lib/utils/logger', () => ({
   logger: {
     warn: jest.fn(),
     error: jest.fn(),
-    info: jest.fn()
-  }
+    info: jest.fn(),
+  },
 }));
 
 jest.mock('@/lib/config', () => ({
@@ -32,24 +32,24 @@ jest.mock('@/lib/config', () => ({
 }));
 
 jest.mock('@/middleware/api-version', () => ({
-  apiVersionMiddleware: jest.fn(() => NextResponse.next())
+  apiVersionMiddleware: jest.fn(() => NextResponse.next()),
 }));
 
 jest.mock('@/middleware/security', () => ({
   securityMiddleware: jest.fn(() => null),
-  applySecurityToResponse: jest.fn((req, res) => res)
+  applySecurityToResponse: jest.fn((req, res) => res),
 }));
 
 describe('Middleware Simple Test', () => {
   it('should work with basic request', async () => {
     const request = new NextRequest(new URL('http://localhost:3000/'));
-    
+
     console.log('Testing middleware with request:', request.url);
-    
+
     try {
       const response = await middleware(request);
       console.log('Response:', response);
-      
+
       expect(response).toBeDefined();
       expect(response.status).toBe(200);
     } catch (error) {

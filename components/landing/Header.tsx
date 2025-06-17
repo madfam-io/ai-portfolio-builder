@@ -120,6 +120,14 @@ export default function Header(): React.ReactElement {
                   Editor
                 </Link>
                 <Link
+                  href="/quick-start"
+                  className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
+                    pathname === '/quick-start' ? 'text-purple-600' : ''
+                  }`}
+                >
+                  Quick Start
+                </Link>
+                <Link
                   href="/analytics"
                   className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
                     pathname === '/analytics' ? 'text-purple-600' : ''
@@ -134,6 +142,14 @@ export default function Header(): React.ReactElement {
                   }`}
                 >
                   Templates
+                </Link>
+                <Link
+                  href="/marketplace"
+                  className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
+                    pathname === '/marketplace' ? 'text-purple-600' : ''
+                  }`}
+                >
+                  Marketplace
                 </Link>
                 <Link
                   href="/about"
@@ -241,6 +257,13 @@ export default function Header(): React.ReactElement {
                       onClick={() => setUserMenuOpen(false)}
                     >
                       Editor
+                    </Link>
+                    <Link
+                      href="/quick-start"
+                      className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                      onClick={() => setUserMenuOpen(false)}
+                    >
+                      Quick Start
                     </Link>
                     <Link
                       href="/profile"
@@ -369,6 +392,14 @@ export default function Header(): React.ReactElement {
                   }`}
                 >
                   Editor
+                </Link>
+                <Link
+                  href="/quick-start"
+                  className={`text-gray-900 dark:text-white hover:text-purple-600 transition ${
+                    pathname === '/quick-start' ? 'text-purple-600' : ''
+                  }`}
+                >
+                  Quick Start
                 </Link>
                 <Link
                   href="/about"

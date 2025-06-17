@@ -27,7 +27,7 @@ describe('API Version Middleware', () => {
   ) => {
     const url = new URL(`https://example.com${pathname}`);
     const headers = new Headers(options.headers);
-    
+
     return new NextRequest(url, {
       method: options.method || 'GET',
       headers,
@@ -74,7 +74,7 @@ describe('API Version Middleware', () => {
 
     it('should work with multiple supported versions', () => {
       API_VERSION_CONFIG.supportedVersions = ['v1', 'v2', 'v3'];
-      
+
       expect(isVersionSupported('v1')).toBe(true);
       expect(isVersionSupported('v2')).toBe(true);
       expect(isVersionSupported('v3')).toBe(true);
@@ -107,9 +107,11 @@ describe('API Version Middleware', () => {
     describe('getDeprecationInfo', () => {
       it('should return deprecation info for deprecated versions', () => {
         const info = getDeprecationInfo('v0');
-        
+
         expect(info).toBeDefined();
-        expect(info?.message).toBe('API v0 is deprecated. Please upgrade to v1.');
+        expect(info?.message).toBe(
+          'API v0 is deprecated. Please upgrade to v1.'
+        );
         expect(info?.deprecatedAt).toEqual(new Date('2025-01-01'));
         expect(info?.sunsetDate).toEqual(new Date('2025-06-01'));
       });
@@ -125,7 +127,7 @@ describe('API Version Middleware', () => {
       it('should pass through non-API requests unchanged', async () => {
         const request = createRequest('/dashboard');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response).toBeDefined();
         expect(response.status).toBe(200);
         expect(response.headers.get('location')).toBeNull();
@@ -134,7 +136,7 @@ describe('API Version Middleware', () => {
       it('should pass through root requests', async () => {
         const request = createRequest('/');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
       });
     });
@@ -143,32 +145,40 @@ describe('API Version Middleware', () => {
       it('should redirect /api/ to current version', async () => {
         const request = createRequest('/api/');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(307); // Temporary redirect
-        expect(response.headers.get('location')).toBe('https://example.com/api/v1/');
+        expect(response.headers.get('location')).toBe(
+          'https://example.com/api/v1/'
+        );
       });
 
       it('should redirect non-versioned API paths to current version', async () => {
         const request = createRequest('/api/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(307);
-        expect(response.headers.get('location')).toBe('https://example.com/api/v1/portfolios');
+        expect(response.headers.get('location')).toBe(
+          'https://example.com/api/v1/portfolios'
+        );
       });
 
       it('should redirect nested non-versioned paths', async () => {
         const request = createRequest('/api/portfolios/123/publish');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(307);
-        expect(response.headers.get('location')).toBe('https://example.com/api/v1/portfolios/123/publish');
+        expect(response.headers.get('location')).toBe(
+          'https://example.com/api/v1/portfolios/123/publish'
+        );
       });
 
       it('should preserve query parameters in redirects', async () => {
         const request = createRequest('/api/portfolios?limit=10&offset=20');
         const response = await apiVersionMiddleware(request);
-        
-        expect(response.headers.get('location')).toBe('https://example.com/api/v1/portfolios?limit=10&offset=20');
+
+        expect(response.headers.get('location')).toBe(
+          'https://example.com/api/v1/portfolios?limit=10&offset=20'
+        );
       });
     });
 
@@ -176,7 +186,7 @@ describe('API Version Middleware', () => {
       it('should allow requests to supported versions', async () => {
         const request = createRequest('/api/v1/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
         expect(response.headers.get('X-API-Version')).toBe('v1');
         expect(response.headers.get('X-API-Current-Version')).toBe('v1');
@@ -186,9 +196,9 @@ describe('API Version Middleware', () => {
       it('should reject requests to unsupported versions', async () => {
         const request = createRequest('/api/v2/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(400);
-        
+
         const body = await response.json();
         expect(body._error).toBe('Unsupported API Version');
         expect(body._message).toContain('API version v2 is not supported');
@@ -197,15 +207,15 @@ describe('API Version Middleware', () => {
 
       it('should handle multiple supported versions', async () => {
         API_VERSION_CONFIG.supportedVersions = ['v1', 'v2'];
-        
+
         const requestV1 = createRequest('/api/v1/portfolios');
         const responseV1 = await apiVersionMiddleware(requestV1);
         expect(responseV1.status).toBe(200);
-        
+
         const requestV2 = createRequest('/api/v2/portfolios');
         const responseV2 = await apiVersionMiddleware(requestV2);
         expect(responseV2.status).toBe(200);
-        
+
         const requestV3 = createRequest('/api/v3/portfolios');
         const responseV3 = await apiVersionMiddleware(requestV3);
         expect(responseV3.status).toBe(400);
@@ -225,18 +235,26 @@ describe('API Version Middleware', () => {
       it('should add deprecation headers for deprecated versions', async () => {
         const request = createRequest('/api/v0/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
-        expect(response.headers.get('X-API-Deprecation-Warning')).toBe('Please upgrade to v1');
-        expect(response.headers.get('X-API-Sunset-Date')).toBe('2025-06-01T00:00:00.000Z');
-        expect(response.headers.get('Sunset')).toBe('Mon, 01 Jun 2025 00:00:00 GMT');
-        expect(response.headers.get('Deprecation')).toBe('date="2025-01-01T00:00:00.000Z"');
+        expect(response.headers.get('X-API-Deprecation-Warning')).toBe(
+          'Please upgrade to v1'
+        );
+        expect(response.headers.get('X-API-Sunset-Date')).toBe(
+          '2025-06-01T00:00:00.000Z'
+        );
+        expect(response.headers.get('Sunset')).toBe(
+          'Mon, 01 Jun 2025 00:00:00 GMT'
+        );
+        expect(response.headers.get('Deprecation')).toBe(
+          'date="2025-01-01T00:00:00.000Z"'
+        );
       });
 
       it('should not add deprecation headers for current versions', async () => {
         const request = createRequest('/api/v1/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
         expect(response.headers.get('X-API-Deprecation-Warning')).toBeNull();
         expect(response.headers.get('X-API-Sunset-Date')).toBeNull();
@@ -249,7 +267,7 @@ describe('API Version Middleware', () => {
       it('should add standard API version headers', async () => {
         const request = createRequest('/api/v1/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.headers.get('X-API-Version')).toBe('v1');
         expect(response.headers.get('X-API-Current-Version')).toBe('v1');
         expect(response.headers.get('X-API-Supported-Versions')).toBe('v1');
@@ -257,10 +275,10 @@ describe('API Version Middleware', () => {
 
       it('should handle requests with existing headers', async () => {
         const request = createRequest('/api/v1/portfolios', {
-          headers: { 'Authorization': 'Bearer token123' },
+          headers: { Authorization: 'Bearer token123' },
         });
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
         expect(response.headers.get('X-API-Version')).toBe('v1');
       });
@@ -270,7 +288,7 @@ describe('API Version Middleware', () => {
       it('should handle malformed version paths', async () => {
         const request = createRequest('/api/version1/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         // Should redirect to current version
         expect(response.status).toBe(307);
       });
@@ -278,14 +296,14 @@ describe('API Version Middleware', () => {
       it('should handle very long version numbers', async () => {
         const request = createRequest('/api/v999999999/portfolios');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(400);
       });
 
       it('should handle special characters in paths', async () => {
         const request = createRequest('/api/v1/portfolios/@special');
         const response = await apiVersionMiddleware(request);
-        
+
         expect(response.status).toBe(200);
       });
     });
@@ -295,7 +313,7 @@ describe('API Version Middleware', () => {
     it('should create response with version headers', () => {
       const data = { message: 'success' };
       const response = createVersionedResponse(data);
-      
+
       expect(response.headers.get('X-API-Version')).toBe('v1');
       expect(response.headers.get('X-API-Response-Time')).toBeDefined();
     });
@@ -307,7 +325,7 @@ describe('API Version Middleware', () => {
         headers: { 'Custom-Header': 'value' },
         version: 'v2',
       });
-      
+
       expect(response.status).toBe(404);
       expect(response.headers.get('Custom-Header')).toBe('value');
       expect(response.headers.get('X-API-Version')).toBe('v2');
@@ -315,7 +333,7 @@ describe('API Version Middleware', () => {
 
     it('should handle empty data', () => {
       const response = createVersionedResponse(null);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers.get('X-API-Version')).toBe('v1');
     });
@@ -332,30 +350,30 @@ describe('API Version Middleware', () => {
     it('should call handler with version context', async () => {
       const wrappedHandler = withApiVersion(mockHandler);
       const request = createRequest('/api/v1/test');
-      
+
       await wrappedHandler(request);
-      
+
       expect(mockHandler).toHaveBeenCalledWith(request, { _apiVersion: 'v1' });
     });
 
     it('should default to current version for non-versioned paths', async () => {
       const wrappedHandler = withApiVersion(mockHandler);
       const request = createRequest('/api/test');
-      
+
       await wrappedHandler(request);
-      
+
       expect(mockHandler).toHaveBeenCalledWith(request, { _apiVersion: 'v1' });
     });
 
     it('should enforce minimum version requirement', async () => {
       const wrappedHandler = withApiVersion(mockHandler, { minVersion: 'v2' });
       const request = createRequest('/api/v1/test');
-      
+
       const response = await wrappedHandler(request);
-      
+
       expect(response.status).toBe(400);
       expect(mockHandler).not.toHaveBeenCalled();
-      
+
       const body = await response.json();
       expect(body._error).toBe('Version Too Low');
     });
@@ -363,12 +381,12 @@ describe('API Version Middleware', () => {
     it('should enforce maximum version requirement', async () => {
       const wrappedHandler = withApiVersion(mockHandler, { maxVersion: 'v1' });
       const request = createRequest('/api/v2/test');
-      
+
       const response = await wrappedHandler(request);
-      
+
       expect(response.status).toBe(400);
       expect(mockHandler).not.toHaveBeenCalled();
-      
+
       const body = await response.json();
       expect(body._error).toBe('Version Too High');
     });
@@ -378,17 +396,17 @@ describe('API Version Middleware', () => {
         minVersion: 'v1',
         maxVersion: 'v3',
       });
-      
+
       const requests = [
         createRequest('/api/v1/test'),
         createRequest('/api/v2/test'),
         createRequest('/api/v3/test'),
       ];
-      
+
       for (const request of requests) {
         mockHandler.mockClear();
         const response = await wrappedHandler(request);
-        
+
         expect(response.status).toBe(200);
         expect(mockHandler).toHaveBeenCalled();
       }
@@ -399,17 +417,17 @@ describe('API Version Middleware', () => {
         minVersion: 'v2',
         maxVersion: 'v10',
       });
-      
+
       // v1 should be too low
       const lowRequest = createRequest('/api/v1/test');
       const lowResponse = await wrappedHandler(lowRequest);
       expect(lowResponse.status).toBe(400);
-      
+
       // v11 should be too high
       const highRequest = createRequest('/api/v11/test');
       const highResponse = await wrappedHandler(highRequest);
       expect(highResponse.status).toBe(400);
-      
+
       // v5 should be within range
       mockHandler.mockClear();
       const validRequest = createRequest('/api/v5/test');
@@ -424,16 +442,16 @@ describe('API Version Middleware', () => {
       const requests = Array.from({ length: 100 }, (_, i) =>
         createRequest(`/api/v1/test-${i}`)
       );
-      
+
       const startTime = Date.now();
       const responses = await Promise.all(
         requests.map(req => apiVersionMiddleware(req))
       );
       const endTime = Date.now();
-      
+
       expect(responses).toHaveLength(100);
       expect(endTime - startTime).toBeLessThan(100); // Should be fast
-      
+
       // All should be successful
       responses.forEach(response => {
         expect(response.status).toBe(200);
@@ -448,16 +466,20 @@ describe('API Version Middleware', () => {
         message: 'Deprecated',
       });
       API_VERSION_CONFIG.supportedVersions = ['v0', 'v1'];
-      
+
       const request1 = createRequest('/api/v0/test1');
       const response1 = await apiVersionMiddleware(request1);
-      
+
       const request2 = createRequest('/api/v0/test2');
       const response2 = await apiVersionMiddleware(request2);
-      
+
       // Both should have deprecation headers
-      expect(response1.headers.get('X-API-Deprecation-Warning')).toBe('Deprecated');
-      expect(response2.headers.get('X-API-Deprecation-Warning')).toBe('Deprecated');
+      expect(response1.headers.get('X-API-Deprecation-Warning')).toBe(
+        'Deprecated'
+      );
+      expect(response2.headers.get('X-API-Deprecation-Warning')).toBe(
+        'Deprecated'
+      );
     });
   });
 });

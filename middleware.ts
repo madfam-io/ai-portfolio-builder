@@ -24,6 +24,14 @@ import {
  */
 export async function middleware(req: NextRequest): Promise<NextResponse> {
   const { pathname } = req.nextUrl;
+  const hostname = req.headers.get('host') || '';
+
+  // Check if this is a custom domain request
+  const isCustomDomain =
+    !hostname.includes('prisma.madfam.io') &&
+    !hostname.includes('localhost') &&
+    !hostname.includes('vercel.app') &&
+    !hostname.includes('127.0.0.1');
 
   // Apply API versioning middleware first
   if (pathname.startsWith('/api/')) {
@@ -51,6 +59,77 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // Import environment config at the top of the function to avoid module initialization issues
   const { env, services } = await import('@/lib/config');
+
+  // Handle custom domain routing
+  if (isCustomDomain) {
+    // Create a Supabase client for custom domain lookup
+    const supabase = createServerClient(
+      env.NEXT_PUBLIC_SUPABASE_URL!,
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          get(name: string) {
+            return req.cookies.get(name)?.value;
+          },
+          set() {},
+          remove() {},
+        },
+      }
+    );
+
+    try {
+      // Look up the domain in the database
+      const { data: domain } = await supabase
+        .from('custom_domains')
+        .select('portfolio_id, status')
+        .eq('domain', hostname)
+        .eq('status', 'active')
+        .single();
+
+      if (domain && domain.portfolio_id) {
+        // Get portfolio details
+        const { data: portfolio } = await supabase
+          .from('portfolios')
+          .select('subdomain')
+          .eq('id', domain.portfolio_id)
+          .single();
+
+        if (portfolio && portfolio.subdomain) {
+          // Track page view analytics (async, don't block request)
+          const userAgent = req.headers.get('user-agent') || '';
+          const referrer = req.headers.get('referer') || '';
+
+          // Fire and forget analytics tracking
+          supabase
+            .from('domain_analytics')
+            .insert({
+              domain_id: domain.portfolio_id,
+              event_type: 'page_view',
+              path: pathname,
+              referrer: referrer || null,
+              user_agent: userAgent,
+              visitor_id: req.ip || 'unknown',
+              session_id:
+                req.headers.get('x-forwarded-for') || req.ip || 'unknown',
+            })
+            .then()
+            .catch(() => {}); // Ignore analytics errors
+
+          // Rewrite to the portfolio route
+          const url = req.nextUrl.clone();
+          url.pathname = `/p/${portfolio.subdomain}${pathname}`;
+          return NextResponse.rewrite(url);
+        }
+      }
+    } catch (error) {
+      logger.error('Custom domain lookup failed', { error, hostname });
+    }
+
+    // If domain not found or not active, show error page
+    const url = req.nextUrl.clone();
+    url.pathname = '/domain-not-found';
+    return NextResponse.rewrite(url);
+  }
 
   // If Supabase is not configured, skip authentication checks (development mode)
   if (!services.supabase) {

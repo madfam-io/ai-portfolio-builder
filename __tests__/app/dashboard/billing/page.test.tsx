@@ -25,12 +25,20 @@ jest.mock('@/hooks/use-toast', () => ({
   useToast: jest.fn(),
 }));
 jest.mock('@/components/auth/protected-route', () => {
-  return function MockedProtectedRoute({ children }: { children: React.ReactNode }) {
+  return function MockedProtectedRoute({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
     return <div data-testid="protected-route">{children}</div>;
   };
 });
 jest.mock('@/components/layouts/BaseLayout', () => {
-  return function MockedBaseLayout({ children }: { children: React.ReactNode }) {
+  return function MockedBaseLayout({
+    children,
+  }: {
+    children: React.ReactNode;
+  }) {
     return <div data-testid="base-layout">{children}</div>;
   };
 });
@@ -46,7 +54,9 @@ jest.mock('@/components/dashboard/ai-credit-packs', () => {
 });
 
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
-const mockUseSubscription = useSubscription as jest.MockedFunction<typeof useSubscription>;
+const mockUseSubscription = useSubscription as jest.MockedFunction<
+  typeof useSubscription
+>;
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 const mockUseToast = useToast as jest.MockedFunction<typeof useToast>;
 
@@ -60,7 +70,7 @@ describe('BillingPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     mockUseRouter.mockReturnValue({
       push: mockPush,
       replace: jest.fn(),
@@ -123,7 +133,7 @@ describe('BillingPage', () => {
 
       expect(screen.getByTestId('protected-route')).toBeInTheDocument();
       expect(screen.getByTestId('base-layout')).toBeInTheDocument();
-      
+
       // Should show loading skeletons
       const loadingElements = screen.getAllByRole('generic');
       expect(loadingElements.length).toBeGreaterThan(0);
@@ -140,8 +150,12 @@ describe('BillingPage', () => {
 
       render(<BillingPage />);
 
-      expect(screen.getByText('Error Loading Billing Information')).toBeInTheDocument();
-      expect(screen.getByText('Failed to load subscription data')).toBeInTheDocument();
+      expect(
+        screen.getByText('Error Loading Billing Information')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('Failed to load subscription data')
+      ).toBeInTheDocument();
       expect(screen.getByText('Try Again')).toBeInTheDocument();
     });
 
@@ -172,7 +186,11 @@ describe('BillingPage', () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Billing & Usage')).toBeInTheDocument();
-      expect(screen.getByText('Manage your subscription and view your usage statistics')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Manage your subscription and view your usage statistics'
+        )
+      ).toBeInTheDocument();
     });
 
     it('should display current plan information', () => {
@@ -188,7 +206,7 @@ describe('BillingPage', () => {
 
       expect(screen.getByText('Portfolio Usage')).toBeInTheDocument();
       expect(screen.getByText('2 of 5 used')).toBeInTheDocument();
-      
+
       expect(screen.getByText('AI Usage This Month')).toBeInTheDocument();
       expect(screen.getByText('15 of 50 used')).toBeInTheDocument();
     });
@@ -231,7 +249,11 @@ describe('BillingPage', () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Upgrade Your Plan')).toBeInTheDocument();
-      expect(screen.getByText('Unlock more features and higher limits with a paid plan')).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'Unlock more features and higher limits with a paid plan'
+        )
+      ).toBeInTheDocument();
     });
 
     it('should display billing interval toggle', () => {
@@ -298,7 +320,8 @@ describe('BillingPage', () => {
     it('should redirect to Stripe portal on manage billing click', async () => {
       const mockResponse = {
         ok: true,
-        json: () => Promise.resolve({ url: 'https://billing.stripe.com/portal' }),
+        json: () =>
+          Promise.resolve({ url: 'https://billing.stripe.com/portal' }),
       };
       mockFetch.mockResolvedValue(mockResponse as any);
 
@@ -340,7 +363,8 @@ describe('BillingPage', () => {
     it('should initiate credit pack purchase', async () => {
       const mockResponse = {
         ok: true,
-        json: () => Promise.resolve({ checkoutUrl: 'https://checkout.stripe.com/test' }),
+        json: () =>
+          Promise.resolve({ checkoutUrl: 'https://checkout.stripe.com/test' }),
       };
       mockFetch.mockResolvedValue(mockResponse as any);
 
@@ -353,13 +377,16 @@ describe('BillingPage', () => {
       const purchaseButton = screen.getByText('Purchase Small Pack');
       await userEvent.click(purchaseButton);
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/v1/stripe/checkout-credits', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ packId: 'small' }),
-      });
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/api/v1/stripe/checkout-credits',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ packId: 'small' }),
+        }
+      );
 
       await waitFor(() => {
         expect(window.location.href).toBe('https://checkout.stripe.com/test');
@@ -406,7 +433,8 @@ describe('BillingPage', () => {
     it('should handle upgrade button clicks', async () => {
       const mockResponse = {
         ok: true,
-        json: () => Promise.resolve({ url: 'https://checkout.stripe.com/upgrade' }),
+        json: () =>
+          Promise.resolve({ url: 'https://checkout.stripe.com/upgrade' }),
       };
       mockFetch.mockResolvedValue(mockResponse as any);
 
@@ -430,7 +458,9 @@ describe('BillingPage', () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Need Help?')).toBeInTheDocument();
-      expect(screen.getByText('Have questions about billing or need assistance?')).toBeInTheDocument();
+      expect(
+        screen.getByText('Have questions about billing or need assistance?')
+      ).toBeInTheDocument();
       expect(screen.getByText('Contact Support')).toBeInTheDocument();
       expect(screen.getByText('Billing Documentation')).toBeInTheDocument();
     });
@@ -444,8 +474,15 @@ describe('BillingPage', () => {
     it('should have proper heading structure', () => {
       render(<BillingPage />);
 
-      expect(screen.getByRole('heading', { level: 1, name: 'Billing & Usage' })).toBeInTheDocument();
-      expect(screen.getByRole('heading', { level: 2, name: 'AI Enhancement Credits' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', { level: 1, name: 'Billing & Usage' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('heading', {
+          level: 2,
+          name: 'AI Enhancement Credits',
+        })
+      ).toBeInTheDocument();
     });
 
     it('should have accessible progress bars', () => {

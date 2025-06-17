@@ -25,6 +25,8 @@ const mockRedisClient = {
 };
 
 export const getRedisClient = jest.fn().mockResolvedValue(mockRedisClient);
-export const createRedisConnection = jest.fn().mockResolvedValue(mockRedisClient);
+export const createRedisConnection = jest
+  .fn()
+  .mockResolvedValue(mockRedisClient);
 
 export default mockRedisClient;

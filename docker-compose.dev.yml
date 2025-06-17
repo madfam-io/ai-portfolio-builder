@@ -74,3 +74,5 @@ networks:
     driver: bridge
   posthog-network:
     driver: bridge
+  signoz-network:
+    driver: bridge

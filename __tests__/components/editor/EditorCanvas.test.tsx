@@ -36,7 +36,8 @@ describe('EditorCanvas', () => {
       {
         id: 'project-1',
         title: 'E-commerce Platform',
-        description: 'Full-stack e-commerce application built with React and Node.js',
+        description:
+          'Full-stack e-commerce application built with React and Node.js',
         technologies: ['React', 'Node.js', 'MongoDB'],
         link: 'https://github.com/user/ecommerce',
       },
@@ -82,10 +83,7 @@ describe('EditorCanvas', () => {
 
   const renderEditorCanvas = (portfolio = mockPortfolio) => {
     return render(
-      <EditorCanvas
-        portfolio={portfolio}
-        onDataChange={mockOnDataChange}
-      />
+      <EditorCanvas portfolio={portfolio} onDataChange={mockOnDataChange} />
     );
   };
 
@@ -93,7 +91,9 @@ describe('EditorCanvas', () => {
     it('should render the main editor canvas', () => {
       renderEditorCanvas();
 
-      expect(screen.getByText('Editing Portfolio: Test Portfolio')).toBeInTheDocument();
+      expect(
+        screen.getByText('Editing Portfolio: Test Portfolio')
+      ).toBeInTheDocument();
       expect(screen.getByText('Hero Section')).toBeInTheDocument();
       expect(screen.getByText('About Section')).toBeInTheDocument();
       expect(screen.getByText('Projects')).toBeInTheDocument();
@@ -103,7 +103,9 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      const taglineInput = screen.getByDisplayValue('Building amazing web applications');
+      const taglineInput = screen.getByDisplayValue(
+        'Building amazing web applications'
+      );
 
       expect(headlineInput).toBeInTheDocument();
       expect(taglineInput).toBeInTheDocument();
@@ -122,7 +124,9 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
-      expect(screen.getByText(/Full-stack e-commerce application/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Full-stack e-commerce application/)
+      ).toBeInTheDocument();
     });
 
     it('should render add project button', () => {
@@ -138,7 +142,7 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      
+
       await user.clear(headlineInput);
       await user.type(headlineInput, 'Full Stack Developer');
 
@@ -151,8 +155,10 @@ describe('EditorCanvas', () => {
       const user = userEvent.setup();
       renderEditorCanvas();
 
-      const taglineInput = screen.getByDisplayValue('Building amazing web applications');
-      
+      const taglineInput = screen.getByDisplayValue(
+        'Building amazing web applications'
+      );
+
       await user.clear(taglineInput);
       await user.type(taglineInput, 'Creating innovative solutions');
 
@@ -166,7 +172,7 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      
+
       await user.clear(headlineInput);
 
       expect(mockOnDataChange).toHaveBeenCalledWith({
@@ -181,7 +187,7 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const bioTextarea = screen.getByDisplayValue(/Experienced developer/);
-      
+
       await user.clear(bioTextarea);
       await user.type(bioTextarea, 'New bio content');
 
@@ -195,7 +201,7 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const bioTextarea = screen.getByDisplayValue(/Experienced developer/);
-      
+
       await user.clear(bioTextarea);
       await user.type(bioTextarea, 'Line 1{enter}Line 2{enter}Line 3');
 
@@ -210,7 +216,9 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
-      expect(screen.getByText(/Full-stack e-commerce application/)).toBeInTheDocument();
+      expect(
+        screen.getByText(/Full-stack e-commerce application/)
+      ).toBeInTheDocument();
     });
 
     it('should open project modal when add button is clicked', async () => {
@@ -221,8 +229,12 @@ describe('EditorCanvas', () => {
       await user.click(addButton);
 
       expect(screen.getByText('Add New Project')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Enter project title')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Describe your project...')).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Enter project title')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Describe your project...')
+      ).toBeInTheDocument();
     });
 
     it('should close project modal when cancel is clicked', async () => {
@@ -253,20 +265,24 @@ describe('EditorCanvas', () => {
     beforeEach(async () => {
       const user = userEvent.setup();
       renderEditorCanvas();
-      
+
       const addButton = screen.getByText('+ Add Project');
       await user.click(addButton);
     });
 
     it('should render all project form fields', () => {
-      expect(screen.getByPlaceholderText('Enter project title')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Describe your project...')).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Enter project title')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Describe your project...')
+      ).toBeInTheDocument();
       expect(screen.getByPlaceholderText('https://...')).toBeInTheDocument();
     });
 
     it('should update project title input', async () => {
       const user = userEvent.setup();
-      
+
       const titleInput = screen.getByPlaceholderText('Enter project title');
       await user.type(titleInput, 'New Project');
 
@@ -275,16 +291,20 @@ describe('EditorCanvas', () => {
 
     it('should update project description textarea', async () => {
       const user = userEvent.setup();
-      
-      const descriptionTextarea = screen.getByPlaceholderText('Describe your project...');
+
+      const descriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
       await user.type(descriptionTextarea, 'This is a new project description');
 
-      expect(descriptionTextarea).toHaveValue('This is a new project description');
+      expect(descriptionTextarea).toHaveValue(
+        'This is a new project description'
+      );
     });
 
     it('should update project link input', async () => {
       const user = userEvent.setup();
-      
+
       const linkInput = screen.getByPlaceholderText('https://...');
       await user.type(linkInput, 'https://github.com/user/project');
 
@@ -298,10 +318,12 @@ describe('EditorCanvas', () => {
 
     it('should enable add button when required fields are filled', async () => {
       const user = userEvent.setup();
-      
+
       const titleInput = screen.getByPlaceholderText('Enter project title');
-      const descriptionTextarea = screen.getByPlaceholderText('Describe your project...');
-      
+      const descriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
+
       await user.type(titleInput, 'Test Project');
       await user.type(descriptionTextarea, 'Test Description');
 
@@ -311,11 +333,13 @@ describe('EditorCanvas', () => {
 
     it('should add project when form is submitted with valid data', async () => {
       const user = userEvent.setup();
-      
+
       const titleInput = screen.getByPlaceholderText('Enter project title');
-      const descriptionTextarea = screen.getByPlaceholderText('Describe your project...');
+      const descriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
       const linkInput = screen.getByPlaceholderText('https://...');
-      
+
       await user.type(titleInput, 'New Test Project');
       await user.type(descriptionTextarea, 'A comprehensive test project');
       await user.type(linkInput, 'https://example.com');
@@ -339,10 +363,12 @@ describe('EditorCanvas', () => {
 
     it('should close modal after successful project addition', async () => {
       const user = userEvent.setup();
-      
+
       const titleInput = screen.getByPlaceholderText('Enter project title');
-      const descriptionTextarea = screen.getByPlaceholderText('Describe your project...');
-      
+      const descriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
+
       await user.type(titleInput, 'New Project');
       await user.type(descriptionTextarea, 'Description');
 
@@ -354,11 +380,13 @@ describe('EditorCanvas', () => {
 
     it('should clear form after successful submission', async () => {
       const user = userEvent.setup();
-      
+
       // Fill and submit form
       const titleInput = screen.getByPlaceholderText('Enter project title');
-      const descriptionTextarea = screen.getByPlaceholderText('Describe your project...');
-      
+      const descriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
+
       await user.type(titleInput, 'Project 1');
       await user.type(descriptionTextarea, 'Description 1');
 
@@ -371,8 +399,10 @@ describe('EditorCanvas', () => {
 
       // Check form is cleared
       const newTitleInput = screen.getByPlaceholderText('Enter project title');
-      const newDescriptionTextarea = screen.getByPlaceholderText('Describe your project...');
-      
+      const newDescriptionTextarea = screen.getByPlaceholderText(
+        'Describe your project...'
+      );
+
       expect(newTitleInput).toHaveValue('');
       expect(newDescriptionTextarea).toHaveValue('');
     });
@@ -395,7 +425,9 @@ describe('EditorCanvas', () => {
       await user.click(addButton);
 
       // Modal should be focusable
-      const modal = screen.getByRole('dialog', { hidden: true }) || screen.getByText('Add New Project').closest('div');
+      const modal =
+        screen.getByRole('dialog', { hidden: true }) ||
+        screen.getByText('Add New Project').closest('div');
       expect(modal).toBeInTheDocument();
     });
 
@@ -403,12 +435,14 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      const taglineInput = screen.getByDisplayValue('Building amazing web applications');
+      const taglineInput = screen.getByDisplayValue(
+        'Building amazing web applications'
+      );
 
       // Tab navigation
       headlineInput.focus();
       fireEvent.keyDown(headlineInput, { key: 'Tab' });
-      
+
       expect(document.activeElement).toBe(taglineInput);
     });
   });
@@ -425,18 +459,24 @@ describe('EditorCanvas', () => {
 
       renderEditorCanvas(minimalPortfolio);
 
-      expect(screen.getByPlaceholderText('Enter your headline')).toHaveValue('');
-      expect(screen.getByPlaceholderText('A short, memorable tagline')).toHaveValue('');
-      expect(screen.getByPlaceholderText('Tell us about yourself...')).toHaveValue('');
+      expect(screen.getByPlaceholderText('Enter your headline')).toHaveValue(
+        ''
+      );
+      expect(
+        screen.getByPlaceholderText('A short, memorable tagline')
+      ).toHaveValue('');
+      expect(
+        screen.getByPlaceholderText('Tell us about yourself...')
+      ).toHaveValue('');
     });
 
-    it('should handle extremely long text input', () => {
+    it('should handle extremely long text input', async () => {
       const user = userEvent.setup();
       renderEditorCanvas();
 
       const longText = 'A'.repeat(100); // Reduced for test performance
       const bioTextarea = screen.getByDisplayValue(/Experienced developer/);
-      
+
       await user.clear(bioTextarea);
       await user.type(bioTextarea, longText);
 
@@ -451,7 +491,7 @@ describe('EditorCanvas', () => {
 
       const specialText = 'Special chars: !@#$%^&*()_+-=';
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      
+
       await user.clear(headlineInput);
       await user.type(headlineInput, specialText);
 
@@ -465,7 +505,7 @@ describe('EditorCanvas', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
-      
+
       // Rapid changes
       await user.clear(headlineInput);
       await user.type(headlineInput, 'Dev');
@@ -482,10 +522,14 @@ describe('EditorCanvas', () => {
     it('should use translated text from language hook', () => {
       renderEditorCanvas();
 
-      expect(screen.getByText('Editing Portfolio: Test Portfolio')).toBeInTheDocument();
+      expect(
+        screen.getByText('Editing Portfolio: Test Portfolio')
+      ).toBeInTheDocument();
       expect(screen.getByText('Hero Section')).toBeInTheDocument();
       expect(screen.getByText('About Section')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Enter your headline')).toBeInTheDocument();
+      expect(
+        screen.getByPlaceholderText('Enter your headline')
+      ).toBeInTheDocument();
     });
 
     it('should fallback gracefully when translations are missing', () => {

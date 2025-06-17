@@ -3,7 +3,13 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PortfolioEditor from '@/components/editor/PortfolioEditor';
 import { useAutoSave } from '@/hooks/useAutoSave';
@@ -21,7 +27,7 @@ jest.mock('@/lib/utils/logger');
 jest.mock('@/components/editor/EditorHeader', () => ({
   EditorHeader: ({ portfolio, onSave }: any) => (
     <div data-testid="editor-header">
-<button onClick={() => onSave(portfolio)}>Save</button>
+      <button onClick={() => onSave(portfolio)}>Save</button>
     </div>
   ),
 }));

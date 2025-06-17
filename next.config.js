@@ -39,6 +39,8 @@ const nextConfig = {
       '@octokit/rest',
       '@octokit/types',
     ],
+    // Enable instrumentation hook for OpenTelemetry
+    instrumentationHook: true,
   },
 
   // Security headers
@@ -211,7 +213,7 @@ const nextConfig = {
               priority: 30,
               reuseExistingChunk: true,
             },
-            
+
             // Next.js chunks
             next: {
               test: /[\\/]node_modules[\\/]next[\\/]/,
@@ -219,7 +221,7 @@ const nextConfig = {
               priority: 25,
               reuseExistingChunk: true,
             },
-            
+
             // Heavy analytics and chart libraries
             analytics: {
               test: /[\\/]node_modules[\\/](recharts|d3-.*|@nivo|chart\.js)[\\/]/,
@@ -227,7 +229,7 @@ const nextConfig = {
               priority: 20,
               reuseExistingChunk: true,
             },
-            
+
             // GitHub/Git related
             github: {
               test: /[\\/]node_modules[\\/](@octokit|simple-git)[\\/]/,
@@ -235,7 +237,7 @@ const nextConfig = {
               priority: 20,
               reuseExistingChunk: true,
             },
-            
+
             // Database and auth
             database: {
               test: /[\\/]node_modules[\\/](@supabase|postgres)[\\/]/,
@@ -243,7 +245,7 @@ const nextConfig = {
               priority: 20,
               reuseExistingChunk: true,
             },
-            
+
             // Payment processing
             payments: {
               test: /[\\/]node_modules[\\/](stripe|@stripe)[\\/]/,
@@ -251,7 +253,7 @@ const nextConfig = {
               priority: 20,
               reuseExistingChunk: true,
             },
-            
+
             // Date utilities
             dates: {
               test: /[\\/]node_modules[\\/](date-fns|moment|dayjs)[\\/]/,
@@ -259,7 +261,7 @@ const nextConfig = {
               priority: 15,
               reuseExistingChunk: true,
             },
-            
+
             // UI libraries
             ui: {
               test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|framer-motion)[\\/]/,
@@ -267,7 +269,7 @@ const nextConfig = {
               priority: 15,
               reuseExistingChunk: true,
             },
-            
+
             // Utility libraries
             utils: {
               test: /[\\/]node_modules[\\/](lodash|ramda|uuid|zod)[\\/]/,
@@ -275,7 +277,7 @@ const nextConfig = {
               priority: 10,
               reuseExistingChunk: true,
             },
-            
+
             // Default vendor chunk for remaining modules
             vendor: {
               test: /[\\/]node_modules[\\/]/,
@@ -283,7 +285,7 @@ const nextConfig = {
               priority: 5,
               reuseExistingChunk: true,
             },
-            
+
             // Common application code
             common: {
               minChunks: 2,
@@ -292,20 +294,20 @@ const nextConfig = {
             },
           },
         },
-        
+
         // Module concatenation for better tree shaking
         concatenateModules: true,
-        
+
         // Minimize duplicate code
         providedExports: true,
         usedExports: true,
         sideEffects: false,
       };
-      
+
       // Enhanced terser configuration for production
       if (process.env.NODE_ENV === 'production') {
         config.optimization.minimizer = [
-          ...config.optimization.minimizer || [],
+          ...(config.optimization.minimizer || []),
           // Additional optimization could be added here
         ];
       }

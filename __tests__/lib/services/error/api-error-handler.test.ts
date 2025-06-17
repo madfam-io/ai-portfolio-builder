@@ -184,11 +184,9 @@ describe('API Error Handler', () => {
         data: string;
       }
 
-      const handler = createApiHandler<Params, Response>(
-        (req, { params }) => {
-          return NextResponse.json({ data: params.id });
-        }
-      );
+      const handler = createApiHandler<Params, Response>((req, { params }) => {
+        return NextResponse.json({ data: params.id });
+      });
 
       const result = await handler(mockRequest, { params: { id: '123' } });
 

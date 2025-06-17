@@ -4,30 +4,33 @@ This guide covers the complete deployment process for the PRISMA AI Portfolio Bu
 
 ## 🏗️ Environment Overview
 
-| Environment | Purpose | URL | Database | Redis | Monitoring |
-|-------------|---------|-----|----------|-------|------------|
-| **Local** | Development & Testing | http://localhost:3000 | PostgreSQL:5432 | Redis:6379 | Basic |
-| **Staging** | Pre-production Testing | https://staging.prisma.madfam.io | PostgreSQL:5433 | Redis:6380 | Full Stack |
-| **Production** | Live Application | https://prisma.madfam.io | PostgreSQL:5434 | Redis:6381 | Enterprise |
+| Environment    | Purpose                | URL                              | Database        | Redis      | Monitoring |
+| -------------- | ---------------------- | -------------------------------- | --------------- | ---------- | ---------- |
+| **Local**      | Development & Testing  | http://localhost:3000            | PostgreSQL:5432 | Redis:6379 | Basic      |
+| **Staging**    | Pre-production Testing | https://staging.prisma.madfam.io | PostgreSQL:5433 | Redis:6380 | Full Stack |
+| **Production** | Live Application       | https://prisma.madfam.io         | PostgreSQL:5434 | Redis:6381 | Enterprise |
 
 ## 📋 Prerequisites
 
 ### System Requirements
+
 - **Docker & Docker Compose**: Latest stable versions
 - **Node.js**: Version 18 or higher
 - **pnpm**: Preferred package manager (npm also supported)
 - **Git**: For version control
 
 ### Required Environment Files
+
 ```bash
 .env.local      # Local development
-.env.staging    # Staging environment  
+.env.staging    # Staging environment
 .env.production # Production environment
 ```
 
 ## 🏠 Local Development Deployment
 
 ### Quick Start
+
 ```bash
 # Simple deployment
 pnpm deploy:local
@@ -40,6 +43,7 @@ pnpm dev
 ```
 
 ### Manual Setup
+
 ```bash
 # 1. Clone and setup
 git clone <repository>
@@ -63,6 +67,7 @@ cp .env.example .env.local
 ```
 
 ### Development Commands
+
 ```bash
 # Health check
 pnpm health:check
@@ -80,11 +85,13 @@ pnpm dev:clean
 ## 🏗️ Staging Deployment
 
 ### Prerequisites
+
 - Staging server with Docker installed
 - `.env.staging` file configured
 - SSL certificates (optional but recommended)
 
 ### Deployment Process
+
 ```bash
 # 1. Prepare staging environment
 cp .env.staging.example .env.staging
@@ -98,6 +105,7 @@ pnpm health:check:staging
 ```
 
 ### Staging-Specific Configuration
+
 ```bash
 # Environment variables to configure:
 NODE_ENV=staging
@@ -119,6 +127,7 @@ ENABLE_PERFORMANCE_MONITORING=true
 ```
 
 ### Staging Services
+
 ```bash
 # Access URLs:
 # App: http://localhost:3000 (or your staging domain)
@@ -137,6 +146,7 @@ pnpm docker:staging:up      # Start staging
 ## 🚀 Production Deployment
 
 ### Critical Prerequisites
+
 - Production server with Docker Swarm or Kubernetes
 - `.env.production` file with production secrets
 - SSL certificates configured
@@ -144,6 +154,7 @@ pnpm docker:staging:up      # Start staging
 - Monitoring alerts configured
 
 ### Pre-Deployment Checklist
+
 - [ ] All tests passing
 - [ ] Security audit completed
 - [ ] Performance benchmarks met
@@ -153,6 +164,7 @@ pnpm docker:staging:up      # Start staging
 - [ ] Rollback plan prepared
 
 ### Production Deployment
+
 ```bash
 # 1. Dry run (recommended)
 pnpm deploy:production:dry-run
@@ -165,6 +177,7 @@ pnpm deploy:production
 ```
 
 ### Production Configuration
+
 ```bash
 # Critical environment variables:
 NODE_ENV=production
@@ -187,6 +200,7 @@ RATE_LIMIT_ENABLED=true
 ```
 
 ### Production Architecture
+
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Load Balancer │    │   App Replicas  │    │   Monitoring    │
@@ -204,6 +218,7 @@ RATE_LIMIT_ENABLED=true
 ## 🔧 Environment Management
 
 ### Environment Variables
+
 Each environment has specific configuration:
 
 ```bash
@@ -212,7 +227,7 @@ NODE_ENV=development
 DEBUG=true
 APM_ENABLED=false
 
-# Staging (.env.staging)  
+# Staging (.env.staging)
 NODE_ENV=staging
 DEBUG=true
 APM_ENABLED=true
@@ -226,6 +241,7 @@ EXPERIMENT_SAMPLING_RATE=0.1
 ```
 
 ### Database Management
+
 ```bash
 # Local: PostgreSQL on port 5432
 # Staging: PostgreSQL on port 5433
@@ -238,13 +254,14 @@ docker-compose -f docker-compose.production.yml exec production-postgres psql -U
 ```
 
 ### Health Monitoring
+
 ```bash
 # Universal health check
 ./scripts/health-check.sh -e <environment> -u <url>
 
 # Environment-specific checks
 pnpm health:check                    # Local
-pnpm health:check:staging           # Staging  
+pnpm health:check:staging           # Staging
 pnpm health:check:production        # Production
 
 # JSON output for automation
@@ -256,6 +273,7 @@ pnpm health:check:json
 ### Common Issues
 
 #### 1. Container Startup Failures
+
 ```bash
 # Check logs
 docker-compose -f docker-compose.<env>.yml logs <service>
@@ -268,6 +286,7 @@ docker-compose -f docker-compose.<env>.yml up --build -d <service>
 ```
 
 #### 2. Database Connection Issues
+
 ```bash
 # Check PostgreSQL status
 docker-compose -f docker-compose.<env>.yml exec <db-service> pg_isready
@@ -280,6 +299,7 @@ docker-compose -f docker-compose.<env>.yml exec <db-service> psql -U <user> -d <
 ```
 
 #### 3. Redis Connection Issues
+
 ```bash
 # Check Redis status
 docker-compose -f docker-compose.<env>.yml exec <redis-service> redis-cli ping
@@ -292,6 +312,7 @@ docker-compose -f docker-compose.<env>.yml exec <redis-service> redis-cli
 ```
 
 #### 4. Health Check Failures
+
 ```bash
 # Verbose health check
 ./scripts/health-check.sh -v -e <environment>
@@ -306,6 +327,7 @@ docker-compose -f docker-compose.<env>.yml logs app
 ### Emergency Procedures
 
 #### Production Rollback
+
 ```bash
 # Stop current deployment
 docker-compose -f docker-compose.production.yml down
@@ -319,6 +341,7 @@ pnpm deploy:production --skip-tests
 ```
 
 #### Service Recovery
+
 ```bash
 # Restart all services
 docker-compose -f docker-compose.<env>.yml restart
@@ -334,12 +357,15 @@ docker-compose -f docker-compose.<env>.yml up -d
 ## 📊 Monitoring & Observability
 
 ### Metrics Access
+
 - **Prometheus**: http://localhost:9090 (staging), http://localhost:9091 (production)
 - **Grafana**: http://localhost:3001 (staging), http://localhost:3002 (production)
 - **Health Checks**: Available at `/api/v1/health` endpoints
 
 ### Alert Configuration
+
 Configure alerts for:
+
 - Application health failures
 - Database connection issues
 - High response times (> 2s)
@@ -347,6 +373,7 @@ Configure alerts for:
 - Resource utilization (> 80%)
 
 ### Log Management
+
 ```bash
 # View logs by service
 docker-compose -f docker-compose.<env>.yml logs -f <service>
@@ -361,17 +388,20 @@ docker-compose -f docker-compose.<env>.yml logs | grep "ERROR"
 ## 🔐 Security Considerations
 
 ### Environment Security
+
 - **Local**: Relaxed security for development
 - **Staging**: Production-like security with test data
 - **Production**: Maximum security with live data
 
 ### Key Management
+
 - Use different secrets for each environment
 - Rotate secrets regularly
 - Store secrets securely (e.g., HashiCorp Vault)
 - Never commit secrets to version control
 
 ### Network Security
+
 - **Local**: Open access for development
 - **Staging**: VPN or IP-restricted access
 - **Production**: HTTPS only, strict firewall rules
@@ -379,16 +409,19 @@ docker-compose -f docker-compose.<env>.yml logs | grep "ERROR"
 ## 📈 Performance Optimization
 
 ### Environment-Specific Optimizations
+
 - **Local**: Fast rebuild, hot reloading, detailed debugging
 - **Staging**: Production-like performance, full monitoring
 - **Production**: Maximum performance, minimal resource usage
 
 ### Caching Strategy
+
 - **Local**: In-memory cache only
 - **Staging**: Redis with basic clustering
 - **Production**: Redis cluster with persistence
 
 ### Resource Allocation
+
 ```yaml
 # Production resource limits
 services:
@@ -406,24 +439,28 @@ services:
 ## 🚀 Best Practices
 
 ### Deployment Workflow
+
 1. **Develop** → Local environment
-2. **Test** → Staging environment  
+2. **Test** → Staging environment
 3. **Deploy** → Production environment
 4. **Monitor** → All environments
 
 ### Version Control
+
 - Use semantic versioning
 - Tag releases before production deployment
 - Maintain deployment logs
 - Document configuration changes
 
 ### Testing Strategy
+
 - Unit tests in all environments
 - Integration tests in staging
 - E2E tests before production
 - Performance tests in staging
 
 ### Backup Strategy
+
 - **Local**: Git commits
 - **Staging**: Daily automated backups
 - **Production**: Automated backups + manual pre-deployment

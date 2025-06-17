@@ -10,7 +10,9 @@ jest.mock('lucide-react', () => ({
 
 // Mock shadcn/ui components to avoid import issues
 jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+  Button: ({ children, ...props }: any) => (
+    <button {...props}>{children}</button>
+  ),
 }));
 
 jest.mock('@/components/ui/input', () => ({
@@ -34,7 +36,8 @@ describe('BasicInfoStep', () => {
     yourTitle: 'Your Professional Title',
     titlePlaceholder: 'Senior Software Engineer',
     shortBio: 'Short Bio',
-    bioPlaceholder: 'Tell us about your experience and what makes you unique...',
+    bioPlaceholder:
+      'Tell us about your experience and what makes you unique...',
     continueButton: 'Continue',
   };
 

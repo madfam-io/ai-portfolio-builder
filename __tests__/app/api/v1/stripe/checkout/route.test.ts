@@ -35,14 +35,17 @@ describe('/api/v1/stripe/checkout', () => {
   };
 
   const mockAuthenticatedRequest = (body: any) => {
-    const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout', {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
+    const request = new NextRequest(
+      'http://localhost:3000/api/v1/stripe/checkout',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
     return request;
@@ -56,7 +59,9 @@ describe('/api/v1/stripe/checkout', () => {
     };
 
     beforeEach(() => {
-      mockStripeService.createCheckoutSession.mockResolvedValue(mockSession as any);
+      mockStripeService.createCheckoutSession.mockResolvedValue(
+        mockSession as any
+      );
     });
 
     it('should create checkout session for valid plan', async () => {
@@ -80,7 +85,8 @@ describe('/api/v1/stripe/checkout', () => {
         planId: 'pro',
         userId: mockUser.id,
         userEmail: mockUser.email,
-        successUrl: 'https://app.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
+        successUrl:
+          'https://app.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
         cancelUrl: 'https://app.example.com/pricing?canceled=true',
         trialDays: 14,
       });
@@ -119,7 +125,9 @@ describe('/api/v1/stripe/checkout', () => {
 
       for (const planId of validPlans) {
         jest.clearAllMocks();
-        mockStripeService.createCheckoutSession.mockResolvedValue(mockSession as any);
+        mockStripeService.createCheckoutSession.mockResolvedValue(
+          mockSession as any
+        );
 
         const request = mockAuthenticatedRequest({ planId });
         const response = await POST(request as any);
@@ -173,7 +181,9 @@ describe('/api/v1/stripe/checkout', () => {
       const validTrialDays = [0, 7, 14, 30];
       for (const trialDays of validTrialDays) {
         jest.clearAllMocks();
-        mockStripeService.createCheckoutSession.mockResolvedValue(mockSession as any);
+        mockStripeService.createCheckoutSession.mockResolvedValue(
+          mockSession as any
+        );
 
         const request = mockAuthenticatedRequest({ planId: 'pro', trialDays });
         const response = await POST(request as any);
@@ -195,13 +205,16 @@ describe('/api/v1/stripe/checkout', () => {
     });
 
     it('should handle missing user email', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout', {
-        method: 'POST',
-        body: JSON.stringify({ planId: 'pro' }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout',
+        {
+          method: 'POST',
+          body: JSON.stringify({ planId: 'pro' }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       // User without email
       (request as any).user = { id: 'user-123', name: 'Test User' };
@@ -257,20 +270,24 @@ describe('/api/v1/stripe/checkout', () => {
 
       expect(mockStripeService.createCheckoutSession).toHaveBeenCalledWith(
         expect.objectContaining({
-          successUrl: 'https://custom-domain.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
+          successUrl:
+            'https://custom-domain.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
           cancelUrl: 'https://custom-domain.com/pricing?canceled=true',
         })
       );
     });
 
     it('should handle malformed JSON', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout', {
-        method: 'POST',
-        body: 'invalid-json',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout',
+        {
+          method: 'POST',
+          body: 'invalid-json',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       (request as any).user = mockUser;
 
@@ -289,13 +306,16 @@ describe('/api/v1/stripe/checkout', () => {
         name: 'Custom User',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout', {
-        method: 'POST',
-        body: JSON.stringify({ planId: 'business' }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout',
+        {
+          method: 'POST',
+          body: JSON.stringify({ planId: 'business' }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       (request as any).user = customUser;
 
@@ -342,7 +362,9 @@ describe('/api/v1/stripe/checkout', () => {
         amount_total: 3900, // $39.00 in cents
       };
 
-      mockStripeService.createCheckoutSession.mockResolvedValue(customSession as any);
+      mockStripeService.createCheckoutSession.mockResolvedValue(
+        customSession as any
+      );
 
       const request = mockAuthenticatedRequest({ planId: 'business' });
       const response = await POST(request as any);

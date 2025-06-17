@@ -4,7 +4,10 @@
 
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/stripe/checkout-credits/route';
-import { enhancedStripeService, AI_CREDIT_PACKS } from '@/lib/services/stripe/stripe-enhanced';
+import {
+  enhancedStripeService,
+  AI_CREDIT_PACKS,
+} from '@/lib/services/stripe/stripe-enhanced';
 import { logger } from '@/lib/utils/logger';
 
 // Mock dependencies
@@ -17,7 +20,9 @@ jest.mock('@/lib/api/response-helpers', () => ({
   versionedApiHandler: (handler: any) => handler,
 }));
 
-const mockEnhancedStripeService = enhancedStripeService as jest.Mocked<typeof enhancedStripeService>;
+const mockEnhancedStripeService = enhancedStripeService as jest.Mocked<
+  typeof enhancedStripeService
+>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
 // Mock environment variables
@@ -46,14 +51,17 @@ describe('/api/v1/stripe/checkout-credits', () => {
   };
 
   const mockAuthenticatedRequest = (body: any) => {
-    const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout-credits', {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-    
+    const request = new NextRequest(
+      'http://localhost:3000/api/v1/stripe/checkout-credits',
+      {
+        method: 'POST',
+        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
     return request;
@@ -66,7 +74,9 @@ describe('/api/v1/stripe/checkout-credits', () => {
         url: 'https://checkout.stripe.com/pay/cs_test_123',
       };
 
-      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(mockSession as any);
+      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
+        mockSession as any
+      );
 
       const request = mockAuthenticatedRequest({ packId: 'small' });
       const response = await POST(request as any);
@@ -78,11 +88,14 @@ describe('/api/v1/stripe/checkout-credits', () => {
         sessionId: mockSession.id,
       });
 
-      expect(mockEnhancedStripeService.createAICreditCheckout).toHaveBeenCalledWith({
+      expect(
+        mockEnhancedStripeService.createAICreditCheckout
+      ).toHaveBeenCalledWith({
         packId: 'small',
         userId: mockUser.id,
         userEmail: mockUser.email,
-        successUrl: 'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
+        successUrl:
+          'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
         cancelUrl: 'https://test.example.com/dashboard/billing?canceled=true',
       });
 
@@ -102,7 +115,9 @@ describe('/api/v1/stripe/checkout-credits', () => {
         url: 'https://checkout.stripe.com/pay/cs_test_123',
       };
 
-      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(mockSession as any);
+      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
+        mockSession as any
+      );
 
       // Test each valid pack ID
       for (const packId of Object.keys(AI_CREDIT_PACKS)) {
@@ -110,17 +125,20 @@ describe('/api/v1/stripe/checkout-credits', () => {
         const response = await POST(request as any);
 
         expect(response.status).toBe(200);
-        expect(mockEnhancedStripeService.createAICreditCheckout).toHaveBeenCalledWith(
-          expect.objectContaining({ packId })
-        );
+        expect(
+          mockEnhancedStripeService.createAICreditCheckout
+        ).toHaveBeenCalledWith(expect.objectContaining({ packId }));
       }
     });
 
     it('should return 401 when user is missing', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout-credits', {
-        method: 'POST',
-        body: JSON.stringify({ packId: 'small' }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout-credits',
+        {
+          method: 'POST',
+          body: JSON.stringify({ packId: 'small' }),
+        }
+      );
 
       // No user attached to request
       const response = await POST(request as any);
@@ -131,10 +149,13 @@ describe('/api/v1/stripe/checkout-credits', () => {
     });
 
     it('should return 401 when user lacks required fields', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout-credits', {
-        method: 'POST',
-        body: JSON.stringify({ packId: 'small' }),
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout-credits',
+        {
+          method: 'POST',
+          body: JSON.stringify({ packId: 'small' }),
+        }
+      );
 
       // User missing email
       (request as any).user = { id: 'user-123', name: 'Test User' };
@@ -153,7 +174,9 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       expect(response.status).toBe(400);
       expect(data.error).toBe('Invalid credit pack ID');
-      expect(mockEnhancedStripeService.createAICreditCheckout).not.toHaveBeenCalled();
+      expect(
+        mockEnhancedStripeService.createAICreditCheckout
+      ).not.toHaveBeenCalled();
     });
 
     it('should return 400 for missing pack ID', async () => {
@@ -174,12 +197,16 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       expect(response.status).toBe(503);
       expect(data.error).toBe('Payment service is currently unavailable');
-      expect(mockEnhancedStripeService.createAICreditCheckout).not.toHaveBeenCalled();
+      expect(
+        mockEnhancedStripeService.createAICreditCheckout
+      ).not.toHaveBeenCalled();
     });
 
     it('should handle Stripe service errors', async () => {
       const stripeError = new Error('Stripe API error');
-      mockEnhancedStripeService.createAICreditCheckout.mockRejectedValue(stripeError);
+      mockEnhancedStripeService.createAICreditCheckout.mockRejectedValue(
+        stripeError
+      );
 
       const request = mockAuthenticatedRequest({ packId: 'medium' });
       const response = await POST(request as any);
@@ -195,13 +222,16 @@ describe('/api/v1/stripe/checkout-credits', () => {
     });
 
     it('should handle malformed JSON body', async () => {
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout-credits', {
-        method: 'POST',
-        body: 'invalid-json',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout-credits',
+        {
+          method: 'POST',
+          body: 'invalid-json',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       (request as any).user = mockUser;
 
@@ -218,16 +248,21 @@ describe('/api/v1/stripe/checkout-credits', () => {
         url: 'https://checkout.stripe.com/pay/cs_test_123',
       };
 
-      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(mockSession as any);
+      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
+        mockSession as any
+      );
 
       const request = mockAuthenticatedRequest({ packId: 'large' });
       await POST(request as any);
 
-      expect(mockEnhancedStripeService.createAICreditCheckout).toHaveBeenCalledWith({
+      expect(
+        mockEnhancedStripeService.createAICreditCheckout
+      ).toHaveBeenCalledWith({
         packId: 'large',
         userId: mockUser.id,
         userEmail: mockUser.email,
-        successUrl: 'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
+        successUrl:
+          'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
         cancelUrl: 'https://test.example.com/dashboard/billing?canceled=true',
       });
     });
@@ -240,7 +275,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
       for (const packId of validPackIds) {
         const request = mockAuthenticatedRequest({ packId });
         const response = await POST(request as any);
-        
+
         // Should not return 400 for valid pack IDs
         expect(response.status).not.toBe(400);
       }
@@ -249,7 +284,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
         const request = mockAuthenticatedRequest({ packId });
         const response = await POST(request as any);
         const data = await response.json();
-        
+
         expect(response.status).toBe(400);
         expect(data.error).toBe('Invalid credit pack ID');
       }
@@ -261,7 +296,9 @@ describe('/api/v1/stripe/checkout-credits', () => {
         url: 'https://checkout.stripe.com/pay/cs_test_456',
       };
 
-      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(mockSession as any);
+      mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
+        mockSession as any
+      );
 
       const customUser = {
         id: 'custom-user-789',
@@ -269,19 +306,24 @@ describe('/api/v1/stripe/checkout-credits', () => {
         name: 'Custom User',
       };
 
-      const request = new NextRequest('http://localhost:3000/api/v1/stripe/checkout-credits', {
-        method: 'POST',
-        body: JSON.stringify({ packId: 'medium' }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
+      const request = new NextRequest(
+        'http://localhost:3000/api/v1/stripe/checkout-credits',
+        {
+          method: 'POST',
+          body: JSON.stringify({ packId: 'medium' }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       (request as any).user = customUser;
 
       await POST(request as any);
 
-      expect(mockEnhancedStripeService.createAICreditCheckout).toHaveBeenCalledWith(
+      expect(
+        mockEnhancedStripeService.createAICreditCheckout
+      ).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: customUser.id,
           userEmail: customUser.email,

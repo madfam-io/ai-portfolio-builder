@@ -32,8 +32,15 @@ jest.mock('@/lib/ai/geo/geo-service', () => ({
         searchVolume: 12000,
         difficulty: 65,
         trends: 'rising',
-        relatedKeywords: ['web developer', 'full stack developer', 'software engineer'],
-        questions: ['What does a software developer do?', 'How to become a software developer?'],
+        relatedKeywords: [
+          'web developer',
+          'full stack developer',
+          'software engineer',
+        ],
+        questions: [
+          'What does a software developer do?',
+          'How to become a software developer?',
+        ],
       },
     ]),
   })),
@@ -90,12 +97,7 @@ describe('/api/v1/geo/keywords', () => {
     });
 
     it('should handle different industries', async () => {
-      const industries = [
-        'technology',
-        'design', 
-        'marketing',
-        'business',
-      ];
+      const industries = ['technology', 'design', 'marketing', 'business'];
 
       for (const industry of industries) {
         mockRequest = new NextRequest(

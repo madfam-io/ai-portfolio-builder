@@ -28,14 +28,14 @@ describe('EditorSidebar', () => {
     title: 'Software Developer',
     tagline: 'Building amazing applications',
     bio: 'Experienced developer with passion for creating user-friendly applications.',
-    contact: { 
+    contact: {
       email: 'test@example.com',
       phone: '+1-555-0123',
-      location: 'San Francisco, CA'
+      location: 'San Francisco, CA',
     },
     social: {
       linkedin: 'https://linkedin.com/in/test',
-      github: 'https://github.com/test'
+      github: 'https://github.com/test',
     },
     experience: [
       {
@@ -45,8 +45,8 @@ describe('EditorSidebar', () => {
         startDate: '2022-01-01',
         endDate: '2024-12-31',
         description: 'Led development of key features',
-        current: false
-      }
+        current: false,
+      },
     ],
     education: [
       {
@@ -55,8 +55,8 @@ describe('EditorSidebar', () => {
         degree: 'Computer Science',
         startDate: '2018-09-01',
         endDate: '2022-05-31',
-        description: 'Bachelor of Science'
-      }
+        description: 'Bachelor of Science',
+      },
     ],
     projects: [
       {
@@ -64,8 +64,8 @@ describe('EditorSidebar', () => {
         title: 'E-commerce Platform',
         description: 'Full-stack e-commerce application',
         technologies: ['React', 'Node.js'],
-        link: 'https://github.com/test/ecommerce'
-      }
+        link: 'https://github.com/test/ecommerce',
+      },
     ],
     skills: ['JavaScript', 'React', 'Node.js'],
     certifications: [
@@ -74,8 +74,8 @@ describe('EditorSidebar', () => {
         name: 'AWS Certified',
         issuer: 'Amazon',
         date: '2023-06-01',
-        expiryDate: '2026-06-01'
-      }
+        expiryDate: '2026-06-01',
+      },
     ],
     template: 'developer',
     customization: {},
@@ -193,7 +193,7 @@ describe('EditorSidebar', () => {
       for (const section of sections) {
         const sectionElement = screen.getByText(section.text);
         await user.click(sectionElement);
-        
+
         expect(mockProps.onSectionChange).toHaveBeenCalledWith(section.value);
       }
     });
@@ -207,10 +207,10 @@ describe('EditorSidebar', () => {
 
       // Change to about section
       rerender(<EditorSidebar {...mockProps} activeSection="about" />);
-      
+
       const aboutSection = screen.getByText('About Section').closest('button');
       expect(aboutSection).toHaveClass('bg-primary/10');
-      
+
       heroSection = screen.getByText('Hero Section').closest('button');
       expect(heroSection).not.toHaveClass('bg-primary/10');
     });
@@ -234,7 +234,10 @@ describe('EditorSidebar', () => {
       const addExperienceButton = screen.getByText('Add Experience');
       await user.click(addExperienceButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('experience', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'experience',
+        expect.any(Object)
+      );
     });
 
     it('should call onSectionUpdate when adding education', async () => {
@@ -244,7 +247,10 @@ describe('EditorSidebar', () => {
       const addEducationButton = screen.getByText('Add Education');
       await user.click(addEducationButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('education', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'education',
+        expect.any(Object)
+      );
     });
 
     it('should call onSectionUpdate when adding project', async () => {
@@ -254,7 +260,10 @@ describe('EditorSidebar', () => {
       const addProjectButton = screen.getByText('Add Project');
       await user.click(addProjectButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('projects', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'projects',
+        expect.any(Object)
+      );
     });
 
     it('should call onSectionUpdate when adding skill', async () => {
@@ -264,7 +273,10 @@ describe('EditorSidebar', () => {
       const addSkillButton = screen.getByText('Add Skill');
       await user.click(addSkillButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('skills', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'skills',
+        expect.any(Object)
+      );
     });
 
     it('should call onSectionUpdate when adding certification', async () => {
@@ -274,7 +286,10 @@ describe('EditorSidebar', () => {
       const addCertificationButton = screen.getByText('Add Certification');
       await user.click(addCertificationButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('certifications', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'certifications',
+        expect.any(Object)
+      );
     });
   });
 
@@ -328,12 +343,18 @@ describe('EditorSidebar', () => {
       const experienceSection = screen.getByText('Experience').closest('div');
       const educationSection = screen.getByText('Education').closest('div');
       const skillsSection = screen.getByText('Skills').closest('div');
-      const certificationsSection = screen.getByText('Certifications').closest('div');
+      const certificationsSection = screen
+        .getByText('Certifications')
+        .closest('div');
 
-      expect(experienceSection).toContainElement(screen.getByText('Incomplete'));
+      expect(experienceSection).toContainElement(
+        screen.getByText('Incomplete')
+      );
       expect(educationSection).toContainElement(screen.getByText('Incomplete'));
       expect(skillsSection).toContainElement(screen.getByText('Incomplete'));
-      expect(certificationsSection).toContainElement(screen.getByText('Incomplete'));
+      expect(certificationsSection).toContainElement(
+        screen.getByText('Incomplete')
+      );
     });
   });
 
@@ -350,7 +371,10 @@ describe('EditorSidebar', () => {
       const editContactButton = screen.getByText('Edit Contact');
       await user.click(editContactButton);
 
-      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith('contact', expect.any(Object));
+      expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
+        'contact',
+        expect.any(Object)
+      );
     });
 
     it('should mark contact as complete when email exists', () => {
@@ -382,7 +406,7 @@ describe('EditorSidebar', () => {
 
     it('should display existing social links count', () => {
       renderEditorSidebar();
-      
+
       // Portfolio has LinkedIn and GitHub
       expect(screen.getByText(/2 links/)).toBeInTheDocument();
     });
@@ -405,14 +429,14 @@ describe('EditorSidebar', () => {
       renderEditorSidebar();
 
       const sections = screen.getAllByRole('button');
-      
+
       // Focus first section
       sections[0].focus();
       expect(document.activeElement).toBe(sections[0]);
 
       // Tab to next section
       fireEvent.keyDown(sections[0], { key: 'Tab' });
-      
+
       // All buttons should be focusable
       sections.forEach(section => {
         expect(section.tabIndex).toBeGreaterThanOrEqual(0);
@@ -424,9 +448,9 @@ describe('EditorSidebar', () => {
 
       const aboutSection = screen.getByText('About Section');
       aboutSection.focus();
-      
+
       fireEvent.keyDown(aboutSection, { key: 'Enter' });
-      
+
       expect(mockProps.onSectionChange).toHaveBeenCalledWith('about');
     });
 
@@ -435,9 +459,9 @@ describe('EditorSidebar', () => {
 
       const projectsSection = screen.getByText('Projects');
       projectsSection.focus();
-      
+
       fireEvent.keyDown(projectsSection, { key: ' ' });
-      
+
       expect(mockProps.onSectionChange).toHaveBeenCalledWith('projects');
     });
   });
@@ -465,7 +489,9 @@ describe('EditorSidebar', () => {
     it('should have proper heading structure', () => {
       renderEditorSidebar();
 
-      const heading = screen.getByRole('heading', { name: 'Portfolio Structure' });
+      const heading = screen.getByRole('heading', {
+        name: 'Portfolio Structure',
+      });
       expect(heading).toBeInTheDocument();
     });
 

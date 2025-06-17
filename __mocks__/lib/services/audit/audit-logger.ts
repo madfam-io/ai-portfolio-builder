@@ -10,7 +10,7 @@ export const mockAuditLogger = {
     userId: 'user_123',
     success: true,
   }),
-  
+
   getAuditLogs: jest.fn().mockResolvedValue([
     {
       id: 'audit_123',
@@ -21,7 +21,7 @@ export const mockAuditLogger = {
       riskLevel: 'low',
     },
   ]),
-  
+
   exportAuditLogs: jest.fn().mockResolvedValue(Buffer.from('CSV content')),
 };
 

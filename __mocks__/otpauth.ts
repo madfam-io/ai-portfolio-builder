@@ -2,10 +2,14 @@
  * Mock OTPAuth for testing
  */
 
-export const TOTP = jest.fn().mockImplementation((config) => ({
+export const TOTP = jest.fn().mockImplementation(config => ({
   generate: jest.fn().mockReturnValue('123456'),
   validate: jest.fn().mockReturnValue(true),
-  toString: jest.fn().mockReturnValue('otpauth://totp/Test:user@example.com?secret=TESTSECRET&issuer=Test'),
+  toString: jest
+    .fn()
+    .mockReturnValue(
+      'otpauth://totp/Test:user@example.com?secret=TESTSECRET&issuer=Test'
+    ),
   secret: config?.secret || 'TESTSECRET',
   algorithm: config?.algorithm || 'SHA1',
   digits: config?.digits || 6,

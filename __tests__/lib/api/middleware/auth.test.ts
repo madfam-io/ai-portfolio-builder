@@ -22,14 +22,16 @@ jest.mock('@/lib/supabase/server', () => ({
 jest.mock('@/lib/utils/logger');
 jest.mock('@/lib/api/versioning');
 
-const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+const mockCreateClient = createClient as jest.MockedFunction<
+  typeof createClient
+>;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockApiError = apiError as jest.MockedFunction<typeof apiError>;
 
 describe('Auth Middleware', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Mock timing functions to speed up tests
     jest.spyOn(global, 'setTimeout').mockImplementation((callback: any) => {
       if (typeof callback === 'function') callback();
@@ -226,7 +228,7 @@ describe('Auth Middleware', () => {
 
     it('should implement timing consistency for security', async () => {
       const startTime = Date.now();
-      
+
       // Mock a fast authentication response
       const mockUser = {
         id: 'user-fast',
@@ -278,7 +280,7 @@ describe('Auth Middleware', () => {
 
       expect(hasPermission(regularUser, 'portfolio:manage')).toBe(true);
       expect(hasPermission(regularUser, 'analytics:view')).toBe(true);
-      
+
       // Should not have admin permissions
       expect(hasPermission(regularUser, 'experiments:manage')).toBe(false);
       expect(hasPermission(regularUser, 'users:manage')).toBe(false);
@@ -295,9 +297,13 @@ describe('Auth Middleware', () => {
     it('should handle users with unknown role', () => {
       const userWithUnknownRole = { role: 'guest' };
 
-      expect(hasPermission(userWithUnknownRole, 'portfolio:manage')).toBe(false);
+      expect(hasPermission(userWithUnknownRole, 'portfolio:manage')).toBe(
+        false
+      );
       expect(hasPermission(userWithUnknownRole, 'analytics:view')).toBe(false);
-      expect(hasPermission(userWithUnknownRole, 'experiments:manage')).toBe(false);
+      expect(hasPermission(userWithUnknownRole, 'experiments:manage')).toBe(
+        false
+      );
     });
 
     it('should deny access for undefined permissions', () => {
@@ -316,7 +322,9 @@ describe('Auth Middleware', () => {
 
       const result = unauthorizedResponse();
 
-      expect(mockApiError).toHaveBeenCalledWith('Unauthorized', { status: 401 });
+      expect(mockApiError).toHaveBeenCalledWith('Unauthorized', {
+        status: 401,
+      });
       expect(result).toBe(mockResponse);
     });
 
@@ -339,7 +347,9 @@ describe('Auth Middleware', () => {
 
       const result = forbiddenResponse();
 
-      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', { status: 403 });
+      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', {
+        status: 403,
+      });
       expect(result).toBe(mockResponse);
     });
 
@@ -425,11 +435,16 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockApiError).toHaveBeenCalledWith('Authentication required', { status: 401 });
-      expect(result).toBe(unauthorizedResp);
-      expect(mockLogger.warn).toHaveBeenCalledWith('Unauthorized access attempt', {
-        path: '/api/test',
+      expect(mockApiError).toHaveBeenCalledWith('Authentication required', {
+        status: 401,
       });
+      expect(result).toBe(unauthorizedResp);
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Unauthorized access attempt',
+        {
+          path: '/api/test',
+        }
+      );
     });
 
     it('should handle authentication errors gracefully', async () => {
@@ -444,9 +459,14 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockApiError).toHaveBeenCalledWith('Authentication failed', { status: 500 });
+      expect(mockApiError).toHaveBeenCalledWith('Authentication failed', {
+        status: 500,
+      });
       expect(result).toBe(errorResp);
-      expect(mockLogger.error).toHaveBeenCalledWith('Auth middleware error:', authError);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Auth middleware error:',
+        authError
+      );
     });
 
     it('should pass additional arguments to handler', async () => {
@@ -477,7 +497,7 @@ describe('Auth Middleware', () => {
       const wrappedHandler = withAuth(mockHandler);
       const request = createMockRequest();
       const additionalArg = { extra: 'parameter' };
-      
+
       const result = await wrappedHandler(request, additionalArg);
 
       expect(mockHandler).toHaveBeenCalledWith(
@@ -516,11 +536,12 @@ describe('Auth Middleware', () => {
 
       const wrappedHandler = withAuth(mockHandler);
       const request = createMockRequest('http://localhost:3000/api/special');
-      
+
       await wrappedHandler(request);
 
-      const authenticatedRequest = mockHandler.mock.calls[0][0] as AuthenticatedRequest;
-      
+      const authenticatedRequest = mockHandler.mock
+        .calls[0][0] as AuthenticatedRequest;
+
       expect(authenticatedRequest.user).toEqual(mockUser);
       expect(authenticatedRequest.nextUrl.pathname).toBe('/api/special');
       expect(authenticatedRequest.method).toBe('GET');
@@ -584,7 +605,10 @@ describe('Auth Middleware', () => {
   describe('Role-based Access Control Integration', () => {
     const createMockHandler = (requiredPermission?: string) => {
       return jest.fn(async (req: AuthenticatedRequest) => {
-        if (requiredPermission && !hasPermission(req.user, requiredPermission)) {
+        if (
+          requiredPermission &&
+          !hasPermission(req.user, requiredPermission)
+        ) {
           return forbiddenResponse();
         }
         return new NextResponse(JSON.stringify({ success: true }));
@@ -656,7 +680,9 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(result).toBe(forbiddenResp);
-      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', { status: 403 });
+      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', {
+        status: 403,
+      });
     });
 
     it('should allow user access to user endpoints', async () => {

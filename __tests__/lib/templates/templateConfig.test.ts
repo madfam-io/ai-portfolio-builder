@@ -22,7 +22,7 @@ describe('Template Configuration', () => {
         expect(section).toHaveProperty('defaultVisible');
         expect(section).toHaveProperty('description');
         expect(section).toHaveProperty('icon');
-        
+
         expect(typeof section.id).toBe('string');
         expect(typeof section.label).toBe('string');
         expect(typeof section.required).toBe('boolean');
@@ -35,7 +35,7 @@ describe('Template Configuration', () => {
     it('should include required sections', () => {
       const requiredSections = TEMPLATE_SECTIONS.filter(s => s.required);
       const requiredSectionIds = requiredSections.map(s => s.id);
-      
+
       expect(requiredSectionIds).toContain('hero');
       expect(requiredSectionIds).toContain('contact');
       expect(requiredSections.length).toBeGreaterThanOrEqual(2);
@@ -44,7 +44,7 @@ describe('Template Configuration', () => {
     it('should have unique section IDs', () => {
       const sectionIds = TEMPLATE_SECTIONS.map(s => s.id);
       const uniqueIds = new Set(sectionIds);
-      
+
       expect(sectionIds).toHaveLength(uniqueIds.size);
     });
 
@@ -54,7 +54,9 @@ describe('Template Configuration', () => {
         expect(section.icon.length).toBeGreaterThan(0);
         expect(section.icon.length).toBeLessThanOrEqual(2);
         // Should be some kind of visual symbol
-        expect(section.icon).toMatch(/[\u{1F000}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|⚡|📞|👋|👤|💼|🚀|🎓|💬/u);
+        expect(section.icon).toMatch(
+          /[\u{1F000}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|⚡|📞|👋|👤|💼|🚀|🎓|💬/u
+        );
       });
     });
 
@@ -122,7 +124,7 @@ describe('Template Configuration', () => {
     it('should have valid color schemes', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
-        
+
         expect(colorScheme).toHaveProperty('primary');
         expect(colorScheme).toHaveProperty('secondary');
         expect(colorScheme).toHaveProperty('accent');
@@ -141,9 +143,11 @@ describe('Template Configuration', () => {
     it('should have valid layout configurations', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { layout } = config;
-        
+
         expect(['minimal', 'bold', 'creative']).toContain(layout.headerStyle);
-        expect(['compact', 'normal', 'relaxed']).toContain(layout.sectionSpacing);
+        expect(['compact', 'normal', 'relaxed']).toContain(
+          layout.sectionSpacing
+        );
         expect(['modern', 'classic', 'creative']).toContain(layout.typography);
       });
     });
@@ -151,20 +155,22 @@ describe('Template Configuration', () => {
     it('should have valid feature configurations', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { features } = config;
-        
+
         expect(typeof features.showcaseProjects).toBe('boolean');
         expect(typeof features.emphasizeSkills).toBe('boolean');
         expect(typeof features.includeTestimonials).toBe('boolean');
-        expect(['icons', 'buttons', 'minimal']).toContain(features.socialLinksStyle);
+        expect(['icons', 'buttons', 'minimal']).toContain(
+          features.socialLinksStyle
+        );
       });
     });
 
     it('should include required sections in default order', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
-        const requiredSections = TEMPLATE_SECTIONS
-          .filter(s => s.required)
-          .map(s => s.id);
-        
+        const requiredSections = TEMPLATE_SECTIONS.filter(s => s.required).map(
+          s => s.id
+        );
+
         requiredSections.forEach(sectionId => {
           expect(config.defaultOrder).toContain(sectionId);
         });
@@ -172,10 +178,10 @@ describe('Template Configuration', () => {
     });
 
     it('should have unique default orders per template', () => {
-      const orders = Object.values(TEMPLATE_CONFIGS).map(config => 
+      const orders = Object.values(TEMPLATE_CONFIGS).map(config =>
         config.defaultOrder.join(',')
       );
-      
+
       // Most templates should have different section orders
       const uniqueOrders = new Set(orders);
       expect(uniqueOrders.size).toBeGreaterThan(1);
@@ -185,14 +191,16 @@ describe('Template Configuration', () => {
       // Developer template should emphasize technical skills
       expect(TEMPLATE_CONFIGS.developer.features.emphasizeSkills).toBe(true);
       expect(TEMPLATE_CONFIGS.developer.features.showcaseProjects).toBe(true);
-      
+
       // Designer template should showcase projects prominently
       expect(TEMPLATE_CONFIGS.designer.features.showcaseProjects).toBe(true);
       expect(TEMPLATE_CONFIGS.designer.defaultOrder[1]).toBe('projects');
-      
+
       // Consultant template should include testimonials
-      expect(TEMPLATE_CONFIGS.consultant.features.includeTestimonials).toBe(true);
-      
+      expect(TEMPLATE_CONFIGS.consultant.features.includeTestimonials).toBe(
+        true
+      );
+
       // Minimal template should be simple
       expect(TEMPLATE_CONFIGS.minimal.features.showcaseProjects).toBe(false);
       expect(TEMPLATE_CONFIGS.minimal.features.includeTestimonials).toBe(false);
@@ -222,7 +230,7 @@ describe('Template Configuration', () => {
   describe('getTemplateConfig', () => {
     it('should return correct template config', () => {
       const config = getTemplateConfig('developer');
-      
+
       expect(config.id).toBe('developer');
       expect(config.name).toBe('Developer');
       expect(config.industry).toContain('Software Engineering');
@@ -249,7 +257,7 @@ describe('Template Configuration', () => {
 
     it('should return config with all required properties', () => {
       const config = getTemplateConfig('developer');
-      
+
       expect(config).toHaveProperty('id');
       expect(config).toHaveProperty('name');
       expect(config).toHaveProperty('description');
@@ -264,7 +272,7 @@ describe('Template Configuration', () => {
     it('should return consistent config object', () => {
       const config1 = getTemplateConfig('developer');
       const config2 = getTemplateConfig('developer');
-      
+
       // Both configs should be identical
       expect(config1).toEqual(config2);
       expect(config1.id).toBe(config2.id);
@@ -275,14 +283,14 @@ describe('Template Configuration', () => {
   describe('getAvailableTemplates', () => {
     it('should return array of template summaries', () => {
       const templates = getAvailableTemplates();
-      
+
       expect(Array.isArray(templates)).toBe(true);
       expect(templates.length).toBeGreaterThan(0);
     });
 
     it('should include essential template info', () => {
       const templates = getAvailableTemplates();
-      
+
       templates.forEach(template => {
         expect(template).toHaveProperty('id');
         expect(template).toHaveProperty('name');
@@ -295,7 +303,7 @@ describe('Template Configuration', () => {
     it('should include all template types', () => {
       const templates = getAvailableTemplates();
       const templateIds = templates.map(t => t.id);
-      
+
       const expectedIds: TemplateType[] = [
         'developer',
         'designer',
@@ -314,7 +322,7 @@ describe('Template Configuration', () => {
 
     it('should return templates with valid color schemes', () => {
       const templates = getAvailableTemplates();
-      
+
       templates.forEach(template => {
         expect(template.colorScheme.primary).toMatch(/^#[0-9A-F]{6}$/i);
         expect(template.colorScheme.background).toMatch(/^#[0-9A-F]{6}$/i);
@@ -323,7 +331,7 @@ describe('Template Configuration', () => {
 
     it('should not expose internal template details', () => {
       const templates = getAvailableTemplates();
-      
+
       templates.forEach(template => {
         expect(template).not.toHaveProperty('sections');
         expect(template).not.toHaveProperty('defaultOrder');
@@ -353,10 +361,10 @@ describe('Template Configuration', () => {
     it('should have appropriate color contrast', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
-        
+
         // Ensure text and background colors are different
         expect(colorScheme.text).not.toBe(colorScheme.background);
-        
+
         // Ensure primary and background colors are different
         expect(colorScheme.primary).not.toBe(colorScheme.background);
       });
@@ -369,7 +377,7 @@ describe('Template Configuration', () => {
           const projectsIndex = config.defaultOrder.indexOf('projects');
           expect(projectsIndex).toBeLessThanOrEqual(4); // Should be in top 5 sections
         }
-        
+
         // If emphasizing skills, should include skills section
         if (config.features.emphasizeSkills) {
           expect(config.defaultOrder).toContain('skills');
@@ -383,7 +391,7 @@ describe('Template Configuration', () => {
       TEMPLATE_SECTIONS.forEach(section => {
         expect(section.label).not.toBe(section.id);
         expect(section.label.length).toBeGreaterThan(2);
-        
+
         // Should be title case or properly formatted
         expect(section.label[0]).toBe(section.label[0].toUpperCase());
       });
@@ -392,11 +400,14 @@ describe('Template Configuration', () => {
     it('should have accessible color combinations', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
-        
+
         // Basic check: ensure we have dark text on light background or vice versa
         const textBrightness = parseInt(colorScheme.text.slice(1), 16);
-        const backgroundBrightness = parseInt(colorScheme.background.slice(1), 16);
-        
+        const backgroundBrightness = parseInt(
+          colorScheme.background.slice(1),
+          16
+        );
+
         // Should have sufficient contrast (simplified check)
         const contrastRatio = Math.abs(textBrightness - backgroundBrightness);
         expect(contrastRatio).toBeGreaterThan(0x400000); // Minimum contrast
@@ -424,7 +435,7 @@ describe('Template Configuration', () => {
     it('should have efficient data structure', () => {
       // Configuration should be serializable
       expect(() => JSON.stringify(TEMPLATE_CONFIGS)).not.toThrow();
-      
+
       // Should not have circular references
       const serialized = JSON.stringify(TEMPLATE_CONFIGS);
       const deserialized = JSON.parse(serialized);
@@ -433,7 +444,7 @@ describe('Template Configuration', () => {
 
     it('should have minimal memory footprint', () => {
       const configSize = JSON.stringify(TEMPLATE_CONFIGS).length;
-      
+
       // Configuration should be reasonable size (less than 50KB)
       expect(configSize).toBeLessThan(50000);
     });
@@ -466,8 +477,10 @@ describe('Template Configuration', () => {
     it('should maintain consistency across similar templates', () => {
       // Creative templates should share some characteristics
       const creativeTemplates = ['designer', 'creative'];
-      const creativeConfigs = creativeTemplates.map(t => TEMPLATE_CONFIGS[t as TemplateType]);
-      
+      const creativeConfigs = creativeTemplates.map(
+        t => TEMPLATE_CONFIGS[t as TemplateType]
+      );
+
       creativeConfigs.forEach(config => {
         expect(config.layout.headerStyle).toMatch(/creative|bold/);
         expect(config.features.showcaseProjects).toBe(true);
@@ -478,11 +491,11 @@ describe('Template Configuration', () => {
   describe('Business Logic Validation', () => {
     it('should prioritize projects for project-heavy roles', () => {
       const projectHeavyTemplates = ['developer', 'designer', 'creative'];
-      
+
       projectHeavyTemplates.forEach(templateType => {
         const config = TEMPLATE_CONFIGS[templateType as TemplateType];
         const projectsIndex = config.defaultOrder.indexOf('projects');
-        
+
         // Projects should appear early (within first 3 sections)
         expect(projectsIndex).toBeLessThan(3);
         expect(config.features.showcaseProjects).toBe(true);
@@ -491,11 +504,11 @@ describe('Template Configuration', () => {
 
     it('should emphasize experience for senior roles', () => {
       const seniorRoleTemplates = ['consultant', 'business', 'educator'];
-      
+
       seniorRoleTemplates.forEach(templateType => {
         const config = TEMPLATE_CONFIGS[templateType as TemplateType];
         const experienceIndex = config.defaultOrder.indexOf('experience');
-        
+
         // Experience should appear early
         expect(experienceIndex).toBeLessThan(4);
       });
@@ -503,7 +516,7 @@ describe('Template Configuration', () => {
 
     it('should include testimonials for client-facing roles', () => {
       const clientFacingTemplates = ['consultant', 'business', 'designer'];
-      
+
       clientFacingTemplates.forEach(templateType => {
         const config = TEMPLATE_CONFIGS[templateType as TemplateType];
         expect(config.features.includeTestimonials).toBe(true);
@@ -514,11 +527,11 @@ describe('Template Configuration', () => {
       // Technical templates should use modern typography
       expect(TEMPLATE_CONFIGS.developer.layout.typography).toBe('modern');
       expect(TEMPLATE_CONFIGS.modern.layout.typography).toBe('modern');
-      
+
       // Business templates should use classic typography
       expect(TEMPLATE_CONFIGS.business.layout.typography).toBe('classic');
       expect(TEMPLATE_CONFIGS.consultant.layout.typography).toBe('classic');
-      
+
       // Creative templates should use creative typography
       expect(TEMPLATE_CONFIGS.creative.layout.typography).toBe('creative');
       expect(TEMPLATE_CONFIGS.designer.layout.typography).toBe('creative');

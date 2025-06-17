@@ -167,22 +167,32 @@ process.env = {
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     auth: {
-      signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithOAuth: jest.fn().mockResolvedValue({ data: { url: 'mock-url' }, error: null }),
+      signUp: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithPassword: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithOAuth: jest
+        .fn()
+        .mockResolvedValue({ data: { url: 'mock-url' }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
       getUser: jest.fn().mockResolvedValue({
-        data: { 
+        data: {
           user: {
             id: 'test-user-id',
             email: 'test@example.com',
             name: 'Test User',
-          }
-        }, 
-        error: null 
+          },
+        },
+        error: null,
       }),
-      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+      getSession: jest
+        .fn()
+        .mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -191,14 +201,16 @@ jest.mock('@supabase/supabase-js', () => ({
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({ data: {}, error: null }),
-      then: jest.fn((callback) => callback({ data: [], error: null })),
+      then: jest.fn(callback => callback({ data: [], error: null })),
     })),
     storage: {
       from: jest.fn(() => ({
         upload: jest.fn().mockResolvedValue({ data: {}, error: null }),
         download: jest.fn().mockResolvedValue({ data: {}, error: null }),
         remove: jest.fn().mockResolvedValue({ data: {}, error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'mock-url' } }),
+        getPublicUrl: jest
+          .fn()
+          .mockReturnValue({ data: { publicUrl: 'mock-url' } }),
       })),
     },
   })),
@@ -209,16 +221,18 @@ jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn().mockResolvedValue({
     auth: {
       getUser: jest.fn().mockResolvedValue({
-        data: { 
+        data: {
           user: {
             id: 'test-user-id',
             email: 'test@example.com',
             name: 'Test User',
-          }
-        }, 
-        error: null 
+          },
+        },
+        error: null,
       }),
-      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      getSession: jest
+        .fn()
+        .mockResolvedValue({ data: { session: null }, error: null }),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -227,7 +241,7 @@ jest.mock('@/lib/supabase/server', () => ({
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({ data: {}, error: null }),
-      then: jest.fn((callback) => callback({ data: [], error: null })),
+      then: jest.fn(callback => callback({ data: [], error: null })),
     })),
   }),
 }));
@@ -332,10 +346,14 @@ jest.mock('@/lib/services/error/index', () => ({
     initialize: jest.fn(),
     cleanup: jest.fn(),
   },
-  withErrorHandler: jest.fn((handler) => handler),
-  ValidationError: jest.fn((message) => ({ message, name: 'ValidationError' })),
-  ConflictError: jest.fn((message) => ({ message, name: 'ConflictError' })),
-  ExternalServiceError: jest.fn((service, message) => ({ message, name: 'ExternalServiceError', service })),
+  withErrorHandler: jest.fn(handler => handler),
+  ValidationError: jest.fn(message => ({ message, name: 'ValidationError' })),
+  ConflictError: jest.fn(message => ({ message, name: 'ConflictError' })),
+  ExternalServiceError: jest.fn((service, message) => ({
+    message,
+    name: 'ExternalServiceError',
+    service,
+  })),
   errorLogger: {
     logError: jest.fn(),
     logInfo: jest.fn(),
@@ -369,25 +387,29 @@ jest.mock('@/lib/cache/redis-cache', () => ({
 
 // Mock API middleware and helpers
 jest.mock('@/lib/api/middleware/auth', () => ({
-  withAuth: jest.fn((handler) => handler),
+  withAuth: jest.fn(handler => handler),
   AuthenticatedRequest: jest.fn(),
 }));
 
 jest.mock('@/lib/api/response-helpers', () => ({
-  apiSuccess: jest.fn((data) => ({ success: true, data })),
-  apiError: jest.fn((message, code) => ({ success: false, error: message, code })),
-  versionedApiHandler: jest.fn((handler) => handler),
+  apiSuccess: jest.fn(data => ({ success: true, data })),
+  apiError: jest.fn((message, code) => ({
+    success: false,
+    error: message,
+    code,
+  })),
+  versionedApiHandler: jest.fn(handler => handler),
 }));
 
 jest.mock('@/lib/validation/portfolio', () => ({
-  validateCreatePortfolio: jest.fn((data) => ({ success: true, data })),
-  validatePortfolioQuery: jest.fn((data) => ({ success: true, data })),
-  sanitizePortfolioData: jest.fn((data) => data),
+  validateCreatePortfolio: jest.fn(data => ({ success: true, data })),
+  validatePortfolioQuery: jest.fn(data => ({ success: true, data })),
+  sanitizePortfolioData: jest.fn(data => data),
 }));
 
 jest.mock('@/lib/utils/portfolio-transformer', () => ({
-  transformDbPortfolioToApi: jest.fn((portfolio) => portfolio),
-  transformApiPortfolioToDb: jest.fn((portfolio) => portfolio),
+  transformDbPortfolioToApi: jest.fn(portfolio => portfolio),
+  transformApiPortfolioToDb: jest.fn(portfolio => portfolio),
 }));
 
 // Mock file reading for testing
@@ -664,12 +686,12 @@ jest.mock('@/components/ui/card', () => ({
 // Mock lucide-react icons globally
 jest.mock('lucide-react', () => {
   const React = require('react');
-  const mockIcon = (name) => {
-    return React.forwardRef((props, ref) => 
+  const mockIcon = name => {
+    return React.forwardRef((props, ref) =>
       React.createElement('span', { ...props, ref, 'data-icon': name }, name)
     );
   };
-  
+
   return {
     ArrowRight: mockIcon('ArrowRight'),
     AlertCircle: mockIcon('AlertCircle'),
@@ -709,10 +731,10 @@ jest.mock('@/lib/config', () => {
       supabase: true,
     },
   };
-  
+
   // Make it available for both static and dynamic imports
   global.__dynamic_import_mock__['@/lib/config'] = actualConfig;
-  
+
   return actualConfig;
 });
 

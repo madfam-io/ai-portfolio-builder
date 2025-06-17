@@ -94,7 +94,7 @@ describe('Retry Handler', () => {
 
       // Use real timers for this test to avoid timeout issues
       jest.useRealTimers();
-      
+
       const result = await retry(mockFn, {
         initialDelay: 10,
         backoffMultiplier: 2,
@@ -103,7 +103,7 @@ describe('Retry Handler', () => {
 
       expect(result).toBe('success');
       expect(mockFn).toHaveBeenCalledTimes(3);
-      
+
       // Restore fake timers for other tests
       jest.useFakeTimers();
     });

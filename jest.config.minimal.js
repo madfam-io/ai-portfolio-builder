@@ -6,9 +6,7 @@ const createJestConfig = nextJest({
 
 // Minimal Jest config for fixing test suite
 const minimalJestConfig = {
-  setupFilesAfterEnv: [
-    '<rootDir>/jest.setup.js',
-  ],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
   testEnvironment: 'jest-environment-jsdom',
   testMatch: [
     // Only run component tests initially - they're more likely to pass

@@ -1,0 +1,148 @@
+version: '3.8'
+
+services:
+  # ClickHouse for data storage
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.8.11-alpine
+    container_name: signoz-clickhouse
+    hostname: clickhouse
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./clickhouse-config.xml:/etc/clickhouse-server/config.xml
+      - ./clickhouse-users.xml:/etc/clickhouse-server/users.xml
+      - ./custom-function.xml:/etc/clickhouse-server/custom-function.xml
+      - ./clickhouse-cluster.xml:/etc/clickhouse-server/config.d/cluster.xml
+    environment:
+      - CLICKHOUSE_DB=signoz_traces
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+      - CLICKHOUSE_PASSWORD=27ff0399-0d3a-4bd8-919d-17c2181e6fb9
+    ports:
+      - '9000:9000'
+      - '8123:8123'
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'localhost:8123/ping']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - signoz-network
+
+  # Alertmanager
+  alertmanager:
+    image: signoz/alertmanager:0.23.4
+    container_name: signoz-alertmanager
+    volumes:
+      - alertmanager-data:/data
+    depends_on:
+      - query-service
+    ports:
+      - '9093:9093'
+    command:
+      - --queryService.url=http://query-service:8085
+      - --storage.path=/data
+    networks:
+      - signoz-network
+
+  # Query Service
+  query-service:
+    image: signoz/query-service:0.37.2
+    container_name: signoz-query-service
+    command: ['-config=/root/config/prometheus.yml']
+    volumes:
+      - ./prometheus.yml:/root/config/prometheus.yml
+      - signoz-data:/var/lib/signoz
+    environment:
+      - ClickHouseUrl=tcp://clickhouse:9000/?database=signoz_traces
+      - ALERTMANAGER_API_PREFIX=http://alertmanager:9093/api/
+      - SIGNOZ_LOCAL_DB_PATH=/var/lib/signoz/signoz.db
+      - DASHBOARDS_PATH=/root/config/dashboards
+      - STORAGE=clickhouse
+      - GODEBUG=netdns=go
+      - TELEMETRY_ENABLED=true
+      - DEPLOYMENT_TYPE=docker-standalone-amd
+    ports:
+      - '8080:8080'
+      - '8085:8085'
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD', 'wget', '--spider', '-q', 'localhost:8080/api/v1/health']
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - signoz-network
+
+  # Frontend
+  frontend:
+    image: signoz/frontend:0.37.2
+    container_name: signoz-frontend
+    depends_on:
+      - alertmanager
+      - query-service
+    ports:
+      - '3301:3301'
+    volumes:
+      - nginx-config:/etc/nginx
+    environment:
+      - ALERTMANAGER_URL=http://alertmanager:9093
+      - QUERY_SERVICE_URL=http://query-service:8080
+    networks:
+      - signoz-network
+
+  # OpenTelemetry Collector
+  otel-collector:
+    image: signoz/signoz-otel-collector:0.88.11
+    container_name: signoz-otel-collector
+    command: ['--config=/etc/otel-collector-config.yaml']
+    user: root
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - otel-data:/var/lib/otel
+    environment:
+      - OTEL_RESOURCE_ATTRIBUTES=host.name=signoz-host,os.type=linux
+      - CLICKHOUSE_ENDPOINT=tcp://clickhouse:9000/?database=signoz_traces
+      - ALERTMANAGER_API_PREFIX=http://alertmanager:9093/api/
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=27ff0399-0d3a-4bd8-919d-17c2181e6fb9
+    ports:
+      - '4317:4317' # OTLP gRPC receiver
+      - '4318:4318' # OTLP HTTP receiver
+      - '14268:14268' # Jaeger receiver
+      - '9411:9411' # Zipkin receiver
+      - '8888:8888' # Prometheus metrics exposed by the collector
+      - '13133:13133' # Health check
+      - '1777:1777' # pprof extension
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - signoz-network
+
+  # Logs collection via OTEL collector
+  otel-collector-migrator:
+    image: signoz/signoz-otel-collector-migrator:0.88.11
+    container_name: otel-migrator
+    command:
+      - '--dsn=tcp://clickhouse:9000'
+    environment:
+      - CLICKHOUSE_USER=admin
+      - CLICKHOUSE_PASSWORD=27ff0399-0d3a-4bd8-919d-17c2181e6fb9
+    depends_on:
+      clickhouse:
+        condition: service_healthy
+    networks:
+      - signoz-network
+
+volumes:
+  clickhouse-data:
+  alertmanager-data:
+  signoz-data:
+  nginx-config:
+  otel-data:
+
+networks:
+  signoz-network:
+    driver: bridge
