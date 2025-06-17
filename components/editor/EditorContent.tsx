@@ -64,6 +64,25 @@ export function EditorContent() {
     return () => clearInterval(autoSaveInterval);
   }, [currentPortfolio, savePortfolio, toast, t]);
 
+  const handleSave = useCallback(async () => {
+    setIsSaving(true);
+    try {
+      await savePortfolio();
+      toast({
+        title: t.success || 'Success',
+        description: t.portfolioSaved || 'Portfolio saved successfully',
+      });
+    } catch (error) {
+      toast({
+        title: t.error || 'Error',
+        description: t.failedToSave || 'Failed to save portfolio',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }, [savePortfolio, toast, t]);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -92,25 +111,6 @@ export function EditorContent() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [canUndo, canRedo, undo, redo, showPreview, handleSave]);
-
-  const handleSave = useCallback(async () => {
-    setIsSaving(true);
-    try {
-      await savePortfolio();
-      toast({
-        title: t.success || 'Success',
-        description: t.portfolioSaved || 'Portfolio saved successfully',
-      });
-    } catch (error) {
-      toast({
-        title: t.error || 'Error',
-        description: t.failedToSave || 'Failed to save portfolio',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSaving(false);
-    }
-  }, [savePortfolio, toast, t]);
 
   const handlePublish = async () => {
     // Save before publishing

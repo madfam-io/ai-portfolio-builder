@@ -99,7 +99,7 @@ function BillingContent() {
   // TODO: Fetch actual AI credits balance
   useEffect(() => {
     // This would be fetched from the API
-    setAiCredits(limits?.ai_requests_used || 0);
+    setAiCredits(limits?.current_usage?.ai_requests || 0);
   }, [limits]);
 
   const handleUpgrade = async (planId: 'pro' | 'business' | 'enterprise') => {
