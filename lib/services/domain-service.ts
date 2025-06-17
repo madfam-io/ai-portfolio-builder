@@ -62,6 +62,10 @@ export class DomainService {
 
     // Check if domain is already taken
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
+
     const { data } = await supabase.rpc('check_domain_availability', {
       p_domain: domain,
     });
@@ -94,6 +98,9 @@ export class DomainService {
     }
 
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     // Generate verification token
     const verificationToken = this.generateVerificationToken();
@@ -129,6 +136,9 @@ export class DomainService {
    */
   static async getUserDomains(userId: string): Promise<CustomDomain[]> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     const { data, error } = await supabase
       .from('custom_domains')
@@ -148,6 +158,9 @@ export class DomainService {
     portfolioId: string
   ): Promise<CustomDomain[]> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     const { data, error } = await supabase
       .from('custom_domains')
@@ -167,6 +180,9 @@ export class DomainService {
     domainId: string
   ): Promise<DomainVerificationResult> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     // Get domain details
     const { data: domain, error } = await supabase
@@ -243,6 +259,9 @@ export class DomainService {
    */
   static async activateDomain(domainId: string): Promise<CustomDomain> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     // Check if domain is verified
     const { data: domain, error: fetchError } = await supabase
@@ -294,6 +313,9 @@ export class DomainService {
     portfolioId: string
   ): Promise<void> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     // First, unset any existing primary domain for this portfolio
     await supabase
@@ -323,6 +345,9 @@ export class DomainService {
    */
   static async removeDomain(domainId: string): Promise<void> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     // Get domain details for tracking
     const { data: domain } = await supabase
@@ -454,6 +479,9 @@ export class DomainService {
     redirectType: 301 | 302 = 301
   ): Promise<DomainRedirect> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     const { data, error } = await supabase
       .from('domain_redirects')
@@ -476,6 +504,9 @@ export class DomainService {
    */
   static async getSSLInfo(domainId: string): Promise<SSLCertificateInfo> {
     const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
 
     const { data: domain, error } = await supabase
       .from('custom_domains')

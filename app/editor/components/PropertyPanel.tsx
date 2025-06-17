@@ -311,7 +311,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-sm flex items-center gap-2">
-            <Spacing className="h-4 w-4" />
+            <Move className="h-4 w-4" />
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </CardTitle>
         </CardHeader>

@@ -54,7 +54,7 @@ export const trackPortfolioUpdated = (
   });
 };
 
-export const trackPortfolioPublished = (
+const trackPortfolioPublished = (
   portfolioId: string,
   properties?: {
     subdomain?: string;
@@ -68,7 +68,7 @@ export const trackPortfolioPublished = (
   });
 };
 
-export const trackPortfolioViewed = (
+const trackPortfolioViewed = (
   portfolioSlug: string,
   properties?: {
     variant_id?: string;
@@ -114,7 +114,7 @@ export const trackEditorThemeChanged = (
 };
 
 // Variant Events
-export const trackVariantCreated = (
+const trackVariantCreated = (
   variantId: string,
   properties?: {
     portfolio_id?: string;
@@ -128,7 +128,7 @@ export const trackVariantCreated = (
   });
 };
 
-export const trackVariantUpdated = (
+const trackVariantUpdated = (
   variantId: string,
   properties?: {
     update_type?: string;
@@ -141,7 +141,7 @@ export const trackVariantUpdated = (
   });
 };
 
-export const trackVariantSwitched = (properties?: {
+const trackVariantSwitched = (properties?: {
   from_variant?: string;
   to_variant?: string;
   portfolio_id?: string;
@@ -149,7 +149,7 @@ export const trackVariantSwitched = (properties?: {
   captureEvent(EVENTS.VARIANT_SWITCHED, properties);
 };
 
-export const trackVariantPublished = (
+const trackVariantPublished = (
   variantId: string,
   properties?: {
     portfolio_id?: string;
@@ -163,7 +163,7 @@ export const trackVariantPublished = (
 };
 
 // AI Events
-export const trackAIContentGenerated = (properties?: {
+const trackAIContentGenerated = (properties?: {
   content_type?: 'bio' | 'project' | 'experience' | 'skills';
   model?: string;
   word_count?: number;
@@ -173,7 +173,7 @@ export const trackAIContentGenerated = (properties?: {
   captureEvent(EVENTS.AI_CONTENT_GENERATED, properties);
 };
 
-export const trackAISuggestionAccepted = (properties?: {
+const trackAISuggestionAccepted = (properties?: {
   suggestion_type?: string;
   section?: string;
   confidence_score?: number;
@@ -182,7 +182,7 @@ export const trackAISuggestionAccepted = (properties?: {
   captureEvent(EVENTS.AI_SUGGESTION_ACCEPTED, properties);
 };
 
-export const trackAISuggestionRejected = (properties?: {
+const trackAISuggestionRejected = (properties?: {
   suggestion_type?: string;
   section?: string;
   confidence_score?: number;
@@ -193,7 +193,7 @@ export const trackAISuggestionRejected = (properties?: {
 };
 
 // Engagement Events
-export const trackContactClicked = (
+const trackContactClicked = (
   portfolioSlug: string,
   properties?: {
     contact_type?: 'email' | 'phone' | 'linkedin' | 'twitter' | 'github';
@@ -206,7 +206,7 @@ export const trackContactClicked = (
   });
 };
 
-export const trackResumeDownloaded = (
+const trackResumeDownloaded = (
   portfolioSlug: string,
   properties?: {
     format?: 'pdf' | 'docx';
@@ -219,7 +219,7 @@ export const trackResumeDownloaded = (
   });
 };
 
-export const trackSocialLinkClicked = (
+const trackSocialLinkClicked = (
   portfolioSlug: string,
   properties?: {
     platform?: string;
@@ -232,7 +232,7 @@ export const trackSocialLinkClicked = (
   });
 };
 
-export const trackProjectViewed = (
+const trackProjectViewed = (
   portfolioSlug: string,
   projectId: string,
   properties?: {
@@ -250,7 +250,7 @@ export const trackProjectViewed = (
 };
 
 // Revenue Events
-export const trackSubscriptionStarted = (properties?: {
+const trackSubscriptionStarted = (properties?: {
   plan?: 'starter' | 'professional' | 'business';
   billing_period?: 'monthly' | 'yearly';
   amount?: number;
@@ -259,7 +259,7 @@ export const trackSubscriptionStarted = (properties?: {
   captureEnhancedEvent(EVENTS.SUBSCRIPTION_STARTED, properties);
 };
 
-export const trackSubscriptionCancelled = (properties?: {
+const trackSubscriptionCancelled = (properties?: {
   plan?: string;
   reason?: string;
   churn_survey_response?: Record<string, any>;
@@ -267,7 +267,7 @@ export const trackSubscriptionCancelled = (properties?: {
   captureEnhancedEvent(EVENTS.SUBSCRIPTION_CANCELLED, properties);
 };
 
-export const trackPaymentCompleted = (properties?: {
+const trackPaymentCompleted = (properties?: {
   amount?: number;
   currency?: string;
   payment_method?: string;
@@ -277,7 +277,7 @@ export const trackPaymentCompleted = (properties?: {
 };
 
 // Funnel tracking
-export const trackOnboardingStep = (
+const trackOnboardingStep = (
   step: number,
   stepName: string,
   properties?: Record<string, any>
@@ -289,7 +289,7 @@ export const trackOnboardingStep = (
   });
 };
 
-export const trackConversionFunnel = (
+const trackConversionFunnel = (
   stage:
     | 'landed'
     | 'signed_up'

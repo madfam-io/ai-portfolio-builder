@@ -27,9 +27,6 @@ export class MarketplaceService {
     hasMore: boolean;
   }> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const { query, filters, page = 1, limit = 12 } = params;
     const offset = (page - 1) * limit;
 
@@ -127,9 +124,6 @@ export class MarketplaceService {
    */
   static async getTemplate(idOrSlug: string): Promise<PremiumTemplate | null> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('premium_templates')
@@ -151,9 +145,6 @@ export class MarketplaceService {
    */
   static async getFeaturedTemplates(limit = 6): Promise<PremiumTemplate[]> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('premium_templates')
@@ -176,9 +167,6 @@ export class MarketplaceService {
     limit = 12
   ): Promise<PremiumTemplate[]> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('premium_templates')
@@ -208,9 +196,6 @@ export class MarketplaceService {
     licenseType: LicenseType = 'single_use'
   ): Promise<TemplatePurchase> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Check if already purchased
     const { data: existing } = await supabase
@@ -268,9 +253,6 @@ export class MarketplaceService {
    */
   static async getUserPurchases(userId: string): Promise<TemplatePurchase[]> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('template_purchases')
@@ -291,9 +273,6 @@ export class MarketplaceService {
     templateId: string
   ): Promise<boolean> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('template_purchases')
@@ -314,9 +293,6 @@ export class MarketplaceService {
     portfolioName: string
   ): Promise<string> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Verify purchase
     const { data: purchase, error: purchaseError } = await supabase
@@ -393,9 +369,6 @@ export class MarketplaceService {
     }
   ): Promise<TemplateReview> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Verify purchase
     const { data: purchase } = await supabase
@@ -464,9 +437,6 @@ export class MarketplaceService {
     averageRating: number;
   }> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const offset = (page - 1) * limit;
 
     const { data, error, count } = await supabase
@@ -508,9 +478,6 @@ export class MarketplaceService {
     templateId: string
   ): Promise<boolean> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Check if already in wishlist
     const { data: existing } = await supabase
@@ -553,9 +520,6 @@ export class MarketplaceService {
    */
   static async getUserWishlist(userId: string): Promise<PremiumTemplate[]> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('template_wishlist')
@@ -576,9 +540,6 @@ export class MarketplaceService {
   private static async trackTemplateView(templateId: string) {
     // Update analytics (could be done via edge function for better performance)
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
     const today = new Date().toISOString().split('T')[0];
 
     await supabase.rpc('upsert_template_analytics', {
@@ -594,9 +555,6 @@ export class MarketplaceService {
 
   private static async updateTemplateRating(templateId: string) {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data: reviews } = await supabase
       .from('template_reviews')

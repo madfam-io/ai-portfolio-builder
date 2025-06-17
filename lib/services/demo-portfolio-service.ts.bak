@@ -223,9 +223,6 @@ export class DemoPortfolioService {
     // If user is logged in, save to database
     if (options.userId) {
       const supabase = createClient();
-      if (!supabase) {
-        throw new Error('Supabase client not available');
-      }
 
       const { data: portfolio, error } = await supabase
         .from('portfolios')
@@ -337,9 +334,6 @@ export class DemoPortfolioService {
     }
 
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Check if user already has this demo
     const { data: existing } = await supabase
@@ -370,9 +364,6 @@ export class DemoPortfolioService {
    */
   static async getUserDemoPortfolios(userId: string): Promise<any[]> {
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     const { data, error } = await supabase
       .from('portfolios')
@@ -401,9 +392,6 @@ export class DemoPortfolioService {
 
     const temporaryPortfolio = JSON.parse(stored);
     const supabase = createClient();
-    if (!supabase) {
-      throw new Error('Supabase client not available');
-    }
 
     // Save to database
     const { data: portfolio, error } = await supabase

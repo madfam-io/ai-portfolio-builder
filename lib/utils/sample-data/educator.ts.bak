@@ -50,7 +50,7 @@ export const educatorSampleData: SampleDataConfig = {
       company: 'MIT Data Science Institute',
       position: 'Senior Lecturer & Program Director',
       startDate: '2019',
-      endDate: undefined,
+      endDate: null,
       current: true,
       description:
         'Leading data science education initiatives and directing professional certificate programs. Teaching graduate courses in machine learning and statistical modeling.',

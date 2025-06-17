@@ -42,7 +42,7 @@ export const marketerSampleData: SampleDataConfig = {
       company: 'Growth Dynamics Inc.',
       position: 'Head of Digital Marketing',
       startDate: '2020',
-      endDate: undefined,
+      endDate: null,
       current: true,
       description:
         'Leading digital marketing strategy for high-growth SaaS company. Managing team of 15 marketers and $5M annual budget. Driving customer acquisition and retention initiatives.',

@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs';
-import { cookies } from 'next/headers';
+import { createClient } from '@/lib/supabase/server';
 import dns from 'dns/promises';
 
 export async function POST(request: NextRequest) {
@@ -14,7 +13,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = createRouteHandlerClient({ cookies });
+    const supabase = createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database not available' },
+        { status: 500 }
+      );
+    }
 
     // Get user session
     const {
@@ -46,8 +51,9 @@ export async function POST(request: NextRequest) {
 
       // Look up CNAME record
       try {
-        cnameRecord = await dns.resolveCname(domain.domain);
-      } catch (cnameError) {
+        const cnameRecords = await dns.resolveCname(domain.domain);
+        cnameRecord = cnameRecords[0] || null;
+      } catch (_cnameError) {
         // CNAME might not exist, which is okay
         console.log('No CNAME record found');
       }

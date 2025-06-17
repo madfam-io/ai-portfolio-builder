@@ -83,6 +83,7 @@ export interface Experience {
   current: boolean;
   description: string;
   highlights?: string[];
+  achievements?: string[]; // For sample data compatibility
   technologies?: string[];
 }
 
@@ -108,6 +109,7 @@ export interface Project {
   projectUrl?: string;
   liveUrl?: string;
   githubUrl?: string;
+  role?: string; // For sample data compatibility
   technologies: string[];
   highlights?: string[];
   featured?: boolean;
@@ -127,6 +129,7 @@ export interface Certification {
   name: string;
   issuer: string;
   issueDate: string;
+  date?: string; // For sample data compatibility (alias for issueDate)
   expiryDate?: string;
   credentialId?: string;
   credentialUrl?: string;

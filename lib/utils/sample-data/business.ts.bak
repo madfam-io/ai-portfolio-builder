@@ -38,7 +38,7 @@ export const businessSampleData: SampleDataConfig = {
       company: 'TechCorp Global',
       position: 'Chief Executive Officer',
       startDate: '2019',
-      endDate: undefined,
+      endDate: null,
       current: true,
       description:
         'Leading digital transformation of Fortune 500 technology company. Increased revenue by 45% and expanded into 12 new markets. Implemented AI-driven operations resulting in 30% efficiency gains.',

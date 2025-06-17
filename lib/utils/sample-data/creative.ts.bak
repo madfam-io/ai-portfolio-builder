@@ -42,7 +42,7 @@ export const creativeSampleData: SampleDataConfig = {
       company: 'Stellar Creative Agency',
       position: 'Creative Director',
       startDate: '2020',
-      endDate: undefined,
+      endDate: null,
       current: true,
       description:
         'Leading creative vision for award-winning agency. Direct multidisciplinary teams to deliver innovative campaigns for global brands. Pioneered immersive AR/VR experiences.',

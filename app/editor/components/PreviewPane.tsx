@@ -245,11 +245,11 @@ export function PreviewPane({
         {/* Device Info */}
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
           <div className="text-sm font-medium">
-            {viewport === 'desktop' && 'Desktop View'}
-            {viewport === 'tablet' &&
-              `Tablet ${isRotated ? 'Landscape' : 'Portrait'}`}
-            {viewport === 'mobile' &&
-              `Mobile ${isRotated ? 'Landscape' : 'Portrait'}`}
+            {viewport === 'desktop'
+              ? 'Desktop View'
+              : viewport === 'tablet'
+                ? `Tablet ${isRotated ? 'Landscape' : 'Portrait'}`
+                : `Mobile ${isRotated ? 'Landscape' : 'Portrait'}`}
           </div>
           <div className="text-xs text-muted-foreground">
             {dimensions.width} × {dimensions.height}
