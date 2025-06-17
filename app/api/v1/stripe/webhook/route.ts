@@ -115,10 +115,26 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  */
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
   const userId = session.metadata?.userId;
-  const planId = session.metadata?.planId;
+  const type = session.metadata?.type;
 
-  if (!userId || !planId) {
-    logger.error('Missing metadata in checkout session', {
+  if (!userId) {
+    logger.error('Missing userId in checkout session', {
+      sessionId: session.id,
+      metadata: session.metadata || {},
+    });
+    return;
+  }
+
+  // Handle AI credit pack purchase
+  if (type === 'ai_credit_pack') {
+    await handleCreditPackPurchase(session);
+    return;
+  }
+
+  // Handle subscription purchase
+  const planId = session.metadata?.planId;
+  if (!planId) {
+    logger.error('Missing planId in checkout session', {
       sessionId: session.id,
       metadata: session.metadata || {},
     });
@@ -196,9 +212,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   try {
     // Calculate subscription end date
-    const subscriptionEnd = new Date(
-      (subscription as any).current_period_end * 1000
-    );
+    const subscriptionEnd = new Date(subscription.current_period_end * 1000);
 
     const { error } = await supabase
       .from('users')
@@ -258,9 +272,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   }
 
   try {
-    const subscriptionEnd = new Date(
-      (subscription as any).current_period_end * 1000
-    );
+    const subscriptionEnd = new Date(subscription.current_period_end * 1000);
 
     const { error } = await supabase
       .from('users')
@@ -354,7 +366,7 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  * Handle successful payment
  */
 function handlePaymentSucceeded(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  const subscriptionId = invoice.subscription as string;
 
   if (!subscriptionId) {
     logger.info('Payment succeeded for non-subscription invoice', {
@@ -376,7 +388,7 @@ function handlePaymentSucceeded(invoice: Stripe.Invoice) {
  * Handle failed payment
  */
 function handlePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  const subscriptionId = invoice.subscription as string;
 
   if (!subscriptionId) {
     logger.info('Payment failed for non-subscription invoice', {
@@ -392,4 +404,89 @@ function handlePaymentFailed(invoice: Stripe.Invoice) {
   });
 
   // Could trigger email notifications or grace period logic here
+}
+
+/**
+ * Handle AI credit pack purchase
+ */
+async function handleCreditPackPurchase(session: Stripe.Checkout.Session) {
+  const userId = session.metadata?.userId;
+  const credits = parseInt(session.metadata?.credits || '0');
+
+  if (!userId || !credits) {
+    logger.error('Missing metadata for credit pack purchase', {
+      sessionId: session.id,
+      metadata: session.metadata || {},
+    });
+    return;
+  }
+
+  const supabase = await createClient();
+  if (!supabase) {
+    logger.error('Database not available for credit pack purchase', {
+      userId,
+      sessionId: session.id,
+    });
+    return;
+  }
+
+  try {
+    // Get current user credits
+    const { data: user, error: fetchError } = await supabase
+      .from('users')
+      .select('ai_credits')
+      .eq('id', userId)
+      .single();
+
+    if (fetchError) {
+      logger.error('Failed to fetch user for credit update', {
+        error: fetchError,
+        userId,
+      });
+      return;
+    }
+
+    const currentCredits = user?.ai_credits || 0;
+    const newCredits = currentCredits + credits;
+
+    // Update user credits
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        ai_credits: newCredits,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      logger.error('Failed to update user credits', {
+        error: updateError,
+        userId,
+        credits,
+      });
+      return;
+    }
+
+    // Log credit purchase
+    await supabase.from('ai_credit_purchases').insert({
+      user_id: userId,
+      credits_purchased: credits,
+      amount_paid: session.amount_total || 0,
+      stripe_session_id: session.id,
+      created_at: new Date().toISOString(),
+    });
+
+    logger.info('AI credit pack purchase completed', {
+      userId,
+      credits,
+      newBalance: newCredits,
+      sessionId: session.id,
+    });
+  } catch (error) {
+    logger.error('Error handling credit pack purchase', {
+      error,
+      userId,
+      sessionId: session.id,
+    });
+  }
 }

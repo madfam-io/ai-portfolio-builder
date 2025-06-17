@@ -40,8 +40,11 @@ import {
   AlertCircle,
   CheckCircle,
   Crown,
+  Sparkles,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import AICreditPacks from '@/components/dashboard/ai-credit-packs';
+import { type AICreditPack } from '@/lib/services/stripe/stripe-enhanced';
 
 function BillingContent() {
   const { t: _t } = useLanguage();
@@ -59,32 +62,54 @@ function BillingContent() {
   } = useSubscription();
   const [isUpgrading, setIsUpgrading] = useState<string | null>(null);
   const [isRedirectingToPortal, setIsRedirectingToPortal] = useState(false);
+  const [aiCredits, setAiCredits] = useState(0);
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>(
+    'monthly'
+  );
 
   // Auto-refresh limits when coming back from Stripe
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.get('success') === 'true') {
       // User completed checkout successfully
-      toast({
-        title: 'Subscription Updated!',
-        description: 'Your subscription has been successfully updated.',
-      });
+      const type = urlParams.get('type');
+      if (type === 'credits') {
+        toast({
+          title: 'Credits Purchased!',
+          description: 'Your AI credits have been added to your account.',
+        });
+        // TODO: Refresh AI credits balance
+      } else {
+        toast({
+          title: 'Subscription Updated!',
+          description: 'Your subscription has been successfully updated.',
+        });
+      }
       refresh();
     }
     if (urlParams.get('canceled') === 'true') {
       toast({
         title: 'Checkout Canceled',
-        description: 'Your subscription was not changed.',
+        description: 'Your purchase was not completed.',
         variant: 'default',
       });
     }
   }, [refresh, toast]);
 
+  // TODO: Fetch actual AI credits balance
+  useEffect(() => {
+    // This would be fetched from the API
+    setAiCredits(limits?.ai_requests_used || 0);
+  }, [limits]);
+
   const handleUpgrade = async (planId: 'pro' | 'business' | 'enterprise') => {
     setIsUpgrading(planId);
 
     try {
-      const result = await createCheckoutSession({ planId });
+      const result = await createCheckoutSession({
+        planId,
+        billingInterval,
+      });
 
       if (!result.success) {
         toast({
@@ -125,6 +150,36 @@ function BillingContent() {
       });
     } finally {
       setIsRedirectingToPortal(false);
+    }
+  };
+
+  const handlePurchaseCreditPack = async (packId: AICreditPack) => {
+    try {
+      const response = await fetch('/api/v1/stripe/checkout-credits', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ packId }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const { checkoutUrl } = await response.json();
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      toast({
+        title: 'Purchase Failed',
+        description: 'Failed to start credit purchase. Please try again.',
+        variant: 'destructive',
+      });
     }
   };
 
@@ -336,13 +391,36 @@ function BillingContent() {
         <>
           <Separator />
           <div className="space-y-4">
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">
-                Upgrade Your Plan
-              </h2>
-              <p className="text-muted-foreground">
-                Unlock more features and higher limits with a paid plan
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-2xl font-bold tracking-tight">
+                  Upgrade Your Plan
+                </h2>
+                <p className="text-muted-foreground">
+                  Unlock more features and higher limits with a paid plan
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={
+                    billingInterval === 'monthly' ? 'default' : 'outline'
+                  }
+                  onClick={() => setBillingInterval('monthly')}
+                  size="sm"
+                >
+                  Monthly
+                </Button>
+                <Button
+                  variant={billingInterval === 'yearly' ? 'default' : 'outline'}
+                  onClick={() => setBillingInterval('yearly')}
+                  size="sm"
+                >
+                  Yearly
+                  <Badge variant="secondary" className="ml-2">
+                    Save 20%
+                  </Badge>
+                </Button>
+              </div>
             </div>
 
             <div className="grid gap-6 md:grid-cols-3">
@@ -358,7 +436,17 @@ function BillingContent() {
                     <CardHeader>
                       <CardTitle>{plan.name}</CardTitle>
                       <CardDescription className="text-2xl font-bold">
-                        {formatPrice(plan.price)}/month
+                        {billingInterval === 'yearly' ? (
+                          <>
+                            {formatPrice(plan.price * 12 * 0.8)}/year
+                            <div className="text-sm font-normal text-muted-foreground">
+                              {formatPrice(plan.price * 0.8)}/month billed
+                              yearly
+                            </div>
+                          </>
+                        ) : (
+                          <>{formatPrice(plan.price)}/month</>
+                        )}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -411,6 +499,18 @@ function BillingContent() {
           </div>
         </>
       )}
+
+      {/* AI Credit Packs */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2 mb-6">
+          <Sparkles className="h-6 w-6 text-primary" />
+          <h2 className="text-2xl font-semibold">AI Enhancement Credits</h2>
+        </div>
+        <AICreditPacks
+          currentCredits={aiCredits}
+          onPurchase={handlePurchaseCreditPack}
+        />
+      </div>
 
       {/* Help Section */}
       <Card>

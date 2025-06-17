@@ -75,12 +75,12 @@ export default function Header(): React.ReactElement {
                 >
                   {t.howItWorks}
                 </a>
-                <a
-                  href="#templates"
+                <Link
+                  href="/templates"
                   className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
                 >
                   {t.templates}
-                </a>
+                </Link>
                 <a
                   href="#pricing"
                   className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
@@ -126,6 +126,14 @@ export default function Header(): React.ReactElement {
                   }`}
                 >
                   Analytics
+                </Link>
+                <Link
+                  href="/templates"
+                  className={`text-gray-600 dark:text-gray-300 hover:text-purple-600 transition ${
+                    pathname === '/templates' ? 'text-purple-600' : ''
+                  }`}
+                >
+                  Templates
                 </Link>
                 <Link
                   href="/about"

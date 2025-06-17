@@ -3,10 +3,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Save, Eye, EyeOff, Undo, Redo } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 import { EditorLayout } from '@/components/editor/EditorLayout';
 import { EditorSidebar } from '@/components/editor/EditorSidebar';
-import { EditorCanvas } from '@/components/editor/EditorCanvas';
 import { EditorPreview } from '@/components/editor/EditorPreview';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -91,7 +91,7 @@ export function EditorContent() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [canUndo, canRedo, undo, redo, showPreview]);
+  }, [canUndo, canRedo, undo, redo, showPreview, handleSave]);
 
   const handleSave = useCallback(async () => {
     setIsSaving(true);
@@ -259,27 +259,15 @@ export function EditorContent() {
           }}
         />
 
-        {/* Canvas/Form Area */}
-        <div className={`flex-1 flex ${showPreview ? 'w-1/2' : 'w-full'}`}>
-          <EditorCanvas
-            portfolio={currentPortfolio}
-            onDataChange={data => {
-              // Handle partial portfolio data updates
-              if (data && typeof data === 'object') {
-                Object.entries(data).forEach(([field, value]) => {
-                  updatePortfolioData(`data.${field}`, value);
-                });
-              }
-            }}
-          />
-        </div>
-
         {/* Preview Area */}
-        {showPreview && (
-          <div className="w-1/2 border-l">
-            <EditorPreview portfolio={currentPortfolio} />
-          </div>
-        )}
+        <div
+          className={cn(
+            'border-l transition-all duration-300',
+            showPreview ? 'flex-1' : 'w-0 overflow-hidden'
+          )}
+        >
+          <EditorPreview portfolio={currentPortfolio} />
+        </div>
       </div>
     </EditorLayout>
   );

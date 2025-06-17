@@ -2,10 +2,12 @@
 
 import { Check } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useApp } from '@/lib/contexts/AppContext';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 
 // Currency exchange rates (MXN as base)
 const EXCHANGE_RATES = {
@@ -17,7 +19,7 @@ const EXCHANGE_RATES = {
 // Base prices in MXN
 const BASE_PRICES = {
   free: 0,
-  pro: 340, // ~$19 USD
+  pro: 430, // ~$24 USD
   business: 875, // ~$49 USD
   enterprise: 1750, // ~$99 USD
 };
@@ -31,11 +33,20 @@ const CURRENCY_SYMBOLS = {
 export default function Pricing(): React.ReactElement {
   const { t } = useLanguage();
   const { currency } = useApp();
+  const [billingInterval, setBillingInterval] = useState<'monthly' | 'yearly'>(
+    'monthly'
+  );
 
-  const formatPrice = (basePriceMXN: number) => {
+  const formatPrice = (basePriceMXN: number, isYearly = false) => {
     if (basePriceMXN === 0) return '0';
 
-    const convertedPrice = Math.round(basePriceMXN * EXCHANGE_RATES[currency]);
+    let price = basePriceMXN;
+    if (isYearly) {
+      // Apply 20% discount for yearly billing
+      price = basePriceMXN * 12 * 0.8;
+    }
+
+    const convertedPrice = Math.round(price * EXCHANGE_RATES[currency]);
     const symbol = CURRENCY_SYMBOLS[currency];
 
     return `${symbol}${convertedPrice}`;
@@ -56,6 +67,27 @@ export default function Pricing(): React.ReactElement {
           <p className="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
             {t.pricingSubtitle}
           </p>
+
+          {/* Billing Interval Toggle */}
+          <div className="mt-8 flex items-center justify-center gap-4">
+            <Button
+              variant={billingInterval === 'monthly' ? 'default' : 'outline'}
+              onClick={() => setBillingInterval('monthly')}
+              size="sm"
+            >
+              Monthly
+            </Button>
+            <Button
+              variant={billingInterval === 'yearly' ? 'default' : 'outline'}
+              onClick={() => setBillingInterval('yearly')}
+              size="sm"
+            >
+              Yearly
+              <Badge variant="secondary" className="ml-2">
+                Save 20%
+              </Badge>
+            </Button>
+          </div>
         </div>
 
         {/* Limited Time Offer Banner */}
@@ -73,7 +105,7 @@ export default function Pricing(): React.ReactElement {
             <div className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
               <span data-price="0">{formatPrice(BASE_PRICES.free)}</span>
               <span className="text-lg text-gray-600 dark:text-gray-300">
-                {t.perMonth}
+                {billingInterval === 'yearly' ? '/year' : t.perMonth}
               </span>
             </div>
             <ul className="space-y-3 mb-8">
@@ -95,7 +127,7 @@ export default function Pricing(): React.ReactElement {
               </li>
             </ul>
             <Link
-              href="/auth/signup?plan=free"
+              href={`/auth/signup?plan=free&interval=${billingInterval}`}
               className="block w-full border-2 border-purple-600 text-purple-600 py-3 rounded-lg font-medium hover:bg-purple-50 dark:hover:bg-purple-900 transition text-center"
             >
               {t.startFree}
@@ -109,8 +141,22 @@ export default function Pricing(): React.ReactElement {
             </div>
             <h3 className="text-2xl font-bold mb-2">{t.planPro}</h3>
             <div className="text-4xl font-bold mb-6">
-              <span data-price="19">{formatPrice(BASE_PRICES.pro)}</span>
-              <span className="text-lg opacity-80">{t.perMonth}</span>
+              {billingInterval === 'yearly' ? (
+                <>
+                  <span data-price="230">
+                    {formatPrice(BASE_PRICES.pro, true)}
+                  </span>
+                  <span className="text-lg opacity-80">/year</span>
+                  <div className="text-sm opacity-70 font-normal mt-1">
+                    ({formatPrice(BASE_PRICES.pro)}/month billed yearly)
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span data-price="24">{formatPrice(BASE_PRICES.pro)}</span>
+                  <span className="text-lg opacity-80">{t.perMonth}</span>
+                </>
+              )}
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
@@ -135,7 +181,7 @@ export default function Pricing(): React.ReactElement {
               </li>
             </ul>
             <Link
-              href="/auth/signup?plan=pro"
+              href={`/auth/signup?plan=pro&interval=${billingInterval}`}
               className="block w-full bg-white text-purple-600 py-3 rounded-lg font-medium hover:bg-gray-100 transition text-center"
             >
               {t.startProTrial}
@@ -148,10 +194,28 @@ export default function Pricing(): React.ReactElement {
               {t.planBusiness}
             </h3>
             <div className="text-4xl font-bold mb-6 text-gray-900 dark:text-white">
-              <span data-price="49">{formatPrice(BASE_PRICES.business)}</span>
-              <span className="text-lg text-gray-600 dark:text-gray-300">
-                {t.perMonth}
-              </span>
+              {billingInterval === 'yearly' ? (
+                <>
+                  <span data-price="470">
+                    {formatPrice(BASE_PRICES.business, true)}
+                  </span>
+                  <span className="text-lg text-gray-600 dark:text-gray-300">
+                    /year
+                  </span>
+                  <div className="text-sm text-gray-500 dark:text-gray-400 font-normal mt-1">
+                    ({formatPrice(BASE_PRICES.business)}/month billed yearly)
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span data-price="49">
+                    {formatPrice(BASE_PRICES.business)}
+                  </span>
+                  <span className="text-lg text-gray-600 dark:text-gray-300">
+                    {t.perMonth}
+                  </span>
+                </>
+              )}
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
@@ -177,7 +241,7 @@ export default function Pricing(): React.ReactElement {
             </ul>
             <div className="space-y-3">
               <Link
-                href="/auth/signup?plan=business"
+                href={`/auth/signup?plan=business&interval=${billingInterval}`}
                 className="block w-full bg-purple-600 text-white py-3 rounded-lg font-medium hover:bg-purple-700 transition text-center"
               >
                 {t.pricingStartBusinessTrial}
@@ -198,8 +262,24 @@ export default function Pricing(): React.ReactElement {
             </div>
             <h3 className="text-2xl font-bold mb-2">{t.planEnterprise}</h3>
             <div className="text-4xl font-bold mb-6">
-              <span data-price="99">{formatPrice(BASE_PRICES.enterprise)}</span>
-              <span className="text-lg opacity-80">{t.perMonth}</span>
+              {billingInterval === 'yearly' ? (
+                <>
+                  <span data-price="950">
+                    {formatPrice(BASE_PRICES.enterprise, true)}
+                  </span>
+                  <span className="text-lg opacity-80">/year</span>
+                  <div className="text-sm opacity-70 font-normal mt-1">
+                    ({formatPrice(BASE_PRICES.enterprise)}/month billed yearly)
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span data-price="99">
+                    {formatPrice(BASE_PRICES.enterprise)}
+                  </span>
+                  <span className="text-lg opacity-80">{t.perMonth}</span>
+                </>
+              )}
             </div>
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
@@ -229,7 +309,7 @@ export default function Pricing(): React.ReactElement {
             </ul>
             <div className="space-y-3">
               <Link
-                href="/auth/signup?plan=enterprise"
+                href={`/auth/signup?plan=enterprise&interval=${billingInterval}`}
                 className="block w-full bg-yellow-400 text-gray-900 py-3 rounded-lg font-medium hover:bg-yellow-300 transition text-center"
               >
                 {t.pricingStartEnterpriseTrial}

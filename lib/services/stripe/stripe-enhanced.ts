@@ -53,12 +53,15 @@ export const SUBSCRIPTION_PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 1500, // $15.00 in cents
-    originalPrice: 1500,
-    promotionalPrice: 750, // $7.50 with 50% discount
+    price: 2400, // $24.00 in cents
+    originalPrice: 2400,
+    promotionalPrice: 1200, // $12.00 with 50% discount
+    yearlyPrice: 23040, // $230.40 yearly (20% discount)
+    yearlyPromotionalPrice: 11520, // $115.20 yearly with promo
     currency: 'usd',
     interval: 'month' as const,
     stripePriceId: process.env.STRIPE_PRO_PRICE_ID,
+    stripeYearlyPriceId: process.env.STRIPE_PRO_YEARLY_PRICE_ID,
     stripePromoPriceId: process.env.STRIPE_PRO_PROMO_PRICE_ID,
     features: {
       portfolios: 5,
@@ -84,9 +87,12 @@ export const SUBSCRIPTION_PLANS = {
     price: 3900, // $39.00 in cents
     originalPrice: 3900,
     promotionalPrice: 1950, // $19.50 with 50% discount
+    yearlyPrice: 37440, // $374.40 yearly (20% discount)
+    yearlyPromotionalPrice: 18720, // $187.20 yearly with promo
     currency: 'usd',
     interval: 'month' as const,
     stripePriceId: process.env.STRIPE_BUSINESS_PRICE_ID,
+    stripeYearlyPriceId: process.env.STRIPE_BUSINESS_YEARLY_PRICE_ID,
     stripePromoPriceId: process.env.STRIPE_BUSINESS_PROMO_PRICE_ID,
     features: {
       portfolios: 25,
@@ -113,9 +119,12 @@ export const SUBSCRIPTION_PLANS = {
     price: 7900, // $79.00 in cents
     originalPrice: 7900,
     promotionalPrice: 3950, // $39.50 with 50% discount
+    yearlyPrice: 75840, // $758.40 yearly (20% discount)
+    yearlyPromotionalPrice: 37920, // $379.20 yearly with promo
     currency: 'usd',
     interval: 'month' as const,
     stripePriceId: process.env.STRIPE_ENTERPRISE_PRICE_ID,
+    stripeYearlyPriceId: process.env.STRIPE_ENTERPRISE_YEARLY_PRICE_ID,
     stripePromoPriceId: process.env.STRIPE_ENTERPRISE_PROMO_PRICE_ID,
     features: {
       portfolios: -1, // unlimited
@@ -441,6 +450,14 @@ class EnhancedStripeService {
           credits: pack.credits.toString(),
           type: 'ai_credit_pack',
         },
+        payment_intent_data: {
+          metadata: {
+            userId,
+            packId,
+            credits: pack.credits.toString(),
+            type: 'ai_credit_pack',
+          },
+        },
       });
 
       logger.info('AI credit pack checkout session created', {
@@ -498,8 +515,12 @@ class EnhancedStripeService {
       // In a real implementation, these would come from your database
       // This is a placeholder showing the structure
       return {
-        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
-        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
+        currentPeriodStart: new Date(
+          (subscription as any).current_period_start * 1000
+        ),
+        currentPeriodEnd: new Date(
+          (subscription as any).current_period_end * 1000
+        ),
         portfoliosCreated: 0, // Get from database
         aiRequestsUsed: 0, // Get from database
         storageUsedGB: 0, // Get from storage service
@@ -532,52 +553,66 @@ class EnhancedStripeService {
       }
 
       // Check remaining redemptions
-      if (this.promotionId) {
-        const coupon = await stripe.coupons.retrieve(this.promotionId);
-        const remainingSlots = coupon.max_redemptions
-          ? coupon.max_redemptions - (coupon.times_redeemed || 0)
-          : null;
-
-        if (remainingSlots !== null && remainingSlots <= 0) {
-          return { eligible: false, reason: 'Promotion fully redeemed' };
-        }
-
-        // Check if user already used the promotion
-        const customers = await stripe.customers.list({
-          email: userEmail,
-          limit: 1,
-        });
-
-        if (customers.data.length > 0) {
-          const customer = customers.data[0];
-          if (!customer) {
-            return { eligible: true, remainingSlots: remainingSlots || undefined };
-          }
-          const subscriptions = await stripe.subscriptions.list({
-            customer: customer.id,
-            limit: 100,
-          });
-
-          const hasUsedPromo = subscriptions.data.some(
-            sub => sub.discounts?.some(d => typeof d !== 'string' && d.coupon?.id === this.promotionId)
-          );
-
-          if (hasUsedPromo) {
-            return { eligible: false, reason: 'Already used promotion' };
-          }
-        }
-
-        return {
-          eligible: true,
-          remainingSlots: remainingSlots || undefined,
-        };
+      if (!this.promotionId) {
+        return { eligible: false, reason: 'Promotion not configured' };
       }
 
-      return { eligible: false, reason: 'Promotion not configured' };
+      const coupon = await stripe.coupons.retrieve(this.promotionId);
+      const remainingSlots = coupon.max_redemptions
+        ? coupon.max_redemptions - (coupon.times_redeemed || 0)
+        : null;
+
+      if (remainingSlots !== null && remainingSlots <= 0) {
+        return { eligible: false, reason: 'Promotion fully redeemed' };
+      }
+
+      // Check if user already used the promotion
+      const hasUsedPromo = await this.checkUserPromoUsage(stripe, userEmail);
+      if (hasUsedPromo) {
+        return { eligible: false, reason: 'Already used promotion' };
+      }
+
+      return {
+        eligible: true,
+        remainingSlots: remainingSlots || undefined,
+      };
     } catch (error) {
       logger.error('Failed to check promotional eligibility', { error });
       return { eligible: false, reason: 'Error checking eligibility' };
     }
+  }
+
+  /**
+   * Check if user has already used the promotion
+   */
+  private async checkUserPromoUsage(
+    stripe: Stripe,
+    userEmail: string
+  ): Promise<boolean> {
+    const customers = await stripe.customers.list({
+      email: userEmail,
+      limit: 1,
+    });
+
+    if (customers.data.length === 0) {
+      return false;
+    }
+
+    const customer = customers.data[0];
+    if (!customer) {
+      return false;
+    }
+
+    const subscriptions = await stripe.subscriptions.list({
+      customer: customer.id,
+      limit: 100,
+    });
+
+    return subscriptions.data.some(sub =>
+      sub.discounts?.some(
+        d => typeof d !== 'string' && d.coupon?.id === this.promotionId
+      )
+    );
   }
 
   // ... Include all other methods from the original stripe.ts file ...
@@ -594,7 +629,8 @@ class EnhancedStripeService {
       ...plan.features,
       limitations: plan.limitations,
       price: plan.price,
-      promotionalPrice: 'promotionalPrice' in plan ? plan.promotionalPrice : undefined,
+      promotionalPrice:
+        'promotionalPrice' in plan ? plan.promotionalPrice : undefined,
     };
   }
 }

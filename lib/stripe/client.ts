@@ -44,9 +44,11 @@ export async function isStripeAvailable(): Promise<boolean> {
 export async function createCheckoutSession({
   planId,
   trialDays = 7,
+  billingInterval = 'monthly',
 }: {
   planId: 'pro' | 'business' | 'enterprise';
   trialDays?: number;
+  billingInterval?: 'monthly' | 'yearly';
 }): Promise<{ success: boolean; error?: string }> {
   try {
     // Check if Stripe is available
@@ -66,6 +68,7 @@ export async function createCheckoutSession({
       body: JSON.stringify({
         planId,
         trialDays,
+        billingInterval,
       }),
     });
 
@@ -189,7 +192,7 @@ export const PLAN_CONFIG = {
   },
   pro: {
     name: 'Pro',
-    price: 1500, // $15.00
+    price: 2400, // $24.00
     features: {
       portfolios: 5,
       aiRequests: 50,
