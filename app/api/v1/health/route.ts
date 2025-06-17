@@ -12,7 +12,7 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  * GET /api/v1/health - Comprehensive health check
  */
 export const GET = withErrorTracking(
-  withAPMTracking(async () => {
+  withAPMTracking(() => {
     return handleHealthCheck();
   }, 'health-check'),
   'health-api'
