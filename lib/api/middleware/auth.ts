@@ -21,15 +21,15 @@ function _safeStringCompare(a: string, b: string): boolean {
     // Ensure both strings are the same length to prevent length-based timing attacks
     const bufferA = Buffer.from(a, 'utf8');
     const bufferB = Buffer.from(b, 'utf8');
-    
+
     // Pad shorter buffer with zeros to make lengths equal
     const maxLength = Math.max(bufferA.length, bufferB.length);
     const paddedA = Buffer.alloc(maxLength);
     const paddedB = Buffer.alloc(maxLength);
-    
+
     bufferA.copy(paddedA);
     bufferB.copy(paddedB);
-    
+
     return timingSafeEqual(paddedA, paddedB) && a.length === b.length;
   } catch (error) {
     logger.error('Safe string comparison error:', error as Error);
@@ -61,7 +61,7 @@ export interface AuthenticatedRequest extends NextRequest {
  */
 export async function authenticateUser(_request: NextRequest) {
   const startTime = Date.now();
-  
+
   try {
     const supabase = await createClient();
 
@@ -91,9 +91,9 @@ export async function authenticateUser(_request: NextRequest) {
       .single();
 
     if (profileError) {
-      logger.warn('Profile fetch failed, using default role', { 
+      logger.warn('Profile fetch failed, using default role', {
         userId: user.id,
-        error: profileError.message 
+        error: profileError.message,
       });
     }
 

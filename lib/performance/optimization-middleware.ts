@@ -25,38 +25,52 @@ export function withPerformanceOptimization<T extends (...args: any[]) => any>(
 
   return (async (request: NextRequest, ...args: any[]) => {
     const startTime = Date.now();
-    
+
     try {
       // Execute the original handler
       const response = await handler(request, ...args);
-      
+
       if (response instanceof NextResponse) {
         // Add performance headers
         const processingTime = Date.now() - startTime;
         response.headers.set('X-Response-Time', `${processingTime}ms`);
-        
+
         // Cache control based on content type and route
         const contentType = response.headers.get('content-type') || '';
         const isAPI = request.nextUrl.pathname.startsWith('/api/');
-        const isStatic = request.nextUrl.pathname.match(/\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/);
-        
+        const isStatic = request.nextUrl.pathname.match(
+          /\.(js|css|png|jpg|jpeg|gif|svg|ico|woff|woff2)$/
+        );
+
         if (cacheControl) {
           response.headers.set('Cache-Control', cacheControl);
         } else if (isStatic) {
           // Static assets - cache for 1 year
-          response.headers.set('Cache-Control', 'public, max-age=31536000, immutable');
+          response.headers.set(
+            'Cache-Control',
+            'public, max-age=31536000, immutable'
+          );
         } else if (isAPI) {
           // API routes - cache based on content
           if (contentType.includes('application/json')) {
-            response.headers.set('Cache-Control', `public, max-age=${maxAge}, stale-while-revalidate=86400`);
+            response.headers.set(
+              'Cache-Control',
+              `public, max-age=${maxAge}, stale-while-revalidate=86400`
+            );
           } else {
-            response.headers.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+            response.headers.set(
+              'Cache-Control',
+              'no-cache, no-store, must-revalidate'
+            );
           }
         } else {
           // HTML pages - short cache with revalidation
-          response.headers.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=3600');
+          response.headers.set(
+            'Cache-Control',
+            'public, max-age=300, stale-while-revalidate=3600'
+          );
         }
-        
+
         // Enable compression if supported
         if (enableCompression) {
           const acceptEncoding = request.headers.get('accept-encoding') || '';
@@ -66,29 +80,32 @@ export function withPerformanceOptimization<T extends (...args: any[]) => any>(
             response.headers.set('Content-Encoding', 'br');
           }
         }
-        
+
         // Add ETag for better caching
         if (enableETags && response.body) {
           const etag = generateETag(response);
           response.headers.set('ETag', etag);
-          
+
           // Check if client has cached version
           const ifNoneMatch = request.headers.get('if-none-match');
           if (ifNoneMatch === etag) {
             return new NextResponse(null, { status: 304 });
           }
         }
-        
+
         // Add performance hints
         response.headers.set('X-DNS-Prefetch-Control', 'on');
-        response.headers.set('X-Preconnect', 'https://fonts.googleapis.com, https://api.stripe.com');
-        
+        response.headers.set(
+          'X-Preconnect',
+          'https://fonts.googleapis.com, https://api.stripe.com'
+        );
+
         // Server timing for debugging
         if (process.env.NODE_ENV === 'development') {
           response.headers.set('Server-Timing', `total;dur=${processingTime}`);
         }
       }
-      
+
       return response;
     } catch (error) {
       // Even errors should have response time headers
@@ -110,13 +127,13 @@ function generateETag(response: NextResponse): string {
   // Simple hash-based ETag generation
   const content = response.body ? response.body.toString() : '';
   let hash = 0;
-  
+
   for (let i = 0; i < content.length; i++) {
     const char = content.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32-bit integer
   }
-  
+
   return `"${Math.abs(hash).toString(16)}"`;
 }
 
@@ -143,7 +160,7 @@ export function withQueryOptimization<T extends (...args: any[]) => any>(
     }
 
     // Generate cache key
-    const cacheKey = cacheKeyGenerator 
+    const cacheKey = cacheKeyGenerator
       ? cacheKeyGenerator(request)
       : `query:${request.nextUrl.pathname}:${request.nextUrl.search}`;
 
@@ -152,7 +169,7 @@ export function withQueryOptimization<T extends (...args: any[]) => any>(
       // This would integrate with Redis in production
       // For now, we'll use in-memory cache
       const cachedResponse = getFromCache(cacheKey);
-      
+
       if (cachedResponse) {
         const response = NextResponse.json(cachedResponse);
         response.headers.set('X-Cache', 'HIT');
@@ -164,7 +181,7 @@ export function withQueryOptimization<T extends (...args: any[]) => any>(
 
     // Execute handler and cache result
     const response = await handler(request, ...args);
-    
+
     if (response instanceof NextResponse && response.status === 200) {
       try {
         const responseData = await response.clone().json();
@@ -186,23 +203,23 @@ const cache = new Map<string, { data: any; expiry: number }>();
 
 function getFromCache(key: string): any | null {
   const item = cache.get(key);
-  
+
   if (!item) {
     return null;
   }
-  
+
   if (Date.now() > item.expiry) {
     cache.delete(key);
     return null;
   }
-  
+
   return item.data;
 }
 
 function setCache(key: string, data: any, ttlSeconds: number): void {
-  const expiry = Date.now() + (ttlSeconds * 1000);
+  const expiry = Date.now() + ttlSeconds * 1000;
   cache.set(key, { data, expiry });
-  
+
   // Clean up expired entries periodically
   if (cache.size > 1000) {
     cleanupExpiredCache();
@@ -211,7 +228,7 @@ function setCache(key: string, data: any, ttlSeconds: number): void {
 
 function cleanupExpiredCache(): void {
   const now = Date.now();
-  
+
   for (const [key, item] of cache.entries()) {
     if (now > item.expiry) {
       cache.delete(key);
@@ -224,12 +241,14 @@ function cleanupExpiredCache(): void {
  */
 export function optimizeAPIResponse(data: any): any {
   // Remove undefined values to reduce payload size
-  return JSON.parse(JSON.stringify(data, (key, value) => {
-    if (value === undefined) {
-      return undefined;
-    }
-    return value;
-  }));
+  return JSON.parse(
+    JSON.stringify(data, (key, value) => {
+      if (value === undefined) {
+        return undefined;
+      }
+      return value;
+    })
+  );
 }
 
 /**
@@ -247,11 +266,14 @@ export function optimizePagination(
   maxLimit: number = 100
 ): PaginationOptions {
   const searchParams = request.nextUrl.searchParams;
-  
+
   const page = Math.max(1, parseInt(searchParams.get('page') || '1', 10));
-  const requestedLimit = parseInt(searchParams.get('limit') || defaultLimit.toString(), 10);
+  const requestedLimit = parseInt(
+    searchParams.get('limit') || defaultLimit.toString(),
+    10
+  );
   const limit = Math.min(Math.max(1, requestedLimit), maxLimit);
-  
+
   return { page, limit, maxLimit };
 }
 
@@ -272,7 +294,7 @@ export const imageOptimization = {
       w: width.toString(),
       q: quality.toString(),
     });
-    
+
     return `/_next/image?${params.toString()}`;
   },
 
@@ -300,7 +322,9 @@ export const bundleOptimization = {
   /**
    * Critical CSS extraction
    */
-  extractCriticalCSS: (html: string): { critical: string; remaining: string } => {
+  extractCriticalCSS: (
+    html: string
+  ): { critical: string; remaining: string } => {
     // This would be implemented with a CSS extraction tool
     // For now, return placeholder
     return {
@@ -312,14 +336,16 @@ export const bundleOptimization = {
   /**
    * Resource prioritization
    */
-  prioritizeResources: (resources: string[]): { critical: string[]; deferred: string[] } => {
-    const critical = resources.filter(resource => 
-      resource.includes('/critical/') || 
-      resource.includes('/above-fold/')
+  prioritizeResources: (
+    resources: string[]
+  ): { critical: string[]; deferred: string[] } => {
+    const critical = resources.filter(
+      resource =>
+        resource.includes('/critical/') || resource.includes('/above-fold/')
     );
-    
+
     const deferred = resources.filter(resource => !critical.includes(resource));
-    
+
     return { critical, deferred };
   },
 };
@@ -333,14 +359,17 @@ export function trackPerformanceMetrics(
   additionalData?: Record<string, any>
 ): void {
   const duration = Date.now() - startTime;
-  
+
   // Log performance metrics (in production, send to analytics service)
   if (process.env.NODE_ENV === 'development') {
     console.log(`Performance: ${operation} took ${duration}ms`, additionalData);
   }
-  
+
   // Track slow operations
   if (duration > 1000) {
-    console.warn(`Slow operation detected: ${operation} took ${duration}ms`, additionalData);
+    console.warn(
+      `Slow operation detected: ${operation} took ${duration}ms`,
+      additionalData
+    );
   }
 }

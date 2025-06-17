@@ -19,10 +19,18 @@ export function createLazyComponent<T extends ComponentType<any>>(
  * Lazy load heavy chart components
  */
 export const LazyChartComponents = {
-  LineChart: createLazyComponent(() => import('recharts').then(module => ({ default: module.LineChart }))),
-  BarChart: createLazyComponent(() => import('recharts').then(module => ({ default: module.BarChart }))),
-  PieChart: createLazyComponent(() => import('recharts').then(module => ({ default: module.PieChart }))),
-  AreaChart: createLazyComponent(() => import('recharts').then(module => ({ default: module.AreaChart }))),
+  LineChart: createLazyComponent(() =>
+    import('recharts').then(module => ({ default: module.LineChart }))
+  ),
+  BarChart: createLazyComponent(() =>
+    import('recharts').then(module => ({ default: module.BarChart }))
+  ),
+  PieChart: createLazyComponent(() =>
+    import('recharts').then(module => ({ default: module.PieChart }))
+  ),
+  AreaChart: createLazyComponent(() =>
+    import('recharts').then(module => ({ default: module.AreaChart }))
+  ),
 };
 
 /**
@@ -85,12 +93,12 @@ export async function dynamicImportWithRetry<T>(
       if (i === retries - 1) {
         throw error;
       }
-      
+
       // Wait before retrying
       await new Promise(resolve => setTimeout(resolve, delay * (i + 1)));
     }
   }
-  
+
   throw new Error('Dynamic import failed after retries');
 }
 
@@ -153,24 +161,25 @@ export function createIntersectionObserver(
  */
 export const imageOptimization = {
   // Generate srcSet for responsive images
-  generateSrcSet: (baseUrl: string, sizes: number[] = [320, 640, 1280, 1920]) => {
+  generateSrcSet: (
+    baseUrl: string,
+    sizes: number[] = [320, 640, 1280, 1920]
+  ) => {
     return sizes.map(size => `${baseUrl}?w=${size} ${size}w`).join(', ');
   },
 
   // Lazy load images with intersection observer
   lazyLoadImage: (img: HTMLImageElement, src: string) => {
-    const observer = createIntersectionObserver(
-      (entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const target = entry.target as HTMLImageElement;
-            target.src = src;
-            target.classList.remove('lazy');
-            observer?.unobserve(target);
-          }
-        });
-      }
-    );
+    const observer = createIntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const target = entry.target as HTMLImageElement;
+          target.src = src;
+          target.classList.remove('lazy');
+          observer?.unobserve(target);
+        }
+      });
+    });
 
     if (observer) {
       img.classList.add('lazy');
@@ -219,7 +228,7 @@ export const performanceMonitoring = {
     if (typeof window === 'undefined') return;
 
     // Largest Contentful Paint
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
       if (lastEntry) {
@@ -228,7 +237,7 @@ export const performanceMonitoring = {
     }).observe({ entryTypes: ['largest-contentful-paint'] });
 
     // First Input Delay
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach(entry => {
         const fidEntry = entry as PerformanceEventTiming;
@@ -240,7 +249,7 @@ export const performanceMonitoring = {
 
     // Cumulative Layout Shift
     let cumulativeScore = 0;
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach(entry => {
         const clsEntry = entry as any; // Layout shift entry type
@@ -257,15 +266,18 @@ export const performanceMonitoring = {
     if (typeof window === 'undefined') return;
 
     window.addEventListener('load', () => {
-      const timing = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
-      
+      const timing = performance.getEntriesByType(
+        'navigation'
+      )[0] as PerformanceNavigationTiming;
+
       const metrics = {
         dns: timing.domainLookupEnd - timing.domainLookupStart,
         tcp: timing.connectEnd - timing.connectStart,
         ttfb: timing.responseStart - timing.requestStart,
         download: timing.responseEnd - timing.responseStart,
         domParsing: timing.domContentLoadedEventStart - timing.responseEnd,
-        resourceLoading: timing.loadEventStart - timing.domContentLoadedEventStart,
+        resourceLoading:
+          timing.loadEventStart - timing.domContentLoadedEventStart,
         total: timing.loadEventEnd - timing.startTime,
       };
 

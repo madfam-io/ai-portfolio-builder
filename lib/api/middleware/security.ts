@@ -49,19 +49,19 @@ export function validateCSRFToken(request: NextRequest): boolean {
     if (!tokenFromHeader || !tokenFromCookie) {
       return false;
     }
-    
+
     const headerBuffer = Buffer.from(tokenFromHeader, 'hex');
     const cookieBuffer = Buffer.from(tokenFromCookie, 'hex');
-    
+
     if (headerBuffer.length !== cookieBuffer.length) {
       return false;
     }
-    
+
     let result = 0;
     for (let i = 0; i < headerBuffer.length; i++) {
       result |= (headerBuffer[i] ?? 0) ^ (cookieBuffer[i] ?? 0);
     }
-    
+
     return result === 0;
   } catch (error) {
     logger.error('CSRF token validation error:', error as Error);
@@ -77,19 +77,19 @@ function getClientIP(request: NextRequest): string {
   const xForwardedFor = request.headers.get('x-forwarded-for');
   const xRealIP = request.headers.get('x-real-ip');
   const cfConnectingIP = request.headers.get('cf-connecting-ip');
-  
+
   if (xForwardedFor) {
     return xForwardedFor.split(',')[0]?.trim() || 'unknown';
   }
-  
+
   if (xRealIP) {
     return xRealIP;
   }
-  
+
   if (cfConnectingIP) {
     return cfConnectingIP;
   }
-  
+
   // Fallback to connection remote address if available
   return 'unknown';
 }
@@ -104,10 +104,8 @@ export function generateRequestFingerprint(request: NextRequest): string {
     request.headers.get('accept-encoding') || '',
     getClientIP(request),
   ];
-  
-  return createHash('sha256')
-    .update(components.join('|'))
-    .digest('hex');
+
+  return createHash('sha256').update(components.join('|')).digest('hex');
 }
 
 /**
@@ -118,7 +116,7 @@ export function detectSuspiciousActivity(request: NextRequest): {
   reasons: string[];
 } {
   const reasons: string[] = [];
-  
+
   // Check for suspicious user agents
   const userAgent = request.headers.get('user-agent') || '';
   const suspiciousUAPatterns = [
@@ -128,23 +126,23 @@ export function detectSuspiciousActivity(request: NextRequest): {
     /scraper/i,
     /^$/,
   ];
-  
+
   if (suspiciousUAPatterns.some(pattern => pattern.test(userAgent))) {
     reasons.push('suspicious_user_agent');
   }
-  
+
   // Check for missing expected headers
   if (!request.headers.get('accept')) {
     reasons.push('missing_accept_header');
   }
-  
+
   // Check for suspicious referer patterns
   const referer = request.headers.get('referer');
   if (referer) {
     try {
       const refererUrl = new URL(referer);
       const currentHost = request.nextUrl.host;
-      
+
       // Allow common staging/development patterns
       const allowedHosts = [
         'localhost',
@@ -152,14 +150,16 @@ export function detectSuspiciousActivity(request: NextRequest): {
         '*.vercel.app',
         '*.netlify.app',
       ];
-      
+
       const isAllowed = allowedHosts.some(pattern => {
         if (pattern.startsWith('*')) {
           return refererUrl.hostname.endsWith(pattern.slice(1));
         }
-        return refererUrl.hostname === pattern || refererUrl.hostname === currentHost;
+        return (
+          refererUrl.hostname === pattern || refererUrl.hostname === currentHost
+        );
       });
-      
+
       if (!isAllowed) {
         reasons.push('suspicious_referer');
       }
@@ -168,12 +168,12 @@ export function detectSuspiciousActivity(request: NextRequest): {
       reasons.push('invalid_referer');
     }
   }
-  
+
   // Check for rapid sequential requests (basic rate limiting check)
   const clientIP = getClientIP(request);
   const rateLimitKey = `rate_limit_${clientIP}`;
   // This would ideally use Redis, but for now we'll just flag it
-  
+
   const forwardedFor = request.headers.get('x-forwarded-for');
   if (forwardedFor) {
     const forwardedIPs = forwardedFor.split(',');
@@ -181,7 +181,7 @@ export function detectSuspiciousActivity(request: NextRequest): {
       reasons.push('multiple_proxies');
     }
   }
-  
+
   return {
     isSuspicious: reasons.length > 0,
     reasons,
@@ -214,13 +214,13 @@ export function withSecurity<T extends (...args: any[]) => any>(
           path: request.nextUrl.pathname,
           ip: getClientIP(request),
         });
-        
+
         return NextResponse.json(
           { error: 'Method not allowed' },
-          { 
+          {
             status: 405,
             headers: {
-              'Allow': allowedMethods.join(', '),
+              Allow: allowedMethods.join(', '),
             },
           }
         );
@@ -233,7 +233,7 @@ export function withSecurity<T extends (...args: any[]) => any>(
           path: request.nextUrl.pathname,
           ip: getClientIP(request),
         });
-        
+
         return NextResponse.json(
           { error: 'Invalid CSRF token' },
           { status: 403 }
@@ -243,7 +243,7 @@ export function withSecurity<T extends (...args: any[]) => any>(
       // Suspicious activity detection
       if (checkSuspiciousActivity) {
         const { isSuspicious, reasons } = detectSuspiciousActivity(request);
-        
+
         if (isSuspicious) {
           logger.warn('Suspicious activity detected', {
             reasons,
@@ -252,14 +252,14 @@ export function withSecurity<T extends (...args: any[]) => any>(
             ip: getClientIP(request),
             userAgent: request.headers.get('user-agent'),
           });
-          
+
           // For now, just log it. In production, might want to rate limit or block
         }
       }
 
       // Add security headers to response
       const response = await handler(request, ...args);
-      
+
       if (response instanceof NextResponse) {
         // Add CSRF token for future requests
         if (!request.cookies.get(CSRF_COOKIE_NAME)) {
@@ -270,16 +270,19 @@ export function withSecurity<T extends (...args: any[]) => any>(
             sameSite: 'strict',
             maxAge: 60 * 60 * 24, // 24 hours
           });
-          
+
           response.headers.set('X-CSRF-Token', csrfToken);
         }
-        
+
         // Add additional security headers
         response.headers.set('X-Content-Type-Options', 'nosniff');
         response.headers.set('X-Frame-Options', 'DENY');
-        response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+        response.headers.set(
+          'Referrer-Policy',
+          'strict-origin-when-cross-origin'
+        );
       }
-      
+
       return response;
     } catch (error) {
       logger.error('Security middleware error:', error as Error);
@@ -299,29 +302,32 @@ export function validateRequestContent(request: NextRequest): {
   error?: string;
 } {
   const contentType = request.headers.get('content-type');
-  
+
   // For POST/PUT/PATCH requests, require proper content type
   if (['POST', 'PUT', 'PATCH'].includes(request.method)) {
     if (!contentType) {
       return { isValid: false, error: 'Content-Type header required' };
     }
-    
-    if (!contentType.includes('application/json') && 
-        !contentType.includes('multipart/form-data') &&
-        !contentType.includes('application/x-www-form-urlencoded')) {
+
+    if (
+      !contentType.includes('application/json') &&
+      !contentType.includes('multipart/form-data') &&
+      !contentType.includes('application/x-www-form-urlencoded')
+    ) {
       return { isValid: false, error: 'Unsupported content type' };
     }
   }
-  
+
   // Check for reasonable content length
   const contentLength = request.headers.get('content-length');
   if (contentLength) {
     const length = parseInt(contentLength, 10);
-    if (length > 10 * 1024 * 1024) { // 10MB limit
+    if (length > 10 * 1024 * 1024) {
+      // 10MB limit
       return { isValid: false, error: 'Request too large' };
     }
   }
-  
+
   return { isValid: true };
 }
 
@@ -334,9 +340,10 @@ export function secureErrorResponse(
   details?: Record<string, any>
 ): NextResponse {
   // In production, don't leak sensitive information
-  const response = process.env.NODE_ENV === 'production' 
-    ? { error: message }
-    : { error: message, details };
-    
+  const response =
+    process.env.NODE_ENV === 'production'
+      ? { error: message }
+      : { error: message, details };
+
   return NextResponse.json(response, { status });
 }

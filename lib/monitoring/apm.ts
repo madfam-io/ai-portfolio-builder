@@ -71,7 +71,10 @@ class APMService {
   /**
    * End a transaction
    */
-  endTransaction(id: string, status: 'completed' | 'failed' = 'completed'): void {
+  endTransaction(
+    id: string,
+    status: 'completed' | 'failed' = 'completed'
+  ): void {
     if (!this.isEnabled || !id) return;
 
     const transaction = this.transactions.get(id);
@@ -96,7 +99,9 @@ class APMService {
 
     // Log slow transactions
     if (transaction.duration > 1000) {
-      console.warn(`Slow transaction detected: ${transaction.name} took ${transaction.duration}ms`);
+      console.warn(
+        `Slow transaction detected: ${transaction.name} took ${transaction.duration}ms`
+      );
     }
   }
 
@@ -174,7 +179,10 @@ class APMService {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
-      console.log(`APM Metric: ${metric.name} = ${metric.value}${metric.unit}`, metric.tags);
+      console.log(
+        `APM Metric: ${metric.name} = ${metric.value}${metric.unit}`,
+        metric.tags
+      );
     }
   }
 
@@ -189,7 +197,9 @@ class APMService {
    * Get all active transactions
    */
   getActiveTransactions(): TransactionTrace[] {
-    return Array.from(this.transactions.values()).filter(t => t.status === 'pending');
+    return Array.from(this.transactions.values()).filter(
+      t => t.status === 'pending'
+    );
   }
 
   /**
@@ -203,18 +213,29 @@ class APMService {
     errorRate: number;
   } {
     const transactions = Array.from(this.transactions.values());
-    const completedTransactions = transactions.filter(t => t.status !== 'pending');
-    
-    const totalDuration = completedTransactions.reduce((sum, t) => sum + (t.duration || 0), 0);
-    const averageResponseTime = completedTransactions.length > 0 
-      ? totalDuration / completedTransactions.length 
-      : 0;
-    
-    const slowTransactions = completedTransactions.filter(t => (t.duration || 0) > 1000).length;
-    const failedTransactions = completedTransactions.filter(t => t.status === 'failed').length;
-    const errorRate = completedTransactions.length > 0 
-      ? (failedTransactions / completedTransactions.length) * 100 
-      : 0;
+    const completedTransactions = transactions.filter(
+      t => t.status !== 'pending'
+    );
+
+    const totalDuration = completedTransactions.reduce(
+      (sum, t) => sum + (t.duration || 0),
+      0
+    );
+    const averageResponseTime =
+      completedTransactions.length > 0
+        ? totalDuration / completedTransactions.length
+        : 0;
+
+    const slowTransactions = completedTransactions.filter(
+      t => (t.duration || 0) > 1000
+    ).length;
+    const failedTransactions = completedTransactions.filter(
+      t => t.status === 'failed'
+    ).length;
+    const errorRate =
+      completedTransactions.length > 0
+        ? (failedTransactions / completedTransactions.length) * 100
+        : 0;
 
     return {
       totalTransactions: transactions.length,
@@ -247,10 +268,14 @@ class APMService {
   private cleanupOldTransactions(): void {
     if (this.transactions.size <= this.maxTransactions) return;
 
-    const sortedTransactions = Array.from(this.transactions.entries())
-      .sort(([, a], [, b]) => a.startTime - b.startTime);
+    const sortedTransactions = Array.from(this.transactions.entries()).sort(
+      ([, a], [, b]) => a.startTime - b.startTime
+    );
 
-    const toRemove = sortedTransactions.slice(0, sortedTransactions.length - this.maxTransactions);
+    const toRemove = sortedTransactions.slice(
+      0,
+      sortedTransactions.length - this.maxTransactions
+    );
     toRemove.forEach(([id]) => this.transactions.delete(id));
   }
 
@@ -274,8 +299,9 @@ export function withAPMTracking<T extends (...args: any[]) => any>(
 ): T {
   return (async (...args: any[]) => {
     const request = args[0] as NextRequest;
-    const transactionName = operationName || `${request?.method} ${request?.nextUrl?.pathname}`;
-    
+    const transactionName =
+      operationName || `${request?.method} ${request?.nextUrl?.pathname}`;
+
     const transactionId = apm.startTransaction(transactionName, {
       method: request?.method,
       url: request?.url,
@@ -302,7 +328,10 @@ export function trackDatabaseOperation<T>(
   executor: () => Promise<T> | T
 ): Promise<T> | T {
   const transactionId = apm.startTransaction(`db:${operation}`, { query });
-  const spanId = apm.startSpan(transactionId, 'database', undefined, { operation, query });
+  const spanId = apm.startSpan(transactionId, 'database', undefined, {
+    operation,
+    query,
+  });
 
   const finish = (result: T, status: 'completed' | 'failed' = 'completed') => {
     apm.endSpan(transactionId, spanId, status);
@@ -312,7 +341,7 @@ export function trackDatabaseOperation<T>(
 
   try {
     const result = executor();
-    
+
     if (result instanceof Promise) {
       return result
         .then(r => finish(r, 'completed'))
@@ -321,7 +350,7 @@ export function trackDatabaseOperation<T>(
           throw error;
         });
     }
-    
+
     return finish(result, 'completed');
   } catch (error) {
     finish(error as T, 'failed');
@@ -337,8 +366,14 @@ export function trackAIOperation<T>(
   operation: string,
   executor: () => Promise<T> | T
 ): Promise<T> | T {
-  const transactionId = apm.startTransaction(`ai:${operation}`, { model, operation });
-  const spanId = apm.startSpan(transactionId, 'ai-inference', undefined, { model, operation });
+  const transactionId = apm.startTransaction(`ai:${operation}`, {
+    model,
+    operation,
+  });
+  const spanId = apm.startSpan(transactionId, 'ai-inference', undefined, {
+    model,
+    operation,
+  });
 
   const finish = (result: T, status: 'completed' | 'failed' = 'completed') => {
     apm.endSpan(transactionId, spanId, status);
@@ -348,7 +383,7 @@ export function trackAIOperation<T>(
 
   try {
     const result = executor();
-    
+
     if (result instanceof Promise) {
       return result
         .then(r => finish(r, 'completed'))
@@ -357,7 +392,7 @@ export function trackAIOperation<T>(
           throw error;
         });
     }
-    
+
     return finish(result, 'completed');
   } catch (error) {
     finish(error as T, 'failed');
@@ -373,8 +408,14 @@ export function trackExternalAPI<T>(
   endpoint: string,
   executor: () => Promise<T> | T
 ): Promise<T> | T {
-  const transactionId = apm.startTransaction(`external:${service}`, { service, endpoint });
-  const spanId = apm.startSpan(transactionId, 'external-api', undefined, { service, endpoint });
+  const transactionId = apm.startTransaction(`external:${service}`, {
+    service,
+    endpoint,
+  });
+  const spanId = apm.startSpan(transactionId, 'external-api', undefined, {
+    service,
+    endpoint,
+  });
 
   const finish = (result: T, status: 'completed' | 'failed' = 'completed') => {
     apm.endSpan(transactionId, spanId, status);
@@ -384,7 +425,7 @@ export function trackExternalAPI<T>(
 
   try {
     const result = executor();
-    
+
     if (result instanceof Promise) {
       return result
         .then(r => finish(r, 'completed'))
@@ -393,7 +434,7 @@ export function trackExternalAPI<T>(
           throw error;
         });
     }
-    
+
     return finish(result, 'completed');
   } catch (error) {
     finish(error as T, 'failed');
@@ -405,7 +446,11 @@ export function trackExternalAPI<T>(
  * Business metrics tracking
  */
 export const businessMetrics = {
-  trackUserAction: (action: string, userId?: string, metadata?: Record<string, any>) => {
+  trackUserAction: (
+    action: string,
+    userId?: string,
+    metadata?: Record<string, any>
+  ) => {
     apm.recordMetric({
       name: 'user_action',
       value: 1,
@@ -468,7 +513,9 @@ export const businessMetrics = {
  */
 export function useAPMTracking(componentName: string) {
   const startRender = () => {
-    return apm.startTransaction(`render:${componentName}`, { component: componentName });
+    return apm.startTransaction(`render:${componentName}`, {
+      component: componentName,
+    });
   };
 
   const endRender = (transactionId: string) => {

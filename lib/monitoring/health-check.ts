@@ -44,43 +44,45 @@ class HealthMonitor {
    * Run all health checks
    */
   async runAllChecks(): Promise<SystemHealth> {
-    const checkPromises = Array.from(this.checks.entries()).map(async ([name, checkFn]) => {
-      try {
-        const startTime = performance.now();
-        const cached = this.cache.get(name);
-        
-        // Use cache if still valid
-        if (cached && Date.now() - cached.lastCheck < this.cacheTimeout) {
-          return cached;
-        }
+    const checkPromises = Array.from(this.checks.entries()).map(
+      async ([name, checkFn]) => {
+        try {
+          const startTime = performance.now();
+          const cached = this.cache.get(name);
 
-        const result = await Promise.race([
-          checkFn(),
-          this.timeoutPromise<HealthCheck>(5000, {
+          // Use cache if still valid
+          if (cached && Date.now() - cached.lastCheck < this.cacheTimeout) {
+            return cached;
+          }
+
+          const result = await Promise.race([
+            checkFn(),
+            this.timeoutPromise<HealthCheck>(5000, {
+              name,
+              status: 'unhealthy',
+              message: 'Health check timeout',
+              lastCheck: Date.now(),
+              responseTime: 5000,
+            }),
+          ]);
+
+          result.responseTime = performance.now() - startTime;
+          result.lastCheck = Date.now();
+
+          this.cache.set(name, result);
+          return result;
+        } catch (error) {
+          const failedCheck: HealthCheck = {
             name,
             status: 'unhealthy',
-            message: 'Health check timeout',
+            message: error instanceof Error ? error.message : 'Unknown error',
             lastCheck: Date.now(),
-            responseTime: 5000,
-          }),
-        ]);
-
-        result.responseTime = performance.now() - startTime;
-        result.lastCheck = Date.now();
-        
-        this.cache.set(name, result);
-        return result;
-      } catch (error) {
-        const failedCheck: HealthCheck = {
-          name,
-          status: 'unhealthy',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          lastCheck: Date.now(),
-        };
-        this.cache.set(name, failedCheck);
-        return failedCheck;
+          };
+          this.cache.set(name, failedCheck);
+          return failedCheck;
+        }
       }
-    });
+    );
 
     const checks = await Promise.all(checkPromises);
     const overall = this.calculateOverallHealth(checks);
@@ -106,7 +108,7 @@ class HealthMonitor {
       const result = await checkFn();
       result.responseTime = performance.now() - startTime;
       result.lastCheck = Date.now();
-      
+
       this.cache.set(name, result);
       return result;
     } catch (error) {
@@ -131,18 +133,21 @@ class HealthMonitor {
         // This would check actual database connection
         // For now, we'll simulate the check
         const isConnected = await this.checkDatabaseConnection();
-        
+
         return {
           name: 'database',
           status: isConnected ? 'healthy' : 'unhealthy',
-          message: isConnected ? 'Database connection successful' : 'Database connection failed',
+          message: isConnected
+            ? 'Database connection successful'
+            : 'Database connection failed',
           lastCheck: Date.now(),
         };
       } catch (error) {
         return {
           name: 'database',
           status: 'unhealthy',
-          message: error instanceof Error ? error.message : 'Database check failed',
+          message:
+            error instanceof Error ? error.message : 'Database check failed',
           lastCheck: Date.now(),
         };
       }
@@ -152,11 +157,13 @@ class HealthMonitor {
     this.registerCheck('redis', async () => {
       try {
         const isConnected = await this.checkRedisConnection();
-        
+
         return {
           name: 'redis',
           status: isConnected ? 'healthy' : 'degraded',
-          message: isConnected ? 'Redis connection successful' : 'Redis unavailable, using memory cache',
+          message: isConnected
+            ? 'Redis connection successful'
+            : 'Redis unavailable, using memory cache',
           lastCheck: Date.now(),
         };
       } catch (error) {
@@ -172,12 +179,16 @@ class HealthMonitor {
     // External API dependencies
     this.registerCheck('huggingface', async () => {
       try {
-        const isAvailable = await this.checkExternalAPI('https://huggingface.co');
-        
+        const isAvailable = await this.checkExternalAPI(
+          'https://huggingface.co'
+        );
+
         return {
           name: 'huggingface',
           status: isAvailable ? 'healthy' : 'degraded',
-          message: isAvailable ? 'HuggingFace API accessible' : 'HuggingFace API unavailable',
+          message: isAvailable
+            ? 'HuggingFace API accessible'
+            : 'HuggingFace API unavailable',
           lastCheck: Date.now(),
         };
       } catch (error) {
@@ -192,12 +203,16 @@ class HealthMonitor {
 
     this.registerCheck('stripe', async () => {
       try {
-        const isAvailable = await this.checkExternalAPI('https://api.stripe.com');
-        
+        const isAvailable = await this.checkExternalAPI(
+          'https://api.stripe.com'
+        );
+
         return {
           name: 'stripe',
           status: isAvailable ? 'healthy' : 'degraded',
-          message: isAvailable ? 'Stripe API accessible' : 'Stripe API unavailable',
+          message: isAvailable
+            ? 'Stripe API accessible'
+            : 'Stripe API unavailable',
           lastCheck: Date.now(),
         };
       } catch (error) {
@@ -215,10 +230,10 @@ class HealthMonitor {
       try {
         const memoryUsage = process.memoryUsage();
         const cpuUsage = process.cpuUsage();
-        
+
         const memoryMB = memoryUsage.heapUsed / 1024 / 1024;
         const isHealthy = memoryMB < 512; // Alert if using more than 512MB
-        
+
         return {
           name: 'system',
           status: isHealthy ? 'healthy' : 'degraded',
@@ -244,11 +259,13 @@ class HealthMonitor {
       try {
         // Test portfolio generation pipeline
         const isWorking = await this.testPortfolioGeneration();
-        
+
         return {
           name: 'portfolio_generation',
           status: isWorking ? 'healthy' : 'unhealthy',
-          message: isWorking ? 'Portfolio generation working' : 'Portfolio generation failed',
+          message: isWorking
+            ? 'Portfolio generation working'
+            : 'Portfolio generation failed',
           lastCheck: Date.now(),
         };
       } catch (error) {
@@ -265,18 +282,20 @@ class HealthMonitor {
   /**
    * Calculate overall system health based on individual checks
    */
-  private calculateOverallHealth(checks: HealthCheck[]): 'healthy' | 'degraded' | 'unhealthy' {
+  private calculateOverallHealth(
+    checks: HealthCheck[]
+  ): 'healthy' | 'degraded' | 'unhealthy' {
     const unhealthyCount = checks.filter(c => c.status === 'unhealthy').length;
     const degradedCount = checks.filter(c => c.status === 'degraded').length;
-    
+
     if (unhealthyCount > 0) {
       return 'unhealthy';
     }
-    
+
     if (degradedCount > 0) {
       return 'degraded';
     }
-    
+
     return 'healthy';
   }
 
@@ -284,7 +303,7 @@ class HealthMonitor {
    * Create a promise that rejects after a timeout
    */
   private timeoutPromise<T>(ms: number, fallback: T): Promise<T> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       setTimeout(() => resolve(fallback), ms);
     });
   }
@@ -324,12 +343,12 @@ class HealthMonitor {
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 3000);
-      
+
       const response = await fetch(url, {
         signal: controller.signal,
         method: 'HEAD',
       });
-      
+
       clearTimeout(timeoutId);
       return response.ok;
     } catch {
@@ -361,7 +380,7 @@ export const healthMonitor = new HealthMonitor();
 export async function handleHealthCheck(): Promise<Response> {
   try {
     const health = await healthMonitor.runAllChecks();
-    
+
     const statusCode = {
       healthy: 200,
       degraded: 200, // Still operational
@@ -403,8 +422,9 @@ export async function handleReadinessCheck(): Promise<Response> {
       criticalChecks.map(name => healthMonitor.runCheck(name))
     );
 
-    const isReady = results.every(check => 
-      check && (check.status === 'healthy' || check.status === 'degraded')
+    const isReady = results.every(
+      check =>
+        check && (check.status === 'healthy' || check.status === 'degraded')
     );
 
     return new Response(
@@ -463,12 +483,12 @@ export function handleLivenessCheck(): Response {
 export function initializeHealthMonitoring(): void {
   // Set startup time for uptime calculation
   (global as any).__startup_time = Date.now();
-  
+
   // Run periodic health checks
   if (process.env.NODE_ENV === 'production') {
     setInterval(async () => {
       const health = await healthMonitor.runAllChecks();
-      
+
       if (health.overall === 'unhealthy') {
         console.error('System health is unhealthy:', health);
       } else if (health.overall === 'degraded') {

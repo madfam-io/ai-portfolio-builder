@@ -44,7 +44,7 @@ class ErrorTracker {
 
     // Global error handlers
     if (typeof window !== 'undefined') {
-      window.addEventListener('error', (event) => {
+      window.addEventListener('error', event => {
         this.captureError(new Error(event.message), {
           category: 'javascript',
           context: {
@@ -55,7 +55,7 @@ class ErrorTracker {
         });
       });
 
-      window.addEventListener('unhandledrejection', (event) => {
+      window.addEventListener('unhandledrejection', event => {
         this.captureError(new Error(event.reason), {
           category: 'unhandled-promise',
           context: {
@@ -78,10 +78,7 @@ class ErrorTracker {
   /**
    * Capture and report errors
    */
-  captureError(
-    error: Error,
-    context: Partial<ErrorReport> = {}
-  ): void {
+  captureError(error: Error, context: Partial<ErrorReport> = {}): void {
     const report: ErrorReport = {
       message: error.message,
       stack: error.stack,
@@ -89,7 +86,10 @@ class ErrorTracker {
       level: 'error',
       category: context.category || 'general',
       context: {
-        userAgent: typeof window !== 'undefined' ? window.navigator?.userAgent : undefined,
+        userAgent:
+          typeof window !== 'undefined'
+            ? window.navigator?.userAgent
+            : undefined,
         url: typeof window !== 'undefined' ? window.location?.href : undefined,
         ...context.context,
       },
@@ -138,7 +138,7 @@ class ErrorTracker {
       // This would send to Sentry, LogRocket, or other service
       // For now, we'll use a webhook or API endpoint
       const endpoint = process.env.ERROR_TRACKING_ENDPOINT;
-      
+
       if (endpoint) {
         await fetch(endpoint, {
           method: 'POST',
@@ -156,10 +156,12 @@ class ErrorTracker {
   /**
    * Send performance metric to external service
    */
-  private async sendMetricToExternalService(metric: PerformanceMetric): Promise<void> {
+  private async sendMetricToExternalService(
+    metric: PerformanceMetric
+  ): Promise<void> {
     try {
       const endpoint = process.env.METRICS_ENDPOINT;
-      
+
       if (endpoint) {
         await fetch(endpoint, {
           method: 'POST',
@@ -180,14 +182,16 @@ class ErrorTracker {
   private storeLocally(report: ErrorReport): void {
     try {
       if (typeof window !== 'undefined' && window.localStorage) {
-        const errors = JSON.parse(localStorage.getItem('error-reports') || '[]');
+        const errors = JSON.parse(
+          localStorage.getItem('error-reports') || '[]'
+        );
         errors.push(report);
-        
+
         // Keep only last 50 errors
         if (errors.length > 50) {
           errors.splice(0, errors.length - 50);
         }
-        
+
         localStorage.setItem('error-reports', JSON.stringify(errors));
       }
     } catch (error) {
@@ -238,7 +242,7 @@ export function withErrorTracking<T extends (...args: any[]) => any>(
       return await handler(...args);
     } catch (error) {
       const request = args[0] as NextRequest;
-      
+
       errorTracker.captureError(error as Error, {
         category,
         context: {
@@ -248,7 +252,7 @@ export function withErrorTracking<T extends (...args: any[]) => any>(
           userAgent: request?.headers?.get('user-agent'),
         },
       });
-      
+
       throw error; // Re-throw to maintain normal error handling
     }
   }) as T;
@@ -284,10 +288,10 @@ export const performanceMonitor = {
     tags?: Record<string, string>
   ): Promise<T> | T => {
     const startTime = performance.now();
-    
+
     const finish = (result: T) => {
       const duration = performance.now() - startTime;
-      
+
       errorTracker.capturePerformance({
         name: operationName,
         value: duration,
@@ -295,17 +299,17 @@ export const performanceMonitor = {
         tags,
         timestamp: Date.now(),
       });
-      
+
       return result;
     };
 
     try {
       const result = operation();
-      
+
       if (result instanceof Promise) {
-        return result.then(finish).catch((error) => {
+        return result.then(finish).catch(error => {
           const duration = performance.now() - startTime;
-          
+
           errorTracker.capturePerformance({
             name: `${operationName}_error`,
             value: duration,
@@ -313,15 +317,15 @@ export const performanceMonitor = {
             tags: { ...tags, status: 'error' },
             timestamp: Date.now(),
           });
-          
+
           throw error;
         });
       }
-      
+
       return finish(result);
     } catch (error) {
       const duration = performance.now() - startTime;
-      
+
       errorTracker.capturePerformance({
         name: `${operationName}_error`,
         value: duration,
@@ -329,7 +333,7 @@ export const performanceMonitor = {
         tags: { ...tags, status: 'error' },
         timestamp: Date.now(),
       });
-      
+
       throw error;
     }
   },
@@ -341,7 +345,7 @@ export const performanceMonitor = {
     if (typeof window === 'undefined') return;
 
     // Largest Contentful Paint
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
       if (lastEntry) {
@@ -355,9 +359,9 @@ export const performanceMonitor = {
     }).observe({ entryTypes: ['largest-contentful-paint'] });
 
     // First Input Delay
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         const fidEntry = entry as PerformanceEventTiming;
         if (fidEntry.processingStart && fidEntry.startTime) {
           errorTracker.capturePerformance({
@@ -372,15 +376,15 @@ export const performanceMonitor = {
 
     // Cumulative Layout Shift
     let cumulativeScore = 0;
-    new PerformanceObserver((list) => {
+    new PerformanceObserver(list => {
       const entries = list.getEntries();
-      entries.forEach((entry) => {
+      entries.forEach(entry => {
         const clsEntry = entry as any;
         if (!clsEntry.hadRecentInput) {
           cumulativeScore += clsEntry.value;
         }
       });
-      
+
       errorTracker.capturePerformance({
         name: 'cumulative_layout_shift',
         value: cumulativeScore,
@@ -393,7 +397,11 @@ export const performanceMonitor = {
   /**
    * Track API response times
    */
-  trackAPIResponse: (endpoint: string, duration: number, statusCode: number) => {
+  trackAPIResponse: (
+    endpoint: string,
+    duration: number,
+    statusCode: number
+  ) => {
     errorTracker.capturePerformance({
       name: 'api_response_time',
       value: duration,
@@ -413,7 +421,7 @@ export const performanceMonitor = {
  */
 export function initializeMonitoring(): void {
   errorTracker.init();
-  
+
   if (typeof window !== 'undefined') {
     performanceMonitor.trackWebVitals();
   }
