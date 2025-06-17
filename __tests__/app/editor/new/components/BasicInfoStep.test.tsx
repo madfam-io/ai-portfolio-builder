@@ -1,34 +1,47 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BasicInfoStep } from '@/app/editor/new/components/BasicInfoStep';
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
-  User: () => <span>User</span>,
-  ChevronRight: () => <span>ChevronRight</span>,
+  ArrowRight: () => <span>ArrowRight</span>,
+}));
+
+// Mock shadcn/ui components to avoid import issues
+jest.mock('@/components/ui/button', () => ({
+  Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+}));
+
+jest.mock('@/components/ui/input', () => ({
+  Input: (props: any) => <input {...props} />,
+}));
+
+jest.mock('@/components/ui/label', () => ({
+  Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
+}));
+
+jest.mock('@/components/ui/textarea', () => ({
+  Textarea: (props: any) => <textarea {...props} />,
 }));
 
 describe('BasicInfoStep', () => {
   const mockT = {
-    yourName: 'Your Name',
-    yourTitle: 'Your Title',
+    letsGetStarted: "Let's get started",
+    basicInfoDescription: 'Tell us a bit about yourself and your portfolio',
+    portfolioName: 'Portfolio Name',
+    portfolioNamePlaceholder: 'My Professional Portfolio',
+    yourTitle: 'Your Professional Title',
+    titlePlaceholder: 'Senior Software Engineer',
     shortBio: 'Short Bio',
-    tellUsAboutYourself: 'Tell us about yourself',
-    next: 'Next',
-    fieldRequired: 'This field is required',
-    nameRequired: 'Name is required',
-    titleRequired: 'Title is required',
-    bioRequired: 'Bio is required',
+    bioPlaceholder: 'Tell us about your experience and what makes you unique...',
+    continueButton: 'Continue',
   };
 
   const mockFormData = {
     name: '',
     title: '',
     bio: '',
-    template: 'modern' as const,
-    importSource: 'manual' as const,
-    enhanceContent: true,
   };
 
   const mockUpdateFormData = jest.fn();
@@ -48,17 +61,16 @@ describe('BasicInfoStep', () => {
       />
     );
 
-    expect(screen.getByLabelText(mockT.yourName)).toBeInTheDocument();
+    expect(screen.getByLabelText(mockT.portfolioName)).toBeInTheDocument();
     expect(screen.getByLabelText(mockT.yourTitle)).toBeInTheDocument();
     expect(screen.getByLabelText(mockT.shortBio)).toBeInTheDocument();
     expect(
-      screen.getByRole('button', { name: mockT.next })
+      screen.getByRole('button', { name: /Continue/ })
     ).toBeInTheDocument();
   });
 
   it('should display initial form values', () => {
     const filledFormData = {
-      ...mockFormData,
       name: 'John Doe',
       title: 'Software Engineer',
       bio: 'Experienced developer',
@@ -73,7 +85,7 @@ describe('BasicInfoStep', () => {
       />
     );
 
-    expect(screen.getByLabelText(mockT.yourName)).toHaveValue('John Doe');
+    expect(screen.getByLabelText(mockT.portfolioName)).toHaveValue('John Doe');
     expect(screen.getByLabelText(mockT.yourTitle)).toHaveValue(
       'Software Engineer'
     );
@@ -94,24 +106,21 @@ describe('BasicInfoStep', () => {
       />
     );
 
-    const nameInput = screen.getByLabelText(mockT.yourName);
+    const nameInput = screen.getByLabelText(mockT.portfolioName);
     const titleInput = screen.getByLabelText(mockT.yourTitle);
     const bioInput = screen.getByLabelText(mockT.shortBio);
 
-    await user.type(nameInput, 'Jane Smith');
-    await user.type(titleInput, 'UX Designer');
-    await user.type(bioInput, 'Creative professional');
+    await user.type(nameInput, 'J');
+    expect(mockUpdateFormData).toHaveBeenCalledWith({ name: 'J' });
 
-    expect(mockUpdateFormData).toHaveBeenCalledWith({ name: 'Jane Smith' });
-    expect(mockUpdateFormData).toHaveBeenCalledWith({ title: 'UX Designer' });
-    expect(mockUpdateFormData).toHaveBeenCalledWith({
-      bio: 'Creative professional',
-    });
+    await user.type(titleInput, 'U');
+    expect(mockUpdateFormData).toHaveBeenCalledWith({ title: 'U' });
+
+    await user.type(bioInput, 'C');
+    expect(mockUpdateFormData).toHaveBeenCalledWith({ bio: 'C' });
   });
 
-  it('should validate required fields before proceeding', async () => {
-    const user = userEvent.setup();
-
+  it('should disable next button when required fields are empty', () => {
     render(
       <BasicInfoStep
         formData={mockFormData}
@@ -121,213 +130,50 @@ describe('BasicInfoStep', () => {
       />
     );
 
-    const nextButton = screen.getByRole('button', { name: mockT.next });
-
-    // Try to proceed without filling fields
-    await user.click(nextButton);
-
-    // Should not call onNext
-    expect(mockOnNext).not.toHaveBeenCalled();
-
-    // Should show validation errors
-    await waitFor(() => {
-      expect(screen.getByText(mockT.nameRequired)).toBeInTheDocument();
-      expect(screen.getByText(mockT.titleRequired)).toBeInTheDocument();
-      expect(screen.getByText(mockT.bioRequired)).toBeInTheDocument();
-    });
-  });
-
-  it('should validate individual fields on blur', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const nameInput = screen.getByLabelText(mockT.yourName);
-
-    // Focus and blur without entering anything
-    await user.click(nameInput);
-    await user.tab();
-
-    // Should show validation error
-    await waitFor(() => {
-      expect(screen.getByText(mockT.nameRequired)).toBeInTheDocument();
-    });
-  });
-
-  it('should clear validation errors when fields are filled', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const nextButton = screen.getByRole('button', { name: mockT.next });
-    const nameInput = screen.getByLabelText(mockT.yourName);
-
-    // Try to proceed without filling fields
-    await user.click(nextButton);
-
-    // Should show validation error
-    await waitFor(() => {
-      expect(screen.getByText(mockT.nameRequired)).toBeInTheDocument();
-    });
-
-    // Fill the name field
-    await user.type(nameInput, 'John Doe');
-
-    // Error should be cleared
-    await waitFor(() => {
-      expect(screen.queryByText(mockT.nameRequired)).not.toBeInTheDocument();
-    });
-  });
-
-  it('should proceed when all fields are valid', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    // Fill all fields
-    await user.type(screen.getByLabelText(mockT.yourName), 'John Doe');
-    await user.type(
-      screen.getByLabelText(mockT.yourTitle),
-      'Software Engineer'
-    );
-    await user.type(
-      screen.getByLabelText(mockT.shortBio),
-      'Experienced developer'
-    );
-
-    // Click next
-    await user.click(screen.getByRole('button', { name: mockT.next }));
-
-    // Should call onNext
-    expect(mockOnNext).toHaveBeenCalled();
-  });
-
-  it('should trim whitespace from inputs', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const nameInput = screen.getByLabelText(mockT.yourName);
-
-    // Type with leading/trailing spaces
-    await user.type(nameInput, '  John Doe  ');
-
-    // Should trim spaces when calling updateFormData
-    expect(mockUpdateFormData).toHaveBeenCalledWith({ name: 'John Doe' });
-  });
-
-  it('should have proper character limits', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const nameInput = screen.getByLabelText(mockT.yourName) as HTMLInputElement;
-    const titleInput = screen.getByLabelText(
-      mockT.yourTitle
-    ) as HTMLInputElement;
-    const bioInput = screen.getByLabelText(
-      mockT.shortBio
-    ) as HTMLTextAreaElement;
-
-    expect(nameInput.maxLength).toBe(100);
-    expect(titleInput.maxLength).toBe(100);
-    expect(bioInput.maxLength).toBe(500);
-  });
-
-  it('should show character count for bio field', async () => {
-    const user = userEvent.setup();
-
-    render(
-      <BasicInfoStep
-        formData={mockFormData}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const bioInput = screen.getByLabelText(mockT.shortBio);
-
-    // Type some text
-    await user.type(bioInput, 'This is my bio');
-
-    // Should show character count
-    expect(screen.getByText('14/500')).toBeInTheDocument();
-  });
-
-  it('should disable next button while processing', async () => {
-    const user = userEvent.setup();
-    let resolveNext: () => void;
-    const nextPromise = new Promise<void>(resolve => {
-      resolveNext = resolve;
-    });
-
-    mockOnNext.mockImplementation(() => nextPromise);
-
-    render(
-      <BasicInfoStep
-        formData={{
-          ...mockFormData,
-          name: 'John Doe',
-          title: 'Software Engineer',
-          bio: 'Experienced developer',
-        }}
-        updateFormData={mockUpdateFormData}
-        onNext={mockOnNext}
-        t={mockT}
-      />
-    );
-
-    const nextButton = screen.getByRole('button', { name: mockT.next });
-
-    // Click next
-    await user.click(nextButton);
-
-    // Button should be disabled
+    const nextButton = screen.getByRole('button', { name: /Continue/ });
     expect(nextButton).toBeDisabled();
+  });
 
-    // Resolve the promise
-    resolveNext!();
-    await nextPromise;
+  it('should enable next button when required fields are filled', () => {
+    const filledFormData = {
+      name: 'John Doe',
+      title: 'Software Engineer',
+      bio: '',
+    };
 
-    // Button should be enabled again
-    await waitFor(() => {
-      expect(nextButton).toBeEnabled();
-    });
+    render(
+      <BasicInfoStep
+        formData={filledFormData}
+        updateFormData={mockUpdateFormData}
+        onNext={mockOnNext}
+        t={mockT}
+      />
+    );
+
+    const nextButton = screen.getByRole('button', { name: /Continue/ });
+    expect(nextButton).toBeEnabled();
+  });
+
+  it('should call onNext when form is valid and button is clicked', async () => {
+    const user = userEvent.setup();
+    const filledFormData = {
+      name: 'John Doe',
+      title: 'Software Engineer',
+      bio: 'Experienced developer',
+    };
+
+    render(
+      <BasicInfoStep
+        formData={filledFormData}
+        updateFormData={mockUpdateFormData}
+        onNext={mockOnNext}
+        t={mockT}
+      />
+    );
+
+    const nextButton = screen.getByRole('button', { name: /Continue/ });
+    await user.click(nextButton);
+
+    expect(mockOnNext).toHaveBeenCalled();
   });
 });

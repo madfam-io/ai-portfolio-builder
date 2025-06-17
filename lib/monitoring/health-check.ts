@@ -296,6 +296,7 @@ class HealthMonitor {
     try {
       // This would use actual database connection
       // For now, we'll simulate success
+      await Promise.resolve();
       return true;
     } catch {
       return false;
@@ -309,6 +310,7 @@ class HealthMonitor {
     try {
       // This would use actual Redis connection
       // For now, we'll simulate success
+      await Promise.resolve();
       return true;
     } catch {
       return false;
@@ -342,6 +344,7 @@ class HealthMonitor {
     try {
       // This would test the actual portfolio generation pipeline
       // For now, we'll simulate success
+      await Promise.resolve();
       return true;
     } catch {
       return false;
@@ -437,7 +440,7 @@ export async function handleReadinessCheck(): Promise<Response> {
 /**
  * Liveness check (for Kubernetes/Docker)
  */
-export async function handleLivenessCheck(): Promise<Response> {
+export function handleLivenessCheck(): Response {
   // Simple liveness check - just verify the process is running
   return new Response(
     JSON.stringify({

@@ -12,7 +12,7 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  */
 export const GET = withErrorTracking(
   withAPMTracking(async () => {
-    return await handleLivenessCheck();
+    return handleLivenessCheck();
   }, 'liveness-check'),
   'health-api'
 );

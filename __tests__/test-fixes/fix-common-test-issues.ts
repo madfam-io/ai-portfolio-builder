@@ -3,6 +3,8 @@
  * This file contains common fixes for the failing test suite
  */
 
+import React from 'react';
+
 // Global test configuration for API route testing
 export const setupAPITestEnvironment = () => {
   // Mock all external dependencies that API routes use

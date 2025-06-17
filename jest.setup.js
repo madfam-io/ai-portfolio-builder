@@ -281,14 +281,8 @@ jest.mock('redis', () => ({
   }),
 }));
 
-// Mock crypto module
-jest.mock('crypto', () => ({
-  randomBytes: jest.fn(size => Buffer.alloc(size, 0)),
-  createHash: jest.fn().mockReturnValue({
-    update: jest.fn().mockReturnThis(),
-    digest: jest.fn().mockReturnValue('mock-hash-12345678'),
-  }),
-}));
+// Remove crypto mock to use native crypto in tests
+// The crypto module should work natively in Node.js test environment
 
 // Framer Motion mock removed - library not installed
 
@@ -614,6 +608,109 @@ jest.mock('@/lib/services/feature-flags/use-experiment', () => ({
   }),
   sortComponentsByOrder: components => components,
 }));
+
+// Mock shadcn/ui components
+jest.mock('@/components/ui/button', () => ({
+  Button: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('button', props, children);
+  },
+}));
+
+jest.mock('@/components/ui/input', () => ({
+  Input: ({ ...props }) => {
+    const React = require('react');
+    return React.createElement('input', props);
+  },
+}));
+
+jest.mock('@/components/ui/label', () => ({
+  Label: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('label', props, children);
+  },
+}));
+
+jest.mock('@/components/ui/textarea', () => ({
+  Textarea: ({ ...props }) => {
+    const React = require('react');
+    return React.createElement('textarea', props);
+  },
+}));
+
+jest.mock('@/components/ui/card', () => ({
+  Card: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('div', props, children);
+  },
+  CardHeader: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('div', props, children);
+  },
+  CardContent: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('div', props, children);
+  },
+  CardFooter: ({ children, ...props }) => {
+    const React = require('react');
+    return React.createElement('div', props, children);
+  },
+}));
+
+// Mock lucide-react icons globally
+jest.mock('lucide-react', () => {
+  const React = require('react');
+  const mockIcon = (name) => {
+    return React.forwardRef((props, ref) => 
+      React.createElement('span', { ...props, ref, 'data-icon': name }, name)
+    );
+  };
+  
+  return {
+    ArrowRight: mockIcon('ArrowRight'),
+    AlertCircle: mockIcon('AlertCircle'),
+    RefreshCw: mockIcon('RefreshCw'),
+    User: mockIcon('User'),
+    ChevronRight: mockIcon('ChevronRight'),
+    X: mockIcon('X'),
+    Menu: mockIcon('Menu'),
+    Search: mockIcon('Search'),
+    Home: mockIcon('Home'),
+    Settings: mockIcon('Settings'),
+    Check: mockIcon('Check'),
+    Info: mockIcon('Info'),
+    Warning: mockIcon('Warning'),
+    Error: mockIcon('Error'),
+    Loader: mockIcon('Loader'),
+    Plus: mockIcon('Plus'),
+    Minus: mockIcon('Minus'),
+    Edit: mockIcon('Edit'),
+    Trash: mockIcon('Trash'),
+    Copy: mockIcon('Copy'),
+    // Add more icons as needed
+  };
+});
+
+// Mock dynamic imports globally
+global.__dynamic_import_mock__ = {};
+
+// Override dynamic import behavior
+jest.mock('@/lib/config', () => {
+  const actualConfig = {
+    env: {
+      NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
+    },
+    services: {
+      supabase: true,
+    },
+  };
+  
+  // Make it available for both static and dynamic imports
+  global.__dynamic_import_mock__['@/lib/config'] = actualConfig;
+  
+  return actualConfig;
+});
 
 // Clear localStorage before each test suite to ensure consistent language detection
 beforeEach(() => {

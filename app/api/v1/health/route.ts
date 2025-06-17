@@ -4,11 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { 
-  handleHealthCheck, 
-  handleReadinessCheck, 
-  handleLivenessCheck 
-} from '@/lib/monitoring/health-check';
+import { handleHealthCheck } from '@/lib/monitoring/health-check';
 import { withErrorTracking } from '@/lib/monitoring/error-tracking';
 import { withAPMTracking } from '@/lib/monitoring/apm';
 
@@ -17,7 +13,7 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  */
 export const GET = withErrorTracking(
   withAPMTracking(async () => {
-    return await handleHealthCheck();
+    return handleHealthCheck();
   }, 'health-check'),
   'health-api'
 );
@@ -26,7 +22,7 @@ export const GET = withErrorTracking(
  * HEAD /api/v1/health - Quick health check for load balancers
  */
 export const HEAD = withErrorTracking(
-  withAPMTracking(async () => {
+  withAPMTracking(() => {
     // Quick check without detailed response
     return new NextResponse(null, { status: 200 });
   }, 'health-check-head'),

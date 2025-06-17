@@ -16,7 +16,7 @@ import { logger } from '@/lib/utils/logger';
  * @param b - Second string to compare
  * @returns True if strings are equal
  */
-function safeStringCompare(a: string, b: string): boolean {
+function _safeStringCompare(a: string, b: string): boolean {
   try {
     // Ensure both strings are the same length to prevent length-based timing attacks
     const bufferA = Buffer.from(a, 'utf8');
@@ -159,7 +159,7 @@ export function forbiddenResponse(message = 'Insufficient permissions') {
  * @param handler - The route handler function
  * @param requiredPermission - Optional permission requirement
  */
-function requireAuth(
+function _requireAuth(
   handler: (request: NextRequest, user: unknown) => Promise<NextResponse>,
   requiredPermission?: string
 ) {
