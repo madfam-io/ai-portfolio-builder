@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { EditorCanvas } from '@/components/editor/EditorCanvas';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -430,7 +430,7 @@ describe('EditorCanvas', () => {
       expect(screen.getByPlaceholderText('Tell us about yourself...')).toHaveValue('');
     });
 
-    it('should handle extremely long text input', async () => {
+    it('should handle extremely long text input', () => {
       const user = userEvent.setup();
       renderEditorCanvas();
 

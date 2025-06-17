@@ -45,8 +45,7 @@ export default function AICreditPacks({
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description:
-          'Failed to initiate purchase',
+        description: 'Failed to initiate purchase',
         variant: 'destructive',
       });
     } finally {
@@ -76,7 +75,8 @@ export default function AICreditPacks({
           </CardTitle>
           <CardDescription>
             {
-              'Purchase additional credits to enhance your portfolio content with AI'}
+              'Purchase additional credits to enhance your portfolio content with AI'
+            }
           </CardDescription>
         </CardHeader>
         <CardContent>

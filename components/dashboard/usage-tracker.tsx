@@ -82,7 +82,10 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
   };
 
   const planFeatures = SUBSCRIPTION_PLANS[usage.plan];
-  const hasPromotion = usage.plan !== 'free' && 'promotionalPrice' in planFeatures && planFeatures.promotionalPrice;
+  const hasPromotion =
+    usage.plan !== 'free' &&
+    'promotionalPrice' in planFeatures &&
+    planFeatures.promotionalPrice;
 
   return (
     <div className="space-y-6">
@@ -227,9 +230,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
-                <CardTitle className="text-sm font-medium">
-                  Storage
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Storage</CardTitle>
               </div>
               <span
                 className={`text-sm font-semibold ${getUsageColor(getUsagePercentage(usage.storage.usedGB, usage.storage.limitGB))}`}
@@ -257,9 +258,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
-                <CardTitle className="text-sm font-medium">
-                  Bandwidth
-                </CardTitle>
+                <CardTitle className="text-sm font-medium">Bandwidth</CardTitle>
               </div>
               <span
                 className={`text-sm font-semibold ${getUsageColor(getUsagePercentage(usage.bandwidth.usedGB, usage.bandwidth.limitGB))}`}
