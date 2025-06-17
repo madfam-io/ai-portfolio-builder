@@ -83,7 +83,7 @@ const nextConfig = {
               process.env.NODE_ENV === 'production'
                 ? [
                     "default-src 'self'",
-                    "script-src 'self' 'sha256-/h8yTi8AZLM7b/bPF8PbQ9t8XzOgqLJ5A0BGHA8Z5Y=' https://prisma-brown.vercel.app https://*.vercel.app", // Allow Next.js scripts from Vercel
+                    "script-src 'self' 'unsafe-inline' https://prisma-brown.vercel.app https://*.vercel.app", // Allow Next.js inline scripts and external scripts
                     "style-src 'self' 'unsafe-inline'", // Required for CSS-in-JS and Tailwind
                     "img-src 'self' data: https: blob:",
                     "font-src 'self' data: https://fonts.gstatic.com",
