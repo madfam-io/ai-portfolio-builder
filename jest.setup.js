@@ -399,20 +399,22 @@ global.fetch = jest.fn().mockResolvedValue({
   text: () => Promise.resolve(''),
 });
 
-// Setup window.matchMedia mock
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation(query => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
+// Setup window.matchMedia mock only in JSDOM environment
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: jest.fn().mockImplementation(query => ({
+      matches: false,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(), // deprecated
+      removeListener: jest.fn(), // deprecated
+      addEventListener: jest.fn(),
+      removeEventListener: jest.fn(),
+      dispatchEvent: jest.fn(),
+    })),
+  });
+}
 
 // IntersectionObserver already mocked at the top of the file
 
@@ -432,10 +434,12 @@ global.console = {
   log: jest.fn(),
 };
 
-// Mock window.alert, window.confirm, window.prompt
-global.alert = jest.fn();
-global.confirm = jest.fn(() => true);
-global.prompt = jest.fn(() => '');
+// Mock window.alert, window.confirm, window.prompt only in browser environment
+if (typeof window !== 'undefined') {
+  global.alert = jest.fn();
+  global.confirm = jest.fn(() => true);
+  global.prompt = jest.fn(() => '');
+}
 
 // Mock AppContext before importing any components
 jest.mock('@/lib/contexts/AppContext', () => ({
@@ -714,15 +718,17 @@ jest.mock('@/lib/config', () => {
 
 // Clear localStorage before each test suite to ensure consistent language detection
 beforeEach(() => {
-  localStorage.clear();
-  sessionStorage.clear();
+  if (typeof window !== 'undefined') {
+    localStorage.clear();
+    sessionStorage.clear();
 
-  // Set navigator.language to Spanish by default for tests
-  Object.defineProperty(navigator, 'language', {
-    value: 'es-ES',
-    writable: true,
-    configurable: true,
-  });
+    // Set navigator.language to Spanish by default for tests
+    Object.defineProperty(navigator, 'language', {
+      value: 'es-ES',
+      writable: true,
+      configurable: true,
+    });
+  }
 });
 
 // Reset all mocks after each test

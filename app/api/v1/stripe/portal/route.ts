@@ -39,8 +39,8 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     const supabase = await createClient();
     if (!supabase) {
       throw new AppError(
-        'DATABASE_NOT_AVAILABLE',
         'Database service unavailable',
+        'DATABASE_NOT_AVAILABLE',
         503
       );
     }
@@ -56,13 +56,13 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
         error,
         userId: user.id,
       });
-      throw new AppError('USER_DATA_NOT_FOUND', 'User data not found', 404);
+      throw new AppError('User data not found', 'USER_DATA_NOT_FOUND', 404);
     }
 
     if (!userData.stripe_customer_id) {
       throw new AppError(
-        'NO_STRIPE_CUSTOMER',
         'No active subscription found',
+        'NO_STRIPE_CUSTOMER',
         400
       );
     }

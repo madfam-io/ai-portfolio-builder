@@ -48,8 +48,8 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
     const { user } = request;
     if (!user?.email) {
       throw new AppError(
-        'USER_EMAIL_REQUIRED',
         'User email is required for checkout',
+        'USER_EMAIL_REQUIRED',
         400
       );
     }

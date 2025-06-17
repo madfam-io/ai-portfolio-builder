@@ -5,6 +5,11 @@
 import { mfaService, MFAService } from '@/lib/services/auth/mfa-service';
 import { AppError } from '@/types/errors';
 
+// Mock dependencies first
+jest.mock('@/lib/supabase/client', () => ({
+  createClient: jest.fn(),
+}));
+
 // Mock Supabase client
 const mockSupabase = {
   auth: {
@@ -19,10 +24,6 @@ const mockSupabase = {
   },
 };
 
-jest.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase,
-}));
-
 // Mock QRCode library
 jest.mock('qrcode', () => ({
   toDataURL: jest.fn().mockResolvedValue('data:image/png;base64,mockqrcode'),
@@ -35,9 +36,14 @@ jest.mock('otpauth', () => ({
   })),
 }));
 
+// Mock the createClient import
+import { createClient } from '@/lib/supabase/client';
+const mockCreateClient = createClient as jest.MockedFunction<typeof createClient>;
+
 describe('MFA Service', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockCreateClient.mockReturnValue(mockSupabase as any);
   });
 
   describe('MFA Status', () => {

@@ -1,7 +1,11 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import _userEvent from '@testing-library/user-event';
-import { PortfolioEditor } from '@/components/editor/PortfolioEditor';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import PortfolioEditor from '@/components/editor/PortfolioEditor';
 import { useAutoSave } from '@/hooks/useAutoSave';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useEditorHistory } from '@/hooks/useEditorHistory';
@@ -17,7 +21,7 @@ jest.mock('@/lib/utils/logger');
 jest.mock('@/components/editor/EditorHeader', () => ({
   EditorHeader: ({ portfolio, onSave }: any) => (
     <div data-testid="editor-header">
-      <button onClick={() => onSave(_portfolio)}>Save</button>
+<button onClick={() => onSave(portfolio)}>Save</button>
     </div>
   ),
 }));
@@ -108,7 +112,7 @@ describe('PortfolioEditor', () => {
     // Mock fetch for loading portfolio
     global.fetch = jest.fn().mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve(mockPortfolio),
+      json: () => Promise.resolve({ data: mockPortfolio }),
     });
   });
 
@@ -293,7 +297,7 @@ describe('PortfolioEditor', () => {
 
   it('should integrate with autosave hook', async () => {
     const mockAutoSave = {
-      isSaving: true,
+      autoSave: jest.fn(),
       lastSaved: new Date(),
       error: null,
     };
@@ -303,22 +307,21 @@ describe('PortfolioEditor', () => {
     render(<PortfolioEditor {...defaultProps} />);
 
     await waitFor(() => {
-      expect(useAutoSave).toHaveBeenCalledWith({
-        data: expect.any(Object),
-        onSave: expect.any(Function),
-        interval: 30000, // 30 seconds
-        enabled: true,
-      });
+      expect(useAutoSave).toHaveBeenCalledWith(
+        defaultProps.portfolioId,
+        expect.any(Object),
+        expect.any(Boolean)
+      );
     });
   });
 
   it('should integrate with editor history', async () => {
     const mockHistory = {
-      canUndo: true,
-      canRedo: false,
+      pushToHistory: jest.fn(),
       undo: jest.fn(),
       redo: jest.fn(),
-      addToHistory: jest.fn(),
+      canUndo: true,
+      canRedo: false,
     };
 
     (useEditorHistory as jest.Mock).mockReturnValue(mockHistory);
@@ -333,16 +336,16 @@ describe('PortfolioEditor', () => {
     const updateButton = screen.getByText('Update Name');
     fireEvent.click(updateButton);
 
-    expect(mockHistory.addToHistory).toHaveBeenCalled();
+    expect(mockHistory.pushToHistory).toHaveBeenCalled();
   });
 
   it('should handle keyboard shortcuts', async () => {
     const mockHistory = {
-      canUndo: true,
-      canRedo: true,
+      pushToHistory: jest.fn(),
       undo: jest.fn(),
       redo: jest.fn(),
-      addToHistory: jest.fn(),
+      canUndo: true,
+      canRedo: true,
     };
 
     (useEditorHistory as jest.Mock).mockReturnValue(mockHistory);
