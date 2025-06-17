@@ -168,7 +168,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
     } catch (error) {
       console.error('Failed to save consents:', error);
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to save your preferences. Please try again.',
         variant: 'destructive',
       });

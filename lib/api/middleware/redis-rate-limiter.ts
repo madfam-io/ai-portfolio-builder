@@ -287,7 +287,11 @@ class RedisRateLimiter {
 
     // General API routes
     if (path.startsWith('/api/')) {
-      const config = { ...RATE_LIMIT_CONFIGS.api };
+      const config: RateLimitConfig = { 
+        windowMs: RATE_LIMIT_CONFIGS.api.windowMs,
+        max: RATE_LIMIT_CONFIGS.api.max,
+        message: RATE_LIMIT_CONFIGS.api.message
+      };
 
       // Authenticated users get higher limits
       if (isAuthenticated) {

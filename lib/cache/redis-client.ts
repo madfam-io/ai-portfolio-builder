@@ -5,14 +5,14 @@
 import Redis from 'ioredis';
 import { logger } from '@/lib/utils/logger';
 
-let redis: Redis | null = null;
+let redisInstance: Redis | null = null;
 let isAvailable = false;
 
 /**
  * Initialize Redis connection
  */
 function initializeRedis(): Redis | null {
-  if (redis) return redis;
+  if (redisInstance) return redisInstance;
 
   const redisUrl = process.env.REDIS_URL;
 
@@ -22,23 +22,26 @@ function initializeRedis(): Redis | null {
   }
 
   try {
-    redis = new Redis(redisUrl, {
-      retryDelayOnFailover: 100,
+    redisInstance = new Redis(redisUrl, {
       maxRetriesPerRequest: 3,
       lazyConnect: true,
+      retryStrategy: (times) => {
+        const delay = Math.min(times * 100, 3000);
+        return delay;
+      },
     });
 
-    redis.on('connect', () => {
+    redisInstance.on('connect', () => {
       isAvailable = true;
       logger.info('Redis connected successfully');
     });
 
-    redis.on('error', error => {
+    redisInstance.on('error', error => {
       isAvailable = false;
       logger.error('Redis connection error', { error });
     });
 
-    return redis;
+    return redisInstance;
   } catch (error) {
     logger.error('Failed to initialize Redis', { error });
     return null;
@@ -52,7 +55,7 @@ const redisClient = initializeRedis();
  * Check if Redis is available
  */
 export function isRedisAvailable(): boolean {
-  return isAvailable && redis !== null;
+  return isAvailable && redisInstance !== null;
 }
 
 /**

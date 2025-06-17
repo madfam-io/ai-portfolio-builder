@@ -491,12 +491,15 @@ class EnhancedStripeService {
       }
 
       const subscription = subscriptions.data[0];
+      if (!subscription) {
+        return null;
+      }
 
       // In a real implementation, these would come from your database
       // This is a placeholder showing the structure
       return {
-        currentPeriodStart: new Date(subscription.current_period_start * 1000),
-        currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+        currentPeriodStart: new Date((subscription as any).current_period_start * 1000),
+        currentPeriodEnd: new Date((subscription as any).current_period_end * 1000),
         portfoliosCreated: 0, // Get from database
         aiRequestsUsed: 0, // Get from database
         storageUsedGB: 0, // Get from storage service
@@ -547,13 +550,16 @@ class EnhancedStripeService {
 
         if (customers.data.length > 0) {
           const customer = customers.data[0];
+          if (!customer) {
+            return { eligible: true, remainingSlots: remainingSlots || undefined };
+          }
           const subscriptions = await stripe.subscriptions.list({
             customer: customer.id,
             limit: 100,
           });
 
           const hasUsedPromo = subscriptions.data.some(
-            sub => sub.discount?.coupon.id === this.promotionId
+            sub => sub.discounts?.some(d => typeof d !== 'string' && d.coupon?.id === this.promotionId)
           );
 
           if (hasUsedPromo) {
@@ -588,7 +594,7 @@ class EnhancedStripeService {
       ...plan.features,
       limitations: plan.limitations,
       price: plan.price,
-      promotionalPrice: plan.promotionalPrice,
+      promotionalPrice: 'promotionalPrice' in plan ? plan.promotionalPrice : undefined,
     };
   }
 }

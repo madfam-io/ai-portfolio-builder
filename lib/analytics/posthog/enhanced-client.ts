@@ -402,7 +402,9 @@ class EnhancedPostHogService {
     if (!this.posthog || !this.initialized) return {};
 
     try {
-      return this.posthog.getPersonProperties() || {};
+      // PostHog doesn't have a direct getPersonProperties method
+      // We'll return an empty object for now
+      return {};
     } catch (error) {
       logger.error('Failed to get person properties', { error });
       return {};

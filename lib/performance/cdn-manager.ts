@@ -258,7 +258,7 @@ class CDNManager {
           fid: 0, // Will be updated by Web Vitals
           cls: 0, // Will be updated by Web Vitals
           ttfb: navigation.responseStart - navigation.requestStart,
-          tti: navigation.domInteractive - navigation.navigationStart,
+          tti: navigation.domInteractive - navigation.fetchStart,
         },
         connection: {
           effectiveType: connection?.effectiveType || 'unknown',
@@ -538,10 +538,12 @@ class CDNManager {
 
     metrics.forEach(metric => {
       const date = metric.timestamp.toISOString().split('T')[0];
-      if (!dailyMetrics.has(date)) {
+      if (date && !dailyMetrics.has(date)) {
         dailyMetrics.set(date, []);
       }
-      dailyMetrics.get(date)!.push(metric);
+      if (date) {
+        dailyMetrics.get(date)!.push(metric);
+      }
     });
 
     return Array.from(dailyMetrics.entries()).map(([date, dayMetrics]) => ({

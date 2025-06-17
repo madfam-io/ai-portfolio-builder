@@ -62,7 +62,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       onStatusChange?.(status.enabled);
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to load MFA status',
         variant: 'destructive',
       });
@@ -79,7 +79,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       setStep('setup');
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to set up MFA',
         variant: 'destructive',
       });
@@ -114,7 +114,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       }
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to verify MFA setup',
         variant: 'destructive',
       });
@@ -136,7 +136,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       });
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to disable MFA',
         variant: 'destructive',
       });
@@ -158,7 +158,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       }, 2000);
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description: 'Failed to copy to clipboard',
         variant: 'destructive',
       });
@@ -210,7 +210,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
                 <Smartphone className="h-4 w-4 text-muted-foreground" />
                 <span className="font-medium">Authenticator App</span>
               </div>
-              <Badge variant={mfaStatus?.enabled ? 'success' : 'secondary'}>
+              <Badge variant={mfaStatus?.enabled ? 'default' : 'secondary'}>
                 {mfaStatus?.enabled ? 'Enabled' : 'Disabled'}
               </Badge>
             </div>

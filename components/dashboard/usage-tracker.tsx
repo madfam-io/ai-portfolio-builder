@@ -82,7 +82,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
   };
 
   const planFeatures = SUBSCRIPTION_PLANS[usage.plan];
-  const hasPromotion = usage.plan !== 'free' && planFeatures.promotionalPrice;
+  const hasPromotion = usage.plan !== 'free' && 'promotionalPrice' in planFeatures && planFeatures.promotionalPrice;
 
   return (
     <div className="space-y-6">
@@ -92,14 +92,14 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                {t.dashboard?.usage?.title || 'Usage & Limits'}
+                Usage & Limits
                 {usage.plan === 'pro' && <Badge>Popular</Badge>}
               </CardTitle>
               <CardDescription>
-                {t.dashboard?.usage?.currentPlan || 'Current Plan'}:
+                Current Plan:
                 <span className="font-semibold ml-1">{planFeatures.name}</span>
                 {hasPromotion && (
-                  <Badge variant="success" className="ml-2">
+                  <Badge variant="default" className="ml-2">
                     50% OFF - Limited Time
                   </Badge>
                 )}
@@ -108,7 +108,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             {usage.plan !== 'enterprise' && (
               <Button onClick={handleUpgrade} variant="default" size="sm">
                 <TrendingUp className="mr-2 h-4 w-4" />
-                {t.dashboard?.usage?.upgrade || 'Upgrade Plan'}
+                Upgrade Plan
               </Button>
             )}
           </div>
@@ -142,7 +142,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
               <div className="flex items-center gap-2">
                 <FolderOpen className="h-4 w-4 text-muted-foreground" />
                 <CardTitle className="text-sm font-medium">
-                  {t.dashboard?.usage?.portfolios || 'Portfolios'}
+                  Portfolios
                 </CardTitle>
               </div>
               <span
@@ -164,7 +164,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             />
             {isNearLimit(usage.portfolios.used, usage.portfolios.limit) && (
               <p className="text-xs text-muted-foreground mt-2">
-                {t.dashboard?.usage?.nearLimit || 'Approaching limit'} -
+                Approaching limit -
                 <Button
                   variant="link"
                   size="sm"
@@ -185,7 +185,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
               <div className="flex items-center gap-2">
                 <Zap className="h-4 w-4 text-muted-foreground" />
                 <CardTitle className="text-sm font-medium">
-                  {t.dashboard?.usage?.aiRequests || 'AI Enhancements'}
+                  AI Enhancements
                 </CardTitle>
               </div>
               <span
@@ -207,7 +207,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             />
             {isNearLimit(usage.aiRequests.used, usage.aiRequests.limit) && (
               <p className="text-xs text-muted-foreground mt-2">
-                {t.dashboard?.usage?.nearLimit || 'Approaching limit'} -
+                Approaching limit -
                 <Button
                   variant="link"
                   size="sm"
@@ -228,7 +228,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
                 <CardTitle className="text-sm font-medium">
-                  {t.dashboard?.usage?.storage || 'Storage'}
+                  Storage
                 </CardTitle>
               </div>
               <span
@@ -258,7 +258,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
               <div className="flex items-center gap-2">
                 <Activity className="h-4 w-4 text-muted-foreground" />
                 <CardTitle className="text-sm font-medium">
-                  {t.dashboard?.usage?.bandwidth || 'Bandwidth'}
+                  Bandwidth
                 </CardTitle>
               </div>
               <span

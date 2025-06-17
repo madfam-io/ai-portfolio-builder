@@ -242,7 +242,7 @@ class GDPRService {
             request_date: request.requestDate.toISOString(),
             status: request.status,
             request_ip: request.requestIp,
-            expiry_date: request.expiryDate.toISOString(),
+            expiry_date: request.expiryDate?.toISOString(),
           });
 
         if (error) {

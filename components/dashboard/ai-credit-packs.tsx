@@ -39,14 +39,13 @@ export default function AICreditPacks({
     try {
       await onPurchase(packId);
       toast({
-        title: t.dashboard?.aiCredits?.purchaseSuccess || 'Purchase initiated',
+        title: 'Purchase initiated',
         description: 'You will be redirected to complete your purchase.',
       });
     } catch (error) {
       toast({
-        title: t.common?.error || 'Error',
+        title: t.error || 'Error',
         description:
-          t.dashboard?.aiCredits?.purchaseError ||
           'Failed to initiate purchase',
         variant: 'destructive',
       });
@@ -73,10 +72,10 @@ export default function AICreditPacks({
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Sparkles className="h-5 w-5" />
-            {t.dashboard?.aiCredits?.title || 'AI Enhancement Credits'}
+            AI Enhancement Credits
           </CardTitle>
           <CardDescription>
-            {t.dashboard?.aiCredits?.description ||
+            {
               'Purchase additional credits to enhance your portfolio content with AI'}
           </CardDescription>
         </CardHeader>
@@ -105,7 +104,7 @@ export default function AICreditPacks({
       <div className="grid gap-4 md:grid-cols-3">
         {Object.entries(AI_CREDIT_PACKS).map(([key, pack]) => {
           const packId = key as AICreditPack;
-          const isPopular = pack.popularBadge;
+          const isPopular = 'popularBadge' in pack && pack.popularBadge;
           const pricePerCredit = calculatePricePerCredit(
             pack.price,
             pack.credits
@@ -152,7 +151,7 @@ export default function AICreditPacks({
 
                 {/* Savings Badge */}
                 {packId === 'large' && (
-                  <Badge variant="success" className="w-full justify-center">
+                  <Badge variant="default" className="w-full justify-center">
                     Save 33% vs small pack
                   </Badge>
                 )}

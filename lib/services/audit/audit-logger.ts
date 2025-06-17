@@ -145,7 +145,7 @@ class AuditLogger {
       this.buffer.push(auditEvent);
 
       // Log to application logger as well
-      logger.info('Audit event', auditEvent);
+      logger.info('Audit event', { ...auditEvent });
 
       // Store in Redis for immediate access if available
       if (isRedisAvailable()) {
@@ -471,7 +471,7 @@ class AuditLogger {
   private async handleCriticalEvent(event: AuditEvent): Promise<void> {
     try {
       // Log to application logger with high priority
-      logger.error('CRITICAL AUDIT EVENT', event);
+      logger.error('CRITICAL AUDIT EVENT', { ...event });
 
       // Store immediately in database
       if (this.supabase) {
