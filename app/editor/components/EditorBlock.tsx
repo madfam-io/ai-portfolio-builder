@@ -3,7 +3,7 @@
 import React, { useCallback, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Card } from '@/components/ui/card';
+// import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
   Move,
@@ -42,7 +42,7 @@ export function EditorBlock({
   viewport,
 }: EditorBlockProps) {
   const {
-    updateBlock,
+    updateBlock: _updateBlock,
     deleteBlock,
     duplicateBlock,
     reorderBlocks,
@@ -131,7 +131,7 @@ export function EditorBlock({
     [isVisible]
   );
 
-  const getResponsiveStyles = () => {
+  const _getResponsiveStyles = () => {
     const styles = block.responsive[viewport] || block.responsive.desktop;
     return styles;
   };

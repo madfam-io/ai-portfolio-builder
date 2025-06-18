@@ -15,6 +15,72 @@ interface RouteParams {
   };
 }
 
+interface SyncOptions {
+  syncMetrics?: boolean;
+  syncPullRequests?: boolean;
+  syncContributors?: boolean;
+  syncCommits?: boolean;
+}
+
+interface SyncResult {
+  repositoryId: string;
+  synced: string[];
+  errors: Array<{
+    type: string;
+    error: string;
+  }>;
+  timestamp?: string;
+}
+
+// Helper function to sync data with error handling
+async function syncWithErrorHandling(params: {
+  analyticsService: AnalyticsService;
+  repositoryId: string;
+  syncType: string;
+  syncFunction: () => Promise<void>;
+  results: SyncResult;
+}): Promise<void> {
+  const { repositoryId, syncType, syncFunction, results } = params;
+  try {
+    await syncFunction();
+    results.synced.push(syncType);
+  } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error';
+    logger.error(`Failed to sync ${syncType}`, {
+      repositoryId,
+      error: errorMessage,
+    });
+    results.errors.push({
+      type: syncType,
+      error: errorMessage || 'An unexpected error occurred',
+    });
+  }
+}
+
+// Helper function to authenticate user and initialize analytics service
+async function authenticateAndInitialize(userId: string) {
+  const analyticsService = new AnalyticsService(userId);
+
+  try {
+    await analyticsService.initialize();
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes('No active GitHub integration')
+    ) {
+      return {
+        error: 'GitHub integration required',
+        requiresAuth: true,
+        status: 400,
+      };
+    }
+    throw error;
+  }
+
+  return { analyticsService };
+}
+
 /**
  * Get analytics for a specific repository
  */
@@ -43,26 +109,18 @@ export async function GET(
     }
 
     const repositoryId = params.id;
-    const analyticsService = new AnalyticsService(user.id);
+    const authResult = await authenticateAndInitialize(user.id);
 
-    try {
-      await analyticsService.initialize();
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes('No active GitHub integration')
-      ) {
-        return NextResponse.json(
-          { error: 'GitHub integration required', requiresAuth: true },
-          { status: 400 }
-        );
-      }
-      throw error;
+    if ('error' in authResult) {
+      return NextResponse.json(
+        { error: authResult.error, requiresAuth: authResult.requiresAuth },
+        { status: authResult.status }
+      );
     }
 
     // Get repository analytics
     const analytics =
-      await analyticsService.getRepositoryAnalytics(repositoryId);
+      await authResult.analyticsService.getRepositoryAnalytics(repositoryId);
 
     if (!analytics) {
       return NextResponse.json(
@@ -118,29 +176,23 @@ export async function POST(
 
     const repositoryId = params.id;
     const body = await request.json().catch(() => ({}));
-    const {
-      syncMetrics = true,
-      syncPullRequests = true,
-      syncContributors = true,
-      syncCommits = true,
-    } = body;
+    const syncOptions: SyncOptions = {
+      syncMetrics: body.syncMetrics !== false,
+      syncPullRequests: body.syncPullRequests !== false,
+      syncContributors: body.syncContributors !== false,
+      syncCommits: body.syncCommits !== false,
+    };
 
-    const analyticsService = new AnalyticsService(user.id);
+    const authResult = await authenticateAndInitialize(user.id);
 
-    try {
-      await analyticsService.initialize();
-    } catch (error) {
-      if (
-        error instanceof Error &&
-        error.message.includes('No active GitHub integration')
-      ) {
-        return NextResponse.json(
-          { error: 'GitHub integration required', requiresAuth: true },
-          { status: 400 }
-        );
-      }
-      throw error;
+    if ('error' in authResult) {
+      return NextResponse.json(
+        { error: authResult.error, requiresAuth: authResult.requiresAuth },
+        { status: authResult.status }
+      );
     }
+
+    const { analyticsService } = authResult;
 
     // Verify repository belongs to user
     const repository = await analyticsService.getRepository(repositoryId);
@@ -151,94 +203,52 @@ export async function POST(
       );
     }
 
-    const results: {
-      repositoryId: string;
-      synced: string[];
-      errors: Array<{
-        type: string;
-        error: string;
-      }>;
-      timestamp?: string;
-    } = {
+    const results: SyncResult = {
       repositoryId,
       synced: [],
       errors: [],
     };
 
-    // Sync metrics
-    if (syncMetrics === true) {
-      try {
-        await analyticsService.syncRepositoryMetrics(repositoryId);
-        results.synced.push('metrics');
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Unknown error';
-        logger.error('Failed to sync metrics', {
-          repositoryId,
-          error: errorMessage,
-        });
-        results.errors.push({
-          type: 'metrics',
-          error: errorMessage || 'An unexpected error occurred',
-        });
-      }
+    // Sync each type of data based on options
+    if (syncOptions.syncMetrics) {
+      await syncWithErrorHandling({
+        analyticsService,
+        repositoryId,
+        syncType: 'metrics',
+        syncFunction: () =>
+          analyticsService.syncRepositoryMetrics(repositoryId),
+        results,
+      });
     }
 
-    // Sync pull requests
-    if (syncPullRequests === true) {
-      try {
-        await analyticsService.syncPullRequests(repositoryId);
-        results.synced.push('pull_requests');
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Unknown error';
-        logger.error('Failed to sync pull requests', {
-          repositoryId,
-          error: errorMessage,
-        });
-        results.errors.push({
-          type: 'pull_requests',
-          error: errorMessage || 'An unexpected error occurred',
-        });
-      }
+    if (syncOptions.syncPullRequests) {
+      await syncWithErrorHandling({
+        analyticsService,
+        repositoryId,
+        syncType: 'pull_requests',
+        syncFunction: () => analyticsService.syncPullRequests(repositoryId),
+        results,
+      });
     }
 
-    // Sync contributors
-    if (syncContributors === true) {
-      try {
-        await analyticsService.syncContributors(repositoryId);
-        results.synced.push('contributors');
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Unknown error';
-        logger.error('Failed to sync contributors', {
-          repositoryId,
-          error: errorMessage,
-        });
-        results.errors.push({
-          type: 'contributors',
-          error: errorMessage || 'An unexpected error occurred',
-        });
-      }
+    if (syncOptions.syncContributors) {
+      await syncWithErrorHandling({
+        analyticsService,
+        repositoryId,
+        syncType: 'contributors',
+        syncFunction: () => analyticsService.syncContributors(repositoryId),
+        results,
+      });
     }
 
-    // Sync commit analytics
-    if (syncCommits === true) {
-      try {
-        await analyticsService.syncCommitAnalytics(repositoryId);
-        results.synced.push('commits');
-      } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : 'Unknown error';
-        logger.error('Failed to sync commits', {
-          repositoryId,
-          error: errorMessage,
-        });
-        results.errors.push({
-          type: 'commits',
-          error: errorMessage || 'An unexpected error occurred',
-        });
-      }
+    if (syncOptions.syncCommits) {
+      await syncWithErrorHandling({
+        analyticsService,
+        repositoryId,
+        syncType: 'commits',
+        syncFunction: () => analyticsService.syncCommitAnalytics(repositoryId),
+        results,
+      });
     }
 
     return NextResponse.json({

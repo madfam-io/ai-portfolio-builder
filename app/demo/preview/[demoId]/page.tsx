@@ -17,9 +17,7 @@ interface PageProps {
   };
 }
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export function generateMetadata({ params }: PageProps): Metadata {
   const demo = DemoPortfolioService.getDemo(params.demoId);
 
   if (!demo) {
@@ -103,7 +101,7 @@ export default function DemoPreviewPage({ params }: PageProps) {
       {/* Demo Banner */}
       <div className="bg-primary text-primary-foreground p-4 text-center">
         <p className="text-sm font-medium">
-          This is a demo preview of the "{demo.name}" template.
+          This is a demo preview of the &quot;{demo.name}&quot; template.
           <a href="/quick-start" className="underline ml-2">
             Get started with this template →
           </a>

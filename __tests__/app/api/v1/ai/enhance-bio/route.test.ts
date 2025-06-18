@@ -6,21 +6,23 @@ import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/ai/enhance-bio/route';
 import { enhanceBio } from '@/lib/ai/huggingface-service';
-import { getUserSession } from '@/lib/auth/session';
-import { createSupabaseClient } from '@/lib/supabase/server';
+// Mock getUserSession since the module doesn't exist
+const getUserSession = jest.fn();
+
+// Mock createSupabaseClient
+const createSupabaseClient = jest.fn();
 import { withAuth } from '@/lib/api/middleware/auth';
 import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { logger } from '@/lib/utils/logger';
-import { trackEvent } from '@/lib/analytics/posthog';
+import { trackEvent } from '@/lib/analytics/posthog/server';
 
 // Mock dependencies
 jest.mock('@/lib/ai/huggingface-service');
-jest.mock('@/lib/auth/session');
-jest.mock('@/lib/supabase/server');
+// No need to mock non-existent modules
 jest.mock('@/lib/api/middleware/auth');
 jest.mock('@/lib/api/middleware/rate-limit');
 jest.mock('@/lib/utils/logger');
-jest.mock('@/lib/analytics/posthog');
+jest.mock('@/lib/analytics/posthog/server');
 
 const mockEnhanceBio = jest.mocked(enhanceBio);
 const mockGetUserSession = jest.mocked(getUserSession);

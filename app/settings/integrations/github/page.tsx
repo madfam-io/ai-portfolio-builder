@@ -114,7 +114,7 @@ export default function GitHubIntegrationPage() {
 
   const handleDisconnect = async () => {
     if (
-      !confirm(
+      !window.confirm(
         'Are you sure you want to disconnect GitHub? This will remove all synced repository data.'
       )
     ) {

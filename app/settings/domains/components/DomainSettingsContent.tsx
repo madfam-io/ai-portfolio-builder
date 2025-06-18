@@ -28,7 +28,7 @@ import {
   Trash,
   Info,
   RefreshCw,
-  Settings,
+  // Settings,
   Link as LinkIcon,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -40,14 +40,14 @@ import { DomainSetupInstructions } from './DomainSetupInstructions';
 import type { CustomDomain } from '@/types/domains';
 
 export function DomainSettingsContent() {
-  const router = useRouter();
+  const _router = useRouter();
   const { toast } = useToast();
   const { user } = useAuthStore();
   const { portfolios } = usePortfolioStore();
 
   const [domains, setDomains] = useState<CustomDomain[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDomain, setSelectedDomain] = useState<CustomDomain | null>(
+  const [_selectedDomain, _setSelectedDomain] = useState<CustomDomain | null>(
     null
   );
   const [showAddModal, setShowAddModal] = useState(false);
@@ -197,7 +197,7 @@ export function DomainSettingsContent() {
 
   const handleRemoveDomain = async (domain: CustomDomain) => {
     if (
-      !confirm(
+      !window.confirm(
         `Are you sure you want to remove ${domain.domain}? This action cannot be undone.`
       )
     ) {

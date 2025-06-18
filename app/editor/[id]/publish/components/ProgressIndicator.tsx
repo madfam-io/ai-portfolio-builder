@@ -4,7 +4,7 @@ import { cn } from '@/lib/utils';
 
 interface ProgressIndicatorProps {
   currentStep: 'subdomain' | 'seo' | 'review';
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function ProgressIndicator({ currentStep, t }: ProgressIndicatorProps) {

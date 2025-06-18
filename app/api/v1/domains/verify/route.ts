@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import dns from 'dns/promises';
+import { logger } from '@/lib/utils/logger';
 
 export async function POST(request: NextRequest) {
   try {
@@ -55,10 +56,10 @@ export async function POST(request: NextRequest) {
         cnameRecord = cnameRecords[0] || null;
       } catch (_cnameError) {
         // CNAME might not exist, which is okay
-        console.log('No CNAME record found');
+        logger.debug('No CNAME record found', { domain: domain.domain });
       }
-    } catch (dnsError: any) {
-      console.error('DNS lookup error:', dnsError);
+    } catch (dnsError) {
+      logger.error('DNS lookup error', dnsError as Error);
 
       // Log verification attempt
       await supabase.from('domain_verification_logs').insert({
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
     const verified = hasVerificationToken && hasCnameRecord;
 
     // Update domain status
-    const updateData: any = {
+    const updateData: Record<string, unknown> = {
       dns_last_checked_at: new Date().toISOString(),
       verification_attempts: domain.verification_attempts + 1,
       last_verification_at: new Date().toISOString(),
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (error) {
-    console.error('Domain verification error:', error);
+    logger.error('Domain verification error', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

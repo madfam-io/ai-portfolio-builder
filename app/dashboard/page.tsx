@@ -21,6 +21,16 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
@@ -60,23 +70,20 @@ function DashboardContent(): React.ReactElement {
         variant: 'destructive',
       });
     });
-  }, [loadPortfolios]);
+  }, [loadPortfolios, t, toast]);
+
+  const [deletePortfolioId, setDeletePortfolioId] = useState<string | null>(
+    null
+  );
 
   const handleDeletePortfolio = async (portfolioId: string) => {
-    if (
-      !confirm(
-        t.confirmDelete || 'Are you sure you want to delete this portfolio?'
-      )
-    ) {
-      return;
-    }
-
     try {
       await deletePortfolio(portfolioId);
       toast({
         title: t.success || 'Success',
         description: t.portfolioDeleted || 'Portfolio deleted successfully',
       });
+      setDeletePortfolioId(null);
     } catch (err) {
       logger.error(
         'Failed to delete portfolio:',
@@ -151,6 +158,71 @@ function DashboardContent(): React.ReactElement {
     return dateObj.toLocaleDateString();
   };
 
+  // Helper function to render portfolio stats
+  const renderPortfolioStats = () => (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t.totalPortfolios || 'Total Portfolios'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-bold">{portfolios.length}</p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t.published || 'Published'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-bold">
+            {portfolios.filter(p => p.status === 'published').length}
+          </p>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            {t.totalViews || 'Total Views'}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-2xl font-bold">
+            {portfolios.reduce((sum, p) => sum + (p.views || 0), 0)}
+          </p>
+        </CardContent>
+      </Card>
+    </div>
+  );
+
+  // Helper function to render upgrade banners
+  const renderUpgradeBanners = () => (
+    <>
+      {isFreeTier && shouldShowPrompt('portfolio_limit') && (
+        <div className="mb-6">
+          <UpgradeBanner
+            type="portfolio_limit"
+            title="Portfolio Limit Reached"
+            description={`You've created ${limits?.current_usage.portfolios || 0} of ${limits?.limits.max_portfolios || 0} portfolios. Upgrade to create more professional portfolios.`}
+          />
+        </div>
+      )}
+
+      {isFreeTier && shouldShowPrompt('ai_limit') && (
+        <div className="mb-6">
+          <UpgradeBanner
+            type="ai_limit"
+            title="AI Enhancements Used Up"
+            description={`You've used ${limits?.current_usage.ai_requests || 0} of ${limits?.limits.max_ai_requests || 0} AI enhancements this month. Upgrade for unlimited AI features.`}
+          />
+        </div>
+      )}
+    </>
+  );
+
   // Show loading spinner while loading data
   if (isLoading && portfolios.length === 0) {
     return (
@@ -198,25 +270,7 @@ function DashboardContent(): React.ReactElement {
         )}
 
         {/* Upgrade Banners */}
-        {isFreeTier && shouldShowPrompt('portfolio_limit') && (
-          <div className="mb-6">
-            <UpgradeBanner
-              type="portfolio_limit"
-              title="Portfolio Limit Reached"
-              description={`You've created ${limits?.current_usage.portfolios || 0} of ${limits?.limits.max_portfolios || 0} portfolios. Upgrade to create more professional portfolios.`}
-            />
-          </div>
-        )}
-
-        {isFreeTier && shouldShowPrompt('ai_limit') && (
-          <div className="mb-6">
-            <UpgradeBanner
-              type="ai_limit"
-              title="AI Enhancements Used Up"
-              description={`You've used ${limits?.current_usage.ai_requests || 0} of ${limits?.limits.max_ai_requests || 0} AI enhancements this month. Upgrade for unlimited AI features.`}
-            />
-          </div>
-        )}
+        {renderUpgradeBanners()}
 
         {/* Usage Stats */}
         <div className="mb-8">
@@ -224,42 +278,7 @@ function DashboardContent(): React.ReactElement {
         </div>
 
         {/* Portfolio Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t.totalPortfolios || 'Total Portfolios'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">{portfolios.length}</p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t.published || 'Published'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {portfolios.filter(p => p.status === 'published').length}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {t.totalViews || 'Total Views'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-2xl font-bold">
-                {portfolios.reduce((sum, p) => sum + (p.views || 0), 0)}
-              </p>
-            </CardContent>
-          </Card>
-        </div>
+        {renderPortfolioStats()}
 
         {/* Portfolio Grid */}
         {portfolios.length > 0 ? (
@@ -354,7 +373,7 @@ function DashboardContent(): React.ReactElement {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDeletePortfolio(portfolio.id)}
+                    onClick={() => setDeletePortfolioId(portfolio.id)}
                     className="text-destructive hover:text-destructive hover:bg-destructive/10"
                     title={t.delete || 'Delete'}
                   >
@@ -404,6 +423,35 @@ function DashboardContent(): React.ReactElement {
             currentPlan={limits?.subscription_tier || 'free'}
           />
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog
+          open={deletePortfolioId !== null}
+          onOpenChange={open => !open && setDeletePortfolioId(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {t.confirmDeleteTitle || 'Delete Portfolio'}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {t.confirmDeleteDescription ||
+                  'Are you sure you want to delete this portfolio? This action cannot be undone.'}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>{t.cancel || 'Cancel'}</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={() =>
+                  deletePortfolioId && handleDeletePortfolio(deletePortfolioId)
+                }
+                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              >
+                {t.delete || 'Delete'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </BaseLayout>
   );

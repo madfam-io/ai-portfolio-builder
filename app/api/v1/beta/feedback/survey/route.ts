@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * API endpoint for submitting satisfaction surveys
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       npsScore >= 9 ? 'promoter' : npsScore >= 7 ? 'passive' : 'detractor';
 
     // Log survey data for analytics
-    console.log('Beta Survey Received:', {
+    logger.info('Beta Survey Received', {
       id: enhancedSurvey.id,
       userId: enhancedSurvey.userId,
       overallSatisfaction: enhancedSurvey.overallSatisfaction,
@@ -89,12 +90,15 @@ export async function POST(request: NextRequest) {
 
     // TODO: Trigger follow-up actions based on responses
     if (enhancedSurvey.overallSatisfaction <= 5) {
-      console.log('LOW SATISFACTION ALERT:', enhancedSurvey.userId);
+      logger.warn('LOW SATISFACTION ALERT', {
+        userId: enhancedSurvey.userId,
+        survey: enhancedSurvey,
+      });
       // await triggerCustomerSuccessFollow(enhancedSurvey);
     }
 
     if (npsCategory === 'promoter') {
-      console.log('PROMOTER IDENTIFIED:', enhancedSurvey.userId);
+      logger.info('PROMOTER IDENTIFIED', { userId: enhancedSurvey.userId });
       // await triggerReferralProgram(enhancedSurvey);
     }
 
@@ -105,7 +109,7 @@ export async function POST(request: NextRequest) {
       message: 'Survey submitted successfully',
     });
   } catch (error) {
-    console.error('Error processing survey submission:', error);
+    logger.error('Error processing survey submission', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -116,12 +120,12 @@ export async function POST(request: NextRequest) {
 /**
  * GET endpoint to retrieve survey analytics
  */
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const userId = searchParams.get('userId');
+    const _userId = searchParams.get('userId');
     const days = parseInt(searchParams.get('days') || '30');
-    const limit = parseInt(searchParams.get('limit') || '100');
+    const _limit = parseInt(searchParams.get('limit') || '100');
 
     // TODO: Implement database queries for survey analytics
     // const surveys = await getSurveysFromDatabase({ userId, days, limit });
@@ -176,7 +180,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(mockAnalytics);
   } catch (error) {
-    console.error('Error fetching survey analytics:', error);
+    logger.error('Error fetching survey analytics', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

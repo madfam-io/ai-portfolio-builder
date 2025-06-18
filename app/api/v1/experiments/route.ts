@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 import { z } from 'zod';
 
 import {
@@ -60,7 +60,7 @@ const createExperimentSchema = z.object({
  */
 export async function GET(request: Request): Promise<Response> {
   try {
-    const user = await authenticateUser(request as any);
+    const user = await authenticateUser(request as NextRequest);
     if (!user) {
       return unauthorizedResponse();
     }
@@ -159,7 +159,7 @@ export async function GET(request: Request): Promise<Response> {
  */
 export async function POST(request: Request): Promise<Response> {
   try {
-    const user = await authenticateUser(request as any);
+    const user = await authenticateUser(request as NextRequest);
     if (!user) {
       return unauthorizedResponse();
     }

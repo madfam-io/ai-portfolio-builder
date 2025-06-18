@@ -14,7 +14,7 @@ interface EnhanceStepProps {
   isCreating: boolean;
   onCreate: () => void;
   onBack: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function EnhanceStep({

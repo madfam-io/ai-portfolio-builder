@@ -69,7 +69,15 @@ function PublishContent({ params }: PageProps) {
           });
         });
     }
-  }, [portfolioId, loadPortfolio, currentPortfolio?.id]);
+  }, [
+    portfolioId,
+    loadPortfolio,
+    currentPortfolio?.id,
+    currentPortfolio,
+    t.error,
+    t.failedToLoadPortfolio,
+    toast,
+  ]);
 
   const handleStepChange = (newStep: 'subdomain' | 'seo' | 'review') => {
     setStep(newStep);
@@ -105,7 +113,7 @@ function PublishContent({ params }: PageProps) {
         '_blank'
       );
       router.push('/dashboard');
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description:

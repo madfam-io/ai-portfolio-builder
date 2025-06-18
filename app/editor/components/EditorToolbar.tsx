@@ -34,7 +34,7 @@ export function EditorToolbar({
   const {
     blocks,
     viewport,
-    isPreviewMode,
+    isPreviewMode: _isPreviewMode,
     canUndo,
     canRedo,
     undo,

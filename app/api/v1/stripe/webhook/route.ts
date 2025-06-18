@@ -212,9 +212,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   try {
     // Calculate subscription end date
-    const subscriptionEnd = new Date(
-      (subscription as any).current_period_end * 1000
-    );
+    const subscriptionEnd = new Date(subscription.current_period_end * 1000);
 
     const { error } = await supabase
       .from('users')
@@ -274,9 +272,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   }
 
   try {
-    const subscriptionEnd = new Date(
-      (subscription as any).current_period_end * 1000
-    );
+    const subscriptionEnd = new Date(subscription.current_period_end * 1000);
 
     const { error } = await supabase
       .from('users')
@@ -370,7 +366,10 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  * Handle successful payment
  */
 function handlePaymentSucceeded(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  const subscriptionId =
+    typeof invoice.subscription === 'string'
+      ? invoice.subscription
+      : invoice.subscription?.id;
 
   if (!subscriptionId) {
     logger.info('Payment succeeded for non-subscription invoice', {
@@ -392,7 +391,10 @@ function handlePaymentSucceeded(invoice: Stripe.Invoice) {
  * Handle failed payment
  */
 function handlePaymentFailed(invoice: Stripe.Invoice) {
-  const subscriptionId = (invoice as any).subscription as string;
+  const subscriptionId =
+    typeof invoice.subscription === 'string'
+      ? invoice.subscription
+      : invoice.subscription?.id;
 
   if (!subscriptionId) {
     logger.info('Payment failed for non-subscription invoice', {

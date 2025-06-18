@@ -6,7 +6,7 @@ type Step = 'basic' | 'template' | 'import' | 'enhance';
 
 interface StepProgressProps {
   currentStep: Step;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function StepProgress({ currentStep, t }: StepProgressProps) {

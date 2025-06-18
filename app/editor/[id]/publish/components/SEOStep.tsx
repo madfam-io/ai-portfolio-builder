@@ -17,11 +17,11 @@ interface SEOStepProps {
       keywords: string;
     };
   };
-  setPublishData: (data: any) => void;
+  setPublishData: (data: typeof publishData) => void;
   currentPortfolio: Portfolio | null;
   onNext: () => void;
   onBack: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function SEOStep({

@@ -17,17 +17,92 @@ interface SubdomainStepProps {
       keywords: string;
     };
   };
-  setPublishData: (data: any) => void;
+  setPublishData: (data: typeof publishData) => void;
   currentPortfolio: Portfolio | null;
   onNext: () => void;
   onBack: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
+}
+
+// Component for subdomain input field
+function SubdomainInput({
+  subdomain,
+  isChecking,
+  isAvailable,
+  onSubdomainChange,
+  onBlur,
+}: {
+  subdomain: string;
+  isChecking: boolean;
+  isAvailable: boolean | null;
+  onSubdomainChange: (value: string) => void;
+  onBlur: () => void;
+}) {
+  return (
+    <div className="flex-1 relative">
+      <Input
+        id="subdomain"
+        value={subdomain}
+        onChange={e => onSubdomainChange(e.target.value)}
+        onBlur={onBlur}
+        placeholder="yourname"
+        className={cn(
+          'pr-10',
+          isAvailable === true && 'border-green-500',
+          isAvailable === false && 'border-red-500'
+        )}
+      />
+      {isChecking && (
+        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+          <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+        </div>
+      )}
+      {!isChecking && isAvailable === true && (
+        <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
+      )}
+      {!isChecking && isAvailable === false && (
+        <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500" />
+      )}
+    </div>
+  );
+}
+
+// Component for subdomain suggestions
+function SubdomainSuggestions({
+  suggestions,
+  onSelectSuggestion,
+  t,
+}: {
+  suggestions: string[];
+  onSelectSuggestion: (suggestion: string) => void;
+  t: Record<string, string | undefined>;
+}) {
+  if (suggestions.length === 0) return null;
+
+  return (
+    <div className="mt-2">
+      <p className="text-sm text-muted-foreground mb-2">
+        {t.suggestedAlternatives || 'Try these alternatives:'}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {suggestions.map(suggestion => (
+          <button
+            key={suggestion}
+            onClick={() => onSelectSuggestion(suggestion)}
+            className="px-3 py-1 text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
+          >
+            {suggestion}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function SubdomainStep({
   publishData,
   setPublishData,
-  currentPortfolio,
+  currentPortfolio: _currentPortfolio,
   onNext,
   onBack,
   t,
@@ -73,7 +148,7 @@ export function SubdomainStep({
         setSubdomainAvailable(false);
         setErrorMessage(data.error || 'Failed to check subdomain availability');
       }
-    } catch (error) {
+    } catch (_error) {
       setSubdomainAvailable(false);
       setErrorMessage('Failed to check subdomain availability');
     } finally {
@@ -91,6 +166,16 @@ export function SubdomainStep({
     setSubdomainAvailable(null);
   };
 
+  const handleSelectSuggestion = (suggestion: string) => {
+    setPublishData({
+      ...publishData,
+      subdomain: suggestion,
+    });
+    setSubdomainAvailable(null);
+    setSuggestions([]);
+    setErrorMessage('');
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -105,31 +190,13 @@ export function SubdomainStep({
       <div>
         <Label htmlFor="subdomain">{t.subdomain || 'Subdomain'}</Label>
         <div className="flex items-center gap-2 mt-2">
-          <div className="flex-1 relative">
-            <Input
-              id="subdomain"
-              value={publishData.subdomain}
-              onChange={e => handleSubdomainChange(e.target.value)}
-              onBlur={checkSubdomainAvailability}
-              placeholder="yourname"
-              className={cn(
-                'pr-10',
-                subdomainAvailable === true && 'border-green-500',
-                subdomainAvailable === false && 'border-red-500'
-              )}
-            />
-            {isCheckingSubdomain && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
-              </div>
-            )}
-            {!isCheckingSubdomain && subdomainAvailable === true && (
-              <CheckCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-500" />
-            )}
-            {!isCheckingSubdomain && subdomainAvailable === false && (
-              <AlertCircle className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-red-500" />
-            )}
-          </div>
+          <SubdomainInput
+            subdomain={publishData.subdomain}
+            isChecking={isCheckingSubdomain}
+            isAvailable={subdomainAvailable}
+            onSubdomainChange={handleSubdomainChange}
+            onBlur={checkSubdomainAvailability}
+          />
           <span className="text-muted-foreground">.prisma.madfam.io</span>
         </div>
         <p className="text-sm text-muted-foreground mt-2">
@@ -143,32 +210,11 @@ export function SubdomainStep({
                 t.subdomainTaken ||
                 'This subdomain is already taken or reserved'}
             </p>
-            {suggestions.length > 0 && (
-              <div className="mt-2">
-                <p className="text-sm text-muted-foreground mb-2">
-                  {t.suggestedAlternatives || 'Try these alternatives:'}
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {suggestions.map(suggestion => (
-                    <button
-                      key={suggestion}
-                      onClick={() => {
-                        setPublishData({
-                          ...publishData,
-                          subdomain: suggestion,
-                        });
-                        setSubdomainAvailable(null);
-                        setSuggestions([]);
-                        setErrorMessage('');
-                      }}
-                      className="px-3 py-1 text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
-                    >
-                      {suggestion}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
+            <SubdomainSuggestions
+              suggestions={suggestions}
+              onSelectSuggestion={handleSelectSuggestion}
+              t={t}
+            />
           </div>
         )}
       </div>

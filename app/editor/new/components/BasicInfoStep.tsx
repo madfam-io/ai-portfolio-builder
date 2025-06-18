@@ -16,7 +16,7 @@ interface BasicInfoStepProps {
   formData: FormDataType;
   updateFormData: (data: Partial<FormDataType>) => void;
   onNext: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function BasicInfoStep({

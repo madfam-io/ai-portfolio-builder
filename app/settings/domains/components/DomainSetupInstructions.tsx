@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+// import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
@@ -48,10 +48,10 @@ export function DomainSetupInstructions({
     });
   };
 
-  const instructions = DomainService.getSetupInstructions(
+  const _instructions = DomainService.getSetupInstructions(
     domain,
     verificationToken,
-    provider as any
+    provider as string
   );
 
   const dnsProviders = [

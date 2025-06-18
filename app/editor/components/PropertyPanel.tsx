@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Separator } from '@/components/ui/separator';
+// import { Separator } from '@/components/ui/separator';
 import {
   Select,
   SelectContent,
@@ -63,22 +63,22 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
     );
   }
 
-  const handleDataUpdate = (key: string, value: any) => {
+  const handleDataUpdate = (key: string, value: unknown) => {
     updateBlock(block.id, {
       data: { ...block.data, [key]: value },
     });
   };
 
-  const handleStyleUpdate = (key: string, value: any) => {
+  const handleStyleUpdate = (key: string, value: unknown) => {
     updateBlock(block.id, {
       styles: { ...block.styles, [key]: value },
     });
   };
 
-  const handleResponsiveStyleUpdate = (
+  const _handleResponsiveStyleUpdate = (
     viewport: 'desktop' | 'tablet' | 'mobile',
     key: string,
-    value: any
+    value: unknown
   ) => {
     const currentResponsive = block.responsive[viewport] || {};
     updateBlock(block.id, {
@@ -258,7 +258,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
                           const newArray = [...value];
                           newArray[index] = parsed;
                           handleDataUpdate(property.key, newArray);
-                        } catch (error) {
+                        } catch (_error) {
                           // Invalid JSON, don't update
                         }
                       }}

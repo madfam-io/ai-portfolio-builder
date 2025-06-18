@@ -15,13 +15,182 @@ import { EditorStep } from './components/EditorStep';
 import { PreviewStep } from './components/PreviewStep';
 import { TemplateSelectionStep } from './components/TemplateSelectionStep';
 
+type DemoStep = 'template' | 'ai-enhance' | 'editor' | 'preview';
+
+interface StepRendererProps {
+  currentStep: DemoStep;
+  portfolio: Portfolio;
+  selectedTemplate: TemplateType;
+  isLoading: boolean;
+  selectedAIModel: string;
+  currentAITask: 'bio' | 'project' | 'template';
+  previewConfig: Record<string, unknown>;
+  previewDimensions: Record<string, unknown>;
+  handleTemplateChange: (template: TemplateType) => Promise<void>;
+  handlePortfolioChange: (portfolio: Portfolio) => void;
+  handleNextStep: () => void;
+  handlePreviousStep: () => void;
+  handleExport: () => void;
+  handleShare: () => void;
+  handleRefresh: () => void;
+  setSelectedAIModel: (model: string) => void;
+  setCurrentAITask: (task: 'bio' | 'project' | 'template') => void;
+  setPreviewMode: (mode: string) => void;
+  toggleFullscreen: () => void;
+  setZoomLevel: (level: number) => void;
+  toggleSectionBorders: () => void;
+  toggleInteractiveElements: () => void;
+  getResponsiveBreakpoints: () => Array<{
+    name: string;
+    width: number;
+    icon: React.ReactNode;
+  }>;
+  testResponsiveBreakpoint: (breakpoint: string) => void;
+  t: Record<string, string | undefined>;
+}
+
+// Helper component to render current step
+function StepRenderer({
+  currentStep,
+  portfolio,
+  selectedTemplate,
+  isLoading,
+  selectedAIModel,
+  currentAITask,
+  previewConfig,
+  previewDimensions,
+  handleTemplateChange,
+  handlePortfolioChange,
+  handleNextStep,
+  handlePreviousStep,
+  handleExport,
+  handleShare,
+  handleRefresh,
+  setSelectedAIModel,
+  setCurrentAITask,
+  setPreviewMode,
+  toggleFullscreen,
+  setZoomLevel,
+  toggleSectionBorders,
+  toggleInteractiveElements,
+  getResponsiveBreakpoints,
+  testResponsiveBreakpoint,
+  t,
+}: StepRendererProps) {
+  switch (currentStep) {
+    case 'ai-enhance':
+      return (
+        <AIEnhancementStep
+          portfolio={portfolio}
+          selectedTemplate={selectedTemplate}
+          selectedAIModel={selectedAIModel}
+          currentAITask={currentAITask}
+          onPortfolioChange={handlePortfolioChange}
+          onNextStep={handleNextStep}
+          onAIModelSelect={setSelectedAIModel}
+          onAITaskChange={setCurrentAITask}
+        />
+      );
+
+    case 'template':
+      return (
+        <TemplateSelectionStep
+          selectedTemplate={selectedTemplate}
+          isLoading={isLoading}
+          onTemplateChange={handleTemplateChange}
+          onNextStep={handleNextStep}
+          translations={{
+            demoChooseYourTemplate:
+              t.demoChooseYourTemplate || 'Choose Your Template',
+            demoStartBySelecting:
+              t.demoStartBySelecting ||
+              'Start by selecting a template that matches your profession',
+            demoLoadingTemplates:
+              t.demoLoadingTemplates || 'Loading templates...',
+          }}
+        />
+      );
+
+    case 'editor':
+      return (
+        <EditorStep
+          portfolio={portfolio}
+          previewConfig={previewConfig}
+          onPortfolioChange={handlePortfolioChange}
+          onNextStep={handleNextStep}
+          onPreviousStep={handlePreviousStep}
+          translations={{
+            demoEditPortfolio: t.demoEditPortfolio || 'Edit Portfolio',
+            demoBack: t.demoBack || 'Back',
+            demoPreview: t.demoPreview || 'Preview',
+            demoInteractiveDemoMode:
+              t.demoInteractiveDemoMode || 'Interactive Demo Mode',
+            demoThisIsPreview:
+              t.demoThisIsPreview ||
+              'This is a preview of the editor. Sign up to save your portfolio.',
+            demoBasicInformation: t.demoBasicInformation || 'Basic Information',
+            demoName: t.demoName || 'Name',
+            demoTitle: t.demoTitle || 'Title',
+            demoBio: t.demoBio || 'Bio',
+            demoProjects: t.demoProjects || 'Projects',
+            demoAddProject: t.demoAddProject || 'Add Project',
+            demoSkills: t.demoSkills || 'Skills',
+            demoAvailableInFullVersion:
+              t.demoAvailableInFullVersion || 'Available in Full Version',
+            demoAiBioEnhancement:
+              t.demoAiBioEnhancement || 'AI Bio Enhancement',
+            demoProjectManagement:
+              t.demoProjectManagement || 'Project Management',
+            demoSkillsExperience:
+              t.demoSkillsExperience || 'Skills & Experience',
+            demoCustomSections: t.demoCustomSections || 'Custom Sections',
+            demoLinkedinImport: t.demoLinkedinImport || 'LinkedIn Import',
+            demoGithubIntegration:
+              t.demoGithubIntegration || 'GitHub Integration',
+            demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
+          }}
+        />
+      );
+
+    case 'preview':
+      return (
+        <PreviewStep
+          portfolio={portfolio}
+          previewConfig={previewConfig}
+          previewDimensions={previewDimensions}
+          onPreviousStep={handlePreviousStep}
+          onExport={handleExport}
+          onShare={handleShare}
+          onRefresh={handleRefresh}
+          setPreviewMode={setPreviewMode}
+          toggleFullscreen={toggleFullscreen}
+          setZoomLevel={setZoomLevel}
+          toggleSectionBorders={toggleSectionBorders}
+          toggleInteractiveElements={toggleInteractiveElements}
+          getResponsiveBreakpoints={getResponsiveBreakpoints}
+          testResponsiveBreakpoint={testResponsiveBreakpoint}
+          translations={{
+            demoLoadingControls: t.demoLoadingControls || 'Loading controls...',
+            demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
+            demoBackToEditor: t.demoBackToEditor || 'Back to Editor',
+            demoLoveWhatYouSee: t.demoLoveWhatYouSee || 'Love what you see?',
+            demoGetStartedFreeTrial:
+              t.demoGetStartedFreeTrial || 'Get Started - Free Trial',
+            demoShareDemo: t.demoShareDemo || 'Share Demo',
+          }}
+        />
+      );
+
+    default:
+      return null;
+  }
+}
+
 export default function InteractiveDemoPage(): React.ReactElement {
   const { t } = useLanguage();
   usePerformanceTracking('InteractiveDemoPage');
 
-  const [currentStep, setCurrentStep] = useState<
-    'template' | 'ai-enhance' | 'editor' | 'preview'
-  >('template');
+  const [currentStep, setCurrentStep] = useState<DemoStep>('template');
   const [selectedTemplate, setSelectedTemplate] =
     useState<TemplateType>('developer');
   const [isLoading, setIsLoading] = useState(false);
@@ -77,33 +246,28 @@ export default function InteractiveDemoPage(): React.ReactElement {
   };
 
   const handleNextStep = (): void => {
-    switch (currentStep) {
-      case 'template':
-        setCurrentStep('ai-enhance');
-        break;
-      case 'ai-enhance':
-        setCurrentStep('editor');
-        break;
-      case 'editor':
-        setCurrentStep('preview');
-        break;
-      case 'preview':
-        // Could navigate to signup or other action
-        break;
+    const stepOrder: DemoStep[] = [
+      'template',
+      'ai-enhance',
+      'editor',
+      'preview',
+    ];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    if (currentIndex < stepOrder.length - 1) {
+      setCurrentStep(stepOrder[currentIndex + 1]);
     }
   };
 
   const handlePreviousStep = (): void => {
-    switch (currentStep) {
-      case 'ai-enhance':
-        setCurrentStep('template');
-        break;
-      case 'editor':
-        setCurrentStep('ai-enhance');
-        break;
-      case 'preview':
-        setCurrentStep('editor');
-        break;
+    const stepOrder: DemoStep[] = [
+      'template',
+      'ai-enhance',
+      'editor',
+      'preview',
+    ];
+    const currentIndex = stepOrder.indexOf(currentStep);
+    if (currentIndex > 0) {
+      setCurrentStep(stepOrder[currentIndex - 1]);
     }
   };
 
@@ -142,106 +306,33 @@ export default function InteractiveDemoPage(): React.ReactElement {
       />
 
       <main className="flex-1">
-        {currentStep === 'ai-enhance' && (
-          <AIEnhancementStep
-            portfolio={portfolio}
-            selectedTemplate={selectedTemplate}
-            selectedAIModel={selectedAIModel}
-            currentAITask={currentAITask}
-            onPortfolioChange={handlePortfolioChange}
-            onNextStep={handleNextStep}
-            onAIModelSelect={setSelectedAIModel}
-            onAITaskChange={setCurrentAITask}
-          />
-        )}
-
-        {currentStep === 'template' && (
-          <TemplateSelectionStep
-            selectedTemplate={selectedTemplate}
-            isLoading={isLoading}
-            onTemplateChange={handleTemplateChange}
-            onNextStep={handleNextStep}
-            translations={{
-              demoChooseYourTemplate:
-                t.demoChooseYourTemplate || 'Choose Your Template',
-              demoStartBySelecting:
-                t.demoStartBySelecting ||
-                'Start by selecting a template that matches your profession',
-              demoLoadingTemplates:
-                t.demoLoadingTemplates || 'Loading templates...',
-            }}
-          />
-        )}
-
-        {currentStep === 'editor' && (
-          <EditorStep
-            portfolio={portfolio}
-            previewConfig={previewConfig}
-            onPortfolioChange={handlePortfolioChange}
-            onNextStep={handleNextStep}
-            onPreviousStep={handlePreviousStep}
-            translations={{
-              demoEditPortfolio: t.demoEditPortfolio || 'Edit Portfolio',
-              demoBack: t.demoBack || 'Back',
-              demoPreview: t.demoPreview || 'Preview',
-              demoInteractiveDemoMode:
-                t.demoInteractiveDemoMode || 'Interactive Demo Mode',
-              demoThisIsPreview:
-                t.demoThisIsPreview ||
-                'This is a preview of the editor. Sign up to save your portfolio.',
-              demoBasicInformation:
-                t.demoBasicInformation || 'Basic Information',
-              demoName: t.demoName || 'Name',
-              demoTitle: t.demoTitle || 'Title',
-              demoBio: t.demoBio || 'Bio',
-              demoProjects: t.demoProjects || 'Projects',
-              demoAddProject: t.demoAddProject || 'Add Project',
-              demoSkills: t.demoSkills || 'Skills',
-              demoAvailableInFullVersion:
-                t.demoAvailableInFullVersion || 'Available in Full Version',
-              demoAiBioEnhancement:
-                t.demoAiBioEnhancement || 'AI Bio Enhancement',
-              demoProjectManagement:
-                t.demoProjectManagement || 'Project Management',
-              demoSkillsExperience:
-                t.demoSkillsExperience || 'Skills & Experience',
-              demoCustomSections: t.demoCustomSections || 'Custom Sections',
-              demoLinkedinImport: t.demoLinkedinImport || 'LinkedIn Import',
-              demoGithubIntegration:
-                t.demoGithubIntegration || 'GitHub Integration',
-              demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
-            }}
-          />
-        )}
-
-        {currentStep === 'preview' && (
-          <PreviewStep
-            portfolio={portfolio}
-            previewConfig={previewConfig}
-            previewDimensions={previewDimensions}
-            onPreviousStep={handlePreviousStep}
-            onExport={handleExport}
-            onShare={handleShare}
-            onRefresh={handleRefresh}
-            setPreviewMode={setPreviewMode}
-            toggleFullscreen={toggleFullscreen}
-            setZoomLevel={setZoomLevel}
-            toggleSectionBorders={toggleSectionBorders}
-            toggleInteractiveElements={toggleInteractiveElements}
-            getResponsiveBreakpoints={getResponsiveBreakpoints}
-            testResponsiveBreakpoint={testResponsiveBreakpoint}
-            translations={{
-              demoLoadingControls:
-                t.demoLoadingControls || 'Loading controls...',
-              demoLoadingPreview: t.demoLoadingPreview || 'Loading preview...',
-              demoBackToEditor: t.demoBackToEditor || 'Back to Editor',
-              demoLoveWhatYouSee: t.demoLoveWhatYouSee || 'Love what you see?',
-              demoGetStartedFreeTrial:
-                t.demoGetStartedFreeTrial || 'Get Started - Free Trial',
-              demoShareDemo: t.demoShareDemo || 'Share Demo',
-            }}
-          />
-        )}
+        <StepRenderer
+          currentStep={currentStep}
+          portfolio={portfolio}
+          selectedTemplate={selectedTemplate}
+          isLoading={isLoading}
+          selectedAIModel={selectedAIModel}
+          currentAITask={currentAITask}
+          previewConfig={previewConfig}
+          previewDimensions={previewDimensions}
+          handleTemplateChange={handleTemplateChange}
+          handlePortfolioChange={handlePortfolioChange}
+          handleNextStep={handleNextStep}
+          handlePreviousStep={handlePreviousStep}
+          handleExport={handleExport}
+          handleShare={handleShare}
+          handleRefresh={handleRefresh}
+          setSelectedAIModel={setSelectedAIModel}
+          setCurrentAITask={setCurrentAITask}
+          setPreviewMode={setPreviewMode}
+          toggleFullscreen={toggleFullscreen}
+          setZoomLevel={setZoomLevel}
+          toggleSectionBorders={toggleSectionBorders}
+          toggleInteractiveElements={toggleInteractiveElements}
+          getResponsiveBreakpoints={getResponsiveBreakpoints}
+          testResponsiveBreakpoint={testResponsiveBreakpoint}
+          t={t}
+        />
       </main>
     </div>
   );

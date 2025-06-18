@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * API endpoint for tracking beta user analytics events
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
     };
 
     // Log event for debugging and immediate visibility
-    console.log('Beta Analytics Event:', {
+    logger.info('Beta Analytics Event', {
       id: enhancedEvent.id,
       userId: enhancedEvent.userId,
       event: enhancedEvent.event,
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
       enhancedEvent.event === 'payment_failed' ||
       enhancedEvent.event === 'user_churned'
     ) {
-      console.log('CRITICAL EVENT ALERT:', enhancedEvent);
+      logger.warn('CRITICAL EVENT ALERT', { enhancedEvent });
       // await sendCriticalEventAlert(enhancedEvent);
     }
 
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       message: 'Event tracked successfully',
     });
   } catch (error) {
-    console.error('Error tracking analytics event:', error);
+    logger.error('Error tracking analytics event', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -86,14 +87,14 @@ export async function POST(request: NextRequest) {
 /**
  * GET endpoint to retrieve user analytics data
  */
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
     const event = searchParams.get('event');
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const limit = parseInt(searchParams.get('limit') || '100');
+    const _limit = parseInt(searchParams.get('limit') || '100');
 
     // Validate required parameters for analytics queries
     if (!userId && !event && !startDate) {
@@ -157,7 +158,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(analytics);
   } catch (error) {
-    console.error('Error fetching analytics data:', error);
+    logger.error('Error fetching analytics data', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

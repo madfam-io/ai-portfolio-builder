@@ -29,7 +29,7 @@ import type {
 export function MarketplaceContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuthStore();
 

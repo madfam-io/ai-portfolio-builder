@@ -8,7 +8,7 @@ import { Metadata } from 'next';
 import { QuickStartGallery } from '@/components/demo/QuickStartGallery';
 import { QuickStartHeader } from '@/components/demo/QuickStartHeader';
 import { createClient } from '@/lib/supabase/server';
-import { redirect } from 'next/navigation';
+// import { redirect } from 'next/navigation'; // Currently unused
 
 export const metadata: Metadata = {
   title: 'Quick Start - Choose Your Template | PRISMA',

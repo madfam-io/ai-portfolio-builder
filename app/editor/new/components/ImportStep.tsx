@@ -17,7 +17,7 @@ interface ImportStepProps {
   onSelectSource: (source: ImportSource) => void;
   onNext: () => void;
   onBack: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 export function ImportStep({

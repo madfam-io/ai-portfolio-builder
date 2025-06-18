@@ -280,7 +280,7 @@ export function getCSRFToken(): string | null {
 /**
  * Hook to include CSRF token in requests
  */
-function useCSRFToken(): {
+export function useCSRFToken(): {
   token: string | null;
   headers: { [key: string]: string };
 } {
@@ -291,3 +291,6 @@ function useCSRFToken(): {
     headers: token ? { [CSRF_HEADER_NAME]: token } : {},
   };
 }
+
+// Export the middleware as default
+export default csrfMiddleware;

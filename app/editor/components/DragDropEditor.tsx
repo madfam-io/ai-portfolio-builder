@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useRef } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -14,7 +14,6 @@ import {
   DragOverEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
@@ -29,7 +28,6 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Plus,
   Eye,
-  EyeOff,
   Undo,
   Redo,
   Save,
@@ -49,25 +47,30 @@ import { EditorBlock } from './EditorBlock';
 import { BlockLibrary } from './BlockLibrary';
 import { PropertyPanel } from './PropertyPanel';
 import { PreviewPane } from './PreviewPane';
-import { EditorToolbar } from './EditorToolbar';
+// import { EditorToolbar } from './EditorToolbar';
 import { DropZone } from './DropZone';
 import type { BlockType } from '@/types/editor';
 
 interface DragDropEditorProps {
   portfolioId?: string;
-  initialBlocks?: any[];
+  initialBlocks?: Array<{
+    id: string;
+    type: BlockType;
+    data: Record<string, unknown>;
+    styles: Record<string, unknown>;
+  }>;
 }
 
 export function DragDropEditor({
-  portfolioId,
-  initialBlocks = [],
+  portfolioId: _portfolioId,
+  initialBlocks: _initialBlocks = [],
 }: DragDropEditorProps) {
   const {
     blocks,
     selectedBlockId,
     viewport,
     isPreviewMode,
-    isDragging,
+    isDragging: _isDragging,
     preferences,
     addBlock,
     reorderBlocks,
@@ -122,7 +125,7 @@ export function DragDropEditor({
     [startDragging, selectBlock]
   );
 
-  const handleDragOver = useCallback((event: DragOverEvent) => {
+  const handleDragOver = useCallback((_event: DragOverEvent) => {
     // Handle drag over logic for drop zones
   }, []);
 
@@ -179,8 +182,7 @@ export function DragDropEditor({
     try {
       await save();
       // Show success toast or notification
-    } catch (error) {
-      console.error('Failed to save:', error);
+    } catch (_error) {
       // Show error toast or notification
     }
   }, [save]);
@@ -261,7 +263,9 @@ export function DragDropEditor({
 
             <Tabs
               value={sidebarTab}
-              onValueChange={value => setSidebarTab(value as any)}
+              onValueChange={value =>
+                setSidebarTab(value as 'blocks' | 'layers' | 'properties')
+              }
             >
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="blocks" className="text-xs">

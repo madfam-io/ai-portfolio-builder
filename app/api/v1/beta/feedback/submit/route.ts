@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
+import { logger } from '@/lib/utils/logger';
 
 /**
  * API endpoint for submitting beta feedback
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     // In a real implementation, you would save this to a database
     // For now, we'll log it and return success
-    console.log('Beta Feedback Received:', {
+    logger.info('Beta Feedback Received', {
       id: enhancedFeedback.id,
       type: enhancedFeedback.type,
       severity: enhancedFeedback.severity,
@@ -58,7 +59,10 @@ export async function POST(request: NextRequest) {
 
     // TODO: Send notifications for critical issues
     if (enhancedFeedback.severity === 'critical') {
-      console.log('CRITICAL FEEDBACK ALERT:', enhancedFeedback.title);
+      logger.warn('CRITICAL FEEDBACK ALERT', {
+        title: enhancedFeedback.title,
+        feedback: enhancedFeedback,
+      });
       // await sendCriticalFeedbackAlert(enhancedFeedback);
     }
 
@@ -68,7 +72,7 @@ export async function POST(request: NextRequest) {
       message: 'Feedback submitted successfully',
     });
   } catch (error) {
-    console.error('Error processing feedback submission:', error);
+    logger.error('Error processing feedback submission', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -79,7 +83,7 @@ export async function POST(request: NextRequest) {
 /**
  * GET endpoint to retrieve feedback (for admin dashboard)
  */
-export async function GET(request: NextRequest) {
+export function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
@@ -111,7 +115,7 @@ export async function GET(request: NextRequest) {
       filters: { type, severity, status, userId, limit },
     });
   } catch (error) {
-    console.error('Error fetching feedback:', error);
+    logger.error('Error fetching feedback', error as Error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

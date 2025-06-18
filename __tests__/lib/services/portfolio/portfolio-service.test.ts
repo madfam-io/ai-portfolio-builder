@@ -1,6 +1,6 @@
 import { PortfolioService } from '@/lib/services/portfolio/portfolio-service';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
-import { _cache } from '@/lib/cache/redis-cache.server';
+import { cache } from '@/lib/cache/redis-cache.server';
 import {
   Portfolio,
   CreatePortfolioDTO,

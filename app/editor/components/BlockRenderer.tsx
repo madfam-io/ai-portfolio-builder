@@ -1,26 +1,13 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
-import {
-  Mail,
-  Phone,
-  MapPin,
-  ExternalLink,
-  Github,
-  Linkedin,
-  Twitter,
-  Star,
-  Calendar,
-  Building,
-  Eye,
-  Code,
-  Palette,
-} from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, Github } from 'lucide-react';
 import type { EditorBlock, BlockStyles } from '@/types/editor';
 
 interface BlockRendererProps {
@@ -32,7 +19,7 @@ interface BlockRendererProps {
 export function BlockRenderer({
   block,
   viewport,
-  isEditing,
+  isEditing: _isEditing,
 }: BlockRendererProps) {
   const getAppliedStyles = (): BlockStyles => {
     const responsiveStyles =
@@ -41,12 +28,6 @@ export function BlockRenderer({
   };
 
   const appliedStyles = getAppliedStyles();
-
-  const containerClasses = `
-    ${appliedStyles.padding ? `p-[${appliedStyles.padding.top}px_${appliedStyles.padding.right}px_${appliedStyles.padding.bottom}px_${appliedStyles.padding.left}px]` : ''}
-    ${appliedStyles.margin ? `m-[${appliedStyles.margin.top}px_${appliedStyles.margin.right}px_${appliedStyles.margin.bottom}px_${appliedStyles.margin.left}px]` : ''}
-    ${appliedStyles.opacity !== undefined ? `opacity-${Math.round(appliedStyles.opacity * 100)}` : ''}
-  `;
 
   const containerStyle: React.CSSProperties = {
     backgroundColor: appliedStyles.backgroundColor,
@@ -114,26 +95,37 @@ export function BlockRenderer({
             <p className="text-lg leading-relaxed mb-6">{block.data.content}</p>
             {block.data.facts && (
               <div className="grid grid-cols-2 gap-4">
-                {block.data.facts.map((fact: any, index: number) => (
-                  <div key={index} className="text-center">
-                    <div className="text-2xl font-bold text-primary">
-                      {fact.value}
+                {block.data.facts.map(
+                  (
+                    fact: {
+                      value: string;
+                      label: string;
+                    },
+                    index: number
+                  ) => (
+                    <div key={index} className="text-center">
+                      <div className="text-2xl font-bold text-primary">
+                        {fact.value}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {fact.label}
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      {fact.label}
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
             )}
           </div>
           {block.data.image && (
             <div className="flex justify-center">
-              <img
-                src={block.data.image}
-                alt="About"
-                className="rounded-lg shadow-lg max-w-md w-full"
-              />
+              <div className="relative rounded-lg shadow-lg max-w-md w-full aspect-video">
+                <Image
+                  src={block.data.image}
+                  alt="About"
+                  fill
+                  className="object-cover rounded-lg"
+                />
+              </div>
             </div>
           )}
         </div>
@@ -148,29 +140,48 @@ export function BlockRenderer({
           {block.data.title}
         </h2>
         <div className="grid md:grid-cols-2 gap-8">
-          {block.data.skillCategories?.map((category: any, index: number) => (
-            <div key={index}>
-              <h3 className="text-xl font-semibold mb-4">{category.name}</h3>
-              <div className="space-y-4">
-                {category.skills.map((skill: any, skillIndex: number) => (
-                  <div key={skillIndex}>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-medium">{skill.name}</span>
-                      <span className="text-sm text-muted-foreground">
-                        {skill.level}%
-                      </span>
-                    </div>
-                    {block.data.displayType === 'bars' && (
-                      <Progress value={skill.level} className="h-2" />
-                    )}
-                    {block.data.displayType === 'tags' && (
-                      <Badge variant="secondary">{skill.name}</Badge>
-                    )}
-                  </div>
-                ))}
+          {block.data.skillCategories?.map(
+            (
+              category: {
+                name: string;
+                skills: Array<{
+                  name: string;
+                  level: number;
+                }>;
+              },
+              index: number
+            ) => (
+              <div key={index}>
+                <h3 className="text-xl font-semibold mb-4">{category.name}</h3>
+                <div className="space-y-4">
+                  {category.skills.map(
+                    (
+                      skill: {
+                        name: string;
+                        level: number;
+                      },
+                      skillIndex: number
+                    ) => (
+                      <div key={skillIndex}>
+                        <div className="flex justify-between mb-2">
+                          <span className="font-medium">{skill.name}</span>
+                          <span className="text-sm text-muted-foreground">
+                            {skill.level}%
+                          </span>
+                        </div>
+                        {block.data.displayType === 'bars' && (
+                          <Progress value={skill.level} className="h-2" />
+                        )}
+                        {block.data.displayType === 'tags' && (
+                          <Badge variant="secondary">{skill.name}</Badge>
+                        )}
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
     </section>
@@ -189,60 +200,75 @@ export function BlockRenderer({
               : ''
           }`}
         >
-          {block.data.projects?.map((project: any) => (
-            <Card key={project.id} className="overflow-hidden">
-              {project.image && (
-                <div className="aspect-video bg-muted">
-                  <img
-                    src={project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <CardContent className="p-6">
-                <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
-                <p className="text-muted-foreground mb-4">
-                  {project.description}
-                </p>
-                {project.technologies && (
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.technologies.map((tech: string, index: number) => (
-                      <Badge key={index} variant="secondary">
-                        {tech}
-                      </Badge>
-                    ))}
+          {block.data.projects?.map(
+            (project: {
+              id: string;
+              title: string;
+              description: string;
+              image?: string;
+              technologies?: string[];
+              liveUrl?: string;
+              githubUrl?: string;
+            }) => (
+              <Card key={project.id} className="overflow-hidden">
+                {project.image && (
+                  <div className="aspect-video bg-muted">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                 )}
-                <div className="flex gap-2">
-                  {project.liveUrl && (
-                    <Button size="sm" variant="outline" asChild>
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <ExternalLink className="h-4 w-4 mr-1" />
-                        Live Demo
-                      </a>
-                    </Button>
+                <CardContent className="p-6">
+                  <h3 className="text-xl font-semibold mb-2">
+                    {project.title}
+                  </h3>
+                  <p className="text-muted-foreground mb-4">
+                    {project.description}
+                  </p>
+                  {project.technologies && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {project.technologies.map(
+                        (tech: string, index: number) => (
+                          <Badge key={index} variant="secondary">
+                            {tech}
+                          </Badge>
+                        )
+                      )}
+                    </div>
                   )}
-                  {project.githubUrl && (
-                    <Button size="sm" variant="outline" asChild>
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <Github className="h-4 w-4 mr-1" />
-                        Code
-                      </a>
-                    </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                  <div className="flex gap-2">
+                    {project.liveUrl && (
+                      <Button size="sm" variant="outline" asChild>
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <ExternalLink className="h-4 w-4 mr-1" />
+                          Live Demo
+                        </a>
+                      </Button>
+                    )}
+                    {project.githubUrl && (
+                      <Button size="sm" variant="outline" asChild>
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <Github className="h-4 w-4 mr-1" />
+                          Code
+                        </a>
+                      </Button>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )
+          )}
         </div>
       </div>
     </section>
@@ -255,34 +281,48 @@ export function BlockRenderer({
           {block.data.title}
         </h2>
         <div className="max-w-3xl mx-auto">
-          {block.data.experiences?.map((exp: any, index: number) => (
-            <div key={exp.id} className="mb-8 last:mb-0">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                <div>
-                  <h3 className="text-xl font-semibold">{exp.position}</h3>
-                  <p className="text-lg text-primary">{exp.company}</p>
+          {block.data.experiences?.map(
+            (
+              exp: {
+                id: string;
+                position: string;
+                company: string;
+                startDate: string;
+                endDate?: string;
+                location?: string;
+                description: string;
+                technologies?: string[];
+              },
+              _index: number
+            ) => (
+              <div key={exp.id} className="mb-8 last:mb-0">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                  <div>
+                    <h3 className="text-xl font-semibold">{exp.position}</h3>
+                    <p className="text-lg text-primary">{exp.company}</p>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    {exp.startDate} - {exp.endDate || 'Present'}
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">
-                  {exp.startDate} - {exp.endDate || 'Present'}
-                </div>
+                {exp.location && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {exp.location}
+                  </p>
+                )}
+                <p className="mb-4">{exp.description}</p>
+                {exp.technologies && (
+                  <div className="flex flex-wrap gap-2">
+                    {exp.technologies.map((tech: string, techIndex: number) => (
+                      <Badge key={techIndex} variant="outline">
+                        {tech}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
-              {exp.location && (
-                <p className="text-sm text-muted-foreground mb-2">
-                  {exp.location}
-                </p>
-              )}
-              <p className="mb-4">{exp.description}</p>
-              {exp.technologies && (
-                <div className="flex flex-wrap gap-2">
-                  {exp.technologies.map((tech: string, index: number) => (
-                    <Badge key={index} variant="outline">
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            )
+          )}
         </div>
       </div>
     </section>
@@ -302,45 +342,65 @@ export function BlockRenderer({
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* Contact Info */}
           <div className="space-y-6">
-            {block.data.contactInfo?.map((info: any, index: number) => (
-              <div key={index} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  {info.icon === 'mail' && <Mail className="h-5 w-5" />}
-                  {info.icon === 'phone' && <Phone className="h-5 w-5" />}
-                  {info.icon === 'map-pin' && <MapPin className="h-5 w-5" />}
+            {block.data.contactInfo?.map(
+              (
+                info: {
+                  icon: string;
+                  label: string;
+                  value: string;
+                },
+                index: number
+              ) => (
+                <div key={index} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    {info.icon === 'mail' && <Mail className="h-5 w-5" />}
+                    {info.icon === 'phone' && <Phone className="h-5 w-5" />}
+                    {info.icon === 'map-pin' && <MapPin className="h-5 w-5" />}
+                  </div>
+                  <div>
+                    <p className="font-medium">{info.label}</p>
+                    <p className="text-muted-foreground">{info.value}</p>
+                  </div>
                 </div>
-                <div>
-                  <p className="font-medium">{info.label}</p>
-                  <p className="text-muted-foreground">{info.value}</p>
-                </div>
-              </div>
-            ))}
+              )
+            )}
           </div>
 
           {/* Contact Form */}
           {block.data.showForm && (
             <div className="space-y-4">
-              {block.data.formFields?.map((field: any, index: number) => (
-                <div key={index}>
-                  <label className="block text-sm font-medium mb-1">
-                    {field.label}{' '}
-                    {field.required && <span className="text-red-500">*</span>}
-                  </label>
-                  {field.type === 'textarea' ? (
-                    <textarea
-                      className="w-full p-3 border rounded-md"
-                      rows={4}
-                      placeholder={`Enter your ${field.label.toLowerCase()}`}
-                    />
-                  ) : (
-                    <input
-                      type={field.type}
-                      className="w-full p-3 border rounded-md"
-                      placeholder={`Enter your ${field.label.toLowerCase()}`}
-                    />
-                  )}
-                </div>
-              ))}
+              {block.data.formFields?.map(
+                (
+                  field: {
+                    label: string;
+                    type: string;
+                    required?: boolean;
+                  },
+                  index: number
+                ) => (
+                  <div key={index}>
+                    <label className="block text-sm font-medium mb-1">
+                      {field.label}{' '}
+                      {field.required && (
+                        <span className="text-red-500">*</span>
+                      )}
+                    </label>
+                    {field.type === 'textarea' ? (
+                      <textarea
+                        className="w-full p-3 border rounded-md"
+                        rows={4}
+                        placeholder={`Enter your ${field.label.toLowerCase()}`}
+                      />
+                    ) : (
+                      <input
+                        type={field.type}
+                        className="w-full p-3 border rounded-md"
+                        placeholder={`Enter your ${field.label.toLowerCase()}`}
+                      />
+                    )}
+                  </div>
+                )
+              )}
               <Button className="w-full">Send Message</Button>
             </div>
           )}
@@ -363,20 +423,30 @@ export function BlockRenderer({
       <div className="relative">
         {block.data.link ? (
           <a href={block.data.link} target="_blank" rel="noopener noreferrer">
-            <img
-              src={block.data.url}
-              alt={block.data.alt}
+            <div
+              className="relative"
               style={{ width: block.data.width, height: block.data.height }}
-              className="max-w-full h-auto"
-            />
+            >
+              <Image
+                src={block.data.url}
+                alt={block.data.alt}
+                fill
+                className="object-contain"
+              />
+            </div>
           </a>
         ) : (
-          <img
-            src={block.data.url}
-            alt={block.data.alt}
+          <div
+            className="relative"
             style={{ width: block.data.width, height: block.data.height }}
-            className="max-w-full h-auto"
-          />
+          >
+            <Image
+              src={block.data.url}
+              alt={block.data.alt}
+              fill
+              className="object-contain"
+            />
+          </div>
         )}
         {block.data.caption && (
           <p className="text-sm text-muted-foreground mt-2 text-center">

@@ -62,8 +62,8 @@ interface ProjectFormData {
 // Sortable Project Item Component
 function SortableProjectItem({
   project,
-  index,
-  projectsLength,
+  index: _index,
+  projectsLength: _projectsLength,
   onEdit,
   onDelete,
   t,
@@ -110,6 +110,7 @@ function SortableProjectItem({
           {project.imageUrl && (
             <div className="w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
               <img
+                alt=""
                 src={project.imageUrl}
                 alt={project.title}
                 className="w-full h-full object-cover"
@@ -330,7 +331,7 @@ export function ProjectsSection({
 
   const handleDelete = (id: string) => {
     if (
-      confirm(
+      window.confirm(
         t.confirmDeleteProject ||
           'Are you sure you want to delete this project?'
       )

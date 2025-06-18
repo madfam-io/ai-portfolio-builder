@@ -124,7 +124,7 @@ export function CertificationsSection({
 
   const handleDelete = (id: string) => {
     if (
-      confirm(
+      window.confirm(
         t.confirmDeleteCertification ||
           'Are you sure you want to delete this certification?'
       )

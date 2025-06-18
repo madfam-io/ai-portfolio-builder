@@ -5,7 +5,7 @@ import { useDraggable } from '@dnd-kit/core';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +14,6 @@ import {
   Type,
   Image,
   Video,
-  Layout,
   Zap,
   User,
   Briefcase,
@@ -34,7 +33,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { blockConfigs } from '@/lib/editor/block-configs';
-import type { BlockType, BlockConfig } from '@/types/editor';
+import type { BlockConfig } from '@/types/editor';
 
 const iconMap: Record<string, React.ReactNode> = {
   star: <Star className="h-4 w-4" />,

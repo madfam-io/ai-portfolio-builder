@@ -17,7 +17,7 @@ interface TemplateStepProps {
   onSelectTemplate: (template: TemplateType) => void;
   onNext: () => void;
   onBack: () => void;
-  t: any; // Translation object
+  t: Record<string, string | undefined>; // Translation object
 }
 
 const templates: Array<{

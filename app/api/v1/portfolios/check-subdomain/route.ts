@@ -165,7 +165,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
  */
 async function generateSuggestions(
   subdomain: string,
-  supabase: any
+  supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never
 ): Promise<string[]> {
   const suggestions: string[] = [];
   const maxSuggestions = 5;
@@ -199,7 +199,7 @@ async function generateSuggestions(
       }
     } catch (error) {
       // If error code is PGRST116, it means no record found, so it's available
-      if ((error as any)?.code === 'PGRST116') {
+      if ((error as { code?: string })?.code === 'PGRST116') {
         suggestions.push(variation);
       }
     }

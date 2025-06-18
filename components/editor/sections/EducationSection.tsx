@@ -120,7 +120,7 @@ export function EducationSection({
 
   const handleDelete = (id: string) => {
     if (
-      confirm(
+      window.confirm(
         t.confirmDeleteEducation ||
           'Are you sure you want to delete this education?'
       )

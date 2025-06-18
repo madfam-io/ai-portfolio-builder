@@ -12,6 +12,88 @@ interface RouteParams {
   params: { id: string };
 }
 
+// Helper function to transform variant data
+function transformVariant(variant: Record<string, unknown>) {
+  return {
+    id: variant.id,
+    portfolioId: variant.portfolio_id,
+    name: variant.name,
+    slug: variant.slug,
+    isDefault: variant.is_default,
+    isPublished: variant.is_published,
+    contentOverrides: variant.content_overrides || {},
+    audienceProfile: variant.audience_profile || {
+      id: variant.audience_profile_id,
+      type: 'general',
+      name: 'General Audience',
+    },
+    aiOptimization: variant.ai_optimization || {},
+    analytics: variant.analytics || {},
+    createdAt: variant.created_at,
+    updatedAt: variant.updated_at,
+  };
+}
+
+// Helper function to verify portfolio ownership
+async function verifyPortfolioOwnership(
+  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+    ? T
+    : never,
+  portfolioId: string,
+  userId: string
+) {
+  const { data: portfolio, error } = await supabase
+    .from('portfolios')
+    .select('id')
+    .eq('id', portfolioId)
+    .eq('user_id', userId)
+    .single();
+
+  return { portfolio, error };
+}
+
+// Helper function to create audience profile
+async function createAudienceProfile(
+  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+    ? T
+    : never,
+  userId: string,
+  body: CreateVariantInput
+) {
+  if (!body.audienceDetails) {
+    return { profileId: null };
+  }
+
+  const audienceData = {
+    user_id: userId,
+    type: body.audienceType,
+    name: body.audienceDetails.name || body.name,
+    description: body.audienceDetails.description,
+    industry: body.audienceDetails.industry,
+    company_size: body.audienceDetails.companySize,
+    key_priorities: body.audienceDetails.keyPriorities || [],
+    pain_points: body.audienceDetails.painPoints || [],
+    decision_criteria: body.audienceDetails.decisionCriteria || [],
+    important_keywords: body.audienceDetails.importantKeywords || [],
+    avoid_keywords: body.audienceDetails.avoidKeywords || [],
+    communication_style: body.audienceDetails.communicationStyle,
+    preferred_length: body.audienceDetails.preferredLength,
+  };
+
+  const { data: profile, error } = await supabase
+    .from('audience_profiles')
+    .insert(audienceData)
+    .select()
+    .single();
+
+  if (error) {
+    logger.error('Failed to create audience profile:', error);
+    return { error };
+  }
+
+  return { profileId: profile.id };
+}
+
 /**
  * GET /api/v1/portfolios/[id]/variants
  * Get all variants for a portfolio
@@ -27,12 +109,8 @@ export const GET = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      const { data: portfolio, error: portfolioError } = await supabase
-        .from('portfolios')
-        .select('id')
-        .eq('id', portfolioId)
-        .eq('user_id', request.user.id)
-        .single();
+      const { portfolio, error: portfolioError } =
+        await verifyPortfolioOwnership(supabase, portfolioId, request.user.id);
 
       if (portfolioError || !portfolio) {
         return apiError('Portfolio not found', { status: 404 });
@@ -56,25 +134,7 @@ export const GET = versionedApiHandler(
       }
 
       // Transform to match TypeScript types
-      const transformedVariants =
-        variants?.map(variant => ({
-          id: variant.id,
-          portfolioId: variant.portfolio_id,
-          name: variant.name,
-          slug: variant.slug,
-          isDefault: variant.is_default,
-          isPublished: variant.is_published,
-          contentOverrides: variant.content_overrides || {},
-          audienceProfile: variant.audience_profile || {
-            id: variant.audience_profile_id,
-            type: 'general',
-            name: 'General Audience',
-          },
-          aiOptimization: variant.ai_optimization || {},
-          analytics: variant.analytics || {},
-          createdAt: variant.created_at,
-          updatedAt: variant.updated_at,
-        })) || [];
+      const transformedVariants = variants?.map(transformVariant) || [];
 
       return apiSuccess({ variants: transformedVariants });
     } catch (error) {
@@ -103,48 +163,19 @@ export const POST = versionedApiHandler(
       }
 
       // Verify user owns the portfolio
-      const { data: portfolio, error: portfolioError } = await supabase
-        .from('portfolios')
-        .select('id')
-        .eq('id', portfolioId)
-        .eq('user_id', request.user.id)
-        .single();
+      const { portfolio, error: portfolioError } =
+        await verifyPortfolioOwnership(supabase, portfolioId, request.user.id);
 
       if (portfolioError || !portfolio) {
         return apiError('Portfolio not found', { status: 404 });
       }
 
       // Create or get audience profile
-      let audienceProfileId = null;
-      if (body.audienceDetails) {
-        const audienceData = {
-          user_id: request.user.id,
-          type: body.audienceType,
-          name: body.audienceDetails.name || body.name,
-          description: body.audienceDetails.description,
-          industry: body.audienceDetails.industry,
-          company_size: body.audienceDetails.companySize,
-          key_priorities: body.audienceDetails.keyPriorities || [],
-          pain_points: body.audienceDetails.painPoints || [],
-          decision_criteria: body.audienceDetails.decisionCriteria || [],
-          important_keywords: body.audienceDetails.importantKeywords || [],
-          avoid_keywords: body.audienceDetails.avoidKeywords || [],
-          communication_style: body.audienceDetails.communicationStyle,
-          preferred_length: body.audienceDetails.preferredLength,
-        };
+      const { profileId: audienceProfileId, error: profileError } =
+        await createAudienceProfile(supabase, request.user.id, body);
 
-        const { data: profile, error: profileError } = await supabase
-          .from('audience_profiles')
-          .insert(audienceData)
-          .select()
-          .single();
-
-        if (profileError) {
-          logger.error('Failed to create audience profile:', profileError);
-          return apiError('Failed to create audience profile', { status: 500 });
-        }
-
-        audienceProfileId = profile.id;
+      if (profileError) {
+        return apiError('Failed to create audience profile', { status: 500 });
       }
 
       // Generate slug from name
@@ -193,24 +224,7 @@ export const POST = versionedApiHandler(
       }
 
       // Transform to match TypeScript types
-      const transformedVariant = {
-        id: variant.id,
-        portfolioId: variant.portfolio_id,
-        name: variant.name,
-        slug: variant.slug,
-        isDefault: variant.is_default,
-        isPublished: variant.is_published,
-        contentOverrides: variant.content_overrides || {},
-        audienceProfile: variant.audience_profile || {
-          id: audienceProfileId,
-          type: body.audienceType,
-          name: body.audienceDetails?.name || body.name,
-        },
-        aiOptimization: variant.ai_optimization || {},
-        analytics: variant.analytics || {},
-        createdAt: variant.created_at,
-        updatedAt: variant.updated_at,
-      };
+      const transformedVariant = transformVariant(variant);
 
       logger.info('Created portfolio variant', {
         userId: request.user.id,

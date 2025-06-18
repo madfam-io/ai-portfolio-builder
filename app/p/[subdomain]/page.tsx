@@ -26,7 +26,7 @@ async function getPortfolio(subdomain: string): Promise<Portfolio | null> {
 
     const data = await response.json();
     return data.data?.portfolio || null;
-  } catch (error) {
+  } catch (_error) {
     return null;
   }
 }

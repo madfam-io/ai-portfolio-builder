@@ -17,6 +17,147 @@ const analyzeContentSchema = z.object({
   targetKeywords: z.array(z.string()).optional(),
 });
 
+interface AnalysisResult {
+  content?: string;
+  score?: {
+    overall?: number;
+    keyword?: number;
+    readability?: number;
+    structure?: number;
+    technical?: number;
+  };
+  optimizationScore?: number;
+  keywords?: {
+    primaryKeyword?: string;
+    secondaryKeywords?: string[];
+    lsiKeywords?: string[];
+    density?: Record<string, number>;
+    recommendations?: string[];
+  };
+  readability?: {
+    score?: number;
+    level?: string;
+    avgWordsPerSentence?: number;
+    complexWordCount?: number;
+    fleschReading?: number;
+  };
+  structure?: {
+    headings?: Array<{
+      level: number;
+      text: string;
+    }>;
+    paragraphCount?: number;
+    hasProperHierarchy?: boolean;
+  };
+  suggestions?: Array<{
+    type: string;
+    priority: string;
+    message: string;
+    action: string;
+    impact: number;
+  }>;
+  metadata?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+  };
+}
+
+// Helper functions to reduce complexity
+function processTargetKeywords(
+  analysis: AnalysisResult,
+  targetKeywords?: string[]
+): void {
+  if (targetKeywords && targetKeywords.length > 0) {
+    const primaryKeyword = targetKeywords[0];
+    if (primaryKeyword) {
+      analysis.keywords = {
+        primaryKeyword: primaryKeyword,
+        secondaryKeywords: targetKeywords.slice(1),
+      };
+    }
+  }
+}
+
+function transformSuggestions(
+  suggestions?: Array<{
+    type: string;
+    priority: string;
+    message: string;
+    action: string;
+    impact: number;
+  }>
+): Array<Record<string, unknown>> {
+  return (
+    suggestions?.map(suggestion => ({
+      type: suggestion.type,
+      priority: suggestion.priority,
+      message: suggestion.message,
+      action: suggestion.action,
+      estimatedImpact: `+${suggestion.impact}% score improvement`,
+    })) ?? []
+  );
+}
+
+function buildScores(analysis: AnalysisResult): Record<string, number> {
+  return {
+    overall: analysis.score?.overall ?? analysis.optimizationScore ?? 0,
+    keyword: analysis.score?.keyword ?? 0,
+    readability: analysis.score?.readability ?? 0,
+    structure: analysis.score?.structure ?? 0,
+    technical: analysis.score?.technical ?? 0,
+  };
+}
+
+function buildKeywordsData(analysis: AnalysisResult): Record<string, unknown> {
+  return {
+    detected: analysis.keywords?.lsiKeywords ?? analysis.keywords,
+    density: analysis.keywords?.density ?? {},
+    recommendations: analysis.keywords?.recommendations ?? [],
+  };
+}
+
+function buildReadabilityData(
+  analysis: AnalysisResult
+): Record<string, unknown> {
+  return {
+    score: analysis.readability?.score ?? 0,
+    level: analysis.readability?.level ?? 'unknown',
+    metrics: {
+      avgSentenceLength: analysis.readability?.avgWordsPerSentence ?? 0,
+      complexWords: analysis.readability?.complexWordCount ?? 0,
+      readingEase: analysis.readability?.fleschReading ?? 0,
+    },
+  };
+}
+
+// Main transformation function
+function transformAnalysisResults(
+  analysis: AnalysisResult,
+  targetKeywords?: string[]
+): Record<string, unknown> {
+  // Process target keywords
+  processTargetKeywords(analysis, targetKeywords);
+
+  return {
+    content: analysis.content,
+    scores: buildScores(analysis),
+    keywords: buildKeywordsData(analysis),
+    readability: buildReadabilityData(analysis),
+    structure: {
+      headings: analysis.structure?.headings ?? [],
+      paragraphs: analysis.structure?.paragraphCount ?? 0,
+      hasProperHierarchy: analysis.structure?.hasProperHierarchy ?? false,
+    },
+    suggestions: transformSuggestions(analysis.suggestions),
+    metadata: {
+      title: analysis.metadata?.title || '',
+      description: analysis.metadata?.description || '',
+      recommendedKeywords: analysis.metadata?.keywords ?? [],
+    },
+  };
+}
+
 export async function POST(request: NextRequest): Promise<Response> {
   try {
     // 1. Authenticate user
@@ -61,143 +202,13 @@ export async function POST(request: NextRequest): Promise<Response> {
     // 4. Analyze content
     const analysis = await geoService.analyzeContent(content, contentType);
 
-    // 5. Add target keywords if provided
-    if (targetKeywords && targetKeywords.length > 0) {
-      const primaryKeyword = targetKeywords[0];
-      if (primaryKeyword) {
-        (analysis as unknown as Record<string, unknown>).keywords = {
-          primaryKeyword: primaryKeyword,
-          secondaryKeywords: targetKeywords.slice(1),
-        };
-      }
-    }
+    // 5. Transform analysis results
+    const data = transformAnalysisResults(analysis, targetKeywords);
 
-    // 6. Generate optimization suggestions
-    const suggestions =
-      (
-        (analysis as unknown as Record<string, unknown>).suggestions as Array<
-          Record<string, unknown>
-        >
-      )?.map((suggestion: Record<string, unknown>) => ({
-        type: suggestion.type,
-        priority: suggestion.priority,
-        message: suggestion.message,
-        action: suggestion.action,
-        estimatedImpact: `+${suggestion.impact}% score improvement`,
-      })) ?? [];
-
-    // 7. Return analysis results
+    // 6. Return analysis results
     return NextResponse.json({
       success: true,
-      data: {
-        content: analysis.content,
-        scores: {
-          overall:
-            (
-              (analysis as unknown as Record<string, unknown>).score as Record<
-                string,
-                unknown
-              >
-            )?.overall ?? analysis.optimizationScore,
-          keyword:
-            (
-              (analysis as unknown as Record<string, unknown>).score as Record<
-                string,
-                unknown
-              >
-            )?.keyword ?? 0,
-          readability:
-            (
-              (analysis as unknown as Record<string, unknown>).score as Record<
-                string,
-                unknown
-              >
-            )?.readability ?? 0,
-          structure:
-            (
-              (analysis as unknown as Record<string, unknown>).score as Record<
-                string,
-                unknown
-              >
-            )?.structure ?? 0,
-          technical:
-            (
-              (analysis as unknown as Record<string, unknown>).score as Record<
-                string,
-                unknown
-              >
-            )?.technical ?? 0,
-        },
-        keywords: {
-          detected:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .keywords as Record<string, unknown>
-            )?.lsiKeywords ?? analysis.keywords,
-          density:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .keywords as Record<string, unknown>
-            )?.density ?? {},
-          recommendations:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .keywords as Record<string, unknown>
-            )?.recommendations ?? [],
-        },
-        readability: {
-          score:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .readability as Record<string, unknown>
-            )?.score ?? 0,
-          level:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .readability as Record<string, unknown>
-            )?.level ?? 'unknown',
-          metrics: {
-            avgSentenceLength:
-              (
-                (analysis as unknown as Record<string, unknown>)
-                  .readability as Record<string, unknown>
-              )?.avgWordsPerSentence ?? 0,
-            complexWords:
-              (
-                (analysis as unknown as Record<string, unknown>)
-                  .readability as Record<string, unknown>
-              )?.complexWordCount ?? 0,
-            readingEase:
-              (
-                (analysis as unknown as Record<string, unknown>)
-                  .readability as Record<string, unknown>
-              )?.fleschReading ?? 0,
-          },
-        },
-        structure: {
-          headings:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .structure as Record<string, unknown>
-            )?.headings ?? [],
-          paragraphs:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .structure as Record<string, unknown>
-            )?.paragraphCount ?? 0,
-          hasProperHierarchy:
-            (
-              (analysis as unknown as Record<string, unknown>)
-                .structure as Record<string, unknown>
-            )?.hasProperHierarchy ?? false,
-        },
-        suggestions,
-        metadata: {
-          title: analysis.metadata?.title || '',
-          description: analysis.metadata?.description || '',
-          recommendedKeywords: analysis.metadata?.keywords ?? [],
-        },
-      },
+      data,
       metadata: {
         analyzedAt: new Date().toISOString(),
         contentLength: content.length,

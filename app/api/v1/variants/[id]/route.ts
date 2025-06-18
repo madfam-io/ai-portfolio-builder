@@ -11,6 +11,60 @@ interface RouteParams {
   params: { id: string };
 }
 
+// Helper function to transform variant data
+function transformVariant(variant: Record<string, unknown>) {
+  return {
+    id: variant.id,
+    portfolioId: variant.portfolio_id,
+    name: variant.name,
+    slug: variant.slug,
+    isDefault: variant.is_default,
+    isPublished: variant.is_published,
+    contentOverrides: variant.content_overrides || {},
+    audienceProfile: variant.audience_profile || {},
+    aiOptimization: variant.ai_optimization || {},
+    analytics: variant.analytics || {},
+    createdAt: variant.created_at,
+    updatedAt: variant.updated_at,
+  };
+}
+
+// Helper function to verify variant ownership
+async function verifyVariantOwnership(
+  supabase: ReturnType<typeof createClient> extends Promise<infer T>
+    ? T
+    : never,
+  variantId: string,
+  userId: string
+) {
+  const { data: variant, error } = await supabase
+    .from('portfolio_variants')
+    .select(
+      `
+      *,
+      audience_profile:audience_profiles(*),
+      portfolio:portfolios(user_id)
+    `
+    )
+    .eq('id', variantId)
+    .single();
+
+  if (error || !variant) {
+    return { error: 'Variant not found', status: 404 };
+  }
+
+  // Verify user owns the portfolio
+  const portfolioData = Array.isArray(variant.portfolio)
+    ? variant.portfolio[0]
+    : variant.portfolio;
+
+  if (!portfolioData || portfolioData.user_id !== userId) {
+    return { error: 'Unauthorized', status: 403 };
+  }
+
+  return { variant };
+}
+
 /**
  * GET /api/v1/variants/[id]
  * Get a specific variant
@@ -25,46 +79,18 @@ export const GET = versionedApiHandler(
         return apiError('Database service not available', { status: 503 });
       }
 
-      // Get variant with portfolio to verify ownership
-      const { data: variant, error } = await supabase
-        .from('portfolio_variants')
-        .select(
-          `
-          *,
-          audience_profile:audience_profiles(*),
-          portfolio:portfolios(user_id)
-        `
-        )
-        .eq('id', variantId)
-        .single();
+      const result = await verifyVariantOwnership(
+        supabase,
+        variantId,
+        request.user.id
+      );
 
-      if (error || !variant) {
-        return apiError('Variant not found', { status: 404 });
-      }
-
-      // Verify user owns the portfolio
-      const portfolioData = Array.isArray(variant.portfolio)
-        ? variant.portfolio[0]
-        : variant.portfolio;
-      if (!portfolioData || portfolioData.user_id !== request.user.id) {
-        return apiError('Unauthorized', { status: 403 });
+      if ('error' in result) {
+        return apiError(result.error, { status: result.status });
       }
 
       // Transform to match TypeScript types
-      const transformedVariant = {
-        id: variant.id,
-        portfolioId: variant.portfolio_id,
-        name: variant.name,
-        slug: variant.slug,
-        isDefault: variant.is_default,
-        isPublished: variant.is_published,
-        contentOverrides: variant.content_overrides || {},
-        audienceProfile: variant.audience_profile || {},
-        aiOptimization: variant.ai_optimization || {},
-        analytics: variant.analytics || {},
-        createdAt: variant.created_at,
-        updatedAt: variant.updated_at,
-      };
+      const transformedVariant = transformVariant(result.variant);
 
       return apiSuccess({ variant: transformedVariant });
     } catch (error) {
@@ -92,7 +118,7 @@ export const PATCH = versionedApiHandler(
         return apiError('Database service not available', { status: 503 });
       }
 
-      // Get variant with portfolio to verify ownership
+      // Verify ownership first
       const { data: existingVariant, error: fetchError } = await supabase
         .from('portfolio_variants')
         .select(
@@ -117,15 +143,7 @@ export const PATCH = versionedApiHandler(
       }
 
       // Prepare updates
-      const dbUpdates: Partial<{
-        name: string;
-        slug: string;
-        is_default: boolean;
-        is_published: boolean;
-        content_overrides: Record<string, unknown>;
-        ai_optimization: Record<string, unknown>;
-        analytics: Record<string, unknown>;
-      }> = {};
+      const dbUpdates: Record<string, unknown> = {};
 
       if ('name' in updates) dbUpdates.name = updates.name;
       if ('slug' in updates) dbUpdates.slug = updates.slug;
@@ -157,20 +175,7 @@ export const PATCH = versionedApiHandler(
       }
 
       // Transform to match TypeScript types
-      const transformedVariant = {
-        id: variant.id,
-        portfolioId: variant.portfolio_id,
-        name: variant.name,
-        slug: variant.slug,
-        isDefault: variant.is_default,
-        isPublished: variant.is_published,
-        contentOverrides: variant.content_overrides || {},
-        audienceProfile: variant.audience_profile || {},
-        aiOptimization: variant.ai_optimization || {},
-        analytics: variant.analytics || {},
-        createdAt: variant.created_at,
-        updatedAt: variant.updated_at,
-      };
+      const transformedVariant = transformVariant(variant);
 
       logger.info('Updated portfolio variant', {
         userId: request.user.id,
