@@ -170,9 +170,10 @@ const landing = {
   recommended: 'Recomendado',
 
   // CTA Section
-  ctaTitle: 'Convierte tu CV en un portafolio',
-  ctaTitle2: 'que consigue resultados.',
-  ctaButton: '¡Comenzar Gratis Ahora!',
+  ctaTitle: '¿Listo para crear tu portafolio profesional?',
+  ctaSubtitle: 'Únete a miles de profesionales que han creado portafolios increíbles con PRISMA',
+  ctaButton: 'Comienza a construir tu portafolio',
+  ctaFooter: 'Sin tarjeta de crédito • Plan gratuito para siempre disponible',
 
   // Social Proof
   trustedBy: 'Con la confianza de',

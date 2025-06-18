@@ -683,39 +683,8 @@ jest.mock('@/components/ui/card', () => ({
   },
 }));
 
-// Mock lucide-react icons globally
-jest.mock('lucide-react', () => {
-  const React = require('react');
-  const mockIcon = name => {
-    return React.forwardRef((props, ref) =>
-      React.createElement('span', { ...props, ref, 'data-icon': name }, name)
-    );
-  };
-
-  return {
-    ArrowRight: mockIcon('ArrowRight'),
-    AlertCircle: mockIcon('AlertCircle'),
-    RefreshCw: mockIcon('RefreshCw'),
-    User: mockIcon('User'),
-    ChevronRight: mockIcon('ChevronRight'),
-    X: mockIcon('X'),
-    Menu: mockIcon('Menu'),
-    Search: mockIcon('Search'),
-    Home: mockIcon('Home'),
-    Settings: mockIcon('Settings'),
-    Check: mockIcon('Check'),
-    Info: mockIcon('Info'),
-    Warning: mockIcon('Warning'),
-    Error: mockIcon('Error'),
-    Loader: mockIcon('Loader'),
-    Plus: mockIcon('Plus'),
-    Minus: mockIcon('Minus'),
-    Edit: mockIcon('Edit'),
-    Trash: mockIcon('Trash'),
-    Copy: mockIcon('Copy'),
-    // Add more icons as needed
-  };
-});
+// Note: lucide-react mocking is handled by moduleNameMapper in jest.config.js
+// pointing to __mocks__/lucide-react.js - removing duplicate mock here
 
 // Mock dynamic imports globally
 global.__dynamic_import_mock__ = {};

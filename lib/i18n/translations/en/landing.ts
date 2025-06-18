@@ -164,9 +164,10 @@ const landing = {
   recommended: 'Recommended',
 
   // CTA Section
-  ctaTitle: 'Turn your CV into a portfolio',
-  ctaTitle2: 'that gets results.',
-  ctaButton: 'Start Free Now!',
+  ctaTitle: 'Ready to Create Your Professional Portfolio?',
+  ctaSubtitle: 'Join thousands of professionals who have built stunning portfolios with PRISMA',
+  ctaButton: 'Start Building Your Portfolio',
+  ctaFooter: 'No credit card required • Free forever plan available',
 
   // Social Proof
   trustedBy: 'Trusted by',

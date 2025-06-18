@@ -29,11 +29,31 @@ const mockUseLanguage = {
     dashboard: 'Dashboard',
     editor: 'Editor',
     analytics: 'Analytics',
+    features: 'Features',
+    howItWorks: 'How It Works',
+    pricing: 'Pricing',
+    templates: 'Templates',
+
+    // Auth
+    signIn: 'Sign In',
+    signOut: 'Sign Out',
+
+    // Language & Settings
+    switchTo: 'Switch to',
+    switchCurrency: 'Switch currency',
+    current: 'Current',
+    hello: 'Hello',
 
     // Portfolio
     portfolio: 'Portfolio',
     portfolios: 'Portfolios',
     createPortfolio: 'Create Portfolio',
+
+    // CTA Section
+    ctaTitle: 'Ready to Create Your Professional Portfolio?',
+    ctaSubtitle: 'Join thousands of professionals who have built stunning portfolios with PRISMA',
+    ctaButton: 'Start Building Your Portfolio',
+    ctaFooter: 'No credit card required • Free forever plan available',
     editPortfolio: 'Edit Portfolio',
     deletePortfolio: 'Delete Portfolio',
     publishPortfolio: 'Publish Portfolio',
@@ -51,11 +71,6 @@ const mockUseLanguage = {
     saved: 'Saved',
     unsavedChanges: 'Unsaved changes',
 
-    // Templates
-    template: 'Template',
-    templates: 'Templates',
-    selectTemplate: 'Select Template',
-
     // Forms
     name: 'Name',
     email: 'Email',
@@ -69,6 +84,10 @@ const mockUseLanguage = {
     published: 'Published',
     archived: 'Archived',
   },
+  availableLanguages: [
+    { code: 'en', name: 'English', flag: '🇺🇸' },
+    { code: 'es', name: 'Español', flag: '🇪🇸' },
+  ],
   isLoading: false,
 };
 
