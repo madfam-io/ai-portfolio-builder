@@ -182,65 +182,12 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
           return <TextareaInput />;
         case 'number':
           return <NumberInput />;
-        case 'boolean':
+        case 'checkbox':
           return <BooleanInput />;
         case 'select':
           return <SelectInput />;
         case 'color':
           return <ColorInput />;
-
-        case 'color':
-          return (
-            <div className="flex gap-2">
-              <Input
-                type="color"
-                value={value || '#000000'}
-                onChange={e => handleDataUpdate(property.key, e.target.value)}
-                className="w-16 h-10 p-1"
-              />
-              <Input
-                value={value || '#000000'}
-                onChange={e => handleDataUpdate(property.key, e.target.value)}
-                placeholder="#000000"
-              />
-            </div>
-          );
-
-        case 'select':
-          return (
-            <Select
-              value={value || ''}
-              onValueChange={newValue =>
-                handleDataUpdate(property.key, newValue)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue
-                  placeholder={`Select ${property.label.toLowerCase()}`}
-                />
-              </SelectTrigger>
-              <SelectContent>
-                {property.options?.map(option => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          );
-
-        case 'checkbox':
-          return (
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={value || false}
-                onCheckedChange={checked =>
-                  handleDataUpdate(property.key, checked)
-                }
-              />
-              <Label className="text-sm">{property.label}</Label>
-            </div>
-          );
 
         case 'image':
           return (
@@ -251,7 +198,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
                 placeholder="Image URL or upload"
               />
               <Button variant="outline" size="sm" className="w-full">
-                <Image className="h-4 w-4 mr-2" alt="Upload icon" />
+                <Image className="h-4 w-4 mr-2" />
                 Upload Image
               </Button>
             </div>

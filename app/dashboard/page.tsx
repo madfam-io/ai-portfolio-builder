@@ -41,24 +41,29 @@ import { Portfolio } from '@/types/portfolio';
 
 // Helper function to load portfolios with error handling
 const usePortfolioLoader = (
-  loadPortfolios: () => Promise<void>,
+  loadPortfolios: () => Promise<Portfolio[]>,
   t: Record<string, string | undefined>,
   toast: any
 ) => {
   useEffect(() => {
-    loadPortfolios().catch(err => {
-      logger.error(
-        'Failed to load portfolios:',
-        err instanceof Error ? err : new Error(String(err))
-      );
-      toast({
-        title: t.error || 'Error',
-        description:
-          t.failedToLoadPortfolios ||
-          'Failed to load portfolios. Please try again.',
-        variant: 'destructive',
-      });
-    });
+    const loadPortfoliosAsync = async () => {
+      try {
+        await loadPortfolios();
+      } catch (err) {
+        logger.error(
+          'Failed to load portfolios:',
+          err instanceof Error ? err : new Error(String(err))
+        );
+        toast({
+          title: t.error || 'Error',
+          description:
+            t.failedToLoadPortfolios ||
+            'Failed to load portfolios. Please try again.',
+          variant: 'destructive',
+        });
+      }
+    };
+    void loadPortfoliosAsync();
   }, [loadPortfolios, t, toast]);
 };
 
@@ -99,7 +104,7 @@ const usePortfolioDeletion = (
 // Helper function for portfolio creation with limit checks
 const usePortfolioCreation = (
   canCreatePortfolio: boolean,
-  checkAndShowPrompt: (reason: string) => boolean,
+  checkAndShowPrompt: (type: 'ai_limit' | 'portfolio_limit') => boolean,
   toast: any,
   router: any
 ) => {
@@ -149,21 +154,6 @@ function DashboardContent(): React.ReactElement {
   );
 
   // Additional handlers for navigation
-  const handleEditPortfolio = (portfolioId: string) => {
-    router.push(`/editor/${portfolioId}`);
-  };
-
-  const handleViewPortfolio = (portfolio: Portfolio) => {
-    if (portfolio.status === 'published' && portfolio.subdomain) {
-      window.open(
-        `${window.location.origin}/p/${portfolio.subdomain}`,
-        '_blank'
-      );
-    } else {
-      router.push(`/editor/${portfolio.id}/preview`);
-    }
-  };
-
   const handleEditPortfolio = (portfolioId: string) => {
     router.push(`/editor/${portfolioId}`);
   };
