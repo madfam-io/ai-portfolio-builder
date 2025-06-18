@@ -40,8 +40,8 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
         userId: user.id,
       });
       throw new AppError(
-        'LIMITS_CHECK_FAILED',
         'Failed to check user limits',
+        'LIMITS_CHECK_FAILED',
         500
       );
     }
@@ -51,7 +51,7 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
         error: data.error,
         userId: user.id,
       });
-      throw new AppError('USER_NOT_FOUND', data.error, 404);
+      throw new AppError(data.error, 'USER_NOT_FOUND', 404);
     }
 
     logger.info('User limits retrieved successfully', {

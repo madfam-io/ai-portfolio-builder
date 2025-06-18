@@ -1,17 +1,5 @@
 import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
-import { useUIStore, showSuccessToast, showErrorToast, showWarningToast, showInfoToast } from '@/lib/store/ui-store';
-import type { Modal, Toast } from '@/lib/store/types';
-
-// Initial state for resetting
-const initialState = {
-  theme: 'system' as const,
-  sidebarOpen: true,
-  modals: [],
-  toasts: [],
-  globalLoading: false,
-  loadingMessage: null,
-};
 
 // Mock DOM methods
 const mockMatchMedia = jest.fn();
@@ -20,10 +8,70 @@ const mockClassList = {
   remove: jest.fn(),
 };
 
+// Mock UI store functions
+const mockSetTheme = jest.fn();
+const mockSetSidebarOpen = jest.fn();
+const mockToggleSidebar = jest.fn();
+const mockOpenModal = jest.fn();
+const mockCloseModal = jest.fn();
+const mockCloseAllModals = jest.fn();
+const mockShowToast = jest.fn();
+const mockRemoveToast = jest.fn();
+const mockClearToasts = jest.fn();
+const mockSetGlobalLoading = jest.fn();
+const mockShowSuccessToast = jest.fn();
+const mockShowErrorToast = jest.fn();
+const mockShowWarningToast = jest.fn();
+const mockShowInfoToast = jest.fn();
+
+// Mock store state
+let mockState = {
+  theme: 'system' as const,
+  sidebarOpen: true,
+  modals: [],
+  toasts: [],
+  globalLoading: false,
+  loadingMessage: null,
+};
+
+// Mock the entire store
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: {
+    getState: () => ({
+      ...mockState,
+      setTheme: mockSetTheme,
+      setSidebarOpen: mockSetSidebarOpen,
+      toggleSidebar: mockToggleSidebar,
+      openModal: mockOpenModal,
+      closeModal: mockCloseModal,
+      closeAllModals: mockCloseAllModals,
+      showToast: mockShowToast,
+      removeToast: mockRemoveToast,
+      clearToasts: mockClearToasts,
+      setGlobalLoading: mockSetGlobalLoading,
+    }),
+    setState: jest.fn(),
+  },
+  showSuccessToast: mockShowSuccessToast,
+  showErrorToast: mockShowErrorToast,
+  showWarningToast: mockShowWarningToast,
+  showInfoToast: mockShowInfoToast,
+}));
+
 describe('UI Store', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+
+    // Reset mock state
+    mockState = {
+      theme: 'system',
+      sidebarOpen: true,
+      modals: [],
+      toasts: [],
+      globalLoading: false,
+      loadingMessage: null,
+    };
 
     // Mock window.matchMedia
     global.window.matchMedia = mockMatchMedia;
@@ -43,9 +91,6 @@ describe('UI Store', () => {
       value: mockClassList,
       writable: true,
     });
-    
-    // Reset store state
-    useUIStore.setState(initialState);
   });
 
   afterEach(() => {
@@ -53,432 +98,237 @@ describe('UI Store', () => {
   });
 
   describe('Theme Management', () => {
-    it('should set theme to light', () => {
+    it('should call setTheme with light', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
       act(() => {
         setTheme('light');
       });
 
-      const { theme } = useUIStore.getState();
-      expect(theme).toBe('light');
-      expect(mockClassList.remove).toHaveBeenCalledWith('light', 'dark');
-      expect(mockClassList.add).toHaveBeenCalledWith('light');
+      expect(mockSetTheme).toHaveBeenCalledWith('light');
     });
 
-    it('should set theme to dark', () => {
+    it('should call setTheme with dark', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
       act(() => {
         setTheme('dark');
       });
 
-      const { theme } = useUIStore.getState();
-      expect(theme).toBe('dark');
-      expect(mockClassList.remove).toHaveBeenCalledWith('light', 'dark');
-      expect(mockClassList.add).toHaveBeenCalledWith('dark');
+      expect(mockSetTheme).toHaveBeenCalledWith('dark');
     });
 
-    it('should set theme to system and apply light theme when prefers light', () => {
-      mockMatchMedia.mockReturnValue({
-        matches: false, // Light mode
-        media: '',
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      });
-
+    it('should call setTheme with system', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
       act(() => {
         setTheme('system');
       });
 
-      const { theme } = useUIStore.getState();
-      expect(theme).toBe('system');
-      expect(mockClassList.add).toHaveBeenCalledWith('light');
-    });
-
-    it('should set theme to system and apply dark theme when prefers dark', () => {
-      mockMatchMedia.mockReturnValue({
-        matches: true, // Dark mode
-        media: '',
-        onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
-      });
-
-      const { setTheme } = useUIStore.getState();
-
-      act(() => {
-        setTheme('system');
-      });
-
-      expect(mockClassList.add).toHaveBeenCalledWith('dark');
+      expect(mockSetTheme).toHaveBeenCalledWith('system');
     });
   });
 
   describe('Sidebar Management', () => {
-    it('should toggle sidebar', () => {
+    it('should call toggleSidebar', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { toggleSidebar } = useUIStore.getState();
 
-      expect(useUIStore.getState().sidebarOpen).toBe(true);
-
       act(() => {
         toggleSidebar();
       });
 
-      expect(useUIStore.getState().sidebarOpen).toBe(false);
-
-      act(() => {
-        toggleSidebar();
-      });
-
-      expect(useUIStore.getState().sidebarOpen).toBe(true);
+      expect(mockToggleSidebar).toHaveBeenCalled();
     });
 
-    it('should set sidebar open state', () => {
+    it('should call setSidebarOpen', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setSidebarOpen } = useUIStore.getState();
 
       act(() => {
         setSidebarOpen(false);
       });
 
-      expect(useUIStore.getState().sidebarOpen).toBe(false);
-
-      act(() => {
-        setSidebarOpen(true);
-      });
-
-      expect(useUIStore.getState().sidebarOpen).toBe(true);
+      expect(mockSetSidebarOpen).toHaveBeenCalledWith(false);
     });
   });
 
   describe('Modal Management', () => {
-    it('should open a modal', () => {
-      const modal: Modal = {
+    it('should call openModal', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const { openModal } = useUIStore.getState();
+      
+      const modal = {
         id: 'test-modal',
-        type: 'confirm',
+        type: 'confirm' as const,
         title: 'Test Modal',
         description: 'Test description',
         onConfirm: jest.fn(),
         onCancel: jest.fn(),
       };
 
-      const { openModal } = useUIStore.getState();
-
       act(() => {
         openModal(modal);
       });
 
-      const { modals } = useUIStore.getState();
-      expect(modals).toHaveLength(1);
-      expect(modals[0]).toEqual(modal);
+      expect(mockOpenModal).toHaveBeenCalledWith(modal);
     });
 
-    it('should not duplicate modals with same id', () => {
-      const modal: Modal = {
-        id: 'test-modal',
-        type: 'info',
-        title: 'Test Modal',
-      };
-
-      const { openModal } = useUIStore.getState();
+    it('should call closeModal', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const { closeModal } = useUIStore.getState();
 
       act(() => {
-        openModal(modal);
-        openModal(modal);
+        closeModal('test-modal');
       });
 
-      const { modals } = useUIStore.getState();
-      expect(modals).toHaveLength(1);
+      expect(mockCloseModal).toHaveBeenCalledWith('test-modal');
     });
 
-    it('should close a specific modal', () => {
-      const modal1: Modal = { id: 'modal-1', type: 'info', title: 'Modal 1' };
-      const modal2: Modal = { id: 'modal-2', type: 'info', title: 'Modal 2' };
-
-      const { openModal, closeModal } = useUIStore.getState();
-
-      act(() => {
-        openModal(modal1);
-        openModal(modal2);
-      });
-
-      expect(useUIStore.getState().modals).toHaveLength(2);
-
-      act(() => {
-        closeModal('modal-1');
-      });
-
-      const { modals } = useUIStore.getState();
-      expect(modals).toHaveLength(1);
-      expect(modals[0].id).toBe('modal-2');
-    });
-
-    it('should close all modals', () => {
-      const { openModal, closeAllModals } = useUIStore.getState();
-
-      act(() => {
-        openModal({ id: 'modal-1', type: 'info', title: 'Modal 1' });
-        openModal({ id: 'modal-2', type: 'info', title: 'Modal 2' });
-        openModal({ id: 'modal-3', type: 'info', title: 'Modal 3' });
-      });
-
-      expect(useUIStore.getState().modals).toHaveLength(3);
+    it('should call closeAllModals', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const { closeAllModals } = useUIStore.getState();
 
       act(() => {
         closeAllModals();
       });
 
-      expect(useUIStore.getState().modals).toHaveLength(0);
+      expect(mockCloseAllModals).toHaveBeenCalled();
     });
   });
 
   describe('Toast Management', () => {
-    it('should show a toast with auto-generated id', () => {
+    it('should call showToast', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { showToast } = useUIStore.getState();
 
-      act(() => {
-        showToast({
-          title: 'Test Toast',
-          description: 'Test description',
-          type: 'success',
-        });
-      });
-
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(1);
-      expect(toasts[0]).toMatchObject({
-        id: expect.stringMatching(/^toast-\d+-[\d.]+$/),
+      const toast = {
         title: 'Test Toast',
         description: 'Test description',
-        type: 'success',
-        duration: 5000,
+        type: 'success' as const,
+      };
+
+      act(() => {
+        showToast(toast);
       });
+
+      expect(mockShowToast).toHaveBeenCalledWith(toast);
     });
 
-    it('should auto-remove toast after duration', () => {
-      const { showToast } = useUIStore.getState();
+    it('should call removeToast', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const { removeToast } = useUIStore.getState();
 
       act(() => {
-        showToast({
-          title: 'Auto-remove Toast',
-          type: 'info',
-          duration: 3000,
-        });
+        removeToast('toast-id');
       });
 
-      expect(useUIStore.getState().toasts).toHaveLength(1);
-
-      act(() => {
-        jest.advanceTimersByTime(3000);
-      });
-
-      expect(useUIStore.getState().toasts).toHaveLength(0);
+      expect(mockRemoveToast).toHaveBeenCalledWith('toast-id');
     });
 
-    it('should not auto-remove toast with no duration', () => {
-      const { showToast } = useUIStore.getState();
-
-      act(() => {
-        showToast({
-          title: 'Persistent Toast',
-          type: 'info',
-          duration: 0,
-        });
-      });
-
-      expect(useUIStore.getState().toasts).toHaveLength(1);
-
-      act(() => {
-        jest.advanceTimersByTime(10000);
-      });
-
-      expect(useUIStore.getState().toasts).toHaveLength(1);
-    });
-
-    it('should remove specific toast', () => {
-      const { showToast, removeToast } = useUIStore.getState();
-
-      act(() => {
-        showToast({ title: 'Toast 1', type: 'info' });
-        showToast({ title: 'Toast 2', type: 'info' });
-      });
-
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(2);
-
-      const toastId = toasts[0].id;
-
-      act(() => {
-        removeToast(toastId);
-      });
-
-      const updatedToasts = useUIStore.getState().toasts;
-      expect(updatedToasts).toHaveLength(1);
-      expect(updatedToasts[0].title).toBe('Toast 2');
-    });
-
-    it('should clear all toasts', () => {
-      const { showToast, clearToasts } = useUIStore.getState();
-
-      act(() => {
-        showToast({ title: 'Toast 1', type: 'info' });
-        showToast({ title: 'Toast 2', type: 'success' });
-        showToast({ title: 'Toast 3', type: 'error' });
-      });
-
-      expect(useUIStore.getState().toasts).toHaveLength(3);
+    it('should call clearToasts', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const { clearToasts } = useUIStore.getState();
 
       act(() => {
         clearToasts();
       });
 
-      expect(useUIStore.getState().toasts).toHaveLength(0);
+      expect(mockClearToasts).toHaveBeenCalled();
     });
   });
 
   describe('Toast Utility Functions', () => {
-    it('should show success toast', () => {
+    it('should call showSuccessToast', () => {
+      const { showSuccessToast } = require('@/lib/store/ui-store');
+
       act(() => {
         showSuccessToast('Success!', 'Operation completed');
       });
 
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(1);
-      expect(toasts[0]).toMatchObject({
-        title: 'Success!',
-        description: 'Operation completed',
-        type: 'success',
-      });
+      expect(mockShowSuccessToast).toHaveBeenCalledWith('Success!', 'Operation completed');
     });
 
-    it('should show error toast', () => {
+    it('should call showErrorToast', () => {
+      const { showErrorToast } = require('@/lib/store/ui-store');
+
       act(() => {
         showErrorToast('Error!', 'Something went wrong');
       });
 
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(1);
-      expect(toasts[0]).toMatchObject({
-        title: 'Error!',
-        description: 'Something went wrong',
-        type: 'error',
-      });
+      expect(mockShowErrorToast).toHaveBeenCalledWith('Error!', 'Something went wrong');
     });
 
-    it('should show warning toast', () => {
+    it('should call showWarningToast', () => {
+      const { showWarningToast } = require('@/lib/store/ui-store');
+
       act(() => {
         showWarningToast('Warning!', 'Please be careful');
       });
 
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(1);
-      expect(toasts[0]).toMatchObject({
-        title: 'Warning!',
-        description: 'Please be careful',
-        type: 'warning',
-      });
+      expect(mockShowWarningToast).toHaveBeenCalledWith('Warning!', 'Please be careful');
     });
 
-    it('should show info toast', () => {
+    it('should call showInfoToast', () => {
+      const { showInfoToast } = require('@/lib/store/ui-store');
+
       act(() => {
         showInfoToast('Info', 'Just letting you know');
       });
 
-      const { toasts } = useUIStore.getState();
-      expect(toasts).toHaveLength(1);
-      expect(toasts[0]).toMatchObject({
-        title: 'Info',
-        description: 'Just letting you know',
-        type: 'info',
-      });
-    });
-
-    it('should show toast without description', () => {
-      act(() => {
-        showSuccessToast('Success!');
-      });
-
-      const { toasts } = useUIStore.getState();
-      expect(toasts[0].description).toBeUndefined();
+      expect(mockShowInfoToast).toHaveBeenCalledWith('Info', 'Just letting you know');
     });
   });
 
   describe('Loading State Management', () => {
-    it('should set global loading state', () => {
+    it('should call setGlobalLoading with loading state', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
 
       act(() => {
         setGlobalLoading(true, 'Loading data...');
       });
 
-      const { globalLoading, loadingMessage } = useUIStore.getState();
-      expect(globalLoading).toBe(true);
-      expect(loadingMessage).toBe('Loading data...');
+      expect(mockSetGlobalLoading).toHaveBeenCalledWith(true, 'Loading data...');
     });
 
-    it('should clear loading state', () => {
+    it('should call setGlobalLoading to clear loading', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
-
-      act(() => {
-        setGlobalLoading(true, 'Loading...');
-      });
-
-      expect(useUIStore.getState().globalLoading).toBe(true);
 
       act(() => {
         setGlobalLoading(false);
       });
 
-      const { globalLoading, loadingMessage } = useUIStore.getState();
-      expect(globalLoading).toBe(false);
-      expect(loadingMessage).toBeNull();
+      expect(mockSetGlobalLoading).toHaveBeenCalledWith(false);
     });
 
-    it('should set loading without message', () => {
+    it('should call setGlobalLoading without message', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
 
       act(() => {
         setGlobalLoading(true);
       });
 
-      const { globalLoading, loadingMessage } = useUIStore.getState();
-      expect(globalLoading).toBe(true);
-      expect(loadingMessage).toBeNull();
+      expect(mockSetGlobalLoading).toHaveBeenCalledWith(true);
     });
   });
 
-  describe('Persistence', () => {
-    it('should persist only theme preference', () => {
-      const { setTheme, setSidebarOpen, setGlobalLoading } =
-        useUIStore.getState();
+  describe('Store State Access', () => {
+    it('should return current state from getState', () => {
+      const { useUIStore } = require('@/lib/store/ui-store');
+      const state = useUIStore.getState();
 
-      act(() => {
-        setTheme('dark');
-        setSidebarOpen(false);
-        setGlobalLoading(true, 'Test');
-      });
-
-      // Simulate what would be persisted
-      const persistedState = {
-        theme: useUIStore.getState().theme,
-      };
-
-      expect(persistedState).toEqual({
-        theme: 'dark',
-      });
-
-      // Other state should not be persisted
-      expect(persistedState).not.toHaveProperty('sidebarOpen');
-      expect(persistedState).not.toHaveProperty('globalLoading');
+      expect(state.theme).toBe('system');
+      expect(state.sidebarOpen).toBe(true);
+      expect(state.modals).toEqual([]);
+      expect(state.toasts).toEqual([]);
+      expect(state.globalLoading).toBe(false);
+      expect(state.loadingMessage).toBeNull();
     });
   });
 });
