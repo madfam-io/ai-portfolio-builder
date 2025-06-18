@@ -31,7 +31,7 @@ export function ComponentLayout({
   onToggleVisibility,
   onRemoveComponent,
   onSelectComponent,
-}: ComponentLayoutProps): JSX.Element {
+}: ComponentLayoutProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
       <div className="flex items-center justify-between mb-4">

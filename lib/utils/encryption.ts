@@ -204,13 +204,14 @@ export const encryptJsonField = (data: any, fieldPath: string): any => {
 
   // Navigate to the parent of the field
   for (let i = 0; i < pathParts.length - 1; i++) {
-    if (!current[pathParts[i]]) return cloned;
-    current = current[pathParts[i]];
+    const key = pathParts[i];
+    if (!key || !current[key]) return cloned;
+    current = current[key];
   }
 
   // Encrypt the field
   const lastPart = pathParts[pathParts.length - 1];
-  if (current[lastPart]) {
+  if (lastPart && current[lastPart]) {
     current[lastPart] = encryptField(current[lastPart], fieldPath);
   }
 
@@ -232,13 +233,14 @@ export const decryptJsonField = (data: any, fieldPath: string): any => {
 
   // Navigate to the parent of the field
   for (let i = 0; i < pathParts.length - 1; i++) {
-    if (!current[pathParts[i]]) return cloned;
-    current = current[pathParts[i]];
+    const key = pathParts[i];
+    if (!key || !current[key]) return cloned;
+    current = current[key];
   }
 
   // Decrypt the field
   const lastPart = pathParts[pathParts.length - 1];
-  if (current[lastPart]) {
+  if (lastPart && current[lastPart]) {
     current[lastPart] = decryptField(current[lastPart], fieldPath);
   }
 

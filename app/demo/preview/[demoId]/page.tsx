@@ -45,6 +45,8 @@ export default function DemoPreviewPage({ params }: PageProps) {
   const portfolio: Portfolio = {
     id: `demo-${demo.id}`,
     userId: 'demo-user',
+    createdAt: new Date(),
+    updatedAt: new Date(),
     name: demo.sampleData.personal.name,
     title: demo.sampleData.personal.title,
     bio: demo.sampleData.personal.bio,

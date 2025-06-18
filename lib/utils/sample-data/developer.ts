@@ -1,20 +1,20 @@
 import type { SampleDataConfig } from './types';
 
 export const developerSampleData: SampleDataConfig = {
-  name: 'Alex Rodriguez',
-  title: 'Senior Full-Stack Developer',
-  bio: 'Passionate software engineer with 6+ years of experience building scalable web applications. Expertise in React, Node.js, and cloud architecture. Led development teams and delivered high-impact solutions for fintech and healthcare industries.',
-  tagline: 'Building the future, one line of code at a time',
-  location: 'San Francisco, CA',
-  email: 'alex@example.com',
-  phone: '+1 (555) 123-4567',
+  personal: {
+    name: 'Alex Rodriguez',
+    title: 'Senior Full-Stack Developer',
+    bio: 'Passionate software engineer with 6+ years of experience building scalable web applications. Expertise in React, Node.js, and cloud architecture. Led development teams and delivered high-impact solutions for fintech and healthcare industries.',
+    email: 'alex@example.com',
+    phone: '+1 (555) 123-4567',
+    location: 'San Francisco, CA',
+  },
   experience: [
     {
       id: '1',
       position: 'Senior Full-Stack Developer',
       company: 'TechCorp Inc.',
       startDate: '2021-03',
-      endDate: '',
       current: true,
       description:
         'Led development of microservices architecture serving 2M+ users. Architected CI/CD pipelines reducing deployment time by 60%.',
@@ -105,22 +105,30 @@ export const developerSampleData: SampleDataConfig = {
       institution: 'University of California, Berkeley',
       degree: 'Bachelor of Science',
       field: 'Computer Science',
-      startDate: '2014-09',
-      endDate: '2018-05',
+      startDate: '2013-09',
+      endDate: '2017-05',
       current: false,
       achievements: ["Dean's List", 'ACM Programming Competition Winner'],
     },
   ],
-  skills: [
-    { name: 'JavaScript', level: 'expert', category: 'Languages' },
-    { name: 'TypeScript', level: 'expert', category: 'Languages' },
-    { name: 'Python', level: 'advanced', category: 'Languages' },
-    { name: 'React', level: 'expert', category: 'Frontend' },
-    { name: 'Node.js', level: 'expert', category: 'Backend' },
-    { name: 'PostgreSQL', level: 'advanced', category: 'Database' },
-    { name: 'AWS', level: 'advanced', category: 'Cloud' },
-    { name: 'Docker', level: 'intermediate', category: 'DevOps' },
-  ],
+  skills: {
+    technical: [
+      { name: 'JavaScript', level: 'expert' },
+      { name: 'TypeScript', level: 'expert' },
+      { name: 'Python', level: 'advanced' },
+      { name: 'React', level: 'expert' },
+      { name: 'Node.js', level: 'expert' },
+      { name: 'PostgreSQL', level: 'advanced' },
+      { name: 'AWS', level: 'advanced' },
+      { name: 'Docker', level: 'intermediate' },
+    ],
+    soft: [
+      { name: 'Team Leadership' },
+      { name: 'Problem Solving' },
+      { name: 'Communication' },
+      { name: 'Agile Methodologies' },
+    ],
+  },
   certifications: [
     {
       id: '1',

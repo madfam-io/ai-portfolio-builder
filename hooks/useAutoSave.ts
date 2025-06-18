@@ -17,7 +17,7 @@ export function useAutoSave(
   _isDirty: boolean
 ) {
   const [lastSaved, setLastSaved] = useState<Date | undefined>();
-  const saveTimeoutRef = useRef<NodeJS.Timeout>();
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isAutoSavingRef = useRef(false);
 
   const autoSave = useCallback(

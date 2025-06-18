@@ -34,7 +34,7 @@ import type {
  * Interface for creating new A/B testing experiments with visual
  * component selection and variant configuration.
  */
-export default function CreateExperimentPage(): JSX.Element {
+export default function CreateExperimentPage() {
   const { user, isAdmin, canAccess } = useAuth();
   const router = useRouter();
 

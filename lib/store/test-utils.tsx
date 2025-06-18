@@ -29,9 +29,6 @@ function createMockStore<T>(initialState: T): StoreApi<T> {
       listeners.add(listener);
       return () => listeners.delete(listener);
     },
-    destroy: () => {
-      listeners.clear();
-    },
     getInitialState: () => initialState,
   };
 }

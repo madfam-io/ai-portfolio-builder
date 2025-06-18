@@ -7,7 +7,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { withAPMTracking } from '@/lib/monitoring/unified';
 import { getCurrentTraceId, addSpanAttributes } from '@/lib/monitoring/signoz';
-import { captureEvent } from '@/lib/analytics/posthog/server';
+import { captureServerEvent } from '@/lib/analytics/posthog/server';
 import { recordPerformanceMetric } from '@/lib/monitoring/signoz/metrics';
 
 /**
@@ -75,16 +75,16 @@ export function withObservability<T extends (...args: any[]) => any>(
 
       // Track analytics event
       if (trackAnalytics && process.env.NODE_ENV === 'production') {
-        await captureEvent({
-          distinctId: req.headers.get('x-user-id') || 'anonymous',
-          event: 'api_request',
-          properties: {
+        await captureServerEvent(
+          req.headers.get('x-user-id') || 'anonymous',
+          'api_request',
+          {
             ...metadata,
             duration_ms: duration,
             status_code: response.status,
             success: true,
-          },
-        });
+          }
+        );
       }
 
       // Add trace ID to response headers
@@ -119,18 +119,18 @@ export function withObservability<T extends (...args: any[]) => any>(
 
       // Track analytics event
       if (trackAnalytics && process.env.NODE_ENV === 'production') {
-        await captureEvent({
-          distinctId: req.headers.get('x-user-id') || 'anonymous',
-          event: 'api_error',
-          properties: {
+        await captureServerEvent(
+          req.headers.get('x-user-id') || 'anonymous',
+          'api_error',
+          {
             ...metadata,
             duration_ms: duration,
             status_code: statusCode,
             error: errorMessage,
             error_type:
               error instanceof Error ? error.constructor.name : 'unknown',
-          },
-        });
+          }
+        );
       }
 
       // Create error response
@@ -152,7 +152,7 @@ export function withObservability<T extends (...args: any[]) => any>(
 
       return errorResponse;
     }
-  }, pathname) as T;
+  }) as T;
 }
 
 /**
@@ -243,15 +243,15 @@ export class ObservabilityContext {
 
     // Track analytics
     if (process.env.NODE_ENV === 'production') {
-      await captureEvent({
-        distinctId: this.metadata.userId || 'system',
-        event: `operation_${this.operation}_success`,
-        properties: {
+      await captureServerEvent(
+        this.metadata.userId || 'system',
+        `operation_${this.operation}_success`,
+        {
           ...this.metadata,
           duration_ms: duration,
           success: true,
-        },
-      });
+        }
+      );
     }
   }
 
@@ -269,16 +269,16 @@ export class ObservabilityContext {
 
     // Track analytics
     if (process.env.NODE_ENV === 'production') {
-      await captureEvent({
-        distinctId: this.metadata.userId || 'system',
-        event: `operation_${this.operation}_failed`,
-        properties: {
+      await captureServerEvent(
+        this.metadata.userId || 'system',
+        `operation_${this.operation}_failed`,
+        {
           ...this.metadata,
           duration_ms: duration,
           error: error.message,
           error_type: error.constructor.name,
-        },
-      });
+        }
+      );
     }
   }
 }

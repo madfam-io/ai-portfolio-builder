@@ -131,7 +131,10 @@ export const recordError = (
   const span = getCurrentSpan();
   if (!span) return;
 
-  span.recordException(error, attributes);
+  span.recordException(error);
+  if (attributes) {
+    span.setAttributes(attributes);
+  }
   span.setStatus({
     code: SpanStatusCode.ERROR,
     message: error.message,

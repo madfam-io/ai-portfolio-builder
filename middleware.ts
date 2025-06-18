@@ -100,7 +100,7 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
           const referrer = req.headers.get('referer') || '';
 
           // Fire and forget analytics tracking
-          supabase
+          void supabase
             .from('domain_analytics')
             .insert({
               domain_id: domain.portfolio_id,
@@ -108,12 +108,10 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
               path: pathname,
               referrer: referrer || null,
               user_agent: userAgent,
-              visitor_id: req.ip || 'unknown',
+              visitor_id: req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown',
               session_id:
-                req.headers.get('x-forwarded-for') || req.ip || 'unknown',
-            })
-            .then()
-            .catch(() => {}); // Ignore analytics errors
+                req.headers.get('x-forwarded-for') || req.headers.get('x-real-ip') || 'unknown',
+            });
 
           // Rewrite to the portfolio route
           const url = req.nextUrl.clone();

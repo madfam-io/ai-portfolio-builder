@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { shallow } from 'zustand/shallow';
 
 import { useAIStore } from './ai-store';
 import { useAuthStore } from './auth-store';
 import { usePortfolioStore } from './portfolio-store';
 import { useUIStore } from './ui-store';
+import type { AuthState, AuthActions } from './types';
 
 /**
  * Store Hooks
@@ -16,12 +16,11 @@ import { useUIStore } from './ui-store';
  */
 function useUser() {
   const { user, isLoading, isAuthenticated } = useAuthStore(
-    state => ({
+    (state: AuthState & AuthActions) => ({
       user: state.user,
       isLoading: state.isLoading,
       isAuthenticated: state.isAuthenticated,
-    }),
-    shallow
+    })
   );
 
   return {
@@ -50,7 +49,6 @@ function useCurrentPortfolio() {
       updatePortfolio: state.updatePortfolio,
       setCurrentPortfolio: state.setCurrentPortfolio,
     }),
-    shallow
   );
 
   const updateField = useCallback(
@@ -110,7 +108,6 @@ function useTheme() {
       theme: state.theme,
       setTheme: state.setTheme,
     }),
-    shallow
   );
 
   // Apply theme on mount and when it changes
@@ -181,7 +178,6 @@ function useAIModels() {
       setSelectedModel: state.setSelectedModel,
       loadModels: state.loadModels,
     }),
-    shallow
   );
 
   // Load models on mount
@@ -221,7 +217,6 @@ function useModal(modalId: string) {
       openModal: state.openModal,
       closeModal: state.closeModal,
     }),
-    shallow
   );
 
   const isOpen = modals.some(m => m.id === modalId);
@@ -255,7 +250,6 @@ function useToasts() {
       removeToast: state.removeToast,
       clearToasts: state.clearToasts,
     }),
-    shallow
   );
 
   return {
@@ -284,7 +278,6 @@ function useGlobalLoading() {
       loadingMessage: state.loadingMessage,
       setGlobalLoading: state.setGlobalLoading,
     }),
-    shallow
   );
 
   const withLoading = useCallback(
@@ -320,10 +313,9 @@ function usePortfolios(options?: {
       isLoading: state.isLoading,
       loadPortfolios: state.loadPortfolios,
     }),
-    shallow
   );
 
-  const { user } = useAuthStore(state => ({ user: state.user }), shallow);
+  const { user } = useAuthStore(state => ({ user: state.user }));
 
   // Load portfolios on mount
   useEffect(() => {

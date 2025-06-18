@@ -30,7 +30,7 @@ export function ExperimentForm({
   trafficPercentage,
   setTrafficPercentage,
   errors,
-}: ExperimentFormProps): JSX.Element {
+}: ExperimentFormProps) {
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">

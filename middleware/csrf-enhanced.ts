@@ -46,24 +46,35 @@ interface CSRFToken {
 }
 
 /**
- * Encrypt token data
+ * Encrypt token data - simplified version using HMAC
  */
 function encryptToken(data: CSRFToken): string {
-  const cipher = crypto.createCipher('aes-256-cbc', CSRF_SECRET);
-  let encrypted = cipher.update(JSON.stringify(data), 'utf8', 'hex');
-  encrypted += cipher.final('hex');
-  return encrypted;
+  const payload = JSON.stringify(data);
+  const hmac = crypto.createHmac('sha256', CSRF_SECRET);
+  hmac.update(payload);
+  const signature = hmac.digest('hex');
+  return Buffer.from(payload).toString('base64') + '.' + signature;
 }
 
 /**
- * Decrypt token data
+ * Decrypt token data - verify and parse
  */
 function decryptToken(encrypted: string): CSRFToken | null {
   try {
-    const decipher = crypto.createDecipher('aes-256-cbc', CSRF_SECRET);
-    let decrypted = decipher.update(encrypted, 'hex', 'utf8');
-    decrypted += decipher.final('utf8');
-    return JSON.parse(decrypted) as CSRFToken;
+    const [payload, signature] = encrypted.split('.');
+    if (!payload || !signature) return null;
+    
+    const data = Buffer.from(payload, 'base64').toString('utf8');
+    const hmac = crypto.createHmac('sha256', CSRF_SECRET);
+    hmac.update(data);
+    const expectedSignature = hmac.digest('hex');
+    
+    if (signature !== expectedSignature) {
+      logger.error('CSRF token signature mismatch');
+      return null;
+    }
+    
+    return JSON.parse(data) as CSRFToken;
   } catch (error) {
     logger.error('Failed to decrypt CSRF token', error as Error);
     return null;

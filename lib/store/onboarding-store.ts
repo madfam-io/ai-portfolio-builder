@@ -221,11 +221,13 @@ export const useOnboardingStore = create<OnboardingState>()(
           );
           if (stepIndex === -1) return;
 
-          state.currentFlow.steps[stepIndex].completed = true;
-          state.currentFlow.steps[stepIndex].completedAt =
-            new Date().toISOString();
-          if (metadata) {
-            state.currentFlow.steps[stepIndex].metadata = metadata;
+          const step = state.currentFlow.steps[stepIndex];
+          if (step) {
+            step.completed = true;
+            step.completedAt = new Date().toISOString();
+            if (metadata) {
+              step.metadata = metadata;
+            }
           }
 
           // Auto-advance to next step
@@ -257,7 +259,10 @@ export const useOnboardingStore = create<OnboardingState>()(
           );
           if (stepIndex === -1) return;
 
-          state.currentFlow.steps[stepIndex].skipped = true;
+          const step = state.currentFlow.steps[stepIndex];
+          if (step) {
+            step.skipped = true;
+          }
 
           // Auto-advance to next step
           const nextIncompleteIndex = state.currentFlow.steps.findIndex(

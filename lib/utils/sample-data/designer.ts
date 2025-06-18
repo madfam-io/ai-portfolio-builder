@@ -1,20 +1,20 @@
 import type { SampleDataConfig } from './types';
 
 export const designerSampleData: SampleDataConfig = {
-  name: 'Maya Chen',
-  title: 'Product Design Lead',
-  bio: 'Award-winning product designer with 8 years of experience creating user-centered digital experiences. Passionate about inclusive design, accessibility, and building design systems that scale.',
-  tagline: 'Designing experiences that delight and inspire',
-  location: 'New York, NY',
-  email: 'maya@example.com',
-  phone: '+1 (555) 234-5678',
+  personal: {
+    name: 'Maya Chen',
+    title: 'Product Design Lead',
+    bio: 'Award-winning product designer with 8 years of experience creating user-centered digital experiences. Passionate about inclusive design, accessibility, and building design systems that scale.',
+    email: 'maya@example.com',
+    phone: '+1 (555) 234-5678',
+    location: 'New York, NY',
+  },
   experience: [
     {
       id: '1',
       position: 'Product Design Lead',
       company: 'DesignStudio Pro',
-      startDate: '2020-04',
-      endDate: '',
+      startDate: '2020-01',
       current: true,
       description:
         'Lead designer for enterprise SaaS products. Manage design system and mentor junior designers.',
@@ -56,19 +56,27 @@ export const designerSampleData: SampleDataConfig = {
       institution: 'Parsons School of Design',
       degree: 'Bachelor of Fine Arts',
       field: 'Communication Design',
-      startDate: '2016-09',
-      endDate: '2020-05',
+      startDate: '2012-09',
+      endDate: '2016-05',
       current: false,
       achievements: ['Summa Cum Laude', 'Design Excellence Award'],
     },
   ],
-  skills: [
-    { name: 'UI Design', level: 'expert', category: 'Design' },
-    { name: 'UX Research', level: 'expert', category: 'Research' },
-    { name: 'Figma', level: 'expert', category: 'Tools' },
-    { name: 'Prototyping', level: 'advanced', category: 'Design' },
-    { name: 'Design Systems', level: 'expert', category: 'Design' },
-  ],
+  skills: {
+    technical: [
+      { name: 'UI Design', level: 'expert' },
+      { name: 'UX Research', level: 'expert' },
+      { name: 'Figma', level: 'expert' },
+      { name: 'Prototyping', level: 'advanced' },
+      { name: 'Design Systems', level: 'expert' },
+    ],
+    soft: [
+      { name: 'Leadership' },
+      { name: 'User Empathy' },
+      { name: 'Presentation Skills' },
+      { name: 'Collaboration' },
+    ],
+  },
   certifications: [
     {
       id: '1',

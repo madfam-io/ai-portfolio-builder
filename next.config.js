@@ -39,8 +39,7 @@ const nextConfig = {
       '@octokit/rest',
       '@octokit/types',
     ],
-    // Enable instrumentation hook for OpenTelemetry
-    instrumentationHook: true,
+    // instrumentationHook is now enabled by default in Next.js 15
   },
 
   // Security headers

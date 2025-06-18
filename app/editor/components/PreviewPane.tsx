@@ -190,20 +190,23 @@ export function PreviewPane({
       );
     }
 
+    // At this point, viewport is either 'tablet' or 'mobile'
+    const deviceViewport = viewport as 'tablet' | 'mobile';
+    
     return (
       <div className="flex-1 bg-slate-100 flex items-center justify-center p-8">
         {/* Device Frame */}
         <div
           className={`relative bg-gray-800 rounded-2xl shadow-2xl ${
-            viewport === 'tablet' ? 'p-8' : 'p-4'
+            deviceViewport === 'tablet' ? 'p-8' : 'p-4'
           }`}
           style={{
             width:
               parseInt(dimensions.width as string) +
-              (viewport === 'tablet' ? 64 : 32),
+              (deviceViewport === 'tablet' ? 64 : 32),
             height:
               parseInt(dimensions.height as string) +
-              (viewport === 'tablet' ? 64 : 32),
+              (deviceViewport === 'tablet' ? 64 : 32),
           }}
         >
           {/* Device Screen */}
@@ -212,7 +215,7 @@ export function PreviewPane({
             style={dimensions}
           >
             {/* Status Bar (Mobile only) */}
-            {viewport === 'mobile' && !isRotated && (
+            {deviceViewport === 'mobile' && !isRotated && (
               <div className="h-6 bg-black flex items-center justify-between px-4 text-white text-xs">
                 <span>9:41</span>
                 <div className="flex items-center gap-1">
@@ -237,7 +240,7 @@ export function PreviewPane({
           </div>
 
           {/* Home Indicator (iPhone) */}
-          {viewport === 'mobile' && !isRotated && (
+          {deviceViewport === 'mobile' && !isRotated && (
             <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full opacity-50" />
           )}
         </div>
@@ -245,11 +248,9 @@ export function PreviewPane({
         {/* Device Info */}
         <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-lg">
           <div className="text-sm font-medium">
-            {viewport === 'desktop'
-              ? 'Desktop View'
-              : viewport === 'tablet'
-                ? `Tablet ${isRotated ? 'Landscape' : 'Portrait'}`
-                : `Mobile ${isRotated ? 'Landscape' : 'Portrait'}`}
+            {deviceViewport === 'tablet'
+              ? `Tablet ${isRotated ? 'Landscape' : 'Portrait'}`
+              : `Mobile ${isRotated ? 'Landscape' : 'Portrait'}`}
           </div>
           <div className="text-xs text-muted-foreground">
             {dimensions.width} × {dimensions.height}

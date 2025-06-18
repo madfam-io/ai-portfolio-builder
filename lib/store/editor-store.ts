@@ -169,7 +169,10 @@ export const useEditorStore = create<EditorStore>()(
               state.blocks.splice(position, 0, newBlock);
               // Update order for subsequent blocks
               for (let i = position + 1; i < state.blocks.length; i++) {
-                state.blocks[i].order = i;
+                const block = state.blocks[i];
+                if (block) {
+                  block.order = i;
+                }
               }
             } else {
               state.blocks.push(newBlock);
@@ -189,7 +192,10 @@ export const useEditorStore = create<EditorStore>()(
               state.history.future = [];
 
               // Update block
-              Object.assign(state.blocks[blockIndex], updates);
+              const block = state.blocks[blockIndex];
+              if (block) {
+                Object.assign(block, updates);
+              }
             }
           });
         },
@@ -207,7 +213,10 @@ export const useEditorStore = create<EditorStore>()(
 
               // Update order for subsequent blocks
               for (let i = blockIndex; i < state.blocks.length; i++) {
-                state.blocks[i].order = i;
+                const block = state.blocks[i];
+                if (block) {
+                  block.order = i;
+                }
               }
 
               // Clear selection if deleted block was selected
@@ -228,7 +237,9 @@ export const useEditorStore = create<EditorStore>()(
 
             // Move block
             const [movedBlock] = state.blocks.splice(fromIndex, 1);
-            state.blocks.splice(toIndex, 0, movedBlock);
+            if (movedBlock) {
+              state.blocks.splice(toIndex, 0, movedBlock);
+            }
 
             // Update order for all blocks
             state.blocks.forEach((block, index) => {
@@ -257,7 +268,10 @@ export const useEditorStore = create<EditorStore>()(
 
               // Update order for subsequent blocks
               for (let i = insertIndex + 1; i < state.blocks.length; i++) {
-                state.blocks[i].order = i;
+                const block = state.blocks[i];
+                if (block) {
+                  block.order = i;
+                }
               }
 
               // Select duplicated block

@@ -12,7 +12,7 @@ import {
   decryptJsonField,
   ENCRYPTED_FIELDS,
 } from '@/lib/utils/encryption';
-import { createSupabaseClient } from '@/lib/supabase/server';
+import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
 // Define types for encrypted data
@@ -52,34 +52,46 @@ export const encryptUserData = (
 
   // Encrypt email
   if (user.email && !user.email_encrypted) {
-    encrypted.email_encrypted = encryptField(
+    const encryptedEmail = encryptField(
       user.email,
       ENCRYPTED_FIELDS.USER_EMAIL
     );
+    if (encryptedEmail !== null) {
+      encrypted.email_encrypted = encryptedEmail;
+    }
     encrypted.email_hash = hashForIndex(user.email);
   }
 
   // Encrypt phone
   if (user.phone && !user.phone_encrypted) {
-    encrypted.phone_encrypted = encryptField(
+    const encryptedPhone = encryptField(
       user.phone,
       ENCRYPTED_FIELDS.USER_PHONE
     );
+    if (encryptedPhone !== null) {
+      encrypted.phone_encrypted = encryptedPhone;
+    }
   }
 
   // Encrypt Stripe IDs
   if (user.stripe_customer_id && !user.stripe_customer_id_encrypted) {
-    encrypted.stripe_customer_id_encrypted = encryptField(
+    const encryptedStripeCustomerId = encryptField(
       user.stripe_customer_id,
       ENCRYPTED_FIELDS.USER_STRIPE_CUSTOMER_ID
     );
+    if (encryptedStripeCustomerId !== null) {
+      encrypted.stripe_customer_id_encrypted = encryptedStripeCustomerId;
+    }
   }
 
   if (user.stripe_subscription_id && !user.stripe_subscription_id_encrypted) {
-    encrypted.stripe_subscription_id_encrypted = encryptField(
+    const encryptedStripeSubscriptionId = encryptField(
       user.stripe_subscription_id,
       ENCRYPTED_FIELDS.USER_STRIPE_SUBSCRIPTION_ID
     );
+    if (encryptedStripeSubscriptionId !== null) {
+      encrypted.stripe_subscription_id_encrypted = encryptedStripeSubscriptionId;
+    }
   }
 
   return encrypted;
@@ -95,33 +107,45 @@ export const decryptUserData = (
 
   // Decrypt email
   if (user.email_encrypted && !user.email) {
-    decrypted.email = decryptField(
+    const decryptedEmail = decryptField(
       user.email_encrypted,
       ENCRYPTED_FIELDS.USER_EMAIL
     );
+    if (decryptedEmail !== null) {
+      decrypted.email = decryptedEmail;
+    }
   }
 
   // Decrypt phone
   if (user.phone_encrypted && !user.phone) {
-    decrypted.phone = decryptField(
+    const decryptedPhone = decryptField(
       user.phone_encrypted,
       ENCRYPTED_FIELDS.USER_PHONE
     );
+    if (decryptedPhone !== null) {
+      decrypted.phone = decryptedPhone;
+    }
   }
 
   // Decrypt Stripe IDs
   if (user.stripe_customer_id_encrypted && !user.stripe_customer_id) {
-    decrypted.stripe_customer_id = decryptField(
+    const decryptedStripeCustomerId = decryptField(
       user.stripe_customer_id_encrypted,
       ENCRYPTED_FIELDS.USER_STRIPE_CUSTOMER_ID
     );
+    if (decryptedStripeCustomerId !== null) {
+      decrypted.stripe_customer_id = decryptedStripeCustomerId;
+    }
   }
 
   if (user.stripe_subscription_id_encrypted && !user.stripe_subscription_id) {
-    decrypted.stripe_subscription_id = decryptField(
+    const decryptedStripeSubscriptionId = decryptField(
       user.stripe_subscription_id_encrypted,
       ENCRYPTED_FIELDS.USER_STRIPE_SUBSCRIPTION_ID
     );
+    if (decryptedStripeSubscriptionId !== null) {
+      decrypted.stripe_subscription_id = decryptedStripeSubscriptionId;
+    }
   }
 
   return decrypted;
@@ -136,19 +160,25 @@ export const encryptOAuthTokens = (
   const encrypted: Partial<EncryptedOAuthTokens> = { ...tokens };
 
   if (tokens.access_token && !tokens.access_token_encrypted) {
-    encrypted.access_token_encrypted = encryptField(
+    const encryptedAccessToken = encryptField(
       tokens.access_token,
       ENCRYPTED_FIELDS.GITHUB_ACCESS_TOKEN
     );
+    if (encryptedAccessToken !== null) {
+      encrypted.access_token_encrypted = encryptedAccessToken;
+    }
     // Clear plaintext
     delete encrypted.access_token;
   }
 
   if (tokens.refresh_token && !tokens.refresh_token_encrypted) {
-    encrypted.refresh_token_encrypted = encryptField(
+    const encryptedRefreshToken = encryptField(
       tokens.refresh_token,
       ENCRYPTED_FIELDS.GITHUB_REFRESH_TOKEN
     );
+    if (encryptedRefreshToken !== null) {
+      encrypted.refresh_token_encrypted = encryptedRefreshToken;
+    }
     // Clear plaintext
     delete encrypted.refresh_token;
   }
@@ -165,17 +195,23 @@ export const decryptOAuthTokens = (
   const decrypted: Partial<EncryptedOAuthTokens> = { ...tokens };
 
   if (tokens.access_token_encrypted) {
-    decrypted.access_token = decryptField(
+    const decryptedAccessToken = decryptField(
       tokens.access_token_encrypted,
       ENCRYPTED_FIELDS.GITHUB_ACCESS_TOKEN
     );
+    if (decryptedAccessToken !== null) {
+      decrypted.access_token = decryptedAccessToken;
+    }
   }
 
   if (tokens.refresh_token_encrypted) {
-    decrypted.refresh_token = decryptField(
+    const decryptedRefreshToken = decryptField(
       tokens.refresh_token_encrypted,
       ENCRYPTED_FIELDS.GITHUB_REFRESH_TOKEN
     );
+    if (decryptedRefreshToken !== null) {
+      decrypted.refresh_token = decryptedRefreshToken;
+    }
   }
 
   return decrypted;
@@ -262,7 +298,13 @@ export const decryptPortfolioContact = (portfolioData: any): any => {
  * Find user by encrypted email
  */
 export const findUserByEmail = async (email: string): Promise<any | null> => {
-  const supabase = await createSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    throw new Error('Supabase client not available');
+  }
+  if (!supabase) {
+    throw new Error('Supabase client not available');
+  }
   const emailHash = hashForIndex(email);
 
   const { data, error } = await supabase
@@ -284,7 +326,10 @@ export const migrateTableToEncryption = async (
   tableName: string,
   batchSize: number = 100
 ): Promise<{ success: boolean; error?: string }> => {
-  const supabase = await createSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    throw new Error('Supabase client not available');
+  }
 
   try {
     // Update migration status
@@ -394,7 +439,10 @@ export const migrateTableToEncryption = async (
  * Get encryption migration status
  */
 export const getEncryptionMigrationStatus = async () => {
-  const supabase = await createSupabaseClient();
+  const supabase = await createClient();
+  if (!supabase) {
+    throw new Error('Supabase client not available');
+  }
 
   const { data, error } = await supabase
     .from('encryption_migration_status')

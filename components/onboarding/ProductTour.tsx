@@ -120,11 +120,11 @@ export function ProductTour() {
     let steps: TourStep[] = [];
 
     if (pathname.includes('/dashboard')) {
-      steps = tourSteps.dashboard;
+      steps = tourSteps.dashboard || [];
     } else if (pathname.includes('/editor')) {
-      steps = tourSteps.editor;
+      steps = tourSteps.editor || [];
     } else if (pathname.includes('/portfolio')) {
-      steps = tourSteps.portfolio;
+      steps = tourSteps.portfolio || [];
     }
 
     setCurrentSteps(steps);

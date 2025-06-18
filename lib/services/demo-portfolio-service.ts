@@ -15,8 +15,8 @@ import {
   marketerSampleData,
   freelancerSampleData,
 } from '@/lib/utils/sample-data';
-import { templates } from '@/lib/templates/templateConfig';
-import type { PortfolioContent, PortfolioSettings } from '@/types/portfolio';
+import { TEMPLATE_CONFIGS } from '@/lib/templates/templateConfig';
+import type { TemplateType } from '@/types/portfolio';
 import { createClient } from '@/lib/supabase/client';
 import { track } from '@/lib/monitoring/unified/events';
 
@@ -25,7 +25,7 @@ export interface DemoPortfolio {
   name: string;
   description: string;
   industry: string;
-  template: string;
+  template: TemplateType;
   thumbnail: string;
   features: string[];
   sampleData: any;
@@ -178,12 +178,11 @@ export class DemoPortfolioService {
     // Track demo selection
     await track.portfolio.create('demo-' + uuidv4(), async () => {}, {
       template: demo.template,
-      demo_id: demo.id,
-      ai_enhanced: options.aiEnhance,
+      ai_assisted: options.aiEnhance,
     });
 
     // Create portfolio content from demo
-    const portfolioContent: PortfolioContent = {
+    const portfolioContent = {
       ...demo.sampleData,
       // Apply customizations
       personal: {
@@ -194,13 +193,21 @@ export class DemoPortfolioService {
     };
 
     // Create portfolio settings
-    const portfolioSettings: PortfolioSettings = {
+    const portfolioSettings = {
       template: demo.template,
       theme: {
-        ...templates[demo.template].defaultTheme,
+        mode: 'light',
         colors: {
-          ...templates[demo.template].defaultTheme.colors,
+          primary: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.primary || '#3B82F6',
+          secondary: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.secondary || '#1E40AF',
+          accent: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.accent || '#06B6D4',
+          background: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.background || '#F8FAFC',
+          text: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.text || '#1E293B',
           ...(options.customizations?.colors || {}),
+        },
+        font: {
+          heading: 'Inter',
+          body: 'Inter',
         },
       },
       seo: {

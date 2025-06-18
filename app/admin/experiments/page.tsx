@@ -48,7 +48,7 @@ interface VariantFromDB {
 interface ExperimentWithVariants extends LandingPageExperiment {
   variants?: VariantFromDB[];
 }
-export default function AdminExperimentsPage(): JSX.Element {
+export default function AdminExperimentsPage() {
   const { isAdmin, canAccess } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();

@@ -1,5 +1,18 @@
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { DomainAnalytics } from '@/types/domains';
+
+interface DetailedDomainAnalytics {
+  totalViews: number;
+  uniqueVisitors: number;
+  uniqueSessions: number;
+  averageSessionDuration: number;
+  bounceRate: number;
+  popularPages: Array<{ path: string; views: number }>;
+  topReferrers: Array<{ referrer: string; count: number }>;
+  dailyViews: Array<{ date: string; views: number }>;
+  deviceTypes: Record<string, number>;
+  countries: Array<{ country: string; count: number }>;
+}
 
 export class DomainAnalyticsService {
   /**
@@ -12,6 +25,10 @@ export class DomainAnalyticsService {
     userAgent?: string
   ): Promise<void> {
     try {
+      const supabase = createClient();
+      if (!supabase) {
+        throw new Error('Supabase client not available');
+      }
       await supabase.from('domain_analytics').insert({
         domain_id: domainId,
         event_type: 'page_view',
@@ -32,7 +49,11 @@ export class DomainAnalyticsService {
   static async getDomainAnalytics(
     domainId: string,
     dateRange: { from: Date; to: Date }
-  ): Promise<DomainAnalytics> {
+  ): Promise<DetailedDomainAnalytics> {
+    const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
     const { data: events, error } = await supabase
       .from('domain_analytics')
       .select('*')
@@ -58,9 +79,9 @@ export class DomainAnalyticsService {
     );
 
     const popularPages = Object.entries(pageCounts)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 10)
-      .map(([path, views]) => ({ path, views }));
+      .map(([path, views]) => ({ path, views: views as number }));
 
     // Calculate referrer stats
     const referrerCounts = pageViews
@@ -75,9 +96,9 @@ export class DomainAnalyticsService {
       );
 
     const topReferrers = Object.entries(referrerCounts)
-      .sort(([, a], [, b]) => b - a)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
       .slice(0, 10)
-      .map(([referrer, count]) => ({ referrer, count }));
+      .map(([referrer, count]) => ({ referrer, count: count as number }));
 
     // Calculate daily views
     const dailyViews = this.calculateDailyViews(pageViews, dateRange);
@@ -113,6 +134,10 @@ export class DomainAnalyticsService {
       visitors: number;
     }>;
   }> {
+    const supabase = createClient();
+    if (!supabase) {
+      throw new Error('Supabase client not available');
+    }
     const { data: events, error } = await supabase
       .from('domain_analytics')
       .select('*')
@@ -154,6 +179,10 @@ export class DomainAnalyticsService {
     details?: any
   ): Promise<void> {
     try {
+      const supabase = createClient();
+      if (!supabase) {
+        throw new Error('Supabase client not available');
+      }
       await supabase.from('domain_analytics').insert({
         domain_id: domainId,
         event_type: `ssl_${eventType}`,
@@ -194,8 +223,12 @@ export class DomainAnalyticsService {
     const dailyCounts: Record<string, number> = {};
 
     events.forEach(event => {
-      const date = new Date(event.created_at).toISOString().split('T')[0];
-      dailyCounts[date] = (dailyCounts[date] || 0) + 1;
+      if (event.created_at) {
+        const date = new Date(event.created_at).toISOString().split('T')[0];
+        if (date) {
+          dailyCounts[date] = (dailyCounts[date] || 0) + 1;
+        }
+      }
     });
 
     // Fill in missing days with 0
@@ -203,7 +236,7 @@ export class DomainAnalyticsService {
     const current = new Date(dateRange.from);
 
     while (current <= dateRange.to) {
-      const dateStr = current.toISOString().split('T')[0];
+      const dateStr = current.toISOString().split('T')[0]!;
       days.push({
         date: dateStr,
         views: dailyCounts[dateStr] || 0,
@@ -271,11 +304,11 @@ export class DomainAnalyticsService {
 
       const ua = event.user_agent.toLowerCase();
       if (/mobile|android|iphone/i.test(ua) && !/ipad/i.test(ua)) {
-        deviceCounts.mobile++;
+        deviceCounts.mobile = (deviceCounts.mobile || 0) + 1;
       } else if (/ipad|tablet/i.test(ua)) {
-        deviceCounts.tablet++;
+        deviceCounts.tablet = (deviceCounts.tablet || 0) + 1;
       } else {
-        deviceCounts.desktop++;
+        deviceCounts.desktop = (deviceCounts.desktop || 0) + 1;
       }
     });
 

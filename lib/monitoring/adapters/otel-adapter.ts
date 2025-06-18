@@ -260,7 +260,7 @@ export function withAPMTracking<T extends (...args: any[]) => any>(
 /**
  * Export adapted versions of tracking functions
  */
-export { trackDatabaseOperation } from '../signoz/tracing';
+export { traceDatabaseOperation as trackDatabaseOperation } from '../signoz/tracing';
 export { traceAIOperation as trackAIOperation } from '../signoz/tracing';
 export { traceHttpRequest as trackExternalAPI } from '../signoz/tracing';
 

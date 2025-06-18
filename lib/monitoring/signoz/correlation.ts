@@ -132,9 +132,11 @@ export const trackPortfolioOperation = async <T>(
       });
 
       // Record business metric
-      const metricMap = {
+      const metricMap: Record<string, string> = {
         create: 'portfoliosCreated',
         publish: 'portfoliosPublished',
+        update: 'portfoliosUpdated',
+        delete: 'portfoliosDeleted',
       };
 
       if (metricMap[operation]) {

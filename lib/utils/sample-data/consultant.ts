@@ -1,20 +1,20 @@
 import type { SampleDataConfig } from './types';
 
 export const consultantSampleData: SampleDataConfig = {
-  name: 'Robert Thompson',
-  title: 'Senior Management Consultant',
-  bio: 'Strategic business consultant with 10+ years of experience helping Fortune 500 companies optimize operations and drive growth. Specialized in digital transformation, process improvement, and organizational change management.',
-  tagline: 'Transforming businesses through strategic innovation',
-  location: 'Chicago, IL',
-  email: 'robert@example.com',
-  phone: '+1 (555) 456-7890',
+  personal: {
+    name: 'Robert Thompson',
+    title: 'Senior Management Consultant',
+    bio: 'Strategic business consultant with 10+ years of experience helping Fortune 500 companies optimize operations and drive growth. Specialized in digital transformation, process improvement, and organizational change management.',
+    location: 'Chicago, IL',
+    email: 'robert@example.com',
+    phone: '+1 (555) 456-7890',
+  },
   experience: [
     {
       id: '1',
       position: 'Senior Manager',
       company: 'McKinsey & Company',
       startDate: '2019-01',
-      endDate: '',
       current: true,
       description:
         'Lead strategic initiatives for Fortune 500 clients across retail, manufacturing, and technology sectors.',
@@ -54,13 +54,22 @@ export const consultantSampleData: SampleDataConfig = {
       achievements: ['Baker Scholar', 'Case Competition Winner'],
     },
   ],
-  skills: [
-    { name: 'Strategy Development', level: 'expert', category: 'Consulting' },
-    { name: 'Process Optimization', level: 'expert', category: 'Operations' },
-    { name: 'Data Analysis', level: 'advanced', category: 'Analytics' },
-    { name: 'Change Management', level: 'expert', category: 'Leadership' },
-    { name: 'Financial Modeling', level: 'advanced', category: 'Finance' },
-  ],
+  skills: {
+    technical: [
+      { name: 'Strategy Development', level: 'expert', category: 'Consulting' },
+      { name: 'Process Optimization', level: 'expert', category: 'Operations' },
+      { name: 'Data Analysis', level: 'advanced', category: 'Analytics' },
+      { name: 'Financial Modeling', level: 'advanced', category: 'Finance' },
+      { name: 'Market Research', level: 'advanced', category: 'Research' },
+    ],
+    soft: [
+      { name: 'Change Management', level: 'expert', category: 'Leadership' },
+      { name: 'Stakeholder Management', level: 'expert', category: 'Communication' },
+      { name: 'Executive Presentation', level: 'expert', category: 'Communication' },
+      { name: 'Team Leadership', level: 'advanced', category: 'Leadership' },
+      { name: 'Problem Solving', level: 'expert', category: 'Analytical' },
+    ],
+  },
   certifications: [
     {
       id: '1',
