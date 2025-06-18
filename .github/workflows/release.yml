@@ -80,7 +80,7 @@ jobs:
       - name: Create release
         run: |
           # Use standard-version for changelog generation
-          pnpm release -- --release-as ${{ steps.version.outputs.bump }} --skip.tag
+          pnpm release -- --release-as ${{ steps.version.outputs.bump }} --skip-tag
 
       - name: Push changes
         run: |
