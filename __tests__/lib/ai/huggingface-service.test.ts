@@ -16,6 +16,7 @@ import {
 import { HfInference } from '@huggingface/inference';
 import { logger } from '@/lib/utils/logger';
 
+
 // Mock dependencies
 jest.mock('@huggingface/inference');
 jest.mock('@/lib/utils/logger');
@@ -90,7 +91,6 @@ describe('HuggingFace AI Service', () => {
         expect.objectContaining({
           model: AI_MODELS['phi-3.5'].id,
         })
-      );
     });
 
     it('should enforce word limit', async () => {
@@ -134,7 +134,6 @@ describe('HuggingFace AI Service', () => {
     it('should handle API errors gracefully', async () => {
       mockHf.textGeneration.mockRejectedValue(
         new Error('HuggingFace API error')
-      );
 
       const result = await enhanceBio(originalBio);
 
@@ -148,7 +147,7 @@ describe('HuggingFace AI Service', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to enhance bio',
         expect.any(Error)
-      );
+
     });
 
     it('should validate model selection', async () => {
@@ -163,7 +162,6 @@ describe('HuggingFace AI Service', () => {
         expect.objectContaining({
           model: AI_MODELS['llama-3.1-70b'].id,
         })
-      );
     });
   });
 
@@ -310,7 +308,6 @@ describe('HuggingFace AI Service', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Low confidence template recommendation',
         expect.objectContaining({ confidence: 40 })
-      );
     });
   });
 
@@ -494,11 +491,11 @@ describe('HuggingFace AI Service', () => {
 
       expect(result.suggestions).toContain(
         expect.stringContaining('specific years')
-      );
+
       expect(result.suggestions).toContain(expect.stringContaining('metrics'));
       expect(result.suggestions).toContain(
         expect.stringContaining('technologies')
-      );
+
     });
   });
 
@@ -515,7 +512,7 @@ describe('HuggingFace AI Service', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'HuggingFace rate limit hit',
         expect.any(Object)
-      );
+
     });
 
     it('should handle model unavailability', async () => {
@@ -547,7 +544,7 @@ describe('HuggingFace AI Service', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'HuggingFace API authentication failed',
         expect.any(Object)
-      );
+
     });
   });
 
@@ -561,9 +558,8 @@ describe('HuggingFace AI Service', () => {
             setTimeout(
               () => resolve({ generated_text: 'Late response' }),
               30000
-            );
+
           })
-      );
 
       const promise = enhanceBio('test bio');
       jest.advanceTimersByTime(15000); // 15 second timeout

@@ -1,5 +1,7 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/v1/geo/analyze/route';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
@@ -24,7 +26,6 @@ describe('/api/v1/geo/analyze', () => {
               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
           },
         }
-      );
 
       const response = await GET(mockRequest);
       const data = await response.json();
@@ -57,7 +58,6 @@ describe('/api/v1/geo/analyze', () => {
             'accept-language': 'es-MX,es;q=0.9',
           },
         }
-      );
 
       const response = await GET(mockRequest);
       const data = await response.json();
@@ -81,7 +81,6 @@ describe('/api/v1/geo/analyze', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
-      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -100,7 +99,6 @@ describe('/api/v1/geo/analyze', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
-      );
 
       const response = await POST(mockRequest);
 
@@ -122,7 +120,6 @@ describe('/api/v1/geo/analyze', () => {
             method: 'POST',
             body: JSON.stringify(requestBody),
           }
-        );
 
         const response = await POST(mockRequest);
         const data = await response.json();
@@ -144,7 +141,6 @@ describe('/api/v1/geo/analyze', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
-      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -165,7 +161,6 @@ describe('/api/v1/geo/analyze', () => {
           method: 'POST',
           body: 'invalid json',
         }
-      );
 
       const response = await POST(mockRequest);
 
@@ -184,7 +179,6 @@ describe('/api/v1/geo/analyze', () => {
           method: 'POST',
           body: JSON.stringify({ content: 'test', targetLocale: 'en-US' }),
         }
-      );
 
       const response = await POST(mockRequest);
 

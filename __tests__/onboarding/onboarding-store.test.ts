@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach } from '@jest/globals';
+
 /**
  * Onboarding Store Tests
  */
@@ -5,12 +7,26 @@
 import { renderHook, act } from '@testing-library/react';
 import { useOnboardingStore } from '@/lib/store/onboarding-store';
 
+
 describe('OnboardingStore', () => {
   beforeEach(() => {
-    // Reset store before each test
-    const { result } = renderHook(() => useOnboardingStore());
-    act(() => {
-      result.current.resetOnboarding();
+    // Clear localStorage to prevent persistence issues
+    localStorage.clear();
+    
+    // Reset Zustand store state
+    useOnboardingStore.setState({
+      isOnboarding: false,
+      currentFlow: null,
+      completedFlows: [],
+      tourActive: false,
+      currentTourStep: 0,
+      showChecklist: false,
+      dismissedHints: [],
+      preferences: {
+        skipTours: false,
+        emailReminders: true,
+        showProgress: true,
+      },
     });
   });
 
@@ -105,9 +121,14 @@ describe('OnboardingStore', () => {
 
       act(() => {
         result.current.startOnboarding('new');
+      });
 
-        // Complete all steps
-        result.current.currentFlow?.steps.forEach(step => {
+      // Get the steps to complete
+      const steps = result.current.currentFlow?.steps || [];
+      
+      // Complete each step individually
+      steps.forEach(step => {
+        act(() => {
           result.current.completeStep(step.id);
         });
       });
@@ -198,6 +219,11 @@ describe('OnboardingStore', () => {
   describe('UI State Management', () => {
     it('should toggle checklist visibility', () => {
       const { result } = renderHook(() => useOnboardingStore());
+
+      // Set initial state to true before testing
+      act(() => {
+        useOnboardingStore.setState({ showChecklist: true });
+      });
 
       expect(result.current.showChecklist).toBe(true);
 

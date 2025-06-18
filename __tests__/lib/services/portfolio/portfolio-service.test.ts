@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { PortfolioService } from '@/lib/services/portfolio/portfolio-service';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
 import { cache } from '@/lib/cache/redis-cache.server';
@@ -77,11 +78,10 @@ describe('PortfolioService', () => {
     it('should handle repository errors', async () => {
       mockRepository.findByUserId.mockRejectedValue(
         new Error('Database error')
-      );
 
       await expect(service.getUserPortfolios('user-123')).rejects.toThrow(
         'Database error'
-      );
+
     });
   });
 
@@ -136,7 +136,6 @@ describe('PortfolioService', () => {
           ...createDto,
           status: 'draft',
         })
-      );
     });
 
     it('should handle import data', async () => {
@@ -159,7 +158,6 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           importSource: 'linkedin',
         })
-      );
     });
 
     it('should apply default values', async () => {
@@ -177,7 +175,6 @@ describe('PortfolioService', () => {
           skills: [],
           certifications: [],
         })
-      );
     });
   });
 
@@ -198,7 +195,7 @@ describe('PortfolioService', () => {
       expect(mockRepository.update).toHaveBeenCalledWith(
         'portfolio-123',
         updateDto
-      );
+
       expect(cache.del).toHaveBeenCalled(); // Cache invalidation
     });
 
@@ -224,7 +221,7 @@ describe('PortfolioService', () => {
       expect(mockRepository.update).toHaveBeenCalledWith(
         'portfolio-123',
         partialUpdate
-      );
+
     });
   });
 
@@ -249,7 +246,6 @@ describe('PortfolioService', () => {
 
       await expect(service.deletePortfolio('portfolio-123')).rejects.toThrow(
         'Cannot delete published portfolio'
-      );
 
       expect(mockRepository.delete).not.toHaveBeenCalled();
     });
@@ -289,7 +285,6 @@ describe('PortfolioService', () => {
           status: 'published',
           publishedAt: expect.any(Date),
         })
-      );
     });
 
     it('should generate subdomain if not provided', async () => {
@@ -311,7 +306,6 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           subdomain: expect.any(String),
         })
-      );
     });
 
     it('should not republish already published portfolio', async () => {
@@ -333,7 +327,6 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           status: 'published',
         })
-      );
     });
   });
 
@@ -369,7 +362,7 @@ describe('PortfolioService', () => {
       expect(result).toEqual(mockPortfolio);
       expect(mockRepository.findBySubdomain).toHaveBeenCalledWith(
         'my-portfolio'
-      );
+
     });
 
     it('should return null for non-existent subdomain', async () => {

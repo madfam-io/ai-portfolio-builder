@@ -1,5 +1,7 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/integrations/github/auth/route';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
@@ -36,26 +38,24 @@ describe('/api/v1/integrations/github/auth', () => {
     it('should redirect to GitHub OAuth authorization page', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
 
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toContain(
         'https://github.com/login/oauth/authorize'
-      );
+
       expect(response.headers.get('Location')).toContain(
         `client_id=${GITHUB_CLIENT_ID}`
-      );
+
       expect(response.headers.get('Location')).toContain(
         'scope=repo%20read:user'
-      );
+
     });
 
     it('should include state parameter for CSRF protection', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
       const location = response.headers.get('Location');
@@ -71,7 +71,6 @@ describe('/api/v1/integrations/github/auth', () => {
     it('should include all required scopes', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
       const location = response.headers.get('Location');
@@ -86,7 +85,6 @@ describe('/api/v1/integrations/github/auth', () => {
       const customRedirect = 'http://localhost:3000/dashboard/integrations';
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/auth?redirect_uri=${encodeURIComponent(customRedirect)}`
-      );
 
       const response = await GET(mockRequest);
 
@@ -109,7 +107,6 @@ describe('/api/v1/integrations/github/auth', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
 
@@ -121,7 +118,6 @@ describe('/api/v1/integrations/github/auth', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
 
@@ -131,7 +127,6 @@ describe('/api/v1/integrations/github/auth', () => {
     it('should store state in session/cookie', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
 
@@ -149,7 +144,7 @@ describe('/api/v1/integrations/github/auth', () => {
       for (let i = 0; i < 5; i++) {
         mockRequest = new NextRequest(
           'http://localhost:3000/api/v1/integrations/github/auth'
-        );
+
         const response = await GET(mockRequest);
         const location = response.headers.get('Location');
         const stateMatch = location?.match(/state=([^&]+)/);
@@ -167,14 +162,12 @@ describe('/api/v1/integrations/github/auth', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
       const location = response.headers.get('Location');
 
       expect(location).toContain(
         'https://github.company.com/login/oauth/authorize'
-      );
 
       delete process.env.GITHUB_ENTERPRISE_URL;
     });
@@ -182,7 +175,6 @@ describe('/api/v1/integrations/github/auth', () => {
     it('should include custom scopes if requested', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth?scopes=repo,workflow,admin:org'
-      );
 
       const response = await GET(mockRequest);
       const location = response.headers.get('Location');
@@ -206,7 +198,6 @@ describe('/api/v1/integrations/github/auth', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/auth'
-      );
 
       const response = await GET(mockRequest);
 
@@ -217,7 +208,6 @@ describe('/api/v1/integrations/github/auth', () => {
       const maliciousRedirect = 'http://evil.com/steal-token';
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/auth?redirect_uri=${encodeURIComponent(maliciousRedirect)}`
-      );
 
       const response = await GET(mockRequest);
 

@@ -182,7 +182,6 @@ describe('Portfolio Creation Journey - 30 Minute Goal', () => {
       // Test AI enhancement failure with fallback
       mockFetch.mockRejectedValueOnce(
         new Error('AI service temporarily unavailable')
-      );
 
       try {
         await fetch('/api/v1/ai/enhance-bio', { method: 'POST' });
@@ -259,7 +258,6 @@ describe('Portfolio Creation Journey - 30 Minute Goal', () => {
       const totalTarget = Object.values(performanceTargets).reduce(
         (sum, target) => sum + target,
         0
-      );
 
       // Verify total target is under 30 minutes
       expect(totalTarget).toBeLessThan(30 * 60 * 1000);

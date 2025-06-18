@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,6 +10,7 @@ import AICreditPacks from '@/components/dashboard/ai-credit-packs';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { toast } from '@/lib/ui/toast';
 import { AI_CREDIT_PACKS } from '@/lib/services/stripe/stripe-enhanced';
+
 
 // Mock dependencies
 jest.mock('@/lib/i18n/refactored-context');
@@ -233,7 +235,6 @@ describe('AICreditPacks', () => {
       await waitFor(() => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({ variant: 'destructive' })
-        );
       });
 
       // Should no longer be in loading state
@@ -271,7 +272,7 @@ describe('AICreditPacks', () => {
 
       const useAcrossPortfoliosElements = screen.getAllByText(
         'Use across all portfolios'
-      );
+
       expect(useAcrossPortfoliosElements).toHaveLength(3);
     });
   });

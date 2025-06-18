@@ -1,8 +1,10 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { useRouter } from 'next/navigation';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { useAuthStore } from '@/lib/store/auth-store';
+
 
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
@@ -44,7 +46,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
     expect(mockPush).not.toHaveBeenCalled();
@@ -60,7 +61,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     // Should show loading spinner
     const loadingContainer = screen.getByTestId('loading-container');
@@ -79,7 +79,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/auth/signin');
@@ -98,7 +97,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute redirectTo="/custom-login">
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/custom-login');
@@ -110,7 +108,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     // Start with loading
     mockUseAuthStore.mockReturnValue({
@@ -122,7 +119,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     // Change to authenticated
     mockUseAuthStore.mockReturnValue({
@@ -134,7 +130,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
     expect(mockPush).not.toHaveBeenCalled();
@@ -151,7 +146,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     expect(screen.getByTestId('loading-container')).toBeInTheDocument();
 
@@ -165,7 +159,6 @@ describe('ProtectedRoute', () => {
       <ProtectedRoute>
         <div>Protected Content</div>
       </ProtectedRoute>
-    );
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith('/auth/signin');

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import {
   FeedbackSystem,
   BetaAnalytics,
@@ -57,7 +58,6 @@ describe('Beta Feedback System', () => {
           headers: { 'Content-Type': 'application/json' },
           body: expect.stringContaining('Template switching issue'),
         })
-      );
     });
 
     it('should handle feedback submission failures gracefully', async () => {
@@ -65,7 +65,6 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
-      );
 
       const feedbackData = {
         userId: 'user_123',
@@ -117,7 +116,6 @@ describe('Beta Feedback System', () => {
           headers: { 'Content-Type': 'application/json' },
           body: expect.stringContaining('AI Content Enhancement'),
         })
-      );
     });
 
     it('should retrieve feedback with filters', async () => {
@@ -153,7 +151,6 @@ describe('Beta Feedback System', () => {
           '/api/v1/beta/feedback/list?type=bug&severity=high&limit=10'
         ),
         expect.objectContaining({ method: 'GET' })
-      );
     });
 
     it('should calculate NPS score correctly', () => {
@@ -297,7 +294,6 @@ describe('Beta Feedback System', () => {
           headers: { 'Content-Type': 'application/json' },
           body: expect.stringContaining('portfolio_created'),
         })
-      );
     });
 
     it('should track portfolio journey events', async () => {
@@ -318,7 +314,6 @@ describe('Beta Feedback System', () => {
         expect.objectContaining({
           body: expect.stringContaining('portfolio_journey'),
         })
-      );
     });
 
     it('should track feature usage', async () => {
@@ -338,14 +333,12 @@ describe('Beta Feedback System', () => {
           enhancedLength: 120,
           quality: 'high',
         }
-      );
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/beta/analytics/track',
         expect.objectContaining({
           body: expect.stringContaining('feature_usage'),
         })
-      );
     });
 
     it('should handle tracking failures gracefully', async () => {
@@ -353,7 +346,6 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
-      );
 
       // Should not throw error
       await expect(
@@ -428,7 +420,7 @@ describe('Beta Feedback System', () => {
       expect(readiness.checks.stability.message).toContain('2 critical bugs');
       expect(readiness.recommendations).toContainEqual(
         expect.stringContaining('2 critical bugs need resolution')
-      );
+
     });
   });
 

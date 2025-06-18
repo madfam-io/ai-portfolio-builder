@@ -1,8 +1,11 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import crypto from 'crypto';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('next/headers');
@@ -10,6 +13,8 @@ jest.mock('@/lib/supabase/server');
 jest.mock('@/lib/utils/logger');
 
 describe('FeatureFlagService', () => {
+  setupCommonMocks();
+
   let mockCookieStore: any;
   let mockSupabaseClient: any;
 
@@ -97,14 +102,12 @@ describe('FeatureFlagService', () => {
           sameSite: 'lax',
           path: '/',
         })
-      );
 
       // Should store assignment
       expect(mockCookieStore.set).toHaveBeenCalledWith(
         'prisma_experiments',
         expect.stringContaining('exp-123'),
         expect.any(Object)
-      );
 
       // Should record assignment event
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
@@ -113,7 +116,6 @@ describe('FeatureFlagService', () => {
           p_event_type: 'assignment',
           p_experiment_id: 'exp-123',
         })
-      );
     });
 
     it('should return existing assignment for returning visitor', async () => {
@@ -158,7 +160,7 @@ describe('FeatureFlagService', () => {
         'prisma_experiments',
         expect.any(String),
         expect.any(Object)
-      );
+
     });
 
     it('should respect targeting criteria', async () => {
@@ -274,7 +276,7 @@ describe('FeatureFlagService', () => {
       expect(result).toBeNull();
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to create Supabase client'
-      );
+
     });
 
     it('should respect traffic percentage for experiment', async () => {
@@ -325,7 +327,7 @@ describe('FeatureFlagService', () => {
           p_event_type: 'conversion',
           p_event_data: { value: 99.99 },
         }
-      );
+
     });
 
     it('should handle conversion recording errors', async () => {
@@ -337,7 +339,7 @@ describe('FeatureFlagService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to record conversion',
         expect.any(Error)
-      );
+
     });
 
     it('should handle missing supabase client', async () => {
@@ -347,7 +349,7 @@ describe('FeatureFlagService', () => {
 
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to create Supabase client for conversion tracking'
-      );
+
     });
   });
 
@@ -362,7 +364,6 @@ describe('FeatureFlagService', () => {
         {
           section: 'hero',
         }
-      );
 
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
         'record_landing_page_event',
@@ -377,7 +378,7 @@ describe('FeatureFlagService', () => {
             timestamp: expect.any(String),
           }),
         }
-      );
+
     });
   });
 
@@ -419,7 +420,7 @@ describe('FeatureFlagService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to parse experiment assignments cookie',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -447,7 +448,6 @@ describe('FeatureFlagService', () => {
       const result = await FeatureFlagService.isFeatureEnabled(
         'hero',
         'modern'
-      );
 
       expect(result).toBe(true);
     });
@@ -474,7 +474,6 @@ describe('FeatureFlagService', () => {
       const result = await FeatureFlagService.isFeatureEnabled(
         'hero',
         'modern'
-      );
 
       expect(result).toBe(false);
     });
@@ -491,7 +490,6 @@ describe('FeatureFlagService', () => {
       const result = await FeatureFlagService.isFeatureEnabled(
         'hero',
         'modern'
-      );
 
       expect(result).toBe(false);
     });

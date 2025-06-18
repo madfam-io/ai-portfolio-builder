@@ -1,9 +1,12 @@
+import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+
 /**
  * Test suite for MFA Service
  */
 
 import { mfaService, MFAService } from '@/lib/services/auth/mfa-service';
 import { AppError } from '@/types/errors';
+
 
 // Mock dependencies first
 jest.mock('@/lib/supabase/client', () => ({
@@ -38,6 +41,7 @@ jest.mock('otpauth', () => ({
 
 // Mock the createClient import
 import { createClient } from '@/lib/supabase/client';
+
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
@@ -223,7 +227,7 @@ describe('MFA Service', () => {
 
       await expect(mfaService.challengeMFA('factor_123')).rejects.toThrow(
         AppError
-      );
+
     });
   });
 
@@ -277,7 +281,7 @@ describe('MFA Service', () => {
 
       await expect(mfaService.disableMFA('factor_123')).rejects.toThrow(
         AppError
-      );
+
     });
   });
 
@@ -307,17 +311,16 @@ describe('MFA Service', () => {
 
       await expect(service.getMFAStatus()).rejects.toThrow(
         'MFA service not available'
-      );
+
     });
 
     test('should handle network errors gracefully', async () => {
       mockSupabase.auth.mfa.listFactors.mockRejectedValue(
         new Error('Network error')
-      );
 
       await expect(mfaService.getMFAStatus()).rejects.toThrow(
         'Failed to get MFA status'
-      );
+
     });
   });
 });

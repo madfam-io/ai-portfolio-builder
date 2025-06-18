@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,6 +10,7 @@ import { aiClient } from '@/lib/ai/client';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { showToast } from '@/lib/utils/toast';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/ai/client');
@@ -58,7 +60,6 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       const button = screen.getByRole('button');
       expect(button).toBeInTheDocument();
@@ -74,7 +75,6 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       expect(screen.getByRole('button')).toBeDisabled();
     });
@@ -88,7 +88,6 @@ describe('AIEnhancementButton', () => {
           onEnhanced={mockOnEnhanced}
           disabled={true}
         />
-      );
 
       expect(screen.getByRole('button')).toBeDisabled();
     });
@@ -109,7 +108,6 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       const button = screen.getByRole('button');
       await user.click(button);
@@ -123,11 +121,11 @@ describe('AIEnhancementButton', () => {
         expect(aiClient.enhanceBio).toHaveBeenCalledWith(
           'Original bio',
           bioContext
-        );
+
         expect(mockOnEnhanced).toHaveBeenCalledWith(
           mockEnhancedContent.content,
           mockEnhancedContent.suggestions
-        );
+
       });
 
       // Should show enhanced state
@@ -137,7 +135,6 @@ describe('AIEnhancementButton', () => {
     it('should handle enhancement error', async () => {
       (aiClient.enhanceBio as jest.Mock).mockRejectedValue(
         new Error('Enhancement failed')
-      );
 
       const user = userEvent.setup();
       render(
@@ -147,7 +144,6 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -159,7 +155,7 @@ describe('AIEnhancementButton', () => {
             type: 'bio',
             content: 'Original bio',
           })
-        );
+
         expect(showToast.error).toHaveBeenCalledWith(mockT.aiEnhancementFailed);
       });
 
@@ -171,7 +167,6 @@ describe('AIEnhancementButton', () => {
     it('should handle authentication error', async () => {
       (aiClient.enhanceBio as jest.Mock).mockRejectedValue(
         new Error('Authentication required')
-      );
 
       const user = userEvent.setup();
       render(
@@ -181,21 +176,19 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
       await waitFor(() => {
         expect(showToast.error).toHaveBeenCalledWith(
           mockT.aiEnhancementRequiresAuth
-        );
+
       });
     });
 
     it('should handle quota exceeded error', async () => {
       (aiClient.enhanceBio as jest.Mock).mockRejectedValue(
         new Error('Quota exceeded')
-      );
 
       const user = userEvent.setup();
       render(
@@ -205,7 +198,6 @@ describe('AIEnhancementButton', () => {
           context={bioContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -230,7 +222,6 @@ describe('AIEnhancementButton', () => {
           context={projectContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       const button = screen.getByRole('button');
       expect(button).toHaveAttribute('title', mockT.enhanceProjectWithAI);
@@ -247,7 +238,6 @@ describe('AIEnhancementButton', () => {
 
       (aiClient.optimizeProject as jest.Mock).mockResolvedValue(
         mockEnhancedContent
-      );
 
       const user = userEvent.setup();
       render(
@@ -257,7 +247,6 @@ describe('AIEnhancementButton', () => {
           context={projectContext}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -266,11 +255,11 @@ describe('AIEnhancementButton', () => {
           projectContext.description,
           projectContext.technologies,
           projectContext.title
-        );
+
         expect(mockOnEnhanced).toHaveBeenCalledWith(
           mockEnhancedContent.enhanced,
           mockEnhancedContent.keyAchievements
-        );
+
       });
     });
 
@@ -282,7 +271,6 @@ describe('AIEnhancementButton', () => {
 
       (aiClient.optimizeProject as jest.Mock).mockResolvedValue(
         mockEnhancedContent
-      );
 
       const user = userEvent.setup();
       render(
@@ -292,7 +280,6 @@ describe('AIEnhancementButton', () => {
           context={{ technologies: ['React'] }}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -301,7 +288,7 @@ describe('AIEnhancementButton', () => {
           'Fallback description',
           ['React'],
           undefined
-        );
+
       });
     });
   });
@@ -310,7 +297,6 @@ describe('AIEnhancementButton', () => {
     it('should show loading state during enhancement', async () => {
       (aiClient.enhanceBio as jest.Mock).mockImplementation(
         () => new Promise(() => {}) // Never resolves
-      );
 
       const user = userEvent.setup();
       render(
@@ -320,7 +306,6 @@ describe('AIEnhancementButton', () => {
           context={{ title: 'Developer', skills: [] }}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -337,7 +322,6 @@ describe('AIEnhancementButton', () => {
           onEnhanced={mockOnEnhanced}
           className="custom-class"
         />
-      );
 
       expect(screen.getByRole('button')).toHaveClass('custom-class');
     });
@@ -356,7 +340,6 @@ describe('AIEnhancementButton', () => {
           context={{ title: 'Developer', skills: [] }}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       await user.click(screen.getByRole('button'));
 
@@ -372,7 +355,6 @@ describe('AIEnhancementButton', () => {
           context={{ title: 'Developer', skills: [] }}
           onEnhanced={mockOnEnhanced}
         />
-      );
 
       const button = screen.getByRole('button');
       expect(button).toHaveClass('bg-green-100', 'text-green-700');
@@ -426,7 +408,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     expect(screen.queryByText(mockT.selectModelFor)).not.toBeInTheDocument();
   });
@@ -440,7 +421,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     expect(screen.getByText(`${mockT.selectModelFor} bio`)).toBeInTheDocument();
   });
@@ -456,7 +436,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     // Should show loading state initially
     expect(screen.getByText('Loading...')).toBeInTheDocument();
@@ -498,7 +477,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       expect(screen.getByText('Fast Model')).toBeInTheDocument();
@@ -518,7 +496,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       const selectedModel = screen
@@ -541,7 +518,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       expect(screen.getByText('Quality Model')).toBeInTheDocument();
@@ -556,7 +532,7 @@ describe('ModelSelectionModal', () => {
       expect(aiClient.updateModelSelection).toHaveBeenCalledWith(
         'bio',
         'model-2'
-      );
+
       expect(mockOnModelChange).toHaveBeenCalledWith('model-2');
       expect(mockOnClose).toHaveBeenCalled();
     });
@@ -566,7 +542,6 @@ describe('ModelSelectionModal', () => {
     (aiClient.getAvailableModels as jest.Mock).mockResolvedValue(mockModels);
     (aiClient.updateModelSelection as jest.Mock).mockRejectedValue(
       new Error('Update failed')
-    );
 
     const user = userEvent.setup();
     render(
@@ -577,7 +552,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       expect(screen.getByText('Quality Model')).toBeInTheDocument();
@@ -585,13 +559,12 @@ describe('ModelSelectionModal', () => {
 
     await user.click(
       screen.getByText('Quality Model').closest('div')?.parentElement!
-    );
 
     await waitFor(() => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to update AI model selection',
         expect.any(Error)
-      );
+
       expect(mockOnClose).not.toHaveBeenCalled();
     });
   });
@@ -608,7 +581,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       expect(screen.getByText(mockT.close)).toBeInTheDocument();
@@ -629,7 +601,6 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await user.click(screen.getByText('×'));
 
@@ -639,7 +610,6 @@ describe('ModelSelectionModal', () => {
   it('should handle loading error', async () => {
     (aiClient.getAvailableModels as jest.Mock).mockRejectedValue(
       new Error('Failed to load models')
-    );
 
     render(
       <ModelSelectionModal
@@ -649,13 +619,12 @@ describe('ModelSelectionModal', () => {
         currentModel="model-1"
         onModelChange={mockOnModelChange}
       />
-    );
 
     await waitFor(() => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to load AI models',
         expect.any(Error)
-      );
+
     });
   });
 });

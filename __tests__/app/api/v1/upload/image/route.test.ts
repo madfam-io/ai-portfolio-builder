@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { POST, DELETE } from '@/app/api/v1/upload/image/route';
 import { withAuth } from '@/lib/api/middleware/auth';
@@ -8,6 +9,7 @@ import {
   STORAGE_BUCKETS,
 } from '@/lib/supabase/storage';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/api/middleware/auth');
@@ -44,7 +46,7 @@ describe('Image Upload API Routes', () => {
     // Mock generateFilePath
     (generateFilePath as jest.Mock).mockReturnValue(
       'user-123/profile/test-image-123.jpg'
-    );
+
   });
 
   describe('POST /api/v1/upload/image', () => {
@@ -68,7 +70,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -96,7 +97,6 @@ describe('Image Upload API Routes', () => {
       (uploadFile as jest.Mock).mockResolvedValue(mockUploadResult);
       (generateFilePath as jest.Mock).mockReturnValue(
         'user-123/portfolio-123/test-image-123.jpg'
-      );
 
       const formData = new FormData();
       formData.append('file', mockFile);
@@ -109,7 +109,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -124,7 +123,7 @@ describe('Image Upload API Routes', () => {
         'user-123',
         'test-image.jpg',
         'portfolio-123'
-      );
+
     });
 
     it('should upload certificate image successfully', async () => {
@@ -147,7 +146,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
 
@@ -179,7 +177,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
 
@@ -202,7 +199,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -222,7 +218,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -242,7 +237,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -263,7 +257,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -289,7 +282,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -312,7 +304,6 @@ describe('Image Upload API Routes', () => {
           method: 'POST',
           body: formData,
         }
-      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -332,7 +323,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -342,7 +332,7 @@ describe('Image Upload API Routes', () => {
       expect(deleteFile).toHaveBeenCalledWith(
         'AVATARS',
         'user-123/profile/test-image.jpg'
-      );
+
     });
 
     it('should return 400 when path is missing', async () => {
@@ -351,7 +341,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -366,7 +355,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -381,7 +369,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -405,7 +392,6 @@ describe('Image Upload API Routes', () => {
           {
             method: 'DELETE',
           }
-        );
 
         const response = await DELETE(request);
         expect(response.status).toBe(200);
@@ -419,7 +405,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -436,7 +421,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();
@@ -453,7 +437,6 @@ describe('Image Upload API Routes', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const response = await DELETE(request);
       const data = await response.json();

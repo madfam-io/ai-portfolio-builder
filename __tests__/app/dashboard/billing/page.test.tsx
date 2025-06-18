@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,7 +12,32 @@ import { useSubscription } from '@/lib/hooks/use-subscription';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useToast } from '@/hooks/use-toast';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
 }));
@@ -49,9 +75,9 @@ jest.mock('@/components/dashboard/ai-credit-packs', () => {
         <span data-testid="current-credits">{currentCredits}</span>
         <button onClick={() => onPurchase('small')}>Purchase Small Pack</button>
       </div>
-    );
+
   };
-});
+}));
 
 const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 const mockUseSubscription = useSubscription as jest.MockedFunction<
@@ -386,7 +412,6 @@ describe('BillingPage', () => {
           },
           body: JSON.stringify({ packId: 'small' }),
         }
-      );
 
       await waitFor(() => {
         expect(window.location.href).toBe('https://checkout.stripe.com/test');

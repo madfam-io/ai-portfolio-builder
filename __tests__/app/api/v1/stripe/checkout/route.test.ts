@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -8,6 +10,7 @@ import { stripeService } from '@/lib/services/stripe/stripe';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
 import { AppError } from '@/types/errors';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/stripe/stripe');
@@ -44,7 +47,6 @@ describe('/api/v1/stripe/checkout', () => {
           'Content-Type': 'application/json',
         },
       }
-    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -61,7 +63,7 @@ describe('/api/v1/stripe/checkout', () => {
     beforeEach(() => {
       mockStripeService.createCheckoutSession.mockResolvedValue(
         mockSession as any
-      );
+
     });
 
     it('should create checkout session for valid plan', async () => {
@@ -99,7 +101,7 @@ describe('/api/v1/stripe/checkout', () => {
           planId: 'pro',
           amount: mockSession.amount_total,
         }
-      );
+
     });
 
     it('should use default trial days when not provided', async () => {
@@ -117,7 +119,6 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           trialDays: 7,
         })
-      );
     });
 
     it('should handle all valid plan types', async () => {
@@ -127,7 +128,6 @@ describe('/api/v1/stripe/checkout', () => {
         jest.clearAllMocks();
         mockStripeService.createCheckoutSession.mockResolvedValue(
           mockSession as any
-        );
 
         const request = mockAuthenticatedRequest({ planId });
         const response = await POST(request as any);
@@ -135,7 +135,6 @@ describe('/api/v1/stripe/checkout', () => {
         expect(response.status).toBe(200);
         expect(mockStripeService.createCheckoutSession).toHaveBeenCalledWith(
           expect.objectContaining({ planId })
-        );
       }
     });
 
@@ -183,7 +182,6 @@ describe('/api/v1/stripe/checkout', () => {
         jest.clearAllMocks();
         mockStripeService.createCheckoutSession.mockResolvedValue(
           mockSession as any
-        );
 
         const request = mockAuthenticatedRequest({ planId: 'pro', trialDays });
         const response = await POST(request as any);
@@ -214,7 +212,6 @@ describe('/api/v1/stripe/checkout', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       // User without email
       (request as any).user = { id: 'user-123', name: 'Test User' };
@@ -242,7 +239,7 @@ describe('/api/v1/stripe/checkout', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Checkout session creation failed',
         { error: stripeError }
-      );
+
     });
 
     it('should handle AppError instances', async () => {
@@ -250,7 +247,7 @@ describe('/api/v1/stripe/checkout', () => {
         'Custom error message',
         'CUSTOM_ERROR',
         422
-      );
+
       mockStripeService.createCheckoutSession.mockRejectedValue(appError);
 
       const request = mockAuthenticatedRequest({ planId: 'enterprise' });
@@ -274,7 +271,6 @@ describe('/api/v1/stripe/checkout', () => {
             'https://custom-domain.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
           cancelUrl: 'https://custom-domain.com/pricing?canceled=true',
         })
-      );
     });
 
     it('should handle malformed JSON', async () => {
@@ -287,7 +283,6 @@ describe('/api/v1/stripe/checkout', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -315,7 +310,6 @@ describe('/api/v1/stripe/checkout', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       (request as any).user = customUser;
 
@@ -326,14 +320,12 @@ describe('/api/v1/stripe/checkout', () => {
           userId: customUser.id,
           userEmail: customUser.email,
         })
-      );
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Checkout session created successfully',
         expect.objectContaining({
           userId: customUser.id,
         })
-      );
     });
 
     it('should handle zero trial days', async () => {
@@ -352,7 +344,6 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           trialDays: 0,
         })
-      );
     });
 
     it('should include session amount in response', async () => {
@@ -364,7 +355,6 @@ describe('/api/v1/stripe/checkout', () => {
 
       mockStripeService.createCheckoutSession.mockResolvedValue(
         customSession as any
-      );
 
       const request = mockAuthenticatedRequest({ planId: 'business' });
       const response = await POST(request as any);
@@ -374,7 +364,6 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           amount: 3900,
         })
-      );
     });
   });
 });

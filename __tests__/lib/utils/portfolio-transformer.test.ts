@@ -1,10 +1,11 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   transformDbPortfolioToApi,
   transformApiPortfolioToDb,
   transformDbPortfoliosToApi,
   sanitizePortfolioData,
 } from '@/lib/utils/portfolio-transformer';
-import { _Portfolio } from '@/types/portfolio';
+import type { Portfolio } from '@/types/portfolio';
 
 describe('Portfolio Transformer Utilities', () => {
   describe('transformDbPortfolioToApi', () => {

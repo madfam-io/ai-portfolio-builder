@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import React from 'react';
 import {
   render,
@@ -17,7 +18,32 @@ import { useDebounce } from '@/hooks/useDebounce';
 import { useEditorHistory } from '@/hooks/useEditorHistory';
 import { Portfolio, TemplateType } from '@/types/portfolio';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/hooks/useAutoSave');
 jest.mock('@/hooks/useDebounce');
 jest.mock('@/hooks/useEditorHistory');
@@ -144,7 +170,7 @@ describe('PortfolioEditor', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         `/api/v1/portfolios/${defaultProps.portfolioId}`,
         expect.any(Object)
-      );
+
     });
 
     expect(screen.getByText('Portfolio: My Portfolio')).toBeInTheDocument();
@@ -231,7 +257,6 @@ describe('PortfolioEditor', () => {
         expect.objectContaining({
           method: 'PUT',
         })
-      );
     });
 
     expect(defaultProps.onSave).toHaveBeenCalled();
@@ -269,7 +294,6 @@ describe('PortfolioEditor', () => {
       expect.objectContaining({
         data: expect.any(Object),
       })
-    );
 
     // Make a change
     const updateButton = screen.getByText('Update Name');
@@ -283,7 +307,6 @@ describe('PortfolioEditor', () => {
             name: 'Updated Name',
           }),
         })
-      );
     });
   });
 
@@ -317,7 +340,7 @@ describe('PortfolioEditor', () => {
         defaultProps.portfolioId,
         expect.any(Object),
         expect.any(Boolean)
-      );
+
     });
   });
 

@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+
 
 // Mock template components
 const MockModernTemplate = ({ portfolio }: any) => (
@@ -11,21 +13,18 @@ const MockModernTemplate = ({ portfolio }: any) => (
     <h1>{portfolio.name}</h1>
     <p>{portfolio.title}</p>
   </div>
-);
 
 const MockMinimalTemplate = ({ portfolio }: any) => (
   <div data-testid="minimal-template">
     <h1>{portfolio.name}</h1>
     <p>{portfolio.title}</p>
   </div>
-);
 
 const MockBusinessTemplate = ({ portfolio }: any) => (
   <div data-testid="business-template">
     <h1>{portfolio.name}</h1>
     <p>{portfolio.title}</p>
   </div>
-);
 
 // Template selector component
 const TemplateSelector = ({ template, onTemplateChange }: any) => (
@@ -52,7 +51,6 @@ const TemplateSelector = ({ template, onTemplateChange }: any) => (
       Business
     </button>
   </div>
-);
 
 // Template renderer
 const TemplateRenderer = ({ portfolio }: any) => {
@@ -120,7 +118,6 @@ describe('Template System Integration', () => {
 
     render(
       <TemplateSelector template="modern" onTemplateChange={mockOnChange} />
-    );
 
     expect(screen.getByTestId('template-selector')).toBeInTheDocument();
     expect(screen.getByTestId('modern-btn')).toHaveClass('selected');
@@ -160,7 +157,6 @@ describe('Template System Integration', () => {
       const portfolioWithTemplate = { ...mockPortfolio, template };
       const { unmount } = render(
         <TemplateRenderer portfolio={portfolioWithTemplate} />
-      );
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Software Developer')).toBeInTheDocument();

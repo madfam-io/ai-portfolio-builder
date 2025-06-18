@@ -2,14 +2,40 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { EditorSidebar } from '@/components/editor/EditorSidebar';
+import EditorSidebar from '@/components/editor/EditorSidebar';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio, SectionType } from '@/types/portfolio';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -237,7 +263,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'experience',
         expect.any(Object)
-      );
+
     });
 
     it('should call onSectionUpdate when adding education', async () => {
@@ -250,7 +276,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'education',
         expect.any(Object)
-      );
+
     });
 
     it('should call onSectionUpdate when adding project', async () => {
@@ -263,7 +289,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'projects',
         expect.any(Object)
-      );
+
     });
 
     it('should call onSectionUpdate when adding skill', async () => {
@@ -276,7 +302,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'skills',
         expect.any(Object)
-      );
+
     });
 
     it('should call onSectionUpdate when adding certification', async () => {
@@ -289,7 +315,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'certifications',
         expect.any(Object)
-      );
+
     });
   });
 
@@ -349,12 +375,12 @@ describe('EditorSidebar', () => {
 
       expect(experienceSection).toContainElement(
         screen.getByText('Incomplete')
-      );
+
       expect(educationSection).toContainElement(screen.getByText('Incomplete'));
       expect(skillsSection).toContainElement(screen.getByText('Incomplete'));
       expect(certificationsSection).toContainElement(
         screen.getByText('Incomplete')
-      );
+
     });
   });
 
@@ -374,7 +400,7 @@ describe('EditorSidebar', () => {
       expect(mockProps.onSectionUpdate).toHaveBeenCalledWith(
         'contact',
         expect.any(Object)
-      );
+
     });
 
     it('should mark contact as complete when email exists', () => {

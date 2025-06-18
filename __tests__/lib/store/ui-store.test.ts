@@ -1,12 +1,17 @@
-import { act } from '@testing-library/react';
-import {
-  useUIStore,
-  showSuccessToast,
-  showErrorToast,
-  showWarningToast,
-  showInfoToast,
-} from '@/lib/store/ui-store';
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { act, renderHook } from '@testing-library/react';
+import { useUIStore, showSuccessToast, showErrorToast, showWarningToast, showInfoToast } from '@/lib/store/ui-store';
 import type { Modal, Toast } from '@/lib/store/types';
+
+// Initial state for resetting
+const initialState = {
+  theme: 'system' as const,
+  sidebarOpen: true,
+  modals: [],
+  toasts: [],
+  globalLoading: false,
+  loadingMessage: null,
+};
 
 // Mock DOM methods
 const mockMatchMedia = jest.fn();
@@ -38,16 +43,9 @@ describe('UI Store', () => {
       value: mockClassList,
       writable: true,
     });
-
+    
     // Reset store state
-    useUIStore.setState({
-      theme: 'system',
-      sidebarOpen: true,
-      modals: [],
-      toasts: [],
-      globalLoading: false,
-      loadingMessage: null,
-    });
+    useUIStore.setState(initialState);
   });
 
   afterEach(() => {

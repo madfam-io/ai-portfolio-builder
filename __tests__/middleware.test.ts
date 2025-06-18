@@ -1,9 +1,13 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { middleware } from '@/middleware';
 import { createServerClient } from '@supabase/ssr';
 
+
 // Mock dependencies
-jest.mock('@supabase/ssr');
+jest.mock('@supabase/ssr', () => ({
+  createServerClient: jest.fn(),
+}));
 jest.mock('@/lib/utils/logger');
 // Mock config module to be available for dynamic imports
 jest.mock('@/lib/config', () => ({
@@ -39,9 +43,7 @@ jest.mock('@/middleware/security', () => ({
   applySecurityToResponse: jest.fn((req, res) => res),
 }));
 
-const mockCreateServerClient = createServerClient as jest.MockedFunction<
-  typeof createServerClient
->;
+const mockCreateServerClient = createServerClient as any;
 
 describe('middleware', () => {
   let mockSupabaseClient: any;
@@ -84,6 +86,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307); // Redirect status
@@ -102,6 +105,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/editor/new')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -138,6 +142,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/editor/123?template=developer')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -152,6 +157,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/auth/signin')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -164,6 +170,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/auth/signup')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -176,6 +183,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/auth/signin?redirectTo=/editor/new')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -188,6 +196,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/auth/signin?redirectTo=/about')
       );
+
       const response = await middleware(request);
 
       expect(response.status).toBe(307);
@@ -206,6 +215,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/auth/signin')
       );
+
       const response = await middleware(request);
 
       // Should not redirect
@@ -251,6 +261,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/api/v1/portfolios')
       );
+
       await middleware(request);
 
       expect(apiVersionMiddleware).toHaveBeenCalledWith(request);
@@ -269,6 +280,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/api/portfolios')
       );
+
       const response = await middleware(request);
 
       expect(response.headers.get('location')).toBe(
@@ -357,6 +369,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
+
       const response = await middleware(request);
 
       // Should redirect to signin when session fails
@@ -378,6 +391,7 @@ describe('middleware', () => {
       const request = new NextRequest(
         new URL('http://localhost:3000/dashboard')
       );
+
       const response = await middleware(request);
 
       // Should not redirect when Supabase is not configured

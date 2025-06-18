@@ -2,10 +2,12 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Portfolio } from '@/types/portfolio';
+
 
 // Mock the entire EditorHeader component due to systematic Jest compilation issues
 // with lucide-react + TypeScript + React 19. This test verifies the component interface
@@ -163,13 +165,14 @@ jest.mock('@/components/editor/EditorHeader', () => ({
               )
             )
           )
-        );
+
       }
     ),
 }));
 
 // Import the mocked component
 import { EditorHeader } from '@/components/editor/EditorHeader';
+
 
 // Skip this test suite due to Jest + lucide-react + TypeScript compilation issues
 // The component works correctly but has systematic test infrastructure issues
@@ -211,7 +214,7 @@ describe.skip('EditorHeader', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-  });
+  }));
 
   const renderEditorHeader = (props = mockProps) => {
     return render(<EditorHeader {...props} />);
@@ -579,7 +582,7 @@ describe.skip('EditorHeader', () => {
           onRedo: expect.any(Function),
         }),
         {}
-      );
+
     });
 
     it('should handle optional lastSaved prop', () => {
@@ -594,7 +597,7 @@ describe.skip('EditorHeader', () => {
           lastSaved,
         }),
         {}
-      );
+
     });
   });
 });

@@ -1,3 +1,5 @@
+import { describe, test, it, expect, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -19,7 +21,7 @@ describe('AI Recommend Template API Route', () => {
       rpc: jest.fn().mockResolvedValue({
         data: true,
         error: null,
-      }),
+      })
     };
 
     // Apply any overrides

@@ -1,8 +1,11 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+
 
 // Mock crypto module before importing the middleware
 jest.mock('crypto', () => ({
@@ -17,6 +20,7 @@ jest.mock('crypto', () => ({
 // Import the middleware after mocking crypto
 import csrfMiddleware from '@/middleware/csrf-enhanced';
 import crypto from 'crypto';
+
 
 const mockCrypto = crypto as jest.Mocked<typeof crypto>;
 
@@ -402,7 +406,6 @@ describe('Enhanced CSRF Middleware', () => {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeInstanceOf(NextResponse);
@@ -414,7 +417,6 @@ describe('Enhanced CSRF Middleware', () => {
         {
           method: 'DELETE',
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeInstanceOf(NextResponse);
@@ -427,7 +429,6 @@ describe('Enhanced CSRF Middleware', () => {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeInstanceOf(NextResponse);
@@ -468,7 +469,6 @@ describe('Enhanced CSRF Middleware', () => {
         {
           method: 'POST',
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeNull();
@@ -481,7 +481,6 @@ describe('Enhanced CSRF Middleware', () => {
           method: 'POST',
           headers: { 'stripe-signature': 'valid-signature' },
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeNull();
@@ -502,7 +501,6 @@ describe('Enhanced CSRF Middleware', () => {
         {
           method: 'POST',
         }
-      );
 
       const result = await csrfMiddleware(request);
       expect(result).toBeNull();
@@ -625,7 +623,8 @@ describe('Enhanced CSRF Middleware', () => {
       });
 
       const result = await csrfMiddleware(request);
-      const responseData = await result?.json();
+
+    const responseData = await result?.json();
 
       // The middleware always returns the same error message
       expect(responseData.error).toContain('Invalid CSRF token');
@@ -642,7 +641,8 @@ describe('Enhanced CSRF Middleware', () => {
       });
 
       const result = await csrfMiddleware(request);
-      const responseData = await result?.json();
+
+    const responseData = await result?.json();
 
       // The middleware always returns the same error message regardless of environment
       expect(responseData.error).toBe('Invalid CSRF token');
@@ -712,7 +712,7 @@ describe('Enhanced CSRF Middleware', () => {
       expect(mockCrypto.createHmac).toHaveBeenCalledWith(
         'sha256',
         expect.any(String)
-      );
+
     });
 
     it('should rotate tokens periodically', async () => {
@@ -760,11 +760,9 @@ describe('Enhanced CSRF Middleware', () => {
             Cookie: `prisma-csrf-token=token-${i}`,
           },
         })
-      );
 
       const results = await Promise.all(
         requests.map(req => csrfMiddleware(req))
-      );
 
       expect(results).toHaveLength(10);
     });
@@ -773,11 +771,9 @@ describe('Enhanced CSRF Middleware', () => {
       // Generate many tokens
       const requests = Array.from({ length: 1000 }, (_, i) =>
         createRequest('https://example.com/api/v1/csrf-token')
-      );
 
       const responses = await Promise.all(
         requests.map(req => csrfMiddleware(req))
-      );
 
       expect(responses).toHaveLength(1000);
       expect(mockCrypto.randomBytes).toHaveBeenCalledTimes(1000);

@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
+
 
 // Mock a basic editor component for testing
 const BasicEditor = ({ portfolio, onUpdate }: any) => {
@@ -29,7 +31,7 @@ const BasicEditor = ({ portfolio, onUpdate }: any) => {
       />
       <button data-testid="save-btn">Save</button>
     </div>
-  );
+
 };
 
 describe('Basic Editor Functionality', () => {

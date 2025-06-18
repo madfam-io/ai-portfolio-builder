@@ -1,3 +1,5 @@
+import { describe, test, it, expect } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -11,6 +13,7 @@ import {
   TemplateSection,
 } from '@/lib/templates/templateConfig';
 import { TemplateType, SectionType } from '@/types/portfolio';
+
 
 describe('Template Configuration', () => {
   describe('TEMPLATE_SECTIONS', () => {
@@ -56,7 +59,7 @@ describe('Template Configuration', () => {
         // Should be some kind of visual symbol
         expect(section.icon).toMatch(
           /[\u{1F000}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|⚡|📞|👋|👤|💼|🚀|🎓|💬/u
-        );
+
       });
     });
 
@@ -147,7 +150,7 @@ describe('Template Configuration', () => {
         expect(['minimal', 'bold', 'creative']).toContain(layout.headerStyle);
         expect(['compact', 'normal', 'relaxed']).toContain(
           layout.sectionSpacing
-        );
+
         expect(['modern', 'classic', 'creative']).toContain(layout.typography);
       });
     });
@@ -161,7 +164,7 @@ describe('Template Configuration', () => {
         expect(typeof features.includeTestimonials).toBe('boolean');
         expect(['icons', 'buttons', 'minimal']).toContain(
           features.socialLinksStyle
-        );
+
       });
     });
 
@@ -169,7 +172,6 @@ describe('Template Configuration', () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const requiredSections = TEMPLATE_SECTIONS.filter(s => s.required).map(
           s => s.id
-        );
 
         requiredSections.forEach(sectionId => {
           expect(config.defaultOrder).toContain(sectionId);
@@ -180,7 +182,6 @@ describe('Template Configuration', () => {
     it('should have unique default orders per template', () => {
       const orders = Object.values(TEMPLATE_CONFIGS).map(config =>
         config.defaultOrder.join(',')
-      );
 
       // Most templates should have different section orders
       const uniqueOrders = new Set(orders);
@@ -199,7 +200,6 @@ describe('Template Configuration', () => {
       // Consultant template should include testimonials
       expect(TEMPLATE_CONFIGS.consultant.features.includeTestimonials).toBe(
         true
-      );
 
       // Minimal template should be simple
       expect(TEMPLATE_CONFIGS.minimal.features.showcaseProjects).toBe(false);
@@ -406,7 +406,6 @@ describe('Template Configuration', () => {
         const backgroundBrightness = parseInt(
           colorScheme.background.slice(1),
           16
-        );
 
         // Should have sufficient contrast (simplified check)
         const contrastRatio = Math.abs(textBrightness - backgroundBrightness);
@@ -479,7 +478,6 @@ describe('Template Configuration', () => {
       const creativeTemplates = ['designer', 'creative'];
       const creativeConfigs = creativeTemplates.map(
         t => TEMPLATE_CONFIGS[t as TemplateType]
-      );
 
       creativeConfigs.forEach(config => {
         expect(config.layout.headerStyle).toMatch(/creative|bold/);

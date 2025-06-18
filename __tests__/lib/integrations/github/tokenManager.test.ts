@@ -1,11 +1,12 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { GitHubTokenManager } from '@/lib/integrations/github/tokenManager';
 import { createClient } from '@/lib/supabase/server';
 import * as _crypto from 'crypto';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/services/error/error-logger');
 jest.mock('crypto', () => ({
   ...jest.requireActual('crypto'),
@@ -24,6 +25,8 @@ jest.mock('crypto', () => ({
 global.fetch = jest.fn();
 
 describe('GitHubTokenManager', () => {
+  setupCommonMocks();
+
   let tokenManager: GitHubTokenManager;
   let mockSupabase: any;
   const _mockUserId = 'user-123';
@@ -87,7 +90,6 @@ describe('GitHubTokenManager', () => {
           expires_at: expect.any(String),
           scope: 'repo,read:user',
         })
-      );
     });
 
     it('should encrypt tokens before storage', async () => {
@@ -130,7 +132,7 @@ describe('GitHubTokenManager', () => {
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
         'user_id',
         mockUserId
-      );
+
     });
 
     it('should return null for non-existent integration', async () => {
@@ -198,7 +200,6 @@ describe('GitHubTokenManager', () => {
           }),
           body: expect.stringContaining('grant_type=refresh_token'),
         })
-      );
     });
 
     it('should update stored tokens after refresh', async () => {
@@ -221,7 +222,6 @@ describe('GitHubTokenManager', () => {
           refresh_token: expect.any(String),
           expires_at: expect.any(String),
         })
-      );
     });
 
     it('should handle refresh token failure', async () => {
@@ -236,7 +236,7 @@ describe('GitHubTokenManager', () => {
 
       await expect(tokenManager.refreshToken(mockUserId)).rejects.toThrow(
         'Failed to refresh token'
-      );
+
     });
 
     it('should implement refresh token rotation', async () => {
@@ -273,7 +273,7 @@ describe('GitHubTokenManager', () => {
         expect.objectContaining({
           method: 'DELETE',
         })
-      );
+
       expect(mockSupabase.from().delete).toHaveBeenCalled();
     });
 
@@ -290,7 +290,7 @@ describe('GitHubTokenManager', () => {
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
         'user_id',
         mockUserId
-      );
+
     });
 
     it('should handle revocation API errors', async () => {
@@ -315,7 +315,7 @@ describe('GitHubTokenManager', () => {
       const hasMissingScope = await tokenManager.hasScope(
         mockUserId,
         'admin:org'
-      );
+
       expect(hasMissingScope).toBe(false);
     });
 
@@ -328,7 +328,7 @@ describe('GitHubTokenManager', () => {
       expect(authUrl).toContain('https://github.com/login/oauth/authorize');
       expect(authUrl).toContain(
         'scope=repo%2Cread%3Auser%2Cworkflow%2Cadmin%3Aorg'
-      );
+
     });
 
     it('should merge existing and new scopes', async () => {
@@ -395,7 +395,6 @@ describe('GitHubTokenManager', () => {
           action: 'api_call',
           timestamp: expect.any(String),
         })
-      );
     });
 
     it('should implement token auto-refresh', async () => {
@@ -460,7 +459,7 @@ describe('GitHubTokenManager', () => {
 
       await expect(tokenManager.getAccessToken(mockUserId)).rejects.toThrow(
         'Database connection failed'
-      );
+
     });
 
     it('should log security events', async () => {
@@ -476,20 +475,18 @@ describe('GitHubTokenManager', () => {
           message: expect.stringContaining('decryption failed'),
           severity: 'high',
         })
-      );
     });
 
     it('should implement rate limiting for token operations', async () => {
       const promises = Array.from({ length: 10 }, () =>
         tokenManager.getAccessToken(mockUserId)
-      );
 
       await Promise.all(promises);
 
       // After rate limit, should throw
       await expect(tokenManager.getAccessToken(mockUserId)).rejects.toThrow(
         'Rate limit exceeded'
-      );
+
     });
   });
 });

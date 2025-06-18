@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +10,32 @@ import { EditorPreview } from '@/components/editor/EditorPreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -287,7 +313,6 @@ describe('EditorPreview', () => {
             title: 'Full Stack Developer',
           }}
         />
-      );
 
       expect(
         screen.getByText('Hero: Full Stack Developer')
@@ -341,7 +366,6 @@ describe('EditorPreview', () => {
             tagline: 'Creating innovative solutions',
           }}
         />
-      );
 
       expect(
         screen.getByText('Creating innovative solutions')
@@ -371,7 +395,6 @@ describe('EditorPreview', () => {
               title,
             }}
           />
-        );
 
         expect(screen.getByText(`Hero: ${title}`)).toBeInTheDocument();
       });
@@ -394,7 +417,6 @@ describe('EditorPreview', () => {
             title: 'Updated Title',
           }}
         />
-      );
 
       // Scroll position should be maintained
       expect(previewContainer.scrollTop).toBe(100);
@@ -415,7 +437,6 @@ describe('EditorPreview', () => {
             template: 'designer',
           }}
         />
-      );
 
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
       expect(
@@ -434,7 +455,6 @@ describe('EditorPreview', () => {
             template: 'designer',
           }}
         />
-      );
 
       // Data should still be passed to new template
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
@@ -471,7 +491,7 @@ describe('EditorPreview', () => {
       // Template content should remain the same
       expect(screen.getByTestId('developer-template').innerHTML).toBe(
         templateHTML
-      );
+
     });
 
     it('should only re-render when portfolio data changes', () => {
@@ -632,7 +652,6 @@ describe('EditorPreview', () => {
           }}
           previewMode="tablet"
         />
-      );
 
       expect(
         screen.getByText('Hero: Updated by external state')
@@ -656,7 +675,6 @@ describe('EditorPreview', () => {
           }}
           previewMode="mobile"
         />
-      );
 
       expect(screen.getByText('Hero: Update 1')).toBeInTheDocument();
       expect(screen.getByText('Tagline 1')).toBeInTheDocument();

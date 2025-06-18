@@ -172,7 +172,6 @@ describe('Enhanced Stripe Service', () => {
             },
           ],
         })
-      );
     });
 
     it('should include trial period when specified', async () => {
@@ -197,7 +196,6 @@ describe('Enhanced Stripe Service', () => {
             trial_period_days: 14,
           }),
         })
-      );
     });
 
     it('should throw error for invalid plan', async () => {
@@ -299,7 +297,6 @@ describe('Enhanced Stripe Service', () => {
               credits: AI_CREDIT_PACKS[packId].credits.toString(),
             }),
           })
-        );
       }
     });
   });
@@ -361,7 +358,6 @@ describe('Enhanced Stripe Service', () => {
         mockRawBody,
         mockSignature,
         process.env.STRIPE_WEBHOOK_SECRET
-      );
 
       expect(handler).toHaveBeenCalledWith(mockEvent);
       expect(result).toEqual({ received: true });
@@ -523,7 +519,7 @@ describe('Enhanced Stripe Service', () => {
       const enterpriseFeatures = getSubscriptionFeatures('enterprise');
       const unlimitedFeatures = enterpriseFeatures.filter(f =>
         f.name.toLowerCase().includes('unlimited')
-      );
+
       expect(unlimitedFeatures.length).toBeGreaterThan(0);
     });
   });

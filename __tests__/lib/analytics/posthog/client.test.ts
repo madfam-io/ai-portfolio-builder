@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
 import posthog from 'posthog-js';
 import {
@@ -21,6 +22,7 @@ import {
   USER_PROPERTIES,
 } from '@/lib/analytics/posthog/client';
 import { useAuthStore } from '@/lib/store/auth-store';
+
 
 // Mock posthog-js
 jest.mock('posthog-js', () => ({
@@ -325,14 +327,13 @@ describe('PostHog Analytics Client', () => {
         const mockPayload = { variant: 'A', config: { color: 'blue' } };
         (posthog.getFeatureFlagPayload as jest.Mock).mockReturnValue(
           mockPayload
-        );
 
         const result = getFeatureFlagPayload('experiment_1');
 
         expect(result).toEqual(mockPayload);
         expect(posthog.getFeatureFlagPayload).toHaveBeenCalledWith(
           'experiment_1'
-        );
+
       });
 
       it('should return null when PostHog is not loaded', () => {
@@ -558,7 +559,6 @@ describe('PostHog Analytics Client', () => {
           return usePostHog();
         },
         { initialProps: { user: null } }
-      );
 
       expect(posthog.reset).toHaveBeenCalled();
 

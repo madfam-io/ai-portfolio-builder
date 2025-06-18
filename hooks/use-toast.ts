@@ -20,7 +20,7 @@ export function useToast() {
         title: options.title,
         description: options.description,
         type: options.variant === 'destructive' ? 'error' : 'success',
-        duration: options.duration || 5000,
+        duration: options.duration !== undefined ? options.duration : 5000,
       });
     },
     [showToast]

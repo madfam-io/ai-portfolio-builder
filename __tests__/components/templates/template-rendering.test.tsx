@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ModernTemplate } from '@/components/templates/ModernTemplate';
@@ -10,6 +11,7 @@ import { EducatorTemplate } from '@/components/templates/EducatorTemplate';
 import { CreativeTemplate } from '@/components/templates/CreativeTemplate';
 import { BusinessTemplate } from '@/components/templates/BusinessTemplate';
 import { Portfolio } from '@/types/portfolio';
+
 
 const mockPortfolio: Portfolio = {
   id: 'test-portfolio',
@@ -323,7 +325,6 @@ describe('Template Rendering', () => {
       const githubLinks = screen.getAllByRole('link');
       const externalLinks = githubLinks.filter(
         link => link.getAttribute('target') === '_blank'
-      );
 
       externalLinks.forEach(link => {
         expect(link).toHaveAttribute('rel', 'noopener noreferrer');

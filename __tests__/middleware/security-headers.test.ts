@@ -1,9 +1,12 @@
+import { describe, test, it, expect } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { securityHeaders } from '@/middleware/security-headers';
+import { applySecurityHeaders } from '@/middleware/security-headers';
+
 
 describe('Security Headers Middleware', () => {
   const createRequest = (
@@ -25,7 +28,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const cspHeader = result.headers.get('Content-Security-Policy');
       expect(cspHeader).toBeDefined();
@@ -38,7 +41,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
@@ -47,7 +50,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
     });
@@ -56,7 +59,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-XSS-Protection')).toBe('1; mode=block');
     });
@@ -65,18 +68,18 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Referrer-Policy')).toBe(
         'strict-origin-when-cross-origin'
-      );
+
     });
 
     it('should add Permissions-Policy header', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const permissionsPolicy = result.headers.get('Permissions-Policy');
       expect(permissionsPolicy).toBeDefined();
@@ -91,7 +94,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const hsts = result.headers.get('Strict-Transport-Security');
       expect(hsts).toBe('max-age=31536000; includeSubDomains; preload');
@@ -101,7 +104,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('http://example.com');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Strict-Transport-Security')).toBeNull();
     });
@@ -110,7 +113,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Upgrade-Insecure-Requests')).toBe('1');
     });
@@ -121,7 +124,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('https://*.vercel.app');
@@ -132,7 +135,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('https://www.google-analytics.com');
@@ -143,7 +146,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('https://*.stripe.com');
@@ -154,7 +157,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('https://fonts.googleapis.com');
@@ -165,7 +168,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain("img-src 'self' data: https:");
@@ -177,7 +180,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain("default-src 'none'");
@@ -188,7 +191,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
     });
@@ -197,7 +200,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Cache-Control')).toBe('no-store, max-age=0');
     });
@@ -211,7 +214,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).not.toContain("'unsafe-eval'");
@@ -226,7 +229,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('localhost:*');
@@ -240,7 +243,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/embed/portfolio');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('SAMEORIGIN');
     });
@@ -249,7 +252,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/preview/123');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain("frame-src 'self'");
@@ -259,7 +262,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('https://example.com/auth/callback');
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
@@ -272,7 +275,7 @@ describe('Security Headers Middleware', () => {
         headers: { 'Content-Type': 'application/json' },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Content-Type')).toBe('application/json');
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
@@ -284,7 +287,7 @@ describe('Security Headers Middleware', () => {
         headers: { 'Content-Type': 'text/html' },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Content-Type')).toBe('text/html');
     });
@@ -295,7 +298,7 @@ describe('Security Headers Middleware', () => {
         headers: { 'Content-Type': 'image/png' },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Cache-Control')).toContain('public');
     });
@@ -308,11 +311,11 @@ describe('Security Headers Middleware', () => {
       });
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Access-Control-Allow-Origin')).toBe(
         'https://trusted-domain.com'
-      );
+
     });
 
     it('should reject CORS for disallowed origins', () => {
@@ -321,7 +324,7 @@ describe('Security Headers Middleware', () => {
       });
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Access-Control-Allow-Origin')).toBeNull();
     });
@@ -336,11 +339,11 @@ describe('Security Headers Middleware', () => {
       });
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Access-Control-Allow-Methods')).toContain(
         'POST'
-      );
+
       expect(result.headers.get('Access-Control-Max-Age')).toBe('86400');
     });
   });
@@ -350,7 +353,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Powered-By')).toBeNull(); // Should remove this
       expect(result.headers.get('Server')).toBeNull(); // Should remove this
@@ -360,7 +363,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('report-uri /api/v1/csp-report');
@@ -370,7 +373,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse('Internal Server Error', { status: 500 });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.status).toBe(500);
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
@@ -384,7 +387,7 @@ describe('Security Headers Middleware', () => {
         headers: { 'X-Frame-Options': 'SAMEORIGIN' },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       // Should override with more secure value
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
@@ -399,7 +402,7 @@ describe('Security Headers Middleware', () => {
         },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Custom-Header')).toBe('value');
       expect(result.headers.get('Content-Length')).toBe('100');
@@ -410,7 +413,7 @@ describe('Security Headers Middleware', () => {
       const response = createResponse();
 
       const start = performance.now();
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
       const end = performance.now();
 
       expect(end - start).toBeLessThan(10); // Should be fast
@@ -423,14 +426,14 @@ describe('Security Headers Middleware', () => {
       const request = createRequest('invalid-url');
       const response = createResponse();
 
-      expect(() => securityHeaders(request, response)).not.toThrow();
+      expect(() => applySecurityHeaders(request, response)).not.toThrow();
     });
 
     it('should handle missing request headers', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
@@ -439,7 +442,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse(null);
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('Content-Security-Policy')).toBeDefined();
     });
@@ -449,7 +452,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest(`https://example.com${longPath}`);
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
@@ -462,7 +465,7 @@ describe('Security Headers Middleware', () => {
         headers: { 'X-Custom-Middleware': 'applied' },
       });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Custom-Middleware')).toBe('applied');
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
@@ -472,7 +475,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse('Not Found', { status: 404 });
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.status).toBe(404);
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
@@ -489,7 +492,7 @@ describe('Security Headers Middleware', () => {
       });
       const response = new NextResponse(stream);
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
@@ -500,7 +503,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       // OWASP recommended headers
       expect(result.headers.get('X-Frame-Options')).toBeTruthy();
@@ -513,7 +516,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       // Common security scanner checks
       expect(result.headers.get('X-Powered-By')).toBeNull();
@@ -525,7 +528,7 @@ describe('Security Headers Middleware', () => {
       const request = createRequest();
       const response = createResponse();
 
-      const result = securityHeaders(request, response);
+      const result = applySecurityHeaders(request, response);
 
       const csp = result.headers.get('Content-Security-Policy');
       expect(csp).toContain('report-uri');

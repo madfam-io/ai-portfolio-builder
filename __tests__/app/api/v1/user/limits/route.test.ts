@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -7,11 +9,11 @@ import { GET } from '@/app/api/v1/user/limits/route';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/utils/logger', () => ({
   logger: {
     error: jest.fn(),
@@ -30,6 +32,8 @@ const mockCreateClient = createClient as jest.MockedFunction<
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
 describe('/api/v1/user/limits', () => {
+  setupCommonMocks();
+
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -43,7 +47,6 @@ describe('/api/v1/user/limits', () => {
           'Content-Type': 'application/json',
         },
       }
-    );
 
     // Mock the authenticated user from withAuth middleware
     (request as any).user = {
@@ -102,7 +105,7 @@ describe('/api/v1/user/limits', () => {
           userId: 'user-123',
           subscriptionTier: 'pro',
         }
-      );
+
     });
 
     it('should handle different subscription tiers', async () => {
@@ -231,7 +234,7 @@ describe('/api/v1/user/limits', () => {
           },
           userId: 'user-123',
         }
-      );
+
     });
 
     it('should handle database function returning user error', async () => {
@@ -263,13 +266,12 @@ describe('/api/v1/user/limits', () => {
           error: 'User not found in system',
           userId: 'user-123',
         }
-      );
+
     });
 
     it('should handle unexpected errors', async () => {
       mockCreateClient.mockRejectedValue(
         new Error('Network connection failed')
-      );
 
       const request = createAuthenticatedRequest();
       const response = await GET(request as any);
@@ -285,7 +287,7 @@ describe('/api/v1/user/limits', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to get user limits',
         { error: expect.any(Error) }
-      );
+
     });
 
     it('should handle AppError instances properly', async () => {
@@ -293,7 +295,6 @@ describe('/api/v1/user/limits', () => {
         'Custom limits error message',
         'CUSTOM_LIMITS_ERROR',
         422
-      );
 
       mockCreateClient.mockRejectedValue(appError);
 
@@ -338,7 +339,7 @@ describe('/api/v1/user/limits', () => {
           userId: differentUserId,
           subscriptionTier: 'business',
         }
-      );
+
     });
   });
 
@@ -538,7 +539,7 @@ describe('/api/v1/user/limits', () => {
         {
           user_uuid: 'user-b-456',
         }
-      );
+
     });
 
     it('should validate user exists in system', async () => {

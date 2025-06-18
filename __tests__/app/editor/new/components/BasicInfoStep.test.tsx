@@ -1,7 +1,9 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BasicInfoStep } from '@/app/editor/new/components/BasicInfoStep';
+
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
@@ -62,7 +64,6 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     expect(screen.getByLabelText(mockT.portfolioName)).toBeInTheDocument();
     expect(screen.getByLabelText(mockT.yourTitle)).toBeInTheDocument();
@@ -86,15 +87,14 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     expect(screen.getByLabelText(mockT.portfolioName)).toHaveValue('John Doe');
     expect(screen.getByLabelText(mockT.yourTitle)).toHaveValue(
       'Software Engineer'
-    );
+
     expect(screen.getByLabelText(mockT.shortBio)).toHaveValue(
       'Experienced developer'
-    );
+
   });
 
   it('should update form data on input change', async () => {
@@ -107,7 +107,6 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     const nameInput = screen.getByLabelText(mockT.portfolioName);
     const titleInput = screen.getByLabelText(mockT.yourTitle);
@@ -131,7 +130,6 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     const nextButton = screen.getByRole('button', { name: /Continue/ });
     expect(nextButton).toBeDisabled();
@@ -151,7 +149,6 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     const nextButton = screen.getByRole('button', { name: /Continue/ });
     expect(nextButton).toBeEnabled();
@@ -172,7 +169,6 @@ describe('BasicInfoStep', () => {
         onNext={mockOnNext}
         t={mockT}
       />
-    );
 
     const nextButton = screen.getByRole('button', { name: /Continue/ });
     await user.click(nextButton);

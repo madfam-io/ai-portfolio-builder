@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -10,7 +11,32 @@ import * as stripeEnhanced from '@/lib/services/stripe/stripe-enhanced';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/lib/ui/toast';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('next/navigation');
 jest.mock('@/lib/services/stripe/stripe-enhanced');
 jest.mock('@/lib/ui/toast');
@@ -32,11 +58,11 @@ const mockRouter = {
 const mockUseRouter = jest.mocked(useRouter);
 const mockCreateCheckoutSession = jest.mocked(
   stripeEnhanced.createCheckoutSession
-);
+
 const mockCreatePortalSession = jest.mocked(stripeEnhanced.createPortalSession);
 const mockCreateAICreditCheckout = jest.mocked(
   stripeEnhanced.createAICreditCheckout
-);
+
 const mockToast = jest.mocked(toast);
 
 describe('BillingDashboard', () => {
@@ -83,7 +109,7 @@ describe('BillingDashboard', () => {
 
       const nextBillingDate = new Date(
         defaultProps.user.subscription_period_end
-      );
+
       const formattedDate = nextBillingDate.toLocaleDateString();
 
       expect(screen.getByText(/Next billing/i)).toBeInTheDocument();
@@ -135,14 +161,13 @@ describe('BillingDashboard', () => {
 
       expect(mockRouter.push).toHaveBeenCalledWith(
         'https://billing.stripe.com/session'
-      );
+
     });
 
     it('should handle portal session errors', async () => {
       const user = userEvent.setup();
       mockCreatePortalSession.mockRejectedValue(
         new Error('Portal creation failed')
-      );
 
       render(<BillingDashboard {...defaultProps} />);
 
@@ -164,7 +189,6 @@ describe('BillingDashboard', () => {
       const user = userEvent.setup();
       mockCreatePortalSession.mockImplementation(
         () => new Promise(resolve => setTimeout(resolve, 100))
-      );
 
       render(<BillingDashboard {...defaultProps} />);
 
@@ -235,7 +259,7 @@ describe('BillingDashboard', () => {
 
       expect(mockRouter.push).toHaveBeenCalledWith(
         'https://checkout.stripe.com/session'
-      );
+
     });
 
     it('should show plan comparison features', () => {
@@ -303,7 +327,7 @@ describe('BillingDashboard', () => {
 
       expect(mockRouter.push).toHaveBeenCalledWith(
         'https://checkout.stripe.com/credits'
-      );
+
     });
   });
 

@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Portfolio } from '@/types/portfolio';
+
 
 // Mock fetch for API calls
 global.fetch = jest.fn();
@@ -56,7 +58,12 @@ const MockAIEnhancementFlow = () => {
       if (bioResponse.ok) {
         const bioData = await bioResponse.json();
         setEnhancementResults(prev => ({ ...prev, bio: bioData.enhancedBio }));
+        
+        // Transition to projects phase
         setEnhancementStep('projects');
+        
+        // Small delay to ensure state update
+        await new Promise(resolve => setTimeout(resolve, 0));
 
         // Enhance projects
         for (const project of portfolio.projects || []) {
@@ -194,7 +201,7 @@ const MockAIEnhancementFlow = () => {
         )}
       </div>
     </div>
-  );
+
 };
 
 describe('AI Enhancement Flow Integration', () => {
@@ -211,7 +218,7 @@ describe('AI Enhancement Flow Integration', () => {
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
       expect(screen.getByTestId('current-bio')).toHaveTextContent(
         'I am a developer'
-      );
+
       expect(screen.getByText('Basic App')).toBeInTheDocument();
     });
 
@@ -227,7 +234,6 @@ describe('AI Enhancement Flow Integration', () => {
     it('should disable button and show loading state when enhancement starts', async () => {
       (global.fetch as jest.Mock).mockImplementation(
         () => new Promise(resolve => setTimeout(resolve, 100))
-      );
 
       render(<MockAIEnhancementFlow />);
 
@@ -286,7 +292,6 @@ describe('AI Enhancement Flow Integration', () => {
     it('should show bio enhancement progress', async () => {
       (global.fetch as jest.Mock).mockImplementation(
         () => new Promise(resolve => setTimeout(resolve, 50))
-      );
 
       render(<MockAIEnhancementFlow />);
 
@@ -297,7 +302,7 @@ describe('AI Enhancement Flow Integration', () => {
       expect(screen.getByText('Enhancing bio...')).toBeInTheDocument();
       expect(screen.getByTestId('progress-indicator')).toHaveTextContent(
         'Step: bio'
-      );
+
     });
   });
 
@@ -343,7 +348,7 @@ describe('AI Enhancement Flow Integration', () => {
               technologies: ['React'],
             }),
           }
-        );
+
       });
     });
 
@@ -355,7 +360,6 @@ describe('AI Enhancement Flow Integration', () => {
         })
         .mockImplementation(
           () => new Promise(resolve => setTimeout(resolve, 50))
-        );
 
       render(<MockAIEnhancementFlow />);
 
@@ -487,7 +491,7 @@ describe('AI Enhancement Flow Integration', () => {
       // Check that original content is updated
       expect(screen.getByTestId('current-bio')).toHaveTextContent(
         'Enhanced professional bio'
-      );
+
       expect(screen.getByText('Enhanced Project Title')).toBeInTheDocument();
 
       // Enhancement UI should be hidden
@@ -531,7 +535,7 @@ describe('AI Enhancement Flow Integration', () => {
       // Original content should remain
       expect(screen.getByTestId('current-bio')).toHaveTextContent(
         'I am a developer'
-      );
+
       expect(screen.getByText('Basic App')).toBeInTheDocument();
 
       // Enhancement UI should be hidden
@@ -545,7 +549,6 @@ describe('AI Enhancement Flow Integration', () => {
     it('should handle bio enhancement API errors', async () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Bio enhancement failed')
-      );
 
       render(<MockAIEnhancementFlow />);
 
@@ -645,7 +648,6 @@ describe('AI Enhancement Flow Integration', () => {
                 50
               )
             )
-        );
 
       render(<MockAIEnhancementFlow />);
 
@@ -655,18 +657,17 @@ describe('AI Enhancement Flow Integration', () => {
       // Should show bio enhancement first
       expect(screen.getByTestId('progress-indicator')).toHaveTextContent(
         'Step: bio'
-      );
 
       await waitFor(() => {
         expect(screen.getByTestId('progress-indicator')).toHaveTextContent(
           'Step: projects'
-        );
+
       });
 
       await waitFor(() => {
         expect(screen.getByTestId('progress-indicator')).toHaveTextContent(
           'Step: complete'
-        );
+
       });
     });
 

@@ -1,10 +1,11 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { DashboardAnalyticsService } from '@/lib/services/analytics/DashboardAnalyticsService';
 import { createClient } from '@/lib/supabase/server';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/cache/redis-cache.server', () => ({
   redisCache: {
     get: jest.fn(),
@@ -14,6 +15,8 @@ jest.mock('@/lib/cache/redis-cache.server', () => ({
 }));
 
 describe('DashboardAnalyticsService', () => {
+  setupCommonMocks();
+
   let service: DashboardAnalyticsService;
   let mockSupabase: any;
   const _mockUserId = 'user-123';
@@ -83,7 +86,7 @@ describe('DashboardAnalyticsService', () => {
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
         'portfolio_id',
         mockPortfolioId
-      );
+
     });
 
     it('should handle different time ranges', async () => {
@@ -105,7 +108,7 @@ describe('DashboardAnalyticsService', () => {
       expect(result).toEqual(mockAnalyticsData);
       expect(redisCache.get).toHaveBeenCalledWith(
         expect.stringContaining(`analytics:overview:${mockPortfolioId}`)
-      );
+
       expect(mockSupabase.from).not.toHaveBeenCalled();
     });
 
@@ -120,7 +123,7 @@ describe('DashboardAnalyticsService', () => {
         expect.stringContaining(`analytics:overview:${mockPortfolioId}`),
         JSON.stringify(mockAnalyticsData),
         300 // 5 minutes TTL
-      );
+
     });
   });
 
@@ -188,7 +191,7 @@ describe('DashboardAnalyticsService', () => {
         {
           portfolio_id: mockPortfolioId,
         }
-      );
+
     });
   });
 
@@ -303,7 +306,7 @@ describe('DashboardAnalyticsService', () => {
 
       expect(mockSupabase.channel).toHaveBeenCalledWith(
         expect.stringContaining(`analytics:${mockPortfolioId}`)
-      );
+
       expect(mockChannel.on).toHaveBeenCalled();
       expect(mockChannel.subscribe).toHaveBeenCalled();
     });
@@ -440,7 +443,6 @@ describe('DashboardAnalyticsService', () => {
     it('should validate input parameters', async () => {
       await expect(service.getOverviewMetrics('', '7d')).rejects.toThrow(
         'Portfolio ID is required'
-      );
 
       await expect(
         service.getOverviewMetrics(mockPortfolioId, 'invalid')

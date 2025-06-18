@@ -1,9 +1,11 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   calculatePValue,
   calculateExperimentResults,
   generateTimeline,
 } from '@/lib/utils/experiments/calculate-results';
 import type { DetailedVariant } from '@/types/experiments';
+
 
 describe('Experiment Calculation Utilities', () => {
   describe('calculatePValue', () => {
@@ -183,14 +185,14 @@ describe('Experiment Calculation Utilities', () => {
 
       const control = results?.variantResults.find(
         v => v.variantId === 'control'
-      );
+
       expect(control?.conversionRate).toBe(10);
       expect(control?.uplift).toBe(0);
       expect(control?.pValue).toBe(1);
 
       const variantB = results?.variantResults.find(
         v => v.variantId === 'variant-b'
-      );
+
       expect(variantB?.conversionRate).toBe(12);
       expect(variantB?.uplift).toBe(20); // 20% uplift
       expect(variantB?.pValue).toBeGreaterThan(0);
@@ -224,7 +226,7 @@ describe('Experiment Calculation Utilities', () => {
         // If no winner, at least verify the calculation was done
         const winnerVariant = results?.variantResults.find(
           v => v.variantId === 'winner'
-        );
+
         expect(winnerVariant?.uplift).toBe(50);
       }
     });
@@ -282,7 +284,7 @@ describe('Experiment Calculation Utilities', () => {
 
       const variantC = results?.variantResults.find(
         v => v.variantId === 'variant-c'
-      );
+
       expect(variantC?.uplift).toBe(-10); // Negative uplift
     });
 
@@ -328,10 +330,10 @@ describe('Experiment Calculation Utilities', () => {
       expect(control?.confidenceInterval).toBeDefined();
       expect(control?.confidenceInterval[0]).toBeLessThan(
         control?.conversionRate || 0
-      );
+
       expect(control?.confidenceInterval[1]).toBeGreaterThan(
         control?.conversionRate || 0
-      );
+
     });
 
     it('should pick highest uplift winner among significant results', () => {
@@ -444,7 +446,6 @@ describe('Experiment Calculation Utilities', () => {
       const timeline = generateTimeline(variants, '7d');
       const todayData = timeline.find(
         t => t.date.toISOString().split('T')[0] === today
-      );
 
       expect(todayData?.visitors).toBe(110); // 50 + 60
       expect(todayData?.conversions).toBe(11); // 5 + 6
@@ -478,7 +479,7 @@ describe('Experiment Calculation Utilities', () => {
       for (let i = 1; i < timeline.length; i++) {
         expect(timeline[i].date.getTime()).toBeGreaterThan(
           timeline[i - 1].date.getTime()
-        );
+
       }
     });
   });

@@ -1,10 +1,11 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { OptimizedAnalyticsService } from '@/lib/services/analytics/optimized-analytics-service';
 import { createClient } from '@/lib/supabase/server';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/cache/in-memory', () => ({
   inMemoryCache: {
     get: jest.fn(),
@@ -16,6 +17,8 @@ jest.mock('@/lib/cache/in-memory', () => ({
 jest.mock('@/lib/services/error/error-logger');
 
 describe('OptimizedAnalyticsService', () => {
+  setupCommonMocks();
+
   let service: OptimizedAnalyticsService;
   let mockSupabase: any;
   const mockPortfolioId = 'portfolio-123';
@@ -79,14 +82,13 @@ describe('OptimizedAnalyticsService', () => {
       expect(mockSupabase.from().in).toHaveBeenCalledWith(
         'portfolio_id',
         portfolioIds
-      );
+
     });
 
     it('should handle batch size limits', async () => {
       const largePortfolioList = Array.from(
         { length: 150 },
         (_, i) => `portfolio-${i}`
-      );
 
       await service.getBatchedAnalytics(largePortfolioList, '7d');
 
@@ -269,7 +271,7 @@ describe('OptimizedAnalyticsService', () => {
 
       expect(mockSupabase.from).toHaveBeenCalledWith(
         'portfolio_analytics_optimized'
-      );
+
     });
 
     it('should implement request deduplication', async () => {
@@ -279,7 +281,6 @@ describe('OptimizedAnalyticsService', () => {
           metrics: ['views'],
           timeRange: '24h',
         })
-      );
 
       await Promise.all(promises);
 
@@ -294,7 +295,6 @@ describe('OptimizedAnalyticsService', () => {
           metrics: ['views'],
           timeRange: '24h',
         })
-      );
 
       await Promise.all(promises);
 

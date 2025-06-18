@@ -1,3 +1,4 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   enhanceBioSchema,
   optimizeProjectSchema,
@@ -44,7 +45,7 @@ describe('AI Validation Schemas', () => {
 
       expect(() => enhanceBioSchema.parse(invalidData)).toThrow(
         'Bio must be at least 10 characters'
-      );
+
     });
 
     it('should reject text too long', () => {
@@ -54,7 +55,7 @@ describe('AI Validation Schemas', () => {
 
       expect(() => enhanceBioSchema.parse(invalidData)).toThrow(
         'Bio must be less than 500 characters'
-      );
+
     });
 
     it('should reject invalid model', () => {
@@ -109,7 +110,7 @@ describe('AI Validation Schemas', () => {
 
       expect(() => optimizeProjectSchema.parse(invalidData)).toThrow(
         'Description must be at least 20 characters'
-      );
+
     });
 
     it('should validate format options', () => {
@@ -314,7 +315,7 @@ describe('AI Validation Schemas', () => {
       const result = aiFeedbackSchema.parse(validData);
       expect(result.feedback).toBe(
         'Great improvement, but could be more concise'
-      );
+
     });
 
     it('should validate rating range', () => {

@@ -2,13 +2,39 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import Features from '@/components/landing/Features';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -235,7 +261,6 @@ describe('Features', () => {
 
       const featureCards = screen.getAllByText(
         /AI-Powered|Professional|Real-time|Full|One-Click|Enterprise/
-      );
 
       featureCards.forEach(card => {
         mockObserver.observe(card);
@@ -249,7 +274,6 @@ describe('Features', () => {
 
       const featureCards = document.querySelectorAll(
         '[data-testid="feature-card"]'
-      );
 
       featureCards.forEach((card, index) => {
         expect(card).toHaveStyle(`animation-delay: ${index * 0.1}s`);
@@ -286,7 +310,6 @@ describe('Features', () => {
 
       const featureCards = document.querySelectorAll(
         '[data-testid="feature-card"]'
-      );
 
       featureCards.forEach(card => {
         expect(card).not.toHaveClass('animate-fade-in');
@@ -342,7 +365,6 @@ describe('Features', () => {
 
       const descriptions = screen.getAllByText(
         /Generate|Choose|See changes|Customize|Deploy|Bank-level/
-      );
 
       descriptions.forEach(desc => {
         expect(desc).toHaveClass('text-gray-600');
@@ -365,7 +387,7 @@ describe('Features', () => {
       coreFeatures.forEach(feature => {
         expect(feature.closest('[data-testid="feature-card"]')).toHaveClass(
           'bg-white'
-        );
+
       });
     });
 
@@ -445,7 +467,6 @@ describe('Features', () => {
 
       const featureCards = document.querySelectorAll(
         '[data-testid="feature-card"]'
-      );
 
       featureCards.forEach(card => {
         expect(card).toHaveAttribute('role', 'article');
@@ -488,7 +509,6 @@ describe('Features', () => {
       const preloadLinks = document.querySelectorAll('link[rel="preload"]');
       const iconPreloads = Array.from(preloadLinks).filter(link =>
         link.getAttribute('href')?.includes('icon')
-      );
 
       expect(iconPreloads.length).toBeGreaterThan(0);
     });
@@ -639,7 +659,7 @@ describe('Features', () => {
       // Should apply A/B test variants
       const experimentVariant = document.querySelector(
         '[data-experiment="features-layout"]'
-      );
+
       expect(experimentVariant).toBeInTheDocument();
     });
 

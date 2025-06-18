@@ -1,8 +1,10 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   validateExperimentForm,
   getRemainingTrafficPercentage,
 } from '@/lib/utils/experiment-validation';
 import type { VariantConfig } from '@/components/admin/experiments/create/VariantConfiguration';
+
 
 describe('Experiment Validation Utilities', () => {
   describe('validateExperimentForm', () => {
@@ -84,7 +86,7 @@ describe('Experiment Validation Utilities', () => {
 
       expect(errors.traffic).toBe(
         'Traffic allocation must equal 100% (currently 70%)'
-      );
+
     });
 
     it('should validate traffic allocation over 100%', () => {
@@ -97,7 +99,7 @@ describe('Experiment Validation Utilities', () => {
 
       expect(errors.traffic).toBe(
         'Traffic allocation must equal 100% (currently 110%)'
-      );
+
     });
 
     it('should require a control variant', () => {
@@ -122,7 +124,7 @@ describe('Experiment Validation Utilities', () => {
       expect(errors.variants).toBe('At least 2 variants are required');
       expect(errors.traffic).toBe(
         'Traffic allocation must equal 100% (currently 30%)'
-      );
+
       expect(errors.control).toBe('One variant must be marked as control');
     });
 

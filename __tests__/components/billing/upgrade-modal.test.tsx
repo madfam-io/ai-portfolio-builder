@@ -2,11 +2,37 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
 import { createCheckoutSession } from '@/lib/stripe/client';
 
+
 // Mock Stripe client
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/stripe/client', () => ({
   createCheckoutSession: jest.fn(),
   PLAN_CONFIG: {
@@ -221,7 +247,6 @@ describe('UpgradeModal', () => {
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
         )
-    );
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -258,7 +283,6 @@ describe('UpgradeModal', () => {
   it('should handle checkout session errors', async () => {
     (createCheckoutSession as jest.Mock).mockRejectedValue(
       new Error('Network error')
-    );
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -314,7 +338,6 @@ describe('UpgradeModal', () => {
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
         )
-    );
 
     render(<UpgradeModal {...defaultProps} />);
 

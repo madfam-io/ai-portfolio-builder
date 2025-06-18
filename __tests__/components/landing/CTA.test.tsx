@@ -2,12 +2,38 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import CTA from '@/components/landing/CTA';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -19,9 +45,9 @@ jest.mock('next/link', () => {
       <a href={href} className={className} {...props}>
         {children}
       </a>
-    );
+
   };
-});
+}));
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
@@ -88,7 +114,7 @@ describe('CTA', () => {
         'bg-gradient-to-r',
         'from-purple-600',
         'to-blue-600'
-      );
+
     });
 
     it('should have proper heading hierarchy', () => {
@@ -97,7 +123,7 @@ describe('CTA', () => {
       const heading = screen.getByRole('heading', { level: 2 });
       expect(heading).toHaveTextContent(
         'Ready to Create Your Professional Portfolio?'
-      );
+
     });
   });
 
@@ -170,7 +196,7 @@ describe('CTA', () => {
         'px-8',
         'py-4',
         'rounded-lg'
-      );
+
     });
 
     it('should have proper text styling classes', () => {
@@ -178,12 +204,12 @@ describe('CTA', () => {
 
       const subtitle = screen.getByText(
         'Join thousands of professionals who have built stunning portfolios with PRISMA'
-      );
+
       expect(subtitle).toHaveClass('text-xl', 'mb-8', 'opacity-90');
 
       const footer = screen.getByText(
         'No credit card required • Free forever plan available'
-      );
+
       expect(footer).toHaveClass('mt-4', 'opacity-80');
     });
   });

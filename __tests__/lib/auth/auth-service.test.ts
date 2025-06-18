@@ -19,6 +19,7 @@ import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { cookies } from 'next/headers';
 
+
 // Mock dependencies
 jest.mock('@/lib/supabase/server');
 jest.mock('@/lib/utils/logger');
@@ -149,7 +150,6 @@ describe('Auth Service', () => {
 
       await expect(signUpWithEmail(mockEmail, weakPassword)).rejects.toThrow(
         'Password must be at least 12 characters'
-      );
 
       expect(mockAuth.signUp).not.toHaveBeenCalled();
     });
@@ -159,7 +159,6 @@ describe('Auth Service', () => {
 
       await expect(signUpWithEmail(invalidEmail, mockPassword)).rejects.toThrow(
         'Invalid email format'
-      );
 
       expect(mockAuth.signUp).not.toHaveBeenCalled();
     });
@@ -410,7 +409,6 @@ describe('Auth Service', () => {
 
       await expect(updatePassword(weakPassword)).rejects.toThrow(
         'Password must be at least 12 characters'
-      );
 
       expect(mockAuth.updateUser).not.toHaveBeenCalled();
     });
@@ -676,7 +674,6 @@ describe('Auth Service', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Password reset requested',
         expect.any(Object)
-      );
 
       // Failed login
       mockAuth.signInWithPassword.mockResolvedValue({
@@ -687,7 +684,7 @@ describe('Auth Service', () => {
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Failed sign in attempt',
         expect.any(Object)
-      );
+
     });
   });
 });

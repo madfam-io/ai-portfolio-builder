@@ -1,6 +1,8 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { AuthService } from '@/lib/services/auth/auth-service';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/supabase/client');
@@ -72,7 +74,6 @@ describe('AuthService', () => {
       const result = await authService.signIn(
         'test@example.com',
         'password123'
-      );
 
       expect(result.data).toEqual({ user: mockUser, session: mockSession });
       expect(result.error).toBeNull();
@@ -99,7 +100,6 @@ describe('AuthService', () => {
       const result = await authService.signIn(
         'test@example.com',
         'wrongpassword'
-      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
@@ -109,12 +109,10 @@ describe('AuthService', () => {
     it('should handle sign in exception', async () => {
       mockAuthClient.signInWithPassword.mockRejectedValue(
         new Error('Network error')
-      );
 
       const result = await authService.signIn(
         'test@example.com',
         'password123'
-      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual({
@@ -124,7 +122,7 @@ describe('AuthService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Sign in exception:',
         expect.any(Error)
-      );
+
     });
 
     it('should handle missing supabase client', async () => {
@@ -134,7 +132,6 @@ describe('AuthService', () => {
       const result = await authService.signIn(
         'test@example.com',
         'password123'
-      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual({
@@ -161,7 +158,6 @@ describe('AuthService', () => {
         'test@example.com',
         'password123',
         metadata
-      );
 
       expect(result.data).toEqual({ user: mockUser, session: mockSession });
       expect(result.error).toBeNull();
@@ -184,7 +180,6 @@ describe('AuthService', () => {
       const result = await authService.signUp(
         'test@example.com',
         'password123'
-      );
 
       expect(result.data).toEqual({ user: mockUser, session: null });
       expect(mockAuthClient.signUp).toHaveBeenCalledWith({
@@ -208,7 +203,6 @@ describe('AuthService', () => {
       const result = await authService.signUp(
         'test@example.com',
         'password123'
-      );
 
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
@@ -263,7 +257,7 @@ describe('AuthService', () => {
         {
           redirectTo: 'http://localhost:3000/auth/reset-password',
         }
-      );
+
       expect(logger.info).toHaveBeenCalledWith('Password reset email sent', {
         email: 'test@example.com',
       });
@@ -286,7 +280,7 @@ describe('AuthService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Password reset error:',
         authError
-      );
+
     });
   });
 
@@ -325,7 +319,7 @@ describe('AuthService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Password update error:',
         authError
-      );
+
     });
   });
 
@@ -455,7 +449,7 @@ describe('AuthService', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'OAuth sign in error:',
         authError
-      );
+
     });
   });
 
@@ -486,7 +480,7 @@ describe('AuthService', () => {
 
       expect(logger.warn).toHaveBeenCalledWith(
         'Cannot listen to auth state changes - service not configured'
-      );
+
       expect(mockAuthClient.onAuthStateChange).not.toHaveBeenCalled();
 
       // Unsubscribe should be a no-op
@@ -501,7 +495,6 @@ describe('AuthService', () => {
       const result = await authService.signIn(
         'test@example.com',
         'password123'
-      );
 
       expect(result.error).toEqual({
         message: 'Sign in failed',

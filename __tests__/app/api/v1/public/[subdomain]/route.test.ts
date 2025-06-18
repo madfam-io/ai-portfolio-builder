@@ -1,13 +1,14 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/public/[subdomain]/route';
 import { createClient } from '@/lib/supabase/server';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
 jest.mock('@/lib/services/error/api-error-handler');
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/cache/redis-cache.server', () => ({
   redisCache: {
     get: jest.fn(),
@@ -16,6 +17,8 @@ jest.mock('@/lib/cache/redis-cache.server', () => ({
 }));
 
 describe('/api/v1/public/[subdomain]', () => {
+  setupCommonMocks();
+
   let mockRequest: NextRequest;
   let mockSupabase: any;
   const mockPortfolio = {
@@ -75,7 +78,7 @@ describe('/api/v1/public/[subdomain]', () => {
           error: null,
         }),
         update: jest.fn().mockReturnThis(),
-      })),
+      }))
     };
 
     (createClient as jest.Mock).mockReturnValue(mockSupabase);
@@ -85,7 +88,7 @@ describe('/api/v1/public/[subdomain]', () => {
     it('should retrieve a published portfolio by subdomain', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -110,7 +113,7 @@ describe('/api/v1/public/[subdomain]', () => {
       for (const subdomain of invalidSubdomains) {
         mockRequest = new NextRequest(
           `http://localhost:3000/api/v1/public/${subdomain}`
-        );
+
         const params = { subdomain };
 
         const response = await GET(mockRequest, { params });
@@ -130,7 +133,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/nonexistent'
-      );
+
       const params = { subdomain: 'nonexistent' };
 
       const response = await GET(mockRequest, { params });
@@ -152,7 +155,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -166,7 +169,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -176,7 +179,7 @@ describe('/api/v1/public/[subdomain]', () => {
       expect(data.subdomain).toBe('johndoe');
       expect(redisCache.get).toHaveBeenCalledWith(
         'portfolio:subdomain:johndoe'
-      );
+
       expect(mockSupabase.from).not.toHaveBeenCalled();
     });
 
@@ -186,7 +189,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -196,7 +199,7 @@ describe('/api/v1/public/[subdomain]', () => {
         'portfolio:subdomain:johndoe',
         JSON.stringify(mockPortfolio),
         3600 // 1 hour TTL
-      );
+
     });
 
     it('should track portfolio views', async () => {
@@ -208,7 +211,7 @@ describe('/api/v1/public/[subdomain]', () => {
             'x-forwarded-for': '192.168.1.1',
           },
         }
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -222,7 +225,7 @@ describe('/api/v1/public/[subdomain]', () => {
     it('should handle variant selection', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe?variant=recruiters'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       // Mock variant fetch
@@ -239,8 +242,8 @@ describe('/api/v1/public/[subdomain]', () => {
                 },
               },
               error: null,
-            }),
-          };
+            })
+    };
         }
         return {
           select: jest.fn().mockReturnThis(),
@@ -248,8 +251,8 @@ describe('/api/v1/public/[subdomain]', () => {
           single: jest.fn().mockResolvedValue({
             data: mockPortfolio,
             error: null,
-          }),
-        };
+          })
+    };
       });
 
       const response = await GET(mockRequest, { params });
@@ -267,7 +270,7 @@ describe('/api/v1/public/[subdomain]', () => {
             origin: 'https://external-site.com',
           },
         }
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -276,7 +279,7 @@ describe('/api/v1/public/[subdomain]', () => {
       expect(response.headers.get('Access-Control-Allow-Origin')).toBe('*');
       expect(response.headers.get('Access-Control-Allow-Methods')).toContain(
         'GET'
-      );
+
     });
 
     it('should sanitize portfolio data for public access', async () => {
@@ -300,7 +303,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -316,7 +319,7 @@ describe('/api/v1/public/[subdomain]', () => {
     it('should include SEO metadata in response', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -344,7 +347,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -371,7 +374,7 @@ describe('/api/v1/public/[subdomain]', () => {
             'x-forwarded-for': '192.168.1.1',
           },
         }
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -382,7 +385,7 @@ describe('/api/v1/public/[subdomain]', () => {
     it('should set appropriate cache headers', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -406,7 +409,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });
@@ -420,7 +423,7 @@ describe('/api/v1/public/[subdomain]', () => {
 
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/public/johndoe'
-      );
+
       const params = { subdomain: 'johndoe' };
 
       const response = await GET(mockRequest, { params });

@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   handleApiError,
@@ -9,6 +10,7 @@ import {
 } from '@/lib/services/error/api-error-handler';
 import { AppError } from '@/types/errors';
 import { errorLogger } from '@/lib/services/error/error-logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
@@ -55,7 +57,6 @@ describe('API Error Handler', () => {
           url: 'http://localhost:3000/api/test',
           method: 'GET',
         })
-      );
     });
 
     it('should handle regular Error in development mode', () => {
@@ -99,7 +100,6 @@ describe('API Error Handler', () => {
         expect.objectContaining({
           requestId: 'custom-request-id',
         })
-      );
     });
 
     it('should handle error without request', () => {
@@ -125,7 +125,6 @@ describe('API Error Handler', () => {
           userId: 'user-123',
           action: 'create-portfolio',
         })
-      );
     });
 
     it('should handle non-Error objects', () => {
@@ -171,7 +170,6 @@ describe('API Error Handler', () => {
         expect.objectContaining({
           url: 'http://localhost:3000/api/test',
         })
-      );
     });
   });
 
@@ -315,7 +313,6 @@ describe('API Error Handler', () => {
             ip: '192.168.1.1',
           },
         })
-      );
     });
 
     it('should handle missing headers gracefully', () => {
@@ -337,7 +334,6 @@ describe('API Error Handler', () => {
             ip: undefined,
           },
         })
-      );
     });
 
     it('should prefer x-real-ip over x-forwarded-for', () => {
@@ -359,7 +355,6 @@ describe('API Error Handler', () => {
             ip: '10.0.0.1', // x-forwarded-for takes precedence
           }),
         })
-      );
     });
   });
 });

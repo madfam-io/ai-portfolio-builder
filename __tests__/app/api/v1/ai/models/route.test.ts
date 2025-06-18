@@ -1,8 +1,10 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/ai/models/route';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { withCacheHeaders, generateETag } from '@/lib/cache/cache-headers';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/ai/huggingface-service');
@@ -17,12 +19,11 @@ describe('GET /api/v1/ai/models', () => {
 
     // Mock HuggingFace service instance
     mockHuggingFaceInstance = {
-      getAvailableModels: jest.fn(),
+      getAvailableModels: jest.fn()
     };
 
     (HuggingFaceService as jest.Mock).mockImplementation(
       () => mockHuggingFaceInstance
-    );
 
     // Mock cache functions
     (withCacheHeaders as jest.Mock).mockImplementation(response => response);
@@ -101,7 +102,6 @@ describe('GET /api/v1/ai/models', () => {
           models: mockModels,
         }),
       })
-    );
   });
 
   it('should return recommended models first', async () => {
@@ -113,11 +113,11 @@ describe('GET /api/v1/ai/models', () => {
 
     const recommendedModels = data.data.models.filter(
       (m: any) => m.isRecommended
-    );
+
     expect(recommendedModels).toHaveLength(2);
     expect(recommendedModels[0].id).toBe(
       'meta-llama/Meta-Llama-3.1-8B-Instruct'
-    );
+
     expect(recommendedModels[1].id).toBe('microsoft/Phi-3.5-mini-instruct');
   });
 
@@ -130,7 +130,7 @@ describe('GET /api/v1/ai/models', () => {
 
     const llamaModel = data.data.models.find((m: any) =>
       m.id.includes('Llama')
-    );
+
     expect(llamaModel.capabilities).toContain('bio');
     expect(llamaModel.capabilities).toContain('project');
     expect(llamaModel.capabilities).toContain('template');
@@ -165,7 +165,7 @@ describe('GET /api/v1/ai/models', () => {
     expect(logger.error).toHaveBeenCalledWith(
       'Failed to fetch available models',
       error
-    );
+
   });
 
   it('should include cost information', async () => {
@@ -220,13 +220,12 @@ describe('GET /api/v1/ai/models', () => {
     expect(data.data.lastUpdated).toBeDefined();
     expect(new Date(data.data.lastUpdated).toISOString()).toBe(
       data.data.lastUpdated
-    );
+
   });
 
   it('should handle non-Error exceptions', async () => {
     mockHuggingFaceInstance.getAvailableModels.mockRejectedValue(
       'String error'
-    );
 
     const _request = new NextRequest('http://localhost:3000/api/v1/ai/models');
     const response = await GET();
@@ -237,6 +236,6 @@ describe('GET /api/v1/ai/models', () => {
     expect(logger.error).toHaveBeenCalledWith(
       'Failed to fetch available models',
       { error: 'String error' }
-    );
+
   });
 });

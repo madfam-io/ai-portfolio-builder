@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { act } from '@testing-library/react';
 import { usePortfolioVariantsStore } from '@/lib/store/portfolio-variants-store';
 import { logger } from '@/lib/utils/logger';
@@ -96,7 +97,7 @@ describe('Portfolio Variants Store', () => {
       expect(isLoading).toBe(false);
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios/portfolio-123/variants'
-      );
+
     });
 
     it('should handle empty variants', async () => {
@@ -133,7 +134,7 @@ describe('Portfolio Variants Store', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to load variants:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -212,7 +213,6 @@ describe('Portfolio Variants Store', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(input),
         })
-      );
     });
 
     it('should handle create error', async () => {
@@ -268,7 +268,6 @@ describe('Portfolio Variants Store', () => {
           method: 'PATCH',
           body: JSON.stringify(updates),
         })
-      );
     });
 
     it('should update content override', async () => {
@@ -297,7 +296,6 @@ describe('Portfolio Variants Store', () => {
             },
           }),
         })
-      );
     });
 
     it('should remove content override', async () => {
@@ -320,7 +318,6 @@ describe('Portfolio Variants Store', () => {
             contentOverrides: {},
           }),
         })
-      );
     });
   });
 
@@ -353,7 +350,6 @@ describe('Portfolio Variants Store', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/variants/variant-2',
         expect.objectContaining({ method: 'DELETE' })
-      );
     });
 
     it('should handle deletion of default variant', async () => {
@@ -408,7 +404,7 @@ describe('Portfolio Variants Store', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to switch variant:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -432,7 +428,6 @@ describe('Portfolio Variants Store', () => {
           method: 'POST',
           body: JSON.stringify({ visitorInfo }),
         })
-      );
     });
 
     it('should get analytics', async () => {
@@ -460,7 +455,7 @@ describe('Portfolio Variants Store', () => {
       expect(result!).toEqual(mockAnalytics);
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/variants/variant-1/analytics?period=month'
-      );
+
     });
   });
 
@@ -498,7 +493,6 @@ describe('Portfolio Variants Store', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/variants/variant-1/optimize',
         expect.objectContaining({ method: 'POST' })
-      );
     });
 
     it('should apply suggestion', async () => {
@@ -541,7 +535,6 @@ describe('Portfolio Variants Store', () => {
             },
           }),
         })
-      );
     });
   });
 
@@ -567,7 +560,6 @@ describe('Portfolio Variants Store', () => {
             variantBId: 'variant-2',
           }),
         })
-      );
     });
 
     it('should stop comparison', async () => {
@@ -588,7 +580,6 @@ describe('Portfolio Variants Store', () => {
           method: 'PATCH',
           body: JSON.stringify({ status: 'completed' }),
         })
-      );
     });
   });
 

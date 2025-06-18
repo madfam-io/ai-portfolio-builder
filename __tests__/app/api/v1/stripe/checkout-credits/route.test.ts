@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, beforeAll, afterAll, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -9,6 +11,7 @@ import {
   AI_CREDIT_PACKS,
 } from '@/lib/services/stripe/stripe-enhanced';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/stripe/stripe-enhanced');
@@ -60,7 +63,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
           'Content-Type': 'application/json',
         },
       }
-    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -76,7 +78,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
         mockSession as any
-      );
 
       const request = mockAuthenticatedRequest({ packId: 'small' });
       const response = await POST(request as any);
@@ -106,7 +107,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
           userId: mockUser.id,
           packId: 'small',
         }
-      );
+
     });
 
     it('should handle all valid credit pack types', async () => {
@@ -117,7 +118,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
         mockSession as any
-      );
 
       // Test each valid pack ID
       for (const packId of Object.keys(AI_CREDIT_PACKS)) {
@@ -138,7 +138,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
           method: 'POST',
           body: JSON.stringify({ packId: 'small' }),
         }
-      );
 
       // No user attached to request
       const response = await POST(request as any);
@@ -155,7 +154,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
           method: 'POST',
           body: JSON.stringify({ packId: 'small' }),
         }
-      );
 
       // User missing email
       (request as any).user = { id: 'user-123', name: 'Test User' };
@@ -206,7 +204,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
       const stripeError = new Error('Stripe API error');
       mockEnhancedStripeService.createAICreditCheckout.mockRejectedValue(
         stripeError
-      );
 
       const request = mockAuthenticatedRequest({ packId: 'medium' });
       const response = await POST(request as any);
@@ -218,7 +215,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Failed to create AI credit checkout session',
         { error: stripeError }
-      );
+
     });
 
     it('should handle malformed JSON body', async () => {
@@ -231,7 +228,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -250,7 +246,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
         mockSession as any
-      );
 
       const request = mockAuthenticatedRequest({ packId: 'large' });
       await POST(request as any);
@@ -298,7 +293,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
         mockSession as any
-      );
 
       const customUser = {
         id: 'custom-user-789',
@@ -315,7 +309,6 @@ describe('/api/v1/stripe/checkout-credits', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       (request as any).user = customUser;
 
@@ -328,14 +321,12 @@ describe('/api/v1/stripe/checkout-credits', () => {
           userId: customUser.id,
           userEmail: customUser.email,
         })
-      );
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'AI credit pack checkout session created',
         expect.objectContaining({
           userId: customUser.id,
         })
-      );
     });
   });
 });

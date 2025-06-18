@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Portfolio } from '@/types/portfolio';
+
 
 // Mock fetch for API calls
 global.fetch = jest.fn();
@@ -45,7 +47,6 @@ const MockPublishingFlow = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain }),
         }
-      );
 
       if (response.ok) {
         setStep('success');
@@ -114,7 +115,7 @@ const MockPublishingFlow = () => {
         </div>
       )}
     </div>
-  );
+
 };
 
 describe('Portfolio Publishing Integration', () => {
@@ -167,7 +168,7 @@ describe('Portfolio Publishing Integration', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ subdomain: 'john-doe' }),
           }
-        );
+
       });
     });
 
@@ -193,7 +194,6 @@ describe('Portfolio Publishing Integration', () => {
     it('should handle subdomain validation errors', async () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Subdomain taken')
-      );
 
       render(<MockPublishingFlow />);
 
@@ -227,7 +227,7 @@ describe('Portfolio Publishing Integration', () => {
       fireEvent.click(checkButton);
 
       await waitFor(() => {
-        expect(screen.getByText('john-doe.prisma.dev')).toBeInTheDocument();
+        expect(screen.getByText(/john-doe\.prisma\.dev/)).toBeInTheDocument();
         expect(screen.getByTestId('publish-btn')).toBeInTheDocument();
         expect(screen.getByTestId('back-btn')).toBeInTheDocument();
       });
@@ -332,7 +332,7 @@ describe('Portfolio Publishing Integration', () => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ subdomain: 'john-doe' }),
           }
-        );
+
       });
     });
 
@@ -407,7 +407,7 @@ describe('Portfolio Publishing Integration', () => {
           expect(screen.queryByTestId('success-step')).not.toBeInTheDocument();
         },
         { timeout: 3000 }
-      );
+
     });
   });
 
@@ -528,7 +528,6 @@ describe('Portfolio Publishing Integration', () => {
         })
         .mockImplementationOnce(
           () => new Promise(resolve => setTimeout(resolve, 100))
-        );
 
       render(<MockPublishingFlow />);
 

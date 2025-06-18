@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -9,14 +11,14 @@ import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
 import { createClient } from '@/lib/supabase/server';
 import { AppError } from '@/types/errors';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/stripe/stripe');
 jest.mock('@/lib/utils/logger');
 jest.mock('@/lib/config/env');
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/api/middleware/auth', () => ({
   withAuth: (handler: any) => handler,
 }));
@@ -29,6 +31,8 @@ const mockCreateClient = createClient as jest.MockedFunction<
 >;
 
 describe('/api/v1/stripe/portal', () => {
+  setupCommonMocks();
+
   let mockSupabase: any;
 
   beforeEach(() => {
@@ -42,7 +46,7 @@ describe('/api/v1/stripe/portal', () => {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn()
     };
 
     mockCreateClient.mockResolvedValue(mockSupabase);
@@ -60,7 +64,6 @@ describe('/api/v1/stripe/portal', () => {
       {
         method: 'POST',
       }
-    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -76,7 +79,7 @@ describe('/api/v1/stripe/portal', () => {
     beforeEach(() => {
       mockStripeService.createPortalSession.mockResolvedValue(
         mockPortalSession as any
-      );
+
     });
 
     it('should create portal session for user with valid Stripe customer', async () => {
@@ -102,7 +105,7 @@ describe('/api/v1/stripe/portal', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('users');
       expect(mockSupabase.select).toHaveBeenCalledWith(
         'stripe_customer_id, subscription_status'
-      );
+
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', mockUser.id);
 
       expect(mockStripeService.createPortalSession).toHaveBeenCalledWith({
@@ -117,7 +120,7 @@ describe('/api/v1/stripe/portal', () => {
           userId: mockUser.id,
           customerId: mockUserData.stripe_customer_id,
         }
-      );
+
     });
 
     it('should return 503 when Stripe service is unavailable', async () => {
@@ -168,7 +171,7 @@ describe('/api/v1/stripe/portal', () => {
           error: { message: 'User not found' },
           userId: mockUser.id,
         }
-      );
+
     });
 
     it('should return 400 when user has no Stripe customer ID', async () => {
@@ -218,7 +221,7 @@ describe('/api/v1/stripe/portal', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Portal session creation failed',
         { error: stripeError }
-      );
+
     });
 
     it('should handle AppError instances', async () => {
@@ -236,7 +239,7 @@ describe('/api/v1/stripe/portal', () => {
         'Custom error message',
         'CUSTOM_ERROR',
         422
-      );
+
       mockStripeService.createPortalSession.mockRejectedValue(appError);
 
       const request = mockAuthenticatedRequest();
@@ -290,7 +293,7 @@ describe('/api/v1/stripe/portal', () => {
           error: { message: 'Database connection failed', code: 'DB_ERROR' },
           userId: mockUser.id,
         }
-      );
+
     });
 
     it('should handle empty Stripe customer ID', async () => {
@@ -331,7 +334,6 @@ describe('/api/v1/stripe/portal', () => {
 
         mockStripeService.createPortalSession.mockResolvedValue(
           mockPortalSession as any
-        );
 
         const request = mockAuthenticatedRequest();
         const response = await POST(request as any);
@@ -358,7 +360,6 @@ describe('/api/v1/stripe/portal', () => {
         {
           method: 'POST',
         }
-      );
 
       (request as any).user = customUser;
 
@@ -380,7 +381,6 @@ describe('/api/v1/stripe/portal', () => {
         expect.objectContaining({
           userId: customUser.id,
         })
-      );
     });
   });
 });

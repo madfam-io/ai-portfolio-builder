@@ -1,5 +1,7 @@
+import { describe, test, it, expect, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { middleware } from '@/middleware';
+
 
 // Mock all dependencies
 jest.mock('@supabase/ssr', () => ({

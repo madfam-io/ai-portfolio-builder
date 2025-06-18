@@ -4,46 +4,15 @@
 
 import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { POST } from '@/app/api/v1/stripe/webhook/route';
-import * as stripeEnhanced from '@/lib/services/stripe/stripe-enhanced';
-import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
-// Mock dependencies
-jest.mock('@/lib/services/stripe/stripe-enhanced');
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
-
-const mockHandleWebhookEvent = jest.mocked(stripeEnhanced.handleWebhookEvent);
-const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
-const mockLogger = jest.mocked(logger);
+import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
 
 describe('Stripe Webhook Route', () => {
-  let mockSupabase: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Setup Supabase mock
-    mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      upsert: jest.fn().mockReturnThis(),
-    };
-
-    mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
-
-    // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    jest.resetModules();
   });
 
-  const createMockRequest = (
+  const createWebhookRequest = (
     body: any,
     signature: string = 'test_signature'
   ) => {
@@ -86,7 +55,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['checkout.session.completed'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -120,7 +88,6 @@ describe('Stripe Webhook Route', () => {
           userId: 'user_123',
           plan: 'pro',
         })
-      );
     });
 
     it('should handle AI credit pack purchase', async () => {
@@ -147,7 +114,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['checkout.session.completed'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -192,7 +158,6 @@ describe('Stripe Webhook Route', () => {
           pack: 'medium',
           credits: 25,
         })
-      );
     });
 
     it('should handle missing user gracefully', async () => {
@@ -217,7 +182,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['checkout.session.completed'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user not found
       mockSupabase.single.mockResolvedValueOnce({
@@ -233,7 +197,6 @@ describe('Stripe Webhook Route', () => {
         expect.objectContaining({
           userId: 'user_nonexistent',
         })
-      );
     });
   });
 
@@ -269,7 +232,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['customer.subscription.updated'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup by Stripe customer ID
       mockSupabase.single.mockResolvedValueOnce({
@@ -298,7 +260,6 @@ describe('Stripe Webhook Route', () => {
           subscriptionId: 'sub_123',
           status: 'active',
         })
-      );
     });
 
     it('should handle plan changes', async () => {
@@ -330,7 +291,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['customer.subscription.updated'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -353,7 +313,6 @@ describe('Stripe Webhook Route', () => {
         expect.objectContaining({
           subscription_plan: 'business',
         })
-      );
     });
   });
 
@@ -376,7 +335,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['customer.subscription.deleted'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -406,7 +364,6 @@ describe('Stripe Webhook Route', () => {
         expect.objectContaining({
           subscriptionId: 'sub_123',
         })
-      );
     });
   });
 
@@ -431,7 +388,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['invoice.payment_failed'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -459,7 +415,6 @@ describe('Stripe Webhook Route', () => {
           subscriptionId: 'sub_123',
           attemptCount: 2,
         })
-      );
     });
   });
 
@@ -479,7 +434,6 @@ describe('Stripe Webhook Route', () => {
 
       mockHandleWebhookEvent.mockRejectedValue(
         new Error('Webhook processing failed')
-      );
 
       const response = await POST(mockRequest);
       const result = await response.json();
@@ -490,7 +444,7 @@ describe('Stripe Webhook Route', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Webhook processing error',
         expect.any(Error)
-      );
+
     });
 
     it('should handle database errors gracefully', async () => {
@@ -512,7 +466,6 @@ describe('Stripe Webhook Route', () => {
           await handlers['checkout.session.completed'](mockEvent);
           return { received: true };
         }
-      );
 
       // Mock database error
       mockSupabase.single.mockResolvedValueOnce({
@@ -528,7 +481,7 @@ describe('Stripe Webhook Route', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         expect.stringContaining('Error'),
         expect.any(Error)
-      );
+
     });
   });
 
@@ -545,7 +498,7 @@ describe('Stripe Webhook Route', () => {
         JSON.stringify(mockEvent),
         'valid_signature',
         expect.any(Object)
-      );
+
     });
 
     it('should handle unrecognized events', async () => {
@@ -564,7 +517,6 @@ describe('Stripe Webhook Route', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Webhook received',
         expect.objectContaining({ type: 'unknown.event.type' })
-      );
     });
   });
 });

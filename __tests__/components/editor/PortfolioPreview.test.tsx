@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +10,32 @@ import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio, SectionType } from '@/types/portfolio';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -252,7 +278,6 @@ describe('PortfolioPreview', () => {
             template: 'designer',
           }}
         />
-      );
 
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
       expect(
@@ -288,7 +313,6 @@ describe('PortfolioPreview', () => {
             title: 'Full Stack Developer',
           }}
         />
-      );
 
       expect(screen.getByText('Full Stack Developer')).toBeInTheDocument();
     });
@@ -556,7 +580,7 @@ describe('PortfolioPreview', () => {
       expect(heroSection).toHaveAttribute(
         'aria-label',
         'Click to edit hero section'
-      );
+
     });
 
     it('should support keyboard navigation for interactive sections', () => {

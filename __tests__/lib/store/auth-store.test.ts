@@ -1,7 +1,9 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { authService } from '@/lib/services/auth/auth-service';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock supabase client first
 jest.mock('@/lib/supabase/client', () => ({
@@ -379,7 +381,7 @@ describe('useAuthStore', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to initialize auth',
         error
-      );
+
     });
   });
 

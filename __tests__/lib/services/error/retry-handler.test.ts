@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import {
   retry,
   CircuitBreaker,
@@ -6,6 +7,7 @@ import {
 } from '@/lib/services/error/retry-handler';
 import { AppError, ExternalServiceError } from '@/types/errors';
 import { errorLogger } from '@/lib/services/error/error-logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
@@ -211,7 +213,7 @@ describe('Retry Handler', () => {
       expect(errorLogger.logWarning).toHaveBeenCalledWith(
         'Circuit breaker tripped',
         expect.any(Object)
-      );
+
     });
 
     it('should reject immediately when open', async () => {
@@ -229,7 +231,6 @@ describe('Retry Handler', () => {
 
       await expect(circuitBreaker.execute(mockFn)).rejects.toThrow(
         'Service temporarily unavailable'
-      );
 
       expect(mockFn).not.toHaveBeenCalled();
     });

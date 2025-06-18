@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -14,11 +16,11 @@ import {
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { apiError } from '@/lib/api/versioning';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/utils/logger');
 jest.mock('@/lib/api/versioning');
 
@@ -29,6 +31,8 @@ const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockApiError = apiError as jest.MockedFunction<typeof apiError>;
 
 describe('Auth Middleware', () => {
+  setupCommonMocks();
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -139,7 +143,7 @@ describe('Auth Middleware', () => {
           userId: 'user-456',
           error: 'Profile not found',
         }
-      );
+
     });
 
     it('should return null when user is not authenticated', async () => {
@@ -172,7 +176,7 @@ describe('Auth Middleware', () => {
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Supabase client not available for authentication'
-      );
+
     });
 
     it('should handle authentication errors gracefully', async () => {
@@ -186,7 +190,7 @@ describe('Auth Middleware', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Authentication error',
         authError
-      );
+
     });
 
     it('should handle user without email', async () => {
@@ -299,11 +303,11 @@ describe('Auth Middleware', () => {
 
       expect(hasPermission(userWithUnknownRole, 'portfolio:manage')).toBe(
         false
-      );
+
       expect(hasPermission(userWithUnknownRole, 'analytics:view')).toBe(false);
       expect(hasPermission(userWithUnknownRole, 'experiments:manage')).toBe(
         false
-      );
+
     });
 
     it('should deny access for undefined permissions', () => {
@@ -411,7 +415,7 @@ describe('Auth Middleware', () => {
         expect.objectContaining({
           user: mockUser,
         })
-      );
+
       expect(result).toBe(mockResponse);
     });
 
@@ -444,7 +448,7 @@ describe('Auth Middleware', () => {
         {
           path: '/api/test',
         }
-      );
+
     });
 
     it('should handle authentication errors gracefully', async () => {
@@ -466,7 +470,7 @@ describe('Auth Middleware', () => {
       expect(mockLogger.error).toHaveBeenCalledWith(
         'Auth middleware error:',
         authError
-      );
+
     });
 
     it('should pass additional arguments to handler', async () => {
@@ -505,7 +509,7 @@ describe('Auth Middleware', () => {
           user: mockUser,
         }),
         additionalArg
-      );
+
       expect(result).toBe(mockResponse);
     });
 

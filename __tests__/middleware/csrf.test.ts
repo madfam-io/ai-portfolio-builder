@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   generateCSRFToken,
@@ -14,6 +15,7 @@ jest.mock('@/lib/utils/logger', () => ({
 }));
 
 import { logger } from '@/lib/utils/logger';
+
 
 describe('CSRF Middleware', () => {
   beforeEach(() => {
@@ -171,7 +173,6 @@ describe('CSRF Middleware', () => {
             method: 'POST',
             url: 'https://example.com/api/test',
           })
-        );
       });
 
       it('should reject missing cookie token', () => {
@@ -189,7 +190,6 @@ describe('CSRF Middleware', () => {
             hasCookie: false,
             hasHeader: true,
           })
-        );
       });
 
       it('should reject missing header token', () => {
@@ -207,7 +207,6 @@ describe('CSRF Middleware', () => {
             hasCookie: true,
             hasHeader: false,
           })
-        );
       });
 
       it('should reject both tokens missing', () => {
@@ -222,7 +221,6 @@ describe('CSRF Middleware', () => {
             hasCookie: false,
             hasHeader: false,
           })
-        );
       });
     });
 
@@ -376,7 +374,6 @@ describe('CSRF Middleware', () => {
             method: 'POST',
             url: 'https://example.com/api/portfolios',
           })
-        );
       });
 
       it('should include IP address in security logs', () => {
@@ -396,7 +393,6 @@ describe('CSRF Middleware', () => {
           expect.objectContaining({
             ip: '192.168.1.1',
           })
-        );
       });
     });
 
@@ -464,7 +460,6 @@ describe('CSRF Middleware', () => {
             headers: { 'x-csrf-token': validToken },
             cookies: { 'prisma-csrf-token': validToken },
           })
-        );
 
         const responses = requests.map(req => csrfMiddleware(req));
 

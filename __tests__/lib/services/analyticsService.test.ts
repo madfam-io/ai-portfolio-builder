@@ -1,9 +1,11 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { GitHubAnalyticsClient } from '@/lib/analytics/github/client';
 import { DashboardAnalyticsService } from '@/lib/services/analytics/DashboardAnalyticsService';
 import { MetricsCalculationService } from '@/lib/services/analytics/MetricsCalculationService';
 import { RepositoryAnalyticsService } from '@/lib/services/analytics/RepositoryAnalyticsService';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/analytics/github/client');
@@ -115,7 +117,7 @@ describe('AnalyticsService', () => {
 
       expect(mockRepositoryService.getRepository).toHaveBeenCalledWith(
         'repo-123'
-      );
+
       expect(repository).toEqual(mockRepository);
     });
 
@@ -145,10 +147,10 @@ describe('AnalyticsService', () => {
 
       expect(mockRepositoryService.getRepository).toHaveBeenCalledWith(
         'repo-123'
-      );
+
       expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(
         mockRepository
-      );
+
       expect(metrics).toEqual(mockMetrics);
     });
 
@@ -186,7 +188,7 @@ describe('AnalyticsService', () => {
 
       expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(
         mockRepository
-      );
+
       expect(pullRequests).toEqual(mockPullRequests);
     });
 
@@ -209,7 +211,7 @@ describe('AnalyticsService', () => {
 
       expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(
         mockRepository
-      );
+
     });
 
     it('should throw error for non-existent repository', async () => {
@@ -232,7 +234,7 @@ describe('AnalyticsService', () => {
       expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
         mockRepository,
         30
-      );
+
     });
 
     it('should sync commit analytics with custom days', async () => {
@@ -245,7 +247,7 @@ describe('AnalyticsService', () => {
       expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
         mockRepository,
         60
-      );
+
     });
 
     it('should throw error for non-existent repository', async () => {
@@ -312,11 +314,11 @@ describe('AnalyticsService', () => {
 
       await expect(analyticsService.getDashboardData()).rejects.toThrow(
         'Dashboard error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to get dashboard data',
         { error }
-      );
+
     });
   });
 
@@ -332,14 +334,13 @@ describe('AnalyticsService', () => {
 
       mockRepositoryService.getRepositoryAnalytics.mockResolvedValue(
         mockAnalytics
-      );
 
       const analytics =
         await analyticsService.getRepositoryAnalytics('repo-123');
 
       expect(mockRepositoryService.getRepositoryAnalytics).toHaveBeenCalledWith(
         'repo-123'
-      );
+
       expect(analytics).toEqual(mockAnalytics);
     });
   });
@@ -363,16 +364,16 @@ describe('AnalyticsService', () => {
 
       expect(mockMetricsService.syncRepositoryMetrics).toHaveBeenCalledWith(
         mockRepository
-      );
+
       expect(mockMetricsService.syncPullRequests).toHaveBeenCalledWith(
         mockRepository
-      );
+
       expect(mockMetricsService.syncContributors).toHaveBeenCalledWith(
         mockRepository
-      );
+
       expect(mockMetricsService.syncCommitAnalytics).toHaveBeenCalledWith(
         mockRepository
-      );
+
     });
 
     it('should sync only specified data types', async () => {
@@ -400,7 +401,6 @@ describe('AnalyticsService', () => {
     it('should handle partial sync failures', async () => {
       mockMetricsService.syncRepositoryMetrics.mockRejectedValue(
         new Error('Metrics error')
-      );
 
       // Should not throw - Promise.all will handle the error
       await expect(
@@ -416,29 +416,27 @@ describe('AnalyticsService', () => {
     it('should run all syncs in parallel', async () => {
       const metricsPromise = new Promise(resolve =>
         setTimeout(() => resolve({}), 100)
-      );
+
       const pullRequestsPromise = new Promise(resolve =>
         setTimeout(() => resolve([]), 50)
-      );
+
       const contributorsPromise = new Promise(resolve =>
         setTimeout(() => resolve(undefined), 75)
-      );
+
       const commitsPromise = new Promise(resolve =>
         setTimeout(() => resolve(undefined), 25)
-      );
 
       mockMetricsService.syncRepositoryMetrics.mockReturnValue(
         metricsPromise as any
-      );
+
       mockMetricsService.syncPullRequests.mockReturnValue(
         pullRequestsPromise as any
-      );
+
       mockMetricsService.syncContributors.mockReturnValue(
         contributorsPromise as any
-      );
+
       mockMetricsService.syncCommitAnalytics.mockReturnValue(
         commitsPromise as any
-      );
 
       const startTime = Date.now();
       await analyticsService.syncRepositoryData('repo-123');

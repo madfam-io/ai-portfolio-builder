@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { PortfolioServiceClient } from '@/lib/services/portfolio/portfolio-service-client';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -66,7 +67,7 @@ describe('PortfolioServiceClient', () => {
       expect(result).toEqual(mockPortfolios);
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios?userId=user-123'
-      );
+
     });
 
     it('should handle fetch error', async () => {
@@ -82,7 +83,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error fetching portfolios:',
         expect.any(Error)
-      );
+
     });
 
     it('should handle network error', async () => {
@@ -96,7 +97,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error fetching portfolios:',
         networkError
-      );
+
     });
   });
 
@@ -112,7 +113,7 @@ describe('PortfolioServiceClient', () => {
       expect(result).toEqual(mockPortfolio);
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios/portfolio-123'
-      );
+
     });
 
     it('should handle fetch error', async () => {
@@ -128,7 +129,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error fetching portfolio:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -178,7 +179,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error creating portfolio:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -197,7 +198,6 @@ describe('PortfolioServiceClient', () => {
       const result = await portfolioServiceClient.updatePortfolio(
         'portfolio-123',
         updateData
-      );
 
       expect(result.name).toBe('Updated Portfolio');
       expect(result.bio).toBe('Updated bio');
@@ -210,7 +210,7 @@ describe('PortfolioServiceClient', () => {
           },
           body: JSON.stringify(updateData),
         }
-      );
+
     });
 
     it('should handle update error', async () => {
@@ -230,7 +230,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error updating portfolio:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -247,7 +247,7 @@ describe('PortfolioServiceClient', () => {
         {
           method: 'DELETE',
         }
-      );
+
     });
 
     it('should handle deletion error', async () => {
@@ -263,7 +263,7 @@ describe('PortfolioServiceClient', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error deleting portfolio:',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -313,7 +313,7 @@ describe('PortfolioServiceClient', () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios/portfolio-123'
-      );
+
       // No headers object should be passed for GET requests
     });
 
@@ -327,7 +327,7 @@ describe('PortfolioServiceClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios/portfolio-123',
         { method: 'DELETE' }
-      );
+
       // No Content-Type header for DELETE
     });
   });

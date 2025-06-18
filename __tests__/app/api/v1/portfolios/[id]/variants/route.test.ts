@@ -1,18 +1,21 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/v1/portfolios/[id]/variants/route';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { withAuth } from '@/lib/api/middleware/auth';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/utils/logger');
 jest.mock('@/lib/api/middleware/auth');
 
 describe('/api/v1/portfolios/[id]/variants', () => {
+  setupCommonMocks();
+
   const mockUser = {
     id: 'user-123',
     email: 'test@example.com',
@@ -110,7 +113,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-      );
 
       const handler = GET as any;
       const response = await handler(request, { params });
@@ -144,7 +146,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-      );
 
       const handler = GET as any;
       const response = await handler(request, { params });
@@ -166,7 +167,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-      );
 
       const handler = GET as any;
       const response = await handler(request, { params });
@@ -202,7 +202,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-      );
 
       const handler = GET as any;
       const response = await handler(request, { params });
@@ -294,7 +293,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -395,7 +393,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(inputWithBase),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -451,7 +448,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(inputWithSpecialChars),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -475,7 +471,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -515,7 +510,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -559,7 +553,6 @@ describe('/api/v1/portfolios/[id]/variants', () => {
             audienceType: 'general',
           }),
         }
-      );
 
       const handler = POST as any;
       const response = await handler(request, { params });

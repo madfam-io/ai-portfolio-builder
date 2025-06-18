@@ -1,6 +1,8 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import crypto from 'crypto';
 import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger');
@@ -155,10 +157,10 @@ describe('Crypto Utilities', () => {
 
       expect(() => encrypt('test')).toThrow(
         'ENCRYPTION_KEY must be set in production environment'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'CRITICAL: ENCRYPTION_KEY not set in production environment'
-      );
+
     });
 
     it('should generate development key when not in production', () => {
@@ -169,10 +171,10 @@ describe('Crypto Utilities', () => {
       expect(result).toHaveProperty('encrypted');
       expect(logger.warn).toHaveBeenCalledWith(
         expect.stringContaining('ENCRYPTION_KEY not found')
-      );
+
       expect(logger.info).toHaveBeenCalledWith(
         expect.stringContaining('Generated development encryption key')
-      );
+
     });
 
     it('should reuse same development key during runtime', () => {
@@ -198,7 +200,7 @@ describe('Crypto Utilities', () => {
 
       expect(() => encrypt('test')).toThrow(
         'ENCRYPTION_KEY must be a 64-character hexadecimal string'
-      );
+
     });
 
     it('should accept valid 64-char hex key', () => {

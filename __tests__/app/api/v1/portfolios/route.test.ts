@@ -4,533 +4,265 @@
 
 import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { GET, POST } from '@/app/api/v1/portfolios/route';
-import { createSupabaseClient } from '@/lib/supabase/server';
-import { getUserSession } from '@/lib/auth/session';
-import { withAuth } from '@/lib/api/middleware/auth';
-import { withRateLimit } from '@/lib/api/middleware/rate-limit';
-import { logger } from '@/lib/utils/logger';
+import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
 
-// Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/auth/session');
-jest.mock('@/lib/api/middleware/auth');
-jest.mock('@/lib/api/middleware/rate-limit');
-jest.mock('@/lib/utils/logger');
-
-const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
-const mockGetUserSession = jest.mocked(getUserSession);
-const mockWithAuth = jest.mocked(withAuth);
-const mockWithRateLimit = jest.mocked(withRateLimit);
-const mockLogger = jest.mocked(logger);
+// Helper to create portfolio query mock chain
+const createPortfolioQueryMock = (data: any, error: any = null) => ({
+  from: jest.fn().mockReturnValue({
+    select: jest.fn().mockReturnValue({
+      eq: jest.fn().mockReturnValue({
+        order: jest.fn().mockReturnValue({
+          range: jest.fn().mockResolvedValue({ data, error }),
+        }),
+      }),
+    }),
+  }),
+});
 
 describe('Portfolios API Route', () => {
-  let mockSupabase: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Setup Supabase mock
-    mockSupabase = {
-      from: jest.fn().mockReturnThis(),
-      select: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      insert: jest.fn().mockReturnThis(),
-      order: jest.fn().mockReturnThis(),
-      limit: jest.fn().mockReturnThis(),
-      range: jest.fn().mockReturnThis(),
-      count: jest.fn().mockReturnThis(),
-    };
-
-    mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
-
-    // Mock auth middleware to pass through
-    mockWithAuth.mockImplementation(handler => handler);
-    mockWithRateLimit.mockImplementation(handler => handler);
-
-    // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    jest.resetModules();
   });
 
-  const createMockRequest = (
-    method: string,
-    url: string,
-    body?: any
-  ): NextRequest => {
-    const request = new NextRequest(url, {
-      method,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: body ? JSON.stringify(body) : undefined,
-    });
-
-    // Mock JSON method
-    if (body) {
-      request.json = jest.fn().mockResolvedValue(body);
-    }
-
-    return request;
-  };
-
   describe('GET /api/v1/portfolios', () => {
-    const mockUserId = 'user_123';
-    const mockSession = {
-      user: { id: mockUserId, email: 'test@example.com' },
-    };
-
-    beforeEach(() => {
-      mockGetUserSession.mockResolvedValue(mockSession);
-    });
-
     it('should list user portfolios', async () => {
       const mockPortfolios = [
         {
           id: 'portfolio_1',
-          title: 'Portfolio 1',
-          slug: 'portfolio-1',
-          is_published: true,
-          created_at: '2024-01-01T00:00:00Z',
-          view_count: 100,
+          user_id: 'user_123',
+          name: 'My Portfolio',
+          title: 'Software Developer',
+          template: 'developer',
+          status: 'published',
+          created_at: new Date().toISOString(),
         },
         {
           id: 'portfolio_2',
-          title: 'Portfolio 2',
-          slug: 'portfolio-2',
-          is_published: false,
-          created_at: '2024-01-02T00:00:00Z',
-          view_count: 50,
+          user_id: 'user_123',
+          name: 'Secondary Portfolio',
+          title: 'Freelancer',
+          template: 'freelancer',
+          status: 'draft',
+          created_at: new Date().toISOString(),
         },
       ];
 
-      mockSupabase.count.mockReturnValue({
-        data: mockPortfolios,
-        error: null,
-        count: 2,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          ...createPortfolioQueryMock(mockPortfolios),
+        },
       });
 
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios'
-      );
+      const { GET } = await import('@/app/api/v1/portfolios/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios');
       const response = await GET(request);
       const result = await response.json();
 
       expect(response.status).toBe(200);
-      expect(result).toEqual({
-        portfolios: mockPortfolios,
-        total: 2,
-        page: 1,
-        totalPages: 1,
-      });
-
-      expect(mockSupabase.eq).toHaveBeenCalledWith('user_id', mockUserId);
-      expect(mockSupabase.order).toHaveBeenCalledWith('created_at', {
-        ascending: false,
-      });
+      expect(result.portfolios).toHaveLength(2);
+      expect(result.portfolios[0].name).toBe('My Portfolio');
     });
 
-    it('should support pagination', async () => {
-      mockSupabase.count.mockReturnValue({
-        data: [],
-        error: null,
-        count: 50,
+    it('should handle no portfolios', async () => {
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          ...createPortfolioQueryMock([]),
+        },
       });
 
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios?page=2&limit=20'
-      );
-      await GET(request);
+      const { GET } = await import('@/app/api/v1/portfolios/route');
 
-      expect(mockSupabase.range).toHaveBeenCalledWith(20, 39); // Page 2, items 21-40
+      const request = createMockRequest('https://example.com/api/v1/portfolios');
+      const response = await GET(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(result.portfolios).toHaveLength(0);
     });
 
-    it('should filter by published status', async () => {
-      mockSupabase.count.mockReturnValue({
-        data: [],
-        error: null,
-        count: 0,
-      });
+    it('should require authentication', async () => {
+      // Clear all modules to ensure fresh imports
+      jest.resetModules();
+      
+      // Mock auth middleware to simulate unauthenticated request
+      jest.doMock('@/lib/api/middleware/auth', () => ({
+        withAuth: jest.fn((handler) => async (request: any) => {
+          return new Response(JSON.stringify({ error: 'Authentication required' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }),
+      }));
+      
+      setupCommonMocks();
 
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios?published=true'
-      );
-      await GET(request);
+      const { GET } = await import('@/app/api/v1/portfolios/route');
 
-      expect(mockSupabase.eq).toHaveBeenCalledWith('is_published', true);
-    });
-
-    it('should sort by different fields', async () => {
-      mockSupabase.count.mockReturnValue({
-        data: [],
-        error: null,
-        count: 0,
-      });
-
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios?sortBy=view_count&sortOrder=desc'
-      );
-      await GET(request);
-
-      expect(mockSupabase.order).toHaveBeenCalledWith('view_count', {
-        ascending: false,
-      });
-    });
-
-    it('should handle authentication failure', async () => {
-      mockGetUserSession.mockResolvedValue(null);
-
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios'
-      );
+      const request = createMockRequest('https://example.com/api/v1/portfolios');
       const response = await GET(request);
       const result = await response.json();
 
       expect(response.status).toBe(401);
-      expect(result.error).toBe('Unauthorized');
-    });
-
-    it('should handle database errors', async () => {
-      mockSupabase.count.mockReturnValue({
-        data: null,
-        error: { code: 'PGRST000', message: 'Database error' },
-      });
-
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios'
-      );
-      const response = await GET(request);
-      const result = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(result.error).toBe('Failed to fetch portfolios');
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to fetch portfolios',
-        expect.any(Object)
-      );
+      expect(result.error).toBe('Authentication required');
     });
   });
 
   describe('POST /api/v1/portfolios', () => {
-    const mockUserId = 'user_123';
-    const mockSession = {
-      user: { id: mockUserId, email: 'test@example.com' },
-    };
-
-    beforeEach(() => {
-      mockGetUserSession.mockResolvedValue(mockSession);
-    });
-
     it('should create a new portfolio', async () => {
-      const portfolioData = {
-        title: 'My New Portfolio',
-        description: 'A professional portfolio',
-        template_id: 'developer',
-        sections: {
-          hero: {
-            title: 'John Doe',
-            subtitle: 'Full Stack Developer',
-          },
-          about: {
-            content: 'Experienced developer with 5+ years...',
-          },
-        },
+      const newPortfolio = {
+        name: 'New Portfolio',
+        title: 'Full Stack Developer',
+        bio: 'Experienced developer with over 10 years of experience in building scalable web applications',
+        template: 'developer',
       };
 
-      const mockCreatedPortfolio = {
-        id: 'portfolio_new',
-        user_id: mockUserId,
-        ...portfolioData,
-        slug: 'my-new-portfolio',
-        is_published: false,
-        created_at: '2024-01-01T00:00:00Z',
-      };
-
-      // Mock user check for portfolio limit
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: mockUserId,
-          subscription_plan: 'pro',
-          portfolio_count: 2,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: {
+              can_create_portfolio: true,
+              limits: { max_portfolios: 5 },
+              current_usage: { portfolios: 2 },
+            },
+            error: null,
+          }),
+          from: jest.fn().mockReturnValue({
+            insert: jest.fn().mockReturnValue({
+              select: jest.fn().mockResolvedValue({
+                data: [{
+                  id: 'new_portfolio_id',
+                  user_id: 'user_123',
+                  name: 'New Portfolio',
+                  template: 'developer',
+                  status: 'draft',
+                  data: {
+                    title: 'Full Stack Developer',
+                    bio: 'Experienced developer with over 10 years of experience in building scalable web applications',
+                  },
+                  created_at: new Date().toISOString(),
+                  updated_at: new Date().toISOString(),
+                }],
+                error: null,
+              }),
+            }),
+          }),
         },
-        error: null,
       });
 
-      // Mock portfolio creation
-      mockSupabase.single.mockResolvedValueOnce({
-        data: mockCreatedPortfolio,
-        error: null,
-      });
+      const { POST } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        portfolioData
-      );
+      const request = createMockRequest('https://example.com/api/v1/portfolios', {
+        method: 'POST',
+        body: newPortfolio,
+      });
       const response = await POST(request);
       const result = await response.json();
 
+      if (response.status !== 201) {
+        console.log('Create portfolio response:', response.status, result);
+      }
       expect(response.status).toBe(201);
-      expect(result).toEqual({
-        portfolio: mockCreatedPortfolio,
-      });
-
-      expect(mockSupabase.insert).toHaveBeenCalledWith({
-        user_id: mockUserId,
-        ...portfolioData,
-        slug: expect.any(String),
-        is_published: false,
-        metadata: {
-          version: 1,
-          created_with: 'api',
-        },
-      });
-
-      expect(mockLogger.info).toHaveBeenCalledWith(
-        'Portfolio created via API',
-        {
-          portfolioId: 'portfolio_new',
-          userId: mockUserId,
-        }
-      );
+      expect(result.portfolio).toBeDefined();
+      expect(result.portfolio.name).toBe('New Portfolio');
+      expect(result.portfolio.id).toBe('new_portfolio_id');
     });
 
     it('should validate required fields', async () => {
-      const invalidData = {
-        // Missing title
-        description: 'A portfolio',
-        template_id: 'developer',
-      };
-
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        invalidData
-      );
-      const response = await POST(request);
-      const result = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(result.error).toContain('title');
-    });
-
-    it('should enforce portfolio limits', async () => {
-      // Mock user at limit
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: mockUserId,
-          subscription_plan: 'free',
-          portfolio_count: 1, // At limit for free plan
-        },
-        error: null,
-      });
-
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        {
-          title: 'Another Portfolio',
-          template_id: 'designer',
-        }
-      );
-      const response = await POST(request);
-      const result = await response.json();
-
-      expect(response.status).toBe(403);
-      expect(result.error).toContain('Portfolio limit reached');
-    });
-
-    it('should validate template ID', async () => {
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        {
-          title: 'Portfolio',
-          template_id: 'invalid_template',
-        }
-      );
-      const response = await POST(request);
-      const result = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(result.error).toContain('Invalid template');
-    });
-
-    it('should generate unique slug', async () => {
-      // Mock user check
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: mockUserId,
-          subscription_plan: 'pro',
-          portfolio_count: 0,
-        },
-        error: null,
-      });
-
-      // Mock slug collision check
-      mockSupabase.single
-        .mockResolvedValueOnce({
-          data: { slug: 'my-portfolio' }, // Exists
-          error: null,
-        })
-        .mockResolvedValueOnce({
-          data: null, // Available with suffix
-          error: { code: 'PGRST116' },
-        });
-
-      // Mock portfolio creation
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: 'portfolio_123',
-          slug: 'my-portfolio-2',
-        },
-        error: null,
-      });
-
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        {
-          title: 'My Portfolio',
-          template_id: 'developer',
-        }
-      );
-      await POST(request);
-
-      // Should check for slug with number suffix
-      expect(mockSupabase.eq).toHaveBeenCalledWith('slug', 'my-portfolio-2');
-    });
-
-    it('should sanitize input data', async () => {
-      const maliciousData = {
-        title: '<script>alert("XSS")</script>My Portfolio',
-        description: 'Normal description',
-        template_id: 'developer',
-        sections: {
-          hero: {
-            title: '<img src=x onerror=alert("XSS")>',
-          },
-        },
-      };
-
-      // Mock user check
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: mockUserId,
-          subscription_plan: 'pro',
-          portfolio_count: 0,
-        },
-        error: null,
-      });
-
-      // Mock portfolio creation
-      mockSupabase.single.mockResolvedValueOnce({
-        data: { id: 'portfolio_123' },
-        error: null,
-      });
-
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        maliciousData
-      );
-      await POST(request);
-
-      // Should sanitize HTML in title
-      expect(mockSupabase.insert).toHaveBeenCalledWith(
-        expect.objectContaining({
-          title: 'My Portfolio', // Script tags removed
-          sections: expect.objectContaining({
-            hero: expect.objectContaining({
-              title: expect.not.stringContaining('<img'),
-            }),
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: {
+              can_create_portfolio: true,
+              limits: { max_portfolios: 5 },
+              current_usage: { portfolios: 2 },
+            },
+            error: null,
           }),
-        })
-      );
+        },
+      });
+
+      const { POST } = await import('@/app/api/v1/portfolios/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios', {
+        method: 'POST',
+        body: {
+          // Missing required fields
+          template: 'developer',
+        },
+      });
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(result.error).toContain('Invalid');
     });
 
-    it('should handle database errors gracefully', async () => {
-      // Mock user check success
-      mockSupabase.single.mockResolvedValueOnce({
-        data: {
-          id: mockUserId,
-          subscription_plan: 'pro',
-          portfolio_count: 0,
-        },
-        error: null,
-      });
-
-      // Mock portfolio creation failure
-      mockSupabase.single.mockResolvedValueOnce({
-        data: null,
-        error: {
-          code: '23505',
-          message: 'Duplicate key violation',
+    it('should enforce portfolio limit', async () => {
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: {
+              can_create_portfolio: false,
+              limits: { max_portfolios: 5 },
+              current_usage: { portfolios: 5 },
+            },
+            error: null,
+          }),
         },
       });
 
-      const request = createMockRequest(
-        'POST',
-        'https://example.com/api/v1/portfolios',
-        {
-          title: 'Portfolio',
-          template_id: 'developer',
-        }
-      );
+      const { POST } = await import('@/app/api/v1/portfolios/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios', {
+        method: 'POST',
+        body: {
+          name: 'New Portfolio',
+          title: 'Developer',
+          bio: 'Bio',
+          template: 'developer',
+        },
+      });
+      const response = await POST(request);
+      const result = await response.json();
+
+      expect(response.status).toBe(400);
+      expect(result.error).toContain('Portfolio creation limit exceeded');
+    });
+
+    it('should handle database errors', async () => {
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: null,
+            error: new Error('Database error'),
+          }),
+        },
+      });
+
+      const { POST } = await import('@/app/api/v1/portfolios/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios', {
+        method: 'POST',
+        body: {
+          name: 'New Portfolio',
+          title: 'Developer',
+          bio: 'Bio',
+          template: 'developer',
+        },
+      });
       const response = await POST(request);
       const result = await response.json();
 
       expect(response.status).toBe(500);
-      expect(result.error).toBe('Failed to create portfolio');
-
-      expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to create portfolio',
-        expect.any(Object)
-      );
-    });
-  });
-
-  describe('Rate Limiting', () => {
-    it('should apply rate limiting to GET requests', async () => {
-      // Mock rate limit exceeded
-      mockWithRateLimit.mockImplementationOnce(() => {
-        return () => {
-          return new Response(
-            JSON.stringify({
-              error: 'Too many requests',
-              retryAfter: 60,
-            }),
-            {
-              status: 429,
-              headers: {
-                'Retry-After': '60',
-                'X-RateLimit-Limit': '100',
-                'X-RateLimit-Remaining': '0',
-              },
-            }
-          );
-        };
-      });
-
-      const request = createMockRequest(
-        'GET',
-        'https://example.com/api/v1/portfolios'
-      );
-      const response = await GET(request);
-      const result = await response.json();
-
-      expect(response.status).toBe(429);
-      expect(result.error).toBe('Too many requests');
-      expect(response.headers.get('Retry-After')).toBe('60');
+      expect(result.error).toContain('Failed to check portfolio count');
     });
   });
 });

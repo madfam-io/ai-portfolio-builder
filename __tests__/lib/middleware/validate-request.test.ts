@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
 import {
@@ -10,6 +11,7 @@ import {
 } from '@/lib/middleware/validate-request';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger');
@@ -65,11 +67,11 @@ describe('validate-request middleware', () => {
 
         await expect(validateRequest(request, schemas)).rejects.toThrow(
           AppError
-        );
+
         expect(logger.warn).toHaveBeenCalledWith(
           'Request validation failed',
           expect.any(Object)
-        );
+
       });
 
       it('should handle empty body', async () => {
@@ -80,7 +82,7 @@ describe('validate-request middleware', () => {
 
         await expect(validateRequest(request, schemas)).rejects.toThrow(
           AppError
-        );
+
       });
 
       it('should handle invalid JSON', async () => {
@@ -91,7 +93,7 @@ describe('validate-request middleware', () => {
 
         await expect(validateRequest(request, schemas)).rejects.toThrow(
           'Invalid JSON in request body'
-        );
+
       });
 
       it('should respect maxBodySize option', async () => {
@@ -119,7 +121,6 @@ describe('validate-request middleware', () => {
       it('should validate valid query parameters', async () => {
         const request = new NextRequest(
           'http://localhost:3000/api/test?page=2&limit=20&search=test'
-        );
 
         const result = await validateRequest(request, schemas);
 
@@ -137,7 +138,6 @@ describe('validate-request middleware', () => {
 
         const request = new NextRequest(
           'http://localhost:3000/api/test?tags=javascript&tags=typescript'
-        );
 
         const result = await validateRequest(request, {
           query: arrayQuerySchema,
@@ -151,11 +151,10 @@ describe('validate-request middleware', () => {
       it('should reject invalid query parameters', async () => {
         const request = new NextRequest(
           'http://localhost:3000/api/test?page=0&limit=200'
-        );
 
         await expect(validateRequest(request, schemas)).rejects.toThrow(
           AppError
-        );
+
       });
     });
 
@@ -214,7 +213,6 @@ describe('validate-request middleware', () => {
           request,
           { body: unsafeSchema.shape.body },
           { sanitize: true }
-        );
 
         expect(result.body).toEqual({
           comment: 'scriptalert("xss")/scriptHello',
@@ -237,7 +235,6 @@ describe('validate-request middleware', () => {
           request,
           { body: unsafeSchema.shape.body },
           { sanitize: false }
-        );
 
         expect(result.body).toEqual(unsafeBody);
       });
@@ -270,7 +267,6 @@ describe('validate-request middleware', () => {
           request,
           { body: nestedSchema },
           { sanitize: true }
-        );
 
         expect(result.body).toEqual({
           user: {
@@ -300,7 +296,7 @@ describe('validate-request middleware', () => {
             request,
             { body: schema },
             { errorFormatter: customFormatter }
-          );
+
         } catch (error) {
           expect(customFormatter).toHaveBeenCalled();
           expect((error as AppError).details).toEqual({
@@ -321,7 +317,6 @@ describe('validate-request middleware', () => {
             method: 'POST',
             body: JSON.stringify({ name: 123 }),
           }
-        );
 
         try {
           await validateRequest(request, schemas);
@@ -351,7 +346,6 @@ describe('validate-request middleware', () => {
           request,
           { body: schema },
           { stripUnknown: true }
-        );
 
         expect(result.body).toEqual({ name: 'John' });
       });
@@ -368,7 +362,6 @@ describe('validate-request middleware', () => {
             method: 'POST',
             body: JSON.stringify({ notInvalid: 'value' }),
           }
-        );
 
         const result = await validateRequest(request, schemas, {
           body: false,
@@ -453,16 +446,16 @@ describe('validate-request middleware', () => {
     it('should validate email', () => {
       expect(commonSchemas.email.safeParse('test@example.com').success).toBe(
         true
-      );
+
       expect(commonSchemas.email.safeParse('invalid-email').success).toBe(
         false
-      );
+
     });
 
     it('should validate URL', () => {
       expect(commonSchemas.url.safeParse('https://example.com').success).toBe(
         true
-      );
+
       expect(commonSchemas.url.safeParse('not-a-url').success).toBe(false);
     });
 
@@ -483,7 +476,7 @@ describe('validate-request middleware', () => {
       // Test limits
       expect(commonSchemas.pagination.safeParse({ limit: 200 }).success).toBe(
         false
-      );
+
     });
 
     it('should validate date range', () => {

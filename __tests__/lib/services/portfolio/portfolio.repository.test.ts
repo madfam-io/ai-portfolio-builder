@@ -1,9 +1,12 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { getMockPortfolios } from '@/lib/services/portfolio/__mocks__/portfolio.mock';
 import { PortfolioMapper } from '@/lib/services/portfolio/portfolio.mapper';
 import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('@/lib/supabase/server');
@@ -12,6 +15,8 @@ jest.mock('@/lib/services/portfolio/__mocks__/portfolio.mock');
 jest.mock('@/lib/services/portfolio/portfolio.mapper');
 
 describe('PortfolioRepository', () => {
+  setupCommonMocks();
+
   let repository: PortfolioRepository;
   let mockSupabaseClient: any;
   let mockQuery: any;
@@ -57,7 +62,7 @@ describe('PortfolioRepository', () => {
     // Setup mock mapper
     (PortfolioMapper.fromDatabase as jest.Mock).mockImplementation(
       data => data
-    );
+
     (PortfolioMapper.toDatabase as jest.Mock).mockImplementation(data => data);
 
     // Mock logger
@@ -75,7 +80,7 @@ describe('PortfolioRepository', () => {
       expect(result).toEqual([]);
       expect(logger.warn).toHaveBeenCalledWith(
         'findAll called without userId filter'
-      );
+
     });
 
     it('should call findByUserId when userId filter provided', async () => {
@@ -117,11 +122,11 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.findByUserId('user-123')).rejects.toThrow(
         'Database error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Error fetching portfolios:',
         error
-      );
+
     });
 
     it('should use mock data in development without Supabase', async () => {
@@ -173,11 +178,11 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.findById('portfolio-123')).rejects.toThrow(
         'Database error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Error fetching portfolio:',
         error
-      );
+
     });
   });
 
@@ -227,11 +232,11 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.create(createData)).rejects.toThrow(
         'Database error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Error creating portfolio:',
         error
-      );
+
     });
 
     it('should use mock data in development', async () => {
@@ -297,7 +302,7 @@ describe('PortfolioRepository', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Error updating portfolio:',
         error
-      );
+
     });
   });
 
@@ -320,11 +325,11 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.delete('portfolio-123')).rejects.toThrow(
         'Database error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Error deleting portfolio:',
         error
-      );
+
     });
   });
 
@@ -383,7 +388,7 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.isSubdomainAvailable('test')).rejects.toThrow(
         'Database error'
-      );
+
     });
   });
 
@@ -429,7 +434,7 @@ describe('PortfolioRepository', () => {
         {
           portfolio_id: 'portfolio-123',
         }
-      );
+
     });
 
     it('should handle RPC errors', async () => {
@@ -438,11 +443,11 @@ describe('PortfolioRepository', () => {
 
       await expect(repository.incrementViews('portfolio-123')).rejects.toThrow(
         'RPC error'
-      );
+
       expect(logger.error).toHaveBeenCalledWith(
         'Error incrementing views:',
         error
-      );
+
     });
 
     it('should skip in mock mode', async () => {
@@ -461,7 +466,6 @@ describe('PortfolioRepository', () => {
       // Access private method through any type casting
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
-      );
 
       const subdomain = generateSubdomain('Test Portfolio Name');
 
@@ -472,7 +476,6 @@ describe('PortfolioRepository', () => {
     it('should handle special characters', () => {
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
-      );
 
       const subdomain = generateSubdomain('Portfolio @ #123!');
 
@@ -482,7 +485,6 @@ describe('PortfolioRepository', () => {
     it('should truncate long names', () => {
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
-      );
 
       const longName =
         'This is a very long portfolio name that should be truncated';

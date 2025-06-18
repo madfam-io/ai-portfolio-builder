@@ -2,13 +2,39 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { EditorContent } from '@/components/editor/EditorContent';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useUIStore } from '@/lib/store/ui-store';
 
+
 // Mock the stores
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/store/portfolio-store');
 jest.mock('@/lib/store/ui-store');
 
@@ -205,7 +231,6 @@ describe('EditorContent', () => {
             headers: { 'Content-Type': 'application/json' },
             body: expect.stringContaining('A passionate developer'),
           })
-        );
       });
     });
 
@@ -328,13 +353,13 @@ describe('EditorContent', () => {
 
       expect(screen.getByLabelText('Desktop view')).toHaveAttribute(
         'aria-pressed'
-      );
+
       expect(screen.getByLabelText('Tablet view')).toHaveAttribute(
         'aria-pressed'
-      );
+
       expect(screen.getByLabelText('Mobile view')).toHaveAttribute(
         'aria-pressed'
-      );
+
     });
 
     it('should have proper focus management', () => {

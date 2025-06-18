@@ -1,3 +1,4 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   validateCreatePortfolio,
   validateUpdatePortfolio,
@@ -217,7 +218,7 @@ describe('Portfolio Validation', () => {
       expect(sanitized.avatarUrl).toBe('https://example.com/avatar.jpg');
       expect(sanitized.social?.linkedin).toBe(
         'https://linkedin.com/in/johndoe'
-      );
+
       expect(sanitized.social?.github).toBe('https://github.com/johndoe');
       expect(sanitized.social?.website).toBe('https://johndoe.com');
     });
@@ -235,7 +236,7 @@ describe('Portfolio Validation', () => {
       expect(sanitized.avatarUrl).toBe('https://example.com/avatar.jpg');
       expect(sanitized.social?.linkedin).toBe(
         'https://linkedin.com/in/johndoe'
-      );
+
     });
 
     it('should preserve http URLs', () => {
@@ -320,7 +321,7 @@ describe('Portfolio Validation', () => {
 
       expect(sanitized.social?.linkedin).toBe(
         'https://linkedin.com/in/johndoe'
-      );
+
       expect((sanitized.social as any)?.verified).toBe(true);
       expect((sanitized.social as any)?.followers).toBe(1000);
     });

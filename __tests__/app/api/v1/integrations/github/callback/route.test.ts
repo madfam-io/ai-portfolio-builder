@@ -1,5 +1,7 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/integrations/github/callback/route';
+
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
@@ -61,7 +63,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       // Mock cookie with matching state
       Object.defineProperty(mockRequest, 'cookies', {
@@ -81,7 +82,6 @@ describe('/api/v1/integrations/github/callback', () => {
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toBe(
         '/dashboard/integrations?success=true'
-      );
 
       // Verify GitHub API was called
       expect(global.fetch).toHaveBeenCalledWith(
@@ -98,7 +98,6 @@ describe('/api/v1/integrations/github/callback', () => {
             code,
           }),
         })
-      );
     });
 
     it('should validate state parameter for CSRF protection', async () => {
@@ -108,7 +107,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${wrongState}`
-      );
 
       // Mock cookie with different state
       Object.defineProperty(mockRequest, 'cookies', {
@@ -130,7 +128,6 @@ describe('/api/v1/integrations/github/callback', () => {
     it('should handle missing code parameter', async () => {
       mockRequest = new NextRequest(
         'http://localhost:3000/api/v1/integrations/github/callback?state=test-state'
-      );
 
       const response = await GET(mockRequest);
 
@@ -153,7 +150,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -167,7 +163,7 @@ describe('/api/v1/integrations/github/callback', () => {
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toContain(
         'error=github_auth_failed'
-      );
+
     });
 
     it('should fetch user data after token exchange', async () => {
@@ -199,7 +195,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -219,7 +214,6 @@ describe('/api/v1/integrations/github/callback', () => {
             Authorization: 'Bearer gho_testtoken123',
           }),
         })
-      );
     });
 
     it('should store integration in database', async () => {
@@ -229,7 +223,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -253,11 +246,9 @@ describe('/api/v1/integrations/github/callback', () => {
       };
       const encodedState = Buffer.from(JSON.stringify(stateData)).toString(
         'base64'
-      );
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${encodedState}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -271,7 +262,7 @@ describe('/api/v1/integrations/github/callback', () => {
       expect(response.status).toBe(302);
       expect(response.headers.get('Location')).toBe(
         `${customRedirect}?success=true`
-      );
+
     });
   });
 
@@ -282,7 +273,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?error=${error}&error_description=${encodeURIComponent(errorDescription)}`
-      );
 
       const response = await GET(mockRequest);
 
@@ -298,7 +288,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -335,7 +324,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {
@@ -356,7 +344,6 @@ describe('/api/v1/integrations/github/callback', () => {
 
       mockRequest = new NextRequest(
         `http://localhost:3000/api/v1/integrations/github/callback?code=${code}&state=${state}`
-      );
 
       Object.defineProperty(mockRequest, 'cookies', {
         value: {

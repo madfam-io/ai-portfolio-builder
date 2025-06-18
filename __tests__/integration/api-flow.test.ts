@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 // Mock fetch for API calls
 global.fetch = jest.fn();
 
@@ -85,7 +87,6 @@ describe('API Flow Integration Tests', () => {
     it('should handle API errors gracefully', async () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
-      );
 
       try {
         await fetch('/api/v1/portfolios/invalid-id');
@@ -219,7 +220,6 @@ describe('API Flow Integration Tests', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain: 'john-doe' }),
         }
-      );
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -308,7 +308,6 @@ describe('API Flow Integration Tests', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain: 'john-doe' }),
         }
-      );
 
       const publishResponse = await fetch(
         '/api/v1/portfolios/new-portfolio/publish',
@@ -317,7 +316,6 @@ describe('API Flow Integration Tests', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain: 'john-doe' }),
         }
-      );
 
       // Verify all steps completed successfully
       expect(createResponse.ok).toBe(true);
@@ -340,7 +338,6 @@ describe('API Flow Integration Tests', () => {
       // Failure
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('AI service unavailable')
-      );
 
       // Recovery
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -372,7 +369,7 @@ describe('API Flow Integration Tests', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain: 'test' }),
         }
-      );
+
       expect(subdomainResponse.ok).toBe(true);
     });
   });

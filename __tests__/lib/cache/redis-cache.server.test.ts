@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import * as redis from 'redis';
 import {
   cache,
@@ -5,6 +6,7 @@ import {
   CacheService,
 } from '@/lib/cache/redis-cache.server';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('redis');
@@ -66,7 +68,7 @@ describe('Redis Cache Service', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to connect to Redis',
         expect.any(Error)
-      );
+
     });
 
     it('should use in-memory cache when Redis is not available', async () => {
@@ -135,7 +137,7 @@ describe('Redis Cache Service', () => {
         'test-key',
         600,
         JSON.stringify(data)
-      );
+
     });
 
     it('should use default TTL when not specified', async () => {
@@ -148,7 +150,7 @@ describe('Redis Cache Service', () => {
         'test-key',
         300, // Default TTL
         JSON.stringify(data)
-      );
+
     });
 
     it('should handle Redis errors gracefully', async () => {
@@ -170,7 +172,7 @@ describe('Redis Cache Service', () => {
         'test-key',
         300,
         JSON.stringify(largeData)
-      );
+
     });
   });
 

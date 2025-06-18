@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { createClient } from '@supabase/supabase-js';
 import {
   signIn,
@@ -67,7 +68,7 @@ describe('Auth Service', () => {
       expect(createClient).toHaveBeenCalledWith(
         'https://test.supabase.co',
         'test-anon-key'
-      );
+
     });
 
     it('should throw error when environment variables are missing', async () => {
@@ -75,7 +76,7 @@ describe('Auth Service', () => {
 
       await expect(signIn('test@example.com', 'password')).rejects.toThrow(
         'Authentication service not configured'
-      );
+
     });
   });
 
@@ -191,7 +192,7 @@ describe('Auth Service', () => {
         {
           redirectTo: `${window.location.origin}/auth/reset-password`,
         }
-      );
+
     });
 
     it('should handle invalid email', async () => {
@@ -400,7 +401,7 @@ describe('Auth Service', () => {
       });
       expect(mockAuth.exchangeCodeForSession).toHaveBeenCalledWith(
         'auth-code-123'
-      );
+
     });
   });
 

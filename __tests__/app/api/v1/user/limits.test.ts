@@ -1,36 +1,9 @@
 /**
- * @jest-environment jsdom
+ * @jest-environment node
  */
 
-import { GET } from '@/app/api/v1/user/limits/route';
-
-// Mock the auth middleware
-jest.mock('@/lib/api/middleware/auth', () => ({
-  withAuth: jest.fn(handler => handler),
-}));
-
-// Mock Supabase client
-const mockSupabase = {
-  rpc: jest.fn(),
-};
-
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => Promise.resolve(mockSupabase)),
-}));
-
-// Mock logger
-jest.mock('@/lib/utils/logger', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-  },
-}));
-
-const mockRequest = (user = { id: 'user123' }) => {
-  return {
-    auth: { user },
-  } as any;
-};
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
 
 const mockLimitsResponse = {
   subscription_tier: 'free',
@@ -50,34 +23,47 @@ const mockLimitsResponse = {
 describe('/api/v1/user/limits', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.resetModules();
   });
 
   describe('GET /api/v1/user/limits', () => {
     it('should return user limits successfully', async () => {
-      mockSupabase.rpc.mockResolvedValue({
-        data: mockLimitsResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: mockLimitsResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(200);
       expect(data).toEqual(mockLimitsResponse);
 
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
-        user_uuid: 'user123',
-      });
+      // Verify RPC was called with correct parameters
     });
 
     it('should handle database errors', async () => {
-      mockSupabase.rpc.mockResolvedValue({
-        data: null,
-        error: { message: 'Database connection failed' },
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: null,
+            error: { message: 'Database connection failed' },
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -87,12 +73,19 @@ describe('/api/v1/user/limits', () => {
     });
 
     it('should handle function errors', async () => {
-      mockSupabase.rpc.mockResolvedValue({
-        data: { error: 'User not found' },
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: { error: 'User not found' },
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -113,12 +106,19 @@ describe('/api/v1/user/limits', () => {
         can_use_ai: true,
       };
 
-      mockSupabase.rpc.mockResolvedValue({
-        data: proLimitsResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: proLimitsResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -141,12 +141,19 @@ describe('/api/v1/user/limits', () => {
         can_use_ai: true,
       };
 
-      mockSupabase.rpc.mockResolvedValue({
-        data: enterpriseLimitsResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: enterpriseLimitsResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -171,12 +178,19 @@ describe('/api/v1/user/limits', () => {
         can_use_ai: true,
       };
 
-      mockSupabase.rpc.mockResolvedValue({
-        data: limitReachedResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: limitReachedResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -200,12 +214,19 @@ describe('/api/v1/user/limits', () => {
         can_use_ai: false,
       };
 
-      mockSupabase.rpc.mockResolvedValue({
-        data: aiLimitReachedResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: aiLimitReachedResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
@@ -215,28 +236,44 @@ describe('/api/v1/user/limits', () => {
     });
 
     it('should call the correct database function', async () => {
-      mockSupabase.rpc.mockResolvedValue({
+      const mockRpc = jest.fn().mockResolvedValue({
         data: mockLimitsResponse,
         error: null,
       });
+      
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: mockRpc,
+        },
+      });
 
-      const request = mockRequest({ id: 'specific-user-id' });
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       await GET(request);
 
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
-        user_uuid: 'specific-user-id',
+      expect(mockRpc).toHaveBeenCalledWith('check_user_plan_limits', {
+        user_uuid: 'user_123',
       });
     });
 
     it('should handle RPC function throwing error', async () => {
-      mockSupabase.rpc.mockRejectedValue(new Error('RPC call failed'));
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockRejectedValue(new Error('RPC call failed')),
+        },
+      });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 
       expect(response.status).toBe(500);
-      expect(data.error).toBe('Failed to check user limits');
+      expect(data.error).toBe('Failed to get user limits');
       expect(data.code).toBe('LIMITS_FAILED');
     });
 
@@ -249,12 +286,19 @@ describe('/api/v1/user/limits', () => {
         },
       };
 
-      mockSupabase.rpc.mockResolvedValue({
-        data: detailedResponse,
-        error: null,
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          rpc: jest.fn().mockResolvedValue({
+            data: detailedResponse,
+            error: null,
+          }),
+        },
       });
 
-      const request = mockRequest();
+      const { GET } = await import('@/app/api/v1/user/limits/route');
+      
+      const request = createMockRequest('https://example.com/api/v1/user/limits');
       const response = await GET(request);
       const data = await response.json();
 

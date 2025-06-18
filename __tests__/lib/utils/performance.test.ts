@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import {
   PerformanceMonitor,
   PerformanceMetrics,
@@ -9,6 +10,7 @@ import {
   getMemoryUsage,
 } from '@/lib/utils/performance';
 import { logger } from '@/lib/utils/logger';
+
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger', () => ({
@@ -216,7 +218,7 @@ describe('Performance Utilities', () => {
           expect.stringContaining(
             'Slow component render: SlowComponent took 25.00ms'
           )
-        );
+
       });
 
       it('should not warn about slow components in production', () => {
@@ -361,7 +363,7 @@ describe('Performance Utilities', () => {
 
           expect(console.log).toHaveBeenCalledWith(
             expect.stringContaining('📊 Performance Metric: lcp = 2000.00ms')
-          );
+
         }
       });
 
@@ -414,7 +416,7 @@ describe('Performance Utilities', () => {
       it('should have navigation timing method', () => {
         expect(typeof (monitor as any).observeNavigationTiming).toBe(
           'function'
-        );
+
       });
 
       it('should handle missing navigation timing gracefully', () => {

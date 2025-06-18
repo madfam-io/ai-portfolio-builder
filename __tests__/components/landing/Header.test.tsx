@@ -2,11 +2,37 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+
 // Mock useLanguage explicitly
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
@@ -110,6 +136,16 @@ jest.mock('next/navigation', () => ({
 
 // Import Header after setting up mocks
 import Header from '@/components/landing/Header';
+
+
+// Mock useApp hook
+jest.mock('@/hooks/useApp', () => ({
+  useApp: () => ({
+    user: { id: 'test-user', email: 'test@example.com' },
+    loading: false,
+    error: null,
+  }),
+}));
 
 const mockUseApp = require('@/lib/contexts/AppContext')
   .useApp as jest.MockedFunction<any>;

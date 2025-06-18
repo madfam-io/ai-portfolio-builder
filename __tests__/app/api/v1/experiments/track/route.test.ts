@@ -1,31 +1,22 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { cookies } from 'next/headers';
 import { POST } from '@/app/api/v1/experiments/track/route';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('next/headers');
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
-
-describe('POST /api/v1/experiments/track', () => {
-  let mockSupabaseClient: any;
-  let mockCookieStore: any;
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-
-    // Mock cookies
-    mockCookieStore = {
-      get: jest.fn().mockReturnValue({ value: 'visitor-123' }),
+,
     };
     (cookies as jest.Mock).mockResolvedValue(mockCookieStore);
 
     // Mock Supabase client
     mockSupabaseClient = {
       rpc: jest.fn(),
-      from: jest.fn(),
+      from: jest.fn()
     };
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
@@ -52,7 +43,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(validTrackData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -68,7 +58,7 @@ describe('POST /api/v1/experiments/track', () => {
         p_event_type: validTrackData.eventType,
         p_event_data: validTrackData.eventData,
       }
-    );
+
   });
 
   it('should track conversion event and update variant count', async () => {
@@ -89,12 +79,12 @@ describe('POST /api/v1/experiments/track', () => {
       single: jest.fn().mockResolvedValue({
         data: { conversions: 5 },
         error: null,
-      }),
+      })
     };
 
     const mockUpdate = {
       update: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockResolvedValue({ error: null }),
+      eq: jest.fn().mockResolvedValue({ error: null })
     };
 
     mockSupabaseClient.from
@@ -107,7 +97,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(conversionData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -137,7 +126,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(pageviewData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -164,7 +152,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(engagementData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -188,7 +175,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(minimalData),
       }
-    );
 
     const response = await POST(request);
 
@@ -198,7 +184,6 @@ describe('POST /api/v1/experiments/track', () => {
       expect.objectContaining({
         p_event_data: {},
       })
-    );
   });
 
   it('should return 400 when visitor ID not found', async () => {
@@ -210,7 +195,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(validTrackData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -231,7 +215,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(invalidData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -253,7 +236,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(invalidData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -274,7 +256,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(invalidData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -292,7 +273,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(validTrackData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -311,7 +291,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(validTrackData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -321,7 +300,7 @@ describe('POST /api/v1/experiments/track', () => {
     expect(logger.error).toHaveBeenCalledWith(
       'Failed to track experiment event',
       dbError
-    );
+
   });
 
   it('should handle conversion update errors gracefully', async () => {
@@ -338,7 +317,7 @@ describe('POST /api/v1/experiments/track', () => {
       single: jest.fn().mockResolvedValue({
         data: null,
         error: new Error('Variant not found'),
-      }),
+      })
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -349,7 +328,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: JSON.stringify(conversionData),
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -366,7 +344,6 @@ describe('POST /api/v1/experiments/track', () => {
         method: 'POST',
         body: 'invalid-json',
       }
-    );
 
     const response = await POST(request);
     const data = await response.json();

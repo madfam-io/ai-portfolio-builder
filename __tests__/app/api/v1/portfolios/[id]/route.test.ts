@@ -1,17 +1,16 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '@/app/api/v1/portfolios/[id]/route';
 import { createClient } from '@/lib/supabase/server';
 import { AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
-jest.mock('@/lib/api/middleware/auth', () => ({
-  withAuth: (handler: any) => handler,
-  AuthenticatedRequest: jest.fn(),
-}));
 
 describe('/api/v1/portfolios/[id]', () => {
+  setupCommonMocks();
+
   let mockSupabaseClient: any;
   let mockUser: any;
 
@@ -31,7 +30,7 @@ describe('/api/v1/portfolios/[id]', () => {
       eq: jest.fn().mockReturnThis(),
       single: jest.fn(),
       update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis()
     };
 
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
@@ -176,7 +175,6 @@ describe('/api/v1/portfolios/[id]', () => {
             bio: 'Updated bio',
           }),
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -215,7 +213,6 @@ describe('/api/v1/portfolios/[id]', () => {
             invalidField: 'should be removed', // Should be sanitized
           }),
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -265,7 +262,6 @@ describe('/api/v1/portfolios/[id]', () => {
             bio: 'Updated bio only',
           }),
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -308,7 +304,6 @@ describe('/api/v1/portfolios/[id]', () => {
             subdomain: 'existing-subdomain',
           }),
         }
-      );
 
       (request as any).user = mockUser;
 
@@ -383,7 +378,7 @@ describe('/api/v1/portfolios/[id]', () => {
       const data = await response.json();
       expect(data.error).toBe(
         'Cannot delete published portfolio. Please unpublish first.'
-      );
+
     });
 
     it('should handle deletion of non-existent portfolio', async () => {

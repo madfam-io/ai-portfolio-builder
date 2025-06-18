@@ -1,16 +1,19 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { GitHubClient } from '@/lib/integrations/github/client.lazy';
 import { createClient } from '@/lib/supabase/server';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(),
-}));
+
 jest.mock('@/lib/services/error/error-logger');
 
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('GitHubClient', () => {
+  setupCommonMocks();
+
   let client: GitHubClient;
   let mockSupabase: any;
   const mockAccessToken = 'gho_testtoken123';
@@ -53,7 +56,7 @@ describe('GitHubClient', () => {
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
         'user_id',
         mockUserId
-      );
+
     });
 
     it('should refresh expired token', async () => {
@@ -89,7 +92,6 @@ describe('GitHubClient', () => {
         expect.objectContaining({
           method: 'POST',
         })
-      );
     });
 
     it('should handle missing integration gracefully', async () => {
@@ -104,7 +106,7 @@ describe('GitHubClient', () => {
 
       await expect(client.getAccessToken()).rejects.toThrow(
         'GitHub integration not found'
-      );
+
     });
   });
 
@@ -144,7 +146,6 @@ describe('GitHubClient', () => {
             Accept: 'application/vnd.github.v3+json',
           }),
         })
-      );
     });
 
     it('should fetch user by username', async () => {
@@ -166,7 +167,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         `https://api.github.com/users/${username}`,
         expect.any(Object)
-      );
+
     });
   });
 
@@ -216,7 +217,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining('user/repos'),
         expect.any(Object)
-      );
+
     });
 
     it('should get repository details', async () => {
@@ -243,7 +244,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         `https://api.github.com/repos/${owner}/${repo}`,
         expect.any(Object)
-      );
+
     });
 
     it('should get repository languages', async () => {
@@ -267,7 +268,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         `https://api.github.com/repos/${owner}/${repo}/languages`,
         expect.any(Object)
-      );
+
     });
 
     it('should get repository contributors', async () => {
@@ -345,7 +346,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         expect.stringContaining(`repos/${owner}/${repo}/commits`),
         expect.any(Object)
-      );
+
     });
 
     it('should get commit statistics', async () => {
@@ -443,7 +444,6 @@ describe('GitHubClient', () => {
           method: 'POST',
           body: JSON.stringify(prData),
         })
-      );
     });
   });
 
@@ -479,7 +479,7 @@ describe('GitHubClient', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         'https://api.github.com/user/orgs',
         expect.any(Object)
-      );
+
     });
   });
 
@@ -511,7 +511,7 @@ describe('GitHubClient', () => {
 
       await expect(client.getRepository('nonexistent', 'repo')).rejects.toThrow(
         'Not Found'
-      );
+
     });
 
     it('should retry on network errors', async () => {

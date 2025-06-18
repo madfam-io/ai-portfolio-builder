@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,6 +8,7 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+
 
 // Mock dependencies
 jest.mock('next/navigation');
@@ -142,11 +144,10 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
 
       // Click next
       await user.click(screen.getByRole('button', { name: mockT.next }));
@@ -168,11 +169,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Check template options
@@ -192,11 +193,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Select creative template
@@ -228,11 +229,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Click back
@@ -258,11 +259,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Select template
@@ -316,11 +317,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Select template
@@ -364,7 +365,6 @@ describe('Portfolio Creation Flow', () => {
 
       await user.click(
         screen.getByRole('button', { name: mockT.createPortfolio })
-      );
 
       // Should show creating state
       expect(
@@ -405,7 +405,6 @@ describe('Portfolio Creation Flow', () => {
 
       await user.click(
         screen.getByRole('button', { name: mockT.createPortfolio })
-      );
 
       // Wait for error
       await waitFor(() => {
@@ -435,25 +434,24 @@ describe('Portfolio Creation Flow', () => {
       expect(screen.getByTestId('step-1')).toHaveAttribute(
         'data-active',
         'true'
-      );
 
       // Navigate to step 2
       await user.type(screen.getByLabelText(mockT.yourName), 'John Doe');
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       await waitFor(() => {
         expect(screen.getByTestId('step-2')).toHaveAttribute(
           'data-active',
           'true'
-        );
+
       });
 
       // Navigate to step 3
@@ -464,7 +462,7 @@ describe('Portfolio Creation Flow', () => {
         expect(screen.getByTestId('step-3')).toHaveAttribute(
           'data-active',
           'true'
-        );
+
       });
 
       // Navigate to step 4
@@ -475,7 +473,7 @@ describe('Portfolio Creation Flow', () => {
         expect(screen.getByTestId('step-4')).toHaveAttribute(
           'data-active',
           'true'
-        );
+
       });
     });
 
@@ -488,11 +486,11 @@ describe('Portfolio Creation Flow', () => {
       await user.type(
         screen.getByLabelText(mockT.yourTitle),
         'Software Engineer'
-      );
+
       await user.type(
         screen.getByLabelText(mockT.shortBio),
         'Experienced developer'
-      );
+
       await user.click(screen.getByRole('button', { name: mockT.next }));
 
       // Go to template step and back
@@ -503,10 +501,10 @@ describe('Portfolio Creation Flow', () => {
       expect(screen.getByLabelText(mockT.yourName)).toHaveValue('John Doe');
       expect(screen.getByLabelText(mockT.yourTitle)).toHaveValue(
         'Software Engineer'
-      );
+
       expect(screen.getByLabelText(mockT.shortBio)).toHaveValue(
         'Experienced developer'
-      );
+
     });
   });
 });

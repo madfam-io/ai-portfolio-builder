@@ -1,3 +1,4 @@
+import { describe, test, it, expect } from '@jest/globals';
 import {
   createPortfolioSchema,
   updatePortfolioSchema,
@@ -44,7 +45,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.projects).toHaveLength(1);
       expect(result.socialLinks?.linkedin).toBe(
         'https://linkedin.com/in/johndoe'
-      );
+
     });
 
     it('should reject invalid name', () => {
@@ -56,7 +57,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => createPortfolioSchema.parse(invalidData)).toThrow(
         'Name must be at least 2 characters'
-      );
+
     });
 
     it('should reject invalid email', () => {
@@ -68,7 +69,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => createPortfolioSchema.parse(invalidData)).toThrow(
         'Invalid email format'
-      );
+
     });
 
     it('should reject invalid template', () => {
@@ -94,7 +95,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => createPortfolioSchema.parse(validData)).toThrow(
         'Invalid URL format'
-      );
+
     });
   });
 
@@ -204,7 +205,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => subdomainCheckSchema.parse(data)).toThrow(
         'Subdomain can only contain lowercase letters, numbers, and hyphens'
-      );
+
     });
 
     it('should reject subdomain starting with hyphen', () => {
@@ -214,7 +215,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => subdomainCheckSchema.parse(data)).toThrow(
         'Subdomain must start with a letter or number'
-      );
+
     });
 
     it('should reject subdomain ending with hyphen', () => {
@@ -224,7 +225,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => subdomainCheckSchema.parse(data)).toThrow(
         'Subdomain must end with a letter or number'
-      );
+
     });
 
     it('should reject too short subdomain', () => {
@@ -234,7 +235,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => subdomainCheckSchema.parse(data)).toThrow(
         'Subdomain must be at least 3 characters'
-      );
+
     });
 
     it('should reject too long subdomain', () => {
@@ -244,7 +245,7 @@ describe('Portfolio Validation Schemas', () => {
 
       expect(() => subdomainCheckSchema.parse(data)).toThrow(
         'Subdomain must be less than 63 characters'
-      );
+
     });
   });
 

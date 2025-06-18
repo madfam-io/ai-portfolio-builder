@@ -1,13 +1,18 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, PUT } from '@/app/api/v1/ai/models/selection/route';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
 
 // Mock dependencies
 jest.mock('@/lib/supabase/server');
 jest.mock('@/lib/utils/logger');
 
 describe('AI Model Selection API Routes', () => {
+  setupCommonMocks();
+
   let mockSupabaseClient: any;
   let mockAuth: any;
 
@@ -16,13 +21,13 @@ describe('AI Model Selection API Routes', () => {
 
     // Mock auth methods
     mockAuth = {
-      getUser: jest.fn(),
+      getUser: jest.fn()
     };
 
     // Mock Supabase client
     mockSupabaseClient = {
       auth: mockAuth,
-      from: jest.fn(),
+      from: jest.fn()
     };
 
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
@@ -51,8 +56,8 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: mockPreferences,
           error: null,
-        }),
-      };
+        })
+    };
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
@@ -96,8 +101,8 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: null,
           error: { code: 'PGRST116', message: 'No rows found' },
-        }),
-      };
+        })
+    };
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
@@ -131,8 +136,8 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: null,
           error: new Error('Database error'),
-        }),
-      };
+        })
+    };
 
       mockSupabaseClient.from.mockReturnValue(mockSelect);
 
@@ -166,16 +171,16 @@ describe('AI Model Selection API Routes', () => {
             },
           },
           error: null,
-        }),
-      };
+        })
+    };
 
       const mockUpsert = {
-        upsert: jest.fn().mockResolvedValue({ error: null }),
-      };
+        upsert: jest.fn().mockResolvedValue({ error: null })
+    };
 
       const mockInsert = {
-        insert: jest.fn().mockResolvedValue({ error: null }),
-      };
+        insert: jest.fn().mockResolvedValue({ error: null })
+    };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockSelect) // Get current preferences
@@ -188,7 +193,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -216,7 +220,7 @@ describe('AI Model Selection API Routes', () => {
           updated_at: expect.any(String),
         },
         { onConflict: 'user_id' }
-      );
+
     });
 
     it('should create new preferences for first-time users', async () => {
@@ -228,16 +232,16 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: null,
           error: { code: 'PGRST116' },
-        }),
-      };
+        })
+    };
 
       const mockUpsert = {
-        upsert: jest.fn().mockResolvedValue({ error: null }),
-      };
+        upsert: jest.fn().mockResolvedValue({ error: null })
+    };
 
       const mockInsert = {
-        insert: jest.fn().mockResolvedValue({ error: null }),
-      };
+        insert: jest.fn().mockResolvedValue({ error: null })
+    };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockSelect)
@@ -250,7 +254,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -270,7 +273,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -293,7 +295,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(invalidData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -317,7 +318,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(invalidData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -335,7 +335,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -353,14 +352,14 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: { preferences: {} },
           error: null,
-        }),
-      };
+        })
+    };
 
       const mockUpsert = {
         upsert: jest.fn().mockResolvedValue({
           error: new Error('Update failed'),
-        }),
-      };
+        })
+    };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockSelect)
@@ -372,7 +371,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -391,18 +389,18 @@ describe('AI Model Selection API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: { preferences: {} },
           error: null,
-        }),
-      };
+        })
+    };
 
       const mockUpsert = {
-        upsert: jest.fn().mockResolvedValue({ error: null }),
-      };
+        upsert: jest.fn().mockResolvedValue({ error: null })
+    };
 
       const mockInsert = {
         insert: jest.fn().mockResolvedValue({
           error: new Error('Logging failed'),
-        }),
-      };
+        })
+    };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockSelect)
@@ -415,7 +413,6 @@ describe('AI Model Selection API Routes', () => {
           method: 'PUT',
           body: JSON.stringify(validUpdateData),
         }
-      );
 
       const response = await PUT(request);
       const data = await response.json();
@@ -426,7 +423,7 @@ describe('AI Model Selection API Routes', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to log model selection',
         expect.any(Error)
-      );
+
     });
   });
 });

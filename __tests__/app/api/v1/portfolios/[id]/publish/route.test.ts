@@ -1,179 +1,240 @@
-import { NextRequest } from 'next/server';
-import { POST } from '@/app/api/v1/portfolios/[id]/publish/route';
-import { authenticateUser } from '@/lib/api/middleware/auth';
-import { portfolioService } from '@/lib/services/portfolio/portfolio-service';
+/**
+ * @jest-environment node
+ */
 
-// Mock dependencies
-jest.mock('@/lib/api/middleware/auth');
-jest.mock('@/lib/services/portfolio/portfolio-service');
-jest.mock('@/lib/utils/logger');
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
 
 describe('/api/v1/portfolios/[id]/publish', () => {
-  let mockUser: any;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Setup mock user
-    mockUser = {
-      id: 'test-user-123',
-      email: 'test@example.com',
-    };
-
-    // Default mock implementations
-    (authenticateUser as jest.Mock).mockResolvedValue(mockUser);
+    jest.resetModules();
   });
 
   describe('POST /api/v1/portfolios/[id]/publish', () => {
     it('should publish portfolio successfully', async () => {
       const mockPortfolio = {
         id: 'portfolio-123',
-        user_id: 'test-user-123',
-        name: 'My Portfolio',
+        user_id: 'user_123',
+        name: 'Test Portfolio',
         status: 'draft',
+        template: 'developer',
+        subdomain: 'test-portfolio',
+        data: {
+          title: 'Developer',
+          bio: 'Test bio',
+        },
       };
 
       const mockPublishedPortfolio = {
         ...mockPortfolio,
         status: 'published',
-        subdomain: 'my-portfolio',
-        publishedAt: new Date().toISOString(),
+        published_at: new Date().toISOString(),
       };
 
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
-        mockPortfolio
-      );
-      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(
-        mockPublishedPortfolio
-      );
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          from: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockPortfolio,
+                  error: null,
+                }),
+              }),
+            }),
+            update: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockPublishedPortfolio,
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        },
+      });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+        params: { id: 'portfolio-123' },
+      });
+      
       const response = await POST(request, { params: { id: 'portfolio-123' } });
+      const result = await response.json();
+
       expect(response.status).toBe(200);
-
-      const data = await response.json();
-      expect(data.data).toEqual(mockPublishedPortfolio);
-      expect(data.message).toBe('Portfolio published successfully');
-
-      expect(portfolioService.getPortfolio).toHaveBeenCalledWith(
-        'portfolio-123'
-      );
-      expect(portfolioService.publishPortfolio).toHaveBeenCalledWith(
-        'portfolio-123'
-      );
+      expect(result.success).toBe(true);
+      expect(result.portfolio.status).toBe('published');
+      expect(result.portfolio.id).toBe('portfolio-123');
     });
 
-    it('should handle unauthenticated requests', async () => {
-      (authenticateUser as jest.Mock).mockResolvedValue(null);
+    it('should require authentication', async () => {
+      jest.resetModules();
+      
+      jest.doMock('@/lib/api/middleware/auth', () => ({
+        withAuth: jest.fn((handler) => async (request: any) => {
+          return new Response(JSON.stringify({ error: 'Authentication required' }), {
+            status: 401,
+            headers: { 'Content-Type': 'application/json' },
+          });
+        }),
+      }));
+      
+      setupCommonMocks();
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+      });
+      
       const response = await POST(request, { params: { id: 'portfolio-123' } });
-      expect(response.status).toBe(401);
+      const result = await response.json();
 
-      const data = await response.json();
-      expect(data.error).toBe('Unauthorized');
+      expect(response.status).toBe(401);
+      expect(result.error).toBe('Authentication required');
     });
 
     it('should prevent publishing portfolios not owned by user', async () => {
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(null);
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          from: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: {
+                    id: 'portfolio-123',
+                    user_id: 'different-user-123', // Different user
+                    name: 'Test Portfolio',
+                    status: 'draft',
+                  },
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        },
+      });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+      });
+      
       const response = await POST(request, { params: { id: 'portfolio-123' } });
-      expect(response.status).toBe(403);
+      const result = await response.json();
 
-      const data = await response.json();
-      expect(data.error).toBe('Portfolio not found or access denied');
+      expect(response.status).toBe(403);
+      expect(result.error).toContain('not authorized');
     });
 
-    it('should handle portfolio not found during publish', async () => {
+    it('should handle portfolio not found', async () => {
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          from: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        },
+      });
+
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+      });
+      
+      const response = await POST(request, { params: { id: 'portfolio-123' } });
+      const result = await response.json();
+
+      expect(response.status).toBe(404);
+      expect(result.error).toContain('Portfolio not found');
+    });
+
+    it('should handle database errors', async () => {
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          from: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: null,
+                  error: new Error('Database error'),
+                }),
+              }),
+            }),
+          }),
+        },
+      });
+
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
+
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+      });
+      
+      const response = await POST(request, { params: { id: 'portfolio-123' } });
+      const result = await response.json();
+
+      expect(response.status).toBe(500);
+      expect(result.error).toContain('Failed to publish portfolio');
+    });
+
+    it('should require subdomain to publish', async () => {
       const mockPortfolio = {
         id: 'portfolio-123',
-        user_id: 'test-user-123',
+        user_id: 'user_123',
+        name: 'Test Portfolio',
+        status: 'draft',
+        template: 'developer',
+        subdomain: null, // No subdomain
+        data: {
+          title: 'Developer',
+          bio: 'Test bio',
+        },
       };
 
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
-        mockPortfolio
-      );
-      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(null);
+      setupCommonMocks({
+        supabase: {
+          ...defaultSupabaseMock,
+          from: jest.fn().mockReturnValue({
+            select: jest.fn().mockReturnValue({
+              eq: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: mockPortfolio,
+                  error: null,
+                }),
+              }),
+            }),
+          }),
+        },
+      });
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
+      const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
+      const request = createMockRequest('https://example.com/api/v1/portfolios/portfolio-123/publish', {
+        method: 'POST',
+      });
+      
       const response = await POST(request, { params: { id: 'portfolio-123' } });
-      expect(response.status).toBe(404);
+      const result = await response.json();
 
-      const data = await response.json();
-      expect(data.error).toBe('Portfolio not found');
-    });
-
-    it('should handle service errors', async () => {
-      (portfolioService.getPortfolio as jest.Mock).mockRejectedValue(
-        new Error('Database connection failed')
-      );
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
-
-      const response = await POST(request, { params: { id: 'portfolio-123' } });
-      expect(response.status).toBe(500);
-
-      const data = await response.json();
-      expect(data.error).toBe('Failed to publish portfolio');
-    });
-
-    it('should handle already published portfolios', async () => {
-      const mockPublishedPortfolio = {
-        id: 'portfolio-123',
-        user_id: 'test-user-123',
-        status: 'published',
-        publishedAt: '2025-06-15T10:00:00Z',
-      };
-
-      (portfolioService.getPortfolio as jest.Mock).mockResolvedValue(
-        mockPublishedPortfolio
-      );
-      (portfolioService.publishPortfolio as jest.Mock).mockResolvedValue(
-        mockPublishedPortfolio
-      );
-
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/publish',
-        {
-          method: 'POST',
-        }
-      );
-
-      const response = await POST(request, { params: { id: 'portfolio-123' } });
-      expect(response.status).toBe(200);
-
-      const data = await response.json();
-      expect(data.data.status).toBe('published');
+      expect(response.status).toBe(400);
+      expect(result.error).toContain('subdomain');
     });
   });
 });

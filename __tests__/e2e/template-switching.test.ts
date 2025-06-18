@@ -2,11 +2,13 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import { TemplateSelector } from '@/components/editor/TemplateSelector';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { Portfolio } from '@/types/portfolio';
+
 
 // Mock the portfolio store
 jest.mock('@/lib/store/portfolio-store');
@@ -91,7 +93,6 @@ const TemplateSwitchingTest = () => {
       onTemplateChange: updateTemplate
     }),
     React.createElement(MockTemplateRenderer, { portfolio: currentPortfolio })
-  );
 };
 
 describe('Template Switching E2E', () => {

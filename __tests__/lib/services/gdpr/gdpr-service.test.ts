@@ -1,47 +1,58 @@
 /**
  * Test suite for GDPR Service
+ * @jest-environment node
  */
 
-import { gdprService } from '@/lib/services/gdpr/gdpr-service';
-import type { ConsentType, LegalBasis } from '@/lib/services/gdpr/gdpr-service';
+import { jest } from '@jest/globals';
 
-// Mock Supabase client
-const mockSupabase = {
-  from: jest.fn().mockReturnThis(),
-  select: jest.fn().mockReturnThis(),
-  insert: jest.fn().mockReturnThis(),
-  upsert: jest.fn().mockReturnThis(),
-  update: jest.fn().mockReturnThis(),
-  delete: jest.fn().mockReturnThis(),
-  eq: jest.fn().mockReturnThis(),
-  single: jest.fn().mockReturnThis(),
-  limit: jest.fn().mockReturnThis(),
-};
 
-jest.mock('@/lib/supabase/client', () => ({
-  createClient: () => mockSupabase,
-}));
-
-// Mock Redis
-const mockRedis = {
-  setex: jest.fn(),
-  get: jest.fn(),
-  sismember: jest.fn(),
-  sadd: jest.fn(),
-};
-
-jest.mock('@/lib/cache/redis-client', () => ({
-  redis: mockRedis,
-  isRedisAvailable: () => true,
-}));
-
-// Mock audit logger
-jest.mock('@/lib/services/audit/audit-logger', () => ({
-  auditLogger: {
+// Setup function to configure mocks
+const setupMocks = (mockOverrides: any = {}) => {
+  jest.resetModules();
+  
+  // Default mock values
+  const mockSupabase = mockOverrides.supabase || {
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    upsert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockReturnThis(),
+    limit: jest.fn().mockReturnThis(),
+  };
+  
+  const mockRedis = mockOverrides.redis || {
+    setex: jest.fn(),
+    get: jest.fn(),
+    sismember: jest.fn(),
+    sadd: jest.fn(),
+  };
+  
+  const mockAuditLogger = mockOverrides.auditLogger || {
     logGDPR: jest.fn(),
     logDataAccess: jest.fn(),
-  },
-}));
+  };
+  
+  // Mock Supabase client
+  jest.doMock('@/lib/supabase/client', () => ({
+    createClient: () => mockSupabase,
+  }));
+  
+  // Mock Redis
+  jest.doMock('@/lib/cache/redis-client', () => ({
+    redis: mockRedis,
+    isRedisAvailable: () => true,
+  }));
+  
+  // Mock audit logger
+  jest.doMock('@/lib/services/audit/audit-logger', () => ({
+    auditLogger: mockAuditLogger,
+  }));
+  
+  return { mockSupabase, mockRedis, mockAuditLogger };
+};
 
 describe('GDPR Service', () => {
   beforeEach(() => {
@@ -50,8 +61,11 @@ describe('GDPR Service', () => {
 
   describe('Consent Management', () => {
     test('should record consent successfully', async () => {
+      const { mockSupabase, mockRedis } = setupMocks();
       mockSupabase.upsert.mockResolvedValue({ error: null });
       mockRedis.setex.mockResolvedValue('OK');
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       await gdprService.recordConsent({
         userId: 'user_123',
@@ -78,9 +92,12 @@ describe('GDPR Service', () => {
     });
 
     test('should handle consent recording failure', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.upsert.mockResolvedValue({
         error: { message: 'Database error' },
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       await expect(
         gdprService.recordConsent({
@@ -116,10 +133,13 @@ describe('GDPR Service', () => {
         },
       ];
 
+      const { mockSupabase } = setupMocks();
       mockSupabase.select.mockResolvedValue({
         data: mockConsentData,
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const consent = await gdprService.getUserConsent('user_123');
 
@@ -141,13 +161,15 @@ describe('GDPR Service', () => {
 
   describe('Data Export Requests', () => {
     test('should create data export request successfully', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.insert.mockResolvedValue({ error: null });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const request = await gdprService.requestDataExport(
         'user_123',
         'test@example.com',
         '192.168.1.1'
-      );
 
       expect(request).toMatchObject({
         userId: 'user_123',
@@ -172,9 +194,12 @@ describe('GDPR Service', () => {
     });
 
     test('should handle export request failure', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.insert.mockResolvedValue({
         error: { message: 'Database error' },
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       await expect(
         gdprService.requestDataExport(
@@ -188,7 +213,10 @@ describe('GDPR Service', () => {
 
   describe('Data Deletion Requests', () => {
     test('should create data deletion request successfully', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.insert.mockResolvedValue({ error: null });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const request = await gdprService.requestDataDeletion(
         'user_123',
@@ -196,7 +224,6 @@ describe('GDPR Service', () => {
         '192.168.1.1',
         'soft',
         'User requested account deletion'
-      );
 
       expect(request).toMatchObject({
         userId: 'user_123',
@@ -222,14 +249,16 @@ describe('GDPR Service', () => {
     });
 
     test('should create hard deletion request with zero retention', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.insert.mockResolvedValue({ error: null });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const request = await gdprService.requestDataDeletion(
         'user_123',
         'test@example.com',
         '192.168.1.1',
         'hard'
-      );
 
       expect(request.deletionType).toBe('hard');
       expect(request.retentionPeriod).toBe(0);
@@ -238,10 +267,13 @@ describe('GDPR Service', () => {
 
   describe('Privacy Settings', () => {
     test('should get default privacy settings for new user', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.single.mockResolvedValue({
         data: null,
         error: { message: 'No rows returned' },
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const settings = await gdprService.getPrivacySettings('user_123');
 
@@ -268,10 +300,13 @@ describe('GDPR Service', () => {
         updated_at: '2025-01-01T00:00:00Z',
       };
 
+      const { mockSupabase } = setupMocks();
       mockSupabase.single.mockResolvedValue({
         data: mockSettings,
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const settings = await gdprService.getPrivacySettings('user_123');
 
@@ -285,6 +320,7 @@ describe('GDPR Service', () => {
     });
 
     test('should update privacy settings', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.upsert.mockResolvedValue({ error: null });
 
       // Mock getting current settings
@@ -301,6 +337,8 @@ describe('GDPR Service', () => {
         },
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const updatedSettings = await gdprService.updatePrivacySettings(
         'user_123',
@@ -309,7 +347,6 @@ describe('GDPR Service', () => {
           marketingEnabled: true,
         },
         '192.168.1.1'
-      );
 
       expect(updatedSettings.profileVisibility).toBe('private');
       expect(updatedSettings.marketingEnabled).toBe(true);
@@ -343,10 +380,13 @@ describe('GDPR Service', () => {
         },
       ];
 
+      const { mockSupabase } = setupMocks();
       mockSupabase.select.mockResolvedValue({
         data: mockConsentData,
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const canContact = await gdprService.canContactForMarketing('user_123');
 
@@ -354,10 +394,13 @@ describe('GDPR Service', () => {
     });
 
     test('should deny marketing contact when consent not granted', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.select.mockResolvedValue({
         data: [],
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const canContact = await gdprService.canContactForMarketing('user_123');
 
@@ -378,10 +421,13 @@ describe('GDPR Service', () => {
         },
       ];
 
+      const { mockSupabase } = setupMocks();
       mockSupabase.select.mockResolvedValue({
         data: mockConsentData,
         error: null,
       });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const canContact = await gdprService.canContactForMarketing('user_123');
 
@@ -391,7 +437,10 @@ describe('GDPR Service', () => {
 
   describe('Error Handling', () => {
     test('should handle database connection errors', async () => {
+      const { mockSupabase } = setupMocks();
       mockSupabase.select.mockRejectedValue(new Error('Connection failed'));
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       const consent = await gdprService.getUserConsent('user_123');
 
@@ -404,8 +453,11 @@ describe('GDPR Service', () => {
     });
 
     test('should handle redis connection errors gracefully', async () => {
+      const { mockSupabase, mockRedis } = setupMocks();
       mockRedis.setex.mockRejectedValue(new Error('Redis connection failed'));
       mockSupabase.upsert.mockResolvedValue({ error: null });
+      
+      const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
       // Should not throw error even if Redis fails
       await expect(
@@ -425,9 +477,12 @@ describe('GDPR Service', () => {
 // Integration tests
 describe('GDPR Service Integration', () => {
   test('should handle complete consent lifecycle', async () => {
+    const { mockSupabase, mockRedis } = setupMocks();
     // Record initial consent
     mockSupabase.upsert.mockResolvedValue({ error: null });
     mockRedis.setex.mockResolvedValue('OK');
+    
+    const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
     await gdprService.recordConsent({
       userId: 'user_123',
@@ -462,14 +517,16 @@ describe('GDPR Service Integration', () => {
   });
 
   test('should handle complete data export flow', async () => {
+    const { mockSupabase } = setupMocks();
     // Create export request
     mockSupabase.insert.mockResolvedValue({ error: null });
+    
+    const { gdprService } = await import('@/lib/services/gdpr/gdpr-service');
 
     const request = await gdprService.requestDataExport(
       'user_123',
       'test@example.com',
       '192.168.1.1'
-    );
 
     expect(request.status).toBe('pending');
 

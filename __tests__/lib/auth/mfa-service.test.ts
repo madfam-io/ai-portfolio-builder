@@ -19,6 +19,7 @@ import QRCode from 'qrcode';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
+
 // Mock dependencies
 jest.mock('otplib');
 jest.mock('qrcode');
@@ -220,11 +221,10 @@ describe('MFA Service', () => {
       it('should handle QR code generation errors', async () => {
         mockQRCode.toDataURL.mockRejectedValue(
           new Error('QR generation failed')
-        );
 
         await expect(generateQRCode('invalid')).rejects.toThrow(
           'QR generation failed'
-        );
+
       });
     });
 
@@ -316,7 +316,6 @@ describe('MFA Service', () => {
               used: false,
             }),
           ])
-        );
 
         expect(mockLogger.info).toHaveBeenCalledWith('MFA enabled', { userId });
       });
@@ -513,7 +512,7 @@ describe('MFA Service', () => {
           {
             userId,
           }
-        );
+
       });
 
       it('should require MFA to be enabled', async () => {
@@ -553,7 +552,6 @@ describe('MFA Service', () => {
         expect.objectContaining({
           mfa_secret: encryptedSecret,
         })
-      );
     });
 
     it('should hash backup codes before storage', async () => {
@@ -575,7 +573,7 @@ describe('MFA Service', () => {
             code: 'hashed_code',
           }),
         ])
-      );
+
     });
 
     it('should log security events', async () => {
@@ -602,7 +600,7 @@ describe('MFA Service', () => {
         {
           userId: 'user_123',
         }
-      );
+
     });
   });
 });

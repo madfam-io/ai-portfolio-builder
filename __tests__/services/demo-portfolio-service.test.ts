@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import {
   DemoPortfolioService,
   DEMO_PORTFOLIOS,
@@ -46,7 +47,7 @@ describe('DemoPortfolioService', () => {
       const techDemos = DemoPortfolioService.getAvailableDemos('Technology');
       expect(techDemos.every(demo => demo.industry === 'Technology')).toBe(
         true
-      );
+
       expect(techDemos.length).toBeGreaterThan(0);
     });
 
@@ -55,7 +56,7 @@ describe('DemoPortfolioService', () => {
       for (let i = 1; i < demos.length; i++) {
         expect(demos[i - 1].popularity).toBeGreaterThanOrEqual(
           demos[i].popularity
-        );
+
       }
     });
   });
@@ -176,18 +177,16 @@ describe('DemoPortfolioService', () => {
       // Business template should rank higher for seniors
       const seniorBusinessIndex = seniorRecs.findIndex(
         d => d.template === 'business'
-      );
+
       const juniorBusinessIndex = juniorRecs.findIndex(
         d => d.template === 'business'
-      );
 
       // Minimal template should rank higher for juniors
       const seniorMinimalIndex = seniorRecs.findIndex(
         d => d.template === 'minimal'
-      );
+
       const juniorMinimalIndex = juniorRecs.findIndex(
         d => d.template === 'minimal'
-      );
 
       // These assertions might need adjustment based on actual scoring
       expect(seniorBusinessIndex).toBeLessThanOrEqual(juniorBusinessIndex);
@@ -215,7 +214,6 @@ describe('DemoPortfolioService', () => {
       const portfolioId = await DemoPortfolioService.cloneDemo(
         'dev-startup',
         'user-123'
-      );
 
       expect(portfolioId).toBe('existing-123');
     });
@@ -251,7 +249,6 @@ describe('DemoPortfolioService', () => {
         'dev-startup',
         'user-123',
         'My Custom Portfolio'
-      );
 
       expect(portfolioId).toBe('new-portfolio-123');
     });
@@ -281,7 +278,6 @@ describe('DemoPortfolioService', () => {
     it('should convert temporary portfolio to permanent', async () => {
       (window.sessionStorage.getItem as jest.Mock).mockReturnValue(
         JSON.stringify(temporaryPortfolio)
-      );
 
       mockSupabaseClient.from.mockReturnValue({
         insert: jest.fn().mockReturnValue({
@@ -297,12 +293,11 @@ describe('DemoPortfolioService', () => {
       const portfolioId = await DemoPortfolioService.convertToPermanent(
         'temp-123',
         'user-123'
-      );
 
       expect(portfolioId).toBe('permanent-123');
       expect(window.sessionStorage.removeItem).toHaveBeenCalledWith(
         'demo-portfolio-temp-123'
-      );
+
       expect(track.user.action).toHaveBeenCalledWith(
         'demo_portfolio_converted',
         'user-123',
@@ -312,7 +307,6 @@ describe('DemoPortfolioService', () => {
           temporary_id: 'temp-123',
           permanent_id: 'permanent-123',
         })
-      );
     });
 
     it('should throw error if temporary portfolio not found', async () => {

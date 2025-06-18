@@ -1,6 +1,11 @@
-import { renderHook } from '@testing-library/react';
+/**
+ * @jest-environment jsdom
+ */
+
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { renderHook, act } from '@testing-library/react';
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
-import { _Portfolio } from '@/types/portfolio';
+import type { Portfolio } from '@/types/portfolio';
 
 describe('useRealTimePreview', () => {
   const mockPortfolio: Portfolio = {
@@ -304,7 +309,7 @@ describe('useRealTimePreview', () => {
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
-    let screenshot: string | null;
+    let screenshot: string | null = null;
     await act(async () => {
       screenshot = await result.current.capturePreviewScreenshot();
     });
@@ -322,7 +327,7 @@ describe('useRealTimePreview', () => {
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
-    let screenshot: string | null;
+    let screenshot: string | null = null;
     await act(async () => {
       screenshot = await result.current.capturePreviewScreenshot();
     });

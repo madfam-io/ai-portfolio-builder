@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import {
   createDynamicComponent,
   preloadComponent,
@@ -6,6 +7,7 @@ import {
 } from '@/lib/utils/dynamic-import';
 import dynamic from 'next/dynamic';
 import type { ComponentType } from 'react';
+
 
 // Mock next/dynamic
 jest.mock('next/dynamic', () => ({
@@ -197,16 +199,16 @@ describe('Dynamic Import Utilities', () => {
       expect(optimizationStrategies.splitVendorChunks.react).toContain('react');
       expect(optimizationStrategies.splitVendorChunks.react).toContain(
         'react-dom'
-      );
+
       expect(optimizationStrategies.splitVendorChunks.ui).toContain(
         '@mui/material'
-      );
+
       expect(optimizationStrategies.splitVendorChunks.charts).toContain(
         'recharts'
-      );
+
       expect(optimizationStrategies.splitVendorChunks.utils).toContain(
         'lodash'
-      );
+
     });
 
     it('should have list of components to lazy load', () => {

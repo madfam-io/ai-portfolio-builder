@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -5,7 +6,32 @@ import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/services/auth/auth-service';
 import { useAuthStore } from '@/lib/store/auth-store';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('next/navigation');
 jest.mock('@/lib/supabase/client', () => ({
   createClient: jest.fn(() => ({
@@ -57,7 +83,7 @@ function SignInForm() {
       </button>
       {error && <div role="alert">{error}</div>}
     </form>
-  );
+
 }
 
 // Dashboard component that requires auth
@@ -70,7 +96,7 @@ function Dashboard() {
       <p>Welcome, {user?.email}</p>
       <button onClick={signOut}>Sign Out</button>
     </div>
-  );
+
 }
 
 describe('Authentication Flow Integration', () => {
@@ -135,7 +161,7 @@ describe('Authentication Flow Integration', () => {
         expect(authService.signIn).toHaveBeenCalledWith(
           'test@example.com',
           'password123'
-        );
+
       });
 
       // Verify auth state is updated
@@ -167,7 +193,7 @@ describe('Authentication Flow Integration', () => {
       await waitFor(() => {
         expect(screen.getByRole('alert')).toHaveTextContent(
           'Invalid credentials'
-        );
+
       });
 
       // Verify auth state
@@ -369,7 +395,6 @@ describe('Authentication Flow Integration', () => {
         <ProtectedRoute>
           <Dashboard />
         </ProtectedRoute>
-      );
 
       await waitFor(() => {
         expect(mockPush).toHaveBeenCalledWith('/auth/signin');
@@ -394,7 +419,6 @@ describe('Authentication Flow Integration', () => {
         <ProtectedRoute>
           <Dashboard />
         </ProtectedRoute>
-      );
 
       expect(screen.getByText('Dashboard')).toBeInTheDocument();
       expect(screen.getByText('Welcome, test@example.com')).toBeInTheDocument();

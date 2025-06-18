@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import {
   PerformanceMonitor,
   ImageOptimizer,
@@ -132,7 +133,7 @@ describe('Performance Optimization System', () => {
 
       await expect(optimizer.optimizeImage(largeFile)).rejects.toThrow(
         'exceeds maximum'
-      );
+
     });
 
     it('should generate responsive sizes correctly', () => {
@@ -140,14 +141,13 @@ describe('Performance Optimization System', () => {
 
       const sizes = optimizer.generateResponsiveSizes(
         'https://example.com/image.jpg'
-      );
 
       expect(sizes.sm).toContain('w=400');
       expect(sizes.md).toContain('w=800');
       expect(sizes.lg).toContain('w=1200');
       expect(sizes.sm).toContain(
         `q=${DEFAULT_OPTIMIZATION_CONFIG.compressionLevel}`
-      );
+
     });
   });
 
@@ -265,11 +265,9 @@ describe('Performance Optimization System', () => {
       const optimizer = new MobileImageOptimizer(
         DEFAULT_MOBILE_CONFIG,
         detector
-      );
 
       const optimization = optimizer.optimizeForMobile(
         'https://example.com/image.jpg'
-      );
 
       expect(optimization.src).toContain('w=');
       expect(optimization.src).toContain('q=');
@@ -286,10 +284,9 @@ describe('Performance Optimization System', () => {
       const optimizer = new MobileImageOptimizer(
         DEFAULT_MOBILE_CONFIG,
         detector
-      );
+
       const optimization = optimizer.optimizeForMobile(
         'https://example.com/image.jpg'
-      );
 
       expect(optimization.quality).toBeLessThanOrEqual(60);
     });
@@ -369,7 +366,6 @@ describe('Performance Optimization System', () => {
     it('should optimize complete portfolio creation workflow', async () => {
       const optimizer = new PortfolioPerformanceOptimizer(
         DEFAULT_OPTIMIZATION_CONFIG
-      );
 
       const portfolioData = {
         name: 'Test Portfolio',
@@ -401,7 +397,6 @@ describe('Performance Optimization System', () => {
     it('should provide optimization recommendations', () => {
       const optimizer = new PortfolioPerformanceOptimizer(
         DEFAULT_OPTIMIZATION_CONFIG
-      );
 
       // Simulate performance issues by manually setting metrics
       const monitor = new PerformanceMonitor();
@@ -435,7 +430,7 @@ describe('Performance Optimization System', () => {
       // Optimize an image
       const imageConfig = mobileSystem.optimizeImage(
         'https://example.com/test.jpg'
-      );
+
       expect(imageConfig.src).toBeDefined();
       expect(imageConfig.quality).toBeGreaterThan(0);
 

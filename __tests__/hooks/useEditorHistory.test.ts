@@ -1,6 +1,8 @@
-import { renderHook } from '@testing-library/react';
+import { describe, test, it, expect, jest } from '@jest/globals';
+import { renderHook, act } from '@testing-library/react';
+import { useState } from 'react';
 import { useEditorHistory } from '@/hooks/useEditorHistory';
-import { Portfolio, PortfolioEditorState } from '@/types/portfolio';
+import type { Portfolio, PortfolioEditorState } from '@/types/portfolio';
 
 describe('useEditorHistory', () => {
   const mockPortfolio: Portfolio = {
@@ -49,24 +51,23 @@ describe('useEditorHistory', () => {
   });
 
   it('should initialize with no history', () => {
-    const editorState = createInitialState();
-    const setEditorState = jest.fn();
-
-    const { result } = renderHook(() =>
-      useEditorHistory(editorState, setEditorState)
-    );
+    const { result } = renderHook(() => {
+      const [editorState, setEditorState] = useState(createInitialState());
+      return useEditorHistory(editorState, setEditorState);
+    });
 
     expect(result.current.canUndo).toBe(false);
     expect(result.current.canRedo).toBe(false);
   });
 
   it('should push to history', () => {
-    const editorState = createInitialState();
-    const setEditorState = jest.fn();
-
-    const { result } = renderHook(() =>
-      useEditorHistory(editorState, setEditorState)
-    );
+    const { result } = renderHook(() => {
+      const [editorState, setEditorState] = useState(createInitialState());
+      return {
+        ...useEditorHistory(editorState, setEditorState),
+        editorState
+      };
+    });
 
     const updatedPortfolio = { ...mockPortfolio, name: 'Updated Portfolio' };
 
@@ -74,17 +75,14 @@ describe('useEditorHistory', () => {
       result.current.pushToHistory('Update name', updatedPortfolio);
     });
 
-    expect(setEditorState).toHaveBeenCalled();
-    const updateFn = setEditorState.mock.calls[0][0];
-    const newState = updateFn(editorState);
-
-    expect(newState.history).toHaveLength(1);
-    expect(newState.history[0]).toMatchObject({
+    expect(result.current.editorState.history).toHaveLength(1);
+    expect(result.current.editorState.history[0]).toMatchObject({
       action: 'Update name',
       state: expect.objectContaining({ name: 'Updated Portfolio' }),
       timestamp: expect.any(Date),
     });
-    expect(newState.historyIndex).toBe(0);
+    expect(result.current.editorState.historyIndex).toBe(0);
+    expect(result.current.canUndo).toBe(true);
   });
 
   it('should handle undo', () => {

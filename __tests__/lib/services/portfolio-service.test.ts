@@ -18,6 +18,7 @@ import {
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
+
 // Mock dependencies
 jest.mock('@/lib/supabase/server');
 jest.mock('@/lib/utils/logger');
@@ -180,7 +181,7 @@ describe('Portfolio Service', () => {
 
       await expect(createPortfolio(userId, invalidData as any)).rejects.toThrow(
         'Title is required'
-      );
+
     });
   });
 
@@ -243,7 +244,7 @@ describe('Portfolio Service', () => {
           portfolioId,
           userId: 'wrong_user',
         }
-      );
+
     });
   });
 
@@ -331,7 +332,7 @@ describe('Portfolio Service', () => {
 
       expect(mockSupabase.update).toHaveBeenCalledWith(
         expect.objectContaining(partialUpdate)
-      );
+
     });
 
     it('should increment version on update', async () => {
@@ -357,7 +358,6 @@ describe('Portfolio Service', () => {
             version: 6,
           }),
         })
-      );
     });
   });
 
@@ -434,7 +434,6 @@ describe('Portfolio Service', () => {
         expect.objectContaining({
           slug: 'my-portfolio',
         })
-      );
     });
   });
 
@@ -580,7 +579,7 @@ describe('Portfolio Service', () => {
 
       expect(result.portfolio.public_url).toBe(
         'https://john-doe.prisma-portfolio.com'
-      );
+
     });
 
     it('should validate portfolio completeness', async () => {
@@ -686,7 +685,7 @@ describe('Portfolio Service', () => {
 
       expect(result.error).toBe(
         'Portfolio limit reached. Upgrade to create more portfolios.'
-      );
+
     });
   });
 
@@ -695,13 +694,13 @@ describe('Portfolio Service', () => {
       it('should generate valid slug from title', () => {
         expect(generatePortfolioSlug('My Awesome Portfolio!')).toBe(
           'my-awesome-portfolio'
-        );
+
         expect(generatePortfolioSlug('John Doe - Developer')).toBe(
           'john-doe-developer'
-        );
+
         expect(generatePortfolioSlug('   Spaces   Everywhere   ')).toBe(
           'spaces-everywhere'
-        );
+
       });
 
       it('should handle special characters', () => {

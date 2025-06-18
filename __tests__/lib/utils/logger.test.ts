@@ -1,4 +1,6 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { logger } from '@/lib/utils/logger';
+
 
 describe('Logger', () => {
   let consoleDebugSpy: jest.SpyInstance;
@@ -49,10 +51,9 @@ describe('Logger', () => {
 
       expect(consoleDebugSpy).toHaveBeenCalledWith(
         expect.stringContaining('[DEBUG] Debug message')
-      );
+
       expect(consoleDebugSpy).toHaveBeenCalledWith(
         expect.stringContaining('"feature":"test"')
-      );
 
       process.env.NODE_ENV = originalNodeEnv;
       process.env.SHOW_LOGS = originalShowLogs;
@@ -271,7 +272,7 @@ describe('Logger', () => {
       // Check for ISO timestamp format
       expect(parsedLog.timestamp).toMatch(
         /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/
-      );
+
     });
 
     it('should handle complex metadata objects', () => {

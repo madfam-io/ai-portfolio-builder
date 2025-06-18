@@ -1,3 +1,4 @@
+import { describe, test, it, expect, afterEach } from '@jest/globals';
 import {
   getCSPDirectives,
   formatCSPHeader,
@@ -43,10 +44,9 @@ describe('Content Security Policy', () => {
       // Check for Google Analytics
       expect(directives['script-src']).toContain(
         'https://www.googletagmanager.com'
-      );
+
       expect(directives['connect-src']).toContain(
         'https://www.google-analytics.com'
-      );
 
       // Check for fonts
       expect(directives['font-src']).toContain('https://fonts.gstatic.com');
@@ -54,10 +54,10 @@ describe('Content Security Policy', () => {
       // Check for social login providers
       expect(directives['img-src']).toContain(
         'https://avatars.githubusercontent.com'
-      );
+
       expect(directives['img-src']).toContain(
         'https://lh3.googleusercontent.com'
-      );
+
     });
 
     it('should include WebSocket support for development', () => {

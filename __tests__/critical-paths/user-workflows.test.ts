@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 // Mock fetch for API calls
 global.fetch = jest.fn();
 
@@ -219,7 +221,6 @@ describe('Critical User Workflows', () => {
             name: 'John Doe Updated',
           }),
         }
-      );
 
       expect(autoSave1Response.ok).toBe(true);
 
@@ -232,7 +233,6 @@ describe('Critical User Workflows', () => {
             title: 'Senior Developer',
           }),
         }
-      );
 
       expect(autoSave2Response.ok).toBe(true);
 
@@ -247,7 +247,6 @@ describe('Critical User Workflows', () => {
             bio: 'Updated professional bio',
           }),
         }
-      );
 
       expect(manualSaveResponse.ok).toBe(true);
       const finalData = await manualSaveResponse.json();
@@ -298,7 +297,7 @@ describe('Critical User Workflows', () => {
               lastAccessed: new Date().toISOString(),
             }),
           }
-        );
+
         expect(updateResponse.ok).toBe(true);
       }
 
@@ -348,7 +347,6 @@ describe('Critical User Workflows', () => {
             name: 'Copy of Original Portfolio',
           }),
         }
-      );
 
       expect(duplicateResponse.ok).toBe(true);
       const duplicateData = await duplicateResponse.json();
@@ -423,7 +421,7 @@ describe('Critical User Workflows', () => {
       // Step 1: Verify portfolio readiness
       const readinessResponse = await fetch(
         '/api/v1/portfolios/ready-portfolio/readiness'
-      );
+
       const readinessData = await readinessResponse.json();
       expect(readinessData.portfolio.readinessScore).toBeGreaterThan(90);
 
@@ -434,7 +432,6 @@ describe('Critical User Workflows', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain: 'ready-user' }),
         }
-      );
 
       const subdomainData = await subdomainResponse.json();
       expect(subdomainData.available).toBe(true);
@@ -445,7 +442,6 @@ describe('Critical User Workflows', () => {
         {
           method: 'POST',
         }
-      );
 
       const validationData = await validationResponse.json();
       expect(validationData.valid).toBe(true);
@@ -460,7 +456,6 @@ describe('Critical User Workflows', () => {
             enableAnalytics: true,
           }),
         }
-      );
 
       const publishData = await publishResponse.json();
       expect(publishData.success).toBe(true);
@@ -472,7 +467,6 @@ describe('Critical User Workflows', () => {
         {
           method: 'POST',
         }
-      );
 
       const shareData = await shareResponse.json();
       expect(shareData.shareLinks.direct).toBe('https://ready-user.prisma.dev');
@@ -531,7 +525,6 @@ describe('Critical User Workflows', () => {
             domain: 'johndoe.com',
           }),
         }
-      );
 
       const domainData = await domainResponse.json();
       expect(domainData.domainRequest.domain).toBe('johndoe.com');
@@ -546,7 +539,6 @@ describe('Critical User Workflows', () => {
             requestId: domainData.domainRequest.id,
           }),
         }
-      );
 
       const verifyData = await verifyResponse.json();
       expect(verifyData.verification.status).toBe('verified');
@@ -560,7 +552,6 @@ describe('Critical User Workflows', () => {
             requestId: domainData.domainRequest.id,
           }),
         }
-      );
 
       const activateData = await activateResponse.json();
       expect(activateData.active).toBe(true);
@@ -610,7 +601,6 @@ describe('Critical User Workflows', () => {
             Authorization: 'Bearer token',
           },
         }
-      );
 
       expect(analyticsResponse.ok).toBe(true);
       const analyticsData = await analyticsResponse.json();
@@ -627,7 +617,6 @@ describe('Critical User Workflows', () => {
             dateRange: '30d',
           }),
         }
-      );
 
       expect(exportResponse.ok).toBe(true);
       const exportData = await exportResponse.json();
@@ -680,7 +669,6 @@ describe('Critical User Workflows', () => {
             variants: mockVariants,
           }),
         }
-      );
 
       const experimentData = await experimentResponse.json();
       expect(experimentData.experiment.variants).toHaveLength(2);
@@ -689,7 +677,6 @@ describe('Critical User Workflows', () => {
       // Get experiment results
       const resultsResponse = await fetch(
         '/api/v1/portfolios/portfolio-123/experiments/experiment-123/results'
-      );
 
       const resultsData = await resultsResponse.json();
       expect(resultsData.results.winner).toBe('variant-b');

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -9,7 +10,32 @@ import { EditorToolbar } from '@/components/editor/EditorToolbar';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { TemplateType } from '@/types/portfolio';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -376,7 +402,6 @@ describe('EditorToolbar', () => {
       // After toggle, should update aria-pressed
       const { rerender } = render(
         <EditorToolbar {...mockProps} showPreview={true} />
-      );
 
       const hidePreviewButton = screen.getByText('Hide Preview');
       expect(hidePreviewButton).toHaveAttribute('aria-pressed', 'true');
@@ -517,7 +542,6 @@ describe('EditorToolbar', () => {
           template="creative"
           showPreview={true}
         />
-      );
 
       expect(screen.getByText('Mobile')).toHaveClass('bg-primary');
       expect(screen.getByText('Creative')).toBeInTheDocument();

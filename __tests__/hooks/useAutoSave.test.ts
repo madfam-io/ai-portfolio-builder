@@ -1,16 +1,19 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import type { Portfolio } from '@/types/portfolio';
+
 
 // Clear any existing mocks of useAutoSave
 jest.unmock('@/hooks/useAutoSave');
 
-// Import the actual hook after clearing mocks
-import { useAutoSave } from '@/hooks/useAutoSave';
 
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('useAutoSave', () => {
+  // Import the hook at the describe level
+  const { useAutoSave } = require('@/hooks/useAutoSave');
+  
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',

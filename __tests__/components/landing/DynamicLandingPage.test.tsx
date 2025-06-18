@@ -2,13 +2,39 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynamicLandingPage from '@/components/landing/DynamicLandingPage';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+
 // Mock dependencies
+
+// Mock useLanguage hook
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => ({
+    language: 'en',
+    setLanguage: jest.fn(),
+    t: {
+      welcomeMessage: 'Welcome',
+      heroTitle: 'Create Your Portfolio',
+      getStarted: 'Get Started',
+      save: 'Save',
+      cancel: 'Cancel',
+      loading: 'Loading...',
+      error: 'Error',
+      success: 'Success',
+      enhanceWithAI: 'Enhance with AI',
+      publish: 'Publish',
+      preview: 'Preview',
+      // Add more translations as needed
+    },
+  }),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
@@ -206,7 +232,7 @@ describe('DynamicLandingPage', () => {
         if (index > 0) {
           expect(section.compareDocumentPosition(sections[index - 1])).toBe(
             Node.DOCUMENT_POSITION_PRECEDING
-          );
+
         }
       });
     });
@@ -455,7 +481,7 @@ describe('DynamicLandingPage', () => {
 
       const metaDescription = document.querySelector(
         'meta[name="description"]'
-      );
+
       expect(metaDescription).toBeInTheDocument();
     });
 
@@ -465,7 +491,6 @@ describe('DynamicLandingPage', () => {
       const ogTitle = document.querySelector('meta[property="og:title"]');
       const ogDescription = document.querySelector(
         'meta[property="og:description"]'
-      );
 
       expect(ogTitle).toBeInTheDocument();
       expect(ogDescription).toBeInTheDocument();
@@ -476,7 +501,7 @@ describe('DynamicLandingPage', () => {
 
       const structuredData = document.querySelector(
         'script[type="application/ld+json"]'
-      );
+
       expect(structuredData).toBeInTheDocument();
     });
   });
@@ -514,7 +539,7 @@ describe('DynamicLandingPage', () => {
         'event',
         'click',
         expect.any(Object)
-      );
+
     });
   });
 

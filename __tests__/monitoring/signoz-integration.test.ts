@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
+
 /**
  * SigNoz Integration Tests
  */
@@ -20,6 +22,7 @@ import {
   measureDuration,
 } from '@/lib/monitoring/signoz/metrics';
 import { SpanStatusCode } from '@opentelemetry/api';
+
 
 // Mock environment
 const originalEnv = process.env;
@@ -72,7 +75,6 @@ describe('SigNoz Integration', () => {
         'GET',
         'https://api.example.com/data',
         mockFetch
-      );
 
       expect(result).toEqual({ data: 'success' });
       expect(mockFetch).toHaveBeenCalled();
@@ -85,7 +87,6 @@ describe('SigNoz Integration', () => {
         'SELECT',
         'SELECT * FROM users',
         mockQuery
-      );
 
       expect(result).toEqual({ rowCount: 5 });
       expect(mockQuery).toHaveBeenCalled();

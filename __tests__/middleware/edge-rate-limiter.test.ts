@@ -1,9 +1,12 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import { edgeRateLimiter } from '@/middleware/edge-rate-limiter';
+import { edgeRateLimitMiddleware } from '@/middleware/edge-rate-limiter';
+
 
 // Mock Redis client
 const mockRedis = {
@@ -69,9 +72,9 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
-      expect(result).toBeUndefined(); // No rate limit response
+      expect(result).toBeNull(); // No rate limit response
       expect(mockRedis.incr).toHaveBeenCalled();
     });
 
@@ -81,7 +84,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
       expect(result?.status).toBe(429);
@@ -100,7 +103,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       if (result) {
         expect(result.headers.get('X-RateLimit-Limit')).toBe('100');
@@ -116,7 +119,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined();
       expect(mockRedis.incr).toHaveBeenCalled();
@@ -132,11 +135,11 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'x-forwarded-for': '203.0.113.1, 192.168.1.1' },
       });
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('203.0.113.1')
-      );
+
     });
 
     it('should extract IP from x-real-ip header', async () => {
@@ -146,11 +149,11 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'x-real-ip': '203.0.113.2' },
       });
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('203.0.113.2')
-      );
+
     });
 
     it('should handle missing IP address', async () => {
@@ -158,11 +161,11 @@ describe('Edge Rate Limiter Middleware', () => {
 
       const request = createRequest('https://example.com/api/v1/test');
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('unknown')
-      );
+
     });
 
     it('should normalize IPv6 addresses', async () => {
@@ -174,11 +177,11 @@ describe('Edge Rate Limiter Middleware', () => {
         },
       });
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
-      );
+
     });
 
     it('should handle localhost requests', async () => {
@@ -188,11 +191,11 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'x-forwarded-for': '127.0.0.1' },
       });
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('127.0.0.1')
-      );
+
     });
   });
 
@@ -203,7 +206,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/auth/login', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
       expect(result?.status).toBe(429);
@@ -215,8 +218,8 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest(
         'https://example.com/api/v1/portfolios/public',
         { ip: '192.168.1.1' }
-      );
-      const result = await edgeRateLimiter(request);
+
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Should allow
     });
@@ -227,7 +230,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/admin/users', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
       expect(result?.status).toBe(429);
@@ -237,7 +240,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/health', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined();
       expect(mockRedis.get).not.toHaveBeenCalled();
@@ -249,7 +252,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/ai/enhance', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
       expect(result?.status).toBe(429);
@@ -265,7 +268,7 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { authorization: 'Bearer valid-token' },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Should allow authenticated user
     });
@@ -281,7 +284,7 @@ describe('Edge Rate Limiter Middleware', () => {
         },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Should allow premium user
     });
@@ -294,11 +297,11 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'x-api-key': 'valid-api-key' },
       });
 
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('user:')
-      );
+
     });
 
     it('should handle invalid authentication tokens', async () => {
@@ -309,12 +312,12 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { authorization: 'Bearer invalid-token' },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       // Should fall back to IP-based limiting
       expect(mockRedis.get).toHaveBeenCalledWith(
         expect.stringContaining('192.168.1.1')
-      );
+
     });
   });
 
@@ -325,12 +328,12 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/auth/login', {
         ip: '192.168.1.1',
       });
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.expire).toHaveBeenCalledWith(
         expect.any(String),
         300 // 5 minutes for auth
-      );
+
     });
 
     it('should handle sliding window rate limiting', async () => {
@@ -347,7 +350,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.pipeline).toHaveBeenCalled();
       expect(pipeline.incr).toHaveBeenCalled();
@@ -360,7 +363,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined();
       expect(mockRedis.incr).toHaveBeenCalled();
@@ -376,7 +379,7 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'cf-ipcountry': 'US' },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // US should have higher limits
     });
@@ -389,7 +392,7 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'cf-ipcountry': 'XX' }, // High-risk country
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
     });
@@ -400,7 +403,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Should use default limits
     });
@@ -418,9 +421,9 @@ describe('Edge Rate Limiter Middleware', () => {
       });
 
       // Simulate rapid requests
-      await edgeRateLimiter(request);
-      await edgeRateLimiter(request);
-      const result = await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
+      await edgeRateLimitMiddleware(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.incr).toHaveBeenCalledTimes(3);
     });
@@ -433,7 +436,7 @@ describe('Edge Rate Limiter Middleware', () => {
         headers: { 'x-rate-limit-violations': '3' },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result?.headers.get('Retry-After')).toBe('300'); // Longer backoff
     });
@@ -443,7 +446,7 @@ describe('Edge Rate Limiter Middleware', () => {
         ip: '10.0.0.1', // Trusted internal IP
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined();
       expect(mockRedis.get).not.toHaveBeenCalled();
@@ -457,7 +460,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       // Should allow request when Redis is unavailable
       expect(result).toBeUndefined();
@@ -469,7 +472,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Fail open
     });
@@ -482,7 +485,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(mockRedis.get).toHaveBeenCalledTimes(2);
     });
@@ -498,7 +501,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
       // Mock the response to check headers
       const mockNext = jest.fn().mockResolvedValue(new NextResponse('OK'));
-      const result = await edgeRateLimiter(request, mockNext);
+      const result = await edgeRateLimitMiddleware(request, mockNext);
 
       expect(result?.headers.get('X-RateLimit-Limit')).toBeDefined();
       expect(result?.headers.get('X-RateLimit-Remaining')).toBeDefined();
@@ -511,7 +514,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       if (result) {
         expect(result.headers.get('X-RateLimit-Policy')).toBeDefined();
@@ -526,7 +529,7 @@ describe('Edge Rate Limiter Middleware', () => {
         ip: '192.168.1.1',
       });
       const mockNext = jest.fn().mockResolvedValue(new NextResponse('OK'));
-      const result = await edgeRateLimiter(request, mockNext);
+      const result = await edgeRateLimitMiddleware(request, mockNext);
 
       expect(result?.headers.get('X-RateLimit-Warning')).toBe('true');
     });
@@ -541,7 +544,7 @@ describe('Edge Rate Limiter Middleware', () => {
       });
 
       // Should use custom config for this endpoint
-      const result = await edgeRateLimiter(request, undefined, {
+      const result = await edgeRateLimitMiddleware(request, undefined, {
         maxRequests: 50,
         windowMs: 300000, // 5 minutes
       });
@@ -558,7 +561,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeUndefined(); // Should be more lenient in development
 
@@ -571,7 +574,7 @@ describe('Edge Rate Limiter Middleware', () => {
       });
 
       expect(() => {
-        edgeRateLimiter(request, undefined, {
+        edgeRateLimitMiddleware(request, undefined, {
           maxRequests: -1, // Invalid
           windowMs: 0, // Invalid
         });
@@ -588,11 +591,10 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Rate limit exceeded')
-      );
 
       consoleSpy.mockRestore();
     });
@@ -603,12 +605,12 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      await edgeRateLimiter(request);
+      await edgeRateLimitMiddleware(request);
 
       // Should increment metrics counter
       expect(mockRedis.incr).toHaveBeenCalledWith(
         expect.stringContaining('metrics:rate_limit')
-      );
+
     });
 
     it('should provide rate limiting statistics', async () => {
@@ -617,8 +619,8 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest(
         'https://example.com/api/v1/rate-limit-stats',
         { ip: '192.168.1.1' }
-      );
-      const result = await edgeRateLimiter(request);
+
+      const result = await edgeRateLimitMiddleware(request);
 
       if (result) {
         const stats = await result.json();
@@ -641,7 +643,7 @@ describe('Edge Rate Limiter Middleware', () => {
         },
       });
 
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result).toBeInstanceOf(NextResponse);
       expect(result?.status).toBe(429);
@@ -653,7 +655,7 @@ describe('Edge Rate Limiter Middleware', () => {
       const request = createRequest('https://example.com/api/v1/test', {
         ip: '192.168.1.1',
       });
-      const result = await edgeRateLimiter(request);
+      const result = await edgeRateLimitMiddleware(request);
 
       expect(result?.headers.get('X-Challenge-Required')).toBe('captcha');
     });
@@ -669,8 +671,7 @@ describe('Edge Rate Limiter Middleware', () => {
       ];
 
       const results = await Promise.all(
-        requests.map(req => edgeRateLimiter(req))
-      );
+        requests.map(req => edgeRateLimitMiddleware(req))
 
       // Should detect and block subnet-based attack
       expect(results.some(r => r?.status === 429)).toBe(true);

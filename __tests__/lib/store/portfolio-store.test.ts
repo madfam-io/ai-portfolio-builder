@@ -1,7 +1,9 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
+
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger');
@@ -197,7 +199,7 @@ describe('usePortfolioStore', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to load portfolios',
         expect.any(Error)
-      );
+
     });
   });
 
@@ -353,7 +355,6 @@ describe('usePortfolioStore', () => {
           method: 'PATCH',
           body: JSON.stringify(updates),
         })
-      );
     });
 
     it('should handle update error', async () => {

@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { renderHook, waitFor } from '@testing-library/react';
 import {
   useSubscription,
@@ -215,7 +216,10 @@ describe('useSubscription Hook', () => {
     // Refresh limits
     await result.current.refresh();
 
-    expect(result.current.limits?.current_usage.portfolios).toBe(0);
+    await waitFor(() => {
+      expect(result.current.limits?.current_usage.portfolios).toBe(0);
+    });
+    
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 });

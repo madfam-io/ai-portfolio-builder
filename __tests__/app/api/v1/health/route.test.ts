@@ -1,3 +1,5 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+
 /**
  * @jest-environment node
  */
@@ -5,6 +7,7 @@
 import { NextRequest } from 'next/server';
 import { GET, HEAD } from '@/app/api/v1/health/route';
 import { handleHealthCheck } from '@/lib/monitoring/health-check';
+
 
 // Mock dependencies
 jest.mock('@/lib/monitoring/health-check');
@@ -95,7 +98,6 @@ describe('/api/v1/health', () => {
             'Content-Type': 'application/json',
           },
         }
-      );
 
       mockHandleHealthCheck.mockResolvedValue(errorResponse as any);
 
@@ -235,7 +237,7 @@ describe('/api/v1/health', () => {
       const request = createRequest();
       const response = await GET(request);
 
-      const responseData = await response.json();
+    const responseData = await response.json();
 
       // Verify required fields are present
       expect(responseData).toHaveProperty('status');
@@ -246,7 +248,7 @@ describe('/api/v1/health', () => {
       // Verify status is one of expected values
       expect(['healthy', 'degraded', 'unhealthy']).toContain(
         responseData.status
-      );
+
     });
   });
 

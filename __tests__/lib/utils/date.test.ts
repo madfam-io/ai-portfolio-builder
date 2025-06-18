@@ -1,3 +1,4 @@
+import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import {
   formatDistanceToNow,
   format,
@@ -45,7 +46,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('30 seconds');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '30 seconds ago'
-      );
+
     });
 
     it('should format minutes ago', () => {
@@ -53,7 +54,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('5 minutes');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '5 minutes ago'
-      );
+
     });
 
     it('should format hours ago', () => {
@@ -61,7 +62,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('2 hours');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '2 hours ago'
-      );
+
     });
 
     it('should format days ago', () => {
@@ -75,7 +76,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('2 weeks');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '2 weeks ago'
-      );
+
     });
 
     it('should format months ago', () => {
@@ -83,7 +84,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('2 months');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '2 months ago'
-      );
+
     });
 
     it('should format years ago', () => {
@@ -91,7 +92,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('2 years');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '2 years ago'
-      );
+
     });
 
     it('should handle singular units', () => {
@@ -99,7 +100,7 @@ describe('Date Utilities', () => {
       expect(formatDistanceToNow(date)).toBe('1 second');
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '1 second ago'
-      );
+
     });
 
     it('should handle just now', () => {
@@ -112,14 +113,14 @@ describe('Date Utilities', () => {
       const date = '2024-01-15T10:25:00.000Z';
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '5 minutes ago'
-      );
+
     });
 
     it('should handle timestamp dates', () => {
       const date = new Date('2024-01-15T10:25:00.000Z').getTime();
       expect(formatDistanceToNow(date, { addSuffix: true })).toBe(
         '5 minutes ago'
-      );
+
     });
   });
 
@@ -157,7 +158,7 @@ describe('Date Utilities', () => {
     it('should handle string dates', () => {
       expect(format('2024-03-15T14:30:00.000Z', 'MMM d, yyyy')).toMatch(
         /Mar 15, 2024/
-      );
+
     });
 
     it('should handle timestamp dates', () => {

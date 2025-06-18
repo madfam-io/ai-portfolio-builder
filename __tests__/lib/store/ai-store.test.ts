@@ -1,6 +1,8 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { act } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
 import type { AIEnhancement } from '@/lib/store/types';
+
 
 // We need to mock before importing the store
 jest.mock('@/lib/ai/client', () => ({
@@ -19,6 +21,7 @@ global.fetch = jest.fn();
 import { useAIStore } from '@/lib/store/ai-store';
 import { aiClient } from '@/lib/ai/client';
 
+
 // Unmock the store from comprehensive-test-setup.tsx
 jest.unmock('@/lib/store/ai-store');
 
@@ -32,15 +35,15 @@ describe('AI Store', () => {
       result.current.setSelectedModel(
         'bio',
         'meta-llama/Meta-Llama-3.1-8B-Instruct'
-      );
+
       result.current.setSelectedModel(
         'project',
         'microsoft/Phi-3.5-mini-instruct'
-      );
+
       result.current.setSelectedModel(
         'template',
         'meta-llama/Meta-Llama-3.1-8B-Instruct'
-      );
+
       result.current.setAvailableModels([]);
       result.current.clearHistory();
       result.current.setQuota(0, 100);
@@ -60,7 +63,7 @@ describe('AI Store', () => {
       expect(result.current.selectedModels.bio).toBe('new-model-id');
       expect(result.current.selectedModels.project).toBe(
         'microsoft/Phi-3.5-mini-instruct'
-      );
+
     });
 
     it('should set available models', () => {
@@ -105,7 +108,6 @@ describe('AI Store', () => {
     it('should handle model loading error', async () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
-      );
 
       const { loadModels } = useAIStore.getState();
 
@@ -245,7 +247,7 @@ describe('AI Store', () => {
         expect(aiClient.updateModelSelection).toHaveBeenCalledWith(
           'bio',
           'meta-llama/Meta-Llama-3.1-8B-Instruct'
-        );
+
         expect(aiClient.enhanceBio).toHaveBeenCalledWith(
           'Original bio text',
           expect.objectContaining({
@@ -256,7 +258,7 @@ describe('AI Store', () => {
             industry: 'tech',
             targetLength: 'concise',
           })
-        );
+
         expect(result!).toBe('Enhanced bio text');
 
         const { enhancementHistory, quotaUsed, isProcessing, error } =
@@ -292,7 +294,6 @@ describe('AI Store', () => {
       it('should handle enhancement error', async () => {
         (aiClient.enhanceBio as jest.Mock).mockRejectedValue(
           new Error('API error')
-        );
 
         const { enhanceBio } = useAIStore.getState();
 
@@ -327,12 +328,12 @@ describe('AI Store', () => {
         expect(aiClient.updateModelSelection).toHaveBeenCalledWith(
           'project',
           'microsoft/Phi-3.5-mini-instruct'
-        );
+
         expect(aiClient.optimizeProject).toHaveBeenCalledWith(
           'Original project description',
           [],
           'Project'
-        );
+
         expect(result!).toBe('Enhanced project description');
 
         const { enhancementHistory, quotaUsed } = useAIStore.getState();
@@ -356,7 +357,6 @@ describe('AI Store', () => {
 
         (aiClient.recommendTemplate as jest.Mock).mockResolvedValue(
           mockRecommendation
-        );
 
         const { recommendTemplate } = useAIStore.getState();
 
@@ -373,7 +373,7 @@ describe('AI Store', () => {
         expect(aiClient.updateModelSelection).toHaveBeenCalledWith(
           'template',
           'meta-llama/Meta-Llama-3.1-8B-Instruct'
-        );
+
         expect(aiClient.recommendTemplate).toHaveBeenCalledWith(profileData);
         expect(result).toEqual(mockRecommendation);
 
