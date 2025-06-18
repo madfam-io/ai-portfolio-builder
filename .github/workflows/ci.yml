@@ -229,7 +229,7 @@ jobs:
           echo "- Build Check: ${{ needs.build.result }}"
           echo "- Security Scan: ${{ needs.security.result }}"
           echo ""
-          
+
           # Allow skipped jobs but fail on errors
           if [[ "${{ needs.lint-and-type-check.result }}" == "failure" || 
                 "${{ needs.test.result }}" == "failure" || 
