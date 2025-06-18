@@ -66,14 +66,14 @@ export async function POST(request: NextRequest) {
         domain_id: domainId,
         verification_type: 'dns_txt',
         status: 'failed',
-        error_code: dnsError.code,
-        error_message: dnsError.message,
+        error_code: (dnsError as any).code,
+        error_message: (dnsError as any).message,
       });
 
       return NextResponse.json({
         verified: false,
         error: 'DNS lookup failed',
-        details: dnsError.message,
+        details: (dnsError as any).message,
       });
     }
 

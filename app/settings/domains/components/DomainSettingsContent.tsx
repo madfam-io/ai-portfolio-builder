@@ -87,7 +87,7 @@ export function DomainSettingsContent() {
 
       setDomains([...domains, newDomain]);
       setShowAddModal(false);
-      setSelectedDomain(newDomain);
+      _setSelectedDomain(newDomain);
 
       toast({
         title: 'Domain Added',

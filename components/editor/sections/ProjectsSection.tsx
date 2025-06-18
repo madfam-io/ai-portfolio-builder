@@ -110,7 +110,6 @@ function SortableProjectItem({
           {project.imageUrl && (
             <div className="w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
               <img
-                alt=""
                 src={project.imageUrl}
                 alt={project.title}
                 className="w-full h-full object-cover"

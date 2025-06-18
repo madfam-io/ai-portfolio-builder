@@ -17,7 +17,7 @@ interface SEOStepProps {
       keywords: string;
     };
   };
-  setPublishData: (data: typeof publishData) => void;
+  setPublishData: (data: SEOStepProps['publishData']) => void;
   currentPortfolio: Portfolio | null;
   onNext: () => void;
   onBack: () => void;

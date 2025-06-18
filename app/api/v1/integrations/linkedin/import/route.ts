@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { LinkedInClient } from '@/lib/services/integrations/linkedin/client';
 import { LinkedInParser } from '@/lib/services/integrations/linkedin/parser';
+import { LinkedInFullProfile } from '@/lib/services/integrations/linkedin/types';
 import { logger } from '@/lib/utils/logger';
 
 interface ImportOptions {
@@ -25,6 +26,21 @@ interface ProfileUpdates {
   [key: string]: unknown;
 }
 
+// Helper to convert URLs object to array
+function formatUrlsForPortfolio(urls: {
+  linkedin?: string;
+  website?: string;
+  github?: string;
+  twitter?: string;
+}): string[] {
+  const urlArray: string[] = [];
+  if (urls.linkedin) urlArray.push(urls.linkedin);
+  if (urls.website) urlArray.push(urls.website);
+  if (urls.github) urlArray.push(urls.github);
+  if (urls.twitter) urlArray.push(urls.twitter);
+  return urlArray;
+}
+
 // Helper function to build portfolio updates based on options
 function buildPortfolioUpdates(
   profileData: {
@@ -41,7 +57,7 @@ function buildPortfolioUpdates(
     location?: string;
     urls?: string[];
   },
-  linkedInProfile: Record<string, unknown>,
+  linkedInProfile: LinkedInFullProfile,
   options: ImportOptions
 ): ProfileUpdates {
   const updates: ProfileUpdates = {};
@@ -98,7 +114,7 @@ async function updateExistingPortfolio(params: {
     location?: string;
     urls?: string[];
   };
-  linkedInProfile: Record<string, unknown>;
+  linkedInProfile: LinkedInFullProfile;
   options: ImportOptions;
 }) {
   const {
@@ -110,7 +126,7 @@ async function updateExistingPortfolio(params: {
     options,
   } = params;
   // Verify user owns the portfolio
-  const { data: portfolio, error: portfolioError } = await supabase
+  const { data: portfolio, error: portfolioError } = await supabase!
     .from('portfolios')
     .select('id')
     .eq('id', portfolioId)
@@ -125,7 +141,7 @@ async function updateExistingPortfolio(params: {
   const updates = buildPortfolioUpdates(profileData, linkedInProfile, options);
 
   // Update portfolio
-  const { error: updateError } = await supabase
+  const { error: updateError } = await supabase!
     .from('portfolios')
     .update({
       ...updates,
@@ -141,7 +157,7 @@ async function updateExistingPortfolio(params: {
 
   // Update user profile if needed
   if (options.updateProfile !== false) {
-    await supabase
+    await supabase!
       .from('profiles')
       .update({
         full_name: profileData.name,
@@ -191,10 +207,10 @@ async function createNewPortfolio(params: {
     location?: string;
     urls?: string[];
   };
-  linkedInProfile: Record<string, unknown>;
+  linkedInProfile: LinkedInFullProfile;
 }) {
   const { supabase, userId, profileData, linkedInProfile } = params;
-  const { data: newPortfolio, error: createError } = await supabase
+  const { data: newPortfolio, error: createError } = await supabase!
     .from('portfolios')
     .insert({
       user_id: userId,
@@ -275,7 +291,7 @@ export async function POST(request: NextRequest) {
     const { portfolioId, options = {} } = body;
 
     // Get LinkedIn connection
-    const { data: connection, error: connectionError } = await supabase
+    const { data: connection, error: connectionError } = await supabase!
       .from('linkedin_connections')
       .select('*')
       .eq('user_id', user.id)
@@ -301,7 +317,7 @@ export async function POST(request: NextRequest) {
 
     try {
       // Fetch full profile
-      const linkedInProfile = await linkedInClient.fetchFullProfile(
+      const linkedInProfile: LinkedInFullProfile = await linkedInClient.fetchFullProfile(
         connection.access_token
       );
 
@@ -317,6 +333,12 @@ export async function POST(request: NextRequest) {
 
       const profileData = parsedProfile.data;
 
+      // Convert URLs object to array format for portfolio
+      const formattedProfileData = {
+        ...profileData,
+        urls: formatUrlsForPortfolio(profileData.urls),
+      };
+
       // Handle portfolio update or creation
       let result;
       if (portfolioId) {
@@ -324,7 +346,7 @@ export async function POST(request: NextRequest) {
           supabase,
           portfolioId,
           userId: user.id,
-          profileData,
+          profileData: formattedProfileData,
           linkedInProfile,
           options,
         });
@@ -332,7 +354,7 @@ export async function POST(request: NextRequest) {
         result = await createNewPortfolio({
           supabase,
           userId: user.id,
-          profileData,
+          profileData: formattedProfileData,
           linkedInProfile,
         });
       }

@@ -51,7 +51,7 @@ export function DomainSetupInstructions({
   const _instructions = DomainService.getSetupInstructions(
     domain,
     verificationToken,
-    provider as string
+    provider as "generic" | "cloudflare" | "namecheap" | "godaddy" | "route53" | "googledomains"
   );
 
   const dnsProviders = [

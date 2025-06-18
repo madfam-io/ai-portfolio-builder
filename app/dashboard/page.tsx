@@ -3,7 +3,7 @@
 import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
@@ -427,7 +427,7 @@ function DashboardContent(): React.ReactElement {
         {/* Delete Confirmation Dialog */}
         <AlertDialog
           open={deletePortfolioId !== null}
-          onOpenChange={open => !open && setDeletePortfolioId(null)}
+          onOpenChange={(open: boolean) => !open && setDeletePortfolioId(null)}
         >
           <AlertDialogContent>
             <AlertDialogHeader>

@@ -215,8 +215,9 @@ export async function POST(
         analyticsService,
         repositoryId,
         syncType: 'metrics',
-        syncFunction: () =>
-          analyticsService.syncRepositoryMetrics(repositoryId),
+        syncFunction: async () => {
+          await analyticsService.syncRepositoryMetrics(repositoryId);
+        },
         results,
       });
     }
@@ -226,7 +227,9 @@ export async function POST(
         analyticsService,
         repositoryId,
         syncType: 'pull_requests',
-        syncFunction: () => analyticsService.syncPullRequests(repositoryId),
+        syncFunction: async () => {
+          await analyticsService.syncPullRequests(repositoryId);
+        },
         results,
       });
     }

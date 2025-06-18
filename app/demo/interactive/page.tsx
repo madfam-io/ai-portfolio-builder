@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-import { useRealTimePreview } from '@/hooks/useRealTimePreview';
+import { useRealTimePreview, PreviewMode } from '@/hooks/useRealTimePreview';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 import { generateSamplePortfolio } from '@/lib/utils/sampleData';
@@ -24,8 +24,18 @@ interface StepRendererProps {
   isLoading: boolean;
   selectedAIModel: string;
   currentAITask: 'bio' | 'project' | 'template';
-  previewConfig: Record<string, unknown>;
-  previewDimensions: Record<string, unknown>;
+  previewConfig: {
+    mode: PreviewMode;
+    state: 'editing' | 'preview' | 'fullscreen';
+    zoomLevel: number;
+    showSectionBorders: boolean;
+    showInteractiveElements: boolean;
+  };
+  previewDimensions: {
+    width: string | number;
+    height: string | number;
+    scale: number;
+  };
   handleTemplateChange: (template: TemplateType) => Promise<void>;
   handlePortfolioChange: (portfolio: Portfolio) => void;
   handleNextStep: () => void;
@@ -35,7 +45,7 @@ interface StepRendererProps {
   handleRefresh: () => void;
   setSelectedAIModel: (model: string) => void;
   setCurrentAITask: (task: 'bio' | 'project' | 'template') => void;
-  setPreviewMode: (mode: string) => void;
+  setPreviewMode: (mode: PreviewMode) => void;
   toggleFullscreen: () => void;
   setZoomLevel: (level: number) => void;
   toggleSectionBorders: () => void;
@@ -43,9 +53,9 @@ interface StepRendererProps {
   getResponsiveBreakpoints: () => Array<{
     name: string;
     width: number;
-    icon: React.ReactNode;
+    height: number;
   }>;
-  testResponsiveBreakpoint: (breakpoint: string) => void;
+  testResponsiveBreakpoint: (width: number, height: number) => void;
   t: Record<string, string | undefined>;
 }
 
@@ -254,7 +264,10 @@ export default function InteractiveDemoPage(): React.ReactElement {
     ];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex < stepOrder.length - 1) {
-      setCurrentStep(stepOrder[currentIndex + 1]);
+      const nextStep = stepOrder[currentIndex + 1];
+      if (nextStep) {
+        setCurrentStep(nextStep);
+      }
     }
   };
 
@@ -267,7 +280,10 @@ export default function InteractiveDemoPage(): React.ReactElement {
     ];
     const currentIndex = stepOrder.indexOf(currentStep);
     if (currentIndex > 0) {
-      setCurrentStep(stepOrder[currentIndex - 1]);
+      const prevStep = stepOrder[currentIndex - 1];
+      if (prevStep) {
+        setCurrentStep(prevStep);
+      }
     }
   };
 

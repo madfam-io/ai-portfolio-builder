@@ -37,7 +37,7 @@ async function verifyVariantOwnership(
   variantId: string,
   userId: string
 ) {
-  const { data: variant, error } = await supabase
+  const { data: variant, error } = await supabase!
     .from('portfolio_variants')
     .select(
       `
@@ -86,7 +86,7 @@ export const GET = versionedApiHandler(
       );
 
       if ('error' in result) {
-        return apiError(result.error, { status: result.status });
+        return apiError(result.error || 'Unknown error', { status: result.status });
       }
 
       // Transform to match TypeScript types

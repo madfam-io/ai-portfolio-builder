@@ -4,6 +4,7 @@ import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { apiSuccess, versionedApiHandler } from '@/lib/api/response-helpers';
 import { createClient } from '@/lib/supabase/server';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
+import type { CreatePortfolioDTO } from '@/types/portfolio';
 import {
   validateCreatePortfolio,
   validatePortfolioQuery,
@@ -171,23 +172,19 @@ export const POST = versionedApiHandler(
         throw new ValidationError('Invalid JSON in request body');
       }
 
-      const validation = validateCreatePortfolio(
-        body as Record<string, unknown>
-      );
+      const validation = validateCreatePortfolio(body as CreatePortfolioDTO);
 
       if (!validation.isValid) {
         throw new ValidationError('Invalid portfolio data', {
-          errors: validation.errors,
+          errors: validation.errors || [],
         });
       }
 
       // Sanitize input data
-      const sanitizedData = sanitizePortfolioData(
-        body as Record<string, unknown>
-      );
+      const sanitizedData = sanitizePortfolioData(body as CreatePortfolioDTO);
 
       // Generate unique subdomain if not provided
-      let subdomain = sanitizedData.name
+      let subdomain = String(sanitizedData.name || 'portfolio')
         .toLowerCase()
         .replace(/[^a-z0-9]/g, '-')
         .replace(/-+/g, '-')

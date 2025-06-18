@@ -206,7 +206,7 @@ function createPosition(
     _type: t[config.keys.type] || config.defaults.type,
     _description: t[config.keys.desc] || config.defaults.desc,
     requirements: config.keys.reqs.map(
-      (key, i) => t[key] || config.defaults.reqs[i]
+      (key, i) => t[key] || config.defaults.reqs[i] || ''
     ),
   };
 }

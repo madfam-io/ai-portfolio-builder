@@ -188,7 +188,7 @@ async function generateSuggestions(
     if (suggestions.length >= maxSuggestions) break;
 
     try {
-      const { data: existing } = await supabase
+      const { data: existing } = await supabase!
         .from('portfolios')
         .select('id')
         .eq('subdomain', variation)

@@ -17,7 +17,7 @@ interface SubdomainStepProps {
       keywords: string;
     };
   };
-  setPublishData: (data: typeof publishData) => void;
+  setPublishData: (data: SubdomainStepProps['publishData']) => void;
   currentPortfolio: Portfolio | null;
   onNext: () => void;
   onBack: () => void;

@@ -202,8 +202,18 @@ export async function POST(request: NextRequest): Promise<Response> {
     // 4. Analyze content
     const analysis = await geoService.analyzeContent(content, contentType);
 
-    // 5. Transform analysis results
-    const data = transformAnalysisResults(analysis, targetKeywords);
+    // 5. Transform analysis results - convert keywords array to object format
+    const analysisWithKeywordObject = {
+      ...analysis,
+      keywords: {
+        primaryKeyword: analysis.keywords[0],
+        secondaryKeywords: analysis.keywords.slice(1, 5),
+        lsiKeywords: analysis.keywords.slice(5),
+        density: {},
+        recommendations: [],
+      },
+    };
+    const data = transformAnalysisResults(analysisWithKeywordObject, targetKeywords);
 
     // 6. Return analysis results
     return NextResponse.json({

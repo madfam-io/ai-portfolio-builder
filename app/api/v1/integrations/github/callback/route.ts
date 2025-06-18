@@ -20,7 +20,7 @@ async function validateOAuthState(
   userId: string,
   supabase: ReturnType<typeof createClient> extends Promise<infer T> ? T : never
 ) {
-  const { data: oauthState, error: stateError } = await supabase
+  const { data: oauthState, error: stateError } = await supabase!
     .from('oauth_states')
     .select('*')
     .eq('state', state)
@@ -137,7 +137,7 @@ async function storeGitHubIntegration(
       : null;
 
   // Store GitHub integration with encrypted tokens
-  const { error: integrationError } = await supabase
+  const { error: integrationError } = await supabase!
     .from('github_integrations')
     .upsert({
       user_id: user.id,
