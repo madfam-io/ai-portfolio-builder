@@ -62,15 +62,15 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
 
   // Mock API error handler functions
   jest.doMock('@/lib/services/error/api-error-handler', () => ({
-    handleApiError: jest.fn((error, context) => ({
+    handleApiError: jest.fn((error, _context) => ({
       error: error.message || 'An error occurred',
       code: error.code || 'UNKNOWN_ERROR',
       statusCode: error.statusCode || 500,
     })),
-    createApiHandler: jest.fn((handler) => handler),
+    createApiHandler: jest.fn(handler => handler),
     validateMethod: jest.fn(() => true),
-    parseJsonBody: jest.fn((request) => request.json()),
-    withErrorHandler: jest.fn((handler) => handler),
+    parseJsonBody: jest.fn(request => request.json()),
+    withErrorHandler: jest.fn(handler => handler),
     ApiError: class ApiError extends Error {
       constructor(message: string, statusCode: number, code?: string) {
         super(message);
@@ -84,7 +84,7 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
 
   // Mock auth middleware
   jest.doMock('@/lib/api/middleware/auth', () => ({
-    withAuth: jest.fn((handler) => async (request: any) => {
+    withAuth: jest.fn(handler => (request: any) => {
       // Add user to request object
       request.user = {
         id: 'user_123',
@@ -96,7 +96,7 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
       id: 'user_123',
       email: 'test@example.com',
     }),
-    requireAuth: jest.fn((handler) => async (request: any) => {
+    requireAuth: jest.fn(handler => (request: any) => {
       // Add user to request object
       request.user = {
         id: 'user_123',
@@ -108,7 +108,7 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
 
   // Mock rate limit middleware
   jest.doMock('@/lib/api/middleware/rate-limit', () => ({
-    withRateLimit: jest.fn((handler) => handler),
+    withRateLimit: jest.fn(handler => handler),
     rateLimiter: jest.fn(() => true),
   }));
 
@@ -174,7 +174,7 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
         headers: { 'Content-Type': 'application/json' },
       });
     }),
-    versionedApiHandler: jest.fn((handler) => handler),
+    versionedApiHandler: jest.fn(handler => handler),
   }));
 
   // Mock HuggingFace
@@ -276,7 +276,6 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
     createClient: jest.fn().mockResolvedValue(supabaseMock),
     createSupabaseClient: jest.fn().mockResolvedValue(supabaseMock), // For legacy imports
   }));
-
 };
 
 export const createMockRequest = (
@@ -294,7 +293,7 @@ export const createMockRequest = (
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
-  // Add json method
+  // Add json method - the body should be returned as-is since it's already the parsed object
   (request as any).json = jest.fn().mockResolvedValue(options.body || {});
 
   // Add NextRequest specific properties

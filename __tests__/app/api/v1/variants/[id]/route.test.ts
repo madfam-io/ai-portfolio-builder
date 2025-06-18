@@ -3,8 +3,10 @@
  */
 
 import { jest } from '@jest/globals';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 describe('/api/v1/variants/[id]', () => {
   const mockVariant = {
@@ -63,10 +65,11 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { GET } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
         { params: { id: 'variant-123' } }
+      );
 
       const response = await GET(request, { params: { id: 'variant-123' } });
       const data = await response.json();
@@ -108,10 +111,11 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { GET } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
         { params: { id: 'variant-123' } }
+      );
 
       const response = await GET(request, { params: { id: 'variant-123' } });
       expect(response.status).toBe(200);
@@ -138,10 +142,11 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { GET } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/non-existent',
         { params: { id: 'non-existent' } }
+      );
 
       const response = await GET(request, { params: { id: 'non-existent' } });
       const data = await response.json();
@@ -192,14 +197,15 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { PUT } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
-        { 
+        {
           method: 'PUT',
           body: updateData,
-          params: { id: 'variant-123' } 
+          params: { id: 'variant-123' },
         }
+      );
 
       const response = await PUT(request, { params: { id: 'variant-123' } });
       const data = await response.json();
@@ -219,14 +225,15 @@ describe('/api/v1/variants/[id]', () => {
       setupCommonMocks();
 
       const { PUT } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
-        { 
+        {
           method: 'PUT',
           body: invalidData,
-          params: { id: 'variant-123' } 
+          params: { id: 'variant-123' },
         }
+      );
 
       const response = await PUT(request, { params: { id: 'variant-123' } });
       const data = await response.json();
@@ -271,13 +278,14 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { DELETE } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
-        { 
+        {
           method: 'DELETE',
-          params: { id: 'variant-123' } 
+          params: { id: 'variant-123' },
         }
+      );
 
       const response = await DELETE(request, { params: { id: 'variant-123' } });
       const data = await response.json();
@@ -307,13 +315,14 @@ describe('/api/v1/variants/[id]', () => {
       });
 
       const { DELETE } = await import('@/app/api/v1/variants/[id]/route');
-      
+
       const request = createMockRequest(
         'http://localhost:3000/api/v1/variants/variant-123',
-        { 
+        {
           method: 'DELETE',
-          params: { id: 'variant-123' } 
+          params: { id: 'variant-123' },
         }
+      );
 
       const response = await DELETE(request, { params: { id: 'variant-123' } });
       const data = await response.json();

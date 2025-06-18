@@ -25,8 +25,17 @@ const taglineSchema = z
   .string()
   .max(100, 'Tagline must be less than 100 characters');
 
-// Template enum
-const templateSchema = z.enum(['developer', 'designer', 'consultant']);
+// Template enum - matches TemplateType from @/types/portfolio.ts
+const templateSchema = z.enum([
+  'developer',
+  'designer',
+  'consultant',
+  'educator',
+  'creative',
+  'business',
+  'minimal',
+  'modern',
+]);
 
 // Social links schema
 const socialLinksSchema = z.object({
@@ -178,8 +187,8 @@ export const publishPortfolioSchema = z.object({
 });
 
 // Export types
-type CreatePortfolioInput = z.infer<typeof createPortfolioSchema>;
-type UpdatePortfolioInput = z.infer<typeof updatePortfolioSchema>;
-type PortfolioQueryInput = z.infer<typeof portfolioQuerySchema>;
-type SubdomainCheckInput = z.infer<typeof subdomainCheckSchema>;
-type PublishPortfolioInput = z.infer<typeof publishPortfolioSchema>;
+export type CreatePortfolioInput = z.infer<typeof createPortfolioSchema>;
+export type UpdatePortfolioInput = z.infer<typeof updatePortfolioSchema>;
+export type PortfolioQueryInput = z.infer<typeof portfolioQuerySchema>;
+export type SubdomainCheckInput = z.infer<typeof subdomainCheckSchema>;
+export type PublishPortfolioInput = z.infer<typeof publishPortfolioSchema>;

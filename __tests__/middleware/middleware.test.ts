@@ -1,7 +1,6 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { middleware } from '../../middleware';
-
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger', () => ({
@@ -50,10 +49,7 @@ jest.mock('@supabase/ssr', () => ({
 
 // Import mocked modules
 import { apiVersionMiddleware } from '../../middleware/api-version';
-import {
-  securityMiddleware,
-  applySecurityToResponse,
-} from '../../middleware/security';
+import { securityMiddleware } from '../../middleware/security';
 
 describe('Middleware', () => {
   beforeEach(() => {
@@ -62,6 +58,7 @@ describe('Middleware', () => {
     // Default mock implementations
     (apiVersionMiddleware as jest.Mock).mockResolvedValue(
       new NextResponse(null, { status: 200 })
+    );
 
     (securityMiddleware as jest.Mock).mockResolvedValue(null);
     mockSupabaseClient.auth.getSession.mockResolvedValue({
@@ -121,6 +118,7 @@ describe('Middleware', () => {
     it('should return version middleware response if it redirects', async () => {
       const redirectResponse = NextResponse.redirect(
         'https://example.com/api/v2/test'
+      );
 
       (apiVersionMiddleware as jest.Mock).mockResolvedValue(redirectResponse);
 
@@ -176,11 +174,13 @@ describe('Middleware', () => {
             remove: expect.any(Function),
           }),
         })
+      );
     });
 
     it('should handle session retrieval errors gracefully', async () => {
       mockSupabaseClient.auth.getSession.mockRejectedValue(
         new Error('Session error')
+      );
 
       const request = createRequest('/dashboard');
       const result = await middleware(request);
@@ -227,7 +227,7 @@ describe('Middleware', () => {
         const location = result?.headers.get('location');
         expect(location).toBe(
           `https://example.com/auth/signin?redirectTo=${encodeURIComponent(route)}`
-
+        );
       });
 
       it(`should allow authenticated users to access ${route}`, async () => {
@@ -265,7 +265,7 @@ describe('Middleware', () => {
         const expectedPath = `${route}?tab=settings&id=123`;
         expect(location).toContain(
           `redirectTo=${encodeURIComponent(expectedPath)}`
-
+        );
       });
     });
   });
@@ -292,7 +292,7 @@ describe('Middleware', () => {
         expect(result?.status).toBe(307);
         expect(result?.headers.get('location')).toBe(
           'https://example.com/dashboard'
-
+        );
       });
 
       it(`should allow unauthenticated users to access ${route}`, async () => {
@@ -326,7 +326,7 @@ describe('Middleware', () => {
 
         expect(result?.headers.get('location')).toBe(
           'https://example.com/dashboard/billing'
-
+        );
       });
 
       it(`should not redirect to non-protected routes`, async () => {
@@ -347,7 +347,7 @@ describe('Middleware', () => {
 
         expect(result?.headers.get('location')).toBe(
           'https://example.com/dashboard'
-
+        );
       });
     });
   });
@@ -450,9 +450,11 @@ describe('Middleware', () => {
     it('should handle concurrent requests', async () => {
       const requests = Array.from({ length: 10 }, (_, i) =>
         createRequest(`/dashboard/page-${i}`)
+      );
 
       const results = await Promise.all(
         requests.map(request => middleware(request))
+      );
 
       expect(results).toHaveLength(10);
       results.forEach(result => {

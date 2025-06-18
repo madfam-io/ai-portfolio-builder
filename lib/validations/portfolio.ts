@@ -14,7 +14,7 @@ const PHONE_REGEX =
 const HEX_COLOR_REGEX = /^#[0-9A-F]{6}$/i;
 const DATE_REGEX = /^\d{4}-\d{2}$/; // YYYY-MM format
 
-// Template type validation
+// Template type validation - matches TemplateType from @/types/portfolio.ts
 const templateTypeSchema = z.enum([
   'developer',
   'designer',
@@ -22,6 +22,8 @@ const templateTypeSchema = z.enum([
   'educator',
   'creative',
   'business',
+  'minimal',
+  'modern',
 ]);
 
 // Portfolio status validation
@@ -263,10 +265,10 @@ export function validatePortfolioQuery(data: unknown) {
 /**
  * Sanitize portfolio data to prevent XSS attacks
  */
-export function sanitizePortfolioData<T extends Record<string, any>>(
+export function sanitizePortfolioData<T extends Record<string, unknown>>(
   data: T
 ): T {
-  const sanitized = { ...data } as any;
+  const sanitized = { ...data } as T;
 
   // List of fields that should be sanitized
   const textFields = ['name', 'title', 'bio', 'tagline', 'description'];

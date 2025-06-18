@@ -4,8 +4,10 @@
 
 import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { setupCommonMocks, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  defaultSupabaseMock,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 describe('Auth Callback Route', () => {
   beforeEach(() => {
@@ -34,7 +36,9 @@ describe('Auth Callback Route', () => {
 
     const { GET } = await import('@/app/auth/callback/route');
 
-    const request = new NextRequest('https://example.com/auth/callback?code=test_code');
+    const request = new NextRequest(
+      'https://example.com/auth/callback?code=test_code'
+    );
     const response = await GET(request);
 
     expect(response.status).toBe(302);
@@ -60,6 +64,7 @@ describe('Auth Callback Route', () => {
 
     const request = new NextRequest(
       'https://example.com/auth/callback?error=access_denied&error_description=User+denied+access'
+    );
 
     const response = await GET(request);
 
@@ -83,7 +88,9 @@ describe('Auth Callback Route', () => {
 
     const { GET } = await import('@/app/auth/callback/route');
 
-    const request = new NextRequest('https://example.com/auth/callback?code=invalid_code');
+    const request = new NextRequest(
+      'https://example.com/auth/callback?code=invalid_code'
+    );
     const response = await GET(request);
 
     expect(response.status).toBe(302);
@@ -122,7 +129,9 @@ describe('Auth Callback Route', () => {
 
     const { GET } = await import('@/app/auth/callback/route');
 
-    const request = new NextRequest('https://example.com/auth/callback?code=test_code');
+    const request = new NextRequest(
+      'https://example.com/auth/callback?code=test_code'
+    );
     const response = await GET(request);
 
     expect(response.status).toBe(302);
@@ -136,7 +145,9 @@ describe('Auth Callback Route', () => {
 
     const { GET } = await import('@/app/auth/callback/route');
 
-    const request = new NextRequest('https://example.com/auth/callback?code=test_code');
+    const request = new NextRequest(
+      'https://example.com/auth/callback?code=test_code'
+    );
     const response = await GET(request);
 
     expect(response.status).toBe(302);

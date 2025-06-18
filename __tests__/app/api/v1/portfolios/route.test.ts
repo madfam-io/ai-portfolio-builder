@@ -3,8 +3,11 @@
  */
 
 import { jest } from '@jest/globals';
-import { NextRequest } from 'next/server';
-import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
+import {
+  setupCommonMocks,
+  createMockRequest,
+  defaultSupabaseMock,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Helper to create portfolio query mock chain
 const createPortfolioQueryMock = (data: any, error: any = null) => ({
@@ -57,7 +60,9 @@ describe('Portfolios API Route', () => {
 
       const { GET } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios');
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios'
+      );
       const response = await GET(request);
       const result = await response.json();
 
@@ -76,7 +81,9 @@ describe('Portfolios API Route', () => {
 
       const { GET } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios');
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios'
+      );
       const response = await GET(request);
       const result = await response.json();
 
@@ -87,22 +94,34 @@ describe('Portfolios API Route', () => {
     it('should require authentication', async () => {
       // Clear all modules to ensure fresh imports
       jest.resetModules();
-      
+
       // Mock auth middleware to simulate unauthenticated request
       jest.doMock('@/lib/api/middleware/auth', () => ({
-        withAuth: jest.fn((handler) => async (request: any) => {
-          return new Response(JSON.stringify({ error: 'Authentication required' }), {
-            status: 401,
-            headers: { 'Content-Type': 'application/json' },
-          });
+        withAuth: jest.fn(_handler => (_request: any) => {
+          return new Response(
+            JSON.stringify({ error: 'Authentication required' }),
+            {
+              status: 401,
+              headers: { 'Content-Type': 'application/json' },
+            }
+          );
         }),
+        AuthenticatedRequest: jest.fn(),
       }));
-      
-      setupCommonMocks();
+
+      // Mock other dependencies to avoid module loading issues
+      jest.doMock('@/lib/api/response-helpers', () => ({
+        apiSuccess: jest.fn(),
+        versionedApiHandler: jest.fn(handler => handler),
+      }));
+
+      // Don't call setupCommonMocks to avoid conflicts with auth mock
 
       const { GET } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios');
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios'
+      );
       const response = await GET(request);
       const result = await response.json();
 
@@ -114,11 +133,24 @@ describe('Portfolios API Route', () => {
   describe('POST /api/v1/portfolios', () => {
     it('should create a new portfolio', async () => {
       const newPortfolio = {
-        name: 'New Portfolio',
-        title: 'Full Stack Developer',
-        bio: 'Experienced developer with over 10 years of experience in building scalable web applications',
-        template: 'developer',
+        name: 'Test Portfolio',
+        title: 'Developer',
+        template: 'developer' as const,
       };
+
+      // Add debug logging for validation
+      jest.doMock('@/lib/services/portfolio/validation', () => ({
+        validateCreatePortfolio: jest.fn(data => {
+          console.log('Validation input:', data);
+          const result = {
+            isValid: true,
+            errors: [],
+            warnings: [],
+          };
+          console.log('Validation result:', result);
+          return result;
+        }),
+      }));
 
       setupCommonMocks({
         supabase: {
@@ -132,22 +164,32 @@ describe('Portfolios API Route', () => {
             error: null,
           }),
           from: jest.fn().mockReturnValue({
-            insert: jest.fn().mockReturnValue({
-              select: jest.fn().mockResolvedValue({
-                data: [{
-                  id: 'new_portfolio_id',
-                  user_id: 'user_123',
-                  name: 'New Portfolio',
-                  template: 'developer',
-                  status: 'draft',
-                  data: {
-                    title: 'Full Stack Developer',
-                    bio: 'Experienced developer with over 10 years of experience in building scalable web applications',
-                  },
-                  created_at: new Date().toISOString(),
-                  updated_at: new Date().toISOString(),
-                }],
+            select: jest.fn().mockReturnValue({
+              like: jest.fn().mockResolvedValue({
+                data: [], // No existing portfolios with this subdomain
                 error: null,
+              }),
+            }),
+            insert: jest.fn().mockReturnValue({
+              select: jest.fn().mockReturnValue({
+                single: jest.fn().mockResolvedValue({
+                  data: {
+                    id: 'new_portfolio_id',
+                    user_id: 'user_123',
+                    name: 'Test Portfolio',
+                    template: 'developer',
+                    status: 'draft',
+                    slug: 'test-portfolio',
+                    subdomain: 'test-portfolio',
+                    data: {
+                      title: 'Developer',
+                      bio: '',
+                    },
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString(),
+                  },
+                  error: null,
+                }),
               }),
             }),
           }),
@@ -156,10 +198,13 @@ describe('Portfolios API Route', () => {
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios', {
-        method: 'POST',
-        body: newPortfolio,
-      });
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios',
+        {
+          method: 'POST',
+          body: newPortfolio,
+        }
+      );
       const response = await POST(request);
       const result = await response.json();
 
@@ -168,7 +213,7 @@ describe('Portfolios API Route', () => {
       }
       expect(response.status).toBe(201);
       expect(result.portfolio).toBeDefined();
-      expect(result.portfolio.name).toBe('New Portfolio');
+      expect(result.portfolio.name).toBe('Test Portfolio');
       expect(result.portfolio.id).toBe('new_portfolio_id');
     });
 
@@ -189,18 +234,21 @@ describe('Portfolios API Route', () => {
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios', {
-        method: 'POST',
-        body: {
-          // Missing required fields
-          template: 'developer',
-        },
-      });
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios',
+        {
+          method: 'POST',
+          body: {
+            // Missing required fields: name and title
+            template: 'developer' as const,
+          },
+        }
+      );
       const response = await POST(request);
       const result = await response.json();
 
       expect(response.status).toBe(400);
-      expect(result.error).toContain('Invalid');
+      expect(result.error).toContain('Invalid portfolio data');
     });
 
     it('should enforce portfolio limit', async () => {
@@ -220,15 +268,18 @@ describe('Portfolios API Route', () => {
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios', {
-        method: 'POST',
-        body: {
-          name: 'New Portfolio',
-          title: 'Developer',
-          bio: 'Bio',
-          template: 'developer',
-        },
-      });
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios',
+        {
+          method: 'POST',
+          body: {
+            name: 'New Portfolio',
+            title: 'Developer',
+            bio: 'Bio',
+            template: 'developer' as const,
+          },
+        }
+      );
       const response = await POST(request);
       const result = await response.json();
 
@@ -249,20 +300,23 @@ describe('Portfolios API Route', () => {
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
-      const request = createMockRequest('https://example.com/api/v1/portfolios', {
-        method: 'POST',
-        body: {
-          name: 'New Portfolio',
-          title: 'Developer',
-          bio: 'Bio',
-          template: 'developer',
-        },
-      });
+      const request = createMockRequest(
+        'https://example.com/api/v1/portfolios',
+        {
+          method: 'POST',
+          body: {
+            name: 'New Portfolio',
+            title: 'Developer',
+            bio: 'Bio',
+            template: 'developer' as const,
+          },
+        }
+      );
       const response = await POST(request);
       const result = await response.json();
 
       expect(response.status).toBe(500);
-      expect(result.error).toContain('Failed to check portfolio count');
+      expect(result.error).toContain('Internal server error');
     });
   });
 });

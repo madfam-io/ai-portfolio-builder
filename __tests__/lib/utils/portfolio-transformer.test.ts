@@ -1,15 +1,13 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import type { Portfolio } from '@/types/portfolio';
-
-const {
+import {
   transformDbPortfolioToApi,
   transformApiPortfolioToDb,
   transformDbPortfoliosToApi,
   sanitizePortfolioData,
-} = require('@/lib/utils/portfolio-transformer');
+} from '@/lib/utils/portfolio-transformer';
 
 describe('Portfolio Transformer Utilities', () => {
-
   describe('transformDbPortfolioToApi', () => {
     it('should transform basic database portfolio to API format', () => {
       const dbPortfolio = {

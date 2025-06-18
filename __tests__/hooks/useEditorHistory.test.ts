@@ -1,4 +1,4 @@
-import { describe, test, it, expect, jest } from '@jest/globals';
+import { describe, it, expect, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useState } from 'react';
 import { useEditorHistory } from '@/hooks/useEditorHistory';
@@ -61,14 +61,14 @@ describe('useEditorHistory', () => {
   });
 
   it('should push to history', () => {
-    let editorState = createInitialState();
-    const setEditorState = (updateFn: any) => {
-      editorState = typeof updateFn === 'function' ? updateFn(editorState) : updateFn;
-    };
-
-    const { result } = renderHook(() => 
-      useEditorHistory(editorState, setEditorState)
-    );
+    const { result } = renderHook(() => {
+      const [editorState, setEditorState] = useState(createInitialState());
+      return {
+        editorState,
+        setEditorState,
+        ...useEditorHistory(editorState, setEditorState),
+      };
+    });
 
     const updatedPortfolio = { ...mockPortfolio, name: 'Updated Portfolio' };
 
@@ -76,13 +76,13 @@ describe('useEditorHistory', () => {
       result.current.pushToHistory('Update name', updatedPortfolio);
     });
 
-    expect(editorState.history).toHaveLength(1);
-    expect(editorState.history[0]).toMatchObject({
+    expect(result.current.editorState.history).toHaveLength(1);
+    expect(result.current.editorState.history[0]).toMatchObject({
       action: 'Update name',
       state: expect.objectContaining({ name: 'Updated Portfolio' }),
       timestamp: expect.any(Date),
     });
-    expect(editorState.historyIndex).toBe(0);
+    expect(result.current.editorState.historyIndex).toBe(0);
     expect(result.current.canUndo).toBe(true);
   });
 
@@ -227,30 +227,29 @@ describe('useEditorHistory', () => {
   });
 
   it('should limit history to 50 entries', () => {
-    const editorState = createInitialState();
-    const setEditorState = jest.fn();
-
-    const { result } = renderHook(() =>
-      useEditorHistory(editorState, setEditorState)
-    );
+    const { result } = renderHook(() => {
+      const [editorState, setEditorState] = useState(createInitialState());
+      return {
+        editorState,
+        setEditorState,
+        ...useEditorHistory(editorState, setEditorState),
+      };
+    });
 
     // Push 60 entries
-    let currentState = editorState;
     for (let i = 0; i < 60; i++) {
       act(() => {
         result.current.pushToHistory(`Action ${i}`, mockPortfolio);
       });
-
-      const updateFn = setEditorState.mock.calls[i][0];
-      currentState = updateFn(currentState);
     }
 
-    expect(currentState.history).toHaveLength(50);
-    expect(currentState.history[0].action).toBe('Action 10'); // First 10 should be removed
-    expect(currentState.history[49].action).toBe('Action 59'); // Last should be most recent
+    expect(result.current.editorState.history).toHaveLength(50);
+    expect(result.current.editorState.history[0].action).toBe('Action 10'); // First 10 should be removed
+    expect(result.current.editorState.history[49].action).toBe('Action 59'); // Last should be most recent
   });
 
   it('should clear future history when pushing after undo', () => {
+    const initialState = createInitialState();
     const history = [
       { timestamp: new Date(), action: 'Action 1', state: mockPortfolio },
       {
@@ -265,17 +264,18 @@ describe('useEditorHistory', () => {
       },
     ];
 
-    const editorState: PortfolioEditorState = {
-      ...createInitialState(),
-      history,
-      historyIndex: 1, // Currently at Action 2
-    };
-
-    const setEditorState = jest.fn();
-
-    const { result } = renderHook(() =>
-      useEditorHistory(editorState, setEditorState)
-    );
+    const { result } = renderHook(() => {
+      const [editorState, setEditorState] = useState({
+        ...initialState,
+        history,
+        historyIndex: 1, // Currently at Action 2
+      });
+      return {
+        editorState,
+        setEditorState,
+        ...useEditorHistory(editorState, setEditorState),
+      };
+    });
 
     const newPortfolio = { ...mockPortfolio, name: 'New Version' };
 
@@ -283,12 +283,9 @@ describe('useEditorHistory', () => {
       result.current.pushToHistory('New Action', newPortfolio);
     });
 
-    const updateFn = setEditorState.mock.calls[0][0];
-    const newState = updateFn(editorState);
-
-    expect(newState.history).toHaveLength(3); // Action 1, Action 2, New Action
-    expect(newState.history[2].action).toBe('New Action');
-    expect(newState.historyIndex).toBe(2);
+    expect(result.current.editorState.history).toHaveLength(3); // Action 1, Action 2, New Action
+    expect(result.current.editorState.history[2].action).toBe('New Action');
+    expect(result.current.editorState.historyIndex).toBe(2);
   });
 
   it('should maintain function references across renders', () => {
