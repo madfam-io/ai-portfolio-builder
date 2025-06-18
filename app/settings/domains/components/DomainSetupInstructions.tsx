@@ -51,7 +51,13 @@ export function DomainSetupInstructions({
   const _instructions = DomainService.getSetupInstructions(
     domain,
     verificationToken,
-    provider as "generic" | "cloudflare" | "namecheap" | "godaddy" | "route53" | "googledomains"
+    provider as
+      | 'generic'
+      | 'cloudflare'
+      | 'namecheap'
+      | 'godaddy'
+      | 'route53'
+      | 'googledomains'
   );
 
   const dnsProviders = [
@@ -191,7 +197,7 @@ export function DomainSetupInstructions({
 
                   <div className="ml-10 space-y-3">
                     <p className="text-sm text-muted-foreground">
-                      Point your domain to PRISMA's servers
+                      Point your domain to PRISMA&apos;s servers
                     </p>
 
                     <div className="grid gap-3">
@@ -266,7 +272,7 @@ export function DomainSetupInstructions({
                         <Info className="h-4 w-4" />
                         <AlertDescription>
                           <strong>Important:</strong> Set the proxy status to
-                          "DNS only" (gray cloud) for the CNAME record.
+                          &quot;DNS only&quot; (gray cloud) for the CNAME record.
                         </AlertDescription>
                       </Alert>
                     )}
@@ -305,7 +311,7 @@ export function DomainSetupInstructions({
                           <Shield className="w-8 h-8 text-primary mb-2" />
                           <h5 className="font-medium mb-1">SSL Certificate</h5>
                           <p className="text-xs text-muted-foreground">
-                            We'll automatically provision an SSL certificate
+                            We&apos;ll automatically provision an SSL certificate
                             once verified
                           </p>
                         </CardContent>
@@ -323,19 +329,19 @@ export function DomainSetupInstructions({
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Server className="w-4 w-4" />
+            <Server className="w-4 h-4" />
             Need Help?
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <p className="text-sm text-muted-foreground">
-            If you're having trouble setting up your domain:
+            If you&apos;re having trouble setting up your domain:
           </p>
           <ul className="text-sm text-muted-foreground space-y-2 ml-4">
             <li className="flex items-start gap-2">
               <ChevronRight className="w-4 h-4 mt-0.5 flex-shrink-0" />
               <span>
-                Make sure you're editing DNS records for the root domain (@ or
+                Make sure you&apos;re editing DNS records for the root domain (@ or
                 blank)
               </span>
             </li>
@@ -347,7 +353,7 @@ export function DomainSetupInstructions({
             </li>
             <li className="flex items-start gap-2">
               <ChevronRight className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              <span>Contact your domain registrar's support for DNS help</span>
+              <span>Contact your domain registrar&apos;s support for DNS help</span>
             </li>
             <li className="flex items-start gap-2">
               <ChevronRight className="w-4 h-4 mt-0.5 flex-shrink-0" />

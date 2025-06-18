@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import BaseLayout from '@/components/layouts/BaseLayout';
@@ -33,6 +33,7 @@ import { useAuthStore } from '@/lib/store/auth-store';
 import { useApp } from '@/lib/contexts/AppContext';
 import { useToast } from '@/hooks/use-toast';
 import { MarketplaceService } from '@/lib/services/marketplace-service';
+import { logger } from '@/lib/utils/logger';
 import { loadStripe } from '@stripe/stripe-js';
 import type { PremiumTemplate, TemplateReview } from '@/types/marketplace';
 
@@ -55,14 +56,7 @@ export function TemplateDetailContent({
   const [reviewsLoading, setReviewsLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  useEffect(() => {
-    if (user) {
-      checkPurchaseStatus();
-      loadReviews();
-    }
-  }, [user, template.id]);
-
-  const checkPurchaseStatus = async () => {
+  const checkPurchaseStatus = useCallback(async () => {
     try {
       const purchased = await MarketplaceService.hasUserPurchased(
         user!.id,
@@ -70,21 +64,28 @@ export function TemplateDetailContent({
       );
       setIsPurchased(purchased);
     } catch (error) {
-      console.error('Failed to check purchase status:', error);
+      logger.error('Failed to check purchase status', error as Error);
     }
-  };
+  }, [user, template.id]);
 
-  const loadReviews = async () => {
+  const loadReviews = useCallback(async () => {
     try {
       setReviewsLoading(true);
       const result = await MarketplaceService.getTemplateReviews(template.id);
       setReviews(result.reviews);
     } catch (error) {
-      console.error('Failed to load reviews:', error);
+      logger.error('Failed to load reviews', error as Error);
     } finally {
       setReviewsLoading(false);
     }
-  };
+  }, [template.id]);
+
+  useEffect(() => {
+    if (user) {
+      checkPurchaseStatus();
+      loadReviews();
+    }
+  }, [user, checkPurchaseStatus, loadReviews]);
 
   const getPrice = () => {
     const prices = {
@@ -152,7 +153,7 @@ export function TemplateDetailContent({
       );
       await stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
-      console.error('Purchase failed:', error);
+      logger.error('Purchase failed', error as Error);
       toast({
         title: 'Purchase Failed',
         description: 'Unable to process your purchase. Please try again.',
@@ -192,7 +193,7 @@ export function TemplateDetailContent({
           : 'Template removed from your wishlist.',
       });
     } catch (error) {
-      console.error('Failed to toggle wishlist:', error);
+      logger.error('Failed to toggle wishlist', error as Error);
       toast({
         title: 'Error',
         description: 'Failed to update wishlist. Please try again.',

@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { MarketplaceService } from '@/lib/services/marketplace-service';
+import { logger } from '@/lib/utils/logger';
 import { TemplateCard } from './TemplateCard';
 import { TemplateFilters } from './TemplateFilters';
 import { Button } from '@/components/ui/button';
@@ -52,12 +53,7 @@ export function MarketplaceContent() {
   const [newArrivals, setNewArrivals] = useState<PremiumTemplate[]>([]);
   const [bestSellers, setBestSellers] = useState<PremiumTemplate[]>([]);
 
-  useEffect(() => {
-    loadTemplates();
-    loadFeaturedSections();
-  }, [filters, searchQuery, page]);
-
-  const loadTemplates = async () => {
+  const loadTemplates = useCallback(async () => {
     try {
       setLoading(true);
       const result = await MarketplaceService.searchTemplates({
@@ -76,7 +72,7 @@ export function MarketplaceContent() {
       setTotal(result.total);
       setHasMore(result.hasMore);
     } catch (error) {
-      console.error('Failed to load templates:', error);
+      logger.error('Failed to load templates', error as Error);
       toast({
         title: 'Error',
         description: 'Failed to load templates. Please try again.',
@@ -85,9 +81,9 @@ export function MarketplaceContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [searchQuery, filters, page, toast]);
 
-  const loadFeaturedSections = async () => {
+  const loadFeaturedSections = useCallback(async () => {
     try {
       // Load featured templates
       const featured = await MarketplaceService.getFeaturedTemplates(3);
@@ -109,9 +105,14 @@ export function MarketplaceContent() {
       });
       setBestSellers(bestSellersResult.templates);
     } catch (error) {
-      console.error('Failed to load featured sections:', error);
+      logger.error('Failed to load featured sections', error as Error);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadTemplates();
+    loadFeaturedSections();
+  }, [loadTemplates, loadFeaturedSections]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();

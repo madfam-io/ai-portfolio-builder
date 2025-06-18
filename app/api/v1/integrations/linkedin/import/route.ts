@@ -126,7 +126,11 @@ async function updateExistingPortfolio(params: {
     options,
   } = params;
   // Verify user owns the portfolio
-  const { data: portfolio, error: portfolioError } = await supabase!
+  if (!supabase) {
+    return { error: 'Database connection not available', status: 503 };
+  }
+
+  const { data: portfolio, error: portfolioError } = await supabase
     .from('portfolios')
     .select('id')
     .eq('id', portfolioId)
@@ -141,7 +145,7 @@ async function updateExistingPortfolio(params: {
   const updates = buildPortfolioUpdates(profileData, linkedInProfile, options);
 
   // Update portfolio
-  const { error: updateError } = await supabase!
+  const { error: updateError } = await supabase
     .from('portfolios')
     .update({
       ...updates,
@@ -157,7 +161,7 @@ async function updateExistingPortfolio(params: {
 
   // Update user profile if needed
   if (options.updateProfile !== false) {
-    await supabase!
+    await supabase
       .from('profiles')
       .update({
         full_name: profileData.name,
@@ -210,7 +214,11 @@ async function createNewPortfolio(params: {
   linkedInProfile: LinkedInFullProfile;
 }) {
   const { supabase, userId, profileData, linkedInProfile } = params;
-  const { data: newPortfolio, error: createError } = await supabase!
+  if (!supabase) {
+    return { error: 'Database connection not available', status: 503 };
+  }
+
+  const { data: newPortfolio, error: createError } = await supabase
     .from('portfolios')
     .insert({
       user_id: userId,
@@ -291,7 +299,14 @@ export async function POST(request: NextRequest) {
     const { portfolioId, options = {} } = body;
 
     // Get LinkedIn connection
-    const { data: connection, error: connectionError } = await supabase!
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database connection not available' },
+        { status: 503 }
+      );
+    }
+
+    const { data: connection, error: connectionError } = await supabase
       .from('linkedin_connections')
       .select('*')
       .eq('user_id', user.id)
@@ -317,9 +332,8 @@ export async function POST(request: NextRequest) {
 
     try {
       // Fetch full profile
-      const linkedInProfile: LinkedInFullProfile = await linkedInClient.fetchFullProfile(
-        connection.access_token
-      );
+      const linkedInProfile: LinkedInFullProfile =
+        await linkedInClient.fetchFullProfile(connection.access_token);
 
       // Parse profile data
       const parsedProfile = LinkedInParser.parseProfile(linkedInProfile);

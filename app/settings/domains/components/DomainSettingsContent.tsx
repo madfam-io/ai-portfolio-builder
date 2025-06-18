@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import {
@@ -35,6 +35,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { DomainService } from '@/lib/services/domain-service';
+import { logger } from '@/lib/utils/logger';
 import { AddDomainModal } from './AddDomainModal';
 import { DomainSetupInstructions } from './DomainSetupInstructions';
 import type { CustomDomain } from '@/types/domains';
@@ -54,19 +55,13 @@ export function DomainSettingsContent() {
   const [verifying, setVerifying] = useState<string | null>(null);
   const [activating, setActivating] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (user) {
-      loadDomains();
-    }
-  }, [user]);
-
-  const loadDomains = async () => {
+  const loadDomains = useCallback(async () => {
     try {
       setLoading(true);
       const userDomains = await DomainService.getUserDomains(user!.id);
       setDomains(userDomains);
     } catch (error) {
-      console.error('Failed to load domains:', error);
+      logger.error('Failed to load domains', error as Error);
       toast({
         title: 'Error',
         description: 'Failed to load your domains. Please try again.',
@@ -75,7 +70,13 @@ export function DomainSettingsContent() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
+
+  useEffect(() => {
+    if (user) {
+      loadDomains();
+    }
+  }, [user, loadDomains]);
 
   const handleAddDomain = async (portfolioId: string, domain: string) => {
     try {
@@ -130,7 +131,8 @@ export function DomainSettingsContent() {
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (_error) {
+      logger.error('Failed to verify domain', _error as Error);
       toast({
         title: 'Error',
         description: 'Failed to verify domain. Please try again.',
@@ -186,7 +188,8 @@ export function DomainSettingsContent() {
         title: 'Primary Domain Set',
         description: `${domain.domain} is now your primary domain.`,
       });
-    } catch (error) {
+    } catch (_error) {
+      logger.error('Failed to set primary domain', _error as Error);
       toast({
         title: 'Error',
         description: 'Failed to set primary domain. Please try again.',
@@ -196,6 +199,7 @@ export function DomainSettingsContent() {
   };
 
   const handleRemoveDomain = async (domain: CustomDomain) => {
+    // eslint-disable-next-line no-alert
     if (
       !window.confirm(
         `Are you sure you want to remove ${domain.domain}? This action cannot be undone.`
@@ -212,7 +216,8 @@ export function DomainSettingsContent() {
         title: 'Domain Removed',
         description: 'Your domain has been removed successfully.',
       });
-    } catch (error) {
+    } catch (_error) {
+      logger.error('Failed to remove domain', _error as Error);
       toast({
         title: 'Error',
         description: 'Failed to remove domain. Please try again.',

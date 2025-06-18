@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -52,11 +52,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
   });
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    checkConsentStatus();
-  }, [user]);
-
-  const checkConsentStatus = async () => {
+  const checkConsentStatus = useCallback(async () => {
     try {
       // Check if user has already given consent
       const hasConsent = localStorage.getItem('cookie-consent-given');
@@ -80,7 +76,11 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
     } catch (error) {
       console.error('Failed to check consent status:', error);
     }
-  };
+  }, [user, consents]);
+
+  useEffect(() => {
+    checkConsentStatus();
+  }, [checkConsentStatus]);
 
   const handleConsentChange = (type: ConsentType, granted: boolean) => {
     if (type === 'essential') return; // Essential cookies cannot be disabled

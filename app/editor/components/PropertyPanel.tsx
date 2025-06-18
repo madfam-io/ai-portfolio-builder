@@ -100,39 +100,94 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
       }
     }
 
+    // Input renderer components to reduce complexity
+    const TextInput = () => (
+      <Input
+        value={value || ''}
+        onChange={e => handleDataUpdate(property.key, e.target.value)}
+        placeholder={`Enter ${property.label.toLowerCase()}`}
+      />
+    );
+
+    const TextareaInput = () => (
+      <Textarea
+        value={value || ''}
+        onChange={e => handleDataUpdate(property.key, e.target.value)}
+        placeholder={`Enter ${property.label.toLowerCase()}`}
+        rows={3}
+      />
+    );
+
+    const NumberInput = () => (
+      <Input
+        type="number"
+        value={value || 0}
+        onChange={e =>
+          handleDataUpdate(property.key, parseInt(e.target.value) || 0)
+        }
+        placeholder={`Enter ${property.label.toLowerCase()}`}
+      />
+    );
+
+    const BooleanInput = () => (
+      <div className="flex items-center space-x-2">
+        <Switch
+          checked={Boolean(value)}
+          onCheckedChange={checked => handleDataUpdate(property.key, checked)}
+        />
+        <Label>{property.label}</Label>
+      </div>
+    );
+
+    const SelectInput = () => (
+      <Select
+        value={value || ''}
+        onValueChange={newValue => handleDataUpdate(property.key, newValue)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder={`Select ${property.label.toLowerCase()}`} />
+        </SelectTrigger>
+        <SelectContent>
+          {property.options?.map(option => (
+            <SelectItem key={option.value} value={option.value}>
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    );
+
+    const ColorInput = () => (
+      <div className="flex items-center space-x-2">
+        <Input
+          type="color"
+          value={value || '#000000'}
+          onChange={e => handleDataUpdate(property.key, e.target.value)}
+          className="w-12 h-8 p-1 border rounded"
+        />
+        <Input
+          value={value || '#000000'}
+          onChange={e => handleDataUpdate(property.key, e.target.value)}
+          placeholder="#000000"
+          className="flex-1"
+        />
+      </div>
+    );
+
     const renderPropertyInput = () => {
       switch (property.type) {
         case 'text':
-          return (
-            <Input
-              value={value || ''}
-              onChange={e => handleDataUpdate(property.key, e.target.value)}
-              placeholder={`Enter ${property.label.toLowerCase()}`}
-            />
-          );
-
+          return <TextInput />;
         case 'textarea':
-          return (
-            <Textarea
-              value={value || ''}
-              onChange={e => handleDataUpdate(property.key, e.target.value)}
-              placeholder={`Enter ${property.label.toLowerCase()}`}
-              rows={3}
-            />
-          );
-
+          return <TextareaInput />;
         case 'number':
-          return (
-            <Input
-              type="number"
-              value={value || 0}
-              onChange={e =>
-                handleDataUpdate(property.key, parseInt(e.target.value) || 0)
-              }
-              min={property.validation?.min}
-              max={property.validation?.max}
-            />
-          );
+          return <NumberInput />;
+        case 'boolean':
+          return <BooleanInput />;
+        case 'select':
+          return <SelectInput />;
+        case 'color':
+          return <ColorInput />;
 
         case 'color':
           return (
@@ -196,7 +251,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
                 placeholder="Image URL or upload"
               />
               <Button variant="outline" size="sm" className="w-full">
-                <Image className="h-4 w-4 mr-2" />
+                <Image className="h-4 w-4 mr-2" alt="Upload icon" />
                 Upload Image
               </Button>
             </div>

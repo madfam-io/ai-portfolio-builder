@@ -14,6 +14,7 @@ import {
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { X, Globe, Info } from 'lucide-react';
 import { DomainService } from '@/lib/services/domain-service';
+import { logger } from '@/lib/utils/logger';
 import type { Portfolio } from '@/types/portfolio';
 
 interface AddDomainModalProps {
@@ -41,7 +42,7 @@ export function AddDomainModal({
       const result = await DomainService.checkDomainAvailability(domain);
       setAvailability(result);
     } catch (error) {
-      console.error('Failed to check domain availability:', error);
+      logger.error('Failed to check domain availability', error as Error);
     } finally {
       setChecking(false);
     }
@@ -54,7 +55,7 @@ export function AddDomainModal({
     try {
       await onAdd(selectedPortfolio, domain);
     } catch (error) {
-      console.error('Failed to add domain:', error);
+      logger.error('Failed to add domain', error as Error);
     } finally {
       setAdding(false);
     }

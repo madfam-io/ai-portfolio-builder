@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -50,11 +50,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
     'status' | 'setup' | 'verify' | 'backup-codes'
   >('status');
 
-  useEffect(() => {
-    loadMFAStatus();
-  }, []);
-
-  const loadMFAStatus = async () => {
+  const loadMFAStatus = useCallback(async () => {
     try {
       setIsLoading(true);
       const status = await mfaService.getMFAStatus();
@@ -69,7 +65,11 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [t, onStatusChange]);
+
+  useEffect(() => {
+    loadMFAStatus();
+  }, [loadMFAStatus]);
 
   const handleSetupMFA = async () => {
     try {

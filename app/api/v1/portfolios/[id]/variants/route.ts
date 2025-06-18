@@ -42,7 +42,14 @@ async function verifyPortfolioOwnership(
   portfolioId: string,
   userId: string
 ) {
-  const { data: portfolio, error } = await supabase!
+  if (!supabase) {
+    return {
+      portfolio: null,
+      error: new Error('Database connection not available'),
+    };
+  }
+
+  const { data: portfolio, error } = await supabase
     .from('portfolios')
     .select('id')
     .eq('id', portfolioId)
@@ -80,7 +87,11 @@ async function createAudienceProfile(
     preferred_length: body.audienceDetails.preferredLength,
   };
 
-  const { data: profile, error } = await supabase!
+  if (!supabase) {
+    return { error: new Error('Database connection not available') };
+  }
+
+  const { data: profile, error } = await supabase
     .from('audience_profiles')
     .insert(audienceData)
     .select()

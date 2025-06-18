@@ -14,6 +14,15 @@ import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
 import { createClient } from '@/lib/supabase/server';
 
+// Enhanced Stripe types for better type safety
+interface StripeSubscriptionWithPeriod extends Stripe.Subscription {
+  current_period_end: number;
+}
+
+interface StripeInvoiceWithSubscription extends Stripe.Invoice {
+  subscription: string | { id: string } | null;
+}
+
 /**
  * POST /api/v1/stripe/webhook
  *
@@ -212,7 +221,9 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
 
   try {
     // Calculate subscription end date
-    const subscriptionEnd = new Date((subscription as any).current_period_end * 1000);
+    const subscriptionEnd = new Date(
+      (subscription as StripeSubscriptionWithPeriod).current_period_end * 1000
+    );
 
     const { error } = await supabase
       .from('users')
@@ -272,7 +283,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   }
 
   try {
-    const subscriptionEnd = new Date((subscription as any).current_period_end * 1000);
+    const subscriptionEnd = new Date(
+      (subscription as StripeSubscriptionWithPeriod).current_period_end * 1000
+    );
 
     const { error } = await supabase
       .from('users')
@@ -366,10 +379,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
  * Handle successful payment
  */
 function handlePaymentSucceeded(invoice: Stripe.Invoice) {
+  const invoiceWithSub = invoice as StripeInvoiceWithSubscription;
   const subscriptionId =
-    typeof (invoice as any).subscription === 'string'
-      ? (invoice as any).subscription
-      : (invoice as any).subscription?.id;
+    typeof invoiceWithSub.subscription === 'string'
+      ? invoiceWithSub.subscription
+      : invoiceWithSub.subscription?.id;
 
   if (!subscriptionId) {
     logger.info('Payment succeeded for non-subscription invoice', {
@@ -391,10 +405,11 @@ function handlePaymentSucceeded(invoice: Stripe.Invoice) {
  * Handle failed payment
  */
 function handlePaymentFailed(invoice: Stripe.Invoice) {
+  const invoiceWithSub = invoice as StripeInvoiceWithSubscription;
   const subscriptionId =
-    typeof (invoice as any).subscription === 'string'
-      ? (invoice as any).subscription
-      : (invoice as any).subscription?.id;
+    typeof invoiceWithSub.subscription === 'string'
+      ? invoiceWithSub.subscription
+      : invoiceWithSub.subscription?.id;
 
   if (!subscriptionId) {
     logger.info('Payment failed for non-subscription invoice', {

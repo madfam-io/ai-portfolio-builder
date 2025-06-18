@@ -213,7 +213,10 @@ export async function POST(request: NextRequest): Promise<Response> {
         recommendations: [],
       },
     };
-    const data = transformAnalysisResults(analysisWithKeywordObject, targetKeywords);
+    const data = transformAnalysisResults(
+      analysisWithKeywordObject,
+      targetKeywords
+    );
 
     // 6. Return analysis results
     return NextResponse.json({

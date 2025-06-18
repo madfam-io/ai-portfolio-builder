@@ -86,7 +86,9 @@ export const GET = versionedApiHandler(
       );
 
       if ('error' in result) {
-        return apiError(result.error || 'Unknown error', { status: result.status });
+        return apiError(result.error || 'Unknown error', {
+          status: result.status,
+        });
       }
 
       // Transform to match TypeScript types

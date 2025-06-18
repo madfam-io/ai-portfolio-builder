@@ -39,23 +39,12 @@ import { useUpgradePrompts } from '@/lib/hooks/use-upgrade-prompts';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
 
-function DashboardContent(): React.ReactElement {
-  const { t } = useLanguage();
-  const { user } = useAuthStore();
-  const router = useRouter();
-  const { toast } = useToast();
-  const { portfolios, isLoading, error, loadPortfolios, deletePortfolio } =
-    usePortfolioStore();
-  const { limits, canCreatePortfolio, isFreeTier } = useSubscription();
-  const {
-    showModal,
-    modalReason,
-    hideUpgradeModal,
-    checkAndShowPrompt,
-    shouldShowPrompt,
-  } = useUpgradePrompts();
-
-  // Load user's portfolios on mount
+// Helper function to load portfolios with error handling
+const usePortfolioLoader = (
+  loadPortfolios: () => Promise<void>,
+  t: Record<string, string | undefined>,
+  toast: any
+) => {
   useEffect(() => {
     loadPortfolios().catch(err => {
       logger.error(
@@ -71,7 +60,14 @@ function DashboardContent(): React.ReactElement {
       });
     });
   }, [loadPortfolios, t, toast]);
+};
 
+// Helper function for portfolio deletion with error handling
+const usePortfolioDeletion = (
+  deletePortfolio: (id: string) => Promise<void>,
+  t: Record<string, string | undefined>,
+  toast: any
+) => {
   const [deletePortfolioId, setDeletePortfolioId] = useState<string | null>(
     null
   );
@@ -97,8 +93,17 @@ function DashboardContent(): React.ReactElement {
     }
   };
 
+  return { deletePortfolioId, setDeletePortfolioId, handleDeletePortfolio };
+};
+
+// Helper function for portfolio creation with limit checks
+const usePortfolioCreation = (
+  canCreatePortfolio: boolean,
+  checkAndShowPrompt: (reason: string) => boolean,
+  toast: any,
+  router: any
+) => {
   const handleCreatePortfolio = () => {
-    // Check if user can create more portfolios
     if (!canCreatePortfolio) {
       const shown = checkAndShowPrompt('portfolio_limit');
       if (!shown) {
@@ -110,8 +115,53 @@ function DashboardContent(): React.ReactElement {
       }
       return;
     }
-
     router.push('/editor/new');
+  };
+
+  return { handleCreatePortfolio };
+};
+
+function DashboardContent(): React.ReactElement {
+  const { t } = useLanguage();
+  const { user } = useAuthStore();
+  const router = useRouter();
+  const { toast } = useToast();
+  const { portfolios, isLoading, error, loadPortfolios, deletePortfolio } =
+    usePortfolioStore();
+  const { limits, canCreatePortfolio, isFreeTier } = useSubscription();
+  const {
+    showModal,
+    modalReason,
+    hideUpgradeModal,
+    checkAndShowPrompt,
+    shouldShowPrompt,
+  } = useUpgradePrompts();
+
+  // Use custom hooks to reduce complexity
+  usePortfolioLoader(loadPortfolios, t, toast);
+  const { deletePortfolioId, setDeletePortfolioId, handleDeletePortfolio } =
+    usePortfolioDeletion(deletePortfolio, t, toast);
+  const { handleCreatePortfolio } = usePortfolioCreation(
+    canCreatePortfolio,
+    checkAndShowPrompt,
+    toast,
+    router
+  );
+
+  // Additional handlers for navigation
+  const handleEditPortfolio = (portfolioId: string) => {
+    router.push(`/editor/${portfolioId}`);
+  };
+
+  const handleViewPortfolio = (portfolio: Portfolio) => {
+    if (portfolio.status === 'published' && portfolio.subdomain) {
+      window.open(
+        `${window.location.origin}/p/${portfolio.subdomain}`,
+        '_blank'
+      );
+    } else {
+      router.push(`/editor/${portfolio.id}/preview`);
+    }
   };
 
   const handleEditPortfolio = (portfolioId: string) => {

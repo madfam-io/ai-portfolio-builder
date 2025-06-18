@@ -66,14 +66,19 @@ export async function POST(request: NextRequest) {
         domain_id: domainId,
         verification_type: 'dns_txt',
         status: 'failed',
-        error_code: (dnsError as any).code,
-        error_message: (dnsError as any).message,
+        error_code:
+          dnsError instanceof Error && 'code' in dnsError
+            ? (dnsError as NodeJS.ErrnoException).code || 'UNKNOWN'
+            : 'UNKNOWN',
+        error_message:
+          dnsError instanceof Error ? dnsError.message : 'Unknown DNS error',
       });
 
       return NextResponse.json({
         verified: false,
         error: 'DNS lookup failed',
-        details: (dnsError as any).message,
+        details:
+          dnsError instanceof Error ? dnsError.message : 'Unknown DNS error',
       });
     }
 
