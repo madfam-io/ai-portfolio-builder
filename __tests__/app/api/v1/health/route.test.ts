@@ -10,17 +10,22 @@ import { handleHealthCheck } from '@/lib/monitoring/health-check';
 
 
 // Mock dependencies
-jest.mock('@/lib/monitoring/health-check');
+const mockHandleHealthCheck = jest.fn();
+
+jest.mock('@/lib/monitoring/health-check', () => ({
+  handleHealthCheck: mockHandleHealthCheck,
+  healthMonitor: {
+    getSystemHealth: jest.fn(),
+  },
+}));
+
 jest.mock('@/lib/monitoring/error-tracking', () => ({
   withErrorTracking: (handler: any) => handler,
 }));
+
 jest.mock('@/lib/monitoring/apm', () => ({
   withAPMTracking: (handler: any) => handler,
 }));
-
-const mockHandleHealthCheck = handleHealthCheck as jest.MockedFunction<
-  typeof handleHealthCheck
->;
 
 describe('/api/v1/health', () => {
   beforeEach(() => {
@@ -98,6 +103,7 @@ describe('/api/v1/health', () => {
             'Content-Type': 'application/json',
           },
         }
+      );
 
       mockHandleHealthCheck.mockResolvedValue(errorResponse as any);
 
@@ -248,7 +254,7 @@ describe('/api/v1/health', () => {
       // Verify status is one of expected values
       expect(['healthy', 'degraded', 'unhealthy']).toContain(
         responseData.status
-
+      );
     });
   });
 
