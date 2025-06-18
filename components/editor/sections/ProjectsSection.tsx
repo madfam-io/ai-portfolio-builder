@@ -9,10 +9,26 @@ import {
   Github,
   ExternalLink,
   Star,
-  MoveUp,
-  MoveDown,
+  GripVertical,
   X,
 } from 'lucide-react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,6 +59,168 @@ interface ProjectFormData {
   featured?: boolean;
 }
 
+// Sortable Project Item Component
+function SortableProjectItem({
+  project,
+  index,
+  projectsLength,
+  onEdit,
+  onDelete,
+  t,
+}: {
+  project: Project;
+  index: number;
+  projectsLength: number;
+  onEdit: (project: Project) => void;
+  onDelete: (id: string) => void;
+  t: any;
+}) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: project.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  return (
+    <Card
+      ref={setNodeRef}
+      style={style}
+      className={`group relative overflow-hidden ${isDragging ? 'opacity-50' : ''}`}
+    >
+      <CardContent className="p-6">
+        <div className="flex items-start gap-4">
+          {/* Drag Handle */}
+          <div
+            {...attributes}
+            {...listeners}
+            className="flex-shrink-0 mt-2 cursor-grab hover:text-primary focus:outline-none focus:text-primary"
+          >
+            <GripVertical className="h-5 w-5 text-muted-foreground" />
+          </div>
+
+          {/* Project Image */}
+          {project.imageUrl && (
+            <div className="w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+              <img
+                src={project.imageUrl}
+                alt={project.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
+
+          {/* Project Content */}
+          <div className="flex-1">
+            <div className="flex items-start justify-between mb-2">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <h4 className="font-semibold">{project.title}</h4>
+                  {project.featured && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      <Star className="h-3 w-3 mr-1" />
+                      {t.featured || 'Featured'}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  {project.description}
+                </p>
+              </div>
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onEdit(project)}
+                >
+                  <Edit2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => onDelete(project.id)}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Project Highlights */}
+            {project.highlights && project.highlights.length > 0 && (
+              <ul className="mb-3 space-y-1">
+                {project.highlights.map((highlight, i) => (
+                  <li key={i} className="text-sm flex items-start">
+                    <span className="text-primary mr-2">•</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {/* Technologies and Links */}
+            <div className="flex items-center gap-4">
+              {project.technologies && project.technologies.length > 0 && (
+                <div className="flex flex-wrap gap-2 flex-1">
+                  {project.technologies.map((tech, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted"
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                {project.githubUrl && (
+                  <a
+                    href={project.githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                    title="View on GitHub"
+                  >
+                    <Github className="h-4 w-4" />
+                  </a>
+                )}
+                {project.liveUrl && (
+                  <a
+                    href={project.liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                    title="View live demo"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+                {project.projectUrl && (
+                  <a
+                    href={project.projectUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-muted-foreground hover:text-foreground"
+                    title="View project"
+                  >
+                    <Link className="h-4 w-4" />
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 export function ProjectsSection({
   projects = [],
   onUpdate,
@@ -63,6 +241,14 @@ export function ProjectsSection({
     highlights: [],
     featured: false,
   });
+
+  // Drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const resetForm = () => {
     setFormData({
@@ -172,27 +358,23 @@ export function ProjectsSection({
     setFormData({ ...formData, highlights: newHighlights });
   };
 
-  const moveProject = (index: number, direction: 'up' | 'down') => {
-    const newProjects = [...projects];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
 
-    if (targetIndex < 0 || targetIndex >= projects.length) return;
+    if (active.id !== over?.id) {
+      const oldIndex = projects.findIndex(project => project.id === active.id);
+      const newIndex = projects.findIndex(project => project.id === over?.id);
 
-    // Swap projects
-    const tempProject = newProjects[index];
-    const targetProject = newProjects[targetIndex];
+      const newProjects = arrayMove(projects, oldIndex, newIndex);
 
-    if (!tempProject || !targetProject) return;
+      // Update order values
+      const updatedProjects = newProjects.map((proj, i) => ({
+        ...proj,
+        order: i,
+      }));
 
-    newProjects[index] = targetProject;
-    newProjects[targetIndex] = tempProject;
-
-    // Update order values
-    newProjects.forEach((proj, i) => {
-      proj.order = i;
-    });
-
-    onUpdate(newProjects);
+      onUpdate(updatedProjects);
+    }
   };
 
   return (
@@ -404,144 +586,33 @@ export function ProjectsSection({
         </Card>
       )}
 
-      {/* Projects List */}
-      <div className="space-y-4">
-        {projects
-          .sort((a, b) => (a.order || 0) - (b.order || 0))
-          .map((project, index) => (
-            <Card key={project.id} className="group relative overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  {project.imageUrl && (
-                    <div className="w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-                      <img
-                        src={project.imageUrl}
-                        alt={project.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-start justify-between mb-2">
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-semibold">{project.title}</h4>
-                          {project.featured && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              <Star className="h-3 w-3 mr-1" />
-                              {t.featured || 'Featured'}
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-muted-foreground mb-3">
-                          {project.description}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        {index > 0 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => moveProject(index, 'up')}
-                            title={t.moveUp || 'Move up'}
-                          >
-                            <MoveUp className="h-4 w-4" />
-                          </Button>
-                        )}
-                        {index < projects.length - 1 && (
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => moveProject(index, 'down')}
-                            title={t.moveDown || 'Move down'}
-                          >
-                            <MoveDown className="h-4 w-4" />
-                          </Button>
-                        )}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleEdit(project)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(project.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {project.highlights && project.highlights.length > 0 && (
-                      <ul className="mb-3 space-y-1">
-                        {project.highlights.map((highlight, i) => (
-                          <li key={i} className="text-sm flex items-start">
-                            <span className="text-primary mr-2">•</span>
-                            <span>{highlight}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <div className="flex items-center gap-4">
-                      {project.technologies &&
-                        project.technologies.length > 0 && (
-                          <div className="flex flex-wrap gap-2 flex-1">
-                            {project.technologies.map((tech, i) => (
-                              <span
-                                key={i}
-                                className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-muted"
-                              >
-                                {tech}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                      <div className="flex items-center gap-2">
-                        {project.githubUrl && (
-                          <a
-                            href={project.githubUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
-                            title="View on GitHub"
-                          >
-                            <Github className="h-4 w-4" />
-                          </a>
-                        )}
-                        {project.liveUrl && (
-                          <a
-                            href={project.liveUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
-                            title="View live demo"
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                          </a>
-                        )}
-                        {project.projectUrl && (
-                          <a
-                            href={project.projectUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-muted-foreground hover:text-foreground"
-                            title="View project"
-                          >
-                            <Link className="h-4 w-4" />
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-      </div>
+      {/* Projects List with Drag and Drop */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <div className="space-y-4">
+          <SortableContext
+            items={projects.map(p => p.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {projects
+              .sort((a, b) => (a.order || 0) - (b.order || 0))
+              .map((project, index) => (
+                <SortableProjectItem
+                  key={project.id}
+                  project={project}
+                  index={index}
+                  projectsLength={projects.length}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  t={t}
+                />
+              ))}
+          </SortableContext>
+        </div>
+      </DndContext>
 
       {projects.length === 0 && !isAdding && (
         <Card>

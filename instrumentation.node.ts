@@ -6,7 +6,7 @@
  */
 
 // Temporarily disable OpenTelemetry instrumentation until dependency issues are resolved
-// The build warnings about missing winston-transport and exporter-jaeger are from optional 
+// The build warnings about missing winston-transport and exporter-jaeger are from optional
 // dependencies that are not needed for our use case
 if (process.env.OTEL_ENABLED === 'true') {
   console.log('OpenTelemetry instrumentation is currently disabled');

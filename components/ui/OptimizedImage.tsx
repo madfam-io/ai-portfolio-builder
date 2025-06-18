@@ -1,5 +1,6 @@
 import Image, { ImageProps } from 'next/image';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { createMobileOptimizer } from '@/lib/performance/mobile-optimization';
 
 /**
  * Optimized image component with lazy loading and blur placeholder
@@ -20,6 +21,15 @@ export function OptimizedImage({
 }: OptimizedImageProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [mobileOptimizer] = useState(() => createMobileOptimizer());
+  const [optimizedImageConfig, setOptimizedImageConfig] = useState<any>(null);
+
+  useEffect(() => {
+    if (typeof src === 'string') {
+      const config = mobileOptimizer.optimizeImage(src);
+      setOptimizedImageConfig(config);
+    }
+  }, [src, mobileOptimizer]);
 
   const handleError = (): void => {
     setError(true);
@@ -37,15 +47,16 @@ export function OptimizedImage({
       )}
 
       <Image
-        src={error ? fallbackSrc : src}
+        src={error ? fallbackSrc : optimizedImageConfig?.src || src}
         alt={alt}
         onError={handleError}
         onLoad={handleLoad}
         placeholder="blur"
         blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAf/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWEREiMxUf/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
-        quality={85}
-        loading="lazy"
-        className={`${loading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300`}
+        quality={optimizedImageConfig?.quality || 85}
+        loading={optimizedImageConfig?.loading || 'lazy'}
+        sizes={optimizedImageConfig?.sizes}
+        className={`${loading ? 'opacity-0' : 'opacity-100'} transition-opacity duration-300 will-change-transform`}
         {...props}
       />
     </div>

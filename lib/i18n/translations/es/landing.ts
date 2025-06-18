@@ -171,7 +171,8 @@ const landing = {
 
   // CTA Section
   ctaTitle: '¿Listo para crear tu portafolio profesional?',
-  ctaSubtitle: 'Únete a miles de profesionales que han creado portafolios increíbles con PRISMA',
+  ctaSubtitle:
+    'Únete a miles de profesionales que han creado portafolios increíbles con PRISMA',
   ctaButton: 'Comienza a construir tu portafolio',
   ctaFooter: 'Sin tarjeta de crédito • Plan gratuito para siempre disponible',
 

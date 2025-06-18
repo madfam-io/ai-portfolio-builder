@@ -198,10 +198,16 @@ export class DemoPortfolioService {
       theme: {
         mode: 'light',
         colors: {
-          primary: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.primary || '#3B82F6',
-          secondary: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.secondary || '#1E40AF',
-          accent: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.accent || '#06B6D4',
-          background: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.background || '#F8FAFC',
+          primary:
+            TEMPLATE_CONFIGS[demo.template]?.colorScheme?.primary || '#3B82F6',
+          secondary:
+            TEMPLATE_CONFIGS[demo.template]?.colorScheme?.secondary ||
+            '#1E40AF',
+          accent:
+            TEMPLATE_CONFIGS[demo.template]?.colorScheme?.accent || '#06B6D4',
+          background:
+            TEMPLATE_CONFIGS[demo.template]?.colorScheme?.background ||
+            '#F8FAFC',
           text: TEMPLATE_CONFIGS[demo.template]?.colorScheme?.text || '#1E293B',
           ...(options.customizations?.colors || {}),
         },

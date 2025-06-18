@@ -90,7 +90,8 @@ export const encryptUserData = (
       ENCRYPTED_FIELDS.USER_STRIPE_SUBSCRIPTION_ID
     );
     if (encryptedStripeSubscriptionId !== null) {
-      encrypted.stripe_subscription_id_encrypted = encryptedStripeSubscriptionId;
+      encrypted.stripe_subscription_id_encrypted =
+        encryptedStripeSubscriptionId;
     }
   }
 

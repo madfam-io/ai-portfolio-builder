@@ -64,8 +64,16 @@ export const consultantSampleData: SampleDataConfig = {
     ],
     soft: [
       { name: 'Change Management', level: 'expert', category: 'Leadership' },
-      { name: 'Stakeholder Management', level: 'expert', category: 'Communication' },
-      { name: 'Executive Presentation', level: 'expert', category: 'Communication' },
+      {
+        name: 'Stakeholder Management',
+        level: 'expert',
+        category: 'Communication',
+      },
+      {
+        name: 'Executive Presentation',
+        level: 'expert',
+        category: 'Communication',
+      },
       { name: 'Team Leadership', level: 'advanced', category: 'Leadership' },
       { name: 'Problem Solving', level: 'expert', category: 'Analytical' },
     ],

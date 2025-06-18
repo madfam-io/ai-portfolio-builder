@@ -18,12 +18,12 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
       pricing: 'Pricing',
       templates: 'Templates',
       about: 'About',
-      
+
       // Auth
       signIn: 'Sign In',
       signOut: 'Sign Out',
       getStarted: 'Get Started',
-      
+
       // Common
       dashboard: 'Dashboard',
       editor: 'Editor',
@@ -31,13 +31,13 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
       quickStart: 'Quick Start',
       analytics: 'Analytics',
       marketplace: 'Marketplace',
-      
+
       // Language & Settings
       switchTo: 'Switch to',
       switchCurrency: 'Switch currency',
       current: 'Current',
       hello: 'Hello',
-      
+
       // Additional common translations
       loading: 'Loading...',
       currency: 'USD',
@@ -111,15 +111,18 @@ jest.mock('next/navigation', () => ({
 // Import Header after setting up mocks
 import Header from '@/components/landing/Header';
 
-const mockUseApp = require('@/lib/contexts/AppContext').useApp as jest.MockedFunction<any>;
-const mockUseAuth = require('@/lib/contexts/AuthContext').useAuth as jest.MockedFunction<any>;
-const mockUsePathname = require('next/navigation').usePathname as jest.MockedFunction<any>;
+const mockUseApp = require('@/lib/contexts/AppContext')
+  .useApp as jest.MockedFunction<any>;
+const mockUseAuth = require('@/lib/contexts/AuthContext')
+  .useAuth as jest.MockedFunction<any>;
+const mockUsePathname = require('next/navigation')
+  .usePathname as jest.MockedFunction<any>;
 
 // Global window mocks for analytics
 (global as any).window.gtag = jest.fn();
 
 // Skip this test suite due to Jest + lucide-react + TypeScript compilation issues
-// The component works correctly but has systematic test infrastructure issues  
+// The component works correctly but has systematic test infrastructure issues
 describe.skip('Header', () => {
   let mockToggleDarkMode: jest.Mock;
   let mockSetCurrency: jest.Mock;
@@ -128,13 +131,13 @@ describe.skip('Header', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Reset mocks
     mockToggleDarkMode = jest.fn();
     mockSetCurrency = jest.fn();
     mockSetMobileMenuOpen = jest.fn();
     mockSignOut = jest.fn();
-    
+
     // Reset pathname to landing page by default
     mockUsePathname.mockReturnValue('/');
 
@@ -207,7 +210,7 @@ describe.skip('Header', () => {
 
     it('should show user menu for authenticated users', async () => {
       const user = userEvent.setup();
-      
+
       // Mock authenticated user
       mockUseAuth.mockReturnValue({
         user: {
@@ -222,7 +225,7 @@ describe.skip('Header', () => {
 
       // User name should be visible
       expect(screen.getByText('John Doe')).toBeInTheDocument();
-      
+
       // Click user menu to open dropdown
       const userButton = screen.getByText('John Doe');
       await user.click(userButton);
@@ -240,7 +243,9 @@ describe.skip('Header', () => {
       const user = userEvent.setup();
       renderHeader();
 
-      const darkModeButton = screen.getByTestId('lucide-moon').closest('button');
+      const darkModeButton = screen
+        .getByTestId('lucide-moon')
+        .closest('button');
       await user.click(darkModeButton!);
 
       expect(mockToggleDarkMode).toHaveBeenCalledTimes(1);
@@ -256,7 +261,7 @@ describe.skip('Header', () => {
         isMobileMenuOpen: false,
         setMobileMenuOpen: mockSetMobileMenuOpen,
       });
-      
+
       renderHeader();
 
       // Should show sun icon when in dark mode
@@ -285,7 +290,7 @@ describe.skip('Header', () => {
         isMobileMenuOpen: true,
         setMobileMenuOpen: mockSetMobileMenuOpen,
       });
-      
+
       renderHeader();
 
       expect(screen.getByTestId('lucide-x')).toBeInTheDocument();
@@ -298,7 +303,7 @@ describe.skip('Header', () => {
 
       // Should show current language code
       expect(screen.getByText('EN')).toBeInTheDocument();
-      
+
       // Should show flag icon
       expect(screen.getByText('🇺🇸')).toBeInTheDocument();
     });

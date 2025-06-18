@@ -41,15 +41,13 @@ function useCurrentPortfolio() {
     isSaving,
     updatePortfolio,
     setCurrentPortfolio,
-  } = usePortfolioStore(
-    state => ({
-      currentPortfolio: state.currentPortfolio,
-      isEditing: state.isEditing,
-      isSaving: state.isSaving,
-      updatePortfolio: state.updatePortfolio,
-      setCurrentPortfolio: state.setCurrentPortfolio,
-    }),
-  );
+  } = usePortfolioStore(state => ({
+    currentPortfolio: state.currentPortfolio,
+    isEditing: state.isEditing,
+    isSaving: state.isSaving,
+    updatePortfolio: state.updatePortfolio,
+    setCurrentPortfolio: state.setCurrentPortfolio,
+  }));
 
   const updateField = useCallback(
     (field: string, value: unknown) => {
@@ -103,12 +101,10 @@ function useCurrentPortfolio() {
  * Hook for theme management with system detection
  */
 function useTheme() {
-  const { theme, setTheme } = useUIStore(
-    state => ({
-      theme: state.theme,
-      setTheme: state.setTheme,
-    }),
-  );
+  const { theme, setTheme } = useUIStore(state => ({
+    theme: state.theme,
+    setTheme: state.setTheme,
+  }));
 
   // Apply theme on mount and when it changes
   useEffect(() => {
@@ -169,16 +165,14 @@ function useAIModels() {
     quotaLimit,
     setSelectedModel,
     loadModels,
-  } = useAIStore(
-    state => ({
-      selectedModels: state.selectedModels,
-      availableModels: state.availableModels,
-      quotaUsed: state.quotaUsed,
-      quotaLimit: state.quotaLimit,
-      setSelectedModel: state.setSelectedModel,
-      loadModels: state.loadModels,
-    }),
-  );
+  } = useAIStore(state => ({
+    selectedModels: state.selectedModels,
+    availableModels: state.availableModels,
+    quotaUsed: state.quotaUsed,
+    quotaLimit: state.quotaLimit,
+    setSelectedModel: state.setSelectedModel,
+    loadModels: state.loadModels,
+  }));
 
   // Load models on mount
   useEffect(() => {
@@ -211,13 +205,11 @@ function useAIModels() {
  * Hook for modal management
  */
 function useModal(modalId: string) {
-  const { modals, openModal, closeModal } = useUIStore(
-    state => ({
-      modals: state.modals,
-      openModal: state.openModal,
-      closeModal: state.closeModal,
-    }),
-  );
+  const { modals, openModal, closeModal } = useUIStore(state => ({
+    modals: state.modals,
+    openModal: state.openModal,
+    closeModal: state.closeModal,
+  }));
 
   const isOpen = modals.some(m => m.id === modalId);
 
@@ -243,14 +235,12 @@ function useModal(modalId: string) {
  * Hook for toast notifications
  */
 function useToasts() {
-  const { toasts, showToast, removeToast, clearToasts } = useUIStore(
-    state => ({
-      toasts: state.toasts,
-      showToast: state.showToast,
-      removeToast: state.removeToast,
-      clearToasts: state.clearToasts,
-    }),
-  );
+  const { toasts, showToast, removeToast, clearToasts } = useUIStore(state => ({
+    toasts: state.toasts,
+    showToast: state.showToast,
+    removeToast: state.removeToast,
+    clearToasts: state.clearToasts,
+  }));
 
   return {
     toasts,
@@ -277,7 +267,7 @@ function useGlobalLoading() {
       globalLoading: state.globalLoading,
       loadingMessage: state.loadingMessage,
       setGlobalLoading: state.setGlobalLoading,
-    }),
+    })
   );
 
   const withLoading = useCallback(
@@ -312,7 +302,7 @@ function usePortfolios(options?: {
       portfolios: state.portfolios,
       isLoading: state.isLoading,
       loadPortfolios: state.loadPortfolios,
-    }),
+    })
   );
 
   const { user } = useAuthStore(state => ({ user: state.user }));

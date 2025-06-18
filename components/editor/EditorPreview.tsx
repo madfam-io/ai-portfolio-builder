@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 
 interface EditorPreviewProps {
   portfolio: Portfolio;
+  mode?: 'desktop' | 'tablet' | 'mobile';
   className?: string;
 }
 
@@ -23,9 +24,13 @@ type PreviewMode = 'desktop' | 'tablet' | 'mobile';
  * Real-time preview of the portfolio using actual templates
  * Shows how the portfolio will look when published
  */
-export function EditorPreview({ portfolio, className }: EditorPreviewProps) {
+export function EditorPreview({
+  portfolio,
+  mode = 'desktop',
+  className,
+}: EditorPreviewProps) {
   const { t } = useLanguage();
-  const [previewMode, setPreviewMode] = useState<PreviewMode>('desktop');
+  const previewMode = mode;
 
   // Select template based on portfolio template type
   const renderTemplate = () => {
@@ -66,37 +71,9 @@ export function EditorPreview({ portfolio, className }: EditorPreviewProps) {
     <div className={cn('h-full flex flex-col bg-muted/30', className)}>
       <div className="flex items-center justify-between border-b bg-background px-4 py-2">
         <p className="text-sm font-medium text-muted-foreground">
-          {t.livePreview || 'Live Preview'}
+          {t.livePreview || 'Live Preview'} -{' '}
+          {previewMode.charAt(0).toUpperCase() + previewMode.slice(1)}
         </p>
-        <div className="flex gap-1">
-          <Button
-            size="sm"
-            variant={previewMode === 'desktop' ? 'default' : 'ghost'}
-            onClick={() => setPreviewMode('desktop')}
-            aria-label="Desktop view"
-            className="h-8 px-2"
-          >
-            <Monitor className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant={previewMode === 'tablet' ? 'default' : 'ghost'}
-            onClick={() => setPreviewMode('tablet')}
-            aria-label="Tablet view"
-            className="h-8 px-2"
-          >
-            <Tablet className="h-4 w-4" />
-          </Button>
-          <Button
-            size="sm"
-            variant={previewMode === 'mobile' ? 'default' : 'ghost'}
-            onClick={() => setPreviewMode('mobile')}
-            aria-label="Mobile view"
-            className="h-8 px-2"
-          >
-            <Smartphone className="h-4 w-4" />
-          </Button>
-        </div>
       </div>
 
       <div className="flex-1 overflow-hidden bg-gray-100 dark:bg-gray-900">

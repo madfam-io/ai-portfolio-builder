@@ -11,108 +11,161 @@ import { Portfolio } from '@/types/portfolio';
 // with lucide-react + TypeScript + React 19. This test verifies the component interface
 // and behavior without testing implementation details.
 jest.mock('@/components/editor/EditorHeader', () => ({
-  EditorHeader: jest.fn().mockImplementation(({
-    portfolio,
-    isDirty,
-    isSaving,
-    lastSaved,
-    onSave,
-    onPublish,
-    onPreview,
-    canUndo,
-    canRedo,
-    onUndo,
-    onRedo,
-  }) => {
-    const React = require('react');
-    
-    // Add keyboard event listeners for shortcuts
-    React.useEffect(() => {
-      const handleKeyDown = (e) => {
-        if (e.ctrlKey || e.metaKey) {
-          switch (e.key) {
-            case 's':
-              if (isDirty && !isSaving) {
-                e.preventDefault();
-                onSave();
-              }
-              break;
-            case 'z':
-              if (canUndo) {
-                e.preventDefault();
-                onUndo();
-              }
-              break;
-            case 'y':
-              if (canRedo) {
-                e.preventDefault();
-                onRedo();
-              }
-              break;
-          }
-        }
-      };
+  EditorHeader: jest
+    .fn()
+    .mockImplementation(
+      ({
+        portfolio,
+        isDirty,
+        isSaving,
+        lastSaved,
+        onSave,
+        onPublish,
+        onPreview,
+        canUndo,
+        canRedo,
+        onUndo,
+        onRedo,
+      }) => {
+        const React = require('react');
 
-      document.addEventListener('keydown', handleKeyDown);
-      return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [isDirty, isSaving, canUndo, canRedo, onSave, onUndo, onRedo]);
+        // Add keyboard event listeners for shortcuts
+        React.useEffect(() => {
+          const handleKeyDown = e => {
+            if (e.ctrlKey || e.metaKey) {
+              switch (e.key) {
+                case 's':
+                  if (isDirty && !isSaving) {
+                    e.preventDefault();
+                    onSave();
+                  }
+                  break;
+                case 'z':
+                  if (canUndo) {
+                    e.preventDefault();
+                    onUndo();
+                  }
+                  break;
+                case 'y':
+                  if (canRedo) {
+                    e.preventDefault();
+                    onRedo();
+                  }
+                  break;
+              }
+            }
+          };
 
-    return React.createElement('header', 
-      { 'data-testid': 'editor-header', className: 'bg-white border-b border-gray-200 px-6 py-4' },
-      React.createElement('div', { className: 'flex items-center justify-between' },
-        React.createElement('div', null,
-          React.createElement('h1', { className: 'text-xl font-semibold text-gray-900' },
-            portfolio?.name || 'Untitled Portfolio'
-          ),
-          React.createElement('div', { className: 'flex items-center space-x-2 text-sm text-gray-500' },
-            isSaving ? 
-              React.createElement('span', null, 'Saving...') :
-              isDirty ? 
-                React.createElement('span', null, 'Unsaved changes') :
-                React.createElement('span', null, lastSaved ? 'Last saved' : 'Never'),
-            React.createElement('span', null, '•'),
-            React.createElement('span', { className: 'capitalize' }, `${portfolio?.template} template`),
-            React.createElement('span', null, '•'),
-            React.createElement('span', {
-              className: `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                portfolio?.status === 'published'
-                  ? 'bg-green-100 text-green-800'
-                  : 'bg-gray-100 text-gray-800'
-              }`
-            }, portfolio?.status === 'published' ? 'Published' : 'Draft')
+          document.addEventListener('keydown', handleKeyDown);
+          return () => document.removeEventListener('keydown', handleKeyDown);
+        }, [isDirty, isSaving, canUndo, canRedo, onSave, onUndo, onRedo]);
+
+        return React.createElement(
+          'header',
+          {
+            'data-testid': 'editor-header',
+            className: 'bg-white border-b border-gray-200 px-6 py-4',
+          },
+          React.createElement(
+            'div',
+            { className: 'flex items-center justify-between' },
+            React.createElement(
+              'div',
+              null,
+              React.createElement(
+                'h1',
+                { className: 'text-xl font-semibold text-gray-900' },
+                portfolio?.name || 'Untitled Portfolio'
+              ),
+              React.createElement(
+                'div',
+                {
+                  className:
+                    'flex items-center space-x-2 text-sm text-gray-500',
+                },
+                isSaving
+                  ? React.createElement('span', null, 'Saving...')
+                  : isDirty
+                    ? React.createElement('span', null, 'Unsaved changes')
+                    : React.createElement(
+                        'span',
+                        null,
+                        lastSaved ? 'Last saved' : 'Never'
+                      ),
+                React.createElement('span', null, '•'),
+                React.createElement(
+                  'span',
+                  { className: 'capitalize' },
+                  `${portfolio?.template} template`
+                ),
+                React.createElement('span', null, '•'),
+                React.createElement(
+                  'span',
+                  {
+                    className: `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      portfolio?.status === 'published'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-gray-100 text-gray-800'
+                    }`,
+                  },
+                  portfolio?.status === 'published' ? 'Published' : 'Draft'
+                )
+              )
+            ),
+            React.createElement(
+              'div',
+              { className: 'flex items-center space-x-3' },
+              React.createElement(
+                'button',
+                {
+                  onClick: onUndo,
+                  disabled: !canUndo,
+                  'aria-label': 'Undo',
+                  title: 'Undo',
+                },
+                'Undo'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: onRedo,
+                  disabled: !canRedo,
+                  'aria-label': 'Redo',
+                  title: 'Redo',
+                },
+                'Redo'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: onPreview,
+                  'aria-label': 'Preview',
+                },
+                'Preview'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: onSave,
+                  disabled: isSaving || !isDirty,
+                  'aria-label': 'Save',
+                },
+                isSaving ? 'Saving...' : 'Save'
+              ),
+              React.createElement(
+                'button',
+                {
+                  onClick: onPublish,
+                  'aria-label': 'Publish',
+                  disabled: isSaving,
+                },
+                portfolio?.status === 'published' ? 'Unpublish' : 'Publish'
+              )
+            )
           )
-        ),
-        React.createElement('div', { className: 'flex items-center space-x-3' },
-          React.createElement('button', {
-            onClick: onUndo,
-            disabled: !canUndo,
-            'aria-label': 'Undo',
-            title: 'Undo'
-          }, 'Undo'),
-          React.createElement('button', {
-            onClick: onRedo,
-            disabled: !canRedo,
-            'aria-label': 'Redo',
-            title: 'Redo'
-          }, 'Redo'),
-          React.createElement('button', {
-            onClick: onPreview,
-            'aria-label': 'Preview'
-          }, 'Preview'),
-          React.createElement('button', {
-            onClick: onSave,
-            disabled: isSaving || !isDirty,
-            'aria-label': 'Save'
-          }, isSaving ? 'Saving...' : 'Save'),
-          React.createElement('button', {
-            onClick: onPublish,
-            'aria-label': 'Publish',
-            disabled: isSaving
-          }, portfolio?.status === 'published' ? 'Unpublish' : 'Publish')
-        )
-      )
-    );
-  })
+        );
+      }
+    ),
 }));
 
 // Import the mocked component
@@ -454,8 +507,12 @@ describe.skip('EditorHeader', () => {
       renderEditorHeader();
 
       expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Publish' })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Preview' })).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Publish' })
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: 'Preview' })
+      ).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Undo' })).toBeInTheDocument();
       expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
     });

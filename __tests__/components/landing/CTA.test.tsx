@@ -73,7 +73,9 @@ describe('CTA', () => {
       renderCTA();
 
       expect(
-        screen.getByText('No credit card required • Free forever plan available')
+        screen.getByText(
+          'No credit card required • Free forever plan available'
+        )
       ).toBeInTheDocument();
     });
 
@@ -82,7 +84,11 @@ describe('CTA', () => {
 
       const section = document.querySelector('section');
       expect(section).toBeInTheDocument();
-      expect(section).toHaveClass('bg-gradient-to-r', 'from-purple-600', 'to-blue-600');
+      expect(section).toHaveClass(
+        'bg-gradient-to-r',
+        'from-purple-600',
+        'to-blue-600'
+      );
     });
 
     it('should have proper heading hierarchy', () => {
@@ -108,9 +114,13 @@ describe('CTA', () => {
           'Join thousands of professionals who have built stunning portfolios with PRISMA'
         )
       ).toBeInTheDocument();
-      expect(screen.getByText('Start Building Your Portfolio')).toBeInTheDocument();
       expect(
-        screen.getByText('No credit card required • Free forever plan available')
+        screen.getByText('Start Building Your Portfolio')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'No credit card required • Free forever plan available'
+        )
       ).toBeInTheDocument();
     });
 

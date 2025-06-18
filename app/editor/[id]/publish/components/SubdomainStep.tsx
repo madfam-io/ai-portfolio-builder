@@ -36,14 +36,20 @@ export function SubdomainStep({
   const [subdomainAvailable, setSubdomainAvailable] = useState<boolean | null>(
     null
   );
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const checkSubdomainAvailability = async () => {
     if (!publishData.subdomain || publishData.subdomain.length < 3) {
       setSubdomainAvailable(false);
+      setErrorMessage('Subdomain must be at least 3 characters long');
       return;
     }
 
     setIsCheckingSubdomain(true);
+    setErrorMessage('');
+    setSuggestions([]);
+
     try {
       const response = await fetch('/api/v1/portfolios/check-subdomain', {
         method: 'POST',
@@ -52,19 +58,24 @@ export function SubdomainStep({
         },
         body: JSON.stringify({
           subdomain: publishData.subdomain,
-          currentPortfolioId: currentPortfolio?.id,
         }),
       });
 
       const data = await response.json();
 
-      if (response.ok && data.success) {
-        setSubdomainAvailable(data.data.available);
+      if (response.ok) {
+        setSubdomainAvailable(data.available);
+        if (!data.available) {
+          setErrorMessage(data.error || 'This subdomain is not available');
+          setSuggestions(data.suggestions || []);
+        }
       } else {
         setSubdomainAvailable(false);
+        setErrorMessage(data.error || 'Failed to check subdomain availability');
       }
     } catch (error) {
       setSubdomainAvailable(false);
+      setErrorMessage('Failed to check subdomain availability');
     } finally {
       setIsCheckingSubdomain(false);
     }
@@ -126,9 +137,39 @@ export function SubdomainStep({
             'Use letters, numbers, and hyphens. At least 3 characters.'}
         </p>
         {subdomainAvailable === false && (
-          <p className="text-sm text-red-500 mt-1">
-            {t.subdomainTaken || 'This subdomain is already taken or reserved'}
-          </p>
+          <div className="mt-2">
+            <p className="text-sm text-red-500">
+              {errorMessage ||
+                t.subdomainTaken ||
+                'This subdomain is already taken or reserved'}
+            </p>
+            {suggestions.length > 0 && (
+              <div className="mt-2">
+                <p className="text-sm text-muted-foreground mb-2">
+                  {t.suggestedAlternatives || 'Try these alternatives:'}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {suggestions.map(suggestion => (
+                    <button
+                      key={suggestion}
+                      onClick={() => {
+                        setPublishData({
+                          ...publishData,
+                          subdomain: suggestion,
+                        });
+                        setSubdomainAvailable(null);
+                        setSuggestions([]);
+                        setErrorMessage('');
+                      }}
+                      className="px-3 py-1 text-sm bg-muted hover:bg-muted/80 rounded-md transition-colors"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 

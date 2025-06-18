@@ -1,119 +1,209 @@
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
-import {
-  apiSuccess,
-  apiError,
-  versionedApiHandler,
-} from '@/lib/api/response-helpers';
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
+const checkSubdomainSchema = z.object({
+  subdomain: z
+    .string()
+    .min(3, 'Subdomain must be at least 3 characters')
+    .max(30, 'Subdomain must be at most 30 characters')
+    .regex(
+      /^[a-z0-9-]+$/,
+      'Subdomain can only contain lowercase letters, numbers, and hyphens'
+    )
+    .regex(/^[a-z0-9]/, 'Subdomain must start with a letter or number')
+    .regex(/[a-z0-9]$/, 'Subdomain must end with a letter or number'),
+});
+
 /**
- * POST /api/v1/portfolios/check-subdomain
  * Check if a subdomain is available
  */
-export const POST = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest) => {
-    try {
-      const body = await request.json();
-      const { subdomain, currentPortfolioId } = body;
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  try {
+    const body = await request.json();
+    const validation = checkSubdomainSchema.safeParse(body);
 
-      // Validate subdomain format
-      if (!subdomain || typeof subdomain !== 'string') {
-        return apiError('Invalid subdomain', { status: 400 });
-      }
-
-      // Check subdomain requirements
-      const subdomainRegex = /^[a-z0-9][a-z0-9-]{1,61}[a-z0-9]$/;
-      if (!subdomainRegex.test(subdomain)) {
-        return apiError('Invalid subdomain format', {
-          status: 400,
-          data: {
-            requirements:
-              'Subdomain must be 3-63 characters, start and end with a letter or number, and contain only lowercase letters, numbers, and hyphens',
-          },
-        });
-      }
-
-      // Reserved subdomains
-      const reservedSubdomains = [
-        'www',
-        'app',
-        'api',
-        'admin',
-        'dashboard',
-        'auth',
-        'login',
-        'signup',
-        'about',
-        'contact',
-        'help',
-        'support',
-        'blog',
-        'news',
-        'press',
-        'media',
-        'static',
-        'assets',
-        'public',
-        'private',
-        'secure',
-        'portal',
-        'account',
-        'profile',
-        'settings',
-        'config',
-        'test',
-        'demo',
-      ];
-
-      if (reservedSubdomains.includes(subdomain)) {
-        return apiSuccess({
+    if (!validation.success) {
+      return NextResponse.json(
+        {
           available: false,
-          reason: 'reserved',
-          message: 'This subdomain is reserved',
-        });
-      }
-
-      // Create Supabase client
-      const supabase = await createClient();
-      if (!supabase) {
-        return apiError('Database service not available', { status: 503 });
-      }
-
-      // Check if subdomain is already taken
-      const { data: existingPortfolios, error: fetchError } = await supabase
-        .from('portfolios')
-        .select('id, subdomain')
-        .eq('subdomain', subdomain);
-
-      if (fetchError) {
-        logger.error('Database error checking subdomain:', fetchError);
-        return apiError('Failed to check subdomain availability', {
-          status: 500,
-        });
-      }
-
-      // Check if subdomain is available
-      const isAvailable =
-        !existingPortfolios ||
-        existingPortfolios.length === 0 ||
-        (existingPortfolios.length === 1 &&
-          existingPortfolios[0]?.id === currentPortfolioId);
-
-      return apiSuccess({
-        available: isAvailable,
-        subdomain,
-        reason: isAvailable ? null : 'taken',
-        message: isAvailable
-          ? 'Subdomain is available'
-          : 'This subdomain is already taken',
-      });
-    } catch (error) {
-      logger.error('Unexpected error in check-subdomain:', error as Error);
-      if (error instanceof SyntaxError) {
-        return apiError('Invalid JSON in request body', { status: 400 });
-      }
-      return apiError('Internal server error', { status: 500 });
+          error: 'Invalid subdomain format',
+          details: validation.error.errors,
+        },
+        { status: 400 }
+      );
     }
-  })
-);
+
+    const { subdomain } = validation.data;
+
+    // Reserved subdomains
+    const reservedSubdomains = [
+      'www',
+      'api',
+      'admin',
+      'app',
+      'blog',
+      'docs',
+      'help',
+      'support',
+      'dashboard',
+      'status',
+      'mail',
+      'email',
+      'cdn',
+      'assets',
+      'static',
+      'staging',
+      'dev',
+      'test',
+      'demo',
+      'sandbox',
+      'preview',
+      'beta',
+      'secure',
+      'ssl',
+      'ftp',
+      'sftp',
+      'ssh',
+      'git',
+      'gitlab',
+      'github',
+      'bitbucket',
+      'jenkins',
+      'ci',
+      'cd',
+      'docker',
+      'registry',
+      'hub',
+      'store',
+      'shop',
+      'checkout',
+      'payment',
+      'billing',
+      'invoice',
+      'account',
+      'accounts',
+      'auth',
+      'login',
+      'logout',
+      'signup',
+      'register',
+      'profile',
+      'settings',
+      'config',
+      'console',
+      'control',
+      'panel',
+      'analytics',
+      'stats',
+      'metrics',
+      'monitoring',
+      'logs',
+      'log',
+      'prisma',
+      'madfam',
+      'portfolio',
+      'portfolios',
+    ];
+
+    if (reservedSubdomains.includes(subdomain.toLowerCase())) {
+      return NextResponse.json({
+        available: false,
+        error: 'This subdomain is reserved and cannot be used',
+      });
+    }
+
+    // Check if subdomain exists in database
+    const supabase = await createClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: 'Database service unavailable' },
+        { status: 503 }
+      );
+    }
+
+    const { data: existing, error } = await supabase
+      .from('portfolios')
+      .select('id')
+      .eq('subdomain', subdomain)
+      .single();
+
+    if (error && error.code !== 'PGRST116') {
+      logger.error('Error checking subdomain availability:', error);
+      return NextResponse.json(
+        { error: 'Failed to check subdomain availability' },
+        { status: 500 }
+      );
+    }
+
+    const available = !existing;
+
+    // Generate suggestions if not available
+    let suggestions: string[] = [];
+    if (!available) {
+      suggestions = await generateSuggestions(subdomain, supabase);
+    }
+
+    return NextResponse.json({
+      available,
+      subdomain,
+      suggestions: available ? [] : suggestions,
+    });
+  } catch (error) {
+    logger.error('Error in subdomain check:', error as Error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
+/**
+ * Generate alternative subdomain suggestions
+ */
+async function generateSuggestions(
+  subdomain: string,
+  supabase: any
+): Promise<string[]> {
+  const suggestions: string[] = [];
+  const maxSuggestions = 5;
+
+  // Try different variations
+  const variations = [
+    `${subdomain}1`,
+    `${subdomain}2`,
+    `${subdomain}3`,
+    `${subdomain}-portfolio`,
+    `${subdomain}-dev`,
+    `${subdomain}-io`,
+    `${subdomain}-me`,
+    `${subdomain}-pro`,
+    `the-${subdomain}`,
+    `${subdomain}-official`,
+  ];
+
+  for (const variation of variations) {
+    if (suggestions.length >= maxSuggestions) break;
+
+    try {
+      const { data: existing } = await supabase
+        .from('portfolios')
+        .select('id')
+        .eq('subdomain', variation)
+        .single();
+
+      if (!existing) {
+        suggestions.push(variation);
+      }
+    } catch (error) {
+      // If error code is PGRST116, it means no record found, so it's available
+      if ((error as any)?.code === 'PGRST116') {
+        suggestions.push(variation);
+      }
+    }
+  }
+
+  return suggestions;
+}

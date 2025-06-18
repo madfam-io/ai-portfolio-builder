@@ -192,7 +192,7 @@ export function PreviewPane({
 
     // At this point, viewport is either 'tablet' or 'mobile'
     const deviceViewport = viewport as 'tablet' | 'mobile';
-    
+
     return (
       <div className="flex-1 bg-slate-100 flex items-center justify-center p-8">
         {/* Device Frame */}

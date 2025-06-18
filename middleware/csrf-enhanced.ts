@@ -63,17 +63,17 @@ function decryptToken(encrypted: string): CSRFToken | null {
   try {
     const [payload, signature] = encrypted.split('.');
     if (!payload || !signature) return null;
-    
+
     const data = Buffer.from(payload, 'base64').toString('utf8');
     const hmac = crypto.createHmac('sha256', CSRF_SECRET);
     hmac.update(data);
     const expectedSignature = hmac.digest('hex');
-    
+
     if (signature !== expectedSignature) {
       logger.error('CSRF token signature mismatch');
       return null;
     }
-    
+
     return JSON.parse(data) as CSRFToken;
   } catch (error) {
     logger.error('Failed to decrypt CSRF token', error as Error);

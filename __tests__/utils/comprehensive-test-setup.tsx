@@ -51,7 +51,8 @@ const mockUseLanguage = {
 
     // CTA Section
     ctaTitle: 'Ready to Create Your Professional Portfolio?',
-    ctaSubtitle: 'Join thousands of professionals who have built stunning portfolios with PRISMA',
+    ctaSubtitle:
+      'Join thousands of professionals who have built stunning portfolios with PRISMA',
     ctaButton: 'Start Building Your Portfolio',
     ctaFooter: 'No credit card required • Free forever plan available',
     editPortfolio: 'Edit Portfolio',
