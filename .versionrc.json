@@ -2,15 +2,20 @@
   "types": [
     { "type": "feat", "section": "Features" },
     { "type": "fix", "section": "Bug Fixes" },
-    { "type": "chore", "hidden": false, "section": "Maintenance" },
-    { "type": "docs", "hidden": false, "section": "Documentation" },
-    { "type": "style", "hidden": true },
-    { "type": "refactor", "hidden": false, "section": "Code Refactoring" },
-    { "type": "perf", "hidden": false, "section": "Performance Improvements" },
-    { "type": "test", "hidden": false, "section": "Tests" }
+    { "type": "docs", "section": "Documentation" },
+    { "type": "style", "section": "Styles" },
+    { "type": "refactor", "section": "Code Refactoring" },
+    { "type": "perf", "section": "Performance Improvements" },
+    { "type": "test", "section": "Tests" },
+    { "type": "build", "section": "Build System" },
+    { "type": "ci", "section": "Continuous Integration" },
+    { "type": "chore", "section": "Chores" },
+    { "type": "revert", "section": "Reverts" }
   ],
-  "commitUrlFormat": "https://github.com/aldoruizluna/labspace/ai-portfolio-builder/commit/{{hash}}",
-  "compareUrlFormat": "https://github.com/aldoruizluna/labspace/ai-portfolio-builder/compare/{{previousTag}}...{{currentTag}}",
+  "commitUrlFormat": "https://github.com/madfam-io/ai-portfolio-builder/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/madfam-io/ai-portfolio-builder/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/madfam-io/ai-portfolio-builder/issues/{{id}}",
+  "userUrlFormat": "https://github.com/{{user}}",
   "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
   "skip": {
     "bump": false,
