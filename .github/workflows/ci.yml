@@ -8,7 +8,7 @@ on:
 
 env:
   NODE_VERSION: '18.17.0'
-  PNPM_VERSION: '10.11.1'
+  PNPM_VERSION: '8.15.4'
 
 jobs:
   # Job 1: Lint and Type Check
