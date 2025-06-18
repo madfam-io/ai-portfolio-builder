@@ -61,13 +61,14 @@ describe('useEditorHistory', () => {
   });
 
   it('should push to history', () => {
-    const { result } = renderHook(() => {
-      const [editorState, setEditorState] = useState(createInitialState());
-      return {
-        ...useEditorHistory(editorState, setEditorState),
-        editorState
-      };
-    });
+    let editorState = createInitialState();
+    const setEditorState = (updateFn: any) => {
+      editorState = typeof updateFn === 'function' ? updateFn(editorState) : updateFn;
+    };
+
+    const { result } = renderHook(() => 
+      useEditorHistory(editorState, setEditorState)
+    );
 
     const updatedPortfolio = { ...mockPortfolio, name: 'Updated Portfolio' };
 
@@ -75,13 +76,13 @@ describe('useEditorHistory', () => {
       result.current.pushToHistory('Update name', updatedPortfolio);
     });
 
-    expect(result.current.editorState.history).toHaveLength(1);
-    expect(result.current.editorState.history[0]).toMatchObject({
+    expect(editorState.history).toHaveLength(1);
+    expect(editorState.history[0]).toMatchObject({
       action: 'Update name',
       state: expect.objectContaining({ name: 'Updated Portfolio' }),
       timestamp: expect.any(Date),
     });
-    expect(result.current.editorState.historyIndex).toBe(0);
+    expect(editorState.historyIndex).toBe(0);
     expect(result.current.canUndo).toBe(true);
   });
 
