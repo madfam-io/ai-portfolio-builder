@@ -259,6 +259,15 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
       delete: jest.fn(),
       get: jest.fn(),
       list: jest.fn(),
+      getPortfolio: jest.fn(),
+      publishPortfolio: jest.fn(),
+      unpublishPortfolio: jest.fn(),
+      getUserPortfolios: jest.fn(),
+      createPortfolio: jest.fn(),
+      updatePortfolio: jest.fn(),
+      deletePortfolio: jest.fn(),
+      getPortfolioBySubdomain: jest.fn(),
+      getPortfolioAnalytics: jest.fn(),
     },
   }));
 

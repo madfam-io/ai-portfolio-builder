@@ -32,29 +32,15 @@ describe('/api/v1/portfolios/[id]/publish', () => {
         published_at: new Date().toISOString(),
       };
 
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
-          from: jest.fn().mockReturnValue({
-            select: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                single: jest.fn().mockResolvedValue({
-                  data: mockPortfolio,
-                  error: null,
-                }),
-              }),
-            }),
-            update: jest.fn().mockReturnValue({
-              eq: jest.fn().mockReturnValue({
-                single: jest.fn().mockResolvedValue({
-                  data: mockPublishedPortfolio,
-                  error: null,
-                }),
-              }),
-            }),
-          }),
+      setupCommonMocks();
+
+      // Mock portfolio service methods
+      jest.doMock('@/lib/services/portfolio/portfolio-service', () => ({
+        portfolioService: {
+          getPortfolio: jest.fn().mockResolvedValue(mockPortfolio),
+          publishPortfolio: jest.fn().mockResolvedValue(mockPublishedPortfolio),
         },
-      });
+      }));
 
       const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
@@ -67,24 +53,26 @@ describe('/api/v1/portfolios/[id]/publish', () => {
       const result = await response.json();
 
       expect(response.status).toBe(200);
-      expect(result.success).toBe(true);
-      expect(result.portfolio.status).toBe('published');
-      expect(result.portfolio.id).toBe('portfolio-123');
+      expect(result.data).toBeDefined();
+      expect(result.data.status).toBe('published');
+      expect(result.data.id).toBe('portfolio-123');
+      expect(result.message).toBe('Portfolio published successfully');
     });
 
     it('should require authentication', async () => {
       jest.resetModules();
       
       jest.doMock('@/lib/api/middleware/auth', () => ({
-        withAuth: jest.fn((handler) => async (request: any) => {
-          return new Response(JSON.stringify({ error: 'Authentication required' }), {
+        authenticateUser: jest.fn().mockResolvedValue(null),
+        unauthorizedResponse: jest.fn().mockReturnValue(
+          new Response(JSON.stringify({ error: 'Authentication required' }), {
             status: 401,
             headers: { 'Content-Type': 'application/json' },
-          });
-        }),
+          })
+        ),
       }));
       
-      setupCommonMocks();
+      // Don't call setupCommonMocks to avoid auth conflicts
 
       const { POST } = await import('@/app/api/v1/portfolios/[id]/publish/route');
 
@@ -131,7 +119,7 @@ describe('/api/v1/portfolios/[id]/publish', () => {
       const result = await response.json();
 
       expect(response.status).toBe(403);
-      expect(result.error).toContain('not authorized');
+      expect(result.error).toBe('Portfolio not found or access denied');
     });
 
     it('should handle portfolio not found', async () => {

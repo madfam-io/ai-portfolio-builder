@@ -1,15 +1,24 @@
 import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
-import { middleware } from '@/middleware';
-import { createServerClient } from '@supabase/ssr';
 
+// Mock dependencies before importing middleware
+const mockCreateServerClient = jest.fn();
+const mockApiVersionMiddleware = jest.fn();
+const mockSecurityMiddleware = jest.fn();
+const mockApplySecurityToResponse = jest.fn();
 
-// Mock dependencies
 jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(),
+  createServerClient: mockCreateServerClient,
 }));
-jest.mock('@/lib/utils/logger');
-// Mock config module to be available for dynamic imports
+
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+  },
+}));
+
 jest.mock('@/lib/config', () => ({
   __esModule: true,
   default: {
@@ -31,19 +40,16 @@ jest.mock('@/lib/config', () => ({
 }));
 
 jest.mock('@/middleware/api-version', () => ({
-  apiVersionMiddleware: jest.fn(() =>
-    NextResponse.next({
-      status: 200,
-    })
-  ),
+  apiVersionMiddleware: mockApiVersionMiddleware,
 }));
 
 jest.mock('@/middleware/security', () => ({
-  securityMiddleware: jest.fn(() => null),
-  applySecurityToResponse: jest.fn((req, res) => res),
+  securityMiddleware: mockSecurityMiddleware,
+  applySecurityToResponse: mockApplySecurityToResponse,
 }));
 
-const mockCreateServerClient = createServerClient as any;
+// Import middleware after mocks are set up
+import { middleware } from '@/middleware';
 
 describe('middleware', () => {
   let mockSupabaseClient: any;
@@ -62,7 +68,7 @@ describe('middleware', () => {
       refresh_token: 'test-refresh-token',
     };
 
-    // Setup mock Supabase client
+    // Setup mock Supabase client with all necessary methods
     mockSupabaseClient = {
       auth: {
         getSession: jest.fn().mockResolvedValue({
@@ -70,9 +76,23 @@ describe('middleware', () => {
           error: null,
         }),
       },
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
     };
 
-    mockCreateServerClient.mockReturnValue(mockSupabaseClient);
+    // Ensure mockCreateServerClient always returns our mock client
+    mockCreateServerClient.mockImplementation((...args) => {
+      // Debug log to see what arguments are being passed
+      console.log('createServerClient called with:', args);
+      return mockSupabaseClient;
+    });
+    
+    // Setup default middleware mocks
+    mockApiVersionMiddleware.mockResolvedValue(NextResponse.next({ status: 200 }));
+    mockSecurityMiddleware.mockResolvedValue(null);
+    mockApplySecurityToResponse.mockImplementation((req, res) => res);
   });
 
   describe('Protected Routes', () => {
@@ -256,22 +276,18 @@ describe('middleware', () => {
 
   describe('API Routes', () => {
     it('should handle API versioning for API routes', async () => {
-      const { apiVersionMiddleware } = require('@/middleware/api-version');
-
       const request = new NextRequest(
         new URL('http://localhost:3000/api/v1/portfolios')
       );
 
       await middleware(request);
 
-      expect(apiVersionMiddleware).toHaveBeenCalledWith(request);
+      expect(mockApiVersionMiddleware).toHaveBeenCalledWith(request);
     });
 
     it('should return API version response if not 200', async () => {
-      const { apiVersionMiddleware } = require('@/middleware/api-version');
-
       // Mock version middleware returning redirect
-      apiVersionMiddleware.mockResolvedValueOnce(
+      mockApiVersionMiddleware.mockReturnValueOnce(
         NextResponse.redirect(
           new URL('http://localhost:3000/api/v2/portfolios')
         )
@@ -291,31 +307,25 @@ describe('middleware', () => {
 
   describe('Security', () => {
     it('should apply security middleware to all requests', async () => {
-      const { securityMiddleware } = require('@/middleware/security');
-
       const request = new NextRequest(new URL('http://localhost:3000/'));
       await middleware(request);
 
-      expect(securityMiddleware).toHaveBeenCalledWith(request);
+      expect(mockSecurityMiddleware).toHaveBeenCalledWith(request);
     });
 
     it('should apply security headers to response', async () => {
-      const { applySecurityToResponse } = require('@/middleware/security');
-
       const request = new NextRequest(new URL('http://localhost:3000/'));
       await middleware(request);
 
-      expect(applySecurityToResponse).toHaveBeenCalled();
+      expect(mockApplySecurityToResponse).toHaveBeenCalled();
     });
 
     it('should return security response if provided', async () => {
-      const { securityMiddleware } = require('@/middleware/security');
-
       // Mock security middleware returning rate limit response
       const rateLimitResponse = new NextResponse('Rate limit exceeded', {
         status: 429,
       });
-      securityMiddleware.mockResolvedValueOnce(rateLimitResponse);
+      mockSecurityMiddleware.mockReturnValueOnce(rateLimitResponse);
 
       const request = new NextRequest(new URL('http://localhost:3000/'));
       const response = await middleware(request);
