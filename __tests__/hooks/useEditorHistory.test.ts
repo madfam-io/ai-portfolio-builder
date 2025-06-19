@@ -1,10 +1,18 @@
 import { describe, it, expect, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useState } from 'react';
-import { useEditorHistory } from '@/hooks/useEditorHistory';
 import type { Portfolio, PortfolioEditorState } from '@/types/portfolio';
 
+// Unmock the hook for this test file
+jest.unmock('@/hooks/useEditorHistory');
+import { useEditorHistory } from '@/hooks/useEditorHistory';
+
 describe('useEditorHistory', () => {
+  // Verify the hook is loaded correctly
+  it('should load the hook correctly', () => {
+    expect(typeof useEditorHistory).toBe('function');
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',

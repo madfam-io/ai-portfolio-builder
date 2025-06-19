@@ -4,6 +4,8 @@ import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/g
  * Tests for Error Logger Service
  */
 
+// Unmock the error logger for this test
+jest.unmock('@/lib/services/error/error-logger');
 import { ErrorLogger, errorLogger } from '@/lib/services/error/error-logger';
 import {
   AppError,

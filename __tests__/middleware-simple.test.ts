@@ -1,18 +1,14 @@
 import { describe, test, it, expect, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
-import { middleware } from '@/middleware';
 
+// Mock dependencies before importing middleware
+const mockCreateServerClient = jest.fn();
+const mockApiVersionMiddleware = jest.fn();
+const mockSecurityMiddleware = jest.fn();
+const mockApplySecurityToResponse = jest.fn();
 
-// Mock all dependencies
 jest.mock('@supabase/ssr', () => ({
-  createServerClient: jest.fn(() => ({
-    auth: {
-      getSession: jest.fn().mockResolvedValue({
-        data: { session: { user: { id: 'test-user' } } },
-        error: null,
-      }),
-    },
-  })),
+  createServerClient: mockCreateServerClient,
 }));
 
 jest.mock('@/lib/utils/logger', () => ({
@@ -34,15 +30,41 @@ jest.mock('@/lib/config', () => ({
 }));
 
 jest.mock('@/middleware/api-version', () => ({
-  apiVersionMiddleware: jest.fn(() => NextResponse.next()),
+  apiVersionMiddleware: mockApiVersionMiddleware,
 }));
 
 jest.mock('@/middleware/security', () => ({
-  securityMiddleware: jest.fn(() => null),
-  applySecurityToResponse: jest.fn((req, res) => res),
+  securityMiddleware: mockSecurityMiddleware,
+  applySecurityToResponse: mockApplySecurityToResponse,
 }));
 
+// Import middleware after mocks are set up
+import { middleware } from '@/middleware';
+
 describe('Middleware Simple Test', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    
+    // Setup mock Supabase client
+    const mockSupabaseClient = {
+      auth: {
+        getSession: jest.fn().mockResolvedValue({
+          data: { session: { user: { id: 'test-user' } } },
+          error: null,
+        }),
+      },
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    };
+    
+    mockCreateServerClient.mockImplementation(() => mockSupabaseClient);
+    mockApiVersionMiddleware.mockResolvedValue(NextResponse.next());
+    mockSecurityMiddleware.mockResolvedValue(null);
+    mockApplySecurityToResponse.mockImplementation((req, res) => res);
+  });
+
   it('should work with basic request', async () => {
     const request = new NextRequest(new URL('http://localhost:3000/'));
 
