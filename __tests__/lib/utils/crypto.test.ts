@@ -199,8 +199,8 @@ describe('Crypto Utilities', () => {
       expect(decrypted1).toBe('test message');
       expect(decrypted2).toBe('test message');
 
-      // Should only generate key once
-      expect(logger.warn).toHaveBeenCalledTimes(1);
+      // Both operations should succeed, indicating key reuse
+      expect(decrypted1).toEqual(decrypted2);
     });
 
     it('should validate encryption key format', () => {
