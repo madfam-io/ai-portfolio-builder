@@ -1,23 +1,26 @@
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
 import crypto from 'crypto';
 import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
+import { describe, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 
 // Mock dependencies
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 describe('Crypto Utilities', () => {
   const originalEnv = process.env;
   const testKey = crypto.randomBytes(32).toString('hex');
 
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     process.env = { ...originalEnv };
   });
@@ -27,7 +30,7 @@ describe('Crypto Utilities', () => {
   });
 
   describe('encrypt', () => {
-    it('should encrypt text successfully', () => {
+    it('should encrypt text successfully', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const plainText = 'This is a secret message';
@@ -41,7 +44,7 @@ describe('Crypto Utilities', () => {
       expect(result.tag).toMatch(/^[0-9a-f]{32}$/i);
     });
 
-    it('should generate different IVs for same text', () => {
+    it('should generate different IVs for same text', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const plainText = 'Same message';
@@ -52,7 +55,7 @@ describe('Crypto Utilities', () => {
       expect(result1.encrypted).not.toBe(result2.encrypted);
     });
 
-    it('should handle empty strings', () => {
+    it('should handle empty strings', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const result = encrypt('');
@@ -62,7 +65,7 @@ describe('Crypto Utilities', () => {
       expect(result).toHaveProperty('tag');
     });
 
-    it('should handle unicode text', () => {
+    it('should handle unicode text', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const unicodeText = '🔐 Unicode encryption test 测试';
@@ -72,7 +75,7 @@ describe('Crypto Utilities', () => {
       expect(result.encrypted).not.toBe(unicodeText);
     });
 
-    it('should handle long text', () => {
+    it('should handle long text', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const longText = 'A'.repeat(10000);
@@ -84,7 +87,7 @@ describe('Crypto Utilities', () => {
   });
 
   describe('decrypt', () => {
-    it('should decrypt encrypted text correctly', () => {
+    it('should decrypt encrypted text correctly', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const plainText = 'Secret message to decrypt';
@@ -94,7 +97,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted).toBe(plainText);
     });
 
-    it('should handle empty string encryption/decryption', () => {
+    it('should handle empty string encryption/decryption', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('');
@@ -103,7 +106,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted).toBe('');
     });
 
-    it('should handle unicode text encryption/decryption', () => {
+    it('should handle unicode text encryption/decryption', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const unicodeText = '🔓 Decrypted unicode 解密';
@@ -113,7 +116,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted).toBe(unicodeText);
     });
 
-    it('should fail with tampered data', () => {
+    it('should fail with tampered data', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
@@ -127,7 +130,7 @@ describe('Crypto Utilities', () => {
       expect(() => decrypt(tamperedData)).toThrow();
     });
 
-    it('should fail with wrong auth tag', () => {
+    it('should fail with wrong auth tag', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
@@ -141,7 +144,7 @@ describe('Crypto Utilities', () => {
       expect(() => decrypt(tamperedData)).toThrow();
     });
 
-    it('should fail with invalid IV', () => {
+    it('should fail with invalid IV', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const encrypted = encrypt('Original message');
@@ -157,7 +160,7 @@ describe('Crypto Utilities', () => {
   });
 
   describe('encryption key management', () => {
-    it('should throw error in production without encryption key', () => {
+    it('should throw error in production without encryption key', async () => {
       delete process.env.ENCRYPTION_KEY;
       process.env.NODE_ENV = 'production';
 
@@ -170,7 +173,7 @@ describe('Crypto Utilities', () => {
       );
     });
 
-    it('should generate development key when not in production', () => {
+    it('should generate development key when not in production', async () => {
       delete process.env.ENCRYPTION_KEY;
       process.env.NODE_ENV = 'development';
 
@@ -185,7 +188,7 @@ describe('Crypto Utilities', () => {
       );
     });
 
-    it('should reuse same development key during runtime', () => {
+    it('should reuse same development key during runtime', async () => {
       delete process.env.ENCRYPTION_KEY;
       process.env.NODE_ENV = 'development';
 
@@ -203,7 +206,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted1).toEqual(decrypted2);
     });
 
-    it('should validate encryption key format', () => {
+    it('should validate encryption key format', async () => {
       process.env.ENCRYPTION_KEY = 'invalid-key-format';
 
       expect(() => encrypt('test')).toThrow(
@@ -211,14 +214,14 @@ describe('Crypto Utilities', () => {
       );
     });
 
-    it('should accept valid 64-char hex key', () => {
+    it('should accept valid 64-char hex key', async () => {
       process.env.ENCRYPTION_KEY = '0123456789abcdef'.repeat(4); // 64 chars
 
       const result = encrypt('test');
       expect(result).toHaveProperty('encrypted');
     });
 
-    it('should fail with wrong encryption key on decrypt', () => {
+    it('should fail with wrong encryption key on decrypt', async () => {
       process.env.ENCRYPTION_KEY = testKey;
       const encrypted = encrypt('Secret message');
 
@@ -230,7 +233,7 @@ describe('Crypto Utilities', () => {
   });
 
   describe('edge cases', () => {
-    it('should handle special characters', () => {
+    it('should handle special characters', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const specialText = '!@#$%^&*()_+-=[]{}|;\':",.<>?/~`';
@@ -240,7 +243,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted).toBe(specialText);
     });
 
-    it('should handle JSON data', () => {
+    it('should handle JSON data', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const jsonData = JSON.stringify({
@@ -255,7 +258,7 @@ describe('Crypto Utilities', () => {
       expect(JSON.parse(decrypted)).toEqual(JSON.parse(jsonData));
     });
 
-    it('should handle newlines and whitespace', () => {
+    it('should handle newlines and whitespace', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const textWithWhitespace = 'Line 1\nLine 2\tTabbed\r\nWindows line';
@@ -265,7 +268,7 @@ describe('Crypto Utilities', () => {
       expect(decrypted).toBe(textWithWhitespace);
     });
 
-    it('should handle base64 encoded data', () => {
+    it('should handle base64 encoded data', async () => {
       process.env.ENCRYPTION_KEY = testKey;
 
       const binaryData = crypto.randomBytes(100);

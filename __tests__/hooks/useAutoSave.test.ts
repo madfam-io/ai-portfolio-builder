@@ -1,20 +1,19 @@
-import {
-  describe,
-  test,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import type { Portfolio } from '@/types/portfolio';
+import { describe, test, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 
 // Clear any existing mocks of useAutoSave
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('useAutoSave', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   // Import the hook at the describe level
   const { useAutoSave } = require('@/hooks/useAutoSave');
 
@@ -60,7 +59,7 @@ describe('useAutoSave', () => {
     jest.useRealTimers();
   });
 
-  it('should initialize with undefined lastSaved', () => {
+  it('should initialize with undefined lastSaved', async () => {
     const { result } = renderHook(() =>
       useAutoSave('portfolio-123', mockPortfolio, false)
     );
@@ -224,7 +223,7 @@ describe('useAutoSave', () => {
     );
   });
 
-  it('should clear timeout on clearAutoSave', () => {
+  it('should clear timeout on clearAutoSave', async () => {
     const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
 
     const { result } = renderHook(() =>
@@ -241,10 +240,7 @@ describe('useAutoSave', () => {
     clearTimeoutSpy.mockRestore();
   });
 
-  it(
-    'should update lastSaved timestamp on successful save',
-    20000,
-    async () => {
+  it('should update lastSaved timestamp on successful save', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         json: () => ({ success: true }),
@@ -309,7 +305,7 @@ describe('useAutoSave', () => {
     );
   });
 
-  it('should maintain autoSave function reference across renders', () => {
+  it('should maintain autoSave function reference across renders', async () => {
     const { result, rerender } = renderHook(
       ({ portfolioId, portfolio, isDirty }) =>
         useAutoSave(portfolioId, portfolio, isDirty),

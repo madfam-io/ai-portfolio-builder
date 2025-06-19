@@ -1,23 +1,31 @@
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
-import {
-  generateCSRFToken,
+import { logger } from '@/lib/utils/logger';
+
+import {   generateCSRFToken,
+
+jest.mock('@/lib/utils/logger', () => ({
+
+jest.setTimeout(30000);
+
   verifyCSRFToken,
   csrfMiddleware,
-} from '../../middleware/csrf';
+ } from '../../middleware/csrf';
 
 // Mock logger
-jest.mock('@/lib/utils/logger', () => ({
+
   logger: {
     warn: jest.fn(),
     error: jest.fn(),
   },
 }));
 
-import { logger } from '@/lib/utils/logger';
-
 describe('CSRF Middleware', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    global.fetch = jest.fn();
     jest.clearAllMocks();
   });
 
@@ -47,27 +55,27 @@ describe('CSRF Middleware', () => {
   };
 
   describe('generateCSRFToken', () => {
-    it('should generate a token of correct length', () => {
+    it('should generate a token of correct length', async () => {
       const token = generateCSRFToken();
 
       expect(token).toHaveLength(64); // 32 bytes * 2 (hex encoding)
       expect(typeof token).toBe('string');
     });
 
-    it('should generate unique tokens', () => {
+    it('should generate unique tokens', async () => {
       const token1 = generateCSRFToken();
       const token2 = generateCSRFToken();
 
       expect(token1).not.toBe(token2);
     });
 
-    it('should generate tokens with only hex characters', () => {
+    it('should generate tokens with only hex characters', async () => {
       const token = generateCSRFToken();
 
       expect(token).toMatch(/^[0-9a-f]+$/);
     });
 
-    it('should be cryptographically random', () => {
+    it('should be cryptographically random', async () => {
       // Generate multiple tokens and ensure they have good entropy
       const tokens = Array.from({ length: 100 }, () => generateCSRFToken());
       const uniqueTokens = new Set(tokens);
@@ -81,7 +89,7 @@ describe('CSRF Middleware', () => {
       '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
 
     describe('Method-based protection', () => {
-      it('should skip verification for GET requests', () => {
+      it('should skip verification for GET requests', async () => {
         const request = createRequest('/api/test', { method: 'GET' });
 
         const result = verifyCSRFToken(request);
@@ -89,7 +97,7 @@ describe('CSRF Middleware', () => {
         expect(result).toBe(true);
       });
 
-      it('should skip verification for HEAD requests', () => {
+      it('should skip verification for HEAD requests', async () => {
         const request = createRequest('/api/test', { method: 'HEAD' });
 
         const result = verifyCSRFToken(request);
@@ -97,7 +105,7 @@ describe('CSRF Middleware', () => {
         expect(result).toBe(true);
       });
 
-      it('should skip verification for OPTIONS requests', () => {
+      it('should skip verification for OPTIONS requests', async () => {
         const request = createRequest('/api/test', { method: 'OPTIONS' });
 
         const result = verifyCSRFToken(request);
@@ -107,7 +115,7 @@ describe('CSRF Middleware', () => {
 
       const protectedMethods = ['POST', 'PUT', 'PATCH', 'DELETE'];
       protectedMethods.forEach(method => {
-        it(`should require verification for ${method} requests`, () => {
+        it(`should require verification for ${method} requests`, async () => {
           const request = createRequest('/api/test', { method });
 
           const result = verifyCSRFToken(request);
@@ -125,7 +133,7 @@ describe('CSRF Middleware', () => {
       ];
 
       exemptRoutes.forEach(route => {
-        it(`should skip verification for exempt route: ${route}`, () => {
+        it(`should skip verification for exempt route: ${route}`, async () => {
           const request = createRequest(route, { method: 'POST' });
 
           const result = verifyCSRFToken(request);
@@ -134,7 +142,7 @@ describe('CSRF Middleware', () => {
         });
       });
 
-      it('should require verification for non-exempt routes', () => {
+      it('should require verification for non-exempt routes', async () => {
         const request = createRequest('/api/portfolios', { method: 'POST' });
 
         const result = verifyCSRFToken(request);
@@ -144,7 +152,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Token validation', () => {
-      it('should accept valid matching tokens', () => {
+      it('should accept valid matching tokens', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
@@ -156,7 +164,7 @@ describe('CSRF Middleware', () => {
         expect(result).toBe(true);
       });
 
-      it('should reject mismatched tokens', () => {
+      it('should reject mismatched tokens', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
@@ -175,7 +183,7 @@ describe('CSRF Middleware', () => {
         );
       });
 
-      it('should reject missing cookie token', () => {
+      it('should reject missing cookie token', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
@@ -193,7 +201,7 @@ describe('CSRF Middleware', () => {
         );
       });
 
-      it('should reject missing header token', () => {
+      it('should reject missing header token', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           cookies: { 'prisma-csrf-token': validToken },
@@ -211,7 +219,7 @@ describe('CSRF Middleware', () => {
         );
       });
 
-      it('should reject both tokens missing', () => {
+      it('should reject both tokens missing', async () => {
         const request = createRequest('/api/test', { method: 'POST' });
 
         const result = verifyCSRFToken(request);
@@ -228,7 +236,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Edge cases', () => {
-      it('should handle empty token values', () => {
+      it('should handle empty token values', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': '' },
@@ -240,7 +248,7 @@ describe('CSRF Middleware', () => {
         expect(result).toBe(false);
       });
 
-      it('should handle whitespace in tokens', () => {
+      it('should handle whitespace in tokens', async () => {
         const tokenWithSpaces = ` ${validToken} `;
         const request = createRequest('/api/test', {
           method: 'POST',
@@ -254,7 +262,7 @@ describe('CSRF Middleware', () => {
         expect(result).toBe(false);
       });
 
-      it('should be case sensitive', () => {
+      it('should be case sensitive', async () => {
         const upperToken = validToken.toUpperCase();
         const request = createRequest('/api/test', {
           method: 'POST',
@@ -271,7 +279,7 @@ describe('CSRF Middleware', () => {
 
   describe('csrfMiddleware', () => {
     describe('GET request handling', () => {
-      it('should generate and set CSRF token for GET requests', () => {
+      it('should generate and set CSRF token for GET requests', async () => {
         const request = createRequest('/api/test', { method: 'GET' });
 
         const response = csrfMiddleware(request);
@@ -292,7 +300,7 @@ describe('CSRF Middleware', () => {
         expect(headerToken).toBe(csrfCookie?.value);
       });
 
-      it('should set secure cookie in production', () => {
+      it('should set secure cookie in production', async () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'production';
 
@@ -306,7 +314,7 @@ describe('CSRF Middleware', () => {
         process.env.NODE_ENV = originalEnv;
       });
 
-      it('should set non-secure cookie in development', () => {
+      it('should set non-secure cookie in development', async () => {
         const originalEnv = process.env.NODE_ENV;
         process.env.NODE_ENV = 'development';
 
@@ -320,7 +328,7 @@ describe('CSRF Middleware', () => {
         process.env.NODE_ENV = originalEnv;
       });
 
-      it('should set cookie expiration to 24 hours', () => {
+      it('should set cookie expiration to 24 hours', async () => {
         const request = createRequest('/api/test', { method: 'GET' });
         const response = csrfMiddleware(request);
 
@@ -334,7 +342,7 @@ describe('CSRF Middleware', () => {
       const validToken =
         '1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef';
 
-      it('should allow requests with valid CSRF tokens', () => {
+      it('should allow requests with valid CSRF tokens', async () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
@@ -346,7 +354,7 @@ describe('CSRF Middleware', () => {
         expect(response).toBeNull();
       });
 
-      it('should block requests with invalid CSRF tokens', () => {
+      it('should block requests with invalid CSRF tokens', async () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': 'invalid-token' },
@@ -359,10 +367,10 @@ describe('CSRF Middleware', () => {
         expect(response?.status).toBe(403);
 
         const responseData = response?.json();
-        expect(responseData).resolves.toEqual({ error: 'Invalid CSRF token' });
+        await expect(responseData).resolves.toEqual({ error: 'Invalid CSRF token' });
       });
 
-      it('should log security events for failed validations', () => {
+      it('should log security events for failed validations', async () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': 'invalid-token' },
@@ -380,7 +388,7 @@ describe('CSRF Middleware', () => {
         );
       });
 
-      it('should include IP address in security logs', () => {
+      it('should include IP address in security logs', async () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: {
@@ -402,7 +410,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Exempt routes', () => {
-      it('should allow POST to OAuth callback without CSRF token', () => {
+      it('should allow POST to OAuth callback without CSRF token', async () => {
         const request = createRequest('/api/auth/callback', { method: 'POST' });
 
         const response = csrfMiddleware(request);
@@ -410,7 +418,7 @@ describe('CSRF Middleware', () => {
         expect(response).toBeNull();
       });
 
-      it('should allow POST to GitHub callback without CSRF token', () => {
+      it('should allow POST to GitHub callback without CSRF token', async () => {
         const request = createRequest('/api/integrations/github/callback', {
           method: 'POST',
         });
@@ -420,7 +428,7 @@ describe('CSRF Middleware', () => {
         expect(response).toBeNull();
       });
 
-      it('should allow POST to webhooks without CSRF token', () => {
+      it('should allow POST to webhooks without CSRF token', async () => {
         const request = createRequest('/api/webhooks/stripe', {
           method: 'POST',
         });
@@ -432,7 +440,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Integration scenarios', () => {
-      it('should handle complete CSRF flow', () => {
+      it('should handle complete CSRF flow', async () => {
         // Step 1: GET request generates token
         const getRequest = createRequest('/api/portfolios', { method: 'GET' });
         const getResponse = csrfMiddleware(getRequest);
@@ -456,7 +464,7 @@ describe('CSRF Middleware', () => {
         expect(postResponse).toBeNull();
       });
 
-      it('should handle multiple concurrent requests', () => {
+      it('should handle multiple concurrent requests', async () => {
         const validToken = generateCSRFToken();
 
         const requests = Array.from({ length: 10 }, (_, i) =>
@@ -476,7 +484,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Error handling and edge cases', () => {
-      it('should handle requests with malformed cookies', () => {
+      it('should handle requests with malformed cookies', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': 'valid-token' },
@@ -490,7 +498,7 @@ describe('CSRF Middleware', () => {
         expect(response?.status).toBe(403);
       });
 
-      it('should handle very long tokens', () => {
+      it('should handle very long tokens', async () => {
         const longToken = 'a'.repeat(1000);
         const request = createRequest('/api/test', {
           method: 'POST',
@@ -503,7 +511,7 @@ describe('CSRF Middleware', () => {
         expect(response).toBeNull(); // Should accept matching tokens regardless of length
       });
 
-      it('should handle special characters in tokens', () => {
+      it('should handle special characters in tokens', async () => {
         const specialToken = 'token-with-special-chars!@#$%^&*()';
         const request = createRequest('/api/test', {
           method: 'POST',
@@ -516,7 +524,7 @@ describe('CSRF Middleware', () => {
         expect(response).toBeNull();
       });
 
-      it('should handle requests without any headers', () => {
+      it('should handle requests without any headers', async () => {
         const request = createRequest('/api/test', { method: 'POST' });
 
         const response = csrfMiddleware(request);
@@ -526,7 +534,7 @@ describe('CSRF Middleware', () => {
     });
 
     describe('Performance considerations', () => {
-      it('should process requests quickly', () => {
+      it('should process requests quickly', async () => {
         const validToken = generateCSRFToken();
         const request = createRequest('/api/test', {
           method: 'POST',
@@ -541,7 +549,7 @@ describe('CSRF Middleware', () => {
         expect(endTime - startTime).toBeLessThan(10); // Should be very fast
       });
 
-      it('should handle high volume of token generations', () => {
+      it('should handle high volume of token generations', async () => {
         const startTime = Date.now();
 
         for (let i = 0; i < 1000; i++) {

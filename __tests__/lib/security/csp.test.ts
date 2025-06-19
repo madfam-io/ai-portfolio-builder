@@ -1,4 +1,4 @@
-import { describe, test, it, expect, afterEach } from '@jest/globals';
+import { describe, test, it, expect, afterEach, jest, beforeEach } from '@jest/globals';
 import {
   getCSPDirectives,
   formatCSPHeader,
@@ -6,6 +6,12 @@ import {
 } from '@/lib/security/csp';
 
 describe('Content Security Policy', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const originalEnv = process.env.NODE_ENV;
 
   afterEach(() => {
@@ -13,7 +19,7 @@ describe('Content Security Policy', () => {
   });
 
   describe('getCSPDirectives', () => {
-    it('should return CSP directives for production', () => {
+    it('should return CSP directives for production', async () => {
       process.env.NODE_ENV = 'production';
       const directives = getCSPDirectives();
 
@@ -26,7 +32,7 @@ describe('Content Security Policy', () => {
       expect(directives['connect-src']).toContain("'self'");
     });
 
-    it('should return CSP directives for development', () => {
+    it('should return CSP directives for development', async () => {
       process.env.NODE_ENV = 'development';
       const directives = getCSPDirectives();
 
@@ -34,7 +40,7 @@ describe('Content Security Policy', () => {
       expect(directives['script-src']).toContain("'unsafe-eval'");
     });
 
-    it('should include necessary external domains', () => {
+    it('should include necessary external domains', async () => {
       const directives = getCSPDirectives();
 
       // Check for Supabase domains
@@ -60,7 +66,7 @@ describe('Content Security Policy', () => {
 
     });
 
-    it('should include WebSocket support for development', () => {
+    it('should include WebSocket support for development', async () => {
       process.env.NODE_ENV = 'development';
       const directives = getCSPDirectives();
 
@@ -70,7 +76,7 @@ describe('Content Security Policy', () => {
   });
 
   describe('formatCSPHeader', () => {
-    it('should format CSP directives as a string', () => {
+    it('should format CSP directives as a string', async () => {
       const directives = {
         'default-src': ["'self'"],
         'script-src': ["'self'", 'https://example.com'],
@@ -85,7 +91,7 @@ describe('Content Security Policy', () => {
       expect(header.split(';').length).toBe(3);
     });
 
-    it('should filter out empty values', () => {
+    it('should filter out empty values', async () => {
       const directives = {
         'default-src': ["'self'", ''],
         'script-src': ["'self'", '', 'https://example.com'],
@@ -98,14 +104,14 @@ describe('Content Security Policy', () => {
       expect(header).toContain("script-src 'self' https://example.com");
     });
 
-    it('should handle empty directives object', () => {
+    it('should handle empty directives object', async () => {
       const header = formatCSPHeader({});
       expect(header).toBe('');
     });
   });
 
   describe('generateNonce', () => {
-    it('should generate a base64 encoded nonce', () => {
+    it('should generate a base64 encoded nonce', async () => {
       const nonce = generateNonce();
 
       expect(typeof nonce).toBe('string');
@@ -114,7 +120,7 @@ describe('Content Security Policy', () => {
       expect(nonce).toMatch(/^[A-Za-z0-9+/]+=*$/);
     });
 
-    it('should generate unique nonces', () => {
+    it('should generate unique nonces', async () => {
       const nonces = new Set();
       for (let i = 0; i < 100; i++) {
         nonces.add(generateNonce());
@@ -123,7 +129,7 @@ describe('Content Security Policy', () => {
       expect(nonces.size).toBe(100);
     });
 
-    it('should handle environments without crypto', () => {
+    it('should handle environments without crypto', async () => {
       // Mock crypto not being available
       const originalCrypto = global.crypto;
       (global as any).crypto = undefined;

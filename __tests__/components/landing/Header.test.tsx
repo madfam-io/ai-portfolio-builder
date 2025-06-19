@@ -1,16 +1,62 @@
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { mockUseLanguage } from '@/test-utils/mock-i18n';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
+import Header from '@/components/landing/Header';
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+
+// Mock next/navigation
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { 
+// Mock i18n
+
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import {
+// Mock global fetch
+global.fetch = jest.fn();
+ render, screen, fireEvent } from '@testing-library/react';
 
 // Mock useLanguage explicitly
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -34,7 +80,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   ),
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -118,7 +163,6 @@ jest.mock('next/link', () => ({
   },
 }));
 
-jest.mock('next/navigation', () => ({
   useRouter: jest.fn(() => ({
     push: jest.fn(),
     replace: jest.fn(),
@@ -136,7 +180,6 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Import Header after setting up mocks
-import Header from '@/components/landing/Header';
 
 // Mock useApp hook
 jest.mock('@/hooks/useApp', () => ({
@@ -204,14 +247,20 @@ describe.skip('Header', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render brand logo and name', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+    it('should render brand logo and name', async () => {
       renderHeader();
 
       expect(screen.getByText('PRISMA')).toBeInTheDocument();
       expect(screen.getByAltText('PRISMA Logo')).toBeInTheDocument();
     });
 
-    it('should render main navigation links', () => {
+    it('should render main navigation links', async () => {
       renderHeader();
 
       expect(screen.getByText('Features')).toBeInTheDocument();
@@ -221,14 +270,14 @@ describe.skip('Header', () => {
       expect(screen.getByText('About')).toBeInTheDocument();
     });
 
-    it('should render authentication buttons for non-authenticated users', () => {
+    it('should render authentication buttons for non-authenticated users', async () => {
       renderHeader();
 
       expect(screen.getByText('Sign In')).toBeInTheDocument();
       expect(screen.getByText('Get Started')).toBeInTheDocument();
     });
 
-    it('should render language selector', () => {
+    it('should render language selector', async () => {
       renderHeader();
 
       expect(screen.getByText('EN')).toBeInTheDocument();
@@ -237,7 +286,7 @@ describe.skip('Header', () => {
   });
 
   describe('Authentication States', () => {
-    it('should show login and signup for unauthenticated users', () => {
+    it('should show login and signup for unauthenticated users', async () => {
       renderHeader();
 
       expect(screen.getByText('Sign In')).toBeInTheDocument();
@@ -287,7 +336,7 @@ describe.skip('Header', () => {
       expect(mockToggleDarkMode).toHaveBeenCalledTimes(1);
     });
 
-    it('should show sun icon when in dark mode', () => {
+    it('should show sun icon when in dark mode', async () => {
       // Mock dark mode enabled
       mockUseApp.mockReturnValue({
         isDarkMode: true,
@@ -316,7 +365,7 @@ describe.skip('Header', () => {
       expect(mockSetMobileMenuOpen).toHaveBeenCalledWith(true);
     });
 
-    it('should show close icon when mobile menu is open', () => {
+    it('should show close icon when mobile menu is open', async () => {
       // Mock mobile menu open state
       mockUseApp.mockReturnValue({
         isDarkMode: false,
@@ -334,7 +383,7 @@ describe.skip('Header', () => {
   });
 
   describe('Language Switching', () => {
-    it('should show language toggle with current language', () => {
+    it('should show language toggle with current language', async () => {
       renderHeader();
 
       // Should show current language code
@@ -344,7 +393,7 @@ describe.skip('Header', () => {
       expect(screen.getByText('🇺🇸')).toBeInTheDocument();
     });
 
-    it('should show correct language toggle title', () => {
+    it('should show correct language toggle title', async () => {
       renderHeader();
 
       const languageButton = screen.getByText('EN').closest('button');
@@ -353,7 +402,7 @@ describe.skip('Header', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle missing user data gracefully', () => {
+    it('should handle missing user data gracefully', async () => {
       // Mock authenticated state but null user (edge case)
       mockUseAuth.mockReturnValue({
         user: null,
@@ -367,7 +416,7 @@ describe.skip('Header', () => {
       expect(screen.getByText('Sign In')).toBeInTheDocument();
     });
 
-    it('should handle loading state gracefully', () => {
+    it('should handle loading state gracefully', async () => {
       // Mock loading state
       mockUseAuth.mockReturnValue({
         user: null,

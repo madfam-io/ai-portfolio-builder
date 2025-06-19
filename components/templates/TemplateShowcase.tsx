@@ -54,9 +54,15 @@ const templateDetails: TemplateDetails[] = [
   {
     id: 'modern',
     name: 'Modern',
-    description: 'A sleek, contemporary design with dark theme and smooth animations',
+    description:
+      'A sleek, contemporary design with dark theme and smooth animations',
     icon: <Zap className="w-6 h-6" />,
-    features: ['Dark theme', 'Glassmorphism', 'Smooth animations', 'Grid layouts'],
+    features: [
+      'Dark theme',
+      'Glassmorphism',
+      'Smooth animations',
+      'Grid layouts',
+    ],
     industries: ['Technology', 'Startup', 'Developer', 'Designer'],
     preview: {
       desktop: '/templates/modern-desktop.png',
@@ -76,7 +82,12 @@ const templateDetails: TemplateDetails[] = [
     name: 'Minimal',
     description: 'Clean and focused design that lets your content shine',
     icon: <Layout className="w-6 h-6" />,
-    features: ['Clean typography', 'Whitespace', 'Simple navigation', 'Fast loading'],
+    features: [
+      'Clean typography',
+      'Whitespace',
+      'Simple navigation',
+      'Fast loading',
+    ],
     industries: ['Writer', 'Consultant', 'Freelancer', 'Designer'],
     preview: {
       desktop: '/templates/minimal-desktop.png',
@@ -93,9 +104,15 @@ const templateDetails: TemplateDetails[] = [
   {
     id: 'business',
     name: 'Business',
-    description: 'Professional template with structured sections and metrics display',
+    description:
+      'Professional template with structured sections and metrics display',
     icon: <Briefcase className="w-6 h-6" />,
-    features: ['Corporate design', 'Metrics display', 'Testimonials', 'Case studies'],
+    features: [
+      'Corporate design',
+      'Metrics display',
+      'Testimonials',
+      'Case studies',
+    ],
     industries: ['Consultant', 'Executive', 'Agency', 'B2B Services'],
     preview: {
       desktop: '/templates/business-desktop.png',
@@ -114,7 +131,12 @@ const templateDetails: TemplateDetails[] = [
     name: 'Creative',
     description: 'Vibrant and artistic design perfect for visual portfolios',
     icon: <Palette className="w-6 h-6" />,
-    features: ['Bold colors', 'Image galleries', 'Creative layouts', 'Portfolio grid'],
+    features: [
+      'Bold colors',
+      'Image galleries',
+      'Creative layouts',
+      'Portfolio grid',
+    ],
     industries: ['Artist', 'Photographer', 'Designer', 'Creative Director'],
     preview: {
       desktop: '/templates/creative-desktop.png',
@@ -131,9 +153,15 @@ const templateDetails: TemplateDetails[] = [
   {
     id: 'developer',
     name: 'Developer',
-    description: 'Code-focused template with GitHub integration and tech showcase',
+    description:
+      'Code-focused template with GitHub integration and tech showcase',
     icon: <Code className="w-6 h-6" />,
-    features: ['Code highlighting', 'GitHub stats', 'Project cards', 'Tech stack'],
+    features: [
+      'Code highlighting',
+      'GitHub stats',
+      'Project cards',
+      'Tech stack',
+    ],
     industries: ['Developer', 'Engineer', 'DevOps', 'Data Scientist'],
     preview: {
       desktop: '/templates/developer-desktop.png',
@@ -152,7 +180,12 @@ const templateDetails: TemplateDetails[] = [
     name: 'Educator',
     description: 'Academic template with sections for courses and publications',
     icon: <GraduationCap className="w-6 h-6" />,
-    features: ['Course listings', 'Publications', 'Research areas', 'Academic CV'],
+    features: [
+      'Course listings',
+      'Publications',
+      'Research areas',
+      'Academic CV',
+    ],
     industries: ['Teacher', 'Professor', 'Researcher', 'Trainer'],
     preview: {
       desktop: '/templates/educator-desktop.png',
@@ -177,7 +210,9 @@ export function TemplateShowcase({
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateType | null>(
     currentTemplate || null
   );
-  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>(
+    'desktop'
+  );
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const categories = [
@@ -189,25 +224,25 @@ export function TemplateShowcase({
 
   const filterTemplates = (category: string) => {
     if (category === 'all') return templateDetails;
-    
+
     if (category === 'professional') {
-      return templateDetails.filter(t => 
+      return templateDetails.filter(t =>
         ['business', 'consultant', 'minimal'].includes(t.id)
       );
     }
-    
+
     if (category === 'creative') {
-      return templateDetails.filter(t => 
+      return templateDetails.filter(t =>
         ['creative', 'designer', 'modern'].includes(t.id)
       );
     }
-    
+
     if (category === 'technical') {
-      return templateDetails.filter(t => 
+      return templateDetails.filter(t =>
         ['developer', 'modern', 'educator'].includes(t.id)
       );
     }
-    
+
     return templateDetails;
   };
 
@@ -223,12 +258,15 @@ export function TemplateShowcase({
       <div className="mb-8">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-3xl font-bold">{t.chooseTemplate || 'Choose Your Template'}</h2>
+            <h2 className="text-3xl font-bold">
+              {t.chooseTemplate || 'Choose Your Template'}
+            </h2>
             <p className="text-muted-foreground mt-2">
-              {t.templateSubtitle || 'Select a professional template that matches your style'}
+              {t.templateSubtitle ||
+                'Select a professional template that matches your style'}
             </p>
           </div>
-          
+
           {showWizard && (
             <Button onClick={showWizard} variant="outline">
               <Sparkles className="w-4 h-4 mr-2" />
@@ -258,10 +296,10 @@ export function TemplateShowcase({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <Card 
+            <Card
               className={cn(
-                "overflow-hidden cursor-pointer transition-all hover:shadow-lg",
-                selectedTemplate === template.id && "ring-2 ring-primary"
+                'overflow-hidden cursor-pointer transition-all hover:shadow-lg',
+                selectedTemplate === template.id && 'ring-2 ring-primary'
               )}
               onClick={() => handleSelect(template.id)}
             >
@@ -295,9 +333,11 @@ export function TemplateShowcase({
                 <div className="absolute bottom-2 left-2 flex gap-1">
                   <Button
                     size="sm"
-                    variant={previewMode === 'desktop' ? 'default' : 'secondary'}
+                    variant={
+                      previewMode === 'desktop' ? 'default' : 'secondary'
+                    }
                     className="h-7 px-2"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setPreviewMode('desktop');
                     }}
@@ -308,7 +348,7 @@ export function TemplateShowcase({
                     size="sm"
                     variant={previewMode === 'mobile' ? 'default' : 'secondary'}
                     className="h-7 px-2"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       setPreviewMode('mobile');
                     }}
@@ -329,10 +369,13 @@ export function TemplateShowcase({
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={(e) => {
+                    onClick={e => {
                       e.stopPropagation();
                       // Open preview in new window
-                      window.open(`/templates/preview/${template.id}`, '_blank');
+                      window.open(
+                        `/templates/preview/${template.id}`,
+                        '_blank'
+                      );
                     }}
                   >
                     <Eye className="w-4 h-4" />
@@ -343,8 +386,12 @@ export function TemplateShowcase({
               <CardContent>
                 {/* Features */}
                 <div className="flex flex-wrap gap-1 mb-4">
-                  {template.features.slice(0, 3).map((feature) => (
-                    <Badge key={feature} variant="secondary" className="text-xs">
+                  {template.features.slice(0, 3).map(feature => (
+                    <Badge
+                      key={feature}
+                      variant="secondary"
+                      className="text-xs"
+                    >
                       {feature}
                     </Badge>
                   ))}

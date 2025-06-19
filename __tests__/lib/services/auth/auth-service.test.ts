@@ -1,12 +1,24 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { AuthService } from '@/lib/services/auth/auth-service';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
 
+jest.mock('@/lib/supabase/client');
+jest.mock('@/lib/utils/logger', () => ({
+
+/**
+ * @jest-environment jsdom
+ */
 
 // Mock dependencies
-jest.mock('@/lib/supabase/client');
-jest.mock('@/lib/utils/logger');
+
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 // Mock window.location
 Object.defineProperty(window, 'location', {
@@ -17,6 +29,12 @@ Object.defineProperty(window, 'location', {
 });
 
 describe('AuthService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let authService: AuthService;
   let mockSupabaseClient: any;
   let mockAuthClient: any;
@@ -42,15 +60,15 @@ describe('AuthService', () => {
 
     // Mock auth client methods
     mockAuthClient = {
-      signInWithPassword: jest.fn(),
-      signUp: jest.fn(),
-      signOut: jest.fn(),
-      resetPasswordForEmail: jest.fn(),
-      updateUser: jest.fn(),
-      getSession: jest.fn(),
-      getUser: jest.fn(),
-      signInWithOAuth: jest.fn(),
-      onAuthStateChange: jest.fn(),
+      signInWithPassword: jest.fn().mockReturnValue(void 0),
+      signUp: jest.fn().mockReturnValue(void 0),
+      signOut: jest.fn().mockReturnValue(void 0),
+      resetPasswordForEmail: jest.fn().mockReturnValue(void 0),
+      updateUser: jest.fn().mockReturnValue(void 0),
+      getSession: jest.fn().mockReturnValue(void 0),
+      getUser: jest.fn().mockReturnValue(void 0),
+      signInWithOAuth: jest.fn().mockReturnValue(void 0),
+      onAuthStateChange: jest.fn().mockReturnValue(void 0),
     };
 
     // Mock Supabase client
@@ -58,7 +76,7 @@ describe('AuthService', () => {
       auth: mockAuthClient,
     };
 
-    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
 
     // Create new instance for each test
     authService = new AuthService();
@@ -81,7 +99,7 @@ describe('AuthService', () => {
       {
         email: 'test@example.com',
         password: 'password123',
-    );
+    });
   });
       expect(logger.info).toHaveBeenCalledWith(
       'User signed in successfully', {
@@ -130,7 +148,7 @@ describe('AuthService', () => {
     });
 
     it('should handle missing supabase client', async () => {
-      (createClient as jest.Mock).mockReturnValue(null);
+      jest.mocked(createClient).mockReturnValue(null);
       authService = new AuthService();
 
       const result = await authService.signIn(
@@ -170,7 +188,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password123',
         options: { data: metadata },
-    );
+    });
   });
       expect(logger.info).toHaveBeenCalledWith(
       'User signed up successfully', {
@@ -195,7 +213,7 @@ describe('AuthService', () => {
         email: 'test@example.com',
         password: 'password123',
         options: { data: undefined },
-    );
+    });
   });
     });
 
@@ -310,7 +328,7 @@ describe('AuthService', () => {
       expect(mockAuthClient.updateUser).toHaveBeenCalledWith(
       {
         password: 'newpassword123',
-    );
+    });
   });
       expect(logger.info).toHaveBeenCalledWith('Password updated successfully');
     });
@@ -364,7 +382,7 @@ describe('AuthService', () => {
     });
 
     it('should handle missing supabase client gracefully', async () => {
-      (createClient as jest.Mock).mockReturnValue(null);
+      jest.mocked(createClient).mockReturnValue(null);
       authService = new AuthService();
 
       const result = await authService.getSession();
@@ -419,7 +437,7 @@ describe('AuthService', () => {
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
         },
-    );
+    });
   });
       expect(logger.info).toHaveBeenCalledWith(
       'OAuth sign in initiated', {
@@ -446,7 +464,7 @@ describe('AuthService', () => {
           options: {
             redirectTo: 'http://localhost:3000/auth/callback',
           },
-    );
+    });
   });
       }
     });
@@ -474,14 +492,14 @@ describe('AuthService', () => {
   });
 
   describe('onAuthStateChange', () => {
-    it('should subscribe to auth state changes', () => {
-      const mockUnsubscribe = jest.fn();
+    it('should subscribe to auth state changes', async () => {
+      const mockUnsubscribe = jest.fn().mockReturnValue(void 0);
       const mockSubscription = { unsubscribe: mockUnsubscribe };
       mockAuthClient.onAuthStateChange.mockReturnValue({
         data: { subscription: mockSubscription },
       });
 
-      const callback = jest.fn();
+      const callback = jest.fn().mockReturnValue(void 0);
       const unsubscribe = authService.onAuthStateChange(callback);
 
       expect(mockAuthClient.onAuthStateChange).toHaveBeenCalledWith(callback);
@@ -491,11 +509,11 @@ describe('AuthService', () => {
       expect(mockUnsubscribe).toHaveBeenCalled();
     });
 
-    it('should handle missing supabase client', () => {
-      (createClient as jest.Mock).mockReturnValue(null);
+    it('should handle missing supabase client', async () => {
+      jest.mocked(createClient).mockReturnValue(null);
       authService = new AuthService();
 
-      const callback = jest.fn();
+      const callback = jest.fn().mockReturnValue(void 0);
       const unsubscribe = authService.onAuthStateChange(callback);
 
       expect(logger.warn).toHaveBeenCalledWith(

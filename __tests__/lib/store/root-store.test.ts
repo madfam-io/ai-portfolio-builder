@@ -1,97 +1,137 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { act } from '@testing-library/react';
-import {
-  useRootStore,
-  useAuth,
-  usePortfolio,
-  useUI,
-  useAI,
-  getRootStore,
-  getAuthStore,
-  getPortfolioStore,
-  getUIStore,
-  getAIStore,
-} from '@/lib/store/root-store';
-import { useAuthStore } from '@/lib/store/auth-store';
-import { usePortfolioStore } from '@/lib/store/portfolio-store';
-import { useUIStore } from '@/lib/store/ui-store';
-import { useAIStore } from '@/lib/store/ai-store';
-import { logger } from '@/lib/utils/logger';
 
-// Mock dependencies
-jest.mock('@/lib/utils/logger');
-jest.mock('@/lib/store/auth-store');
-jest.mock('@/lib/store/portfolio-store');
-jest.mock('@/lib/store/ui-store');
-jest.mock('@/lib/store/ai-store');
 
-describe('Root Store', () => {
-  const mockAuthState = {
-    user: null,
-    session: null,
-    isLoading: false,
-    error: null,
-    signOut: jest.fn(),
-  };
+// Mock zustand stores
+const mockPortfolioStore = {
+  portfolios: [],
+  currentPortfolio: null,
+  isLoading: false,
+  error: null,
+  fetchPortfolios: jest.fn(),
+  createPortfolio: jest.fn(),
+  updatePortfolio: jest.fn(),
+  deletePortfolio: jest.fn(),
+  setCurrentPortfolio: jest.fn(),
+};
 
-  const mockPortfolioState = {
-    portfolios: [],
-    currentPortfolio: null,
-    isLoading: false,
-    error: null,
-    resetPortfolios: jest.fn(),
-  };
+jest.mock('@/lib/store/portfolio-store', () => ({
+  usePortfolioStore: jest.fn(() => mockPortfolioStore),
+}));
 
-  const mockUIState = {
-    theme: 'light',
-    sidebarOpen: true,
-    modals: [],
-    toasts: [],
-    globalLoading: false,
-    clearToasts: jest.fn(),
-    closeAllModals: jest.fn(),
-  };
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-  const mockAIState = {
-    selectedModels: {
-      bio: 'model-1',
-      project: 'model-2',
-      template: 'model-3',
-    },
-    availableModels: [],
-    enhancementHistory: [],
-    quotaUsed: 0,
-    quotaLimit: 100,
-    isProcessing: false,
-    error: null,
-    clearHistory: jest.fn(),
-  };
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (logger.error as jest.Mock).mockImplementation(() => {});
+create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-    // Setup mock store implementations
-    (useAuthStore.getState as jest.Mock).mockReturnValue(mockAuthState);
-    (useAuthStore.subscribe as jest.Mock).mockImplementation(() => jest.fn());
+// Mock zustand
 
-    (usePortfolioStore.getState as jest.Mock).mockReturnValue(
-      mockPortfolioState
-    );
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-    (usePortfolioStore.subscribe as jest.Mock).mockImplementation(() =>
-      jest.fn()
-    );
+// Mock zustand
 
-    (useUIStore.getState as jest.Mock).mockReturnValue(mockUIState);
-    (useUIStore.subscribe as jest.Mock).mockImplementation(() => jest.fn());
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+// Mock zustand
 
-    (useAIStore.getState as jest.Mock).mockReturnValue(mockAIState);
-    (useAIStore.subscribe as jest.Mock).mockImplementation(() => jest.fn());
-  });
+// Mock zustand create function
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}))
 
   describe('Initial State', () => {
-    it('should initialize with all store states', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+    it('should initialize with all store states', async () => {
       const rootState = useRootStore.getState();
 
       expect(rootState.auth).toBeDefined();
@@ -100,7 +140,7 @@ describe('Root Store', () => {
       expect(rootState.ai).toBeDefined();
     });
 
-    it('should have overridden signOut method', () => {
+    it('should have overridden signOut method', async () => {
       const rootState = useRootStore.getState();
       expect(rootState.auth.signOut).toBeDefined();
       expect(typeof rootState.auth.signOut).toBe('function');
@@ -109,7 +149,7 @@ describe('Root Store', () => {
 
   describe('Cross-Store Operations', () => {
     it('should reset all stores on sign out', async () => {
-      const mockSignOut = jest.fn().mockResolvedValue(undefined);
+      const mockSignOut = jest.fn().mockResolvedValue(void 0);
       (useAuthStore.getState as jest.Mock).mockReturnValue({
         ...mockAuthState,
         signOut: mockSignOut,
@@ -152,23 +192,23 @@ describe('Root Store', () => {
   });
 
   describe('Store Subscriptions', () => {
-    it('should subscribe to auth store changes', () => {
+    it('should subscribe to auth store changes', async () => {
       expect(useAuthStore.subscribe).toHaveBeenCalled();
     });
 
-    it('should subscribe to portfolio store changes', () => {
+    it('should subscribe to portfolio store changes', async () => {
       expect(usePortfolioStore.subscribe).toHaveBeenCalled();
     });
 
-    it('should subscribe to UI store changes', () => {
+    it('should subscribe to UI store changes', async () => {
       expect(useUIStore.subscribe).toHaveBeenCalled();
     });
 
-    it('should subscribe to AI store changes', () => {
+    it('should subscribe to AI store changes', async () => {
       expect(useAIStore.subscribe).toHaveBeenCalled();
     });
 
-    it('should update root store when auth store changes', () => {
+    it('should update root store when auth store changes', async () => {
       const authSubscriber = (useAuthStore.subscribe as jest.Mock).mock
         .calls[0][0];
       const newAuthState = {
@@ -186,7 +226,7 @@ describe('Root Store', () => {
       expect(typeof rootState.auth.signOut).toBe('function');
     });
 
-    it('should update root store when portfolio store changes', () => {
+    it('should update root store when portfolio store changes', async () => {
       const portfolioSubscriber = (usePortfolioStore.subscribe as jest.Mock)
         .mock.calls[0][0];
       const newPortfolioState = {
@@ -204,7 +244,7 @@ describe('Root Store', () => {
       );
     });
 
-    it('should update root store when UI store changes', () => {
+    it('should update root store when UI store changes', async () => {
       const uiSubscriber = (useUIStore.subscribe as jest.Mock).mock.calls[0][0];
       const newUIState = {
         ...mockUIState,
@@ -221,7 +261,7 @@ describe('Root Store', () => {
       expect(rootState.ui.sidebarOpen).toBe(false);
     });
 
-    it('should update root store when AI store changes', () => {
+    it('should update root store when AI store changes', async () => {
       const aiSubscriber = (useAIStore.subscribe as jest.Mock).mock.calls[0][0];
       const newAIState = {
         ...mockAIState,
@@ -240,25 +280,25 @@ describe('Root Store', () => {
   });
 
   describe('Convenience Hooks', () => {
-    it('should provide useAuth hook', () => {
+    it('should provide useAuth hook', async () => {
       const authState = useAuth();
       expect(authState).toBeDefined();
       expect(authState.signOut).toBeDefined();
     });
 
-    it('should provide usePortfolio hook', () => {
+    it('should provide usePortfolio hook', async () => {
       const portfolioState = usePortfolio();
       expect(portfolioState).toBeDefined();
       expect(portfolioState.resetPortfolios).toBeDefined();
     });
 
-    it('should provide useUI hook', () => {
+    it('should provide useUI hook', async () => {
       const uiState = useUI();
       expect(uiState).toBeDefined();
       expect(uiState.clearToasts).toBeDefined();
     });
 
-    it('should provide useAI hook', () => {
+    it('should provide useAI hook', async () => {
       const aiState = useAI();
       expect(aiState).toBeDefined();
       expect(aiState.clearHistory).toBeDefined();
@@ -266,7 +306,7 @@ describe('Root Store', () => {
   });
 
   describe('Direct Access Functions', () => {
-    it('should provide getRootStore function', () => {
+    it('should provide getRootStore function', async () => {
       const rootStore = getRootStore();
       expect(rootStore).toBeDefined();
       expect(rootStore.auth).toBeDefined();
@@ -275,25 +315,25 @@ describe('Root Store', () => {
       expect(rootStore.ai).toBeDefined();
     });
 
-    it('should provide getAuthStore function', () => {
+    it('should provide getAuthStore function', async () => {
       const authStore = getAuthStore();
       expect(authStore).toBeDefined();
       expect(authStore.signOut).toBeDefined();
     });
 
-    it('should provide getPortfolioStore function', () => {
+    it('should provide getPortfolioStore function', async () => {
       const portfolioStore = getPortfolioStore();
       expect(portfolioStore).toBeDefined();
       expect(portfolioStore.resetPortfolios).toBeDefined();
     });
 
-    it('should provide getUIStore function', () => {
+    it('should provide getUIStore function', async () => {
       const uiStore = getUIStore();
       expect(uiStore).toBeDefined();
       expect(uiStore.clearToasts).toBeDefined();
     });
 
-    it('should provide getAIStore function', () => {
+    it('should provide getAIStore function', async () => {
       const aiStore = getAIStore();
       expect(aiStore).toBeDefined();
       expect(aiStore.clearHistory).toBeDefined();

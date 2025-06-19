@@ -1,20 +1,61 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { DashboardAnalyticsService } from '@/lib/services/analytics/DashboardAnalyticsService';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { createClient } from '@/lib/supabase/server';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+import {
+// Mock global fetch
 
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
+global.fetch = jest.fn();
+ DashboardAnalyticsService } from '@/lib/services/analytics/DashboardAnalyticsService';
 
 // Mock dependencies
 
 jest.mock('@/lib/cache/redis-cache.server', () => ({
   redisCache: {
-    get: jest.fn(),
-    set: jest.fn(),
-    delete: jest.fn(),
+    get: jest.fn().mockReturnValue(void 0),
+    set: jest.fn().mockReturnValue(void 0),
+    delete: jest.fn().mockReturnValue(void 0),
   },
 }));
 
 describe('DashboardAnalyticsService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   let service: DashboardAnalyticsService;
@@ -73,7 +114,7 @@ describe('DashboardAnalyticsService', () => {
       }),
     };
 
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    jest.mocked(createClient).mockReturnValue(mockSupabase);
     service = new DashboardAnalyticsService();
   });
 
@@ -296,12 +337,12 @@ describe('DashboardAnalyticsService', () => {
     it('should handle WebSocket connections for real-time updates', async () => {
       const mockChannel = {
         on: jest.fn().mockReturnThis(),
-        subscribe: jest.fn(),
+        subscribe: jest.fn().mockReturnValue(void 0),
       };
 
       mockSupabase.channel = jest.fn().mockReturnValue(mockChannel);
 
-      const callback = jest.fn();
+      const callback = jest.fn().mockReturnValue(void 0);
       await service.subscribeToRealTimeUpdates(mockPortfolioId, callback);
 
       expect(mockSupabase.channel).toHaveBeenCalledWith(

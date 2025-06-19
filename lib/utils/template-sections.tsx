@@ -36,7 +36,10 @@ export function getOrderedSections(portfolio: Portfolio): SectionType[] {
 /**
  * Check if a section should be visible based on portfolio customization
  */
-export function isSectionVisible(portfolio: Portfolio, section: string): boolean {
+export function isSectionVisible(
+  portfolio: Portfolio,
+  section: string
+): boolean {
   const hiddenSections = portfolio.customization?.hiddenSections || [];
   return !hiddenSections.includes(section);
 }
@@ -49,13 +52,13 @@ export function renderSections(
   sectionRenderMap: SectionRenderMap
 ): React.ReactNode[] {
   const orderedSections = getOrderedSections(portfolio);
-  
+
   return orderedSections
     .filter(section => isSectionVisible(portfolio, section))
     .map(section => {
       const renderFn = sectionRenderMap[section as keyof SectionRenderMap];
       if (!renderFn) return null;
-      
+
       return (
         <div key={section} id={section} className="portfolio-section">
           {renderFn()}

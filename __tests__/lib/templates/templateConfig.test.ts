@@ -1,4 +1,5 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
+import { TemplateType, SectionType } from '@/types/portfolio';
 
 /**
  * @jest-environment node
@@ -12,12 +13,16 @@ import {
   TemplateConfig,
   TemplateSection,
 } from '@/lib/templates/templateConfig';
-import { TemplateType, SectionType } from '@/types/portfolio';
-
 
 describe('Template Configuration', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('TEMPLATE_SECTIONS', () => {
-    it('should have all required section properties', () => {
+    it('should have all required section properties', async () => {
       TEMPLATE_SECTIONS.forEach(section => {
         expect(section).toHaveProperty('id');
         expect(section).toHaveProperty('label');
@@ -35,7 +40,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should include required sections', () => {
+    it('should include required sections', async () => {
       const requiredSections = TEMPLATE_SECTIONS.filter(s => s.required);
       const requiredSectionIds = requiredSections.map(s => s.id);
 
@@ -44,14 +49,14 @@ describe('Template Configuration', () => {
       expect(requiredSections.length).toBeGreaterThanOrEqual(2);
     });
 
-    it('should have unique section IDs', () => {
+    it('should have unique section IDs', async () => {
       const sectionIds = TEMPLATE_SECTIONS.map(s => s.id);
       const uniqueIds = new Set(sectionIds);
 
       expect(sectionIds).toHaveLength(uniqueIds.size);
     });
 
-    it('should have valid emoji icons', () => {
+    it('should have valid emoji icons', async () => {
       TEMPLATE_SECTIONS.forEach(section => {
         // Check for any Unicode emoji or symbol
         expect(section.icon.length).toBeGreaterThan(0);
@@ -63,7 +68,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should include all standard portfolio sections', () => {
+    it('should include all standard portfolio sections', async () => {
       const expectedSections: SectionType[] = [
         'hero',
         'about',
@@ -83,7 +88,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have meaningful descriptions', () => {
+    it('should have meaningful descriptions', async () => {
       TEMPLATE_SECTIONS.forEach(section => {
         expect(section.description.length).toBeGreaterThan(10);
         expect(section.description).not.toContain('TODO');
@@ -104,13 +109,13 @@ describe('Template Configuration', () => {
       'modern',
     ];
 
-    it('should include all expected template types', () => {
+    it('should include all expected template types', async () => {
       templateTypes.forEach(templateType => {
         expect(TEMPLATE_CONFIGS).toHaveProperty(templateType);
       });
     });
 
-    it('should have valid template configuration structure', () => {
+    it('should have valid template configuration structure', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         expect(config).toHaveProperty('id');
         expect(config).toHaveProperty('name');
@@ -124,7 +129,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have valid color schemes', () => {
+    it('should have valid color schemes', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
 
@@ -143,7 +148,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have valid layout configurations', () => {
+    it('should have valid layout configurations', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { layout } = config;
 
@@ -155,7 +160,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have valid feature configurations', () => {
+    it('should have valid feature configurations', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { features } = config;
 
@@ -168,7 +173,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should include required sections in default order', () => {
+    it('should include required sections in default order', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const requiredSections = TEMPLATE_SECTIONS.filter(s => s.required).map(
           s => s.id
@@ -179,7 +184,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have unique default orders per template', () => {
+    it('should have unique default orders per template', async () => {
       const orders = Object.values(TEMPLATE_CONFIGS).map(config =>
         config.defaultOrder.join(',')
 
@@ -188,7 +193,7 @@ describe('Template Configuration', () => {
       expect(uniqueOrders.size).toBeGreaterThan(1);
     });
 
-    it('should have industry-specific configurations', () => {
+    it('should have industry-specific configurations', async () => {
       // Developer template should emphasize technical skills
       expect(TEMPLATE_CONFIGS.developer.features.emphasizeSkills).toBe(true);
       expect(TEMPLATE_CONFIGS.developer.features.showcaseProjects).toBe(true);
@@ -206,7 +211,7 @@ describe('Template Configuration', () => {
       expect(TEMPLATE_CONFIGS.minimal.features.includeTestimonials).toBe(false);
     });
 
-    it('should have meaningful template descriptions', () => {
+    it('should have meaningful template descriptions', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         expect(config.description.length).toBeGreaterThan(20);
         // Description should be relevant to the template (more flexible check)
@@ -216,7 +221,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have relevant industry tags', () => {
+    it('should have relevant industry tags', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         expect(config.industry.length).toBeGreaterThan(0);
         config.industry.forEach(industry => {
@@ -228,7 +233,7 @@ describe('Template Configuration', () => {
   });
 
   describe('getTemplateConfig', () => {
-    it('should return correct template config', () => {
+    it('should return correct template config', async () => {
       const config = getTemplateConfig('developer');
 
       expect(config.id).toBe('developer');
@@ -236,7 +241,7 @@ describe('Template Configuration', () => {
       expect(config.industry).toContain('Software Engineering');
     });
 
-    it('should return valid config for all template types', () => {
+    it('should return valid config for all template types', async () => {
       const templateTypes: TemplateType[] = [
         'developer',
         'designer',
@@ -255,7 +260,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should return config with all required properties', () => {
+    it('should return config with all required properties', async () => {
       const config = getTemplateConfig('developer');
 
       expect(config).toHaveProperty('id');
@@ -269,7 +274,7 @@ describe('Template Configuration', () => {
       expect(config).toHaveProperty('features');
     });
 
-    it('should return consistent config object', () => {
+    it('should return consistent config object', async () => {
       const config1 = getTemplateConfig('developer');
       const config2 = getTemplateConfig('developer');
 
@@ -281,14 +286,14 @@ describe('Template Configuration', () => {
   });
 
   describe('getAvailableTemplates', () => {
-    it('should return array of template summaries', () => {
+    it('should return array of template summaries', async () => {
       const templates = getAvailableTemplates();
 
       expect(Array.isArray(templates)).toBe(true);
       expect(templates.length).toBeGreaterThan(0);
     });
 
-    it('should include essential template info', () => {
+    it('should include essential template info', async () => {
       const templates = getAvailableTemplates();
 
       templates.forEach(template => {
@@ -300,7 +305,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should include all template types', () => {
+    it('should include all template types', async () => {
       const templates = getAvailableTemplates();
       const templateIds = templates.map(t => t.id);
 
@@ -320,7 +325,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should return templates with valid color schemes', () => {
+    it('should return templates with valid color schemes', async () => {
       const templates = getAvailableTemplates();
 
       templates.forEach(template => {
@@ -329,7 +334,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should not expose internal template details', () => {
+    it('should not expose internal template details', async () => {
       const templates = getAvailableTemplates();
 
       templates.forEach(template => {
@@ -342,7 +347,7 @@ describe('Template Configuration', () => {
   });
 
   describe('Template Validation', () => {
-    it('should have consistent section references', () => {
+    it('should have consistent section references', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         config.defaultOrder.forEach(sectionId => {
           const sectionExists = TEMPLATE_SECTIONS.some(s => s.id === sectionId);
@@ -351,14 +356,14 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should not have duplicate sections in default order', () => {
+    it('should not have duplicate sections in default order', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const uniqueSections = new Set(config.defaultOrder);
         expect(config.defaultOrder.length).toBe(uniqueSections.size);
       });
     });
 
-    it('should have appropriate color contrast', () => {
+    it('should have appropriate color contrast', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
 
@@ -370,7 +375,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have logical feature combinations', () => {
+    it('should have logical feature combinations', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         // If showcasing projects, should probably include them early in order
         if (config.features.showcaseProjects) {
@@ -387,7 +392,7 @@ describe('Template Configuration', () => {
   });
 
   describe('Accessibility and Usability', () => {
-    it('should have descriptive section labels', () => {
+    it('should have descriptive section labels', async () => {
       TEMPLATE_SECTIONS.forEach(section => {
         expect(section.label).not.toBe(section.id);
         expect(section.label.length).toBeGreaterThan(2);
@@ -397,7 +402,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have accessible color combinations', () => {
+    it('should have accessible color combinations', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         const { colorScheme } = config;
 
@@ -413,7 +418,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have user-friendly template names', () => {
+    it('should have user-friendly template names', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         expect(config.name).not.toContain('_');
         expect(config.name).not.toContain('-');
@@ -423,7 +428,7 @@ describe('Template Configuration', () => {
   });
 
   describe('Performance Considerations', () => {
-    it('should have reasonable number of sections per template', () => {
+    it('should have reasonable number of sections per template', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         // Should not overwhelm users with too many sections
         expect(config.defaultOrder.length).toBeLessThanOrEqual(10);
@@ -431,7 +436,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have efficient data structure', () => {
+    it('should have efficient data structure', async () => {
       // Configuration should be serializable
       expect(() => JSON.stringify(TEMPLATE_CONFIGS)).not.toThrow();
 
@@ -441,7 +446,7 @@ describe('Template Configuration', () => {
       expect(deserialized).toEqual(TEMPLATE_CONFIGS);
     });
 
-    it('should have minimal memory footprint', () => {
+    it('should have minimal memory footprint', async () => {
       const configSize = JSON.stringify(TEMPLATE_CONFIGS).length;
 
       // Configuration should be reasonable size (less than 50KB)
@@ -450,20 +455,20 @@ describe('Template Configuration', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing template gracefully', () => {
+    it('should handle missing template gracefully', async () => {
       // This should not throw, but return undefined or handle gracefully
       // Note: The current implementation doesn't handle this case
       const invalidTemplate = 'nonexistent' as TemplateType;
       expect(() => getTemplateConfig(invalidTemplate)).not.toThrow();
     });
 
-    it('should handle empty industry arrays', () => {
+    it('should handle empty industry arrays', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         expect(config.industry.length).toBeGreaterThan(0);
       });
     });
 
-    it('should handle special characters in descriptions', () => {
+    it('should handle special characters in descriptions', async () => {
       Object.values(TEMPLATE_CONFIGS).forEach(config => {
         // Should not contain problematic characters
         expect(config.description).not.toContain('<');
@@ -473,7 +478,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should maintain consistency across similar templates', () => {
+    it('should maintain consistency across similar templates', async () => {
       // Creative templates should share some characteristics
       const creativeTemplates = ['designer', 'creative'];
       const creativeConfigs = creativeTemplates.map(
@@ -487,7 +492,7 @@ describe('Template Configuration', () => {
   });
 
   describe('Business Logic Validation', () => {
-    it('should prioritize projects for project-heavy roles', () => {
+    it('should prioritize projects for project-heavy roles', async () => {
       const projectHeavyTemplates = ['developer', 'designer', 'creative'];
 
       projectHeavyTemplates.forEach(templateType => {
@@ -500,7 +505,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should emphasize experience for senior roles', () => {
+    it('should emphasize experience for senior roles', async () => {
       const seniorRoleTemplates = ['consultant', 'business', 'educator'];
 
       seniorRoleTemplates.forEach(templateType => {
@@ -512,7 +517,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should include testimonials for client-facing roles', () => {
+    it('should include testimonials for client-facing roles', async () => {
       const clientFacingTemplates = ['consultant', 'business', 'designer'];
 
       clientFacingTemplates.forEach(templateType => {
@@ -521,7 +526,7 @@ describe('Template Configuration', () => {
       });
     });
 
-    it('should have appropriate typography for template purpose', () => {
+    it('should have appropriate typography for template purpose', async () => {
       // Technical templates should use modern typography
       expect(TEMPLATE_CONFIGS.developer.layout.typography).toBe('modern');
       expect(TEMPLATE_CONFIGS.modern.layout.typography).toBe('modern');

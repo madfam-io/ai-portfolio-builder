@@ -1,18 +1,21 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import CTA from '@/components/landing/CTA';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import CTA from '@/components/landing/CTA';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -34,7 +37,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -52,6 +54,12 @@ jest.mock('next/link', () => {
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('CTA', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockTranslations = {
     ctaTitle: 'Ready to Create Your Professional Portfolio?',
     ctaSubtitle:
@@ -73,7 +81,7 @@ describe('CTA', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render CTA title and subtitle', () => {
+    it('should render CTA title and subtitle', async () => {
       renderCTA();
 
       expect(
@@ -86,7 +94,7 @@ describe('CTA', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render CTA button as link to dashboard', () => {
+    it('should render CTA button as link to dashboard', async () => {
       renderCTA();
 
       const ctaLink = screen.getByRole('link');
@@ -95,7 +103,7 @@ describe('CTA', () => {
       expect(ctaLink).toHaveTextContent('Start Building Your Portfolio');
     });
 
-    it('should render footer text', () => {
+    it('should render footer text', async () => {
       renderCTA();
 
       expect(
@@ -105,7 +113,7 @@ describe('CTA', () => {
       ).toBeInTheDocument();
     });
 
-    it('should have proper section with gradient background', () => {
+    it('should have proper section with gradient background', async () => {
       renderCTA();
 
       const section = document.querySelector('section');
@@ -117,7 +125,7 @@ describe('CTA', () => {
 
     });
 
-    it('should have proper heading hierarchy', () => {
+    it('should have proper heading hierarchy', async () => {
       renderCTA();
 
       const heading = screen.getByRole('heading', { level: 2 });
@@ -128,7 +136,7 @@ describe('CTA', () => {
   });
 
   describe('Translation and Internationalization', () => {
-    it('should use translations from i18n context', () => {
+    it('should use translations from i18n context', async () => {
       renderCTA();
 
       // Verify all translated content is displayed
@@ -150,7 +158,7 @@ describe('CTA', () => {
       ).toBeInTheDocument();
     });
 
-    it('should handle missing translations gracefully', () => {
+    it('should handle missing translations gracefully', async () => {
       // Mock with missing translations
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {
@@ -170,7 +178,7 @@ describe('CTA', () => {
   });
 
   describe('Component Structure', () => {
-    it('should have the correct DOM structure', () => {
+    it('should have the correct DOM structure', async () => {
       renderCTA();
 
       // Check section element
@@ -199,7 +207,7 @@ describe('CTA', () => {
 
     });
 
-    it('should have proper text styling classes', () => {
+    it('should have proper text styling classes', async () => {
       renderCTA();
 
       const subtitle = screen.getByText(

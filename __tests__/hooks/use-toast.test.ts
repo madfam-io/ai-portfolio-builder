@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useToast } from '@/hooks/use-toast';
 import { useUIStore } from '@/lib/store/ui-store';
@@ -7,40 +7,44 @@ import { useUIStore } from '@/lib/store/ui-store';
 jest.mock('@/lib/store/ui-store');
 
 describe('useToast', () => {
-  const mockShowToast = jest.fn();
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  const mockShowToast = jest.fn().mockReturnValue(void 0);
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (useUIStore as jest.MockedFunction<typeof useUIStore>).mockReturnValue({
+    jest.mocked(useUIStore).mockReturnValue({
       showToast: mockShowToast,
       // Add other store properties if needed
     } as any);
   });
 
-  it('should call showToast with correct parameters for default toast', () => {
+  it('should call showToast with correct parameters for default toast', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Success!',
         description: 'Operation completed successfully',
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Success!',
       description: 'Operation completed successfully',
       type: 'success',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should call showToast with error type for destructive variant', () => {
+  it('should call showToast with error type for destructive variant', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Error!',
         description: 'Something went wrong',
@@ -48,56 +52,50 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Error!',
       description: 'Something went wrong',
       type: 'error',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should use custom duration when provided', () => {
+  it('should use custom duration when provided', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Custom duration',
         duration: 10000,
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Custom duration',
       description: undefined,
       type: 'success',
       duration: 10000,
-    );
-  });
+    });
   });
 
-  it('should handle toast without description', () => {
+  it('should handle toast without description', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Simple notification',
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Simple notification',
       description: undefined,
       type: 'success',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should maintain stable toast function reference', () => {
+  it('should maintain stable toast function reference', async () => {
     const { result, rerender } = renderHook(() => useToast());
 
     const firstToast = result.current.toast;
@@ -108,30 +106,28 @@ describe('useToast', () => {
     expect(result.current.toast).toBe(firstToast);
   });
 
-  it('should handle variant default explicitly', () => {
+  it('should handle variant default explicitly', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Default variant',
         variant: 'default',
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Default variant',
       description: undefined,
       type: 'success',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should work with all options combined', () => {
+  it('should work with all options combined', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Complete toast',
         description: 'With all options',
@@ -140,20 +136,18 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Complete toast',
       description: 'With all options',
       type: 'error',
       duration: 3000,
-    );
-  });
+    });
   });
 
-  it('should handle multiple toast calls', () => {
+  it('should handle multiple toast calls', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({ title: 'First toast' });
       result.current.toast({ title: 'Second toast' });
       result.current.toast({ title: 'Third toast' });
@@ -180,14 +174,14 @@ describe('useToast', () => {
     });
   });
 
-  it('should update toast function when showToast changes', () => {
+  it('should update toast function when showToast changes', async () => {
     const { result, rerender } = renderHook(() => useToast());
 
     const firstToast = result.current.toast;
 
     // Change the mock implementation
-    const newMockShowToast = jest.fn();
-    (useUIStore as jest.MockedFunction<typeof useUIStore>).mockReturnValue({
+    const newMockShowToast = jest.fn().mockReturnValue(void 0);
+    jest.mocked(useUIStore).mockReturnValue({
       showToast: newMockShowToast,
     } as any);
 
@@ -198,7 +192,7 @@ describe('useToast', () => {
     expect(result.current.toast).not.toBe(firstToast);
 
     // New function should use new showToast
-    act(() => {
+    await act(async () => {
       result.current.toast({ title: 'New toast' });
     });
 
@@ -208,66 +202,60 @@ describe('useToast', () => {
     );
   });
 
-  it('should handle empty title gracefully', () => {
+  it('should handle empty title gracefully', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: '',
         description: 'Description without title',
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: '',
       description: 'Description without title',
       type: 'success',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should handle very long messages', () => {
+  it('should handle very long messages', async () => {
     const { result } = renderHook(() => useToast());
 
     const longTitle = 'A'.repeat(200);
     const longDescription = 'B'.repeat(500);
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: longTitle,
         description: longDescription,
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: longTitle,
       description: longDescription,
       type: 'success',
       duration: 5000,
-    );
-  });
+    });
   });
 
-  it('should handle duration of 0', () => {
+  it('should handle duration of 0', async () => {
     const { result } = renderHook(() => useToast());
 
-    act(() => {
+    await act(async () => {
       result.current.toast({
         title: 'Persistent toast',
         duration: 0,
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith(
-      {
+    expect(mockShowToast).toHaveBeenCalledWith({
       title: 'Persistent toast',
       description: undefined,
       type: 'success',
       duration: 0,
-    );
-  });
+    });
   });
 });

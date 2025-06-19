@@ -1,13 +1,12 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Portfolio } from '@/types/portfolio';
-
+import { EditorHeader } from '@/components/editor/EditorHeader';
+/**
+ * @jest-environment jsdom
+ */
 
 // Mock the entire EditorHeader component due to systematic Jest compilation issues
 // with lucide-react + TypeScript + React 19. This test verifies the component interface
@@ -171,8 +170,6 @@ jest.mock('@/components/editor/EditorHeader', () => ({
 }));
 
 // Import the mocked component
-import { EditorHeader } from '@/components/editor/EditorHeader';
-
 
 // Skip this test suite due to Jest + lucide-react + TypeScript compilation issues
 // The component works correctly but has systematic test infrastructure issues
@@ -203,13 +200,13 @@ describe.skip('EditorHeader', () => {
     isDirty: false,
     isSaving: false,
     lastSaved: null as Date | null,
-    onSave: jest.fn(),
-    onPublish: jest.fn(),
-    onPreview: jest.fn(),
+    onSave: jest.fn().mockReturnValue(void 0),
+    onPublish: jest.fn().mockReturnValue(void 0),
+    onPreview: jest.fn().mockReturnValue(void 0),
     canUndo: false,
     canRedo: false,
-    onUndo: jest.fn(),
-    onRedo: jest.fn(),
+    onUndo: jest.fn().mockReturnValue(void 0),
+    onRedo: jest.fn().mockReturnValue(void 0),
   };
 
   beforeEach(() => {
@@ -221,17 +218,23 @@ describe.skip('EditorHeader', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render without crashing', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+    it('should render without crashing', async () => {
       const { container } = renderEditorHeader();
       expect(container).toBeTruthy();
     });
 
-    it('should render portfolio name', () => {
+    it('should render portfolio name', async () => {
       renderEditorHeader();
       expect(screen.getByText('My Portfolio')).toBeInTheDocument();
     });
 
-    it('should render all action buttons', () => {
+    it('should render all action buttons', async () => {
       renderEditorHeader();
 
       expect(screen.getByText('Save')).toBeInTheDocument();
@@ -241,13 +244,13 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Redo')).toBeInTheDocument();
     });
 
-    it('should show clean state when not dirty', () => {
+    it('should show clean state when not dirty', async () => {
       renderEditorHeader();
       expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
       expect(screen.getByText('Never')).toBeInTheDocument();
     });
 
-    it('should show last saved time when available', () => {
+    it('should show last saved time when available', async () => {
       const lastSaved = new Date('2025-01-15T10:30:00Z');
       renderEditorHeader({
         ...mockProps,
@@ -257,7 +260,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Last saved')).toBeInTheDocument();
     });
 
-    it('should show template and status information', () => {
+    it('should show template and status information', async () => {
       renderEditorHeader();
       expect(screen.getByText('developer template')).toBeInTheDocument();
       expect(screen.getByText('Draft')).toBeInTheDocument();
@@ -278,7 +281,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onSave).toHaveBeenCalledTimes(1);
     });
 
-    it('should show saving state', () => {
+    it('should show saving state', async () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -288,7 +291,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Saving...')).toBeDisabled();
     });
 
-    it('should show unsaved changes indicator when dirty', () => {
+    it('should show unsaved changes indicator when dirty', async () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: true,
@@ -297,7 +300,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Unsaved changes')).toBeInTheDocument();
     });
 
-    it('should disable save button when saving', () => {
+    it('should disable save button when saving', async () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -307,7 +310,7 @@ describe.skip('EditorHeader', () => {
       expect(saveButton).toBeDisabled();
     });
 
-    it('should enable save button when changes exist', () => {
+    it('should enable save button when changes exist', async () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: true,
@@ -317,7 +320,7 @@ describe.skip('EditorHeader', () => {
       expect(saveButton).not.toBeDisabled();
     });
 
-    it('should disable save button when no changes', () => {
+    it('should disable save button when no changes', async () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: false,
@@ -339,7 +342,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onPublish).toHaveBeenCalledTimes(1);
     });
 
-    it('should disable publish button when saving', () => {
+    it('should disable publish button when saving', async () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -349,7 +352,7 @@ describe.skip('EditorHeader', () => {
       expect(publishButton).toBeDisabled();
     });
 
-    it('should show published status for published portfolios', () => {
+    it('should show published status for published portfolios', async () => {
       renderEditorHeader({
         ...mockProps,
         portfolio: {
@@ -374,7 +377,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onPreview).toHaveBeenCalledTimes(1);
     });
 
-    it('should be available even when saving', () => {
+    it('should be available even when saving', async () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -412,7 +415,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onRedo).toHaveBeenCalledTimes(1);
     });
 
-    it('should disable undo button when canUndo is false', () => {
+    it('should disable undo button when canUndo is false', async () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -422,7 +425,7 @@ describe.skip('EditorHeader', () => {
       expect(undoButton).toBeDisabled();
     });
 
-    it('should disable redo button when canRedo is false', () => {
+    it('should disable redo button when canRedo is false', async () => {
       renderEditorHeader({
         ...mockProps,
         canRedo: false,
@@ -432,7 +435,7 @@ describe.skip('EditorHeader', () => {
       expect(redoButton).toBeDisabled();
     });
 
-    it('should enable undo button when canUndo is true', () => {
+    it('should enable undo button when canUndo is true', async () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: true,
@@ -442,7 +445,7 @@ describe.skip('EditorHeader', () => {
       expect(undoButton).not.toBeDisabled();
     });
 
-    it('should enable redo button when canRedo is true', () => {
+    it('should enable redo button when canRedo is true', async () => {
       renderEditorHeader({
         ...mockProps,
         canRedo: true,
@@ -487,7 +490,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onRedo).toHaveBeenCalledTimes(1);
     });
 
-    it('should not trigger shortcuts when buttons are disabled', () => {
+    it('should not trigger shortcuts when buttons are disabled', async () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -506,7 +509,7 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper button roles', () => {
+    it('should have proper button roles', async () => {
       renderEditorHeader();
 
       expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
@@ -520,7 +523,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
     });
 
-    it('should have proper aria labels for disabled buttons', () => {
+    it('should have proper aria labels for disabled buttons', async () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -536,7 +539,7 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing portfolio gracefully', () => {
+    it('should handle missing portfolio gracefully', async () => {
       renderEditorHeader({
         ...mockProps,
         portfolio: null as any,
@@ -566,7 +569,7 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Component Interface Validation', () => {
-    it('should accept all required props', () => {
+    it('should accept all required props', async () => {
       expect(() => renderEditorHeader()).not.toThrow();
       expect(EditorHeader).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -585,7 +588,7 @@ describe.skip('EditorHeader', () => {
 
     });
 
-    it('should handle optional lastSaved prop', () => {
+    it('should handle optional lastSaved prop', async () => {
       const lastSaved = new Date();
       renderEditorHeader({
         ...mockProps,

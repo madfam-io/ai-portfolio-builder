@@ -14,7 +14,13 @@ import {
 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
@@ -53,7 +59,7 @@ export function CustomDomainSettings({
 }: CustomDomainSettingsProps) {
   const { t } = useLanguage();
   const { toast } = useToast();
-  
+
   const [domain, setDomain] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
@@ -86,11 +92,14 @@ export function CustomDomainSettings({
     setIsVerifying(true);
     try {
       // Call API to add custom domain
-      const response = await fetch(`/api/v1/portfolios/${portfolio.id}/custom-domain`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ domain }),
-      });
+      const response = await fetch(
+        `/api/v1/portfolios/${portfolio.id}/custom-domain`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ domain }),
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -99,10 +108,12 @@ export function CustomDomainSettings({
           status: 'pending',
           message: t.verifyingDomain || 'Verifying domain configuration...',
         });
-        
+
         toast({
           title: t.domainAdded || 'Domain Added',
-          description: t.followDnsInstructions || 'Please follow the DNS configuration instructions',
+          description:
+            t.followDnsInstructions ||
+            'Please follow the DNS configuration instructions',
         });
 
         // Start verification polling
@@ -114,7 +125,8 @@ export function CustomDomainSettings({
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: error instanceof Error ? error.message : 'Failed to add domain',
+        description:
+          error instanceof Error ? error.message : 'Failed to add domain',
         variant: 'destructive',
       });
     } finally {
@@ -126,9 +138,12 @@ export function CustomDomainSettings({
   const handleRemoveDomain = async () => {
     setIsRemoving(true);
     try {
-      const response = await fetch(`/api/v1/portfolios/${portfolio.id}/custom-domain`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/v1/portfolios/${portfolio.id}/custom-domain`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (response.ok) {
         onUpdate({ customDomain: undefined });
@@ -156,7 +171,9 @@ export function CustomDomainSettings({
 
     const checkStatus = async () => {
       try {
-        const response = await fetch(`/api/v1/portfolios/${portfolio.id}/custom-domain/status`);
+        const response = await fetch(
+          `/api/v1/portfolios/${portfolio.id}/custom-domain/status`
+        );
         if (response.ok) {
           const status = await response.json();
           setDomainStatus(status);
@@ -164,7 +181,8 @@ export function CustomDomainSettings({
           if (status.status === 'active') {
             toast({
               title: t.domainActive || 'Domain Active!',
-              description: t.domainActiveDesc || 'Your custom domain is now active',
+              description:
+                t.domainActiveDesc || 'Your custom domain is now active',
             });
           } else if (status.status === 'pending' && attempts < maxAttempts) {
             attempts++;
@@ -206,15 +224,16 @@ export function CustomDomainSettings({
             {t.customDomain || 'Custom Domain'}
           </CardTitle>
           <CardDescription>
-            {t.customDomainDesc || 'Use your own domain name for your portfolio'}
+            {t.customDomainDesc ||
+              'Use your own domain name for your portfolio'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert>
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>
-              {t.proFeatureOnly || 'Custom domains are available for Pro subscribers.'}
-              {' '}
+              {t.proFeatureOnly ||
+                'Custom domains are available for Pro subscribers.'}{' '}
               <Button variant="link" className="p-0 h-auto" asChild>
                 <a href="/pricing">{t.upgradeToPro || 'Upgrade to Pro'}</a>
               </Button>
@@ -245,7 +264,9 @@ export function CustomDomainSettings({
                 <div className="flex items-center gap-4">
                   <Globe className="w-8 h-8 text-primary" />
                   <div>
-                    <p className="font-medium text-lg">{portfolio.customDomain}</p>
+                    <p className="font-medium text-lg">
+                      {portfolio.customDomain}
+                    </p>
                     <div className="flex items-center gap-2 mt-1">
                       {domainStatus?.status === 'active' ? (
                         <Badge variant="default" className="bg-green-600">
@@ -272,11 +293,7 @@ export function CustomDomainSettings({
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    asChild
-                  >
+                  <Button variant="ghost" size="icon" asChild>
                     <a
                       href={`https://${portfolio.customDomain}`}
                       target="_blank"
@@ -307,26 +324,38 @@ export function CustomDomainSettings({
             {/* DNS Configuration */}
             {domainStatus?.status !== 'active' && (
               <div className="space-y-4">
-                <h4 className="font-medium">{t.dnsConfiguration || 'DNS Configuration'}</h4>
+                <h4 className="font-medium">
+                  {t.dnsConfiguration || 'DNS Configuration'}
+                </h4>
                 <p className="text-sm text-muted-foreground">
-                  {t.addDnsRecords || 'Add these DNS records to your domain provider:'}
+                  {t.addDnsRecords ||
+                    'Add these DNS records to your domain provider:'}
                 </p>
                 <div className="space-y-2">
                   {getDnsRecords().map((record, index) => (
-                    <div key={index} className="p-3 rounded-lg bg-muted font-mono text-sm">
+                    <div
+                      key={index}
+                      className="p-3 rounded-lg bg-muted font-mono text-sm"
+                    >
                       <div className="flex items-center justify-between">
                         <div className="space-y-1">
                           <div>
-                            <span className="text-muted-foreground">Type:</span> {record.type}
+                            <span className="text-muted-foreground">Type:</span>{' '}
+                            {record.type}
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Name:</span> {record.name}
+                            <span className="text-muted-foreground">Name:</span>{' '}
+                            {record.name}
                           </div>
                           <div>
-                            <span className="text-muted-foreground">Value:</span> {record.value}
+                            <span className="text-muted-foreground">
+                              Value:
+                            </span>{' '}
+                            {record.value}
                           </div>
                           <div>
-                            <span className="text-muted-foreground">TTL:</span> {record.ttl}
+                            <span className="text-muted-foreground">TTL:</span>{' '}
+                            {record.ttl}
                           </div>
                         </div>
                         <Button
@@ -355,7 +384,7 @@ export function CustomDomainSettings({
                     type="text"
                     placeholder="example.com"
                     value={domain}
-                    onChange={(e) => setDomain(e.target.value)}
+                    onChange={e => setDomain(e.target.value)}
                     disabled={isVerifying}
                   />
                   <Button
@@ -373,7 +402,8 @@ export function CustomDomainSettings({
                   </Button>
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  {t.enterDomainWithoutProtocol || "Enter your domain without 'https://'"}
+                  {t.enterDomainWithoutProtocol ||
+                    "Enter your domain without 'https://'"}
                 </p>
               </div>
 
@@ -381,12 +411,23 @@ export function CustomDomainSettings({
               <Alert>
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>
-                  <p className="font-medium mb-2">{t.beforeYouStart || 'Before you start:'}</p>
+                  <p className="font-medium mb-2">
+                    {t.beforeYouStart || 'Before you start:'}
+                  </p>
                   <ol className="list-decimal list-inside space-y-1 text-sm">
                     <li>{t.ownDomain || 'Make sure you own the domain'}</li>
-                    <li>{t.accessDnsSettings || 'Have access to your domain DNS settings'}</li>
-                    <li>{t.sslIncluded || 'SSL certificate will be automatically provisioned'}</li>
-                    <li>{t.propagationTime || 'DNS changes may take up to 48 hours to propagate'}</li>
+                    <li>
+                      {t.accessDnsSettings ||
+                        'Have access to your domain DNS settings'}
+                    </li>
+                    <li>
+                      {t.sslIncluded ||
+                        'SSL certificate will be automatically provisioned'}
+                    </li>
+                    <li>
+                      {t.propagationTime ||
+                        'DNS changes may take up to 48 hours to propagate'}
+                    </li>
                   </ol>
                 </AlertDescription>
               </Alert>
@@ -398,9 +439,11 @@ export function CustomDomainSettings({
         <AlertDialog open={showRemoveDialog} onOpenChange={setShowRemoveDialog}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>{t.removeDomain || 'Remove Custom Domain'}</AlertDialogTitle>
+              <AlertDialogTitle>
+                {t.removeDomain || 'Remove Custom Domain'}
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                {t.removeDomainWarning || 
+                {t.removeDomainWarning ||
                   'Are you sure you want to remove this custom domain? Your portfolio will be accessible via the default subdomain.'}
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -411,7 +454,9 @@ export function CustomDomainSettings({
                 disabled={isRemoving}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                {isRemoving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {isRemoving && (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                )}
                 {t.remove || 'Remove'}
               </AlertDialogAction>
             </AlertDialogFooter>

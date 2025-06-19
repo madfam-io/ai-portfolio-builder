@@ -19,16 +19,15 @@ export default function PaymentSuccess() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuthStore();
-  const { refreshLimits } = useSubscription();
-  
+  const { refresh: refetch } = useSubscription();
+
   const [isVerifying, setIsVerifying] = useState(true);
-  const [sessionId, setSessionId] = useState<string | null>(null);
+
   const [planName, setPlanName] = useState<string>('');
 
   useEffect(() => {
     // Get session_id from URL
     const session = searchParams.get('session_id');
-    setSessionId(session);
 
     // Trigger confetti animation
     const triggerConfetti = () => {
@@ -88,16 +87,18 @@ export default function PaymentSuccess() {
         if (response.ok) {
           const data = await response.json();
           setPlanName(data.planName || 'Pro');
-          
+
           // Refresh subscription limits
-          await refreshLimits();
-          
+          await refetch();
+
           // Trigger celebration
           setTimeout(triggerConfetti, 500);
-          
+
           toast({
             title: t.paymentSuccessful || 'Payment Successful!',
-            description: t.subscriptionActivated || 'Your subscription has been activated.',
+            description:
+              t.subscriptionActivated ||
+              'Your subscription has been activated.',
           });
         } else {
           throw new Error('Payment verification failed');
@@ -106,7 +107,8 @@ export default function PaymentSuccess() {
         console.error('Payment verification error:', error);
         toast({
           title: t.verificationFailed || 'Verification Failed',
-          description: t.contactSupport || 'Please contact support if you were charged.',
+          description:
+            t.contactSupport || 'Please contact support if you were charged.',
           variant: 'destructive',
         });
       } finally {
@@ -115,7 +117,7 @@ export default function PaymentSuccess() {
     };
 
     verifyPayment();
-  }, [searchParams, refreshLimits, t, toast]);
+  }, [searchParams, refetch, t, toast]);
 
   const features = {
     pro: [
@@ -148,7 +150,8 @@ export default function PaymentSuccess() {
                   {t.verifyingPayment || 'Verifying your payment...'}
                 </h3>
                 <p className="text-muted-foreground">
-                  {t.pleaseWait || 'Please wait while we confirm your subscription.'}
+                  {t.pleaseWait ||
+                    'Please wait while we confirm your subscription.'}
                 </p>
               </div>
             </CardContent>
@@ -174,7 +177,8 @@ export default function PaymentSuccess() {
                 {t.welcomeToPro || `Welcome to ${planName || 'Pro'}!`}
               </CardTitle>
               <p className="text-muted-foreground mt-2">
-                {t.thankYouForUpgrading || 'Thank you for upgrading your account'}
+                {t.thankYouForUpgrading ||
+                  'Thank you for upgrading your account'}
               </p>
             </CardHeader>
 
@@ -192,7 +196,8 @@ export default function PaymentSuccess() {
                         {t.exploreFeatures || 'Explore your new features'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {t.checkOutPremium || 'Check out all the premium features now available to you'}
+                        {t.checkOutPremium ||
+                          'Check out all the premium features now available to you'}
                       </p>
                     </div>
                   </div>
@@ -200,10 +205,12 @@ export default function PaymentSuccess() {
                     <span className="text-primary mr-3">2.</span>
                     <div>
                       <p className="font-medium">
-                        {t.createMorePortfolios || 'Create unlimited portfolios'}
+                        {t.createMorePortfolios ||
+                          'Create unlimited portfolios'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {t.noMoreLimits || 'No more limits on the number of portfolios you can create'}
+                        {t.noMoreLimits ||
+                          'No more limits on the number of portfolios you can create'}
                       </p>
                     </div>
                   </div>
@@ -214,7 +221,8 @@ export default function PaymentSuccess() {
                         {t.setupCustomDomain || 'Set up a custom domain'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        {t.connectYourDomain || 'Connect your own domain for a professional look'}
+                        {t.connectYourDomain ||
+                          'Connect your own domain for a professional look'}
                       </p>
                     </div>
                   </div>
@@ -227,7 +235,10 @@ export default function PaymentSuccess() {
                   {t.yourNewFeatures || 'Your new features'}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {(features[planName.toLowerCase() as keyof typeof features] || features.pro).map((feature, index) => (
+                  {(
+                    features[planName.toLowerCase() as keyof typeof features] ||
+                    features.pro
+                  ).map((feature, index) => (
                     <div key={index} className="flex items-center">
                       <span className="text-2xl mr-3">{feature.icon}</span>
                       <span className="text-sm">{feature.text}</span>
@@ -262,8 +273,8 @@ export default function PaymentSuccess() {
                   {t.needHelp || 'Need help?'}{' '}
                   <a href="/support" className="text-primary hover:underline">
                     {t.contactSupport || 'Contact support'}
-                  </a>
-                  {' '}{t.or || 'or'}{' '}
+                  </a>{' '}
+                  {t.or || 'or'}{' '}
                   <a href="/docs" className="text-primary hover:underline">
                     {t.viewDocs || 'view documentation'}
                   </a>

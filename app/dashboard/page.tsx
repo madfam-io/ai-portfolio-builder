@@ -1,6 +1,15 @@
 'use client';
 
-import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar, BarChart3 } from 'lucide-react';
+import {
+  Edit,
+  Eye,
+  Globe,
+  Loader,
+  Plus,
+  Trash,
+  Calendar,
+  BarChart3,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -318,7 +327,9 @@ function DashboardContent(): React.ReactElement {
         {/* Dashboard Tabs */}
         <Tabs defaultValue="portfolios" className="space-y-6">
           <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="portfolios">{t.portfolios || 'Portfolios'}</TabsTrigger>
+            <TabsTrigger value="portfolios">
+              {t.portfolios || 'Portfolios'}
+            </TabsTrigger>
             <TabsTrigger value="analytics">
               <BarChart3 className="w-4 h-4 mr-2" />
               {t.analytics || 'Analytics'}
@@ -337,141 +348,141 @@ function DashboardContent(): React.ReactElement {
             {/* Portfolio Grid */}
             {portfolios.length > 0 ? (
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {portfolios.map(portfolio => (
-              <Card
-                key={portfolio.id}
-                className="hover:shadow-lg transition-shadow"
-              >
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <CardTitle className="text-lg line-clamp-1">
-                        {portfolio.name}
-                      </CardTitle>
-                      <div className="flex items-center gap-2 mt-1">
-                        <Badge variant={getStatusBadge(portfolio.status)}>
-                          {portfolio.status}
-                        </Badge>
-                        <CompletionBadge portfolio={portfolio} />
+                {portfolios.map(portfolio => (
+                  <Card
+                    key={portfolio.id}
+                    className="hover:shadow-lg transition-shadow"
+                  >
+                    <CardHeader>
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <CardTitle className="text-lg line-clamp-1">
+                            {portfolio.name}
+                          </CardTitle>
+                          <div className="flex items-center gap-2 mt-1">
+                            <Badge variant={getStatusBadge(portfolio.status)}>
+                              {portfolio.status}
+                            </Badge>
+                            <CompletionBadge portfolio={portfolio} />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                  <CardDescription className="line-clamp-2">
-                    {portfolio.title ||
-                      portfolio.bio ||
-                      t.noDescription ||
-                      'No description'}
-                  </CardDescription>
-                </CardHeader>
+                      <CardDescription className="line-clamp-2">
+                        {portfolio.title ||
+                          portfolio.bio ||
+                          t.noDescription ||
+                          'No description'}
+                      </CardDescription>
+                    </CardHeader>
 
-                <CardContent>
-                  <div className="flex flex-col gap-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <span className="capitalize">
-                        {portfolio.template} template
-                      </span>
-                    </div>
-                    {portfolio.updatedAt && (
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3" />
-                        <span>{formatDate(portfolio.updatedAt)}</span>
-                      </div>
-                    )}
-                    {portfolio.views && portfolio.views > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Eye className="h-3 w-3" />
-                        <span>
-                          {portfolio.views} {t.views || 'views'}
-                        </span>
-                      </div>
-                    )}
-                    {portfolio.subdomain &&
-                      portfolio.status === 'published' && (
+                    <CardContent>
+                      <div className="flex flex-col gap-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
-                          <Globe className="h-3 w-3" />
-                          <span className="text-xs">
-                            {portfolio.subdomain}.prisma.madfam.io
+                          <span className="capitalize">
+                            {portfolio.template} template
                           </span>
                         </div>
-                      )}
-                  </div>
-                </CardContent>
+                        {portfolio.updatedAt && (
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-3 w-3" />
+                            <span>{formatDate(portfolio.updatedAt)}</span>
+                          </div>
+                        )}
+                        {portfolio.views && portfolio.views > 0 && (
+                          <div className="flex items-center gap-2">
+                            <Eye className="h-3 w-3" />
+                            <span>
+                              {portfolio.views} {t.views || 'views'}
+                            </span>
+                          </div>
+                        )}
+                        {portfolio.subdomain &&
+                          portfolio.status === 'published' && (
+                            <div className="flex items-center gap-2">
+                              <Globe className="h-3 w-3" />
+                              <span className="text-xs">
+                                {portfolio.subdomain}.prisma.madfam.io
+                              </span>
+                            </div>
+                          )}
+                      </div>
+                    </CardContent>
 
-                <CardFooter className="flex items-center justify-between pt-3">
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEditPortfolio(portfolio.id)}
-                      title={t.edit || 'Edit'}
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleViewPortfolio(portfolio)}
-                      title={t.preview || 'Preview'}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    {portfolio.status === 'published' &&
-                      portfolio.subdomain && (
-                        <Button variant="ghost" size="icon" asChild>
-                          <a
-                            href={`https://${portfolio.subdomain}.prisma.madfam.io`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            title={t.viewLive || 'View live'}
-                          >
-                            <Globe className="h-4 w-4" />
-                          </a>
+                    <CardFooter className="flex items-center justify-between pt-3">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditPortfolio(portfolio.id)}
+                          title={t.edit || 'Edit'}
+                        >
+                          <Edit className="h-4 w-4" />
                         </Button>
-                      )}
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setDeletePortfolioId(portfolio.id)}
-                    className="text-destructive hover:text-destructive hover:bg-destructive/10"
-                    title={t.delete || 'Delete'}
-                  >
-                    <Trash className="h-4 w-4" />
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        ) : (
-          /* Empty State */
-          <Card>
-            <CardContent className="text-center py-12">
-              <div className="w-24 h-24 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
-                <Plus className="h-12 w-12 text-muted-foreground" />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleViewPortfolio(portfolio)}
+                          title={t.preview || 'Preview'}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                        {portfolio.status === 'published' &&
+                          portfolio.subdomain && (
+                            <Button variant="ghost" size="icon" asChild>
+                              <a
+                                href={`https://${portfolio.subdomain}.prisma.madfam.io`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={t.viewLive || 'View live'}
+                              >
+                                <Globe className="h-4 w-4" />
+                              </a>
+                            </Button>
+                          )}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setDeletePortfolioId(portfolio.id)}
+                        className="text-destructive hover:text-destructive hover:bg-destructive/10"
+                        title={t.delete || 'Delete'}
+                      >
+                        <Trash className="h-4 w-4" />
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
-              <h3 className="text-lg font-medium mb-2">
-                {t.noPortfoliosYet || 'No portfolios yet'}
-              </h3>
-              <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
-                {t.createFirstPortfolio ||
-                  'Create your first portfolio to showcase your professional work'}
-              </p>
-              <Button onClick={handleCreatePortfolio} size="lg">
-                <Plus className="mr-2 h-5 w-5" />
-                {t.createPortfolio || 'Create Portfolio'}
-              </Button>
-              <p className="text-sm text-muted-foreground mt-4">
-                {t.orTryQuickStart || 'Or try our'}{' '}
-                <Link
-                  href="/quick-start"
-                  className="text-primary hover:underline"
-                >
-                  {t.quickStartTemplates || 'Quick Start Templates'}
-                </Link>
-              </p>
-            </CardContent>
-          </Card>
-        )}
+            ) : (
+              /* Empty State */
+              <Card>
+                <CardContent className="text-center py-12">
+                  <div className="w-24 h-24 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <Plus className="h-12 w-12 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">
+                    {t.noPortfoliosYet || 'No portfolios yet'}
+                  </h3>
+                  <p className="text-muted-foreground mb-6 max-w-sm mx-auto">
+                    {t.createFirstPortfolio ||
+                      'Create your first portfolio to showcase your professional work'}
+                  </p>
+                  <Button onClick={handleCreatePortfolio} size="lg">
+                    <Plus className="mr-2 h-5 w-5" />
+                    {t.createPortfolio || 'Create Portfolio'}
+                  </Button>
+                  <p className="text-sm text-muted-foreground mt-4">
+                    {t.orTryQuickStart || 'Or try our'}{' '}
+                    <Link
+                      href="/quick-start"
+                      className="text-primary hover:underline"
+                    >
+                      {t.quickStartTemplates || 'Quick Start Templates'}
+                    </Link>
+                  </p>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="analytics" className="space-y-6">

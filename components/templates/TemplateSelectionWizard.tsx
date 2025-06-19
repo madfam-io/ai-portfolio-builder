@@ -130,7 +130,7 @@ export function TemplateSelectionWizard({
       const nextStep = steps[currentStepIndex + 1];
       if (nextStep) {
         setCurrentStep(nextStep);
-        
+
         // Calculate recommendation after features step
         if (currentStep === 'features') {
           const recommendation = calculateRecommendation(wizardState);
@@ -207,31 +207,51 @@ export function TemplateSelectionWizard({
     // Find highest score
     const bestTemplate = Object.entries(scores)
       .filter(([template]) => templates.some(t => t.id === template))
-      .reduce((best, [template, score]) => 
-        score > best[1] ? [template as TemplateType, score] : best
-      , ['modern' as TemplateType, 0])[0];
+      .reduce(
+        (best, [template, score]) =>
+          score > best[1] ? [template as TemplateType, score] : best,
+        ['modern' as TemplateType, 0]
+      )[0];
 
-    return bestTemplate;
+    return bestTemplate as TemplateType;
   };
 
   const industries = [
-    { value: 'Technology', label: t.industryTech || 'Technology', icon: <Code /> },
+    {
+      value: 'Technology',
+      label: t.industryTech || 'Technology',
+      icon: <Code />,
+    },
     { value: 'Design', label: t.industryDesign || 'Design', icon: <Palette /> },
-    { value: 'Business', label: t.industryBusiness || 'Business', icon: <Building /> },
-    { value: 'Education', label: t.industryEducation || 'Education', icon: <GraduationCap /> },
-    { value: 'Creative', label: t.industryCreative || 'Creative Arts', icon: <Camera /> },
+    {
+      value: 'Business',
+      label: t.industryBusiness || 'Business',
+      icon: <Building />,
+    },
+    {
+      value: 'Education',
+      label: t.industryEducation || 'Education',
+      icon: <GraduationCap />,
+    },
+    {
+      value: 'Creative',
+      label: t.industryCreative || 'Creative Arts',
+      icon: <Camera />,
+    },
   ];
 
   const styleOptions = [
     {
       value: 'visual',
       label: t.styleVisual || 'Visual & Creative',
-      description: t.styleVisualDesc || 'Image-heavy, colorful, artistic layouts',
+      description:
+        t.styleVisualDesc || 'Image-heavy, colorful, artistic layouts',
     },
     {
       value: 'content',
       label: t.styleContent || 'Content-Focused',
-      description: t.styleContentDesc || 'Text-heavy, minimal distractions, clean',
+      description:
+        t.styleContentDesc || 'Text-heavy, minimal distractions, clean',
     },
     {
       value: 'balanced',
@@ -260,16 +280,19 @@ export function TemplateSelectionWizard({
           <CardHeader className="border-b">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>{t.selectTemplate || 'Select Your Template'}</CardTitle>
+                <CardTitle>
+                  {t.selectTemplate || 'Select Your Template'}
+                </CardTitle>
                 <p className="text-sm text-muted-foreground mt-1">
-                  {t.wizardSubtitle || 'Let us help you find the perfect template'}
+                  {t.wizardSubtitle ||
+                    'Let us help you find the perfect template'}
                 </p>
               </div>
               <Button variant="ghost" size="sm" onClick={onCancel}>
                 {t.skip || 'Skip'}
               </Button>
             </div>
-            
+
             {/* Progress indicators */}
             <div className="flex items-center gap-2 mt-4">
               {steps.map((step, index) => (
@@ -277,9 +300,7 @@ export function TemplateSelectionWizard({
                   key={step}
                   className={cn(
                     'flex-1 h-2 rounded-full transition-colors',
-                    index <= currentStepIndex
-                      ? 'bg-primary'
-                      : 'bg-muted'
+                    index <= currentStepIndex ? 'bg-primary' : 'bg-muted'
                   )}
                 />
               ))}
@@ -302,22 +323,28 @@ export function TemplateSelectionWizard({
                       {t.whatIndustry || 'What industry are you in?'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {t.industryHelp || 'This helps us recommend templates that work well in your field'}
+                      {t.industryHelp ||
+                        'This helps us recommend templates that work well in your field'}
                     </p>
                   </div>
 
                   <RadioGroup
                     value={wizardState.industry}
-                    onValueChange={(value) => setWizardState({ ...wizardState, industry: value })}
+                    onValueChange={value =>
+                      setWizardState({ ...wizardState, industry: value })
+                    }
                   >
                     <div className="grid gap-3">
-                      {industries.map((industry) => (
+                      {industries.map(industry => (
                         <Label
                           key={industry.value}
                           htmlFor={industry.value}
                           className="flex items-center space-x-3 rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors"
                         >
-                          <RadioGroupItem value={industry.value} id={industry.value} />
+                          <RadioGroupItem
+                            value={industry.value}
+                            id={industry.value}
+                          />
                           <div className="text-primary">{industry.icon}</div>
                           <span className="font-medium">{industry.label}</span>
                         </Label>
@@ -338,26 +365,32 @@ export function TemplateSelectionWizard({
                 >
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
-                      {t.preferredStyle || 'What\'s your preferred style?'}
+                      {t.preferredStyle || "What's your preferred style?"}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {t.styleHelp || 'Choose the approach that best matches your content'}
+                      {t.styleHelp ||
+                        'Choose the approach that best matches your content'}
                     </p>
                   </div>
 
                   <RadioGroup
                     value={wizardState.style}
-                    onValueChange={(value) => setWizardState({ ...wizardState, style: value as any })}
+                    onValueChange={value =>
+                      setWizardState({ ...wizardState, style: value as any })
+                    }
                   >
                     <div className="grid gap-3">
-                      {styleOptions.map((style) => (
+                      {styleOptions.map(style => (
                         <Label
                           key={style.value}
                           htmlFor={style.value}
                           className="flex flex-col space-y-1 rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors"
                         >
                           <div className="flex items-center space-x-3">
-                            <RadioGroupItem value={style.value} id={style.value} />
+                            <RadioGroupItem
+                              value={style.value}
+                              id={style.value}
+                            />
                             <span className="font-medium">{style.label}</span>
                           </div>
                           <p className="text-sm text-muted-foreground ml-6">
@@ -381,7 +414,8 @@ export function TemplateSelectionWizard({
                 >
                   <div>
                     <h3 className="text-lg font-semibold mb-2">
-                      {t.importantFeatures || 'What features are important to you?'}
+                      {t.importantFeatures ||
+                        'What features are important to you?'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       {t.featuresHelp || 'Select all that apply'}
@@ -389,7 +423,7 @@ export function TemplateSelectionWizard({
                   </div>
 
                   <div className="grid gap-3">
-                    {featureOptions.map((feature) => (
+                    {featureOptions.map(feature => (
                       <Label
                         key={feature.value}
                         htmlFor={feature.value}
@@ -399,15 +433,22 @@ export function TemplateSelectionWizard({
                           type="checkbox"
                           id={feature.value}
                           value={feature.value}
-                          checked={wizardState.features?.includes(feature.value)}
-                          onChange={(e) => {
+                          checked={wizardState.features?.includes(
+                            feature.value
+                          )}
+                          onChange={e => {
                             const features = wizardState.features || [];
                             if (e.target.checked) {
-                              setWizardState({ ...wizardState, features: [...features, feature.value] });
+                              setWizardState({
+                                ...wizardState,
+                                features: [...features, feature.value],
+                              });
                             } else {
-                              setWizardState({ 
-                                ...wizardState, 
-                                features: features.filter(f => f !== feature.value) 
+                              setWizardState({
+                                ...wizardState,
+                                features: features.filter(
+                                  f => f !== feature.value
+                                ),
                               });
                             }
                           }}
@@ -434,31 +475,40 @@ export function TemplateSelectionWizard({
                       {t.recommendedTemplate || 'Recommended Templates'}
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      {t.previewHelp || 'Based on your preferences, these templates would work best'}
+                      {t.previewHelp ||
+                        'Based on your preferences, these templates would work best'}
                     </p>
                   </div>
 
                   <RadioGroup
                     value={selectedTemplate || undefined}
-                    onValueChange={(value) => setSelectedTemplate(value as TemplateType)}
+                    onValueChange={value =>
+                      setSelectedTemplate(value as TemplateType)
+                    }
                   >
                     <div className="grid gap-4 md:grid-cols-2">
                       {templates
-                        .filter(t => t.id === wizardState.recommendation || t.recommended)
-                        .map((template) => (
+                        .filter(
+                          t =>
+                            t.id === wizardState.recommendation || t.recommended
+                        )
+                        .map(template => (
                           <Label
                             key={template.id}
                             htmlFor={template.id}
                             className="relative rounded-lg border p-4 cursor-pointer hover:bg-muted/50 transition-colors"
                           >
-                            <RadioGroupItem 
-                              value={template.id} 
+                            <RadioGroupItem
+                              value={template.id}
                               id={template.id}
                               className="absolute top-4 right-4"
                             />
-                            
+
                             {template.id === wizardState.recommendation && (
-                              <Badge className="absolute top-4 left-4" variant="default">
+                              <Badge
+                                className="absolute top-4 left-4"
+                                variant="default"
+                              >
                                 <Sparkles className="w-3 h-3 mr-1" />
                                 {t.recommended || 'Recommended'}
                               </Badge>
@@ -466,17 +516,25 @@ export function TemplateSelectionWizard({
 
                             <div className="pr-8">
                               <div className="flex items-center gap-3 mb-2 mt-2">
-                                <div className="text-primary">{template.icon}</div>
-                                <h4 className="font-semibold">{template.name}</h4>
+                                <div className="text-primary">
+                                  {template.icon}
+                                </div>
+                                <h4 className="font-semibold">
+                                  {template.name}
+                                </h4>
                               </div>
-                              
+
                               <p className="text-sm text-muted-foreground mb-3">
                                 {template.description}
                               </p>
 
                               <div className="flex flex-wrap gap-1">
-                                {template.features.slice(0, 3).map((feature) => (
-                                  <Badge key={feature} variant="secondary" className="text-xs">
+                                {template.features.slice(0, 3).map(feature => (
+                                  <Badge
+                                    key={feature}
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
                                     {feature}
                                   </Badge>
                                 ))}
@@ -512,10 +570,7 @@ export function TemplateSelectionWizard({
               </Button>
 
               {currentStep === 'preview' ? (
-                <Button
-                  onClick={handleFinish}
-                  disabled={!selectedTemplate}
-                >
+                <Button onClick={handleFinish} disabled={!selectedTemplate}>
                   <Check className="w-4 h-4 mr-2" />
                   {t.useTemplate || 'Use This Template'}
                 </Button>

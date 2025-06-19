@@ -1,4 +1,4 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
 import {
   createPortfolioSchema,
   updatePortfolioSchema,
@@ -8,8 +8,14 @@ import {
 } from '@/lib/validation/schemas/portfolio';
 
 describe('Portfolio Validation Schemas', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('createPortfolioSchema', () => {
-    it('should validate valid portfolio creation data', () => {
+    it('should validate valid portfolio creation data', async () => {
       const validData = {
         name: 'John Doe',
         email: 'john@example.com',
@@ -20,7 +26,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result).toEqual(validData);
     });
 
-    it('should accept optional fields', () => {
+    it('should accept optional fields', async () => {
       const validData = {
         name: 'John Doe',
         email: 'john@example.com',
@@ -48,7 +54,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject invalid name', () => {
+    it('should reject invalid name', async () => {
       const invalidData = {
         name: 'J',
         email: 'john@example.com',
@@ -60,7 +66,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject invalid email', () => {
+    it('should reject invalid email', async () => {
       const invalidData = {
         name: 'John Doe',
         email: 'not-an-email',
@@ -72,7 +78,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject invalid template', () => {
+    it('should reject invalid template', async () => {
       const invalidData = {
         name: 'John Doe',
         email: 'john@example.com',
@@ -82,7 +88,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(() => createPortfolioSchema.parse(invalidData)).toThrow();
     });
 
-    it('should validate social links', () => {
+    it('should validate social links', async () => {
       const validData = {
         name: 'John Doe',
         email: 'john@example.com',
@@ -100,7 +106,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('updatePortfolioSchema', () => {
-    it('should allow partial updates', () => {
+    it('should allow partial updates', async () => {
       const updateData = {
         name: 'Jane Doe',
       };
@@ -109,7 +115,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result).toEqual(updateData);
     });
 
-    it('should allow updating settings', () => {
+    it('should allow updating settings', async () => {
       const updateData = {
         settings: {
           showEmail: false,
@@ -125,7 +131,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.settings?.customColors?.primary).toBe('#FF0000');
     });
 
-    it('should reject invalid color format', () => {
+    it('should reject invalid color format', async () => {
       const updateData = {
         settings: {
           customColors: {
@@ -139,7 +145,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('portfolioQuerySchema', () => {
-    it('should parse query parameters with defaults', () => {
+    it('should parse query parameters with defaults', async () => {
       const query = {};
 
       const result = portfolioQuerySchema.parse(query);
@@ -151,7 +157,7 @@ describe('Portfolio Validation Schemas', () => {
       });
     });
 
-    it('should parse and coerce string numbers', () => {
+    it('should parse and coerce string numbers', async () => {
       const query = {
         page: '2',
         limit: '25',
@@ -162,7 +168,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.limit).toBe(25);
     });
 
-    it('should validate status filter', () => {
+    it('should validate status filter', async () => {
       const query = {
         status: 'published',
       };
@@ -171,7 +177,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.status).toBe('published');
     });
 
-    it('should reject invalid status', () => {
+    it('should reject invalid status', async () => {
       const query = {
         status: 'invalid',
       };
@@ -179,7 +185,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(() => portfolioQuerySchema.parse(query)).toThrow();
     });
 
-    it('should enforce limit constraints', () => {
+    it('should enforce limit constraints', async () => {
       const query = {
         limit: '150',
       };
@@ -189,7 +195,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('subdomainCheckSchema', () => {
-    it('should validate valid subdomain', () => {
+    it('should validate valid subdomain', async () => {
       const data = {
         subdomain: 'john-doe-portfolio',
       };
@@ -198,7 +204,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.subdomain).toBe('john-doe-portfolio');
     });
 
-    it('should reject subdomain with uppercase', () => {
+    it('should reject subdomain with uppercase', async () => {
       const data = {
         subdomain: 'JohnDoe',
       };
@@ -208,7 +214,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject subdomain starting with hyphen', () => {
+    it('should reject subdomain starting with hyphen', async () => {
       const data = {
         subdomain: '-johndoe',
       };
@@ -218,7 +224,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject subdomain ending with hyphen', () => {
+    it('should reject subdomain ending with hyphen', async () => {
       const data = {
         subdomain: 'johndoe-',
       };
@@ -228,7 +234,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject too short subdomain', () => {
+    it('should reject too short subdomain', async () => {
       const data = {
         subdomain: 'ab',
       };
@@ -238,7 +244,7 @@ describe('Portfolio Validation Schemas', () => {
 
     });
 
-    it('should reject too long subdomain', () => {
+    it('should reject too long subdomain', async () => {
       const data = {
         subdomain: 'a'.repeat(64),
       };
@@ -250,7 +256,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('publishPortfolioSchema', () => {
-    it('should validate publish request with subdomain', () => {
+    it('should validate publish request with subdomain', async () => {
       const data = {
         subdomain: 'john-portfolio',
       };
@@ -259,7 +265,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.subdomain).toBe('john-portfolio');
     });
 
-    it('should allow custom domain', () => {
+    it('should allow custom domain', async () => {
       const data = {
         subdomain: 'john-portfolio',
         customDomain: 'john.example.com',
@@ -269,7 +275,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.customDomain).toBe('john.example.com');
     });
 
-    it('should apply subdomain validation rules', () => {
+    it('should apply subdomain validation rules', async () => {
       const data = {
         subdomain: 'INVALID',
       };

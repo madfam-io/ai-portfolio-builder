@@ -1,4 +1,5 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { z } from 'zod';
 import {
   portfolioSchema,
   createPortfolioSchema,
@@ -14,7 +15,7 @@ import {
 
 describe('Portfolio Validation Schemas', () => {
   describe('createPortfolioSchema', () => {
-    it('should validate a valid portfolio creation request', () => {
+    it('should validate a valid portfolio creation request', async () => {
       const validData = {
         name: 'My Portfolio',
         title: 'Senior Developer',
@@ -29,7 +30,7 @@ describe('Portfolio Validation Schemas', () => {
       }
     });
 
-    it('should require name and title', () => {
+    it('should require name and title', async () => {
       const invalidData = {
         bio: 'Some bio',
         template: 'developer',
@@ -52,7 +53,7 @@ describe('Portfolio Validation Schemas', () => {
       }
     });
 
-    it('should enforce maximum length constraints', () => {
+    it('should enforce maximum length constraints', async () => {
       const invalidData = {
         name: 'a'.repeat(101),
         title: 'b'.repeat(101),
@@ -67,7 +68,7 @@ describe('Portfolio Validation Schemas', () => {
       }
     });
 
-    it('should validate template type', () => {
+    it('should validate template type', async () => {
       const invalidData = {
         name: 'My Portfolio',
         title: 'Developer',
@@ -80,7 +81,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('portfolioSchema', () => {
-    it('should validate a complete portfolio object', () => {
+    it('should validate a complete portfolio object', async () => {
       const validPortfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -97,7 +98,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate contact information', () => {
+    it('should validate contact information', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -119,7 +120,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate social links', () => {
+    it('should validate social links', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -147,7 +148,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate experience entries', () => {
+    it('should validate experience entries', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -176,7 +177,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate education entries', () => {
+    it('should validate education entries', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -205,7 +206,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate projects', () => {
+    it('should validate projects', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -235,7 +236,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate skills', () => {
+    it('should validate skills', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -263,7 +264,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate certifications', () => {
+    it('should validate certifications', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -290,7 +291,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate template customization', () => {
+    it('should validate template customization', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -318,7 +319,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate AI settings', () => {
+    it('should validate AI settings', async () => {
       const portfolio = {
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -341,7 +342,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should validate subdomain format', () => {
+    it('should validate subdomain format', async () => {
       const createPortfolioWithSubdomain = (subdomain: string) => ({
         id: '550e8400-e29b-41d4-a716-446655440000',
         userId: '550e8400-e29b-41d4-a716-446655440001',
@@ -384,7 +385,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('updatePortfolioSchema', () => {
-    it('should allow partial updates', () => {
+    it('should allow partial updates', async () => {
       const updates = {
         name: 'Updated Portfolio',
         bio: 'New bio text',
@@ -394,7 +395,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should not allow updating protected fields', () => {
+    it('should not allow updating protected fields', async () => {
       const updates = {
         id: 'new-id',
         userId: 'new-user-id',
@@ -414,7 +415,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('portfolioQuerySchema', () => {
-    it('should validate query parameters', () => {
+    it('should validate query parameters', async () => {
       const query = {
         status: 'published',
         template: 'developer',
@@ -435,7 +436,7 @@ describe('Portfolio Validation Schemas', () => {
       }
     });
 
-    it('should reject invalid numeric parameters', () => {
+    it('should reject invalid numeric parameters', async () => {
       const query = {
         limit: 'not-a-number',
         offset: 'abc',
@@ -446,7 +447,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('should validate sort and order enums', () => {
+    it('should validate sort and order enums', async () => {
       const invalidQuery = {
         sort: 'invalid-field',
         order: 'random',
@@ -458,7 +459,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('Validation Functions', () => {
-    it('validateCreatePortfolio should return success for valid data', () => {
+    it('validateCreatePortfolio should return success for valid data', async () => {
       const data = {
         name: 'My Portfolio',
         title: 'Developer',
@@ -469,7 +470,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('validateCreatePortfolio should return error for invalid data', () => {
+    it('validateCreatePortfolio should return error for invalid data', async () => {
       const data = {
         name: '',
         title: '',
@@ -480,7 +481,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(false);
     });
 
-    it('validateUpdatePortfolio should return success for valid update data', () => {
+    it('validateUpdatePortfolio should return success for valid update data', async () => {
       const data = {
         name: 'Updated Name',
         status: 'published',
@@ -490,7 +491,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(result.success).toBe(true);
     });
 
-    it('validatePortfolioQuery should return success for valid query', () => {
+    it('validatePortfolioQuery should return success for valid query', async () => {
       const query = {
         status: 'published',
         limit: '20',
@@ -502,7 +503,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('sanitizePortfolioData', () => {
-    it('should sanitize text fields', () => {
+    it('should sanitize text fields', async () => {
       const data = {
         name: 'Portfolio <script>alert("XSS")</script>',
         title: 'Developer<img src=x onerror=alert(1)>',
@@ -526,7 +527,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(sanitized.description).not.toContain('<div>');
     });
 
-    it('should sanitize array text fields', () => {
+    it('should sanitize array text fields', async () => {
       const data = {
         highlights: [
           'Achievement <script>bad</script>',
@@ -546,7 +547,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(sanitized.achievements[0]).not.toContain('<img');
     });
 
-    it('should recursively sanitize nested objects', () => {
+    it('should recursively sanitize nested objects', async () => {
       const data = {
         name: 'Portfolio<script>alert(1)</script>',
         description: 'Description with <b>bold</b>',
@@ -577,7 +578,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(sanitized.experience.nested.bio).toBe('Nested bio text'); // bio is in textFields
     });
 
-    it('should not sanitize date fields', () => {
+    it('should not sanitize date fields', async () => {
       const now = new Date();
       const data = {
         name: 'Portfolio',
@@ -594,7 +595,7 @@ describe('Portfolio Validation Schemas', () => {
       expect(sanitized.lastViewedAt).toBe(now);
     });
 
-    it('should handle non-string values in arrays', () => {
+    it('should handle non-string values in arrays', async () => {
       const data = {
         highlights: [
           'String highlight',
@@ -627,7 +628,7 @@ describe('Portfolio Validation Schemas', () => {
       description: 'Description',
     });
 
-    it('should validate valid YYYY-MM date formats', () => {
+    it('should validate valid YYYY-MM date formats', async () => {
       const validDates = ['2023-01', '2023-12', '2020-06'];
       validDates.forEach(date => {
         const result = experienceSchema.safeParse(createExperienceData(date));
@@ -635,7 +636,7 @@ describe('Portfolio Validation Schemas', () => {
       });
     });
 
-    it('should reject invalid date formats', () => {
+    it('should reject invalid date formats', async () => {
       // Test specific invalid dates
       expect(
         experienceSchema.safeParse(createExperienceData('2023-1')).success
@@ -659,7 +660,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('Email and Phone Validation', () => {
-    it('should validate email formats', () => {
+    it('should validate email formats', async () => {
       const validEmails = [
         'test@example.com',
         'user.name@domain.co.uk',
@@ -686,7 +687,7 @@ describe('Portfolio Validation Schemas', () => {
       });
     });
 
-    it('should validate phone formats', () => {
+    it('should validate phone formats', async () => {
       const validPhones = [
         '+1234567890',
         '(123) 456-7890',
@@ -711,7 +712,7 @@ describe('Portfolio Validation Schemas', () => {
   });
 
   describe('Color Validation', () => {
-    it('should validate hex color formats', () => {
+    it('should validate hex color formats', async () => {
       const validColors = ['#FFFFFF', '#000000', '#3B82F6', '#ff00ff'];
       const invalidColors = [
         'FFFFFF', // missing #
@@ -738,7 +739,7 @@ describe('Portfolio Validation Schemas', () => {
 
 // Additional type tests
 describe('Type Exports', () => {
-  it('should export correct types', () => {
+  it('should export correct types', async () => {
     // These are compile-time checks, so we just need to ensure they exist
     type TestPortfolio = Portfolio;
     type TestCreateDTO = CreatePortfolioDTO;
@@ -767,7 +768,6 @@ import type {
 } from '@/lib/validations/portfolio';
 
 // Import necessary schemas
-import { z } from 'zod';
 
 // Additional schema definitions for isolated testing
 const experienceSchema = z.object({

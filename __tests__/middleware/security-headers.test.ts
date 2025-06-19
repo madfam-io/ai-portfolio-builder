@@ -1,13 +1,18 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { NextRequest, NextResponse } from 'next/server';
+import { applySecurityHeaders } from '@/middleware/security-headers';
 
 /**
  * @jest-environment node
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { applySecurityHeaders } from '@/middleware/security-headers';
-
 describe('Security Headers Middleware', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const createRequest = (
     url: string = 'https://example.com',
     options: { headers?: Record<string, string>; method?: string } = {}
@@ -23,7 +28,7 @@ describe('Security Headers Middleware', () => {
   };
 
   describe('Core Security Headers', () => {
-    it('should add Content Security Policy header', () => {
+    it('should add Content Security Policy header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -36,7 +41,7 @@ describe('Security Headers Middleware', () => {
       expect(cspHeader).toContain("style-src 'self' 'unsafe-inline'");
     });
 
-    it('should add X-Frame-Options header', () => {
+    it('should add X-Frame-Options header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -45,7 +50,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
 
-    it('should add X-Content-Type-Options header', () => {
+    it('should add X-Content-Type-Options header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -54,7 +59,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
     });
 
-    it('should add X-XSS-Protection header', () => {
+    it('should add X-XSS-Protection header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -63,7 +68,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-XSS-Protection')).toBe('1; mode=block');
     });
 
-    it('should add Referrer-Policy header', () => {
+    it('should add Referrer-Policy header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -74,7 +79,7 @@ describe('Security Headers Middleware', () => {
       );
     });
 
-    it('should add Permissions-Policy header', () => {
+    it('should add Permissions-Policy header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -89,7 +94,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('HTTPS Security', () => {
-    it('should add Strict-Transport-Security header for HTTPS', () => {
+    it('should add Strict-Transport-Security header for HTTPS', async () => {
       const request = createRequest('https://example.com');
       const response = createResponse();
 
@@ -99,7 +104,7 @@ describe('Security Headers Middleware', () => {
       expect(hsts).toBe('max-age=31536000; includeSubDomains; preload');
     });
 
-    it('should not add HSTS header for HTTP', () => {
+    it('should not add HSTS header for HTTP', async () => {
       const request = createRequest('http://example.com');
       const response = createResponse();
 
@@ -108,7 +113,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Strict-Transport-Security')).toBeNull();
     });
 
-    it('should add Upgrade-Insecure-Requests header', () => {
+    it('should add Upgrade-Insecure-Requests header', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -119,7 +124,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Content Security Policy', () => {
-    it('should allow Next.js domains in script-src', () => {
+    it('should allow Next.js domains in script-src', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -130,7 +135,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain('https://prisma-brown.vercel.app');
     });
 
-    it('should include analytics domains', () => {
+    it('should include analytics domains', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -141,7 +146,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain('https://www.googletagmanager.com');
     });
 
-    it('should allow Stripe domains for payments', () => {
+    it('should allow Stripe domains for payments', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -152,7 +157,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain('https://js.stripe.com');
     });
 
-    it('should include font sources', () => {
+    it('should include font sources', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -163,7 +168,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain('https://fonts.gstatic.com');
     });
 
-    it('should handle img-src for CDNs', () => {
+    it('should handle img-src for CDNs', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -175,7 +180,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('API Routes Security', () => {
-    it('should apply stricter CSP for API routes', () => {
+    it('should apply stricter CSP for API routes', async () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
@@ -186,7 +191,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain("script-src 'none'");
     });
 
-    it('should add X-Robots-Tag for API routes', () => {
+    it('should add X-Robots-Tag for API routes', async () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
@@ -195,7 +200,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Robots-Tag')).toBe('noindex, nofollow');
     });
 
-    it('should set Cache-Control for API routes', () => {
+    it('should set Cache-Control for API routes', async () => {
       const request = createRequest('https://example.com/api/v1/test');
       const response = createResponse();
 
@@ -206,7 +211,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Development vs Production', () => {
-    it('should apply stricter headers in production', () => {
+    it('should apply stricter headers in production', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
 
@@ -221,7 +226,7 @@ describe('Security Headers Middleware', () => {
       process.env.NODE_ENV = originalEnv;
     });
 
-    it('should allow development tools in development', () => {
+    it('should allow development tools in development', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'development';
 
@@ -238,7 +243,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Special Routes', () => {
-    it('should handle iframe embedding for specific routes', () => {
+    it('should handle iframe embedding for specific routes', async () => {
       const request = createRequest('https://example.com/embed/portfolio');
       const response = createResponse();
 
@@ -247,7 +252,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('SAMEORIGIN');
     });
 
-    it('should allow more permissive CSP for preview pages', () => {
+    it('should allow more permissive CSP for preview pages', async () => {
       const request = createRequest('https://example.com/preview/123');
       const response = createResponse();
 
@@ -257,7 +262,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain("frame-src 'self'");
     });
 
-    it('should handle auth callback routes', () => {
+    it('should handle auth callback routes', async () => {
       const request = createRequest('https://example.com/auth/callback');
       const response = createResponse();
 
@@ -268,7 +273,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Content Type Handling', () => {
-    it('should handle JSON responses', () => {
+    it('should handle JSON responses', async () => {
       const request = createRequest();
       const response = createResponse('{"test": true}', {
         headers: { 'Content-Type': 'application/json' },
@@ -280,7 +285,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
     });
 
-    it('should handle HTML responses', () => {
+    it('should handle HTML responses', async () => {
       const request = createRequest();
       const response = createResponse('<html></html>', {
         headers: { 'Content-Type': 'text/html' },
@@ -291,7 +296,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Content-Type')).toBe('text/html');
     });
 
-    it('should handle static assets', () => {
+    it('should handle static assets', async () => {
       const request = createRequest('https://example.com/static/image.png');
       const response = createResponse(null, {
         headers: { 'Content-Type': 'image/png' },
@@ -304,7 +309,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Cross-Origin Resource Sharing', () => {
-    it('should handle CORS for allowed origins', () => {
+    it('should handle CORS for allowed origins', async () => {
       const request = createRequest('https://example.com/api/v1/public', {
         headers: { Origin: 'https://trusted-domain.com' },
       });
@@ -317,7 +322,7 @@ describe('Security Headers Middleware', () => {
       );
     });
 
-    it('should reject CORS for disallowed origins', () => {
+    it('should reject CORS for disallowed origins', async () => {
       const request = createRequest('https://example.com/api/v1/private', {
         headers: { Origin: 'https://malicious-domain.com' },
       });
@@ -328,7 +333,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Access-Control-Allow-Origin')).toBeNull();
     });
 
-    it('should handle preflight requests', () => {
+    it('should handle preflight requests', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
         method: 'OPTIONS',
         headers: {
@@ -348,7 +353,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Security Monitoring', () => {
-    it('should add security-related response headers for monitoring', () => {
+    it('should add security-related response headers for monitoring', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -358,7 +363,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Server')).toBeNull(); // Should remove this
     });
 
-    it('should add Content Security Policy Report-URI', () => {
+    it('should add Content Security Policy Report-URI', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -368,7 +373,7 @@ describe('Security Headers Middleware', () => {
       expect(csp).toContain('report-uri /api/v1/csp-report');
     });
 
-    it('should handle error responses securely', () => {
+    it('should handle error responses securely', async () => {
       const request = createRequest();
       const response = createResponse('Internal Server Error', { status: 500 });
 
@@ -380,7 +385,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Performance Considerations', () => {
-    it('should not duplicate existing headers', () => {
+    it('should not duplicate existing headers', async () => {
       const request = createRequest();
       const response = createResponse(null, {
         headers: { 'X-Frame-Options': 'SAMEORIGIN' },
@@ -392,7 +397,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
 
-    it('should preserve non-security headers', () => {
+    it('should preserve non-security headers', async () => {
       const request = createRequest();
       const response = createResponse(null, {
         headers: {
@@ -407,7 +412,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Content-Length')).toBe('100');
     });
 
-    it('should handle large header values efficiently', () => {
+    it('should handle large header values efficiently', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -421,14 +426,14 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle malformed URLs gracefully', () => {
+    it('should handle malformed URLs gracefully', async () => {
       const request = createRequest('invalid-url');
       const response = createResponse();
 
       expect(() => applySecurityHeaders(request, response)).not.toThrow();
     });
 
-    it('should handle missing request headers', () => {
+    it('should handle missing request headers', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -437,7 +442,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
 
-    it('should handle null response body', () => {
+    it('should handle null response body', async () => {
       const request = createRequest();
       const response = createResponse(null);
 
@@ -446,7 +451,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Content-Security-Policy')).toBeDefined();
     });
 
-    it('should handle very long URLs', () => {
+    it('should handle very long URLs', async () => {
       const longPath = '/'.repeat(1000);
       const request = createRequest(`https://example.com${longPath}`);
       const response = createResponse();
@@ -458,7 +463,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Integration', () => {
-    it('should work with other middleware', () => {
+    it('should work with other middleware', async () => {
       const request = createRequest();
       const response = createResponse(null, {
         headers: { 'X-Custom-Middleware': 'applied' },
@@ -470,7 +475,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
 
-    it('should maintain response status codes', () => {
+    it('should maintain response status codes', async () => {
       const request = createRequest();
       const response = createResponse('Not Found', { status: 404 });
 
@@ -480,7 +485,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-Frame-Options')).toBe('DENY');
     });
 
-    it('should work with streaming responses', () => {
+    it('should work with streaming responses', async () => {
       const request = createRequest();
       const stream = new ReadableStream({
         start(controller) {
@@ -498,7 +503,7 @@ describe('Security Headers Middleware', () => {
   });
 
   describe('Security Compliance', () => {
-    it('should meet OWASP security header requirements', () => {
+    it('should meet OWASP security header requirements', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -511,7 +516,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('Referrer-Policy')).toBeTruthy();
     });
 
-    it('should pass security scanner requirements', () => {
+    it('should pass security scanner requirements', async () => {
       const request = createRequest();
       const response = createResponse();
 
@@ -523,7 +528,7 @@ describe('Security Headers Middleware', () => {
       expect(result.headers.get('X-XSS-Protection')).toBeTruthy();
     });
 
-    it('should support Content Security Policy v3', () => {
+    it('should support Content Security Policy v3', async () => {
       const request = createRequest();
       const response = createResponse();
 

@@ -1,13 +1,18 @@
-import { describe, it, expect, jest } from '@jest/globals';
-import { renderHook, act } from '@testing-library/react';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { renderHook, act , act } from '@testing-library/react';
 import { useState } from 'react';
 import type { Portfolio, PortfolioEditorState } from '@/types/portfolio';
-
 import { useEditorHistory } from '@/hooks/useEditorHistory';
 
 describe('useEditorHistory', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   // Verify the hook is loaded correctly
-  it('should load the hook correctly', () => {
+  it('should load the hook correctly', async () => {
     expect(typeof useEditorHistory).toBe('function');
   });
 
@@ -56,7 +61,7 @@ describe('useEditorHistory', () => {
     focusedField: null,
   });
 
-  it('should initialize with no history', () => {
+  it('should initialize with no history', async () => {
     const { result } = renderHook(() => {
       const [editorState, setEditorState] = useState(createInitialState());
       return useEditorHistory(editorState, setEditorState);
@@ -66,7 +71,7 @@ describe('useEditorHistory', () => {
     expect(result.current.canRedo).toBe(false);
   });
 
-  it('should push to history', () => {
+  it('should push to history', async () => {
     const { result } = renderHook(() => {
       const [editorState, setEditorState] = useState(createInitialState());
       return {
@@ -78,7 +83,7 @@ describe('useEditorHistory', () => {
 
     const updatedPortfolio = { ...mockPortfolio, name: 'Updated Portfolio' };
 
-    act(() => {
+    await act(async () => {
       result.current.pushToHistory('Update name', updatedPortfolio);
     });
 
@@ -92,7 +97,7 @@ describe('useEditorHistory', () => {
     expect(result.current.canUndo).toBe(true);
   });
 
-  it('should handle undo', () => {
+  it('should handle undo', async () => {
     const historyEntry = {
       timestamp: new Date(),
       action: 'Initial state',
@@ -113,7 +118,7 @@ describe('useEditorHistory', () => {
       historyIndex: 1,
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
@@ -121,7 +126,7 @@ describe('useEditorHistory', () => {
 
     expect(result.current.canUndo).toBe(true);
 
-    act(() => {
+    await act(async () => {
       result.current.undo();
     });
 
@@ -134,7 +139,7 @@ describe('useEditorHistory', () => {
     expect(newState.isDirty).toBe(true);
   });
 
-  it('should handle redo', () => {
+  it('should handle redo', async () => {
     const historyEntry = {
       timestamp: new Date(),
       action: 'Initial state',
@@ -155,7 +160,7 @@ describe('useEditorHistory', () => {
       historyIndex: 0,
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
@@ -163,7 +168,7 @@ describe('useEditorHistory', () => {
 
     expect(result.current.canRedo).toBe(true);
 
-    act(() => {
+    await act(async () => {
       result.current.redo();
     });
 
@@ -176,7 +181,7 @@ describe('useEditorHistory', () => {
     expect(newState.isDirty).toBe(true);
   });
 
-  it('should not undo when at beginning of history', () => {
+  it('should not undo when at beginning of history', async () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
       history: [
@@ -185,7 +190,7 @@ describe('useEditorHistory', () => {
       historyIndex: 0,
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
@@ -193,7 +198,7 @@ describe('useEditorHistory', () => {
 
     expect(result.current.canUndo).toBe(false);
 
-    act(() => {
+    await act(async () => {
       result.current.undo();
     });
 
@@ -204,7 +209,7 @@ describe('useEditorHistory', () => {
     expect(newState).toBe(editorState); // Should return unchanged state
   });
 
-  it('should not redo when at end of history', () => {
+  it('should not redo when at end of history', async () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
       history: [
@@ -213,7 +218,7 @@ describe('useEditorHistory', () => {
       historyIndex: 0,
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
@@ -221,7 +226,7 @@ describe('useEditorHistory', () => {
 
     expect(result.current.canRedo).toBe(false);
 
-    act(() => {
+    await act(async () => {
       result.current.redo();
     });
 
@@ -232,7 +237,7 @@ describe('useEditorHistory', () => {
     expect(newState).toBe(editorState); // Should return unchanged state
   });
 
-  it('should limit history to 50 entries', () => {
+  it('should limit history to 50 entries', async () => {
     const { result } = renderHook(() => {
       const [editorState, setEditorState] = useState(createInitialState());
       return {
@@ -244,7 +249,7 @@ describe('useEditorHistory', () => {
 
     // Push 60 entries
     for (let i = 0; i < 60; i++) {
-      act(() => {
+      await act(async () => {
         result.current.pushToHistory(`Action ${i}`, mockPortfolio);
       });
     }
@@ -254,7 +259,7 @@ describe('useEditorHistory', () => {
     expect(result.current.editorState.history[49].action).toBe('Action 59'); // Last should be most recent
   });
 
-  it('should clear future history when pushing after undo', () => {
+  it('should clear future history when pushing after undo', async () => {
     const initialState = createInitialState();
     const history = [
       { timestamp: new Date(), action: 'Action 1', state: mockPortfolio },
@@ -285,7 +290,7 @@ describe('useEditorHistory', () => {
 
     const newPortfolio = { ...mockPortfolio, name: 'New Version' };
 
-    act(() => {
+    await act(async () => {
       result.current.pushToHistory('New Action', newPortfolio);
     });
 
@@ -294,9 +299,9 @@ describe('useEditorHistory', () => {
     expect(result.current.editorState.historyIndex).toBe(2);
   });
 
-  it('should maintain function references across renders', () => {
+  it('should maintain function references across renders', async () => {
     const editorState = createInitialState();
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result, rerender } = renderHook(
       ({ state, setState }) => useEditorHistory(state, setState),
@@ -323,20 +328,20 @@ describe('useEditorHistory', () => {
     expect(result.current.redo).toBe(firstRedo);
   });
 
-  it('should handle missing history entries gracefully', () => {
+  it('should handle missing history entries gracefully', async () => {
     const editorState: PortfolioEditorState = {
       ...createInitialState(),
       history: [],
       historyIndex: 5, // Invalid index
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
-    act(() => {
+    await act(async () => {
       result.current.undo();
     });
 
@@ -347,7 +352,7 @@ describe('useEditorHistory', () => {
     expect(newState).toBe(editorState);
   });
 
-  it('should merge portfolio states correctly during undo/redo', () => {
+  it('should merge portfolio states correctly during undo/redo', async () => {
     const basePortfolio = mockPortfolio;
     const partialUpdate = { name: 'Partial Update', bio: 'New bio' };
 
@@ -367,13 +372,13 @@ describe('useEditorHistory', () => {
       historyIndex: 1,
     };
 
-    const setEditorState = jest.fn();
+    const setEditorState = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useEditorHistory(editorState, setEditorState)
     );
 
-    act(() => {
+    await act(async () => {
       result.current.undo();
     });
 

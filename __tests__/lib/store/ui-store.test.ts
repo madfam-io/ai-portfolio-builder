@@ -1,36 +1,28 @@
-import {
-  describe,
-  test,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
+import { describe, test, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 
 // Mock DOM methods
-const mockMatchMedia = jest.fn();
+const mockMatchMedia = jest.fn().mockReturnValue(void 0);
 const mockClassList = {
-  add: jest.fn(),
-  remove: jest.fn(),
+  add: jest.fn().mockReturnValue(void 0),
+  remove: jest.fn().mockReturnValue(void 0),
 };
 
 // Mock UI store functions
-const mockSetTheme = jest.fn();
-const mockSetSidebarOpen = jest.fn();
-const mockToggleSidebar = jest.fn();
-const mockOpenModal = jest.fn();
-const mockCloseModal = jest.fn();
-const mockCloseAllModals = jest.fn();
-const mockShowToast = jest.fn();
-const mockRemoveToast = jest.fn();
-const mockClearToasts = jest.fn();
-const mockSetGlobalLoading = jest.fn();
-const mockShowSuccessToast = jest.fn();
-const mockShowErrorToast = jest.fn();
-const mockShowWarningToast = jest.fn();
-const mockShowInfoToast = jest.fn();
+const mockSetTheme = jest.fn().mockReturnValue(void 0);
+const mockSetSidebarOpen = jest.fn().mockReturnValue(void 0);
+const mockToggleSidebar = jest.fn().mockReturnValue(void 0);
+const mockOpenModal = jest.fn().mockReturnValue(void 0);
+const mockCloseModal = jest.fn().mockReturnValue(void 0);
+const mockCloseAllModals = jest.fn().mockReturnValue(void 0);
+const mockShowToast = jest.fn().mockReturnValue(void 0);
+const mockRemoveToast = jest.fn().mockReturnValue(void 0);
+const mockClearToasts = jest.fn().mockReturnValue(void 0);
+const mockSetGlobalLoading = jest.fn().mockReturnValue(void 0);
+const mockShowSuccessToast = jest.fn().mockReturnValue(void 0);
+const mockShowErrorToast = jest.fn().mockReturnValue(void 0);
+const mockShowWarningToast = jest.fn().mockReturnValue(void 0);
+const mockShowInfoToast = jest.fn().mockReturnValue(void 0);
 
 // Mock store state
 let mockState = {
@@ -58,7 +50,7 @@ jest.mock('@/lib/store/ui-store', () => ({
       clearToasts: mockClearToasts,
       setGlobalLoading: mockSetGlobalLoading,
     }),
-    setState: jest.fn(),
+    setState: jest.fn().mockReturnValue(void 0),
   },
   showSuccessToast: mockShowSuccessToast,
   showErrorToast: mockShowErrorToast,
@@ -68,6 +60,9 @@ jest.mock('@/lib/store/ui-store', () => ({
 
 describe('UI Store', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     jest.useFakeTimers();
 
@@ -87,11 +82,11 @@ describe('UI Store', () => {
       matches: false,
       media: '',
       onchange: null,
-      addListener: jest.fn(),
-      removeListener: jest.fn(),
-      addEventListener: jest.fn(),
-      removeEventListener: jest.fn(),
-      dispatchEvent: jest.fn(),
+      addListener: jest.fn().mockReturnValue(void 0),
+      removeListener: jest.fn().mockReturnValue(void 0),
+      addEventListener: jest.fn().mockReturnValue(void 0),
+      removeEventListener: jest.fn().mockReturnValue(void 0),
+      dispatchEvent: jest.fn().mockReturnValue(void 0),
     });
 
     // Mock document.documentElement.classList
@@ -106,33 +101,33 @@ describe('UI Store', () => {
   });
 
   describe('Theme Management', () => {
-    it('should call setTheme with light', () => {
+    it('should call setTheme with light', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setTheme('light');
       });
 
       expect(mockSetTheme).toHaveBeenCalledWith('light');
     });
 
-    it('should call setTheme with dark', () => {
+    it('should call setTheme with dark', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setTheme('dark');
       });
 
       expect(mockSetTheme).toHaveBeenCalledWith('dark');
     });
 
-    it('should call setTheme with system', () => {
+    it('should call setTheme with system', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setTheme } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setTheme('system');
       });
 
@@ -141,22 +136,22 @@ describe('UI Store', () => {
   });
 
   describe('Sidebar Management', () => {
-    it('should call toggleSidebar', () => {
+    it('should call toggleSidebar', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { toggleSidebar } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         toggleSidebar();
       });
 
       expect(mockToggleSidebar).toHaveBeenCalled();
     });
 
-    it('should call setSidebarOpen', () => {
+    it('should call setSidebarOpen', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setSidebarOpen } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setSidebarOpen(false);
       });
 
@@ -165,7 +160,7 @@ describe('UI Store', () => {
   });
 
   describe('Modal Management', () => {
-    it('should call openModal', () => {
+    it('should call openModal', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { openModal } = useUIStore.getState();
 
@@ -174,33 +169,33 @@ describe('UI Store', () => {
         type: 'confirm' as const,
         title: 'Test Modal',
         description: 'Test description',
-        onConfirm: jest.fn(),
-        onCancel: jest.fn(),
+        onConfirm: jest.fn().mockReturnValue(void 0),
+        onCancel: jest.fn().mockReturnValue(void 0),
       };
 
-      act(() => {
+      await act(async () => {
         openModal(modal);
       });
 
       expect(mockOpenModal).toHaveBeenCalledWith(modal);
     });
 
-    it('should call closeModal', () => {
+    it('should call closeModal', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { closeModal } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         closeModal('test-modal');
       });
 
       expect(mockCloseModal).toHaveBeenCalledWith('test-modal');
     });
 
-    it('should call closeAllModals', () => {
+    it('should call closeAllModals', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { closeAllModals } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         closeAllModals();
       });
 
@@ -209,7 +204,7 @@ describe('UI Store', () => {
   });
 
   describe('Toast Management', () => {
-    it('should call showToast', () => {
+    it('should call showToast', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { showToast } = useUIStore.getState();
 
@@ -219,29 +214,29 @@ describe('UI Store', () => {
         type: 'success' as const,
       };
 
-      act(() => {
+      await act(async () => {
         showToast(toast);
       });
 
       expect(mockShowToast).toHaveBeenCalledWith(toast);
     });
 
-    it('should call removeToast', () => {
+    it('should call removeToast', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { removeToast } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         removeToast('toast-id');
       });
 
       expect(mockRemoveToast).toHaveBeenCalledWith('toast-id');
     });
 
-    it('should call clearToasts', () => {
+    it('should call clearToasts', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { clearToasts } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         clearToasts();
       });
 
@@ -250,10 +245,10 @@ describe('UI Store', () => {
   });
 
   describe('Toast Utility Functions', () => {
-    it('should call showSuccessToast', () => {
+    it('should call showSuccessToast', async () => {
       const { showSuccessToast } = require('@/lib/store/ui-store');
 
-      act(() => {
+      await act(async () => {
         showSuccessToast('Success!', 'Operation completed');
       });
 
@@ -263,10 +258,10 @@ describe('UI Store', () => {
       );
     });
 
-    it('should call showErrorToast', () => {
+    it('should call showErrorToast', async () => {
       const { showErrorToast } = require('@/lib/store/ui-store');
 
-      act(() => {
+      await act(async () => {
         showErrorToast('Error!', 'Something went wrong');
       });
 
@@ -276,10 +271,10 @@ describe('UI Store', () => {
       );
     });
 
-    it('should call showWarningToast', () => {
+    it('should call showWarningToast', async () => {
       const { showWarningToast } = require('@/lib/store/ui-store');
 
-      act(() => {
+      await act(async () => {
         showWarningToast('Warning!', 'Please be careful');
       });
 
@@ -289,10 +284,10 @@ describe('UI Store', () => {
       );
     });
 
-    it('should call showInfoToast', () => {
+    it('should call showInfoToast', async () => {
       const { showInfoToast } = require('@/lib/store/ui-store');
 
-      act(() => {
+      await act(async () => {
         showInfoToast('Info', 'Just letting you know');
       });
 
@@ -304,11 +299,11 @@ describe('UI Store', () => {
   });
 
   describe('Loading State Management', () => {
-    it('should call setGlobalLoading with loading state', () => {
+    it('should call setGlobalLoading with loading state', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setGlobalLoading(true, 'Loading data...');
       });
 
@@ -318,22 +313,22 @@ describe('UI Store', () => {
       );
     });
 
-    it('should call setGlobalLoading to clear loading', () => {
+    it('should call setGlobalLoading to clear loading', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setGlobalLoading(false);
       });
 
       expect(mockSetGlobalLoading).toHaveBeenCalledWith(false);
     });
 
-    it('should call setGlobalLoading without message', () => {
+    it('should call setGlobalLoading without message', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { setGlobalLoading } = useUIStore.getState();
 
-      act(() => {
+      await act(async () => {
         setGlobalLoading(true);
       });
 
@@ -342,7 +337,7 @@ describe('UI Store', () => {
   });
 
   describe('Store State Access', () => {
-    it('should return current state from getState', () => {
+    it('should return current state from getState', async () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const state = useUIStore.getState();
 

@@ -60,7 +60,7 @@ export function useAutoSave(
         }
 
         return false;
-      } catch (error) {
+      } catch (_error) {
         return false;
       } finally {
         isAutoSavingRef.current = false;

@@ -1,22 +1,22 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { errorLogger } from '@/lib/services/error/error-logger';
 
 /**
  * Tests for Error Boundary Components
  */
 
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import {
   ErrorBoundary,
   ComponentErrorBoundary,
 } from '@/components/error/error-boundary';
-import { errorLogger } from '@/lib/services/error/error-logger';
 
 
 // Mock error logger
 jest.mock('@/lib/services/error/error-logger', () => ({
   errorLogger: {
-    logError: jest.fn(),
+    logError: jest.fn().mockReturnValue(void 0),
   },
 }));
 
@@ -42,14 +42,14 @@ describe('ErrorBoundary', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     // Suppress console.error for these tests
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('should render children when no error', () => {
+  it('should render children when no error', async () => {
     render(
       <ErrorBoundary>
         <div>Test content</div>
@@ -58,7 +58,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Test content')).toBeInTheDocument();
   });
 
-  it('should catch and display errors', () => {
+  it('should catch and display errors', async () => {
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -72,7 +72,7 @@ describe('ErrorBoundary', () => {
     ).toBeInTheDocument();
   });
 
-  it('should log errors with context', () => {
+  it('should log errors with context', async () => {
     render(
       <ErrorBoundary>
         <ThrowError />
@@ -90,7 +90,7 @@ describe('ErrorBoundary', () => {
       })
   });
 
-  it('should show error details in development', () => {
+  it('should show error details in development', async () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'development';
 
@@ -104,7 +104,7 @@ describe('ErrorBoundary', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('should hide error details in production', () => {
+  it('should hide error details in production', async () => {
     const originalEnv = process.env.NODE_ENV;
     process.env.NODE_ENV = 'production';
 
@@ -118,7 +118,7 @@ describe('ErrorBoundary', () => {
     process.env.NODE_ENV = originalEnv;
   });
 
-  it('should reset error boundary on button click', () => {
+  it('should reset error boundary on button click', async () => {
     const { rerender } = render(
       <ErrorBoundary>
         <ThrowError shouldThrow={true} />
@@ -138,7 +138,7 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('No error')).toBeInTheDocument();
   });
 
-  it('should use custom fallback', () => {
+  it('should use custom fallback', async () => {
     const customFallback = <div>Custom error UI</div>;
 
     render(
@@ -149,8 +149,8 @@ describe('ErrorBoundary', () => {
     expect(screen.getByText('Custom error UI')).toBeInTheDocument();
   });
 
-  it('should call onError callback', () => {
-    const onError = jest.fn();
+  it('should call onError callback', async () => {
+    const onError = jest.fn().mockReturnValue(void 0);
 
     render(
       <ErrorBoundary onError={onError}>
@@ -167,7 +167,7 @@ describe('ErrorBoundary', () => {
     );
   });
 
-  it('should reset on resetKeys change', () => {
+  it('should reset on resetKeys change', async () => {
     const { rerender } = render(
       <ErrorBoundary resetKeys={['key1']}>
         <ThrowError />
@@ -228,14 +228,14 @@ describe('ErrorBoundary', () => {
 describe('ComponentErrorBoundary', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.spyOn(console, 'error').mockImplementation(() => {});
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
     jest.restoreAllMocks();
   });
 
-  it('should render children when no error', () => {
+  it('should render children when no error', async () => {
     render(
       <ComponentErrorBoundary>
         <div>Component content</div>
@@ -244,7 +244,7 @@ describe('ComponentErrorBoundary', () => {
     expect(screen.getByText('Component content')).toBeInTheDocument();
   });
 
-  it('should show component-specific error message', () => {
+  it('should show component-specific error message', async () => {
     render(
       <ComponentErrorBoundary componentName="TestComponent">
         <ThrowError />
@@ -255,7 +255,7 @@ describe('ComponentErrorBoundary', () => {
     ).toBeInTheDocument();
   });
 
-  it('should use custom fallback', () => {
+  it('should use custom fallback', async () => {
     render(
       <ComponentErrorBoundary fallback={<div>Custom component error</div>}>
         <ThrowError />
@@ -264,7 +264,7 @@ describe('ComponentErrorBoundary', () => {
     expect(screen.getByText('Custom component error')).toBeInTheDocument();
   });
 
-  it('should be isolated (not affect parent)', () => {
+  it('should be isolated (not affect parent)', async () => {
     render(
       <div>
         <div>Outside content</div>

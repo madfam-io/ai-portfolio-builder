@@ -6,7 +6,7 @@ const glob = require('glob');
 
 // Find all test files
 const testFiles = glob.sync('__tests__/**/*.test.{ts,tsx}', {
-  ignore: ['**/node_modules/**']
+  ignore: ['**/node_modules/**'],
 });
 
 console.log(`Found ${testFiles.length} test files to fix import paths`);
@@ -20,14 +20,29 @@ testFiles.forEach(filePath => {
   // Fix relative imports to test utils
   const patterns = [
     // Fix relative imports like ../../../utils/ or ../../../../utils/
-    [/from ['"]\.\.\/\.\.\/\.\.\/utils\/([\w-]+)['"]/g, "from '@/__tests__/utils/$1'"],
-    [/from ['"]\.\.\/\.\.\/\.\.\/\.\.\/utils\/([\w-]+)['"]/g, "from '@/__tests__/utils/$1'"],
-    [/from ['"]\.\.\/\.\.\/utils\/([\w-]+)['"]/g, "from '@/__tests__/utils/$1'"],
+    [
+      /from ['"]\.\.\/\.\.\/\.\.\/utils\/([\w-]+)['"]/g,
+      "from '@/__tests__/utils/$1'",
+    ],
+    [
+      /from ['"]\.\.\/\.\.\/\.\.\/\.\.\/utils\/([\w-]+)['"]/g,
+      "from '@/__tests__/utils/$1'",
+    ],
+    [
+      /from ['"]\.\.\/\.\.\/utils\/([\w-]+)['"]/g,
+      "from '@/__tests__/utils/$1'",
+    ],
     [/from ['"]\.\.\/utils\/([\w-]+)['"]/g, "from '@/__tests__/utils/$1'"],
     // Fix imports without subdirectory
     [/from ['"]\.\.\/test-utils['"]/g, "from '@/__tests__/utils/test-utils'"],
-    [/from ['"]\.\.\/\.\.\/test-utils['"]/g, "from '@/__tests__/utils/test-utils'"],
-    [/from ['"]\.\.\/\.\.\/\.\.\/test-utils['"]/g, "from '@/__tests__/utils/test-utils'"],
+    [
+      /from ['"]\.\.\/\.\.\/test-utils['"]/g,
+      "from '@/__tests__/utils/test-utils'",
+    ],
+    [
+      /from ['"]\.\.\/\.\.\/\.\.\/test-utils['"]/g,
+      "from '@/__tests__/utils/test-utils'",
+    ],
   ];
 
   patterns.forEach(([pattern, replacement]) => {

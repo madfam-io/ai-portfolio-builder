@@ -1,19 +1,22 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import Pricing from '@/components/landing/Pricing';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import Pricing from '@/components/landing/Pricing';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -35,7 +38,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 // Mock useApp hook
@@ -85,6 +87,12 @@ jest.mock('lucide-react', () => ({
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('Pricing', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockTranslations = {
     pricingTitle: 'Pricing',
     powerfulFeatures: 'with Powerful Features',
@@ -115,7 +123,7 @@ describe('Pricing', () => {
   });
 
   describe('Initial Rendering', () => {
-    it('should render pricing section title', () => {
+    it('should render pricing section title', async () => {
       render(<Pricing />);
 
       expect(screen.getByText('Pricing')).toBeInTheDocument();
@@ -125,7 +133,7 @@ describe('Pricing', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render all pricing plans', () => {
+    it('should render all pricing plans', async () => {
       render(<Pricing />);
 
       expect(screen.getByText(mockTranslations.planFree)).toBeInTheDocument();
@@ -134,19 +142,19 @@ describe('Pricing', () => {
       expect(screen.getByText(mockTranslations.planEnterprise)).toBeInTheDocument();
     });
 
-    it('should render billing toggle', () => {
+    it('should render billing toggle', async () => {
       render(<Pricing />);
 
       const buttons = screen.getAllByRole('button');
       const monthlyButton = buttons.find(btn => btn.textContent === 'Monthly');
       const yearlyButton = buttons.find(btn => btn.textContent?.includes('Yearly'));
-      
+
       expect(monthlyButton).toBeInTheDocument();
       expect(yearlyButton).toBeInTheDocument();
       expect(screen.getByText('Save 20%')).toBeInTheDocument();
     });
 
-    it('should highlight popular plan', () => {
+    it('should highlight popular plan', async () => {
       render(<Pricing />);
 
       const popularBadge = screen.getByText('Most Popular');
@@ -169,7 +177,7 @@ describe('Pricing', () => {
   });
 
   describe('Plan Features', () => {
-    it('should display free plan features', () => {
+    it('should display free plan features', async () => {
       render(<Pricing />);
 
       expect(screen.getByText('1 portfolio')).toBeInTheDocument();

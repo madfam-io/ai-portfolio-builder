@@ -1,11 +1,10 @@
+import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import Stripe from 'stripe';
 /**
  * @jest-environment node
  */
 
-import { jest } from '@jest/globals';
-import Stripe from 'stripe';
-import {
-  createCheckoutSession,
+import {   createCheckoutSession,
   createPortalSession,
   handleWebhookEvent,
   createAICreditCheckout,
@@ -13,12 +12,18 @@ import {
   AI_CREDIT_PACKS,
   formatPriceWithPromotion,
   getSubscriptionFeatures,
-} from '@/lib/services/stripe/stripe-enhanced';
+ } from '@/lib/services/stripe/stripe-enhanced';
 
 // Mock Stripe
 jest.mock('stripe');
 
 describe('Enhanced Stripe Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockStripe: jest.Mocked<Stripe>;
   let mockCheckoutSessions: any;
   let mockBillingPortalSessions: any;
@@ -33,27 +38,27 @@ describe('Enhanced Stripe Service', () => {
 
     // Setup mock implementations
     mockCheckoutSessions = {
-      create: jest.fn(),
+      create: jest.fn().mockReturnValue(void 0),
     };
 
     mockBillingPortalSessions = {
-      create: jest.fn(),
+      create: jest.fn().mockReturnValue(void 0),
     };
 
     mockPrices = {
-      retrieve: jest.fn(),
+      retrieve: jest.fn().mockReturnValue(void 0),
     };
 
     mockCustomers = {
-      update: jest.fn(),
+      update: jest.fn().mockReturnValue(void 0),
     };
 
     mockSubscriptions = {
-      retrieve: jest.fn(),
-      update: jest.fn(),
+      retrieve: jest.fn().mockReturnValue(void 0),
+      update: jest.fn().mockReturnValue(void 0),
     };
 
-    mockWebhooksConstructEvent = jest.fn();
+    mockWebhooksConstructEvent = jest.fn().mockReturnValue(void 0);
 
     // Create Stripe mock instance
     mockStripe = {
@@ -76,7 +81,7 @@ describe('Enhanced Stripe Service', () => {
   });
 
   describe('Subscription Plans', () => {
-    it('should have correctly structured subscription plans', () => {
+    it('should have correctly structured subscription plans', async () => {
       expect(SUBSCRIPTION_PLANS).toHaveProperty('free');
       expect(SUBSCRIPTION_PLANS).toHaveProperty('pro');
       expect(SUBSCRIPTION_PLANS).toHaveProperty('business');
@@ -89,7 +94,7 @@ describe('Enhanced Stripe Service', () => {
       expect(SUBSCRIPTION_PLANS.enterprise.portfolios).toBe(-1); // Unlimited
     });
 
-    it('should have promotional pricing for paid plans', () => {
+    it('should have promotional pricing for paid plans', async () => {
       expect(SUBSCRIPTION_PLANS.pro.promotionalPrice).toBe(1200); // $12
       expect(SUBSCRIPTION_PLANS.business.promotionalPrice).toBe(1950); // $19.50
       expect(SUBSCRIPTION_PLANS.enterprise.promotionalPrice).toBe(3950); // $39.50
@@ -143,7 +148,7 @@ describe('Enhanced Stripe Service', () => {
             planId: 'pro',
           },
         },
-    );
+    });
   });
 
       expect(result).toEqual(mockSession);
@@ -270,7 +275,7 @@ describe('Enhanced Stripe Service', () => {
         success_url: 'https://example.com/success',
         cancel_url: 'https://example.com/cancel',
         billing_address_collection: 'auto',
-    );
+    });
   });
 
       expect(result).toEqual(mockSession);
@@ -323,7 +328,7 @@ describe('Enhanced Stripe Service', () => {
       {
         customer: 'cus_123',
         return_url: 'https://example.com/dashboard',
-    );
+    });
   });
 
       expect(result).toEqual(mockSession);
@@ -355,7 +360,7 @@ describe('Enhanced Stripe Service', () => {
 
       mockWebhooksConstructEvent.mockReturnValue(mockEvent);
 
-      const handler = jest.fn();
+      const handler = jest.fn().mockReturnValue(void 0);
       const result = await handleWebhookEvent(mockRawBody, mockSignature, {
         'checkout.session.completed': handler,
       });
@@ -388,7 +393,7 @@ describe('Enhanced Stripe Service', () => {
 
       mockWebhooksConstructEvent.mockReturnValue(mockEvent);
 
-      const handler = jest.fn();
+      const handler = jest.fn().mockReturnValue(void 0);
       await handleWebhookEvent(mockRawBody, mockSignature, {
         'checkout.session.completed': handler,
       });
@@ -421,7 +426,7 @@ describe('Enhanced Stripe Service', () => {
 
       mockWebhooksConstructEvent.mockReturnValue(mockEvent);
 
-      const handler = jest.fn();
+      const handler = jest.fn().mockReturnValue(void 0);
       await handleWebhookEvent(mockRawBody, mockSignature, {
         'customer.subscription.updated': handler,
       });
@@ -442,7 +447,7 @@ describe('Enhanced Stripe Service', () => {
 
       mockWebhooksConstructEvent.mockReturnValue(mockEvent);
 
-      const handler = jest.fn();
+      const handler = jest.fn().mockReturnValue(void 0);
       await handleWebhookEvent(mockRawBody, mockSignature, {
         'customer.subscription.deleted': handler,
       });
@@ -475,12 +480,12 @@ describe('Enhanced Stripe Service', () => {
   });
 
   describe('formatPriceWithPromotion', () => {
-    it('should format price without promotion', () => {
+    it('should format price without promotion', async () => {
       const result = formatPriceWithPromotion(2400);
       expect(result).toBe('$24.00');
     });
 
-    it('should format price with promotion', () => {
+    it('should format price with promotion', async () => {
       const result = formatPriceWithPromotion(2400, 1200);
       expect(result).toEqual({
         original: '$24.00',
@@ -490,14 +495,14 @@ describe('Enhanced Stripe Service', () => {
       });
     });
 
-    it('should handle different currencies', () => {
+    it('should handle different currencies', async () => {
       const result = formatPriceWithPromotion(2400, undefined, 'eur');
       expect(result).toBe('€24.00');
     });
   });
 
   describe('getSubscriptionFeatures', () => {
-    it('should return correct features for each plan', () => {
+    it('should return correct features for each plan', async () => {
       const plans: Array<keyof typeof SUBSCRIPTION_PLANS> = [
         'free',
         'pro',
@@ -514,14 +519,14 @@ describe('Enhanced Stripe Service', () => {
       });
     });
 
-    it('should include AI request limits', () => {
+    it('should include AI request limits', async () => {
       const proFeatures = getSubscriptionFeatures('pro');
       const aiFeature = proFeatures.find(f => f.name.includes('AI'));
       expect(aiFeature).toBeDefined();
       expect(aiFeature?.included).toBe(true);
     });
 
-    it('should show unlimited features for enterprise', () => {
+    it('should show unlimited features for enterprise', async () => {
       const enterpriseFeatures = getSubscriptionFeatures('enterprise');
       const unlimitedFeatures = enterpriseFeatures.filter(f =>
         f.name.toLowerCase().includes('unlimited')
@@ -568,7 +573,7 @@ describe('Enhanced Stripe Service', () => {
   });
 
   describe('Promotional Pricing Logic', () => {
-    it('should calculate correct savings percentage', () => {
+    it('should calculate correct savings percentage', async () => {
       const result = formatPriceWithPromotion(3900, 1950);
       expect(result).toEqual({
         original: '$39.00',
@@ -578,7 +583,7 @@ describe('Enhanced Stripe Service', () => {
       });
     });
 
-    it('should handle edge cases in pricing', () => {
+    it('should handle edge cases in pricing', async () => {
       // Zero promotional price
       const freePromo = formatPriceWithPromotion(1000, 0);
       expect(freePromo.percentOff).toBe(100);

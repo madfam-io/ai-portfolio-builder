@@ -1,26 +1,63 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { cookies } from 'next/headers';
-import { POST } from '@/app/api/v1/experiments/track/route';
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import {
-  setupCommonMocks,
-  createMockRequest,
-} from '@/__tests__/utils/api-route-test-helpers';
 
-// Mock dependencies
-jest.mock('next/headers');
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+    })),
+  })),
+}));
+
+jest.mock('@/lib/auth/middleware', () => ({
+  authMiddleware: jest.fn((handler) => handler),
+  requireAuth: jest.fn(() => ({ id: 'test-user' })),
+}));
+
+jest.mock('@/lib/cache/cache-headers', () => ({
+  setCacheHeaders: jest.fn(),
+}));
+
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 describe('POST /api/v1/experiments/track', () => {
+  beforeEach(() => {
+    global.fetch = jest.fn();
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   let mockCookieStore: any;
   let mockSupabaseClient: any;
 
   beforeEach(() => {
+    global.crypto = {
+      randomUUID: jest.fn(() => 'test-uuid-' + Math.random()),
+      getRandomValues: jest.fn((arr) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = Math.floor(Math.random() * 256);
+        }
+        return arr;
+      }),
+    };
     jest.clearAllMocks();
 
     // Mock cookies
@@ -37,7 +74,7 @@ describe('POST /api/v1/experiments/track', () => {
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
     // Mock logger
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
   });
 
   const validTrackData = {
@@ -122,7 +159,7 @@ describe('POST /api/v1/experiments/track', () => {
     expect(mockUpdate.update).toHaveBeenCalledWith(
       {
       conversions: 6,
-    );
+    });
   });
   });
 

@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
 import { cookies } from 'next/headers';
 import { createClient } from '@/lib/supabase/server';
@@ -8,11 +8,29 @@ import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route
 
 
 // Mock dependencies
-jest.mock('next/headers');
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+jest.mock('next/headers', () => ({
+  cookies: jest.fn().mockReturnValue(void 0),
+  headers: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 describe('FeatureFlagService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   let mockCookieStore: any;
@@ -23,21 +41,21 @@ describe('FeatureFlagService', () => {
 
     // Mock cookie store
     mockCookieStore = {
-      get: jest.fn(),
-      set: jest.fn(),
-      delete: jest.fn(),
+      get: jest.fn().mockReturnValue(void 0),
+      set: jest.fn().mockReturnValue(void 0),
+      delete: jest.fn().mockReturnValue(void 0),
     };
     (cookies as jest.Mock).mockResolvedValue(mockCookieStore);
 
     // Mock Supabase client
     mockSupabaseClient = {
-      from: jest.fn(),
+      from: jest.fn().mockReturnValue(void 0),
       rpc: jest.fn().mockResolvedValue({ error: null }),
     };
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
     // Mock logger
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
 
     // Mock crypto.randomUUID
     jest.spyOn(crypto, 'randomUUID').mockReturnValue('test-visitor-id');
@@ -497,7 +515,7 @@ describe('FeatureFlagService', () => {
   });
 
   describe('hashToPercentage', () => {
-    it('should consistently hash strings to percentages', () => {
+    it('should consistently hash strings to percentages', async () => {
       const hashToPercentage = (FeatureFlagService as any).hashToPercentage;
 
       const hash1 = hashToPercentage('test-string');
@@ -508,7 +526,7 @@ describe('FeatureFlagService', () => {
       expect(hash1).toBeLessThan(100);
     });
 
-    it('should distribute hashes evenly', () => {
+    it('should distribute hashes evenly', async () => {
       const hashToPercentage = (FeatureFlagService as any).hashToPercentage;
       const hashes: number[] = [];
 

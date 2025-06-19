@@ -213,7 +213,7 @@ export function useRealTimePreview({
 
       // For now, return a placeholder - implement with html2canvas in production
       return 'data:image/png;base64,placeholder-screenshot-data';
-    } catch (error) {
+    } catch (_error) {
       return null;
     }
   }, []);

@@ -10,7 +10,10 @@ export async function GET(request: NextRequest) {
   if (!code) {
     logger.error('No code provided in auth callback');
     return NextResponse.redirect(
-      new URL(`/auth/login?error=No authorization code provided`, requestUrl.origin)
+      new URL(
+        `/auth/login?error=No authorization code provided`,
+        requestUrl.origin
+      )
     );
   }
 
@@ -19,7 +22,10 @@ export async function GET(request: NextRequest) {
     if (!supabase) {
       logger.error('Supabase client not configured');
       return NextResponse.redirect(
-        new URL(`/auth/login?error=Authentication service not configured`, requestUrl.origin)
+        new URL(
+          `/auth/login?error=Authentication service not configured`,
+          requestUrl.origin
+        )
       );
     }
 
@@ -28,7 +34,10 @@ export async function GET(request: NextRequest) {
     if (error) {
       logger.error('Error exchanging code for session:', error);
       return NextResponse.redirect(
-        new URL(`/auth/login?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
+        new URL(
+          `/auth/login?error=${encodeURIComponent(error.message)}`,
+          requestUrl.origin
+        )
       );
     }
 

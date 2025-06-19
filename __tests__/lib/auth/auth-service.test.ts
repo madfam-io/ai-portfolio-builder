@@ -1,10 +1,45 @@
+import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import { cookies } from 'next/headers';
 /**
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
  * @jest-environment node
  */
 
-import { jest } from '@jest/globals';
-import {
-  signUpWithEmail,
+import {   signUpWithEmail,
   signInWithEmail,
   signInWithProvider,
   signOut,
@@ -14,22 +49,36 @@ import {
   setupMFA,
   validateSession,
   refreshSession,
-} from '@/lib/auth/auth-service';
-import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import { cookies } from 'next/headers';
-
+ } from '@/lib/auth/auth-service';
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
-jest.mock('next/headers');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
+jest.mock('next/headers', () => ({
+  cookies: jest.fn().mockReturnValue(void 0),
+  headers: jest.fn().mockReturnValue(void 0),
+}));
 
 const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
 const mockLogger = jest.mocked(logger);
 const mockCookies = jest.mocked(cookies);
 
 describe('Auth Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockSupabase: any;
   let mockAuth: any;
 
@@ -38,16 +87,16 @@ describe('Auth Service', () => {
 
     // Setup auth mock
     mockAuth = {
-      signUp: jest.fn(),
-      signInWithPassword: jest.fn(),
-      signInWithOAuth: jest.fn(),
-      signOut: jest.fn(),
-      resetPasswordForEmail: jest.fn(),
-      updateUser: jest.fn(),
-      verifyOtp: jest.fn(),
-      getSession: jest.fn(),
-      refreshSession: jest.fn(),
-      getUser: jest.fn(),
+      signUp: jest.fn().mockReturnValue(void 0),
+      signInWithPassword: jest.fn().mockReturnValue(void 0),
+      signInWithOAuth: jest.fn().mockReturnValue(void 0),
+      signOut: jest.fn().mockReturnValue(void 0),
+      resetPasswordForEmail: jest.fn().mockReturnValue(void 0),
+      updateUser: jest.fn().mockReturnValue(void 0),
+      verifyOtp: jest.fn().mockReturnValue(void 0),
+      getSession: jest.fn().mockReturnValue(void 0),
+      refreshSession: jest.fn().mockReturnValue(void 0),
+      getUser: jest.fn().mockReturnValue(void 0),
     };
 
     // Setup Supabase mock
@@ -57,21 +106,21 @@ describe('Auth Service', () => {
       insert: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn().mockReturnValue(void 0),
     };
 
     mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
 
     // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    mockLogger.info = jest.fn().mockReturnValue(void 0);
+    mockLogger.error = jest.fn().mockReturnValue(void 0);
+    mockLogger.warn = jest.fn().mockReturnValue(void 0);
 
     // Mock cookies
     mockCookies.mockReturnValue({
-      get: jest.fn(),
-      set: jest.fn(),
-      delete: jest.fn(),
+      get: jest.fn().mockReturnValue(void 0),
+      set: jest.fn().mockReturnValue(void 0),
+      delete: jest.fn().mockReturnValue(void 0),
     });
   });
 
@@ -119,7 +168,7 @@ describe('Auth Service', () => {
         email: mockEmail,
         subscription_plan: 'free',
         ai_credits: 3,
-    );
+    });
   });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -193,7 +242,7 @@ describe('Auth Service', () => {
       {
         email: mockEmail,
         password: mockPassword,
-    );
+    });
   });
 
       expect(result).toEqual({
@@ -410,7 +459,7 @@ describe('Auth Service', () => {
       expect(mockAuth.updateUser).toHaveBeenCalledWith(
       {
         password: newPassword,
-    );
+    });
   });
 
       expect(result.error).toBeNull();
@@ -480,7 +529,7 @@ describe('Auth Service', () => {
         expect(mockAuth.mfa.enroll).toHaveBeenCalledWith(
       {
           factorType: 'totp',
-    );
+    });
   });
 
         expect(result).toEqual({
@@ -537,7 +586,7 @@ describe('Auth Service', () => {
       {
           factorId: mockFactorId,
           code: mockCode,
-    );
+    });
   });
 
         expect(result).toEqual({

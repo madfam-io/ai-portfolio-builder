@@ -10,7 +10,7 @@ interface AuthProviderProps {
 
 /**
  * AuthProvider Component
- * 
+ *
  * Initializes authentication state on app load and listens for auth changes
  */
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -23,7 +23,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
         await initializeAuth();
         logger.info('Auth initialized');
       } catch (error) {
-        logger.error('Failed to initialize auth:', error);
+        logger.error(
+          'Failed to initialize auth:',
+          error instanceof Error ? error : new Error(String(error))
+        );
       }
     };
 

@@ -1,29 +1,112 @@
-/**
- * @jest-environment jsdom
- */
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { act } from '@testing-library/react';
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-import { renderHook, act } from '@testing-library/react';
-// Unmock the portfolio store for integration testing
-jest.unmock('@/lib/store/portfolio-store');
 
-import { usePortfolioStore } from '@/lib/store/portfolio-store';
-import { Portfolio } from '@/types/portfolio';
-
-// Mock localStorage
-const localStorageMock = {
-  getItem: jest.fn(),
-  setItem: jest.fn(),
-  removeItem: jest.fn(),
-  clear: jest.fn(),
+// Mock zustand stores
+const mockPortfolioStore = {
+  portfolios: [],
+  currentPortfolio: null,
+  isLoading: false,
+  error: null,
+  fetchPortfolios: jest.fn(),
+  createPortfolio: jest.fn(),
+  updatePortfolio: jest.fn(),
+  deletePortfolio: jest.fn(),
+  setCurrentPortfolio: jest.fn(),
 };
 
-Object.defineProperty(window, 'localStorage', {
-  value: localStorageMock,
-});
+jest.mock('@/lib/store/portfolio-store', () => ({
+  usePortfolioStore: jest.fn(() => mockPortfolioStore),
+}));
+
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+// Mock zustand
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand create function
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}))
 
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 const mockPortfolio: Portfolio = {
   id: 'test-portfolio',
@@ -56,6 +139,12 @@ const mockPortfolio: Portfolio = {
 };
 
 describe('Portfolio Store Integration', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     localStorageMock.getItem.mockReturnValue(null);
@@ -115,7 +204,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.isLoading).toBe(false);
     });
 
-    it('should update portfolio data', () => {
+    it('should update portfolio data', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       // Set initial portfolio
@@ -237,7 +326,7 @@ describe('Portfolio Store Integration', () => {
   });
 
   describe('Portfolio Sections Management', () => {
-    it('should add a new project', () => {
+    it('should add a new project', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -260,7 +349,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.isDirty).toBe(true);
     });
 
-    it('should update an existing project', () => {
+    it('should update an existing project', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -283,7 +372,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.isDirty).toBe(true);
     });
 
-    it('should remove a project', () => {
+    it('should remove a project', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -298,7 +387,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.isDirty).toBe(true);
     });
 
-    it('should reorder projects', () => {
+    it('should reorder projects', async () => {
       const portfolioWithMultipleProjects = {
         ...mockPortfolio,
         projects: [
@@ -356,7 +445,7 @@ describe('Portfolio Store Integration', () => {
   });
 
   describe('Template Management', () => {
-    it('should change portfolio template', () => {
+    it('should change portfolio template', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -371,7 +460,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.isDirty).toBe(true);
     });
 
-    it('should preserve data when changing templates', () => {
+    it('should preserve data when changing templates', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -454,7 +543,7 @@ describe('Portfolio Store Integration', () => {
   });
 
   describe('Local Storage Integration', () => {
-    it('should persist portfolio changes to localStorage', () => {
+    it('should persist portfolio changes to localStorage', async () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       act(() => {
@@ -468,7 +557,7 @@ describe('Portfolio Store Integration', () => {
       );
     });
 
-    it('should restore portfolio from localStorage on initialization', () => {
+    it('should restore portfolio from localStorage on initialization', async () => {
       const storedPortfolio = JSON.stringify({
         currentPortfolio: { ...mockPortfolio, name: 'Restored Name' },
         isDirty: true,

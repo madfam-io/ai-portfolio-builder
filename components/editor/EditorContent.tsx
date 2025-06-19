@@ -37,7 +37,11 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { GuidedTour } from '@/components/onboarding/GuidedTour';
-import { editorTourSteps, shouldShowTour, markTourCompleted } from '@/components/onboarding/tours/editor-tour';
+import {
+  editorTourSteps,
+  shouldShowTour,
+  markTourCompleted,
+} from '@/components/onboarding/tours/editor-tour';
 import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
 
 /**
@@ -216,7 +220,7 @@ export function EditorContent() {
         try {
           await savePortfolio();
           setLastSaved(new Date());
-        } catch (error) {
+        } catch (_error) {
           // Error handling already in savePortfolio
         } finally {
           setIsSaving(false);
@@ -288,7 +292,10 @@ export function EditorContent() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <h1 className="text-lg font-semibold">{currentPortfolio.name}</h1>
-              <CompletionBadge portfolio={currentPortfolio} className="text-xs" />
+              <CompletionBadge
+                portfolio={currentPortfolio}
+                className="text-xs"
+              />
               {currentPortfolio.hasUnsavedChanges && (
                 <Badge variant="secondary" className="text-xs">
                   {t.unsavedChanges || 'Unsaved changes'}
@@ -407,7 +414,11 @@ export function EditorContent() {
                 : t.aiEnhance || 'AI Enhance'}
             </Button>
 
-            <Button size="sm" onClick={handlePublish} data-tour="publish-button">
+            <Button
+              size="sm"
+              onClick={handlePublish}
+              data-tour="publish-button"
+            >
               {t.publish || 'Publish'}
             </Button>
           </div>
@@ -419,52 +430,52 @@ export function EditorContent() {
         {/* Sidebar */}
         <div className="editor-sidebar">
           <EditorSidebarEnhanced
-          portfolio={currentPortfolio}
-          activeSection={activeSection}
-          onSectionChange={setActiveSection}
-          onSectionUpdate={(section, updates) => {
-            // Handle section updates
-            if (typeof updates === 'object' && updates !== null) {
-              Object.entries(updates).forEach(([field, value]) => {
-                // Track analytics for section edits
-                trackEditorSectionEdited(currentPortfolio.id, section, {
-                  edit_type: 'update',
-                  field,
+            portfolio={currentPortfolio}
+            activeSection={activeSection}
+            onSectionChange={setActiveSection}
+            onSectionUpdate={(section, updates) => {
+              // Handle section updates
+              if (typeof updates === 'object' && updates !== null) {
+                Object.entries(updates).forEach(([field, value]) => {
+                  // Track analytics for section edits
+                  trackEditorSectionEdited(currentPortfolio.id, section, {
+                    edit_type: 'update',
+                    field,
+                  });
+
+                  // Track theme changes specifically
+                  if (field === 'customization' || field === 'template') {
+                    trackEditorThemeChanged(currentPortfolio.id, {
+                      customization_type: field,
+                    });
+                  }
+
+                  // For nested data fields, we need to update the data object
+                  if (
+                    [
+                      'experience',
+                      'education',
+                      'projects',
+                      'skills',
+                      'certifications',
+                      'customization',
+                      'contact',
+                      'social',
+                    ].includes(field)
+                  ) {
+                    updatePortfolioData(field, value);
+                  } else {
+                    updatePortfolioData(field, value);
+                  }
                 });
 
-                // Track theme changes specifically
-                if (field === 'customization' || field === 'template') {
-                  trackEditorThemeChanged(currentPortfolio.id, {
-                    customization_type: field,
-                  });
-                }
-
-                // For nested data fields, we need to update the data object
-                if (
-                  [
-                    'experience',
-                    'education',
-                    'projects',
-                    'skills',
-                    'certifications',
-                    'customization',
-                    'contact',
-                    'social',
-                  ].includes(field)
-                ) {
-                  updatePortfolioData(field, value);
-                } else {
-                  updatePortfolioData(field, value);
-                }
-              });
-
-              // Track general portfolio update
-              trackPortfolioUpdated(currentPortfolio.id, {
-                section,
-                update_type: 'manual',
-              });
-            }
-          }}
+                // Track general portfolio update
+                trackPortfolioUpdated(currentPortfolio.id, {
+                  section,
+                  update_type: 'manual',
+                });
+              }
+            }}
           />
         </div>
 

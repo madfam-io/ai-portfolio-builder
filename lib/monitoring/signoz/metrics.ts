@@ -234,7 +234,7 @@ export const measureDuration = async <T>(
     });
 
     return result;
-  } catch (error) {
+  } catch (_error) {
     const duration = performance.now() - startTime;
 
     recordPerformanceMetric(metricName, duration, {

@@ -1,5 +1,6 @@
 // Comprehensive Supabase mock factory for tests
-import { jest } from '@jest/globals';
+// Jest is available globally in test environment
+declare const jest: any;
 
 export const createMockSupabaseClient = (overrides: any = {}) => {
   const mockAuth = {
@@ -95,18 +96,22 @@ export const createMockSupabaseServerClient = (overrides: any = {}) => {
 export const setupSupabaseMocks = () => {
   // Mock @supabase/ssr
   jest.mock('@supabase/ssr', () => ({
-    createServerClient: jest.fn((_url, _key, _options) => {
-      // Return mock client with auth property
-      return createMockSupabaseServerClient();
-    }),
-    createBrowserClient: jest.fn((_url, _key, _options) => {
-      return createMockSupabaseClient();
-    }),
+    createServerClient: jest.fn(
+      (_url: string, _key: string, _options?: any) => {
+        // Return mock client with auth property
+        return createMockSupabaseServerClient();
+      }
+    ),
+    createBrowserClient: jest.fn(
+      (_url: string, _key: string, _options?: any) => {
+        return createMockSupabaseClient();
+      }
+    ),
   }));
 
   // Mock @supabase/supabase-js
   jest.mock('@supabase/supabase-js', () => ({
-    createClient: jest.fn((_url, _key, _options) => {
+    createClient: jest.fn((_url: string, _key: string, _options?: any) => {
       return createMockSupabaseClient();
     }),
   }));

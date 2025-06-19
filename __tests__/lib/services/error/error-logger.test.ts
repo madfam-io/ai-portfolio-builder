@@ -1,20 +1,13 @@
-import {
-  describe,
-  test,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { ErrorLogger, errorLogger } from '@/lib/services/error/error-logger';
+import { describe, test, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 
 /**
  * Tests for Error Logger Service
  */
 
 // Unmock the error logger for this test
-jest.unmock('@/lib/services/error/error-logger');
-import { ErrorLogger, errorLogger } from '@/lib/services/error/error-logger';
+
 import {
   AppError,
   ValidationError,
@@ -28,6 +21,9 @@ describe('ErrorLogger', () => {
   let originalTestLogs: string | undefined;
 
   beforeEach(() => {
+    const originalEnv = process.env;
+    process.env = { ...originalEnv };
+
     consoleSpy = jest.spyOn(console, 'error').mockImplementation();
     consoleLogSpy = jest.spyOn(console, 'log').mockImplementation();
     originalEnv = process.env.NODE_ENV;
@@ -50,7 +46,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('getInstance', () => {
-    it('should return singleton instance', () => {
+    it('should return singleton instance', async () => {
       const instance1 = ErrorLogger.getInstance();
       const instance2 = ErrorLogger.getInstance();
       expect(instance1).toBe(instance2);
@@ -58,7 +54,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('logError', () => {
-    it('should log standard Error objects', () => {
+    it('should log standard Error objects', async () => {
       const error = new Error('Test error');
       errorLogger.logError(error);
 
@@ -69,7 +65,7 @@ describe('ErrorLogger', () => {
       expect(logData.level).toBe('error');
     });
 
-    it('should log AppError with additional details', () => {
+    it('should log AppError with additional details', async () => {
       const error = new AppError('Test app error', 'TEST_ERROR', 400, {
         field: 'test',
       });
@@ -85,7 +81,7 @@ describe('ErrorLogger', () => {
       expect(logData.details).toEqual({ field: 'test' });
     });
 
-    it('should log with context information', () => {
+    it('should log with context information', async () => {
       const error = new Error('Context error');
       errorLogger.logError(error, {
         userId: 'user123',
@@ -101,7 +97,7 @@ describe('ErrorLogger', () => {
       expect(logData.context.userId).toBe('user123');
     });
 
-    it('should handle non-Error objects', () => {
+    it('should handle non-Error objects', async () => {
       errorLogger.logError('String error');
       expect(consoleSpy).toHaveBeenCalled();
 
@@ -109,7 +105,7 @@ describe('ErrorLogger', () => {
       expect(consoleSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should suppress logs in test environment when ENABLE_TEST_LOGS is not set', () => {
+    it('should suppress logs in test environment when ENABLE_TEST_LOGS is not set', async () => {
       process.env.NODE_ENV = 'test';
       delete process.env.ENABLE_TEST_LOGS;
 
@@ -117,7 +113,7 @@ describe('ErrorLogger', () => {
       expect(consoleSpy).not.toHaveBeenCalled();
     });
 
-    it('should show logs in test environment when ENABLE_TEST_LOGS is set', () => {
+    it('should show logs in test environment when ENABLE_TEST_LOGS is set', async () => {
       process.env.NODE_ENV = 'test';
       process.env.ENABLE_TEST_LOGS = 'true';
 
@@ -129,7 +125,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('logWarning', () => {
-    it('should log warning messages', () => {
+    it('should log warning messages', async () => {
       errorLogger.logWarning('Test warning');
 
       expect(consoleSpy).toHaveBeenCalled();
@@ -139,7 +135,7 @@ describe('ErrorLogger', () => {
       expect(logData.message).toBe('Test warning');
     });
 
-    it('should include context in warnings', () => {
+    it('should include context in warnings', async () => {
       errorLogger.logWarning('Warning with context', {
         component: 'TestComponent',
       });
@@ -152,7 +148,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('logInfo', () => {
-    it('should log info messages', () => {
+    it('should log info messages', async () => {
       errorLogger.logInfo('Test info');
 
       expect(consoleSpy).toHaveBeenCalled();
@@ -164,7 +160,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('development vs production logging', () => {
-    it('should use JSON format in test environment', () => {
+    it('should use JSON format in test environment', async () => {
       errorLogger.logError(new Error('Test env error'));
 
       expect(consoleSpy).toHaveBeenCalled();
@@ -174,7 +170,7 @@ describe('ErrorLogger', () => {
       expect(parsed.level).toBe('error');
     });
 
-    it('should include stack trace in error logs', () => {
+    it('should include stack trace in error logs', async () => {
       const error = new Error('Stack error');
       errorLogger.logError(error);
 
@@ -187,7 +183,7 @@ describe('ErrorLogger', () => {
   });
 
   describe('specialized error types', () => {
-    it('should handle ValidationError', () => {
+    it('should handle ValidationError', async () => {
       const error = new ValidationError('Invalid input', {
         field: 'email',
         reason: 'invalid format',
@@ -206,7 +202,7 @@ describe('ErrorLogger', () => {
       });
     });
 
-    it('should handle ExternalServiceError', () => {
+    it('should handle ExternalServiceError', async () => {
       const originalError = new Error('Connection failed');
       const error = new ExternalServiceError('Database', originalError);
 

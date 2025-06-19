@@ -1,8 +1,48 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
 import posthog from 'posthog-js';
-import {
-  initializePostHog,
+import { useAuthStore } from '@/lib/store/auth-store';
+
+import {   initializePostHog,
+
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+
+jest.mock('posthog-js', () => ({
+jest.mock('@/lib/store/auth-store');
+
+create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+
   identifyUser,
   resetUser,
   captureEvent,
@@ -20,35 +60,35 @@ import {
   usePostHog,
   EVENTS,
   USER_PROPERTIES,
-} from '@/lib/analytics/posthog/client';
-import { useAuthStore } from '@/lib/store/auth-store';
+ } from '@/lib/analytics/posthog/client';
+
 
 
 // Mock posthog-js
-jest.mock('posthog-js', () => ({
+
   __esModule: true,
   default: {
     __loaded: false,
-    init: jest.fn(),
-    identify: jest.fn(),
-    reset: jest.fn(),
-    capture: jest.fn(),
-    isFeatureEnabled: jest.fn(),
-    getFeatureFlagPayload: jest.fn(),
+    init: jest.fn().mockReturnValue(void 0),
+    identify: jest.fn().mockReturnValue(void 0),
+    reset: jest.fn().mockReturnValue(void 0),
+    capture: jest.fn().mockReturnValue(void 0),
+    isFeatureEnabled: jest.fn().mockReturnValue(void 0),
+    getFeatureFlagPayload: jest.fn().mockReturnValue(void 0),
     people: {
-      set: jest.fn(),
+      set: jest.fn().mockReturnValue(void 0),
     },
-    get_property: jest.fn(),
-    startSessionRecording: jest.fn(),
-    stopSessionRecording: jest.fn(),
-    opt_out_capturing: jest.fn(),
-    opt_in_capturing: jest.fn(),
-    has_opted_out_capturing: jest.fn(),
+    get_property: jest.fn().mockReturnValue(void 0),
+    startSessionRecording: jest.fn().mockReturnValue(void 0),
+    stopSessionRecording: jest.fn().mockReturnValue(void 0),
+    opt_out_capturing: jest.fn().mockReturnValue(void 0),
+    opt_in_capturing: jest.fn().mockReturnValue(void 0),
+    has_opted_out_capturing: jest.fn().mockReturnValue(void 0),
   },
 }));
 
 // Mock auth store
-jest.mock('@/lib/store/auth-store');
+
 
 // Mock environment variables
 const mockEnv = {
@@ -59,6 +99,12 @@ const mockEnv = {
 };
 
 describe('PostHog Analytics Client', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockUser = {
     id: 'user-123',
     email: 'test@example.com',
@@ -66,6 +112,9 @@ describe('PostHog Analytics Client', () => {
   };
 
   beforeEach(() => {
+    const originalEnv = process.env;
+    process.env = { ...originalEnv };
+
     jest.clearAllMocks();
     // Reset environment
     process.env = { ...mockEnv };
@@ -90,7 +139,7 @@ describe('PostHog Analytics Client', () => {
   });
 
   describe('initializePostHog', () => {
-    it('should initialize PostHog when enabled with key', () => {
+    it('should initialize PostHog when enabled with key', async () => {
       initializePostHog();
 
       expect(posthog.init).toHaveBeenCalledWith('test-posthog-key', {
@@ -115,7 +164,7 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should not initialize when PostHog key is missing', () => {
+    it('should not initialize when PostHog key is missing', async () => {
       delete process.env.NEXT_PUBLIC_POSTHOG_KEY;
 
       initializePostHog();
@@ -123,7 +172,7 @@ describe('PostHog Analytics Client', () => {
       expect(posthog.init).not.toHaveBeenCalled();
     });
 
-    it('should not initialize when PostHog is disabled', () => {
+    it('should not initialize when PostHog is disabled', async () => {
       process.env.NEXT_PUBLIC_ENABLE_POSTHOG = 'false';
 
       initializePostHog();
@@ -131,7 +180,7 @@ describe('PostHog Analytics Client', () => {
       expect(posthog.init).not.toHaveBeenCalled();
     });
 
-    it('should not initialize on server side', () => {
+    it('should not initialize on server side', async () => {
       delete (global as any).window;
 
       initializePostHog();
@@ -139,7 +188,7 @@ describe('PostHog Analytics Client', () => {
       expect(posthog.init).not.toHaveBeenCalled();
     });
 
-    it('should not reinitialize if already loaded', () => {
+    it('should not reinitialize if already loaded', async () => {
       (posthog as any).__loaded = true;
 
       initializePostHog();
@@ -153,7 +202,7 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should identify user with properties', () => {
+    it('should identify user with properties', async () => {
       const properties = { plan: 'pro', role: 'admin' };
 
       identifyUser('user-123', properties);
@@ -164,7 +213,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should identify user without additional properties', () => {
+    it('should identify user without additional properties', async () => {
       identifyUser('user-123');
 
       expect(posthog.identify).toHaveBeenCalledWith('user-123', {
@@ -172,7 +221,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should not identify when PostHog is not loaded', () => {
+    it('should not identify when PostHog is not loaded', async () => {
       (posthog as any).__loaded = false;
 
       identifyUser('user-123');
@@ -186,13 +235,13 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should reset user', () => {
+    it('should reset user', async () => {
       resetUser();
 
       expect(posthog.reset).toHaveBeenCalled();
     });
 
-    it('should not reset when PostHog is not loaded', () => {
+    it('should not reset when PostHog is not loaded', async () => {
       (posthog as any).__loaded = false;
 
       resetUser();
@@ -206,7 +255,7 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should capture event with properties', () => {
+    it('should capture event with properties', async () => {
       const properties = { portfolio_id: 'portfolio-123' };
 
       captureEvent('portfolio_created', properties);
@@ -218,7 +267,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should capture event without properties', () => {
+    it('should capture event without properties', async () => {
       captureEvent('user_logged_in');
 
       expect(posthog.capture).toHaveBeenCalledWith('user_logged_in', {
@@ -227,7 +276,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should not capture when PostHog is not loaded', () => {
+    it('should not capture when PostHog is not loaded', async () => {
       (posthog as any).__loaded = false;
 
       captureEvent('test_event');
@@ -241,7 +290,7 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should capture event with enhanced properties', () => {
+    it('should capture event with enhanced properties', async () => {
       captureEnhancedEvent('page_viewed', { section: 'hero' });
 
       expect(posthog.capture).toHaveBeenCalledWith('page_viewed', {
@@ -259,7 +308,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should override default properties with custom ones', () => {
+    it('should override default properties with custom ones', async () => {
       captureEnhancedEvent('custom_event', {
         page_url: 'https://custom.com',
         custom_prop: 'value',
@@ -287,7 +336,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('isFeatureEnabled', () => {
-      it('should return true when feature is enabled', () => {
+      it('should return true when feature is enabled', async () => {
         (posthog.isFeatureEnabled as jest.Mock).mockReturnValue(true);
 
         const result = isFeatureEnabled('new_editor');
@@ -296,7 +345,7 @@ describe('PostHog Analytics Client', () => {
         expect(posthog.isFeatureEnabled).toHaveBeenCalledWith('new_editor');
       });
 
-      it('should return false when feature is disabled', () => {
+      it('should return false when feature is disabled', async () => {
         (posthog.isFeatureEnabled as jest.Mock).mockReturnValue(false);
 
         const result = isFeatureEnabled('beta_feature');
@@ -304,7 +353,7 @@ describe('PostHog Analytics Client', () => {
         expect(result).toBe(false);
       });
 
-      it('should return false when feature returns null', () => {
+      it('should return false when feature returns null', async () => {
         (posthog.isFeatureEnabled as jest.Mock).mockReturnValue(null);
 
         const result = isFeatureEnabled('unknown_feature');
@@ -312,7 +361,7 @@ describe('PostHog Analytics Client', () => {
         expect(result).toBe(false);
       });
 
-      it('should return false when PostHog is not loaded', () => {
+      it('should return false when PostHog is not loaded', async () => {
         (posthog as any).__loaded = false;
 
         const result = isFeatureEnabled('any_feature');
@@ -323,7 +372,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('getFeatureFlagPayload', () => {
-      it('should return feature flag payload', () => {
+      it('should return feature flag payload', async () => {
         const mockPayload = { variant: 'A', config: { color: 'blue' } };
         (posthog.getFeatureFlagPayload as jest.Mock).mockReturnValue(
           mockPayload
@@ -336,7 +385,7 @@ describe('PostHog Analytics Client', () => {
     );
   });
 
-      it('should return null when PostHog is not loaded', () => {
+      it('should return null when PostHog is not loaded', async () => {
         (posthog as any).__loaded = false;
 
         const result = getFeatureFlagPayload('any_flag');
@@ -352,7 +401,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('setUserProperties', () => {
-      it('should set user properties', () => {
+      it('should set user properties', async () => {
         const properties = {
           plan: 'pro',
           portfolios_count: 5,
@@ -363,7 +412,7 @@ describe('PostHog Analytics Client', () => {
         expect(posthog.people.set).toHaveBeenCalledWith(properties);
       });
 
-      it('should not set properties when PostHog is not loaded', () => {
+      it('should not set properties when PostHog is not loaded', async () => {
         (posthog as any).__loaded = false;
 
         setUserProperties({ plan: 'free' });
@@ -373,7 +422,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('incrementUserProperty', () => {
-      it('should increment property by 1 by default', () => {
+      it('should increment property by 1 by default', async () => {
         (posthog.get_property as jest.Mock).mockReturnValue(5);
 
         incrementUserProperty('portfolios_count');
@@ -382,11 +431,11 @@ describe('PostHog Analytics Client', () => {
         expect(posthog.people.set).toHaveBeenCalledWith(
       {
           portfolios_count: 6,
-    );
+    });
   });
       });
 
-      it('should increment property by custom value', () => {
+      it('should increment property by custom value', async () => {
         (posthog.get_property as jest.Mock).mockReturnValue(10);
 
         incrementUserProperty('total_views', 5);
@@ -394,19 +443,19 @@ describe('PostHog Analytics Client', () => {
         expect(posthog.people.set).toHaveBeenCalledWith(
       {
           total_views: 15,
-    );
+    });
   });
       });
 
-      it('should handle missing property (start from 0)', () => {
-        (posthog.get_property as jest.Mock).mockReturnValue(undefined);
+      it('should handle missing property (start from 0)', async () => {
+        (posthog.get_property as jest.Mock).mockReturnValue(void 0);
 
         incrementUserProperty('new_property', 3);
 
         expect(posthog.people.set).toHaveBeenCalledWith(
       {
           new_property: 3,
-    );
+    });
   });
       });
     });
@@ -417,7 +466,7 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should track revenue with default currency', () => {
+    it('should track revenue with default currency', async () => {
       trackRevenue(99.99, { plan: 'pro', billing_cycle: 'monthly' });
 
       expect(posthog.capture).toHaveBeenCalledWith('revenue', {
@@ -430,7 +479,7 @@ describe('PostHog Analytics Client', () => {
       });
     });
 
-    it('should track revenue without additional properties', () => {
+    it('should track revenue without additional properties', async () => {
       trackRevenue(19.99);
 
       expect(posthog.capture).toHaveBeenCalledWith('revenue', {
@@ -448,7 +497,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('startSessionRecording', () => {
-      it('should start session recording in production', () => {
+      it('should start session recording in production', async () => {
         process.env.NODE_ENV = 'production';
 
         startSessionRecording();
@@ -456,7 +505,7 @@ describe('PostHog Analytics Client', () => {
         expect(posthog.startSessionRecording).toHaveBeenCalled();
       });
 
-      it('should not start session recording in development', () => {
+      it('should not start session recording in development', async () => {
         process.env.NODE_ENV = 'development';
 
         startSessionRecording();
@@ -466,7 +515,7 @@ describe('PostHog Analytics Client', () => {
     });
 
     describe('stopSessionRecording', () => {
-      it('should stop session recording', () => {
+      it('should stop session recording', async () => {
         stopSessionRecording();
 
         expect(posthog.stopSessionRecording).toHaveBeenCalled();
@@ -479,19 +528,19 @@ describe('PostHog Analytics Client', () => {
       (posthog as any).__loaded = true;
     });
 
-    it('should opt out of tracking', () => {
+    it('should opt out of tracking', async () => {
       optOut();
 
       expect(posthog.opt_out_capturing).toHaveBeenCalled();
     });
 
-    it('should opt in to tracking', () => {
+    it('should opt in to tracking', async () => {
       optIn();
 
       expect(posthog.opt_in_capturing).toHaveBeenCalled();
     });
 
-    it('should check opt out status', () => {
+    it('should check opt out status', async () => {
       (posthog.has_opted_out_capturing as jest.Mock).mockReturnValue(true);
 
       const result = hasOptedOut();
@@ -500,7 +549,7 @@ describe('PostHog Analytics Client', () => {
       expect(posthog.has_opted_out_capturing).toHaveBeenCalled();
     });
 
-    it('should return false for opt out status when not loaded', () => {
+    it('should return false for opt out status when not loaded', async () => {
       (posthog as any).__loaded = false;
 
       const result = hasOptedOut();
@@ -518,13 +567,13 @@ describe('PostHog Analytics Client', () => {
       } as any);
     });
 
-    it('should initialize PostHog on mount', () => {
+    it('should initialize PostHog on mount', async () => {
       renderHook(() => usePostHog());
 
       expect(posthog.init).toHaveBeenCalled();
     });
 
-    it('should identify user when authenticated', () => {
+    it('should identify user when authenticated', async () => {
       (posthog as any).__loaded = true;
       (
         useAuthStore as jest.MockedFunction<typeof useAuthStore>
@@ -542,7 +591,7 @@ describe('PostHog Analytics Client', () => {
   });
     });
 
-    it('should reset user when not authenticated', () => {
+    it('should reset user when not authenticated', async () => {
       (posthog as any).__loaded = true;
       (
         useAuthStore as jest.MockedFunction<typeof useAuthStore>
@@ -555,7 +604,7 @@ describe('PostHog Analytics Client', () => {
       expect(posthog.reset).toHaveBeenCalled();
     });
 
-    it('should update identification when user changes', () => {
+    it('should update identification when user changes', async () => {
       (posthog as any).__loaded = true;
       const { rerender } = renderHook(
         ({ user }) => {
@@ -588,14 +637,14 @@ describe('PostHog Analytics Client', () => {
   });
 
   describe('Event Constants', () => {
-    it('should have all required event constants', () => {
+    it('should have all required event constants', async () => {
       expect(EVENTS.USER_SIGNED_UP).toBe('user_signed_up');
       expect(EVENTS.PORTFOLIO_CREATED).toBe('portfolio_created');
       expect(EVENTS.AI_CONTENT_GENERATED).toBe('ai_content_generated');
       expect(EVENTS.SUBSCRIPTION_STARTED).toBe('subscription_started');
     });
 
-    it('should have all required user property constants', () => {
+    it('should have all required user property constants', async () => {
       expect(USER_PROPERTIES.TOTAL_PORTFOLIOS).toBe('total_portfolios');
       expect(USER_PROPERTIES.SUBSCRIPTION_TIER).toBe('subscription_tier');
       expect(USER_PROPERTIES.ONBOARDING_COMPLETED).toBe('onboarding_completed');

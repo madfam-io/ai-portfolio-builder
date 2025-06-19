@@ -1,4 +1,6 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { AnalyticsService } from '@/lib/services/analyticsService';
+import { logger } from '@/lib/utils/logger';
 
 // Mock the entire analytics service and its dependencies
 jest.doMock('@/lib/services/analyticsService', () => {
@@ -44,19 +46,19 @@ jest.doMock('@/lib/services/analyticsService', () => {
             },
           },
         ]),
-        getRepository: jest.fn(),
-        getRepositoryAnalytics: jest.fn(),
+        getRepository: jest.fn().mockReturnValue(void 0),
+        getRepositoryAnalytics: jest.fn().mockReturnValue(void 0),
       };
 
       const mockMetricsService = {
-        syncRepositoryMetrics: jest.fn(),
-        syncPullRequests: jest.fn(),
-        syncContributors: jest.fn(),
-        syncCommitAnalytics: jest.fn(),
+        syncRepositoryMetrics: jest.fn().mockReturnValue(void 0),
+        syncPullRequests: jest.fn().mockReturnValue(void 0),
+        syncContributors: jest.fn().mockReturnValue(void 0),
+        syncCommitAnalytics: jest.fn().mockReturnValue(void 0),
       };
 
       const mockDashboardService = {
-        getDashboardData: jest.fn(),
+        getDashboardData: jest.fn().mockReturnValue(void 0),
       };
 
       return {
@@ -68,7 +70,7 @@ jest.doMock('@/lib/services/analyticsService', () => {
         syncCommitAnalytics: mockMetricsService.syncCommitAnalytics,
         getDashboardData: mockDashboardService.getDashboardData,
         getRepositoryAnalytics: mockRepositoryService.getRepositoryAnalytics,
-        syncRepositoryData: jest.fn(),
+        syncRepositoryData: jest.fn().mockReturnValue(void 0),
         _mockRepositoryService: mockRepositoryService,
         _mockMetricsService: mockMetricsService,
         _mockDashboardService: mockDashboardService,
@@ -79,18 +81,22 @@ jest.doMock('@/lib/services/analyticsService', () => {
 
 jest.mock('@/lib/utils/logger', () => ({
   logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
+    info: jest.fn().mockReturnValue(void 0),
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
   },
 }));
 
 // Import after mocks
-import { AnalyticsService } from '@/lib/services/analyticsService';
-import { logger } from '@/lib/utils/logger';
 
 describe('AnalyticsService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let analyticsService: any;
   let mockRepositoryService: any;
   let mockMetricsService: any;
@@ -139,7 +145,7 @@ describe('AnalyticsService', () => {
     ) as jest.Mocked<DashboardAnalyticsService>;
 
     // Setup default mock implementations
-    mockGithubClient.initialize = jest.fn().mockResolvedValue(undefined);
+    mockGithubClient.initialize = jest.fn().mockResolvedValue(void 0);
     mockRepositoryService.syncRepositories = jest
       .fn()
       .mockResolvedValue([mockRepository]);
@@ -154,7 +160,9 @@ describe('AnalyticsService', () => {
       .mockResolvedValue(null);
 
     // Mock logger
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (
+      logger.error as jest.MockedFunction<typeof logger.error>
+    ).mockImplementation(() => undefined);
 
     // Create service instance
     analyticsService = new AnalyticsService(userId);
@@ -284,7 +292,7 @@ describe('AnalyticsService', () => {
     it('should sync contributors for existing repository', async () => {
       mockMetricsService.syncContributors = jest
         .fn()
-        .mockResolvedValue(undefined);
+        .mockResolvedValue(void 0);
 
       await analyticsService.syncContributors('repo-123');
 
@@ -306,7 +314,7 @@ describe('AnalyticsService', () => {
     it('should sync commit analytics with default days', async () => {
       mockMetricsService.syncCommitAnalytics = jest
         .fn()
-        .mockResolvedValue(undefined);
+        .mockResolvedValue(void 0);
 
       await analyticsService.syncCommitAnalytics('repo-123');
 
@@ -319,7 +327,7 @@ describe('AnalyticsService', () => {
     it('should sync commit analytics with custom days', async () => {
       mockMetricsService.syncCommitAnalytics = jest
         .fn()
-        .mockResolvedValue(undefined);
+        .mockResolvedValue(void 0);
 
       await analyticsService.syncCommitAnalytics('repo-123', 60);
 
@@ -435,10 +443,10 @@ describe('AnalyticsService', () => {
       mockMetricsService.syncPullRequests = jest.fn().mockResolvedValue([]);
       mockMetricsService.syncContributors = jest
         .fn()
-        .mockResolvedValue(undefined);
+        .mockResolvedValue(void 0);
       mockMetricsService.syncCommitAnalytics = jest
         .fn()
-        .mockResolvedValue(undefined);
+        .mockResolvedValue(void 0);
     });
 
     it('should sync all data by default', async () => {

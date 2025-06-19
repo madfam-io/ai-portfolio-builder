@@ -1,10 +1,46 @@
+import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import { authenticator } from 'otplib';
+import QRCode from 'qrcode';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
 /**
  * @jest-environment node
  */
 
-import { jest } from '@jest/globals';
-import {
-  generateBackupCodes,
+import {   generateBackupCodes,
   validateBackupCode,
   generateTOTPSecret,
   generateQRCode,
@@ -13,18 +49,22 @@ import {
   disableMFA,
   checkMFAStatus,
   regenerateBackupCodes,
-} from '@/lib/auth/mfa-service';
-import { authenticator } from 'otplib';
-import QRCode from 'qrcode';
-import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
+ } from '@/lib/auth/mfa-service';
 
 // Mock dependencies
 jest.mock('otplib');
 jest.mock('qrcode');
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 const mockAuthenticator = jest.mocked(authenticator);
 const mockQRCode = jest.mocked(QRCode);
@@ -32,6 +72,12 @@ const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
 const mockLogger = jest.mocked(logger);
 
 describe('MFA Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockSupabase: any;
 
   beforeEach(() => {
@@ -40,18 +86,18 @@ describe('MFA Service', () => {
     // Setup Supabase mock
     mockSupabase = {
       auth: {
-        getUser: jest.fn(),
+        getUser: jest.fn().mockReturnValue(void 0),
         mfa: {
-          enroll: jest.fn(),
-          verify: jest.fn(),
-          unenroll: jest.fn(),
-          listFactors: jest.fn(),
+          enroll: jest.fn().mockReturnValue(void 0),
+          verify: jest.fn().mockReturnValue(void 0),
+          unenroll: jest.fn().mockReturnValue(void 0),
+          listFactors: jest.fn().mockReturnValue(void 0),
         },
       },
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn().mockReturnValue(void 0),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
@@ -60,13 +106,13 @@ describe('MFA Service', () => {
     mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
 
     // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    mockLogger.info = jest.fn().mockReturnValue(void 0);
+    mockLogger.error = jest.fn().mockReturnValue(void 0);
+    mockLogger.warn = jest.fn().mockReturnValue(void 0);
   });
 
   describe('generateBackupCodes', () => {
-    it('should generate 10 unique backup codes', () => {
+    it('should generate 10 unique backup codes', async () => {
       const codes = generateBackupCodes();
 
       expect(codes).toHaveLength(10);
@@ -78,7 +124,7 @@ describe('MFA Service', () => {
       });
     });
 
-    it('should generate cryptographically secure codes', () => {
+    it('should generate cryptographically secure codes', async () => {
       const mockRandomValues = new Uint8Array(10);
       mockRandomValues.fill(255);
 
@@ -177,7 +223,7 @@ describe('MFA Service', () => {
 
   describe('TOTP Operations', () => {
     describe('generateTOTPSecret', () => {
-      it('should generate TOTP secret and metadata', () => {
+      it('should generate TOTP secret and metadata', async () => {
         const mockSecret = 'JBSWY3DPEHPK3PXP';
         mockAuthenticator.generateSecret.mockReturnValue(mockSecret);
 
@@ -231,7 +277,7 @@ describe('MFA Service', () => {
     });
 
     describe('verifyTOTP', () => {
-      it('should verify valid TOTP code', () => {
+      it('should verify valid TOTP code', async () => {
         const secret = 'JBSWY3DPEHPK3PXP';
         const code = '123456';
 
@@ -244,13 +290,13 @@ describe('MFA Service', () => {
           token: code,
           secret: secret,
           window: 1, // Allow 1 step before/after
-    );
+    });
   });
 
         expect(result).toBe(true);
       });
 
-      it('should reject invalid TOTP code', () => {
+      it('should reject invalid TOTP code', async () => {
         mockAuthenticator.verify.mockReturnValue(false);
 
         const result = verifyTOTP('secret', '000000');
@@ -258,7 +304,7 @@ describe('MFA Service', () => {
         expect(result).toBe(false);
       });
 
-      it('should handle time window for codes', () => {
+      it('should handle time window for codes', async () => {
         const secret = 'JBSWY3DPEHPK3PXP';
         const code = '123456';
 
@@ -269,7 +315,7 @@ describe('MFA Service', () => {
           token: code,
           secret: secret,
           window: 1,
-    );
+    });
   });
       });
     });
@@ -389,7 +435,7 @@ describe('MFA Service', () => {
       {
           mfa_enabled: false,
           mfa_secret: null,
-    );
+    });
   });
 
         // Verify backup codes were deleted

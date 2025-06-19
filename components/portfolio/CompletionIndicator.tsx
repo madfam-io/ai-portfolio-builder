@@ -39,15 +39,19 @@ export function CompletionIndicator({
         label: 'Basic Information',
         isRequired: true,
         isComplete: !!(portfolio.name && portfolio.title && portfolio.bio),
-        message: !portfolio.name ? 'Name is required' :
-                 !portfolio.title ? 'Title is required' :
-                 !portfolio.bio ? 'Bio is required' : undefined,
+        message: !portfolio.name
+          ? 'Name is required'
+          : !portfolio.title
+            ? 'Title is required'
+            : !portfolio.bio
+              ? 'Bio is required'
+              : undefined,
       },
       {
         section: 'contact',
         label: 'Contact Information',
         isRequired: true,
-        isComplete: !!(portfolio.contact?.email),
+        isComplete: !!portfolio.contact?.email,
         message: !portfolio.contact?.email ? 'Email is required' : undefined,
       },
       {
@@ -92,12 +96,14 @@ export function CompletionIndicator({
     const requiredComplete = visibleStatuses
       .filter(s => s.isRequired)
       .every(s => s.isComplete);
-    
+
     if (!requiredComplete) {
       setCompletionPercentage(0);
     } else {
       const completedCount = visibleStatuses.filter(s => s.isComplete).length;
-      const percentage = Math.round((completedCount / visibleStatuses.length) * 100);
+      const percentage = Math.round(
+        (completedCount / visibleStatuses.length) * 100
+      );
       setCompletionPercentage(percentage);
     }
   }, [portfolio]);
@@ -134,8 +140,8 @@ export function CompletionIndicator({
             {t.portfolioCompletion || 'Portfolio Completion'}
           </h3>
           <div className="flex items-center gap-4">
-            <Progress 
-              value={completionPercentage} 
+            <Progress
+              value={completionPercentage}
               className="flex-1"
               indicatorClassName={getProgressBarColor()}
             />
@@ -148,11 +154,13 @@ export function CompletionIndicator({
         <div className="space-y-2">
           <p className="text-sm text-muted-foreground mb-3">
             {completionPercentage === 100
-              ? t.portfolioComplete || 'Your portfolio is complete and ready to publish!'
-              : t.completeFollowing || 'Complete the following sections to improve your portfolio:'}
+              ? t.portfolioComplete ||
+                'Your portfolio is complete and ready to publish!'
+              : t.completeFollowing ||
+                'Complete the following sections to improve your portfolio:'}
           </p>
 
-          {sectionStatuses.map((status) => (
+          {sectionStatuses.map(status => (
             <div
               key={status.section}
               className={cn(
@@ -160,7 +168,9 @@ export function CompletionIndicator({
                 status.isComplete
                   ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
                   : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800',
-                onSectionClick && !status.isComplete && 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'
+                onSectionClick &&
+                  !status.isComplete &&
+                  'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'
               )}
               onClick={() => {
                 if (onSectionClick && !status.isComplete) {
@@ -196,7 +206,9 @@ export function CompletionIndicator({
         {completionPercentage < 100 && (
           <div className="pt-4 border-t">
             <p className="text-sm text-muted-foreground">
-              <span className="text-red-500">*</span> {t.requiredFields || 'Required fields must be completed before publishing'}
+              <span className="text-red-500">*</span>{' '}
+              {t.requiredFields ||
+                'Required fields must be completed before publishing'}
             </p>
           </div>
         )}

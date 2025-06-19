@@ -69,18 +69,31 @@ export function SuccessMetrics() {
     // Simulate loading metrics
     setTimeout(() => {
       // Calculate real metrics from portfolio data
-      const publishedPortfolios = portfolios.filter(p => p.status === 'published');
-      const totalViews = publishedPortfolios.reduce((sum, p) => sum + (p.views || 0), 0);
-      const avgCompletionRate = portfolios.length > 0
-        ? portfolios.reduce((sum, p) => {
-            const sections = ['experience', 'projects', 'skills', 'education'];
-            const completedSections = sections.filter(s => {
-              const sectionData = p[s as keyof typeof p];
-              return Array.isArray(sectionData) ? sectionData.length > 0 : !!sectionData;
-            }).length;
-            return sum + (completedSections / sections.length) * 100;
-          }, 0) / portfolios.length
-        : 0;
+      const publishedPortfolios = portfolios.filter(
+        p => p.status === 'published'
+      );
+      const totalViews = publishedPortfolios.reduce(
+        (sum, p) => sum + (p.views || 0),
+        0
+      );
+      const avgCompletionRate =
+        portfolios.length > 0
+          ? portfolios.reduce((sum, p) => {
+              const sections = [
+                'experience',
+                'projects',
+                'skills',
+                'education',
+              ];
+              const completedSections = sections.filter(s => {
+                const sectionData = p[s as keyof typeof p];
+                return Array.isArray(sectionData)
+                  ? sectionData.length > 0
+                  : !!sectionData;
+              }).length;
+              return sum + (completedSections / sections.length) * 100;
+            }, 0) / portfolios.length
+          : 0;
 
       setMetrics({
         overview: [
@@ -194,7 +207,12 @@ export function SuccessMetrics() {
           current: Math.round(avgCompletionRate),
           target: 100,
           unit: '%',
-          status: avgCompletionRate >= 80 ? 'on-track' : avgCompletionRate >= 60 ? 'at-risk' : 'behind',
+          status:
+            avgCompletionRate >= 80
+              ? 'on-track'
+              : avgCompletionRate >= 60
+                ? 'at-risk'
+                : 'behind',
         },
         {
           id: '2',
@@ -203,7 +221,12 @@ export function SuccessMetrics() {
           target: 1000,
           unit: 'views',
           deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-          status: totalViews >= 800 ? 'on-track' : totalViews >= 500 ? 'at-risk' : 'behind',
+          status:
+            totalViews >= 800
+              ? 'on-track'
+              : totalViews >= 500
+                ? 'at-risk'
+                : 'behind',
         },
         {
           id: '3',
@@ -262,9 +285,11 @@ export function SuccessMetrics() {
             <div
               className={cn(
                 'flex items-center text-sm font-medium',
-                metric.trend === 'up' ? 'text-green-600' : 
-                metric.trend === 'down' ? 'text-red-600' : 
-                'text-gray-600'
+                metric.trend === 'up'
+                  ? 'text-green-600'
+                  : metric.trend === 'down'
+                    ? 'text-red-600'
+                    : 'text-gray-600'
               )}
             >
               {metric.trend === 'up' ? (
@@ -286,7 +311,7 @@ export function SuccessMetrics() {
 
   const renderGoalCard = (goal: Goal) => {
     const progress = (goal.current / goal.target) * 100;
-    
+
     return (
       <Card key={goal.id}>
         <CardContent className="p-6">
@@ -296,7 +321,7 @@ export function SuccessMetrics() {
               {goal.status.replace('-', ' ')}
             </Badge>
           </div>
-          
+
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">
@@ -330,24 +355,29 @@ export function SuccessMetrics() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-2xl font-bold">{t.successMetrics || 'Success Metrics'}</h3>
+          <h3 className="text-2xl font-bold">
+            {t.successMetrics || 'Success Metrics'}
+          </h3>
           <p className="text-muted-foreground">
-            {t.trackYourProgress || 'Track your portfolio performance and growth'}
+            {t.trackYourProgress ||
+              'Track your portfolio performance and growth'}
           </p>
         </div>
-        
+
         {/* Time Range Selector */}
         <div className="flex gap-2">
-          {(['7d', '30d', '90d'] as const).map((range) => (
+          {(['7d', '30d', '90d'] as const).map(range => (
             <Button
               key={range}
               variant={timeRange === range ? 'default' : 'outline'}
               size="sm"
               onClick={() => setTimeRange(range)}
             >
-              {range === '7d' ? t.last7Days || 'Last 7 days' :
-               range === '30d' ? t.last30Days || 'Last 30 days' :
-               t.last90Days || 'Last 90 days'}
+              {range === '7d'
+                ? t.last7Days || 'Last 7 days'
+                : range === '30d'
+                  ? t.last30Days || 'Last 30 days'
+                  : t.last90Days || 'Last 90 days'}
             </Button>
           ))}
         </div>
@@ -357,8 +387,12 @@ export function SuccessMetrics() {
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList>
           <TabsTrigger value="overview">{t.overview || 'Overview'}</TabsTrigger>
-          <TabsTrigger value="engagement">{t.engagement || 'Engagement'}</TabsTrigger>
-          <TabsTrigger value="conversion">{t.conversion || 'Conversion'}</TabsTrigger>
+          <TabsTrigger value="engagement">
+            {t.engagement || 'Engagement'}
+          </TabsTrigger>
+          <TabsTrigger value="conversion">
+            {t.conversion || 'Conversion'}
+          </TabsTrigger>
           <TabsTrigger value="goals">{t.goals || 'Goals'}</TabsTrigger>
         </TabsList>
 
@@ -384,36 +418,42 @@ export function SuccessMetrics() {
           <div className="grid gap-4 md:grid-cols-2">
             {goals.map(renderGoalCard)}
           </div>
-          
+
           {/* Tips Section */}
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle className="text-lg">{t.improvementTips || 'Tips to Improve'}</CardTitle>
+              <CardTitle className="text-lg">
+                {t.improvementTips || 'Tips to Improve'}
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
                   <span className="text-sm">
-                    {t.tip1 || 'Add more projects with detailed descriptions to showcase your work'}
+                    {t.tip1 ||
+                      'Add more projects with detailed descriptions to showcase your work'}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
                   <span className="text-sm">
-                    {t.tip2 || 'Include testimonials to build trust with visitors'}
+                    {t.tip2 ||
+                      'Include testimonials to build trust with visitors'}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
                   <span className="text-sm">
-                    {t.tip3 || 'Share your portfolio on social media to increase visibility'}
+                    {t.tip3 ||
+                      'Share your portfolio on social media to increase visibility'}
                   </span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-primary mr-2">•</span>
                   <span className="text-sm">
-                    {t.tip4 || 'Keep your portfolio updated with recent work and achievements'}
+                    {t.tip4 ||
+                      'Keep your portfolio updated with recent work and achievements'}
                   </span>
                 </li>
               </ul>

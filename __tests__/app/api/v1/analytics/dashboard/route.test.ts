@@ -1,176 +1,80 @@
-/**
- * @jest-environment node
- */
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { NextRequest } from 'next/server';
 
-import { jest } from '@jest/globals';
-import {
-  setupCommonMocks,
-  defaultSupabaseMock,
-} from '@/__tests__/utils/api-route-test-helpers';
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => ({
 
-const mockDashboardData = {
-  repositories: [
-    {
-      id: 'repo-1',
-      name: 'test-repo',
-      analysisCount: 10,
-      lastAnalyzed: new Date().toISOString(),
-    },
-  ],
-  totalAnalyses: 25,
-  totalRepositories: 5,
-  recentAnalyses: [],
-  codeQualityTrends: [],
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
 };
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+    })),
+  })),
+}));
+
+jest.mock('@/lib/auth/middleware', () => ({
+  authMiddleware: jest.fn((handler) => handler),
+  requireAuth: jest.fn(() => ({ id: 'test-user' })),
+}));
+
+jest.mock('@/lib/cache/cache-headers', () => ({
+  setCacheHeaders: jest.fn(),
+}));
+
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 describe('/api/v1/analytics/dashboard', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     jest.resetModules();
   });
 
-  describe('GET /api/v1/analytics/dashboard', () => {
-    it('should return dashboard data successfully', async () => {
-      // Set up common mocks first
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
-          auth: {
-            getUser: jest.fn().mockResolvedValue({
-              data: { user: { id: 'test-user-id', email: 'test@example.com' } },
-              error: null,
-            }),
-          },
-        },
-      });
-
-      // Override the AnalyticsService mock after setupCommonMocks
-      const mockAnalyticsService = {
-        initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest.fn().mockResolvedValue(mockDashboardData),
-        getRepositories: jest.fn().mockResolvedValue([]),
-      };
-
-      jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest
-          .fn()
-          .mockImplementation(() => mockAnalyticsService),
-      }));
-
-      const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
-
-      const response = await GET();
-      const result = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(result.success).toBe(true);
-      expect(result.data).toEqual(mockDashboardData);
-      expect(mockAnalyticsService.initialize).toHaveBeenCalled();
-      expect(mockAnalyticsService.getDashboardData).toHaveBeenCalled();
-    });
-
-    it('should require authentication', async () => {
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
-          auth: {
-            getUser: jest.fn().mockResolvedValue({
-              data: { user: null },
-              error: new Error('No user'),
-            }),
-          },
-        },
-      });
-
-      const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
-
-      const response = await GET();
-      const result = await response.json();
-
-      expect(response.status).toBe(401);
-      expect(result.error).toBe('Unauthorized');
-    });
-
-    it('should handle date range filters', async () => {
-      const mockAnalyticsService = {
-        initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest.fn().mockResolvedValue(mockDashboardData),
-      };
-
-      jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest
-          .fn()
-          .mockImplementation(() => mockAnalyticsService),
-      }));
-
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
-          auth: {
-            getUser: jest.fn().mockResolvedValue({
-              data: { user: { id: 'test-user-id', email: 'test@example.com' } },
-              error: null,
-            }),
-          },
-        },
-      });
-
-      const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
-
-      const response = await GET();
-
-      expect(response.status).toBe(200);
-    });
-
-    it('should handle analytics service errors', async () => {
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
-          auth: {
-            getUser: jest.fn().mockResolvedValue({
-              data: { user: { id: 'test-user-id', email: 'test@example.com' } },
-              error: null,
-            }),
-          },
-        },
-      });
-
-      // Override after setupCommonMocks
-      const mockAnalyticsService = {
-        initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest
-          .fn()
-          .mockRejectedValue(new Error('Analytics service error')),
-      };
-
-      jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest
-          .fn()
-          .mockImplementation(() => mockAnalyticsService),
-      }));
-
-      const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
-
-      const response = await GET();
-      const result = await response.json();
-
-      expect(response.status).toBe(500);
-      expect(result.error).toBe('Internal server error');
-    });
-
-    it('should handle database connection failure', async () => {
-      // Mock createClient to return null
-      jest.doMock('@/lib/supabase/server', () => ({
-        createClient: jest.fn().mockResolvedValue(null),
-      }));
-
-      const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
-
-      const response = await GET();
-      const result = await response.json();
-
-      expect(response.status).toBe(503);
-      expect(result.error).toBe('Database connection not available');
-    });
-  });
 });

@@ -183,7 +183,9 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  recommendTemplate(profile: UserProfile): TemplateRecommendation {
+  async recommendTemplate(
+    profile: UserProfile
+  ): Promise<TemplateRecommendation> {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -231,7 +233,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  scoreContent(content: string, type: string): QualityScore {
+  async scoreContent(content: string, type: string): Promise<QualityScore> {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -257,7 +259,12 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  getUsageStats() {
+  async getUsageStats(): Promise<{
+    requestsToday: number;
+    costToday: number;
+    avgResponseTime: number;
+    successRate: number;
+  }> {
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
@@ -516,8 +523,7 @@ export class HuggingFaceService implements AIService {
   }
 }
 
-// Import HfInference for direct use in convenience functions
-import { HfInference } from '@huggingface/inference';
+// HfInference type is defined below
 
 // Create a singleton instance for the service
 const _huggingFaceService = new HuggingFaceService();
@@ -596,7 +602,34 @@ export async function enhanceBio(
 }> {
   try {
     // For testing compatibility, use HfInference directly
-    const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+    const apiKey = process.env.HUGGINGFACE_API_KEY || '';
+    const makeHfRequest = async (params: any) => {
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${params.model}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            inputs: params.inputs,
+            parameters: params.parameters || {},
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HuggingFace API error: ${response.statusText}`);
+      }
+
+      return await response.json();
+    };
+
+    const hf = {
+      textGeneration: makeHfRequest,
+      textClassification: makeHfRequest,
+    };
     // Validate model and fallback to default if invalid
     const selectedModel = model && AI_MODELS[model] ? model : 'llama-3.1-70b';
     const modelId = AI_MODELS[selectedModel].id;
@@ -661,7 +694,34 @@ export async function optimizeProjectDescription(projectInfo: {
 }> {
   try {
     // For testing compatibility, use HfInference directly
-    const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+    const apiKey = process.env.HUGGINGFACE_API_KEY || '';
+    const makeHfRequest = async (params: any) => {
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${params.model}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            inputs: params.inputs,
+            parameters: params.parameters || {},
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HuggingFace API error: ${response.statusText}`);
+      }
+
+      return await response.json();
+    };
+
+    const hf = {
+      textGeneration: makeHfRequest,
+      textClassification: makeHfRequest,
+    };
     const modelId = AI_MODELS['llama-3.1-70b'].id;
 
     const response = await hf.textGeneration({
@@ -714,7 +774,34 @@ export async function recommendTemplate(userProfile: UserProfile): Promise<{
 }> {
   try {
     // For testing compatibility, use HfInference directly
-    const hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
+    const apiKey = process.env.HUGGINGFACE_API_KEY || '';
+    const makeHfRequest = async (params: any) => {
+      const response = await fetch(
+        `https://api-inference.huggingface.co/models/${params.model}`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            inputs: params.inputs,
+            parameters: params.parameters || {},
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HuggingFace API error: ${response.statusText}`);
+      }
+
+      return await response.json();
+    };
+
+    const hf = {
+      textGeneration: makeHfRequest,
+      textClassification: makeHfRequest,
+    };
 
     const response = await hf.textClassification({
       model: 'microsoft/DialoGPT-medium',
@@ -967,3 +1054,6 @@ function extractMetrics(text: string): string[] {
 
   return metrics;
 }
+
+// Temporary type for HfInference until @huggingface/inference is installed
+type HfInference = any;

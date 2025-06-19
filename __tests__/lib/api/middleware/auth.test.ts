@@ -1,10 +1,47 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { NextRequest, NextResponse } from 'next/server';
+import { createClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
+import { apiError } from '@/lib/api/versioning';
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
+import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
 
 /**
  * @jest-environment node
  */
 
-import { NextRequest, NextResponse } from 'next/server';
 import {
   authenticateUser,
   hasPermission,
@@ -13,15 +50,18 @@ import {
   withAuth,
   AuthenticatedRequest,
 } from '@/lib/api/middleware/auth';
-import { createClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-import { apiError } from '@/lib/api/versioning';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
 
 
 // Mock dependencies
 
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 jest.mock('@/lib/api/versioning');
 
 const mockCreateClient = createClient as jest.MockedFunction<
@@ -31,9 +71,16 @@ const mockLogger = logger as jest.Mocked<typeof logger>;
 const mockApiError = apiError as jest.MockedFunction<typeof apiError>;
 
 describe('Auth Middleware', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
 
     // Mock timing functions to speed up tests
@@ -271,7 +318,7 @@ describe('Auth Middleware', () => {
   });
 
   describe('hasPermission', () => {
-    it('should grant admin permissions correctly', () => {
+    it('should grant admin permissions correctly', async () => {
       const adminUser = { role: 'admin' };
 
       expect(hasPermission(adminUser, 'experiments:manage')).toBe(true);
@@ -281,7 +328,7 @@ describe('Auth Middleware', () => {
       expect(hasPermission(adminUser, 'portfolio:manage')).toBe(true);
     });
 
-    it('should grant user permissions correctly', () => {
+    it('should grant user permissions correctly', async () => {
       const regularUser = { role: 'user' };
 
       expect(hasPermission(regularUser, 'portfolio:manage')).toBe(true);
@@ -292,7 +339,7 @@ describe('Auth Middleware', () => {
       expect(hasPermission(regularUser, 'users:manage')).toBe(false);
     });
 
-    it('should handle users without role (default to user)', () => {
+    it('should handle users without role (default to user)', async () => {
       const userWithoutRole = {};
 
       expect(hasPermission(userWithoutRole, 'portfolio:manage')).toBe(true);
@@ -300,7 +347,7 @@ describe('Auth Middleware', () => {
       expect(hasPermission(userWithoutRole, 'experiments:manage')).toBe(false);
     });
 
-    it('should handle users with unknown role', () => {
+    it('should handle users with unknown role', async () => {
       const userWithUnknownRole = { role: 'guest' };
 
       expect(hasPermission(userWithUnknownRole, 'portfolio:manage')).toBe(
@@ -312,7 +359,7 @@ describe('Auth Middleware', () => {
 
     });
 
-    it('should deny access for undefined permissions', () => {
+    it('should deny access for undefined permissions', async () => {
       const adminUser = { role: 'admin' };
       const regularUser = { role: 'user' };
 
@@ -322,7 +369,7 @@ describe('Auth Middleware', () => {
   });
 
   describe('unauthorizedResponse', () => {
-    it('should return unauthorized response with default message', () => {
+    it('should return unauthorized response with default message', async () => {
       const mockResponse = new NextResponse();
       mockApiError.mockReturnValue(mockResponse);
 
@@ -336,7 +383,7 @@ describe('Auth Middleware', () => {
       expect(result).toBe(mockResponse);
     });
 
-    it('should return unauthorized response with custom message', () => {
+    it('should return unauthorized response with custom message', async () => {
       const mockResponse = new NextResponse();
       mockApiError.mockReturnValue(mockResponse);
 
@@ -349,7 +396,7 @@ describe('Auth Middleware', () => {
   });
 
   describe('forbiddenResponse', () => {
-    it('should return forbidden response with default message', () => {
+    it('should return forbidden response with default message', async () => {
       const mockResponse = new NextResponse();
       mockApiError.mockReturnValue(mockResponse);
 
@@ -363,7 +410,7 @@ describe('Auth Middleware', () => {
       expect(result).toBe(mockResponse);
     });
 
-    it('should return forbidden response with custom message', () => {
+    it('should return forbidden response with custom message', async () => {
       const mockResponse = new NextResponse();
       mockApiError.mockReturnValue(mockResponse);
 
@@ -384,6 +431,7 @@ describe('Auth Middleware', () => {
     };
 
     beforeEach(() => {
+    global.fetch = jest.fn();
       mockHandler.mockClear();
     });
 

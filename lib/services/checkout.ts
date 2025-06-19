@@ -50,7 +50,7 @@ export async function createCheckoutSession({
 
     // Redirect to checkout
     const { error } = await stripe.redirectToCheckout({ sessionId });
-    
+
     if (error) {
       throw error;
     }
@@ -90,7 +90,7 @@ export async function createAICreditCheckout(
     }
 
     const { error } = await stripe.redirectToCheckout({ sessionId });
-    
+
     if (error) {
       throw error;
     }

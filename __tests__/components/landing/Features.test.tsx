@@ -1,19 +1,22 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import Features from '@/components/landing/Features';
+import { useLanguage } from '@/lib/i18n/refactored-context';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import Features from '@/components/landing/Features';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -35,7 +38,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -73,6 +75,12 @@ jest.mock('lucide-react', () => ({
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('Features', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockTranslations = {
     features: 'Features',
     featuresSubtitle: 'Everything you need to create a stunning portfolio',
@@ -120,7 +128,7 @@ describe('Features', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render features section title', () => {
+    it('should render features section title', async () => {
       renderFeatures();
 
       expect(screen.getByText('Features')).toBeInTheDocument();
@@ -129,7 +137,7 @@ describe('Features', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render all feature cards', () => {
+    it('should render all feature cards', async () => {
       renderFeatures();
 
       expect(screen.getByText('AI-Powered Content')).toBeInTheDocument();
@@ -140,7 +148,7 @@ describe('Features', () => {
       expect(screen.getByText('Enterprise Security')).toBeInTheDocument();
     });
 
-    it('should render feature descriptions', () => {
+    it('should render feature descriptions', async () => {
       renderFeatures();
 
       expect(
@@ -169,7 +177,7 @@ describe('Features', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render feature icons', () => {
+    it('should render feature icons', async () => {
       renderFeatures();
 
       expect(screen.getByTestId('sparkles-icon')).toBeInTheDocument();
@@ -180,7 +188,7 @@ describe('Features', () => {
       expect(screen.getByTestId('shield-icon')).toBeInTheDocument();
     });
 
-    it('should have proper section structure', () => {
+    it('should have proper section structure', async () => {
       renderFeatures();
 
       const section = screen.getByRole('region', { name: /features/i });
@@ -269,7 +277,7 @@ describe('Features', () => {
       expect(IntersectionObserver).toHaveBeenCalled();
     });
 
-    it('should have staggered animation delays', () => {
+    it('should have staggered animation delays', async () => {
       renderFeatures();
 
       const featureCards = document.querySelectorAll(
@@ -293,7 +301,7 @@ describe('Features', () => {
       });
     });
 
-    it('should handle reduced motion preferences', () => {
+    it('should handle reduced motion preferences', async () => {
       // Mock reduced motion preference
       Object.defineProperty(window, 'matchMedia', {
         writable: true,
@@ -318,7 +326,7 @@ describe('Features', () => {
   });
 
   describe('Responsive Design', () => {
-    it('should adapt to mobile viewport', () => {
+    it('should adapt to mobile viewport', async () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -332,7 +340,7 @@ describe('Features', () => {
       expect(grid).toHaveClass('grid-cols-1');
     });
 
-    it('should adapt to tablet viewport', () => {
+    it('should adapt to tablet viewport', async () => {
       // Mock tablet viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -346,7 +354,7 @@ describe('Features', () => {
       expect(grid).toHaveClass('md:grid-cols-2');
     });
 
-    it('should adapt to desktop viewport', () => {
+    it('should adapt to desktop viewport', async () => {
       // Mock desktop viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -360,7 +368,7 @@ describe('Features', () => {
       expect(grid).toHaveClass('lg:grid-cols-3');
     });
 
-    it('should maintain readability across screen sizes', () => {
+    it('should maintain readability across screen sizes', async () => {
       renderFeatures();
 
       const descriptions = screen.getAllByText(
@@ -374,7 +382,7 @@ describe('Features', () => {
   });
 
   describe('Feature Categories', () => {
-    it('should group related features visually', () => {
+    it('should group related features visually', async () => {
       renderFeatures();
 
       // Core features should be prominent
@@ -391,7 +399,7 @@ describe('Features', () => {
       });
     });
 
-    it('should highlight premium features', () => {
+    it('should highlight premium features', async () => {
       renderFeatures();
 
       const premiumFeatures = [
@@ -406,7 +414,7 @@ describe('Features', () => {
       });
     });
 
-    it('should show feature availability status', () => {
+    it('should show feature availability status', async () => {
       renderFeatures();
 
       const features = screen.getAllByText(/AI-Powered|Professional|Real-time/);
@@ -419,7 +427,7 @@ describe('Features', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+    it('should have proper ARIA labels', async () => {
       renderFeatures();
 
       const section = screen.getByRole('region', { name: /features/i });
@@ -429,7 +437,7 @@ describe('Features', () => {
       expect(heading).toHaveAttribute('id');
     });
 
-    it('should support keyboard navigation', () => {
+    it('should support keyboard navigation', async () => {
       renderFeatures();
 
       const interactiveElements = screen.getAllByRole('button');
@@ -439,7 +447,7 @@ describe('Features', () => {
       });
     });
 
-    it('should have proper heading hierarchy', () => {
+    it('should have proper heading hierarchy', async () => {
       renderFeatures();
 
       const mainHeading = screen.getByRole('heading', {
@@ -452,7 +460,7 @@ describe('Features', () => {
       expect(featureHeadings.length).toBe(6); // One for each feature
     });
 
-    it('should provide alternative text for icons', () => {
+    it('should provide alternative text for icons', async () => {
       renderFeatures();
 
       const icons = document.querySelectorAll('[data-testid*="icon"]');
@@ -462,7 +470,7 @@ describe('Features', () => {
       });
     });
 
-    it('should support screen readers', () => {
+    it('should support screen readers', async () => {
       renderFeatures();
 
       const featureCards = document.querySelectorAll(
@@ -492,7 +500,7 @@ describe('Features', () => {
       });
     });
 
-    it('should optimize images and assets', () => {
+    it('should optimize images and assets', async () => {
       renderFeatures();
 
       const images = document.querySelectorAll('img');
@@ -503,7 +511,7 @@ describe('Features', () => {
       });
     });
 
-    it('should preload critical icons', () => {
+    it('should preload critical icons', async () => {
       renderFeatures();
 
       const preloadLinks = document.querySelectorAll('link[rel="preload"]');
@@ -515,7 +523,7 @@ describe('Features', () => {
   });
 
   describe('Internationalization', () => {
-    it('should use translated feature titles', () => {
+    it('should use translated feature titles', async () => {
       renderFeatures();
 
       expect(screen.getByText('AI-Powered Content')).toBeInTheDocument();
@@ -523,7 +531,7 @@ describe('Features', () => {
       expect(screen.getByText('Real-time Preview')).toBeInTheDocument();
     });
 
-    it('should use translated feature descriptions', () => {
+    it('should use translated feature descriptions', async () => {
       renderFeatures();
 
       expect(
@@ -536,7 +544,7 @@ describe('Features', () => {
       ).toBeInTheDocument();
     });
 
-    it('should handle missing translations gracefully', () => {
+    it('should handle missing translations gracefully', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
         currentLanguage: 'en',
@@ -548,7 +556,7 @@ describe('Features', () => {
       expect(screen.getByRole('region')).toBeInTheDocument();
     });
 
-    it('should adapt layout for RTL languages', () => {
+    it('should adapt layout for RTL languages', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: mockTranslations,
         currentLanguage: 'ar',
@@ -577,7 +585,7 @@ describe('Features', () => {
   });
     });
 
-    it('should track feature visibility', () => {
+    it('should track feature visibility', async () => {
       renderFeatures();
 
       // Should track when features come into view
@@ -618,7 +626,7 @@ describe('Features', () => {
       });
     });
 
-    it('should gracefully handle missing feature data', () => {
+    it('should gracefully handle missing feature data', async () => {
       // Mock incomplete feature data
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {
@@ -634,7 +642,7 @@ describe('Features', () => {
       expect(screen.getByText('Features')).toBeInTheDocument();
     });
 
-    it('should handle animation errors gracefully', () => {
+    it('should handle animation errors gracefully', async () => {
       // Mock animation API failure
       Element.prototype.animate = jest.fn().mockImplementation(() => {
         throw new Error('Animation failed');
@@ -648,7 +656,7 @@ describe('Features', () => {
   });
 
   describe('Integration', () => {
-    it('should integrate with analytics platform', () => {
+    it('should integrate with analytics platform', async () => {
       renderFeatures();
 
       // Should initialize feature tracking
@@ -657,7 +665,7 @@ describe('Features', () => {
       });
     });
 
-    it('should integrate with experiment system', () => {
+    it('should integrate with experiment system', async () => {
       renderFeatures();
 
       // Should apply A/B test variants
@@ -667,7 +675,7 @@ describe('Features', () => {
       expect(experimentVariant).toBeInTheDocument();
     });
 
-    it('should integrate with user preference system', () => {
+    it('should integrate with user preference system', async () => {
       renderFeatures();
 
       // Should respect user motion preferences

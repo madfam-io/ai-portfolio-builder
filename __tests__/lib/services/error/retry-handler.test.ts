@@ -1,12 +1,12 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { AppError, ExternalServiceError } from '@/types/errors';
+import { errorLogger } from '@/lib/services/error/error-logger';
 import {
   retry,
   CircuitBreaker,
   createDebouncedRetry,
   withTimeout,
 } from '@/lib/services/error/retry-handler';
-import { AppError, ExternalServiceError } from '@/types/errors';
-import { errorLogger } from '@/lib/services/error/error-logger';
 
 
 // Mock dependencies
@@ -16,6 +16,12 @@ jest.mock('@/lib/services/error/error-logger');
 jest.useFakeTimers();
 
 describe('Retry Handler', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     jest.clearAllTimers();
@@ -63,7 +69,7 @@ describe('Retry Handler', () => {
       // Fast-forward through all retries
       await jest.runAllTimersAsync();
 
-      await expect(promise).rejects.toThrow(error);
+      await await await expect(promise).rejects.toThrow(error);
       expect(mockFn).toHaveBeenCalledTimes(3);
     });
 
@@ -125,7 +131,7 @@ describe('Retry Handler', () => {
       // Fast-forward through all retries
       await jest.runAllTimersAsync();
 
-      await expect(promise).rejects.toThrow();
+      await await await expect(promise).rejects.toThrow();
 
       // Check that delay was capped at maxDelay
       const logCalls = (errorLogger.logWarning as jest.Mock).mock.calls;
@@ -134,7 +140,7 @@ describe('Retry Handler', () => {
     });
 
     it('should call onRetry callback', async () => {
-      const onRetry = jest.fn();
+      const onRetry = jest.fn().mockReturnValue(void 0);
       const error = new ExternalServiceError('Error');
       const mockFn = jest
         .fn()
@@ -378,7 +384,7 @@ describe('Retry Handler', () => {
 
       jest.advanceTimersByTime(100);
 
-      await expect(promise).rejects.toThrow(error);
+      await await await expect(promise).rejects.toThrow(error);
     });
 
     it('should reset state after execution', async () => {
@@ -419,7 +425,7 @@ describe('Retry Handler', () => {
 
       jest.advanceTimersByTime(1000);
 
-      await expect(promise).rejects.toThrow('Operation timed out after 1000ms');
+      await await await expect(promise).rejects.toThrow('Operation timed out after 1000ms');
     });
 
     it('should use custom timeout error', async () => {
@@ -430,7 +436,7 @@ describe('Retry Handler', () => {
 
       jest.advanceTimersByTime(100);
 
-      await expect(promise).rejects.toThrow(customError);
+      await await await expect(promise).rejects.toThrow(customError);
     });
 
     it('should handle already rejected promises', async () => {

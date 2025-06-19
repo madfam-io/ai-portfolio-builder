@@ -1,28 +1,60 @@
-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, expect, beforeEach, it } from '@jest/globals';
+import { mfaService, MFAService } from '@/lib/services/auth/mfa-service';
+import { AppError } from '@/types/errors';
+import { createClient } from '@/lib/supabase/client';
+
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
 
 /**
  * Test suite for MFA Service
  */
 
-import { mfaService, MFAService } from '@/lib/services/auth/mfa-service';
-import { AppError } from '@/types/errors';
-
-
 // Mock dependencies first
 jest.mock('@/lib/supabase/client', () => ({
-  createClient: jest.fn(),
+  createClient: jest.fn().mockReturnValue(void 0),
 }));
 
 // Mock Supabase client
 const mockSupabase = {
   auth: {
-    getUser: jest.fn(),
+    getUser: jest.fn().mockReturnValue(void 0),
     mfa: {
-      listFactors: jest.fn(),
-      enroll: jest.fn(),
-      verify: jest.fn(),
-      challenge: jest.fn(),
-      unenroll: jest.fn(),
+      listFactors: jest.fn().mockReturnValue(void 0),
+      enroll: jest.fn().mockReturnValue(void 0),
+      verify: jest.fn().mockReturnValue(void 0),
+      challenge: jest.fn().mockReturnValue(void 0),
+      unenroll: jest.fn().mockReturnValue(void 0),
     },
   },
 };
@@ -40,13 +72,18 @@ jest.mock('otpauth', () => ({
 }));
 
 // Mock the createClient import
-import { createClient } from '@/lib/supabase/client';
 
 const mockCreateClient = createClient as jest.MockedFunction<
   typeof createClient
 >;
 
 describe('MFA Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     mockCreateClient.mockReturnValue(mockSupabase as any);
@@ -190,7 +227,7 @@ describe('MFA Service', () => {
         factorId: 'factor_123',
         challengeId: '',
         code: '123456',
-    );
+    });
   });
     });
 
@@ -219,7 +256,7 @@ describe('MFA Service', () => {
       expect(mockSupabase.auth.mfa.challenge).toHaveBeenCalledWith(
       {
         factorId: 'factor_123',
-    );
+    });
   });
     });
 
@@ -250,7 +287,7 @@ describe('MFA Service', () => {
         factorId: '',
         challengeId: 'challenge_123',
         code: '123456',
-    );
+    });
   });
     });
 
@@ -278,7 +315,7 @@ describe('MFA Service', () => {
       expect(mockSupabase.auth.mfa.unenroll).toHaveBeenCalledWith(
       {
         factorId: 'factor_123',
-    );
+    });
   });
     });
 
@@ -294,7 +331,7 @@ describe('MFA Service', () => {
   });
 
   describe('Code Validation', () => {
-    test('should validate TOTP code format', () => {
+    test('should validate TOTP code format', async () => {
       expect(mfaService.isValidTOTPCode('123456')).toBe(true);
       expect(mfaService.isValidTOTPCode('12345')).toBe(false);
       expect(mfaService.isValidTOTPCode('1234567')).toBe(false);
@@ -302,7 +339,7 @@ describe('MFA Service', () => {
       expect(mfaService.isValidTOTPCode('123abc')).toBe(false);
     });
 
-    test('should validate backup code format', () => {
+    test('should validate backup code format', async () => {
       expect(mfaService.isValidBackupCode('ABCD1234')).toBe(true);
       expect(mfaService.isValidBackupCode('abcd1234')).toBe(false);
       expect(mfaService.isValidBackupCode('ABCD123')).toBe(false);

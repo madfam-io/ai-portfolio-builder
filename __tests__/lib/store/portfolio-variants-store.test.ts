@@ -1,82 +1,108 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { act } from '@testing-library/react';
-import { usePortfolioVariantsStore } from '@/lib/store/portfolio-variants-store';
-import { logger } from '@/lib/utils/logger';
-import type {
-  PortfolioVariant,
-  CreateVariantInput,
-  ContentOptimizationSuggestion,
-  VariantAnalytics,
-  AudienceProfile,
-} from '@/types/portfolio-variants';
 
-// Mock dependencies
-jest.mock('@/lib/utils/logger');
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+// Mock zustand
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+// Mock zustand create function
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}))
+
 
 // Mock fetch
-global.fetch = jest.fn();
-
-describe('Portfolio Variants Store', () => {
-  const mockVariants: PortfolioVariant[] = [
-    {
-      id: 'variant-1',
-      portfolioId: 'portfolio-123',
-      name: 'Default',
-      slug: 'default',
-      isDefault: true,
-      isPublished: true,
-      contentOverrides: {},
-      audienceProfile: {
-        id: 'profile-1',
-        type: 'general',
-        name: 'General Audience',
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-    },
-    {
-      id: 'variant-2',
-      portfolioId: 'portfolio-123',
-      name: 'Tech Recruiters',
-      slug: 'tech-recruiters',
-      isDefault: false,
-      isPublished: false,
-      contentOverrides: {
-        bio: 'Customized bio for tech recruiters',
-      },
-      audienceProfile: {
-        id: 'profile-2',
-        type: 'recruiter',
-        name: 'Tech Recruiters',
-        industry: 'technology',
-      },
-      createdAt: '2024-01-02T00:00:00Z',
-      updatedAt: '2024-01-02T00:00:00Z',
-    },
-  ];
-
-  const mockAudienceProfiles: AudienceProfile[] = [
-    {
-      id: 'profile-1',
-      type: 'general',
-      name: 'General Audience',
-    },
-    {
-      id: 'profile-2',
-      type: 'recruiter',
-      name: 'Tech Recruiters',
-      industry: 'technology',
-    },
-  ];
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (logger.error as jest.Mock).mockImplementation(() => {});
-    // Reset store state
-    usePortfolioVariantsStore.getState().reset();
-  });
+global.fetch = jest.fn().mockResolvedValue({
+  ok: true,
+  json: () => Promise.resolve({ success: true }),
+  text: () => Promise.resolve(''),
+  status: 200,
+});
 
   describe('Loading Variants', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
     it('should load variants for a portfolio', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
@@ -594,28 +620,28 @@ describe('Portfolio Variants Store', () => {
       });
     });
 
-    it('should get current variant', () => {
+    it('should get current variant', async () => {
       const { getCurrentVariant } = usePortfolioVariantsStore.getState();
       const current = getCurrentVariant();
 
       expect(current).toEqual(mockVariants[0]);
     });
 
-    it('should get variant by slug', () => {
+    it('should get variant by slug', async () => {
       const { getVariantBySlug } = usePortfolioVariantsStore.getState();
       const variant = getVariantBySlug('tech-recruiters');
 
       expect(variant).toEqual(mockVariants[1]);
     });
 
-    it('should return null for non-existent slug', () => {
+    it('should return null for non-existent slug', async () => {
       const { getVariantBySlug } = usePortfolioVariantsStore.getState();
       const variant = getVariantBySlug('non-existent');
 
       expect(variant).toBeNull();
     });
 
-    it('should reset store', () => {
+    it('should reset store', async () => {
       usePortfolioVariantsStore.setState({
         variants: mockVariants,
         currentVariantId: 'variant-1',
@@ -638,7 +664,7 @@ describe('Portfolio Variants Store', () => {
   });
 
   describe('Persistence', () => {
-    it('should persist only currentVariantId', () => {
+    it('should persist only currentVariantId', async () => {
       usePortfolioVariantsStore.setState({
         variants: mockVariants,
         currentVariantId: 'variant-2',

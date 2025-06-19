@@ -1,15 +1,15 @@
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import type { Portfolio } from '@/types/portfolio';
 import {
   transformDbPortfolioToApi,
   transformApiPortfolioToDb,
   transformDbPortfoliosToApi,
   sanitizePortfolioData,
 } from '@/lib/utils/portfolio-transformer';
-import type { Portfolio } from '@/types/portfolio';
 
 describe('Portfolio Transformer Utilities', () => {
   describe('transformDbPortfolioToApi', () => {
-    it('should transform basic database portfolio to API format', () => {
+    it('should transform basic database portfolio to API format', async () => {
       const dbPortfolio = {
         id: 'portfolio-123',
         user_id: 'user-456',
@@ -49,7 +49,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.updatedAt).toEqual(new Date('2024-01-15T00:00:00Z'));
     });
 
-    it('should handle empty data field', () => {
+    it('should handle empty data field', async () => {
       const dbPortfolio = {
         id: 'portfolio-123',
         user_id: 'user-456',
@@ -81,7 +81,7 @@ describe('Portfolio Transformer Utilities', () => {
       });
     });
 
-    it('should transform complex portfolio data', () => {
+    it('should transform complex portfolio data', async () => {
       const dbPortfolio = {
         id: 'portfolio-123',
         user_id: 'user-456',
@@ -198,7 +198,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.publishedAt).toEqual(new Date('2024-01-10T00:00:00Z'));
     });
 
-    it('should handle missing optional fields', () => {
+    it('should handle missing optional fields', async () => {
       const dbPortfolio = {
         id: 'portfolio-123',
         user_id: 'user-456',
@@ -223,7 +223,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.views).toBe(0);
     });
 
-    it('should include raw data field', () => {
+    it('should include raw data field', async () => {
       const customData = {
         title: 'Developer',
         bio: 'Full stack developer',
@@ -248,7 +248,7 @@ describe('Portfolio Transformer Utilities', () => {
   });
 
   describe('transformApiPortfolioToDb', () => {
-    it('should transform basic API portfolio to database format', () => {
+    it('should transform basic API portfolio to database format', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         id: 'portfolio-123',
         userId: 'user-456',
@@ -286,7 +286,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.updated_at).toBeDefined();
     });
 
-    it('should handle date fields correctly', () => {
+    it('should handle date fields correctly', async () => {
       const now = new Date();
       const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
@@ -302,7 +302,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.published_at).toBe(now.toISOString());
     });
 
-    it('should handle date fields as strings', () => {
+    it('should handle date fields as strings', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         name: 'Portfolio',
         lastViewedAt: '2024-01-01T00:00:00Z' as any,
@@ -315,7 +315,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.published_at).toBe('2024-01-15T00:00:00Z');
     });
 
-    it('should package complex data into data field', () => {
+    it('should package complex data into data field', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         name: 'Complete Portfolio',
         contact: {
@@ -393,7 +393,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.ai_settings).toEqual(apiPortfolio.aiSettings);
     });
 
-    it('should merge raw data updates', () => {
+    it('should merge raw data updates', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         name: 'Portfolio',
         title: 'Developer',
@@ -413,7 +413,7 @@ describe('Portfolio Transformer Utilities', () => {
       });
     });
 
-    it('should handle partial updates', () => {
+    it('should handle partial updates', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         name: 'Updated Name',
         bio: 'Updated bio',
@@ -427,7 +427,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result.user_id).toBeUndefined();
     });
 
-    it('should handle zero views', () => {
+    it('should handle zero views', async () => {
       const apiPortfolio: Partial<Portfolio> = {
         name: 'Portfolio',
         views: 0,
@@ -440,7 +440,7 @@ describe('Portfolio Transformer Utilities', () => {
   });
 
   describe('transformDbPortfoliosToApi', () => {
-    it('should batch transform multiple portfolios', () => {
+    it('should batch transform multiple portfolios', async () => {
       const dbPortfolios = [
         {
           id: 'portfolio-1',
@@ -485,14 +485,14 @@ describe('Portfolio Transformer Utilities', () => {
       });
     });
 
-    it('should handle empty array', () => {
+    it('should handle empty array', async () => {
       const results = transformDbPortfoliosToApi([]);
       expect(results).toEqual([]);
     });
   });
 
   describe('sanitizePortfolioData', () => {
-    it('should only include allowed fields', () => {
+    it('should only include allowed fields', async () => {
       const data = {
         name: 'Portfolio',
         title: 'Developer',
@@ -518,7 +518,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result).not.toHaveProperty('createdAt');
     });
 
-    it('should ensure arrays are arrays', () => {
+    it('should ensure arrays are arrays', async () => {
       const data = {
         experience: 'not an array',
         education: null,
@@ -536,7 +536,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(Array.isArray(result.certifications)).toBe(true);
     });
 
-    it('should ensure objects are objects', () => {
+    it('should ensure objects are objects', async () => {
       const data = {
         contact: 'not an object',
         social: null,
@@ -554,7 +554,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(Array.isArray(result.social)).toBe(false);
     });
 
-    it('should preserve valid data', () => {
+    it('should preserve valid data', async () => {
       const data = {
         name: 'Portfolio',
         template: 'developer',
@@ -571,7 +571,7 @@ describe('Portfolio Transformer Utilities', () => {
       expect(result).toEqual(data);
     });
 
-    it('should handle all allowed fields', () => {
+    it('should handle all allowed fields', async () => {
       const data = {
         name: 'Test',
         title: 'Title',

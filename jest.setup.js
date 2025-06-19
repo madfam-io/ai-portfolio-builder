@@ -4,7 +4,7 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
 
 // Import comprehensive test setup which includes Supabase mocks
-import './__tests__/utils/comprehensive-test-setup.tsx';
+// Comprehensive test setup removed
 
 // Polyfill for Next.js 15 Request/Response in Node environment
 // Mock IntersectionObserver before any components use it

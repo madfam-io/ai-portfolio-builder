@@ -1,11 +1,9 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen } from '@testing-library/react';
 /**
  * @jest-environment jsdom
  */
-
-import { describe, test, it, expect, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-
 
 // Mock template components
 const MockModernTemplate = ({ portfolio }: any) => (
@@ -71,6 +69,20 @@ const TemplateRenderer = ({ portfolio }: any) => {
 };
 
 describe('Template System Integration', () => {
+  beforeAll(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio = {
     id: 'test',
     name: 'John Doe',
@@ -78,7 +90,7 @@ describe('Template System Integration', () => {
     template: 'modern',
   };
 
-  it('should render modern template by default', () => {
+  it('should render modern template by default', async () => {
     render(<TemplateRenderer portfolio={mockPortfolio} />);
 
     expect(screen.getByTestId('modern-template')).toBeInTheDocument();
@@ -86,7 +98,7 @@ describe('Template System Integration', () => {
     expect(screen.getByText('Software Developer')).toBeInTheDocument();
   });
 
-  it('should render minimal template when selected', () => {
+  it('should render minimal template when selected', async () => {
     const portfolioWithMinimal = { ...mockPortfolio, template: 'minimal' };
 
     render(<TemplateRenderer portfolio={portfolioWithMinimal} />);
@@ -95,7 +107,7 @@ describe('Template System Integration', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
-  it('should render business template when selected', () => {
+  it('should render business template when selected', async () => {
     const portfolioWithBusiness = { ...mockPortfolio, template: 'business' };
 
     render(<TemplateRenderer portfolio={portfolioWithBusiness} />);
@@ -104,7 +116,7 @@ describe('Template System Integration', () => {
     expect(screen.getByText('John Doe')).toBeInTheDocument();
   });
 
-  it('should handle unknown template gracefully', () => {
+  it('should handle unknown template gracefully', async () => {
     const portfolioWithUnknown = { ...mockPortfolio, template: 'unknown' };
 
     render(<TemplateRenderer portfolio={portfolioWithUnknown} />);
@@ -113,8 +125,8 @@ describe('Template System Integration', () => {
     expect(screen.getByText('Unknown template')).toBeInTheDocument();
   });
 
-  it('should render template selector with correct active state', () => {
-    const mockOnChange = jest.fn();
+  it('should render template selector with correct active state', async () => {
+    const mockOnChange = jest.fn().mockReturnValue(void 0);
 
     render(
       <TemplateSelector template="modern" onTemplateChange={mockOnChange} />
@@ -125,7 +137,7 @@ describe('Template System Integration', () => {
     expect(screen.getByTestId('business-btn')).not.toHaveClass('selected');
   });
 
-  it('should handle missing portfolio data gracefully', () => {
+  it('should handle missing portfolio data gracefully', async () => {
     const emptyPortfolio = {
       id: 'test',
       name: '',
@@ -138,7 +150,7 @@ describe('Template System Integration', () => {
     expect(screen.getByTestId('modern-template')).toBeInTheDocument();
   });
 
-  it('should preserve data across template changes', () => {
+  it('should preserve data across template changes', async () => {
     const { rerender } = render(<TemplateRenderer portfolio={mockPortfolio} />);
 
     expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -150,7 +162,7 @@ describe('Template System Integration', () => {
     expect(screen.getByTestId('minimal-template')).toBeInTheDocument();
   });
 
-  it('should render all templates with same data consistently', () => {
+  it('should render all templates with same data consistently', async () => {
     const templates = ['modern', 'minimal', 'business'];
 
     templates.forEach(template => {

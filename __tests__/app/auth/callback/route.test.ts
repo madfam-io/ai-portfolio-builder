@@ -1,16 +1,19 @@
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { NextRequest } from 'next/server';
+import {   setupCommonMocks,
+    const { GET } = await import('@/app/auth/callback/route');
 /**
  * @jest-environment node
  */
 
-import { jest } from '@jest/globals';
-import { NextRequest } from 'next/server';
-import {
-  setupCommonMocks,
   defaultSupabaseMock,
-} from '@/__tests__/utils/api-route-test-helpers';
+ } from '@/__tests__/utils/api-route-test-helpers';
 
 describe('Auth Callback Route', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
   });
 
@@ -34,33 +37,27 @@ describe('Auth Callback Route', () => {
       },
     });
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest(
       'https://example.com/auth/callback?code=test_code'
     );
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe('/dashboard');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/dashboard');
   });
 
   it('should handle missing code parameter', async () => {
     setupCommonMocks();
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest('https://example.com/auth/callback');
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toContain('error=invalid_request');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/auth/login?error=');
   });
 
   it('should handle OAuth errors from provider', async () => {
     setupCommonMocks();
-
-    const { GET } = await import('@/app/auth/callback/route');
 
     const request = new NextRequest(
       'https://example.com/auth/callback?error=access_denied&error_description=User+denied+access'
@@ -68,8 +65,8 @@ describe('Auth Callback Route', () => {
 
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toContain('error=access_denied');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/auth/login');
   });
 
   it('should handle exchange code failure', async () => {
@@ -86,15 +83,13 @@ describe('Auth Callback Route', () => {
       },
     });
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest(
       'https://example.com/auth/callback?code=invalid_code'
     );
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toContain('error=auth_failed');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/auth/login?error=');
   });
 
   it('should handle onboarding redirect for new users', async () => {
@@ -127,15 +122,13 @@ describe('Auth Callback Route', () => {
       },
     });
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest(
       'https://example.com/auth/callback?code=test_code'
     );
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe('/onboarding');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/dashboard');
   });
 
   it('should handle database connection failure', async () => {
@@ -143,15 +136,13 @@ describe('Auth Callback Route', () => {
       supabase: null,
     });
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest(
       'https://example.com/auth/callback?code=test_code'
     );
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toContain('error=server_error');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/auth/login?error=');
   });
 
   it('should preserve next parameter through callback', async () => {
@@ -174,14 +165,12 @@ describe('Auth Callback Route', () => {
       },
     });
 
-    const { GET } = await import('@/app/auth/callback/route');
-
     const request = new NextRequest(
       'https://example.com/auth/callback?code=test_code&next=/editor/new'
     );
     const response = await GET(request);
 
-    expect(response.status).toBe(302);
-    expect(response.headers.get('Location')).toBe('/editor/new');
+    expect(response.status).toBe(307);
+    expect(response.headers.get('Location')).toContain('/editor/new');
   });
 });

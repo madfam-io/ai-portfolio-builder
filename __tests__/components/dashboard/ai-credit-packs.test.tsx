@@ -1,8 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,16 +7,50 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { toast } from '@/lib/ui/toast';
 import { AI_CREDIT_PACKS } from '@/lib/services/stripe/stripe-enhanced';
 
-
-// Mock dependencies
+jest.mock('@/lib/ai/huggingface-service', () => ({
 jest.mock('@/lib/i18n/refactored-context');
 jest.mock('@/lib/ui/toast');
+
+jest.setTimeout(30000);
+
+// Mock HuggingFace service
+const mockHuggingFaceService = {
+  healthCheck: jest.fn().mockResolvedValue(true),
+  enhanceBio: jest.fn().mockResolvedValue({
+    enhancedBio: 'Enhanced bio',
+    wordCount: 10,
+    tone: 'professional',
+  }),
+  optimizeProject: jest.fn().mockResolvedValue({
+    optimizedTitle: 'Optimized Title',
+    optimizedDescription: 'Optimized description',
+  }),
+  getAvailableModels: jest.fn().mockResolvedValue([
+    { id: 'model-1', name: 'Model 1' },
+    { id: 'model-2', name: 'Model 2' },
+  ]),
+};
+
+  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
+}));
+
+/**
+ * @jest-environment jsdom
+ */
+
+// Mock dependencies
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 const mockToast = toast as jest.MockedFunction<typeof toast>;
 
 describe('AICreditPacks', () => {
-  const mockOnPurchase = jest.fn();
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  const mockOnPurchase = jest.fn().mockReturnValue(void 0);
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -39,7 +69,7 @@ describe('AICreditPacks', () => {
   };
 
   describe('Rendering', () => {
-    it('should display current credit balance', () => {
+    it('should display current credit balance', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('AI Enhancement Credits')).toBeInTheDocument();
@@ -47,7 +77,7 @@ describe('AICreditPacks', () => {
       expect(screen.getByText('15 credits')).toBeInTheDocument();
     });
 
-    it('should display all credit pack options', () => {
+    it('should display all credit pack options', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Check that all packs from AI_CREDIT_PACKS are displayed
@@ -62,7 +92,7 @@ describe('AICreditPacks', () => {
       });
     });
 
-    it('should display information alert about credit usage', () => {
+    it('should display information alert about credit usage', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('How credits work:')).toBeInTheDocument();
@@ -72,7 +102,7 @@ describe('AICreditPacks', () => {
       expect(screen.getByText(/Credits never expire/)).toBeInTheDocument();
     });
 
-    it('should display pro tips section', () => {
+    it('should display pro tips section', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('Pro Tips')).toBeInTheDocument();
@@ -85,7 +115,7 @@ describe('AICreditPacks', () => {
       ).toBeInTheDocument();
     });
 
-    it('should highlight popular pack', () => {
+    it('should highlight popular pack', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Medium pack should be marked as popular
@@ -93,7 +123,7 @@ describe('AICreditPacks', () => {
       expect(popularBadge).toBeInTheDocument();
     });
 
-    it('should display savings badges correctly', () => {
+    it('should display savings badges correctly', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       expect(screen.getByText('Save 20% vs small pack')).toBeInTheDocument();
@@ -102,7 +132,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Price Formatting', () => {
-    it('should format prices correctly', () => {
+    it('should format prices correctly', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Check that prices are formatted as currency
@@ -111,7 +141,7 @@ describe('AICreditPacks', () => {
       expect(screen.getByText('$20.00')).toBeInTheDocument(); // Large pack
     });
 
-    it('should calculate price per credit correctly', () => {
+    it('should calculate price per credit correctly', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Small pack: $5.00 / 10 credits = $0.50 per credit
@@ -181,7 +211,7 @@ describe('AICreditPacks', () => {
       {
           title: 'Purchase initiated',
           description: 'You will be redirected to complete your purchase.',
-    );
+    });
   });
       });
     });
@@ -202,7 +232,7 @@ describe('AICreditPacks', () => {
           title: 'Error',
           description: 'Failed to initiate purchase',
           variant: 'destructive',
-    );
+    });
   });
       });
     });
@@ -249,7 +279,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Zero Credits State', () => {
-    it('should display zero credits correctly', () => {
+    it('should display zero credits correctly', async () => {
       render(<AICreditPacks {...defaultProps} currentCredits={0} />);
 
       expect(screen.getByText('0 credits')).toBeInTheDocument();
@@ -257,7 +287,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('High Credits State', () => {
-    it('should display large credit amounts correctly', () => {
+    it('should display large credit amounts correctly', async () => {
       render(<AICreditPacks {...defaultProps} currentCredits={999} />);
 
       expect(screen.getByText('999 credits')).toBeInTheDocument();
@@ -265,7 +295,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Pack Features', () => {
-    it('should display pack features correctly', () => {
+    it('should display pack features correctly', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Should show features for all packs
@@ -283,7 +313,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Button Variants', () => {
-    it('should use correct button variants for popular and regular packs', () => {
+    it('should use correct button variants for popular and regular packs', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       const buyButtons = screen.getAllByRole('button', {
@@ -302,7 +332,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels and roles', () => {
+    it('should have proper ARIA labels and roles', async () => {
       render(<AICreditPacks {...defaultProps} />);
 
       // Check that buttons have proper text
@@ -332,7 +362,7 @@ describe('AICreditPacks', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle very large current credit amounts', () => {
+    it('should handle very large current credit amounts', async () => {
       render(<AICreditPacks {...defaultProps} currentCredits={1000000} />);
 
       expect(screen.getByText('1000000 credits')).toBeInTheDocument();

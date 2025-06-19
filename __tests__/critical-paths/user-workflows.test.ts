@@ -1,14 +1,16 @@
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
-
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('Critical User Workflows', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
   });

@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   apiVersionMiddleware,
@@ -13,6 +13,13 @@ import {
 
 describe('API Version Middleware', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
     // Reset configuration to defaults
     API_VERSION_CONFIG._currentVersion = 'v1';
     API_VERSION_CONFIG.supportedVersions = ['v1'];
@@ -36,25 +43,25 @@ describe('API Version Middleware', () => {
   };
 
   describe('extractApiVersion', () => {
-    it('should extract version from valid API path', () => {
+    it('should extract version from valid API path', async () => {
       expect(extractApiVersion('/api/v1/portfolios')).toBe('v1');
       expect(extractApiVersion('/api/v2/users')).toBe('v2');
       expect(extractApiVersion('/api/v10/test')).toBe('v10');
     });
 
-    it('should return null for non-versioned API paths', () => {
+    it('should return null for non-versioned API paths', async () => {
       expect(extractApiVersion('/api/portfolios')).toBeNull();
       expect(extractApiVersion('/api/test')).toBeNull();
       expect(extractApiVersion('/api/')).toBeNull();
     });
 
-    it('should return null for non-API paths', () => {
+    it('should return null for non-API paths', async () => {
       expect(extractApiVersion('/dashboard')).toBeNull();
       expect(extractApiVersion('/v1/portfolios')).toBeNull();
       expect(extractApiVersion('/')).toBeNull();
     });
 
-    it('should handle edge cases', () => {
+    it('should handle edge cases', async () => {
       expect(extractApiVersion('/api/v1')).toBeNull(); // No trailing slash
       expect(extractApiVersion('/api/v1/')).toBe('v1');
       expect(extractApiVersion('/api/v1/test/v2')).toBe('v1'); // Only first version
@@ -63,17 +70,17 @@ describe('API Version Middleware', () => {
   });
 
   describe('isVersionSupported', () => {
-    it('should return true for supported versions', () => {
+    it('should return true for supported versions', async () => {
       expect(isVersionSupported('v1')).toBe(true);
     });
 
-    it('should return false for unsupported versions', () => {
+    it('should return false for unsupported versions', async () => {
       expect(isVersionSupported('v2')).toBe(false);
       expect(isVersionSupported('v0')).toBe(false);
       expect(isVersionSupported('invalid')).toBe(false);
     });
 
-    it('should work with multiple supported versions', () => {
+    it('should work with multiple supported versions', async () => {
       API_VERSION_CONFIG.supportedVersions = ['v1', 'v2', 'v3'];
 
       expect(isVersionSupported('v1')).toBe(true);
@@ -85,6 +92,7 @@ describe('API Version Middleware', () => {
 
   describe('deprecation handling', () => {
     beforeEach(() => {
+    global.fetch = jest.fn();
       // Add a deprecated version for testing
       API_VERSION_CONFIG.deprecatedVersions.set('v0', {
         deprecatedAt: new Date('2025-01-01'),
@@ -95,18 +103,18 @@ describe('API Version Middleware', () => {
     });
 
     describe('isVersionDeprecated', () => {
-      it('should return true for deprecated versions', () => {
+      it('should return true for deprecated versions', async () => {
         expect(isVersionDeprecated('v0')).toBe(true);
       });
 
-      it('should return false for non-deprecated versions', () => {
+      it('should return false for non-deprecated versions', async () => {
         expect(isVersionDeprecated('v1')).toBe(false);
         expect(isVersionDeprecated('v2')).toBe(false);
       });
     });
 
     describe('getDeprecationInfo', () => {
-      it('should return deprecation info for deprecated versions', () => {
+      it('should return deprecation info for deprecated versions', async () => {
         const info = getDeprecationInfo('v0');
 
         expect(info).toBeDefined();
@@ -117,7 +125,7 @@ describe('API Version Middleware', () => {
         expect(info?.sunsetDate).toEqual(new Date('2025-06-01'));
       });
 
-      it('should return undefined for non-deprecated versions', () => {
+      it('should return undefined for non-deprecated versions', async () => {
         expect(getDeprecationInfo('v1')).toBeUndefined();
       });
     });
@@ -225,6 +233,7 @@ describe('API Version Middleware', () => {
 
     describe('deprecation warnings', () => {
       beforeEach(() => {
+    global.fetch = jest.fn();
         API_VERSION_CONFIG.deprecatedVersions.set('v0', {
           deprecatedAt: new Date('2025-01-01T00:00:00Z'),
           sunsetDate: new Date('2025-06-01T00:00:00Z'),
@@ -311,7 +320,7 @@ describe('API Version Middleware', () => {
   });
 
   describe('createVersionedResponse', () => {
-    it('should create response with version headers', () => {
+    it('should create response with version headers', async () => {
       const data = { message: 'success' };
       const response = createVersionedResponse(data);
 
@@ -319,7 +328,7 @@ describe('API Version Middleware', () => {
       expect(response.headers.get('X-API-Response-Time')).toBeDefined();
     });
 
-    it('should accept custom status and headers', () => {
+    it('should accept custom status and headers', async () => {
       const data = { error: 'not found' };
       const response = createVersionedResponse(data, {
         status: 404,
@@ -332,7 +341,7 @@ describe('API Version Middleware', () => {
       expect(response.headers.get('X-API-Version')).toBe('v2');
     });
 
-    it('should handle empty data', () => {
+    it('should handle empty data', async () => {
       const response = createVersionedResponse(null);
 
       expect(response.status).toBe(200);
@@ -344,6 +353,7 @@ describe('API Version Middleware', () => {
     const mockHandler = jest.fn();
 
     beforeEach(() => {
+    global.fetch = jest.fn();
       mockHandler.mockClear();
       mockHandler.mockResolvedValue(new NextResponse('success'));
     });

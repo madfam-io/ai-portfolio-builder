@@ -1,37 +1,51 @@
+import React from 'react';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import {
-  PerformanceMonitor,
+
+import {   PerformanceMonitor,
   ImageOptimizer,
   APIOptimizer,
   BundleOptimizer,
   PortfolioPerformanceOptimizer,
   DEFAULT_OPTIMIZATION_CONFIG,
-} from '@/lib/performance/optimization';
+ } from '@/lib/performance/optimization';
 
-import {
-  DeviceDetector,
+import {   DeviceDetector,
   MobileImageOptimizer,
   MobileViewportOptimizer,
   MobileDataOptimizer,
   MobileOptimizationSystem,
   DEFAULT_MOBILE_CONFIG,
-} from '@/lib/performance/mobile-optimization';
+ } from '@/lib/performance/mobile-optimization';
 
-import {
-  MobileCSSOptimizer,
+import {   MobileCSSOptimizer,
   TemplateMobileOptimizer,
   createTemplateMobileOptimizer,
-} from '@/lib/performance/mobile-css-optimization';
+ } from '@/lib/performance/mobile-css-optimization';
 
 // Mock fetch for API tests
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('Performance Optimization System', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
+    global.performance = {
+      now: jest.fn(() => Date.now()),
+      mark: jest.fn(),
+      measure: jest.fn(),
+      getEntriesByName: jest.fn(() => []),
+      getEntriesByType: jest.fn(() => []),
+      clearMarks: jest.fn(),
+      clearMeasures: jest.fn(),
+    };
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
 
@@ -42,11 +56,11 @@ describe('Performance Optimization System', () => {
         matches: false,
         media: query,
         onchange: null,
-        addListener: jest.fn(),
-        removeListener: jest.fn(),
-        addEventListener: jest.fn(),
-        removeEventListener: jest.fn(),
-        dispatchEvent: jest.fn(),
+        addListener: jest.fn().mockReturnValue(void 0),
+        removeListener: jest.fn().mockReturnValue(void 0),
+        addEventListener: jest.fn().mockReturnValue(void 0),
+        removeEventListener: jest.fn().mockReturnValue(void 0),
+        dispatchEvent: jest.fn().mockReturnValue(void 0),
       })),
     });
   });
@@ -57,7 +71,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('PerformanceMonitor', () => {
-    it('should track operation timing accurately', () => {
+    it('should track operation timing accurately', async () => {
       const monitor = new PerformanceMonitor();
 
       monitor.startTimer('testOperation');
@@ -74,7 +88,7 @@ describe('Performance Optimization System', () => {
       expect(duration).toBeLessThan(50);
     });
 
-    it('should calculate total metrics correctly', () => {
+    it('should calculate total metrics correctly', async () => {
       const monitor = new PerformanceMonitor();
 
       monitor.startTimer('operation1');
@@ -87,7 +101,7 @@ describe('Performance Optimization System', () => {
       expect(metrics.portfolioCreation).toBeDefined();
     });
 
-    it('should check performance targets correctly', () => {
+    it('should check performance targets correctly', async () => {
       const monitor = new PerformanceMonitor();
 
       // Test fast operation
@@ -97,7 +111,7 @@ describe('Performance Optimization System', () => {
       expect(monitor.meetsPerformanceTarget()).toBe(true);
     });
 
-    it('should reset metrics correctly', () => {
+    it('should reset metrics correctly', async () => {
       const monitor = new PerformanceMonitor();
 
       monitor.startTimer('test');
@@ -136,7 +150,7 @@ describe('Performance Optimization System', () => {
 
     });
 
-    it('should generate responsive sizes correctly', () => {
+    it('should generate responsive sizes correctly', async () => {
       const optimizer = new ImageOptimizer(DEFAULT_OPTIMIZATION_CONFIG);
 
       const sizes = optimizer.generateResponsiveSizes(
@@ -192,7 +206,7 @@ describe('Performance Optimization System', () => {
       expect(fetchCall[1].headers['Accept-Encoding']).toContain('gzip');
     });
 
-    it('should handle cache expiration', () => {
+    it('should handle cache expiration', async () => {
       const optimizer = new APIOptimizer();
 
       // Cache with short TTL
@@ -209,7 +223,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('Mobile Device Detection', () => {
-    it('should detect mobile devices correctly', () => {
+    it('should detect mobile devices correctly', async () => {
       // Mock mobile user agent
       Object.defineProperty(navigator, 'userAgent', {
         value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)',
@@ -223,7 +237,7 @@ describe('Performance Optimization System', () => {
       expect(capabilities.isTablet).toBe(false);
     });
 
-    it('should detect low-end devices', () => {
+    it('should detect low-end devices', async () => {
       // Mock low-end device indicators
       Object.defineProperty(navigator, 'deviceMemory', {
         value: 1,
@@ -242,7 +256,7 @@ describe('Performance Optimization System', () => {
       expect(detector.needsAggressiveOptimization()).toBe(true);
     });
 
-    it('should detect slow connections', () => {
+    it('should detect slow connections', async () => {
       // Mock slow connection
       Object.defineProperty(navigator, 'connection', {
         value: {
@@ -260,7 +274,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('Mobile Image Optimization', () => {
-    it('should optimize images for mobile devices', () => {
+    it('should optimize images for mobile devices', async () => {
       const detector = new DeviceDetector();
       const optimizer = new MobileImageOptimizer(
         DEFAULT_MOBILE_CONFIG,
@@ -276,7 +290,7 @@ describe('Performance Optimization System', () => {
       expect(['lazy', 'eager']).toContain(optimization.loading);
     });
 
-    it('should adjust quality for low-end devices', () => {
+    it('should adjust quality for low-end devices', async () => {
       // Mock low-end device
       const detector = new DeviceDetector();
       jest.spyOn(detector, 'needsAggressiveOptimization').mockReturnValue(true);
@@ -293,7 +307,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('Mobile CSS Optimization', () => {
-    it('should generate responsive container classes', () => {
+    it('should generate responsive container classes', async () => {
       const optimizer = new MobileCSSOptimizer();
       const containerClasses = optimizer.getResponsiveContainer();
 
@@ -303,7 +317,7 @@ describe('Performance Optimization System', () => {
       expect(containerClasses).toContain('lg:px-8');
     });
 
-    it('should generate responsive grid classes', () => {
+    it('should generate responsive grid classes', async () => {
       const optimizer = new MobileCSSOptimizer();
       const gridClasses = optimizer.getResponsiveGrid({
         mobile: 1,
@@ -316,7 +330,7 @@ describe('Performance Optimization System', () => {
       expect(gridClasses).toContain('lg:grid-cols-3');
     });
 
-    it('should generate touch-optimized button classes', () => {
+    it('should generate touch-optimized button classes', async () => {
       const optimizer = new MobileCSSOptimizer();
       const buttonClasses = optimizer.getTouchOptimizedButton();
 
@@ -325,7 +339,7 @@ describe('Performance Optimization System', () => {
       expect(buttonClasses).toContain('transition-all');
     });
 
-    it('should generate mobile stylesheet with custom properties', () => {
+    it('should generate mobile stylesheet with custom properties', async () => {
       const optimizer = new MobileCSSOptimizer();
       const stylesheet = optimizer.generateMobileStylesheet();
 
@@ -337,7 +351,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('Template Mobile Optimization', () => {
-    it('should generate template-specific mobile classes', () => {
+    it('should generate template-specific mobile classes', async () => {
       const optimizer = createTemplateMobileOptimizer();
 
       const modernClasses = optimizer.getModernTemplateMobile();
@@ -394,7 +408,7 @@ describe('Performance Optimization System', () => {
       expect(result.metrics.totalTime).toBeGreaterThanOrEqual(0);
     });
 
-    it('should provide optimization recommendations', () => {
+    it('should provide optimization recommendations', async () => {
       const optimizer = new PortfolioPerformanceOptimizer(
         DEFAULT_OPTIMIZATION_CONFIG
 
@@ -416,7 +430,7 @@ describe('Performance Optimization System', () => {
   });
 
   describe('Integration Tests', () => {
-    it('should complete full mobile optimization workflow', () => {
+    it('should complete full mobile optimization workflow', async () => {
       const mobileSystem = new MobileOptimizationSystem();
 
       // Initialize optimizations

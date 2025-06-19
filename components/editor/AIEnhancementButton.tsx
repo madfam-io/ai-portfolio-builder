@@ -136,7 +136,10 @@ export function AIEnhancementButton({
     if (!canUseAI) {
       const shown = checkAndShowPrompt('ai_limit');
       if (!shown) {
-        showToast.error(t.aiLimitReached || 'AI enhancement limit reached. Please upgrade your plan.');
+        showToast.error(
+          t.aiLimitReached ||
+            'AI enhancement limit reached. Please upgrade your plan.'
+        );
       }
       return;
     }

@@ -1,11 +1,9 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
 /**
  * @jest-environment jsdom
  */
-
-import { describe, test, it, expect, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-
 
 // Mock a basic editor component for testing
 const BasicEditor = ({ portfolio, onUpdate }: any) => {
@@ -35,14 +33,20 @@ const BasicEditor = ({ portfolio, onUpdate }: any) => {
 };
 
 describe('Basic Editor Functionality', () => {
-  it('should render editor inputs', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  it('should render editor inputs', async () => {
     const mockPortfolio = {
       name: 'John Doe',
       title: 'Developer',
       bio: 'A developer',
     };
 
-    const mockUpdate = jest.fn();
+    const mockUpdate = jest.fn().mockReturnValue(void 0);
 
     render(<BasicEditor portfolio={mockPortfolio} onUpdate={mockUpdate} />);
 
@@ -51,14 +55,14 @@ describe('Basic Editor Functionality', () => {
     expect(screen.getByTestId('bio-input')).toHaveValue('A developer');
   });
 
-  it('should call onUpdate when inputs change', () => {
+  it('should call onUpdate when inputs change', async () => {
     const mockPortfolio = {
       name: 'John Doe',
       title: 'Developer',
       bio: 'A developer',
     };
 
-    const mockUpdate = jest.fn();
+    const mockUpdate = jest.fn().mockReturnValue(void 0);
 
     render(<BasicEditor portfolio={mockPortfolio} onUpdate={mockUpdate} />);
 
@@ -68,8 +72,8 @@ describe('Basic Editor Functionality', () => {
     expect(mockUpdate).toHaveBeenCalledWith({ name: 'Jane Doe' });
   });
 
-  it('should handle empty portfolio', () => {
-    const mockUpdate = jest.fn();
+  it('should handle empty portfolio', async () => {
+    const mockUpdate = jest.fn().mockReturnValue(void 0);
 
     render(<BasicEditor portfolio={null} onUpdate={mockUpdate} />);
 

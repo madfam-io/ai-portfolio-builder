@@ -1,22 +1,45 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+
+// Mock UI store with showToast
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: jest.fn(() => ({
+    showToast: jest.fn(),
+    isLoading: false,
+    setLoading: jest.fn(),
+  })),
+}));
+
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {
-  AIEnhancementButton,
-  ModelSelectionModal,
-} from '@/components/editor/AIEnhancementButton';
 import { aiClient } from '@/lib/ai/client';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { showToast } from '@/lib/utils/toast';
 import { logger } from '@/lib/utils/logger';
+import {  
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => mockUseLanguage(),
+}));
 
+describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
+import {
+  AIEnhancementButton,
+  ModelSelectionModal,
+} from '@/components/editor/AIEnhancementButton';
 
 // Mock dependencies
 jest.mock('@/lib/ai/client');
-jest.mock('@/lib/i18n/refactored-context');
 jest.mock('@/lib/utils/toast');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 // Mock lucide-react icons
 jest.mock('lucide-react', () => ({
@@ -24,7 +47,20 @@ jest.mock('lucide-react', () => ({
   Sparkles: ({ className }: any) => <span className={className}>Sparkles</span>,
 }));
 
+// Mock ui-store
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: () => ({
+    showToast: jest.fn(),
+  }),
+}));
+
 describe('AIEnhancementButton', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockT = {
     enhanceBioWithAI: 'Enhance bio with AI',
     enhanceProjectWithAI: 'Enhance project with AI',
@@ -39,10 +75,11 @@ describe('AIEnhancementButton', () => {
   const mockOnEnhanced = jest.fn();
 
   beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
     (useLanguage as jest.Mock).mockReturnValue({ t: mockT });
-    (logger.error as jest.Mock).mockImplementation(() => {});
-    (showToast.error as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
+    (showToast.error as jest.Mock).mockImplementation(() => undefined);
   });
 
   describe('Bio Enhancement', () => {
@@ -52,7 +89,7 @@ describe('AIEnhancementButton', () => {
       experienceLevel: 'senior' as const,
     };
 
-    it('should render bio enhancement button', () => {
+    it('should render bio enhancement button', async () => {
       render(
         <AIEnhancementButton
           type="bio"
@@ -67,7 +104,7 @@ describe('AIEnhancementButton', () => {
       expect(screen.getByText(mockT.enhance)).toBeInTheDocument();
     });
 
-    it('should disable button when content is empty', () => {
+    it('should disable button when content is empty', async () => {
       render(
         <AIEnhancementButton
           type="bio"
@@ -79,7 +116,7 @@ describe('AIEnhancementButton', () => {
       expect(screen.getByRole('button')).toBeDisabled();
     });
 
-    it('should disable button when disabled prop is true', () => {
+    it('should disable button when disabled prop is true', async () => {
       render(
         <AIEnhancementButton
           type="bio"
@@ -214,7 +251,7 @@ describe('AIEnhancementButton', () => {
       technologies: ['React', 'Node.js', 'MongoDB'],
     };
 
-    it('should render project enhancement button', () => {
+    it('should render project enhancement button', async () => {
       render(
         <AIEnhancementButton
           type="project"
@@ -315,7 +352,7 @@ describe('AIEnhancementButton', () => {
       expect(screen.getByText(mockT.enhancing)).toBeInTheDocument();
     });
 
-    it('should apply custom className', () => {
+    it('should apply custom className', async () => {
       render(
         <AIEnhancementButton
           type="bio"
@@ -396,12 +433,13 @@ describe('ModelSelectionModal', () => {
   ];
 
   beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
     (useLanguage as jest.Mock).mockReturnValue({ t: mockT });
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
   });
 
-  it('should not render when closed', () => {
+  it('should not render when closed', async () => {
     render(
       <ModelSelectionModal
         isOpen={false}
@@ -414,7 +452,7 @@ describe('ModelSelectionModal', () => {
     expect(screen.queryByText(mockT.selectModelFor)).not.toBeInTheDocument();
   });
 
-  it('should render modal when open', () => {
+  it('should render modal when open', async () => {
     render(
       <ModelSelectionModal
         isOpen={true}
@@ -509,7 +547,7 @@ describe('ModelSelectionModal', () => {
 
   it('should select new model and close', async () => {
     (aiClient.getAvailableModels as jest.Mock).mockResolvedValue(mockModels);
-    (aiClient.updateModelSelection as jest.Mock).mockResolvedValue(undefined);
+    (aiClient.updateModelSelection as jest.Mock).mockResolvedValue(void 0);
 
     const user = userEvent.setup();
     render(

@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
 import { logger } from '@/lib/utils/logger';
 
 
@@ -36,7 +36,7 @@ describe('Logger', () => {
   });
 
   describe('Log Levels', () => {
-    it('should log debug messages', () => {
+    it('should log debug messages', async () => {
       const originalNodeEnv = process.env.NODE_ENV;
       const originalShowLogs = process.env.SHOW_LOGS;
       process.env.NODE_ENV = 'development';
@@ -59,7 +59,7 @@ describe('Logger', () => {
       process.env.SHOW_LOGS = originalShowLogs;
     });
 
-    it('should log info messages', () => {
+    it('should log info messages', async () => {
       // In test environment, logger outputs JSON format
       logger.info('Info message', { userId: '123' });
 
@@ -71,7 +71,7 @@ describe('Logger', () => {
       expect(parsedLog.level).toBe('info');
     });
 
-    it('should log warning messages', () => {
+    it('should log warning messages', async () => {
       logger.warn('Warning message', { action: 'test-action' });
 
       const logCall = consoleWarnSpy.mock.calls[0][0];
@@ -82,7 +82,7 @@ describe('Logger', () => {
       expect(parsedLog.level).toBe('warn');
     });
 
-    it('should log error messages', () => {
+    it('should log error messages', async () => {
       logger.error('Error message', { requestId: 'req-123' });
 
       const logCall = consoleErrorSpy.mock.calls[0][0];
@@ -95,7 +95,7 @@ describe('Logger', () => {
   });
 
   describe('Error Handling', () => {
-    it('should log error objects with stack trace', () => {
+    it('should log error objects with stack trace', async () => {
       const error = new Error('Test error');
       logger.error('Operation failed', error);
 
@@ -107,7 +107,7 @@ describe('Logger', () => {
       expect(parsedLog.error?.stack).toBeDefined();
     });
 
-    it('should handle errors with custom properties', () => {
+    it('should handle errors with custom properties', async () => {
       const error: any = new Error('Custom error');
       error.code = 'ERR_CUSTOM';
       logger.error('Custom error occurred', error);
@@ -119,7 +119,7 @@ describe('Logger', () => {
       expect(parsedLog.error?.code).toBe('ERR_CUSTOM');
     });
 
-    it('should handle error as context parameter', () => {
+    it('should handle error as context parameter', async () => {
       logger.error('Error with context', {
         errorCode: 'E001',
         severity: 'high',
@@ -134,7 +134,7 @@ describe('Logger', () => {
   });
 
   describe('Environment-based Behavior', () => {
-    it('should skip debug logs in production unless enabled', () => {
+    it('should skip debug logs in production unless enabled', async () => {
       process.env.NODE_ENV = 'production';
       process.env.ENABLE_DEBUG = 'false';
 
@@ -146,7 +146,7 @@ describe('Logger', () => {
       expect(consoleDebugSpy).not.toHaveBeenCalled();
     });
 
-    it('should show debug logs in production when ENABLE_DEBUG is true', () => {
+    it('should show debug logs in production when ENABLE_DEBUG is true', async () => {
       process.env.NODE_ENV = 'production';
       process.env.ENABLE_DEBUG = 'true';
 
@@ -158,7 +158,7 @@ describe('Logger', () => {
       expect(consoleDebugSpy).toHaveBeenCalled();
     });
 
-    it('should format logs as JSON in production', () => {
+    it('should format logs as JSON in production', async () => {
       process.env.NODE_ENV = 'production';
 
       // Create a new logger instance to pick up env changes
@@ -177,7 +177,7 @@ describe('Logger', () => {
       expect(parsedLog).toHaveProperty('environment', 'production');
     });
 
-    it('should skip logs in test environment when SHOW_LOGS is not set', () => {
+    it('should skip logs in test environment when SHOW_LOGS is not set', async () => {
       process.env.SHOW_LOGS = 'false';
 
       // Create a new logger instance to pick up env changes
@@ -195,7 +195,7 @@ describe('Logger', () => {
   });
 
   describe('Child Logger', () => {
-    it('should create child logger with persistent context', () => {
+    it('should create child logger with persistent context', async () => {
       const childLogger = logger.child({ userId: 'user-123', feature: 'auth' });
 
       childLogger.info('User logged in');
@@ -207,7 +207,7 @@ describe('Logger', () => {
       expect(parsedLog.context?.feature).toBe('auth');
     });
 
-    it('should merge contexts in child logger', () => {
+    it('should merge contexts in child logger', async () => {
       const childLogger = logger.child({ userId: 'user-123' });
 
       childLogger.info('Action performed', { action: 'create-portfolio' });
@@ -219,7 +219,7 @@ describe('Logger', () => {
       expect(parsedLog.context?.action).toBe('create-portfolio');
     });
 
-    it('should handle nested child loggers', () => {
+    it('should handle nested child loggers', async () => {
       const childLogger = logger.child({ requestId: 'req-123' });
       const grandchildLogger = childLogger.child({ userId: 'user-456' });
 
@@ -232,7 +232,7 @@ describe('Logger', () => {
       expect(parsedLog.context?.userId).toBe('user-456');
     });
 
-    it('should handle errors in child logger', () => {
+    it('should handle errors in child logger', async () => {
       const childLogger = logger.child({ feature: 'portfolio' });
       const error = new Error('Portfolio error');
 
@@ -248,7 +248,7 @@ describe('Logger', () => {
       // This is a limitation of the current implementation
     });
 
-    it('should handle context in child logger error without Error object', () => {
+    it('should handle context in child logger error without Error object', async () => {
       const childLogger = logger.child({ feature: 'portfolio' });
 
       childLogger.error('Failed to create portfolio', { errorCode: 'E001' });
@@ -263,7 +263,7 @@ describe('Logger', () => {
   });
 
   describe('Log Formatting', () => {
-    it('should include timestamp in logs', () => {
+    it('should include timestamp in logs', async () => {
       logger.info('Timestamp test');
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
@@ -275,7 +275,7 @@ describe('Logger', () => {
 
     });
 
-    it('should handle complex metadata objects', () => {
+    it('should handle complex metadata objects', async () => {
       const metadata = {
         user: {
           id: '123',
@@ -303,7 +303,7 @@ describe('Logger', () => {
       expect(parsedLog.context).toEqual(metadata);
     });
 
-    it('should handle circular references in context', () => {
+    it('should handle circular references in context', async () => {
       const circularObj: any = { name: 'test' };
       circularObj.self = circularObj; // Create circular reference
 
@@ -315,14 +315,14 @@ describe('Logger', () => {
   });
 
   describe('Special Cases', () => {
-    it('should handle null and undefined values', () => {
+    it('should handle null and undefined values', async () => {
       logger.info('Null context', null as any);
       logger.info('Undefined context', undefined as any);
 
       expect(consoleInfoSpy).toHaveBeenCalledTimes(2);
     });
 
-    it('should handle empty messages', () => {
+    it('should handle empty messages', async () => {
       logger.info('', { context: 'empty message' });
 
       const logCall = consoleInfoSpy.mock.calls[0][0];
@@ -332,7 +332,7 @@ describe('Logger', () => {
       expect(parsedLog.context?.context).toBe('empty message');
     });
 
-    it('should handle very long messages', () => {
+    it('should handle very long messages', async () => {
       const longMessage = 'a'.repeat(1000);
       logger.info(longMessage);
 

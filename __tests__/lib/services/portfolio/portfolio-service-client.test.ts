@@ -1,19 +1,46 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { PortfolioServiceClient } from '@/lib/services/portfolio/portfolio-service-client';
 import { logger } from '@/lib/utils/logger';
-import {
-  Portfolio,
+jest.mock('@/lib/supabase/client', () => ({
+  createBrowserClient: jest.fn(() => ({
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn(),
+    auth: {
+      getUser: jest.fn(),
+    },
+  })),
+}));
+
+import {   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
-} from '@/types/portfolio';
+ } from '@/types/portfolio';
 
 // Mock dependencies
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('PortfolioServiceClient', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let portfolioServiceClient: PortfolioServiceClient;
 
   const mockPortfolio: Portfolio = {

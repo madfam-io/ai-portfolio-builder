@@ -1,17 +1,55 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { GitHubClient } from '@/lib/integrations/github/client.lazy';
 import { createClient } from '@/lib/supabase/server';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
 
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
 
 // Mock dependencies
 
 jest.mock('@/lib/services/error/error-logger');
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('GitHubClient', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   let client: GitHubClient;
@@ -38,12 +76,12 @@ describe('GitHubClient', () => {
       })),
     };
 
-    (createClient as jest.Mock).mockReturnValue(mockSupabase);
+    jest.mocked(createClient).mockReturnValue(mockSupabase);
     client = new GitHubClient(mockUserId);
   });
 
   describe('Authentication', () => {
-    it('should initialize with user ID', () => {
+    it('should initialize with user ID', async () => {
       expect(client).toBeDefined();
       expect(client.userId).toBe(mockUserId);
     });

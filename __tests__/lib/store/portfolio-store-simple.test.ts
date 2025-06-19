@@ -1,9 +1,8 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { render, actHook, act } from '@testing-library/react';
 /**
  * @jest-environment jsdom
  */
-
-import { describe, test, it, expect, beforeEach } from '@jest/globals';
-import { renderHook, act } from '@testing-library/react';
 
 // Mock portfolio store for testing
 const createPortfolioStore = () => {
@@ -36,10 +35,13 @@ describe('Portfolio Store Simple Tests', () => {
   let store: ReturnType<typeof createPortfolioStore>;
 
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     store = createPortfolioStore();
   });
 
-  it('should initialize with default state', () => {
+  it('should initialize with default state', async () => {
     const state = store.getState();
 
     expect(state.currentPortfolio).toBeNull();
@@ -49,7 +51,7 @@ describe('Portfolio Store Simple Tests', () => {
     expect(state.error).toBeNull();
   });
 
-  it('should update state correctly', () => {
+  it('should update state correctly', async () => {
     const mockPortfolio = {
       id: 'test',
       name: 'John Doe',
@@ -66,7 +68,7 @@ describe('Portfolio Store Simple Tests', () => {
     expect(state.isDirty).toBe(true);
   });
 
-  it('should reset state correctly', () => {
+  it('should reset state correctly', async () => {
     store.setState({
       currentPortfolio: { id: 'test', name: 'John' },
       isDirty: true,
@@ -81,7 +83,7 @@ describe('Portfolio Store Simple Tests', () => {
     expect(state.error).toBeNull();
   });
 
-  it('should handle loading states', () => {
+  it('should handle loading states', async () => {
     store.setState({ isLoading: true });
     expect(store.getState().isLoading).toBe(true);
 
@@ -89,7 +91,7 @@ describe('Portfolio Store Simple Tests', () => {
     expect(store.getState().isLoading).toBe(false);
   });
 
-  it('should handle error states', () => {
+  it('should handle error states', async () => {
     const errorMessage = 'Failed to save portfolio';
 
     store.setState({ error: errorMessage });

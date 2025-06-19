@@ -1,19 +1,65 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import DynamicLandingPage from '@/components/landing/DynamicLandingPage';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+
+// Mock next/navigation
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+  useSearchParams: () => ({
+    get: jest.fn(),
+  }),
+  usePathname: () => '/test',
+}));
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import DynamicLandingPage from '@/components/landing/DynamicLandingPage';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -35,7 +81,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -198,7 +243,7 @@ describe('DynamicLandingPage', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render all landing page sections', () => {
+    it('should render all landing page sections', async () => {
       renderDynamicLandingPage();
 
       expect(screen.getByTestId('header')).toBeInTheDocument();
@@ -212,7 +257,7 @@ describe('DynamicLandingPage', () => {
       expect(screen.getByTestId('footer')).toBeInTheDocument();
     });
 
-    it('should render sections in correct order', () => {
+    it('should render sections in correct order', async () => {
       renderDynamicLandingPage();
 
       const sections = [
@@ -237,13 +282,13 @@ describe('DynamicLandingPage', () => {
       });
     });
 
-    it('should display default hero variant', () => {
+    it('should display default hero variant', async () => {
       renderDynamicLandingPage();
 
       expect(screen.getByText(/Hero Variant:/)).toBeInTheDocument();
     });
 
-    it('should have proper page structure', () => {
+    it('should have proper page structure', async () => {
       renderDynamicLandingPage();
 
       const mainContent = screen.getByRole('main');
@@ -252,7 +297,7 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Hero Variants', () => {
-    it('should handle A/B testing variants', () => {
+    it('should handle A/B testing variants', async () => {
       renderDynamicLandingPage();
 
       const heroSection = screen.getByTestId('hero-variants');
@@ -397,7 +442,7 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Responsive Design', () => {
-    it('should adapt to mobile viewport', () => {
+    it('should adapt to mobile viewport', async () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -413,7 +458,7 @@ describe('DynamicLandingPage', () => {
       expect(screen.getByTestId('features')).toBeInTheDocument();
     });
 
-    it('should adapt to tablet viewport', () => {
+    it('should adapt to tablet viewport', async () => {
       // Mock tablet viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -427,7 +472,7 @@ describe('DynamicLandingPage', () => {
       expect(screen.getByTestId('templates')).toBeInTheDocument();
     });
 
-    it('should handle orientation changes', () => {
+    it('should handle orientation changes', async () => {
       renderDynamicLandingPage();
 
       // Simulate orientation change
@@ -450,7 +495,7 @@ describe('DynamicLandingPage', () => {
       });
     });
 
-    it('should optimize images and assets', () => {
+    it('should optimize images and assets', async () => {
       renderDynamicLandingPage();
 
       // Check for Next.js optimized images
@@ -460,7 +505,7 @@ describe('DynamicLandingPage', () => {
       });
     });
 
-    it('should preload critical resources', () => {
+    it('should preload critical resources', async () => {
       renderDynamicLandingPage();
 
       // Check for resource preloading
@@ -470,13 +515,13 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('SEO and Meta Tags', () => {
-    it('should have proper page title', () => {
+    it('should have proper page title', async () => {
       renderDynamicLandingPage();
 
       expect(document.title).toContain('PRISMA');
     });
 
-    it('should have meta description', () => {
+    it('should have meta description', async () => {
       renderDynamicLandingPage();
 
       const metaDescription = document.querySelector(
@@ -485,7 +530,7 @@ describe('DynamicLandingPage', () => {
       expect(metaDescription).toBeInTheDocument();
     });
 
-    it('should have Open Graph tags', () => {
+    it('should have Open Graph tags', async () => {
       renderDynamicLandingPage();
 
       const ogTitle = document.querySelector('meta[property="og:title"]');
@@ -496,7 +541,7 @@ describe('DynamicLandingPage', () => {
       expect(ogDescription).toBeInTheDocument();
     });
 
-    it('should have structured data', () => {
+    it('should have structured data', async () => {
       renderDynamicLandingPage();
 
       const structuredData = document.querySelector(
@@ -507,7 +552,7 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Analytics and Tracking', () => {
-    it('should track page view', () => {
+    it('should track page view', async () => {
       renderDynamicLandingPage();
 
       // Should send pageview event
@@ -544,7 +589,7 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper heading hierarchy', () => {
+    it('should have proper heading hierarchy', async () => {
       renderDynamicLandingPage();
 
       const headings = screen.getAllByRole('heading');
@@ -558,14 +603,14 @@ describe('DynamicLandingPage', () => {
       expect(h2s.length).toBeGreaterThan(0);
     });
 
-    it('should have proper ARIA labels', () => {
+    it('should have proper ARIA labels', async () => {
       renderDynamicLandingPage();
 
       const ctaButton = screen.getByTestId('cta-button');
       expect(ctaButton).toHaveAttribute('aria-label');
     });
 
-    it('should be keyboard navigable', () => {
+    it('should be keyboard navigable', async () => {
       renderDynamicLandingPage();
 
       const focusableElements = screen.getAllByRole('button');
@@ -575,7 +620,7 @@ describe('DynamicLandingPage', () => {
       });
     });
 
-    it('should have proper color contrast', () => {
+    it('should have proper color contrast', async () => {
       renderDynamicLandingPage();
 
       // All text should have sufficient contrast
@@ -583,7 +628,7 @@ describe('DynamicLandingPage', () => {
       expect(textElements.length).toBeGreaterThan(0);
     });
 
-    it('should support screen readers', () => {
+    it('should support screen readers', async () => {
       renderDynamicLandingPage();
 
       const main = screen.getByRole('main');
@@ -596,9 +641,9 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle component loading errors gracefully', () => {
+    it('should handle component loading errors gracefully', async () => {
       // Mock component error
-      const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      const spy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
       renderDynamicLandingPage();
 
@@ -618,7 +663,7 @@ describe('DynamicLandingPage', () => {
       expect(screen.getByTestId('hero-variants')).toBeInTheDocument();
     });
 
-    it('should handle translation loading errors', () => {
+    it('should handle translation loading errors', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
         currentLanguage: 'en',
@@ -644,14 +689,14 @@ describe('DynamicLandingPage', () => {
       expect(ctaButton).toBeInTheDocument();
     });
 
-    it('should integrate with experiment system', () => {
+    it('should integrate with experiment system', async () => {
       renderDynamicLandingPage();
 
       // Should show appropriate variant based on experiment
       expect(screen.getByTestId('hero-variants')).toBeInTheDocument();
     });
 
-    it('should integrate with analytics platform', () => {
+    it('should integrate with analytics platform', async () => {
       renderDynamicLandingPage();
 
       // Should initialize analytics
@@ -660,14 +705,14 @@ describe('DynamicLandingPage', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing props gracefully', () => {
+    it('should handle missing props gracefully', async () => {
       renderDynamicLandingPage();
 
       // Should render with default values
       expect(screen.getByTestId('hero-variants')).toBeInTheDocument();
     });
 
-    it('should handle invalid language codes', () => {
+    it('should handle invalid language codes', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: mockTranslations,
         currentLanguage: 'invalid',
@@ -680,7 +725,7 @@ describe('DynamicLandingPage', () => {
       expect(screen.getByTestId('header')).toBeInTheDocument();
     });
 
-    it('should handle very long content', () => {
+    it('should handle very long content', async () => {
       const longTitle = 'A'.repeat(200);
 
       renderDynamicLandingPage();

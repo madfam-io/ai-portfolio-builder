@@ -1,15 +1,13 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { Portfolio } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Portfolio } from '@/types/portfolio';
-
-
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 // Mock the publishing flow components
 const MockPublishingFlow = () => {
@@ -119,13 +117,25 @@ const MockPublishingFlow = () => {
 };
 
 describe('Portfolio Publishing Integration', () => {
+  beforeAll(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   beforeEach(() => {
+    // Mock console methods
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
   });
 
   describe('Subdomain Selection Flow', () => {
-    it('should render subdomain selection step initially', () => {
+    it('should render subdomain selection step initially', async () => {
       render(<MockPublishingFlow />);
 
       expect(screen.getByTestId('subdomain-step')).toBeInTheDocument();
@@ -133,7 +143,7 @@ describe('Portfolio Publishing Integration', () => {
       expect(screen.getByTestId('subdomain-input')).toBeInTheDocument();
     });
 
-    it('should enable check button when subdomain is entered', () => {
+    it('should enable check button when subdomain is entered', async () => {
       render(<MockPublishingFlow />);
 
       const input = screen.getByTestId('subdomain-input');

@@ -1,15 +1,20 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
+import type { DetailedVariant } from '@/types/experiments';
 import {
   calculatePValue,
   calculateExperimentResults,
   generateTimeline,
 } from '@/lib/utils/experiments/calculate-results';
-import type { DetailedVariant } from '@/types/experiments';
-
 
 describe('Experiment Calculation Utilities', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('calculatePValue', () => {
-    it('should calculate p-value for equal conversion rates', () => {
+    it('should calculate p-value for equal conversion rates', async () => {
       const control: DetailedVariant = {
         id: 'control',
         name: 'Control',
@@ -37,7 +42,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(pValue).toBeCloseTo(1, 1); // Should be close to 1 for identical rates
     });
 
-    it('should calculate p-value for different conversion rates', () => {
+    it('should calculate p-value for different conversion rates', async () => {
       const control: DetailedVariant = {
         id: 'control',
         name: 'Control',
@@ -69,7 +74,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(pValue).toBeLessThan(1);
     });
 
-    it('should handle edge case with zero visitors', () => {
+    it('should handle edge case with zero visitors', async () => {
       const control: DetailedVariant = {
         id: 'control',
         name: 'Control',
@@ -92,7 +97,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(isNaN(pValue)).toBe(true); // Division by zero results in NaN
     });
 
-    it('should calculate lower p-value for larger differences', () => {
+    it('should calculate lower p-value for larger differences', async () => {
       const control: DetailedVariant = {
         id: 'control',
         name: 'Control',
@@ -152,7 +157,7 @@ describe('Experiment Calculation Utilities', () => {
       ...overrides,
     });
 
-    it('should return null if no control variant', () => {
+    it('should return null if no control variant', async () => {
       const variants = [
         createVariant({ id: 'v1' }),
         createVariant({ id: 'v2' }),
@@ -162,7 +167,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(results).toBeNull();
     });
 
-    it('should calculate results for simple A/B test', () => {
+    it('should calculate results for simple A/B test', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -199,7 +204,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(variantB?.pValue).toBeLessThan(1);
     });
 
-    it('should determine winner with statistical significance', () => {
+    it('should determine winner with statistical significance', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -231,7 +236,7 @@ describe('Experiment Calculation Utilities', () => {
       }
     });
 
-    it('should not declare winner without statistical significance', () => {
+    it('should not declare winner without statistical significance', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -252,7 +257,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(results?.confidence).toBe(0);
     });
 
-    it('should handle multi-variant experiments', () => {
+    it('should handle multi-variant experiments', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -288,7 +293,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(variantC?.uplift).toBe(-10); // Negative uplift
     });
 
-    it('should handle zero visitors correctly', () => {
+    it('should handle zero visitors correctly', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -314,7 +319,7 @@ describe('Experiment Calculation Utilities', () => {
       });
     });
 
-    it('should calculate confidence intervals', () => {
+    it('should calculate confidence intervals', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -336,7 +341,7 @@ describe('Experiment Calculation Utilities', () => {
 
     });
 
-    it('should pick highest uplift winner among significant results', () => {
+    it('should pick highest uplift winner among significant results', async () => {
       const variants = [
         createVariant({
           id: 'control',
@@ -390,7 +395,7 @@ describe('Experiment Calculation Utilities', () => {
       },
     });
 
-    it('should generate timeline for 7 days', () => {
+    it('should generate timeline for 7 days', async () => {
       const variants = [createVariant()];
       const timeline = generateTimeline(variants, '7d');
 
@@ -399,28 +404,28 @@ describe('Experiment Calculation Utilities', () => {
       expect(timeline[0].date.getTime()).toBeLessThan(Date.now());
     });
 
-    it('should generate timeline for 14 days', () => {
+    it('should generate timeline for 14 days', async () => {
       const variants = [createVariant()];
       const timeline = generateTimeline(variants, '14d');
 
       expect(timeline).toHaveLength(15); // 14 days + today
     });
 
-    it('should generate timeline for 30 days', () => {
+    it('should generate timeline for 30 days', async () => {
       const variants = [createVariant()];
       const timeline = generateTimeline(variants, '30d');
 
       expect(timeline).toHaveLength(31); // 30 days + today
     });
 
-    it('should generate timeline for 365 days', () => {
+    it('should generate timeline for 365 days', async () => {
       const variants = [createVariant()];
       const timeline = generateTimeline(variants, 'all');
 
       expect(timeline).toHaveLength(366); // 365 days + today
     });
 
-    it('should aggregate data from multiple variants', () => {
+    it('should aggregate data from multiple variants', async () => {
       const today = new Date().toISOString().split('T')[0];
       const variants = [
         {
@@ -451,7 +456,7 @@ describe('Experiment Calculation Utilities', () => {
       expect(todayData?.conversions).toBe(11); // 5 + 6
     });
 
-    it('should handle missing data for some days', () => {
+    it('should handle missing data for some days', async () => {
       const variants = [
         {
           ...createVariant(),
@@ -472,7 +477,7 @@ describe('Experiment Calculation Utilities', () => {
       });
     });
 
-    it('should create dates in chronological order', () => {
+    it('should create dates in chronological order', async () => {
       const variants = [createVariant()];
       const timeline = generateTimeline(variants, '7d');
 

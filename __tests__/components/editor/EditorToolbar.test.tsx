@@ -1,20 +1,23 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import { EditorToolbar } from '@/components/editor/EditorToolbar';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { TemplateType } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { EditorToolbar } from '@/components/editor/EditorToolbar';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { TemplateType } from '@/types/portfolio';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -36,7 +39,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -46,7 +48,37 @@ jest.mock('@/lib/utils', () => ({
 
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
+
+const mockPortfolio = {
+  id: 'test-portfolio',
+  userId: 'test-user',
+  name: 'Test Portfolio',
+  title: 'Test Title',
+  bio: 'Test bio',
+  template: 'modern',
+  status: 'draft',
+  subdomain: 'test',
+  contact: {},
+  social: {},
+  experience: [],
+  education: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  customization: {},
+  aiSettings: {},
+  views: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 describe('EditorToolbar', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockProps = {
     previewMode: 'desktop' as const,
     onPreviewModeChange: jest.fn(),
@@ -89,7 +121,7 @@ describe('EditorToolbar', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render preview mode selector', () => {
+    it('should render preview mode selector', async () => {
       renderEditorToolbar();
 
       expect(screen.getByText('View Mode')).toBeInTheDocument();
@@ -98,20 +130,20 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Mobile')).toBeInTheDocument();
     });
 
-    it('should render template selector', () => {
+    it('should render template selector', async () => {
       renderEditorToolbar();
 
       expect(screen.getByText('Template')).toBeInTheDocument();
       expect(screen.getByText('Developer')).toBeInTheDocument();
     });
 
-    it('should render preview toggle button', () => {
+    it('should render preview toggle button', async () => {
       renderEditorToolbar();
 
       expect(screen.getByText('Show Preview')).toBeInTheDocument();
     });
 
-    it('should highlight current preview mode', () => {
+    it('should highlight current preview mode', async () => {
       renderEditorToolbar({
         ...mockProps,
         previewMode: 'tablet',
@@ -121,7 +153,7 @@ describe('EditorToolbar', () => {
       expect(tabletButton).toHaveClass('bg-primary'); // Active state
     });
 
-    it('should highlight current template', () => {
+    it('should highlight current template', async () => {
       renderEditorToolbar();
 
       const developerTemplate = screen.getByText('Developer');
@@ -163,7 +195,7 @@ describe('EditorToolbar', () => {
       expect(mockProps.onPreviewModeChange).toHaveBeenCalledWith('mobile');
     });
 
-    it('should update active state when preview mode changes', () => {
+    it('should update active state when preview mode changes', async () => {
       const { rerender } = renderEditorToolbar();
 
       // Initially desktop is active
@@ -180,7 +212,7 @@ describe('EditorToolbar', () => {
       expect(desktopButton).not.toHaveClass('bg-primary');
     });
 
-    it('should show responsive icons for preview modes', () => {
+    it('should show responsive icons for preview modes', async () => {
       renderEditorToolbar();
 
       // Check for presence of mode buttons with icons
@@ -191,7 +223,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Template Selection', () => {
-    it('should render template dropdown', () => {
+    it('should render template dropdown', async () => {
       renderEditorToolbar();
 
       expect(screen.getByText('Template')).toBeInTheDocument();
@@ -227,7 +259,7 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Consultant')).toBeInTheDocument();
     });
 
-    it('should update selected template when prop changes', () => {
+    it('should update selected template when prop changes', async () => {
       const { rerender } = renderEditorToolbar();
 
       // Initially developer template
@@ -257,7 +289,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Preview Toggle', () => {
-    it('should show "Show Preview" when preview is hidden', () => {
+    it('should show "Show Preview" when preview is hidden', async () => {
       renderEditorToolbar({
         ...mockProps,
         showPreview: false,
@@ -266,7 +298,7 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Show Preview')).toBeInTheDocument();
     });
 
-    it('should show "Hide Preview" when preview is shown', () => {
+    it('should show "Hide Preview" when preview is shown', async () => {
       renderEditorToolbar({
         ...mockProps,
         showPreview: true,
@@ -301,7 +333,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('should support keyboard navigation between controls', () => {
+    it('should support keyboard navigation between controls', async () => {
       renderEditorToolbar();
 
       const buttons = screen.getAllByRole('button');
@@ -316,7 +348,7 @@ describe('EditorToolbar', () => {
       });
     });
 
-    it('should handle Enter key for preview mode selection', () => {
+    it('should handle Enter key for preview mode selection', async () => {
       renderEditorToolbar();
 
       const tabletButton = screen.getByText('Tablet');
@@ -327,7 +359,7 @@ describe('EditorToolbar', () => {
       expect(mockProps.onPreviewModeChange).toHaveBeenCalledWith('tablet');
     });
 
-    it('should handle Space key for preview toggle', () => {
+    it('should handle Space key for preview toggle', async () => {
       renderEditorToolbar();
 
       const previewButton = screen.getByText('Show Preview');
@@ -338,7 +370,7 @@ describe('EditorToolbar', () => {
       expect(mockProps.onTogglePreview).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle arrow keys for preview mode navigation', () => {
+    it('should handle arrow keys for preview mode navigation', async () => {
       renderEditorToolbar();
 
       const desktopButton = screen.getByText('Desktop');
@@ -352,7 +384,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+    it('should have proper ARIA labels', async () => {
       renderEditorToolbar();
 
       const viewModeGroup = screen.getByLabelText('Preview Mode Selector');
@@ -362,7 +394,7 @@ describe('EditorToolbar', () => {
       expect(templateSelector).toBeInTheDocument();
     });
 
-    it('should indicate current selections with aria-current', () => {
+    it('should indicate current selections with aria-current', async () => {
       renderEditorToolbar();
 
       const desktopButton = screen.getByText('Desktop');
@@ -372,7 +404,7 @@ describe('EditorToolbar', () => {
       expect(developerTemplate).toHaveAttribute('aria-current', 'true');
     });
 
-    it('should have proper role attributes', () => {
+    it('should have proper role attributes', async () => {
       renderEditorToolbar();
 
       const previewModeGroup = screen.getByRole('group', {
@@ -384,7 +416,7 @@ describe('EditorToolbar', () => {
       expect(templateGroup).toBeInTheDocument();
     });
 
-    it('should provide descriptive button labels', () => {
+    it('should provide descriptive button labels', async () => {
       renderEditorToolbar();
 
       const buttons = screen.getAllByRole('button');
@@ -393,7 +425,7 @@ describe('EditorToolbar', () => {
       });
     });
 
-    it('should announce state changes to screen readers', () => {
+    it('should announce state changes to screen readers', async () => {
       renderEditorToolbar();
 
       const previewButton = screen.getByText('Show Preview');
@@ -409,7 +441,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Responsive Design', () => {
-    it('should adapt layout for mobile screens', () => {
+    it('should adapt layout for mobile screens', async () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -425,7 +457,7 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Show Preview')).toBeInTheDocument();
     });
 
-    it('should show icons only in compact mode', () => {
+    it('should show icons only in compact mode', async () => {
       renderEditorToolbar();
 
       // In compact mode, buttons might show only icons
@@ -453,7 +485,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Visual States', () => {
-    it('should show loading state during template change', () => {
+    it('should show loading state during template change', async () => {
       renderEditorToolbar({
         ...mockProps,
         isChangingTemplate: true,
@@ -464,7 +496,7 @@ describe('EditorToolbar', () => {
       expect(templateButton).toBeDisabled();
     });
 
-    it('should highlight selected states correctly', () => {
+    it('should highlight selected states correctly', async () => {
       renderEditorToolbar({
         ...mockProps,
         previewMode: 'tablet',
@@ -492,7 +524,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing template gracefully', () => {
+    it('should handle missing template gracefully', async () => {
       renderEditorToolbar({
         ...mockProps,
         template: undefined as any,
@@ -502,7 +534,7 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Template')).toBeInTheDocument();
     });
 
-    it('should handle invalid preview mode', () => {
+    it('should handle invalid preview mode', async () => {
       renderEditorToolbar({
         ...mockProps,
         previewMode: 'invalid' as any,
@@ -531,7 +563,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Integration', () => {
-    it('should work with external state management', () => {
+    it('should work with external state management', async () => {
       const { rerender } = renderEditorToolbar();
 
       // External state change
@@ -561,7 +593,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Internationalization', () => {
-    it('should use translated labels', () => {
+    it('should use translated labels', async () => {
       renderEditorToolbar();
 
       expect(screen.getByText('View Mode')).toBeInTheDocument();
@@ -569,7 +601,7 @@ describe('EditorToolbar', () => {
       expect(screen.getByText('Show Preview')).toBeInTheDocument();
     });
 
-    it('should fallback gracefully when translations are missing', () => {
+    it('should fallback gracefully when translations are missing', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);
@@ -580,7 +612,7 @@ describe('EditorToolbar', () => {
       expect(screen.getAllByRole('button').length).toBeGreaterThan(0);
     });
 
-    it('should handle RTL languages', () => {
+    it('should handle RTL languages', async () => {
       renderEditorToolbar();
 
       // Toolbar should adapt to RTL layouts
@@ -590,7 +622,7 @@ describe('EditorToolbar', () => {
   });
 
   describe('Performance', () => {
-    it('should not re-render unnecessarily', () => {
+    it('should not re-render unnecessarily', async () => {
       const { rerender } = renderEditorToolbar();
 
       // Same props should not cause unnecessary re-renders

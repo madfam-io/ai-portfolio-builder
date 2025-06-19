@@ -1,20 +1,37 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { getMockPortfolios } from '@/lib/services/portfolio/__mocks__/portfolio.mock';
 import { PortfolioMapper } from '@/lib/services/portfolio/portfolio.mapper';
 import { CreatePortfolioDTO, UpdatePortfolioDTO } from '@/types/portfolio';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+// Mock global fetch
+global.fetch = jest.fn();
+ PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 jest.mock('@/lib/services/portfolio/__mocks__/portfolio.mock');
 jest.mock('@/lib/services/portfolio/portfolio.mapper');
 
 describe('PortfolioRepository', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   setupCommonMocks();
 
   let repository: PortfolioRepository;
@@ -47,14 +64,14 @@ describe('PortfolioRepository', () => {
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
       order: jest.fn().mockReturnThis(),
-      single: jest.fn(),
-      rpc: jest.fn(),
+      single: jest.fn().mockReturnValue(void 0),
+      rpc: jest.fn().mockReturnValue(void 0),
     };
 
     // Setup mock Supabase client
     mockSupabaseClient = {
       from: jest.fn().mockReturnValue(mockQuery),
-      rpc: jest.fn(),
+      rpc: jest.fn().mockReturnValue(void 0),
     };
 
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
@@ -66,15 +83,15 @@ describe('PortfolioRepository', () => {
     (PortfolioMapper.toDatabase as jest.Mock).mockImplementation(data => data);
 
     // Mock logger
-    (logger.error as jest.Mock).mockImplementation(() => {});
-    (logger.warn as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
+    (logger.warn as jest.MockedFunction<typeof logger.warn>).mockImplementation(() => undefined);
 
     // Create repository instance
     repository = new PortfolioRepository();
   });
 
   describe('findAll', () => {
-    it('should return empty array when no userId filter provided', () => {
+    it('should return empty array when no userId filter provided', async () => {
       const result = repository.findAll();
 
       expect(result).toEqual([]);
@@ -464,7 +481,7 @@ describe('PortfolioRepository', () => {
   });
 
   describe('generateSubdomain', () => {
-    it('should generate subdomain from name', () => {
+    it('should generate subdomain from name', async () => {
       // Access private method through any type casting
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
@@ -475,7 +492,7 @@ describe('PortfolioRepository', () => {
       expect(subdomain.length).toBeLessThanOrEqual(24); // 20 chars + 4 digits
     });
 
-    it('should handle special characters', () => {
+    it('should handle special characters', async () => {
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
 
@@ -484,7 +501,7 @@ describe('PortfolioRepository', () => {
       expect(subdomain).toMatch(/^portfolio123\d{4}$/);
     });
 
-    it('should truncate long names', () => {
+    it('should truncate long names', async () => {
       const generateSubdomain = (repository as any).generateSubdomain.bind(
         repository
 

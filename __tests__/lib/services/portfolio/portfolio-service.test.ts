@@ -1,20 +1,49 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { PortfolioService } from '@/lib/services/portfolio/portfolio-service';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
 import { cache } from '@/lib/cache/redis-cache.server';
-import {
-  Portfolio,
+jest.mock('@/lib/supabase/client', () => ({
+  createBrowserClient: jest.fn(() => ({
+    from: jest.fn().mockReturnThis(),
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn(),
+    auth: {
+      getUser: jest.fn(),
+    },
+  })),
+}));
+
+import { // Mock global fetch
+global.fetch = jest.fn();
+ PortfolioService  } from '@/lib/services/portfolio/portfolio-service';
+import {   Portfolio,
   CreatePortfolioDTO,
   UpdatePortfolioDTO,
   PortfolioStatus,
-} from '@/types/portfolio';
+ } from '@/types/portfolio';
 
 // Mock dependencies
 jest.mock('@/lib/services/portfolio/portfolio.repository');
 jest.mock('@/lib/cache/redis-cache.server');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 describe('PortfolioService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let service: PortfolioService;
   let mockRepository: jest.Mocked<PortfolioRepository>;
 
@@ -52,8 +81,8 @@ describe('PortfolioService', () => {
 
     // Setup cache mocks
     (cache.get as jest.Mock).mockResolvedValue(null);
-    (cache.set as jest.Mock).mockResolvedValue(undefined);
-    (cache.del as jest.Mock).mockResolvedValue(undefined);
+    (cache.set as jest.Mock).mockResolvedValue(void 0);
+    (cache.del as jest.Mock).mockResolvedValue(void 0);
   });
 
   describe('getUserPortfolios', () => {
@@ -399,7 +428,7 @@ describe('PortfolioService', () => {
         query: 'developer',
         template: 'modern',
         status: 'published',
-    );
+    });
   });
     });
   });

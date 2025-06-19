@@ -61,7 +61,8 @@ export default {
   passwordMismatch: 'Passwords do not match',
   passwordMismatchDescription: 'Please make sure both passwords are the same.',
   termsRequired: 'Terms acceptance required',
-  termsRequiredDescription: 'You must accept the terms and conditions to continue.',
+  termsRequiredDescription:
+    'You must accept the terms and conditions to continue.',
 
   // Navigation
   goToSignIn: 'Go to Sign In',

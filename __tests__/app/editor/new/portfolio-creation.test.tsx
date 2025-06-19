@@ -1,5 +1,24 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { mockUseLanguage  } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
+
+// Mock zustand stores
+const mockPortfolioStore = {
+  portfolios: [],
+  currentPortfolio: null,
+  isLoading: false,
+  error: null,
+  fetchPortfolios: jest.fn(),
+  createPortfolio: jest.fn(),
+  updatePortfolio: jest.fn(),
+  deletePortfolio: jest.fn(),
+  setCurrentPortfolio: jest.fn(),
+};
+
+jest.mock('@/lib/store/portfolio-store', () => ({
+  usePortfolioStore: jest.fn(() => mockPortfolioStore),
+}));
+
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRouter } from 'next/navigation';
@@ -9,19 +28,46 @@ import { useAuthStore } from '@/lib/store/auth-store';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+import { // Mock i18n
 
-// Mock dependencies
+jest.mock('zustand', () => ({
+jest.mock('@/lib/i18n/refactored-context', () => ({
 jest.mock('next/navigation');
 jest.mock('@/lib/store/portfolio-store');
 jest.mock('@/lib/store/auth-store');
 jest.mock('@/hooks/use-toast');
-jest.mock('@/lib/i18n/refactored-context');
 jest.mock('@/components/auth/protected-route', () => ({
+jest.mock('@/components/layouts/BaseLayout', () => ({
+jest.mock('lucide-react', () => ({
+
+create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
+
+// Mock dependencies
+
   ProtectedRoute: ({ children }: { children: React.ReactNode }) => (
     <>{children}</>
   ),
 }));
-jest.mock('@/components/layouts/BaseLayout', () => ({
+
   __esModule: true,
   default: ({ children }: { children: React.ReactNode }) => (
     <div>{children}</div>
@@ -29,7 +75,7 @@ jest.mock('@/components/layouts/BaseLayout', () => ({
 }));
 
 // Mock lucide-react icons
-jest.mock('lucide-react', () => ({
+
   ChevronRight: () => <span>ChevronRight</span>,
   ChevronLeft: () => <span>ChevronLeft</span>,
   User: () => <span>User</span>,
@@ -40,9 +86,15 @@ jest.mock('lucide-react', () => ({
 }));
 
 describe('Portfolio Creation Flow', () => {
-  const mockPush = jest.fn();
-  const mockToast = jest.fn();
-  const mockCreatePortfolio = jest.fn();
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  const mockPush = jest.fn().mockReturnValue(void 0);
+  const mockToast = jest.fn().mockReturnValue(void 0);
+  const mockCreatePortfolio = jest.fn().mockReturnValue(void 0);
 
   const mockT = {
     // Basic info step
@@ -99,7 +151,7 @@ describe('Portfolio Creation Flow', () => {
       t: mockT,
       language: 'en',
     });
-    (useAuthStore as jest.MockedFunction<typeof useAuthStore>).mockReturnValue({
+    jest.mocked(useAuthStore).mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
     } as any);
@@ -111,7 +163,7 @@ describe('Portfolio Creation Flow', () => {
   });
 
   describe('Basic Info Step', () => {
-    it('should render basic info form', () => {
+    it('should render basic info form', async () => {
       render(<NewPortfolioPage />);
 
       expect(screen.getByLabelText(mockT.yourName)).toBeInTheDocument();
@@ -331,6 +383,23 @@ describe('Portfolio Creation Flow', () => {
 
       // Select import source
       await waitFor(() => screen.getByText(mockT.manual));
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
       await user.click(screen.getByText(mockT.manual).closest('button')!);
       await user.click(screen.getByRole('button', { name: mockT.next }));
     };
@@ -379,7 +448,7 @@ describe('Portfolio Creation Flow', () => {
           title: 'Software Engineer',
           bio: 'Experienced developer',
           template: 'modern',
-    );
+    });
   });
       });
 
@@ -388,7 +457,7 @@ describe('Portfolio Creation Flow', () => {
       {
         title: mockT.success,
         description: mockT.portfolioCreated,
-    );
+    });
   });
       expect(mockPush).toHaveBeenCalledWith('/editor/portfolio-123');
     });
@@ -417,7 +486,7 @@ describe('Portfolio Creation Flow', () => {
           title: mockT.error,
           description: mockT.failedToCreatePortfolio,
           variant: 'destructive',
-    );
+    });
   });
       });
 

@@ -161,14 +161,15 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             }
           },
 
-          signInWithOAuth: async (provider) => {
+          signInWithOAuth: async provider => {
             set(state => {
               state.isLoading = true;
               state.error = null;
             });
 
             try {
-              const { data, error } = await authService.signInWithOAuth(provider);
+              const { data, error } =
+                await authService.signInWithOAuth(provider);
 
               if (error) {
                 throw new Error(error.message);

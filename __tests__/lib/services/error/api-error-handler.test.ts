@@ -1,5 +1,7 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
+import { AppError } from '@/types/errors';
+import { errorLogger } from '@/lib/services/error/error-logger';
 import {
   handleApiError,
   withErrorHandler,
@@ -8,17 +10,21 @@ import {
   parseJsonBody,
   ApiErrorResponse,
 } from '@/lib/services/error/api-error-handler';
-import { AppError } from '@/types/errors';
-import { errorLogger } from '@/lib/services/error/error-logger';
-
 
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
 
 describe('API Error Handler', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockRequest: NextRequest;
 
   beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
 
     // Mock NextRequest
@@ -34,11 +40,11 @@ describe('API Error Handler', () => {
     } as unknown as NextRequest;
 
     // Mock error logger
-    (errorLogger.logError as jest.Mock).mockImplementation(() => {});
+    (errorLogger.logError as jest.Mock).mockImplementation(() => undefined);
   });
 
   describe('handleApiError', () => {
-    it('should handle AppError correctly', () => {
+    it('should handle AppError correctly', async () => {
       const appError = new AppError('Test error', 'TEST_ERROR', 400, {
         field: 'test',
       });
@@ -60,7 +66,7 @@ describe('API Error Handler', () => {
     );
   });
 
-    it('should handle regular Error in development mode', () => {
+    it('should handle regular Error in development mode', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'development';
 
@@ -72,7 +78,7 @@ describe('API Error Handler', () => {
       process.env.NODE_ENV = originalEnv;
     });
 
-    it('should hide error details in production mode', () => {
+    it('should hide error details in production mode', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
 
@@ -85,7 +91,7 @@ describe('API Error Handler', () => {
       process.env.NODE_ENV = originalEnv;
     });
 
-    it('should extract request ID from headers', () => {
+    it('should extract request ID from headers', async () => {
       const requestWithId = {
         ...mockRequest,
         headers: new Headers({
@@ -104,7 +110,7 @@ describe('API Error Handler', () => {
     );
   });
 
-    it('should handle error without request', () => {
+    it('should handle error without request', async () => {
       const error = new Error('Test error');
       const response = handleApiError(error);
 
@@ -112,7 +118,7 @@ describe('API Error Handler', () => {
       expect(response.status).toBe(500);
     });
 
-    it('should merge additional context', () => {
+    it('should merge additional context', async () => {
       const error = new Error('Test error');
       const additionalContext = {
         userId: 'user-123',
@@ -130,7 +136,7 @@ describe('API Error Handler', () => {
     );
   });
 
-    it('should handle non-Error objects', () => {
+    it('should handle non-Error objects', async () => {
       const error = 'String error';
       const response = handleApiError(error);
 
@@ -208,13 +214,13 @@ describe('API Error Handler', () => {
   });
 
   describe('validateMethod', () => {
-    it('should pass for allowed methods', () => {
+    it('should pass for allowed methods', async () => {
       expect(() => {
         validateMethod(mockRequest, ['GET', 'POST']);
       }).not.toThrow();
     });
 
-    it('should throw for disallowed methods', () => {
+    it('should throw for disallowed methods', async () => {
       expect(() => {
         validateMethod(mockRequest, ['POST', 'PUT']);
       }).toThrow(AppError);
@@ -231,7 +237,7 @@ describe('API Error Handler', () => {
       }
     });
 
-    it('should handle different HTTP methods', () => {
+    it('should handle different HTTP methods', async () => {
       const methods = ['POST', 'PUT', 'DELETE', 'PATCH'];
 
       methods.forEach(method => {
@@ -302,7 +308,7 @@ describe('API Error Handler', () => {
   });
 
   describe('Error Context Extraction', () => {
-    it('should extract full context from request', () => {
+    it('should extract full context from request', async () => {
       const error = new Error('Test');
       handleApiError(error, mockRequest);
 
@@ -319,7 +325,7 @@ describe('API Error Handler', () => {
         })
     });
 
-    it('should handle missing headers gracefully', () => {
+    it('should handle missing headers gracefully', async () => {
       const minimalRequest = {
         url: 'http://localhost:3000/api/test',
         method: 'GET',
@@ -340,7 +346,7 @@ describe('API Error Handler', () => {
         })
     });
 
-    it('should prefer x-real-ip over x-forwarded-for', () => {
+    it('should prefer x-real-ip over x-forwarded-for', async () => {
       const requestWithRealIp = {
         ...mockRequest,
         headers: new Headers({

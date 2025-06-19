@@ -1,16 +1,34 @@
+import React from 'react';
+
+// Mock UI store with showToast
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: jest.fn(() => ({
+    showToast: jest.fn(),
+    isLoading: false,
+    setLoading: jest.fn(),
+  })),
+}));
+
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+
+// Mock Stripe
+jest.mock('@stripe/stripe-js', () => ({
+  loadStripe: jest.fn().mockResolvedValue({
+    redirectToCheckout: jest.fn().mockResolvedValue({ error: null }),
+  }),
+}));
+
+// Create mock for createCheckoutSession
+const mockCreateCheckoutSession = jest.fn();
+
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { UpgradeModal } from '@/components/billing/upgrade-modal';
-import { createCheckoutSession } from '@/lib/stripe/client';
-
-
-// Mock Stripe client
-
-// Mock useLanguage hook
+// Mock i18n
 jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
@@ -34,7 +52,7 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
 }));
 
 jest.mock('@/lib/stripe/client', () => ({
-  createCheckoutSession: jest.fn(),
+  createCheckoutSession: mockCreateCheckoutSession,
   PLAN_CONFIG: {
     pro: {
       name: 'Pro',
@@ -125,12 +143,10 @@ jest.mock('lucide-react', () => ({
   Users: () => <span>👥</span>,
 }));
 
-// Mock i18n context
-jest.mock('@/lib/i18n/refactored-context', () => ({
-  useLanguage: () => ({
-    t: {
-      // Add any translations needed for tests
-    },
+// Mock ui-store
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: () => ({
+    showToast: jest.fn(),
   }),
 }));
 
@@ -143,6 +159,12 @@ jest.mock('@/hooks/use-toast', () => ({
 }));
 
 describe('UpgradeModal', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const defaultProps = {
     isOpen: true,
     onClose: jest.fn(),
@@ -154,7 +176,7 @@ describe('UpgradeModal', () => {
     jest.clearAllMocks();
   });
 
-  it('should render when open', () => {
+  it('should render when open', async () => {
     render(<UpgradeModal {...defaultProps} />);
 
     expect(screen.getByText('AI Usage Limit Reached')).toBeInTheDocument();
@@ -163,7 +185,7 @@ describe('UpgradeModal', () => {
     ).toBeInTheDocument();
   });
 
-  it('should not render when closed', () => {
+  it('should not render when closed', async () => {
     render(<UpgradeModal {...defaultProps} isOpen={false} />);
 
     expect(
@@ -171,7 +193,7 @@ describe('UpgradeModal', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('should show different content for portfolio limit', () => {
+  it('should show different content for portfolio limit', async () => {
     render(<UpgradeModal {...defaultProps} reason="portfolio_limit" />);
 
     expect(screen.getByText('Portfolio Limit Reached')).toBeInTheDocument();
@@ -180,7 +202,7 @@ describe('UpgradeModal', () => {
     ).toBeInTheDocument();
   });
 
-  it('should display all plan options', () => {
+  it('should display all plan options', async () => {
     render(<UpgradeModal {...defaultProps} />);
 
     expect(screen.getByText('Pro')).toBeInTheDocument();
@@ -192,13 +214,13 @@ describe('UpgradeModal', () => {
     expect(screen.getByText('$79.00/month')).toBeInTheDocument();
   });
 
-  it('should show recommended badge for Pro plan', () => {
+  it('should show recommended badge for Pro plan', async () => {
     render(<UpgradeModal {...defaultProps} />);
 
     expect(screen.getByText('Recommended')).toBeInTheDocument();
   });
 
-  it('should call onClose when close button is clicked', () => {
+  it('should call onClose when close button is clicked', async () => {
     const onClose = jest.fn();
     render(<UpgradeModal {...defaultProps} onClose={onClose} />);
 
@@ -208,7 +230,7 @@ describe('UpgradeModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('should call onClose when backdrop is clicked', () => {
+  it('should call onClose when backdrop is clicked', async () => {
     const onClose = jest.fn();
     render(<UpgradeModal {...defaultProps} onClose={onClose} />);
 
@@ -220,7 +242,7 @@ describe('UpgradeModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('should call onClose when "Maybe later" is clicked', () => {
+  it('should call onClose when "Maybe later" is clicked', async () => {
     const onClose = jest.fn();
     render(<UpgradeModal {...defaultProps} onClose={onClose} />);
 
@@ -230,23 +252,26 @@ describe('UpgradeModal', () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it('should initiate checkout when upgrade button is clicked', () => {
-    (createCheckoutSession as jest.Mock).mockResolvedValue({ success: true });
+  it('should initiate checkout when upgrade button is clicked', async () => {
+    mockCreateCheckoutSession.mockResolvedValue({ success: true });
 
     render(<UpgradeModal {...defaultProps} />);
 
     const upgradeButton = screen.getByText('Upgrade to Pro');
     fireEvent.click(upgradeButton);
 
-    expect(createCheckoutSession).toHaveBeenCalledWith({ planId: 'pro' });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
+      planId: 'pro'
+    });
   });
 
   it('should show loading state during upgrade', async () => {
-    (createCheckoutSession as jest.Mock).mockImplementation(
+    mockCreateCheckoutSession.mockImplementation(
       () =>
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
         )
+    );
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -261,7 +286,7 @@ describe('UpgradeModal', () => {
   });
 
   it('should show error toast on checkout failure', async () => {
-    (createCheckoutSession as jest.Mock).mockResolvedValue({
+    mockCreateCheckoutSession.mockResolvedValue({
       success: false,
       error: 'Payment failed',
     });
@@ -272,19 +297,18 @@ describe('UpgradeModal', () => {
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-      {
+      expect(mockToast).toHaveBeenCalledWith({
         title: 'Upgrade Failed',
         description: 'Payment failed',
         variant: 'destructive',
-    );
-  });
+      });
     });
   });
 
   it('should handle checkout session errors', async () => {
-    (createCheckoutSession as jest.Mock).mockRejectedValue(
+    mockCreateCheckoutSession.mockRejectedValue(
       new Error('Network error')
+    );
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -292,17 +316,15 @@ describe('UpgradeModal', () => {
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith(
-      {
+      expect(mockToast).toHaveBeenCalledWith({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',
         variant: 'destructive',
-    );
-  });
+      });
     });
   });
 
-  it('should display plan features correctly', () => {
+  it('should display plan features correctly', async () => {
     render(<UpgradeModal {...defaultProps} />);
 
     // Check Pro plan features
@@ -314,13 +336,13 @@ describe('UpgradeModal', () => {
     expect(screen.getByText('Unlimited AI requests')).toBeInTheDocument();
   });
 
-  it('should show current plan information', () => {
+  it('should show current plan information', async () => {
     render(<UpgradeModal {...defaultProps} currentPlan="free" />);
 
     expect(screen.getByText('Current Plan: Free')).toBeInTheDocument();
   });
 
-  it('should display benefits section', () => {
+  it('should display benefits section', async () => {
     render(<UpgradeModal {...defaultProps} />);
 
     expect(screen.getByText('Why upgrade?')).toBeInTheDocument();
@@ -336,12 +358,13 @@ describe('UpgradeModal', () => {
     expect(screen.getByText('30-day money-back guarantee')).toBeInTheDocument();
   });
 
-  it('should disable other buttons while one is processing', () => {
-    (createCheckoutSession as jest.Mock).mockImplementation(
+  it('should disable other buttons while one is processing', async () => {
+    mockCreateCheckoutSession.mockImplementation(
       () =>
         new Promise(resolve =>
           setTimeout(() => resolve({ success: true }), 100)
         )
+    );
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -354,8 +377,8 @@ describe('UpgradeModal', () => {
     expect(proButton).toBeDisabled();
   });
 
-  it('should handle different plan selections', () => {
-    (createCheckoutSession as jest.Mock).mockResolvedValue({ success: true });
+  it('should handle different plan selections', async () => {
+    mockCreateCheckoutSession.mockResolvedValue({ success: true });
 
     render(<UpgradeModal {...defaultProps} />);
 
@@ -363,16 +386,14 @@ describe('UpgradeModal', () => {
     const businessButton = screen.getByText('Upgrade to Business');
     fireEvent.click(businessButton);
 
-    expect(createCheckoutSession).toHaveBeenCalledWith({ planId: 'business' });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({ planId: 'business' });
 
     // Test Enterprise plan upgrade
     const enterpriseButton = screen.getByText('Upgrade to Enterprise');
     fireEvent.click(enterpriseButton);
 
-    expect(createCheckoutSession).toHaveBeenCalledWith(
-      {
-      planId: 'enterprise',
-    );
-  });
+    expect(mockCreateCheckoutSession).toHaveBeenCalledWith({
+      planId: 'enterprise'
+    });
   });
 });

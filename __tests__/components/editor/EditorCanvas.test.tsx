@@ -1,20 +1,23 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import { EditorCanvas } from '@/components/editor/EditorCanvas';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { EditorCanvas } from '@/components/editor/EditorCanvas';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio } from '@/types/portfolio';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -36,7 +39,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -47,6 +49,12 @@ jest.mock('@/lib/utils', () => ({
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('EditorCanvas', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -114,7 +122,7 @@ describe('EditorCanvas', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render the main editor canvas', () => {
+    it('should render the main editor canvas', async () => {
       renderEditorCanvas();
 
       expect(
@@ -125,7 +133,7 @@ describe('EditorCanvas', () => {
       expect(screen.getByText('Projects')).toBeInTheDocument();
     });
 
-    it('should render hero section fields with current values', () => {
+    it('should render hero section fields with current values', async () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
@@ -136,7 +144,7 @@ describe('EditorCanvas', () => {
       expect(taglineInput).toBeInTheDocument();
     });
 
-    it('should render about section with bio content', () => {
+    it('should render about section with bio content', async () => {
       renderEditorCanvas();
 
       const bioTextarea = screen.getByDisplayValue(
@@ -145,7 +153,7 @@ describe('EditorCanvas', () => {
       expect(bioTextarea).toBeInTheDocument();
     });
 
-    it('should render existing projects', () => {
+    it('should render existing projects', async () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
@@ -154,7 +162,7 @@ describe('EditorCanvas', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render add project button', () => {
+    it('should render add project button', async () => {
       renderEditorCanvas();
 
       expect(screen.getByText('+ Add Project')).toBeInTheDocument();
@@ -175,7 +183,7 @@ describe('EditorCanvas', () => {
       expect(mockOnDataChange).toHaveBeenCalledWith(
       {
         title: 'Full Stack Developer',
-    );
+    });
   });
     });
 
@@ -205,7 +213,7 @@ describe('EditorCanvas', () => {
       expect(mockOnDataChange).toHaveBeenCalledWith(
       {
         title: '',
-    );
+    });
   });
     });
   });
@@ -241,7 +249,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Projects Section', () => {
-    it('should display existing projects correctly', () => {
+    it('should display existing projects correctly', async () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
@@ -281,7 +289,7 @@ describe('EditorCanvas', () => {
       expect(screen.queryByText('Add New Project')).not.toBeInTheDocument();
     });
 
-    it('should handle portfolio with no projects', () => {
+    it('should handle portfolio with no projects', async () => {
       const emptyPortfolio = { ...mockPortfolio, projects: [] };
       renderEditorCanvas(emptyPortfolio);
 
@@ -299,7 +307,7 @@ describe('EditorCanvas', () => {
       await user.click(addButton);
     });
 
-    it('should render all project form fields', () => {
+    it('should render all project form fields', async () => {
       expect(
         screen.getByPlaceholderText('Enter project title')
       ).toBeInTheDocument();
@@ -340,7 +348,7 @@ describe('EditorCanvas', () => {
       expect(linkInput).toHaveValue('https://github.com/user/project');
     });
 
-    it('should disable add button when required fields are empty', () => {
+    it('should disable add button when required fields are empty', async () => {
       const addButton = screen.getByRole('button', { name: /Add Project/ });
       expect(addButton).toBeDisabled();
     });
@@ -434,7 +442,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper form labels', () => {
+    it('should have proper form labels', async () => {
       renderEditorCanvas();
 
       expect(screen.getByLabelText('Headline')).toBeInTheDocument();
@@ -472,7 +480,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle portfolio with missing optional fields', () => {
+    it('should handle portfolio with missing optional fields', async () => {
       const minimalPortfolio = {
         ...mockPortfolio,
         title: '',
@@ -543,7 +551,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Internationalization', () => {
-    it('should use translated text from language hook', () => {
+    it('should use translated text from language hook', async () => {
       renderEditorCanvas();
 
       expect(
@@ -556,7 +564,7 @@ describe('EditorCanvas', () => {
       ).toBeInTheDocument();
     });
 
-    it('should fallback gracefully when translations are missing', () => {
+    it('should fallback gracefully when translations are missing', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);

@@ -11,7 +11,13 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 
 interface UpgradeButtonProps {
   planId: 'pro' | 'business' | 'enterprise';
-  variant?: 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
+  variant?:
+    | 'default'
+    | 'outline'
+    | 'secondary'
+    | 'ghost'
+    | 'link'
+    | 'destructive';
   size?: 'default' | 'sm' | 'lg' | 'icon';
   className?: string;
   children?: React.ReactNode;
@@ -46,7 +52,8 @@ export function UpgradeButton({
     } catch (error) {
       toast({
         title: t.checkoutError || 'Checkout Error',
-        description: error instanceof Error ? error.message : 'Failed to start checkout',
+        description:
+          error instanceof Error ? error.message : 'Failed to start checkout',
         variant: 'destructive',
       });
     } finally {

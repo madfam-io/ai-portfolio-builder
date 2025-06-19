@@ -1,23 +1,26 @@
+import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { renderHook, waitFor } from '@testing-library/react';
+
+import {   useSubscription,
+
+jest.mock('@/lib/utils/logger', () => ({
+
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { renderHook, waitFor } from '@testing-library/react';
-import {
-  useSubscription,
   useCanPerformAction,
-} from '@/lib/hooks/use-subscription';
+ } from '@/lib/hooks/use-subscription';
 
 // Mock fetch
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 // Mock logger
-jest.mock('@/lib/utils/logger', () => ({
+
   logger: {
-    error: jest.fn(),
-    info: jest.fn(),
-    warn: jest.fn(),
+    error: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
   },
 }));
 
@@ -38,6 +41,9 @@ const mockLimitsResponse = {
 
 describe('useSubscription Hook', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     (fetch as jest.Mock).mockClear();
   });
@@ -230,7 +236,7 @@ describe('useCanPerformAction Hook', () => {
     (fetch as jest.Mock).mockClear();
   });
 
-  it('should return loading state initially', () => {
+  it('should return loading state initially', async () => {
     (fetch as jest.Mock).mockImplementation(() => new Promise(() => {})); // Never resolves
 
     const { result } = renderHook(() => useCanPerformAction('portfolio'));

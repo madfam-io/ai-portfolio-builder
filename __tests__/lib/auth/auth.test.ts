@@ -1,6 +1,14 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { createClient } from '@supabase/supabase-js';
+
 import {
+
+jest.mock('@supabase/supabase-js');
+
+/**
+ * @jest-environment jsdom
+ */
+
   signIn,
   signUp,
   signOut,
@@ -18,7 +26,6 @@ import {
 } from '@/lib/auth/auth';
 
 // Mock Supabase
-jest.mock('@supabase/supabase-js');
 
 // Mock environment variables
 const mockEnv = {
@@ -27,10 +34,17 @@ const mockEnv = {
 };
 
 describe('Auth Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockSupabaseClient: any;
   let mockAuth: any;
 
   beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
 
     // Reset environment variables
@@ -58,11 +72,11 @@ describe('Auth Service', () => {
       auth: mockAuth,
     };
 
-    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
   });
 
   describe('initialization', () => {
-    it('should create Supabase client with environment variables', () => {
+    it('should create Supabase client with environment variables', async () => {
       signIn('test@example.com', 'password');
 
       expect(createClient).toHaveBeenCalledWith(
@@ -99,7 +113,7 @@ describe('Auth Service', () => {
       {
         email: 'test@example.com',
         password: 'password123',
-    );
+    });
   });
     });
 
@@ -142,7 +156,7 @@ describe('Auth Service', () => {
         options: {
           data: { name: 'Test User' },
         },
-    );
+    });
   });
     });
 
@@ -224,7 +238,7 @@ describe('Auth Service', () => {
       expect(mockAuth.updateUser).toHaveBeenCalledWith(
       {
         password: 'newPassword123',
-    );
+    });
   });
     });
 
@@ -253,7 +267,7 @@ describe('Auth Service', () => {
       expect(mockAuth.updateUser).toHaveBeenCalledWith(
       {
         email: 'new@example.com',
-    );
+    });
   });
     });
   });
@@ -277,7 +291,7 @@ describe('Auth Service', () => {
         email: 'test@example.com',
         token: '123456',
         type: 'email',
-    );
+    });
   });
     });
 
@@ -299,7 +313,7 @@ describe('Auth Service', () => {
         phone: '+1234567890',
         token: '123456',
         type: 'sms',
-    );
+    });
   });
     });
   });
@@ -321,7 +335,7 @@ describe('Auth Service', () => {
       {
         type: 'signup',
         email: 'test@example.com',
-    );
+    });
   });
     });
   });
@@ -384,7 +398,7 @@ describe('Auth Service', () => {
   });
 
   describe('onAuthStateChange', () => {
-    it('should subscribe to auth state changes', () => {
+    it('should subscribe to auth state changes', async () => {
       const mockUnsubscribe = jest.fn();
       const mockCallback = jest.fn();
 
@@ -437,7 +451,7 @@ describe('Auth Service', () => {
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
         },
-    );
+    });
   });
     });
 

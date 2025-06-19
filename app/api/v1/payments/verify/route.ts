@@ -1,28 +1,39 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
-import { withErrorHandling } from '@/lib/utils/api-helpers';
-import { getServerUser } from '@/lib/auth/server';
+import { withErrorHandling } from '@/lib/api/middleware/error-handler';
 import { logger } from '@/lib/utils/logger';
 
+const getServerUser = async () => {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  );
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  return user;
+};
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2024-10-28.acacia',
+  apiVersion: '2025-05-28.basil',
 });
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error('Supabase configuration missing');
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export const POST = withErrorHandling(async (request: NextRequest) => {
   try {
     // Get authenticated user
     const user = await getServerUser();
     if (!user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get session ID from request body
@@ -71,7 +82,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     // Update user's subscription in database
     const planId = subscription.items.data[0]?.price.id;
     let planName = 'free';
-    
+
     // Map Stripe price IDs to plan names
     if (planId === process.env.STRIPE_PRO_PRICE_ID) {
       planName = 'pro';
@@ -89,8 +100,12 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         subscription_status: subscription.status,
         stripe_customer_id: session.customer as string,
         stripe_subscription_id: subscription.id,
-        subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
-        subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+        subscription_start_date: new Date(
+          (subscription as any).current_period_start * 1000
+        ).toISOString(),
+        subscription_end_date: new Date(
+          (subscription as any).current_period_end * 1000
+        ).toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', user.id);
@@ -115,7 +130,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       customerId: session.customer,
     });
   } catch (error) {
-    logger.error('Payment verification error', error);
+    logger.error('Payment verification error', error as Error);
     return NextResponse.json(
       { error: 'Payment verification failed' },
       { status: 500 }

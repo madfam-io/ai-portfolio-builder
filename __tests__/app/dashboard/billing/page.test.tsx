@@ -1,16 +1,50 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useRouter } from 'next/navigation';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import BillingPage from '@/app/dashboard/billing/page';
 import { useSubscription } from '@/lib/hooks/use-subscription';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useToast } from '@/hooks/use-toast';
+
+// Mock next/navigation
+jest.mock('next/navigation', () => ({
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+
+// Mock next/navigation
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    refresh: jest.fn(),
+    back: jest.fn(),
+    forward: jest.fn(),
+    prefetch: jest.fn(),
+    pathname: '/',
+  })),
+  usePathname: jest.fn(() => '/'),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
+}));
+/**
+ * @jest-environment jsdom
+ */
+
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
@@ -21,7 +55,6 @@ const mockForward = jest.fn();
 const mockRefresh = jest.fn();
 const mockPrefetch = jest.fn();
 
-jest.mock('next/navigation', () => ({
   useRouter: jest.fn(() => ({
     push: mockPush,
     replace: mockReplace,
@@ -44,7 +77,6 @@ jest.mock('@/lib/hooks/use-subscription', () => ({
     aiUsagePercentage: 0,
   })),
 }));
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(() => ({
     t: {
       success: 'Success',
@@ -101,6 +133,12 @@ global.fetch = jest.fn();
 const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 describe('BillingPage', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockToast = jest.fn();
 
   beforeEach(() => {
@@ -152,7 +190,7 @@ describe('BillingPage', () => {
   };
 
   describe('Loading State', () => {
-    it('should display loading skeleton when data is loading', () => {
+    it('should display loading skeleton when data is loading', async () => {
       mockUseSubscription.mockReturnValue({
         ...mockSubscriptionData,
         loading: true,
@@ -170,7 +208,7 @@ describe('BillingPage', () => {
   });
 
   describe('Error State', () => {
-    it('should display error message when subscription data fails to load', () => {
+    it('should display error message when subscription data fails to load', async () => {
       mockUseSubscription.mockReturnValue({
         ...mockSubscriptionData,
         loading: false,
@@ -211,7 +249,7 @@ describe('BillingPage', () => {
       mockUseSubscription.mockReturnValue(mockSubscriptionData);
     });
 
-    it('should display billing dashboard header', () => {
+    it('should display billing dashboard header', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Billing & Usage')).toBeInTheDocument();
@@ -222,7 +260,7 @@ describe('BillingPage', () => {
       ).toBeInTheDocument();
     });
 
-    it('should display current plan information', () => {
+    it('should display current plan information', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Current Plan')).toBeInTheDocument();
@@ -230,7 +268,7 @@ describe('BillingPage', () => {
       expect(screen.getByText('Active')).toBeInTheDocument();
     });
 
-    it('should display usage statistics', () => {
+    it('should display usage statistics', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Portfolio Usage')).toBeInTheDocument();
@@ -240,13 +278,13 @@ describe('BillingPage', () => {
       expect(screen.getByText('15 of 50 used')).toBeInTheDocument();
     });
 
-    it('should show manage billing button for paid users', () => {
+    it('should show manage billing button for paid users', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Manage Billing')).toBeInTheDocument();
     });
 
-    it('should display AI credit packs section', () => {
+    it('should display AI credit packs section', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('AI Enhancement Credits')).toBeInTheDocument();
@@ -268,13 +306,13 @@ describe('BillingPage', () => {
       });
     });
 
-    it('should not show manage billing button for free users', () => {
+    it('should not show manage billing button for free users', async () => {
       render(<BillingPage />);
 
       expect(screen.queryByText('Manage Billing')).not.toBeInTheDocument();
     });
 
-    it('should show upgrade options for free users', () => {
+    it('should show upgrade options for free users', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Upgrade Your Plan')).toBeInTheDocument();
@@ -285,7 +323,7 @@ describe('BillingPage', () => {
       ).toBeInTheDocument();
     });
 
-    it('should display billing interval toggle', () => {
+    it('should display billing interval toggle', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Monthly')).toBeInTheDocument();
@@ -305,7 +343,7 @@ describe('BillingPage', () => {
   });
 
   describe('URL Parameters Handling', () => {
-    it('should show success toast for successful checkout', () => {
+    it('should show success toast for successful checkout', async () => {
       // Mock URL search params
       window.location.search = '?success=true';
 
@@ -315,11 +353,11 @@ describe('BillingPage', () => {
       {
         title: 'Subscription Updated!',
         description: 'Your subscription has been successfully updated.',
-    );
+    });
   });
     });
 
-    it('should show success toast for successful credit purchase', () => {
+    it('should show success toast for successful credit purchase', async () => {
       window.location.search = '?success=true&type=credits';
 
       render(<BillingPage />);
@@ -328,11 +366,11 @@ describe('BillingPage', () => {
       {
         title: 'Credits Purchased!',
         description: 'Your AI credits have been added to your account.',
-    );
+    });
   });
     });
 
-    it('should show canceled toast for canceled checkout', () => {
+    it('should show canceled toast for canceled checkout', async () => {
       window.location.search = '?canceled=true';
 
       render(<BillingPage />);
@@ -342,7 +380,7 @@ describe('BillingPage', () => {
         title: 'Checkout Canceled',
         description: 'Your purchase was not completed.',
         variant: 'default',
-    );
+    });
   });
     });
   });
@@ -389,7 +427,7 @@ describe('BillingPage', () => {
         title: 'Access Failed',
         description: 'Portal unavailable',
         variant: 'destructive',
-    );
+    });
   });
     });
   });
@@ -449,7 +487,7 @@ describe('BillingPage', () => {
         title: 'Purchase Failed',
         description: 'Failed to start credit purchase. Please try again.',
         variant: 'destructive',
-    );
+    });
   });
     });
   });
@@ -463,7 +501,7 @@ describe('BillingPage', () => {
       });
     });
 
-    it('should show upgrade options for free tier users', () => {
+    it('should show upgrade options for free tier users', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Upgrade to Pro')).toBeInTheDocument();
@@ -495,7 +533,7 @@ describe('BillingPage', () => {
       mockUseSubscription.mockReturnValue(mockSubscriptionData);
     });
 
-    it('should display help section', () => {
+    it('should display help section', async () => {
       render(<BillingPage />);
 
       expect(screen.getByText('Need Help?')).toBeInTheDocument();
@@ -512,7 +550,7 @@ describe('BillingPage', () => {
       mockUseSubscription.mockReturnValue(mockSubscriptionData);
     });
 
-    it('should have proper heading structure', () => {
+    it('should have proper heading structure', async () => {
       render(<BillingPage />);
 
       expect(
@@ -526,7 +564,7 @@ describe('BillingPage', () => {
       ).toBeInTheDocument();
     });
 
-    it('should have accessible progress bars', () => {
+    it('should have accessible progress bars', async () => {
       render(<BillingPage />);
 
       const progressBars = screen.getAllByRole('progressbar');

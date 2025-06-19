@@ -1,15 +1,108 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Portfolio } from '@/types/portfolio';
 
 
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
+jest.mock('@/lib/ai/huggingface-service', () => ({
+jest.mock('@/lib/supabase/client', () => ({
+
+jest.setTimeout(30000);
+
+// Mock HuggingFace service
+const mockHuggingFaceService = {
+  healthCheck: jest.fn().mockResolvedValue(true),
+  enhanceBio: jest.fn().mockResolvedValue({
+    enhancedBio: 'Enhanced bio',
+    wordCount: 10,
+    tone: 'professional',
+  }),
+  optimizeProject: jest.fn().mockResolvedValue({
+    optimizedTitle: 'Optimized Title',
+    optimizedDescription: 'Optimized description',
+  }),
+  getAvailableModels: jest.fn().mockResolvedValue([
+    { id: 'model-1', name: 'Model 1' },
+    { id: 'model-2', name: 'Model 2' },
+  ]),
+};
+
+  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
+}));
+
+// Mock Supabase client
+
+  createClient: jest.fn(() => ({
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+      signIn: jest.fn(),
+      signOut: jest.fn(),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+    })),
+  })),
+}));
+
+// Mock HuggingFace service
+
+  HuggingFaceService: jest.fn().mockImplementation(() => ({
+    healthCheck: jest.fn().mockResolvedValue(true),
+    enhanceBio: jest.fn().mockResolvedValue({
+      enhancedBio: 'Enhanced professional bio',
+      wordCount: 10,
+      tone: 'professional',
+    }),
+    optimizeProject: jest.fn().mockResolvedValue({
+      optimizedTitle: 'Optimized Title',
+      optimizedDescription: 'Optimized description',
+    }),
+  })),
+}));
+
+/**
+ * @jest-environment jsdom
+ */
+
 // Mock fetch for API calls
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 // Mock AI Enhancement Flow component
 const MockAIEnhancementFlow = () => {
@@ -58,10 +151,10 @@ const MockAIEnhancementFlow = () => {
       if (bioResponse.ok) {
         const bioData = await bioResponse.json();
         setEnhancementResults(prev => ({ ...prev, bio: bioData.enhancedBio }));
-        
+
         // Transition to projects phase
         setEnhancementStep('projects');
-        
+
         // Small delay to ensure state update
         await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -205,24 +298,36 @@ const MockAIEnhancementFlow = () => {
 };
 
 describe('AI Enhancement Flow Integration', () => {
+  beforeAll(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
   beforeEach(() => {
+    // Mock console methods
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
   });
 
   describe('Enhancement Trigger', () => {
-    it('should render initial portfolio content', () => {
+    it('should render initial portfolio content', async () => {
       render(<MockAIEnhancementFlow />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
       expect(screen.getByTestId('current-bio')).toHaveTextContent(
         'I am a developer'
-
+      );
       expect(screen.getByText('Basic App')).toBeInTheDocument();
     });
 
-    it('should show enhance button', () => {
+    it('should show enhance button', async () => {
       render(<MockAIEnhancementFlow />);
 
       const enhanceButton = screen.getByTestId('enhance-all-btn');
@@ -535,7 +640,7 @@ describe('AI Enhancement Flow Integration', () => {
       // Original content should remain
       expect(screen.getByTestId('current-bio')).toHaveTextContent(
         'I am a developer'
-
+      );
       expect(screen.getByText('Basic App')).toBeInTheDocument();
 
       // Enhancement UI should be hidden

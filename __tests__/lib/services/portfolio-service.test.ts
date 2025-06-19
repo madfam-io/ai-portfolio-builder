@@ -1,10 +1,44 @@
+import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import { createSupabaseClient } from '@/lib/supabase/server';
+import { logger } from '@/lib/utils/logger';
 /**
  * @jest-environment node
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
  */
 
-import { jest } from '@jest/globals';
-import {
-  createPortfolio,
+import {   createPortfolio,
   getPortfolio,
   updatePortfolio,
   deletePortfolio,
@@ -14,19 +48,34 @@ import {
   checkSlugAvailability,
   generatePortfolioSlug,
   updatePortfolioAnalytics,
-} from '@/lib/services/portfolio-service';
-import { createSupabaseClient } from '@/lib/supabase/server';
-import { logger } from '@/lib/utils/logger';
-
+ } from '@/lib/services/portfolio-service';
 
 // Mock dependencies
-jest.mock('@/lib/supabase/server');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
 const mockLogger = jest.mocked(logger);
 
 describe('Portfolio Service', () => {
+  beforeEach(() => {
+// Mock global fetch
+global.fetch = jest.fn();
+
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockSupabase: any;
 
   beforeEach(() => {
@@ -37,7 +86,7 @@ describe('Portfolio Service', () => {
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn(),
+      single: jest.fn().mockReturnValue(void 0),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
@@ -47,15 +96,15 @@ describe('Portfolio Service', () => {
       is: jest.fn().mockReturnThis(),
       neq: jest.fn().mockReturnThis(),
       count: jest.fn().mockReturnThis(),
-      rpc: jest.fn(),
+      rpc: jest.fn().mockReturnValue(void 0),
     };
 
     mockCreateSupabaseClient.mockResolvedValue(mockSupabase);
 
     // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    mockLogger.info = jest.fn().mockReturnValue(void 0);
+    mockLogger.error = jest.fn().mockReturnValue(void 0);
+    mockLogger.warn = jest.fn().mockReturnValue(void 0);
   });
 
   describe('createPortfolio', () => {
@@ -702,7 +751,7 @@ describe('Portfolio Service', () => {
 
   describe('Slug Operations', () => {
     describe('generatePortfolioSlug', () => {
-      it('should generate valid slug from title', () => {
+      it('should generate valid slug from title', async () => {
         expect(generatePortfolioSlug('My Awesome Portfolio!')).toBe(
           'my-awesome-portfolio'
 
@@ -714,12 +763,12 @@ describe('Portfolio Service', () => {
 
       });
 
-      it('should handle special characters', () => {
+      it('should handle special characters', async () => {
         expect(generatePortfolioSlug('Café & Co.')).toBe('cafe-co');
         expect(generatePortfolioSlug('100% Developer')).toBe('100-developer');
       });
 
-      it('should generate random slug for empty title', () => {
+      it('should generate random slug for empty title', async () => {
         const slug = generatePortfolioSlug('');
         expect(slug).toMatch(/^portfolio-[a-z0-9]{8}$/);
       });

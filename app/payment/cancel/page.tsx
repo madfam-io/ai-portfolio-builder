@@ -16,25 +16,34 @@ export default function PaymentCancel() {
     {
       icon: '💰',
       title: t.tooExpensive || 'Too expensive?',
-      description: t.contactForDiscount || 'Contact us for special discounts or custom pricing',
-      action: () => window.location.href = 'mailto:support@prisma.madfam.io?subject=Pricing Inquiry',
+      description:
+        t.contactForDiscount ||
+        'Contact us for special discounts or custom pricing',
+      action: () =>
+        (window.location.href =
+          'mailto:support@prisma.madfam.io?subject=Pricing Inquiry'),
     },
     {
       icon: '🤔',
       title: t.notSureYet || 'Not sure yet?',
-      description: t.tryFreeFeatures || 'Continue using our free features and upgrade anytime',
+      description:
+        t.tryFreeFeatures ||
+        'Continue using our free features and upgrade anytime',
       action: () => router.push('/dashboard'),
     },
     {
       icon: '🛠️',
       title: t.technicalIssues || 'Technical issues?',
-      description: t.helpWithPayment || 'Our support team can help you complete your purchase',
-      action: () => window.location.href = '/support',
+      description:
+        t.helpWithPayment ||
+        'Our support team can help you complete your purchase',
+      action: () => (window.location.href = '/support'),
     },
     {
       icon: '📊',
       title: t.needMoreInfo || 'Need more information?',
-      description: t.comparePlans || 'Compare all features across our pricing plans',
+      description:
+        t.comparePlans || 'Compare all features across our pricing plans',
       action: () => router.push('/pricing'),
     },
   ];
@@ -140,7 +149,7 @@ export default function PaymentCancel() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => window.location.href = '/support'}
+                    onClick={() => (window.location.href = '/support')}
                   >
                     <HelpCircle className="mr-2 h-4 w-4" />
                     {t.visitSupport || 'Visit Support'}
@@ -148,7 +157,9 @@ export default function PaymentCancel() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => window.location.href = 'mailto:support@prisma.madfam.io'}
+                    onClick={() =>
+                      (window.location.href = 'mailto:support@prisma.madfam.io')
+                    }
                   >
                     <MessageCircle className="mr-2 h-4 w-4" />
                     {t.emailUs || 'Email Us'}
@@ -167,7 +178,8 @@ export default function PaymentCancel() {
                   {t.specialOffer || 'Special Offer'}
                 </h4>
                 <p className="text-sm text-muted-foreground mb-4">
-                  {t.getDiscount || 'Get 20% off your first month with code COMEBACK20'}
+                  {t.getDiscount ||
+                    'Get 20% off your first month with code COMEBACK20'}
                 </p>
                 <Button
                   onClick={() => {

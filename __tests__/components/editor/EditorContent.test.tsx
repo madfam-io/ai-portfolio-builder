@@ -1,19 +1,31 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { mockUseLanguage } from '@/test-utils/mock-i18n';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { EditorContent } from '@/components/editor/EditorContent';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useUIStore } from '@/lib/store/ui-store';
+/**
+ * @jest-environment jsdom
+ */
 
+import {  
+// Mock i18n
+
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
 
 // Mock the stores
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -118,6 +130,12 @@ const mockUIStore = {
 
 describe('EditorContent', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
     jest.clearAllMocks();
     (usePortfolioStore as jest.Mock).mockReturnValue(mockPortfolioStore);
     (useUIStore as jest.Mock).mockReturnValue(mockUIStore);
@@ -125,7 +143,7 @@ describe('EditorContent', () => {
   });
 
   describe('Rendering', () => {
-    it('should render the main editor layout', () => {
+    it('should render the main editor layout', async () => {
       render(<EditorContent />);
 
       expect(screen.getByTestId('template-selector')).toBeInTheDocument();
@@ -138,7 +156,7 @@ describe('EditorContent', () => {
       expect(screen.getByTestId('contact-section')).toBeInTheDocument();
     });
 
-    it('should render device mode controls', () => {
+    it('should render device mode controls', async () => {
       render(<EditorContent />);
 
       expect(screen.getByLabelText('Desktop view')).toBeInTheDocument();
@@ -146,7 +164,7 @@ describe('EditorContent', () => {
       expect(screen.getByLabelText('Mobile view')).toBeInTheDocument();
     });
 
-    it('should render AI enhancement button', () => {
+    it('should render AI enhancement button', async () => {
       render(<EditorContent />);
 
       expect(
@@ -154,7 +172,7 @@ describe('EditorContent', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render save status', () => {
+    it('should render save status', async () => {
       render(<EditorContent />);
 
       expect(screen.getByText(/saved/i)).toBeInTheDocument();
@@ -162,7 +180,7 @@ describe('EditorContent', () => {
   });
 
   describe('Device Mode Switching', () => {
-    it('should switch to tablet mode when tablet button is clicked', () => {
+    it('should switch to tablet mode when tablet button is clicked', async () => {
       render(<EditorContent />);
 
       const tabletButton = screen.getByLabelText('Tablet view');
@@ -171,7 +189,7 @@ describe('EditorContent', () => {
       expect(mockUIStore.setDeviceMode).toHaveBeenCalledWith('tablet');
     });
 
-    it('should switch to mobile mode when mobile button is clicked', () => {
+    it('should switch to mobile mode when mobile button is clicked', async () => {
       render(<EditorContent />);
 
       const mobileButton = screen.getByLabelText('Mobile view');
@@ -180,7 +198,7 @@ describe('EditorContent', () => {
       expect(mockUIStore.setDeviceMode).toHaveBeenCalledWith('mobile');
     });
 
-    it('should apply correct viewport classes based on device mode', () => {
+    it('should apply correct viewport classes based on device mode', async () => {
       const { rerender } = render(<EditorContent />);
 
       // Test desktop mode
@@ -229,12 +247,12 @@ describe('EditorContent', () => {
           expect.objectContaining({
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: expect.stringContaining('A passionate developer'),
-          })
-      });
+            body: expect.stringContaining('A passionate developer')
+  })
+};
     });
 
-    it('should show loading state during AI processing', () => {
+    it('should show loading state during AI processing', async () => {
       (useUIStore as jest.Mock).mockReturnValue({
         ...mockUIStore,
         isAIProcessing: true,
@@ -263,7 +281,7 @@ describe('EditorContent', () => {
   });
 
   describe('Auto-save Functionality', () => {
-    it('should trigger auto-save when portfolio changes', () => {
+    it('should trigger auto-save when portfolio changes', async () => {
       render(<EditorContent />);
 
       // Simulate portfolio change
@@ -284,7 +302,7 @@ describe('EditorContent', () => {
       expect(mockPortfolioStore.autoSave).toHaveBeenCalled();
     });
 
-    it('should show unsaved changes indicator when portfolio is dirty', () => {
+    it('should show unsaved changes indicator when portfolio is dirty', async () => {
       (usePortfolioStore as jest.Mock).mockReturnValue({
         ...mockPortfolioStore,
         isDirty: true,
@@ -297,7 +315,7 @@ describe('EditorContent', () => {
   });
 
   describe('Keyboard Shortcuts', () => {
-    it('should save portfolio when Ctrl+S is pressed', () => {
+    it('should save portfolio when Ctrl+S is pressed', async () => {
       render(<EditorContent />);
 
       fireEvent.keyDown(document, {
@@ -309,7 +327,7 @@ describe('EditorContent', () => {
       expect(mockPortfolioStore.autoSave).toHaveBeenCalled();
     });
 
-    it('should prevent default browser save behavior', () => {
+    it('should prevent default browser save behavior', async () => {
       render(<EditorContent />);
 
       const preventDefault = jest.fn();
@@ -324,7 +342,7 @@ describe('EditorContent', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle missing portfolio gracefully', () => {
+    it('should handle missing portfolio gracefully', async () => {
       (usePortfolioStore as jest.Mock).mockReturnValue({
         ...mockPortfolioStore,
         currentPortfolio: null,
@@ -335,7 +353,7 @@ describe('EditorContent', () => {
       expect(screen.getByText(/no portfolio selected/i)).toBeInTheDocument();
     });
 
-    it('should show loading state when portfolio is loading', () => {
+    it('should show loading state when portfolio is loading', async () => {
       (usePortfolioStore as jest.Mock).mockReturnValue({
         ...mockPortfolioStore,
         isLoading: true,
@@ -348,7 +366,7 @@ describe('EditorContent', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels for device mode controls', () => {
+    it('should have proper ARIA labels for device mode controls', async () => {
       render(<EditorContent />);
 
       expect(screen.getByLabelText('Desktop view')).toHaveAttribute(
@@ -362,7 +380,7 @@ describe('EditorContent', () => {
 
     });
 
-    it('should have proper focus management', () => {
+    it('should have proper focus management', async () => {
       render(<EditorContent />);
 
       const enhanceButton = screen.getByRole('button', {

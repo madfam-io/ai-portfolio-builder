@@ -1,8 +1,6 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { mockUseLanguage } from '@/test-utils/mock-i18n';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,11 +9,46 @@ import * as stripeEnhanced from '@/lib/services/stripe/stripe-enhanced';
 import { useRouter } from 'next/navigation';
 import { toast } from '@/lib/ui/toast';
 
+import {  
+
+jest.mock('@/lib/services/stripe/enhanced-stripe-service', () => ({
+jest.mock('@/lib/i18n/refactored-context', () => ({
+jest.mock('next/navigation');
+jest.mock('@/lib/services/stripe/stripe-enhanced', () => ({
+jest.mock('@/lib/ui/toast');
+
+// Mock Enhanced Stripe Service
+const mockEnhancedStripeService = {
+  isAvailable: jest.fn(),
+  createCheckoutSession: jest.fn(),
+  getCheckoutSession: jest.fn(),
+  handleWebhook: jest.fn(),
+  createBillingPortalSession: jest.fn(),
+};
+
+  EnhancedStripeService: jest.fn().mockImplementation(() => mockEnhancedStripeService),
+}));
+
+/**
+ * @jest-environment jsdom
+ */
+
+// Mock i18n
+
+// Mock i18n
+
+  useLanguage: mockUseLanguage,
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
+
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -37,10 +70,19 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('next/navigation');
-jest.mock('@/lib/services/stripe/stripe-enhanced');
-jest.mock('@/lib/ui/toast');
-jest.mock('@/lib/i18n/refactored-context', () => ({
+  enhancedStripeService: {
+    isAvailable: jest.fn(),
+    checkPromotionalEligibility: jest.fn(),
+    createCheckoutSession: jest.fn(),
+    createPortalSession: jest.fn(),
+  },
+  PROMOTIONAL_CONFIG: {
+    code: 'TEST_PROMO',
+    description: 'Test promotion',
+    discountPercentage: 50,
+  },
+}));
+
   useLanguage: () => ({
     t: {
       error: 'Error',
@@ -59,13 +101,19 @@ const mockUseRouter = jest.mocked(useRouter);
 const mockCreateCheckoutSession = jest.mocked(
   stripeEnhanced.createCheckoutSession
 
-const mockCreatePortalSession = jest.mocked(stripeEnhanced.createPortalSession);
+const mockCreatePortalSession = (stripeEnhanced.createPortalSession as jest.MockedFunction<typeof stripeEnhanced.createPortalSession>);
 const mockCreateAICreditCheckout = jest.mocked(
   stripeEnhanced.createAICreditCheckout
 
 const mockToast = jest.mocked(toast);
 
 describe('BillingDashboard', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const defaultProps = {
     user: {
       id: 'user_123',
@@ -86,7 +134,7 @@ describe('BillingDashboard', () => {
   });
 
   describe('Subscription Display', () => {
-    it('should display current subscription details', () => {
+    it('should display current subscription details', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       expect(screen.getByText('Billing & Subscription')).toBeInTheDocument();
@@ -95,7 +143,7 @@ describe('BillingDashboard', () => {
       expect(screen.getByText(/\$24\.00\/month/)).toBeInTheDocument();
     });
 
-    it('should show promotional pricing when active', () => {
+    it('should show promotional pricing when active', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       // Should show both original and promotional prices
@@ -104,7 +152,7 @@ describe('BillingDashboard', () => {
       expect(screen.getByText(/50% off/i)).toBeInTheDocument();
     });
 
-    it('should display next billing date', () => {
+    it('should display next billing date', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       const nextBillingDate = new Date(
@@ -116,7 +164,7 @@ describe('BillingDashboard', () => {
       expect(screen.getByText(new RegExp(formattedDate))).toBeInTheDocument();
     });
 
-    it('should show free plan message when on free tier', () => {
+    it('should show free plan message when on free tier', async () => {
       const freeUserProps = {
         ...defaultProps,
         user: {
@@ -182,7 +230,7 @@ describe('BillingDashboard', () => {
           title: 'Error',
           description: 'Failed to open billing portal',
           variant: 'destructive',
-    );
+    });
   });
       });
     });
@@ -204,7 +252,7 @@ describe('BillingDashboard', () => {
   });
 
   describe('Plan Upgrade', () => {
-    it('should show upgrade options for free users', () => {
+    it('should show upgrade options for free users', async () => {
       const freeUserProps = {
         ...defaultProps,
         user: {
@@ -264,7 +312,7 @@ describe('BillingDashboard', () => {
     );
   });
 
-    it('should show plan comparison features', () => {
+    it('should show plan comparison features', async () => {
       const freeUserProps = {
         ...defaultProps,
         user: {
@@ -286,7 +334,7 @@ describe('BillingDashboard', () => {
   });
 
   describe('AI Credits', () => {
-    it('should display current AI credit balance', () => {
+    it('should display current AI credit balance', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       expect(screen.getByText('AI Credits')).toBeInTheDocument();
@@ -294,7 +342,7 @@ describe('BillingDashboard', () => {
       expect(screen.getByText('Available credits')).toBeInTheDocument();
     });
 
-    it('should show AI credit packs', () => {
+    it('should show AI credit packs', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       expect(screen.getByText('Buy More Credits')).toBeInTheDocument();
@@ -334,7 +382,7 @@ describe('BillingDashboard', () => {
   });
 
   describe('Invoice History', () => {
-    it('should display invoice history section', () => {
+    it('should display invoice history section', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       expect(screen.getByText('Invoice History')).toBeInTheDocument();
@@ -364,7 +412,7 @@ describe('BillingDashboard', () => {
   });
 
   describe('Success Messages', () => {
-    it('should show success message after subscription', () => {
+    it('should show success message after subscription', async () => {
       // Mock URL params
       delete (window as any).location;
       (window as any).location = { search: '?success=true' };
@@ -376,7 +424,7 @@ describe('BillingDashboard', () => {
       ).toBeInTheDocument();
     });
 
-    it('should show success message after credit purchase', () => {
+    it('should show success message after credit purchase', async () => {
       delete (window as any).location;
       (window as any).location = { search: '?credits=true' };
 
@@ -414,12 +462,12 @@ describe('BillingDashboard', () => {
           title: 'Error',
           description: 'Failed to start checkout',
           variant: 'destructive',
-    );
+    });
   });
       });
     });
 
-    it('should disable actions when no customer ID', () => {
+    it('should disable actions when no customer ID', async () => {
       const noCustomerProps = {
         ...defaultProps,
         user: {
@@ -438,14 +486,14 @@ describe('BillingDashboard', () => {
   });
 
   describe('Plan Limits', () => {
-    it('should show usage against plan limits', () => {
+    it('should show usage against plan limits', async () => {
       render(<BillingDashboard {...defaultProps} />);
 
       expect(screen.getByText(/5 portfolios included/i)).toBeInTheDocument();
       expect(screen.getByText(/50 AI requests\/month/i)).toBeInTheDocument();
     });
 
-    it('should highlight when approaching limits', () => {
+    it('should highlight when approaching limits', async () => {
       const nearLimitProps = {
         ...defaultProps,
         user: {

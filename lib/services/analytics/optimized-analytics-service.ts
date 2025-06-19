@@ -278,7 +278,7 @@ export class OptimizedAnalyticsService {
       }
 
       return data;
-    } catch (error) {
+    } catch (_error) {
       // Fallback to multiple queries if RPC doesn't exist
       logger.warn(
         'Dashboard RPC not available, falling back to multiple queries'

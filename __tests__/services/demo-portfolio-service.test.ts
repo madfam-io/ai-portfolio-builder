@@ -1,21 +1,41 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import {
-  DemoPortfolioService,
-  DEMO_PORTFOLIOS,
-} from '@/lib/services/demo-portfolio-service';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 
-// Mock dependencies
+import { // Mock global fetch
+
+jest.mock('@/lib/services/portfolio-service', () => ({
 jest.mock('@/lib/supabase/client', () => ({
-  createClient: jest.fn(),
+jest.mock('@/lib/monitoring/unified/events', () => ({
+
+/**
+ * @jest-environment jsdom
+ */
+
+// Mock portfolio service
+
+  PortfolioService: jest.fn().mockImplementation(() => ({
+    createPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
+    updatePortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
+    getPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123', data: {} }),
+  })),
 }));
 
-jest.mock('@/lib/monitoring/unified/events', () => ({
+global.fetch = jest.fn();
+
+  DemoPortfolioService,
+  DEMO_PORTFOLIOS,
+ } from '@/lib/services/demo-portfolio-service';
+
+// Mock dependencies
+
+  createClient: jest.fn().mockReturnValue(void 0),
+}));
+
   track: {
     portfolio: {
-      create: jest.fn(),
+      create: jest.fn().mockReturnValue(void 0),
     },
     user: {
-      action: jest.fn(),
+      action: jest.fn().mockReturnValue(void 0),
     },
   },
 }));
@@ -24,26 +44,32 @@ const { createClient } = require('@/lib/supabase/client');
 const { track } = require('@/lib/monitoring/unified/events');
 
 describe('DemoPortfolioService', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockSupabaseClient = {
-    from: jest.fn(),
+    from: jest.fn().mockReturnValue(void 0),
     auth: {
-      getUser: jest.fn(),
+      getUser: jest.fn().mockReturnValue(void 0),
     },
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
+    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
   });
 
   describe('getAvailableDemos', () => {
-    it('should return all demos when no industry filter is provided', () => {
+    it('should return all demos when no industry filter is provided', async () => {
       const demos = DemoPortfolioService.getAvailableDemos();
       expect(demos).toHaveLength(DEMO_PORTFOLIOS.length);
       expect(demos).toEqual(expect.arrayContaining(DEMO_PORTFOLIOS));
     });
 
-    it('should filter demos by industry', () => {
+    it('should filter demos by industry', async () => {
       const techDemos = DemoPortfolioService.getAvailableDemos('Technology');
       expect(techDemos.every(demo => demo.industry === 'Technology')).toBe(
         true
@@ -51,7 +77,7 @@ describe('DemoPortfolioService', () => {
       expect(techDemos.length).toBeGreaterThan(0);
     });
 
-    it('should sort demos by popularity', () => {
+    it('should sort demos by popularity', async () => {
       const demos = DemoPortfolioService.getAvailableDemos();
       for (let i = 1; i < demos.length; i++) {
         expect(demos[i - 1].popularity).toBeGreaterThanOrEqual(
@@ -62,14 +88,14 @@ describe('DemoPortfolioService', () => {
   });
 
   describe('getDemo', () => {
-    it('should return a specific demo by id', () => {
+    it('should return a specific demo by id', async () => {
       const demo = DemoPortfolioService.getDemo('dev-startup');
       expect(demo).toBeDefined();
       expect(demo?.id).toBe('dev-startup');
       expect(demo?.name).toBe('Startup Developer');
     });
 
-    it('should return null for non-existent demo id', () => {
+    it('should return null for non-existent demo id', async () => {
       const demo = DemoPortfolioService.getDemo('non-existent');
       expect(demo).toBeNull();
     });
@@ -149,12 +175,12 @@ describe('DemoPortfolioService', () => {
   });
 
   describe('getRecommendedDemos', () => {
-    it('should return top 3 demos by default', () => {
+    it('should return top 3 demos by default', async () => {
       const recommendations = DemoPortfolioService.getRecommendedDemos();
       expect(recommendations).toHaveLength(3);
     });
 
-    it('should filter by user industry', () => {
+    it('should filter by user industry', async () => {
       const recommendations = DemoPortfolioService.getRecommendedDemos({
         industry: 'Technology',
       });
@@ -165,7 +191,7 @@ describe('DemoPortfolioService', () => {
       });
     });
 
-    it('should boost score for matching experience levels', () => {
+    it('should boost score for matching experience levels', async () => {
       const seniorRecs = DemoPortfolioService.getRecommendedDemos({
         experience: 'senior',
       });
@@ -267,9 +293,9 @@ describe('DemoPortfolioService', () => {
       // Mock sessionStorage
       Object.defineProperty(window, 'sessionStorage', {
         value: {
-          getItem: jest.fn(),
-          setItem: jest.fn(),
-          removeItem: jest.fn(),
+          getItem: jest.fn().mockReturnValue(void 0),
+          setItem: jest.fn().mockReturnValue(void 0),
+          removeItem: jest.fn().mockReturnValue(void 0),
         },
         writable: true,
       });

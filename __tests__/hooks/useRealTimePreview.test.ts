@@ -1,25 +1,24 @@
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { renderHook, act } from '@testing-library/react';
+import React from 'react';
+import type { Portfolio } from '@/types/portfolio';
+import { useRealTimePreview } from '@/hooks/useRealTimePreview';
+
 /**
  * @jest-environment jsdom
  */
 
-import {
-  describe,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
-import { renderHook, act } from '@testing-library/react';
-import React from 'react';
-import type { Portfolio } from '@/types/portfolio';
-
 // Ensure React is available globally for hooks
 global.React = React;
 
-import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 
 describe('useRealTimePreview', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -66,11 +65,11 @@ describe('useRealTimePreview', () => {
     document.body.innerHTML = '';
   });
 
-  it('should import hook correctly', () => {
+  it('should import hook correctly', async () => {
     expect(typeof useRealTimePreview).toBe('function');
   });
 
-  it('should initialize with default preview config', () => {
+  it('should initialize with default preview config', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -93,7 +92,7 @@ describe('useRealTimePreview', () => {
     });
   });
 
-  it('should change preview mode', () => {
+  it('should change preview mode', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -121,7 +120,7 @@ describe('useRealTimePreview', () => {
     });
   });
 
-  it('should change preview state', () => {
+  it('should change preview state', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -139,7 +138,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.state).toBe('fullscreen');
   });
 
-  it('should toggle fullscreen', () => {
+  it('should toggle fullscreen', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -157,7 +156,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.state).toBe('preview');
   });
 
-  it('should set active section', () => {
+  it('should set active section', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -175,7 +174,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.activeSection).toBeNull();
   });
 
-  it('should highlight section', () => {
+  it('should highlight section', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -187,8 +186,8 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.highlightedSection).toBe('projects');
   });
 
-  it('should scroll to section', () => {
-    const scrollIntoViewMock = jest.fn();
+  it('should scroll to section', async () => {
+    const scrollIntoViewMock = jest.fn().mockReturnValue(void 0);
     const mockElement = document.querySelector('[data-section="experience"]');
     if (mockElement) {
       mockElement.scrollIntoView = scrollIntoViewMock;
@@ -202,17 +201,16 @@ describe('useRealTimePreview', () => {
       result.current.scrollToSection('experience');
     });
 
-    expect(scrollIntoViewMock).toHaveBeenCalledWith(
-      {
+    expect(scrollIntoViewMock).toHaveBeenCalledWith({
       behavior: 'smooth',
       block: 'start',
       inline: 'nearest',
-    );
-  });
+    });
+    
     expect(result.current.previewConfig.activeSection).toBe('experience');
   });
 
-  it('should handle scrolling to non-existent section', () => {
+  it('should handle scrolling to non-existent section', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -225,7 +223,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.activeSection).toBe('non-existent');
   });
 
-  it('should set zoom level with clamping', () => {
+  it('should set zoom level with clamping', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -252,7 +250,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.zoomLevel).toBe(0.25);
   });
 
-  it('should toggle section borders', () => {
+  it('should toggle section borders', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -272,7 +270,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.showSectionBorders).toBe(false);
   });
 
-  it('should toggle interactive elements', () => {
+  it('should toggle interactive elements', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -286,7 +284,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewConfig.showInteractiveElements).toBe(false);
   });
 
-  it('should get responsive breakpoints', () => {
+  it('should get responsive breakpoints', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -306,7 +304,7 @@ describe('useRealTimePreview', () => {
     });
   });
 
-  it('should test responsive breakpoint', () => {
+  it('should test responsive breakpoint', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -354,7 +352,7 @@ describe('useRealTimePreview', () => {
     expect(screenshot).toBeNull();
   });
 
-  it('should export preview HTML', () => {
+  it('should export preview HTML', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -368,7 +366,7 @@ describe('useRealTimePreview', () => {
     expect(html).toContain('Projects Section');
   });
 
-  it('should handle export HTML with no preview element', () => {
+  it('should handle export HTML with no preview element', async () => {
     document.body.innerHTML = '';
 
     const { result } = renderHook(() =>
@@ -380,7 +378,7 @@ describe('useRealTimePreview', () => {
     expect(html).toBe('');
   });
 
-  it('should get preview URL for published portfolio', () => {
+  it('should get preview URL for published portfolio', async () => {
     const publishedPortfolio = {
       ...mockPortfolio,
       status: 'published' as const,
@@ -396,7 +394,7 @@ describe('useRealTimePreview', () => {
     expect(url).toBe('https://my-portfolio.prisma.madfam.io');
   });
 
-  it('should return null preview URL for draft portfolio', () => {
+  it('should return null preview URL for draft portfolio', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -406,8 +404,8 @@ describe('useRealTimePreview', () => {
     expect(url).toBeNull();
   });
 
-  it('should call onPreviewChange callback', () => {
-    const onPreviewChange = jest.fn();
+  it('should call onPreviewChange callback', async () => {
+    const onPreviewChange = jest.fn().mockReturnValue(void 0);
 
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio, onPreviewChange })
@@ -425,7 +423,7 @@ describe('useRealTimePreview', () => {
     );
   });
 
-  it('should reset custom dimensions when changing mode', () => {
+  it('should reset custom dimensions when changing mode', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -446,7 +444,7 @@ describe('useRealTimePreview', () => {
     expect(result.current.previewDimensions.width).toBe('375px');
   });
 
-  it('should apply zoom to custom dimensions', () => {
+  it('should apply zoom to custom dimensions', async () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
@@ -463,7 +461,7 @@ describe('useRealTimePreview', () => {
     });
   });
 
-  it('should use portfolio name in export title', () => {
+  it('should use portfolio name in export title', async () => {
     const portfolioWithName = {
       ...mockPortfolio,
       name: 'John Doe Portfolio',
@@ -479,7 +477,7 @@ describe('useRealTimePreview', () => {
     expect(html).toContain('<title>John Doe Portfolio - Portfolio</title>');
   });
 
-  it('should use portfolio title as fallback in export', () => {
+  it('should use portfolio title as fallback in export', async () => {
     const portfolioWithoutName = {
       ...mockPortfolio,
       name: '',

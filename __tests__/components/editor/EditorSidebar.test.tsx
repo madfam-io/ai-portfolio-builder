@@ -1,20 +1,23 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import EditorSidebar from '@/components/editor/EditorSidebar';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio, SectionType } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import EditorSidebar from '@/components/editor/EditorSidebar';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio, SectionType } from '@/types/portfolio';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -36,7 +39,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -47,6 +49,12 @@ jest.mock('@/lib/utils', () => ({
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('EditorSidebar', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -150,12 +158,12 @@ describe('EditorSidebar', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render sidebar title', () => {
+    it('should render sidebar title', async () => {
       renderEditorSidebar();
       expect(screen.getByText('Portfolio Structure')).toBeInTheDocument();
     });
 
-    it('should render all section links', () => {
+    it('should render all section links', async () => {
       renderEditorSidebar();
 
       expect(screen.getByText('Hero Section')).toBeInTheDocument();
@@ -168,7 +176,7 @@ describe('EditorSidebar', () => {
       expect(screen.getByText('Contact')).toBeInTheDocument();
     });
 
-    it('should highlight active section', () => {
+    it('should highlight active section', async () => {
       renderEditorSidebar({
         ...mockProps,
         activeSection: 'projects',
@@ -178,7 +186,7 @@ describe('EditorSidebar', () => {
       expect(projectsSection).toHaveClass('bg-primary/10'); // Active section styling
     });
 
-    it('should show section completion status', () => {
+    it('should show section completion status', async () => {
       renderEditorSidebar();
 
       // Hero section should be complete (has title)
@@ -224,7 +232,7 @@ describe('EditorSidebar', () => {
       }
     });
 
-    it('should update active section styling when prop changes', () => {
+    it('should update active section styling when prop changes', async () => {
       const { rerender } = renderEditorSidebar();
 
       // Initially hero is active
@@ -243,7 +251,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Section Actions', () => {
-    it('should show add buttons for list sections', () => {
+    it('should show add buttons for list sections', async () => {
       renderEditorSidebar();
 
       expect(screen.getByText('Add Experience')).toBeInTheDocument();
@@ -320,14 +328,14 @@ describe('EditorSidebar', () => {
   });
 
   describe('Section Completion Status', () => {
-    it('should mark hero section as complete when title exists', () => {
+    it('should mark hero section as complete when title exists', async () => {
       renderEditorSidebar();
 
       const heroSection = screen.getByText('Hero Section').closest('div');
       expect(heroSection).toContainElement(screen.getByText('Complete'));
     });
 
-    it('should mark hero section as incomplete when title is missing', () => {
+    it('should mark hero section as incomplete when title is missing', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: {
@@ -340,21 +348,21 @@ describe('EditorSidebar', () => {
       expect(heroSection).toContainElement(screen.getByText('Incomplete'));
     });
 
-    it('should mark about section as complete when bio exists', () => {
+    it('should mark about section as complete when bio exists', async () => {
       renderEditorSidebar();
 
       const aboutSection = screen.getByText('About Section').closest('div');
       expect(aboutSection).toContainElement(screen.getByText('Complete'));
     });
 
-    it('should mark projects section as complete when projects exist', () => {
+    it('should mark projects section as complete when projects exist', async () => {
       renderEditorSidebar();
 
       const projectsSection = screen.getByText('Projects').closest('div');
       expect(projectsSection).toContainElement(screen.getByText('Complete'));
     });
 
-    it('should mark sections as incomplete when data is missing', () => {
+    it('should mark sections as incomplete when data is missing', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: {
@@ -385,7 +393,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Contact Section', () => {
-    it('should show edit contact button', () => {
+    it('should show edit contact button', async () => {
       renderEditorSidebar();
       expect(screen.getByText('Edit Contact')).toBeInTheDocument();
     });
@@ -403,14 +411,14 @@ describe('EditorSidebar', () => {
 
     });
 
-    it('should mark contact as complete when email exists', () => {
+    it('should mark contact as complete when email exists', async () => {
       renderEditorSidebar();
 
       const contactSection = screen.getByText('Contact').closest('div');
       expect(contactSection).toContainElement(screen.getByText('Complete'));
     });
 
-    it('should mark contact as incomplete when email is missing', () => {
+    it('should mark contact as incomplete when email is missing', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: {
@@ -425,19 +433,19 @@ describe('EditorSidebar', () => {
   });
 
   describe('Social Links Section', () => {
-    it('should show social links information', () => {
+    it('should show social links information', async () => {
       renderEditorSidebar();
       expect(screen.getByText('Social Links')).toBeInTheDocument();
     });
 
-    it('should display existing social links count', () => {
+    it('should display existing social links count', async () => {
       renderEditorSidebar();
 
       // Portfolio has LinkedIn and GitHub
       expect(screen.getByText(/2 links/)).toBeInTheDocument();
     });
 
-    it('should show zero links when no social links exist', () => {
+    it('should show zero links when no social links exist', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: {
@@ -451,7 +459,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Keyboard Navigation', () => {
-    it('should support keyboard navigation between sections', () => {
+    it('should support keyboard navigation between sections', async () => {
       renderEditorSidebar();
 
       const sections = screen.getAllByRole('button');
@@ -493,7 +501,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+    it('should have proper ARIA labels', async () => {
       renderEditorSidebar();
 
       const sections = screen.getAllByRole('button');
@@ -502,7 +510,7 @@ describe('EditorSidebar', () => {
       });
     });
 
-    it('should indicate current section with aria-current', () => {
+    it('should indicate current section with aria-current', async () => {
       renderEditorSidebar({
         ...mockProps,
         activeSection: 'projects',
@@ -512,7 +520,7 @@ describe('EditorSidebar', () => {
       expect(projectsButton).toHaveAttribute('aria-current', 'page');
     });
 
-    it('should have proper heading structure', () => {
+    it('should have proper heading structure', async () => {
       renderEditorSidebar();
 
       const heading = screen.getByRole('heading', {
@@ -521,7 +529,7 @@ describe('EditorSidebar', () => {
       expect(heading).toBeInTheDocument();
     });
 
-    it('should provide completion status to screen readers', () => {
+    it('should provide completion status to screen readers', async () => {
       renderEditorSidebar();
 
       const completeStatuses = screen.getAllByText('Complete');
@@ -534,7 +542,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Responsive Behavior', () => {
-    it('should render in mobile layout', () => {
+    it('should render in mobile layout', async () => {
       // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
@@ -549,7 +557,7 @@ describe('EditorSidebar', () => {
       expect(screen.getByText('Hero Section')).toBeInTheDocument();
     });
 
-    it('should handle collapsed state', () => {
+    it('should handle collapsed state', async () => {
       renderEditorSidebar();
 
       // In mobile view, sidebar might be collapsible
@@ -559,7 +567,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing portfolio data gracefully', () => {
+    it('should handle missing portfolio data gracefully', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: null as any,
@@ -569,7 +577,7 @@ describe('EditorSidebar', () => {
       expect(screen.getByText('Portfolio Structure')).toBeInTheDocument();
     });
 
-    it('should handle undefined sections', () => {
+    it('should handle undefined sections', async () => {
       renderEditorSidebar({
         ...mockProps,
         portfolio: {
@@ -601,7 +609,7 @@ describe('EditorSidebar', () => {
   });
 
   describe('Internationalization', () => {
-    it('should use translated section names', () => {
+    it('should use translated section names', async () => {
       renderEditorSidebar();
 
       expect(screen.getByText('Hero Section')).toBeInTheDocument();
@@ -609,7 +617,7 @@ describe('EditorSidebar', () => {
       expect(screen.getByText('Experience')).toBeInTheDocument();
     });
 
-    it('should fallback gracefully when translations are missing', () => {
+    it('should fallback gracefully when translations are missing', async () => {
       (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);

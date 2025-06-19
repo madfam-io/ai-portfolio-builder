@@ -347,7 +347,7 @@ class CDNManager {
               metrics.push(metric);
             }
           }
-        } catch (error) {
+        } catch (_error) {
           // Skip invalid entries
         }
       }

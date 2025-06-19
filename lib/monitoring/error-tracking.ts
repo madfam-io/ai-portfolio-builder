@@ -194,7 +194,7 @@ class ErrorTracker {
 
         localStorage.setItem('error-reports', JSON.stringify(errors));
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }
@@ -207,7 +207,7 @@ class ErrorTracker {
       if (typeof window !== 'undefined' && window.localStorage) {
         return JSON.parse(localStorage.getItem('error-reports') || '[]');
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore localStorage errors
     }
     return [];
@@ -221,7 +221,7 @@ class ErrorTracker {
       if (typeof window !== 'undefined' && window.localStorage) {
         localStorage.removeItem('error-reports');
       }
-    } catch (error) {
+    } catch (_error) {
       // Ignore localStorage errors
     }
   }

@@ -1,9 +1,19 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { middleware } from '../../middleware';
+import { apiVersionMiddleware } from '../../middleware/api-version';
+import { securityMiddleware } from '../../middleware/security';
+
+jest.mock('@/lib/utils/logger', () => ({
+jest.mock('@/lib/config', () => mockConfig);
+jest.mock('../../middleware/api-version', () => ({
+jest.mock('../../middleware/security', () => ({
+jest.mock('@supabase/ssr', () => ({
+
+jest.setTimeout(30000);
 
 // Mock dependencies
-jest.mock('@/lib/utils/logger', () => ({
+
   logger: {
     warn: jest.fn(),
     error: jest.fn(),
@@ -24,14 +34,11 @@ const mockConfig = {
   },
 };
 
-jest.mock('@/lib/config', () => mockConfig);
-
 // Mock middleware modules
-jest.mock('../../middleware/api-version', () => ({
+
   apiVersionMiddleware: jest.fn(),
 }));
 
-jest.mock('../../middleware/security', () => ({
   securityMiddleware: jest.fn(),
   applySecurityToResponse: jest.fn((req, res) => res),
 }));
@@ -43,16 +50,20 @@ const mockSupabaseClient = {
   },
 };
 
-jest.mock('@supabase/ssr', () => ({
   createServerClient: jest.fn(() => mockSupabaseClient),
 }));
 
 // Import mocked modules
-import { apiVersionMiddleware } from '../../middleware/api-version';
-import { securityMiddleware } from '../../middleware/security';
 
 describe('Middleware', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
 
     // Default mock implementations

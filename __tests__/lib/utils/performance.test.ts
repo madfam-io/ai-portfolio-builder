@@ -1,28 +1,28 @@
+import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { logger } from '@/lib/utils/logger';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import {
-  PerformanceMonitor,
+
+import {   PerformanceMonitor,
   PerformanceMetrics,
   ComponentPerformance,
   getMemoryUsage,
-} from '@/lib/utils/performance';
-import { logger } from '@/lib/utils/logger';
+ } from '@/lib/utils/performance';
 
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger', () => ({
   logger: {
-    warn: jest.fn(),
+    warn: jest.fn().mockReturnValue(void 0),
   },
 }));
 
 // Mock Performance APIs
-const mockPerformanceObserver = jest.fn();
-const mockObserve = jest.fn();
-const mockDisconnect = jest.fn();
+const mockPerformanceObserver = jest.fn().mockReturnValue(void 0);
+const mockObserve = jest.fn().mockReturnValue(void 0);
+const mockDisconnect = jest.fn().mockReturnValue(void 0);
 
 mockPerformanceObserver.mockImplementation(() => ({
   observe: mockObserve,
@@ -33,7 +33,7 @@ global.PerformanceObserver = mockPerformanceObserver as any;
 
 // Mock performance APIs
 const mockPerformanceNow = jest.fn(() => 1000);
-const mockGetEntriesByType = jest.fn();
+const mockGetEntriesByType = jest.fn().mockReturnValue(void 0);
 
 Object.defineProperty(global, 'performance', {
   value: {
@@ -54,6 +54,13 @@ describe('Performance Utilities', () => {
   let originalConsoleWarn: typeof console.warn;
 
   beforeEach(() => {
+    // Mock console methods
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    const originalEnv = process.env;
+    process.env = { ...originalEnv };
+
     jest.clearAllMocks();
     mockObserve.mockClear();
     mockDisconnect.mockClear();
@@ -66,8 +73,8 @@ describe('Performance Utilities', () => {
     // Mock console methods
     originalConsoleLog = console.log;
     originalConsoleWarn = console.warn;
-    console.log = jest.fn();
-    console.warn = jest.fn();
+    console.log = jest.fn().mockReturnValue(void 0);
+    console.warn = jest.fn().mockReturnValue(void 0);
 
     // Mock environment
     process.env.NODE_ENV = 'development';
@@ -88,14 +95,14 @@ describe('Performance Utilities', () => {
 
   describe('PerformanceMonitor', () => {
     describe('Singleton Pattern', () => {
-      it('should return the same instance', () => {
+      it('should return the same instance', async () => {
         const instance1 = PerformanceMonitor.getInstance();
         const instance2 = PerformanceMonitor.getInstance();
 
         expect(instance1).toBe(instance2);
       });
 
-      it('should create only one instance', () => {
+      it('should create only one instance', async () => {
         const instance1 = PerformanceMonitor.getInstance();
         const instance2 = PerformanceMonitor.getInstance();
         const instance3 = PerformanceMonitor.getInstance();
@@ -106,7 +113,7 @@ describe('Performance Utilities', () => {
     });
 
     describe('Initialization', () => {
-      it('should initialize observers in development mode', () => {
+      it('should initialize observers in development mode', async () => {
         process.env.NODE_ENV = 'development';
 
         // Create new instance
@@ -116,7 +123,7 @@ describe('Performance Utilities', () => {
         expect(mockPerformanceObserver).toHaveBeenCalled();
       });
 
-      it('should initialize observers when explicitly enabled', () => {
+      it('should initialize observers when explicitly enabled', async () => {
         process.env.NODE_ENV = 'production';
         process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING = 'true';
 
@@ -127,7 +134,7 @@ describe('Performance Utilities', () => {
         expect(mockPerformanceObserver).toHaveBeenCalled();
       });
 
-      it('should not initialize observers in production by default', () => {
+      it('should not initialize observers in production by default', async () => {
         process.env.NODE_ENV = 'production';
         delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING;
 
@@ -143,7 +150,7 @@ describe('Performance Utilities', () => {
     });
 
     describe('Observer Setup', () => {
-      it('should attempt to setup performance observers in development', () => {
+      it('should attempt to setup performance observers in development', async () => {
         // In development mode, it should try to create observers
         expect(mockPerformanceObserver).toHaveBeenCalled();
 
@@ -152,7 +159,7 @@ describe('Performance Utilities', () => {
         expect(mockPerformanceObserver.mock.calls.length).toBeGreaterThan(0);
       });
 
-      it('should handle observer creation errors gracefully', () => {
+      it('should handle observer creation errors gracefully', async () => {
         mockPerformanceObserver.mockImplementationOnce(() => {
           throw new Error('Observer not supported');
         });
@@ -168,7 +175,7 @@ describe('Performance Utilities', () => {
     });
 
     describe('Component Performance Tracking', () => {
-      it('should track component render time', () => {
+      it('should track component render time', async () => {
         monitor.trackComponentRender('TestComponent', 10);
 
         const metrics = monitor.getComponentMetrics();
@@ -181,7 +188,7 @@ describe('Performance Utilities', () => {
         expect(metric.averageRenderTime).toBe(10);
       });
 
-      it('should accumulate multiple renders for same component', () => {
+      it('should accumulate multiple renders for same component', async () => {
         monitor.trackComponentRender('TestComponent', 10);
         monitor.trackComponentRender('TestComponent', 20);
         monitor.trackComponentRender('TestComponent', 30);
@@ -194,7 +201,7 @@ describe('Performance Utilities', () => {
         expect(metric?.averageRenderTime).toBe(20);
       });
 
-      it('should track multiple components separately', () => {
+      it('should track multiple components separately', async () => {
         monitor.trackComponentRender('ComponentA', 10);
         monitor.trackComponentRender('ComponentB', 15);
         monitor.trackComponentRender('ComponentA', 20);
@@ -209,7 +216,7 @@ describe('Performance Utilities', () => {
         expect(componentB?.renderCount).toBe(1);
       });
 
-      it('should warn about slow components in development', () => {
+      it('should warn about slow components in development', async () => {
         process.env.NODE_ENV = 'development';
 
         monitor.trackComponentRender('SlowComponent', 25); // > 16ms threshold
@@ -221,7 +228,7 @@ describe('Performance Utilities', () => {
 
       });
 
-      it('should not warn about slow components in production', () => {
+      it('should not warn about slow components in production', async () => {
         process.env.NODE_ENV = 'production';
 
         monitor.trackComponentRender('SlowComponent', 25);
@@ -229,7 +236,7 @@ describe('Performance Utilities', () => {
         expect(console.warn).not.toHaveBeenCalled();
       });
 
-      it('should not track when monitoring is disabled', () => {
+      it('should not track when monitoring is disabled', async () => {
         process.env.NODE_ENV = 'production';
         delete process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING;
 
@@ -245,14 +252,14 @@ describe('Performance Utilities', () => {
     });
 
     describe('Metrics Reporting', () => {
-      it('should return current metrics', () => {
+      it('should return current metrics', async () => {
         const metrics = monitor.getMetrics();
 
         expect(metrics).toBeDefined();
         expect(typeof metrics).toBe('object');
       });
 
-      it('should return component metrics array', () => {
+      it('should return component metrics array', async () => {
         monitor.trackComponentRender('TestComponent', 10);
 
         const metrics = monitor.getComponentMetrics();
@@ -261,7 +268,7 @@ describe('Performance Utilities', () => {
         expect(metrics).toHaveLength(1);
       });
 
-      it('should return immutable metrics object', () => {
+      it('should return immutable metrics object', async () => {
         const metrics1 = monitor.getMetrics();
         const metrics2 = monitor.getMetrics();
 
@@ -272,12 +279,12 @@ describe('Performance Utilities', () => {
     });
 
     describe('Performance Score Calculation', () => {
-      it('should return perfect score with no metrics', () => {
+      it('should return perfect score with no metrics', async () => {
         const score = monitor.getPerformanceScore();
         expect(score).toBe(100);
       });
 
-      it('should penalize poor LCP', () => {
+      it('should penalize poor LCP', async () => {
         // Simulate poor LCP > 4s
         (monitor as any).metrics.lcp = 5000;
 
@@ -285,7 +292,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(60); // 100 - 40
       });
 
-      it('should penalize moderate LCP', () => {
+      it('should penalize moderate LCP', async () => {
         // Simulate moderate LCP 2.5-4s
         (monitor as any).metrics.lcp = 3000;
 
@@ -293,7 +300,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(80); // 100 - 20
       });
 
-      it('should penalize poor FID', () => {
+      it('should penalize poor FID', async () => {
         // Simulate poor FID > 300ms
         (monitor as any).metrics.fid = 400;
 
@@ -301,7 +308,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(70); // 100 - 30
       });
 
-      it('should penalize moderate FID', () => {
+      it('should penalize moderate FID', async () => {
         // Simulate moderate FID 100-300ms
         (monitor as any).metrics.fid = 200;
 
@@ -309,7 +316,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(85); // 100 - 15
       });
 
-      it('should penalize poor CLS', () => {
+      it('should penalize poor CLS', async () => {
         // Simulate poor CLS > 0.25
         (monitor as any).metrics.cls = 0.3;
 
@@ -317,7 +324,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(70); // 100 - 30
       });
 
-      it('should penalize moderate CLS', () => {
+      it('should penalize moderate CLS', async () => {
         // Simulate moderate CLS 0.1-0.25
         (monitor as any).metrics.cls = 0.15;
 
@@ -325,7 +332,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(85); // 100 - 15
       });
 
-      it('should combine penalties correctly', () => {
+      it('should combine penalties correctly', async () => {
         // Simulate poor performance across all metrics
         (monitor as any).metrics.lcp = 5000; // -40
         (monitor as any).metrics.fid = 400; // -30
@@ -335,7 +342,7 @@ describe('Performance Utilities', () => {
         expect(score).toBe(0); // 100 - 40 - 30 - 30 = 0 (min)
       });
 
-      it('should not go below 0', () => {
+      it('should not go below 0', async () => {
         // Simulate extreme poor performance
         (monitor as any).metrics.lcp = 10000;
         (monitor as any).metrics.fid = 1000;
@@ -347,7 +354,7 @@ describe('Performance Utilities', () => {
     });
 
     describe('Metric Reporting', () => {
-      it('should log metrics in development mode', () => {
+      it('should log metrics in development mode', async () => {
         process.env.NODE_ENV = 'development';
 
         // Trigger metric reporting by setting up observer callback
@@ -367,7 +374,7 @@ describe('Performance Utilities', () => {
         }
       });
 
-      it('should not log metrics in production', () => {
+      it('should not log metrics in production', async () => {
         process.env.NODE_ENV = 'production';
         process.env.NEXT_PUBLIC_ENABLE_PERFORMANCE_MONITORING = 'true';
 
@@ -375,7 +382,7 @@ describe('Performance Utilities', () => {
         (PerformanceMonitor as any).instance = undefined;
         const prodMonitor = PerformanceMonitor.getInstance();
 
-        console.log = jest.fn();
+        console.log = jest.fn().mockReturnValue(void 0);
 
         // Manually trigger metric reporting
         (prodMonitor as any).reportMetric('test', 100);
@@ -383,7 +390,7 @@ describe('Performance Utilities', () => {
         expect(console.log).not.toHaveBeenCalled();
       });
 
-      it('should get correct metric units', () => {
+      it('should get correct metric units', async () => {
         const monitor = PerformanceMonitor.getInstance();
 
         expect((monitor as any).getMetricUnit('cls')).toBe('');
@@ -396,14 +403,14 @@ describe('Performance Utilities', () => {
     });
 
     describe('Observer Management', () => {
-      it('should have destroy method', () => {
+      it('should have destroy method', async () => {
         expect(typeof monitor.destroy).toBe('function');
 
         // Should not throw when called
         expect(() => monitor.destroy()).not.toThrow();
       });
 
-      it('should clear observer map on destroy', () => {
+      it('should clear observer map on destroy', async () => {
         monitor.destroy();
 
         // Observers map should be cleared
@@ -413,13 +420,13 @@ describe('Performance Utilities', () => {
     });
 
     describe('Navigation Timing', () => {
-      it('should have navigation timing method', () => {
+      it('should have navigation timing method', async () => {
         expect(typeof (monitor as any).observeNavigationTiming).toBe(
           'function'
 
       });
 
-      it('should handle missing navigation timing gracefully', () => {
+      it('should handle missing navigation timing gracefully', async () => {
         mockGetEntriesByType.mockReturnValue([]);
 
         expect(() => {
@@ -430,7 +437,7 @@ describe('Performance Utilities', () => {
   });
 
   describe('Memory Usage Monitoring', () => {
-    it('should return memory usage when available', () => {
+    it('should return memory usage when available', async () => {
       // Update global performance to have memory property
       Object.defineProperty(global.performance, 'memory', {
         value: {
@@ -449,7 +456,7 @@ describe('Performance Utilities', () => {
       expect(memory?.percentage).toBe(50);
     });
 
-    it('should return null when memory API not available', () => {
+    it('should return null when memory API not available', async () => {
       const originalMemory = (performance as any).memory;
       delete (performance as any).memory;
 
@@ -460,7 +467,7 @@ describe('Performance Utilities', () => {
       (performance as any).memory = originalMemory;
     });
 
-    it('should return null in server environment', () => {
+    it('should return null in server environment', async () => {
       const originalWindow = global.window;
       delete (global as any).window;
 
@@ -471,7 +478,7 @@ describe('Performance Utilities', () => {
       global.window = originalWindow;
     });
 
-    it('should calculate percentage correctly', () => {
+    it('should calculate percentage correctly', async () => {
       // Update mock memory values
       (performance as any).memory = {
         usedJSHeapSize: 25 * 1024 * 1024,
@@ -485,7 +492,7 @@ describe('Performance Utilities', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle missing PerformanceObserver gracefully', () => {
+    it('should handle missing PerformanceObserver gracefully', async () => {
       const originalObserver = global.PerformanceObserver;
       delete (global as any).PerformanceObserver;
 
@@ -498,7 +505,7 @@ describe('Performance Utilities', () => {
       global.PerformanceObserver = originalObserver;
     });
 
-    it('should handle observer setup errors', () => {
+    it('should handle observer setup errors', async () => {
       mockPerformanceObserver.mockImplementationOnce(() => {
         throw new Error('Observer creation failed');
       });
@@ -511,7 +518,7 @@ describe('Performance Utilities', () => {
       expect(logger.warn).toHaveBeenCalled();
     });
 
-    it('should handle missing performance.now gracefully', () => {
+    it('should handle missing performance.now gracefully', async () => {
       const originalNow = performance.now;
       delete (performance as any).now;
 
@@ -526,7 +533,7 @@ describe('Performance Utilities', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle zero render times', () => {
+    it('should handle zero render times', async () => {
       monitor.trackComponentRender('InstantComponent', 0);
 
       const metrics = monitor.getComponentMetrics();
@@ -536,7 +543,7 @@ describe('Performance Utilities', () => {
       expect(metric.averageRenderTime).toBe(0);
     });
 
-    it('should handle negative render times', () => {
+    it('should handle negative render times', async () => {
       monitor.trackComponentRender('NegativeComponent', -5);
 
       const metrics = monitor.getComponentMetrics();
@@ -546,7 +553,7 @@ describe('Performance Utilities', () => {
       expect(metric.averageRenderTime).toBe(-5);
     });
 
-    it('should handle very large render times', () => {
+    it('should handle very large render times', async () => {
       const largeTime = 999999;
       monitor.trackComponentRender('VerySlowComponent', largeTime);
 
@@ -557,7 +564,7 @@ describe('Performance Utilities', () => {
       expect(metric.averageRenderTime).toBe(largeTime);
     });
 
-    it('should handle component names with special characters', () => {
+    it('should handle component names with special characters', async () => {
       const specialName = 'Component@#$%^&*()';
       monitor.trackComponentRender(specialName, 10);
 
@@ -567,7 +574,7 @@ describe('Performance Utilities', () => {
       expect(metric.componentName).toBe(specialName);
     });
 
-    it('should handle empty component names', () => {
+    it('should handle empty component names', async () => {
       monitor.trackComponentRender('', 10);
 
       const metrics = monitor.getComponentMetrics();
@@ -578,7 +585,7 @@ describe('Performance Utilities', () => {
   });
 
   describe('Performance Integration', () => {
-    it('should work with real performance.now calls', () => {
+    it('should work with real performance.now calls', async () => {
       mockPerformanceNow.mockReturnValueOnce(1000).mockReturnValueOnce(1020);
 
       const startTime = performance.now();
@@ -593,7 +600,7 @@ describe('Performance Utilities', () => {
       expect(metric.renderTime).toBe(20);
     });
 
-    it('should handle concurrent component tracking', () => {
+    it('should handle concurrent component tracking', async () => {
       // Simulate multiple components rendering simultaneously
       monitor.trackComponentRender('Component1', 10);
       monitor.trackComponentRender('Component2', 15);

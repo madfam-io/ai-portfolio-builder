@@ -83,7 +83,9 @@ export function TemplateStep({
   t,
 }: TemplateStepProps) {
   const [showWizard, setShowWizard] = useState(false);
-  const [selectionMode, setSelectionMode] = useState<'wizard' | 'browse'>('wizard');
+  const [selectionMode, setSelectionMode] = useState<'wizard' | 'browse'>(
+    'wizard'
+  );
 
   const handleTemplateSelect = (template: TemplateType) => {
     onSelectTemplate(template);
@@ -118,7 +120,10 @@ export function TemplateStep({
       </div>
 
       {/* Selection Mode Tabs */}
-      <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as any)}>
+      <Tabs
+        value={selectionMode}
+        onValueChange={v => setSelectionMode(v as any)}
+      >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="wizard" className="flex items-center gap-2">
             <Sparkles className="w-4 h-4" />
@@ -138,8 +143,8 @@ export function TemplateStep({
                 {t.wizardTitle || 'Let us help you choose'}
               </h3>
               <p className="text-muted-foreground mb-6 max-w-md">
-                {t.wizardDescription || 
-                  'Answer a few questions and we\'ll recommend the perfect template for your needs'}
+                {t.wizardDescription ||
+                  "Answer a few questions and we'll recommend the perfect template for your needs"}
               </p>
               <Button onClick={() => setShowWizard(true)} size="lg">
                 <Sparkles className="w-4 h-4 mr-2" />
@@ -177,8 +182,8 @@ export function TemplateStep({
         <Button variant="outline" onClick={onBack} className="flex-1">
           {t.back || 'Back'}
         </Button>
-        <Button 
-          onClick={onNext} 
+        <Button
+          onClick={onNext}
           className="flex-1"
           disabled={!selectedTemplate}
         >

@@ -1,20 +1,23 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio, SectionType } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { PortfolioPreview } from '@/components/editor/PortfolioPreview';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio, SectionType } from '@/types/portfolio';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -36,7 +39,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -84,6 +86,12 @@ jest.mock('@/components/templates/ConsultantTemplate', () => ({
 const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
 
 describe('PortfolioPreview', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -187,7 +195,7 @@ describe('PortfolioPreview', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render developer template by default', () => {
+    it('should render developer template by default', async () => {
       renderPortfolioPreview();
 
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
@@ -197,7 +205,7 @@ describe('PortfolioPreview', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render designer template when specified', () => {
+    it('should render designer template when specified', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -209,7 +217,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('designer-template')).toBeInTheDocument();
     });
 
-    it('should render consultant template when specified', () => {
+    it('should render consultant template when specified', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -221,7 +229,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('consultant-template')).toBeInTheDocument();
     });
 
-    it('should apply correct preview mode styling', () => {
+    it('should apply correct preview mode styling', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'mobile',
@@ -232,7 +240,7 @@ describe('PortfolioPreview', () => {
       expect(previewContainer).toHaveClass('max-w-sm'); // Mobile width
     });
 
-    it('should apply tablet preview mode styling', () => {
+    it('should apply tablet preview mode styling', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'tablet',
@@ -243,7 +251,7 @@ describe('PortfolioPreview', () => {
       expect(previewContainer).toHaveClass('max-w-2xl'); // Tablet width
     });
 
-    it('should apply desktop preview mode styling', () => {
+    it('should apply desktop preview mode styling', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'desktop',
@@ -256,7 +264,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Template Rendering', () => {
-    it('should pass portfolio data to template', () => {
+    it('should pass portfolio data to template', async () => {
       renderPortfolioPreview();
 
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
@@ -265,7 +273,7 @@ describe('PortfolioPreview', () => {
       ).toBeInTheDocument();
     });
 
-    it('should handle template switching', () => {
+    it('should handle template switching', async () => {
       const { rerender } = renderPortfolioPreview();
 
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
@@ -285,7 +293,7 @@ describe('PortfolioPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should handle unknown template gracefully', () => {
+    it('should handle unknown template gracefully', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -300,7 +308,7 @@ describe('PortfolioPreview', () => {
       ).toBeInTheDocument();
     });
 
-    it('should re-render when portfolio data changes', () => {
+    it('should re-render when portfolio data changes', async () => {
       const { rerender } = renderPortfolioPreview();
 
       expect(screen.getByText('Software Developer')).toBeInTheDocument();
@@ -388,7 +396,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Active Section Highlighting', () => {
-    it('should highlight active section', () => {
+    it('should highlight active section', async () => {
       renderPortfolioPreview({
         ...mockProps,
         activeSection: 'hero',
@@ -398,7 +406,7 @@ describe('PortfolioPreview', () => {
       expect(heroSection).toHaveClass('ring-2'); // Active section styling
     });
 
-    it('should update highlighting when active section changes', () => {
+    it('should update highlighting when active section changes', async () => {
       const { rerender } = renderPortfolioPreview({
         ...mockProps,
         activeSection: 'hero',
@@ -419,7 +427,7 @@ describe('PortfolioPreview', () => {
       expect(aboutSection).toHaveClass('ring-2');
     });
 
-    it('should handle undefined active section', () => {
+    it('should handle undefined active section', async () => {
       renderPortfolioPreview({
         ...mockProps,
         activeSection: undefined as any,
@@ -439,7 +447,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Responsive Preview Modes', () => {
-    it('should apply mobile constraints', () => {
+    it('should apply mobile constraints', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'mobile',
@@ -449,7 +457,7 @@ describe('PortfolioPreview', () => {
       expect(container).toHaveStyle('max-width: 384px'); // Mobile max-width
     });
 
-    it('should apply tablet constraints', () => {
+    it('should apply tablet constraints', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'tablet',
@@ -459,7 +467,7 @@ describe('PortfolioPreview', () => {
       expect(container).toHaveStyle('max-width: 672px'); // Tablet max-width
     });
 
-    it('should apply desktop constraints', () => {
+    it('should apply desktop constraints', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'desktop',
@@ -469,7 +477,7 @@ describe('PortfolioPreview', () => {
       expect(container).toHaveStyle('max-width: 1152px'); // Desktop max-width
     });
 
-    it('should handle mode changes smoothly', () => {
+    it('should handle mode changes smoothly', async () => {
       const { rerender } = renderPortfolioPreview({
         ...mockProps,
         mode: 'desktop',
@@ -486,7 +494,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Customization Support', () => {
-    it('should apply custom colors', () => {
+    it('should apply custom colors', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -504,7 +512,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should apply custom fonts', () => {
+    it('should apply custom fonts', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -521,7 +529,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle missing customization gracefully', () => {
+    it('should handle missing customization gracefully', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -535,7 +543,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Loading and Error States', () => {
-    it('should handle missing portfolio data', () => {
+    it('should handle missing portfolio data', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: null as any,
@@ -544,7 +552,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByText('Error loading preview')).toBeInTheDocument();
     });
 
-    it('should handle empty portfolio data', () => {
+    it('should handle empty portfolio data', async () => {
       renderPortfolioPreview({
         ...mockProps,
         portfolio: {
@@ -559,7 +567,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should show loading state during template switch', () => {
+    it('should show loading state during template switch', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isLoading: true,
@@ -570,7 +578,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels for interactive sections', () => {
+    it('should have proper ARIA labels for interactive sections', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isInteractive: true,
@@ -583,7 +591,7 @@ describe('PortfolioPreview', () => {
 
     });
 
-    it('should support keyboard navigation for interactive sections', () => {
+    it('should support keyboard navigation for interactive sections', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isInteractive: true,
@@ -597,7 +605,7 @@ describe('PortfolioPreview', () => {
       expect(mockProps.onSectionClick).toHaveBeenCalledWith('hero');
     });
 
-    it('should handle Space key for section activation', () => {
+    it('should handle Space key for section activation', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isInteractive: true,
@@ -611,7 +619,7 @@ describe('PortfolioPreview', () => {
       expect(mockProps.onSectionClick).toHaveBeenCalledWith('about');
     });
 
-    it('should have proper tabindex for interactive elements', () => {
+    it('should have proper tabindex for interactive elements', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isInteractive: true,
@@ -628,7 +636,7 @@ describe('PortfolioPreview', () => {
       });
     });
 
-    it('should not have tabindex for non-interactive elements', () => {
+    it('should not have tabindex for non-interactive elements', async () => {
       renderPortfolioPreview({
         ...mockProps,
         isInteractive: false,
@@ -647,7 +655,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Performance', () => {
-    it('should not re-render template unnecessarily', () => {
+    it('should not re-render template unnecessarily', async () => {
       const { rerender } = renderPortfolioPreview();
 
       // Same props should not cause re-render
@@ -656,7 +664,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle rapid mode changes efficiently', () => {
+    it('should handle rapid mode changes efficiently', async () => {
       const { rerender } = renderPortfolioPreview();
 
       // Rapid mode changes
@@ -667,7 +675,7 @@ describe('PortfolioPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should memoize template rendering', () => {
+    it('should memoize template rendering', async () => {
       const { rerender } = renderPortfolioPreview();
 
       // Only preview mode change, template should not re-render
@@ -678,7 +686,7 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle portfolio with minimal data', () => {
+    it('should handle portfolio with minimal data', async () => {
       const minimalPortfolio = {
         ...mockPortfolio,
         experience: [],
@@ -715,7 +723,7 @@ describe('PortfolioPreview', () => {
       expect(mockProps.onSectionClick).toHaveBeenCalledTimes(3);
     });
 
-    it('should handle invalid mode gracefully', () => {
+    it('should handle invalid mode gracefully', async () => {
       renderPortfolioPreview({
         ...mockProps,
         mode: 'invalid' as any,
@@ -727,14 +735,14 @@ describe('PortfolioPreview', () => {
   });
 
   describe('Internationalization', () => {
-    it('should pass language context to templates', () => {
+    it('should pass language context to templates', async () => {
       renderPortfolioPreview();
 
       // Templates should have access to language context
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle RTL languages', () => {
+    it('should handle RTL languages', async () => {
       renderPortfolioPreview();
 
       // Preview should adapt to RTL layouts

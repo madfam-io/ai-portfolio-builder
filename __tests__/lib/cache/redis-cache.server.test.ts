@@ -1,16 +1,22 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import * as redis from 'redis';
+import { logger } from '@/lib/utils/logger';
 import {
   cache,
   CACHE_KEYS,
   CacheService,
 } from '@/lib/cache/redis-cache.server';
-import { logger } from '@/lib/utils/logger';
-
 
 // Mock dependencies
 jest.mock('redis');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 jest.mock('@/lib/config', () => ({
   env: {
     REDIS_URL: 'redis://localhost:6379',
@@ -21,6 +27,12 @@ jest.mock('@/lib/config', () => ({
 }));
 
 describe('Redis Cache Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockRedisClient: any;
   let cacheService: CacheService;
 
@@ -29,15 +41,15 @@ describe('Redis Cache Service', () => {
 
     // Setup mock Redis client
     mockRedisClient = {
-      connect: jest.fn().mockResolvedValue(undefined),
-      disconnect: jest.fn().mockResolvedValue(undefined),
-      get: jest.fn(),
-      setEx: jest.fn(),
-      del: jest.fn(),
-      keys: jest.fn(),
+      connect: jest.fn().mockResolvedValue(void 0),
+      disconnect: jest.fn().mockResolvedValue(void 0),
+      get: jest.fn().mockReturnValue(void 0),
+      setEx: jest.fn().mockReturnValue(void 0),
+      del: jest.fn().mockReturnValue(void 0),
+      keys: jest.fn().mockReturnValue(void 0),
       ping: jest.fn().mockResolvedValue('PONG'),
-      on: jest.fn(),
-      quit: jest.fn().mockResolvedValue(undefined),
+      on: jest.fn().mockReturnValue(void 0),
+      quit: jest.fn().mockResolvedValue(void 0),
     };
 
     (redis.createClient as jest.Mock).mockReturnValue(mockRedisClient);
@@ -232,7 +244,7 @@ describe('Redis Cache Service', () => {
   });
 
   describe('cache key helpers', () => {
-    it('should have correct key prefixes', () => {
+    it('should have correct key prefixes', async () => {
       expect(CACHE_KEYS.PORTFOLIO).toBe('portfolio:');
       expect(CACHE_KEYS.AI_RESULT).toBe('ai:');
       expect(CACHE_KEYS.ANALYTICS).toBe('analytics:');

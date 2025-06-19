@@ -1,20 +1,23 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import React from 'react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import { EditorPreview } from '@/components/editor/EditorPreview';
+import { useLanguage } from '@/lib/i18n/refactored-context';
+import { Portfolio } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { EditorPreview } from '@/components/editor/EditorPreview';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio } from '@/types/portfolio';
-
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -36,7 +39,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: jest.fn(),
 }));
 
@@ -153,6 +155,10 @@ describe('EditorPreview', () => {
   };
 
   beforeEach(() => {
+    // Mock console methods
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.clearAllMocks();
     (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
@@ -164,14 +170,14 @@ describe('EditorPreview', () => {
   };
 
   describe('Initial Rendering', () => {
-    it('should render the preview container', () => {
+    it('should render the preview container', async () => {
       renderEditorPreview();
 
       const previewContainer = screen.getByRole('region', { name: /preview/i });
       expect(previewContainer).toBeInTheDocument();
     });
 
-    it('should render the correct template based on portfolio', () => {
+    it('should render the correct template based on portfolio', async () => {
       renderEditorPreview();
 
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
@@ -181,7 +187,7 @@ describe('EditorPreview', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render designer template when specified', () => {
+    it('should render designer template when specified', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -196,7 +202,7 @@ describe('EditorPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should render consultant template when specified', () => {
+    it('should render consultant template when specified', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -211,7 +217,7 @@ describe('EditorPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should apply custom className', () => {
+    it('should apply custom className', async () => {
       renderEditorPreview({
         ...mockProps,
         className: 'custom-preview-class',
@@ -223,7 +229,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Preview Mode Responsiveness', () => {
-    it('should apply desktop styling in desktop mode', () => {
+    it('should apply desktop styling in desktop mode', async () => {
       renderEditorPreview({
         ...mockProps,
         previewMode: 'desktop',
@@ -234,7 +240,7 @@ describe('EditorPreview', () => {
       expect(templateContainer).toHaveClass('w-full'); // Desktop full width
     });
 
-    it('should apply tablet styling in tablet mode', () => {
+    it('should apply tablet styling in tablet mode', async () => {
       renderEditorPreview({
         ...mockProps,
         previewMode: 'tablet',
@@ -245,7 +251,7 @@ describe('EditorPreview', () => {
       expect(templateContainer).toHaveClass('max-w-3xl'); // Tablet max width
     });
 
-    it('should apply mobile styling in mobile mode', () => {
+    it('should apply mobile styling in mobile mode', async () => {
       renderEditorPreview({
         ...mockProps,
         previewMode: 'mobile',
@@ -256,7 +262,7 @@ describe('EditorPreview', () => {
       expect(templateContainer).toHaveClass('max-w-sm'); // Mobile max width
     });
 
-    it('should transition smoothly between preview modes', () => {
+    it('should transition smoothly between preview modes', async () => {
       const { rerender } = renderEditorPreview({
         ...mockProps,
         previewMode: 'desktop',
@@ -272,7 +278,7 @@ describe('EditorPreview', () => {
       expect(container).toHaveClass('transition-all'); // Smooth transition
     });
 
-    it('should center content in all preview modes', () => {
+    it('should center content in all preview modes', async () => {
       const modes = ['desktop', 'tablet', 'mobile'] as const;
 
       modes.forEach(mode => {
@@ -289,7 +295,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Template Data Rendering', () => {
-    it('should pass complete portfolio data to template', () => {
+    it('should pass complete portfolio data to template', async () => {
       renderEditorPreview();
 
       // Check that portfolio data is rendered
@@ -300,7 +306,7 @@ describe('EditorPreview', () => {
       expect(screen.getByText('Projects: 2')).toBeInTheDocument();
     });
 
-    it('should update template when portfolio data changes', () => {
+    it('should update template when portfolio data changes', async () => {
       const { rerender } = renderEditorPreview();
 
       expect(screen.getByText('Hero: Software Developer')).toBeInTheDocument();
@@ -322,7 +328,7 @@ describe('EditorPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should handle portfolio with missing data gracefully', () => {
+    it('should handle portfolio with missing data gracefully', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -339,7 +345,7 @@ describe('EditorPreview', () => {
       expect(screen.getByText('Projects: 0')).toBeInTheDocument();
     });
 
-    it('should handle null portfolio gracefully', () => {
+    it('should handle null portfolio gracefully', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: null as any,
@@ -351,7 +357,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Real-time Updates', () => {
-    it('should reflect changes immediately', () => {
+    it('should reflect changes immediately', async () => {
       const { rerender } = renderEditorPreview();
 
       expect(
@@ -375,7 +381,7 @@ describe('EditorPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should handle rapid updates efficiently', () => {
+    it('should handle rapid updates efficiently', async () => {
       const { rerender } = renderEditorPreview();
 
       // Simulate rapid typing/editing
@@ -400,7 +406,7 @@ describe('EditorPreview', () => {
       });
     });
 
-    it('should maintain scroll position during updates', () => {
+    it('should maintain scroll position during updates', async () => {
       renderEditorPreview();
 
       const previewContainer = screen.getByRole('region', { name: /preview/i });
@@ -424,7 +430,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Template Switching', () => {
-    it('should switch templates correctly', () => {
+    it('should switch templates correctly', async () => {
       const { rerender } = renderEditorPreview();
 
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
@@ -444,7 +450,7 @@ describe('EditorPreview', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('should preserve data across template switches', () => {
+    it('should preserve data across template switches', async () => {
       const { rerender } = renderEditorPreview();
 
       rerender(
@@ -463,7 +469,7 @@ describe('EditorPreview', () => {
       ).toBeInTheDocument();
     });
 
-    it('should handle unknown template types', () => {
+    it('should handle unknown template types', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -480,7 +486,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Performance Optimization', () => {
-    it('should not re-render template when preview mode changes', () => {
+    it('should not re-render template when preview mode changes', async () => {
       const { rerender } = renderEditorPreview();
 
       const template = screen.getByTestId('developer-template');
@@ -494,7 +500,7 @@ describe('EditorPreview', () => {
 
     });
 
-    it('should only re-render when portfolio data changes', () => {
+    it('should only re-render when portfolio data changes', async () => {
       const { rerender } = renderEditorPreview();
 
       // Change only preview mode (no portfolio data change)
@@ -504,7 +510,7 @@ describe('EditorPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle large portfolio data efficiently', () => {
+    it('should handle large portfolio data efficiently', async () => {
       const largePortfolio = {
         ...mockPortfolio,
         projects: Array.from({ length: 50 }, (_, i) => ({
@@ -527,7 +533,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle template rendering errors gracefully', () => {
+    it('should handle template rendering errors gracefully', async () => {
       // Mock console.error to avoid test output pollution
       const originalError = console.error;
       console.error = jest.fn();
@@ -547,7 +553,7 @@ describe('EditorPreview', () => {
       console.error = originalError;
     });
 
-    it('should recover from errors on data update', () => {
+    it('should recover from errors on data update', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: null as any,
@@ -566,21 +572,21 @@ describe('EditorPreview', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper ARIA labels', () => {
+    it('should have proper ARIA labels', async () => {
       renderEditorPreview();
 
       const previewRegion = screen.getByRole('region', { name: /preview/i });
       expect(previewRegion).toHaveAttribute('aria-label', 'Portfolio preview');
     });
 
-    it('should announce preview mode changes to screen readers', () => {
+    it('should announce preview mode changes to screen readers', async () => {
       renderEditorPreview();
 
       const previewRegion = screen.getByRole('region', { name: /preview/i });
       expect(previewRegion).toHaveAttribute('aria-live', 'polite');
     });
 
-    it('should have proper heading structure', () => {
+    it('should have proper heading structure', async () => {
       renderEditorPreview();
 
       // Template should have proper heading structure
@@ -588,7 +594,7 @@ describe('EditorPreview', () => {
       expect(heading).toHaveTextContent('Software Developer');
     });
 
-    it('should be keyboard navigable', () => {
+    it('should be keyboard navigable', async () => {
       renderEditorPreview();
 
       const previewContainer = screen.getByRole('region', { name: /preview/i });
@@ -597,7 +603,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Custom Styling', () => {
-    it('should apply preview mode specific classes', () => {
+    it('should apply preview mode specific classes', async () => {
       renderEditorPreview({
         ...mockProps,
         previewMode: 'mobile',
@@ -607,7 +613,7 @@ describe('EditorPreview', () => {
       expect(container).toHaveClass('preview-mobile');
     });
 
-    it('should apply theme customizations', () => {
+    it('should apply theme customizations', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -625,7 +631,7 @@ describe('EditorPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle missing customization data', () => {
+    it('should handle missing customization data', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -639,7 +645,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Integration', () => {
-    it('should work with external state management', () => {
+    it('should work with external state management', async () => {
       const { rerender } = renderEditorPreview();
 
       // Simulate external state change
@@ -661,7 +667,7 @@ describe('EditorPreview', () => {
       expect(container).toHaveClass('max-w-3xl'); // Tablet mode
     });
 
-    it('should handle concurrent updates', () => {
+    it('should handle concurrent updates', async () => {
       const { rerender } = renderEditorPreview();
 
       // Simulate multiple concurrent updates
@@ -682,7 +688,7 @@ describe('EditorPreview', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle extremely long content', () => {
+    it('should handle extremely long content', async () => {
       const longContent = 'A'.repeat(1000);
 
       renderEditorPreview({
@@ -697,7 +703,7 @@ describe('EditorPreview', () => {
       expect(screen.getByTestId('developer-template')).toBeInTheDocument();
     });
 
-    it('should handle special characters in content', () => {
+    it('should handle special characters in content', async () => {
       renderEditorPreview({
         ...mockProps,
         portfolio: {
@@ -711,7 +717,7 @@ describe('EditorPreview', () => {
       expect(screen.getByText(/你好世界.*émojis/)).toBeInTheDocument();
     });
 
-    it('should handle undefined preview mode gracefully', () => {
+    it('should handle undefined preview mode gracefully', async () => {
       renderEditorPreview({
         ...mockProps,
         previewMode: undefined as any,

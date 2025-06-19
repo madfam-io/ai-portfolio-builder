@@ -160,7 +160,7 @@ export function GuidedTour({
           top: `${tooltipPosition.top}px`,
           left: `${tooltipPosition.left}px`,
         }}
-        onClick={(e) => e.stopPropagation()}
+        onClick={e => e.stopPropagation()}
       >
         <button
           onClick={handleSkip}
@@ -208,10 +208,7 @@ export function GuidedTour({
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button
-              size="sm"
-              onClick={handleNext}
-            >
+            <Button size="sm" onClick={handleNext}>
               {currentStep === steps.length - 1
                 ? t.finish || 'Finish'
                 : t.next || 'Next'}

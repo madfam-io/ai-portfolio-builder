@@ -28,7 +28,9 @@ export interface AuthActions {
     metadata?: unknown
   ) => Promise<void>;
   signOut: () => Promise<void>;
-  signInWithOAuth: (provider: 'google' | 'github' | 'linkedin_oidc') => Promise<void>;
+  signInWithOAuth: (
+    provider: 'google' | 'github' | 'linkedin_oidc'
+  ) => Promise<void>;
   resetAuth: () => void;
   initializeAuth: () => Promise<void>;
 }

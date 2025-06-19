@@ -1,8 +1,4 @@
-/**
- * @jest-environment jsdom
- */
-
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ModernTemplate } from '@/components/templates/ModernTemplate';
@@ -11,7 +7,9 @@ import { EducatorTemplate } from '@/components/templates/EducatorTemplate';
 import { CreativeTemplate } from '@/components/templates/CreativeTemplate';
 import { BusinessTemplate } from '@/components/templates/BusinessTemplate';
 import { Portfolio } from '@/types/portfolio';
-
+/**
+ * @jest-environment jsdom
+ */
 
 const mockPortfolio: Portfolio = {
   id: 'test-portfolio',
@@ -95,8 +93,14 @@ const mockPortfolio: Portfolio = {
 };
 
 describe('Template Rendering', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('ModernTemplate', () => {
-    it('should render all portfolio sections', () => {
+    it('should render all portfolio sections', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
@@ -105,14 +109,14 @@ describe('Template Rendering', () => {
       expect(screen.getByText('San Francisco, CA')).toBeInTheDocument();
     });
 
-    it('should render featured projects', () => {
+    it('should render featured projects', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Featured Projects')).toBeInTheDocument();
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
     });
 
-    it('should render skills with progress bars', () => {
+    it('should render skills with progress bars', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Skills & Expertise')).toBeInTheDocument();
@@ -120,7 +124,7 @@ describe('Template Rendering', () => {
       expect(screen.getByText('Expert')).toBeInTheDocument();
     });
 
-    it('should render contact section', () => {
+    it('should render contact section', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText("Let's Work Together")).toBeInTheDocument();
@@ -129,21 +133,21 @@ describe('Template Rendering', () => {
   });
 
   describe('MinimalTemplate', () => {
-    it('should render with minimal design approach', () => {
+    it('should render with minimal design approach', async () => {
       render(<MinimalTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Selected Work')).toBeInTheDocument();
     });
 
-    it('should handle missing avatar gracefully', () => {
+    it('should handle missing avatar gracefully', async () => {
       const portfolioWithoutAvatar = { ...mockPortfolio, avatarUrl: undefined };
       render(<MinimalTemplate portfolio={portfolioWithoutAvatar} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
 
-    it('should render project technologies as tags', () => {
+    it('should render project technologies as tags', async () => {
       render(<MinimalTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Technologies:')).toBeInTheDocument();
@@ -153,7 +157,7 @@ describe('Template Rendering', () => {
   });
 
   describe('EducatorTemplate', () => {
-    it('should render education-focused sections', () => {
+    it('should render education-focused sections', async () => {
       render(<EducatorTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Teaching Philosophy')).toBeInTheDocument();
@@ -161,21 +165,21 @@ describe('Template Rendering', () => {
       expect(screen.getByText('Teaching Experience')).toBeInTheDocument();
     });
 
-    it('should render courses as projects', () => {
+    it('should render courses as projects', async () => {
       render(<EducatorTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Courses & Curriculum')).toBeInTheDocument();
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
     });
 
-    it('should display areas of expertise', () => {
+    it('should display areas of expertise', async () => {
       render(<EducatorTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Areas of Expertise')).toBeInTheDocument();
       expect(screen.getByText('React')).toBeInTheDocument();
     });
 
-    it('should have education-specific CTA', () => {
+    it('should have education-specific CTA', async () => {
       render(<EducatorTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Ready to Learn Together?')).toBeInTheDocument();
@@ -184,7 +188,7 @@ describe('Template Rendering', () => {
   });
 
   describe('CreativeTemplate', () => {
-    it('should render with artistic design elements', () => {
+    it('should render with artistic design elements', async () => {
       render(<CreativeTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Featured Creations')).toBeInTheDocument();
@@ -192,7 +196,7 @@ describe('Template Rendering', () => {
       expect(screen.getByText('Creative Journey')).toBeInTheDocument();
     });
 
-    it('should include social media integration', () => {
+    it('should include social media integration', async () => {
       render(<CreativeTemplate portfolio={mockPortfolio} />);
 
       expect(
@@ -200,7 +204,7 @@ describe('Template Rendering', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render project metrics', () => {
+    it('should render project metrics', async () => {
       render(<CreativeTemplate portfolio={mockPortfolio} />);
 
       // Should show mock engagement metrics
@@ -210,14 +214,14 @@ describe('Template Rendering', () => {
   });
 
   describe('BusinessTemplate', () => {
-    it('should render executive summary', () => {
+    it('should render executive summary', async () => {
       render(<BusinessTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Executive Summary')).toBeInTheDocument();
       expect(screen.getByText('Core Competencies')).toBeInTheDocument();
     });
 
-    it('should display business metrics', () => {
+    it('should display business metrics', async () => {
       render(<BusinessTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Projects Delivered')).toBeInTheDocument();
@@ -226,7 +230,7 @@ describe('Template Rendering', () => {
       expect(screen.getByText('98%')).toBeInTheDocument();
     });
 
-    it('should render strategic initiatives', () => {
+    it('should render strategic initiatives', async () => {
       render(<BusinessTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Strategic Initiatives')).toBeInTheDocument();
@@ -235,7 +239,7 @@ describe('Template Rendering', () => {
       ).toBeInTheDocument();
     });
 
-    it('should show business impact metrics for projects', () => {
+    it('should show business impact metrics for projects', async () => {
       render(<BusinessTemplate portfolio={mockPortfolio} />);
 
       expect(screen.getByText('Business Impact')).toBeInTheDocument();
@@ -245,7 +249,7 @@ describe('Template Rendering', () => {
   });
 
   describe('Responsive Design', () => {
-    it('should render properly on different screen sizes', () => {
+    it('should render properly on different screen sizes', async () => {
       // Test mobile-first responsive classes
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
@@ -255,7 +259,7 @@ describe('Template Rendering', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle missing data gracefully', () => {
+    it('should handle missing data gracefully', async () => {
       const minimalPortfolio: Portfolio = {
         id: 'minimal',
         name: 'Test User',
@@ -278,7 +282,7 @@ describe('Template Rendering', () => {
       expect(screen.getByText('Developer')).toBeInTheDocument();
     });
 
-    it('should not render sections when data is empty', () => {
+    it('should not render sections when data is empty', async () => {
       const emptyPortfolio: Portfolio = {
         id: 'empty',
         name: 'Test User',
@@ -304,7 +308,7 @@ describe('Template Rendering', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper heading hierarchy', () => {
+    it('should have proper heading hierarchy', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       const h1Elements = screen.getAllByRole('heading', { level: 1 });
@@ -312,14 +316,14 @@ describe('Template Rendering', () => {
       expect(h1Elements[0]).toHaveTextContent('John Doe');
     });
 
-    it('should have alt text for images', () => {
+    it('should have alt text for images', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       const avatarImage = screen.getByAltText('John Doe');
       expect(avatarImage).toBeInTheDocument();
     });
 
-    it('should have proper link attributes', () => {
+    it('should have proper link attributes', async () => {
       render(<ModernTemplate portfolio={mockPortfolio} />);
 
       const githubLinks = screen.getAllByRole('link');

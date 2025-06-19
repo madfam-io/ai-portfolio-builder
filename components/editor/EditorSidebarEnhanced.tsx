@@ -29,9 +29,7 @@ import {
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import {
-  useSortable,
-} from '@dnd-kit/sortable';
+import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import { Portfolio, SectionType } from '@/types/portfolio';
@@ -191,9 +189,7 @@ function SortableSectionItem({
               >
                 {config.label}
               </div>
-              <div className="text-sm text-gray-500">
-                {config.description}
-              </div>
+              <div className="text-sm text-gray-500">{config.description}</div>
             </div>
           </div>
           {isExpanded ? (
@@ -205,7 +201,7 @@ function SortableSectionItem({
 
         {!('required' in config && config.required) && (
           <button
-            onClick={(e) => {
+            onClick={e => {
               e.stopPropagation();
               onVisibilityToggle();
             }}
@@ -236,7 +232,8 @@ export function EditorSidebarEnhanced({
 
   // Initialize section order and hidden sections from portfolio customization
   const [sectionOrder, setSectionOrder] = useState<SectionType[]>(
-    (portfolio.customization?.sectionOrder as SectionType[]) || DEFAULT_SECTION_ORDER
+    (portfolio.customization?.sectionOrder as SectionType[]) ||
+      DEFAULT_SECTION_ORDER
   );
 
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(
@@ -276,7 +273,7 @@ export function EditorSidebarEnhanced({
       }
     }
     setHiddenSections(newHidden);
-    
+
     // Update portfolio customization
     onSectionUpdate('theme', {
       customization: {
@@ -441,7 +438,8 @@ export function EditorSidebarEnhanced({
             onClick={() => toggleSection('theme')}
             className={cn(
               'w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors',
-              activeSection === 'theme' && 'bg-blue-50 border-r-2 border-blue-500'
+              activeSection === 'theme' &&
+                'bg-blue-50 border-r-2 border-blue-500'
             )}
           >
             <div className="flex items-center space-x-3">
@@ -455,7 +453,9 @@ export function EditorSidebarEnhanced({
                 <div
                   className={cn(
                     'font-medium',
-                    activeSection === 'theme' ? 'text-blue-900' : 'text-gray-900'
+                    activeSection === 'theme'
+                      ? 'text-blue-900'
+                      : 'text-gray-900'
                   )}
                 >
                   Theme

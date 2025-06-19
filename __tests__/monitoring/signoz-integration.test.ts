@@ -1,28 +1,41 @@
-import { describe, test, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
+import { SpanStatusCode } from '@opentelemetry/api';
+
+// Mock OpenTelemetry
+jest.mock('@opentelemetry/api', () => ({
+  trace: {
+    getTracer: jest.fn(() => ({
+      startSpan: jest.fn(() => ({
+        end: jest.fn(),
+        setAttribute: jest.fn(),
+        setStatus: jest.fn(),
+      })),
+    })),
+  },
+  SpanStatusCode: {
+    OK: 0,
+    ERROR: 1,
+  },
+}));
 
 /**
  * SigNoz Integration Tests
  */
 
-import {
-  tracer,
+import {   tracer,
   createSpan,
   getCurrentTraceId,
   withTracing,
   isOtelEnabled,
-} from '@/lib/monitoring/signoz';
-import {
-  traceHttpRequest,
+ } from '@/lib/monitoring/signoz';
+import {   traceHttpRequest,
   traceDatabaseOperation,
   traceAIOperation,
-} from '@/lib/monitoring/signoz/tracing';
-import {
-  recordBusinessMetric,
+ } from '@/lib/monitoring/signoz/tracing';
+import {   recordBusinessMetric,
   recordPerformanceMetric,
   measureDuration,
-} from '@/lib/monitoring/signoz/metrics';
-import { SpanStatusCode } from '@opentelemetry/api';
-
+ } from '@/lib/monitoring/signoz/metrics';
 
 // Mock environment
 const originalEnv = process.env;
@@ -40,8 +53,14 @@ afterAll(() => {
 });
 
 describe('SigNoz Integration', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('Span Creation', () => {
-    it('should create a span with attributes', () => {
+    it('should create a span with attributes', async () => {
       const span = createSpan('test.operation', {
         attributes: {
           'test.attribute': 'value',
@@ -57,7 +76,7 @@ describe('SigNoz Integration', () => {
       }
     });
 
-    it('should handle span creation when disabled', () => {
+    it('should handle span creation when disabled', async () => {
       process.env.OTEL_TRACE_ENABLED = 'false';
 
       const span = createSpan('test.operation');
@@ -115,7 +134,7 @@ describe('SigNoz Integration', () => {
   });
 
   describe('Metrics Recording', () => {
-    it('should record business metrics', () => {
+    it('should record business metrics', async () => {
       expect(() => {
         recordBusinessMetric('userSignups', 1, {
           source: 'landing_page',
@@ -123,7 +142,7 @@ describe('SigNoz Integration', () => {
       }).not.toThrow();
     });
 
-    it('should record performance metrics', () => {
+    it('should record performance metrics', async () => {
       expect(() => {
         recordPerformanceMetric('apiResponseTime', 150, {
           endpoint: '/api/v1/portfolios',
@@ -185,19 +204,19 @@ describe('SigNoz Integration', () => {
       }, 'test.trace_id')();
     });
 
-    it('should return undefined trace ID when no active span', () => {
+    it('should return undefined trace ID when no active span', async () => {
       const traceId = getCurrentTraceId();
       expect(traceId).toBeUndefined();
     });
   });
 
   describe('OpenTelemetry Status', () => {
-    it('should correctly report enabled status', () => {
+    it('should correctly report enabled status', async () => {
       process.env.OTEL_TRACE_ENABLED = 'true';
       expect(isOtelEnabled()).toBe(true);
     });
 
-    it('should correctly report disabled status', () => {
+    it('should correctly report disabled status', async () => {
       process.env.OTEL_TRACE_ENABLED = 'false';
       expect(isOtelEnabled()).toBe(false);
 

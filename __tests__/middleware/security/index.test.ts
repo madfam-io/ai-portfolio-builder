@@ -1,5 +1,9 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
+import { csrfMiddleware } from '../../../middleware/csrf';
+import { edgeRateLimitMiddleware } from '../../../middleware/edge-rate-limiter';
+import { applySecurityHeaders } from '../../../middleware/security-headers';
+import { logger } from '@/lib/utils/logger';
 import {
   securityMiddleware,
   applySecurityToResponse,
@@ -35,13 +39,15 @@ jest.mock('../../../middleware/security-headers', () => ({
   applySecurityHeaders: jest.fn((req, res) => res),
 }));
 
-import { csrfMiddleware } from '../../../middleware/csrf';
-import { edgeRateLimitMiddleware } from '../../../middleware/edge-rate-limiter';
-import { applySecurityHeaders } from '../../../middleware/security-headers';
-import { logger } from '@/lib/utils/logger';
-
 describe('Security Middleware', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
 
     // Default mock implementations
@@ -381,17 +387,18 @@ describe('Security Middleware', () => {
     let response: NextResponse;
 
     beforeEach(() => {
+    global.fetch = jest.fn();
       request = createRequest('/test');
       response = new NextResponse('test content');
     });
 
-    it('should apply security headers to response', () => {
+    it('should apply security headers to response', async () => {
       applySecurityToResponse(request, response);
 
       expect(applySecurityHeaders).toHaveBeenCalledWith(request, response);
     });
 
-    it('should add standard security headers', () => {
+    it('should add standard security headers', async () => {
       const result = applySecurityToResponse(request, response);
 
       expect(result.headers.get('X-Content-Type-Options')).toBe('nosniff');
@@ -402,7 +409,7 @@ describe('Security Middleware', () => {
       );
     });
 
-    it('should add HSTS header in production', () => {
+    it('should add HSTS header in production', async () => {
       const originalEnv = process.env.NODE_ENV;
       process.env.NODE_ENV = 'production';
 
@@ -421,7 +428,7 @@ describe('Security Middleware', () => {
       process.env.NODE_ENV = originalEnv;
     });
 
-    it('should apply CORS headers for valid origins', () => {
+    it('should apply CORS headers for valid origins', async () => {
       const corsRequest = createRequest('/test', {
         headers: { origin: 'https://example.com' },
       });
@@ -439,7 +446,7 @@ describe('Security Middleware', () => {
 
   describe('Security Utils', () => {
     describe('validateAPIKey', () => {
-      it('should validate correct API key', () => {
+      it('should validate correct API key', async () => {
         const request = createRequest('/api/test', {
           headers: { 'x-api-key': 'correct-key' },
         });
@@ -449,7 +456,7 @@ describe('Security Middleware', () => {
         expect(isValid).toBe(true);
       });
 
-      it('should reject incorrect API key', () => {
+      it('should reject incorrect API key', async () => {
         const request = createRequest('/api/test', {
           headers: { 'x-api-key': 'wrong-key' },
         });
@@ -459,7 +466,7 @@ describe('Security Middleware', () => {
         expect(isValid).toBe(false);
       });
 
-      it('should reject missing API key', () => {
+      it('should reject missing API key', async () => {
         const request = createRequest('/api/test');
 
         const isValid = securityUtils.validateAPIKey(request, 'correct-key');
@@ -469,7 +476,7 @@ describe('Security Middleware', () => {
     });
 
     describe('getClientIP', () => {
-      it('should get IP from x-forwarded-for header', () => {
+      it('should get IP from x-forwarded-for header', async () => {
         const request = createRequest('/test', {
           headers: { 'x-forwarded-for': '192.168.1.1' },
         });
@@ -479,7 +486,7 @@ describe('Security Middleware', () => {
         expect(ip).toBe('192.168.1.1');
       });
 
-      it('should fallback to x-real-ip header', () => {
+      it('should fallback to x-real-ip header', async () => {
         const request = createRequest('/test', {
           headers: { 'x-real-ip': '10.0.0.1' },
         });
@@ -489,7 +496,7 @@ describe('Security Middleware', () => {
         expect(ip).toBe('10.0.0.1');
       });
 
-      it('should return unknown when no IP headers present', () => {
+      it('should return unknown when no IP headers present', async () => {
         const request = createRequest('/test');
 
         const ip = securityUtils.getClientIP(request);
@@ -499,7 +506,7 @@ describe('Security Middleware', () => {
     });
 
     describe('isAllowedOrigin', () => {
-      it('should allow configured origins', () => {
+      it('should allow configured origins', async () => {
         const request = createRequest('/test', {
           headers: { origin: 'https://example.com' },
         });
@@ -509,7 +516,7 @@ describe('Security Middleware', () => {
         expect(isAllowed).toBe(true);
       });
 
-      it('should allow same-origin requests', () => {
+      it('should allow same-origin requests', async () => {
         const request = createRequest('/test', {
           headers: { origin: 'https://example.com' },
         });
@@ -519,7 +526,7 @@ describe('Security Middleware', () => {
         expect(isAllowed).toBe(true);
       });
 
-      it('should allow requests without origin header', () => {
+      it('should allow requests without origin header', async () => {
         const request = createRequest('/test');
 
         const isAllowed = securityUtils.isAllowedOrigin(request);
@@ -527,7 +534,7 @@ describe('Security Middleware', () => {
         expect(isAllowed).toBe(true);
       });
 
-      it('should reject non-configured origins', () => {
+      it('should reject non-configured origins', async () => {
         const request = createRequest('/test', {
           headers: { origin: 'https://malicious.com' },
         });
@@ -539,7 +546,7 @@ describe('Security Middleware', () => {
     });
 
     describe('IP Management', () => {
-      it('should block and unblock IPs', () => {
+      it('should block and unblock IPs', async () => {
         const testIP = '192.168.1.200';
 
         // Block IP

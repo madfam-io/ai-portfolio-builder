@@ -1,39 +1,71 @@
-import { describe, test, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { act } from '@testing-library/react';
 
-/**
- * Onboarding Store Tests
- */
+// Mock zustand
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-import { renderHook, act } from '@testing-library/react';
-import { useOnboardingStore } from '@/lib/store/onboarding-store';
+// Mock zustand
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+// Mock zustand
 
-describe('OnboardingStore', () => {
-  beforeEach(() => {
-    // Clear localStorage to prevent persistence issues
-    localStorage.clear();
-
-    // Reset Zustand store state
-    useOnboardingStore.setState({
-      isOnboarding: false,
-      currentFlow: null,
-      completedFlows: [],
-      tourActive: false,
-      currentTourStep: 0,
-      showChecklist: false,
-      dismissedHints: [],
-      preferences: {
-        skipTours: false,
-        emailReminders: true,
-        showProgress: true,
-      },
-    });
+// Mock zustand create function
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}))
   });
 
   describe('Starting Onboarding', () => {
-    it('should start new user onboarding flow', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+    it('should start new user onboarding flow', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
       });
 
@@ -43,10 +75,10 @@ describe('OnboardingStore', () => {
       expect(result.current.currentFlow?.currentStepIndex).toBe(0);
     });
 
-    it('should start returning user onboarding flow', () => {
+    it('should start returning user onboarding flow', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('returning');
       });
 
@@ -55,31 +87,48 @@ describe('OnboardingStore', () => {
       expect(result.current.currentFlow?.steps.length).toBe(2);
     });
 
-    it('should start imported user onboarding flow', () => {
+    it('should start imported user onboarding flow', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('imported');
       });
 
       expect(result.current.isOnboarding).toBe(true);
       expect(result.current.currentFlow?.userType).toBe('imported');
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
       expect(result.current.currentFlow?.steps.length).toBe(3);
     });
   });
 
   describe('Step Management', () => {
-    it('should complete a step and advance to next', () => {
+    it('should complete a step and advance to next', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
       });
 
       const firstStep = result.current.getCurrentStep();
       expect(firstStep?.id).toBe('welcome');
 
-      act(() => {
+      await act(async () => {
         result.current.completeStep('welcome', { test: 'metadata' });
       });
 
@@ -91,10 +140,10 @@ describe('OnboardingStore', () => {
       });
     });
 
-    it('should skip a step', () => {
+    it('should skip a step', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
         result.current.skipStep('welcome');
       });
@@ -103,10 +152,10 @@ describe('OnboardingStore', () => {
       expect(result.current.getCurrentStep()?.id).toBe('profile-setup');
     });
 
-    it('should navigate to specific step', () => {
+    it('should navigate to specific step', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
         result.current.goToStep(3);
       });
@@ -115,10 +164,10 @@ describe('OnboardingStore', () => {
       expect(result.current.getCurrentStep()?.id).toBe('ai-enhancement');
     });
 
-    it('should complete onboarding when all steps are done', () => {
+    it('should complete onboarding when all steps are done', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
       });
 
@@ -127,7 +176,7 @@ describe('OnboardingStore', () => {
 
       // Complete each step individually
       steps.forEach(step => {
-        act(() => {
+        await act(async () => {
           result.current.completeStep(step.id);
         });
       });
@@ -138,16 +187,16 @@ describe('OnboardingStore', () => {
   });
 
   describe('Progress Tracking', () => {
-    it('should calculate progress correctly', () => {
+    it('should calculate progress correctly', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
       });
 
       expect(result.current.getProgress()).toBe(0);
 
-      act(() => {
+      await act(async () => {
         result.current.completeStep('welcome');
         result.current.completeStep('profile-setup');
       });
@@ -155,7 +204,7 @@ describe('OnboardingStore', () => {
       // 2 out of 7 steps = ~29%
       expect(result.current.getProgress()).toBeCloseTo(29, 0);
 
-      act(() => {
+      await act(async () => {
         result.current.skipStep('first-portfolio');
       });
 
@@ -163,17 +212,17 @@ describe('OnboardingStore', () => {
       expect(result.current.getProgress()).toBeCloseTo(43, 0);
     });
 
-    it('should track completed flows', () => {
+    it('should track completed flows', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
         result.current.completeOnboarding();
       });
 
       expect(result.current.completedFlows).toContain('new-user-flow');
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('returning');
         result.current.completeOnboarding();
       });
@@ -184,29 +233,29 @@ describe('OnboardingStore', () => {
   });
 
   describe('Tour Management', () => {
-    it('should start and navigate tour', () => {
+    it('should start and navigate tour', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startTour('dashboard');
       });
 
       expect(result.current.tourActive).toBe(true);
       expect(result.current.currentTourStep).toBe(0);
 
-      act(() => {
+      await act(async () => {
         result.current.nextTourStep();
       });
 
       expect(result.current.currentTourStep).toBe(1);
 
-      act(() => {
+      await act(async () => {
         result.current.previousTourStep();
       });
 
       expect(result.current.currentTourStep).toBe(0);
 
-      act(() => {
+      await act(async () => {
         result.current.endTour();
       });
 
@@ -216,27 +265,27 @@ describe('OnboardingStore', () => {
   });
 
   describe('UI State Management', () => {
-    it('should toggle checklist visibility', () => {
+    it('should toggle checklist visibility', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
       // Set initial state to true before testing
-      act(() => {
+      await act(async () => {
         useOnboardingStore.setState({ showChecklist: true });
       });
 
       expect(result.current.showChecklist).toBe(true);
 
-      act(() => {
+      await act(async () => {
         result.current.toggleChecklist();
       });
 
       expect(result.current.showChecklist).toBe(false);
     });
 
-    it('should dismiss hints', () => {
+    it('should dismiss hints', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.dismissHint('test-hint-1');
         result.current.dismissHint('test-hint-2');
       });
@@ -245,7 +294,7 @@ describe('OnboardingStore', () => {
       expect(result.current.dismissedHints).toContain('test-hint-2');
 
       // Should not add duplicates
-      act(() => {
+      await act(async () => {
         result.current.dismissHint('test-hint-1');
       });
 
@@ -254,12 +303,12 @@ describe('OnboardingStore', () => {
       ).toBe(1);
     });
 
-    it('should update preferences', () => {
+    it('should update preferences', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
       expect(result.current.preferences.skipTours).toBe(false);
 
-      act(() => {
+      await act(async () => {
         result.current.updatePreferences({
           skipTours: true,
           emailReminders: false,
@@ -273,10 +322,10 @@ describe('OnboardingStore', () => {
   });
 
   describe('Getters', () => {
-    it('should check if step is completed', () => {
+    it('should check if step is completed', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
         result.current.completeStep('welcome');
       });
@@ -285,10 +334,10 @@ describe('OnboardingStore', () => {
       expect(result.current.isStepCompleted('profile-setup')).toBe(false);
     });
 
-    it('should get next incomplete step', () => {
+    it('should get next incomplete step', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('new');
         result.current.completeStep('welcome');
         result.current.skipStep('profile-setup');
@@ -298,10 +347,10 @@ describe('OnboardingStore', () => {
       expect(nextStep?.id).toBe('first-portfolio');
     });
 
-    it('should return null when all steps are complete', () => {
+    it('should return null when all steps are complete', async () => {
       const { result } = renderHook(() => useOnboardingStore());
 
-      act(() => {
+      await act(async () => {
         result.current.startOnboarding('returning');
         result.current.completeStep('whats-new');
         result.current.completeStep('feature-highlights');

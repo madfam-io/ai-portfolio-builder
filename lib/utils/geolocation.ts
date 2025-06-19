@@ -220,7 +220,7 @@ export function detectCountryFromTimezone(): string | null {
     };
 
     return timezoneCountryMap[timezone] || null;
-  } catch (error) {
+  } catch (_error) {
     // Timezone detection failed - this is expected in some environments
     return null;
   }
@@ -251,7 +251,7 @@ export function detectLanguageFromBrowser(): 'es' | 'en' | null {
     }
 
     return null;
-  } catch (error) {
+  } catch (_error) {
     // Browser language detection failed - this is expected in some environments
     return null;
   }
@@ -328,7 +328,7 @@ async function detectUserLanguage(): Promise<LanguageDetectionResult> {
         confident,
       };
     }
-  } catch (error) {
+  } catch (_error) {
     // IP detection failed, trying timezone detection
   }
 

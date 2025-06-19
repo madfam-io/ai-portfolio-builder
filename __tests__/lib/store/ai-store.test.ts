@@ -1,59 +1,138 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { act } from '@testing-library/react';
-import { renderHook } from '@testing-library/react';
-import type { AIEnhancement } from '@/lib/store/types';
 
-
-// We need to mock before importing the store
-jest.mock('@/lib/ai/client', () => ({
-  aiClient: {
-    updateModelSelection: jest.fn(),
-    enhanceBio: jest.fn(),
-    optimizeProject: jest.fn(),
-    recommendTemplate: jest.fn(),
-  },
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
 }));
 
-// Mock fetch
-global.fetch = jest.fn();
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-// Import after mocking
-import { useAIStore } from '@/lib/store/ai-store';
-import { aiClient } from '@/lib/ai/client';
+jest.mock('@/lib/ai/huggingface-service', () => ({
 
+jest.setTimeout(30000);
 
-// Unmock the store from comprehensive-test-setup.tsx
-jest.unmock('@/lib/store/ai-store');
+// Mock HuggingFace service
+const mockHuggingFaceService = {
+  healthCheck: jest.fn().mockResolvedValue(true),
+  enhanceBio: jest.fn().mockResolvedValue({
+    enhancedBio: 'Enhanced bio',
+    wordCount: 10,
+    tone: 'professional',
+  }),
+  optimizeProject: jest.fn().mockResolvedValue({
+    optimizedTitle: 'Optimized Title',
+    optimizedDescription: 'Optimized description',
+  }),
+  getAvailableModels: jest.fn().mockResolvedValue([
+    { id: 'model-1', name: 'Model 1' },
+    { id: 'model-2', name: 'Model 2' },
+  ]),
+};
 
-describe('AI Store', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
+  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
+}));
 
-    // Get the actual store and reset it
-    const { result } = renderHook(() => useAIStore());
-    act(() => {
-      result.current.setSelectedModel(
-        'bio',
-        'meta-llama/Meta-Llama-3.1-8B-Instruct'
+// Mock zustand
 
-      result.current.setSelectedModel(
-        'project',
-        'microsoft/Phi-3.5-mini-instruct'
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
 
-      result.current.setSelectedModel(
-        'template',
-        'meta-llama/Meta-Llama-3.1-8B-Instruct'
+// Mock zustand
 
-      result.current.setAvailableModels([]);
-      result.current.clearHistory();
-      result.current.setQuota(0, 100);
-      result.current.setProcessing(false);
-      result.current.setError(null);
-    });
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+// Mock zustand
+
+// Mock zustand create function
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}))
   });
 
+
+// Mock fetch
+global.fetch = jest.fn().mockResolvedValue({
+  ok: true,
+  json: () => Promise.resolve({ success: true }),
+  text: () => Promise.resolve(''),
+  status: 200,
+});
+
   describe('Model Management', () => {
-    it('should set selected model for specific type', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+    it('should set selected model for specific type', async () => {
       const { result } = renderHook(() => useAIStore());
 
       act(() => {
@@ -66,7 +145,7 @@ describe('AI Store', () => {
 
     });
 
-    it('should set available models', () => {
+    it('should set available models', async () => {
       const mockModels = [
         { id: 'model-1', name: 'Model 1' },
         { id: 'model-2', name: 'Model 2' },
@@ -124,7 +203,7 @@ describe('AI Store', () => {
   });
 
   describe('Enhancement History', () => {
-    it('should add enhancement to history', () => {
+    it('should add enhancement to history', async () => {
       const enhancement: AIEnhancement = {
         id: 'test-1',
         type: 'bio',
@@ -146,7 +225,7 @@ describe('AI Store', () => {
       expect(enhancementHistory[0]).toEqual(enhancement);
     });
 
-    it('should keep only last 50 enhancements', () => {
+    it('should keep only last 50 enhancements', async () => {
       const { addEnhancement } = useAIStore.getState();
 
       act(() => {
@@ -170,7 +249,7 @@ describe('AI Store', () => {
       expect(enhancementHistory[49].id).toBe('test-5'); // 50th item
     });
 
-    it('should clear enhancement history', () => {
+    it('should clear enhancement history', async () => {
       const { addEnhancement, clearHistory } = useAIStore.getState();
 
       act(() => {
@@ -196,7 +275,7 @@ describe('AI Store', () => {
   });
 
   describe('Quota Management', () => {
-    it('should set quota values', () => {
+    it('should set quota values', async () => {
       const { setQuota } = useAIStore.getState();
 
       act(() => {
@@ -208,7 +287,7 @@ describe('AI Store', () => {
       expect(quotaLimit).toBe(50);
     });
 
-    it('should calculate remaining quota correctly', () => {
+    it('should calculate remaining quota correctly', async () => {
       const { setQuota } = useAIStore.getState();
 
       act(() => {
@@ -385,7 +464,7 @@ describe('AI Store', () => {
   });
 
   describe('State Management', () => {
-    it('should set processing state', () => {
+    it('should set processing state', async () => {
       const { setProcessing } = useAIStore.getState();
 
       act(() => {
@@ -401,7 +480,7 @@ describe('AI Store', () => {
       expect(useAIStore.getState().isProcessing).toBe(false);
     });
 
-    it('should set error state', () => {
+    it('should set error state', async () => {
       const { setError } = useAIStore.getState();
 
       act(() => {
@@ -419,7 +498,7 @@ describe('AI Store', () => {
   });
 
   describe('Persistence', () => {
-    it('should persist selected models and quota', () => {
+    it('should persist selected models and quota', async () => {
       const { setSelectedModel, setQuota } = useAIStore.getState();
 
       act(() => {

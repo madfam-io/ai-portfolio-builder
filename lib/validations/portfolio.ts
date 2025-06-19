@@ -268,7 +268,7 @@ export function validatePortfolioQuery(data: unknown) {
 export function sanitizePortfolioData<T extends Record<string, unknown>>(
   data: T
 ): T {
-  const sanitized = { ...data } as T;
+  const sanitized = { ...data } as any;
 
   // List of fields that should be sanitized
   const textFields = ['name', 'title', 'bio', 'tagline', 'description'];
@@ -277,7 +277,7 @@ export function sanitizePortfolioData<T extends Record<string, unknown>>(
   // Sanitize text fields
   for (const field of textFields) {
     if (field in sanitized && typeof sanitized[field] === 'string') {
-      sanitized[field] = DOMPurify.sanitize(sanitized[field], {
+      (sanitized as any)[field] = DOMPurify.sanitize(sanitized[field], {
         ALLOWED_TAGS: [],
         ALLOWED_ATTR: [],
       });
@@ -287,7 +287,7 @@ export function sanitizePortfolioData<T extends Record<string, unknown>>(
   // Sanitize array text fields
   for (const field of arrayTextFields) {
     if (field in sanitized && Array.isArray(sanitized[field])) {
-      sanitized[field] = sanitized[field].map((item: unknown) =>
+      (sanitized as any)[field] = sanitized[field].map((item: unknown) =>
         typeof item === 'string'
           ? DOMPurify.sanitize(item, {
               ALLOWED_TAGS: [],
@@ -309,7 +309,7 @@ export function sanitizePortfolioData<T extends Record<string, unknown>>(
       key !== 'publishedAt' &&
       key !== 'lastViewedAt'
     ) {
-      sanitized[key] = sanitizePortfolioData(sanitized[key]);
+      (sanitized as any)[key] = sanitizePortfolioData(sanitized[key]);
     }
   }
 

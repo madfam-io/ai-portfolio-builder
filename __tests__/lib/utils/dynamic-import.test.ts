@@ -1,13 +1,15 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import dynamic from 'next/dynamic';
+import type { ComponentType } from 'react';
 import {
+// Mock global fetch
+global.fetch = jest.fn();
+
   createDynamicComponent,
   preloadComponent,
   createRouteComponent,
   optimizationStrategies,
 } from '@/lib/utils/dynamic-import';
-import dynamic from 'next/dynamic';
-import type { ComponentType } from 'react';
-
 
 // Mock next/dynamic
 jest.mock('next/dynamic', () => ({
@@ -25,6 +27,12 @@ jest.mock('next/dynamic', () => ({
 }));
 
 describe('Dynamic Import Utilities', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockDynamic = dynamic as jest.MockedFunction<typeof dynamic>;
 
   beforeEach(() => {
@@ -32,7 +40,7 @@ describe('Dynamic Import Utilities', () => {
   });
 
   describe('createDynamicComponent', () => {
-    it('should create a dynamic component with default options', () => {
+    it('should create a dynamic component with default options', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
@@ -54,7 +62,7 @@ describe('Dynamic Import Utilities', () => {
       expect(callArgs[1].loading()).toBeNull();
     });
 
-    it('should use custom loading component', () => {
+    it('should use custom loading component', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
       const customLoading = () => 'Loading...';
@@ -71,7 +79,7 @@ describe('Dynamic Import Utilities', () => {
   });
     });
 
-    it('should disable SSR when specified', () => {
+    it('should disable SSR when specified', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
@@ -85,7 +93,7 @@ describe('Dynamic Import Utilities', () => {
       });
     });
 
-    it('should handle typed components', () => {
+    it('should handle typed components', async () => {
       interface TestProps {
         name: string;
         age: number;
@@ -131,7 +139,7 @@ describe('Dynamic Import Utilities', () => {
       expect(mockImportFn).toHaveBeenCalled();
     });
 
-    it('should work with multiple preloads', () => {
+    it('should work with multiple preloads', async () => {
       const mockImportFn1 = jest
         .fn()
         .mockResolvedValue({ default: () => null });
@@ -153,7 +161,7 @@ describe('Dynamic Import Utilities', () => {
   });
 
   describe('createRouteComponent', () => {
-    it('should create a route component with default options', () => {
+    it('should create a route component with default options', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
@@ -169,7 +177,7 @@ describe('Dynamic Import Utilities', () => {
       expect(callArgs[1].loading()).toBeNull();
     });
 
-    it('should use custom fallback component', () => {
+    it('should use custom fallback component', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
       const customFallback = () => 'Route Loading...';
@@ -186,7 +194,7 @@ describe('Dynamic Import Utilities', () => {
   });
     });
 
-    it('should always enable SSR for route components', () => {
+    it('should always enable SSR for route components', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 
@@ -198,7 +206,7 @@ describe('Dynamic Import Utilities', () => {
   });
 
   describe('optimizationStrategies', () => {
-    it('should have vendor chunk splitting configuration', () => {
+    it('should have vendor chunk splitting configuration', async () => {
       expect(optimizationStrategies.splitVendorChunks).toBeDefined();
       expect(optimizationStrategies.splitVendorChunks.react).toContain('react');
       expect(optimizationStrategies.splitVendorChunks.react).toContain(
@@ -215,7 +223,7 @@ describe('Dynamic Import Utilities', () => {
 
     });
 
-    it('should have list of components to lazy load', () => {
+    it('should have list of components to lazy load', async () => {
       expect(optimizationStrategies.alwaysLazy).toBeDefined();
       expect(Array.isArray(optimizationStrategies.alwaysLazy)).toBe(true);
       expect(optimizationStrategies.alwaysLazy).toContain('charts');
@@ -226,7 +234,7 @@ describe('Dynamic Import Utilities', () => {
       expect(optimizationStrategies.alwaysLazy).toContain('data-tables');
     });
 
-    it('should have routes for prefetching', () => {
+    it('should have routes for prefetching', async () => {
       expect(optimizationStrategies.prefetchRoutes).toBeDefined();
       expect(Array.isArray(optimizationStrategies.prefetchRoutes)).toBe(true);
       expect(optimizationStrategies.prefetchRoutes).toContain('/dashboard');
@@ -234,7 +242,7 @@ describe('Dynamic Import Utilities', () => {
       expect(optimizationStrategies.prefetchRoutes).toContain('/analytics');
     });
 
-    it('should have complete structure', () => {
+    it('should have complete structure', async () => {
       const keys = Object.keys(optimizationStrategies);
       expect(keys).toContain('splitVendorChunks');
       expect(keys).toContain('alwaysLazy');
@@ -243,7 +251,7 @@ describe('Dynamic Import Utilities', () => {
   });
 
   describe('Integration scenarios', () => {
-    it('should handle component with props correctly', () => {
+    it('should handle component with props correctly', async () => {
       interface ButtonProps {
         onClick: () => void;
         children: React.ReactNode;
@@ -268,7 +276,7 @@ describe('Dynamic Import Utilities', () => {
       expect(callArgs[1].loading()).toBe('Loading button...');
     });
 
-    it('should handle route component with error boundary pattern', () => {
+    it('should handle route component with error boundary pattern', async () => {
       const mockImportFn = () =>
         Promise.resolve({ default: (() => null) as ComponentType });
 

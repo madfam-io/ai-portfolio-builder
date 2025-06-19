@@ -43,7 +43,7 @@ export function useUpgradePrompts() {
 
         setPromptState(parsed);
       }
-    } catch (error) {
+    } catch (_error) {
       // Failed to load upgrade prompts state
     }
   }, []);
@@ -52,7 +52,7 @@ export function useUpgradePrompts() {
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(promptState));
-    } catch (error) {
+    } catch (_error) {
       // Failed to save upgrade prompts state
     }
   }, [promptState]);

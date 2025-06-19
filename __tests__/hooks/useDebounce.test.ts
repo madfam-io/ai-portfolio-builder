@@ -1,17 +1,12 @@
-import {
-  describe,
-  test,
-  it,
-  expect,
-  beforeEach,
-  afterEach,
-  jest,
-} from '@jest/globals';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act , act } from '@testing-library/react';
 import { useDebounce } from '@/hooks/useDebounce';
+import { describe, test, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 
 describe('useDebounce', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     jest.useFakeTimers();
   });
 
@@ -20,13 +15,13 @@ describe('useDebounce', () => {
     jest.useRealTimers();
   });
 
-  it('should return initial value immediately', () => {
+  it('should return initial value immediately', async () => {
     const { result } = renderHook(() => useDebounce('initial', 500));
 
     expect(result.current).toBe('initial');
   });
 
-  it('should debounce value changes', () => {
+  it('should debounce value changes', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -43,7 +38,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('initial');
 
     // Fast-forward time by 250ms (half the delay)
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(250);
     });
 
@@ -51,7 +46,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('initial');
 
     // Fast-forward time by another 250ms (total 500ms)
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(250);
     });
 
@@ -59,7 +54,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('updated');
   });
 
-  it('should cancel previous timeout on rapid changes', () => {
+  it('should cancel previous timeout on rapid changes', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -70,20 +65,20 @@ describe('useDebounce', () => {
     // Make rapid changes
     rerender({ value: 'second', delay: 500 });
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(200);
     });
 
     rerender({ value: 'third', delay: 500 });
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(200);
     });
 
     rerender({ value: 'fourth', delay: 500 });
 
     // Advance time to just before the last timeout completes
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(499);
     });
 
@@ -91,7 +86,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('first');
 
     // Complete the last timeout
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(1);
     });
 
@@ -99,7 +94,7 @@ describe('useDebounce', () => {
     expect(result.current).toBe('fourth');
   });
 
-  it('should handle different delay values', () => {
+  it('should handle different delay values', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -110,20 +105,20 @@ describe('useDebounce', () => {
     // Change both value and delay
     rerender({ value: 'updated', delay: 200 });
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(199);
     });
 
     expect(result.current).toBe('initial');
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(1);
     });
 
     expect(result.current).toBe('updated');
   });
 
-  it('should work with different data types', () => {
+  it('should work with different data types', async () => {
     // Test with number
     const { result: numberResult } = renderHook(() => useDebounce(42, 500));
     expect(numberResult.current).toBe(42);
@@ -147,7 +142,7 @@ describe('useDebounce', () => {
     expect(nullResult.current).toBe(null);
   });
 
-  it('should handle zero delay', () => {
+  it('should handle zero delay', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -157,14 +152,14 @@ describe('useDebounce', () => {
 
     rerender({ value: 'updated', delay: 0 });
 
-    act(() => {
+    await act(async () => {
       jest.runAllTimers();
     });
 
     expect(result.current).toBe('updated');
   });
 
-  it('should clean up timeout on unmount', () => {
+  it('should clean up timeout on unmount', async () => {
     const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
 
     const { unmount, rerender } = renderHook(
@@ -186,7 +181,7 @@ describe('useDebounce', () => {
     clearTimeoutSpy.mockRestore();
   });
 
-  it('should handle rapid consecutive updates', () => {
+  it('should handle rapid consecutive updates', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -197,7 +192,7 @@ describe('useDebounce', () => {
     // Simulate rapid updates like typing
     for (let i = 1; i <= 10; i++) {
       rerender({ value: i, delay: 300 });
-      act(() => {
+      await act(async () => {
         jest.advanceTimersByTime(50); // Advance 50ms between each update
       });
     }
@@ -206,14 +201,14 @@ describe('useDebounce', () => {
     expect(result.current).toBe(0); // Still initial value
 
     // Advance to complete the last debounce
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(300);
     });
 
     expect(result.current).toBe(10); // Final value
   });
 
-  it('should handle changing delay while debouncing', () => {
+  it('should handle changing delay while debouncing', async () => {
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
       {
@@ -223,7 +218,7 @@ describe('useDebounce', () => {
 
     rerender({ value: 'updated', delay: 1000 });
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(500);
     });
 
@@ -231,14 +226,14 @@ describe('useDebounce', () => {
     rerender({ value: 'updated', delay: 200 });
 
     // Original timeout should be cancelled, new one started
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(200);
     });
 
     expect(result.current).toBe('updated');
   });
 
-  it('should maintain referential equality for unchanged object values', () => {
+  it('should maintain referential equality for unchanged object values', async () => {
     const obj = { count: 0 };
     const { result, rerender } = renderHook(
       ({ value, delay }) => useDebounce(value, delay),
@@ -252,7 +247,7 @@ describe('useDebounce', () => {
     // Update with the same object reference
     rerender({ value: obj, delay: 500 });
 
-    act(() => {
+    await act(async () => {
       jest.advanceTimersByTime(500);
     });
 

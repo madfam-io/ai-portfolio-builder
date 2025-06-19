@@ -1,20 +1,93 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
-import { headers } from 'next/headers';
-import { GET } from '@/app/api/v1/experiments/active/route';
-import { FeatureFlagService } from '@/lib/services/feature-flags/feature-flag-service';
-import { logger } from '@/lib/utils/logger';
 
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => ({
 
-// Mock dependencies
-jest.mock('next/headers');
-jest.mock('@/lib/services/feature-flags/feature-flag-service');
-jest.mock('@/lib/utils/logger');
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
+    })),
+  })),
+}));
+
+jest.mock('@/lib/auth/middleware', () => ({
+  authMiddleware: jest.fn((handler) => handler),
+  requireAuth: jest.fn(() => ({ id: 'test-user' })),
+}));
+
+jest.mock('@/lib/cache/cache-headers', () => ({
+  setCacheHeaders: jest.fn(),
+}));
+
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 describe('GET /api/v1/experiments/active', () => {
+  beforeEach(() => {
+    global.fetch = jest.fn();
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockHeaders: any;
 
   beforeEach(() => {
+    global.crypto = {
+      randomUUID: jest.fn(() => 'test-uuid-' + Math.random()),
+      getRandomValues: jest.fn((arr) => {
+        for (let i = 0; i < arr.length; i++) {
+          arr[i] = Math.floor(Math.random() * 256);
+        }
+        return arr;
+      }),
+    };
     jest.clearAllMocks();
 
     // Mock headers
@@ -29,7 +102,7 @@ describe('GET /api/v1/experiments/active', () => {
     });
 
     // Mock logger
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
   });
 
   it('should return active experiment for desktop user', async () => {
@@ -62,7 +135,7 @@ describe('GET /api/v1/experiments/active', () => {
       language: 'en',
       referrer: 'https://google.com',
       utmSource: undefined,
-    );
+    });
   });
   });
 
@@ -238,7 +311,7 @@ describe('GET /api/v1/experiments/active', () => {
       language: 'es',
       referrer: '',
       utmSource: undefined,
-    );
+    });
   });
   });
 

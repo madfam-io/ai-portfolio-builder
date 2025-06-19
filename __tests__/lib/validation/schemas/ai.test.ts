@@ -1,5 +1,32 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
+
 import {
+
+jest.mock('@/lib/ai/huggingface-service', () => ({
+
+jest.setTimeout(30000);
+
+// Mock HuggingFace service
+const mockHuggingFaceService = {
+  healthCheck: jest.fn().mockResolvedValue(true),
+  enhanceBio: jest.fn().mockResolvedValue({
+    enhancedBio: 'Enhanced bio',
+    wordCount: 10,
+    tone: 'professional',
+  }),
+  optimizeProject: jest.fn().mockResolvedValue({
+    optimizedTitle: 'Optimized Title',
+    optimizedDescription: 'Optimized description',
+  }),
+  getAvailableModels: jest.fn().mockResolvedValue([
+    { id: 'model-1', name: 'Model 1' },
+    { id: 'model-2', name: 'Model 2' },
+  ]),
+};
+
+  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
+}));
+
   enhanceBioSchema,
   optimizeProjectSchema,
   recommendTemplateSchema,
@@ -9,8 +36,14 @@ import {
 } from '@/lib/validation/schemas/ai';
 
 describe('AI Validation Schemas', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   describe('enhanceBioSchema', () => {
-    it('should validate valid bio enhancement request', () => {
+    it('should validate valid bio enhancement request', async () => {
       const validData = {
         text: 'I am a software developer with experience in web development.',
       };
@@ -23,7 +56,7 @@ describe('AI Validation Schemas', () => {
       });
     });
 
-    it('should accept optional parameters', () => {
+    it('should accept optional parameters', async () => {
       const validData = {
         text: 'Senior developer with 10 years of experience',
         model: 'meta-llama/Llama-3.1-8B-Instruct',
@@ -38,7 +71,7 @@ describe('AI Validation Schemas', () => {
       expect(result.industry).toBe('Technology');
     });
 
-    it('should reject text too short', () => {
+    it('should reject text too short', async () => {
       const invalidData = {
         text: 'Too short',
       };
@@ -48,7 +81,7 @@ describe('AI Validation Schemas', () => {
 
     });
 
-    it('should reject text too long', () => {
+    it('should reject text too long', async () => {
       const invalidData = {
         text: 'a'.repeat(501),
       };
@@ -58,7 +91,7 @@ describe('AI Validation Schemas', () => {
 
     });
 
-    it('should reject invalid model', () => {
+    it('should reject invalid model', async () => {
       const invalidData = {
         text: 'Valid bio text for enhancement',
         model: 'invalid-model',
@@ -69,7 +102,7 @@ describe('AI Validation Schemas', () => {
   });
 
   describe('optimizeProjectSchema', () => {
-    it('should validate valid project optimization request', () => {
+    it('should validate valid project optimization request', async () => {
       const validData = {
         title: 'E-commerce Platform',
         description:
@@ -86,7 +119,7 @@ describe('AI Validation Schemas', () => {
       });
     });
 
-    it('should accept all parameters', () => {
+    it('should accept all parameters', async () => {
       const validData = {
         title: 'Mobile App',
         description:
@@ -102,7 +135,7 @@ describe('AI Validation Schemas', () => {
       expect(result.includeMetrics).toBe(false);
     });
 
-    it('should reject description too short', () => {
+    it('should reject description too short', async () => {
       const invalidData = {
         title: 'Project',
         description: 'Too short desc',
@@ -113,7 +146,7 @@ describe('AI Validation Schemas', () => {
 
     });
 
-    it('should validate format options', () => {
+    it('should validate format options', async () => {
       const invalidData = {
         title: 'Project',
         description: 'A valid project description that is long enough',
@@ -125,7 +158,7 @@ describe('AI Validation Schemas', () => {
   });
 
   describe('recommendTemplateSchema', () => {
-    it('should validate valid template recommendation request', () => {
+    it('should validate valid template recommendation request', async () => {
       const validData = {
         industry: 'Technology',
         experience: 'senior',
@@ -136,7 +169,7 @@ describe('AI Validation Schemas', () => {
       expect(result).toEqual(validData);
     });
 
-    it('should accept preferences', () => {
+    it('should accept preferences', async () => {
       const validData = {
         industry: 'Design',
         experience: 'mid',
@@ -152,7 +185,7 @@ describe('AI Validation Schemas', () => {
       expect(result.preferences?.style).toBe('modern');
     });
 
-    it('should require at least one skill', () => {
+    it('should require at least one skill', async () => {
       const invalidData = {
         industry: 'Technology',
         experience: 'senior',
@@ -162,7 +195,7 @@ describe('AI Validation Schemas', () => {
       expect(() => recommendTemplateSchema.parse(invalidData)).toThrow();
     });
 
-    it('should validate experience level', () => {
+    it('should validate experience level', async () => {
       const invalidData = {
         industry: 'Technology',
         experience: 'expert',
@@ -172,7 +205,7 @@ describe('AI Validation Schemas', () => {
       expect(() => recommendTemplateSchema.parse(invalidData)).toThrow();
     });
 
-    it('should enforce skill limit', () => {
+    it('should enforce skill limit', async () => {
       const invalidData = {
         industry: 'Technology',
         experience: 'senior',
@@ -184,7 +217,7 @@ describe('AI Validation Schemas', () => {
   });
 
   describe('generateContentSchema', () => {
-    it('should validate valid content generation request', () => {
+    it('should validate valid content generation request', async () => {
       const validData = {
         prompt: 'Generate a professional bio for a software developer',
         contentType: 'bio',
@@ -199,7 +232,7 @@ describe('AI Validation Schemas', () => {
       });
     });
 
-    it('should accept all parameters', () => {
+    it('should accept all parameters', async () => {
       const validData = {
         prompt: 'Generate a creative project description',
         model: 'HuggingFaceH4/zephyr-7b-beta',
@@ -213,7 +246,7 @@ describe('AI Validation Schemas', () => {
       expect(result.temperature).toBe(0.9);
     });
 
-    it('should validate temperature range', () => {
+    it('should validate temperature range', async () => {
       const invalidData = {
         prompt: 'Generate content',
         contentType: 'bio',
@@ -223,7 +256,7 @@ describe('AI Validation Schemas', () => {
       expect(() => generateContentSchema.parse(invalidData)).toThrow();
     });
 
-    it('should validate content type', () => {
+    it('should validate content type', async () => {
       const invalidData = {
         prompt: 'Generate content',
         contentType: 'invalid',
@@ -234,7 +267,7 @@ describe('AI Validation Schemas', () => {
   });
 
   describe('batchAIOperationSchema', () => {
-    it('should validate batch operations', () => {
+    it('should validate batch operations', async () => {
       const validData = {
         operations: [
           {
@@ -257,7 +290,7 @@ describe('AI Validation Schemas', () => {
       expect(result.operations).toHaveLength(2);
     });
 
-    it('should require at least one operation', () => {
+    it('should require at least one operation', async () => {
       const invalidData = {
         operations: [],
       };
@@ -265,7 +298,7 @@ describe('AI Validation Schemas', () => {
       expect(() => batchAIOperationSchema.parse(invalidData)).toThrow();
     });
 
-    it('should enforce maximum operations limit', () => {
+    it('should enforce maximum operations limit', async () => {
       const invalidData = {
         operations: Array(11).fill({
           type: 'enhance_bio',
@@ -276,7 +309,7 @@ describe('AI Validation Schemas', () => {
       expect(() => batchAIOperationSchema.parse(invalidData)).toThrow();
     });
 
-    it('should validate operation data', () => {
+    it('should validate operation data', async () => {
       const invalidData = {
         operations: [
           {
@@ -293,7 +326,7 @@ describe('AI Validation Schemas', () => {
   });
 
   describe('aiFeedbackSchema', () => {
-    it('should validate valid feedback', () => {
+    it('should validate valid feedback', async () => {
       const validData = {
         operationId: '123e4567-e89b-12d3-a456-426614174000',
         rating: 5,
@@ -304,7 +337,7 @@ describe('AI Validation Schemas', () => {
       expect(result).toEqual(validData);
     });
 
-    it('should accept optional feedback text', () => {
+    it('should accept optional feedback text', async () => {
       const validData = {
         operationId: '123e4567-e89b-12d3-a456-426614174000',
         rating: 4,
@@ -318,7 +351,7 @@ describe('AI Validation Schemas', () => {
 
     });
 
-    it('should validate rating range', () => {
+    it('should validate rating range', async () => {
       const invalidData = {
         operationId: '123e4567-e89b-12d3-a456-426614174000',
         rating: 6,
@@ -328,7 +361,7 @@ describe('AI Validation Schemas', () => {
       expect(() => aiFeedbackSchema.parse(invalidData)).toThrow();
     });
 
-    it('should validate UUID format', () => {
+    it('should validate UUID format', async () => {
       const invalidData = {
         operationId: 'not-a-uuid',
         rating: 5,
@@ -338,7 +371,7 @@ describe('AI Validation Schemas', () => {
       expect(() => aiFeedbackSchema.parse(invalidData)).toThrow();
     });
 
-    it('should enforce feedback length limit', () => {
+    it('should enforce feedback length limit', async () => {
       const invalidData = {
         operationId: '123e4567-e89b-12d3-a456-426614174000',
         rating: 3,

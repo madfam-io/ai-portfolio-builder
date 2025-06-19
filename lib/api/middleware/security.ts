@@ -163,7 +163,7 @@ export function detectSuspiciousActivity(request: NextRequest): {
       if (!isAllowed) {
         reasons.push('suspicious_referer');
       }
-    } catch (error) {
+    } catch (_error) {
       // Invalid referer URL
       reasons.push('invalid_referer');
     }

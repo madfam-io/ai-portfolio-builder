@@ -1,28 +1,68 @@
-import { describe, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { mockUseLanguage } from '@/test-utils/mock-i18n';
+import { BasicInfoStep } from '@/app/editor/new/components/BasicInfoStep';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+
+jest.mock('class-variance-authority', () => ({
+jest.mock('@/lib/utils', () => ({
+jest.mock('@/lib/i18n/refactored-context', () => ({
+jest.mock('lucide-react', () => ({
+jest.mock('@/components/ui/button', () => ({
+jest.mock('@/components/ui/input', () => ({
+jest.mock('@/components/ui/label', () => ({
+jest.mock('@/components/ui/textarea', () => ({
+
+// Polyfill FormData for Node environment
+global.FormData = class FormData {
+  private data: Map<string, any> = new Map();
+
+  append(key: string, value: any) {
+    this.data.set(key, value);
+  }
+
+  get(key: string) {
+    return this.data.get(key);
+  }
+
+  has(key: string) {
+    return this.data.has(key);
+  }
+
+  delete(key: string) {
+    this.data.delete(key);
+  }
+
+  *[Symbol.iterator]() {
+    yield* this.data;
+  }
+};
 
 // Mock class-variance-authority
-jest.mock('class-variance-authority', () => ({
+
   cva: () => () => '',
   type: {},
 }));
 
 // Mock lib utils
-jest.mock('@/lib/utils', () => ({
+
   cn: (...args: any[]) => args.filter(Boolean).join(' '),
 }));
 
-import { BasicInfoStep } from '@/app/editor/new/components/BasicInfoStep';
+// Mock i18n
+
+  useLanguage: mockUseLanguage,
+}));
 
 // Mock lucide-react icons
-jest.mock('lucide-react', () => ({
+
   ArrowRight: () => <span>ArrowRight</span>,
 }));
 
 // Mock shadcn/ui components to avoid import issues
-jest.mock('@/components/ui/button', () => ({
+
   Button: React.forwardRef<HTMLButtonElement, any>(function Button(
     { children, ...props },
     ref
@@ -35,13 +75,11 @@ jest.mock('@/components/ui/button', () => ({
   }),
 }));
 
-jest.mock('@/components/ui/input', () => ({
   Input: React.forwardRef<HTMLInputElement, any>(function Input(props, ref) {
     return <input ref={ref} {...props} />;
   }),
 }));
 
-jest.mock('@/components/ui/label', () => ({
   Label: React.forwardRef<HTMLLabelElement, any>(function Label(
     { children, ...props },
     ref
@@ -54,7 +92,6 @@ jest.mock('@/components/ui/label', () => ({
   }),
 }));
 
-jest.mock('@/components/ui/textarea', () => ({
   Textarea: React.forwardRef<HTMLTextAreaElement, any>(
     function Textarea(props, ref) {
       return <textarea ref={ref} {...props} />;
@@ -62,7 +99,42 @@ jest.mock('@/components/ui/textarea', () => ({
   ),
 }));
 
+// Mock language context
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+
+const mockPortfolio = {
+  id: 'test-portfolio',
+  userId: 'test-user',
+  name: 'Test Portfolio',
+  title: 'Test Title',
+  bio: 'Test bio',
+  template: 'modern',
+  status: 'draft',
+  subdomain: 'test',
+  contact: {},
+  social: {},
+  experience: [],
+  education: [],
+  projects: [],
+  skills: [],
+  certifications: [],
+  customization: {},
+  aiSettings: {},
+  views: 0,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 describe('BasicInfoStep', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockT = {
     letsGetStarted: "Let's get started",
     basicInfoDescription: 'Tell us a bit about yourself and your portfolio',
@@ -89,7 +161,7 @@ describe('BasicInfoStep', () => {
     jest.clearAllMocks();
   });
 
-  it('should render all form fields', () => {
+  it('should render all form fields', async () => {
     render(
       <BasicInfoStep
         formData={mockFormData}
@@ -107,7 +179,7 @@ describe('BasicInfoStep', () => {
     ).toBeInTheDocument();
   });
 
-  it('should display initial form values', () => {
+  it('should display initial form values', async () => {
     const filledFormData = {
       name: 'John Doe',
       title: 'Software Engineer',
@@ -158,7 +230,7 @@ describe('BasicInfoStep', () => {
     expect(mockUpdateFormData).toHaveBeenCalledWith({ bio: 'C' });
   });
 
-  it('should disable next button when required fields are empty', () => {
+  it('should disable next button when required fields are empty', async () => {
     render(
       <BasicInfoStep
         formData={mockFormData}
@@ -172,7 +244,7 @@ describe('BasicInfoStep', () => {
     expect(nextButton).toBeDisabled();
   });
 
-  it('should enable next button when required fields are filled', () => {
+  it('should enable next button when required fields are filled', async () => {
     const filledFormData = {
       name: 'John Doe',
       title: 'Software Engineer',

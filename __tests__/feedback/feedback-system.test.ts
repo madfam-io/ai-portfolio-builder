@@ -1,20 +1,25 @@
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import {
-  FeedbackSystem,
+import {   FeedbackSystem,
   BetaAnalytics,
   BetaLaunchChecker,
   createFeedbackSystem,
   createBetaAnalytics,
-} from '@/lib/feedback/feedback-system';
+ } from '@/lib/feedback/feedback-system';
 
 // Mock fetch for API tests
-global.fetch = jest.fn();
+global.fetch = jest.fn().mockReturnValue(void 0);
 
 describe('Beta Feedback System', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
@@ -58,6 +63,7 @@ describe('Beta Feedback System', () => {
           headers: { 'Content-Type': 'application/json' },
           body: expect.stringContaining('Template switching issue'),
         })
+      );
     });
 
     it('should handle feedback submission failures gracefully', async () => {
@@ -65,6 +71,7 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
+      );
 
       const feedbackData = {
         userId: 'user_123',
@@ -154,7 +161,7 @@ describe('Beta Feedback System', () => {
     );
   });
 
-    it('should calculate NPS score correctly', () => {
+    it('should calculate NPS score correctly', async () => {
       const feedbackSystem = new FeedbackSystem();
 
       // Manually add surveys to test NPS calculation
@@ -183,7 +190,7 @@ describe('Beta Feedback System', () => {
       expect(npsScore).toBe(0);
     });
 
-    it('should generate feedback trends correctly', () => {
+    it('should generate feedback trends correctly', async () => {
       const feedbackSystem = new FeedbackSystem();
 
       // Mock feedback entries with different dates and types
@@ -218,7 +225,7 @@ describe('Beta Feedback System', () => {
       expect(trends.some(trend => trend.total > 0)).toBe(true);
     });
 
-    it('should generate comprehensive feedback report', () => {
+    it('should generate comprehensive feedback report', async () => {
       const feedbackSystem = new FeedbackSystem();
 
       // Mock data for report generation
@@ -428,14 +435,14 @@ describe('Beta Feedback System', () => {
   });
 
   describe('Factory Functions', () => {
-    it('should create feedback system with custom endpoint', () => {
+    it('should create feedback system with custom endpoint', async () => {
       const customEndpoint = '/api/custom/feedback';
       const feedbackSystem = createFeedbackSystem(customEndpoint);
 
       expect(feedbackSystem).toBeInstanceOf(FeedbackSystem);
     });
 
-    it('should create beta analytics with custom endpoint', () => {
+    it('should create beta analytics with custom endpoint', async () => {
       const customEndpoint = '/api/custom/analytics';
       const analytics = createBetaAnalytics(customEndpoint);
 

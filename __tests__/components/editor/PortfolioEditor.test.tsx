@@ -1,9 +1,29 @@
+import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+import { mockUseLanguage } from '@/test-utils/mock-i18n';
+import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
+import PortfolioEditor from '@/components/editor/PortfolioEditor';
+import { useAutoSave } from '@/hooks/useAutoSave';
+import { useDebounce } from '@/hooks/useDebounce';
+import { useEditorHistory } from '@/hooks/useEditorHistory';
+import { Portfolio, TemplateType } from '@/types/portfolio';
 /**
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
-import React from 'react';
+import {  
+// Mock i18n
+
+// Mock i18n
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: mockUseLanguage,
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, afterEach, jest  } from '@jest/globals';
 import {
   render,
   screen,
@@ -11,18 +31,11 @@ import {
   waitFor,
   act,
 } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import PortfolioEditor from '@/components/editor/PortfolioEditor';
-import { useAutoSave } from '@/hooks/useAutoSave';
-import { useDebounce } from '@/hooks/useDebounce';
-import { useEditorHistory } from '@/hooks/useEditorHistory';
-import { Portfolio, TemplateType } from '@/types/portfolio';
 
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -47,7 +60,14 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
 jest.mock('@/hooks/useAutoSave');
 jest.mock('@/hooks/useDebounce');
 jest.mock('@/hooks/useEditorHistory');
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 // Mock child components
 jest.mock('@/components/editor/EditorHeader', () => ({
@@ -93,6 +113,12 @@ jest.mock('@/components/editor/PortfolioPreview', () => ({
 }));
 
 describe('PortfolioEditor', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',

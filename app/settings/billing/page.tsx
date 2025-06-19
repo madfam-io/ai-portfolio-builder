@@ -17,7 +17,7 @@ import {
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -42,7 +42,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useSubscription } from '@/lib/hooks/use-subscription';
-import { cn } from '@/lib/utils';
 
 interface PaymentMethod {
   id: string;
@@ -66,8 +65,10 @@ function BillingContent() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const { user } = useAuthStore();
-  const { subscription, limits, isLoading: subLoading } = useSubscription();
-  
+  const subscriptionData = useSubscription();
+  const subscription = subscriptionData.limits;
+  const subLoading = subscriptionData.loading;
+
   const [isLoading, setIsLoading] = useState(true);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
@@ -97,7 +98,8 @@ function BillingContent() {
       console.error('Failed to load billing data:', error);
       toast({
         title: t.error || 'Error',
-        description: t.failedToLoadBilling || 'Failed to load billing information',
+        description:
+          t.failedToLoadBilling || 'Failed to load billing information',
         variant: 'destructive',
       });
     } finally {
@@ -127,9 +129,12 @@ function BillingContent() {
 
   const handleDeletePaymentMethod = async (methodId: string) => {
     try {
-      const response = await fetch(`/api/v1/billing/payment-methods/${methodId}`, {
-        method: 'DELETE',
-      });
+      const response = await fetch(
+        `/api/v1/billing/payment-methods/${methodId}`,
+        {
+          method: 'DELETE',
+        }
+      );
 
       if (response.ok) {
         setPaymentMethods(methods => methods.filter(m => m.id !== methodId));
@@ -141,7 +146,8 @@ function BillingContent() {
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToRemovePayment || 'Failed to remove payment method',
+        description:
+          t.failedToRemovePayment || 'Failed to remove payment method',
         variant: 'destructive',
       });
     } finally {
@@ -151,9 +157,12 @@ function BillingContent() {
 
   const handleSetDefaultPaymentMethod = async (methodId: string) => {
     try {
-      const response = await fetch(`/api/v1/billing/payment-methods/${methodId}/default`, {
-        method: 'POST',
-      });
+      const response = await fetch(
+        `/api/v1/billing/payment-methods/${methodId}/default`,
+        {
+          method: 'POST',
+        }
+      );
 
       if (response.ok) {
         setPaymentMethods(methods =>
@@ -161,13 +170,15 @@ function BillingContent() {
         );
         toast({
           title: t.success || 'Success',
-          description: t.defaultPaymentUpdated || 'Default payment method updated',
+          description:
+            t.defaultPaymentUpdated || 'Default payment method updated',
         });
       }
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToUpdatePayment || 'Failed to update payment method',
+        description:
+          t.failedToUpdatePayment || 'Failed to update payment method',
         variant: 'destructive',
       });
     }
@@ -183,7 +194,9 @@ function BillingContent() {
       if (response.ok) {
         toast({
           title: t.subscriptionCanceled || 'Subscription Canceled',
-          description: t.accessUntilEnd || 'You will have access until the end of your billing period',
+          description:
+            t.accessUntilEnd ||
+            'You will have access until the end of your billing period',
         });
         // Refresh the page to update subscription status
         window.location.reload();
@@ -215,7 +228,8 @@ function BillingContent() {
     } catch (error) {
       toast({
         title: t.error || 'Error',
-        description: t.failedToReactivate || 'Failed to reactivate subscription',
+        description:
+          t.failedToReactivate || 'Failed to reactivate subscription',
         variant: 'destructive',
       });
     }
@@ -239,7 +253,11 @@ function BillingContent() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge variant="default" className="bg-green-600">{t.active || 'Active'}</Badge>;
+        return (
+          <Badge variant="default" className="bg-green-600">
+            {t.active || 'Active'}
+          </Badge>
+        );
       case 'canceled':
         return <Badge variant="secondary">{t.canceled || 'Canceled'}</Badge>;
       case 'past_due':
@@ -265,7 +283,9 @@ function BillingContent() {
     <BaseLayout>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold">{t.billingSettings || 'Billing & Subscription'}</h1>
+          <h1 className="text-3xl font-bold">
+            {t.billingSettings || 'Billing & Subscription'}
+          </h1>
           <p className="text-muted-foreground mt-2">
             {t.manageBilling || 'Manage your subscription and payment methods'}
           </p>
@@ -281,22 +301,26 @@ function BillingContent() {
               <div>
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className="text-2xl font-semibold capitalize">
-                    {subscription?.plan || 'Free'}
+                    {subscription?.subscription_tier || 'Free'}
                   </h3>
-                  {subscription?.status && getStatusBadge(subscription.status)}
+                  {subscription?.subscription_status &&
+                    getStatusBadge(subscription?.subscription_status)}
                 </div>
-                {subscription?.currentPeriodEnd && (
+                {false && (
                   <p className="text-sm text-muted-foreground">
-                    {subscription.status === 'canceled' 
-                      ? `${t.accessUntil || 'Access until'}: ${formatDate(subscription.currentPeriodEnd)}`
-                      : `${t.renewsOn || 'Renews on'}: ${formatDate(subscription.currentPeriodEnd)}`
-                    }
+                    {subscription?.subscription_status === 'canceled'
+                      ? `${t.accessUntil || 'Access until'}: ${formatDate(new Date())}`
+                      : `${t.renewsOn || 'Renews on'}: ${formatDate(new Date())}`}
                   </p>
                 )}
               </div>
               <div className="flex gap-2">
-                {subscription?.plan !== 'free' && subscription?.status === 'active' ? (
-                  <Button variant="outline" onClick={() => router.push('/pricing')}>
+                {subscription?.subscription_tier !== 'free' &&
+                subscription?.subscription_status === 'active' ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => router.push('/pricing')}
+                  >
                     {t.changePlan || 'Change Plan'}
                   </Button>
                 ) : (
@@ -353,8 +377,8 @@ function BillingContent() {
                       <div
                         key={method.id}
                         className={cn(
-                          "flex items-center justify-between p-4 rounded-lg border",
-                          method.isDefault && "border-primary bg-primary/5"
+                          'flex items-center justify-between p-4 rounded-lg border',
+                          method.isDefault && 'border-primary bg-primary/5'
                         )}
                       >
                         <div className="flex items-center gap-4">
@@ -364,11 +388,14 @@ function BillingContent() {
                               {method.brand} •••• {method.last4}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              {t.expires || 'Expires'} {method.expMonth}/{method.expYear}
+                              {t.expires || 'Expires'} {method.expMonth}/
+                              {method.expYear}
                             </p>
                           </div>
                           {method.isDefault && (
-                            <Badge variant="secondary">{t.default || 'Default'}</Badge>
+                            <Badge variant="secondary">
+                              {t.default || 'Default'}
+                            </Badge>
                           )}
                         </div>
                         <div className="flex items-center gap-2">
@@ -376,7 +403,9 @@ function BillingContent() {
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={() => handleSetDefaultPaymentMethod(method.id)}
+                              onClick={() =>
+                                handleSetDefaultPaymentMethod(method.id)
+                              }
                             >
                               {t.setAsDefault || 'Set as Default'}
                             </Button>
@@ -421,14 +450,18 @@ function BillingContent() {
                         <TableHead>{t.date || 'Date'}</TableHead>
                         <TableHead>{t.amount || 'Amount'}</TableHead>
                         <TableHead>{t.status || 'Status'}</TableHead>
-                        <TableHead className="text-right">{t.invoice || 'Invoice'}</TableHead>
+                        <TableHead className="text-right">
+                          {t.invoice || 'Invoice'}
+                        </TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {invoices.map(invoice => (
                         <TableRow key={invoice.id}>
                           <TableCell>{formatDate(invoice.date)}</TableCell>
-                          <TableCell>{formatCurrency(invoice.amount)}</TableCell>
+                          <TableCell>
+                            {formatCurrency(invoice.amount)}
+                          </TableCell>
                           <TableCell>
                             {invoice.status === 'paid' ? (
                               <Badge variant="default" className="bg-green-600">
@@ -441,16 +474,14 @@ function BillingContent() {
                                 {t.failed || 'Failed'}
                               </Badge>
                             ) : (
-                              <Badge variant="secondary">{t.pending || 'Pending'}</Badge>
+                              <Badge variant="secondary">
+                                {t.pending || 'Pending'}
+                              </Badge>
                             )}
                           </TableCell>
                           <TableCell className="text-right">
                             {invoice.downloadUrl && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                asChild
-                              >
+                              <Button variant="ghost" size="sm" asChild>
                                 <a
                                   href={invoice.downloadUrl}
                                   download
@@ -475,20 +506,23 @@ function BillingContent() {
           <TabsContent value="subscription" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>{t.subscriptionManagement || 'Subscription Management'}</CardTitle>
+                <CardTitle>
+                  {t.subscriptionManagement || 'Subscription Management'}
+                </CardTitle>
                 <CardDescription>
-                  {t.manageSubscription || 'Cancel or reactivate your subscription'}
+                  {t.manageSubscription ||
+                    'Cancel or reactivate your subscription'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {subscription?.status === 'active' ? (
+                {subscription?.subscription_status === 'active' ? (
                   <>
                     <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-4">
                       <h4 className="font-medium mb-2">
                         {t.cancelSubscription || 'Cancel Subscription'}
                       </h4>
                       <p className="text-sm text-muted-foreground mb-4">
-                        {t.cancelWarning || 
+                        {t.cancelWarning ||
                           'You will continue to have access to your subscription until the end of the current billing period.'}
                       </p>
                       <Button
@@ -496,18 +530,20 @@ function BillingContent() {
                         onClick={handleCancelSubscription}
                         disabled={isCanceling}
                       >
-                        {isCanceling && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        {isCanceling && (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        )}
                         {t.cancelSubscription || 'Cancel Subscription'}
                       </Button>
                     </div>
                   </>
-                ) : subscription?.status === 'canceled' ? (
+                ) : subscription?.subscription_status === 'canceled' ? (
                   <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
                     <h4 className="font-medium mb-2">
                       {t.reactivateSubscription || 'Reactivate Subscription'}
                     </h4>
                     <p className="text-sm text-muted-foreground mb-4">
-                      {t.reactivateInfo || 
+                      {t.reactivateInfo ||
                         'Resume your subscription and continue enjoying premium features.'}
                     </p>
                     <Button onClick={handleReactivateSubscription}>
@@ -535,7 +571,7 @@ function BillingContent() {
         {/* Delete Payment Method Dialog */}
         <AlertDialog
           open={deleteMethodId !== null}
-          onOpenChange={(open) => !open && setDeleteMethodId(null)}
+          onOpenChange={open => !open && setDeleteMethodId(null)}
         >
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -543,14 +579,16 @@ function BillingContent() {
                 {t.removePaymentMethod || 'Remove Payment Method'}
               </AlertDialogTitle>
               <AlertDialogDescription>
-                {t.removePaymentWarning || 
+                {t.removePaymentWarning ||
                   'Are you sure you want to remove this payment method? This action cannot be undone.'}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>{t.cancel || 'Cancel'}</AlertDialogCancel>
               <AlertDialogAction
-                onClick={() => deleteMethodId && handleDeletePaymentMethod(deleteMethodId)}
+                onClick={() =>
+                  deleteMethodId && handleDeletePaymentMethod(deleteMethodId)
+                }
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
                 {t.remove || 'Remove'}

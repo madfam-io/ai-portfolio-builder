@@ -1,6 +1,8 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { z } from 'zod';
+import { AppError } from '@/types/errors';
+import { logger } from '@/lib/utils/logger';
 import {
   validateRequest,
   createValidationMiddleware,
@@ -9,18 +11,29 @@ import {
   type RequestSchemas,
   type ValidationOptions,
 } from '@/lib/middleware/validate-request';
-import { AppError } from '@/types/errors';
-import { logger } from '@/lib/utils/logger';
-
 
 // Mock dependencies
-jest.mock('@/lib/utils/logger');
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 describe('validate-request middleware', () => {
   beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
     jest.clearAllMocks();
-    (logger.warn as jest.Mock).mockImplementation(() => {});
-    (logger.error as jest.Mock).mockImplementation(() => {});
+    (logger.warn as jest.MockedFunction<typeof logger.warn>).mockImplementation(() => undefined);
+    (logger.error as jest.MockedFunction<typeof logger.error>).mockImplementation(() => undefined);
   });
 
   describe('validateRequest', () => {
@@ -167,7 +180,7 @@ describe('validate-request middleware', () => {
       const schemas: RequestSchemas = { headers: headerSchema };
 
       it('should validate headers when enabled', async () => {
-        const request = new NextRequest('http://localhost:3000/api/test');
+        const request = new NextRequest('http://localhost:3000/api/test', { headers: new Headers() });
         request.headers.set('x-api-key', 'secret-key');
         request.headers.set('content-type', 'application/json');
 
@@ -182,7 +195,7 @@ describe('validate-request middleware', () => {
       });
 
       it('should skip header validation by default', async () => {
-        const request = new NextRequest('http://localhost:3000/api/test');
+        const request = new NextRequest('http://localhost:3000/api/test', { headers: new Headers() });
 
         const result = await validateRequest(request, schemas);
 
@@ -403,7 +416,7 @@ describe('validate-request middleware', () => {
   });
 
   describe('validationErrorResponse', () => {
-    it('should create error response from AppError', () => {
+    it('should create error response from AppError', async () => {
       const error = new AppError('Validation failed', 'VALIDATION_ERROR', 400, {
         field: 'email',
         issue: 'invalid format',
@@ -413,21 +426,21 @@ describe('validate-request middleware', () => {
       const data = response.json();
 
       expect(response.status).toBe(400);
-      expect(data).resolves.toEqual({
+      await expect(data).resolves.toEqual({
         error: 'Validation failed',
         code: 'VALIDATION_ERROR',
         details: { field: 'email', issue: 'invalid format' },
       });
     });
 
-    it('should handle non-AppError errors', () => {
+    it('should handle non-AppError errors', async () => {
       const error = new Error('Generic error');
 
       const response = validationErrorResponse(error);
       const data = response.json();
 
       expect(response.status).toBe(400);
-      expect(data).resolves.toEqual({
+      await expect(data).resolves.toEqual({
         error: 'Validation failed',
         code: 'VALIDATION_ERROR',
       });
@@ -435,7 +448,7 @@ describe('validate-request middleware', () => {
   });
 
   describe('commonSchemas', () => {
-    it('should validate UUID', () => {
+    it('should validate UUID', async () => {
       const validUuid = '550e8400-e29b-41d4-a716-446655440000';
       const invalidUuid = 'not-a-uuid';
 
@@ -443,7 +456,7 @@ describe('validate-request middleware', () => {
       expect(commonSchemas.uuid.safeParse(invalidUuid).success).toBe(false);
     });
 
-    it('should validate email', () => {
+    it('should validate email', async () => {
       expect(commonSchemas.email.safeParse('test@example.com').success).toBe(
         true
 
@@ -452,14 +465,14 @@ describe('validate-request middleware', () => {
 
     });
 
-    it('should validate URL', () => {
+    it('should validate URL', async () => {
       expect(commonSchemas.url.safeParse('https://example.com').success).toBe(
         true
 
       expect(commonSchemas.url.safeParse('not-a-url').success).toBe(false);
     });
 
-    it('should validate pagination', () => {
+    it('should validate pagination', async () => {
       const result = commonSchemas.pagination.safeParse({
         page: '2',
         limit: '20',
@@ -479,7 +492,7 @@ describe('validate-request middleware', () => {
 
     });
 
-    it('should validate date range', () => {
+    it('should validate date range', async () => {
       const validRange = {
         from: '2024-01-01T00:00:00Z',
         to: '2024-12-31T23:59:59Z',
@@ -492,7 +505,7 @@ describe('validate-request middleware', () => {
       ).toBe(false);
     });
 
-    it('should validate safe string', () => {
+    it('should validate safe string', async () => {
       const validStrings = [
         'Hello World!',
         'user@example.com',

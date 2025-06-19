@@ -1,16 +1,151 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { mockUseLanguage  } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    signInWithPassword: jest.fn(),
+    signUp: jest.fn(),
+    signOut: jest.fn(),
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+  },
+  from: jest.fn(() => ({
+    select: jest.fn().mockReturnThis(),
+    insert: jest.fn().mockReturnThis(),
+    update: jest.fn().mockReturnThis(),
+    delete: jest.fn().mockReturnThis(),
+    eq: jest.fn().mockReturnThis(),
+    single: jest.fn().mockResolvedValue({ data: null, error: null }),
+  })),
+  rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
+  storage: {
+    from: jest.fn(() => ({
+      upload: jest.fn().mockResolvedValue({ data: null, error: null }),
+      download: jest.fn().mockResolvedValue({ data: null, error: null }),
+      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
+  },
+};
+
+jest.mock('@/lib/auth/supabase-client', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+  supabase: mockSupabaseClient,
+}));
+
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/services/auth/auth-service';
 import { useAuthStore } from '@/lib/store/auth-store';
 
+import { // Mock i18n
+
+jest.mock('zustand', () => ({
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+jest.mock('@/components/auth/protected-route', () => ({
+jest.mock('@/lib/store/auth-store', () => ({
+jest.mock('@/lib/i18n/refactored-context', () => ({
+jest.mock('next/navigation');
+jest.mock('@/lib/supabase/client', () => ({
+jest.mock('@/lib/services/auth/auth-service');
+jest.mock('@/lib/utils/logger', () => ({
+
+// Mock ProtectedRoute component
+
+  __esModule: true,
+  default: ({ children }: { children: React.ReactNode }) => {
+    const mockUseAuthStore = require('@/lib/store/auth-store').useAuthStore;
+    const isAuthenticated = mockUseAuthStore((state: any) => state.isAuthenticated);
+
+    if (!isAuthenticated) {
+      return <div>Not authenticated</div>;
+    }
+
+    return <>{children}</>;
+  },
+}));
+
+  create: jest.fn((createState) => {
+    const api = (() => {
+      let state = createState(
+        (...args) => {
+          state = Object.assign({}, state, args[0]);
+          return state;
+        },
+        () => state,
+        api
+      );
+      return state;
+    })();
+    return Object.assign(() => api, api);
+  }),
+}));
+
+  useAuthStore: Object.assign(
+    () => ({
+      user: null,
+      isAuthenticated: false,
+      isLoading: false,
+      login: jest.fn(),
+      logout: jest.fn(),
+      checkAuth: jest.fn(),
+    }),
+    {
+      getState: () => ({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+      }),
+      setState: jest.fn(),
+      subscribe: jest.fn(),
+    }
+  ),
+}));
+
+// Mock i18n
+
+// Mock auth store
+
+  useAuthStore: jest.fn(() => ({
+    user: null,
+    session: null,
+    isAuthenticated: false,
+    isLoading: false,
+    signIn: jest.fn(),
+    signOut: jest.fn(),
+    updateUser: jest.fn(),
+  })),
+}));
+
+  useLanguage: mockUseLanguage,
+}));
+
+  useLanguage: () => mockUseLanguage(),
+}));
+
+describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
 
 // Mock dependencies
 
 // Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
+
   useLanguage: () => ({
     language: 'en',
     setLanguage: jest.fn(),
@@ -32,8 +167,6 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-jest.mock('next/navigation');
-jest.mock('@/lib/supabase/client', () => ({
   createClient: jest.fn(() => ({
     auth: {
       signInWithPassword: jest.fn(),
@@ -44,8 +177,14 @@ jest.mock('@/lib/supabase/client', () => ({
     },
   })),
 }));
-jest.mock('@/lib/services/auth/auth-service');
-jest.mock('@/lib/utils/logger');
+
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+    info: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
 
 // Simple sign in component for testing
 function SignInForm() {
@@ -57,7 +196,7 @@ function SignInForm() {
     e.preventDefault();
     try {
       await signIn(email, password);
-    } catch (error) {
+    } catch (_error) {
       // Error is handled in store
     }
   };
@@ -100,6 +239,20 @@ function Dashboard() {
 }
 
 describe('Authentication Flow Integration', () => {
+  beforeAll(() => {
+    jest.clearAllMocks();
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
+
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   const mockPush = jest.fn();
   const mockUser = {
     id: 'user-123',
@@ -403,7 +556,7 @@ describe('Authentication Flow Integration', () => {
       expect(screen.queryByText('Dashboard')).not.toBeInTheDocument();
     });
 
-    it('should allow access to protected routes when authenticated', () => {
+    it('should allow access to protected routes when authenticated', async () => {
       const { ProtectedRoute } = require('@/components/auth/protected-route');
 
       // Set authenticated state

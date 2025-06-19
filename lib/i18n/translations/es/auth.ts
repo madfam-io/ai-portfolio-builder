@@ -61,9 +61,11 @@ export default {
   passwordsDoNotMatch: 'Las contraseñas no coinciden',
   emailCannotBeChanged: 'El correo electrónico no se puede cambiar',
   passwordMismatch: 'Las contraseñas no coinciden',
-  passwordMismatchDescription: 'Por favor asegúrate de que ambas contraseñas sean iguales.',
+  passwordMismatchDescription:
+    'Por favor asegúrate de que ambas contraseñas sean iguales.',
   termsRequired: 'Aceptación de términos requerida',
-  termsRequiredDescription: 'Debes aceptar los términos y condiciones para continuar.',
+  termsRequiredDescription:
+    'Debes aceptar los términos y condiciones para continuar.',
 
   // Navigation
   goToSignIn: 'Ir a Iniciar Sesión',
@@ -109,7 +111,8 @@ export default {
 
   // Additional copy
   loginDescription: 'Ingresa tus credenciales para acceder a tu cuenta',
-  signUpDescription: 'Crea tu cuenta para empezar a construir portafolios increíbles',
+  signUpDescription:
+    'Crea tu cuenta para empezar a construir portafolios increíbles',
   createAccount: 'Crear Cuenta',
   acceptTerms: 'Acepto los',
   termsOfService: 'Términos de Servicio',

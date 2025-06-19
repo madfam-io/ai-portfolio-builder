@@ -1,9 +1,16 @@
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { HfInference } from '@huggingface/inference';
+import { logger } from '@/lib/utils/logger';
+
+import {
+
+jest.mock('@huggingface/inference');
+jest.mock('@/lib/utils/logger', () => ({
+
 /**
  * @jest-environment node
  */
 
-import { jest } from '@jest/globals';
-import {
   enhanceBio,
   optimizeProjectDescription,
   recommendTemplate,
@@ -13,17 +20,27 @@ import {
   AIModel,
   AI_MODELS,
 } from '@/lib/ai/huggingface-service';
-import { HfInference } from '@huggingface/inference';
-import { logger } from '@/lib/utils/logger';
 
 // Mock dependencies
-jest.mock('@huggingface/inference');
-jest.mock('@/lib/utils/logger');
+
+  logger: {
+    error: jest.fn().mockReturnValue(void 0),
+    warn: jest.fn().mockReturnValue(void 0),
+    info: jest.fn().mockReturnValue(void 0),
+    debug: jest.fn().mockReturnValue(void 0),
+  },
+}));
 
 const mockHfInference = jest.mocked(HfInference);
 const mockLogger = jest.mocked(logger);
 
 describe('HuggingFace AI Service', () => {
+  beforeEach(() => {
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+  });
+
   let mockHf: any;
 
   beforeEach(() => {
@@ -31,17 +48,17 @@ describe('HuggingFace AI Service', () => {
 
     // Setup HuggingFace mock
     mockHf = {
-      textGeneration: jest.fn(),
-      featureExtraction: jest.fn(),
-      textClassification: jest.fn(),
+      textGeneration: jest.fn().mockReturnValue(void 0),
+      featureExtraction: jest.fn().mockReturnValue(void 0),
+      textClassification: jest.fn().mockReturnValue(void 0),
     };
 
     mockHfInference.mockImplementation(() => mockHf);
 
     // Mock logger
-    mockLogger.info = jest.fn();
-    mockLogger.error = jest.fn();
-    mockLogger.warn = jest.fn();
+    mockLogger.info = jest.fn().mockReturnValue(void 0);
+    mockLogger.error = jest.fn().mockReturnValue(void 0);
+    mockLogger.warn = jest.fn().mockReturnValue(void 0);
   });
 
   describe('enhanceBio', () => {
@@ -553,7 +570,7 @@ describe('HuggingFace AI Service', () => {
   });
 
   describe('Performance', () => {
-    it('should timeout long-running requests', 20000, async () => {
+    it('should timeout long-running requests', async () => {
       jest.useFakeTimers();
 
       mockHf.textGeneration.mockImplementation(
