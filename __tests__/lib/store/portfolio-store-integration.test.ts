@@ -2,11 +2,10 @@
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { Portfolio } from '@/types/portfolio';
-
 
 // Mock localStorage
 const localStorageMock = {
@@ -67,7 +66,7 @@ describe('Portfolio Store Integration', () => {
     it('should create a new portfolio', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
+        json: () => ({ portfolio: mockPortfolio }),
       });
 
       const { result } = renderHook(() => usePortfolioStore());
@@ -87,6 +86,7 @@ describe('Portfolio Store Integration', () => {
           headers: { 'Content-Type': 'application/json' },
           body: expect.stringContaining('John Doe'),
         })
+      );
 
       expect(result.current.currentPortfolio).toEqual(mockPortfolio);
       expect(result.current.isDirty).toBe(false);
@@ -95,7 +95,7 @@ describe('Portfolio Store Integration', () => {
     it('should load an existing portfolio', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
+        json: () => ({ portfolio: mockPortfolio }),
       });
 
       const { result } = renderHook(() => usePortfolioStore());
@@ -106,12 +106,13 @@ describe('Portfolio Store Integration', () => {
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/portfolios/test-portfolio'
+      );
 
       expect(result.current.currentPortfolio).toEqual(mockPortfolio);
       expect(result.current.isLoading).toBe(false);
     });
 
-    it('should update portfolio data', async () => {
+    it('should update portfolio data', () => {
       const { result } = renderHook(() => usePortfolioStore());
 
       // Set initial portfolio
@@ -133,7 +134,7 @@ describe('Portfolio Store Integration', () => {
     it('should save portfolio to server', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({
+        json: () => ({
           portfolio: { ...mockPortfolio, name: 'Updated Name' },
         }),
       });
@@ -156,6 +157,7 @@ describe('Portfolio Store Integration', () => {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
         })
+      );
 
       expect(result.current.isDirty).toBe(false);
       expect(result.current.lastSaved).toBeInstanceOf(Date);
@@ -168,7 +170,7 @@ describe('Portfolio Store Integration', () => {
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
+        json: () => ({ portfolio: mockPortfolio }),
       });
 
       const { result } = renderHook(() => usePortfolioStore());
@@ -193,6 +195,7 @@ describe('Portfolio Store Integration', () => {
         expect.objectContaining({
           method: 'PUT',
         })
+      );
 
       jest.useRealTimers();
     });
@@ -272,6 +275,7 @@ describe('Portfolio Store Integration', () => {
 
       expect(result.current.currentPortfolio?.projects[0].title).toBe(
         'Updated Project Title'
+      );
 
       expect(result.current.isDirty).toBe(true);
     });
@@ -334,12 +338,15 @@ describe('Portfolio Store Integration', () => {
 
       expect(result.current.currentPortfolio?.projects[0].title).toBe(
         'Project 3'
+      );
 
       expect(result.current.currentPortfolio?.projects[1].title).toBe(
         'Project 1'
+      );
 
       expect(result.current.currentPortfolio?.projects[2].title).toBe(
         'Project 2'
+      );
 
       expect(result.current.isDirty).toBe(true);
     });
@@ -378,6 +385,7 @@ describe('Portfolio Store Integration', () => {
       expect(result.current.currentPortfolio?.name).toBe(originalName);
       expect(result.current.currentPortfolio?.projects).toEqual(
         originalProjects
+      );
 
       expect(result.current.currentPortfolio?.template).toBe('business');
     });
@@ -387,6 +395,7 @@ describe('Portfolio Store Integration', () => {
     it('should handle API errors when loading portfolio', async () => {
       (global.fetch as jest.Mock).mockRejectedValue(
         new Error('Failed to load')
+      );
 
       const { result } = renderHook(() => usePortfolioStore());
 
@@ -430,7 +439,7 @@ describe('Portfolio Store Integration', () => {
       // Successful operation should clear error
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
+        json: () => ({ portfolio: mockPortfolio }),
       });
 
       await act(async () => {
@@ -453,7 +462,7 @@ describe('Portfolio Store Integration', () => {
       expect(localStorageMock.setItem).toHaveBeenCalledWith(
         expect.stringContaining('portfolio'),
         expect.stringContaining('Persisted Name')
-
+      );
     });
 
     it('should restore portfolio from localStorage on initialization', () => {

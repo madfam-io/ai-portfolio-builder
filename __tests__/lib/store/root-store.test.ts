@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { act } from '@testing-library/react';
 import {
   useRootStore,
@@ -17,7 +17,6 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useUIStore } from '@/lib/store/ui-store';
 import { useAIStore } from '@/lib/store/ai-store';
 import { logger } from '@/lib/utils/logger';
-
 
 // Mock dependencies
 jest.mock('@/lib/utils/logger');
@@ -78,9 +77,11 @@ describe('Root Store', () => {
 
     (usePortfolioStore.getState as jest.Mock).mockReturnValue(
       mockPortfolioState
+    );
 
     (usePortfolioStore.subscribe as jest.Mock).mockImplementation(() =>
       jest.fn()
+    );
 
     (useUIStore.getState as jest.Mock).mockReturnValue(mockUIState);
     (useUIStore.subscribe as jest.Mock).mockImplementation(() => jest.fn());
@@ -200,7 +201,7 @@ describe('Root Store', () => {
       const rootState = useRootStore.getState();
       expect(rootState.portfolio.portfolios).toEqual(
         newPortfolioState.portfolios
-
+      );
     });
 
     it('should update root store when UI store changes', () => {

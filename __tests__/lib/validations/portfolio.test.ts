@@ -1,4 +1,4 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 import {
   portfolioSchema,
   createPortfolioSchema,
@@ -41,9 +41,11 @@ describe('Portfolio Validation Schemas', () => {
         // Check that both name and title are in the errors
         const hasNameError = result.error.issues.some(
           issue => issue.path.includes('name') && issue.code === 'invalid_type'
+        );
 
         const hasTitleError = result.error.issues.some(
           issue => issue.path.includes('title') && issue.code === 'invalid_type'
+        );
 
         expect(hasNameError).toBe(true);
         expect(hasTitleError).toBe(true);
@@ -113,7 +115,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -141,7 +143,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -170,7 +172,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -199,7 +201,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -229,7 +231,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -257,7 +259,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -284,7 +286,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -312,7 +314,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -335,7 +337,7 @@ describe('Portfolio Validation Schemas', () => {
         updatedAt: new Date(),
       };
 
-      const result = portfolioSchema.safeParse(_portfolio);
+      const result = portfolioSchema.safeParse(portfolio);
       expect(result.success).toBe(true);
     });
 
@@ -357,6 +359,7 @@ describe('Portfolio Validation Schemas', () => {
       validSubdomains.forEach(subdomain => {
         const result = portfolioSchema.safeParse(
           createPortfolioWithSubdomain(subdomain)
+        );
 
         expect(result.success).toBe(true);
       });
@@ -374,7 +377,7 @@ describe('Portfolio Validation Schemas', () => {
       invalidSubdomains.forEach(subdomain => {
         const result = portfolioSchema.safeParse(
           createPortfolioWithSubdomain(subdomain)
-
+        );
         expect(result.success).toBe(false);
       });
     });
@@ -748,7 +751,7 @@ describe('Type Exports', () => {
     const updateDTO: TestUpdateDTO = {} as any;
     const query: TestQuery = {} as any;
 
-    expect(_portfolio).toBeDefined();
+    expect(portfolio).toBeDefined();
     expect(createDTO).toBeDefined();
     expect(updateDTO).toBeDefined();
     expect(query).toBeDefined();
@@ -765,7 +768,6 @@ import type {
 
 // Import necessary schemas
 import { z } from 'zod';
-
 
 // Additional schema definitions for isolated testing
 const experienceSchema = z.object({
