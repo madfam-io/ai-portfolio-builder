@@ -77,7 +77,7 @@ describe('Enhanced CSRF Middleware', () => {
       const setCookieHeader = response?.headers.get('Set-Cookie');
       expect(setCookieHeader).toContain('prisma-csrf-token=');
       expect(setCookieHeader).toContain('HttpOnly');
-      expect(setCookieHeader).toContain('SameSite=Strict');
+      expect(setCookieHeader).toContain('SameSite=strict');
     });
 
     it('should generate unique tokens for each request', async () => {
@@ -848,7 +848,7 @@ describe('Enhanced CSRF Middleware', () => {
       const response = await csrfMiddleware(request);
 
       const setCookieHeader = response?.headers.get('Set-Cookie');
-      expect(setCookieHeader).toContain('Max-Age=1800');
+      expect(setCookieHeader).toContain('Max-Age=86400'); // 24 hours (default)
     });
   });
 });

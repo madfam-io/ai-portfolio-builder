@@ -2,6 +2,18 @@ import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+
+// Mock class-variance-authority
+jest.mock('class-variance-authority', () => ({
+  cva: () => () => '',
+  type: {},
+}));
+
+// Mock lib utils
+jest.mock('@/lib/utils', () => ({
+  cn: (...args: any[]) => args.filter(Boolean).join(' '),
+}));
+
 import { BasicInfoStep } from '@/app/editor/new/components/BasicInfoStep';
 
 // Mock lucide-react icons
@@ -11,21 +23,43 @@ jest.mock('lucide-react', () => ({
 
 // Mock shadcn/ui components to avoid import issues
 jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }: any) => (
-    <button {...props}>{children}</button>
-  ),
+  Button: React.forwardRef<HTMLButtonElement, any>(function Button(
+    { children, ...props },
+    ref
+  ) {
+    return (
+      <button ref={ref} {...props}>
+        {children}
+      </button>
+    );
+  }),
 }));
 
 jest.mock('@/components/ui/input', () => ({
-  Input: (props: any) => <input {...props} />,
+  Input: React.forwardRef<HTMLInputElement, any>(function Input(props, ref) {
+    return <input ref={ref} {...props} />;
+  }),
 }));
 
 jest.mock('@/components/ui/label', () => ({
-  Label: ({ children, ...props }: any) => <label {...props}>{children}</label>,
+  Label: React.forwardRef<HTMLLabelElement, any>(function Label(
+    { children, ...props },
+    ref
+  ) {
+    return (
+      <label ref={ref} {...props}>
+        {children}
+      </label>
+    );
+  }),
 }));
 
 jest.mock('@/components/ui/textarea', () => ({
-  Textarea: (props: any) => <textarea {...props} />,
+  Textarea: React.forwardRef<HTMLTextAreaElement, any>(
+    function Textarea(props, ref) {
+      return <textarea ref={ref} {...props} />;
+    }
+  ),
 }));
 
 describe('BasicInfoStep', () => {

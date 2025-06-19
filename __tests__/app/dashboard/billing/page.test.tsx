@@ -14,42 +14,51 @@ import { useToast } from '@/hooks/use-toast';
 
 // Mock dependencies
 
-// Mock useLanguage hook
-jest.mock('@/lib/i18n/refactored-context', () => ({
-  useLanguage: () => ({
-    language: 'en',
-    setLanguage: jest.fn(),
-    t: {
-      welcomeMessage: 'Welcome',
-      heroTitle: 'Create Your Portfolio',
-      getStarted: 'Get Started',
-      save: 'Save',
-      cancel: 'Cancel',
-      loading: 'Loading...',
-      error: 'Error',
-      success: 'Success',
-      enhanceWithAI: 'Enhance with AI',
-      publish: 'Publish',
-      preview: 'Preview',
-      // Add more translations as needed
-    },
-  }),
-  LanguageProvider: ({ children }: { children: React.ReactNode }) => (
-    <>{children}</>
-  ),
-}));
+const mockPush = jest.fn();
+const mockReplace = jest.fn();
+const mockBack = jest.fn();
+const mockForward = jest.fn();
+const mockRefresh = jest.fn();
+const mockPrefetch = jest.fn();
 
 jest.mock('next/navigation', () => ({
-  useRouter: jest.fn(),
+  useRouter: jest.fn(() => ({
+    push: mockPush,
+    replace: mockReplace,
+    back: mockBack,
+    forward: mockForward,
+    refresh: mockRefresh,
+    prefetch: mockPrefetch,
+  })),
 }));
 jest.mock('@/lib/hooks/use-subscription', () => ({
-  useSubscription: jest.fn(),
+  useSubscription: jest.fn(() => ({
+    limits: null,
+    loading: false,
+    error: null,
+    refresh: jest.fn(),
+    isPaidTier: false,
+    isFreeTier: true,
+    planName: 'Free',
+    portfolioUsagePercentage: 0,
+    aiUsagePercentage: 0,
+  })),
 }));
 jest.mock('@/lib/i18n/refactored-context', () => ({
-  useLanguage: jest.fn(),
+  useLanguage: jest.fn(() => ({
+    t: {
+      success: 'Success',
+      error: 'Error',
+      loading: 'Loading...',
+      cancel: 'Cancel',
+      save: 'Save',
+    },
+  })),
 }));
 jest.mock('@/hooks/use-toast', () => ({
-  useToast: jest.fn(),
+  useToast: jest.fn(() => ({
+    toast: jest.fn(),
+  })),
 }));
 jest.mock('@/components/auth/protected-route', () => {
   return function MockedProtectedRoute({
@@ -80,7 +89,7 @@ jest.mock('@/components/dashboard/ai-credit-packs', () => {
   };
 });
 
-const mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
+const _mockUseRouter = useRouter as jest.MockedFunction<typeof useRouter>;
 const mockUseSubscription = useSubscription as jest.MockedFunction<
   typeof useSubscription
 >;
@@ -92,20 +101,10 @@ global.fetch = jest.fn();
 const mockFetch = fetch as jest.MockedFunction<typeof fetch>;
 
 describe('BillingPage', () => {
-  const mockPush = jest.fn();
   const mockToast = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    mockUseRouter.mockReturnValue({
-      push: mockPush,
-      replace: jest.fn(),
-      back: jest.fn(),
-      forward: jest.fn(),
-      refresh: jest.fn(),
-      prefetch: jest.fn(),
-    } as any);
 
     mockUseLanguage.mockReturnValue({
       t: {
