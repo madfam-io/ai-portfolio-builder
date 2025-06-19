@@ -47,6 +47,10 @@ export default {
   resetEmailSent: "We've sent a password reset link to your email.",
   checkInboxReset:
     'Please check your inbox and click the link to reset your password.',
+  loginSuccess: 'Login successful!',
+  signUpSuccess: 'Account created successfully!',
+  checkEmail: 'Please check your email to confirm your account.',
+  redirecting: 'Redirecting...',
 
   // Validation
   passwordMinLength:
@@ -54,6 +58,10 @@ export default {
   passwordMinLength8: 'Password must be at least 8 characters',
   passwordsDoNotMatch: 'Passwords do not match',
   emailCannotBeChanged: 'Email cannot be changed',
+  passwordMismatch: 'Passwords do not match',
+  passwordMismatchDescription: 'Please make sure both passwords are the same.',
+  termsRequired: 'Terms acceptance required',
+  termsRequiredDescription: 'You must accept the terms and conditions to continue.',
 
   // Navigation
   goToSignIn: 'Go to Sign In',
@@ -85,6 +93,27 @@ export default {
   authorizationDenied: 'Authorization denied',
   authorizationCancelled: 'Authorization cancelled',
   oauthError: 'OAuth error',
+
+  // Error messages
+  loginError: 'Login failed',
+  signUpError: 'Sign up failed',
+  genericError: 'An error occurred. Please try again.',
+
+  // Placeholders
+  emailPlaceholder: 'you@example.com',
+  passwordPlaceholder: 'Enter your password',
+  fullNamePlaceholder: 'John Doe',
+  confirmPasswordPlaceholder: 'Confirm your password',
+
+  // Additional copy
+  loginDescription: 'Enter your credentials to access your account',
+  signUpDescription: 'Create your account to start building amazing portfolios',
+  createAccount: 'Create Account',
+  acceptTerms: 'I accept the',
+  termsOfService: 'Terms of Service',
+  and: 'and',
+  privacyPolicy: 'Privacy Policy',
+  alreadyHaveAccount: 'Already have an account?',
 
   // Account states
   accountLocked: 'Account locked',

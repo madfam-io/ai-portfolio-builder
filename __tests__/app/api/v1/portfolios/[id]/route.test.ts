@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, PUT, DELETE } from '@/app/api/v1/portfolios/[id]/route';
 import { createClient } from '@/lib/supabase/server';
@@ -7,6 +7,9 @@ import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route
 
 
 // Mock dependencies
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(),
+}));
 
 describe('/api/v1/portfolios/[id]', () => {
   setupCommonMocks();
@@ -33,7 +36,7 @@ describe('/api/v1/portfolios/[id]', () => {
       delete: jest.fn().mockReturnThis()
     };
 
-    (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
+    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
   });
 
   describe('GET /api/v1/portfolios/[id]', () => {
@@ -162,7 +165,7 @@ describe('/api/v1/portfolios/[id]', () => {
         error: null,
       });
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/portfolios/portfolio-123',
         {
           method: 'PUT',
@@ -175,6 +178,7 @@ describe('/api/v1/portfolios/[id]', () => {
             bio: 'Updated bio',
           }),
         }
+      );
 
       (request as any).user = mockUser;
 

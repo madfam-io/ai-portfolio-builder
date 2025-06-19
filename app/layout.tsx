@@ -62,6 +62,10 @@ export default function RootLayout({
     >
       <head>
         {/* Theme initialization moved to ThemeScript component below */}
+        {/* Stripe */}
+        {process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY && (
+          <script async src="https://js.stripe.com/v3/"></script>
+        )}
       </head>
       <body
         className={`${inter.className} font-sans dark:bg-gray-900 bg-white`}

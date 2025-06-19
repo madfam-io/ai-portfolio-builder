@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/portfolios/check-subdomain/route';
 import { withAuth } from '@/lib/api/middleware/auth';
@@ -9,7 +9,9 @@ import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route
 
 // Mock dependencies
 jest.mock('@/lib/api/middleware/auth');
-jest.mock('@/lib/supabase/server');
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(),
+}));
 jest.mock('@/lib/utils/logger');
 
 describe('POST /api/v1/portfolios/check-subdomain', () => {
@@ -33,7 +35,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     mockSupabaseClient = {
       from: jest.fn()
     };
-    (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
+    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
     // Mock logger
     (logger.error as jest.Mock).mockImplementation(() => {});
@@ -50,7 +52,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const _request = new NextRequest(
+    const request = new NextRequest(
       'http://localhost:3000/api/v1/portfolios/check-subdomain',
       {
         method: 'POST',
@@ -58,6 +60,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           subdomain: 'john-doe-portfolio',
         }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -72,7 +75,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     expect(mockSelect.eq).toHaveBeenCalledWith(
       'subdomain',
       'john-doe-portfolio'
-
+    );
   });
 
   it('should return unavailable for taken subdomain', async () => {
@@ -86,7 +89,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
 
-    const _request = new NextRequest(
+    const request = new NextRequest(
       'http://localhost:3000/api/v1/portfolios/check-subdomain',
       {
         method: 'POST',
@@ -94,6 +97,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           subdomain: 'john-doe',
         }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();

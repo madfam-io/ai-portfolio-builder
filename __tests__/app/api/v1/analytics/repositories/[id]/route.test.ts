@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/v1/analytics/repositories/[id]/route';
 import { AnalyticsService } from '@/lib/services/analyticsService';
@@ -9,7 +9,9 @@ import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route
 
 // Mock dependencies
 jest.mock('@/lib/services/analyticsService');
-
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(),
+}));
 jest.mock('@/lib/utils/logger');
 
 describe('/api/v1/analytics/repositories/[id]', () => {
@@ -53,7 +55,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    (createClient as jest.Mock).mockResolvedValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
     (logger.error as jest.Mock).mockImplementation(() => {});
   });
 
@@ -70,9 +72,11 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -89,7 +93,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
     });
 
     it('should return 503 when database is unavailable', async () => {
-      (createClient as jest.Mock).mockResolvedValue(null);
+      (createClient as jest.Mock).mockReturnValue(null);
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123'
@@ -132,9 +136,11 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -158,9 +164,11 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -183,9 +191,11 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      );
 
       const response = await GET(request, { params });
       const data = await response.json();

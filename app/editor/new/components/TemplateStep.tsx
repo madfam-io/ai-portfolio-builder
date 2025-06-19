@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Sparkles, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -9,8 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateType } from '@/types/portfolio';
 import { cn } from '@/lib/utils';
+import { TemplateSelectionWizard } from '@/components/templates/TemplateSelectionWizard';
+import { TemplateShowcase } from '@/components/templates/TemplateShowcase';
 
 interface TemplateStepProps {
   selectedTemplate: TemplateType;
@@ -78,8 +82,31 @@ export function TemplateStep({
   onBack,
   t,
 }: TemplateStepProps) {
+  const [showWizard, setShowWizard] = useState(false);
+  const [selectionMode, setSelectionMode] = useState<'wizard' | 'browse'>('wizard');
+
+  const handleTemplateSelect = (template: TemplateType) => {
+    onSelectTemplate(template);
+    setShowWizard(false);
+  };
+
+  const handleWizardComplete = (template: TemplateType) => {
+    onSelectTemplate(template);
+    setShowWizard(false);
+    // Auto-proceed to next step after wizard selection
+    setTimeout(() => onNext(), 500);
+  };
+
   return (
     <div className="space-y-6">
+      {showWizard && selectionMode === 'wizard' && (
+        <TemplateSelectionWizard
+          onSelect={handleWizardComplete}
+          onCancel={() => setShowWizard(false)}
+          currentTemplate={selectedTemplate}
+        />
+      )}
+
       <div>
         <h2 className="text-2xl font-bold mb-2">
           {t.chooseTemplate || 'Choose your template'}
@@ -90,46 +117,71 @@ export function TemplateStep({
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2">
-        {templates.map(template => (
-          <Card
-            key={template.id}
-            className={cn(
-              'cursor-pointer transition-all hover:shadow-md',
-              selectedTemplate === template.id && 'ring-2 ring-primary'
-            )}
-            onClick={() => onSelectTemplate(template.id)}
-          >
-            <CardHeader>
-              <div className="flex items-center gap-3">
-                <span className="text-3xl">{template.icon}</span>
-                <div>
-                  <CardTitle className="text-lg">{template.name}</CardTitle>
-                  <CardDescription className="text-sm">
-                    {template.description}
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm text-muted-foreground space-y-1">
-                {template.features.map((feature, index) => (
-                  <li key={index} className="flex items-center gap-2">
-                    <span className="text-primary">•</span>
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+      {/* Selection Mode Tabs */}
+      <Tabs value={selectionMode} onValueChange={(v) => setSelectionMode(v as any)}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="wizard" className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4" />
+            {t.wizardMode || 'Guided Selection'}
+          </TabsTrigger>
+          <TabsTrigger value="browse" className="flex items-center gap-2">
+            <Grid3X3 className="w-4 h-4" />
+            {t.browseMode || 'Browse All'}
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="wizard" className="space-y-4">
+          <Card className="border-dashed">
+            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+              <Sparkles className="w-12 h-12 text-primary mb-4" />
+              <h3 className="text-lg font-semibold mb-2">
+                {t.wizardTitle || 'Let us help you choose'}
+              </h3>
+              <p className="text-muted-foreground mb-6 max-w-md">
+                {t.wizardDescription || 
+                  'Answer a few questions and we\'ll recommend the perfect template for your needs'}
+              </p>
+              <Button onClick={() => setShowWizard(true)} size="lg">
+                <Sparkles className="w-4 h-4 mr-2" />
+                {t.startWizard || 'Start Template Wizard'}
+              </Button>
             </CardContent>
           </Card>
-        ))}
-      </div>
+
+          {/* Show selected template if chosen */}
+          {selectedTemplate && (
+            <Card className="border-primary">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <span>{t.selectedTemplate || 'Selected Template'}:</span>
+                  <span className="capitalize">{selectedTemplate}</span>
+                </CardTitle>
+              </CardHeader>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="browse">
+          <TemplateShowcase
+            onSelect={handleTemplateSelect}
+            currentTemplate={selectedTemplate}
+            showWizard={() => {
+              setSelectionMode('wizard');
+              setShowWizard(true);
+            }}
+          />
+        </TabsContent>
+      </Tabs>
 
       <div className="flex gap-3">
         <Button variant="outline" onClick={onBack} className="flex-1">
           {t.back || 'Back'}
         </Button>
-        <Button onClick={onNext} className="flex-1">
+        <Button 
+          onClick={onNext} 
+          className="flex-1"
+          disabled={!selectedTemplate}
+        >
           {t.continueButton || 'Continue'}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>

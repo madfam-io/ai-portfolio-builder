@@ -17,7 +17,7 @@ import {
 import { cn } from '@/lib/utils';
 
 import { EditorLayout } from '@/components/editor/EditorLayout';
-import { EditorSidebar } from '@/components/editor/EditorSidebar';
+import { EditorSidebarEnhanced } from '@/components/editor/EditorSidebarEnhanced';
 import { EditorPreview } from '@/components/editor/EditorPreview';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -36,6 +36,9 @@ import {
 } from '@/lib/analytics/posthog/events';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { GuidedTour } from '@/components/onboarding/GuidedTour';
+import { editorTourSteps, shouldShowTour, markTourCompleted } from '@/components/onboarding/tours/editor-tour';
+import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
 
 /**
  * Portfolio Editor Content Component
@@ -48,12 +51,21 @@ export function EditorContent() {
   const { toast } = useToast();
   const [showPreview, setShowPreview] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [activeSection, setActiveSection] = useState<SectionType>('hero');
   const [previewMode, setPreviewMode] = useState<
     'desktop' | 'tablet' | 'mobile'
   >('desktop');
   const [isAIProcessing, setIsAIProcessing] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Check if tour should be shown
+  useEffect(() => {
+    if (shouldShowTour('editor')) {
+      // Delay tour start to ensure DOM is ready
+      setTimeout(() => setShowTour(true), 1000);
+    }
+  }, []);
   const [performanceMonitor] = useState(() => new PerformanceMonitor());
   const [mobileOptimizer] = useState(() => createMobileOptimizer());
 
@@ -276,6 +288,7 @@ export function EditorContent() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-3">
               <h1 className="text-lg font-semibold">{currentPortfolio.name}</h1>
+              <CompletionBadge portfolio={currentPortfolio} className="text-xs" />
               {currentPortfolio.hasUnsavedChanges && (
                 <Badge variant="secondary" className="text-xs">
                   {t.unsavedChanges || 'Unsaved changes'}
@@ -317,6 +330,7 @@ export function EditorContent() {
               variant="ghost"
               onClick={() => setShowPreview(!showPreview)}
               title={`${t.togglePreview || 'Toggle Preview'} (Cmd/Ctrl+P)`}
+              data-tour="preview-toggle"
             >
               {showPreview ? (
                 <>
@@ -372,6 +386,7 @@ export function EditorContent() {
               onClick={handleSave}
               disabled={isSaving || !currentPortfolio.hasUnsavedChanges}
               title={`${t.save || 'Save'} (Cmd/Ctrl+S)`}
+              data-tour="save-button"
             >
               <Save className="h-4 w-4 mr-2" />
               {isSaving ? t.saving || 'Saving...' : t.save || 'Save'}
@@ -384,6 +399,7 @@ export function EditorContent() {
               onClick={handleAIEnhancement}
               disabled={isAIProcessing}
               className="text-purple-600 border-purple-200 hover:bg-purple-50"
+              data-tour="ai-enhance"
             >
               <Sparkles className="h-4 w-4 mr-2" />
               {isAIProcessing
@@ -391,7 +407,7 @@ export function EditorContent() {
                 : t.aiEnhance || 'AI Enhance'}
             </Button>
 
-            <Button size="sm" onClick={handlePublish}>
+            <Button size="sm" onClick={handlePublish} data-tour="publish-button">
               {t.publish || 'Publish'}
             </Button>
           </div>
@@ -401,7 +417,8 @@ export function EditorContent() {
       {/* Main Editor Area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <EditorSidebar
+        <div className="editor-sidebar">
+          <EditorSidebarEnhanced
           portfolio={currentPortfolio}
           activeSection={activeSection}
           onSectionChange={setActiveSection}
@@ -448,7 +465,8 @@ export function EditorContent() {
               });
             }
           }}
-        />
+          />
+        </div>
 
         {/* Preview Area */}
         <div
@@ -464,6 +482,20 @@ export function EditorContent() {
           />
         </div>
       </div>
+
+      {/* Guided Tour */}
+      <GuidedTour
+        steps={editorTourSteps}
+        startTour={showTour}
+        onComplete={() => {
+          setShowTour(false);
+          markTourCompleted('editor');
+        }}
+        onSkip={() => {
+          setShowTour(false);
+          markTourCompleted('editor');
+        }}
+      />
     </EditorLayout>
   );
 }

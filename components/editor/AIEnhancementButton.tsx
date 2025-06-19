@@ -9,6 +9,8 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { showToast } from '@/lib/utils/toast';
 import { getErrorMessage } from '@/types/errors';
+import { useSubscription } from '@/lib/hooks/use-subscription';
+import { useUpgradePrompts } from '@/lib/hooks/use-upgrade-prompts';
 
 interface ProjectContext {
   title?: string;
@@ -124,9 +126,20 @@ export function AIEnhancementButton({
   const { t } = useLanguage();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [lastEnhanced, setLastEnhanced] = useState<string | null>(null);
+  const { canUseAI, isUpgradeRequired } = useSubscription();
+  const { checkAndShowPrompt } = useUpgradePrompts();
 
   const handleEnhance = async (): Promise<void> => {
     if (!content.trim() || isEnhancing || disabled) return;
+
+    // Check AI usage limits
+    if (!canUseAI) {
+      const shown = checkAndShowPrompt('ai_limit');
+      if (!shown) {
+        showToast.error(t.aiLimitReached || 'AI enhancement limit reached. Please upgrade your plan.');
+      }
+      return;
+    }
 
     setIsEnhancing(true);
 

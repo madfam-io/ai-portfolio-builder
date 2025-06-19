@@ -161,6 +161,37 @@ export const useAuthStore = create<AuthState & AuthActions>()(
             }
           },
 
+          signInWithOAuth: async (provider) => {
+            set(state => {
+              state.isLoading = true;
+              state.error = null;
+            });
+
+            try {
+              const { data, error } = await authService.signInWithOAuth(provider);
+
+              if (error) {
+                throw new Error(error.message);
+              }
+
+              if (!data?.url) {
+                throw new Error('OAuth sign in failed - no redirect URL');
+              }
+
+              // Redirect to OAuth provider
+              window.location.href = data.url;
+            } catch (error: unknown) {
+              const errorMessage =
+                error instanceof Error ? error.message : 'OAuth sign in failed';
+              set(state => {
+                state.error = errorMessage;
+                state.isLoading = false;
+              });
+              logger.error('OAuth sign in failed', { error: errorMessage });
+              throw error;
+            }
+          },
+
           resetAuth: () => set(() => initialState),
 
           // Initialize auth state from session

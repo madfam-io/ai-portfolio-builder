@@ -49,6 +49,10 @@ export default {
     'Hemos enviado un enlace para restablecer tu contraseña a tu correo electrónico.',
   checkInboxReset:
     'Por favor revisa tu bandeja de entrada y haz clic en el enlace para restablecer tu contraseña.',
+  loginSuccess: '¡Inicio de sesión exitoso!',
+  signUpSuccess: '¡Cuenta creada exitosamente!',
+  checkEmail: 'Por favor revisa tu correo para confirmar tu cuenta.',
+  redirecting: 'Redirigiendo...',
 
   // Validation
   passwordMinLength:
@@ -56,6 +60,10 @@ export default {
   passwordMinLength8: 'La contraseña debe tener al menos 8 caracteres',
   passwordsDoNotMatch: 'Las contraseñas no coinciden',
   emailCannotBeChanged: 'El correo electrónico no se puede cambiar',
+  passwordMismatch: 'Las contraseñas no coinciden',
+  passwordMismatchDescription: 'Por favor asegúrate de que ambas contraseñas sean iguales.',
+  termsRequired: 'Aceptación de términos requerida',
+  termsRequiredDescription: 'Debes aceptar los términos y condiciones para continuar.',
 
   // Navigation
   goToSignIn: 'Ir a Iniciar Sesión',
@@ -87,6 +95,27 @@ export default {
   authorizationDenied: 'Autorización denegada',
   authorizationCancelled: 'Autorización cancelada',
   oauthError: 'Error de OAuth',
+
+  // Error messages
+  loginError: 'Error al iniciar sesión',
+  signUpError: 'Error al crear cuenta',
+  genericError: 'Ocurrió un error. Por favor intenta nuevamente.',
+
+  // Placeholders
+  emailPlaceholder: 'tu@ejemplo.com',
+  passwordPlaceholder: 'Ingresa tu contraseña',
+  fullNamePlaceholder: 'Juan Pérez',
+  confirmPasswordPlaceholder: 'Confirma tu contraseña',
+
+  // Additional copy
+  loginDescription: 'Ingresa tus credenciales para acceder a tu cuenta',
+  signUpDescription: 'Crea tu cuenta para empezar a construir portafolios increíbles',
+  createAccount: 'Crear Cuenta',
+  acceptTerms: 'Acepto los',
+  termsOfService: 'Términos de Servicio',
+  and: 'y',
+  privacyPolicy: 'Política de Privacidad',
+  alreadyHaveAccount: '¿Ya tienes una cuenta?',
 
   // Account states
   accountLocked: 'Cuenta bloqueada',

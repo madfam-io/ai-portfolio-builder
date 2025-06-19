@@ -1,6 +1,6 @@
 'use client';
 
-import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar } from 'lucide-react';
+import { Edit, Eye, Globe, Loader, Plus, Trash, Calendar, BarChart3 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { UpgradeBanner } from '@/components/billing/upgrade-banner';
 import { UpgradeModal } from '@/components/billing/upgrade-modal';
 import { UsageStats } from '@/components/dashboard/usage-stats';
+import { SuccessMetrics } from '@/components/dashboard/SuccessMetrics';
 import {
   Card,
   CardContent,
@@ -20,6 +21,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -38,6 +40,7 @@ import { useSubscription } from '@/lib/hooks/use-subscription';
 import { useUpgradePrompts } from '@/lib/hooks/use-upgrade-prompts';
 import { logger } from '@/lib/utils/logger';
 import { Portfolio } from '@/types/portfolio';
+import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
 
 // Helper function to load portfolios with error handling
 const usePortfolioLoader = (
@@ -312,17 +315,28 @@ function DashboardContent(): React.ReactElement {
         {/* Upgrade Banners */}
         {renderUpgradeBanners()}
 
-        {/* Usage Stats */}
-        <div className="mb-8">
-          <UsageStats />
-        </div>
+        {/* Dashboard Tabs */}
+        <Tabs defaultValue="portfolios" className="space-y-6">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="portfolios">{t.portfolios || 'Portfolios'}</TabsTrigger>
+            <TabsTrigger value="analytics">
+              <BarChart3 className="w-4 h-4 mr-2" />
+              {t.analytics || 'Analytics'}
+            </TabsTrigger>
+          </TabsList>
 
-        {/* Portfolio Stats */}
-        {renderPortfolioStats()}
+          <TabsContent value="portfolios" className="space-y-6">
+            {/* Usage Stats */}
+            <div className="mb-8">
+              <UsageStats />
+            </div>
 
-        {/* Portfolio Grid */}
-        {portfolios.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/* Portfolio Stats */}
+            {renderPortfolioStats()}
+
+            {/* Portfolio Grid */}
+            {portfolios.length > 0 ? (
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {portfolios.map(portfolio => (
               <Card
                 key={portfolio.id}
@@ -330,12 +344,17 @@ function DashboardContent(): React.ReactElement {
               >
                 <CardHeader>
                   <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg line-clamp-1">
-                      {portfolio.name}
-                    </CardTitle>
-                    <Badge variant={getStatusBadge(portfolio.status)}>
-                      {portfolio.status}
-                    </Badge>
+                    <div className="flex-1">
+                      <CardTitle className="text-lg line-clamp-1">
+                        {portfolio.name}
+                      </CardTitle>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant={getStatusBadge(portfolio.status)}>
+                          {portfolio.status}
+                        </Badge>
+                        <CompletionBadge portfolio={portfolio} />
+                      </div>
+                    </div>
                   </div>
                   <CardDescription className="line-clamp-2">
                     {portfolio.title ||
@@ -453,6 +472,12 @@ function DashboardContent(): React.ReactElement {
             </CardContent>
           </Card>
         )}
+          </TabsContent>
+
+          <TabsContent value="analytics" className="space-y-6">
+            <SuccessMetrics />
+          </TabsContent>
+        </Tabs>
 
         {/* Upgrade Modal */}
         {showModal && modalReason && (

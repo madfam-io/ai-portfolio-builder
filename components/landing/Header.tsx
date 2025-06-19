@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
 import { useApp } from '@/lib/contexts/AppContext';
-import { useAuth } from '@/lib/contexts/AuthContext';
+import { useAuthStore } from '@/lib/store/auth-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 
@@ -21,7 +21,7 @@ export default function Header(): React.ReactElement {
     isMobileMenuOpen,
     setMobileMenuOpen,
   } = useApp();
-  const { user, loading, signOut } = useAuth();
+  const { user, isLoading: loading, signOut } = useAuthStore();
   const pathname = usePathname();
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
@@ -238,7 +238,7 @@ export default function Header(): React.ReactElement {
                 >
                   <User className="text-lg" />
                   <span className="text-sm font-medium">
-                    {user.name || user.email?.split('@')[0] || 'User'}
+                    {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
                   </span>
                 </button>
 
@@ -289,7 +289,7 @@ export default function Header(): React.ReactElement {
             ) : (
               <div className="flex items-center space-x-4">
                 <Link
-                  href="/auth/signin"
+                  href="/auth/login"
                   className="text-gray-600 dark:text-gray-300 hover:text-purple-600 transition"
                 >
                   {t.signIn}
@@ -477,7 +477,7 @@ export default function Header(): React.ReactElement {
             ) : user ? (
               <div className="space-y-3">
                 <div className="text-gray-900 dark:text-white font-medium border-t pt-3">
-                  {t.hello}, {user.name || user.email?.split('@')[0] || 'User'}!
+                  {t.hello}, {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}!
                 </div>
                 <Link
                   href="/dashboard"
