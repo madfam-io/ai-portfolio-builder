@@ -127,6 +127,7 @@ describe('Critical Path: Portfolio Creation', () => {
             location: 'San Francisco, CA',
           }),
         }
+      );
 
       expect(basicInfoResponse.ok).toBe(true);
 
@@ -157,6 +158,7 @@ describe('Critical Path: Portfolio Creation', () => {
             ],
           }),
         }
+      );
 
       expect(projectsResponse.ok).toBe(true);
 
@@ -168,6 +170,7 @@ describe('Critical Path: Portfolio Creation', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain: 'john-doe' }),
         }
+      );
 
       expect(subdomainResponse.ok).toBe(true);
 
@@ -179,6 +182,7 @@ describe('Critical Path: Portfolio Creation', () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ subdomain: 'john-doe' }),
         }
+      );
 
       expect(publishResponse.ok).toBe(true);
       const publishData = await publishResponse.json();
@@ -285,11 +289,13 @@ describe('Critical Path: Portfolio Creation', () => {
             technologies: ['Figma'],
           }),
         }
+      );
 
       expect(optimizeProjectResponse.ok).toBe(true);
       const projectData = await optimizeProjectResponse.json();
       expect(projectData.optimizedProject.description).toContain(
         '40% increase'
+      );
 
       // Save enhanced content
       const saveResponse = await fetch(`/api/v1/portfolios/${portfolioId}`, {
@@ -309,6 +315,7 @@ describe('Critical Path: Portfolio Creation', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain: 'jane-smith' }),
         }
+      );
 
       expect(publishResponse.ok).toBe(true);
       const publishData = await publishResponse.json();
@@ -359,6 +366,7 @@ describe('Critical Path: Portfolio Creation', () => {
           method: 'PUT',
           body: JSON.stringify({ template: 'business' }),
         }
+      );
 
       const updatedData = await switchResponse.json();
       expect(updatedData.portfolio.template).toBe('business');
@@ -370,6 +378,7 @@ describe('Critical Path: Portfolio Creation', () => {
           method: 'PUT',
           body: JSON.stringify({ name: 'Template Switcher' }),
         }
+      );
 
       expect(saveResponse.ok).toBe(true);
     });
@@ -379,6 +388,7 @@ describe('Critical Path: Portfolio Creation', () => {
     it('should handle network failures gracefully', async () => {
       (global.fetch as jest.Mock).mockRejectedValueOnce(
         new Error('Network error')
+      );
 
       try {
         await fetch('/api/v1/portfolios', {
@@ -467,6 +477,7 @@ describe('Critical Path: Portfolio Creation', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain: 'taken-name' }),
         }
+      );
 
       expect(publishResponse.ok).toBe(false);
       expect(publishResponse.status).toBe(409);
@@ -524,6 +535,7 @@ describe('Critical Path: Portfolio Creation', () => {
           method: 'POST',
           body: JSON.stringify(portfolio),
         })
+      );
 
       const results = await Promise.all(creationPromises);
 

@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 
 // Mock fetch for API calls
 global.fetch = jest.fn();
@@ -19,7 +19,7 @@ describe('Critical User Workflows', () => {
         // 1. User signup/authentication
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             user: {
               id: 'user-123',
               email: 'newuser@example.com',
@@ -31,7 +31,7 @@ describe('Critical User Workflows', () => {
         // 2. Create first portfolio
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             portfolio: {
               id: 'first-portfolio',
               name: 'New User',
@@ -44,7 +44,7 @@ describe('Critical User Workflows', () => {
         // 3. Portfolio onboarding completion
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             onboardingCompleted: true,
           }),
@@ -125,7 +125,7 @@ describe('Critical User Workflows', () => {
       tutorialSteps.forEach((step, index) => {
         (global.fetch as jest.Mock).mockResolvedValueOnce({
           ok: true,
-          json: async () => ({
+          json: () => ({
             currentStep: step,
             nextStep: tutorialSteps[index + 1] || null,
             progress: ((index + 1) / tutorialSteps.length) * 100,
@@ -159,7 +159,7 @@ describe('Critical User Workflows', () => {
         // 1. Load existing portfolio
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             portfolio: {
               id: 'existing-portfolio',
               name: 'John Doe',
@@ -172,7 +172,7 @@ describe('Critical User Workflows', () => {
         // 2. Auto-save after first edit
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             lastSaved: new Date().toISOString(),
           }),
@@ -180,7 +180,7 @@ describe('Critical User Workflows', () => {
         // 3. Auto-save after second edit
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             lastSaved: new Date().toISOString(),
           }),
@@ -188,7 +188,7 @@ describe('Critical User Workflows', () => {
         // 4. Manual save
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             portfolio: {
               id: 'existing-portfolio',
@@ -221,6 +221,7 @@ describe('Critical User Workflows', () => {
             name: 'John Doe Updated',
           }),
         }
+      );
 
       expect(autoSave1Response.ok).toBe(true);
 
@@ -233,6 +234,7 @@ describe('Critical User Workflows', () => {
             title: 'Senior Developer',
           }),
         }
+      );
 
       expect(autoSave2Response.ok).toBe(true);
 
@@ -247,6 +249,7 @@ describe('Critical User Workflows', () => {
             bio: 'Updated professional bio',
           }),
         }
+      );
 
       expect(manualSaveResponse.ok).toBe(true);
       const finalData = await manualSaveResponse.json();
@@ -265,7 +268,7 @@ describe('Critical User Workflows', () => {
       // Mock portfolio list response
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({
+        json: () => ({
           portfolios,
           total: 3,
           page: 1,
@@ -277,7 +280,7 @@ describe('Critical User Workflows', () => {
       portfolios.forEach(() => {
         (global.fetch as jest.Mock).mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
+          json: () => ({ success: true }),
         });
       });
 
@@ -297,6 +300,7 @@ describe('Critical User Workflows', () => {
               lastAccessed: new Date().toISOString(),
             }),
           }
+        );
 
         expect(updateResponse.ok).toBe(true);
       }
@@ -326,11 +330,11 @@ describe('Critical User Workflows', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ portfolio: originalPortfolio }),
+          json: () => ({ portfolio: originalPortfolio }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ portfolio: duplicatedPortfolio }),
+          json: () => ({ portfolio: duplicatedPortfolio }),
         });
 
       // Load original portfolio
@@ -347,6 +351,7 @@ describe('Critical User Workflows', () => {
             name: 'Copy of Original Portfolio',
           }),
         }
+      );
 
       expect(duplicateResponse.ok).toBe(true);
       const duplicateData = await duplicateResponse.json();
@@ -361,7 +366,7 @@ describe('Critical User Workflows', () => {
         // 1. Portfolio ready for publishing
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             portfolio: {
               id: 'ready-portfolio',
               name: 'Ready User',
@@ -373,7 +378,7 @@ describe('Critical User Workflows', () => {
         // 2. Subdomain availability check
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             available: true,
             subdomain: 'ready-user',
             suggestions: [],
@@ -382,7 +387,7 @@ describe('Critical User Workflows', () => {
         // 3. Pre-publish validation
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             valid: true,
             issues: [],
             recommendations: [],
@@ -391,7 +396,7 @@ describe('Critical User Workflows', () => {
         // 4. Publish to live URL
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             url: 'https://ready-user.prisma.dev',
             deploymentId: 'deploy-456',
@@ -401,7 +406,7 @@ describe('Critical User Workflows', () => {
         // 5. Generate share links
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             shareLinks: {
               direct: 'https://ready-user.prisma.dev',
               social: 'https://ready-user.prisma.dev?utm_source=social',
@@ -421,6 +426,7 @@ describe('Critical User Workflows', () => {
       // Step 1: Verify portfolio readiness
       const readinessResponse = await fetch(
         '/api/v1/portfolios/ready-portfolio/readiness'
+      );
 
       const readinessData = await readinessResponse.json();
       expect(readinessData.portfolio.readinessScore).toBeGreaterThan(90);
@@ -432,6 +438,7 @@ describe('Critical User Workflows', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain: 'ready-user' }),
         }
+      );
 
       const subdomainData = await subdomainResponse.json();
       expect(subdomainData.available).toBe(true);
@@ -442,6 +449,7 @@ describe('Critical User Workflows', () => {
         {
           method: 'POST',
         }
+      );
 
       const validationData = await validationResponse.json();
       expect(validationData.valid).toBe(true);
@@ -456,6 +464,7 @@ describe('Critical User Workflows', () => {
             enableAnalytics: true,
           }),
         }
+      );
 
       const publishData = await publishResponse.json();
       expect(publishData.success).toBe(true);
@@ -467,6 +476,7 @@ describe('Critical User Workflows', () => {
         {
           method: 'POST',
         }
+      );
 
       const shareData = await shareResponse.json();
       expect(shareData.shareLinks.direct).toBe('https://ready-user.prisma.dev');
@@ -480,7 +490,7 @@ describe('Critical User Workflows', () => {
         // 1. Request custom domain
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             domainRequest: {
               id: 'domain-request-123',
               domain: 'johndoe.com',
@@ -492,7 +502,7 @@ describe('Critical User Workflows', () => {
         // 2. Domain verification
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             verification: {
               status: 'verified',
               records: [{ type: 'CNAME', name: 'www', value: 'prisma.dev' }],
@@ -502,7 +512,7 @@ describe('Critical User Workflows', () => {
         // 3. Activate custom domain
         {
           ok: true,
-          json: async () => ({
+          json: () => ({
             success: true,
             domain: 'johndoe.com',
             active: true,
@@ -525,6 +535,7 @@ describe('Critical User Workflows', () => {
             domain: 'johndoe.com',
           }),
         }
+      );
 
       const domainData = await domainResponse.json();
       expect(domainData.domainRequest.domain).toBe('johndoe.com');
@@ -539,6 +550,7 @@ describe('Critical User Workflows', () => {
             requestId: domainData.domainRequest.id,
           }),
         }
+      );
 
       const verifyData = await verifyResponse.json();
       expect(verifyData.verification.status).toBe('verified');
@@ -552,6 +564,7 @@ describe('Critical User Workflows', () => {
             requestId: domainData.domainRequest.id,
           }),
         }
+      );
 
       const activateData = await activateResponse.json();
       expect(activateData.active).toBe(true);
@@ -582,11 +595,11 @@ describe('Critical User Workflows', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ analytics: mockAnalytics }),
+          json: () => ({ analytics: mockAnalytics }),
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({
+          json: () => ({
             exported: true,
             downloadUrl: 'https://api.prisma.dev/exports/analytics-123.csv',
           }),
@@ -601,6 +614,7 @@ describe('Critical User Workflows', () => {
             Authorization: 'Bearer token',
           },
         }
+      );
 
       expect(analyticsResponse.ok).toBe(true);
       const analyticsData = await analyticsResponse.json();
@@ -617,6 +631,7 @@ describe('Critical User Workflows', () => {
             dateRange: '30d',
           }),
         }
+      );
 
       expect(exportResponse.ok).toBe(true);
       const exportData = await exportResponse.json();
@@ -638,7 +653,7 @@ describe('Critical User Workflows', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({
+          json: () => ({
             experiment: {
               id: 'experiment-123',
               name: 'Template Comparison',
@@ -649,7 +664,7 @@ describe('Critical User Workflows', () => {
         })
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({
+          json: () => ({
             results: {
               'variant-a': { conversions: 45, views: 500 },
               'variant-b': { conversions: 52, views: 500 },
@@ -669,6 +684,7 @@ describe('Critical User Workflows', () => {
             variants: mockVariants,
           }),
         }
+      );
 
       const experimentData = await experimentResponse.json();
       expect(experimentData.experiment.variants).toHaveLength(2);
@@ -677,6 +693,7 @@ describe('Critical User Workflows', () => {
       // Get experiment results
       const resultsResponse = await fetch(
         '/api/v1/portfolios/portfolio-123/experiments/experiment-123/results'
+      );
 
       const resultsData = await resultsResponse.json();
       expect(resultsData.results.winner).toBe('variant-b');

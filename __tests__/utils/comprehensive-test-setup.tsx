@@ -402,12 +402,36 @@ jest.mock('@/hooks/useEditorHistory', () => ({
 }));
 
 jest.mock('@/hooks/useRealTimePreview', () => ({
-  useRealTimePreview: () => ({
-    previewUrl: 'http://localhost:3000/preview/test',
-    isGenerating: false,
-    generatePreview: jest.fn(),
-    refreshPreview: jest.fn(),
-  }),
+  useRealTimePreview: jest.fn(() => ({
+    previewConfig: {
+      mode: 'desktop',
+      state: 'editing',
+      activeSection: null,
+      highlightedSection: null,
+      showSectionBorders: false,
+      showInteractiveElements: true,
+      zoomLevel: 1,
+    },
+    previewDimensions: {
+      width: '100%',
+      height: '100%',
+      scale: 1,
+    },
+    setPreviewMode: jest.fn(),
+    setPreviewState: jest.fn(),
+    toggleFullscreen: jest.fn(),
+    setActiveSection: jest.fn(),
+    highlightSection: jest.fn(),
+    scrollToSection: jest.fn(),
+    setZoomLevel: jest.fn(),
+    toggleSectionBorders: jest.fn(),
+    toggleInteractiveElements: jest.fn(),
+    getResponsiveBreakpoints: jest.fn(() => []),
+    testResponsiveBreakpoint: jest.fn(),
+    capturePreviewScreenshot: jest.fn(() => Promise.resolve(null)),
+    exportPreviewHTML: jest.fn(() => ''),
+    getPreviewUrl: jest.fn(() => null),
+  })),
 }));
 
 // Mock AI services

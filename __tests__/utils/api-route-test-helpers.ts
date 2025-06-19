@@ -70,7 +70,6 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
     createApiHandler: jest.fn(handler => handler),
     validateMethod: jest.fn(() => true),
     parseJsonBody: jest.fn(request => request.json()),
-    withErrorHandler: jest.fn(handler => handler),
     ApiError: class ApiError extends Error {
       constructor(message: string, statusCode: number, code?: string) {
         super(message);
@@ -80,6 +79,98 @@ export const setupCommonMocks = (mockOverrides: any = {}) => {
       statusCode: number;
       code?: string;
     },
+  }));
+
+  // Mock error types
+  jest.doMock('@/types/errors', () => ({
+    ValidationError: class ValidationError extends Error {
+      constructor(message: string, details?: Record<string, unknown>) {
+        super(message);
+        this.name = 'ValidationError';
+        this.details = details;
+      }
+    },
+    ExternalServiceError: class ExternalServiceError extends Error {
+      constructor(service: string, originalError?: unknown) {
+        super(`External service error: ${service}`);
+        this.name = 'ExternalServiceError';
+        this.originalError = originalError;
+      }
+    },
+    ConflictError: class ConflictError extends Error {
+      constructor(message: string) {
+        super(message);
+        this.name = 'ConflictError';
+      }
+    },
+    AppError: class AppError extends Error {
+      constructor(message: string, code: string, statusCode: number = 500, details?: Record<string, unknown>) {
+        super(message);
+        this.name = 'AppError';
+        this.code = code;
+        this.statusCode = statusCode;
+        this.details = details;
+      }
+    },
+    isAppError: jest.fn(error => error instanceof Error && 'code' in error),
+    getErrorMessage: jest.fn(error => error instanceof Error ? error.message : 'Unknown error'),
+    getErrorCode: jest.fn(error => error instanceof Error && 'code' in error ? error.code : 'UNKNOWN_ERROR'),
+  }));
+
+  // Mock lib/services/error index
+  jest.doMock('@/lib/services/error', () => ({
+    ValidationError: class ValidationError extends Error {
+      constructor(message: string, details?: Record<string, unknown>) {
+        super(message);
+        this.name = 'ValidationError';
+        this.details = details;
+      }
+    },
+    ExternalServiceError: class ExternalServiceError extends Error {
+      constructor(service: string, originalError?: unknown) {
+        super(`External service error: ${service}`);
+        this.name = 'ExternalServiceError';
+        this.originalError = originalError;
+      }
+    },
+    ConflictError: class ConflictError extends Error {
+      constructor(message: string) {
+        super(message);
+        this.name = 'ConflictError';
+      }
+    },
+    withErrorHandler: jest.fn(handler => async (...args) => {
+      try {
+        return await handler(...args);
+      } catch (error) {
+        if (error.name === 'ValidationError') {
+          return new Response(JSON.stringify({
+            error: {
+              message: error.message,
+              code: 'VALIDATION_ERROR',
+              statusCode: 400
+            }
+          }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+        }
+        if (error.name === 'ExternalServiceError') {
+          return new Response(JSON.stringify({
+            error: {
+              message: error.message,
+              code: 'EXTERNAL_SERVICE_ERROR',
+              statusCode: 503
+            }
+          }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+        }
+        return new Response(JSON.stringify({
+          error: {
+            message: error.message || 'Internal server error',
+            code: 'INTERNAL_SERVER_ERROR',
+            statusCode: 500
+          }
+        }), { status: 500, headers: { 'Content-Type': 'application/json' } });
+      }
+    }),
+    errorLogger: { logError: jest.fn() },
   }));
 
   // Mock auth middleware

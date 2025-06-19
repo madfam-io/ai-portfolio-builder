@@ -3,7 +3,7 @@
  */
 
 import { jest } from '@jest/globals';
-import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
+import { setupCommonMocks, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
 
 const mockDashboardData = {
   repositories: [
@@ -28,17 +28,7 @@ describe('/api/v1/analytics/dashboard', () => {
 
   describe('GET /api/v1/analytics/dashboard', () => {
     it('should return dashboard data successfully', async () => {
-      // Mock the entire AnalyticsService with proper method chain
-      const mockAnalyticsService = {
-        initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest.fn().mockResolvedValue(mockDashboardData),
-        getRepositories: jest.fn().mockResolvedValue([]),
-      };
-
-      jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
-      }));
-
+      // Set up common mocks first
       setupCommonMocks({
         supabase: {
           ...defaultSupabaseMock,
@@ -50,6 +40,17 @@ describe('/api/v1/analytics/dashboard', () => {
           },
         },
       });
+
+      // Override the AnalyticsService mock after setupCommonMocks
+      const mockAnalyticsService = {
+        initialize: jest.fn().mockResolvedValue(undefined),
+        getDashboardData: jest.fn().mockResolvedValue(mockDashboardData),
+        getRepositories: jest.fn().mockResolvedValue([]),
+      };
+
+      jest.doMock('@/lib/services/analyticsService', () => ({
+        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
+      }));
 
       const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
 
@@ -115,15 +116,6 @@ describe('/api/v1/analytics/dashboard', () => {
     });
 
     it('should handle analytics service errors', async () => {
-      const mockAnalyticsService = {
-        initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest.fn().mockRejectedValue(new Error('Analytics service error')),
-      };
-
-      jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
-      }));
-
       setupCommonMocks({
         supabase: {
           ...defaultSupabaseMock,
@@ -136,6 +128,16 @@ describe('/api/v1/analytics/dashboard', () => {
         },
       });
 
+      // Override after setupCommonMocks
+      const mockAnalyticsService = {
+        initialize: jest.fn().mockResolvedValue(undefined),
+        getDashboardData: jest.fn().mockRejectedValue(new Error('Analytics service error')),
+      };
+
+      jest.doMock('@/lib/services/analyticsService', () => ({
+        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
+      }));
+
       const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
 
       const response = await GET();
@@ -146,9 +148,10 @@ describe('/api/v1/analytics/dashboard', () => {
     });
 
     it('should handle database connection failure', async () => {
-      setupCommonMocks({
-        supabase: null,
-      });
+      // Mock createClient to return null
+      jest.doMock('@/lib/supabase/server', () => ({
+        createClient: jest.fn().mockResolvedValue(null),
+      }));
 
       const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
 

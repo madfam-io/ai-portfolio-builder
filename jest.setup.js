@@ -407,10 +407,7 @@ jest.mock('@/lib/validation/portfolio', () => ({
   sanitizePortfolioData: jest.fn(data => data),
 }));
 
-jest.mock('@/lib/utils/portfolio-transformer', () => ({
-  transformDbPortfolioToApi: jest.fn(portfolio => portfolio),
-  transformApiPortfolioToDb: jest.fn(portfolio => portfolio),
-}));
+// Removed mock for portfolio-transformer to allow real implementation in tests
 
 // Mock file reading for testing
 global.fetch = jest.fn().mockResolvedValue({

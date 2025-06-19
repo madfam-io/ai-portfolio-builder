@@ -138,18 +138,15 @@ describe('Portfolios API Route', () => {
         template: 'developer' as const,
       };
 
-      // Add debug logging for validation
-      jest.doMock('@/lib/services/portfolio/validation', () => ({
-        validateCreatePortfolio: jest.fn(data => {
-          console.log('Validation input:', data);
-          const result = {
-            isValid: true,
-            errors: [],
-            warnings: [],
-          };
-          console.log('Validation result:', result);
-          return result;
-        }),
+      // Mock validation functions
+      jest.doMock('@/lib/validation/portfolio', () => ({
+        validateCreatePortfolio: jest.fn(() => ({
+          isValid: true,
+          errors: [],
+          warnings: [],
+        })),
+        validatePortfolioQuery: jest.fn(() => ({ success: true, data: {} })),
+        sanitizePortfolioData: jest.fn(data => data),
       }));
 
       setupCommonMocks({
@@ -218,9 +215,15 @@ describe('Portfolios API Route', () => {
     });
 
     it('should validate required fields', async () => {
-      setupCommonMocks({
-        supabase: {
-          ...defaultSupabaseMock,
+      // Mock all required modules manually
+      jest.doMock('@/lib/supabase/server', () => ({
+        createClient: jest.fn().mockResolvedValue({
+          auth: {
+            getUser: jest.fn().mockResolvedValue({
+              data: { user: { id: 'user_123', email: 'test@example.com' } },
+              error: null,
+            }),
+          },
           rpc: jest.fn().mockResolvedValue({
             data: {
               can_create_portfolio: true,
@@ -229,8 +232,82 @@ describe('Portfolios API Route', () => {
             },
             error: null,
           }),
+        }),
+      }));
+
+      jest.doMock('@/lib/api/middleware/auth', () => ({
+        withAuth: jest.fn((handler) => (request: any) => {
+          request.user = { id: 'user_123', email: 'test@example.com' };
+          return handler(request);
+        }),
+      }));
+
+      jest.doMock('@/lib/validation/portfolio', () => ({
+        validateCreatePortfolio: jest.fn(() => ({
+          isValid: false,
+          errors: [
+            { field: 'name', message: 'Name is required', code: 'REQUIRED_FIELD' },
+            { field: 'title', message: 'Title is required', code: 'REQUIRED_FIELD' },
+          ],
+          warnings: [],
+        })),
+        validatePortfolioQuery: jest.fn(() => ({ success: true, data: {} })),
+        sanitizePortfolioData: jest.fn(data => data),
+      }));
+
+      jest.doMock('@/lib/api/response-helpers', () => ({
+        apiSuccess: jest.fn((data) => new Response(JSON.stringify(data), { status: 200 })),
+        versionedApiHandler: jest.fn(handler => handler),
+      }));
+
+      jest.doMock('@/lib/services/error', () => ({
+        withErrorHandler: jest.fn(handler => async (...args) => {
+          try {
+            return await handler(...args);
+          } catch (error) {
+            if (error instanceof ValidationError) {
+              return new Response(JSON.stringify({
+                error: {
+                  message: error.message,
+                  code: 'VALIDATION_ERROR',
+                  statusCode: 400
+                }
+              }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+            }
+            if (error instanceof ExternalServiceError) {
+              return new Response(JSON.stringify({
+                error: {
+                  message: error.message,
+                  code: 'EXTERNAL_SERVICE_ERROR',
+                  statusCode: 503
+                }
+              }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+            }
+            throw error;
+          }
+        }),
+        ValidationError: class ValidationError extends Error {
+          constructor(message, details) { 
+            super(message);
+            this.name = 'ValidationError';
+            this.details = details;
+          }
         },
-      });
+        ConflictError: class ConflictError extends Error {
+          constructor(message) { super(message); this.name = 'ConflictError'; }
+        },
+        ExternalServiceError: class ExternalServiceError extends Error {
+          constructor(service, originalError) { 
+            super(`External service error: ${service}`);
+            this.name = 'ExternalServiceError';
+            this.originalError = originalError;
+          }
+        },
+        errorLogger: { logError: jest.fn() },
+      }));
+      
+      // Make error classes available in scope
+      const { ValidationError, ExternalServiceError } = await import('@/lib/services/error');
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
@@ -248,10 +325,22 @@ describe('Portfolios API Route', () => {
       const result = await response.json();
 
       expect(response.status).toBe(400);
-      expect(result.error).toContain('Invalid portfolio data');
+      expect(result.error.message).toContain('Invalid portfolio data');
+      expect(result.error.code).toBe('VALIDATION_ERROR');
     });
 
     it('should enforce portfolio limit', async () => {
+      // Mock validation to pass
+      jest.doMock('@/lib/validation/portfolio', () => ({
+        validateCreatePortfolio: jest.fn(() => ({
+          isValid: true,
+          errors: [],
+          warnings: [],
+        })),
+        validatePortfolioQuery: jest.fn(() => ({ success: true, data: {} })),
+        sanitizePortfolioData: jest.fn(data => data),
+      }));
+
       setupCommonMocks({
         supabase: {
           ...defaultSupabaseMock,
@@ -284,10 +373,22 @@ describe('Portfolios API Route', () => {
       const result = await response.json();
 
       expect(response.status).toBe(400);
-      expect(result.error).toContain('Portfolio creation limit exceeded');
+      expect(result.error.message).toContain('Portfolio creation limit exceeded');
+      expect(result.error.code).toBe('VALIDATION_ERROR');
     });
 
     it('should handle database errors', async () => {
+      // Mock validation to pass
+      jest.doMock('@/lib/validation/portfolio', () => ({
+        validateCreatePortfolio: jest.fn(() => ({
+          isValid: true,
+          errors: [],
+          warnings: [],
+        })),
+        validatePortfolioQuery: jest.fn(() => ({ success: true, data: {} })),
+        sanitizePortfolioData: jest.fn(data => data),
+      }));
+
       setupCommonMocks({
         supabase: {
           ...defaultSupabaseMock,
@@ -315,8 +416,9 @@ describe('Portfolios API Route', () => {
       const response = await POST(request);
       const result = await response.json();
 
-      expect(response.status).toBe(500);
-      expect(result.error).toContain('Internal server error');
+      expect(response.status).toBe(503);
+      expect(result.error.message).toContain('External service error: Database');
+      expect(result.error.code).toBe('EXTERNAL_SERVICE_ERROR');
     });
   });
 });

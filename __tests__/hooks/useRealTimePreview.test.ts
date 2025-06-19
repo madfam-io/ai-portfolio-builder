@@ -2,10 +2,13 @@
  * @jest-environment jsdom
  */
 
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
-import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 import type { Portfolio } from '@/types/portfolio';
+
+// Unmock the hook for this test file
+jest.unmock('@/hooks/useRealTimePreview');
+import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 
 describe('useRealTimePreview', () => {
   const mockPortfolio: Portfolio = {
@@ -54,11 +57,16 @@ describe('useRealTimePreview', () => {
     document.body.innerHTML = '';
   });
 
+  it('should import hook correctly', () => {
+    expect(typeof useRealTimePreview).toBe('function');
+  });
+
   it('should initialize with default preview config', () => {
     const { result } = renderHook(() =>
       useRealTimePreview({ portfolio: mockPortfolio })
     );
 
+    expect(result.current).toBeDefined();
     expect(result.current.previewConfig).toEqual({
       mode: 'desktop',
       state: 'editing',
