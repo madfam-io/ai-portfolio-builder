@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   securityMiddleware,
@@ -39,7 +39,6 @@ import { csrfMiddleware } from '../../../middleware/csrf';
 import { edgeRateLimitMiddleware } from '../../../middleware/edge-rate-limiter';
 import { applySecurityHeaders } from '../../../middleware/security-headers';
 import { logger } from '@/lib/utils/logger';
-
 
 describe('Security Middleware', () => {
   beforeEach(() => {
@@ -98,7 +97,7 @@ describe('Security Middleware', () => {
         expect.objectContaining({
           ip: '192.168.1.100',
         })
-
+      );
       // Clean up
       securityUtils.unblockIP('192.168.1.100');
     });
@@ -164,7 +163,7 @@ describe('Security Middleware', () => {
         expect(logger.warn).toHaveBeenCalledWith(
           'Security Event: SUSPICIOUS_CONTENT',
           expect.any(Object)
-
+        );
       });
     });
 
@@ -209,7 +208,7 @@ describe('Security Middleware', () => {
       expect(logger.warn).toHaveBeenCalledWith(
         'Security Event: REQUEST_TOO_LARGE',
         expect.any(Object)
-
+      );
     });
 
     it('should allow requests within size limit', async () => {
@@ -258,7 +257,7 @@ describe('Security Middleware', () => {
       expect(logger.warn).toHaveBeenCalledWith(
         'Security Event: RATE_LIMITED',
         expect.any(Object)
-
+      );
     });
 
     it('should continue when rate limit is not exceeded', async () => {
@@ -291,7 +290,7 @@ describe('Security Middleware', () => {
       expect(logger.warn).toHaveBeenCalledWith(
         'Security Event: CSRF_FAILED',
         expect.any(Object)
-
+      );
     });
 
     it('should skip CSRF protection for non-API routes', async () => {
@@ -316,7 +315,7 @@ describe('Security Middleware', () => {
       expect(result?.status).toBe(204);
       expect(result?.headers.get('Access-Control-Allow-Origin')).toBe(
         'https://example.com'
-
+      );
     });
 
     it('should set appropriate CORS headers for allowed origins', async () => {
@@ -329,10 +328,10 @@ describe('Security Middleware', () => {
 
       expect(result?.headers.get('Access-Control-Allow-Methods')).toBe(
         'GET, POST, PUT, DELETE, OPTIONS'
-
+      );
       expect(result?.headers.get('Access-Control-Allow-Headers')).toContain(
         'Content-Type'
-
+      );
       expect(result?.headers.get('Access-Control-Max-Age')).toBe('86400');
     });
 
@@ -361,6 +360,7 @@ describe('Security Middleware', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Security middleware error',
         expect.objectContaining({ error: expect.any(Error) })
+      );
     });
 
     it('should handle async errors in request size validation', async () => {
@@ -386,7 +386,7 @@ describe('Security Middleware', () => {
     });
 
     it('should apply security headers to response', () => {
-      const result = applySecurityToResponse(request, response);
+      applySecurityToResponse(request, response);
 
       expect(applySecurityHeaders).toHaveBeenCalledWith(request, response);
     });
@@ -399,7 +399,7 @@ describe('Security Middleware', () => {
       expect(result.headers.get('X-XSS-Protection')).toBe('1; mode=block');
       expect(result.headers.get('Referrer-Policy')).toBe(
         'strict-origin-when-cross-origin'
-
+      );
     });
 
     it('should add HSTS header in production', () => {
@@ -417,7 +417,7 @@ describe('Security Middleware', () => {
 
       expect(result.headers.get('Strict-Transport-Security')).toBe(
         'max-age=31536000; includeSubDomains'
-
+      );
       process.env.NODE_ENV = originalEnv;
     });
 
@@ -430,10 +430,10 @@ describe('Security Middleware', () => {
 
       expect(result.headers.get('Access-Control-Allow-Origin')).toBe(
         'https://example.com'
-
+      );
       expect(result.headers.get('Access-Control-Allow-Credentials')).toBe(
         'true'
-
+      );
     });
   });
 
@@ -549,7 +549,7 @@ describe('Security Middleware', () => {
         });
 
         // Verify IP is blocked
-        const request = createRequest('/test', {
+        createRequest('/test', {
           headers: { 'x-forwarded-for': testIP },
         });
 
@@ -566,11 +566,11 @@ describe('Security Middleware', () => {
     it('should handle high volume of requests efficiently', async () => {
       const requests = Array.from({ length: 100 }, (_, i) =>
         createRequest(`/api/test-${i}`)
-
+      );
       const startTime = Date.now();
       const results = await Promise.all(
         requests.map(req => securityMiddleware(req))
-
+      );
       const endTime = Date.now();
 
       expect(results).toHaveLength(100);

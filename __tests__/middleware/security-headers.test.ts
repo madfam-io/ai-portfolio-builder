@@ -1,4 +1,4 @@
-import { describe, test, it, expect } from '@jest/globals';
+import { describe, it, expect } from '@jest/globals';
 
 /**
  * @jest-environment node
@@ -6,7 +6,6 @@ import { describe, test, it, expect } from '@jest/globals';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { applySecurityHeaders } from '@/middleware/security-headers';
-
 
 describe('Security Headers Middleware', () => {
   const createRequest = (
@@ -72,7 +71,7 @@ describe('Security Headers Middleware', () => {
 
       expect(result.headers.get('Referrer-Policy')).toBe(
         'strict-origin-when-cross-origin'
-
+      );
     });
 
     it('should add Permissions-Policy header', () => {
@@ -315,7 +314,7 @@ describe('Security Headers Middleware', () => {
 
       expect(result.headers.get('Access-Control-Allow-Origin')).toBe(
         'https://trusted-domain.com'
-
+      );
     });
 
     it('should reject CORS for disallowed origins', () => {
@@ -343,7 +342,7 @@ describe('Security Headers Middleware', () => {
 
       expect(result.headers.get('Access-Control-Allow-Methods')).toContain(
         'POST'
-
+      );
       expect(result.headers.get('Access-Control-Max-Age')).toBe('86400');
     });
   });

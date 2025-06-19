@@ -1,4 +1,4 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import {
   apiVersionMiddleware,
@@ -112,7 +112,7 @@ describe('API Version Middleware', () => {
         expect(info).toBeDefined();
         expect(info?.message).toBe(
           'API v0 is deprecated. Please upgrade to v1.'
-
+        );
         expect(info?.deprecatedAt).toEqual(new Date('2025-01-01'));
         expect(info?.sunsetDate).toEqual(new Date('2025-06-01'));
       });
@@ -150,7 +150,7 @@ describe('API Version Middleware', () => {
         expect(response.status).toBe(307); // Temporary redirect
         expect(response.headers.get('location')).toBe(
           'https://example.com/api/v1/'
-
+        );
       });
 
       it('should redirect non-versioned API paths to current version', async () => {
@@ -160,7 +160,7 @@ describe('API Version Middleware', () => {
         expect(response.status).toBe(307);
         expect(response.headers.get('location')).toBe(
           'https://example.com/api/v1/portfolios'
-
+        );
       });
 
       it('should redirect nested non-versioned paths', async () => {
@@ -170,7 +170,7 @@ describe('API Version Middleware', () => {
         expect(response.status).toBe(307);
         expect(response.headers.get('location')).toBe(
           'https://example.com/api/v1/portfolios/123/publish'
-
+        );
       });
 
       it('should preserve query parameters in redirects', async () => {
@@ -179,7 +179,7 @@ describe('API Version Middleware', () => {
 
         expect(response.headers.get('location')).toBe(
           'https://example.com/api/v1/portfolios?limit=10&offset=20'
-
+        );
       });
     });
 
@@ -240,16 +240,16 @@ describe('API Version Middleware', () => {
         expect(response.status).toBe(200);
         expect(response.headers.get('X-API-Deprecation-Warning')).toBe(
           'Please upgrade to v1'
-
+        );
         expect(response.headers.get('X-API-Sunset-Date')).toBe(
           '2025-06-01T00:00:00.000Z'
-
+        );
         expect(response.headers.get('Sunset')).toBe(
           'Mon, 01 Jun 2025 00:00:00 GMT'
-
+        );
         expect(response.headers.get('Deprecation')).toBe(
           'date="2025-01-01T00:00:00.000Z"'
-
+        );
       });
 
       it('should not add deprecation headers for current versions', async () => {
@@ -442,11 +442,11 @@ describe('API Version Middleware', () => {
     it('should handle high volume of requests efficiently', async () => {
       const requests = Array.from({ length: 100 }, (_, i) =>
         createRequest(`/api/v1/test-${i}`)
-
+      );
       const startTime = Date.now();
       const responses = await Promise.all(
         requests.map(req => apiVersionMiddleware(req))
-
+      );
       const endTime = Date.now();
 
       expect(responses).toHaveLength(100);
@@ -476,10 +476,10 @@ describe('API Version Middleware', () => {
       // Both should have deprecation headers
       expect(response1.headers.get('X-API-Deprecation-Warning')).toBe(
         'Deprecated'
-
+      );
       expect(response2.headers.get('X-API-Deprecation-Warning')).toBe(
         'Deprecated'
-
+      );
     });
   });
 });
