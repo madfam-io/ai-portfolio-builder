@@ -1,5 +1,9 @@
 import React from 'react';
 import { render, RenderOptions } from '@testing-library/react';
+import { setupSupabaseMocks } from './supabase-mock-factory';
+
+// Setup Supabase mocks globally
+setupSupabaseMocks();
 
 // Mock the i18n context
 const mockUseLanguage = {

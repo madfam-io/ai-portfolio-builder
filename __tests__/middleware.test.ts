@@ -1,8 +1,9 @@
-import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
+import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
+import { createMockSupabaseServerClient } from './utils/supabase-mock-factory';
 
 // Mock dependencies before importing middleware
-const mockCreateServerClient = jest.fn();
+const mockCreateServerClient = jest.fn(() => createMockSupabaseServerClient());
 const mockApiVersionMiddleware = jest.fn();
 const mockSecurityMiddleware = jest.fn();
 const mockApplySecurityToResponse = jest.fn();
@@ -88,9 +89,11 @@ describe('middleware', () => {
       console.log('createServerClient called with:', args);
       return mockSupabaseClient;
     });
-    
+
     // Setup default middleware mocks
-    mockApiVersionMiddleware.mockResolvedValue(NextResponse.next({ status: 200 }));
+    mockApiVersionMiddleware.mockResolvedValue(
+      NextResponse.next({ status: 200 })
+    );
     mockSecurityMiddleware.mockResolvedValue(null);
     mockApplySecurityToResponse.mockImplementation((req, res) => res);
   });
