@@ -96,9 +96,9 @@ describe('Portfolio Variants Store', () => {
       expect(currentVariantId).toBe('variant-1'); // Default variant
       expect(isLoading).toBe(false);
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios/portfolio-123/variants'
-
-    });
+      '/api/v1/portfolios/portfolio-123/variants'
+    );
+  });
 
     it('should handle empty variants', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -268,7 +268,8 @@ describe('Portfolio Variants Store', () => {
           method: 'PATCH',
           body: JSON.stringify(updates),
         })
-    });
+    );
+  });
 
     it('should update content override', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -350,7 +351,8 @@ describe('Portfolio Variants Store', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/variants/variant-2',
         expect.objectContaining({ method: 'DELETE' })
-    });
+    );
+  });
 
     it('should handle deletion of default variant', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -454,9 +456,9 @@ describe('Portfolio Variants Store', () => {
 
       expect(result!).toEqual(mockAnalytics);
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/variants/variant-1/analytics?period=month'
-
-    });
+      '/api/v1/variants/variant-1/analytics?period=month'
+    );
+  });
   });
 
   describe('AI Optimization', () => {
@@ -493,7 +495,8 @@ describe('Portfolio Variants Store', () => {
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/variants/variant-1/optimize',
         expect.objectContaining({ method: 'POST' })
-    });
+    );
+  });
 
     it('should apply suggestion', async () => {
       const suggestion: ContentOptimizationSuggestion = {

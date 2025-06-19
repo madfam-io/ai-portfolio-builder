@@ -21,7 +21,7 @@ describe('AI Recommend Template API Route', () => {
       rpc: jest.fn().mockResolvedValue({
         data: true,
         error: null,
-      })
+      }),
     };
 
     // Apply any overrides

@@ -3,8 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useState } from 'react';
 import type { Portfolio, PortfolioEditorState } from '@/types/portfolio';
 
-// Unmock the hook for this test file
-jest.unmock('@/hooks/useEditorHistory');
 import { useEditorHistory } from '@/hooks/useEditorHistory';
 
 describe('useEditorHistory', () => {

@@ -79,9 +79,9 @@ describe('EditorToolbar', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
-    } as any);
+    });
   });
 
   const renderEditorToolbar = (props = mockProps) => {
@@ -570,7 +570,7 @@ describe('EditorToolbar', () => {
     });
 
     it('should fallback gracefully when translations are missing', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);
 

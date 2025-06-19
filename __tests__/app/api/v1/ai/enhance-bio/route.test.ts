@@ -3,8 +3,10 @@
  */
 
 import { jest } from '@jest/globals';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 describe('AI Enhance Bio API Route', () => {
   beforeEach(() => {
@@ -24,7 +26,8 @@ describe('AI Enhance Bio API Route', () => {
           from: jest.fn().mockReturnValue({
             select: jest.fn().mockReturnValue({
               eq: jest.fn().mockReturnValue({
-                single: jest.fn()
+                single: jest
+                  .fn()
                   .mockResolvedValueOnce({
                     data: {
                       id: 'user_123',
@@ -60,7 +63,8 @@ describe('AI Enhance Bio API Route', () => {
         HuggingFaceService: jest.fn().mockImplementation(() => ({
           healthCheck: jest.fn().mockResolvedValue(true),
           enhanceBio: jest.fn().mockResolvedValue({
-            enhancedBio: 'Innovative Full Stack Developer with 5+ years of experience building scalable web applications.',
+            enhancedBio:
+              'Innovative Full Stack Developer with 5+ years of experience building scalable web applications.',
             tone: 'professional',
             wordCount: 15,
             keyHighlights: ['Full Stack', 'Scalable', 'Web Applications'],
@@ -86,6 +90,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -162,6 +167,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -237,6 +243,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -266,6 +273,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -316,6 +324,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -349,7 +358,9 @@ describe('AI Enhance Bio API Route', () => {
       jest.doMock('@/lib/ai/huggingface-service', () => ({
         HuggingFaceService: jest.fn().mockImplementation(() => ({
           healthCheck: jest.fn().mockResolvedValue(false),
-          enhanceBio: jest.fn().mockRejectedValue(new Error('AI service unavailable')),
+          enhanceBio: jest
+            .fn()
+            .mockRejectedValue(new Error('AI service unavailable')),
         })),
       }));
 
@@ -369,6 +380,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -405,6 +417,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       const response = await POST(request);
       const result = await response.json();
@@ -431,7 +444,7 @@ describe('AI Enhance Bio API Route', () => {
               error: null,
             }),
           },
-          from: jest.fn().mockImplementation((table) => {
+          from: jest.fn().mockImplementation(table => {
             if (table === 'ai_usage') {
               return { insert: mockInsert };
             }
@@ -483,6 +496,7 @@ describe('AI Enhance Bio API Route', () => {
           method: 'POST',
           body: requestBody,
         }
+      );
 
       await POST(request);
 
@@ -492,6 +506,7 @@ describe('AI Enhance Bio API Route', () => {
           feature_type: 'bio_enhancement',
           credits_used: 1,
         })
+      );
     });
   });
 });

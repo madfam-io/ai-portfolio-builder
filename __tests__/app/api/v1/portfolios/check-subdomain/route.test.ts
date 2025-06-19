@@ -4,8 +4,10 @@ import { POST } from '@/app/api/v1/portfolios/check-subdomain/route';
 import { withAuth } from '@/lib/api/middleware/auth';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Mock dependencies
 jest.mock('@/lib/api/middleware/auth');
@@ -33,7 +35,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
 
     // Mock Supabase client
     mockSupabaseClient = {
-      from: jest.fn()
+      from: jest.fn(),
     };
     (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
@@ -47,7 +49,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: [],
         error: null,
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -84,7 +86,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: [{ id: 'other-portfolio-123', subdomain: 'john-doe' }],
         error: null,
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -117,7 +119,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: [{ id: 'portfolio-123', subdomain: 'my-portfolio' }],
         error: null,
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -131,6 +133,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           currentPortfolioId: 'portfolio-123',
         }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -157,6 +160,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain }),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -190,6 +194,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain }),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -219,7 +224,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: [],
         error: null,
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -231,6 +236,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
           method: 'POST',
           body: JSON.stringify({ subdomain }),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -247,6 +253,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: JSON.stringify({}),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -262,6 +269,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: JSON.stringify({ subdomain: 123 }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -279,6 +287,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: JSON.stringify({ subdomain: 'test' }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -293,7 +302,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: null,
         error: new Error('Database error'),
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -304,6 +313,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: JSON.stringify({ subdomain: 'test' }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -320,6 +330,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: 'invalid-json',
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();
@@ -334,7 +345,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
       eq: jest.fn().mockResolvedValue({
         data: null,
         error: null,
-      })
+      }),
     };
 
     mockSupabaseClient.from.mockReturnValue(mockSelect);
@@ -345,6 +356,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
         method: 'POST',
         body: JSON.stringify({ subdomain: 'test' }),
       }
+    );
 
     const response = await POST(request);
     const data = await response.json();

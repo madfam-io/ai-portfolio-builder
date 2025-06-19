@@ -206,14 +206,16 @@ describe('MFA Service', () => {
 
         const result = await generateQRCode(uri);
 
-        expect(mockQRCode.toDataURL).toHaveBeenCalledWith(uri, {
+        expect(mockQRCode.toDataURL).toHaveBeenCalledWith(
+      uri, {
           width: 256,
           margin: 2,
           color: {
             dark: '#000000',
             light: '#FFFFFF',
           },
-        });
+    );
+  });
 
         expect(result).toBe(mockDataURL);
       });
@@ -237,11 +239,13 @@ describe('MFA Service', () => {
 
         const result = verifyTOTP(secret, code);
 
-        expect(mockAuthenticator.verify).toHaveBeenCalledWith({
+        expect(mockAuthenticator.verify).toHaveBeenCalledWith(
+      {
           token: code,
           secret: secret,
           window: 1, // Allow 1 step before/after
-        });
+    );
+  });
 
         expect(result).toBe(true);
       });
@@ -260,11 +264,13 @@ describe('MFA Service', () => {
 
         verifyTOTP(secret, code);
 
-        expect(mockAuthenticator.verify).toHaveBeenCalledWith({
+        expect(mockAuthenticator.verify).toHaveBeenCalledWith(
+      {
           token: code,
           secret: secret,
           window: 1,
-        });
+    );
+  });
       });
     });
   });
@@ -379,17 +385,21 @@ describe('MFA Service', () => {
         });
 
         // Verify MFA was disabled
-        expect(mockSupabase.update).toHaveBeenCalledWith({
+        expect(mockSupabase.update).toHaveBeenCalledWith(
+      {
           mfa_enabled: false,
           mfa_secret: null,
-        });
+    );
+  });
 
         // Verify backup codes were deleted
         expect(mockSupabase.delete).toHaveBeenCalled();
 
-        expect(mockLogger.info).toHaveBeenCalledWith('MFA disabled', {
+        expect(mockLogger.info).toHaveBeenCalledWith(
+      'MFA disabled', {
           userId,
-        });
+    );
+  });
       });
 
       it('should fail with invalid verification code', async () => {
@@ -508,12 +518,12 @@ describe('MFA Service', () => {
         expect(mockSupabase.insert).toHaveBeenCalled();
 
         expect(mockLogger.info).toHaveBeenCalledWith(
-          'Backup codes regenerated',
+      'Backup codes regenerated',
           {
             userId,
           }
-
-      });
+    );
+  });
 
       it('should require MFA to be enabled', async () => {
         mockSupabase.single.mockResolvedValueOnce({
@@ -552,7 +562,8 @@ describe('MFA Service', () => {
         expect.objectContaining({
           mfa_secret: encryptedSecret,
         })
-    });
+    );
+  });
 
     it('should hash backup codes before storage', async () => {
       jest.doMock('bcryptjs', () => ({
@@ -584,9 +595,11 @@ describe('MFA Service', () => {
         error: null,
       });
       await enableMFA('user_123', 'secret', '123456');
-      expect(mockLogger.info).toHaveBeenCalledWith('MFA enabled', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'MFA enabled', {
         userId: 'user_123',
-      });
+    );
+  });
 
       // Failed verification
       mockSupabase.single.mockResolvedValue({
@@ -596,11 +609,11 @@ describe('MFA Service', () => {
       mockAuthenticator.verify.mockReturnValue(false);
       await disableMFA('user_123', '000000');
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Invalid MFA verification attempt',
+      'Invalid MFA verification attempt',
         {
           userId: 'user_123',
         }
-
-    });
+    );
+  });
   });
 });

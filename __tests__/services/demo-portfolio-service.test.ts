@@ -307,7 +307,8 @@ describe('DemoPortfolioService', () => {
           temporary_id: 'temp-123',
           permanent_id: 'permanent-123',
         })
-    });
+    );
+  });
 
     it('should throw error if temporary portfolio not found', async () => {
       (window.sessionStorage.getItem as jest.Mock).mockReturnValue(null);

@@ -185,11 +185,13 @@ describe('MFA Service', () => {
       const result = await mfaService.verifyMFASetup('123456', 'factor_123');
 
       expect(result).toBe(true);
-      expect(mockSupabase.auth.mfa.verify).toHaveBeenCalledWith({
+      expect(mockSupabase.auth.mfa.verify).toHaveBeenCalledWith(
+      {
         factorId: 'factor_123',
         challengeId: '',
         code: '123456',
-      });
+    );
+  });
     });
 
     test('should return false when verification fails', async () => {
@@ -214,9 +216,11 @@ describe('MFA Service', () => {
       const challengeId = await mfaService.challengeMFA('factor_123');
 
       expect(challengeId).toBe('challenge_123');
-      expect(mockSupabase.auth.mfa.challenge).toHaveBeenCalledWith({
+      expect(mockSupabase.auth.mfa.challenge).toHaveBeenCalledWith(
+      {
         factorId: 'factor_123',
-      });
+    );
+  });
     });
 
     test('should throw error when challenge fails', async () => {
@@ -241,11 +245,13 @@ describe('MFA Service', () => {
       const result = await mfaService.verifyMFA('challenge_123', '123456');
 
       expect(result).toBe(true);
-      expect(mockSupabase.auth.mfa.verify).toHaveBeenCalledWith({
+      expect(mockSupabase.auth.mfa.verify).toHaveBeenCalledWith(
+      {
         factorId: '',
         challengeId: 'challenge_123',
         code: '123456',
-      });
+    );
+  });
     });
 
     test('should return false for invalid code', async () => {
@@ -269,9 +275,11 @@ describe('MFA Service', () => {
       await expect(
         mfaService.disableMFA('factor_123')
       ).resolves.toBeUndefined();
-      expect(mockSupabase.auth.mfa.unenroll).toHaveBeenCalledWith({
+      expect(mockSupabase.auth.mfa.unenroll).toHaveBeenCalledWith(
+      {
         factorId: 'factor_123',
-      });
+    );
+  });
     });
 
     test('should throw error when disable fails', async () => {

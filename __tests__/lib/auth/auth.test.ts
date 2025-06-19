@@ -66,10 +66,10 @@ describe('Auth Service', () => {
       signIn('test@example.com', 'password');
 
       expect(createClient).toHaveBeenCalledWith(
-        'https://test.supabase.co',
+      'https://test.supabase.co',
         'test-anon-key'
-
-    });
+    );
+  });
 
     it('should throw error when environment variables are missing', async () => {
       delete process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -95,10 +95,12 @@ describe('Auth Service', () => {
       const result = await signIn('test@example.com', 'password123');
 
       expect(result).toEqual(mockResponse);
-      expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({
+      expect(mockAuth.signInWithPassword).toHaveBeenCalledWith(
+      {
         email: 'test@example.com',
         password: 'password123',
-      });
+    );
+  });
     });
 
     it('should handle sign in errors', async () => {
@@ -133,13 +135,15 @@ describe('Auth Service', () => {
       });
 
       expect(result).toEqual(mockResponse);
-      expect(mockAuth.signUp).toHaveBeenCalledWith({
+      expect(mockAuth.signUp).toHaveBeenCalledWith(
+      {
         email: 'new@example.com',
         password: 'password123',
         options: {
           data: { name: 'Test User' },
         },
-      });
+    );
+  });
     });
 
     it('should handle email already registered', async () => {
@@ -188,12 +192,12 @@ describe('Auth Service', () => {
 
       expect(result.error).toBeNull();
       expect(mockAuth.resetPasswordForEmail).toHaveBeenCalledWith(
-        'test@example.com',
+      'test@example.com',
         {
           redirectTo: `${window.location.origin}/auth/reset-password`,
         }
-
-    });
+    );
+  });
 
     it('should handle invalid email', async () => {
       mockAuth.resetPasswordForEmail.mockResolvedValue({
@@ -217,9 +221,11 @@ describe('Auth Service', () => {
       const result = await updatePassword('newPassword123');
 
       expect(result.error).toBeNull();
-      expect(mockAuth.updateUser).toHaveBeenCalledWith({
+      expect(mockAuth.updateUser).toHaveBeenCalledWith(
+      {
         password: 'newPassword123',
-      });
+    );
+  });
     });
 
     it('should handle weak password', async () => {
@@ -244,9 +250,11 @@ describe('Auth Service', () => {
       const result = await updateEmail('new@example.com');
 
       expect(result.error).toBeNull();
-      expect(mockAuth.updateUser).toHaveBeenCalledWith({
+      expect(mockAuth.updateUser).toHaveBeenCalledWith(
+      {
         email: 'new@example.com',
-      });
+    );
+  });
     });
   });
 
@@ -264,11 +272,13 @@ describe('Auth Service', () => {
       });
 
       expect(result.error).toBeNull();
-      expect(mockAuth.verifyOtp).toHaveBeenCalledWith({
+      expect(mockAuth.verifyOtp).toHaveBeenCalledWith(
+      {
         email: 'test@example.com',
         token: '123456',
         type: 'email',
-      });
+    );
+  });
     });
 
     it('should verify OTP for phone', async () => {
@@ -284,11 +294,13 @@ describe('Auth Service', () => {
       });
 
       expect(result.error).toBeNull();
-      expect(mockAuth.verifyOtp).toHaveBeenCalledWith({
+      expect(mockAuth.verifyOtp).toHaveBeenCalledWith(
+      {
         phone: '+1234567890',
         token: '123456',
         type: 'sms',
-      });
+    );
+  });
     });
   });
 
@@ -305,10 +317,12 @@ describe('Auth Service', () => {
       });
 
       expect(result.error).toBeNull();
-      expect(mockAuth.resend).toHaveBeenCalledWith({
+      expect(mockAuth.resend).toHaveBeenCalledWith(
+      {
         type: 'signup',
         email: 'test@example.com',
-      });
+    );
+  });
     });
   });
 
@@ -400,9 +414,9 @@ describe('Auth Service', () => {
         error: null,
       });
       expect(mockAuth.exchangeCodeForSession).toHaveBeenCalledWith(
-        'auth-code-123'
-
-    });
+      'auth-code-123'
+    );
+  });
   });
 
   describe('signInWithProvider', () => {
@@ -417,12 +431,14 @@ describe('Auth Service', () => {
       });
 
       expect(result.error).toBeNull();
-      expect(mockAuth.signInWithOAuth).toHaveBeenCalledWith({
+      expect(mockAuth.signInWithOAuth).toHaveBeenCalledWith(
+      {
         provider: 'github',
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
         },
-      });
+    );
+  });
     });
 
     it('should handle provider errors', async () => {

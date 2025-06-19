@@ -332,9 +332,9 @@ describe('PostHog Analytics Client', () => {
 
         expect(result).toEqual(mockPayload);
         expect(posthog.getFeatureFlagPayload).toHaveBeenCalledWith(
-          'experiment_1'
-
-      });
+      'experiment_1'
+    );
+  });
 
       it('should return null when PostHog is not loaded', () => {
         (posthog as any).__loaded = false;
@@ -379,9 +379,11 @@ describe('PostHog Analytics Client', () => {
         incrementUserProperty('portfolios_count');
 
         expect(posthog.get_property).toHaveBeenCalledWith('portfolios_count');
-        expect(posthog.people.set).toHaveBeenCalledWith({
+        expect(posthog.people.set).toHaveBeenCalledWith(
+      {
           portfolios_count: 6,
-        });
+    );
+  });
       });
 
       it('should increment property by custom value', () => {
@@ -389,9 +391,11 @@ describe('PostHog Analytics Client', () => {
 
         incrementUserProperty('total_views', 5);
 
-        expect(posthog.people.set).toHaveBeenCalledWith({
+        expect(posthog.people.set).toHaveBeenCalledWith(
+      {
           total_views: 15,
-        });
+    );
+  });
       });
 
       it('should handle missing property (start from 0)', () => {
@@ -399,9 +403,11 @@ describe('PostHog Analytics Client', () => {
 
         incrementUserProperty('new_property', 3);
 
-        expect(posthog.people.set).toHaveBeenCalledWith({
+        expect(posthog.people.set).toHaveBeenCalledWith(
+      {
           new_property: 3,
-        });
+    );
+  });
       });
     });
   });
@@ -528,10 +534,12 @@ describe('PostHog Analytics Client', () => {
 
       renderHook(() => usePostHog());
 
-      expect(posthog.identify).toHaveBeenCalledWith('user-123', {
+      expect(posthog.identify).toHaveBeenCalledWith(
+      'user-123', {
         email: 'test@example.com',
         created_at: '2024-01-01T00:00:00Z',
-      });
+    );
+  });
     });
 
     it('should reset user when not authenticated', () => {
@@ -565,10 +573,12 @@ describe('PostHog Analytics Client', () => {
       // User logs in
       rerender({ user: mockUser });
 
-      expect(posthog.identify).toHaveBeenCalledWith('user-123', {
+      expect(posthog.identify).toHaveBeenCalledWith(
+      'user-123', {
         email: 'test@example.com',
         created_at: '2024-01-01T00:00:00Z',
-      });
+    );
+  });
 
       // User logs out
       rerender({ user: null });

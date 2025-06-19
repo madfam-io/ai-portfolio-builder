@@ -1,7 +1,6 @@
 import { describe, test, it, expect } from '@jest/globals';
 import { cn } from '@/lib/utils';
 
-
 describe('cn utility', () => {
   it('should merge class names', () => {
     const result = cn('px-2', 'py-1');

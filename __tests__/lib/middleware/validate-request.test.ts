@@ -120,8 +120,8 @@ describe('validate-request middleware', () => {
 
       it('should validate valid query parameters', async () => {
         const request = new NextRequest(
-          'http://localhost:3000/api/test?page=2&limit=20&search=test'
-
+      'http://localhost:3000/api/test?page=2&limit=20&search=test'
+    );
         const result = await validateRequest(request, schemas);
 
         expect(result.query).toEqual({
@@ -137,8 +137,8 @@ describe('validate-request middleware', () => {
         });
 
         const request = new NextRequest(
-          'http://localhost:3000/api/test?tags=javascript&tags=typescript'
-
+      'http://localhost:3000/api/test?tags=javascript&tags=typescript'
+    );
         const result = await validateRequest(request, {
           query: arrayQuerySchema,
         });
@@ -150,8 +150,8 @@ describe('validate-request middleware', () => {
 
       it('should reject invalid query parameters', async () => {
         const request = new NextRequest(
-          'http://localhost:3000/api/test?page=0&limit=200'
-
+      'http://localhost:3000/api/test?page=0&limit=200'
+    );
         await expect(validateRequest(request, schemas)).rejects.toThrow(
           AppError
 

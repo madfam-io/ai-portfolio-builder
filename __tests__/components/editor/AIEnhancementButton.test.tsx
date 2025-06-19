@@ -123,10 +123,10 @@ describe('AIEnhancementButton', () => {
           bioContext
 
         expect(mockOnEnhanced).toHaveBeenCalledWith(
-          mockEnhancedContent.content,
+      mockEnhancedContent.content,
           mockEnhancedContent.suggestions
-
-      });
+    );
+  });
 
       // Should show enhanced state
       expect(screen.getByText(mockT.enhanced)).toBeInTheDocument();
@@ -181,9 +181,9 @@ describe('AIEnhancementButton', () => {
 
       await waitFor(() => {
         expect(showToast.error).toHaveBeenCalledWith(
-          mockT.aiEnhancementRequiresAuth
-
-      });
+      mockT.aiEnhancementRequiresAuth
+    );
+  });
     });
 
     it('should handle quota exceeded error', async () => {
@@ -237,9 +237,10 @@ describe('AIEnhancementButton', () => {
       };
 
       (aiClient.optimizeProject as jest.Mock).mockResolvedValue(
-        mockEnhancedContent
+      mockEnhancedContent
+    );
 
-      const user = userEvent.setup();
+    const user = userEvent.setup();
       render(
         <AIEnhancementButton
           type="project"
@@ -257,10 +258,10 @@ describe('AIEnhancementButton', () => {
           projectContext.title
 
         expect(mockOnEnhanced).toHaveBeenCalledWith(
-          mockEnhancedContent.enhanced,
+      mockEnhancedContent.enhanced,
           mockEnhancedContent.keyAchievements
-
-      });
+    );
+  });
     });
 
     it('should use content when context description is missing', async () => {
@@ -270,9 +271,10 @@ describe('AIEnhancementButton', () => {
       };
 
       (aiClient.optimizeProject as jest.Mock).mockResolvedValue(
-        mockEnhancedContent
+      mockEnhancedContent
+    );
 
-      const user = userEvent.setup();
+    const user = userEvent.setup();
       render(
         <AIEnhancementButton
           type="project"
@@ -285,11 +287,11 @@ describe('AIEnhancementButton', () => {
 
       await waitFor(() => {
         expect(aiClient.optimizeProject).toHaveBeenCalledWith(
-          'Fallback description',
+      'Fallback description',
           ['React'],
           undefined
-
-      });
+    );
+  });
     });
   });
 

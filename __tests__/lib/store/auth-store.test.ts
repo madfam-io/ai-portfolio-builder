@@ -141,9 +141,11 @@ describe('useAuthStore', () => {
       expect(result.current.isAuthenticated).toBe(true);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('User signed in', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'User signed in', {
         userId: 'user-123',
-      });
+    );
+  });
     });
 
     it('should handle sign in error', async () => {
@@ -166,9 +168,11 @@ describe('useAuthStore', () => {
       expect(result.current.isAuthenticated).toBe(false);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBe(errorMessage);
-      expect(logger.error).toHaveBeenCalledWith('Sign in failed', {
+      expect(logger.error).toHaveBeenCalledWith(
+      'Sign in failed', {
         error: errorMessage,
-      });
+    );
+  });
     });
 
     it('should handle missing data in response', async () => {
@@ -207,9 +211,11 @@ describe('useAuthStore', () => {
       expect(result.current.isAuthenticated).toBe(true);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('User signed up', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'User signed up', {
         userId: 'user-123',
-      });
+    );
+  });
     });
 
     it('should handle sign up error', async () => {
@@ -228,9 +234,11 @@ describe('useAuthStore', () => {
       ).rejects.toThrow(errorMessage);
 
       expect(result.current.error).toBe(errorMessage);
-      expect(logger.error).toHaveBeenCalledWith('Sign up failed', {
+      expect(logger.error).toHaveBeenCalledWith(
+      'Sign up failed', {
         error: errorMessage,
-      });
+    );
+  });
     });
 
     it('should handle email verification pending', async () => {
@@ -292,9 +300,11 @@ describe('useAuthStore', () => {
       ).rejects.toThrow(errorMessage);
 
       expect(result.current.error).toBe(errorMessage);
-      expect(logger.error).toHaveBeenCalledWith('Sign out failed', {
+      expect(logger.error).toHaveBeenCalledWith(
+      'Sign out failed', {
         error: errorMessage,
-      });
+    );
+  });
     });
   });
 
@@ -342,9 +352,11 @@ describe('useAuthStore', () => {
       expect(result.current.user).toEqual(mockUser);
       expect(result.current.isAuthenticated).toBe(true);
       expect(result.current.isLoading).toBe(false);
-      expect(logger.info).toHaveBeenCalledWith('Auth initialized', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Auth initialized', {
         userId: 'user-123',
-      });
+    );
+  });
     });
 
     it('should handle no existing session', async () => {
@@ -379,10 +391,10 @@ describe('useAuthStore', () => {
 
       expect(result.current.isLoading).toBe(false);
       expect(logger.error).toHaveBeenCalledWith(
-        'Failed to initialize auth',
+      'Failed to initialize auth',
         error
-
-    });
+    );
+  });
   });
 
   describe('selectors', () => {

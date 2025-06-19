@@ -118,7 +118,8 @@ describe('Enhanced Stripe Service', () => {
         cancelUrl: mockCancelUrl,
       });
 
-      expect(mockCheckoutSessions.create).toHaveBeenCalledWith({
+      expect(mockCheckoutSessions.create).toHaveBeenCalledWith(
+      {
         customer_email: mockEmail,
         metadata: {
           userId: mockUserId,
@@ -142,7 +143,8 @@ describe('Enhanced Stripe Service', () => {
             planId: 'pro',
           },
         },
-      });
+    );
+  });
 
       expect(result).toEqual(mockSession);
     });
@@ -243,7 +245,8 @@ describe('Enhanced Stripe Service', () => {
         cancelUrl: 'https://example.com/cancel',
       });
 
-      expect(mockCheckoutSessions.create).toHaveBeenCalledWith({
+      expect(mockCheckoutSessions.create).toHaveBeenCalledWith(
+      {
         customer_email: mockEmail,
         metadata: {
           userId: mockUserId,
@@ -267,7 +270,8 @@ describe('Enhanced Stripe Service', () => {
         success_url: 'https://example.com/success',
         cancel_url: 'https://example.com/cancel',
         billing_address_collection: 'auto',
-      });
+    );
+  });
 
       expect(result).toEqual(mockSession);
     });
@@ -315,10 +319,12 @@ describe('Enhanced Stripe Service', () => {
         returnUrl: 'https://example.com/dashboard',
       });
 
-      expect(mockBillingPortalSessions.create).toHaveBeenCalledWith({
+      expect(mockBillingPortalSessions.create).toHaveBeenCalledWith(
+      {
         customer: 'cus_123',
         return_url: 'https://example.com/dashboard',
-      });
+    );
+  });
 
       expect(result).toEqual(mockSession);
     });

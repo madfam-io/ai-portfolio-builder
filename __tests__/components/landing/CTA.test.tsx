@@ -62,10 +62,10 @@ describe('CTA', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
       currentLanguage: 'en',
-    } as any);
+    });
   });
 
   const renderCTA = () => {
@@ -152,7 +152,7 @@ describe('CTA', () => {
 
     it('should handle missing translations gracefully', () => {
       // Mock with missing translations
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {
           ctaTitle: undefined,
           ctaSubtitle: undefined,

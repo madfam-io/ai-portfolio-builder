@@ -55,6 +55,7 @@ describe('Stripe Webhook Route', () => {
           await handlers['checkout.session.completed'](mockEvent);
           return { received: true };
         }
+      );
 
       // Mock user lookup
       mockSupabase.single.mockResolvedValueOnce({
@@ -75,12 +76,14 @@ describe('Stripe Webhook Route', () => {
       expect(result).toEqual({ received: true });
 
       // Verify user was updated with subscription
-      expect(mockSupabase.update).toHaveBeenCalledWith({
+      expect(mockSupabase.update).toHaveBeenCalledWith(
+      {
         subscription_plan: 'pro',
         subscription_id: 'sub_123',
         stripe_customer_id: 'cus_123',
         subscription_status: 'active',
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Subscription created for user',
@@ -88,6 +91,7 @@ describe('Stripe Webhook Route', () => {
           userId: 'user_123',
           plan: 'pro',
         })
+      );
     });
 
     it('should handle AI credit pack purchase', async () => {
@@ -138,9 +142,11 @@ describe('Stripe Webhook Route', () => {
       expect(response.status).toBe(200);
 
       // Verify credits were added
-      expect(mockSupabase.update).toHaveBeenCalledWith({
+      expect(mockSupabase.update).toHaveBeenCalledWith(
+      {
         ai_credits: 35, // 10 existing + 25 new
-      });
+    );
+  });
 
       // Verify purchase was logged
       expect(mockSupabase.insert).toHaveBeenCalledWith({
@@ -158,7 +164,8 @@ describe('Stripe Webhook Route', () => {
           pack: 'medium',
           credits: 25,
         })
-    });
+    );
+  });
 
     it('should handle missing user gracefully', async () => {
       const mockEvent = {
@@ -197,7 +204,8 @@ describe('Stripe Webhook Route', () => {
         expect.objectContaining({
           userId: 'user_nonexistent',
         })
-    });
+    );
+  });
   });
 
   describe('customer.subscription.updated', () => {
@@ -260,7 +268,8 @@ describe('Stripe Webhook Route', () => {
           subscriptionId: 'sub_123',
           status: 'active',
         })
-    });
+    );
+  });
 
     it('should handle plan changes', async () => {
       const mockEvent = {
@@ -313,7 +322,8 @@ describe('Stripe Webhook Route', () => {
         expect.objectContaining({
           subscription_plan: 'business',
         })
-    });
+    );
+  });
   });
 
   describe('customer.subscription.deleted', () => {
@@ -352,19 +362,22 @@ describe('Stripe Webhook Route', () => {
 
       expect(response.status).toBe(200);
 
-      expect(mockSupabase.update).toHaveBeenCalledWith({
+      expect(mockSupabase.update).toHaveBeenCalledWith(
+      {
         subscription_plan: 'free',
         subscription_id: null,
         subscription_status: 'canceled',
         subscription_period_end: null,
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Subscription canceled',
         expect.objectContaining({
           subscriptionId: 'sub_123',
         })
-    });
+    );
+  });
   });
 
   describe('invoice.payment_failed', () => {
@@ -405,9 +418,11 @@ describe('Stripe Webhook Route', () => {
 
       expect(response.status).toBe(200);
 
-      expect(mockSupabase.update).toHaveBeenCalledWith({
+      expect(mockSupabase.update).toHaveBeenCalledWith(
+      {
         subscription_status: 'past_due',
-      });
+    );
+  });
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
         'Payment failed for subscription',
@@ -415,7 +430,8 @@ describe('Stripe Webhook Route', () => {
           subscriptionId: 'sub_123',
           attemptCount: 2,
         })
-    });
+    );
+  });
   });
 
   describe('Error Handling', () => {
@@ -517,6 +533,7 @@ describe('Stripe Webhook Route', () => {
       expect(mockLogger.info).toHaveBeenCalledWith(
         'Webhook received',
         expect.objectContaining({ type: 'unknown.event.type' })
-    });
+    );
+  });
   });
 });

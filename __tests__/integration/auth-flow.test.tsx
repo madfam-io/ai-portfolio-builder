@@ -159,10 +159,10 @@ describe('Authentication Flow Integration', () => {
       // Wait for sign in to complete
       await waitFor(() => {
         expect(authService.signIn).toHaveBeenCalledWith(
-          'test@example.com',
+      'test@example.com',
           'password123'
-
-      });
+    );
+  });
 
       // Verify auth state is updated
       const state = useAuthStore.getState();

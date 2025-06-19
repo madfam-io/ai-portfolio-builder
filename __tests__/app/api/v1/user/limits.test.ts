@@ -3,7 +3,11 @@
  */
 
 import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
-import { setupCommonMocks, createMockRequest, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
+import {
+  setupCommonMocks,
+  createMockRequest,
+  defaultSupabaseMock,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 const mockLimitsResponse = {
   subscription_tier: 'free',
@@ -39,8 +43,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -62,8 +68,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -84,8 +92,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -117,8 +127,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -152,8 +164,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -189,8 +203,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -225,8 +241,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -240,7 +258,7 @@ describe('/api/v1/user/limits', () => {
         data: mockLimitsResponse,
         error: null,
       });
-      
+
       setupCommonMocks({
         supabase: {
           ...defaultSupabaseMock,
@@ -249,13 +267,17 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       await GET(request);
 
-      expect(mockRpc).toHaveBeenCalledWith('check_user_plan_limits', {
+      expect(mockRpc).toHaveBeenCalledWith(
+      'check_user_plan_limits', {
         user_uuid: 'user_123',
-      });
+    );
+  });
     });
 
     it('should handle RPC function throwing error', async () => {
@@ -267,8 +289,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 
@@ -297,8 +321,10 @@ describe('/api/v1/user/limits', () => {
       });
 
       const { GET } = await import('@/app/api/v1/user/limits/route');
-      
-      const request = createMockRequest('https://example.com/api/v1/user/limits');
+
+      const request = createMockRequest(
+        'https://example.com/api/v1/user/limits'
+      );
       const response = await GET(request);
       const data = await response.json();
 

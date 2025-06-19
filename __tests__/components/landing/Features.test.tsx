@@ -102,10 +102,10 @@ describe('Features', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
       currentLanguage: 'en',
-    } as any);
+    });
 
     // Mock intersection observer for animations
     global.IntersectionObserver = jest.fn().mockImplementation(() => ({
@@ -537,7 +537,7 @@ describe('Features', () => {
     });
 
     it('should handle missing translations gracefully', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
         currentLanguage: 'en',
       } as any);
@@ -549,10 +549,10 @@ describe('Features', () => {
     });
 
     it('should adapt layout for RTL languages', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: mockTranslations,
         currentLanguage: 'ar',
-      } as any);
+      });
 
       renderFeatures();
 
@@ -569,10 +569,12 @@ describe('Features', () => {
       const aiFeature = screen.getByText('AI-Powered Content');
       await user.click(aiFeature);
 
-      expect(window.gtag).toHaveBeenCalledWith('event', 'feature_interaction', {
+      expect(window.gtag).toHaveBeenCalledWith(
+      'event', 'feature_interaction', {
         feature_name: 'ai_powered_content',
         section: 'features',
-      });
+    );
+  });
     });
 
     it('should track feature visibility', () => {
@@ -589,10 +591,12 @@ describe('Features', () => {
       const viewDemoButton = screen.getByText('View Demo');
       await user.click(viewDemoButton);
 
-      expect(window.gtag).toHaveBeenCalledWith('event', 'demo_engagement', {
+      expect(window.gtag).toHaveBeenCalledWith(
+      'event', 'demo_engagement', {
         demo_type: 'feature_demo',
         feature: 'real_time_preview',
-      });
+    );
+  });
     });
   });
 
@@ -616,7 +620,7 @@ describe('Features', () => {
 
     it('should gracefully handle missing feature data', () => {
       // Mock incomplete feature data
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {
           features: 'Features',
           // Missing feature descriptions

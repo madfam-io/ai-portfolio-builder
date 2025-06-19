@@ -4,8 +4,10 @@ import { GET, POST } from '@/app/api/v1/analytics/repositories/route';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Mock dependencies
 jest.mock('@/lib/services/analyticsService');
@@ -65,6 +67,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const response = await GET();
       const data = await response.json();
@@ -119,6 +122,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const response = await GET();
       const data = await response.json();
@@ -144,6 +148,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const response = await GET();
       const data = await response.json();
@@ -153,7 +158,7 @@ describe('/api/v1/analytics/repositories', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to fetch repositories',
         expect.any(Object)
-
+      );
     });
   });
 
@@ -182,6 +187,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories',
@@ -189,6 +195,7 @@ describe('/api/v1/analytics/repositories', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -228,6 +235,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories',
@@ -235,6 +243,7 @@ describe('/api/v1/analytics/repositories', () => {
           method: 'POST',
           body: JSON.stringify({ force: true }),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -265,6 +274,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories',
@@ -272,6 +282,7 @@ describe('/api/v1/analytics/repositories', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -302,6 +313,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories',
@@ -309,6 +321,7 @@ describe('/api/v1/analytics/repositories', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -337,13 +350,15 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories',
+      'http://localhost:3000/api/v1/analytics/repositories',
         {
           method: 'POST',
           body: 'invalid json',
         }
+    );
 
       const response = await POST(request);
       const data = await response.json();
@@ -374,6 +389,7 @@ describe('/api/v1/analytics/repositories', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories',
@@ -381,6 +397,7 @@ describe('/api/v1/analytics/repositories', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -390,7 +407,7 @@ describe('/api/v1/analytics/repositories', () => {
       expect(logger.error).toHaveBeenCalledWith(
         'Failed to sync repositories',
         expect.any(Object)
-
+      );
     });
   });
 });

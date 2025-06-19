@@ -44,7 +44,7 @@ import { middleware } from '@/middleware';
 describe('Middleware Simple Test', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    
+
     // Setup mock Supabase client
     const mockSupabaseClient = {
       auth: {
@@ -58,7 +58,7 @@ describe('Middleware Simple Test', () => {
       eq: jest.fn().mockReturnThis(),
       single: jest.fn().mockResolvedValue({ data: null, error: null }),
     };
-    
+
     mockCreateServerClient.mockImplementation(() => mockSupabaseClient);
     mockApiVersionMiddleware.mockResolvedValue(NextResponse.next());
     mockSecurityMiddleware.mockResolvedValue(null);

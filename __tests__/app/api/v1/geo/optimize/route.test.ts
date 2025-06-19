@@ -2,7 +2,6 @@ import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { POST } from '@/app/api/v1/geo/optimize/route';
 
-
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
 jest.mock('@/lib/services/error/api-error-handler');
@@ -49,6 +48,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -77,6 +77,7 @@ describe('/api/v1/geo/optimize', () => {
             method: 'POST',
             body: JSON.stringify(body),
           }
+        );
 
         const response = await POST(mockRequest);
         expect(response.status).toBe(400);
@@ -99,6 +100,7 @@ describe('/api/v1/geo/optimize', () => {
             method: 'POST',
             body: JSON.stringify(requestBody),
           }
+        );
 
         const response = await POST(mockRequest);
         const data = await response.json();
@@ -125,6 +127,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -146,6 +149,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -170,6 +174,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -194,6 +199,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -221,6 +227,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response1 = await POST(mockRequest);
       const data1 = await response1.json();
@@ -250,6 +257,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -274,6 +282,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
 
@@ -300,6 +309,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
 
@@ -318,6 +328,7 @@ describe('/api/v1/geo/optimize', () => {
           method: 'POST',
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
 

@@ -63,10 +63,12 @@ describe('Dynamic Import Utilities', () => {
         loading: customLoading,
       });
 
-      expect(mockDynamic).toHaveBeenCalledWith(mockImportFn, {
+      expect(mockDynamic).toHaveBeenCalledWith(
+      mockImportFn, {
         loading: customLoading,
         ssr: true,
-      });
+    );
+  });
     });
 
     it('should disable SSR when specified', () => {
@@ -176,10 +178,12 @@ describe('Dynamic Import Utilities', () => {
         fallback: customFallback,
       });
 
-      expect(mockDynamic).toHaveBeenCalledWith(mockImportFn, {
+      expect(mockDynamic).toHaveBeenCalledWith(
+      mockImportFn, {
         loading: customFallback,
         ssr: true,
-      });
+    );
+  });
     });
 
     it('should always enable SSR for route components', () => {

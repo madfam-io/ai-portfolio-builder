@@ -84,10 +84,10 @@ describe('DashboardAnalyticsService', () => {
       expect(result).toEqual(mockAnalyticsData);
       expect(mockSupabase.from).toHaveBeenCalledWith('portfolio_analytics');
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
-        'portfolio_id',
+      'portfolio_id',
         mockPortfolioId
-
-    });
+    );
+  });
 
     it('should handle different time ranges', async () => {
       const timeRanges = ['24h', '7d', '30d', '90d', '1y', 'all'];
@@ -187,12 +187,12 @@ describe('DashboardAnalyticsService', () => {
 
       expect(result).toEqual(mockRetentionData);
       expect(mockSupabase.rpc).toHaveBeenCalledWith(
-        'calculate_retention_cohorts',
+      'calculate_retention_cohorts',
         {
           portfolio_id: mockPortfolioId,
         }
-
-    });
+    );
+  });
   });
 
   describe('getEngagementMetrics', () => {

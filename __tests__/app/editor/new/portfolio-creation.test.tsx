@@ -373,19 +373,23 @@ describe('Portfolio Creation Flow', () => {
 
       // Wait for creation to complete
       await waitFor(() => {
-        expect(mockCreatePortfolio).toHaveBeenCalledWith({
+        expect(mockCreatePortfolio).toHaveBeenCalledWith(
+      {
           name: 'John Doe',
           title: 'Software Engineer',
           bio: 'Experienced developer',
           template: 'modern',
-        });
+    );
+  });
       });
 
       // Should show success toast and redirect
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: mockT.success,
         description: mockT.portfolioCreated,
-      });
+    );
+  });
       expect(mockPush).toHaveBeenCalledWith('/editor/portfolio-123');
     });
 
@@ -408,11 +412,13 @@ describe('Portfolio Creation Flow', () => {
 
       // Wait for error
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
+        expect(mockToast).toHaveBeenCalledWith(
+      {
           title: mockT.error,
           description: mockT.failedToCreatePortfolio,
           variant: 'destructive',
-        });
+    );
+  });
       });
 
       // Button should be enabled again

@@ -95,18 +95,20 @@ describe('/api/v1/user/limits', () => {
       const responseData = await response.json();
       expect(responseData).toEqual(mockLimitsData);
 
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'check_user_plan_limits', {
         user_uuid: 'user-123',
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'User limits retrieved successfully',
+      'User limits retrieved successfully',
         {
           userId: 'user-123',
           subscriptionTier: 'pro',
         }
-
-    });
+    );
+  });
 
     it('should handle different subscription tiers', async () => {
       const freeTierData = {
@@ -226,7 +228,7 @@ describe('/api/v1/user/limits', () => {
       });
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to check user limits',
+      'Failed to check user limits',
         {
           error: {
             message: 'Function not found',
@@ -234,8 +236,8 @@ describe('/api/v1/user/limits', () => {
           },
           userId: 'user-123',
         }
-
-    });
+    );
+  });
 
     it('should handle database function returning user error', async () => {
       const mockSupabase = {
@@ -261,13 +263,13 @@ describe('/api/v1/user/limits', () => {
       });
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Database function returned error',
+      'Database function returned error',
         {
           error: 'User not found in system',
           userId: 'user-123',
         }
-
-    });
+    );
+  });
 
     it('should handle unexpected errors', async () => {
       mockCreateClient.mockRejectedValue(
@@ -329,18 +331,20 @@ describe('/api/v1/user/limits', () => {
 
       expect(response.status).toBe(200);
 
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'check_user_plan_limits', {
         user_uuid: differentUserId,
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'User limits retrieved successfully',
+      'User limits retrieved successfully',
         {
           userId: differentUserId,
           subscriptionTier: 'business',
         }
-
-    });
+    );
+  });
   });
 
   describe('Usage Calculation', () => {
@@ -529,18 +533,20 @@ describe('/api/v1/user/limits', () => {
       await GET(request as any);
 
       // Verify the RPC call uses the authenticated user's ID
-      expect(mockSupabase.rpc).toHaveBeenCalledWith('check_user_plan_limits', {
+      expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'check_user_plan_limits', {
         user_uuid: userAId,
-      });
+    );
+  });
 
       // Should not be able to query other users
       expect(mockSupabase.rpc).not.toHaveBeenCalledWith(
-        'check_user_plan_limits',
+      'check_user_plan_limits',
         {
           user_uuid: 'user-b-456',
         }
-
-    });
+    );
+  });
 
     it('should validate user exists in system', async () => {
       const mockSupabase = {

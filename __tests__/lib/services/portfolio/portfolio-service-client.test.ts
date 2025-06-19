@@ -66,9 +66,9 @@ describe('PortfolioServiceClient', () => {
 
       expect(result).toEqual(mockPortfolios);
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios?userId=user-123'
-
-    });
+      '/api/v1/portfolios?userId=user-123'
+    );
+  });
 
     it('should handle fetch error', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
@@ -95,10 +95,10 @@ describe('PortfolioServiceClient', () => {
       ).rejects.toThrow('Network error');
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error fetching portfolios:',
+      'Error fetching portfolios:',
         networkError
-
-    });
+    );
+  });
   });
 
   describe('getPortfolio', () => {
@@ -112,9 +112,9 @@ describe('PortfolioServiceClient', () => {
 
       expect(result).toEqual(mockPortfolio);
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios/portfolio-123'
-
-    });
+      '/api/v1/portfolios/portfolio-123'
+    );
+  });
 
     it('should handle fetch error', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
@@ -243,12 +243,12 @@ describe('PortfolioServiceClient', () => {
       await portfolioServiceClient.deletePortfolio('portfolio-123');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios/portfolio-123',
+      '/api/v1/portfolios/portfolio-123',
         {
           method: 'DELETE',
         }
-
-    });
+    );
+  });
 
     it('should handle deletion error', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
@@ -312,10 +312,11 @@ describe('PortfolioServiceClient', () => {
       await portfolioServiceClient.getPortfolio('portfolio-123');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios/portfolio-123'
+      '/api/v1/portfolios/portfolio-123'
 
       // No headers object should be passed for GET requests
-    });
+    );
+  });
 
     it('should not include Content-Type header for DELETE requests', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
@@ -325,11 +326,12 @@ describe('PortfolioServiceClient', () => {
       await portfolioServiceClient.deletePortfolio('portfolio-123');
 
       expect(global.fetch).toHaveBeenCalledWith(
-        '/api/v1/portfolios/portfolio-123',
+      '/api/v1/portfolios/portfolio-123',
         { method: 'DELETE' }
 
       // No Content-Type header for DELETE
-    });
+    );
+  });
   });
 
   describe('Response status codes', () => {

@@ -90,7 +90,8 @@ describe('GitHubTokenManager', () => {
           expires_at: expect.any(String),
           scope: 'repo,read:user',
         })
-    });
+    );
+  });
 
     it('should encrypt tokens before storage', async () => {
       const tokenData = {
@@ -130,10 +131,10 @@ describe('GitHubTokenManager', () => {
       expect(decryptedToken).toBeTruthy();
       expect(mockSupabase.from).toHaveBeenCalledWith('github_integrations');
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
-        'user_id',
+      'user_id',
         mockUserId
-
-    });
+    );
+  });
 
     it('should return null for non-existent integration', async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -222,7 +223,8 @@ describe('GitHubTokenManager', () => {
           refresh_token: expect.any(String),
           expires_at: expect.any(String),
         })
-    });
+    );
+  });
 
     it('should handle refresh token failure', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -288,10 +290,10 @@ describe('GitHubTokenManager', () => {
       expect(mockSupabase.from).toHaveBeenCalledWith('github_integrations');
       expect(mockSupabase.from().delete).toHaveBeenCalled();
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
-        'user_id',
+      'user_id',
         mockUserId
-
-    });
+    );
+  });
 
     it('should handle revocation API errors', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -395,7 +397,8 @@ describe('GitHubTokenManager', () => {
           action: 'api_call',
           timestamp: expect.any(String),
         })
-    });
+    );
+  });
 
     it('should implement token auto-refresh', async () => {
       // Mock token that expires in 5 minutes
@@ -475,7 +478,8 @@ describe('GitHubTokenManager', () => {
           message: expect.stringContaining('decryption failed'),
           severity: 'high',
         })
-    });
+    );
+  });
 
     it('should implement rate limiting for token operations', async () => {
       const promises = Array.from({ length: 10 }, () =>

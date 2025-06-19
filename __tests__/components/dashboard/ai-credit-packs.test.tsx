@@ -25,7 +25,7 @@ describe('AICreditPacks', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: {
         error: 'Error',
         success: 'Success',
@@ -177,10 +177,12 @@ describe('AICreditPacks', () => {
       await user.click(largePackButton);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
+        expect(mockToast).toHaveBeenCalledWith(
+      {
           title: 'Purchase initiated',
           description: 'You will be redirected to complete your purchase.',
-        });
+    );
+  });
       });
     });
 
@@ -195,11 +197,13 @@ describe('AICreditPacks', () => {
       await user.click(smallPackButton);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
+        expect(mockToast).toHaveBeenCalledWith(
+      {
           title: 'Error',
           description: 'Failed to initiate purchase',
           variant: 'destructive',
-        });
+    );
+  });
       });
     });
 
@@ -235,7 +239,8 @@ describe('AICreditPacks', () => {
       await waitFor(() => {
         expect(mockToast).toHaveBeenCalledWith(
           expect.objectContaining({ variant: 'destructive' })
-      });
+    );
+  });
 
       // Should no longer be in loading state
       expect(screen.queryByText('Processing...')).not.toBeInTheDocument();

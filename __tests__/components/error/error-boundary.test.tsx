@@ -164,6 +164,7 @@ describe('ErrorBoundary', () => {
       expect.objectContaining({
         componentStack: expect.any(String),
       })
+    );
   });
 
   it('should reset on resetKeys change', () => {

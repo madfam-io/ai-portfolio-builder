@@ -160,9 +160,9 @@ describe('BillingDashboard', () => {
       });
 
       expect(mockRouter.push).toHaveBeenCalledWith(
-        'https://billing.stripe.com/session'
-
-    });
+      'https://billing.stripe.com/session'
+    );
+  });
 
     it('should handle portal session errors', async () => {
       const user = userEvent.setup();
@@ -177,11 +177,13 @@ describe('BillingDashboard', () => {
       await user.click(manageButton);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
+        expect(mockToast).toHaveBeenCalledWith(
+      {
           title: 'Error',
           description: 'Failed to open billing portal',
           variant: 'destructive',
-        });
+    );
+  });
       });
     });
 
@@ -258,9 +260,9 @@ describe('BillingDashboard', () => {
       });
 
       expect(mockRouter.push).toHaveBeenCalledWith(
-        'https://checkout.stripe.com/session'
-
-    });
+      'https://checkout.stripe.com/session'
+    );
+  });
 
     it('should show plan comparison features', () => {
       const freeUserProps = {
@@ -326,9 +328,9 @@ describe('BillingDashboard', () => {
       });
 
       expect(mockRouter.push).toHaveBeenCalledWith(
-        'https://checkout.stripe.com/credits'
-
-    });
+      'https://checkout.stripe.com/credits'
+    );
+  });
   });
 
   describe('Invoice History', () => {
@@ -407,11 +409,13 @@ describe('BillingDashboard', () => {
       await user.click(upgradeButton);
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith({
+        expect(mockToast).toHaveBeenCalledWith(
+      {
           title: 'Error',
           description: 'Failed to start checkout',
           variant: 'destructive',
-        });
+    );
+  });
       });
     });
 

@@ -154,9 +154,9 @@ describe('EditorPreview', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
-    } as any);
+    });
   });
 
   const renderEditorPreview = (props = mockProps) => {

@@ -544,9 +544,11 @@ describe('Security Middleware', () => {
 
         // Block IP
         securityUtils.blockIP(testIP);
-        expect(logger.warn).toHaveBeenCalledWith('IP added to blocklist', {
+        expect(logger.warn).toHaveBeenCalledWith(
+      'IP added to blocklist', {
           ip: testIP,
-        });
+    );
+  });
 
         // Verify IP is blocked
         createRequest('/test', {
@@ -555,9 +557,11 @@ describe('Security Middleware', () => {
 
         // Unblock IP
         securityUtils.unblockIP(testIP);
-        expect(logger.info).toHaveBeenCalledWith('IP removed from blocklist', {
+        expect(logger.info).toHaveBeenCalledWith(
+      'IP removed from blocklist', {
           ip: testIP,
-        });
+    );
+  });
       });
     });
   });

@@ -106,7 +106,7 @@ describe('BillingPage', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: {
         success: 'Success',
         error: 'Error',
@@ -115,7 +115,10 @@ describe('BillingPage', () => {
         saved: 'Saved',
         changesSaved: 'Your changes have been saved',
       },
-    } as any);
+      language: 'en',
+      setLanguage: jest.fn(),
+      isLoading: false,
+    }));
 
     mockUseToast.mockReturnValue({
       toast: mockToast,
@@ -308,10 +311,12 @@ describe('BillingPage', () => {
 
       render(<BillingPage />);
 
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Subscription Updated!',
         description: 'Your subscription has been successfully updated.',
-      });
+    );
+  });
     });
 
     it('should show success toast for successful credit purchase', () => {
@@ -319,10 +324,12 @@ describe('BillingPage', () => {
 
       render(<BillingPage />);
 
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Credits Purchased!',
         description: 'Your AI credits have been added to your account.',
-      });
+    );
+  });
     });
 
     it('should show canceled toast for canceled checkout', () => {
@@ -330,11 +337,13 @@ describe('BillingPage', () => {
 
       render(<BillingPage />);
 
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Checkout Canceled',
         description: 'Your purchase was not completed.',
         variant: 'default',
-      });
+    );
+  });
     });
   });
 
@@ -356,9 +365,11 @@ describe('BillingPage', () => {
       const manageBillingButton = screen.getByText('Manage Billing');
       await userEvent.click(manageBillingButton);
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/v1/stripe/portal', {
+      expect(mockFetch).toHaveBeenCalledWith(
+      '/api/v1/stripe/portal', {
         method: 'POST',
-      });
+    );
+  });
     });
 
     it('should handle billing portal errors', async () => {
@@ -373,11 +384,13 @@ describe('BillingPage', () => {
       const manageBillingButton = screen.getByText('Manage Billing');
       await userEvent.click(manageBillingButton);
 
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Access Failed',
         description: 'Portal unavailable',
         variant: 'destructive',
-      });
+    );
+  });
     });
   });
 
@@ -431,11 +444,13 @@ describe('BillingPage', () => {
       const purchaseButton = screen.getByText('Purchase Small Pack');
       await userEvent.click(purchaseButton);
 
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Purchase Failed',
         description: 'Failed to start credit purchase. Please try again.',
         variant: 'destructive',
-      });
+    );
+  });
     });
   });
 

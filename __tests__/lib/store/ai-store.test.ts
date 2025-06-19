@@ -356,9 +356,10 @@ describe('AI Store', () => {
         };
 
         (aiClient.recommendTemplate as jest.Mock).mockResolvedValue(
-          mockRecommendation
+      mockRecommendation
+    );
 
-        const { recommendTemplate } = useAIStore.getState();
+    const { recommendTemplate } = useAIStore.getState();
 
         const profileData = {
           title: 'Software Engineer',

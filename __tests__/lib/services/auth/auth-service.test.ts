@@ -77,13 +77,17 @@ describe('AuthService', () => {
 
       expect(result.data).toEqual({ user: mockUser, session: mockSession });
       expect(result.error).toBeNull();
-      expect(mockAuthClient.signInWithPassword).toHaveBeenCalledWith({
+      expect(mockAuthClient.signInWithPassword).toHaveBeenCalledWith(
+      {
         email: 'test@example.com',
         password: 'password123',
-      });
-      expect(logger.info).toHaveBeenCalledWith('User signed in successfully', {
+    );
+  });
+      expect(logger.info).toHaveBeenCalledWith(
+      'User signed in successfully', {
         userId: 'user-123',
-      });
+    );
+  });
     });
 
     it('should handle sign in error', async () => {
@@ -161,14 +165,18 @@ describe('AuthService', () => {
 
       expect(result.data).toEqual({ user: mockUser, session: mockSession });
       expect(result.error).toBeNull();
-      expect(mockAuthClient.signUp).toHaveBeenCalledWith({
+      expect(mockAuthClient.signUp).toHaveBeenCalledWith(
+      {
         email: 'test@example.com',
         password: 'password123',
         options: { data: metadata },
-      });
-      expect(logger.info).toHaveBeenCalledWith('User signed up successfully', {
+    );
+  });
+      expect(logger.info).toHaveBeenCalledWith(
+      'User signed up successfully', {
         userId: 'user-123',
-      });
+    );
+  });
     });
 
     it('should handle sign up without metadata', async () => {
@@ -182,11 +190,13 @@ describe('AuthService', () => {
         'password123'
 
       expect(result.data).toEqual({ user: mockUser, session: null });
-      expect(mockAuthClient.signUp).toHaveBeenCalledWith({
+      expect(mockAuthClient.signUp).toHaveBeenCalledWith(
+      {
         email: 'test@example.com',
         password: 'password123',
         options: { data: undefined },
-      });
+    );
+  });
     });
 
     it('should handle sign up error', async () => {
@@ -258,9 +268,11 @@ describe('AuthService', () => {
           redirectTo: 'http://localhost:3000/auth/reset-password',
         }
 
-      expect(logger.info).toHaveBeenCalledWith('Password reset email sent', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Password reset email sent', {
         email: 'test@example.com',
-      });
+    );
+  });
     });
 
     it('should handle password reset error', async () => {
@@ -278,10 +290,10 @@ describe('AuthService', () => {
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
       expect(logger.error).toHaveBeenCalledWith(
-        'Password reset error:',
+      'Password reset error:',
         authError
-
-    });
+    );
+  });
   });
 
   describe('updatePassword', () => {
@@ -295,9 +307,11 @@ describe('AuthService', () => {
 
       expect(result.data).toEqual(mockUser);
       expect(result.error).toBeNull();
-      expect(mockAuthClient.updateUser).toHaveBeenCalledWith({
+      expect(mockAuthClient.updateUser).toHaveBeenCalledWith(
+      {
         password: 'newpassword123',
-      });
+    );
+  });
       expect(logger.info).toHaveBeenCalledWith('Password updated successfully');
     });
 
@@ -317,10 +331,10 @@ describe('AuthService', () => {
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
       expect(logger.error).toHaveBeenCalledWith(
-        'Password update error:',
+      'Password update error:',
         authError
-
-    });
+    );
+  });
   });
 
   describe('getSession', () => {
@@ -399,15 +413,19 @@ describe('AuthService', () => {
 
       expect(result.data).toEqual({ url: mockUrl });
       expect(result.error).toBeNull();
-      expect(mockAuthClient.signInWithOAuth).toHaveBeenCalledWith({
+      expect(mockAuthClient.signInWithOAuth).toHaveBeenCalledWith(
+      {
         provider: 'google',
         options: {
           redirectTo: 'http://localhost:3000/auth/callback',
         },
-      });
-      expect(logger.info).toHaveBeenCalledWith('OAuth sign in initiated', {
+    );
+  });
+      expect(logger.info).toHaveBeenCalledWith(
+      'OAuth sign in initiated', {
         provider: 'google',
-      });
+    );
+  });
     });
 
     it('should handle different OAuth providers', async () => {
@@ -422,12 +440,14 @@ describe('AuthService', () => {
         const result = await authService.signInWithOAuth(provider);
 
         expect(result.error).toBeNull();
-        expect(mockAuthClient.signInWithOAuth).toHaveBeenCalledWith({
+        expect(mockAuthClient.signInWithOAuth).toHaveBeenCalledWith(
+      {
           provider,
           options: {
             redirectTo: 'http://localhost:3000/auth/callback',
           },
-        });
+    );
+  });
       }
     });
 
@@ -447,10 +467,10 @@ describe('AuthService', () => {
       expect(result.data).toBeNull();
       expect(result.error).toEqual(authError);
       expect(logger.error).toHaveBeenCalledWith(
-        'OAuth sign in error:',
+      'OAuth sign in error:',
         authError
-
-    });
+    );
+  });
   });
 
   describe('onAuthStateChange', () => {

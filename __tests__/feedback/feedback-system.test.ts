@@ -151,7 +151,8 @@ describe('Beta Feedback System', () => {
           '/api/v1/beta/feedback/list?type=bug&severity=high&limit=10'
         ),
         expect.objectContaining({ method: 'GET' })
-    });
+    );
+  });
 
     it('should calculate NPS score correctly', () => {
       const feedbackSystem = new FeedbackSystem();
@@ -314,7 +315,8 @@ describe('Beta Feedback System', () => {
         expect.objectContaining({
           body: expect.stringContaining('portfolio_journey'),
         })
-    });
+    );
+  });
 
     it('should track feature usage', async () => {
       const analytics = new BetaAnalytics();
@@ -339,7 +341,8 @@ describe('Beta Feedback System', () => {
         expect.objectContaining({
           body: expect.stringContaining('feature_usage'),
         })
-    });
+    );
+  });
 
     it('should handle tracking failures gracefully', async () => {
       const analytics = new BetaAnalytics();

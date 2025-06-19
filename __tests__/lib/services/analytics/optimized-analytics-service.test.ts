@@ -80,10 +80,10 @@ describe('OptimizedAnalyticsService', () => {
       expect(result).toHaveLength(3);
       expect(mockSupabase.from).toHaveBeenCalledTimes(1); // Single batched query
       expect(mockSupabase.from().in).toHaveBeenCalledWith(
-        'portfolio_id',
+      'portfolio_id',
         portfolioIds
-
-    });
+    );
+  });
 
     it('should handle batch size limits', async () => {
       const largePortfolioList = Array.from(
@@ -270,9 +270,9 @@ describe('OptimizedAnalyticsService', () => {
       });
 
       expect(mockSupabase.from).toHaveBeenCalledWith(
-        'portfolio_analytics_optimized'
-
-    });
+      'portfolio_analytics_optimized'
+    );
+  });
 
     it('should implement request deduplication', async () => {
       // Make multiple concurrent requests for same data

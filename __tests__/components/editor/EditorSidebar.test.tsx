@@ -140,9 +140,9 @@ describe('EditorSidebar', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
-    } as any);
+    });
   });
 
   const renderEditorSidebar = (props = mockProps) => {
@@ -610,7 +610,7 @@ describe('EditorSidebar', () => {
     });
 
     it('should fallback gracefully when translations are missing', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);
 

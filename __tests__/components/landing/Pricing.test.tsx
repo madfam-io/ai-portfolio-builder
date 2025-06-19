@@ -108,10 +108,10 @@ describe('Pricing', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
       currentLanguage: 'en',
-    } as any);
+    });
   });
 
   describe('Initial Rendering', () => {

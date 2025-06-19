@@ -7,7 +7,6 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-
 // Mock useLanguage explicitly
 
 // Mock useLanguage hook
@@ -30,7 +29,9 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
       // Add more translations as needed
     },
   }),
-  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }));
 
 jest.mock('@/lib/i18n/refactored-context', () => ({
@@ -136,7 +137,6 @@ jest.mock('next/navigation', () => ({
 
 // Import Header after setting up mocks
 import Header from '@/components/landing/Header';
-
 
 // Mock useApp hook
 jest.mock('@/hooks/useApp', () => ({

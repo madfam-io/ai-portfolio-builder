@@ -3,7 +3,10 @@
  */
 
 import { jest } from '@jest/globals';
-import { setupCommonMocks, defaultSupabaseMock } from '@/__tests__/utils/api-route-test-helpers';
+import {
+  setupCommonMocks,
+  defaultSupabaseMock,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 const mockDashboardData = {
   repositories: [
@@ -49,7 +52,9 @@ describe('/api/v1/analytics/dashboard', () => {
       };
 
       jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
+        AnalyticsService: jest
+          .fn()
+          .mockImplementation(() => mockAnalyticsService),
       }));
 
       const { GET } = await import('@/app/api/v1/analytics/dashboard/route');
@@ -93,7 +98,9 @@ describe('/api/v1/analytics/dashboard', () => {
       };
 
       jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
+        AnalyticsService: jest
+          .fn()
+          .mockImplementation(() => mockAnalyticsService),
       }));
 
       setupCommonMocks({
@@ -131,11 +138,15 @@ describe('/api/v1/analytics/dashboard', () => {
       // Override after setupCommonMocks
       const mockAnalyticsService = {
         initialize: jest.fn().mockResolvedValue(undefined),
-        getDashboardData: jest.fn().mockRejectedValue(new Error('Analytics service error')),
+        getDashboardData: jest
+          .fn()
+          .mockRejectedValue(new Error('Analytics service error')),
       };
 
       jest.doMock('@/lib/services/analyticsService', () => ({
-        AnalyticsService: jest.fn().mockImplementation(() => mockAnalyticsService),
+        AnalyticsService: jest
+          .fn()
+          .mockImplementation(() => mockAnalyticsService),
       }));
 
       const { GET } = await import('@/app/api/v1/analytics/dashboard/route');

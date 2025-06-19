@@ -4,8 +4,10 @@ import { GET, POST } from '@/app/api/v1/analytics/repositories/[id]/route';
 import { AnalyticsService } from '@/lib/services/analyticsService';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Mock dependencies
 jest.mock('@/lib/services/analyticsService');
@@ -75,8 +77,8 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
-      );
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -89,14 +91,15 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       expect(mockAnalyticsService.initialize).toHaveBeenCalled();
       expect(mockAnalyticsService.getRepositoryAnalytics).toHaveBeenCalledWith(
         'repo-123'
-
+      );
     });
 
     it('should return 503 when database is unavailable', async () => {
       (createClient as jest.Mock).mockReturnValue(null);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -114,7 +117,8 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       });
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -139,8 +143,8 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
-      );
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -167,8 +171,8 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
-      );
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -194,8 +198,8 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123'
-      );
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123'
+    );
 
       const response = await GET(request, { params });
       const data = await response.json();
@@ -208,6 +212,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           repositoryId: 'repo-123',
           error: 'Database error',
         })
+      );
     });
   });
 
@@ -228,6 +233,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123',
@@ -235,6 +241,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -250,16 +257,16 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       });
       expect(mockAnalyticsService.syncRepositoryMetrics).toHaveBeenCalledWith(
         'repo-123'
-
+      );
       expect(mockAnalyticsService.syncPullRequests).toHaveBeenCalledWith(
         'repo-123'
-
+      );
       expect(mockAnalyticsService.syncContributors).toHaveBeenCalledWith(
         'repo-123'
-
+      );
       expect(mockAnalyticsService.syncCommitAnalytics).toHaveBeenCalledWith(
         'repo-123'
-
+      );
     });
 
     it('should sync only requested data', async () => {
@@ -278,6 +285,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123',
@@ -290,6 +298,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
             syncCommits: true,
           }),
         }
+      );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -322,6 +331,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123',
@@ -329,6 +339,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -360,6 +371,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123',
@@ -367,6 +379,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -391,13 +404,15 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/analytics/repositories/repo-123',
+      'http://localhost:3000/api/v1/analytics/repositories/repo-123',
         {
           method: 'POST',
           body: 'invalid json',
         }
+    );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -424,6 +439,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
       };
       (AnalyticsService as jest.Mock).mockImplementation(
         () => mockAnalyticsService
+      );
 
       const request = new NextRequest(
         'http://localhost:3000/api/v1/analytics/repositories/repo-123',
@@ -431,6 +447,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           method: 'POST',
           body: JSON.stringify({}),
         }
+      );
 
       const response = await POST(request, { params });
       const data = await response.json();
@@ -443,6 +460,7 @@ describe('/api/v1/analytics/repositories/[id]', () => {
           repositoryId: 'repo-123',
           error: 'Database error',
         })
+      );
     });
   });
 });

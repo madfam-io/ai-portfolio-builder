@@ -5,7 +5,6 @@
 import { describe, test, it, expect, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 
-
 // Mock portfolio store for testing
 const createPortfolioStore = () => {
   let state = {

@@ -57,7 +57,8 @@ describe('API Error Handler', () => {
           url: 'http://localhost:3000/api/test',
           method: 'GET',
         })
-    });
+    );
+  });
 
     it('should handle regular Error in development mode', () => {
       const originalEnv = process.env.NODE_ENV;
@@ -100,7 +101,8 @@ describe('API Error Handler', () => {
         expect.objectContaining({
           requestId: 'custom-request-id',
         })
-    });
+    );
+  });
 
     it('should handle error without request', () => {
       const error = new Error('Test error');
@@ -125,7 +127,8 @@ describe('API Error Handler', () => {
           userId: 'user-123',
           action: 'create-portfolio',
         })
-    });
+    );
+  });
 
     it('should handle non-Error objects', () => {
       const error = 'String error';
@@ -170,7 +173,8 @@ describe('API Error Handler', () => {
         expect.objectContaining({
           url: 'http://localhost:3000/api/test',
         })
-    });
+    );
+  });
   });
 
   describe('createApiHandler', () => {

@@ -7,12 +7,11 @@ import { describe, test, it, expect, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useOnboardingStore } from '@/lib/store/onboarding-store';
 
-
 describe('OnboardingStore', () => {
   beforeEach(() => {
     // Clear localStorage to prevent persistence issues
     localStorage.clear();
-    
+
     // Reset Zustand store state
     useOnboardingStore.setState({
       isOnboarding: false,
@@ -125,7 +124,7 @@ describe('OnboardingStore', () => {
 
       // Get the steps to complete
       const steps = result.current.currentFlow?.steps || [];
-      
+
       // Complete each step individually
       steps.forEach(step => {
         act(() => {

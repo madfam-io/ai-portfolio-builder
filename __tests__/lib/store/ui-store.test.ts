@@ -1,4 +1,12 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  test,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { act, renderHook } from '@testing-library/react';
 
 // Mock DOM methods
@@ -160,7 +168,7 @@ describe('UI Store', () => {
     it('should call openModal', () => {
       const { useUIStore } = require('@/lib/store/ui-store');
       const { openModal } = useUIStore.getState();
-      
+
       const modal = {
         id: 'test-modal',
         type: 'confirm' as const,
@@ -249,7 +257,10 @@ describe('UI Store', () => {
         showSuccessToast('Success!', 'Operation completed');
       });
 
-      expect(mockShowSuccessToast).toHaveBeenCalledWith('Success!', 'Operation completed');
+      expect(mockShowSuccessToast).toHaveBeenCalledWith(
+        'Success!',
+        'Operation completed'
+      );
     });
 
     it('should call showErrorToast', () => {
@@ -259,7 +270,10 @@ describe('UI Store', () => {
         showErrorToast('Error!', 'Something went wrong');
       });
 
-      expect(mockShowErrorToast).toHaveBeenCalledWith('Error!', 'Something went wrong');
+      expect(mockShowErrorToast).toHaveBeenCalledWith(
+        'Error!',
+        'Something went wrong'
+      );
     });
 
     it('should call showWarningToast', () => {
@@ -269,7 +283,10 @@ describe('UI Store', () => {
         showWarningToast('Warning!', 'Please be careful');
       });
 
-      expect(mockShowWarningToast).toHaveBeenCalledWith('Warning!', 'Please be careful');
+      expect(mockShowWarningToast).toHaveBeenCalledWith(
+        'Warning!',
+        'Please be careful'
+      );
     });
 
     it('should call showInfoToast', () => {
@@ -279,7 +296,10 @@ describe('UI Store', () => {
         showInfoToast('Info', 'Just letting you know');
       });
 
-      expect(mockShowInfoToast).toHaveBeenCalledWith('Info', 'Just letting you know');
+      expect(mockShowInfoToast).toHaveBeenCalledWith(
+        'Info',
+        'Just letting you know'
+      );
     });
   });
 
@@ -292,7 +312,10 @@ describe('UI Store', () => {
         setGlobalLoading(true, 'Loading data...');
       });
 
-      expect(mockSetGlobalLoading).toHaveBeenCalledWith(true, 'Loading data...');
+      expect(mockSetGlobalLoading).toHaveBeenCalledWith(
+        true,
+        'Loading data...'
+      );
     });
 
     it('should call setGlobalLoading to clear loading', () => {

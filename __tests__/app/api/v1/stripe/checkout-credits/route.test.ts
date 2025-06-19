@@ -63,6 +63,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
           'Content-Type': 'application/json',
         },
       }
+    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -78,6 +79,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
         mockSession as any
+      );
 
       const request = mockAuthenticatedRequest({ packId: 'small' });
       const response = await POST(request as any);
@@ -91,24 +93,26 @@ describe('/api/v1/stripe/checkout-credits', () => {
 
       expect(
         mockEnhancedStripeService.createAICreditCheckout
-      ).toHaveBeenCalledWith({
+      ).toHaveBeenCalledWith(
+      {
         packId: 'small',
         userId: mockUser.id,
         userEmail: mockUser.email,
         successUrl:
           'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
         cancelUrl: 'https://test.example.com/dashboard/billing?canceled=true',
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'AI credit pack checkout session created',
+      'AI credit pack checkout session created',
         {
           sessionId: mockSession.id,
           userId: mockUser.id,
           packId: 'small',
         }
-
-    });
+    );
+  });
 
     it('should handle all valid credit pack types', async () => {
       const mockSession = {
@@ -203,9 +207,10 @@ describe('/api/v1/stripe/checkout-credits', () => {
     it('should handle Stripe service errors', async () => {
       const stripeError = new Error('Stripe API error');
       mockEnhancedStripeService.createAICreditCheckout.mockRejectedValue(
-        stripeError
+      stripeError
+    );
 
-      const request = mockAuthenticatedRequest({ packId: 'medium' });
+    const request = mockAuthenticatedRequest({ packId: 'medium' });
       const response = await POST(request as any);
       const data = await response.json();
 
@@ -213,10 +218,10 @@ describe('/api/v1/stripe/checkout-credits', () => {
       expect(data.error).toBe('Failed to create checkout session');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to create AI credit checkout session',
+      'Failed to create AI credit checkout session',
         { error: stripeError }
-
-    });
+    );
+  });
 
     it('should handle malformed JSON body', async () => {
       const request = new NextRequest(
@@ -245,21 +250,24 @@ describe('/api/v1/stripe/checkout-credits', () => {
       };
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
-        mockSession as any
+      mockSession as any
+    );
 
-      const request = mockAuthenticatedRequest({ packId: 'large' });
+    const request = mockAuthenticatedRequest({ packId: 'large' });
       await POST(request as any);
 
       expect(
         mockEnhancedStripeService.createAICreditCheckout
-      ).toHaveBeenCalledWith({
+      ).toHaveBeenCalledWith(
+      {
         packId: 'large',
         userId: mockUser.id,
         userEmail: mockUser.email,
         successUrl:
           'https://test.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&type=credits',
         cancelUrl: 'https://test.example.com/dashboard/billing?canceled=true',
-      });
+    );
+  });
     });
 
     it('should validate credit pack enum values', async () => {
@@ -292,15 +300,16 @@ describe('/api/v1/stripe/checkout-credits', () => {
       };
 
       mockEnhancedStripeService.createAICreditCheckout.mockResolvedValue(
-        mockSession as any
+      mockSession as any
 
       const customUser = {
         id: 'custom-user-789',
         email: 'custom@example.com',
         name: 'Custom User',
       };
+    );
 
-      const request = new NextRequest(
+    const request = new NextRequest(
         'http://localhost:3000/api/v1/stripe/checkout-credits',
         {
           method: 'POST',
@@ -327,6 +336,7 @@ describe('/api/v1/stripe/checkout-credits', () => {
         expect.objectContaining({
           userId: customUser.id,
         })
-    });
+    );
+  });
   });
 });

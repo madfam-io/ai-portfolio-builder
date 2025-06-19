@@ -4,8 +4,10 @@ import { GET, POST } from '@/app/api/v1/experiments/route';
 import { authenticateUser, hasPermission } from '@/lib/api/middleware/auth';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Mock dependencies
 jest.mock('@/lib/api/middleware/auth');
@@ -27,7 +29,7 @@ describe('Experiments API Routes', () => {
 
     // Mock Supabase client
     mockSupabaseClient = {
-      from: jest.fn()
+      from: jest.fn(),
     };
     (createClient as jest.Mock).mockResolvedValue(mockSupabaseClient);
 
@@ -72,13 +74,13 @@ describe('Experiments API Routes', () => {
         range: jest.fn().mockResolvedValue({
           data: mockExperiments,
           error: null,
-        })
-    };
+        }),
+      };
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
       const data = await response.json();
 
@@ -103,8 +105,8 @@ describe('Experiments API Routes', () => {
         select: jest.fn().mockReturnThis(),
         order: jest.fn().mockReturnThis(),
         range: jest.fn().mockReturnThis(),
-        eq: jest.fn().mockReturnThis()
-    };
+        eq: jest.fn().mockReturnThis(),
+      };
 
       mockQuery.range.mockResolvedValue({
         data: mockExperiments.filter(exp => exp.status === 'active'),
@@ -113,9 +115,9 @@ describe('Experiments API Routes', () => {
 
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments?status=active'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments?status=active'
+    );
       await GET(request);
 
       expect(mockQuery.eq).toHaveBeenCalledWith('status', 'active');
@@ -128,13 +130,13 @@ describe('Experiments API Routes', () => {
         range: jest.fn().mockResolvedValue({
           data: [],
           error: null,
-        })
-    };
+        }),
+      };
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments?limit=10&offset=20'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments?limit=10&offset=20'
+    );
       await GET(request);
 
       expect(mockQuery.range).toHaveBeenCalledWith(20, 29);
@@ -143,9 +145,9 @@ describe('Experiments API Routes', () => {
     it('should return 401 when not authenticated', async () => {
       (authenticateUser as jest.Mock).mockResolvedValue(null);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
 
       expect(response.status).toBe(401);
@@ -154,9 +156,9 @@ describe('Experiments API Routes', () => {
     it('should return 403 when lacking permissions', async () => {
       (hasPermission as jest.Mock).mockReturnValue(false);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
 
       expect(response.status).toBe(403);
@@ -165,9 +167,9 @@ describe('Experiments API Routes', () => {
     it('should handle database connection errors', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
       const data = await response.json();
 
@@ -182,13 +184,13 @@ describe('Experiments API Routes', () => {
         range: jest.fn().mockResolvedValue({
           data: null,
           error: new Error('Database error'),
-        })
-    };
+        }),
+      };
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
       const data = await response.json();
 
@@ -213,13 +215,13 @@ describe('Experiments API Routes', () => {
         range: jest.fn().mockResolvedValue({
           data: experimentsNoVariants,
           error: null,
-        })
-    };
+        }),
+      };
       mockSupabaseClient.from.mockReturnValue(mockQuery);
 
-      const _request = new NextRequest(
-        'http://localhost:3000/api/v1/experiments'
-
+      const request = new NextRequest(
+      'http://localhost:3000/api/v1/experiments'
+    );
       const response = await GET(request);
       const data = await response.json();
 
@@ -293,15 +295,15 @@ describe('Experiments API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: mockExperiment,
           error: null,
-        })
-    };
+        }),
+      };
 
       const mockVariantsInsert = {
         insert: jest.fn().mockResolvedValue({
           data: null,
           error: null,
-        })
-    };
+        }),
+      };
 
       const mockSelect = {
         select: jest.fn().mockReturnThis(),
@@ -309,21 +311,21 @@ describe('Experiments API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: { ...mockExperiment, variants: [] },
           error: null,
-        })
-    };
+        }),
+      };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockInsert) // Create experiment
         .mockReturnValueOnce(mockVariantsInsert) // Create variants
         .mockReturnValueOnce(mockSelect); // Fetch complete experiment
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(validExperimentData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 
@@ -335,6 +337,7 @@ describe('Experiments API Routes', () => {
           description: validExperimentData.description,
           created_by: mockUser.id,
         })
+      );
     });
 
     it('should validate traffic percentages sum to 100', async () => {
@@ -346,13 +349,13 @@ describe('Experiments API Routes', () => {
         ],
       };
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(invalidData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 
@@ -366,13 +369,13 @@ describe('Experiments API Routes', () => {
         variants: [validExperimentData.variants[0]],
       };
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(invalidData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 
@@ -389,36 +392,36 @@ describe('Experiments API Routes', () => {
         single: jest.fn().mockResolvedValue({
           data: mockExperiment,
           error: null,
-        })
-    };
+        }),
+      };
 
       const mockVariantsInsert = {
         insert: jest.fn().mockResolvedValue({
           data: null,
           error: new Error('Variant creation failed'),
-        })
-    };
+        }),
+      };
 
       const mockDelete = {
         delete: jest.fn().mockReturnThis(),
         eq: jest.fn().mockResolvedValue({
           data: null,
           error: null,
-        })
-    };
+        }),
+      };
 
       mockSupabaseClient.from
         .mockReturnValueOnce(mockInsert) // Create experiment
         .mockReturnValueOnce(mockVariantsInsert) // Create variants (fails)
         .mockReturnValueOnce(mockDelete); // Rollback deletion
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(validExperimentData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 
@@ -431,13 +434,13 @@ describe('Experiments API Routes', () => {
     it('should return 401 when not authenticated', async () => {
       (authenticateUser as jest.Mock).mockResolvedValue(null);
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(validExperimentData),
         }
-
+      );
       const response = await POST(request);
       expect(response.status).toBe(401);
     });
@@ -445,13 +448,13 @@ describe('Experiments API Routes', () => {
     it('should return 403 when lacking permissions', async () => {
       (hasPermission as jest.Mock).mockReturnValue(false);
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(validExperimentData),
         }
-
+      );
       const response = await POST(request);
       expect(response.status).toBe(403);
     });
@@ -463,13 +466,13 @@ describe('Experiments API Routes', () => {
         variants: [],
       };
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(invalidData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 
@@ -481,13 +484,13 @@ describe('Experiments API Routes', () => {
     it('should handle database connection errors', async () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
-      const _request = new NextRequest(
+      const request = new NextRequest(
         'http://localhost:3000/api/v1/experiments',
         {
           method: 'POST',
           body: JSON.stringify(validExperimentData),
         }
-
+      );
       const response = await POST(request);
       const data = await response.json();
 

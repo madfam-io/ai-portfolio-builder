@@ -138,13 +138,13 @@ describe('Auth Middleware', () => {
       });
 
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Profile fetch failed, using default role',
+      'Profile fetch failed, using default role',
         {
           userId: 'user-456',
           error: 'Profile not found',
         }
-
-    });
+    );
+  });
 
     it('should return null when user is not authenticated', async () => {
       const mockSupabase = {
@@ -162,9 +162,11 @@ describe('Auth Middleware', () => {
       const result = await authenticateUser(request);
 
       expect(result).toBeNull();
-      expect(mockLogger.debug).toHaveBeenCalledWith('Authentication failed', {
+      expect(mockLogger.debug).toHaveBeenCalledWith(
+      'Authentication failed', {
         error: 'Not authenticated',
-      });
+    );
+  });
     });
 
     it('should return null when Supabase client is not available', async () => {
@@ -175,9 +177,9 @@ describe('Auth Middleware', () => {
 
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Supabase client not available for authentication'
-
-    });
+      'Supabase client not available for authentication'
+    );
+  });
 
     it('should handle authentication errors gracefully', async () => {
       const authError = new Error('Authentication service error');
@@ -188,10 +190,10 @@ describe('Auth Middleware', () => {
 
       expect(result).toBeNull();
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Authentication error',
+      'Authentication error',
         authError
-
-    });
+    );
+  });
 
     it('should handle user without email', async () => {
       const mockUser = {
@@ -326,9 +328,11 @@ describe('Auth Middleware', () => {
 
       const result = unauthorizedResponse();
 
-      expect(mockApiError).toHaveBeenCalledWith('Unauthorized', {
+      expect(mockApiError).toHaveBeenCalledWith(
+      'Unauthorized', {
         status: 401,
-      });
+    );
+  });
       expect(result).toBe(mockResponse);
     });
 
@@ -351,9 +355,11 @@ describe('Auth Middleware', () => {
 
       const result = forbiddenResponse();
 
-      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', {
+      expect(mockApiError).toHaveBeenCalledWith(
+      'Insufficient permissions', {
         status: 403,
-      });
+    );
+  });
       expect(result).toBe(mockResponse);
     });
 
@@ -439,17 +445,19 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockApiError).toHaveBeenCalledWith('Authentication required', {
+      expect(mockApiError).toHaveBeenCalledWith(
+      'Authentication required', {
         status: 401,
-      });
+    );
+  });
       expect(result).toBe(unauthorizedResp);
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Unauthorized access attempt',
+      'Unauthorized access attempt',
         {
           path: '/api/test',
         }
-
-    });
+    );
+  });
 
     it('should handle authentication errors gracefully', async () => {
       const authError = new Error('Authentication service error');
@@ -463,15 +471,17 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(mockHandler).not.toHaveBeenCalled();
-      expect(mockApiError).toHaveBeenCalledWith('Authentication failed', {
+      expect(mockApiError).toHaveBeenCalledWith(
+      'Authentication failed', {
         status: 500,
-      });
+    );
+  });
       expect(result).toBe(errorResp);
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Auth middleware error:',
+      'Auth middleware error:',
         authError
-
-    });
+    );
+  });
 
     it('should pass additional arguments to handler', async () => {
       const mockSupabase = {
@@ -684,9 +694,11 @@ describe('Auth Middleware', () => {
       const result = await wrappedHandler(request);
 
       expect(result).toBe(forbiddenResp);
-      expect(mockApiError).toHaveBeenCalledWith('Insufficient permissions', {
+      expect(mockApiError).toHaveBeenCalledWith(
+      'Insufficient permissions', {
         status: 403,
-      });
+    );
+  });
     });
 
     it('should allow user access to user endpoints', async () => {

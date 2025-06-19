@@ -219,7 +219,7 @@ describe('useSubscription Hook', () => {
     await waitFor(() => {
       expect(result.current.limits?.current_usage.portfolios).toBe(0);
     });
-    
+
     expect(fetch).toHaveBeenCalledTimes(2);
   });
 });

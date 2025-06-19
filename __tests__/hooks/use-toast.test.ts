@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useToast } from '@/hooks/use-toast';
 import { useUIStore } from '@/lib/store/ui-store';
 
-
 // Mock the UI store
 jest.mock('@/lib/store/ui-store');
 
@@ -28,12 +27,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Success!',
       description: 'Operation completed successfully',
       type: 'success',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should call showToast with error type for destructive variant', () => {
@@ -47,12 +48,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Error!',
       description: 'Something went wrong',
       type: 'error',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should use custom duration when provided', () => {
@@ -65,12 +68,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Custom duration',
       description: undefined,
       type: 'success',
       duration: 10000,
-    });
+    );
+  });
   });
 
   it('should handle toast without description', () => {
@@ -82,12 +87,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Simple notification',
       description: undefined,
       type: 'success',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should maintain stable toast function reference', () => {
@@ -111,12 +118,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Default variant',
       description: undefined,
       type: 'success',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should work with all options combined', () => {
@@ -131,12 +140,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Complete toast',
       description: 'With all options',
       type: 'error',
       duration: 3000,
-    });
+    );
+  });
   });
 
   it('should handle multiple toast calls', () => {
@@ -207,12 +218,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: '',
       description: 'Description without title',
       type: 'success',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should handle very long messages', () => {
@@ -228,12 +241,14 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: longTitle,
       description: longDescription,
       type: 'success',
       duration: 5000,
-    });
+    );
+  });
   });
 
   it('should handle duration of 0', () => {
@@ -246,11 +261,13 @@ describe('useToast', () => {
       });
     });
 
-    expect(mockShowToast).toHaveBeenCalledWith({
+    expect(mockShowToast).toHaveBeenCalledWith(
+      {
       title: 'Persistent toast',
       description: undefined,
       type: 'success',
       duration: 0,
-    });
+    );
+  });
   });
 });

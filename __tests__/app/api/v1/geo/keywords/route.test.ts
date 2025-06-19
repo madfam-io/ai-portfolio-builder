@@ -2,7 +2,6 @@ import { describe, test, it, expect, beforeEach, jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 import { GET, POST } from '@/app/api/v1/geo/keywords/route';
 
-
 // Mock dependencies
 jest.mock('@/lib/services/error/error-logger');
 jest.mock('@/lib/services/error/api-error-handler');
@@ -68,7 +67,8 @@ describe('/api/v1/geo/keywords', () => {
   describe('GET /api/v1/geo/keywords', () => {
     it('should return trending keywords for industry', async () => {
       mockRequest = new NextRequest(
-        'http://localhost:3000/api/v1/geo/keywords?industry=technology'
+      'http://localhost:3000/api/v1/geo/keywords?industry=technology'
+    );
 
       const response = await GET(mockRequest);
       const data = await response.json();
@@ -84,7 +84,8 @@ describe('/api/v1/geo/keywords', () => {
 
     it('should default to technology industry if not provided', async () => {
       mockRequest = new NextRequest(
-        'http://localhost:3000/api/v1/geo/keywords'
+      'http://localhost:3000/api/v1/geo/keywords'
+    );
 
       const response = await GET(mockRequest);
       const data = await response.json();
@@ -101,7 +102,8 @@ describe('/api/v1/geo/keywords', () => {
 
       for (const industry of industries) {
         mockRequest = new NextRequest(
-          `http://localhost:3000/api/v1/geo/keywords?industry=${industry}`
+      `http://localhost:3000/api/v1/geo/keywords?industry=${industry}`
+    );
 
         const response = await GET(mockRequest);
         const data = await response.json();
@@ -116,7 +118,8 @@ describe('/api/v1/geo/keywords', () => {
 
     it('should return categories and tips', async () => {
       mockRequest = new NextRequest(
-        'http://localhost:3000/api/v1/geo/keywords?industry=technology'
+      'http://localhost:3000/api/v1/geo/keywords?industry=technology'
+    );
 
       const response = await GET(mockRequest);
       const data = await response.json();
@@ -148,6 +151,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -173,6 +177,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify({}), // Missing required seedKeyword
         }
+      );
 
       const response = await POST(mockRequest);
 
@@ -194,6 +199,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -220,6 +226,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
       const data = await response.json();
@@ -248,6 +255,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
 
@@ -268,6 +276,7 @@ describe('/api/v1/geo/keywords', () => {
           },
           body: JSON.stringify(requestBody),
         }
+      );
 
       const response = await POST(mockRequest);
 

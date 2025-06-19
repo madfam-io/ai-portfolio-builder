@@ -5,8 +5,10 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { withAuth } from '@/lib/api/middleware/auth';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
-import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
-
+import {
+  setupCommonMocks,
+  createMockRequest,
+} from '@/__tests__/utils/api-route-test-helpers';
 
 // Mock dependencies
 
@@ -112,8 +114,8 @@ describe('/api/v1/portfolios/[id]/variants', () => {
       });
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-
+      'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
+    );
       const handler = GET as any;
       const response = await handler(request, { params });
       const data = await response.json();
@@ -145,8 +147,8 @@ describe('/api/v1/portfolios/[id]/variants', () => {
       (createClient as jest.Mock).mockResolvedValue(null);
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-
+      'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
+    );
       const handler = GET as any;
       const response = await handler(request, { params });
       const data = await response.json();
@@ -166,8 +168,8 @@ describe('/api/v1/portfolios/[id]/variants', () => {
       });
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-
+      'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
+    );
       const handler = GET as any;
       const response = await handler(request, { params });
       const data = await response.json();
@@ -201,8 +203,8 @@ describe('/api/v1/portfolios/[id]/variants', () => {
       });
 
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
-
+      'http://localhost:3000/api/v1/portfolios/portfolio-123/variants'
+    );
       const handler = GET as any;
       const response = await handler(request, { params });
       const data = await response.json();
@@ -293,6 +295,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -317,11 +320,13 @@ describe('/api/v1/portfolios/[id]/variants', () => {
         createdAt: '2024-01-03T00:00:00Z',
         updatedAt: '2024-01-03T00:00:00Z',
       });
-      expect(logger.info).toHaveBeenCalledWith('Created portfolio variant', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Created portfolio variant', {
         userId: 'user-123',
         portfolioId: 'portfolio-123',
         variantId: 'variant-new',
-      });
+    );
+  });
     });
 
     it('should create variant based on existing variant', async () => {
@@ -393,6 +398,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(inputWithBase),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -448,6 +454,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(inputWithSpecialChars),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -471,6 +478,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -510,6 +518,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
           method: 'POST',
           body: JSON.stringify(createVariantInput),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });
@@ -553,6 +562,7 @@ describe('/api/v1/portfolios/[id]/variants', () => {
             audienceType: 'general',
           }),
         }
+      );
 
       const handler = POST as any;
       const response = await handler(request, { params });

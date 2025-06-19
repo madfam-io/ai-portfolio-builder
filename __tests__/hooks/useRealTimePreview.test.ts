@@ -2,12 +2,21 @@
  * @jest-environment jsdom
  */
 
-import { describe, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
+import React from 'react';
 import type { Portfolio } from '@/types/portfolio';
 
-// Unmock the hook for this test file
-jest.unmock('@/hooks/useRealTimePreview');
+// Ensure React is available globally for hooks
+global.React = React;
+
 import { useRealTimePreview } from '@/hooks/useRealTimePreview';
 
 describe('useRealTimePreview', () => {
@@ -193,11 +202,13 @@ describe('useRealTimePreview', () => {
       result.current.scrollToSection('experience');
     });
 
-    expect(scrollIntoViewMock).toHaveBeenCalledWith({
+    expect(scrollIntoViewMock).toHaveBeenCalledWith(
+      {
       behavior: 'smooth',
       block: 'start',
       inline: 'nearest',
-    });
+    );
+  });
     expect(result.current.previewConfig.activeSection).toBe('experience');
   });
 

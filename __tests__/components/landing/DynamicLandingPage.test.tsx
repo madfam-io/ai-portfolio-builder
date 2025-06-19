@@ -174,11 +174,11 @@ describe('DynamicLandingPage', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
       currentLanguage: 'en',
       switchLanguage: jest.fn(),
-    } as any);
+    });
 
     // Mock window.location
     delete (window as any).location;
@@ -619,7 +619,7 @@ describe('DynamicLandingPage', () => {
     });
 
     it('should handle translation loading errors', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
         currentLanguage: 'en',
         switchLanguage: jest.fn(),
@@ -668,11 +668,11 @@ describe('DynamicLandingPage', () => {
     });
 
     it('should handle invalid language codes', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: mockTranslations,
         currentLanguage: 'invalid',
         switchLanguage: jest.fn(),
-      } as any);
+      });
 
       renderDynamicLandingPage();
 

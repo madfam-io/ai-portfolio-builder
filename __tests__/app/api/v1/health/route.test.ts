@@ -84,7 +84,7 @@ describe('/api/v1/health', () => {
 
       // Since the real function is being called, test the actual response
       expect(response.status).toBe(200);
-      
+
       const responseData = await response.json();
       expect(responseData).toHaveProperty('overall');
       expect(responseData).toHaveProperty('checks');
@@ -99,10 +99,12 @@ describe('/api/v1/health', () => {
 
       // Health check should return 200 or 503 depending on system health
       expect([200, 503]).toContain(response.status);
-      
+
       const responseData = await response.json();
       expect(responseData).toHaveProperty('overall');
-      expect(['healthy', 'degraded', 'unhealthy']).toContain(responseData.overall);
+      expect(['healthy', 'degraded', 'unhealthy']).toContain(
+        responseData.overall
+      );
     });
 
     it('should handle health check exceptions', async () => {
@@ -158,7 +160,9 @@ describe('/api/v1/health', () => {
       const responseData = await getResponse.json();
       expect(responseData).toHaveProperty('overall');
       expect(responseData).toHaveProperty('checks');
-      expect(['healthy', 'degraded', 'unhealthy']).toContain(responseData.overall);
+      expect(['healthy', 'degraded', 'unhealthy']).toContain(
+        responseData.overall
+      );
     });
 
     it('should handle degraded service scenarios', async () => {
@@ -191,7 +195,7 @@ describe('/api/v1/health', () => {
       expect(['healthy', 'degraded', 'unhealthy']).toContain(
         responseData.overall
       );
-      
+
       // Verify checks is an array
       expect(Array.isArray(responseData.checks)).toBe(true);
     });

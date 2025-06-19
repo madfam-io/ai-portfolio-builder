@@ -116,7 +116,8 @@ describe('FeatureFlagService', () => {
           p_event_type: 'assignment',
           p_experiment_id: 'exp-123',
         })
-    });
+    );
+  });
 
     it('should return existing assignment for returning visitor', async () => {
       const existingAssignments = {
@@ -275,9 +276,9 @@ describe('FeatureFlagService', () => {
 
       expect(result).toBeNull();
       expect(logger.error).toHaveBeenCalledWith(
-        'Failed to create Supabase client'
-
-    });
+      'Failed to create Supabase client'
+    );
+  });
 
     it('should respect traffic percentage for experiment', async () => {
       const lowTrafficExperiment = {
@@ -319,7 +320,7 @@ describe('FeatureFlagService', () => {
       });
 
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
-        'record_landing_page_event',
+      'record_landing_page_event',
         {
           p_session_id: 'test-visitor-id',
           p_experiment_id: 'exp-123',
@@ -327,8 +328,8 @@ describe('FeatureFlagService', () => {
           p_event_type: 'conversion',
           p_event_data: { value: 99.99 },
         }
-
-    });
+    );
+  });
 
     it('should handle conversion recording errors', async () => {
       mockCookieStore.get.mockReturnValue({ value: 'test-visitor-id' });
@@ -348,9 +349,9 @@ describe('FeatureFlagService', () => {
       await FeatureFlagService.recordConversion('exp-123', 'var-test');
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Failed to create Supabase client for conversion tracking'
-
-    });
+      'Failed to create Supabase client for conversion tracking'
+    );
+  });
   });
 
   describe('recordClick', () => {

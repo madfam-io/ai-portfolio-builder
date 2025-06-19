@@ -115,10 +115,12 @@ describe('Portfolio Service', () => {
         },
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Portfolio created', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Portfolio created', {
         portfolioId: 'portfolio_123',
         userId,
-      });
+    );
+  });
     });
 
     it('should enforce portfolio limits based on plan', async () => {
@@ -239,13 +241,13 @@ describe('Portfolio Service', () => {
 
       expect(result.error).toBe('Portfolio not found');
       expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Unauthorized portfolio access attempt',
+      'Unauthorized portfolio access attempt',
         {
           portfolioId,
           userId: 'wrong_user',
         }
-
-    });
+    );
+  });
   });
 
   describe('updatePortfolio', () => {
@@ -293,10 +295,12 @@ describe('Portfolio Service', () => {
         }),
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Portfolio updated', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Portfolio updated', {
         portfolioId,
         userId,
-      });
+    );
+  });
     });
 
     it('should validate ownership before update', async () => {
@@ -389,10 +393,12 @@ describe('Portfolio Service', () => {
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', portfolioId);
       expect(mockSupabase.eq).toHaveBeenCalledWith('user_id', userId);
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Portfolio deleted', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Portfolio deleted', {
         portfolioId,
         userId,
-      });
+    );
+  });
     });
 
     it('should prevent unauthorized deletion', async () => {
@@ -434,7 +440,8 @@ describe('Portfolio Service', () => {
         expect.objectContaining({
           slug: 'my-portfolio',
         })
-    });
+    );
+  });
   });
 
   describe('listPortfolios', () => {
@@ -468,9 +475,11 @@ describe('Portfolio Service', () => {
       });
 
       expect(mockSupabase.eq).toHaveBeenCalledWith('user_id', userId);
-      expect(mockSupabase.order).toHaveBeenCalledWith('created_at', {
+      expect(mockSupabase.order).toHaveBeenCalledWith(
+      'created_at', {
         ascending: false,
-      });
+    );
+  });
       expect(mockSupabase.range).toHaveBeenCalledWith(0, 9);
     });
 
@@ -550,10 +559,12 @@ describe('Portfolio Service', () => {
         published_at: expect.any(String),
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Portfolio published', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Portfolio published', {
         portfolioId,
         slug: 'my-portfolio',
-      });
+    );
+  });
     });
 
     it('should generate subdomain URL', async () => {
@@ -778,9 +789,11 @@ describe('Portfolio Service', () => {
           error: null,
         });
 
-        expect(mockSupabase.rpc).toHaveBeenCalledWith('increment_view_count', {
+        expect(mockSupabase.rpc).toHaveBeenCalledWith(
+      'increment_view_count', {
           portfolio_id: portfolioId,
-        });
+    );
+  });
       });
 
       it('should track visitor analytics', async () => {

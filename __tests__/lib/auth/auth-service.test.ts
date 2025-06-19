@@ -113,17 +113,21 @@ describe('Auth Service', () => {
         error: null,
       });
 
-      expect(mockSupabase.insert).toHaveBeenCalledWith({
+      expect(mockSupabase.insert).toHaveBeenCalledWith(
+      {
         id: 'user_123',
         email: mockEmail,
         subscription_plan: 'free',
         ai_credits: 3,
-      });
+    );
+  });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('User signed up', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'User signed up', {
         userId: 'user_123',
         email: mockEmail,
-      });
+    );
+  });
     });
 
     it('should handle email already in use', async () => {
@@ -185,10 +189,12 @@ describe('Auth Service', () => {
 
       const result = await signInWithEmail(mockEmail, mockPassword);
 
-      expect(mockAuth.signInWithPassword).toHaveBeenCalledWith({
+      expect(mockAuth.signInWithPassword).toHaveBeenCalledWith(
+      {
         email: mockEmail,
         password: mockPassword,
-      });
+    );
+  });
 
       expect(result).toEqual({
         user: mockSession.user,
@@ -196,10 +202,12 @@ describe('Auth Service', () => {
         error: null,
       });
 
-      expect(mockLogger.info).toHaveBeenCalledWith('User signed in', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'User signed in', {
         userId: 'user_123',
         email: mockEmail,
-      });
+    );
+  });
     });
 
     it('should handle invalid credentials', async () => {
@@ -218,10 +226,12 @@ describe('Auth Service', () => {
         status: 400,
       });
 
-      expect(mockLogger.warn).toHaveBeenCalledWith('Failed sign in attempt', {
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+      'Failed sign in attempt', {
         email: mockEmail,
         error: 'Invalid login credentials',
-      });
+    );
+  });
     });
 
     it('should handle MFA requirement', async () => {
@@ -307,10 +317,12 @@ describe('Auth Service', () => {
         status: 500,
       });
 
-      expect(mockLogger.error).toHaveBeenCalledWith('OAuth sign in error', {
+      expect(mockLogger.error).toHaveBeenCalledWith(
+      'OAuth sign in error', {
         provider: 'github',
         error: 'OAuth provider error',
-      });
+    );
+  });
     });
   });
 
@@ -362,9 +374,11 @@ describe('Auth Service', () => {
 
       expect(result.error).toBeNull();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Password reset requested', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Password reset requested', {
         email: mockEmail,
-      });
+    );
+  });
     });
 
     it('should handle non-existent email gracefully', async () => {
@@ -393,15 +407,19 @@ describe('Auth Service', () => {
 
       const result = await updatePassword(newPassword);
 
-      expect(mockAuth.updateUser).toHaveBeenCalledWith({
+      expect(mockAuth.updateUser).toHaveBeenCalledWith(
+      {
         password: newPassword,
-      });
+    );
+  });
 
       expect(result.error).toBeNull();
 
-      expect(mockLogger.info).toHaveBeenCalledWith('Password updated', {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+      'Password updated', {
         userId: 'user_123',
-      });
+    );
+  });
     });
 
     it('should validate new password strength', async () => {
@@ -459,9 +477,11 @@ describe('Auth Service', () => {
 
         const result = await setupMFA();
 
-        expect(mockAuth.mfa.enroll).toHaveBeenCalledWith({
+        expect(mockAuth.mfa.enroll).toHaveBeenCalledWith(
+      {
           factorType: 'totp',
-        });
+    );
+  });
 
         expect(result).toEqual({
           factorId: mockFactorId,
@@ -470,9 +490,11 @@ describe('Auth Service', () => {
           error: null,
         });
 
-        expect(mockLogger.info).toHaveBeenCalledWith('MFA setup initiated', {
+        expect(mockLogger.info).toHaveBeenCalledWith(
+      'MFA setup initiated', {
           userId: 'user_123',
-        });
+    );
+  });
       });
 
       it('should handle MFA already enabled', async () => {
@@ -511,10 +533,12 @@ describe('Auth Service', () => {
 
         const result = await verifyOTP(mockFactorId, mockCode);
 
-        expect(mockAuth.mfa.verify).toHaveBeenCalledWith({
+        expect(mockAuth.mfa.verify).toHaveBeenCalledWith(
+      {
           factorId: mockFactorId,
           code: mockCode,
-        });
+    );
+  });
 
         expect(result).toEqual({
           verified: true,
@@ -620,9 +644,11 @@ describe('Auth Service', () => {
           error: null,
         });
 
-        expect(mockLogger.info).toHaveBeenCalledWith('Session refreshed', {
+        expect(mockLogger.info).toHaveBeenCalledWith(
+      'Session refreshed', {
           userId: 'user_123',
-        });
+    );
+  });
       });
 
       it('should handle refresh token expiry', async () => {
@@ -637,9 +663,11 @@ describe('Auth Service', () => {
         const result = await refreshSession();
 
         expect(result.error.message).toBe('Refresh token expired');
-        expect(mockLogger.warn).toHaveBeenCalledWith('Session refresh failed', {
+        expect(mockLogger.warn).toHaveBeenCalledWith(
+      'Session refresh failed', {
           error: 'Refresh token expired',
-        });
+    );
+  });
       });
     });
   });

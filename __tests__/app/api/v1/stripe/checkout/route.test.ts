@@ -47,6 +47,7 @@ describe('/api/v1/stripe/checkout', () => {
           'Content-Type': 'application/json',
         },
       }
+    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -63,7 +64,7 @@ describe('/api/v1/stripe/checkout', () => {
     beforeEach(() => {
       mockStripeService.createCheckoutSession.mockResolvedValue(
         mockSession as any
-
+      );
     });
 
     it('should create checkout session for valid plan', async () => {
@@ -83,7 +84,8 @@ describe('/api/v1/stripe/checkout', () => {
         trialDays: 14,
       });
 
-      expect(mockStripeService.createCheckoutSession).toHaveBeenCalledWith({
+      expect(mockStripeService.createCheckoutSession).toHaveBeenCalledWith(
+      {
         planId: 'pro',
         userId: mockUser.id,
         userEmail: mockUser.email,
@@ -91,18 +93,19 @@ describe('/api/v1/stripe/checkout', () => {
           'https://app.example.com/dashboard/billing?session_id={CHECKOUT_SESSION_ID}&success=true',
         cancelUrl: 'https://app.example.com/pricing?canceled=true',
         trialDays: 14,
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Checkout session created successfully',
+      'Checkout session created successfully',
         {
           sessionId: mockSession.id,
           userId: mockUser.id,
           planId: 'pro',
           amount: mockSession.amount_total,
         }
-
-    });
+    );
+  });
 
     it('should use default trial days when not provided', async () => {
       const request = mockAuthenticatedRequest({
@@ -119,7 +122,8 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           trialDays: 7,
         })
-    });
+    );
+  });
 
     it('should handle all valid plan types', async () => {
       const validPlans = ['pro', 'business', 'enterprise'];
@@ -127,9 +131,10 @@ describe('/api/v1/stripe/checkout', () => {
       for (const planId of validPlans) {
         jest.clearAllMocks();
         mockStripeService.createCheckoutSession.mockResolvedValue(
-          mockSession as any
+      mockSession as any
+    );
 
-        const request = mockAuthenticatedRequest({ planId });
+    const request = mockAuthenticatedRequest({ planId });
         const response = await POST(request as any);
 
         expect(response.status).toBe(200);
@@ -181,9 +186,10 @@ describe('/api/v1/stripe/checkout', () => {
       for (const trialDays of validTrialDays) {
         jest.clearAllMocks();
         mockStripeService.createCheckoutSession.mockResolvedValue(
-          mockSession as any
+      mockSession as any
+    );
 
-        const request = mockAuthenticatedRequest({ planId: 'pro', trialDays });
+    const request = mockAuthenticatedRequest({ planId: 'pro', trialDays });
         const response = await POST(request as any);
 
         expect(response.status).toBe(200);
@@ -237,10 +243,10 @@ describe('/api/v1/stripe/checkout', () => {
       expect(data.code).toBe('CHECKOUT_FAILED');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Checkout session creation failed',
+      'Checkout session creation failed',
         { error: stripeError }
-
-    });
+    );
+  });
 
     it('should handle AppError instances', async () => {
       const appError = new AppError(
@@ -326,7 +332,8 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           userId: customUser.id,
         })
-    });
+    );
+  });
 
     it('should handle zero trial days', async () => {
       const request = mockAuthenticatedRequest({
@@ -344,7 +351,8 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           trialDays: 0,
         })
-    });
+    );
+  });
 
     it('should include session amount in response', async () => {
       const customSession = {
@@ -354,9 +362,10 @@ describe('/api/v1/stripe/checkout', () => {
       };
 
       mockStripeService.createCheckoutSession.mockResolvedValue(
-        customSession as any
+      customSession as any
+    );
 
-      const request = mockAuthenticatedRequest({ planId: 'business' });
+    const request = mockAuthenticatedRequest({ planId: 'business' });
       const response = await POST(request as any);
 
       expect(mockLogger.info).toHaveBeenCalledWith(
@@ -364,6 +373,7 @@ describe('/api/v1/stripe/checkout', () => {
         expect.objectContaining({
           amount: 3900,
         })
-    });
+    );
+  });
   });
 });

@@ -28,13 +28,7 @@ const mockEnhancedStripeService = enhancedStripeService as jest.Mocked<
 >;
 const mockLogger = logger as jest.Mocked<typeof logger>;
 
-describe('/api/v1/stripe/check-promotion', () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockEnhancedStripeService.isAvailable.mockReturnValue(true);
-  });
-
-  const createRequest = (body: any, method: string = 'POST') => {
+const createRequest = (body: any, method: string = 'POST') => {
     const config: any = {
       method,
       headers: {
@@ -50,8 +44,14 @@ describe('/api/v1/stripe/check-promotion', () => {
     return new NextRequest(
       'http://localhost:3000/api/v1/stripe/check-promotion',
       config
-
+    );
   };
+
+describe('/api/v1/stripe/check-promotion', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockEnhancedStripeService.isAvailable.mockReturnValue(true);
+  });
 
   describe('POST', () => {
     it('should return promotion details for eligible user', async () => {
@@ -62,6 +62,7 @@ describe('/api/v1/stripe/check-promotion', () => {
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
         eligibility
+      );
 
       const request = createRequest({ email: 'test@example.com' });
       const response = await POST(request);
@@ -93,9 +94,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'used@example.com' });
+    const request = createRequest({ email: 'used@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -115,9 +117,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'late@example.com' });
+    const request = createRequest({ email: 'late@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -135,9 +138,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'full@example.com' });
+    const request = createRequest({ email: 'full@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -202,9 +206,10 @@ describe('/api/v1/stripe/check-promotion', () => {
     it('should handle service errors', async () => {
       const serviceError = new Error('Stripe API error');
       mockEnhancedStripeService.checkPromotionalEligibility.mockRejectedValue(
-        serviceError
+      serviceError
+    );
 
-      const request = createRequest({ email: 'error@example.com' });
+    const request = createRequest({ email: 'error@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -212,14 +217,14 @@ describe('/api/v1/stripe/check-promotion', () => {
       expect(data.error).toBe('Failed to check promotional eligibility');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Error checking promotional eligibility',
+      'Error checking promotional eligibility',
         { error: serviceError }
-
-    });
+    );
+  });
 
     it('should handle malformed JSON', async () => {
       const request = new NextRequest(
-        'http://localhost:3000/api/v1/stripe/check-promotion',
+      'http://localhost:3000/api/v1/stripe/check-promotion',
         {
           method: 'POST',
           body: 'invalid-json',
@@ -227,7 +232,7 @@ describe('/api/v1/stripe/check-promotion', () => {
             'Content-Type': 'application/json',
           },
         }
-
+    );
       const response = await POST(request);
       const data = await response.json();
 
@@ -255,11 +260,12 @@ describe('/api/v1/stripe/check-promotion', () => {
       // Test valid emails
       for (const email of validEmails) {
         mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-          {
+      {
             eligible: true,
           }
+    );
 
-        const request = createRequest({ email });
+    const request = createRequest({ email });
         const response = await POST(request);
 
         expect(response.status).toBe(200);
@@ -291,9 +297,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'slots@example.com' });
+    const request = createRequest({ email: 'slots@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -309,9 +316,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'unlimited@example.com' });
+    const request = createRequest({ email: 'unlimited@example.com' });
       const response = await POST(request);
       const data = await response.json();
 
@@ -326,9 +334,10 @@ describe('/api/v1/stripe/check-promotion', () => {
       };
 
       mockEnhancedStripeService.checkPromotionalEligibility.mockResolvedValue(
-        eligibility
+      eligibility
+    );
 
-      const request = createRequest({ email: 'config@example.com' });
+    const request = createRequest({ email: 'config@example.com' });
       const response = await POST(request);
       const data = await response.json();
 

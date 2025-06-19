@@ -79,9 +79,9 @@ describe('PortfolioRepository', () => {
 
       expect(result).toEqual([]);
       expect(logger.warn).toHaveBeenCalledWith(
-        'findAll called without userId filter'
-
-    });
+      'findAll called without userId filter'
+    );
+  });
 
     it('should call findByUserId when userId filter provided', async () => {
       const userId = 'user-123';
@@ -110,9 +110,11 @@ describe('PortfolioRepository', () => {
 
       expect(mockSupabaseClient.from).toHaveBeenCalledWith('portfolios');
       expect(mockQuery.eq).toHaveBeenCalledWith('user_id', 'user-123');
-      expect(mockQuery.order).toHaveBeenCalledWith('updated_at', {
+      expect(mockQuery.order).toHaveBeenCalledWith(
+      'updated_at', {
         ascending: false,
-      });
+    );
+  });
       expect(result).toEqual([mockPortfolio]);
     });
 
@@ -124,10 +126,10 @@ describe('PortfolioRepository', () => {
         'Database error'
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error fetching portfolios:',
+      'Error fetching portfolios:',
         error
-
-    });
+    );
+  });
 
     it('should use mock data in development without Supabase', async () => {
       process.env.NODE_ENV = 'development';
@@ -180,10 +182,10 @@ describe('PortfolioRepository', () => {
         'Database error'
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error fetching portfolio:',
+      'Error fetching portfolio:',
         error
-
-    });
+    );
+  });
   });
 
   describe('create', () => {
@@ -234,10 +236,10 @@ describe('PortfolioRepository', () => {
         'Database error'
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error creating portfolio:',
+      'Error creating portfolio:',
         error
-
-    });
+    );
+  });
 
     it('should use mock data in development', async () => {
       process.env.NODE_ENV = 'development';
@@ -300,10 +302,10 @@ describe('PortfolioRepository', () => {
         repository.update('portfolio-123', updateData)
       ).rejects.toThrow('Database error');
       expect(logger.error).toHaveBeenCalledWith(
-        'Error updating portfolio:',
+      'Error updating portfolio:',
         error
-
-    });
+    );
+  });
   });
 
   describe('delete', () => {
@@ -327,10 +329,10 @@ describe('PortfolioRepository', () => {
         'Database error'
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error deleting portfolio:',
+      'Error deleting portfolio:',
         error
-
-    });
+    );
+  });
   });
 
   describe('findBySubdomain', () => {
@@ -430,12 +432,12 @@ describe('PortfolioRepository', () => {
       await repository.incrementViews('portfolio-123');
 
       expect(mockSupabaseClient.rpc).toHaveBeenCalledWith(
-        'increment_portfolio_views',
+      'increment_portfolio_views',
         {
           portfolio_id: 'portfolio-123',
         }
-
-    });
+    );
+  });
 
     it('should handle RPC errors', async () => {
       const error = new Error('RPC error');
@@ -445,10 +447,10 @@ describe('PortfolioRepository', () => {
         'RPC error'
 
       expect(logger.error).toHaveBeenCalledWith(
-        'Error incrementing views:',
+      'Error incrementing views:',
         error
-
-    });
+    );
+  });
 
     it('should skip in mock mode', async () => {
       process.env.NODE_ENV = 'development';

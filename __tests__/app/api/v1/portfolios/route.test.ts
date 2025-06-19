@@ -236,7 +236,7 @@ describe('Portfolios API Route', () => {
       }));
 
       jest.doMock('@/lib/api/middleware/auth', () => ({
-        withAuth: jest.fn((handler) => (request: any) => {
+        withAuth: jest.fn(handler => (request: any) => {
           request.user = { id: 'user_123', email: 'test@example.com' };
           return handler(request);
         }),
@@ -246,8 +246,16 @@ describe('Portfolios API Route', () => {
         validateCreatePortfolio: jest.fn(() => ({
           isValid: false,
           errors: [
-            { field: 'name', message: 'Name is required', code: 'REQUIRED_FIELD' },
-            { field: 'title', message: 'Title is required', code: 'REQUIRED_FIELD' },
+            {
+              field: 'name',
+              message: 'Name is required',
+              code: 'REQUIRED_FIELD',
+            },
+            {
+              field: 'title',
+              message: 'Title is required',
+              code: 'REQUIRED_FIELD',
+            },
           ],
           warnings: [],
         })),
@@ -256,7 +264,9 @@ describe('Portfolios API Route', () => {
       }));
 
       jest.doMock('@/lib/api/response-helpers', () => ({
-        apiSuccess: jest.fn((data) => new Response(JSON.stringify(data), { status: 200 })),
+        apiSuccess: jest.fn(
+          data => new Response(JSON.stringify(data), { status: 200 })
+        ),
         versionedApiHandler: jest.fn(handler => handler),
       }));
 
@@ -266,38 +276,47 @@ describe('Portfolios API Route', () => {
             return await handler(...args);
           } catch (error) {
             if (error instanceof ValidationError) {
-              return new Response(JSON.stringify({
-                error: {
-                  message: error.message,
-                  code: 'VALIDATION_ERROR',
-                  statusCode: 400
-                }
-              }), { status: 400, headers: { 'Content-Type': 'application/json' } });
+              return new Response(
+                JSON.stringify({
+                  error: {
+                    message: error.message,
+                    code: 'VALIDATION_ERROR',
+                    statusCode: 400,
+                  },
+                }),
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
+              );
             }
             if (error instanceof ExternalServiceError) {
-              return new Response(JSON.stringify({
-                error: {
-                  message: error.message,
-                  code: 'EXTERNAL_SERVICE_ERROR',
-                  statusCode: 503
-                }
-              }), { status: 503, headers: { 'Content-Type': 'application/json' } });
+              return new Response(
+                JSON.stringify({
+                  error: {
+                    message: error.message,
+                    code: 'EXTERNAL_SERVICE_ERROR',
+                    statusCode: 503,
+                  },
+                }),
+                { status: 503, headers: { 'Content-Type': 'application/json' } }
+              );
             }
             throw error;
           }
         }),
         ValidationError: class ValidationError extends Error {
-          constructor(message, details) { 
+          constructor(message, details) {
             super(message);
             this.name = 'ValidationError';
             this.details = details;
           }
         },
         ConflictError: class ConflictError extends Error {
-          constructor(message) { super(message); this.name = 'ConflictError'; }
+          constructor(message) {
+            super(message);
+            this.name = 'ConflictError';
+          }
         },
         ExternalServiceError: class ExternalServiceError extends Error {
-          constructor(service, originalError) { 
+          constructor(service, originalError) {
             super(`External service error: ${service}`);
             this.name = 'ExternalServiceError';
             this.originalError = originalError;
@@ -305,9 +324,11 @@ describe('Portfolios API Route', () => {
         },
         errorLogger: { logError: jest.fn() },
       }));
-      
+
       // Make error classes available in scope
-      const { ValidationError, ExternalServiceError } = await import('@/lib/services/error');
+      const { ValidationError, ExternalServiceError } = await import(
+        '@/lib/services/error'
+      );
 
       const { POST } = await import('@/app/api/v1/portfolios/route');
 
@@ -373,7 +394,9 @@ describe('Portfolios API Route', () => {
       const result = await response.json();
 
       expect(response.status).toBe(400);
-      expect(result.error.message).toContain('Portfolio creation limit exceeded');
+      expect(result.error.message).toContain(
+        'Portfolio creation limit exceeded'
+      );
       expect(result.error.code).toBe('VALIDATION_ERROR');
     });
 
@@ -417,7 +440,9 @@ describe('Portfolios API Route', () => {
       const result = await response.json();
 
       expect(response.status).toBe(503);
-      expect(result.error.message).toContain('External service error: Database');
+      expect(result.error.message).toContain(
+        'External service error: Database'
+      );
       expect(result.error.code).toBe('EXTERNAL_SERVICE_ERROR');
     });
   });

@@ -272,11 +272,13 @@ describe('UpgradeModal', () => {
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Upgrade Failed',
         description: 'Payment failed',
         variant: 'destructive',
-      });
+    );
+  });
     });
   });
 
@@ -290,11 +292,13 @@ describe('UpgradeModal', () => {
     fireEvent.click(upgradeButton);
 
     await waitFor(() => {
-      expect(mockToast).toHaveBeenCalledWith({
+      expect(mockToast).toHaveBeenCalledWith(
+      {
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',
         variant: 'destructive',
-      });
+    );
+  });
     });
   });
 
@@ -365,8 +369,10 @@ describe('UpgradeModal', () => {
     const enterpriseButton = screen.getByText('Upgrade to Enterprise');
     fireEvent.click(enterpriseButton);
 
-    expect(createCheckoutSession).toHaveBeenCalledWith({
+    expect(createCheckoutSession).toHaveBeenCalledWith(
+      {
       planId: 'enterprise',
-    });
+    );
+  });
   });
 });

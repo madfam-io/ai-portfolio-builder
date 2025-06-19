@@ -102,9 +102,9 @@ describe('EditorCanvas', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
-    } as any);
+    });
   });
 
   const renderEditorCanvas = (portfolio = mockPortfolio) => {
@@ -172,9 +172,11 @@ describe('EditorCanvas', () => {
       await user.type(headlineInput, 'Full Stack Developer');
 
       // userEvent types character by character, so we need to check if it was called with the final value
-      expect(mockOnDataChange).toHaveBeenCalledWith({
+      expect(mockOnDataChange).toHaveBeenCalledWith(
+      {
         title: 'Full Stack Developer',
-      });
+    );
+  });
     });
 
     it('should update tagline when input changes', async () => {
@@ -200,9 +202,11 @@ describe('EditorCanvas', () => {
 
       await user.clear(headlineInput);
 
-      expect(mockOnDataChange).toHaveBeenCalledWith({
+      expect(mockOnDataChange).toHaveBeenCalledWith(
+      {
         title: '',
-      });
+    );
+  });
     });
   });
 
@@ -553,7 +557,7 @@ describe('EditorCanvas', () => {
     });
 
     it('should fallback gracefully when translations are missing', () => {
-      mockUseLanguage.mockReturnValue({
+      (mockUseLanguage as any).mockImplementation(() => ({
         t: {},
       } as any);
 

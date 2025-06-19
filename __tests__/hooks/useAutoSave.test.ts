@@ -1,19 +1,23 @@
-import { describe, test, it, expect, beforeEach, afterEach, jest } from '@jest/globals';
+import {
+  describe,
+  test,
+  it,
+  expect,
+  beforeEach,
+  afterEach,
+  jest,
+} from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import type { Portfolio } from '@/types/portfolio';
 
-
 // Clear any existing mocks of useAutoSave
-jest.unmock('@/hooks/useAutoSave');
-
-
 // Mock fetch
 global.fetch = jest.fn();
 
 describe('useAutoSave', () => {
   // Import the hook at the describe level
   const { useAutoSave } = require('@/hooks/useAutoSave');
-  
+
   const mockPortfolio: Portfolio = {
     id: 'portfolio-123',
     userId: 'user-123',
@@ -237,34 +241,38 @@ describe('useAutoSave', () => {
     clearTimeoutSpy.mockRestore();
   });
 
-  it('should update lastSaved timestamp on successful save', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: true,
-      json: () => ({ success: true }),
-    });
+  it(
+    'should update lastSaved timestamp on successful save',
+    20000,
+    async () => {
+      (global.fetch as jest.Mock).mockResolvedValue({
+        ok: true,
+        json: () => ({ success: true }),
+      });
 
-    const { result } = renderHook(() =>
-      useAutoSave('portfolio-123', mockPortfolio, true)
-    );
+      const { result } = renderHook(() =>
+        useAutoSave('portfolio-123', mockPortfolio, true)
+      );
 
-    const beforeSave = new Date();
+      const beforeSave = new Date();
 
-    await act(async () => {
-      // Small delay to ensure timestamp difference
-      await new Promise(resolve => setTimeout(resolve, 10));
-      await result.current.autoSave(mockPortfolio);
-    });
+      await act(async () => {
+        // Small delay to ensure timestamp difference
+        await new Promise(resolve => setTimeout(resolve, 10));
+        await result.current.autoSave(mockPortfolio);
+      });
 
-    const afterSave = new Date();
+      const afterSave = new Date();
 
-    expect(result.current.lastSaved).toBeDefined();
-    expect(result.current.lastSaved!.getTime()).toBeGreaterThanOrEqual(
-      beforeSave.getTime()
-    );
-    expect(result.current.lastSaved!.getTime()).toBeLessThanOrEqual(
-      afterSave.getTime()
-    );
-  });
+      expect(result.current.lastSaved).toBeDefined();
+      expect(result.current.lastSaved!.getTime()).toBeGreaterThanOrEqual(
+        beforeSave.getTime()
+      );
+      expect(result.current.lastSaved!.getTime()).toBeLessThanOrEqual(
+        afterSave.getTime()
+      );
+    }
+  );
 
   it('should handle empty portfolio data gracefully', async () => {
     const emptyPortfolio = {

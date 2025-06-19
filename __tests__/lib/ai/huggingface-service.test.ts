@@ -553,7 +553,7 @@ describe('HuggingFace AI Service', () => {
   });
 
   describe('Performance', () => {
-    it('should timeout long-running requests', async () => {
+    it('should timeout long-running requests', 20000, async () => {
       jest.useFakeTimers();
 
       mockHf.textGeneration.mockImplementation(

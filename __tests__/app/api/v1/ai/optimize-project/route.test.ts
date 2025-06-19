@@ -5,7 +5,6 @@
 import { jest } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
-
 describe('AI Optimize Project API Route', () => {
   const defaultSupabaseMock = {
     auth: {
@@ -67,7 +66,7 @@ describe('AI Optimize Project API Route', () => {
         },
         body: JSON.stringify(body),
       }
-
+    );
     request.json = jest.fn().mockResolvedValue(body);
     return request;
   };

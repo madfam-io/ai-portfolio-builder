@@ -257,7 +257,8 @@ describe('PortfolioEditor', () => {
         expect.objectContaining({
           method: 'PUT',
         })
-    });
+    );
+  });
 
     expect(defaultProps.onSave).toHaveBeenCalled();
   });

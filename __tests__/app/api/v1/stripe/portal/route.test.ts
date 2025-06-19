@@ -64,6 +64,7 @@ describe('/api/v1/stripe/portal', () => {
       {
         method: 'POST',
       }
+    );
 
     // Mock the withAuth middleware by adding user to request
     (request as any).user = mockUser;
@@ -79,7 +80,7 @@ describe('/api/v1/stripe/portal', () => {
     beforeEach(() => {
       mockStripeService.createPortalSession.mockResolvedValue(
         mockPortalSession as any
-
+      );
     });
 
     it('should create portal session for user with valid Stripe customer', async () => {
@@ -108,20 +109,22 @@ describe('/api/v1/stripe/portal', () => {
 
       expect(mockSupabase.eq).toHaveBeenCalledWith('id', mockUser.id);
 
-      expect(mockStripeService.createPortalSession).toHaveBeenCalledWith({
+      expect(mockStripeService.createPortalSession).toHaveBeenCalledWith(
+      {
         customerId: mockUserData.stripe_customer_id,
         returnUrl: 'https://app.example.com/dashboard/billing',
-      });
+    );
+  });
 
       expect(mockLogger.info).toHaveBeenCalledWith(
-        'Portal session created successfully',
+      'Portal session created successfully',
         {
           sessionId: mockPortalSession.id,
           userId: mockUser.id,
           customerId: mockUserData.stripe_customer_id,
         }
-
-    });
+    );
+  });
 
     it('should return 503 when Stripe service is unavailable', async () => {
       mockStripeService.isAvailable.mockReturnValue(false);
@@ -166,13 +169,13 @@ describe('/api/v1/stripe/portal', () => {
       expect(data.code).toBe('USER_DATA_NOT_FOUND');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to fetch user data for portal',
+      'Failed to fetch user data for portal',
         {
           error: { message: 'User not found' },
           userId: mockUser.id,
         }
-
-    });
+    );
+  });
 
     it('should return 400 when user has no Stripe customer ID', async () => {
       const mockUserData = {
@@ -219,10 +222,10 @@ describe('/api/v1/stripe/portal', () => {
       expect(data.code).toBe('PORTAL_FAILED');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Portal session creation failed',
+      'Portal session creation failed',
         { error: stripeError }
-
-    });
+    );
+  });
 
     it('should handle AppError instances', async () => {
       const mockUserData = {
@@ -267,10 +270,12 @@ describe('/api/v1/stripe/portal', () => {
       const request = mockAuthenticatedRequest();
       await POST(request as any);
 
-      expect(mockStripeService.createPortalSession).toHaveBeenCalledWith({
+      expect(mockStripeService.createPortalSession).toHaveBeenCalledWith(
+      {
         customerId: 'cus_test_custom',
         returnUrl: 'https://custom-domain.com/dashboard/billing',
-      });
+    );
+  });
     });
 
     it('should handle database query errors', async () => {
@@ -288,13 +293,13 @@ describe('/api/v1/stripe/portal', () => {
       expect(data.code).toBe('USER_DATA_NOT_FOUND');
 
       expect(mockLogger.error).toHaveBeenCalledWith(
-        'Failed to fetch user data for portal',
+      'Failed to fetch user data for portal',
         {
           error: { message: 'Database connection failed', code: 'DB_ERROR' },
           userId: mockUser.id,
         }
-
-    });
+    );
+  });
 
     it('should handle empty Stripe customer ID', async () => {
       const mockUserData = {
@@ -333,18 +338,21 @@ describe('/api/v1/stripe/portal', () => {
         });
 
         mockStripeService.createPortalSession.mockResolvedValue(
-          mockPortalSession as any
+      mockPortalSession as any
+    );
 
-        const request = mockAuthenticatedRequest();
+    const request = mockAuthenticatedRequest();
         const response = await POST(request as any);
 
         // Portal should be accessible regardless of subscription status
         // as long as they have a Stripe customer ID
         expect(response.status).toBe(200);
-        expect(mockStripeService.createPortalSession).toHaveBeenCalledWith({
+        expect(mockStripeService.createPortalSession).toHaveBeenCalledWith(
+      {
           customerId: `cus_test_${status}`,
           returnUrl: 'https://app.example.com/dashboard/billing',
-        });
+    );
+  });
       }
     });
 
@@ -381,6 +389,7 @@ describe('/api/v1/stripe/portal', () => {
         expect.objectContaining({
           userId: customUser.id,
         })
-    });
+    );
+  });
   });
 });

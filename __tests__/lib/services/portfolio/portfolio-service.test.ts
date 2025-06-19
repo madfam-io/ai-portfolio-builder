@@ -136,7 +136,8 @@ describe('PortfolioService', () => {
           ...createDto,
           status: 'draft',
         })
-    });
+    );
+  });
 
     it('should handle import data', async () => {
       const dtoWithImport = {
@@ -158,7 +159,8 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           importSource: 'linkedin',
         })
-    });
+    );
+  });
 
     it('should apply default values', async () => {
       mockRepository.create.mockResolvedValue(mockPortfolio);
@@ -175,7 +177,8 @@ describe('PortfolioService', () => {
           skills: [],
           certifications: [],
         })
-    });
+    );
+  });
   });
 
   describe('updatePortfolio', () => {
@@ -219,10 +222,10 @@ describe('PortfolioService', () => {
       await service.updatePortfolio('portfolio-123', partialUpdate);
 
       expect(mockRepository.update).toHaveBeenCalledWith(
-        'portfolio-123',
+      'portfolio-123',
         partialUpdate
-
-    });
+    );
+  });
   });
 
   describe('deletePortfolio', () => {
@@ -285,7 +288,8 @@ describe('PortfolioService', () => {
           status: 'published',
           publishedAt: expect.any(Date),
         })
-    });
+    );
+  });
 
     it('should generate subdomain if not provided', async () => {
       const portfolioWithoutSubdomain = {
@@ -306,7 +310,8 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           subdomain: expect.any(String),
         })
-    });
+    );
+  });
 
     it('should not republish already published portfolio', async () => {
       const publishedPortfolio = {
@@ -327,7 +332,8 @@ describe('PortfolioService', () => {
         expect.objectContaining({
           status: 'published',
         })
-    });
+    );
+  });
   });
 
   describe('unpublishPortfolio', () => {
@@ -347,9 +353,11 @@ describe('PortfolioService', () => {
       const result = await service.unpublishPortfolio('portfolio-123');
 
       expect(result).toEqual(unpublishedPortfolio);
-      expect(mockRepository.update).toHaveBeenCalledWith('portfolio-123', {
+      expect(mockRepository.update).toHaveBeenCalledWith(
+      'portfolio-123', {
         status: 'draft',
-      });
+    );
+  });
     });
   });
 
@@ -361,9 +369,9 @@ describe('PortfolioService', () => {
 
       expect(result).toEqual(mockPortfolio);
       expect(mockRepository.findBySubdomain).toHaveBeenCalledWith(
-        'my-portfolio'
-
-    });
+      'my-portfolio'
+    );
+  });
 
     it('should return null for non-existent subdomain', async () => {
       mockRepository.findBySubdomain.mockResolvedValue(null);
@@ -386,11 +394,13 @@ describe('PortfolioService', () => {
       });
 
       expect(result).toEqual(mockResults);
-      expect(mockRepository.search).toHaveBeenCalledWith({
+      expect(mockRepository.search).toHaveBeenCalledWith(
+      {
         query: 'developer',
         template: 'modern',
         status: 'published',
-      });
+    );
+  });
     });
   });
 });

@@ -175,9 +175,11 @@ describe('usePortfolioStore', () => {
       expect(result.current.portfolios).toEqual(mockPortfolios);
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('Portfolios loaded', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolios loaded', {
         count: 1,
-      });
+    );
+  });
     });
 
     it('should handle load portfolios error', async () => {
@@ -220,9 +222,11 @@ describe('usePortfolioStore', () => {
       expect(result.current.currentPortfolioId).toBe('portfolio-123');
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('Portfolio loaded', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio loaded', {
         portfolioId: 'portfolio-123',
-      });
+    );
+  });
     });
 
     it('should handle portfolio not found', async () => {
@@ -275,9 +279,11 @@ describe('usePortfolioStore', () => {
       expect(returnedPortfolio!).toEqual(createdPortfolio);
       expect(result.current.currentPortfolio).toEqual(createdPortfolio);
       expect(result.current.portfolios).toContainEqual(createdPortfolio);
-      expect(logger.info).toHaveBeenCalledWith('Portfolio created', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio created', {
         portfolioId: 'new-portfolio-123',
-      });
+    );
+  });
     });
 
     it('should handle create portfolio error', async () => {
@@ -328,9 +334,11 @@ describe('usePortfolioStore', () => {
       expect(result.current.currentPortfolio).toEqual(updatedPortfolio);
       expect(result.current.lastSaved).toBeInstanceOf(Date);
       expect(result.current.hasUnsavedChanges).toBe(false);
-      expect(logger.info).toHaveBeenCalledWith('Portfolio updated', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio updated', {
         portfolioId: 'portfolio-123',
-      });
+    );
+  });
     });
 
     it('should handle update without current portfolio', async () => {
@@ -355,7 +363,8 @@ describe('usePortfolioStore', () => {
           method: 'PATCH',
           body: JSON.stringify(updates),
         })
-    });
+    );
+  });
 
     it('should handle update error', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
@@ -400,9 +409,11 @@ describe('usePortfolioStore', () => {
 
       expect(result.current.portfolios).toEqual([]);
       expect(result.current.currentPortfolio).toBeNull();
-      expect(logger.info).toHaveBeenCalledWith('Portfolio deleted', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio deleted', {
         portfolioId: 'portfolio-123',
-      });
+    );
+  });
     });
 
     it('should handle delete error', async () => {
@@ -445,9 +456,11 @@ describe('usePortfolioStore', () => {
       });
 
       expect(result.current.currentPortfolio?.status).toBe('published');
-      expect(logger.info).toHaveBeenCalledWith('Portfolio published', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio published', {
         portfolioId: 'portfolio-123',
-      });
+    );
+  });
     });
   });
 
@@ -478,9 +491,11 @@ describe('usePortfolioStore', () => {
       });
 
       expect(result.current.currentPortfolio?.status).toBe('draft');
-      expect(logger.info).toHaveBeenCalledWith('Portfolio unpublished', {
+      expect(logger.info).toHaveBeenCalledWith(
+      'Portfolio unpublished', {
         portfolioId: 'portfolio-123',
-      });
+    );
+  });
     });
   });
 

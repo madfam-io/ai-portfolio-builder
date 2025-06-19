@@ -54,10 +54,10 @@ describe('GitHubClient', () => {
       expect(token).toBe(mockAccessToken);
       expect(mockSupabase.from).toHaveBeenCalledWith('github_integrations');
       expect(mockSupabase.from().eq).toHaveBeenCalledWith(
-        'user_id',
+      'user_id',
         mockUserId
-
-    });
+    );
+  });
 
     it('should refresh expired token', async () => {
       // Mock expired token
@@ -92,7 +92,8 @@ describe('GitHubClient', () => {
         expect.objectContaining({
           method: 'POST',
         })
-    });
+    );
+  });
 
     it('should handle missing integration gracefully', async () => {
       mockSupabase.from.mockReturnValueOnce({
@@ -444,7 +445,8 @@ describe('GitHubClient', () => {
           method: 'POST',
           body: JSON.stringify(prData),
         })
-    });
+    );
+  });
   });
 
   describe('Organization API', () => {

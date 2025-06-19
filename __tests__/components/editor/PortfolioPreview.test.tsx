@@ -177,9 +177,9 @@ describe('PortfolioPreview', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseLanguage.mockReturnValue({
+    (mockUseLanguage as any).mockImplementation(() => ({
       t: mockTranslations,
-    } as any);
+    });
   });
 
   const renderPortfolioPreview = (props = mockProps) => {
