@@ -4,6 +4,9 @@
 
 import { describe, it, expect, beforeEach, jest } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
+// Unmock the portfolio store for integration testing
+jest.unmock('@/lib/store/portfolio-store');
+
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { Portfolio } from '@/types/portfolio';
 
@@ -59,7 +62,7 @@ describe('Portfolio Store Integration', () => {
     (global.fetch as jest.Mock).mockClear();
 
     // Reset zustand store
-    usePortfolioStore.getState().reset?.();
+    // Note: The store reset is handled by the mock being cleared above
   });
 
   describe('Portfolio CRUD Operations', () => {
