@@ -635,53 +635,365 @@ jest.mock('@/lib/services/feature-flags/use-experiment', () => ({
   sortComponentsByOrder: components => components,
 }));
 
-// Mock shadcn/ui components
-jest.mock('@/components/ui/button', () => ({
-  Button: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('button', props, children);
-  },
-}));
+// Mock shadcn/ui components with inline mocks
+jest.mock('@/components/ui/button', () => {
+  const React = require('react');
+  return {
+    Button: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('button', { ref, ...props }, children)
+    ),
+  };
+});
 
-jest.mock('@/components/ui/input', () => ({
-  Input: ({ ...props }) => {
-    const React = require('react');
-    return React.createElement('input', props);
-  },
-}));
+jest.mock('@/components/ui/input', () => {
+  const React = require('react');
+  return {
+    Input: React.forwardRef((props, ref) =>
+      React.createElement('input', { ref, ...props })
+    ),
+  };
+});
 
-jest.mock('@/components/ui/label', () => ({
-  Label: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('label', props, children);
-  },
-}));
+jest.mock('@/components/ui/label', () => {
+  const React = require('react');
+  return {
+    Label: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('label', { ref, ...props }, children)
+    ),
+  };
+});
 
-jest.mock('@/components/ui/textarea', () => ({
-  Textarea: ({ ...props }) => {
-    const React = require('react');
-    return React.createElement('textarea', props);
-  },
-}));
+jest.mock('@/components/ui/textarea', () => {
+  const React = require('react');
+  return {
+    Textarea: React.forwardRef((props, ref) =>
+      React.createElement('textarea', { ref, ...props })
+    ),
+  };
+});
 
-jest.mock('@/components/ui/card', () => ({
-  Card: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('div', props, children);
-  },
-  CardHeader: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('div', props, children);
-  },
-  CardContent: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('div', props, children);
-  },
-  CardFooter: ({ children, ...props }) => {
-    const React = require('react');
-    return React.createElement('div', props, children);
-  },
-}));
+jest.mock('@/components/ui/card', () => {
+  const React = require('react');
+  return {
+    Card: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    CardHeader: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    CardContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    CardFooter: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    CardTitle: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('h3', { ref, ...props }, children)
+    ),
+    CardDescription: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('p', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/select', () => {
+  const React = require('react');
+  return {
+    Select: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    SelectTrigger: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('button', { ref, ...props }, children)
+    ),
+    SelectContent: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    SelectItem: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    SelectValue: props => React.createElement('span', props),
+  };
+});
+
+jest.mock('@/components/ui/dialog', () => {
+  const React = require('react');
+  return {
+    Dialog: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DialogTrigger: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DialogContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    DialogHeader: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DialogFooter: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DialogTitle: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('h2', { ref, ...props }, children)
+    ),
+    DialogDescription: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('p', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/form', () => {
+  const React = require('react');
+  return {
+    Form: ({ children, ...props }) =>
+      React.createElement('form', props, children),
+    FormField: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    FormItem: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    FormLabel: ({ children, ...props }) =>
+      React.createElement('label', props, children),
+    FormControl: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    FormDescription: ({ children, ...props }) =>
+      React.createElement('p', props, children),
+    FormMessage: ({ children, ...props }) =>
+      React.createElement('p', props, children),
+    useFormField: () => ({
+      invalid: false,
+      isDirty: false,
+      isTouched: false,
+      error: null,
+    }),
+  };
+});
+
+jest.mock('@/components/ui/progress', () => {
+  const React = require('react');
+  return {
+    Progress: React.forwardRef(({ value = 0, ...props }, ref) =>
+      React.createElement(
+        'div',
+        { ref, role: 'progressbar', 'aria-valuenow': value, ...props },
+        React.createElement('div', { style: { width: `${value}%` } })
+      )
+    ),
+  };
+});
+
+jest.mock('@/components/ui/badge', () => {
+  const React = require('react');
+  return {
+    Badge: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    badgeVariants: () => '',
+  };
+});
+
+jest.mock('@/components/ui/separator', () => {
+  const React = require('react');
+  return {
+    Separator: React.forwardRef((props, ref) =>
+      React.createElement('div', { ref, ...props })
+    ),
+  };
+});
+
+jest.mock('@/components/ui/tabs', () => {
+  const React = require('react');
+  return {
+    Tabs: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    TabsList: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    TabsTrigger: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('button', { ref, ...props }, children)
+    ),
+    TabsContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/sheet', () => {
+  const React = require('react');
+  return {
+    Sheet: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    SheetTrigger: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    SheetContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    SheetHeader: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    SheetTitle: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('h2', { ref, ...props }, children)
+    ),
+    SheetDescription: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('p', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/alert', () => {
+  const React = require('react');
+  return {
+    Alert: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, role: 'alert', ...props }, children)
+    ),
+    AlertTitle: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('h5', { ref, ...props }, children)
+    ),
+    AlertDescription: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/checkbox', () => {
+  const React = require('react');
+  return {
+    Checkbox: React.forwardRef((props, ref) =>
+      React.createElement('input', { ref, type: 'checkbox', ...props })
+    ),
+  };
+});
+
+jest.mock('@/components/ui/switch', () => {
+  const React = require('react');
+  return {
+    Switch: React.forwardRef(({ checked, ...props }, ref) =>
+      React.createElement('button', {
+        ref,
+        role: 'switch',
+        'aria-checked': checked,
+        ...props,
+      })
+    ),
+  };
+});
+
+jest.mock('@/components/ui/scroll-area', () => {
+  const React = require('react');
+  return {
+    ScrollArea: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement(
+        'div',
+        { ref, style: { overflow: 'auto' }, ...props },
+        children
+      )
+    ),
+  };
+});
+
+jest.mock('@/components/ui/avatar', () => {
+  const React = require('react');
+  return {
+    Avatar: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    AvatarImage: React.forwardRef((props, ref) =>
+      React.createElement('img', { ref, ...props })
+    ),
+    AvatarFallback: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+  };
+});
+
+jest.mock('@/components/ui/toast', () => {
+  const React = require('react');
+  return {
+    Toast: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    ToastAction: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('button', { ref, ...props }, children)
+    ),
+    useToast: () => ({
+      toast: jest.fn(),
+      toasts: [],
+    }),
+  };
+});
+
+jest.mock('@/components/ui/dropdown-menu', () => {
+  const React = require('react');
+  return {
+    DropdownMenu: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DropdownMenuTrigger: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    DropdownMenuContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    DropdownMenuItem: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    DropdownMenuSeparator: React.forwardRef((props, ref) =>
+      React.createElement('div', { ref, ...props })
+    ),
+  };
+});
+
+jest.mock('@/components/ui/tooltip', () => {
+  const React = require('react');
+  return {
+    Tooltip: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    TooltipTrigger: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    TooltipContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+    TooltipProvider: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+  };
+});
+
+jest.mock('@/components/ui/slider', () => {
+  const React = require('react');
+  return {
+    Slider: React.forwardRef(({ value = [0], max = 100, ...props }, ref) =>
+      React.createElement(
+        'div',
+        { ref, ...props },
+        React.createElement('input', {
+          type: 'range',
+          value: value[0],
+          max,
+          readOnly: true,
+        })
+      )
+    ),
+  };
+});
+
+jest.mock('@/components/ui/radio-group', () => {
+  const React = require('react');
+  return {
+    RadioGroup: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement(
+        'div',
+        { ref, role: 'radiogroup', ...props },
+        children
+      )
+    ),
+    RadioGroupItem: React.forwardRef((props, ref) =>
+      React.createElement('input', { ref, type: 'radio', ...props })
+    ),
+  };
+});
+
+jest.mock('@/components/ui/popover', () => {
+  const React = require('react');
+  return {
+    Popover: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    PopoverTrigger: ({ children, ...props }) =>
+      React.createElement('div', props, children),
+    PopoverContent: React.forwardRef(({ children, ...props }, ref) =>
+      React.createElement('div', { ref, ...props }, children)
+    ),
+  };
+});
 
 // Note: lucide-react mocking is handled by moduleNameMapper in jest.config.js
 // pointing to __mocks__/lucide-react.js - removing duplicate mock here
