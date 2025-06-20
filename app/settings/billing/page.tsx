@@ -17,7 +17,7 @@ import {
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -40,6 +40,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
+import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useSubscription } from '@/lib/hooks/use-subscription';
 

@@ -239,7 +239,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       plan: planId || 'pro',
       status: subscription.status,
       current_period_start: new Date(
-        subscription.current_period_start * 1000
+        (subscription as any).current_period_start * 1000
       ).toISOString(),
       current_period_end: subscriptionEnd.toISOString(),
       amount: amount,

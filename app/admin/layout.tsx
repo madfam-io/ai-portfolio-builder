@@ -28,6 +28,11 @@ interface AdminLayoutProps {
 export default async function AdminLayout({ children }: AdminLayoutProps) {
   // Check authentication and admin role
   const supabase = await createClient();
+  
+  if (!supabase) {
+    redirect('/auth/signin');
+  }
+  
   const {
     data: { user },
   } = await supabase.auth.getUser();

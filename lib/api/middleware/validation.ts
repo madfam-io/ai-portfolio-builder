@@ -282,3 +282,10 @@ function createValidatedHandler<T extends ValidationOptions>(
     return handler(request as any, context);
   };
 }
+
+/**
+ * Alias for createValidatedHandler to match expected import
+ */
+export const withValidation = createValidatedHandler;
+
+export { createValidatedHandler, commonSchemas };

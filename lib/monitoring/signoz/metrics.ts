@@ -240,10 +240,10 @@ export const measureDuration = async <T>(
     recordPerformanceMetric(metricName, duration, {
       ...attributes,
       status: 'error',
-      error_type: error instanceof Error ? error.constructor.name : 'unknown',
+      error_type: _error instanceof Error ? _error.constructor.name : 'unknown',
     });
 
-    throw error;
+    throw _error;
   }
 };
 

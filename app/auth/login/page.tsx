@@ -69,8 +69,8 @@ export default function LoginPage() {
       toast({
         title: t.oauthError || 'OAuth error',
         description:
-          error instanceof Error
-            ? error.message
+          _error instanceof Error
+            ? _error.message
             : t.genericError || 'An error occurred',
         variant: 'destructive',
       });
