@@ -77,11 +77,14 @@ function decryptRefreshToken(tokenData: EncryptedTokenData): string | null {
 export function hasEncryptedTokens(
   integration: unknown
 ): integration is EncryptedTokenData {
+  if (!integration || typeof integration !== 'object') {
+    return false;
+  }
+  const obj = integration as Record<string, unknown>;
   return Boolean(
-    integration &&
-      typeof (integration as unknown).encrypted_access_token === 'string' &&
-      typeof (integration as unknown).access_token_iv === 'string' &&
-      typeof (integration as unknown).access_token_tag === 'string'
+    typeof obj.encrypted_access_token === 'string' &&
+    typeof obj.access_token_iv === 'string' &&
+    typeof obj.access_token_tag === 'string'
   );
 }
 
@@ -89,7 +92,9 @@ export function hasEncryptedTokens(
  * Check if the integration has legacy unencrypted tokens
  */
 export function hasLegacyTokens(integration: unknown): boolean {
-  return Boolean(
-    integration && typeof (integration as unknown).access_token === 'string'
-  );
+  if (!integration || typeof integration !== 'object') {
+    return false;
+  }
+  const obj = integration as Record<string, unknown>;
+  return Boolean(typeof obj.access_token === 'string');
 }

@@ -89,7 +89,7 @@ const ProductionEnvSchema = BaseEnvSchema.extend({
 /**
  * Get the appropriate schema based on environment
  */
-function getEnvSchema(nodeEnv: string | undefined): z.ZodSchema {
+function getEnvSchema(nodeEnv: string | undefined): z.ZodObject<any> {
   const env = nodeEnv || 'development';
 
   switch (env) {
@@ -128,7 +128,7 @@ function parseEnv() {
         {} as Record<string, string | undefined>
       );
 
-      return (schema as unknown).partial().parse(cleanedEnv);
+      return schema.partial().parse(cleanedEnv);
     }
 
     const parsed = schema.parse(process.env);
@@ -154,7 +154,7 @@ function parseEnv() {
         logger.warn(
           'Continuing with missing environment variables in development mode'
         );
-        return (schema as unknown).partial().parse(process.env);
+        return schema.partial().parse(process.env);
       }
 
       throw new Error(

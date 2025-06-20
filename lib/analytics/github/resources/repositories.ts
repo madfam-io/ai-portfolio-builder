@@ -83,11 +83,12 @@ export class RepositoryResource {
       });
 
       logger.info('Webhook created successfully', { owner, repo });
-    } catch (error: unknown) {
+    } catch (error) {
       // Ignore if webhook already exists
-      if ((error as unknown).status !== 422) {
-        logger.error('Failed to create webhook', { owner, repo, error });
-        throw error;
+      const errorObj = error instanceof Error ? error : new Error(String(error));
+      if ('status' in errorObj && errorObj.status !== 422) {
+        logger.error('Failed to create webhook', { owner, repo, error: errorObj });
+        throw errorObj;
       }
     }
   }

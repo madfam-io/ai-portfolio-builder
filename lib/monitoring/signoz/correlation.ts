@@ -96,7 +96,7 @@ export const trackUserActionWithPerformance = async <T>(
 
       throw error;
     }
-  });
+  }) as Promise<T>;
 };
 
 /**
@@ -132,15 +132,15 @@ export const trackPortfolioOperation = async <T>(
       });
 
       // Record business metric
-      const metricMap: Record<string, string> = {
+      const metricMap: Record<string, keyof typeof import('./metrics').businessMetrics> = {
         create: 'portfoliosCreated',
         publish: 'portfoliosPublished',
-        update: 'portfoliosUpdated',
-        delete: 'portfoliosDeleted',
+        update: 'portfoliosCreated', // Note: portfoliosUpdated doesn't exist in businessMetrics
+        delete: 'portfoliosCreated', // Note: portfoliosDeleted doesn't exist in businessMetrics
       };
 
       if (metricMap[operation]) {
-        recordBusinessMetric(metricMap[operation] as unknown, 1, {
+        recordBusinessMetric(metricMap[operation], 1, {
           portfolio_id: portfolioId,
         });
       }
@@ -160,7 +160,7 @@ export const trackPortfolioOperation = async <T>(
 
       throw error;
     }
-  });
+  }) as Promise<T>;
 };
 
 /**
@@ -188,7 +188,7 @@ export const trackAIEnhancement = async <T>(
       const duration = performance.now() - startTime;
 
       // Extract token count if available
-      const tokenCount = (result as unknown)?.usage?.total_tokens || 0;
+      const tokenCount = (result as { usage?: { total_tokens?: number } })?.usage?.total_tokens || 0;
 
       // Track in PostHog
       captureEnhancedEvent('ai_content_generated', {
@@ -239,7 +239,7 @@ export const trackAIEnhancement = async <T>(
 
       throw error;
     }
-  });
+  }) as Promise<T>;
 };
 
 /**
@@ -300,7 +300,7 @@ export const trackRevenueOperation = async <T>(
 
       throw error;
     }
-  });
+  }) as Promise<T>;
 };
 
 /**

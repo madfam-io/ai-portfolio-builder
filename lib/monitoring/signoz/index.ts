@@ -5,7 +5,7 @@
  */
 
 import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import type { Span } from '@opentelemetry/api';
+import type { Span, Attributes } from '@opentelemetry/api';
 
 // Re-export tracing utilities
 export * from './tracing';
@@ -54,7 +54,7 @@ export const createSpan = (
   name: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, unknown>;
+    attributes?: Attributes;
   }
 ): Span | undefined => {
   if (!isOtelEnabled()) return undefined;
@@ -81,7 +81,7 @@ export function withTracing<T extends (...args: unknown[]) => unknown>(
   spanName: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, unknown>;
+    attributes?: Attributes;
   }
 ): T {
   if (!isOtelEnabled()) return fn;
@@ -92,11 +92,18 @@ export function withTracing<T extends (...args: unknown[]) => unknown>(
 
     try {
       // Add function arguments as span attributes (be careful with sensitive data)
-      span.setAttributes({
+      const attributes: Attributes = {
         'function.name': fn.name || 'anonymous',
         'function.args.count': args.length,
-        ...options?.attributes,
-      });
+      };
+      if (options?.attributes) {
+        Object.entries(options.attributes).forEach(([key, value]) => {
+          if (value !== undefined && value !== null && typeof value !== 'object') {
+            attributes[key] = value;
+          }
+        });
+      }
+      span.setAttributes(attributes);
 
       const result = await context.with(
         trace.setSpan(context.active(), span),
@@ -127,7 +134,7 @@ export function withTracing<T extends (...args: unknown[]) => unknown>(
  */
 export const recordError = (
   error: Error,
-  attributes?: Record<string, unknown>
+  attributes?: Attributes
 ): void => {
   const span = getCurrentSpan();
   if (!span) return;
@@ -146,7 +153,7 @@ export const recordError = (
  * Add attributes to the current span
  */
 export const addSpanAttributes = (
-  attributes: Record<string, unknown>
+  attributes: Attributes
 ): void => {
   const span = getCurrentSpan();
   if (!span) return;
@@ -159,12 +166,12 @@ export const addSpanAttributes = (
  */
 export const createChildSpan = (
   name: string,
-  fn: (span: Span) => Promise<unknown>
+  fn: (span: Span | undefined) => Promise<unknown>
 ): Promise<unknown> => {
-  if (!isOtelEnabled()) return fn(undefined as unknown);
+  if (!isOtelEnabled()) return fn(undefined);
 
   const span = createSpan(name);
-  if (!span) return fn(undefined as unknown);
+  if (!span) return fn(undefined);
 
   return context.with(trace.setSpan(context.active(), span), async () => {
     try {

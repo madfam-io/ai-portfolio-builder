@@ -145,11 +145,12 @@ export function validateRequest(options: ValidationOptions) {
       }
 
       // Validate route params
-      if (options.params && (context as unknown)?.params) {
+      const contextWithParams = context as { params?: unknown };
+      if (options.params && contextWithParams?.params) {
         const sanitizedParams =
           options.sanitize !== false
-            ? sanitizeObject((context as unknown).params)
-            : (context as unknown).params;
+            ? sanitizeObject(contextWithParams.params)
+            : contextWithParams.params;
         validated.params = options.params.parse(sanitizedParams);
       }
 
@@ -279,7 +280,7 @@ function createValidatedHandler<T extends ValidationOptions>(
       return validationResult;
     }
 
-    return handler(request as unknown, context);
+    return handler(request as NextRequest & { validated: unknown }, context);
   };
 }
 

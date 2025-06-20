@@ -264,10 +264,11 @@ export function withErrorTracking<T extends (...args: unknown[]) => any>(
 export function useErrorBoundary() {
   return {
     captureError: (error: Error, errorInfo?: unknown) => {
+      const errorInfoObj = errorInfo as { componentStack?: string } | undefined;
       errorTracker.captureError(error, {
         category: 'react',
         context: {
-          componentStack: errorInfo?.componentStack,
+          componentStack: errorInfoObj?.componentStack,
           errorBoundary: true,
         },
       });
@@ -379,8 +380,8 @@ export const performanceMonitor = {
     new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach(entry => {
-        const clsEntry = entry as unknown;
-        if (!clsEntry.hadRecentInput) {
+        const clsEntry = entry as { hadRecentInput?: boolean; value?: number };
+        if (!clsEntry.hadRecentInput && clsEntry.value !== undefined) {
           cumulativeScore += clsEntry.value;
         }
       });

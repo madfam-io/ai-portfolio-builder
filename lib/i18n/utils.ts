@@ -33,7 +33,8 @@ export function flattenTranslations(
 
   // Helper function to recursively flatten objects
   function flattenObject(obj: unknown, prefix = ''): void {
-    Object.entries(obj).forEach(([key, value]) => {
+    if (!obj || typeof obj !== 'object') return;
+    Object.entries(obj as Record<string, unknown>).forEach(([key, value]) => {
       const newKey = prefix ? `${prefix}.${key}` : key;
 
       if (

@@ -147,8 +147,6 @@ export function transformDbPortfolioToApi(
     publishedAt: dbPortfolio.published_at
       ? new Date(dbPortfolio.published_at)
       : undefined,
-    // Include the raw data field for dynamic content
-    data: data,
   };
 }
 

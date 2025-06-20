@@ -353,27 +353,27 @@ export { CorrelatedSession } from '../signoz/correlation';
  * Unified marketplace events
  */
 export const marketplace = {
-  search: async (params: unknown) => {
+  search: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_search', params);
   },
 
-  view: async (params: unknown) => {
+  view: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_viewed', params);
   },
 
-  purchase: async (params: unknown) => {
+  purchase: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_purchased', params);
   },
 
-  useTemplate: async (params: unknown) => {
+  useTemplate: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_used', params);
   },
 
-  review: async (params: unknown) => {
+  review: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_reviewed', params);
   },
 
-  wishlist: async (params: unknown) => {
+  wishlist: async (params: Record<string, unknown>) => {
     correlation.event('marketplace_wishlist_action', params);
   },
 };
@@ -382,23 +382,23 @@ export const marketplace = {
  * Unified domain events
  */
 export const domain = {
-  add: async (params: unknown) => {
+  add: async (params: Record<string, unknown>) => {
     correlation.event('domain_added', params);
   },
 
-  verify: async (params: unknown) => {
+  verify: async (params: Record<string, unknown>) => {
     correlation.event('domain_verified', params);
   },
 
-  activate: async (params: unknown) => {
+  activate: async (params: Record<string, unknown>) => {
     correlation.event('domain_activated', params);
   },
 
-  setPrimary: async (params: unknown) => {
+  setPrimary: async (params: Record<string, unknown>) => {
     correlation.event('domain_set_primary', params);
   },
 
-  remove: async (params: unknown) => {
+  remove: async (params: Record<string, unknown>) => {
     correlation.event('domain_removed', params);
   },
 };

@@ -479,11 +479,17 @@ export function useEnhancedPostHog() {
 
   useEffect(() => {
     if (isInitialized && user) {
+      const userWithMetadata = {
+        ...user,
+        user_metadata: (user as any).user_metadata as { full_name?: string } | undefined,
+        created_at: (user as any).created_at as string | undefined,
+        email_confirmed_at: (user as any).email_confirmed_at as string | null | undefined,
+      };
       enhancedPostHog.identify(user.id, {
         email: user.email,
-        name: (user as unknown).user_metadata?.full_name,
-        created_at: (user as unknown).created_at,
-        email_verified: (user as unknown).email_confirmed_at !== null,
+        name: userWithMetadata.user_metadata?.full_name,
+        created_at: userWithMetadata.created_at,
+        email_verified: userWithMetadata.email_confirmed_at !== null,
       });
     }
   }, [isInitialized, user]);

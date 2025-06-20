@@ -1,4 +1,5 @@
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * @fileoverview Analytics and Metrics Seed Data
@@ -30,10 +31,10 @@ export async function seedAnalytics(
   let totalCount = 0;
 
   // Seed in dependency order
-  totalCount += await seedCodeMetrics(client, options);
-  totalCount += await seedCommitAnalytics(client, options);
-  totalCount += await seedPullRequests(client, options);
-  totalCount += await seedPortfolioAnalytics(client, options);
+  totalCount += await seedCodeMetrics(client as SupabaseClient, options);
+  totalCount += await seedCommitAnalytics(client as SupabaseClient, options);
+  totalCount += await seedPullRequests(client as SupabaseClient, options);
+  totalCount += await seedPortfolioAnalytics(client as SupabaseClient, options);
 
   return totalCount;
 }

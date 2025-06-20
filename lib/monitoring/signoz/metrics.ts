@@ -10,6 +10,7 @@ import type {
   Histogram,
   UpDownCounter,
   Meter,
+  Attributes,
 } from '@opentelemetry/api';
 
 // Get the global meter
@@ -177,7 +178,7 @@ if (process.env.NODE_ENV !== 'test') {
 export const recordBusinessMetric = (
   metric: keyof typeof businessMetrics,
   value: number = 1,
-  attributes?: Record<string, unknown>
+  attributes?: Attributes
 ): void => {
   try {
     const counter = businessMetrics[metric];
@@ -195,7 +196,7 @@ export const recordBusinessMetric = (
 export const recordPerformanceMetric = (
   metric: keyof typeof performanceMetrics,
   value: number,
-  attributes?: Record<string, unknown>
+  attributes?: Attributes
 ): void => {
   try {
     const instrument = performanceMetrics[metric];
@@ -219,7 +220,7 @@ export const recordPerformanceMetric = (
 export const measureDuration = async <T>(
   metricName: keyof typeof performanceMetrics,
   operation: () => Promise<T>,
-  attributes?: Record<string, unknown>
+  attributes?: Attributes
 ): Promise<T> => {
   const startTime = performance.now();
 
@@ -276,7 +277,7 @@ export const recordMetricsBatch = (
     type: 'business' | 'performance';
     name: string;
     value: number;
-    attributes?: Record<string, unknown>;
+    attributes?: Attributes;
   }>
 ): void => {
   metrics.forEach(({ type, name, value, attributes }) => {

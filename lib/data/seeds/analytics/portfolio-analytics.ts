@@ -1,6 +1,7 @@
 import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from '../index';
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Generate portfolio analytics
@@ -72,7 +73,7 @@ export function generatePortfolioAnalytics(
  * Seed portfolio analytics table
  */
 export async function seedPortfolioAnalytics(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -86,11 +87,11 @@ export async function seedPortfolioAnalytics(
       .from('portfolio_analytics')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
         `Portfolio analytics table already has ${existingCount} records, skipping`
       );
-      return existingCount;
+      return existingCount || 0;
     }
 
     // Get all published portfolios

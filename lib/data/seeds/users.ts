@@ -3,6 +3,7 @@ import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from './index';
 
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * @fileoverview User Seed Data
@@ -186,7 +187,7 @@ function generateUser(index: number): any {
  * Seed users table with realistic test data
  */
 export async function seedUsers(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -200,9 +201,9 @@ export async function seedUsers(
       .from('users')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(`Users table already has ${existingCount} records, skipping`);
-      return existingCount;
+      return existingCount || 0;
     }
 
     // Prepare user data

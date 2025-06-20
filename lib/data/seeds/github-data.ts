@@ -3,6 +3,7 @@ import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from './index';
 
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * @fileoverview GitHub Integration and Repository Seed Data
@@ -37,10 +38,24 @@ const GITHUB_INTEGRATION_TEMPLATES = [
   },
 ];
 
+interface RepositoryTemplate {
+  name: string;
+  fullName: string;
+  description: string;
+  language: string;
+  isPrivate: boolean;
+  stars: number;
+  forks: number;
+  openIssues: number;
+  size: number;
+  topics: string[];
+  locByLanguage?: Record<string, number>;
+}
+
 /**
  * Repository templates with realistic data
  */
-const REPOSITORY_TEMPLATES = [
+const REPOSITORY_TEMPLATES: RepositoryTemplate[] = [
   {
     name: 'ecommerce-platform',
     fullName: 'juan-dev-mx/ecommerce-platform',
@@ -195,7 +210,7 @@ function generateRepository(
   integrationId: string,
   userId: string,
   index: number,
-  template?: unknown
+  template?: RepositoryTemplate
 ): unknown {
   const languages = [
     'JavaScript',
@@ -215,33 +230,33 @@ function generateRepository(
   ];
   const topics = ['web', 'api', 'frontend', 'backend', 'fullstack', 'mobile'];
 
-  const repoTemplate = template || {
+  const repoTemplate: RepositoryTemplate = template || {
     name: `project-${index}`,
     fullName: `user/project-${index}`,
     description: `Project ${index} description`,
-    language: languages[index % languages.length],
+    language: languages[index % languages.length] || 'JavaScript',
     isPrivate: Math.random() > 0.7,
     stars: Math.floor(Math.random() * 100),
     forks: Math.floor(Math.random() * 20),
     openIssues: Math.floor(Math.random() * 10),
     size: Math.floor(Math.random() * 50000) + 1000,
     topics: [
-      frameworks[index % frameworks.length],
-      topics[index % topics.length],
-      topics[(index + 1) % topics.length],
+      frameworks[index % frameworks.length] || 'web',
+      topics[index % topics.length] || 'fullstack',
+      topics[(index + 1) % topics.length] || 'api',
     ],
   };
 
   // Generate realistic LOC distribution
-  const totalLoc = (repoTemplate as unknown).locByLanguage
-    ? Object.values((repoTemplate as unknown).locByLanguage).reduce(
-        (sum: number, lines: unknown) => sum + lines,
+  const totalLoc = repoTemplate.locByLanguage
+    ? Object.values(repoTemplate.locByLanguage).reduce(
+        (sum: number, lines: number) => sum + lines,
         0
       )
     : Math.floor(Math.random() * 20000) + 5000;
 
-  const locByLanguage = (repoTemplate as unknown).locByLanguage || {
-    [(repoTemplate as unknown).language]: totalLoc,
+  const locByLanguage = repoTemplate.locByLanguage || {
+    [repoTemplate.language]: totalLoc,
   };
 
   return {
@@ -249,18 +264,18 @@ function generateRepository(
     github_integration_id: integrationId,
     user_id: userId,
     github_id: Math.floor(Math.random() * 1000000000) + 100000000,
-    name: (repoTemplate as unknown).name,
-    full_name: (repoTemplate as unknown).fullName,
-    description: (repoTemplate as unknown).description,
-    html_url: `https://github.com/${(repoTemplate as unknown).fullName}`,
-    clone_url: `https://github.com/${(repoTemplate as unknown).fullName}.git`,
-    ssh_url: `git@github.com:${(repoTemplate as unknown).fullName}.git`,
-    owner: (repoTemplate as unknown).fullName.split('/')[0],
+    name: repoTemplate.name,
+    full_name: repoTemplate.fullName,
+    description: repoTemplate.description,
+    html_url: `https://github.com/${repoTemplate.fullName}`,
+    clone_url: `https://github.com/${repoTemplate.fullName}.git`,
+    ssh_url: `git@github.com:${repoTemplate.fullName}.git`,
+    owner: repoTemplate.fullName.split('/')[0],
     default_branch: 'main',
-    language: (repoTemplate as unknown).language,
+    language: repoTemplate.language,
     languages: JSON.stringify(locByLanguage),
-    topics: JSON.stringify((repoTemplate as unknown).topics || []),
-    is_private: (repoTemplate as unknown).isPrivate || false,
+    topics: JSON.stringify(repoTemplate.topics || []),
+    is_private: repoTemplate.isPrivate || false,
     is_fork: Math.random() > 0.85,
     is_archived: false,
     is_disabled: false,
@@ -268,11 +283,11 @@ function generateRepository(
     has_projects: Math.random() > 0.3,
     has_wiki: Math.random() > 0.5,
     has_pages: Math.random() > 0.7,
-    stars_count: (repoTemplate as unknown).stars || 0,
-    watchers_count: Math.floor(((repoTemplate as unknown).stars || 0) * 1.2),
-    forks_count: (repoTemplate as unknown).forks || 0,
-    open_issues_count: (repoTemplate as unknown).openIssues || 0,
-    size: (repoTemplate as unknown).size || 0,
+    stars_count: repoTemplate.stars || 0,
+    watchers_count: Math.floor((repoTemplate.stars || 0) * 1.2),
+    forks_count: repoTemplate.forks || 0,
+    open_issues_count: repoTemplate.openIssues || 0,
+    size: repoTemplate.size || 0,
     pushed_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
     created_at: new Date(
       Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
@@ -287,7 +302,7 @@ function generateRepository(
  * Seed GitHub integrations table
  */
 export async function seedGitHubIntegrations(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding GitHub integrations...');
@@ -298,7 +313,7 @@ export async function seedGitHubIntegrations(
       .from('github_integrations')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
         `GitHub integrations table already has ${existingCount} records, skipping`
       );
@@ -324,11 +339,14 @@ export async function seedGitHubIntegrations(
     const integrationChance = 0.6; // 60% of users have GitHub integrations
 
     for (let i = 0; i < users.length; i++) {
+      const user = users[i];
+      if (!user) continue;
+      
       if (
         Math.random() < integrationChance ||
         i < GITHUB_INTEGRATION_TEMPLATES.length
       ) {
-        const integration = generateGitHubIntegration(users[i].id, i);
+        const integration = generateGitHubIntegration(user.id, i);
         integrations.push(integration);
       }
     }
@@ -371,7 +389,7 @@ export async function seedGitHubIntegrations(
  * Seed repositories table
  */
 export async function seedRepositories(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -387,7 +405,7 @@ export async function seedRepositories(
       .from('repositories')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
         `Repositories table already has ${existingCount} records, skipping`
       );
@@ -475,7 +493,7 @@ export async function seedRepositories(
  * Combined seeding function for GitHub data
  */
 async function seedGitHubData(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

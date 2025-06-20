@@ -1,5 +1,6 @@
 import { logger } from '@/lib/utils/logger';
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Generate pull requests for a repository
@@ -93,7 +94,7 @@ export function generatePullRequests(
  * Seed pull requests table
  */
 export async function seedPullRequests(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding pull requests...');
@@ -104,11 +105,11 @@ export async function seedPullRequests(
       .from('pull_requests')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
         `Pull requests table already has ${existingCount} records, skipping`
       );
-      return existingCount;
+      return existingCount || 0;
     }
 
     // Get all repositories

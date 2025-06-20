@@ -94,7 +94,7 @@ export function handleApiError(
 
   // Handle Supabase/Database errors
   if (error instanceof Error && 'code' in error) {
-    const dbError = error as unknown;
+    const dbError = error as { code?: string };
 
     // Common database error mappings
     switch (dbError.code) {
@@ -167,7 +167,7 @@ export function isApiError(error: unknown): error is ApiError {
   return (
     error instanceof Error &&
     'statusCode' in error &&
-    typeof (error as unknown).statusCode === 'number'
+    typeof (error as { statusCode?: unknown }).statusCode === 'number'
   );
 }
 

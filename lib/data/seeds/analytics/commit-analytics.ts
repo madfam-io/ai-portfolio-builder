@@ -1,6 +1,7 @@
 import { logger } from '@/lib/utils/logger';
 import { getSeedConfig } from '../index';
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * Generate commit analytics for a repository
@@ -50,7 +51,7 @@ export function generateCommitAnalytics(
  * Seed commit analytics table
  */
 export async function seedCommitAnalytics(
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -64,11 +65,11 @@ export async function seedCommitAnalytics(
       .from('commit_analytics')
       .select('*', { count: 'exact', head: true });
 
-    if (existingCount > 0 && options.skipExisting) {
+    if (existingCount && existingCount > 0 && options.skipExisting) {
       logger.info(
         `Commit analytics table already has ${existingCount} records, skipping`
       );
-      return existingCount;
+      return existingCount || 0;
     }
 
     // Get all repositories

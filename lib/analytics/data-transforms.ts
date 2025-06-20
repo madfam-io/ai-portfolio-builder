@@ -76,6 +76,7 @@ export function transformLanguageData(
     value: lang.percentage || 0,
     color:
       colors[colorKeys[index % colorKeys.length] || 'primary'] ||
-      colors.primary,
+      colors.primary ||
+      '#000000', // Fallback color to ensure it's always defined
   }));
 }

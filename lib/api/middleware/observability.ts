@@ -34,7 +34,8 @@ export function withObservability<T extends (...args: unknown[]) => any>(
     customAttributes = {},
   } = config;
 
-  return withAPMTracking(async (req: NextRequest, ...args: unknown[]) => {
+  return withAPMTracking(async (...args: unknown[]) => {
+    const req = args[0] as NextRequest;
     const startTime = performance.now();
     const method = req.method;
     const pathname = req.nextUrl.pathname;
@@ -97,7 +98,7 @@ export function withObservability<T extends (...args: unknown[]) => any>(
       const duration = performance.now() - startTime;
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      const statusCode = (error as unknown)?.statusCode || 500;
+      const statusCode = (error as { statusCode?: number })?.statusCode || 500;
 
       // Track error metrics
       if (trackPerformance) {
@@ -184,7 +185,7 @@ export const sanitizeData = (
 ): any => {
   if (!data || typeof data !== 'object') return data;
 
-  const sanitized = { ...data };
+  const sanitized = { ...data } as Record<string, unknown>;
 
   for (const field of sensitiveFields) {
     if (field in sanitized) {
@@ -244,7 +245,7 @@ export class ObservabilityContext {
     // Track analytics
     if (process.env.NODE_ENV === 'production') {
       await captureServerEvent(
-        this.metadata.userId || 'system',
+        String(this.metadata.userId || 'system'),
         `operation_${this.operation}_success`,
         {
           ...this.metadata,
@@ -270,7 +271,7 @@ export class ObservabilityContext {
     // Track analytics
     if (process.env.NODE_ENV === 'production') {
       await captureServerEvent(
-        this.metadata.userId || 'system',
+        String(this.metadata.userId || 'system'),
         `operation_${this.operation}_failed`,
         {
           ...this.metadata,

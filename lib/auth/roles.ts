@@ -8,6 +8,9 @@ import {
   PLAN_FEATURES,
 } from '@/types/auth';
 
+// Re-export for convenience
+export { PLAN_FEATURES } from '@/types/auth';
+
 /**
  * Role-based Access Control (RBAC) utilities for PRISMA
  * Handles permission checking, role management, and admin mode switching
@@ -246,7 +249,7 @@ function createPermissionContext(user: User): PermissionContext {
     subscriptionPlan: user.customerProfile?.subscriptionPlan,
     canAccess: (permission: AdminPermission) => hasPermission(user, permission),
     canAccessFeature: (feature: string) =>
-      canAccessFeature(user, feature as unknown),
+      canAccessFeature(user, feature as keyof typeof PLAN_FEATURES.free),
     switchToAdminMode: () => {
       // This would be implemented in the auth service
       throw new Error('switchToAdminMode must be implemented by auth service');

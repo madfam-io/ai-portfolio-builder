@@ -17,6 +17,7 @@ import {
   isSubscriptionActive as checkSubscriptionActive,
   getDaysUntilExpiration,
   getPermissionLevel,
+  PLAN_FEATURES,
 } from '@/lib/auth/roles';
 import { logger } from '@/lib/utils/logger';
 import {
@@ -395,7 +396,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const canAccessFeatureCheck = useCallback(
     (feature: string): boolean => {
       return effectiveUser
-        ? canAccessFeature(effectiveUser, feature as unknown)
+        ? canAccessFeature(effectiveUser, feature as keyof typeof PLAN_FEATURES.free)
         : false;
     },
     [effectiveUser]

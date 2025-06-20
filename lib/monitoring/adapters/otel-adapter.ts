@@ -207,7 +207,12 @@ export function withAPMTracking<T extends (...args: unknown[]) => unknown>(
   operationName?: string
 ): T {
   return (async (...args: unknown[]) => {
-    const request = args[0] as unknown;
+    const request = args[0] as { 
+      method?: string; 
+      nextUrl?: { pathname?: string }; 
+      url?: string;
+      headers?: { get: (key: string) => string | null };
+    };
     const spanName =
       operationName || `${request?.method} ${request?.nextUrl?.pathname}`;
 
@@ -218,7 +223,7 @@ export function withAPMTracking<T extends (...args: unknown[]) => unknown>(
         attributes: {
           'http.method': request?.method,
           'http.url': request?.url,
-          'http.user_agent': request?.headers?.get('user-agent'),
+          'http.user_agent': request?.headers?.get('user-agent') || undefined,
         },
       });
 

@@ -1,6 +1,7 @@
 import { logger } from '@/lib/utils/logger';
 
 import type { SeedingOptions } from '@/lib/database/seeder';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 /**
  * @fileoverview Seed Data Orchestrator
@@ -11,7 +12,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
  */
 
 export type SeedFunction = (
-  client: unknown,
+  client: SupabaseClient,
   options: SeedingOptions
 ) => Promise<number>;
 
@@ -33,7 +34,7 @@ export const SEED_CONFIG: SeedConfig[] = [
   {
     name: 'subscription_plans',
     dependencies: [],
-    fn: async (client: unknown) => {
+    fn: async (client: SupabaseClient) => {
       // Subscription plans are inserted via migration, just verify
       const { count } = await client
         .from('subscription_plans')
@@ -122,7 +123,7 @@ export async function executeSeeding(
 
     try {
       logger.info(`Seeding ${seedName}...`);
-      const count = await config.fn(client, options);
+      const count = await config.fn(client as SupabaseClient, options);
       result.completed.push(seedName);
       result.totalRecords += count;
       logger.info(`✅ Seeded ${count} records in ${seedName}`);
