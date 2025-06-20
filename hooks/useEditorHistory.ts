@@ -43,9 +43,16 @@ export function useEditorHistory(
 
   const undo = useCallback(() => {
     setEditorState(prev => {
-      if (prev.historyIndex <= 0) return prev;
+      if (prev.historyIndex < 0) return prev;
 
       const newIndex = prev.historyIndex - 1;
+
+      // If going to -1, we need to restore the initial state before any history
+      if (newIndex < 0) {
+        // For now, just prevent going below 0 since we don't store initial state
+        return prev;
+      }
+
       const previousState = prev.history[newIndex];
 
       if (previousState) {
