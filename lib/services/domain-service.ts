@@ -533,7 +533,7 @@ export class DomainService {
 
   private static generateVerificationToken(): string {
     const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-    let token = '';
+    let token = '&apos;;
     for (let i = 0; i < 32; i++) {
       token += chars[Math.floor(Math.random() * chars.length)];
     }

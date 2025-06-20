@@ -8,7 +8,7 @@ import { NextRequest } from 'next/server';
 export interface ErrorReport {
   message: string;
   stack?: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   userId?: string;
   sessionId?: string;
   timestamp: number;
@@ -233,11 +233,11 @@ export const errorTracker = new ErrorTracker();
 /**
  * Higher-order function to wrap API handlers with error tracking
  */
-export function withErrorTracking<T extends (...args: any[]) => any>(
+export function withErrorTracking<T extends (...args: unknown[]) => any>(
   handler: T,
   category: string = 'api'
 ): T {
-  return (async (...args: any[]) => {
+  return (async (...args: unknown[]) => {
     try {
       return await handler(...args);
     } catch (error) {
@@ -263,7 +263,7 @@ export function withErrorTracking<T extends (...args: any[]) => any>(
  */
 export function useErrorBoundary() {
   return {
-    captureError: (error: Error, errorInfo?: any) => {
+    captureError: (error: Error, errorInfo?: unknown) => {
       errorTracker.captureError(error, {
         category: 'react',
         context: {
@@ -379,7 +379,7 @@ export const performanceMonitor = {
     new PerformanceObserver(list => {
       const entries = list.getEntries();
       entries.forEach(entry => {
-        const clsEntry = entry as any;
+        const clsEntry = entry as unknown;
         if (!clsEntry.hadRecentInput) {
           cumulativeScore += clsEntry.value;
         }

@@ -20,13 +20,13 @@ import React, { Suspense, ComponentType, ReactNode } from 'react';
 
 interface LazyWrapperProps {
   /** The component to lazy load */
-  component: () => Promise<{ default: ComponentType<any> }>;
+  component: () => Promise<{ default: ComponentType<unknown> }>;
   /** Loading fallback component */
   fallback?: ReactNode;
   /** Error fallback component */
   errorFallback?: ReactNode;
   /** Props to pass to the lazy component */
-  componentProps?: Record<string, any>;
+  componentProps?: Record<string, unknown>;
   /** Additional CSS classes for the wrapper */
   className?: string;
 }
@@ -100,7 +100,7 @@ class LazyErrorBoundary extends React.Component<
  * with skeleton-style animation and proper accessibility.
  */
 const DefaultLoadingFallback: React.FC<{ className?: string }> = ({
-  className = '',
+  className = '&apos;,
 }) => (
   <div
     className={`animate-pulse ${className}`}
@@ -147,7 +147,7 @@ export const LazyWrapper: React.FC<LazyWrapperProps> = ({
   fallback,
   errorFallback,
   componentProps = {},
-  className = '',
+  className = '&apos;,
 }) => {
   // Create the lazy component
   const LazyComponent = React.lazy(component);
@@ -198,7 +198,7 @@ export function withLazyLoading<P extends object>(
 //  * Provides more granular control over lazy loading behavior.
 //  * Useful when you need to conditionally load components.
 //  */
-// function useLazyComponent<T extends ComponentType<any>>(
+// function useLazyComponent<T extends ComponentType<unknown>>(
 //   importComponent: () => Promise<{ default: T }>,
 //   shouldLoad: boolean = true
 // ) {

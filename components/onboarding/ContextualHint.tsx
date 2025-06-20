@@ -132,7 +132,7 @@ export function ContextualHint({
   const bgColor = {
     info: 'bg-blue-500/10',
     tip: 'bg-yellow-500/10',
-    feature: 'bg-purple-500/10',
+    feature: 'bg-purple-500/10&apos;,
   }[type];
 
   return (
@@ -142,7 +142,7 @@ export function ContextualHint({
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.9, y: 10 }}
         className={cn(
-          'fixed z-50 pointer-events-none',
+          &apos;fixed z-50 pointer-events-none&apos;,
           targetSelector && 'absolute'
         )}
         style={
@@ -168,7 +168,7 @@ export function ContextualHint({
             <div className="flex items-start gap-3">
               <div
                 className={cn(
-                  'w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0',
+                  &apos;w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0',
                   bgColor
                 )}
               >

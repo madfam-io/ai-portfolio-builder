@@ -155,7 +155,7 @@ export function ThemeCustomizer({
     field: keyof TemplateCustomization,
     description?: string
   ) => {
-    const currentValue = (currentCustomization?.[field] || '') as string;
+    const currentValue = (currentCustomization?.[field] || '&apos;) as string;
 
     return (
       <div className="space-y-2">
@@ -172,7 +172,7 @@ export function ThemeCustomizer({
           />
           <Input
             type="text"
-            value={currentValue || ''}
+            value={currentValue || &apos;'}
             onChange={e => handleColorChange(field, e.target.value)}
             placeholder="#000000"
             className="flex-1 font-mono text-sm"
@@ -315,10 +315,10 @@ export function ThemeCustomizer({
             <div className="space-y-6">
               <div>
                 <Label htmlFor="fontFamily">
-                  {t.fontFamily || 'Font Family'}
+                  {t.fontFamily || 'Font Family&apos;}
                 </Label>
                 <RadioGroup
-                  value={currentCustomization.fontFamily || 'Inter'}
+                  value={currentCustomization.fontFamily || &apos;Inter&apos;}
                   onValueChange={(value: string) =>
                     onUpdate({
                       ...currentCustomization,
@@ -335,7 +335,7 @@ export function ThemeCustomizer({
                       <RadioGroupItem value={font.value} id={font.value} />
                       <Label
                         htmlFor={font.value}
-                        className={cn('cursor-pointer', font.className)}
+                        className={cn(&apos;cursor-pointer', font.className)}
                         style={{ fontFamily: font.value }}
                       >
                         {font.label}

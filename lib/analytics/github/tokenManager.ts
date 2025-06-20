@@ -79,9 +79,9 @@ export function hasEncryptedTokens(
 ): integration is EncryptedTokenData {
   return Boolean(
     integration &&
-      typeof (integration as any).encrypted_access_token === 'string' &&
-      typeof (integration as any).access_token_iv === 'string' &&
-      typeof (integration as any).access_token_tag === 'string'
+      typeof (integration as unknown).encrypted_access_token === 'string' &&
+      typeof (integration as unknown).access_token_iv === 'string' &&
+      typeof (integration as unknown).access_token_tag === 'string'
   );
 }
 
@@ -90,6 +90,6 @@ export function hasEncryptedTokens(
  */
 export function hasLegacyTokens(integration: unknown): boolean {
   return Boolean(
-    integration && typeof (integration as any).access_token === 'string'
+    integration && typeof (integration as unknown).access_token === 'string'
   );
 }

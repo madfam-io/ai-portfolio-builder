@@ -265,7 +265,7 @@ export function OnboardingChecklist() {
                           {!isCompleted && (
                             <Button
                               size="sm"
-                              variant={isNext ? 'default' : 'outline'}
+                              variant={isNext ? &apos;default&apos; : &apos;outline'}
                               className="text-xs h-7"
                               onClick={() => handleAction(item)}
                             >

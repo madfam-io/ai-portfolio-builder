@@ -42,7 +42,7 @@ export class AIClient {
   /**
    * Get available models from HuggingFace
    */
-  async getAvailableModels(): Promise<any[]> {
+  async getAvailableModels(): Promise<unknown[]> {
     const { data, error } = await apiClient.get(API_ENDPOINTS.ai.models);
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
     return data;
@@ -192,7 +192,7 @@ export class AIClient {
     history: Array<{
       id: string;
       operation_type: string;
-      metadata: Record<string, any>;
+      metadata: Record<string, unknown>;
       created_at: string;
     }>;
     totalEnhancements: number;
@@ -250,13 +250,13 @@ const AIUtils = {
    * Extract user profile from portfolio data
    */
   extractUserProfile(portfolio: unknown): UserProfile {
-    const portfolioData = portfolio as any;
+    const portfolioData = portfolio as unknown;
     return {
       title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: any) => s.name) || [],
+      skills: portfolioData.skills?.map((s: unknown) => s.name) || [],
       projectCount: portfolioData.projects?.length || 0,
       hasDesignWork:
-        portfolioData.projects?.some((p: any) =>
+        portfolioData.projects?.some((p: unknown) =>
           p.technologies?.some((t: string) =>
             ['figma', 'sketch', 'photoshop', 'illustrator', 'design'].some(
               design => t.toLowerCase().includes(design)
@@ -274,7 +274,7 @@ const AIUtils = {
    * Calculate experience level from work history
    */
   calculateExperienceLevel(
-    experience: any[]
+    experience: unknown[]
   ): 'entry' | 'mid' | 'senior' | 'lead' {
     const totalYears = experience.reduce((total, exp) => {
       return (
@@ -293,12 +293,12 @@ const AIUtils = {
    * Prepare bio context from portfolio data
    */
   prepareBioContext(portfolio: unknown): BioContext {
-    const portfolioData = portfolio as any;
+    const portfolioData = portfolio as unknown;
     return {
       title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: any) => s.name) || [],
+      skills: portfolioData.skills?.map((s: unknown) => s.name) || [],
       experience:
-        portfolioData.experience?.map((exp: any) => ({
+        portfolioData.experience?.map((exp: unknown) => ({
           company: exp.company,
           position: exp.position,
           yearsExperience: this.calculateYearsExperience(

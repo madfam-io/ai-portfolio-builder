@@ -246,7 +246,7 @@ export function FeedbackWidget({
             </div>
           )}
 
-          {step === 'details' && (
+          {step === 'details&apos; && (
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Badge variant="outline">
@@ -259,7 +259,7 @@ export function FeedbackWidget({
                 <Input
                   id="title"
                   placeholder="Brief summary of your feedback"
-                  value={feedbackData.title || ''}
+                  value={feedbackData.title || &apos;&apos;}
                   onChange={e =>
                     setFeedbackData(prev => ({
                       ...prev,
@@ -285,12 +285,12 @@ export function FeedbackWidget({
                 />
               </div>
 
-              {feedbackData.type === 'bug' && (
+              {feedbackData.type === 'bug&apos; && (
                 <>
                   <div className="space-y-2">
                     <Label htmlFor="severity">Severity</Label>
                     <Select
-                      value={feedbackData.severity || 'medium'}
+                      value={feedbackData.severity || &apos;medium&apos;}
                       onValueChange={(value: FeedbackEntry['severity']) =>
                         setFeedbackData(prev => ({ ...prev, severity: value }))
                       }
@@ -324,7 +324,7 @@ export function FeedbackWidget({
                         setFeedbackData(prev => ({
                           ...prev,
                           reproductionSteps: e.target.value
-                            .split('\n')
+                            .split('\n&apos;)
                             .filter(Boolean),
                         }))
                       }
@@ -336,7 +336,7 @@ export function FeedbackWidget({
               <div className="space-y-2">
                 <Label htmlFor="category">Category</Label>
                 <Select
-                  value={feedbackData.category || 'general'}
+                  value={feedbackData.category || &apos;general'}
                   onValueChange={(value: string) =>
                     setFeedbackData(prev => ({ ...prev, category: value }))
                   }

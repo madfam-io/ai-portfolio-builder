@@ -423,7 +423,7 @@ export class FeedbackSystem {
  * Beta user analytics and tracking
  */
 export class BetaAnalytics {
-  private events: Map<string, any[]> = new Map();
+  private events: Map<string, unknown[]> = new Map();
   private apiEndpoint: string;
 
   constructor(apiEndpoint: string = '/api/v1/beta/analytics') {
@@ -436,7 +436,7 @@ export class BetaAnalytics {
   async trackEvent(event: {
     userId: string;
     event: string;
-    properties?: Record<string, any>;
+    properties?: Record<string, unknown>;
     timestamp?: Date;
   }): Promise<void> {
     const eventData = {
@@ -473,7 +473,7 @@ export class BetaAnalytics {
   async trackPortfolioJourney(
     userId: string,
     step: string,
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       userId,
@@ -493,7 +493,7 @@ export class BetaAnalytics {
     userId: string,
     feature: string,
     action: string,
-    data?: Record<string, any>
+    data?: Record<string, unknown>
   ): Promise<void> {
     await this.trackEvent({
       userId,
@@ -528,7 +528,7 @@ export class BetaAnalytics {
   /**
    * Get user journey analytics
    */
-  async getUserJourneys(limit: number = 100): Promise<any[]> {
+  async getUserJourneys(limit: number = 100): Promise<unknown[]> {
     try {
       const response = await fetch(
         `${this.apiEndpoint}/journeys?limit=${limit}`

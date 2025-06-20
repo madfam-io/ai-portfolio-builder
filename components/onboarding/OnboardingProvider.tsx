@@ -33,8 +33,8 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
       user.created_at &&
       new Date(user.created_at).getTime() > Date.now() - 5 * 60 * 1000;
 
-    // Check if user has any portfolios
-    const hasPortfolios = (user as any).portfolio_count > 0;
+    // Check if user has unknown portfolios
+    const hasPortfolios = (user as unknown).portfolio_count > 0;
 
     // Determine user type and start onboarding if needed
     if (isNewUser && !completedFlows.includes('new-user-flow')) {

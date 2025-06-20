@@ -59,7 +59,7 @@ const renderCustomizedLabel = ({
 
 export default function RepositoryLanguagesChart({
   data,
-  className = '',
+  className = '&apos;,
 }: RepositoryLanguagesChartProps): React.JSX.Element {
   return (
     <ResponsiveContainer width="100%" height={300} className={className}>

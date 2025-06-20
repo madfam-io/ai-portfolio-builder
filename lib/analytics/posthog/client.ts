@@ -66,7 +66,7 @@ export const initializePostHog = () => {
 // Identify user
 export const identifyUser = (
   userId: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
@@ -86,7 +86,7 @@ export const resetUser = () => {
 // Capture custom event
 export const captureEvent = (
   eventName: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
@@ -100,7 +100,7 @@ export const captureEvent = (
 // Capture with enhanced properties
 export const captureEnhancedEvent = (
   eventName: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
@@ -138,7 +138,7 @@ export const getFeatureFlagPayload = (flagName: string): any => {
 };
 
 // Set user properties
-export const setUserProperties = (properties: Record<string, any>) => {
+export const setUserProperties = (properties: Record<string, unknown>) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 
   posthog.people.set(properties);
@@ -156,7 +156,7 @@ export const incrementUserProperty = (property: string, value = 1) => {
 // Track revenue
 export const trackRevenue = (
   amount: number,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   if (typeof window === 'undefined' || !posthog.__loaded) return;
 

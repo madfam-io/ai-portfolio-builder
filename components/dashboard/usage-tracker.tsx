@@ -289,7 +289,7 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             <AlertDescription>
               <div className="flex items-center justify-between">
                 <span>
-                  You&apos;re approaching your plan limits. Upgrade now to
+                  You're approaching your plan limits. Upgrade now to
                   unlock more features and avoid interruptions.
                 </span>
                 <Button

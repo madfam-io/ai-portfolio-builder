@@ -262,7 +262,7 @@ export const trackSubscriptionStarted = (properties?: {
 export const trackSubscriptionCancelled = (properties?: {
   plan?: string;
   reason?: string;
-  churn_survey_response?: Record<string, any>;
+  churn_survey_response?: Record<string, unknown>;
 }) => {
   captureEnhancedEvent(EVENTS.SUBSCRIPTION_CANCELLED, properties);
 };
@@ -280,7 +280,7 @@ export const trackPaymentCompleted = (properties?: {
 export const trackOnboardingStep = (
   step: number,
   stepName: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   captureEvent('onboarding_step_completed', {
     step_number: step,
@@ -296,7 +296,7 @@ export const trackConversionFunnel = (
     | 'created_portfolio'
     | 'published'
     | 'upgraded',
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   captureEvent('conversion_funnel', {
     stage,

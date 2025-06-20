@@ -52,7 +52,7 @@ const stepIcons: Record<string, React.ReactNode> = {
 };
 
 // Step content components
-const stepComponents: Record<string, React.ComponentType<any>> = {
+const stepComponents: Record<string, React.ComponentType<unknown>> = {
   welcome: WelcomeStep,
   'profile-setup': ProfileSetupStep,
   'first-portfolio': FirstPortfolioStep,
@@ -154,7 +154,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       {
         flow: flow.id,
         progress,
-        reason: 'user_closed',
+        reason: 'user_closed&apos;,
       }
     );
   };
@@ -261,7 +261,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
 }
 
 // Default step component
-function DefaultStep({ step, onComplete }: any) {
+function DefaultStep({ step, onComplete }: unknown) {
   return (
     <div className="space-y-4">
       <p className="text-muted-foreground">
@@ -272,7 +272,7 @@ function DefaultStep({ step, onComplete }: any) {
 }
 
 // Step implementations
-function WelcomeStep({ onComplete }: any) {
+function WelcomeStep({ onComplete }: unknown) {
   const { t } = useLanguage();
 
   return (
@@ -329,7 +329,7 @@ function WelcomeStep({ onComplete }: any) {
   );
 }
 
-function ProfileSetupStep({ onComplete }: any) {
+function ProfileSetupStep({ onComplete }: unknown) {
   const router = useRouter();
 
   return (
@@ -370,7 +370,7 @@ function ProfileSetupStep({ onComplete }: any) {
   );
 }
 
-function FirstPortfolioStep({ onComplete }: any) {
+function FirstPortfolioStep({ onComplete }: unknown) {
   const router = useRouter();
 
   return (
@@ -417,7 +417,7 @@ function FirstPortfolioStep({ onComplete }: any) {
   );
 }
 
-function AIEnhancementStep({ onComplete }: any) {
+function AIEnhancementStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -472,7 +472,7 @@ function AIEnhancementStep({ onComplete }: any) {
   );
 }
 
-function CustomizeDesignStep({ onComplete }: any) {
+function CustomizeDesignStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -505,7 +505,7 @@ function CustomizeDesignStep({ onComplete }: any) {
   );
 }
 
-function PublishStep({ onComplete }: any) {
+function PublishStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -546,7 +546,7 @@ function PublishStep({ onComplete }: any) {
   );
 }
 
-function ExploreFeaturesStep({ onComplete }: any) {
+function ExploreFeaturesStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -587,7 +587,7 @@ function ExploreFeaturesStep({ onComplete }: any) {
 }
 
 // Additional step implementations for other flows
-function WhatsNewStep({ onComplete }: any) {
+function WhatsNewStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <h3 className="text-xl font-semibold">Welcome Back! Here's What's New</h3>
@@ -615,7 +615,7 @@ function WhatsNewStep({ onComplete }: any) {
   );
 }
 
-function FeatureHighlightsStep({ onComplete }: any) {
+function FeatureHighlightsStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -639,7 +639,7 @@ function FeatureHighlightsStep({ onComplete }: any) {
   );
 }
 
-function ImportReviewStep({ onComplete }: any) {
+function ImportReviewStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -662,7 +662,7 @@ function ImportReviewStep({ onComplete }: any) {
   );
 }
 
-function EnhanceImportedStep({ onComplete }: any) {
+function EnhanceImportedStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -682,7 +682,7 @@ function EnhanceImportedStep({ onComplete }: any) {
   );
 }
 
-function CustomizeImportedStep({ onComplete }: any) {
+function CustomizeImportedStep({ onComplete }: unknown) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">

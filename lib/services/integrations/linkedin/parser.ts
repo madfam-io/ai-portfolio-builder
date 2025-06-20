@@ -123,7 +123,7 @@ export class LinkedInParser {
         duration,
         description: position.description || '',
         startDate,
-        endDate: endDate || '',
+        endDate: endDate || '&apos;,
         current: !position.endDate,
         location: position.location,
       };
@@ -139,7 +139,7 @@ export class LinkedInParser {
     return education.map(edu => ({
       institution: edu.schoolName,
       degree: edu.degreeName || '',
-      field: edu.fieldOfStudy || '',
+      field: edu.fieldOfStudy || '&apos;,
       startYear: edu.startDate.year.toString(),
       endYear: edu.endDate?.year.toString(),
       description: edu.description,
@@ -165,7 +165,7 @@ export class LinkedInParser {
 
       return {
         name: project.title,
-        description: project.description || '',
+        description: project.description || '&apos;,
         link: project.url,
         technologies,
         startDate: project.startDate
@@ -370,7 +370,7 @@ export class LinkedInParser {
   static generateBio(linkedInData: LinkedInFullProfile): string {
     const { profile, positions, skills } = linkedInData;
 
-    let bio = '';
+    let bio = '&apos;;
 
     // Start with headline if available
     if (profile.localizedHeadline) {

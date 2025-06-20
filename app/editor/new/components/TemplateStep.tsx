@@ -115,7 +115,7 @@ export function TemplateStep({
       {/* Selection Mode Tabs */}
       <Tabs
         value={selectionMode}
-        onValueChange={v => setSelectionMode(v as any)}
+        onValueChange={v => setSelectionMode(v as unknown)}
       >
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="wizard" className="flex items-center gap-2">

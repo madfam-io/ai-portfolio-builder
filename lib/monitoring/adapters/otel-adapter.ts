@@ -26,7 +26,7 @@ export class OpenTelemetryAdapter {
   /**
    * Override startTransaction to create OpenTelemetry span
    */
-  startTransaction(name: string, metadata: Record<string, any> = {}): string {
+  startTransaction(name: string, metadata: Record<string, unknown> = {}): string {
     // Call original APM
     const transactionId = this.originalApm.startTransaction(name, metadata);
 
@@ -199,12 +199,12 @@ export const apmAdapter = new OpenTelemetryAdapter();
 /**
  * Migrate existing APM wrapper functions to use OpenTelemetry
  */
-export function withAPMTracking<T extends (...args: any[]) => any>(
+export function withAPMTracking<T extends (...args: unknown[]) => any>(
   handler: T,
   operationName?: string
 ): T {
-  return (async (...args: any[]) => {
-    const request = args[0] as any;
+  return (async (...args: unknown[]) => {
+    const request = args[0] as unknown;
     const spanName =
       operationName || `${request?.method} ${request?.nextUrl?.pathname}`;
 
@@ -269,7 +269,7 @@ export const businessMetrics = {
   trackUserAction: (
     action: string,
     userId?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ) => {
     // Use original APM
     apmAdapter.recordMetric({

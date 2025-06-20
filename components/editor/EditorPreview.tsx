@@ -75,7 +75,7 @@ export function EditorPreview({
         <div className="h-full overflow-y-auto">
           <div
             className={cn(
-              'bg-white dark:bg-gray-800 min-h-full shadow-xl transition-all duration-300',
+              &apos;bg-white dark:bg-gray-800 min-h-full shadow-xl transition-all duration-300',
               getPreviewClasses()
             )}
           >

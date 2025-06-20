@@ -182,10 +182,10 @@ function _requireAuth(
  * Higher-order function that wraps API route handlers with authentication
  * Works seamlessly with versionedApiHandler
  */
-export function withAuth<T extends (...args: any[]) => any>(
+export function withAuth<T extends (...args: unknown[]) => any>(
   handler: (req: AuthenticatedRequest, ...args: Parameters<T>) => ReturnType<T>
 ): T {
-  return (async (req: NextRequest, ...args: any[]) => {
+  return (async (req: NextRequest, ...args: unknown[]) => {
     try {
       const user = await authenticateUser(req);
 

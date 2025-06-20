@@ -8,7 +8,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 export function generateCodeMetrics(
   repositoryId: string,
   daysBack: number
-): any[] {
+): unknown[] {
   const metrics = [];
   const languages = {
     JavaScript: Math.floor(Math.random() * 10000) + 5000,
@@ -63,7 +63,7 @@ export function generateCodeMetrics(
  * Seed code metrics table
  */
 export async function seedCodeMetrics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

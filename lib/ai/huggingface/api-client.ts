@@ -15,7 +15,7 @@ import {
 
 // Request queue to prevent rate limiting
 class RequestQueue {
-  private queue: Array<() => Promise<any>> = [];
+  private queue: Array<() => Promise<unknown>> = [];
   private processing = false;
   private readonly concurrency = 2; // Max concurrent requests
   private activeRequests = 0;
@@ -82,7 +82,7 @@ class HuggingFaceAPIClient {
   makeRequest(
     modelId: string,
     prompt: string,
-    parameters: Record<string, any> = {}
+    parameters: Record<string, unknown> = {}
   ): Promise<ModelResponse> {
     // Use request queue to prevent rate limiting
     return this.requestQueue.add(() =>
@@ -93,7 +93,7 @@ class HuggingFaceAPIClient {
   private async makeRequestWithRetry(
     modelId: string,
     prompt: string,
-    parameters: Record<string, any> = {},
+    parameters: Record<string, unknown> = {},
     attempt = 1
   ): Promise<ModelResponse> {
     // Check cache first
@@ -279,7 +279,7 @@ class HuggingFaceAPIClient {
   /**
    * Generate a hash for caching
    */
-  private hashPrompt(prompt: string, parameters: Record<string, any>): string {
+  private hashPrompt(prompt: string, parameters: Record<string, unknown>): string {
     const content = prompt + JSON.stringify(parameters);
     // Simple hash function for cache key
     let hash = 0;

@@ -17,7 +17,7 @@ export interface LanguageDataPoint {
 /**
  * Transform commit data for charts
  */
-export function transformCommitData(commitsByDay: any[]): CommitDataPoint[] {
+export function transformCommitData(commitsByDay: unknown[]): CommitDataPoint[] {
   if (!Array.isArray(commitsByDay)) {
     return [];
   }
@@ -32,7 +32,7 @@ export function transformCommitData(commitsByDay: any[]): CommitDataPoint[] {
  * Transform language data for charts
  */
 export function transformLanguageData(
-  languages: any[],
+  languages: unknown[],
   colors: Record<string, string>
 ): LanguageDataPoint[] {
   if (!Array.isArray(languages)) {
@@ -49,7 +49,7 @@ export function transformLanguageData(
     name: lang.name,
     value: lang.percentage || 0,
     color:
-      (colors as any)[colorKeys[index % colorKeys.length] || 'primary'] ||
+      (colors as unknown)[colorKeys[index % colorKeys.length] || 'primary'] ||
       colors.primary,
   }));
 }

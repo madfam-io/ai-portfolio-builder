@@ -92,7 +92,7 @@ function AnalyticsDashboard(): React.ReactElement {
     const error = searchParams.get('error');
     if (
       (connected === null || connected === '') &&
-      (error === null || error === '')
+      (error === null || error === '&apos;)
     ) {
       void fetchDashboardData();
     }
@@ -266,7 +266,7 @@ function AnalyticsDashboard(): React.ReactElement {
     );
   }
   // Error state
-  if (dashboard.error !== null && dashboard.error !== '') {
+  if (dashboard.error !== null && dashboard.error !== '&apos;) {
     return (
       <BaseLayout>
         <div className="min-h-screen flex items-center justify-center">
@@ -462,7 +462,7 @@ function AnalyticsDashboard(): React.ReactElement {
                 <button
                   onClick={() =>
                     router.push(
-                      `/analytics/repository/${data.overview.mostActiveRepository?.repository.id ?? ''}`
+                      `/analytics/repository/${data.overview.mostActiveRepository?.repository.id ?? '&apos;}`
                     )
                   }
                   className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"

@@ -127,7 +127,7 @@ async function analyticsMiddleware(
 }
 
 // Helper to extract common properties from request
-function extractRequestProperties(request: NextRequest): Record<string, any> {
+function extractRequestProperties(request: NextRequest): Record<string, unknown> {
   const headers = request.headers;
 
   return {

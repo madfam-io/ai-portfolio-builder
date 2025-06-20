@@ -8,7 +8,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 export function generatePortfolioAnalytics(
   portfolioId: string,
   daysBack: number
-): any[] {
+): unknown[] {
   const analytics = [];
 
   for (let i = 0; i < daysBack; i++) {
@@ -72,7 +72,7 @@ export function generatePortfolioAnalytics(
  * Seed portfolio analytics table
  */
 export async function seedPortfolioAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

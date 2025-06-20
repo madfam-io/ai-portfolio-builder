@@ -36,7 +36,7 @@ export function MarketplaceContent() {
 
   const [templates, setTemplates] = useState<PremiumTemplate[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
+  const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '&apos;);
   const [filters, setFilters] = useState<ITemplateFilters>({
     category: searchParams.get('category') || undefined,
     sortBy: 'popular',

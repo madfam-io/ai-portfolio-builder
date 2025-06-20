@@ -54,7 +54,7 @@ export const user = {
     action: string,
     userId: string,
     operation: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> => {
     return correlation.userAction(action, userId, operation, metadata);
   },
@@ -145,7 +145,7 @@ export const portfolio = {
   delete: async <T>(
     portfolioId: string,
     fn: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> => {
     return correlation.portfolio('delete', portfolioId, fn, metadata);
   },
@@ -329,7 +329,7 @@ export const revenue = {
   cancellation: (properties?: {
     plan?: string;
     reason?: string;
-    churn_survey_response?: Record<string, any>;
+    churn_survey_response?: Record<string, unknown>;
   }) => {
     trackSubscriptionCancelled(properties);
     correlation.event('subscription_cancelled', properties);
@@ -338,7 +338,7 @@ export const revenue = {
   refund: async <T>(
     amount: number,
     fn: () => Promise<T>,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<T> => {
     return correlation.revenue('refund', amount, fn, metadata);
   },
@@ -353,27 +353,27 @@ export { CorrelatedSession } from '../signoz/correlation';
  * Unified marketplace events
  */
 export const marketplace = {
-  search: async (params: any) => {
+  search: async (params: unknown) => {
     correlation.event('marketplace_search', params);
   },
 
-  view: async (params: any) => {
+  view: async (params: unknown) => {
     correlation.event('marketplace_template_viewed', params);
   },
 
-  purchase: async (params: any) => {
+  purchase: async (params: unknown) => {
     correlation.event('marketplace_template_purchased', params);
   },
 
-  useTemplate: async (params: any) => {
+  useTemplate: async (params: unknown) => {
     correlation.event('marketplace_template_used', params);
   },
 
-  review: async (params: any) => {
+  review: async (params: unknown) => {
     correlation.event('marketplace_template_reviewed', params);
   },
 
-  wishlist: async (params: any) => {
+  wishlist: async (params: unknown) => {
     correlation.event('marketplace_wishlist_action', params);
   },
 };
@@ -382,23 +382,23 @@ export const marketplace = {
  * Unified domain events
  */
 export const domain = {
-  add: async (params: any) => {
+  add: async (params: unknown) => {
     correlation.event('domain_added', params);
   },
 
-  verify: async (params: any) => {
+  verify: async (params: unknown) => {
     correlation.event('domain_verified', params);
   },
 
-  activate: async (params: any) => {
+  activate: async (params: unknown) => {
     correlation.event('domain_activated', params);
   },
 
-  setPrimary: async (params: any) => {
+  setPrimary: async (params: unknown) => {
     correlation.event('domain_set_primary', params);
   },
 
-  remove: async (params: any) => {
+  remove: async (params: unknown) => {
     correlation.event('domain_removed', params);
   },
 };

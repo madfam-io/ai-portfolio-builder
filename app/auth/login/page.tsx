@@ -93,13 +93,13 @@ export default function LoginPage() {
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">{t.email || 'Email'}</Label>
+              <Label htmlFor="email">{t.email || 'Email&apos;}</Label>
               <div className="relative">
                 <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="email"
                   type="email"
-                  placeholder={t.emailPlaceholder || 'you@example.com'}
+                  placeholder={t.emailPlaceholder || &apos;you@example.com'}
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   className="pl-10"
@@ -115,7 +115,7 @@ export default function LoginPage() {
                   href="/auth/forgot-password"
                   className="text-sm text-primary hover:underline"
                 >
-                  {t.forgotPassword || 'Forgot Password?'}
+                  {t.forgotPassword || 'Forgot Password?&apos;}
                 </Link>
               </div>
               <div className="relative">
@@ -123,7 +123,7 @@ export default function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder={t.passwordPlaceholder || 'Enter your password'}
+                  placeholder={t.passwordPlaceholder || &apos;Enter your password'}
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   className="pl-10"

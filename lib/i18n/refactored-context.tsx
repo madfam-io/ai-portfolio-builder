@@ -243,7 +243,7 @@ export function useLanguage(): LanguageContextValue {
  * ));
  * ```
  */
-function withLanguage<P extends Record<string, any>>(
+function withLanguage<P extends Record<string, unknown>>(
   Component: React.ComponentType<P & LanguageContextValue>
 ): React.ComponentType<P> {
   return function WithLanguageComponent(props: P) {

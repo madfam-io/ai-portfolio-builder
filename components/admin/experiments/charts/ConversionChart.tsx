@@ -69,7 +69,7 @@ export default function ConversionChart({
       return (
         <div className="bg-white dark:bg-gray-800 p-3 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg">
           <p className="font-medium text-gray-900 dark:text-white">
-            {label || ''}
+            {label || '&apos;}
           </p>
           <p className="text-blue-600 dark:text-blue-400">
             {`Conversion Rate: ${Number(data.value ?? 0).toFixed(2)}%`}

@@ -66,7 +66,7 @@ export interface SEOMetadata {
   twitterTitle?: string;
   twitterDescription?: string;
   twitterImage?: string;
-  jsonLd?: Record<string, any>; // Schema.org structured data
+  jsonLd?: Record<string, unknown>; // Schema.org structured data
 }
 
 /**

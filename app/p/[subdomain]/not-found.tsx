@@ -11,7 +11,7 @@ export default function PortfolioNotFound() {
           <h1 className="text-9xl font-bold text-muted-foreground/20">404</h1>
           <h2 className="text-2xl font-semibold mt-4">Portfolio Not Found</h2>
           <p className="text-muted-foreground mt-2 max-w-md mx-auto">
-            The portfolio you&apos;re looking for doesn&apos;t exist or has been
+            The portfolio you're looking for doesn't exist or has been
             unpublished.
           </p>
         </div>

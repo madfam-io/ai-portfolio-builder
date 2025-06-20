@@ -212,7 +212,7 @@ export class ContentOptimizer {
     content: string,
     settings: unknown
   ): Promise<GEOContent> {
-    const geoSettings = settings as any;
+    const geoSettings = settings as unknown;
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
       content,
@@ -255,7 +255,7 @@ export class ContentOptimizer {
 
     // Convert Suggestion[] to GEOSuggestion[]
     const suggestions: GEOSuggestion[] = rawSuggestions.map(s => ({
-      type: s.type as any,
+      type: s.type as unknown,
       priority: s.priority,
       message: s.message,
       impact: s.impact,
@@ -277,7 +277,7 @@ export class ContentOptimizer {
    * Calculate original GEO score
    */
   private calculateGEOScore(content: string, settings: unknown): GEOScore {
-    const geoSettings = settings as any;
+    const geoSettings = settings as unknown;
     const keywords = [
       geoSettings.primaryKeyword,
       ...(geoSettings.secondaryKeywords || []),
@@ -304,11 +304,11 @@ export class ContentOptimizer {
   private extractHeadings(content: string, level: number): string[] {
     const pattern = new RegExp(`^#{${level}}\\s+(.+)$`, 'gm');
     const matches = content.match(pattern) || [];
-    return matches.map(match => match.replace(/^#+\s+/, ''));
+    return matches.map(match => match.replace(/^#+\s+/, '&apos;));
   }
 
   private checkHeadingHierarchy(headings: unknown): boolean {
-    const headingData = headings as any;
+    const headingData = headings as unknown;
     if (headingData.h3.length > 0 && headingData.h2.length === 0) return false;
     if (headingData.h4.length > 0 && headingData.h3.length === 0) return false;
     return true;
@@ -392,7 +392,7 @@ export class ContentOptimizer {
     return suggestions;
   }
 
-  private generateActionForSuggestion(suggestion: any): string {
+  private generateActionForSuggestion(suggestion: unknown): string {
     switch (suggestion.type) {
       case 'keyword':
         return 'Add or adjust keyword usage';

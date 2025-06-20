@@ -9,7 +9,7 @@ export interface HealthCheck {
   message?: string;
   lastCheck: number;
   responseTime?: number;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface SystemHealth {
@@ -466,7 +466,7 @@ export function handleLivenessCheck(): Response {
     JSON.stringify({
       alive: true,
       timestamp: Date.now(),
-      uptime: Date.now() - (global as any).__startup_time || 0,
+      uptime: Date.now() - (global as unknown).__startup_time || 0,
     }),
     {
       status: 200,
@@ -482,7 +482,7 @@ export function handleLivenessCheck(): Response {
  */
 export function initializeHealthMonitoring(): void {
   // Set startup time for uptime calculation
-  (global as any).__startup_time = Date.now();
+  (global as unknown).__startup_time = Date.now();
 
   // Run periodic health checks
   if (process.env.NODE_ENV === 'production') {

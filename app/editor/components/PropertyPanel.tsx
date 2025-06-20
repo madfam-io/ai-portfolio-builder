@@ -141,7 +141,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
 
     const SelectInput = () => (
       <Select
-        value={value || ''}
+        value={value || &apos;'}
         onValueChange={newValue => handleDataUpdate(property.key, newValue)}
       >
         <SelectTrigger>
@@ -166,7 +166,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
           className="w-12 h-8 p-1 border rounded"
         />
         <Input
-          value={value || '#000000'}
+          value={value || &apos;#000000'}
           onChange={e => handleDataUpdate(property.key, e.target.value)}
           placeholder="#000000"
           className="flex-1"
@@ -275,7 +275,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
         default:
           return (
             <Input
-              value={value || ''}
+              value={value || &apos;'}
               onChange={e => handleDataUpdate(property.key, e.target.value)}
               placeholder={`Enter ${property.label.toLowerCase()}`}
             />
@@ -410,7 +410,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
       {/* Tabs */}
       <Tabs
         value={activeTab}
-        onValueChange={value => setActiveTab(value as any)}
+        onValueChange={value => setActiveTab(value as unknown)}
         className="flex-1"
       >
         <div className="border-b">

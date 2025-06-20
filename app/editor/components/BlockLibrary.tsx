@@ -110,7 +110,7 @@ function DraggableBlock({ config }: DraggableBlockProps) {
 }
 
 export function BlockLibrary() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('&apos;);
   const [activeCategory, setActiveCategory] = useState<string>('all');
 
   const categories = [

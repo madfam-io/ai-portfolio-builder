@@ -93,8 +93,8 @@ export function ExperienceSection({
     setFormData({
       company: experience.company,
       position: experience.position,
-      location: (experience as any).location || '',
-      employmentType: (experience as any).employmentType || 'full-time',
+      location: (experience as unknown).location || '',
+      employmentType: (experience as unknown).employmentType || 'full-time',
       startDate: experience.startDate,
       endDate: experience.endDate || '',
       current: experience.current,
@@ -246,7 +246,7 @@ export function ExperienceSection({
                   setFormData({ ...formData, companyLogo: url || '' })
                 }
                 type="company"
-                portfolioId={currentPortfolio?.id || ''}
+                portfolioId={currentPortfolio?.id || '&apos;}
                 aspectRatio="square"
                 className="mt-2 max-w-[200px]"
               />
@@ -452,9 +452,9 @@ export function ExperienceSection({
                     {formatDateForDisplay(experience.startDate)} -{' '}
                     {experience.current
                       ? t.present || 'Present'
-                      : formatDateForDisplay(experience.endDate || '')}
-                    {(experience as any).location &&
-                      ` • ${(experience as any).location}`}
+                      : formatDateForDisplay(experience.endDate || '&apos;)}
+                    {(experience as unknown).location &&
+                      ` • ${(experience as unknown).location}`}
                   </p>
                   {experience.description && (
                     <p className="mt-3 text-sm">{experience.description}</p>

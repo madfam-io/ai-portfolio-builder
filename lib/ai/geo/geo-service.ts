@@ -53,7 +53,7 @@ export class GEOService {
         primaryKeyword: request.geoSettings.primaryKeyword,
         secondaryKeywords: request.geoSettings.secondaryKeywords,
         targetAudience: request.geoSettings.targetAudience,
-        contentGoals: request.geoSettings.contentGoals as any[],
+        contentGoals: request.geoSettings.contentGoals as unknown[],
         industry: request.geoSettings.industry,
         tone: 'professional' as const, // Default, could be made configurable
         readabilityLevel: 'moderate',
@@ -70,8 +70,8 @@ export class GEOService {
       const optimizationRequest = {
         content: request.content,
         contentType: request.contentType,
-        settings: geoSettings as any,
-      } as any;
+        settings: geoSettings as unknown,
+      } as unknown;
 
       const optimized =
         await this.contentOptimizer.optimizeContent(optimizationRequest);
@@ -82,19 +82,19 @@ export class GEOService {
       if (request.contentType === 'bio') {
         enhancedContent = await this.enhanceBioWithGEO(
           request.content,
-          geoSettings as any
+          geoSettings as unknown
         );
       } else if (request.contentType === 'project') {
         enhancedContent = await this.enhanceProjectWithGEO(
           request.content,
-          geoSettings as any
+          geoSettings as unknown
         );
       }
 
       // Generate metadata
       const metadata = await this.metadataGenerator.generateMetadata(
         enhancedContent,
-        geoSettings as any
+        geoSettings as unknown
       );
 
       const response: GEOEnhancementResponse = {
@@ -130,7 +130,7 @@ export class GEOService {
     bio: string,
     settings: GEOSettings
   ): Promise<string> {
-    const geoSettings = settings as any;
+    const geoSettings = settings as unknown;
     // Generate GEO-aware prompt (not used directly, but for reference)
     GEOPromptBuilder.buildGeoBioPrompt({
       bio,
@@ -167,7 +167,7 @@ export class GEOService {
     description: string,
     settings: GEOSettings
   ): Promise<string> {
-    const geoSettings = settings as any;
+    const geoSettings = settings as unknown;
     // Generate GEO-aware prompt (not used directly, but for reference)
     GEOPromptBuilder.buildGeoProjectPrompt({
       title: geoSettings.primaryKeyword,
@@ -207,7 +207,7 @@ export class GEOService {
       );
 
       await cache.set(cacheKey, research, 86400); // Cache for 24 hours
-      return research as any;
+      return research as unknown;
     } catch (error) {
       logger.error('Keyword research failed', error as Error);
       return [];
@@ -240,8 +240,8 @@ export class GEOService {
     const finalSettings = { ...defaultSettings, ...settings };
     return this.metadataGenerator.generateMetadata(
       content,
-      finalSettings as any
-    ) as any;
+      finalSettings as unknown
+    ) as unknown;
   }
 
   /**
@@ -271,7 +271,7 @@ export class GEOService {
       optimizeFor: ['google'],
     };
 
-    const metadata = await this.generateMetadata(content, settings as any);
+    const metadata = await this.generateMetadata(content, settings as unknown);
 
     // Calculate GEO score
     const score = {
@@ -304,12 +304,12 @@ export class GEOService {
     return {
       content,
       structure,
-      keywords: analysis as any,
+      keywords: analysis as unknown,
       readability,
       metadata,
       score,
       suggestions,
-    } as any;
+    } as unknown;
   }
 
   /**

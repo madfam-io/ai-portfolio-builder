@@ -178,7 +178,7 @@ export function TemplateSelector({
   onTemplateChange,
   isLoading = false,
 }: TemplateSelectorProps) {
-  const [filterIndustry, setFilterIndustry] = useState<string>('');
+  const [filterIndustry, setFilterIndustry] = useState<string>('&apos;);
 
   const templates = useMemo(() => getAvailableTemplates(), []);
 
@@ -279,7 +279,7 @@ export function TemplateSelector({
             Try a different industry filter or browse all templates
           </p>
           <button
-            onClick={() => setFilterIndustry('')}
+            onClick={() => setFilterIndustry('&apos;)}
             className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
           >
             Show All Templates

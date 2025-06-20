@@ -39,8 +39,8 @@ const CTA = lazy(() => import('./CTA'));
 const componentRegistry: Record<
   string,
   {
-    default: React.ComponentType<any>;
-    variants?: Record<string, React.ComponentType<any>>;
+    default: React.ComponentType<unknown>;
+    variants?: Record<string, React.ComponentType<unknown>>;
   }
 > = {
   hero: {
@@ -197,7 +197,7 @@ export default function DynamicLandingPage(): React.ReactElement {
  */
 function getComponentForConfig(
   config: ComponentConfig
-): React.ComponentType<any> | null {
+): React.ComponentType<unknown> | null {
   const componentEntry = componentRegistry[config.type];
 
   if (!componentEntry) {

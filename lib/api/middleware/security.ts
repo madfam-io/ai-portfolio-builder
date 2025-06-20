@@ -191,7 +191,7 @@ export function detectSuspiciousActivity(request: NextRequest): {
 /**
  * Security middleware wrapper for API routes
  */
-export function withSecurity<T extends (...args: any[]) => any>(
+export function withSecurity<T extends (...args: unknown[]) => any>(
   handler: T,
   options: {
     requireCSRF?: boolean;
@@ -205,7 +205,7 @@ export function withSecurity<T extends (...args: any[]) => any>(
     checkSuspiciousActivity = true,
   } = options;
 
-  return (async (request: NextRequest, ...args: any[]) => {
+  return (async (request: NextRequest, ...args: unknown[]) => {
     try {
       // Method validation
       if (!allowedMethods.includes(request.method)) {
@@ -337,7 +337,7 @@ export function validateRequestContent(request: NextRequest): {
 export function secureErrorResponse(
   message: string = 'An error occurred',
   status: number = 500,
-  details?: Record<string, any>
+  details?: Record<string, unknown>
 ): NextResponse {
   // In production, don't leak sensitive information
   const response =

@@ -175,7 +175,7 @@ class EnhancedPostHogService {
   /**
    * Identify user with enhanced properties
    */
-  identify(userId: string, userProperties: Record<string, any>) {
+  identify(userId: string, userProperties: Record<string, unknown>) {
     if (!this.posthog || !this.initialized) return;
 
     try {
@@ -211,7 +211,7 @@ class EnhancedPostHogService {
    */
   capture(
     eventName: string,
-    properties: Record<string, any> = {},
+    properties: Record<string, unknown> = {},
     options: { send_instantly?: boolean } = {}
   ) {
     if (!this.posthog || !this.initialized) return;
@@ -398,7 +398,7 @@ class EnhancedPostHogService {
   /**
    * Get user properties
    */
-  getPersonProperties(): Record<string, any> {
+  getPersonProperties(): Record<string, unknown> {
     if (!this.posthog || !this.initialized) return {};
 
     try {
@@ -481,9 +481,9 @@ export function useEnhancedPostHog() {
     if (isInitialized && user) {
       enhancedPostHog.identify(user.id, {
         email: user.email,
-        name: (user as any).user_metadata?.full_name,
-        created_at: (user as any).created_at,
-        email_verified: (user as any).email_confirmed_at !== null,
+        name: (user as unknown).user_metadata?.full_name,
+        created_at: (user as unknown).created_at,
+        email_verified: (user as unknown).email_confirmed_at !== null,
       });
     }
   }, [isInitialized, user]);

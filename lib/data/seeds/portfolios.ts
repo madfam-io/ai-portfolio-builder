@@ -209,7 +209,7 @@ function generatePortfolio(
 ): unknown {
   const templates = ['developer', 'designer', 'consultant'];
   const selectedTemplate =
-    (template as any)?.template || templates[index % templates.length];
+    (template as unknown)?.template || templates[index % templates.length];
 
   const baseData = template || {
     name: `Usuario ${index + 1}`,
@@ -218,28 +218,28 @@ function generatePortfolio(
     template: selectedTemplate,
   };
 
-  const subdomain = `${(baseData as any).name.toLowerCase().replace(/\s+/g, '')}-${index}`;
+  const subdomain = `${(baseData as unknown).name.toLowerCase().replace(/\s+/g, '')}-${index}`;
 
   return {
     id: `portfolio-${userId}-${index}`,
     user_id: userId,
-    name: (baseData as any).name,
-    title: (baseData as any).title,
-    bio: (baseData as any).bio,
-    tagline: (baseData as any).tagline || 'Mi tagline profesional',
+    name: (baseData as unknown).name,
+    title: (baseData as unknown).title,
+    bio: (baseData as unknown).bio,
+    tagline: (baseData as unknown).tagline || 'Mi tagline profesional',
     avatar_url: `https://i.pravatar.cc/300?u=${userId}-${index}`,
     contact: JSON.stringify(
-      (baseData as any).contact || {
-        email: `${(baseData as any).name.toLowerCase().replace(/\s+/g, '.')}@ejemplo.com`,
+      (baseData as unknown).contact || {
+        email: `${(baseData as unknown).name.toLowerCase().replace(/\s+/g, '.')}@ejemplo.com`,
         location: 'México',
       }
     ),
-    social: JSON.stringify((baseData as any).social || {}),
-    experience: JSON.stringify((baseData as any).experience || []),
-    education: JSON.stringify((baseData as any).education || []),
-    projects: JSON.stringify((baseData as any).projects || []),
-    skills: JSON.stringify((baseData as any).skills || []),
-    certifications: JSON.stringify((baseData as any).certifications || []),
+    social: JSON.stringify((baseData as unknown).social || {}),
+    experience: JSON.stringify((baseData as unknown).experience || []),
+    education: JSON.stringify((baseData as unknown).education || []),
+    projects: JSON.stringify((baseData as unknown).projects || []),
+    skills: JSON.stringify((baseData as unknown).skills || []),
+    certifications: JSON.stringify((baseData as unknown).certifications || []),
     template: selectedTemplate,
     customization: JSON.stringify({
       primaryColor: ['#6366f1', '#ec4899', '#10b981'][index % 3],
@@ -254,9 +254,9 @@ function generatePortfolio(
     }),
     status: index === 0 ? 'published' : index % 3 === 0 ? 'published' : 'draft',
     subdomain: subdomain.substring(0, 20), // Ensure subdomain length limit
-    meta_title: `${(baseData as any).name} - ${(baseData as any).title}`,
+    meta_title: `${(baseData as unknown).name} - ${(baseData as unknown).title}`,
     meta_description:
-      (baseData as any).bio?.substring(0, 160) || 'Portfolio profesional',
+      (baseData as unknown).bio?.substring(0, 160) || 'Portfolio profesional',
     views: Math.floor(Math.random() * 500),
     last_viewed_at: new Date(
       Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000
@@ -274,7 +274,7 @@ function generatePortfolio(
  * Seed portfolios table with realistic data
  */
 export async function seedPortfolios(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -372,8 +372,8 @@ export async function seedPortfolios(
  * Update user portfolio counts after seeding
  */
 async function updateUserPortfolioCounts(
-  client: any,
-  users: any[]
+  client: unknown,
+  users: unknown[]
 ): Promise<void> {
   try {
     for (const user of users) {

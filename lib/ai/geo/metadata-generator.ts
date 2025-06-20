@@ -127,7 +127,7 @@ export class MetadataGenerator {
     return title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
+      .replace(/^-+|-+$/g, '&apos;)
       .substring(0, 50);
   }
 
@@ -211,7 +211,7 @@ export class MetadataGenerator {
     _content: string,
     settings: GEOSettings,
     metadata: { title: string; description: string; keywords: string[] }
-  ): Record<string, any> {
+  ): Record<string, unknown> {
     const baseSchema = {
       '@context': 'https://schema.org',
       '@type': this.determineSchemaType(settings),
@@ -362,8 +362,8 @@ export class MetadataGenerator {
   /**
    * Generate portfolio-specific structured data
    */
-  generatePortfolioStructuredData(portfolio: unknown): Record<string, any> {
-    const portfolioData = portfolio as any;
+  generatePortfolioStructuredData(portfolio: unknown): Record<string, unknown> {
+    const portfolioData = portfolio as unknown;
     return {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
@@ -378,9 +378,9 @@ export class MetadataGenerator {
           portfolioData.social?.github,
           portfolioData.social?.twitter,
         ].filter(Boolean),
-        knowsAbout: portfolioData.skills?.map((s: any) => s.name) || [],
+        knowsAbout: portfolioData.skills?.map((s: unknown) => s.name) || [],
         alumniOf:
-          portfolioData.education?.map((edu: any) => ({
+          portfolioData.education?.map((edu: unknown) => ({
             '@type': 'EducationalOrganization',
             name: edu.institution,
           })) || [],
@@ -397,7 +397,7 @@ export class MetadataGenerator {
   /**
    * Generate breadcrumb structured data
    */
-  generateBreadcrumbData(path: string[]): Record<string, any> {
+  generateBreadcrumbData(path: string[]): Record<string, unknown> {
     return {
       '@context': 'https://schema.org',
       '@type': 'BreadcrumbList',

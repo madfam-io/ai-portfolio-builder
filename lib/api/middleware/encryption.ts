@@ -82,9 +82,9 @@ export function withEncryption(
  * Encrypt request data based on type
  */
 async function encryptRequestData(
-  data: any,
+  data: unknown,
   config: EncryptionConfig
-): Promise<any> {
+): Promise<unknown> {
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {
@@ -121,9 +121,9 @@ async function encryptRequestData(
  * Decrypt response data based on type
  */
 async function decryptResponseData(
-  data: any,
+  data: unknown,
   config: EncryptionConfig
-): Promise<any> {
+): Promise<unknown> {
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {
@@ -134,7 +134,7 @@ async function decryptResponseData(
         // Handle paginated responses
         return {
           ...data,
-          users: data.users.map((user: any) => decryptUserData(user)),
+          users: data.users.map((user: unknown) => decryptUserData(user)),
         };
       } else {
         return decryptUserData(data);
@@ -150,7 +150,7 @@ async function decryptResponseData(
         // Handle paginated responses
         return {
           ...data,
-          portfolios: data.portfolios.map((portfolio: any) =>
+          portfolios: data.portfolios.map((portfolio: unknown) =>
             decryptPortfolioContact(portfolio)
           ),
         };
@@ -164,7 +164,7 @@ async function decryptResponseData(
       } else if (data.logs) {
         return {
           ...data,
-          logs: data.logs.map((log: any) => decryptAILogs(log)),
+          logs: data.logs.map((log: unknown) => decryptAILogs(log)),
         };
       } else {
         return decryptAILogs(data);

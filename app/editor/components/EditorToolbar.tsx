@@ -79,7 +79,7 @@ export function EditorToolbar({
       {/* Left Section - History & Save */}
       <div className="flex items-center gap-2">
         <Button
-          variant={canUndo() ? 'outline' : 'ghost'}
+          variant={canUndo() ? &apos;outline&apos; : &apos;ghost&apos;}
           size="sm"
           onClick={undo}
           disabled={!canUndo()}
@@ -90,7 +90,7 @@ export function EditorToolbar({
         </Button>
 
         <Button
-          variant={canRedo() ? 'outline' : 'ghost'}
+          variant={canRedo() ? &apos;outline&apos; : &apos;ghost'}
           size="sm"
           onClick={redo}
           disabled={!canRedo()}
@@ -155,7 +155,7 @@ export function EditorToolbar({
           </Button>
 
           <Button
-            variant={preferences.showRulers ? 'default' : 'outline'}
+            variant={preferences.showRulers ? &apos;default&apos; : &apos;outline'}
             size="sm"
             onClick={() =>
               updatePreferences({ showRulers: !preferences.showRulers })

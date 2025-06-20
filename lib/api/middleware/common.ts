@@ -68,7 +68,7 @@ async function validateRequestBody<T>(
 /**
  * Wrapper for API route handlers with common error handling
  */
-function withErrorHandling<T extends any[], R>(
+function withErrorHandling<T extends unknown[], R>(
   handler: (...args: T) => Promise<R>
 ) {
   return async (...args: T): Promise<Response> => {

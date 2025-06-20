@@ -17,13 +17,13 @@ export interface ObservabilityConfig {
   trackAnalytics?: boolean;
   trackPerformance?: boolean;
   sensitiveFields?: string[];
-  customAttributes?: Record<string, any>;
+  customAttributes?: Record<string, unknown>;
 }
 
 /**
  * Apply observability to API routes
  */
-export function withObservability<T extends (...args: any[]) => any>(
+export function withObservability<T extends (...args: unknown[]) => any>(
   handler: T,
   config: ObservabilityConfig = {}
 ): T {
@@ -34,7 +34,7 @@ export function withObservability<T extends (...args: any[]) => any>(
     customAttributes = {},
   } = config;
 
-  return withAPMTracking(async (req: NextRequest, ...args: any[]) => {
+  return withAPMTracking(async (req: NextRequest, ...args: unknown[]) => {
     const startTime = performance.now();
     const method = req.method;
     const pathname = req.nextUrl.pathname;
@@ -97,7 +97,7 @@ export function withObservability<T extends (...args: any[]) => any>(
       const duration = performance.now() - startTime;
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      const statusCode = (error as any)?.statusCode || 500;
+      const statusCode = (error as unknown)?.statusCode || 500;
 
       // Track error metrics
       if (trackPerformance) {
@@ -179,7 +179,7 @@ export const extractUserContext = (
  * Sanitize request/response data
  */
 export const sanitizeData = (
-  data: any,
+  data: unknown,
   sensitiveFields: string[] = ['password', 'token', 'secret', 'key']
 ): any => {
   if (!data || typeof data !== 'object') return data;
@@ -207,11 +207,11 @@ export const sanitizeData = (
  */
 export class ObservabilityContext {
   private startTime: number;
-  private metadata: Record<string, any>;
+  private metadata: Record<string, unknown>;
 
   constructor(
     private operation: string,
-    metadata: Record<string, any> = {}
+    metadata: Record<string, unknown> = {}
   ) {
     this.startTime = performance.now();
     this.metadata = {
@@ -225,14 +225,14 @@ export class ObservabilityContext {
   /**
    * Add additional metadata
    */
-  addMetadata(key: string, value: any): void {
+  addMetadata(key: string, value: unknown): void {
     this.metadata[key] = value;
   }
 
   /**
    * Track success
    */
-  async success(result?: any): Promise<void> {
+  async success(result?: unknown): Promise<void> {
     const duration = performance.now() - this.startTime;
 
     // Record metrics

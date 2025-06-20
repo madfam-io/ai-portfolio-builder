@@ -81,7 +81,7 @@ export function getApiVersion(request: NextRequest): string {
  * Version-aware API handler wrapper
  * Provides version context and standard error handling
  */
-export function versionedApiHandler<T extends (...args: any[]) => any>(
+export function versionedApiHandler<T extends (...args: unknown[]) => any>(
   handler: T
 ): T {
   return (async (...args: Parameters<T>) => {
@@ -95,7 +95,7 @@ export function versionedApiHandler<T extends (...args: any[]) => any>(
 
       // Replace request in args
       const versionedArgs = [...args] as unknown as Parameters<T>;
-      (versionedArgs as any)[0] = versionedRequest;
+      (versionedArgs as unknown)[0] = versionedRequest;
 
       // Call handler with versioned request
       const result = await handler(...versionedArgs);

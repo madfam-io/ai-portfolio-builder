@@ -72,7 +72,7 @@ export function QuickStartGallery({
   const { user } = useAuthStore();
   const { t: _t } = useLanguage();
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('&apos;);
   const [demos, setDemos] = useState<DemoPortfolio[]>([]);
   const [loadingDemo, setLoadingDemo] = useState<string | null>(null);
   const [copiedDemo, setCopiedDemo] = useState<string | null>(null);
@@ -222,7 +222,7 @@ export function QuickStartGallery({
             {industries.map(industry => (
               <TabsTrigger key={industry} value={industry} className="text-xs">
                 {industry === 'all' ? (
-                  'All'
+                  'All&apos;
                 ) : (
                   <span className="flex items-center gap-1">
                     {industryIcons[industry]}
@@ -315,8 +315,8 @@ function DemoCard({
   return (
     <Card
       className={cn(
-        'overflow-hidden hover:shadow-lg transition-all duration-300',
-        isRecommended && 'ring-2 ring-primary'
+        &apos;overflow-hidden hover:shadow-lg transition-all duration-300&apos;,
+        isRecommended && &apos;ring-2 ring-primary'
       )}
     >
       {/* Thumbnail */}

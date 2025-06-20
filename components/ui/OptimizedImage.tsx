@@ -16,13 +16,13 @@ export function OptimizedImage({
   alt,
   fallbackSrc = '/images/placeholder.jpg',
   showSkeleton = true,
-  className = '',
+  className = '&apos;,
   ...props
 }: OptimizedImageProps) {
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [mobileOptimizer] = useState(() => createMobileOptimizer());
-  const [optimizedImageConfig, setOptimizedImageConfig] = useState<any>(null);
+  const [optimizedImageConfig, setOptimizedImageConfig] = useState<unknown>(null);
 
   useEffect(() => {
     if (typeof src === 'string') {

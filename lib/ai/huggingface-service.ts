@@ -356,7 +356,7 @@ export class HuggingFaceService implements AIService {
     if (response.ok) {
       const result = await response.json();
       const text = Array.isArray(result)
-        ? result[0]?.generated_text || ''
+        ? result[0]?.generated_text || '&apos;
         : result.generated_text || result;
       return { text };
     }
@@ -603,7 +603,7 @@ export async function enhanceBio(
   try {
     // For testing compatibility, use HfInference directly
     const apiKey = process.env.HUGGINGFACE_API_KEY || '';
-    const makeHfRequest = async (params: any) => {
+    const makeHfRequest = async (params: unknown) => {
       const response = await fetch(
         `https://api-inference.huggingface.co/models/${params.model}`,
         {
@@ -695,7 +695,7 @@ export async function optimizeProjectDescription(projectInfo: {
   try {
     // For testing compatibility, use HfInference directly
     const apiKey = process.env.HUGGINGFACE_API_KEY || '';
-    const makeHfRequest = async (params: any) => {
+    const makeHfRequest = async (params: unknown) => {
       const response = await fetch(
         `https://api-inference.huggingface.co/models/${params.model}`,
         {
@@ -775,7 +775,7 @@ export async function recommendTemplate(userProfile: UserProfile): Promise<{
   try {
     // For testing compatibility, use HfInference directly
     const apiKey = process.env.HUGGINGFACE_API_KEY || '';
-    const makeHfRequest = async (params: any) => {
+    const makeHfRequest = async (params: unknown) => {
       const response = await fetch(
         `https://api-inference.huggingface.co/models/${params.model}`,
         {

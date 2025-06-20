@@ -186,7 +186,7 @@ function generateUser(index: number): any {
  * Seed users table with realistic test data
  */
 export async function seedUsers(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

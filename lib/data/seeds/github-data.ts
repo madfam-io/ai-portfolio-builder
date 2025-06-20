@@ -233,15 +233,15 @@ function generateRepository(
   };
 
   // Generate realistic LOC distribution
-  const totalLoc = (repoTemplate as any).locByLanguage
-    ? Object.values((repoTemplate as any).locByLanguage).reduce(
-        (sum: number, lines: any) => sum + lines,
+  const totalLoc = (repoTemplate as unknown).locByLanguage
+    ? Object.values((repoTemplate as unknown).locByLanguage).reduce(
+        (sum: number, lines: unknown) => sum + lines,
         0
       )
     : Math.floor(Math.random() * 20000) + 5000;
 
-  const locByLanguage = (repoTemplate as any).locByLanguage || {
-    [(repoTemplate as any).language]: totalLoc,
+  const locByLanguage = (repoTemplate as unknown).locByLanguage || {
+    [(repoTemplate as unknown).language]: totalLoc,
   };
 
   return {
@@ -249,18 +249,18 @@ function generateRepository(
     github_integration_id: integrationId,
     user_id: userId,
     github_id: Math.floor(Math.random() * 1000000000) + 100000000,
-    name: (repoTemplate as any).name,
-    full_name: (repoTemplate as any).fullName,
-    description: (repoTemplate as any).description,
-    html_url: `https://github.com/${(repoTemplate as any).fullName}`,
-    clone_url: `https://github.com/${(repoTemplate as any).fullName}.git`,
-    ssh_url: `git@github.com:${(repoTemplate as any).fullName}.git`,
-    owner: (repoTemplate as any).fullName.split('/')[0],
+    name: (repoTemplate as unknown).name,
+    full_name: (repoTemplate as unknown).fullName,
+    description: (repoTemplate as unknown).description,
+    html_url: `https://github.com/${(repoTemplate as unknown).fullName}`,
+    clone_url: `https://github.com/${(repoTemplate as unknown).fullName}.git`,
+    ssh_url: `git@github.com:${(repoTemplate as unknown).fullName}.git`,
+    owner: (repoTemplate as unknown).fullName.split('/')[0],
     default_branch: 'main',
-    language: (repoTemplate as any).language,
+    language: (repoTemplate as unknown).language,
     languages: JSON.stringify(locByLanguage),
-    topics: JSON.stringify((repoTemplate as any).topics || []),
-    is_private: (repoTemplate as any).isPrivate || false,
+    topics: JSON.stringify((repoTemplate as unknown).topics || []),
+    is_private: (repoTemplate as unknown).isPrivate || false,
     is_fork: Math.random() > 0.85,
     is_archived: false,
     is_disabled: false,
@@ -268,11 +268,11 @@ function generateRepository(
     has_projects: Math.random() > 0.3,
     has_wiki: Math.random() > 0.5,
     has_pages: Math.random() > 0.7,
-    stars_count: (repoTemplate as any).stars || 0,
-    watchers_count: Math.floor(((repoTemplate as any).stars || 0) * 1.2),
-    forks_count: (repoTemplate as any).forks || 0,
-    open_issues_count: (repoTemplate as any).openIssues || 0,
-    size: (repoTemplate as any).size || 0,
+    stars_count: (repoTemplate as unknown).stars || 0,
+    watchers_count: Math.floor(((repoTemplate as unknown).stars || 0) * 1.2),
+    forks_count: (repoTemplate as unknown).forks || 0,
+    open_issues_count: (repoTemplate as unknown).openIssues || 0,
+    size: (repoTemplate as unknown).size || 0,
     pushed_at: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000),
     created_at: new Date(
       Date.now() - Math.random() * 365 * 24 * 60 * 60 * 1000
@@ -287,7 +287,7 @@ function generateRepository(
  * Seed GitHub integrations table
  */
 export async function seedGitHubIntegrations(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding GitHub integrations...');
@@ -371,7 +371,7 @@ export async function seedGitHubIntegrations(
  * Seed repositories table
  */
 export async function seedRepositories(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);
@@ -475,7 +475,7 @@ export async function seedRepositories(
  * Combined seeding function for GitHub data
  */
 async function seedGitHubData(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

@@ -152,7 +152,7 @@ function transformAnalysisResults(
     suggestions: transformSuggestions(analysis.suggestions),
     metadata: {
       title: analysis.metadata?.title || '',
-      description: analysis.metadata?.description || '',
+      description: analysis.metadata?.description || '&apos;,
       recommendedKeywords: analysis.metadata?.keywords ?? [],
     },
   };

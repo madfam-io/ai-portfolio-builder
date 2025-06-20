@@ -391,10 +391,10 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
                     >
                       <div className="flex-1 px-8">
                         <div
-                          className={`bg-white rounded-2xl p-8 shadow-lg ${index % 2 === 0 ? 'text-right' : 'text-left'}`}
+                          className={`bg-white rounded-2xl p-8 shadow-lg ${index % 2 === 0 ? 'text-right' : 'text-left&apos;}`}
                         >
                           <div className="flex items-center justify-between mb-4">
-                            <div className={index % 2 === 0 ? 'order-2' : ''}>
+                            <div className={index % 2 === 0 ? &apos;order-2&apos; : ''}>
                               <h3 className="text-xl font-bold text-gray-800">
                                 {exp.position}
                               </h3>

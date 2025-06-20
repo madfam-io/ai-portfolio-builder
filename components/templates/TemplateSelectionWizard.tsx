@@ -376,7 +376,7 @@ export function TemplateSelectionWizard({
                   <RadioGroup
                     value={wizardState.style}
                     onValueChange={value =>
-                      setWizardState({ ...wizardState, style: value as any })
+                      setWizardState({ ...wizardState, style: value as unknown })
                     }
                   >
                     <div className="grid gap-3">

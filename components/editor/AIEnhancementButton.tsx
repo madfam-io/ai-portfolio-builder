@@ -120,7 +120,7 @@ export function AIEnhancementButton({
   content,
   context,
   onEnhanced,
-  className = '',
+  className = '&apos;,
   disabled = false,
 }: AIEnhancementButtonProps): React.ReactElement {
   const { t } = useLanguage();

@@ -395,7 +395,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const canAccessFeatureCheck = useCallback(
     (feature: string): boolean => {
       return effectiveUser
-        ? canAccessFeature(effectiveUser, feature as any)
+        ? canAccessFeature(effectiveUser, feature as unknown)
         : false;
     },
     [effectiveUser]

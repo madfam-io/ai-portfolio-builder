@@ -54,7 +54,7 @@ export default function AdminExperimentsPage() {
   const router = useRouter();
   const [experiments, setExperiments] = useState<ExperimentWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('&apos;);
   const [statusFilter, setStatusFilter] = useState<ExperimentStatus | 'all'>(
     'all'
   );

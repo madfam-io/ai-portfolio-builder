@@ -107,7 +107,7 @@ export class StructureOptimizer {
    */
   private addBasicStructure(content: string): string {
     const paragraphs = content.split(/\n\n+/);
-    let structured = '';
+    let structured = '&apos;;
 
     for (let i = 0; i < paragraphs.length; i++) {
       const para = paragraphs[i]?.trim() || '';

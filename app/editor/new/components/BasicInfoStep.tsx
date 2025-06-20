@@ -39,11 +39,11 @@ export function BasicInfoStep({
 
       <div className="space-y-4">
         <div>
-          <Label htmlFor="name">{t.portfolioName || 'Portfolio Name'}</Label>
+          <Label htmlFor="name">{t.portfolioName || 'Portfolio Name&apos;}</Label>
           <Input
             id="name"
             placeholder={
-              t.portfolioNamePlaceholder || 'My Professional Portfolio'
+              t.portfolioNamePlaceholder || &apos;My Professional Portfolio'
             }
             value={formData.name}
             onChange={e => updateFormData({ name: e.target.value })}
@@ -53,11 +53,11 @@ export function BasicInfoStep({
 
         <div>
           <Label htmlFor="title">
-            {t.yourTitle || 'Your Professional Title'}
+            {t.yourTitle || 'Your Professional Title&apos;}
           </Label>
           <Input
             id="title"
-            placeholder={t.titlePlaceholder || 'Senior Software Engineer'}
+            placeholder={t.titlePlaceholder || &apos;Senior Software Engineer'}
             value={formData.title}
             onChange={e => updateFormData({ title: e.target.value })}
             className="mt-1"

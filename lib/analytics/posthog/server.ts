@@ -37,7 +37,7 @@ export const getPostHogClient = (): PostHog | null => {
 export const captureServerEvent = async (
   distinctId: string,
   event: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   try {
     const client = getPostHogClient();
@@ -70,7 +70,7 @@ export const captureServerEvent = async (
 // Identify user server-side
 const identifyServerUser = (
   userId: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ) => {
   try {
     const client = getPostHogClient();
@@ -136,7 +136,7 @@ export const trackAPIPerformance = async (
 export const trackServerError = async (
   userId: string,
   error: Error | unknown,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ) => {
   try {
     const errorDetails =
@@ -167,7 +167,7 @@ const batchServerEvents = async (
   events: Array<{
     distinctId: string;
     event: string;
-    properties?: Record<string, any>;
+    properties?: Record<string, unknown>;
   }>
 ) => {
   try {
@@ -208,9 +208,9 @@ const shutdownPostHog = async () => {
 
 // Middleware helper for automatic API tracking
 const withPostHogTracking = (
-  handler: (req: Request, ...args: any[]) => Promise<Response>
+  handler: (req: Request, ...args: unknown[]) => Promise<Response>
 ) => {
-  return async (req: Request, ...args: any[]): Promise<Response> => {
+  return async (req: Request, ...args: unknown[]): Promise<Response> => {
     const startTime = Date.now();
     let response: Response;
     let userId = 'anonymous';

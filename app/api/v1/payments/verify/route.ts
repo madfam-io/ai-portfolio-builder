@@ -115,10 +115,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         stripe_customer_id: session.customer as string,
         stripe_subscription_id: subscription.id,
         subscription_start_date: new Date(
-          (subscription as any).current_period_start * 1000
+          (subscription as unknown).current_period_start * 1000
         ).toISOString(),
         subscription_end_date: new Date(
-          (subscription as any).current_period_end * 1000
+          (subscription as unknown).current_period_end * 1000
         ).toISOString(),
         updated_at: new Date().toISOString(),
       })

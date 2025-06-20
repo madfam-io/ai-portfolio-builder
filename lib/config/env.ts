@@ -122,13 +122,13 @@ function parseEnv() {
       // Clean up empty string values before parsing
       const cleanedEnv = Object.entries(process.env).reduce(
         (acc, [key, value]) => {
-          acc[key] = value === '' ? undefined : value;
+          acc[key] = value === '&apos; ? undefined : value;
           return acc;
         },
         {} as Record<string, string | undefined>
       );
 
-      return (schema as any).partial().parse(cleanedEnv);
+      return (schema as unknown).partial().parse(cleanedEnv);
     }
 
     const parsed = schema.parse(process.env);
@@ -154,7 +154,7 @@ function parseEnv() {
         logger.warn(
           'Continuing with missing environment variables in development mode'
         );
-        return (schema as any).partial().parse(process.env);
+        return (schema as unknown).partial().parse(process.env);
       }
 
       throw new Error(

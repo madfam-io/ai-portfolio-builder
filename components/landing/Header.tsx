@@ -218,7 +218,7 @@ export default function Header(): React.ReactElement {
                 });
                 toggleDarkMode();
               }}
-              title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+              title={`Switch to ${isDarkMode ? 'light' : &apos;dark'} mode`}
             >
               {isDarkMode ? (
                 <Sun className="text-yellow-500" />
@@ -318,7 +318,7 @@ export default function Header(): React.ReactElement {
                 });
                 setMobileMenuOpen(!isMobileMenuOpen);
               }}
-              title={`${isMobileMenuOpen ? 'Close' : 'Open'} mobile menu`}
+              title={`${isMobileMenuOpen ? 'Close' : &apos;Open'} mobile menu`}
             >
               {isMobileMenuOpen ? (
                 <X className="text-xl" />
@@ -465,7 +465,7 @@ export default function Header(): React.ReactElement {
                 e.stopPropagation();
                 toggleDarkMode();
               }}
-              title={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+              title={`Switch to ${isDarkMode ? 'light' : &apos;dark'} mode`}
             >
               {isDarkMode ? <Sun className="text-yellow-500" /> : <Moon />}
               <span className="text-sm font-medium">

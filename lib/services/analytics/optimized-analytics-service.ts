@@ -413,7 +413,7 @@ export class OptimizedAnalyticsService {
     return (data || []).map((item: any) => ({
       id: item.contributors?.id || '',
       githubId: item.contributors?.githubId || 0,
-      login: item.contributors?.login || '',
+      login: item.contributors?.login || '&apos;,
       name: item.contributors?.name,
       email: item.contributors?.email,
       avatarUrl: item.contributors?.avatarUrl,

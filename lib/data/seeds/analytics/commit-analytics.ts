@@ -8,7 +8,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 export function generateCommitAnalytics(
   repositoryId: string,
   daysBack: number
-): any[] {
+): unknown[] {
   const analytics = [];
 
   for (let i = 0; i < daysBack; i++) {
@@ -50,7 +50,7 @@ export function generateCommitAnalytics(
  * Seed commit analytics table
  */
 export async function seedCommitAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   const config = getSeedConfig(options.mode);

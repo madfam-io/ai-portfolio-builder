@@ -11,7 +11,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
  */
 
 export type SeedFunction = (
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ) => Promise<number>;
 
@@ -33,7 +33,7 @@ export const SEED_CONFIG: SeedConfig[] = [
   {
     name: 'subscription_plans',
     dependencies: [],
-    fn: async (client: any) => {
+    fn: async (client: unknown) => {
       // Subscription plans are inserted via migration, just verify
       const { count } = await client
         .from('subscription_plans')

@@ -223,7 +223,7 @@ export function useRealTimePreview({
     if (typeof window === 'undefined') return '';
 
     const previewElement = document.querySelector('[data-preview-container]');
-    if (!previewElement) return '';
+    if (!previewElement) return '&apos;;
 
     // Extract the HTML and inline the styles
     const html = previewElement.outerHTML;

@@ -299,9 +299,9 @@ export function DeveloperTemplate({ portfolio }: DeveloperTemplateProps) {
       {/* Contact & Social Links Section - Developer-focused platforms */}
       <section className="py-16 bg-gradient-to-r from-blue-900 to-indigo-900 text-white">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-8">Let&apos;s Work Together</h2>
+          <h2 className="text-3xl font-bold mb-8">Let's Work Together</h2>
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-            I&apos;m always interested in new opportunities and exciting
+            I'm always interested in new opportunities and exciting
             projects.
           </p>
 

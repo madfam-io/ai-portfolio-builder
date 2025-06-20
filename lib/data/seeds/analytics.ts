@@ -24,7 +24,7 @@ export { seedPortfolioAnalytics } from './analytics/portfolio-analytics';
  * Combined seeding function for all analytics
  */
 export async function seedAnalytics(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   let totalCount = 0;

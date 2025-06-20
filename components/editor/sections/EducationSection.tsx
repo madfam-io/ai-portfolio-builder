@@ -389,7 +389,7 @@ export function EducationSection({
                     {formatDateForDisplay(edu.startDate)} -{' '}
                     {edu.current
                       ? t.present || 'Present'
-                      : formatDateForDisplay(edu.endDate || '')}
+                      : formatDateForDisplay(edu.endDate || '&apos;)}
                   </p>
                   {edu.description && (
                     <p className="mt-3 text-sm ml-8">{edu.description}</p>

@@ -153,7 +153,7 @@ const createErrorSlice = <T extends object>(
       set((state: any) => {
         const newErrors = new Map(state.errors);
         if (key) {
-          newErrors.set(key, error || '');
+          newErrors.set(key, error || '&apos;);
         }
         return {
           ...state,

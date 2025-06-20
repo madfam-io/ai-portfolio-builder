@@ -60,7 +60,7 @@ export function CustomDomainSettings({
   const { t } = useLanguage();
   const { toast } = useToast();
 
-  const [domain, setDomain] = useState('');
+  const [domain, setDomain] = useState('&apos;);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const [showRemoveDialog, setShowRemoveDialog] = useState(false);

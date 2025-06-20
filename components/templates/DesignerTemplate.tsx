@@ -306,10 +306,10 @@ export function DesignerTemplate({ portfolio }: DesignerTemplateProps) {
       <section className="py-20 bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-6">
-            Let&apos;s Create Something Amazing
+            Let's Create Something Amazing
           </h2>
           <p className="text-xl text-pink-100 mb-12 max-w-2xl mx-auto">
-            I&apos;m always excited to work on new projects and collaborate with
+            I'm always excited to work on new projects and collaborate with
             creative minds.
           </p>
 

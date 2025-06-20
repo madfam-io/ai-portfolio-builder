@@ -17,7 +17,7 @@ import type { Span } from '@opentelemetry/api';
  */
 export const trackCorrelatedEvent = (
   eventName: string,
-  properties?: Record<string, any>
+  properties?: Record<string, unknown>
 ): void => {
   const traceId = getCurrentTraceId();
 
@@ -42,7 +42,7 @@ export const trackUserActionWithPerformance = async <T>(
   action: string,
   userId: string,
   operation: () => Promise<T>,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<T> => {
   return createChildSpan(`user_action.${action}`, async span => {
     const traceId = span?.spanContext().traceId;
@@ -106,7 +106,7 @@ export const trackPortfolioOperation = async <T>(
   operation: 'create' | 'update' | 'publish' | 'delete',
   portfolioId: string,
   fn: () => Promise<T>,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<T> => {
   return createChildSpan(`portfolio.${operation}`, async span => {
     const traceId = span?.spanContext().traceId;
@@ -140,7 +140,7 @@ export const trackPortfolioOperation = async <T>(
       };
 
       if (metricMap[operation]) {
-        recordBusinessMetric(metricMap[operation] as any, 1, {
+        recordBusinessMetric(metricMap[operation] as unknown, 1, {
           portfolio_id: portfolioId,
         });
       }
@@ -170,7 +170,7 @@ export const trackAIEnhancement = async <T>(
   contentType: 'bio' | 'project' | 'experience' | 'skills',
   model: string,
   fn: () => Promise<T>,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<T> => {
   return createChildSpan(`ai.enhance_${contentType}`, async span => {
     const traceId = span?.spanContext().traceId;
@@ -188,7 +188,7 @@ export const trackAIEnhancement = async <T>(
       const duration = performance.now() - startTime;
 
       // Extract token count if available
-      const tokenCount = (result as any)?.usage?.total_tokens || 0;
+      const tokenCount = (result as unknown)?.usage?.total_tokens || 0;
 
       // Track in PostHog
       captureEnhancedEvent('ai_content_generated', {
@@ -249,7 +249,7 @@ export const trackRevenueOperation = async <T>(
   operation: 'payment' | 'subscription' | 'refund',
   amount: number,
   fn: () => Promise<T>,
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): Promise<T> => {
   return createChildSpan(`revenue.${operation}`, async span => {
     const traceId = span?.spanContext().traceId;
@@ -320,7 +320,7 @@ export class CorrelatedSession {
   /**
    * Track an event within this session
    */
-  trackEvent(eventName: string, properties?: Record<string, any>): void {
+  trackEvent(eventName: string, properties?: Record<string, unknown>): void {
     const traceId = getCurrentTraceId();
 
     captureEvent(eventName, {

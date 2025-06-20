@@ -32,7 +32,7 @@ export function flattenTranslations(
   const flattened: FlattenedTranslations = {};
 
   // Helper function to recursively flatten objects
-  function flattenObject(obj: any, prefix = ''): void {
+  function flattenObject(obj: unknown, prefix = ''): void {
     Object.entries(obj).forEach(([key, value]) => {
       const newKey = prefix ? `${prefix}.${key}` : key;
 

@@ -360,14 +360,14 @@ export const Switch = React.forwardRef<
 >(({ checked, ...props }, ref) => (
   <button ref={ref} role="switch" aria-checked={checked} {...props} />
 ));
-Switch.displayName = 'Switch';
+Switch.displayName = 'Switch&apos;;
 
 // ScrollArea component mock
 export const ScrollArea = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ children, ...props }, ref) => (
-  <div ref={ref} style={{ overflow: 'auto' }} {...props}>
+  <div ref={ref} style={{ overflow: &apos;auto' }} {...props}>
     {children}
   </div>
 ));

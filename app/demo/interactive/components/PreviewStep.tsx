@@ -119,7 +119,7 @@ export function PreviewStep({
               <div className="flex-1 text-center">
                 <span className="text-sm font-mono text-gray-600 dark:text-gray-400">
                   https://
-                  {portfolio.name.toLowerCase().replace(/\s+/g, '')}
+                  {portfolio.name.toLowerCase().replace(/\s+/g, '&apos;)}
                   .prisma.madfam.io
                 </span>
               </div>
@@ -133,17 +133,17 @@ export function PreviewStep({
             className="bg-white dark:bg-gray-800 rounded-lg shadow-xl overflow-hidden"
             style={{
               width:
-                previewDimensions.width === '100%'
-                  ? '100%'
+                previewDimensions.width === &apos;100%&apos;
+                  ? &apos;100%&apos;
                   : previewDimensions.width,
               height:
-                previewDimensions.height === '100%'
-                  ? 'calc(100% - 120px)'
+                previewDimensions.height === &apos;100%&apos;
+                  ? &apos;calc(100% - 120px)&apos;
                   : previewDimensions.height,
               transform: `scale(${previewDimensions.scale})`,
-              transformOrigin: 'center top',
-              maxWidth: '100%',
-              maxHeight: 'calc(100% - 120px)',
+              transformOrigin: &apos;center top&apos;,
+              maxWidth: &apos;100%&apos;,
+              maxHeight: &apos;calc(100% - 120px)',
             }}
           >
             <div className="overflow-y-auto h-full" data-preview-container>

@@ -53,7 +53,7 @@ export function RepositoryList({
                   : 'No description'}
               </p>
               <div className="flex items-center gap-4 mt-2 text-sm text-gray-500">
-                {repo.language !== null && repo.language !== '' && (
+                {repo.language !== null && repo.language !== '&apos; && (
                   <span className="flex items-center gap-1">
                     <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                     {repo.language}

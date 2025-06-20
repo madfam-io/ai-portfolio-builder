@@ -22,7 +22,7 @@ export interface TransactionTrace {
   duration?: number;
   status: 'pending' | 'completed' | 'failed';
   spans: TransactionSpan[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export interface TransactionSpan {
@@ -49,7 +49,7 @@ class APMService {
   /**
    * Start a new transaction
    */
-  startTransaction(name: string, metadata: Record<string, any> = {}): string {
+  startTransaction(name: string, metadata: Record<string, unknown> = {}): string {
     if (!this.isEnabled) return '';
 
     const id = this.generateId();
@@ -293,11 +293,11 @@ export const apm = new APMService();
 /**
  * Middleware wrapper for automatic transaction tracking
  */
-export function withAPMTracking<T extends (...args: any[]) => any>(
+export function withAPMTracking<T extends (...args: unknown[]) => any>(
   handler: T,
   operationName?: string
 ): T {
-  return (async (...args: any[]) => {
+  return (async (...args: unknown[]) => {
     const request = args[0] as NextRequest;
     const transactionName =
       operationName || `${request?.method} ${request?.nextUrl?.pathname}`;
@@ -449,7 +449,7 @@ export const businessMetrics = {
   trackUserAction: (
     action: string,
     userId?: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ) => {
     apm.recordMetric({
       name: 'user_action',
@@ -522,7 +522,7 @@ export function useAPMTracking(componentName: string) {
     apm.endTransaction(transactionId, 'completed');
   };
 
-  const trackEvent = (eventName: string, metadata?: Record<string, any>) => {
+  const trackEvent = (eventName: string, metadata?: Record<string, unknown>) => {
     apm.recordMetric({
       name: 'component_event',
       value: 1,

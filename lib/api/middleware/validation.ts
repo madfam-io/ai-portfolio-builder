@@ -62,7 +62,7 @@ function sanitizeObject(obj: unknown): unknown {
 /**
  * Parse and validate request body
  */
-async function parseBody(request: NextRequest): Promise<any> {
+async function parseBody(request: NextRequest): Promise<unknown> {
   const contentType = request.headers.get('content-type') || '';
 
   try {
@@ -72,7 +72,7 @@ async function parseBody(request: NextRequest): Promise<any> {
 
     if (contentType.includes('multipart/form-data')) {
       const formData = await request.formData();
-      const body: Record<string, any> = {};
+      const body: Record<string, unknown> = {};
 
       formData.forEach((value, key) => {
         if (value instanceof File) {
@@ -94,7 +94,7 @@ async function parseBody(request: NextRequest): Promise<any> {
     if (contentType.includes('application/x-www-form-urlencoded')) {
       const text = await request.text();
       const params = new URLSearchParams(text);
-      const body: Record<string, any> = {};
+      const body: Record<string, unknown> = {};
 
       params.forEach((value, key) => {
         body[key] = value;
@@ -133,7 +133,7 @@ export function validateRequest(options: ValidationOptions) {
       // Validate query parameters
       if (options.query) {
         const { searchParams } = new URL(request.url);
-        const query: Record<string, any> = {};
+        const query: Record<string, unknown> = {};
 
         searchParams.forEach((value, key) => {
           query[key] = value;
@@ -145,17 +145,17 @@ export function validateRequest(options: ValidationOptions) {
       }
 
       // Validate route params
-      if (options.params && (context as any)?.params) {
+      if (options.params && (context as unknown)?.params) {
         const sanitizedParams =
           options.sanitize !== false
-            ? sanitizeObject((context as any).params)
-            : (context as any).params;
+            ? sanitizeObject((context as unknown).params)
+            : (context as unknown).params;
         validated.params = options.params.parse(sanitizedParams);
       }
 
       // Validate headers
       if (options.headers) {
-        const headers: Record<string, any> = {};
+        const headers: Record<string, unknown> = {};
 
         request.headers.forEach((value, key) => {
           headers[key] = value;
@@ -279,7 +279,7 @@ function createValidatedHandler<T extends ValidationOptions>(
       return validationResult;
     }
 
-    return handler(request as any, context);
+    return handler(request as unknown, context);
   };
 }
 

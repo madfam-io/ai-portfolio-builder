@@ -7,7 +7,7 @@ import { logger } from '@/lib/utils/logger';
  */
 export async function withAuth(
   request: NextRequest,
-  handler: (request: NextRequest, user: any) => Promise<NextResponse>
+  handler: (request: NextRequest, user: unknown) => Promise<NextResponse>
 ) {
   const supabase = await createClient();
 

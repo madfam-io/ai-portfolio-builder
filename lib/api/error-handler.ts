@@ -13,7 +13,7 @@ export interface ApiError extends Error {
   statusCode?: number;
   code?: string;
   retryable?: boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 /**
@@ -35,7 +35,7 @@ const ERROR_TYPES = {
 function createApiError(
   message: string,
   type: keyof typeof ERROR_TYPES = 'INTERNAL_ERROR',
-  metadata?: Record<string, any>
+  metadata?: Record<string, unknown>
 ): ApiError {
   const error = new Error(message) as ApiError;
   const errorConfig = ERROR_TYPES[type];
@@ -94,7 +94,7 @@ export function handleApiError(
 
   // Handle Supabase/Database errors
   if (error instanceof Error && 'code' in error) {
-    const dbError = error as any;
+    const dbError = error as unknown;
 
     // Common database error mappings
     switch (dbError.code) {
@@ -147,9 +147,9 @@ export function handleApiError(
  * Async error wrapper for route handlers
  * Automatically catches and handles errors
  */
-function withErrorHandler<T extends (...args: any[]) => any>(
+function withErrorHandler<T extends (...args: unknown[]) => any>(
   handler: T,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): T {
   return (async (...args: Parameters<T>) => {
     try {
@@ -167,7 +167,7 @@ export function isApiError(error: unknown): error is ApiError {
   return (
     error instanceof Error &&
     'statusCode' in error &&
-    typeof (error as any).statusCode === 'number'
+    typeof (error as unknown).statusCode === 'number'
   );
 }
 

@@ -52,7 +52,7 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
 
   // Complete current step with tracking
   const completeCurrentStep = useCallback(
-    async (metadata?: Record<string, any>) => {
+    async (metadata?: Record<string, unknown>) => {
       const currentStep = getCurrentStep();
       if (!currentStep) return;
 
@@ -206,7 +206,7 @@ export function useOnboardingTracking() {
   const { user } = useAuthStore();
 
   const trackEvent = useCallback(
-    async (event: string, properties?: Record<string, any>) => {
+    async (event: string, properties?: Record<string, unknown>) => {
       await track.user.action(
         `onboarding_${event}`,
         user?.id || 'anonymous',

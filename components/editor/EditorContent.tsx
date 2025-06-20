@@ -105,6 +105,65 @@ export function EditorContent() {
     }
   }, [savePortfolio, toast, t, performanceMonitor]);
 
+  const enhanceBio = async () => {
+    if (!currentPortfolio?.bio) return;
+
+    const response = await fetch('/api/v1/ai/enhance-bio', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        bio: currentPortfolio.bio,
+        context: {
+          title: currentPortfolio.title || 'Professional',
+          skills: currentPortfolio.skills?.map(s =>
+            typeof s === 'string' ? s : s.name
+          ) || ['Professional'],
+          experience:
+            currentPortfolio.experience?.map(exp => ({
+              company: exp.company || 'Company',
+              position: exp.position || 'Position',
+              duration: `${exp.startDate || 'Present'} - ${exp.endDate || 'Present'}`,
+            })) || [],
+          industry: currentPortfolio.template || 'professional',
+          tone: 'professional' as const,
+          targetLength: 'concise' as const,
+        },
+      }),
+    });
+
+    if (!response.ok) return;
+    
+    const result = await response.json();
+    if (result.success && result.data?.content) {
+      updatePortfolioData('bio', result.data.content);
+    }
+  };
+
+  const enhanceProjects = async () => {
+    if (!currentPortfolio?.projects?.length) return;
+
+    for (const project of currentPortfolio.projects) {
+      const response = await fetch('/api/v1/ai/optimize-project', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          description: project.description,
+          technologies: project.technologies,
+        }),
+      });
+
+      if (!response.ok) continue;
+      
+      const { optimizedDescription } = await response.json();
+      const updatedProjects = currentPortfolio.projects.map(p =>
+        p.id === project.id
+          ? { ...p, description: optimizedDescription }
+          : p
+      );
+      updatePortfolioData('projects', updatedProjects);
+    }
+  };
+
   const handleAIEnhancement = async () => {
     if (!currentPortfolio) return;
 
@@ -112,62 +171,8 @@ export function EditorContent() {
     performanceMonitor.startTimer('aiProcessing');
 
     try {
-      // Enhance bio if it exists
-      if (currentPortfolio.bio) {
-        const response = await fetch('/api/v1/ai/enhance-bio', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            bio: currentPortfolio.bio,
-            context: {
-              title: currentPortfolio.title || 'Professional',
-              skills: currentPortfolio.skills?.map(s =>
-                typeof s === 'string' ? s : s.name
-              ) || ['Professional'],
-              experience:
-                currentPortfolio.experience?.map(exp => ({
-                  company: exp.company || 'Company',
-                  position: exp.position || 'Position',
-                  duration: `${exp.startDate || 'Present'} - ${exp.endDate || 'Present'}`,
-                })) || [],
-              industry: currentPortfolio.template || 'professional',
-              tone: 'professional' as const,
-              targetLength: 'concise' as const,
-            },
-          }),
-        });
-
-        if (response.ok) {
-          const result = await response.json();
-          if (result.success && result.data?.content) {
-            updatePortfolioData('bio', result.data.content);
-          }
-        }
-      }
-
-      // Enhance projects
-      if (currentPortfolio.projects && currentPortfolio.projects.length > 0) {
-        for (const project of currentPortfolio.projects) {
-          const response = await fetch('/api/v1/ai/optimize-project', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              description: project.description,
-              technologies: project.technologies,
-            }),
-          });
-
-          if (response.ok) {
-            const { optimizedDescription } = await response.json();
-            const updatedProjects = currentPortfolio.projects.map(p =>
-              p.id === project.id
-                ? { ...p, description: optimizedDescription }
-                : p
-            );
-            updatePortfolioData('projects', updatedProjects);
-          }
-        }
-      }
+      await enhanceBio();
+      await enhanceProjects();
 
       performanceMonitor.endTimer('aiProcessing');
 
@@ -297,7 +302,7 @@ export function EditorContent() {
               )}
               {lastSaved && (
                 <span className="text-xs text-muted-foreground">
-                  {t.saved || 'Saved'} {formatTime(lastSaved)}
+                  {t.saved || 'Saved&apos;} {formatTime(lastSaved)}
                 </span>
               )}
             </div>
@@ -308,7 +313,7 @@ export function EditorContent() {
                 variant="ghost"
                 onClick={() => undo()}
                 disabled={!canUndo}
-                title={`${t.undo || 'Undo'} (Cmd/Ctrl+Z)`}
+                title={`${t.undo || &apos;Undo&apos;} (Cmd/Ctrl+Z)`}
               >
                 <Undo className="h-4 w-4" />
               </Button>
@@ -317,7 +322,7 @@ export function EditorContent() {
                 variant="ghost"
                 onClick={() => redo()}
                 disabled={!canRedo}
-                title={`${t.redo || 'Redo'} (Cmd/Ctrl+Shift+Z)`}
+                title={`${t.redo || &apos;Redo&apos;} (Cmd/Ctrl+Shift+Z)`}
               >
                 <Redo className="h-4 w-4" />
               </Button>
@@ -330,7 +335,7 @@ export function EditorContent() {
               size="sm"
               variant="ghost"
               onClick={() => setShowPreview(!showPreview)}
-              title={`${t.togglePreview || 'Toggle Preview'} (Cmd/Ctrl+P)`}
+              title={`${t.togglePreview || &apos;Toggle Preview'} (Cmd/Ctrl+P)`}
               data-tour="preview-toggle"
             >
               {showPreview ? (
@@ -466,7 +471,7 @@ export function EditorContent() {
                 // Track general portfolio update
                 trackPortfolioUpdated(currentPortfolio.id, {
                   section,
-                  update_type: 'manual',
+                  update_type: 'manual&apos;,
                 });
               }
             }}
@@ -476,8 +481,8 @@ export function EditorContent() {
         {/* Preview Area */}
         <div
           className={cn(
-            'border-l transition-all duration-300',
-            showPreview ? 'flex-1' : 'w-0 overflow-hidden'
+            &apos;border-l transition-all duration-300&apos;,
+            showPreview ? &apos;flex-1&apos; : 'w-0 overflow-hidden'
           )}
         >
           <EditorPreview

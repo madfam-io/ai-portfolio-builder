@@ -7,7 +7,7 @@ import type { SeedingOptions } from '@/lib/database/seeder';
 export function generatePullRequests(
   repositoryId: string,
   count: number
-): any[] {
+): unknown[] {
   const states = ['open', 'closed', 'merged'];
   const titles = [
     'Add new feature for user authentication',
@@ -93,7 +93,7 @@ export function generatePullRequests(
  * Seed pull requests table
  */
 export async function seedPullRequests(
-  client: any,
+  client: unknown,
   options: SeedingOptions
 ): Promise<number> {
   logger.info('Seeding pull requests...');

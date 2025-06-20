@@ -291,7 +291,7 @@ export function ContactSection({
             {t.socialLinks || 'Social Links'}
           </CardTitle>
           <CardDescription>
-            {t.socialLinksDescription || 'Connect your social media profiles'}
+            {t.socialLinksDescription || 'Connect your social media profiles&apos;}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -309,7 +309,7 @@ export function ContactSection({
                 <Input
                   id={platform.key}
                   type="url"
-                  value={(social[platform.key] as string) || ''}
+                  value={(social[platform.key] as string) || &apos;'}
                   onChange={e =>
                     handleSocialChange(platform.key, e.target.value)
                   }

@@ -42,7 +42,7 @@ function getRating(
 /**
  * Report web vitals to analytics
  */
-export function reportWebVitals(metric: any): void {
+export function reportWebVitals(metric: unknown): void {
   const { name, value, id } = metric;
 
   const performanceMetric: PerformanceMetric = {
@@ -334,6 +334,6 @@ function useRenderTracking(componentName: string): void {
 // Import for Next.js types
 declare global {
   interface Window {
-    gtag?: (...args: any[]) => void;
+    gtag?: (...args: unknown[]) => void;
   }
 }

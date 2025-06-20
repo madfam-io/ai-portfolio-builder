@@ -381,7 +381,7 @@ export function ConsultantTemplate({ portfolio }: ConsultantTemplateProps) {
         <div className="max-w-4xl mx-auto px-6 text-center">
           <h2 className="text-4xl font-bold mb-6">Ready to Drive Results?</h2>
           <p className="text-xl text-green-100 mb-12 max-w-2xl mx-auto">
-            Let&apos;s discuss how strategic consulting can accelerate your
+            Let's discuss how strategic consulting can accelerate your
             business growth and operational excellence.
           </p>
 

@@ -198,7 +198,7 @@ export class DeepSeekService implements AIService {
   /**
    * Update usage statistics after successful API call
    */
-  private updateUsageStats(response: any, responseTime: number): void {
+  private updateUsageStats(response: unknown, responseTime: number): void {
     this.usageStats.successfulRequests++;
     this.usageStats.totalResponseTime += responseTime;
     this.usageStats.costToday += this.calculateCost(

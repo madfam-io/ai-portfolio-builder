@@ -209,7 +209,7 @@ export function EditorSidebar({
               <button
                 onClick={() => toggleSection(section)}
                 className={`w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 transition-colors ${
-                  isActive ? 'bg-blue-50 border-r-2 border-blue-500' : ''
+                  isActive ? 'bg-blue-50 border-r-2 border-blue-500' : &apos;'
                 }`}
               >
                 <div className="flex items-center space-x-3">

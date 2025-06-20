@@ -54,7 +54,7 @@ export const createSpan = (
   name: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Record<string, unknown>;
   }
 ): Span | undefined => {
   if (!isOtelEnabled()) return undefined;
@@ -75,17 +75,17 @@ export const createSpan = (
 /**
  * Wrap a function with OpenTelemetry tracing
  */
-export function withTracing<T extends (...args: any[]) => any>(
+export function withTracing<T extends (...args: unknown[]) => any>(
   fn: T,
   spanName: string,
   options?: {
     kind?: SpanKind;
-    attributes?: Record<string, any>;
+    attributes?: Record<string, unknown>;
   }
 ): T {
   if (!isOtelEnabled()) return fn;
 
-  return (async (...args: any[]) => {
+  return (async (...args: unknown[]) => {
     const span = createSpan(spanName, options);
     if (!span) return fn(...args);
 
@@ -126,7 +126,7 @@ export function withTracing<T extends (...args: any[]) => any>(
  */
 export const recordError = (
   error: Error,
-  attributes?: Record<string, any>
+  attributes?: Record<string, unknown>
 ): void => {
   const span = getCurrentSpan();
   if (!span) return;
@@ -144,7 +144,7 @@ export const recordError = (
 /**
  * Add attributes to the current span
  */
-export const addSpanAttributes = (attributes: Record<string, any>): void => {
+export const addSpanAttributes = (attributes: Record<string, unknown>): void => {
   const span = getCurrentSpan();
   if (!span) return;
 
@@ -156,12 +156,12 @@ export const addSpanAttributes = (attributes: Record<string, any>): void => {
  */
 export const createChildSpan = (
   name: string,
-  fn: (span: Span) => Promise<any>
-): Promise<any> => {
-  if (!isOtelEnabled()) return fn(undefined as any);
+  fn: (span: Span) => Promise<unknown>
+): Promise<unknown> => {
+  if (!isOtelEnabled()) return fn(undefined as unknown);
 
   const span = createSpan(name);
-  if (!span) return fn(undefined as any);
+  if (!span) return fn(undefined as unknown);
 
   return context.with(trace.setSpan(context.active(), span), async () => {
     try {

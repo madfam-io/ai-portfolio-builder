@@ -93,7 +93,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                         </li>
                       `
                         )
-                        .join('')}
+                        .join('&apos;)}
                     </ul>
                   `
                       : ''
@@ -101,7 +101,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('')}
+                .join('&apos;)}
             </div>
           </div>
         </section>
@@ -141,7 +141,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                           <span class="px-3 py-1 bg-emerald-100 text-emerald-700 text-sm rounded-full">${tech}</span>
                         `
                           )
-                          .join('')}
+                          .join('&apos;)}
                       </div>
                     `
                         : ''
@@ -154,7 +154,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('')}
+                .join('&apos;)}
             </div>
           </div>
         </section>
@@ -191,7 +191,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('')}
+                .join('&apos;)}
             </div>
           </div>
         </section>
@@ -224,7 +224,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('')}
+                .join('&apos;)}
             </div>
           </div>
         </section>

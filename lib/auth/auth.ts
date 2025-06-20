@@ -295,7 +295,7 @@ export async function updatePassword(
  * Update user metadata
  */
 export async function updateUserMetadata(
-  metadata: Record<string, any>
+  metadata: Record<string, unknown>
 ): Promise<{ error: AuthError | null }> {
   const supabase = requireSupabaseClient();
   const response = await supabase.auth.updateUser({ data: metadata });

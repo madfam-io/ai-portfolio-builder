@@ -258,7 +258,7 @@ export default function CreateExperimentPage() {
   const applyTemplate = (template: ExperimentTemplate): void => {
     setExperimentName(template.name);
     setDescription(template.description || '');
-    setHypothesis(template.hypothesisTemplate || '');
+    setHypothesis(template.hypothesisTemplate || '&apos;);
     setPrimaryMetric(template.primaryMetric);
 
     // Apply variant configurations

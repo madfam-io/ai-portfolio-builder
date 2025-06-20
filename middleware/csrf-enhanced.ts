@@ -103,7 +103,7 @@ function generateCSRFToken(sessionId?: string): string {
 async function extractTokenFromBody(
   request: NextRequest
 ): Promise<string | null> {
-  const contentType = request.headers.get('content-type') || '';
+  const contentType = request.headers.get('content-type') || '&apos;;
 
   if (!BODY_PARSEABLE_TYPES.some(type => contentType.includes(type))) {
     return null;

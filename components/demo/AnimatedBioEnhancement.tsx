@@ -15,7 +15,7 @@ export function AnimatedBioEnhancement({
 }: AnimatedBioEnhancementProps): React.ReactElement {
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [enhancedBio, setEnhancedBio] = useState('');
-  const [displayText, setDisplayText] = useState('');
+  const [displayText, setDisplayText] = useState('&apos;);
   const [qualityScore, setQualityScore] = useState(65);
   const [targetScore, setTargetScore] = useState(65);
   const [extractedKeywords, setExtractedKeywords] = useState<string[]>([]);

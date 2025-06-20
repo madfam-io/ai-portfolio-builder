@@ -246,7 +246,7 @@ function createPermissionContext(user: User): PermissionContext {
     subscriptionPlan: user.customerProfile?.subscriptionPlan,
     canAccess: (permission: AdminPermission) => hasPermission(user, permission),
     canAccessFeature: (feature: string) =>
-      canAccessFeature(user, feature as any),
+      canAccessFeature(user, feature as unknown),
     switchToAdminMode: () => {
       // This would be implemented in the auth service
       throw new Error('switchToAdminMode must be implemented by auth service');

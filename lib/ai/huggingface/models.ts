@@ -128,7 +128,7 @@ class ModelManager {
    */
   getRecommendedModel(taskType: string): string {
     const recommended = this.availableModels
-      .filter(m => m.capabilities.includes(taskType as any) && m.isRecommended)
+      .filter(m => m.capabilities.includes(taskType as unknown) && m.isRecommended)
       .sort(
         (a, b) =>
           b.qualityRating / b.costPerRequest -
@@ -154,7 +154,7 @@ class ModelManager {
    */
   modelSupportsCapability(modelId: string, capability: string): boolean {
     const model = this.getModelInfo(modelId);
-    return model ? model.capabilities.includes(capability as any) : false;
+    return model ? model.capabilities.includes(capability as unknown) : false;
   }
 
   /**
@@ -162,7 +162,7 @@ class ModelManager {
    */
   getModelsForCapability(capability: string): AvailableModel[] {
     return this.availableModels.filter(m =>
-      m.capabilities.includes(capability as any)
+      m.capabilities.includes(capability as unknown)
     );
   }
 

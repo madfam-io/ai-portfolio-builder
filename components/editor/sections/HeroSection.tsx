@@ -25,14 +25,14 @@ interface HeroSectionProps {
       website?: string;
     };
   };
-  onUpdate: (updates: any) => void;
+  onUpdate: (updates: unknown) => void;
 }
 
 export function HeroSection({ data = {}, onUpdate }: HeroSectionProps) {
   const { t } = useLanguage();
   const { currentPortfolio } = usePortfolioStore();
 
-  const handleFieldUpdate = (field: string, value: any) => {
+  const handleFieldUpdate = (field: string, value: unknown) => {
     if (field.includes('.')) {
       // Handle nested fields like social.twitter
       const parts = field.split('.');
@@ -78,7 +78,7 @@ export function HeroSection({ data = {}, onUpdate }: HeroSectionProps) {
                 value={data.avatarUrl}
                 onChange={url => handleFieldUpdate('avatarUrl', url)}
                 type="avatar"
-                portfolioId={currentPortfolio?.id || ''}
+                portfolioId={currentPortfolio?.id || '&apos;}
                 aspectRatio="square"
                 className="mt-2 w-32 h-32"
               />

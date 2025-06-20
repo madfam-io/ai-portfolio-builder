@@ -49,7 +49,7 @@ export const traceHttpRequest = async <T>(
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (error) {
-      const statusCode = (error as any)?.response?.status || 500;
+      const statusCode = (error as unknown)?.response?.status || 500;
 
       span.setAttributes({
         [SemanticAttributes.HTTP_STATUS_CODE]: statusCode,
@@ -97,7 +97,7 @@ export const traceDatabaseOperation = async <T>(
       const duration = Date.now() - startTime;
 
       span.setAttributes({
-        'db.rows_affected': (result as any)?.rowCount || 0,
+        'db.rows_affected': (result as unknown)?.rowCount || 0,
         'db.duration_ms': duration,
       });
 
@@ -145,7 +145,7 @@ export const traceAIOperation = async <T>(
       const duration = Date.now() - startTime;
 
       // Extract token count if available
-      const tokenCount = (result as any)?.usage?.total_tokens || 0;
+      const tokenCount = (result as unknown)?.usage?.total_tokens || 0;
 
       span.setAttributes({
         'ai.duration_ms': duration,
@@ -252,7 +252,7 @@ export const traceStripeOperation = async <T>(
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (error) {
-      const stripeError = error as any;
+      const stripeError = error as unknown;
 
       span.setAttributes({
         'stripe.error_type': stripeError?.type,
@@ -309,7 +309,7 @@ export const traceAPIRoute = async <T>(
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (error) {
-      const statusCode = (error as any)?.statusCode || 500;
+      const statusCode = (error as unknown)?.statusCode || 500;
 
       span.setAttributes({
         [SemanticAttributes.HTTP_STATUS_CODE]: statusCode,

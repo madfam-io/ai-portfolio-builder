@@ -85,7 +85,7 @@ export class RepositoryResource {
       logger.info('Webhook created successfully', { owner, repo });
     } catch (error: unknown) {
       // Ignore if webhook already exists
-      if ((error as any).status !== 422) {
+      if ((error as unknown).status !== 422) {
         logger.error('Failed to create webhook', { owner, repo, error });
         throw error;
       }
