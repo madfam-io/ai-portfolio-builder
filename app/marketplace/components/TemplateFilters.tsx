@@ -74,7 +74,7 @@ export function TemplateFilters({ filters, onChange }: TemplateFiltersProps) {
 
   const clearFilters = () => {
     onChange({
-      sortBy: 'popular&apos;,
+      sortBy: 'popular',
     });
   };
 

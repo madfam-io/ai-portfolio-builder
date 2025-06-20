@@ -172,7 +172,7 @@ export function BlockRenderer({
                         {block.data.displayType === 'bars' && (
                           <Progress value={skill.level} className="h-2" />
                         )}
-                        {block.data.displayType === 'tags&apos; && (
+                        {block.data.displayType === 'tags' && (
                           <Badge variant="secondary">{skill.name}</Badge>
                         )}
                       </div>
@@ -195,7 +195,7 @@ export function BlockRenderer({
         </h2>
         <div
           className={`grid gap-6 ${
-            block.data.layout === &apos;grid&apos;
+            block.data.layout === 'grid'
               ? `md:grid-cols-${block.data.columns || 3}`
               : ''
           }`}

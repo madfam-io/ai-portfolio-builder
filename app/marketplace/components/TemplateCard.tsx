@@ -60,7 +60,7 @@ export function TemplateCard({
     const symbols = {
       USD: '$',
       MXN: '$',
-      EUR: '€&apos;,
+      EUR: '€',
     };
     return `${symbols[currency]}${price.toFixed(2)} ${currency}`;
   };
@@ -139,7 +139,7 @@ export function TemplateCard({
   return (
     <Card
       className={cn(
-        &apos;overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group&apos;,
+        'overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer group',
         featured && 'ring-2 ring-primary'
       )}
       onClick={onClick}
