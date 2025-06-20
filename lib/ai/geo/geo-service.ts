@@ -11,6 +11,7 @@ import { HuggingFaceService } from '../huggingface-service';
 import { GEOEnhancementRequest, GEOEnhancementResponse } from '../types';
 
 import { ContentOptimizer } from './content-optimizer';
+import { OptimizeContentRequest } from './types';
 import { KeywordAnalyzer } from './keyword-analyzer';
 import { MetadataGenerator } from './metadata-generator';
 import { GEOPromptBuilder } from './prompts';
@@ -70,8 +71,8 @@ export class GEOService {
       const optimizationRequest = {
         content: request.content,
         contentType: request.contentType,
-        settings: geoSettings as unknown,
-      } as unknown;
+        settings: geoSettings,
+      } as OptimizeContentRequest;
 
       const optimized =
         await this.contentOptimizer.optimizeContent(optimizationRequest);
@@ -82,12 +83,12 @@ export class GEOService {
       if (request.contentType === 'bio') {
         enhancedContent = await this.enhanceBioWithGEO(
           request.content,
-          geoSettings as unknown
+          geoSettings
         );
       } else if (request.contentType === 'project') {
         enhancedContent = await this.enhanceProjectWithGEO(
           request.content,
-          geoSettings as unknown
+          geoSettings
         );
       }
 

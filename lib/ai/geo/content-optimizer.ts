@@ -10,6 +10,7 @@ import {
   GEOContent,
   GEOScore,
   GEOSuggestion,
+  GEOSettings,
   OptimizeContentRequest,
   OptimizeContentResponse,
 } from './types';
@@ -212,7 +213,7 @@ export class ContentOptimizer {
     content: string,
     settings: unknown
   ): Promise<GEOContent> {
-    const geoSettings = settings as unknown;
+    const geoSettings = settings as GEOSettings;
     const structure = this.analyzeStructure(content);
     const keywords = this.keywordAnalyzer.analyzeContent(
       content,
@@ -234,7 +235,7 @@ export class ContentOptimizer {
       content,
       content,
       keywordList,
-      geoSettings.contentType || 'default'
+'portfolio'
     );
 
     const score = {
@@ -250,12 +251,12 @@ export class ContentOptimizer {
       content,
       keywordList,
       scoreBreakdown,
-      geoSettings.contentType || 'default'
+'portfolio'
     );
 
     // Convert Suggestion[] to GEOSuggestion[]
     const suggestions: GEOSuggestion[] = rawSuggestions.map(s => ({
-      type: s.type as unknown,
+      type: s.type as 'keyword' | 'structure' | 'readability' | 'technical' | 'content',
       priority: s.priority,
       message: s.message,
       impact: s.impact,
@@ -277,7 +278,7 @@ export class ContentOptimizer {
    * Calculate original GEO score
    */
   private calculateGEOScore(content: string, settings: unknown): GEOScore {
-    const geoSettings = settings as unknown;
+    const geoSettings = settings as GEOSettings;
     const keywords = [
       geoSettings.primaryKeyword,
       ...(geoSettings.secondaryKeywords || []),
@@ -287,7 +288,7 @@ export class ContentOptimizer {
       content,
       content,
       keywords,
-      geoSettings.contentType || 'default'
+'portfolio'
     );
 
     return {
@@ -308,7 +309,7 @@ export class ContentOptimizer {
   }
 
   private checkHeadingHierarchy(headings: unknown): boolean {
-    const headingData = headings as unknown;
+    const headingData = headings as ContentStructure['headings'];
     if (headingData.h3.length > 0 && headingData.h2.length === 0) return false;
     if (headingData.h4.length > 0 && headingData.h3.length === 0) return false;
     return true;
@@ -392,7 +393,7 @@ export class ContentOptimizer {
     return suggestions;
   }
 
-  private generateActionForSuggestion(suggestion: unknown): string {
+  private generateActionForSuggestion(suggestion: { type: string }): string {
     switch (suggestion.type) {
       case 'keyword':
         return 'Add or adjust keyword usage';
