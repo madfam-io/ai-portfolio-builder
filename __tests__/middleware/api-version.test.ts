@@ -96,7 +96,7 @@ describe('API Version Middleware', () => {
       // Add a deprecated version for testing
       API_VERSION_CONFIG.deprecatedVersions.set('v0', {
         deprecatedAt: new Date('2025-01-01'),
-        sunsetDate: new Date('2025-06-01'),
+        sunsetDate: new Date('2025-06-01T00:00:00.000Z'),
         message: 'API v0 is deprecated. Please upgrade to v1.',
       });
       API_VERSION_CONFIG.supportedVersions = ['v0', 'v1'];
@@ -122,7 +122,7 @@ describe('API Version Middleware', () => {
           'API v0 is deprecated. Please upgrade to v1.'
         );
         expect(info?.deprecatedAt).toEqual(new Date('2025-01-01'));
-        expect(info?.sunsetDate).toEqual(new Date('2025-06-01'));
+        expect(info?.sunsetDate).toEqual(new Date('2025-06-01T00:00:00.000Z'));
       });
 
       it('should return undefined for non-deprecated versions', async () => {
@@ -472,7 +472,7 @@ describe('API Version Middleware', () => {
       // Add a deprecated version
       API_VERSION_CONFIG.deprecatedVersions.set('v0', {
         deprecatedAt: new Date('2025-01-01'),
-        sunsetDate: new Date('2025-06-01'),
+        sunsetDate: new Date('2025-06-01T00:00:00.000Z'),
         message: 'Deprecated',
       });
       API_VERSION_CONFIG.supportedVersions = ['v0', 'v1'];

@@ -35,7 +35,6 @@ jest.mock('zustand', () => ({
   }),
 }));
 
-jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
     const api = (() => {
       let state = createState(
@@ -121,8 +120,7 @@ create: jest.fn((createState) => {
     })();
     return Object.assign(() => api, api);
   }),
-}))
-
+}));
   describe('Initial State', () => {
   beforeEach(() => {
     jest.spyOn(console, 'log').mockImplementation(() => undefined);

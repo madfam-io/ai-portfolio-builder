@@ -80,7 +80,7 @@ export type SubscriptionPlan = keyof typeof SUBSCRIPTION_PLANS;
 /**
  * Stripe client initialization
  */
-class StripeService {
+export class StripeService {
   private stripe: Stripe | null = null;
   private initialized = false;
 

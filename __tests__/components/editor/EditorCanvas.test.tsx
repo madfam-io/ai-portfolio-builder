@@ -1,128 +1,78 @@
-import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import { EditorCanvas } from '@/components/editor/EditorCanvas';
-import { useLanguage } from '@/lib/i18n/refactored-context';
-import { Portfolio } from '@/types/portfolio';
-/**
- * @jest-environment jsdom
- */
 
-// Mock i18n
-jest.mock('@/lib/i18n/refactored-context', () => ({ 
-  useLanguage: mockUseLanguage,
- }));
+// Mock the language hook
+const mockUseLanguage = jest.fn();
+jest.mock('@/lib/i18n/refactored-context', () => ({
+  useLanguage: () => mockUseLanguage(),
+}));
 
-// Mock dependencies
-
-// Mock useLanguage hook
-  useLanguage: () => ({
-    language: 'en',
-    setLanguage: jest.fn(),
-    t: {
-      welcomeMessage: 'Welcome',
-      heroTitle: 'Create Your Portfolio',
-      getStarted: 'Get Started',
-      save: 'Save',
-      cancel: 'Cancel',
-      loading: 'Loading...',
-      error: 'Error',
-      success: 'Success',
-      enhanceWithAI: 'Enhance with AI',
-      publish: 'Publish',
-      preview: 'Preview',
-      // Add more translations as needed
+// Mock data
+const mockPortfolio = {
+  id: 'test-portfolio',
+  name: 'Test Portfolio',
+  template: 'modern',
+  status: 'draft' as const,
+  title: 'Software Developer',
+  tagline: 'Building amazing web applications',
+  bio: 'Experienced developer with passion for creating user-friendly applications.',
+  projects: [
+    {
+      id: 'project-1',
+      title: 'E-commerce Platform',
+      description: 'Full-stack e-commerce application with React and Node.js',
+      technologies: ['React', 'Node.js', 'PostgreSQL'],
+      link: 'https://example.com',
     },
-  }),
-  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+  ],
+  settings: {},
+  content: {},
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
 
-  useLanguage: jest.fn(),
-}));
-
-jest.mock('@/lib/utils', () => ({ 
-  cn: (...classes: any[]) => classes.filter(Boolean).join(' '),
- }));
-
-const mockUseLanguage = useLanguage as jest.MockedFunction<typeof useLanguage>;
+const mockOnDataChange = jest.fn();
 
 describe('EditorCanvas', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.spyOn(console, 'log').mockImplementation(() => undefined);
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-  });
 
-  const mockPortfolio: Portfolio = {
-    id: 'portfolio-123',
-    userId: 'user-123',
-    name: 'Test Portfolio',
-    title: 'Software Developer',
-    tagline: 'Building amazing web applications',
-    bio: 'Experienced developer with passion for creating user-friendly applications.',
-    contact: { email: 'test@example.com' },
-    social: {},
-    experience: [],
-    education: [],
-    projects: [
-      {
-        id: 'project-1',
-        title: 'E-commerce Platform',
-        description:
-          'Full-stack e-commerce application built with React and Node.js',
-        technologies: ['React', 'Node.js', 'MongoDB'],
-        link: 'https://github.com/user/ecommerce',
+    mockUseLanguage.mockReturnValue({
+      t: {
+        editingPortfolio: 'Editing Portfolio',
+        heroSection: 'Hero Section',
+        aboutSection: 'About Section',
+        projects: 'Projects',
+        addProject: '+ Add Project',
+        enterHeadline: 'Enter your headline',
+        shortTagline: 'A short, memorable tagline',
+        tellAboutYourself: 'Tell us about yourself...',
+        addNewProject: 'Add New Project',
+        enterProjectTitle: 'Enter project title',
+        describeProject: 'Describe your project...',
+        projectUrl: 'https://...',
+        cancel: 'Cancel',
+        headline: 'Headline',
+        tagline: 'Tagline',
+        aboutMe: 'About Me',
       },
-    ],
-    skills: [],
-    certifications: [],
-    template: 'developer',
-    customization: {},
-    status: 'draft',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  const mockOnDataChange = jest.fn();
-
-  const mockTranslations = {
-    editingPortfolio: 'Editing Portfolio',
-    heroSection: 'Hero Section',
-    headline: 'Headline',
-    enterHeadline: 'Enter your headline',
-    tagline: 'Tagline',
-    enterTagline: 'A short, memorable tagline',
-    aboutSection: 'About Section',
-    aboutMe: 'About Me',
-    tellAboutYourself: 'Tell us about yourself...',
-    projectsSection: 'Projects',
-    addProject: '+ Add Project',
-    addNewProject: 'Add New Project',
-    projectTitle: 'Project Title',
-    enterProjectTitle: 'Enter project title',
-    projectDescription: 'Description',
-    describeProject: 'Describe your project...',
-    projectLink: 'Project Link (optional)',
-    cancel: 'Cancel',
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (mockUseLanguage as any).mockImplementation(() => ({
-      t: mockTranslations,
     });
   });
 
   const renderEditorCanvas = (portfolio = mockPortfolio) => {
     return render(
       <EditorCanvas portfolio={portfolio} onDataChange={mockOnDataChange} />
-
+    );
   };
 
   describe('Initial Rendering', () => {
-    it('should render the main editor canvas', async () => {
+    it('should render the main editor canvas', () => {
       renderEditorCanvas();
 
       expect(
@@ -133,27 +83,29 @@ describe('EditorCanvas', () => {
       expect(screen.getByText('Projects')).toBeInTheDocument();
     });
 
-    it('should render hero section fields with current values', async () => {
+    it('should render hero section fields with current values', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
       const taglineInput = screen.getByDisplayValue(
         'Building amazing web applications'
+      );
 
       expect(headlineInput).toBeInTheDocument();
       expect(taglineInput).toBeInTheDocument();
     });
 
-    it('should render about section with bio content', async () => {
+    it('should render about section with bio content', () => {
       renderEditorCanvas();
 
       const bioTextarea = screen.getByDisplayValue(
         'Experienced developer with passion for creating user-friendly applications.'
+      );
 
       expect(bioTextarea).toBeInTheDocument();
     });
 
-    it('should render existing projects', async () => {
+    it('should render existing projects', () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
@@ -162,7 +114,7 @@ describe('EditorCanvas', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render add project button', async () => {
+    it('should render add project button', () => {
       renderEditorCanvas();
 
       expect(screen.getByText('+ Add Project')).toBeInTheDocument();
@@ -179,12 +131,9 @@ describe('EditorCanvas', () => {
       await user.clear(headlineInput);
       await user.type(headlineInput, 'Full Stack Developer');
 
-      // userEvent types character by character, so we need to check if it was called with the final value
-      expect(mockOnDataChange).toHaveBeenCalledWith(
-      {
+      expect(mockOnDataChange).toHaveBeenCalledWith({
         title: 'Full Stack Developer',
-    });
-  });
+      });
     });
 
     it('should update tagline when input changes', async () => {
@@ -193,6 +142,7 @@ describe('EditorCanvas', () => {
 
       const taglineInput = screen.getByDisplayValue(
         'Building amazing web applications'
+      );
 
       await user.clear(taglineInput);
       await user.type(taglineInput, 'Creating innovative solutions');
@@ -210,11 +160,9 @@ describe('EditorCanvas', () => {
 
       await user.clear(headlineInput);
 
-      expect(mockOnDataChange).toHaveBeenCalledWith(
-      {
+      expect(mockOnDataChange).toHaveBeenCalledWith({
         title: '',
-    });
-  });
+      });
     });
   });
 
@@ -249,7 +197,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Projects Section', () => {
-    it('should display existing projects correctly', async () => {
+    it('should display existing projects correctly', () => {
       renderEditorCanvas();
 
       expect(screen.getByText('E-commerce Platform')).toBeInTheDocument();
@@ -289,7 +237,7 @@ describe('EditorCanvas', () => {
       expect(screen.queryByText('Add New Project')).not.toBeInTheDocument();
     });
 
-    it('should handle portfolio with no projects', async () => {
+    it('should handle portfolio with no projects', () => {
       const emptyPortfolio = { ...mockPortfolio, projects: [] };
       renderEditorCanvas(emptyPortfolio);
 
@@ -307,7 +255,7 @@ describe('EditorCanvas', () => {
       await user.click(addButton);
     });
 
-    it('should render all project form fields', async () => {
+    it('should render all project form fields', () => {
       expect(
         screen.getByPlaceholderText('Enter project title')
       ).toBeInTheDocument();
@@ -331,12 +279,13 @@ describe('EditorCanvas', () => {
 
       const descriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
+      );
 
       await user.type(descriptionTextarea, 'This is a new project description');
 
       expect(descriptionTextarea).toHaveValue(
         'This is a new project description'
-
+      );
     });
 
     it('should update project link input', async () => {
@@ -348,7 +297,7 @@ describe('EditorCanvas', () => {
       expect(linkInput).toHaveValue('https://github.com/user/project');
     });
 
-    it('should disable add button when required fields are empty', async () => {
+    it('should disable add button when required fields are empty', () => {
       const addButton = screen.getByRole('button', { name: /Add Project/ });
       expect(addButton).toBeDisabled();
     });
@@ -359,6 +308,7 @@ describe('EditorCanvas', () => {
       const titleInput = screen.getByPlaceholderText('Enter project title');
       const descriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
+      );
 
       await user.type(titleInput, 'Test Project');
       await user.type(descriptionTextarea, 'Test Description');
@@ -373,7 +323,7 @@ describe('EditorCanvas', () => {
       const titleInput = screen.getByPlaceholderText('Enter project title');
       const descriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
-
+      );
       const linkInput = screen.getByPlaceholderText('https://...');
 
       await user.type(titleInput, 'New Test Project');
@@ -403,6 +353,7 @@ describe('EditorCanvas', () => {
       const titleInput = screen.getByPlaceholderText('Enter project title');
       const descriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
+      );
 
       await user.type(titleInput, 'New Project');
       await user.type(descriptionTextarea, 'Description');
@@ -420,6 +371,7 @@ describe('EditorCanvas', () => {
       const titleInput = screen.getByPlaceholderText('Enter project title');
       const descriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
+      );
 
       await user.type(titleInput, 'Project 1');
       await user.type(descriptionTextarea, 'Description 1');
@@ -435,6 +387,7 @@ describe('EditorCanvas', () => {
       const newTitleInput = screen.getByPlaceholderText('Enter project title');
       const newDescriptionTextarea = screen.getByPlaceholderText(
         'Describe your project...'
+      );
 
       expect(newTitleInput).toHaveValue('');
       expect(newDescriptionTextarea).toHaveValue('');
@@ -442,7 +395,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper form labels', async () => {
+    it('should have proper form labels', () => {
       renderEditorCanvas();
 
       expect(screen.getByLabelText('Headline')).toBeInTheDocument();
@@ -464,12 +417,13 @@ describe('EditorCanvas', () => {
       expect(modal).toBeInTheDocument();
     });
 
-    it('should support keyboard navigation', async () => {
+    it('should support keyboard navigation', () => {
       renderEditorCanvas();
 
       const headlineInput = screen.getByDisplayValue('Software Developer');
       const taglineInput = screen.getByDisplayValue(
         'Building amazing web applications'
+      );
 
       // Tab navigation
       headlineInput.focus();
@@ -480,7 +434,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle portfolio with missing optional fields', async () => {
+    it('should handle portfolio with missing optional fields', () => {
       const minimalPortfolio = {
         ...mockPortfolio,
         title: '',
@@ -491,9 +445,7 @@ describe('EditorCanvas', () => {
 
       renderEditorCanvas(minimalPortfolio);
 
-      expect(screen.getByPlaceholderText('Enter your headline')).toHaveValue(
-        ''
-
+      expect(screen.getByPlaceholderText('Enter your headline')).toHaveValue('');
       expect(
         screen.getByPlaceholderText('A short, memorable tagline')
       ).toHaveValue('');
@@ -551,7 +503,7 @@ describe('EditorCanvas', () => {
   });
 
   describe('Internationalization', () => {
-    it('should use translated text from language hook', async () => {
+    it('should use translated text from language hook', () => {
       renderEditorCanvas();
 
       expect(
@@ -564,10 +516,10 @@ describe('EditorCanvas', () => {
       ).toBeInTheDocument();
     });
 
-    it('should fallback gracefully when translations are missing', async () => {
-      (mockUseLanguage as any).mockImplementation(() => ({
+    it('should fallback gracefully when translations are missing', () => {
+      mockUseLanguage.mockImplementation(() => ({
         t: {},
-      } as any);
+      }));
 
       renderEditorCanvas();
 

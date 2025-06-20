@@ -1,37 +1,34 @@
-import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useToast } from '@/hooks/use-toast';
-import { useUIStore } from '@/lib/store/ui-store';
 
 // Mock UI store for showToast functionality
+const mockShowToast = jest.fn().mockReturnValue(void 0);
+const mockUIStore = {
+  showToast: mockShowToast,
+  isLoading: false,
+  setLoading: jest.fn(),
+  theme: 'light' as const,
+  setTheme: jest.fn(),
+};
+
 jest.mock('@/lib/store/ui-store', () => ({
-  useUIStore: jest.fn(),
+  useUIStore: jest.fn(() => mockUIStore),
 }));
 
 describe('useToast', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     jest.spyOn(console, 'log').mockImplementation(() => undefined);
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    mockShowToast.mockClear();
   });
 
-  const mockShowToast = jest.fn().mockReturnValue(void 0);
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (useUIStore as any).mockReturnValue({
-      showToast: mockShowToast,
-      isLoading: false,
-      setLoading: jest.fn(),
-      theme: 'light',
-      setTheme: jest.fn(),
-    });
-  });
-
-  it('should call showToast with correct parameters for default toast', async () => {
+  it('should call showToast with correct parameters for default toast', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Success!',
         description: 'Operation completed successfully',
@@ -46,10 +43,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should call showToast with error type for destructive variant', async () => {
+  it('should call showToast with error type for destructive variant', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Error!',
         description: 'Something went wrong',
@@ -65,10 +62,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should use custom duration when provided', async () => {
+  it('should use custom duration when provided', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Custom duration',
         duration: 10000,
@@ -83,10 +80,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should handle toast without description', async () => {
+  it('should handle toast without description', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Simple notification',
       });
@@ -100,7 +97,7 @@ describe('useToast', () => {
     });
   });
 
-  it('should maintain stable toast function reference', async () => {
+  it('should maintain stable toast function reference', () => {
     const { result, rerender } = renderHook(() => useToast());
 
     const firstToast = result.current.toast;
@@ -111,10 +108,10 @@ describe('useToast', () => {
     expect(result.current.toast).toBe(firstToast);
   });
 
-  it('should handle variant default explicitly', async () => {
+  it('should handle variant default explicitly', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Default variant',
         variant: 'default',
@@ -129,10 +126,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should work with all options combined', async () => {
+  it('should work with all options combined', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Complete toast',
         description: 'With all options',
@@ -149,10 +146,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should handle multiple toast calls', async () => {
+  it('should handle multiple toast calls', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({ title: 'First toast' });
       result.current.toast({ title: 'Second toast' });
       result.current.toast({ title: 'Third toast' });
@@ -179,20 +176,14 @@ describe('useToast', () => {
     });
   });
 
-  it('should update toast function when showToast changes', async () => {
+  it('should update toast function when showToast changes', () => {
     const { result, rerender } = renderHook(() => useToast());
 
     const firstToast = result.current.toast;
 
     // Change the mock implementation
     const newMockShowToast = jest.fn().mockReturnValue(void 0);
-    (useUIStore as any).mockReturnValue({
-      showToast: newMockShowToast,
-      isLoading: false,
-      setLoading: jest.fn(),
-      theme: 'light',
-      setTheme: jest.fn(),
-    });
+    mockUIStore.showToast = newMockShowToast;
 
     // Re-render the hook
     rerender();
@@ -201,7 +192,7 @@ describe('useToast', () => {
     expect(result.current.toast).not.toBe(firstToast);
 
     // New function should use new showToast
-    await act(async () => {
+    act(() => {
       result.current.toast({ title: 'New toast' });
     });
 
@@ -211,10 +202,10 @@ describe('useToast', () => {
     );
   });
 
-  it('should handle empty title gracefully', async () => {
+  it('should handle empty title gracefully', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: '',
         description: 'Description without title',
@@ -229,13 +220,13 @@ describe('useToast', () => {
     });
   });
 
-  it('should handle very long messages', async () => {
+  it('should handle very long messages', () => {
     const { result } = renderHook(() => useToast());
 
     const longTitle = 'A'.repeat(200);
     const longDescription = 'B'.repeat(500);
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: longTitle,
         description: longDescription,
@@ -250,10 +241,10 @@ describe('useToast', () => {
     });
   });
 
-  it('should handle duration of 0', async () => {
+  it('should handle duration of 0', () => {
     const { result } = renderHook(() => useToast());
 
-    await act(async () => {
+    act(() => {
       result.current.toast({
         title: 'Persistent toast',
         duration: 0,

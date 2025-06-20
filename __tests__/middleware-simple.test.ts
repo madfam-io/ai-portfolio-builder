@@ -87,17 +87,12 @@ describe('Middleware Simple Test', () => {
   it('should work with basic request', async () => {
     const request = new NextRequest(new URL('http://localhost:3000/'));
 
-    console.log('Testing middleware with request:', request.url);
-
-    try {
+        try {
       const response = await middleware(request);
-      console.log('Response:', response);
-
-      expect(response).toBeDefined();
+            expect(response).toBeDefined();
       expect(response.status).toBe(200);
     } catch (error) {
-      console.error('Test error:', error);
-      throw error;
+            throw error;
     }
   });
 });

@@ -1,112 +1,112 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+
 // Mock Supabase client
-jest.mock('@/lib/auth/supabase-client', () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
-    from: jest.fn(() => ({
+jest.mock('@/lib/supabase/client', () => ({
+  createClient: jest.fn().mockReturnValue({
+    from: jest.fn().mockReturnValue({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null })}))})),
-  supabase: {
-    auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) }))}}));
-
-import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
-import type { Mock, MockedClass } from 'jest-mock';
-
-import { // Mock global fetch
-
-jest.mock('@/lib/services/portfolio-service', () => ({
-jest.mock('@/lib/supabase/client', () => ({
-jest.mock('@/lib/monitoring/unified/events', () => ({
-
-/**
- * @jest-environment jsdom
- */
+      order: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    }),
+    auth: {
+      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    },
+  }),
+}));
 
 // Mock portfolio service
-
+jest.mock('@/lib/services/portfolio-service', () => ({
   PortfolioService: jest.fn().mockImplementation(() => ({
     createPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
     updatePortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
-    getPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123', data: {} })}))}));
+    getPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123', data: {} }),
+  })),
+}));
 
-global.fetch = jest.fn();
-
-  DemoPortfolioService,
-  DEMO_PORTFOLIOS} from '@/lib/services/demo-portfolio-service';
-
-// Mock dependencies
-
-  createClient: jest.fn().mockReturnValue(void 0)}));
-
+// Mock monitoring events
+jest.mock('@/lib/monitoring/unified/events', () => ({
   track: {
     portfolio: {
-      create: jest.fn().mockReturnValue(void 0)},
+      create: jest.fn().mockReturnValue(undefined),
+    },
     user: {
-      action: jest.fn().mockReturnValue(void 0)}}}));
+      action: jest.fn().mockReturnValue(undefined),
+    },
+  },
+}));
 
-const { createClient } = require('@/lib/supabase/client');
-const { track } = require('@/lib/monitoring/unified/events');
+// Mock global fetch
+global.fetch = jest.fn();
+
+import {
+  DemoPortfolioService,
+  DEMO_PORTFOLIOS,
+} from '@/lib/services/demo-portfolio-service';
+import { createClient } from '@/lib/supabase/client';
+import { track } from '@/lib/monitoring/unified/events';
 
 describe('DemoPortfolioService', () => {
-  beforeEach(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-  });
-
   const mockSupabaseClient = {
-    from: jest.fn().mockReturnValue(void 0),
+    from: jest.fn().mockReturnValue({
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      order: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    }),
     auth: {
-      getUser: jest.fn().mockReturnValue(void 0)}};
+      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+    },
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.spyOn(console, 'log').mockImplementation(() => undefined);
+    jest.spyOn(console, 'error').mockImplementation(() => undefined);
+    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
     (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
   });
 
   describe('getAvailableDemos', () => {
-    it('should return all demos when no industry filter is provided', async () => {
+    it('should return all demos when no industry filter is provided', () => {
       const demos = DemoPortfolioService.getAvailableDemos();
       expect(demos).toHaveLength(DEMO_PORTFOLIOS.length);
       expect(demos).toEqual(expect.arrayContaining(DEMO_PORTFOLIOS));
     });
 
-    it('should filter demos by industry', async () => {
+    it('should filter demos by industry', () => {
       const techDemos = DemoPortfolioService.getAvailableDemos('Technology');
-      expect(techDemos.every(demo => demo.industry === 'Technology')).toBe(
-        true
-
+      expect(techDemos.every(demo => demo.industry === 'Technology')).toBe(true);
       expect(techDemos.length).toBeGreaterThan(0);
     });
 
-    it('should sort demos by popularity', async () => {
+    it('should sort demos by popularity', () => {
       const demos = DemoPortfolioService.getAvailableDemos();
       for (let i = 1; i < demos.length; i++) {
         expect(demos[i - 1].popularity).toBeGreaterThanOrEqual(
           demos[i].popularity
-
+        );
       }
     });
   });
 
   describe('getDemo', () => {
-    it('should return a specific demo by id', async () => {
+    it('should return a specific demo by id', () => {
       const demo = DemoPortfolioService.getDemo('dev-startup');
       expect(demo).toBeDefined();
       expect(demo?.id).toBe('dev-startup');
       expect(demo?.name).toBe('Startup Developer');
     });
 
-    it('should return null for non-existent demo id', async () => {
+    it('should return null for non-existent demo id', () => {
       const demo = DemoPortfolioService.getDemo('non-existent');
       expect(demo).toBeNull();
     });
@@ -117,7 +117,8 @@ describe('DemoPortfolioService', () => {
       id: 'portfolio-123',
       name: 'Test Portfolio',
       content: {},
-      settings: {}};
+      settings: {},
+    };
 
     it('should create a portfolio from demo for authenticated user', async () => {
       // Mock successful database insert
@@ -126,12 +127,17 @@ describe('DemoPortfolioService', () => {
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: mockPortfolio,
-              error: null})})})});
+              error: null,
+            }),
+          }),
+        }),
+      });
 
       const result = await DemoPortfolioService.createFromDemo({
         userId: 'user-123',
         demoId: 'dev-startup',
-        aiEnhance: true});
+        aiEnhance: true,
+      });
 
       expect(result.isTemporary).toBe(false);
       expect(result.portfolioId).toBe('portfolio-123');
@@ -141,7 +147,8 @@ describe('DemoPortfolioService', () => {
 
     it('should create temporary portfolio for non-authenticated user', async () => {
       const result = await DemoPortfolioService.createFromDemo({
-        demoId: 'dev-startup'});
+        demoId: 'dev-startup',
+      });
 
       expect(result.isTemporary).toBe(true);
       expect(result.portfolioId).toMatch(/^temp-/);
@@ -154,11 +161,14 @@ describe('DemoPortfolioService', () => {
         title: 'Custom Title',
         colors: {
           primary: '#ff0000',
-          secondary: '#00ff00'}};
+          secondary: '#00ff00',
+        },
+      };
 
       const result = await DemoPortfolioService.createFromDemo({
         demoId: 'dev-startup',
-        customizations});
+        customizations,
+      });
 
       expect(result.portfolio.content.personal.name).toBe('Custom Name');
       expect(result.portfolio.content.personal.title).toBe('Custom Title');
@@ -169,20 +179,22 @@ describe('DemoPortfolioService', () => {
     it('should throw error for non-existent demo', async () => {
       await expect(
         DemoPortfolioService.createFromDemo({
-          demoId: 'non-existent'})
+          demoId: 'non-existent',
+        })
       ).rejects.toThrow('Demo portfolio not found');
     });
   });
 
   describe('getRecommendedDemos', () => {
-    it('should return top 3 demos by default', async () => {
+    it('should return top 3 demos by default', () => {
       const recommendations = DemoPortfolioService.getRecommendedDemos();
       expect(recommendations).toHaveLength(3);
     });
 
-    it('should filter by user industry', async () => {
+    it('should filter by user industry', () => {
       const recommendations = DemoPortfolioService.getRecommendedDemos({
-        industry: 'Technology'});
+        industry: 'Technology',
+      });
 
       // First recommendations should be from Technology or General
       recommendations.forEach(demo => {
@@ -190,26 +202,32 @@ describe('DemoPortfolioService', () => {
       });
     });
 
-    it('should boost score for matching experience levels', async () => {
+    it('should boost score for matching experience levels', () => {
       const seniorRecs = DemoPortfolioService.getRecommendedDemos({
-        experience: 'senior'});
+        experience: 'senior',
+      });
 
       const juniorRecs = DemoPortfolioService.getRecommendedDemos({
-        experience: 'junior'});
+        experience: 'junior',
+      });
 
       // Business template should rank higher for seniors
       const seniorBusinessIndex = seniorRecs.findIndex(
         d => d.template === 'business'
+      );
 
       const juniorBusinessIndex = juniorRecs.findIndex(
         d => d.template === 'business'
+      );
 
       // Minimal template should rank higher for juniors
       const seniorMinimalIndex = seniorRecs.findIndex(
         d => d.template === 'minimal'
+      );
 
       const juniorMinimalIndex = juniorRecs.findIndex(
         d => d.template === 'minimal'
+      );
 
       // These assertions might need adjustment based on actual scoring
       expect(seniorBusinessIndex).toBeLessThanOrEqual(juniorBusinessIndex);
@@ -227,11 +245,17 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
                 data: existingPortfolio,
-                error: null})})})})});
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      });
 
       const portfolioId = await DemoPortfolioService.cloneDemo(
         'dev-startup',
         'user-123'
+      );
 
       expect(portfolioId).toBe('existing-123');
     });
@@ -244,7 +268,12 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
                 data: null,
-                error: null})})})})});
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      });
 
       // Mock successful creation
       mockSupabaseClient.from.mockReturnValueOnce({
@@ -252,12 +281,17 @@ describe('DemoPortfolioService', () => {
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: { id: 'new-portfolio-123' },
-              error: null})})})});
+              error: null,
+            }),
+          }),
+        }),
+      });
 
       const portfolioId = await DemoPortfolioService.cloneDemo(
         'dev-startup',
         'user-123',
         'My Custom Portfolio'
+      );
 
       expect(portfolioId).toBe('new-portfolio-123');
     });
@@ -269,36 +303,46 @@ describe('DemoPortfolioService', () => {
       name: 'Test Portfolio',
       content: { personal: { name: 'Test' } },
       settings: {},
-      demo_id: 'dev-startup'};
+      demo_id: 'dev-startup',
+    };
 
     beforeEach(() => {
       // Mock sessionStorage
       Object.defineProperty(window, 'sessionStorage', {
         value: {
-          getItem: jest.fn().mockReturnValue(void 0),
-          setItem: jest.fn().mockReturnValue(void 0),
-          removeItem: jest.fn().mockReturnValue(void 0)},
-        writable: true});
+          getItem: jest.fn().mockReturnValue(undefined),
+          setItem: jest.fn().mockReturnValue(undefined),
+          removeItem: jest.fn().mockReturnValue(undefined),
+        },
+        writable: true,
+      });
     });
 
     it('should convert temporary portfolio to permanent', async () => {
       (window.sessionStorage.getItem as jest.Mock).mockReturnValue(
         JSON.stringify(temporaryPortfolio)
+      );
 
       mockSupabaseClient.from.mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: { id: 'permanent-123' },
-              error: null})})})});
+              error: null,
+            }),
+          }),
+        }),
+      });
 
       const portfolioId = await DemoPortfolioService.convertToPermanent(
         'temp-123',
         'user-123'
+      );
 
       expect(portfolioId).toBe('permanent-123');
       expect(window.sessionStorage.removeItem).toHaveBeenCalledWith(
         'demo-portfolio-temp-123'
+      );
 
       expect(track.user.action).toHaveBeenCalledWith(
         'demo_portfolio_converted',
@@ -307,9 +351,10 @@ describe('DemoPortfolioService', () => {
         expect.objectContaining({
           demo_id: 'dev-startup',
           temporary_id: 'temp-123',
-          permanent_id: 'permanent-123'})
-    );
-  });
+          permanent_id: 'permanent-123',
+        })
+      );
+    });
 
     it('should throw error if temporary portfolio not found', async () => {
       (window.sessionStorage.getItem as jest.Mock).mockReturnValue(null);
@@ -333,7 +378,12 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               order: jest.fn().mockResolvedValue({
                 data: mockPortfolios,
-                error: null})})})})});
+                error: null,
+              }),
+            }),
+          }),
+        }),
+      });
 
       const portfolios =
         await DemoPortfolioService.getUserDemoPortfolios('user-123');
@@ -349,7 +399,12 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               order: jest.fn().mockResolvedValue({
                 data: null,
-                error: new Error('Database error')})})})})});
+                error: new Error('Database error'),
+              }),
+            }),
+          }),
+        }),
+      });
 
       await expect(
         DemoPortfolioService.getUserDemoPortfolios('user-123')

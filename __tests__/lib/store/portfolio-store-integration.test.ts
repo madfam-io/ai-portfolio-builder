@@ -36,7 +36,6 @@ jest.mock('zustand', () => ({
 }));
 
 // Mock zustand
-jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
     const api = (() => {
       let state = createState(
@@ -102,8 +101,7 @@ jest.mock('zustand', () => ({
     })();
     return Object.assign(() => api, api);
   }),
-}))
-
+}));
 // Mock fetch for API calls
 global.fetch = jest.fn().mockReturnValue(void 0);
 

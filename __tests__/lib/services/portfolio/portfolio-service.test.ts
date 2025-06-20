@@ -1,108 +1,5 @@
-// Mock Supabase client
-jest.mock('@/lib/auth/supabase-client', () => ({
-  createClient: jest.fn(() => ({
-    auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-    },
-    from: jest.fn(() => ({
-      select: jest.fn().mockReturnThis(),
-      insert: jest.fn().mockReturnThis(),
-      update: jest.fn().mockReturnThis(),
-      delete: jest.fn().mockReturnThis(),
-      eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  })),
-  supabase: {
-    auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
-  },
-}));
-
-import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
-import { PortfolioRepository } from '@/lib/services/portfolio/portfolio.repository';
-import { cache } from '@/lib/cache/redis-cache.server';
-jest.mock('@/lib/supabase/client', () => ({
-  createBrowserClient: jest.fn(() => ({
-    from: jest.fn().mockReturnThis(),
-    select: jest.fn().mockReturnThis(),
-    insert: jest.fn().mockReturnThis(),
-    update: jest.fn().mockReturnThis(),
-    delete: jest.fn().mockReturnThis(),
-    eq: jest.fn().mockReturnThis(),
-    single: jest.fn(),
-    auth: {
-      getUser: jest.fn(),
-    },
-  })),
-}));
-
-import { // Mock global fetch
-global.fetch = jest.fn();
- PortfolioService  } from '@/lib/services/portfolio/portfolio-service';
-import {   Portfolio,
-  CreatePortfolioDTO,
-  UpdatePortfolioDTO,
-  PortfolioStatus,
- } from '@/types/portfolio';
-
-// Mock dependencies
-jest.mock('@/lib/services/portfolio/portfolio.repository');
-jest.mock('@/lib/cache/redis-cache.server');
-jest.mock('@/lib/utils/logger', () => ({
-  logger: {
-    error: jest.fn().mockReturnValue(void 0),
-    warn: jest.fn().mockReturnValue(void 0),
-    info: jest.fn().mockReturnValue(void 0),
-    debug: jest.fn().mockReturnValue(void 0),
-  },
-}));
-
-describe('PortfolioService', () => {
-  beforeEach(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-  });
-
-  let service: PortfolioService;
-  let mockRepository: jest.Mocked<PortfolioRepository>;
-
-  const mockPortfolio: Portfolio = {
-    id: 'portfolio-123',
-    userId: 'user-123',
-    name: 'My Portfolio',
-    title: 'Software Developer',
-    bio: 'Experienced developer',
-    tagline: 'Building amazing things',
-    contact: { email: 'test@example.com' },
-    social: { linkedin: 'https://linkedin.com/in/test' },
-    experience: [],
-    education: [],
-    projects: [],
-    skills: [],
-    certifications: [],
-    template: 'modern',
-    customization: {},
-    status: 'draft',
-    views: 0,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-
-    // Create service instance
-    service = new PortfolioService();
-
-    // Get the mocked repository
-    mockRepository = (service as any)
-      .repository as jest.Mocked<PortfolioRepository>;
+import React from 'react';
+    const mockRepository = {} as jest.Mocked<PortfolioRepository>;
 
     // Setup cache mocks
     (cache.get as jest.Mock).mockResolvedValue(null);
@@ -135,8 +32,7 @@ describe('PortfolioService', () => {
 
       await expect(service.getUserPortfolios('user-123')).rejects.toThrow(
         'Database error'
-
-    });
+      );    });
   });
 
   describe('getPortfolio', () => {
@@ -252,8 +148,7 @@ describe('PortfolioService', () => {
       expect(mockRepository.update).toHaveBeenCalledWith(
         'portfolio-123',
         updateDto
-
-      expect(cache.del).toHaveBeenCalled(); // Cache invalidation
+      );      expect(cache.del).toHaveBeenCalled(); // Cache invalidation
     });
 
     it('should validate portfolio ownership', async () => {
@@ -303,8 +198,7 @@ describe('PortfolioService', () => {
 
       await expect(service.deletePortfolio('portfolio-123')).rejects.toThrow(
         'Cannot delete published portfolio'
-
-      expect(mockRepository.delete).not.toHaveBeenCalled();
+      );      expect(mockRepository.delete).not.toHaveBeenCalled();
     });
 
     it('should return false for non-existent portfolio', async () => {
@@ -371,7 +265,7 @@ describe('PortfolioService', () => {
       const publishedPortfolio = {
         ...mockPortfolio,
         status: 'published' as PortfolioStatus,
-        publishedAt: new Date('2025-06-01'),
+        publishedAt: new Date('2025-06-01T00:00:00.000Z'),
       };
 
       mockRepository.findById.mockResolvedValue(publishedPortfolio);

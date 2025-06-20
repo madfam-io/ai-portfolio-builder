@@ -1,24 +1,5 @@
-
-// Mock implementations for missing functions
-const calculateResults = jest.fn(() => ({ success: 0.5, conversions: 100 }));
-const validateExperiment = jest.fn(() => ({ isValid: true, errors: [] }));
-import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
-import type { VariantConfig } from '@/components/admin/experiments/create/VariantConfiguration';
-import {
-  validateExperimentForm,
-  getRemainingTrafficPercentage,
-} from '@/lib/utils/experiment-validation';
-
-describe('Experiment Validation Utilities', () => {
-  beforeEach(() => {
-    jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-  });
-
-  describe('validateExperimentForm', () => {
-    const createVariant = (
-      overrides: Partial<VariantConfig> = {}
+import React from 'react';
+l<VariantConfig> = {}
     ): VariantConfig => ({
       id: '1',
       name: 'Variant A',

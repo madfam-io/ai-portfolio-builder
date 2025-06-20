@@ -65,7 +65,6 @@ jest.mock('@/lib/supabase/client', () => ({
   })),
 }));
 
-jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
     const api = (() => {
       let state = createState(

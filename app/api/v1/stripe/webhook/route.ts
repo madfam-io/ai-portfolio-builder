@@ -13,6 +13,7 @@ import { stripeService } from '@/lib/services/stripe/stripe';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
 import { createClient } from '@/lib/supabase/server';
+import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
 
 // Enhanced Stripe types for better type safety
 interface StripeSubscriptionWithPeriod extends Stripe.Subscription {
@@ -225,6 +226,35 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       (subscription as StripeSubscriptionWithPeriod).current_period_end * 1000
     );
 
+    // Get subscription amount
+    const amount = subscription.items.data[0]?.price.unit_amount
+      ? subscription.items.data[0].price.unit_amount / 100
+      : 0;
+
+    // Insert into subscriptions table
+    const { error: subError } = await supabase.from('subscriptions').insert({
+      user_id: userId,
+      stripe_subscription_id: subscription.id,
+      stripe_customer_id: subscription.customer as string,
+      plan: planId || 'pro',
+      status: subscription.status,
+      current_period_start: new Date(
+        subscription.current_period_start * 1000
+      ).toISOString(),
+      current_period_end: subscriptionEnd.toISOString(),
+      amount: amount,
+      created_at: new Date().toISOString(),
+    });
+
+    if (subError) {
+      logger.error('Failed to insert subscription record', {
+        error: subError,
+        userId,
+        subscriptionId: subscription.id,
+      });
+    }
+
+    // Update user record
     const { error } = await supabase
       .from('users')
       .update({
@@ -244,6 +274,15 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       });
       return;
     }
+
+    // Track revenue event
+    const revenueService = new RevenueMetricsService(supabase);
+    await revenueService.trackRevenueEvent({
+      type: 'new_subscription',
+      userId,
+      newPlan: planId || 'pro',
+      amount,
+    });
 
     logger.info('User subscription created', {
       userId,
@@ -325,6 +364,7 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
  */
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const userId = subscription.metadata?.userId;
+  const planId = subscription.metadata?.planId;
 
   if (!userId) {
     logger.error('Missing userId in subscription metadata', {
@@ -343,6 +383,29 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   }
 
   try {
+    // Get subscription amount for churn tracking
+    const amount = subscription.items.data[0]?.price.unit_amount
+      ? subscription.items.data[0].price.unit_amount / 100
+      : 0;
+
+    // Update subscription record
+    const { error: subError } = await supabase
+      .from('subscriptions')
+      .update({
+        status: 'canceled',
+        canceled_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('stripe_subscription_id', subscription.id);
+
+    if (subError) {
+      logger.error('Failed to update subscription record', {
+        error: subError,
+        subscriptionId: subscription.id,
+      });
+    }
+
+    // Update user record
     const { error } = await supabase
       .from('users')
       .update({
@@ -361,6 +424,15 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       });
       return;
     }
+
+    // Track churn event
+    const revenueService = new RevenueMetricsService(supabase);
+    await revenueService.trackRevenueEvent({
+      type: 'churn',
+      userId,
+      oldPlan: planId || 'pro',
+      amount,
+    });
 
     logger.info('User subscription cancelled', {
       userId,

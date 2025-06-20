@@ -1,37 +1,5 @@
-import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
-import Stripe from 'stripe';
-/**
- * @jest-environment node
- */
-
-import {   createCheckoutSession,
-  createPortalSession,
-  handleWebhookEvent,
-  createAICreditCheckout,
-  SUBSCRIPTION_PLANS,
-  AI_CREDIT_PACKS,
-  formatPriceWithPromotion,
-  getSubscriptionFeatures,
- } from '@/lib/services/stripe/stripe-enhanced';
-
-// Mock Stripe
-jest.mock('stripe');
-
-describe('Enhanced Stripe Service', () => {
-  beforeEach(() => {
-    // Set up test environment variables
-    process.env.NODE_ENV = 'test';
-    process.env.HUGGINGFACE_API_KEY = 'test-key';
-    process.env.NEXTAUTH_SECRET = 'test-secret';
-    process.env.NEXTAUTH_URL = 'http://localhost:3000';
-    process.env.STRIPE_SECRET_KEY = 'sk_test_123';
-    process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = 'pk_test_123';
-    jest.spyOn(console, 'log').mockImplementation(() => undefined);
-    jest.spyOn(console, 'error').mockImplementation(() => undefined);
-    jest.spyOn(console, 'warn').mockImplementation(() => undefined);
-  });
-
-  let mockStripe: jest.Mocked<Stripe>;
+import React from 'react';
+d<Stripe>;
   let mockCheckoutSessions: any;
   let mockBillingPortalSessions: any;
   let mockWebhooksConstructEvent: jest.Mock;

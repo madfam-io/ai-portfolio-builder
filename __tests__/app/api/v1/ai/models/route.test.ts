@@ -1,17 +1,4 @@
-// Mock HuggingFace service
-const mockHuggingFaceService = {
-  enhanceBio: jest.fn().mockResolvedValue({ content: 'Enhanced bio', qualityScore: 90 }),
-  optimizeProject: jest.fn().mockResolvedValue({ optimizedDescription: 'Optimized project', qualityScore: 85 }),
-  recommendTemplate: jest.fn().mockResolvedValue([{ template: 'modern', score: 95 }]),
-  listModels: jest.fn().mockResolvedValue([{ id: 'test-model', name: 'Test Model' }]),
-};
-
-jest.mock('@/lib/ai/huggingface-service', () => ({ 
-  HuggingFaceService: jest.fn(() => mockHuggingFaceService),
- }));
-
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import type { Mock, MockedClass } from 'jest-mock';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/ai/models/route';
 

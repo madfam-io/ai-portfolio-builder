@@ -46,7 +46,6 @@ let mockState = {
 };
 
 // Mock the entire store
-jest.mock('@/lib/store/ui-store', () => ({
   useUIStore: {
     getState: () => ({
       ...mockState,

@@ -1,240 +1,75 @@
-import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Portfolio } from '@/types/portfolio';
 import { EditorHeader } from '@/components/editor/EditorHeader';
-/**
- * @jest-environment jsdom
- */
+import { useUIStore } from '@/lib/store/ui-store';
 
-// Mock the entire EditorHeader component due to systematic Jest compilation issues
-// with lucide-react + TypeScript + React 19. This test verifies the component interface
-// and behavior without testing implementation details.
-jest.mock('@/components/editor/EditorHeader', () => ({
-  EditorHeader: jest
-    .fn()
-    .mockImplementation(
-      ({
-        portfolio,
-        isDirty,
-        isSaving,
-        lastSaved,
-        onSave,
-        onPublish,
-        onPreview,
-        canUndo,
-        canRedo,
-        onUndo,
-        onRedo,
-      }) => {
-        const React = require('react');
+// Mock the UI store
+const mockUIStore = {
+  theme: 'light' as const,
+  setTheme: jest.fn(),
+  isLoading: false,
+  setLoading: jest.fn(),
+  showToast: jest.fn(),
+};
 
-        // Add keyboard event listeners for shortcuts
-        React.useEffect(() => {
-          const handleKeyDown = e => {
-            if (e.ctrlKey || e.metaKey) {
-              switch (e.key) {
-                case 's':
-                  if (isDirty && !isSaving) {
-                    e.preventDefault();
-                    onSave();
-                  }
-                  break;
-                case 'z':
-                  if (canUndo) {
-                    e.preventDefault();
-                    onUndo();
-                  }
-                  break;
-                case 'y':
-                  if (canRedo) {
-                    e.preventDefault();
-                    onRedo();
-                  }
-                  break;
-              }
-            }
-          };
-
-          document.addEventListener('keydown', handleKeyDown);
-          return () => document.removeEventListener('keydown', handleKeyDown);
-        }, [isDirty, isSaving, canUndo, canRedo, onSave, onUndo, onRedo]);
-
-        return React.createElement(
-          'header',
-          {
-            'data-testid': 'editor-header',
-            className: 'bg-white border-b border-gray-200 px-6 py-4',
-          },
-          React.createElement(
-            'div',
-            { className: 'flex items-center justify-between' },
-            React.createElement(
-              'div',
-              null,
-              React.createElement(
-                'h1',
-                { className: 'text-xl font-semibold text-gray-900' },
-                portfolio?.name || 'Untitled Portfolio'
-              ),
-              React.createElement(
-                'div',
-                {
-                  className:
-                    'flex items-center space-x-2 text-sm text-gray-500',
-                },
-                isSaving
-                  ? React.createElement('span', null, 'Saving...')
-                  : isDirty
-                    ? React.createElement('span', null, 'Unsaved changes')
-                    : React.createElement(
-                        'span',
-                        null,
-                        lastSaved ? 'Last saved' : 'Never'
-                      ),
-                React.createElement('span', null, '•'),
-                React.createElement(
-                  'span',
-                  { className: 'capitalize' },
-                  `${portfolio?.template} template`
-                ),
-                React.createElement('span', null, '•'),
-                React.createElement(
-                  'span',
-                  {
-                    className: `inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      portfolio?.status === 'published'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`,
-                  },
-                  portfolio?.status === 'published' ? 'Published' : 'Draft'
-                )
-              )
-            ),
-            React.createElement(
-              'div',
-              { className: 'flex items-center space-x-3' },
-              React.createElement(
-                'button',
-                {
-                  onClick: onUndo,
-                  disabled: !canUndo,
-                  'aria-label': 'Undo',
-                  title: 'Undo',
-                },
-                'Undo'
-              ),
-              React.createElement(
-                'button',
-                {
-                  onClick: onRedo,
-                  disabled: !canRedo,
-                  'aria-label': 'Redo',
-                  title: 'Redo',
-                },
-                'Redo'
-              ),
-              React.createElement(
-                'button',
-                {
-                  onClick: onPreview,
-                  'aria-label': 'Preview',
-                },
-                'Preview'
-              ),
-              React.createElement(
-                'button',
-                {
-                  onClick: onSave,
-                  disabled: isSaving || !isDirty,
-                  'aria-label': 'Save',
-                },
-                isSaving ? 'Saving...' : 'Save'
-              ),
-              React.createElement(
-                'button',
-                {
-                  onClick: onPublish,
-                  'aria-label': 'Publish',
-                  disabled: isSaving,
-                },
-                portfolio?.status === 'published' ? 'Unpublish' : 'Publish'
-              )
-            )
-          )
-
-      }
-    ),
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: jest.fn(() => mockUIStore),
 }));
 
-// Import the mocked component
+// Mock portfolio data
+const mockPortfolio = {
+  id: 'test-portfolio',
+  name: 'My Portfolio',
+  template: 'developer',
+  status: 'draft' as const,
+  content: {},
+  settings: {},
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+};
 
-// Skip this test suite due to Jest + lucide-react + TypeScript compilation issues
-// The component works correctly but has systematic test infrastructure issues
-describe.skip('EditorHeader', () => {
-  const mockPortfolio: Portfolio = {
-    id: 'portfolio-123',
-    userId: 'user-123',
-    name: 'My Portfolio',
-    title: 'Software Developer',
-    tagline: 'Building amazing applications',
-    bio: 'Experienced developer',
-    contact: { email: 'test@example.com' },
-    social: {},
-    experience: [],
-    education: [],
-    projects: [],
-    skills: [],
-    certifications: [],
-    template: 'developer',
-    customization: {},
-    status: 'draft',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
+// Default props for EditorHeader
+const mockProps = {
+  portfolio: mockPortfolio,
+  isDirty: false,
+  isSaving: false,
+  onSave: jest.fn(),
+  onPublish: jest.fn(),
+  onPreview: jest.fn(),
+  canUndo: false,
+  canRedo: false,
+  onUndo: jest.fn(),
+  onRedo: jest.fn(),
+  lastSaved: undefined as Date | undefined,
+};
 
-  const mockProps = {
-    portfolio: mockPortfolio,
-    isDirty: false,
-    isSaving: false,
-    lastSaved: null as Date | null,
-    onSave: jest.fn().mockReturnValue(void 0),
-    onPublish: jest.fn().mockReturnValue(void 0),
-    onPreview: jest.fn().mockReturnValue(void 0),
-    canUndo: false,
-    canRedo: false,
-    onUndo: jest.fn().mockReturnValue(void 0),
-    onRedo: jest.fn().mockReturnValue(void 0),
-  };
-
+describe('EditorHeader', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-  }));
-
-  const renderEditorHeader = (props = mockProps) => {
-    return render(<EditorHeader {...props} />);
-  };
-
-  describe('Initial Rendering', () => {
-  beforeEach(() => {
     jest.spyOn(console, 'log').mockImplementation(() => undefined);
     jest.spyOn(console, 'error').mockImplementation(() => undefined);
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
-    it('should render without crashing', async () => {
+  const renderEditorHeader = (props = {}) => {
+    const finalProps = { ...mockProps, ...props };
+    return render(<EditorHeader {...finalProps} />);
+  };
+
+  describe('Initial Rendering', () => {
+    it('should render without crashing', () => {
       const { container } = renderEditorHeader();
       expect(container).toBeTruthy();
     });
 
-    it('should render portfolio name', async () => {
+    it('should render portfolio name', () => {
       renderEditorHeader();
       expect(screen.getByText('My Portfolio')).toBeInTheDocument();
     });
 
-    it('should render all action buttons', async () => {
+    it('should render all action buttons', () => {
       renderEditorHeader();
 
       expect(screen.getByText('Save')).toBeInTheDocument();
@@ -244,13 +79,13 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Redo')).toBeInTheDocument();
     });
 
-    it('should show clean state when not dirty', async () => {
+    it('should show clean state when not dirty', () => {
       renderEditorHeader();
       expect(screen.queryByText('Unsaved changes')).not.toBeInTheDocument();
       expect(screen.getByText('Never')).toBeInTheDocument();
     });
 
-    it('should show last saved time when available', async () => {
+    it('should show last saved time when available', () => {
       const lastSaved = new Date('2025-01-15T10:30:00Z');
       renderEditorHeader({
         ...mockProps,
@@ -260,7 +95,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Last saved')).toBeInTheDocument();
     });
 
-    it('should show template and status information', async () => {
+    it('should show template and status information', () => {
       renderEditorHeader();
       expect(screen.getByText('developer template')).toBeInTheDocument();
       expect(screen.getByText('Draft')).toBeInTheDocument();
@@ -281,7 +116,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onSave).toHaveBeenCalledTimes(1);
     });
 
-    it('should show saving state', async () => {
+    it('should show saving state', () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -291,7 +126,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Saving...')).toBeDisabled();
     });
 
-    it('should show unsaved changes indicator when dirty', async () => {
+    it('should show unsaved changes indicator when dirty', () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: true,
@@ -300,7 +135,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByText('Unsaved changes')).toBeInTheDocument();
     });
 
-    it('should disable save button when saving', async () => {
+    it('should disable save button when saving', () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -310,7 +145,7 @@ describe.skip('EditorHeader', () => {
       expect(saveButton).toBeDisabled();
     });
 
-    it('should enable save button when changes exist', async () => {
+    it('should enable save button when changes exist', () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: true,
@@ -320,7 +155,7 @@ describe.skip('EditorHeader', () => {
       expect(saveButton).not.toBeDisabled();
     });
 
-    it('should disable save button when no changes', async () => {
+    it('should disable save button when no changes', () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: false,
@@ -342,7 +177,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onPublish).toHaveBeenCalledTimes(1);
     });
 
-    it('should disable publish button when saving', async () => {
+    it('should disable publish button when saving', () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -352,7 +187,7 @@ describe.skip('EditorHeader', () => {
       expect(publishButton).toBeDisabled();
     });
 
-    it('should show published status for published portfolios', async () => {
+    it('should show published status for published portfolios', () => {
       renderEditorHeader({
         ...mockProps,
         portfolio: {
@@ -377,7 +212,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onPreview).toHaveBeenCalledTimes(1);
     });
 
-    it('should be available even when saving', async () => {
+    it('should be available even when saving', () => {
       renderEditorHeader({
         ...mockProps,
         isSaving: true,
@@ -415,7 +250,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onRedo).toHaveBeenCalledTimes(1);
     });
 
-    it('should disable undo button when canUndo is false', async () => {
+    it('should disable undo button when canUndo is false', () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -425,7 +260,7 @@ describe.skip('EditorHeader', () => {
       expect(undoButton).toBeDisabled();
     });
 
-    it('should disable redo button when canRedo is false', async () => {
+    it('should disable redo button when canRedo is false', () => {
       renderEditorHeader({
         ...mockProps,
         canRedo: false,
@@ -435,7 +270,7 @@ describe.skip('EditorHeader', () => {
       expect(redoButton).toBeDisabled();
     });
 
-    it('should enable undo button when canUndo is true', async () => {
+    it('should enable undo button when canUndo is true', () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: true,
@@ -445,7 +280,7 @@ describe.skip('EditorHeader', () => {
       expect(undoButton).not.toBeDisabled();
     });
 
-    it('should enable redo button when canRedo is true', async () => {
+    it('should enable redo button when canRedo is true', () => {
       renderEditorHeader({
         ...mockProps,
         canRedo: true,
@@ -457,7 +292,7 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Keyboard Shortcuts', () => {
-    it('should handle Ctrl+S for save', async () => {
+    it('should handle Ctrl+S for save', () => {
       renderEditorHeader({
         ...mockProps,
         isDirty: true,
@@ -468,7 +303,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onSave).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle Ctrl+Z for undo', async () => {
+    it('should handle Ctrl+Z for undo', () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: true,
@@ -479,7 +314,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onUndo).toHaveBeenCalledTimes(1);
     });
 
-    it('should handle Ctrl+Y for redo', async () => {
+    it('should handle Ctrl+Y for redo', () => {
       renderEditorHeader({
         ...mockProps,
         canRedo: true,
@@ -490,7 +325,7 @@ describe.skip('EditorHeader', () => {
       expect(mockProps.onRedo).toHaveBeenCalledTimes(1);
     });
 
-    it('should not trigger shortcuts when buttons are disabled', async () => {
+    it('should not trigger shortcuts when buttons are disabled', () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -509,7 +344,7 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper button roles', async () => {
+    it('should have proper button roles', () => {
       renderEditorHeader();
 
       expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();
@@ -523,7 +358,7 @@ describe.skip('EditorHeader', () => {
       expect(screen.getByRole('button', { name: 'Redo' })).toBeInTheDocument();
     });
 
-    it('should have proper aria labels for disabled buttons', async () => {
+    it('should have proper aria labels for disabled buttons', () => {
       renderEditorHeader({
         ...mockProps,
         canUndo: false,
@@ -539,10 +374,10 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Edge Cases', () => {
-    it('should handle missing portfolio gracefully', async () => {
+    it('should handle missing portfolio gracefully', () => {
       renderEditorHeader({
         ...mockProps,
-        portfolio: null as ReturnType<typeof useUIStore>,
+        portfolio: null,
       });
 
       // Should not crash and show fallback content
@@ -569,38 +404,18 @@ describe.skip('EditorHeader', () => {
   });
 
   describe('Component Interface Validation', () => {
-    it('should accept all required props', async () => {
+    it('should accept all required props', () => {
       expect(() => renderEditorHeader()).not.toThrow();
-      expect(EditorHeader).toHaveBeenCalledWith(
-        expect.objectContaining({
-          portfolio: expect.any(Object),
-          isDirty: expect.any(Boolean),
-          isSaving: expect.any(Boolean),
-          onSave: expect.any(Function),
-          onPublish: expect.any(Function),
-          onPreview: expect.any(Function),
-          canUndo: expect.any(Boolean),
-          canRedo: expect.any(Boolean),
-          onUndo: expect.any(Function),
-          onRedo: expect.any(Function),
-        }),
-        {}
-
     });
 
-    it('should handle optional lastSaved prop', async () => {
+    it('should handle optional lastSaved prop', () => {
       const lastSaved = new Date();
-      renderEditorHeader({
-        ...mockProps,
-        lastSaved,
-      });
-
-      expect(EditorHeader).toHaveBeenCalledWith(
-        expect.objectContaining({
+      expect(() =>
+        renderEditorHeader({
+          ...mockProps,
           lastSaved,
-        }),
-        {}
-
+        })
+      ).not.toThrow();
     });
   });
 });
