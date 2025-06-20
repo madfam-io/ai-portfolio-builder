@@ -372,7 +372,7 @@ function AnalyticsDashboard(): React.ReactElement {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Commits Trend Chart */}
             <LazyWrapper
-              component={() => import('@/components/analytics/CommitsChart').then(mod => ({ default: mod.default as ComponentType<unknown> }))}
+              component={() => import('@/components/analytics/CommitsChart')}
               componentProps={{
                 data: data.trends.commitsPerDay,
                 chartColors,
@@ -391,8 +391,7 @@ function AnalyticsDashboard(): React.ReactElement {
 
             {/* Pull Requests Chart */}
             <LazyWrapper
-              component={() =>
-                import('@/components/analytics/PullRequestsChart').then(mod => ({ default: mod.default as ComponentType<unknown> }))
+              component={() => import('@/components/analytics/PullRequestsChart')
               }
               componentProps={{
                 data: data.trends.pullRequestsPerWeek,

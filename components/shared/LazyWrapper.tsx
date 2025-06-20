@@ -20,7 +20,7 @@ import React, { Suspense, ComponentType, ReactNode } from 'react';
 
 interface LazyWrapperProps {
   /** The component to lazy load */
-  component: () => Promise<{ default: ComponentType<unknown> }>;
+  component: () => Promise<{ default: ComponentType<any> }>;
   /** Loading fallback component */
   fallback?: ReactNode;
   /** Error fallback component */
