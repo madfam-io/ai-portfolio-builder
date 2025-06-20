@@ -98,7 +98,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     await track.user.action(
       'onboarding_step_completed',
       'system',
-      () => {
+      async () => {
         completeStep(currentStep.id);
       },
       {
@@ -118,7 +118,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_step_skipped',
       'system',
-      () => {
+      async () => {
         skipStep(currentStep.id);
       },
       {
@@ -132,7 +132,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_completed',
       'system',
-      () => {
+      async () => {
         completeOnboarding();
       },
       {
@@ -153,7 +153,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_closed',
       'system',
-      () => {
+      async () => {
         completeOnboarding();
       },
       {
@@ -365,7 +365,7 @@ function ProfileSetupStep({ onComplete: _onComplete }: StepComponentProps) {
       <Button
         onClick={() => {
           router.push('/settings/profile');
-          onComplete();
+          _onComplete();
         }}
         className="w-full"
       >
@@ -411,7 +411,7 @@ function FirstPortfolioStep({ onComplete: _onComplete }: StepComponentProps) {
       <Button
         onClick={() => {
           router.push('/editor/new');
-          onComplete();
+          _onComplete();
         }}
         className="w-full"
         size="lg"
