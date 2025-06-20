@@ -9,14 +9,21 @@ process.env.SUPABASE_SERVICE_ROLE_KEY = 'test-service-key';
 process.env.STRIPE_SECRET_KEY = 'sk_test_123';
 process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY = 'pk_test_123';
 process.env.HUGGINGFACE_API_KEY = 'hf_test_123';
-process.env.NODE_ENV = 'test';
+(process.env as any).NODE_ENV = 'test';
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
+  root: Element | Document | null = null;
+  rootMargin: string = '0px';
+  thresholds: ReadonlyArray<number> = [0];
+
   constructor() {}
   observe() {}
   unobserve() {}
   disconnect() {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
 };
 
 // Mock ResizeObserver
