@@ -2,7 +2,7 @@
  * Common test utilities and mock helpers for API route tests
  */
 
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { jest } from '@jest/globals';
 
 // Mock Supabase client
 const mockSupabaseClient = {
