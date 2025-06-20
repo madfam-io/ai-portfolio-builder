@@ -147,7 +147,7 @@ export function ReviewStep({
           </p>
         </ReviewCard>
 
-        <ReviewCard icon={Search} title={t.seoSettings || &apos;SEO Settings'}>
+        <ReviewCard icon={Search} title={t.seoSettings || 'SEO Settings'}>
           <div className="space-y-2">
             <div>
               <p className="text-sm font-medium text-muted-foreground">

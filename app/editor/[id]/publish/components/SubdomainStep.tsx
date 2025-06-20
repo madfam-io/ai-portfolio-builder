@@ -111,7 +111,7 @@ export function SubdomainStep({
   const [subdomainAvailable, setSubdomainAvailable] = useState<boolean | null>(
     null
   );
-  const [errorMessage, setErrorMessage] = useState<string>('&apos;);
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const [suggestions, setSuggestions] = useState<string[]>([]);
 
   const checkSubdomainAvailability = async () => {
@@ -173,7 +173,7 @@ export function SubdomainStep({
     });
     setSubdomainAvailable(null);
     setSuggestions([]);
-    setErrorMessage('&apos;);
+    setErrorMessage('');
   };
 
   return (

@@ -183,9 +183,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  async recommendTemplate(
-    profile: UserProfile
-  ): Promise<TemplateRecommendation> {
+  recommendTemplate(profile: UserProfile): TemplateRecommendation {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -233,7 +231,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  async scoreContent(content: string, type: string): Promise<QualityScore> {
+  scoreContent(content: string, type: string): Promise<QualityScore> {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -259,12 +257,12 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  async getUsageStats(): Promise<{
+  getUsageStats(): {
     requestsToday: number;
     costToday: number;
     avgResponseTime: number;
     successRate: number;
-  }> {
+  } {
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
@@ -356,7 +354,7 @@ export class HuggingFaceService implements AIService {
     if (response.ok) {
       const result = await response.json();
       const text = Array.isArray(result)
-        ? result[0]?.generated_text || '&apos;
+        ? result[0]?.generated_text || ''
         : result.generated_text || result;
       return { text };
     }
@@ -623,7 +621,7 @@ export async function enhanceBio(
         throw new Error(`HuggingFace API error: ${response.statusText}`);
       }
 
-      return await response.json();
+      return response.json();
     };
 
     const hf = {
@@ -715,7 +713,7 @@ export async function optimizeProjectDescription(projectInfo: {
         throw new Error(`HuggingFace API error: ${response.statusText}`);
       }
 
-      return await response.json();
+      return response.json();
     };
 
     const hf = {
@@ -795,7 +793,7 @@ export async function recommendTemplate(userProfile: UserProfile): Promise<{
         throw new Error(`HuggingFace API error: ${response.statusText}`);
       }
 
-      return await response.json();
+      return response.json();
     };
 
     const hf = {
@@ -1056,4 +1054,5 @@ function extractMetrics(text: string): string[] {
 }
 
 // Temporary type for HfInference until @huggingface/inference is installed
-type HfInference = any;
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+type _HfInference = unknown;

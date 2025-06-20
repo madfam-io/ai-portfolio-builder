@@ -21,7 +21,7 @@ export function ProgressIndicator({ currentStep, t }: ProgressIndicatorProps) {
       case 'seo':
         return '66%';
       case 'review':
-        return '100%&apos;;
+        return '100%';
     }
   };
 
@@ -32,8 +32,8 @@ export function ProgressIndicator({ currentStep, t }: ProgressIndicatorProps) {
           <div
             key={step.id}
             className={cn(
-              &apos;flex items-center gap-2&apos;,
-              step.id === currentStep ? &apos;text-primary&apos; : &apos;text-muted-foreground'
+              'flex items-center gap-2',
+              step.id === currentStep ? 'text-primary' : 'text-muted-foreground'
             )}
           >
             <div
