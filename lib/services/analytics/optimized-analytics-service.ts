@@ -4,6 +4,26 @@ import { logger } from '@/lib/utils/logger';
 
 import type { Repository, PullRequest, Contributor } from '@/types/analytics';
 
+interface DashboardAnalytics {
+  repositories: Repository[];
+  metrics: CodeMetrics[];
+  pullRequests: PullRequest[];
+  contributors: Contributor[];
+}
+
+interface CodeMetrics {
+  id: string;
+  user_id: string;
+  repository_id: string;
+  metric_date: string;
+  commits: number;
+  additions: number;
+  deletions: number;
+  files_changed: number;
+  created_at: string;
+  updated_at: string;
+}
+
 /**
  * Optimized Analytics Service
  * Fixes N+1 query problems and improves performance
@@ -260,7 +280,7 @@ export class OptimizedAnalyticsService {
   /**
    * Get dashboard analytics with optimized queries
    */
-  async getDashboardAnalytics(): Promise<any> {
+  async getDashboardAnalytics(): Promise<DashboardAnalytics> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
@@ -305,7 +325,7 @@ export class OptimizedAnalyticsService {
   /**
    * Get aggregated metrics with single query
    */
-  async getAggregatedMetrics(): Promise<any> {
+  async getAggregatedMetrics(): Promise<CodeMetrics[]> {
     const supabase = await createClient();
     if (!supabase) {
       throw new Error('Database connection not available');
@@ -409,8 +429,32 @@ export class OptimizedAnalyticsService {
       throw error;
     }
 
+    // Define the structure of the joined data
+    interface ContributorWithJoin {
+      commitCount: number;
+      contributorId: string;
+      contributors: {
+        id: string;
+        githubId: number;
+        login: string;
+        avatarUrl?: string;
+        name?: string;
+        email?: string;
+        company?: string;
+        location?: string;
+        bio?: string;
+        publicRepos?: number;
+        followers?: number;
+        following?: number;
+        githubCreatedAt?: string;
+        lastSeenAt?: string;
+        createdAt: string;
+        updatedAt: string;
+      };
+    }
+
     // Transform to proper Contributor type
-    return (data || []).map((item: unknown) => ({
+    return ((data || []) as ContributorWithJoin[]).map(item => ({
       id: item.contributors?.id || '',
       githubId: item.contributors?.githubId || 0,
       login: item.contributors?.login || '',

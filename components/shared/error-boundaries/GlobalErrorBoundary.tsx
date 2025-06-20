@@ -80,15 +80,12 @@ function ErrorFallback({ error, onReset }: ErrorFallbackProps) {
             {t.unexpectedError || 'Unexpected Error'}
           </CardTitle>
           <CardDescription>
-            {t.somethingWentWrong ||
-              'Something went wrong. Please try again.'}
+            {t.somethingWentWrong || 'Something went wrong. Please try again.'}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Alert variant="destructive">
-            <AlertTitle>
-              {t.errorDetails || 'Error Details'}
-            </AlertTitle>
+            <AlertTitle>{t.errorDetails || 'Error Details'}</AlertTitle>
             <AlertDescription className="mt-2 font-mono text-sm">
               {error?.message || 'Unknown error occurred'}
             </AlertDescription>

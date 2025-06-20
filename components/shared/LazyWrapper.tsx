@@ -18,15 +18,15 @@ import React, { Suspense, ComponentType, ReactNode } from 'react';
  * @version 1.0.0
  */
 
-interface LazyWrapperProps {
+interface LazyWrapperProps<T = Record<string, unknown>> {
   /** The component to lazy load */
-  component: () => Promise<{ default: ComponentType<any> }>;
+  component: () => Promise<{ default: ComponentType<T> }>;
   /** Loading fallback component */
   fallback?: ReactNode;
   /** Error fallback component */
   errorFallback?: ReactNode;
   /** Props to pass to the lazy component */
-  componentProps?: Record<string, unknown>;
+  componentProps?: T;
   /** Additional CSS classes for the wrapper */
   className?: string;
 }
@@ -142,13 +142,15 @@ const DefaultLoadingFallback: React.FC<{ className?: string }> = ({
  * />
  * ```
  */
-export const LazyWrapper: React.FC<LazyWrapperProps> = ({
+export const LazyWrapper = <
+  T extends Record<string, unknown> = Record<string, unknown>,
+>({
   component,
   fallback,
   errorFallback,
-  componentProps = {},
+  componentProps = {} as T,
   className = '',
-}) => {
+}: LazyWrapperProps<T>) => {
   // Create the lazy component
   const LazyComponent = React.lazy(component);
 
@@ -183,7 +185,9 @@ export function withLazyLoading<P extends object>(
   return function LazyLoadedComponent(props: P) {
     return (
       <LazyWrapper
-        component={importComponent as () => Promise<{ default: ComponentType<unknown> }>}
+        component={
+          importComponent as () => Promise<{ default: ComponentType<unknown> }>
+        }
         fallback={options.fallback}
         errorFallback={options.errorFallback}
         componentProps={props as Record<string, unknown>}

@@ -15,7 +15,7 @@ export interface AvailableModel {
   lastUpdated: string;
 }
 
-class ModelManager {
+export class ModelManager {
   private availableModels: AvailableModel[] = [];
   private selectedModels: Record<string, string> = {};
 
@@ -128,7 +128,9 @@ class ModelManager {
    */
   getRecommendedModel(taskType: string): string {
     const recommended = this.availableModels
-      .filter(m => m.capabilities.includes(taskType as unknown) && m.isRecommended)
+      .filter(
+        m => m.capabilities.some(cap => cap === taskType) && m.isRecommended
+      )
       .sort(
         (a, b) =>
           b.qualityRating / b.costPerRequest -
@@ -137,7 +139,9 @@ class ModelManager {
 
     return (
       recommended?.id ||
-      this.defaultModels[taskType as keyof typeof this.defaultModels] ||
+      (taskType in this.defaultModels
+        ? this.defaultModels[taskType as keyof typeof this.defaultModels]
+        : null) ||
       this.defaultModels.bio
     );
   }
@@ -154,7 +158,7 @@ class ModelManager {
    */
   modelSupportsCapability(modelId: string, capability: string): boolean {
     const model = this.getModelInfo(modelId);
-    return model ? model.capabilities.includes(capability as unknown) : false;
+    return model ? model.capabilities.some(cap => cap === capability) : false;
   }
 
   /**

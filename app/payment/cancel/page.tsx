@@ -61,7 +61,7 @@ export default function PaymentCancel() {
                 {t.paymentCanceled || 'Payment Canceled'}
               </CardTitle>
               <p className="text-muted-foreground mt-2">
-                {t.noCharges || "Don't worry, you haven't been charged"}
+                {t.noCharges || `Don't worry, you haven't been charged`}
               </p>
             </CardHeader>
 
@@ -94,7 +94,7 @@ export default function PaymentCancel() {
               {/* What You're Missing */}
               <div className="bg-muted/50 rounded-lg p-6">
                 <h3 className="font-semibold mb-3">
-                  {t.whatYoureMissing || "What you're missing out on"}
+                  {t.whatYoureMissing || `What you're missing out on`}
                 </h3>
                 <ul className="space-y-2">
                   <li className="flex items-center text-sm">

@@ -7,10 +7,11 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
-interface RouteParams {
-  params: {
+// Next.js route handler context type
+interface RouteContext {
+  params: Promise<{
     subdomain: string;
-  };
+  }>;
 }
 
 /**
@@ -18,8 +19,8 @@ interface RouteParams {
  * Fetch a public portfolio by subdomain (no auth required)
  */
 export const GET = versionedApiHandler(
-  (async (_request: Request, context: any) => {
-    const { params } = context as RouteParams;
+  async (_request: Request, context: RouteContext) => {
+    const params = await context.params;
     try {
       const { subdomain } = params;
 
@@ -91,5 +92,5 @@ export const GET = versionedApiHandler(
       );
       return apiError('Internal server error', { status: 500 });
     }
-  }) as any
+  }
 );

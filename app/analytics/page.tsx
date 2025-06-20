@@ -12,7 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState, useEffect, Suspense, ComponentType } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 
 import { ContributorsList } from '@/components/analytics/ContributorsList';
 import { RepositoryList } from '@/components/analytics/RepositoryList';
@@ -21,7 +21,7 @@ import BaseLayout from '@/components/layouts/BaseLayout';
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { usePerformanceTracking } from '@/lib/utils/performance';
 
-import type { AnalyticsDashboardData } from '@/types/analytics';
+import type { AnalyticsDashboardData, Repository } from '@/types/analytics';
 
 /**
  * @fileoverview Analytics Dashboard Page
@@ -36,7 +36,7 @@ interface DashboardApiResponse {
   requiresAuth?: boolean;
 }
 interface RepositoriesApiResponse {
-  repositories?: unknown[];
+  repositories?: Repository[];
   error?: string;
   requiresAuth?: boolean;
 }
@@ -391,7 +391,8 @@ function AnalyticsDashboard(): React.ReactElement {
 
             {/* Pull Requests Chart */}
             <LazyWrapper
-              component={() => import('@/components/analytics/PullRequestsChart')
+              component={() =>
+                import('@/components/analytics/PullRequestsChart')
               }
               componentProps={{
                 data: data.trends.pullRequestsPerWeek,

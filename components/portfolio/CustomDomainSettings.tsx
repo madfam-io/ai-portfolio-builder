@@ -38,7 +38,6 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Portfolio } from '@/types/portfolio';
-import { cn } from '@/lib/utils';
 
 interface CustomDomainSettingsProps {
   portfolio: Portfolio;
@@ -102,7 +101,7 @@ export function CustomDomainSettings({
       );
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         onUpdate({ customDomain: domain });
         setDomainStatus({
           status: 'pending',
@@ -153,7 +152,7 @@ export function CustomDomainSettings({
           description: t.domainRemovedDesc || 'Custom domain has been removed',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: t.failedToRemoveDomain || 'Failed to remove domain',
@@ -165,7 +164,7 @@ export function CustomDomainSettings({
     }
   };
 
-  const verifyDomainStatus = async (domain: string) => {
+  const verifyDomainStatus = (_domain: string) => {
     let attempts = 0;
     const maxAttempts = 10;
 
@@ -189,8 +188,8 @@ export function CustomDomainSettings({
             setTimeout(checkStatus, 5000); // Check again in 5 seconds
           }
         }
-      } catch (error) {
-        console.error('Failed to check domain status:', error);
+      } catch (_error) {
+        // Failed to check domain status
       }
     };
 

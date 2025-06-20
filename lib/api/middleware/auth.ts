@@ -11,6 +11,15 @@ import { logger } from '@/lib/utils/logger';
  */
 
 /**
+ * Authenticated user type returned by authenticateUser
+ */
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  role: string;
+}
+
+/**
  * Timing-safe string comparison to prevent timing attacks
  * @param a - First string to compare
  * @param b - Second string to compare
@@ -59,7 +68,9 @@ export interface AuthenticatedRequest extends NextRequest {
  * @param request - The incoming request
  * @returns User object if authenticated, null otherwise
  */
-export async function authenticateUser(_request: NextRequest) {
+export async function authenticateUser(
+  _request: NextRequest
+): Promise<AuthenticatedUser | null> {
   const startTime = Date.now();
 
   try {
@@ -122,7 +133,7 @@ export async function authenticateUser(_request: NextRequest) {
  * @returns True if user has permission
  */
 export function hasPermission(
-  user: { role?: string },
+  user: AuthenticatedUser,
   permission: string
 ): boolean {
   const rolePermissions: Record<string, string[]> = {
@@ -136,7 +147,7 @@ export function hasPermission(
     user: ['portfolio:manage', 'analytics:view'],
   };
 
-  const userPermissions = rolePermissions[user.role || 'user'] || [];
+  const userPermissions = rolePermissions[user.role] || [];
   return userPermissions.includes(permission);
 }
 
@@ -160,7 +171,10 @@ export function forbiddenResponse(message = 'Insufficient permissions') {
  * @param requiredPermission - Optional permission requirement
  */
 function _requireAuth(
-  handler: (request: NextRequest, user: unknown) => Promise<NextResponse>,
+  handler: (
+    request: NextRequest,
+    user: AuthenticatedUser
+  ) => Promise<NextResponse>,
   requiredPermission?: string
 ) {
   return async (request: NextRequest) => {
@@ -180,12 +194,12 @@ function _requireAuth(
 
 /**
  * Higher-order function that wraps API route handlers with authentication
- * Works seamlessly with versionedApiHandler
+ * Works seamlessly with versionedApiHandler and Next.js route handlers
  */
-export function withAuth<T extends (...args: unknown[]) => any>(
-  handler: (req: AuthenticatedRequest, ...args: Parameters<T>) => ReturnType<T>
-): T {
-  return (async (req: NextRequest, ...args: unknown[]) => {
+export function withAuth<TArgs extends unknown[], TReturn>(
+  handler: (req: AuthenticatedRequest, ...args: TArgs) => TReturn
+): (req: NextRequest, ...args: TArgs) => Promise<TReturn | NextResponse> {
+  return async (req: NextRequest, ...args: TArgs) => {
     try {
       const user = await authenticateUser(req);
 
@@ -202,10 +216,10 @@ export function withAuth<T extends (...args: unknown[]) => any>(
       }) as AuthenticatedRequest;
 
       // Call the original handler with authenticated request
-      return handler(authenticatedReq, ...(args as Parameters<T>));
+      return handler(authenticatedReq, ...args);
     } catch (error) {
       logger.error('Auth middleware error:', error as Error);
       return apiError('Authentication failed', { status: 500 });
     }
-  }) as T;
+  };
 }

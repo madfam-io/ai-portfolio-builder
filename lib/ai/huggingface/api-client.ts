@@ -65,7 +65,7 @@ class RequestQueue {
   }
 }
 
-class HuggingFaceAPIClient {
+export class HuggingFaceAPIClient {
   private readonly apiKey: string;
   private readonly baseUrl = 'https://api-inference.huggingface.co/models';
   private readonly requestQueue = new RequestQueue();
@@ -279,7 +279,10 @@ class HuggingFaceAPIClient {
   /**
    * Generate a hash for caching
    */
-  private hashPrompt(prompt: string, parameters: Record<string, unknown>): string {
+  private hashPrompt(
+    prompt: string,
+    parameters: Record<string, unknown>
+  ): string {
     const content = prompt + JSON.stringify(parameters);
     // Simple hash function for cache key
     let hash = 0;

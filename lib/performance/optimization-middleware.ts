@@ -7,7 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Response compression and caching headers
  */
-export function withPerformanceOptimization<T extends (...args: unknown[]) => any>(
+export function withPerformanceOptimization<
+  T extends (...args: unknown[]) => unknown,
+>(
   handler: T,
   options: {
     enableCompression?: boolean;
@@ -52,17 +54,10 @@ export function withPerformanceOptimization<T extends (...args: unknown[]) => an
           );
         } else if (isAPI) {
           // API routes - cache based on content
-          if (contentType.includes('application/json')) {
-            response.headers.set(
-              'Cache-Control',
-              `public, max-age=${maxAge}, stale-while-revalidate=86400`
-            );
-          } else {
-            response.headers.set(
-              'Cache-Control',
-              'no-cache, no-store, must-revalidate'
-            );
-          }
+          const apiCacheControl = contentType.includes('application/json')
+            ? `public, max-age=${maxAge}, stale-while-revalidate=86400`
+            : 'no-cache, no-store, must-revalidate';
+          response.headers.set('Cache-Control', apiCacheControl);
         } else {
           // HTML pages - short cache with revalidation
           response.headers.set(
@@ -140,7 +135,9 @@ function generateETag(response: NextResponse): string {
 /**
  * Database query optimization middleware
  */
-export function withQueryOptimization<T extends (...args: unknown[]) => any>(
+export function withQueryOptimization<
+  T extends (...args: unknown[]) => unknown,
+>(
   handler: T,
   options: {
     enableQueryCache?: boolean;
@@ -176,6 +173,7 @@ export function withQueryOptimization<T extends (...args: unknown[]) => any>(
         return response;
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Cache read error:', error);
     }
 
@@ -188,6 +186,7 @@ export function withQueryOptimization<T extends (...args: unknown[]) => any>(
         setCache(cacheKey, responseData, cacheTTL);
         response.headers.set('X-Cache', 'MISS');
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Cache write error:', error);
       }
     }
@@ -362,11 +361,13 @@ export function trackPerformanceMetrics(
 
   // Log performance metrics (in production, send to analytics service)
   if (process.env.NODE_ENV === 'development') {
+    // eslint-disable-next-line no-console
     console.log(`Performance: ${operation} took ${duration}ms`, additionalData);
   }
 
   // Track slow operations
   if (duration > 1000) {
+    // eslint-disable-next-line no-console
     console.warn(
       `Slow operation detected: ${operation} took ${duration}ms`,
       additionalData

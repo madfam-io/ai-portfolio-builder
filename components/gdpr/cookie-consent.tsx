@@ -270,10 +270,9 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
           {!showDetails ? (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                By clicking "Accept All", you consent to our use of
-                cookies for analytics, marketing, and enhanced functionality.
-                You can customize your preferences or accept only essential
-                cookies.
+                {`By clicking "Accept All", you consent to our use of cookies for`}
+                analytics, marketing, and enhanced functionality. You can
+                customize your preferences or accept only essential cookies.
               </p>
 
               <div className="flex items-center justify-center space-x-2">

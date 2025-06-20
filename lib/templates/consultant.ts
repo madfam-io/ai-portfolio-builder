@@ -5,6 +5,13 @@ import { Portfolio } from '@/types/portfolio';
  * Professional, business-focused design for consultants and advisors
  */
 
+interface Testimonial {
+  text: string;
+  name: string;
+  title: string;
+  avatarUrl?: string;
+}
+
 export function renderConsultantTemplate(portfolio: Portfolio): string {
   const {
     name,
@@ -19,7 +26,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
     skills,
   } = portfolio;
 
-  const testimonials: unknown[] = []; // Portfolio type doesn't have testimonials yet
+  const testimonials: Testimonial[] = []; // Portfolio type doesn't have testimonials yet
 
   return `
     <div class="min-h-screen bg-gray-50">

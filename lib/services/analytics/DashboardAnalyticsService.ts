@@ -7,7 +7,14 @@ import type {
   PullRequest,
   CommitAnalytics,
   AnalyticsDashboardData,
+  RepositoryContributor,
+  Contributor,
 } from '@/types/analytics';
+
+// Type for repository contributor with nested contributor data
+interface RepositoryContributorWithContributor extends RepositoryContributor {
+  contributor?: Contributor;
+}
 
 /**
  * Dashboard Analytics Service
@@ -40,7 +47,7 @@ export class DashboardAnalyticsService {
         .in('repository_id', repositoryIds)
         .order('metric_date', { ascending: false });
 
-      const metrics = (metricsData as CodeMetrics[]) || [];
+      const metrics: CodeMetrics[] = metricsData || [];
 
       // Fetch recent pull requests
       const { data: prData } = await supabase
@@ -50,7 +57,7 @@ export class DashboardAnalyticsService {
         .order('created_at', { ascending: false })
         .limit(10);
 
-      const pullRequests = (prData as PullRequest[]) || [];
+      const pullRequests: PullRequest[] = prData || [];
 
       // Fetch top contributors
       const { data: contributorData } = await supabase
@@ -65,6 +72,9 @@ export class DashboardAnalyticsService {
         .order('commit_count', { ascending: false })
         .limit(5);
 
+      const typedContributorData: RepositoryContributorWithContributor[] =
+        contributorData || [];
+
       // Fetch commit trends
       const { data: commitData } = await supabase
         .from('commit_analytics')
@@ -78,14 +88,14 @@ export class DashboardAnalyticsService {
         )
         .order('commit_date', { ascending: true });
 
-      const commitAnalytics = (commitData as CommitAnalytics[]) || [];
+      const commitAnalytics: CommitAnalytics[] = commitData || [];
 
       // Calculate overview stats
       const overview = this.calculateOverviewStats(
         repositories,
         metrics,
         pullRequests,
-        contributorData
+        typedContributorData
       );
 
       // Process trends
@@ -113,7 +123,7 @@ export class DashboardAnalyticsService {
     repositories: Repository[],
     metrics: CodeMetrics[],
     pullRequests: PullRequest[],
-    contributorData: any
+    contributorData: RepositoryContributorWithContributor[]
   ) {
     const totalLOC = metrics.reduce((sum, m) => sum + (m.locTotal || 0), 0);
     const totalCommits = metrics.reduce(
@@ -121,8 +131,7 @@ export class DashboardAnalyticsService {
       0
     );
     const totalContributors = new Set(
-      contributorData?.map((rc: any) => rc.contributor?.id).filter(Boolean) ||
-        []
+      contributorData.map(rc => rc.contributor?.id).filter(Boolean)
     ).size;
 
     // Find most active repository
@@ -154,11 +163,19 @@ export class DashboardAnalyticsService {
               : 0,
           }
         : undefined,
-      topContributors:
-        contributorData?.slice(0, 5).map((rc: any) => ({
+      topContributors: contributorData
+        .filter(
+          (
+            rc
+          ): rc is RepositoryContributorWithContributor & {
+            contributor: Contributor;
+          } => rc.contributor !== null && rc.contributor !== undefined
+        )
+        .slice(0, 5)
+        .map(rc => ({
           contributor: rc.contributor,
-          commitCount: rc.commit_count,
-        })) || [],
+          commitCount: rc.commitCount,
+        })),
     };
   }
 

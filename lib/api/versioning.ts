@@ -10,7 +10,7 @@ import {
 /**
  * Base API response structure
  */
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
@@ -80,25 +80,26 @@ export function getApiVersion(request: NextRequest): string {
 /**
  * Version-aware API handler wrapper
  * Provides version context and standard error handling
+ * Supports Next.js App Router route handlers
  */
-export function versionedApiHandler<T extends (...args: unknown[]) => any>(
-  handler: T
-): T {
-  return (async (...args: Parameters<T>) => {
-    const [request] = args as unknown as [NextRequest];
+type RouteSegment = { params: Record<string, string> };
+type RouteHandler<T> = (
+  request: NextRequest,
+  ...args: RouteSegment[]
+) => Promise<T> | T;
 
+export function versionedApiHandler<TReturn = NextResponse>(
+  handler: RouteHandler<TReturn>
+): RouteHandler<TReturn | NextResponse> {
+  return async (request: NextRequest, ...args) => {
     try {
       const version = getApiVersion(request);
 
       // Add version to request context
       const versionedRequest = Object.assign(request, { apiVersion: version });
 
-      // Replace request in args
-      const versionedArgs = [...args] as unknown as Parameters<T>;
-      (versionedArgs as unknown)[0] = versionedRequest;
-
       // Call handler with versioned request
-      const result = await handler(...versionedArgs);
+      const result = await handler(versionedRequest, ...args);
 
       // If the handler returns a NextResponse, add version headers
       if (result instanceof Response) {
@@ -116,13 +117,13 @@ export function versionedApiHandler<T extends (...args: unknown[]) => any>(
 
       return apiError('Internal Server Error', { status: 500 });
     }
-  }) as T;
+  };
 }
 
 /**
  * Helper to create route imports that support versioning
  */
-function createVersionedRoute(routePath: string) {
+export function createVersionedRoute(routePath: string) {
   return {
     v1: `/api/v1/${routePath}`,
     current: `/api/${API_VERSION_CONFIG._currentVersion}/${routePath}`,
@@ -133,7 +134,7 @@ function createVersionedRoute(routePath: string) {
 /**
  * Utility to generate API documentation headers
  */
-function generateApiDocHeaders(
+export function generateApiDocHeaders(
   endpoint: string,
   methods: string[]
 ): Record<string, string> {

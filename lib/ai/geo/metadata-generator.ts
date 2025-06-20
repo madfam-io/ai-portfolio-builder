@@ -1,4 +1,5 @@
 import { SEOMetadata, GEOSettings } from './types';
+import { Portfolio, Skill, Education } from '@/types/portfolio';
 
 /**
  * SEO Metadata and Structured Data Generator
@@ -362,32 +363,32 @@ export class MetadataGenerator {
   /**
    * Generate portfolio-specific structured data
    */
-  generatePortfolioStructuredData(portfolio: unknown): Record<string, unknown> {
-    const portfolioData = portfolio as unknown;
+  generatePortfolioStructuredData(
+    portfolio: Portfolio
+  ): Record<string, unknown> {
     return {
       '@context': 'https://schema.org',
       '@type': 'ProfilePage',
       mainEntity: {
         '@type': 'Person',
-        name: portfolioData.name,
-        jobTitle: portfolioData.title,
-        description: portfolioData.bio,
-        url: portfolioData.url,
+        name: portfolio.name,
+        jobTitle: portfolio.title,
+        description: portfolio.bio,
         sameAs: [
-          portfolioData.social?.linkedin,
-          portfolioData.social?.github,
-          portfolioData.social?.twitter,
+          portfolio.social?.linkedin,
+          portfolio.social?.github,
+          portfolio.social?.twitter,
         ].filter(Boolean),
-        knowsAbout: portfolioData.skills?.map((s: unknown) => s.name) || [],
+        knowsAbout: portfolio.skills?.map((s: Skill) => s.name) || [],
         alumniOf:
-          portfolioData.education?.map((edu: unknown) => ({
+          portfolio.education?.map((edu: Education) => ({
             '@type': 'EducationalOrganization',
             name: edu.institution,
           })) || [],
-        worksFor: portfolioData.experience?.[0]
+        worksFor: portfolio.experience?.[0]
           ? {
               '@type': 'Organization',
-              name: portfolioData.experience[0].company,
+              name: portfolio.experience[0].company,
             }
           : undefined,
       },

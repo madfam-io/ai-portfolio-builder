@@ -276,7 +276,7 @@ export default function TemplatePreviewPage({ params }: PageProps) {
             <div className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               <Card>
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-2">What's Included</h3>
+                  <h3 className="font-semibold mb-2">{`What's Included`}</h3>
                   <ul className="space-y-2 text-sm text-muted-foreground">
                     <li>&bull; Full template source code</li>
                     <li>&bull; Lifetime updates</li>

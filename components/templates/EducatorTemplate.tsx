@@ -14,7 +14,6 @@ import {
   ExternalLink,
   Download,
   Star,
-  Clock,
   Target,
 } from 'lucide-react';
 
@@ -92,7 +91,7 @@ export function EducatorTemplate({ portfolio }: EducatorTemplateProps) {
                 Teaching Philosophy
               </h3>
               <p className="text-lg text-gray-700 leading-relaxed italic">
-                "{portfolio.bio}"
+                {`"${portfolio.bio}"`}
               </p>
             </div>
           )}
@@ -403,8 +402,8 @@ export function EducatorTemplate({ portfolio }: EducatorTemplateProps) {
         <section className="text-center bg-gradient-to-r from-green-600 to-green-700 text-white rounded-2xl p-12 shadow-lg">
           <h3 className="text-3xl font-bold mb-6">Ready to Learn Together?</h3>
           <p className="text-xl text-green-100 mb-8 max-w-2xl mx-auto">
-            I'm passionate about helping students achieve their learning goals
-            through engaging, effective instruction.
+            {`I'm passionate about helping students achieve their learning goals
+            through engaging, effective instruction.`}
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

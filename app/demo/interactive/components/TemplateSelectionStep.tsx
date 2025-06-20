@@ -1,7 +1,7 @@
 'use client';
 
 import { RefreshCw } from 'lucide-react';
-import React, { ComponentType } from 'react';
+import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { TemplateType } from '@/types/portfolio';
@@ -36,10 +36,14 @@ export function TemplateSelectionStep({
         </p>
       </div>
 
-      <LazyWrapper
+      <LazyWrapper<{
+        currentTemplate: TemplateType;
+        onTemplateChange: (template: TemplateType) => Promise<void>;
+        isLoading: boolean;
+      }>
         component={() =>
           import('@/components/editor/TemplateSelector').then(mod => ({
-            default: mod.TemplateSelector as ComponentType<unknown>,
+            default: mod.TemplateSelector,
           }))
         }
         componentProps={{

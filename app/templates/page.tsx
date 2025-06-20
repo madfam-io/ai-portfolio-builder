@@ -390,7 +390,7 @@ export default function TemplateMarketplacePage() {
                       More Templates Coming Soon
                     </h3>
                     <p className="text-sm text-muted-foreground">
-                      We're adding new premium templates every month
+                      {`We're adding new premium templates every month`}
                     </p>
                   </div>
                 </div>

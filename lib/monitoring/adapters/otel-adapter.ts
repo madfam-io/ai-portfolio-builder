@@ -5,8 +5,8 @@
  */
 
 import { apm } from '../apm';
-import type { TransactionTrace, TransactionSpan, APMMetric } from '../apm';
-import { createSpan, tracer, getCurrentSpan, isOtelEnabled } from '../signoz';
+import type { APMMetric } from '../apm';
+import { tracer, isOtelEnabled } from '../signoz';
 import { SpanKind, SpanStatusCode, context, trace } from '@opentelemetry/api';
 import type { Span } from '@opentelemetry/api';
 import {
@@ -26,7 +26,10 @@ export class OpenTelemetryAdapter {
   /**
    * Override startTransaction to create OpenTelemetry span
    */
-  startTransaction(name: string, metadata: Record<string, unknown> = {}): string {
+  startTransaction(
+    name: string,
+    metadata: Record<string, unknown> = {}
+  ): string {
     // Call original APM
     const transactionId = this.originalApm.startTransaction(name, metadata);
 
@@ -199,7 +202,7 @@ export const apmAdapter = new OpenTelemetryAdapter();
 /**
  * Migrate existing APM wrapper functions to use OpenTelemetry
  */
-export function withAPMTracking<T extends (...args: unknown[]) => any>(
+export function withAPMTracking<T extends (...args: unknown[]) => unknown>(
   handler: T,
   operationName?: string
 ): T {

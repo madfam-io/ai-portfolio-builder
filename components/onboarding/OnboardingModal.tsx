@@ -58,7 +58,10 @@ const stepIcons: Record<string, React.ReactNode> = {
 };
 
 // Step content components
-const stepComponents: Record<string, React.ComponentType<StepComponentProps>> = {
+const stepComponents: Record<
+  string,
+  React.ComponentType<StepComponentProps>
+> = {
   welcome: WelcomeStep,
   'profile-setup': ProfileSetupStep,
   'first-portfolio': FirstPortfolioStep,
@@ -98,7 +101,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     await track.user.action(
       'onboarding_step_completed',
       'system',
-      async () => {
+      () => {
         completeStep(currentStep.id);
       },
       {
@@ -118,7 +121,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_step_skipped',
       'system',
-      async () => {
+      () => {
         skipStep(currentStep.id);
       },
       {
@@ -132,7 +135,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_completed',
       'system',
-      async () => {
+      () => {
         completeOnboarding();
       },
       {
@@ -153,7 +156,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_closed',
       'system',
-      async () => {
+      () => {
         completeOnboarding();
       },
       {
@@ -266,7 +269,10 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
 }
 
 // Default step component
-function DefaultStep({ step: _step, onComplete: _onComplete }: StepComponentProps) {
+function DefaultStep({
+  step: _step,
+  onComplete: _onComplete,
+}: StepComponentProps) {
   return (
     <div className="space-y-4">
       <p className="text-muted-foreground">
@@ -287,8 +293,8 @@ function WelcomeStep({ onComplete: _onComplete }: StepComponentProps) {
           Welcome to PRISMA!
         </h3>
         <p className="text-lg text-muted-foreground max-w-md mx-auto">
-          Create stunning portfolios powered by AI in under 30 minutes. Let&apos;s
-          get you started!
+          Create stunning portfolios powered by AI in under 30 minutes.
+          Let&apos;s get you started!
         </p>
       </div>
 
@@ -300,7 +306,7 @@ function WelcomeStep({ onComplete: _onComplete }: StepComponentProps) {
           <div>
             <h4 className="font-medium">Quick Setup</h4>
             <p className="text-sm text-muted-foreground">
-              We'll guide you through creating your first portfolio step by step
+              {`We'll guide you through creating your first portfolio step by step`}
             </p>
           </div>
         </div>
@@ -340,12 +346,12 @@ function ProfileSetupStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
-        Let&apos;s start by setting up your profile. This information will help us
-        personalize your experience.
+        Let&apos;s start by setting up your profile. This information will help
+        us personalize your experience.
       </p>
 
       <div className="bg-muted/50 p-4 rounded-lg space-y-3">
-        <h4 className="font-medium">What we'll set up:</h4>
+        <h4 className="font-medium">{`What we'll set up:`}</h4>
         <ul className="space-y-2 text-sm text-muted-foreground">
           <li className="flex items-center gap-2">
             <div className="w-1.5 h-1.5 rounded-full bg-primary" />
@@ -381,7 +387,7 @@ function FirstPortfolioStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
-        Time to create your first portfolio! We'll walk you through the process.
+        {`Time to create your first portfolio! We'll walk you through the process.`}
       </p>
 
       <div className="grid gap-4">
@@ -584,7 +590,7 @@ function ExploreFeaturesStep({ onComplete: _onComplete }: StepComponentProps) {
       <div className="text-center pt-4">
         <p className="text-lg font-medium mb-2">🎉 Congratulations!</p>
         <p className="text-muted-foreground">
-          You're ready to build amazing portfolios
+          {`You're ready to build amazing portfolios`}
         </p>
       </div>
     </div>
@@ -595,7 +601,9 @@ function ExploreFeaturesStep({ onComplete: _onComplete }: StepComponentProps) {
 function WhatsNewStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Welcome Back! Here&apos;s What&apos;s New</h3>
+      <h3 className="text-xl font-semibold">
+        Welcome Back! Here&apos;s What&apos;s New
+      </h3>
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <div className="w-2 h-2 rounded-full bg-green-500 mt-2" />
@@ -620,7 +628,9 @@ function WhatsNewStep({ onComplete: _onComplete }: StepComponentProps) {
   );
 }
 
-function FeatureHighlightsStep({ onComplete: _onComplete }: StepComponentProps) {
+function FeatureHighlightsStep({
+  onComplete: _onComplete,
+}: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -687,7 +697,9 @@ function EnhanceImportedStep({ onComplete: _onComplete }: StepComponentProps) {
   );
 }
 
-function CustomizeImportedStep({ onComplete: _onComplete }: StepComponentProps) {
+function CustomizeImportedStep({
+  onComplete: _onComplete,
+}: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">

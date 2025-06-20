@@ -8,8 +8,11 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
 
-interface RouteParams {
-  params: { id: string };
+// Next.js route handler context type
+interface RouteContext {
+  params: Promise<{
+    id: string;
+  }>;
 }
 
 // Helper function to transform variant data
@@ -110,8 +113,8 @@ async function createAudienceProfile(
  * Get all variants for a portfolio
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const portfolioId = params.id;
       const supabase = await createClient();
@@ -164,8 +167,8 @@ export const GET = versionedApiHandler(
  * Create a new variant for a portfolio
  */
 export const POST = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const portfolioId = params.id;
       const body: CreateVariantInput = await request.json();

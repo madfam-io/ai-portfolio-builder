@@ -17,7 +17,9 @@ export interface LanguageDataPoint {
 /**
  * Transform commit data for charts
  */
-export function transformCommitData(commitsByDay: unknown[]): CommitDataPoint[] {
+export function transformCommitData(
+  commitsByDay: unknown[]
+): CommitDataPoint[] {
   if (!Array.isArray(commitsByDay)) {
     return [];
   }

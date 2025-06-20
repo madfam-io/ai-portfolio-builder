@@ -89,8 +89,7 @@ export function OnboardingChecklist() {
   const router = useRouter();
   const [isExpanded, setIsExpanded] = useState(true);
   const [dismissing, setDismissing] = useState(false);
-  const { currentFlow, dismissHint, isStepCompleted, getProgress } =
-    useOnboardingStore();
+  const { dismissHint } = useOnboardingStore();
 
   // Mock completed items (in real app, this would come from user data)
   const completedItems = new Set<string>(['complete-profile']);
@@ -104,7 +103,7 @@ export function OnboardingChecklist() {
     track.user.action(
       'checklist_item_clicked',
       'system',
-      async () => {
+      () => {
         if (item.route) {
           router.push(item.route);
         }
@@ -288,7 +287,7 @@ export function OnboardingChecklist() {
                       🎉 Congratulations!
                     </h4>
                     <p className="text-sm text-muted-foreground">
-                      You've completed all onboarding tasks
+                      {`You've completed all onboarding tasks`}
                     </p>
                     <Button
                       size="sm"

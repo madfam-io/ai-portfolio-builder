@@ -32,7 +32,9 @@ export function AddDomainModal({
   const [domain, setDomain] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState('');
   const [checking, setChecking] = useState(false);
-  const [availability, setAvailability] = useState<DomainCheckResult | null>(null);
+  const [availability, setAvailability] = useState<DomainCheckResult | null>(
+    null
+  );
   const [adding, setAdding] = useState(false);
 
   const handleCheckAvailability = async () => {

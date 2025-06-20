@@ -143,6 +143,7 @@ export function ExperienceSection({
 
   const handleDelete = (id: string) => {
     if (
+      // eslint-disable-next-line no-alert
       confirm(
         t.confirmDeleteExperience ||
           'Are you sure you want to delete this experience?'
@@ -453,8 +454,7 @@ export function ExperienceSection({
                     {experience.current
                       ? t.present || 'Present'
                       : formatDateForDisplay(experience.endDate || '')}
-                    {experience.location &&
-                      ` • ${experience.location}`}
+                    {experience.location && ` • ${experience.location}`}
                   </p>
                   {experience.description && (
                     <p className="mt-3 text-sm">{experience.description}</p>

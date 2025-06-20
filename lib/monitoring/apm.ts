@@ -3,7 +3,7 @@
  * Provides comprehensive performance tracking and analysis
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 export interface APMMetric {
   name: string;
@@ -49,7 +49,10 @@ class APMService {
   /**
    * Start a new transaction
    */
-  startTransaction(name: string, metadata: Record<string, unknown> = {}): string {
+  startTransaction(
+    name: string,
+    metadata: Record<string, unknown> = {}
+  ): string {
     if (!this.isEnabled) return '';
 
     const id = this.generateId();
@@ -99,6 +102,7 @@ class APMService {
 
     // Log slow transactions
     if (transaction.duration > 1000) {
+      // eslint-disable-next-line no-console
       console.warn(
         `Slow transaction detected: ${transaction.name} took ${transaction.duration}ms`
       );
@@ -179,6 +183,7 @@ class APMService {
 
     // Log to console in development
     if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
       console.log(
         `APM Metric: ${metric.name} = ${metric.value}${metric.unit}`,
         metric.tags
@@ -293,7 +298,7 @@ export const apm = new APMService();
 /**
  * Middleware wrapper for automatic transaction tracking
  */
-export function withAPMTracking<T extends (...args: unknown[]) => any>(
+export function withAPMTracking<T extends (...args: unknown[]) => unknown>(
   handler: T,
   operationName?: string
 ): T {
@@ -522,7 +527,10 @@ export function useAPMTracking(componentName: string) {
     apm.endTransaction(transactionId, 'completed');
   };
 
-  const trackEvent = (eventName: string, metadata?: Record<string, unknown>) => {
+  const trackEvent = (
+    eventName: string,
+    metadata?: Record<string, unknown>
+  ) => {
     apm.recordMetric({
       name: 'component_event',
       value: 1,

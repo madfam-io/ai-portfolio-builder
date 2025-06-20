@@ -1,4 +1,4 @@
-import { Portfolio } from '@/types/portfolio';
+import { Portfolio, TemplateType, PortfolioStatus } from '@/types/portfolio';
 
 /**
  * Portfolio transformation utilities
@@ -6,10 +6,45 @@ import { Portfolio } from '@/types/portfolio';
  */
 
 /**
+ * Database portfolio structure
+ */
+interface DatabasePortfolio {
+  id: string;
+  user_id: string;
+  name: string;
+  template: TemplateType;
+  customization: Record<string, unknown>;
+  ai_settings: Record<string, unknown>;
+  status: PortfolioStatus;
+  subdomain: string | null;
+  custom_domain: string | null;
+  views: number;
+  last_viewed_at: string | null;
+  created_at: string;
+  updated_at: string;
+  published_at: string | null;
+  data: {
+    title?: string;
+    bio?: string;
+    tagline?: string;
+    avatar_url?: string | null;
+    contact?: Record<string, string>;
+    social?: Record<string, string>;
+    experience?: Array<Record<string, unknown>>;
+    education?: Array<Record<string, unknown>>;
+    projects?: Array<Record<string, unknown>>;
+    skills?: Array<Record<string, unknown>>;
+    certifications?: Array<Record<string, unknown>>;
+  };
+}
+
+/**
  * Transforms database portfolio object to API format
  * Extracts data from JSONB field and converts snake_case to camelCase
  */
-export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
+export function transformDbPortfolioToApi(
+  dbPortfolio: DatabasePortfolio
+): Portfolio {
   // Extract portfolio content from JSONB data field
   const data = dbPortfolio.data || {};
 
@@ -52,10 +87,27 @@ export function transformDbPortfolioToApi(dbPortfolio: any): Portfolio {
  * Transforms API portfolio object to database format
  * Packages portfolio content into JSONB data field
  */
+interface DatabasePortfolioUpdate {
+  id?: string;
+  user_id?: string;
+  name?: string;
+  slug?: string;
+  template?: TemplateType;
+  status?: PortfolioStatus;
+  customization?: Record<string, unknown>;
+  ai_settings?: Record<string, unknown>;
+  subdomain?: string;
+  custom_domain?: string;
+  views?: number;
+  last_viewed_at?: string;
+  published_at?: string;
+  data?: Record<string, unknown>;
+}
+
 export function transformApiPortfolioToDb(
   apiPortfolio: Partial<Portfolio>
-): any {
-  const dbData: any = {};
+): DatabasePortfolioUpdate {
+  const dbData: DatabasePortfolioUpdate = {};
 
   // If data field is provided, use it directly; otherwise extract from fields
   const dataFields = apiPortfolio.data || {
@@ -118,7 +170,9 @@ export function transformApiPortfolioToDb(
 /**
  * Batch transform database portfolios to API format
  */
-export function transformDbPortfoliosToApi(dbPortfolios: any[]): Portfolio[] {
+export function transformDbPortfoliosToApi(
+  dbPortfolios: DatabasePortfolio[]
+): Portfolio[] {
   return dbPortfolios.map(transformDbPortfolioToApi);
 }
 
@@ -155,7 +209,11 @@ export function sanitizePortfolioData(
 
   allowedFields.forEach(field => {
     if (field in data) {
-      (sanitized as any)[field] = (data as any)[field];
+      const key = field as keyof Portfolio;
+      const value = data[key];
+      if (value !== undefined) {
+        (sanitized as Record<keyof Portfolio, unknown>)[key] = value;
+      }
     }
   });
 
@@ -172,7 +230,7 @@ export function sanitizePortfolioData(
       field in sanitized &&
       !Array.isArray(sanitized[field as keyof Portfolio])
     ) {
-      sanitized[field as keyof Portfolio] = [] as any;
+      (sanitized as Record<string, unknown>)[field] = [];
     }
   });
 
@@ -183,7 +241,7 @@ export function sanitizePortfolioData(
       field in sanitized &&
       typeof sanitized[field as keyof Portfolio] !== 'object'
     ) {
-      sanitized[field as keyof Portfolio] = {} as any;
+      (sanitized as Record<string, unknown>)[field] = {};
     }
   });
 

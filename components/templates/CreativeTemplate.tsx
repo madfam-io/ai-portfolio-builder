@@ -16,11 +16,8 @@ import {
   Dribbble,
   Twitter,
   ExternalLink,
-  Download,
   Play,
-  Award,
   Zap,
-  Layers,
 } from 'lucide-react';
 
 import { Portfolio } from '@/types/portfolio';
@@ -158,7 +155,7 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
                   className="px-8 py-4 border-2 border-purple-500 text-purple-600 font-semibold rounded-full hover:bg-purple-50 transition-all duration-300"
                 >
                   <Mail className="w-5 h-5 mr-2 inline" />
-                  Let's Collaborate
+                  {`Let's Collaborate`}
                 </a>
               )}
             </div>
@@ -429,11 +426,11 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
         <section className="py-20 px-6 bg-gradient-to-br from-purple-600 via-pink-600 to-orange-600 text-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">
-              Let's Create Magic Together
+              {`Let's Create Magic Together`}
             </h2>
             <p className="text-xl text-purple-100 mb-12 max-w-2xl mx-auto">
-              Have an idea that needs bringing to life? I'd love to collaborate
-              and turn your vision into reality.
+              {`Have an idea that needs bringing to life? I'd love to collaborate
+              and turn your vision into reality.`}
             </p>
 
             {/* Contact Info */}

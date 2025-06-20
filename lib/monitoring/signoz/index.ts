@@ -5,7 +5,7 @@
  */
 
 import { trace, context, SpanStatusCode, SpanKind } from '@opentelemetry/api';
-import type { Span, SpanContext } from '@opentelemetry/api';
+import type { Span } from '@opentelemetry/api';
 
 // Re-export tracing utilities
 export * from './tracing';
@@ -67,6 +67,7 @@ export const createSpan = (
 
     return span;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('Failed to create span:', error);
     return undefined;
   }
@@ -75,7 +76,7 @@ export const createSpan = (
 /**
  * Wrap a function with OpenTelemetry tracing
  */
-export function withTracing<T extends (...args: unknown[]) => any>(
+export function withTracing<T extends (...args: unknown[]) => unknown>(
   fn: T,
   spanName: string,
   options?: {
@@ -144,7 +145,9 @@ export const recordError = (
 /**
  * Add attributes to the current span
  */
-export const addSpanAttributes = (attributes: Record<string, unknown>): void => {
+export const addSpanAttributes = (
+  attributes: Record<string, unknown>
+): void => {
   const span = getCurrentSpan();
   if (!span) return;
 

@@ -10,7 +10,7 @@ import { showErrorToast, showSuccessToast } from './ui-store';
 /**
  * Async action wrapper with loading and error handling
  */
-function createAsyncAction<T extends any[], R>(
+function createAsyncAction<T extends unknown[], R>(
   action: (...args: T) => Promise<R>,
   options?: {
     loadingMessage?: string;
@@ -83,7 +83,7 @@ const createLoadingSlice = <T extends object>(
     ...initialState,
 
     startLoading: key =>
-      set((state: unknown) => ({
+      set(state => ({
         ...state,
         isLoading: true,
         loadingKey: key || state.loadingKey,
@@ -93,7 +93,7 @@ const createLoadingSlice = <T extends object>(
       })),
 
     stopLoading: key =>
-      set((state: unknown) => {
+      set(state => {
         const newLoadingKeys = new Set(state.loadingKeys);
         if (key) {
           newLoadingKeys.delete(key);
@@ -107,12 +107,12 @@ const createLoadingSlice = <T extends object>(
       }),
 
     isLoadingKey: key => {
-      const state = get() as any;
+      const state = get() as LoadingState & T;
       return state.loadingKeys.has(key);
     },
 
     resetLoading: () =>
-      set((state: unknown) => ({
+      set(state => ({
         ...state,
         isLoading: false,
         loadingKey: null,
@@ -176,14 +176,14 @@ const createErrorSlice = <T extends object>(
       }),
 
     clearAllErrors: () =>
-      set((state: unknown) => ({
+      set(state => ({
         ...state,
         error: null,
         errors: new Map(),
       })),
 
     hasError: key => {
-      const state = get() as any;
+      const state = get() as ErrorState & T;
       if (key) {
         return state.errors.has(key);
       }
@@ -228,7 +228,7 @@ function createOptimisticUpdate<T, R>(
 /**
  * Debounced action creator
  */
-function createDebouncedAction<T extends any[], R>(
+function createDebouncedAction<T extends unknown[], R>(
   action: (...args: T) => R | Promise<R>,
   delay: number = 300
 ) {

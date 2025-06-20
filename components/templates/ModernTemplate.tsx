@@ -11,7 +11,6 @@ import {
   Twitter,
   Globe,
   Calendar,
-  Trophy,
   Star,
   ExternalLink,
 } from 'lucide-react';
@@ -325,11 +324,11 @@ export function ModernTemplate({ portfolio }: ModernTemplateProps) {
         <section className="py-20 px-4">
           <div className="max-w-4xl mx-auto text-center">
             <h3 className="text-3xl md:text-4xl font-bold mb-8 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Let's Work Together
+              {`Let's Work Together`}
             </h3>
             <p className="text-xl text-gray-300 mb-12 max-w-2xl mx-auto">
-              Ready to bring your next project to life? Let's discuss how we can
-              collaborate.
+              {`Ready to bring your next project to life? Let's discuss how we can
+              collaborate.`}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

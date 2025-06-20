@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Check, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import React, { ComponentType } from 'react';
+import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -42,6 +42,31 @@ interface PreviewStepProps {
   };
 }
 
+// Define proper types for the PreviewControls component
+type PreviewControlsProps = {
+  previewMode: 'mobile' | 'desktop' | 'tablet';
+  previewState: 'preview' | 'editing' | 'fullscreen';
+  zoomLevel: number;
+  showSectionBorders: boolean;
+  showInteractiveElements: boolean;
+  isLoading?: boolean;
+  onPreviewModeChange: (mode: 'mobile' | 'desktop' | 'tablet') => void;
+  onToggleFullscreen: () => void;
+  onZoomChange: (zoom: number) => void;
+  onToggleSectionBorders: () => void;
+  onToggleInteractiveElements: () => void;
+  onRefresh: () => void;
+  onExport: () => void;
+  onShare: () => void;
+  onOpenSettings?: () => void;
+  responsiveBreakpoints?: Array<{
+    name: string;
+    width: number;
+    height: number;
+  }>;
+  onTestBreakpoint: (width: number, height: number) => void;
+};
+
 export function PreviewStep({
   portfolio,
   previewConfig,
@@ -62,10 +87,10 @@ export function PreviewStep({
   return (
     <div className="h-[calc(100vh-80px)] flex flex-col">
       {/* Preview Controls */}
-      <LazyWrapper
+      <LazyWrapper<PreviewControlsProps>
         component={() =>
           import('@/components/editor/PreviewControls').then(mod => ({
-            default: mod.PreviewControls as ComponentType<unknown>,
+            default: mod.PreviewControls,
           }))
         }
         componentProps={{
@@ -82,7 +107,10 @@ export function PreviewStep({
           onRefresh,
           onExport,
           onShare,
-          responsiveBreakpoints: getResponsiveBreakpoints(),
+          responsiveBreakpoints: getResponsiveBreakpoints().map(bp => ({
+            ...bp,
+            height: 0, // Add default height
+          })),
           onTestBreakpoint: testResponsiveBreakpoint,
         }}
         fallback={
@@ -147,17 +175,20 @@ export function PreviewStep({
             }}
           >
             <div className="overflow-y-auto h-full" data-preview-container>
-              <LazyWrapper
+              <LazyWrapper<{
+                portfolio: Portfolio;
+                mode: 'mobile' | 'desktop' | 'tablet';
+                isInteractive: boolean;
+              }>
                 component={() =>
                   import('@/components/editor/PortfolioPreview').then(mod => ({
-                    default: mod.PortfolioPreview as ComponentType<unknown>,
+                    default: mod.PortfolioPreview,
                   }))
                 }
                 componentProps={{
                   portfolio: portfolio,
                   mode: previewConfig.mode,
                   isInteractive: previewConfig.showInteractiveElements,
-                  showSectionBorders: previewConfig.showSectionBorders,
                 }}
                 fallback={
                   <div className="flex items-center justify-center h-96">

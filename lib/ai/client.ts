@@ -7,6 +7,7 @@ import {
   UserProfile,
   EnhancedContent,
 } from './types';
+import { Portfolio, Skill, Project, Experience } from '@/types/portfolio';
 
 /**
  * AI Service Client
@@ -231,7 +232,7 @@ export const aiClient = new AIClient();
 /**
  * React hooks for AI operations
  */
-function useAIEnhancement() {
+export function useAIEnhancement() {
   return {
     enhanceBio: aiClient.enhanceBio.bind(aiClient),
     optimizeProject: aiClient.optimizeProject.bind(aiClient),
@@ -245,27 +246,26 @@ function useAIEnhancement() {
 /**
  * Utility functions for AI operations
  */
-const AIUtils = {
+export const AIUtils = {
   /**
    * Extract user profile from portfolio data
    */
-  extractUserProfile(portfolio: unknown): UserProfile {
-    const portfolioData = portfolio as any;
+  extractUserProfile(portfolio: Portfolio): UserProfile {
     return {
-      title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: any) => s.name) || [],
-      projectCount: portfolioData.projects?.length || 0,
+      title: portfolio.title || '',
+      skills: portfolio.skills?.map((s: Skill) => s.name) || [],
+      projectCount: portfolio.projects?.length || 0,
       hasDesignWork:
-        portfolioData.projects?.some((p: any) =>
+        portfolio.projects?.some((p: Project) =>
           p.technologies?.some((t: string) =>
             ['figma', 'sketch', 'photoshop', 'illustrator', 'design'].some(
               design => t.toLowerCase().includes(design)
             )
           )
         ) || false,
-      industry: portfolioData.experience?.[0]?.company || undefined,
+      industry: portfolio.experience?.[0]?.company || undefined,
       experienceLevel: this.calculateExperienceLevel(
-        portfolioData.experience || []
+        portfolio.experience || []
       ),
     };
   },
@@ -274,12 +274,16 @@ const AIUtils = {
    * Calculate experience level from work history
    */
   calculateExperienceLevel(
-    experience: unknown[]
+    experience: Experience[]
   ): 'entry' | 'mid' | 'senior' | 'lead' {
-    const totalYears = experience.reduce((total: number, exp: any) => {
+    const totalYears = experience.reduce((total: number, exp: Experience) => {
       return (
         total +
-        this.calculateYearsExperience(exp.startDate, exp.endDate, exp.current)
+        this.calculateYearsExperience(
+          exp.startDate,
+          exp.endDate || null,
+          exp.current
+        )
       );
     }, 0);
 
@@ -292,24 +296,31 @@ const AIUtils = {
   /**
    * Prepare bio context from portfolio data
    */
-  prepareBioContext(portfolio: unknown): BioContext {
-    const portfolioData = portfolio as any;
+  prepareBioContext(portfolio: Portfolio): BioContext {
     return {
-      title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: any) => s.name) || [],
+      title: portfolio.title || '',
+      skills: portfolio.skills?.map((s: Skill) => s.name) || [],
       experience:
-        portfolioData.experience?.map((exp: any) => ({
+        portfolio.experience?.map((exp: Experience) => ({
           company: exp.company,
           position: exp.position,
           yearsExperience: this.calculateYearsExperience(
             exp.startDate,
-            exp.endDate,
+            exp.endDate || null,
             exp.current
           ),
         })) || [],
-      industry: portfolioData.experience?.[0]?.company || undefined,
-      tone: portfolioData.aiSettings?.tone || 'professional',
-      targetLength: portfolioData.aiSettings?.targetLength || 'concise',
+      industry: portfolio.experience?.[0]?.company || undefined,
+      tone:
+        (portfolio.aiSettings?.tone === 'academic'
+          ? 'professional'
+          : portfolio.aiSettings?.tone) ||
+        ('professional' as 'professional' | 'casual' | 'creative'),
+      targetLength:
+        (portfolio.aiSettings?.targetLength === 'balanced'
+          ? 'detailed'
+          : portfolio.aiSettings?.targetLength) ||
+        ('concise' as 'concise' | 'detailed' | 'comprehensive'),
     };
   },
 

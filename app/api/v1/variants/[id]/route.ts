@@ -7,10 +7,6 @@ import {
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
-interface RouteParams {
-  params: { id: string };
-}
-
 // Helper function to transform variant data
 function transformVariant(variant: Record<string, unknown>) {
   return {
@@ -69,13 +65,20 @@ async function verifyVariantOwnership(
   return { variant };
 }
 
+// Next.js route handler context type
+interface RouteContext {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
 /**
  * GET /api/v1/variants/[id]
  * Get a specific variant
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const variantId = params.id;
       const supabase = await createClient();
@@ -115,8 +118,8 @@ export const GET = versionedApiHandler(
  * Update a variant
  */
 export const PATCH = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const variantId = params.id;
       const updates = await request.json();
@@ -206,8 +209,8 @@ export const PATCH = versionedApiHandler(
  * Delete a variant
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const variantId = params.id;
       const supabase = await createClient();

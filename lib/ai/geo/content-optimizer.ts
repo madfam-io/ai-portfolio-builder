@@ -235,7 +235,7 @@ export class ContentOptimizer {
       content,
       content,
       keywordList,
-'portfolio'
+      'portfolio'
     );
 
     const score = {
@@ -251,12 +251,17 @@ export class ContentOptimizer {
       content,
       keywordList,
       scoreBreakdown,
-'portfolio'
+      'portfolio'
     );
 
     // Convert Suggestion[] to GEOSuggestion[]
     const suggestions: GEOSuggestion[] = rawSuggestions.map(s => ({
-      type: s.type as 'keyword' | 'structure' | 'readability' | 'technical' | 'content',
+      type: s.type as
+        | 'keyword'
+        | 'structure'
+        | 'readability'
+        | 'technical'
+        | 'content',
       priority: s.priority,
       message: s.message,
       impact: s.impact,
@@ -288,7 +293,7 @@ export class ContentOptimizer {
       content,
       content,
       keywords,
-'portfolio'
+      'portfolio'
     );
 
     return {

@@ -2,7 +2,6 @@
 
 import React from 'react';
 import {
-  Briefcase,
   TrendingUp,
   Award,
   Users,
@@ -22,7 +21,6 @@ import {
   Calendar,
   DollarSign,
   Handshake,
-  Zap,
   Shield,
 } from 'lucide-react';
 
@@ -489,11 +487,11 @@ export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
         <section className="py-16 px-6 bg-gradient-to-r from-slate-900 to-slate-800 text-white">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              Let's Drive Results Together
+              {`Let's Drive Results Together`}
             </h2>
             <p className="text-xl text-slate-300 mb-8 max-w-3xl mx-auto">
-              Ready to accelerate your business growth? Let's discuss how my
-              expertise can help achieve your strategic objectives.
+              {`Ready to accelerate your business growth? Let's discuss how my
+              expertise can help achieve your strategic objectives.`}
             </p>
           </div>
 

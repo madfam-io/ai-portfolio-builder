@@ -1,12 +1,11 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { X, ChevronLeft, ChevronRight, Sparkles } from 'lucide-react';
 import { useOnboardingStore } from '@/lib/store/onboarding-store';
-import { cn } from '@/lib/utils';
 import { createPortal } from 'react-dom';
 import { track } from '@/lib/monitoring/unified/events';
 

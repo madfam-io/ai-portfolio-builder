@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { getGEOService } from '@/lib/ai/geo/geo-service';
+import type { KeywordResearch as LocalKeywordResearch } from '@/lib/ai/geo/types';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 
@@ -83,23 +84,26 @@ export async function POST(request: NextRequest): Promise<Response> {
     });
 
     // 7. Return keyword suggestions
+    const primaryKeyword: LocalKeywordResearch = keywordResearch[0] || {
+      keyword: seedKeyword,
+      searchVolume: 0,
+      difficulty: 0,
+      relatedKeywords: [],
+      questions: [],
+      trends: 'stable' as const,
+    };
+
     return NextResponse.json({
       success: true,
       data: {
         primaryKeyword: {
           keyword: seedKeyword,
-          searchVolume: keywordResearch[0]?.searchVolume || 'N/A',
-          difficulty: keywordResearch[0]?.difficulty || 'N/A',
-          trends:
-            ((keywordResearch[0] as unknown as Record<string, unknown>)
-              ?.trends as string) ?? 'stable',
+          searchVolume: primaryKeyword.searchVolume || 'N/A',
+          difficulty: primaryKeyword.difficulty || 'N/A',
+          trends: primaryKeyword.trends || 'stable',
         },
-        relatedKeywords:
-          ((keywordResearch[0] as unknown as Record<string, unknown>)
-            ?.relatedKeywords as string[]) ?? [],
-        questions:
-          ((keywordResearch[0] as unknown as Record<string, unknown>)
-            ?.questions as string[]) ?? [],
+        relatedKeywords: primaryKeyword.relatedKeywords,
+        questions: primaryKeyword.questions,
         variations,
         longTailKeywords,
         locationBased: location
@@ -118,10 +122,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       metadata: {
         researchedAt: new Date().toISOString(),
         totalKeywords:
-          ((
-            (keywordResearch[0] as unknown as Record<string, unknown>)
-              ?.relatedKeywords as string[]
-          )?.length ?? 0) +
+          primaryKeyword.relatedKeywords.length +
           variations.length +
           longTailKeywords.length,
       },

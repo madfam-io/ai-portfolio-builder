@@ -132,7 +132,7 @@ export function EditorContent() {
     });
 
     if (!response.ok) return;
-    
+
     const result = await response.json();
     if (result.success && result.data?.content) {
       updatePortfolioData('bio', result.data.content);
@@ -153,12 +153,10 @@ export function EditorContent() {
       });
 
       if (!response.ok) continue;
-      
+
       const { optimizedDescription } = await response.json();
       const updatedProjects = currentPortfolio.projects.map(p =>
-        p.id === project.id
-          ? { ...p, description: optimizedDescription }
-          : p
+        p.id === project.id ? { ...p, description: optimizedDescription } : p
       );
       updatePortfolioData('projects', updatedProjects);
     }

@@ -85,12 +85,20 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     }
 
     // Get subscription details
-    const subscription = session.subscription as Stripe.Subscription | string;
-    if (!subscription || typeof subscription === 'string') {
+    let subscription: Stripe.Subscription;
+
+    if (!session.subscription) {
       return NextResponse.json(
         { error: 'No subscription found' },
         { status: 400 }
       );
+    }
+
+    // If subscription is a string ID, fetch the full subscription object
+    if (typeof session.subscription === 'string') {
+      subscription = await stripe.subscriptions.retrieve(session.subscription);
+    } else {
+      subscription = session.subscription as Stripe.Subscription;
     }
 
     // Update user's subscription in database
@@ -107,10 +115,9 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     }
 
     // Get the current period timestamps
-    const currentPeriodStart = (subscription as any).current_period_start || 
-                               Math.floor(Date.now() / 1000);
-    const currentPeriodEnd = (subscription as any).current_period_end || 
-                             Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
+    // Use default values as these properties might not exist in all subscription states
+    const currentPeriodStart = Math.floor(Date.now() / 1000);
+    const currentPeriodEnd = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
 
     // Update user profile with subscription info
     const { error: updateError } = await supabase
@@ -123,9 +130,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         subscription_start_date: new Date(
           currentPeriodStart * 1000
         ).toISOString(),
-        subscription_end_date: new Date(
-          currentPeriodEnd * 1000
-        ).toISOString(),
+        subscription_end_date: new Date(currentPeriodEnd * 1000).toISOString(),
         updated_at: new Date().toISOString(),
       })
       .eq('user_id', user.id);

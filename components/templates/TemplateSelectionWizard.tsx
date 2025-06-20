@@ -376,7 +376,10 @@ export function TemplateSelectionWizard({
                   <RadioGroup
                     value={wizardState.style}
                     onValueChange={value =>
-                      setWizardState({ ...wizardState, style: value as 'visual' | 'content' | 'balanced' })
+                      setWizardState({
+                        ...wizardState,
+                        style: value as 'visual' | 'content' | 'balanced',
+                      })
                     }
                   >
                     <div className="grid gap-3">

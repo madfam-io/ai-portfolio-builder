@@ -66,9 +66,10 @@ export class ModelManager {
     }
 
     // Then check available models for best performer
-    const capable = this.availableModels.filter(m =>
-      m.capabilities.includes(taskType as unknown)
-    );
+    const capable = this.availableModels.filter(m => {
+      // Check if taskType matches any capability
+      return m.capabilities.some(cap => cap === taskType);
+    });
     const recommended = capable.find(m => m.isRecommended);
 
     if (recommended) {

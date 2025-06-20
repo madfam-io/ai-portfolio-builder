@@ -34,8 +34,8 @@ export default function DomainNotFoundPage() {
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold">Domain Not Found</h1>
           <p className="text-xl text-muted-foreground max-w-md mx-auto">
-            The domain you're trying to access is not configured or is
-            currently inactive.
+            {`The domain you're trying to access is not configured or is currently
+            inactive.`}
           </p>
         </div>
 
@@ -50,8 +50,8 @@ export default function DomainNotFoundPage() {
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-muted-foreground mt-1.5" />
                 <span>
-                  The domain is still being set up and DNS changes haven't
-                  propagated yet (this can take up to 48 hours)
+                  {`The domain is still being set up and DNS changes haven't
+                  propagated yet (this can take up to 48 hours)`}
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -121,7 +121,7 @@ export default function DomainNotFoundPage() {
               {/* For Visitors */}
               <div>
                 <h3 className="text-sm font-medium mb-2">
-                  If you're looking for a portfolio:
+                  {`If you're looking for a portfolio:`}
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground ml-4">
                   <li className="flex items-start gap-2">
@@ -165,8 +165,8 @@ export default function DomainNotFoundPage() {
         {/* Additional Info */}
         <Alert>
           <AlertDescription className="text-center">
-            If you believe this is an error, please contact our support team
-            with the domain name and we'll help resolve the issue.
+            {`If you believe this is an error, please contact our support team
+            with the domain name and we'll help resolve the issue.`}
           </AlertDescription>
         </Alert>
       </div>

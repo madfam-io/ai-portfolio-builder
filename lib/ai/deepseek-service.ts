@@ -168,14 +168,14 @@ export class DeepSeekService implements AIService {
   /**
    * Health check for DeepSeek service
    */
-  async healthCheck(): Promise<boolean> {
+  healthCheck(): Promise<boolean> {
     return this.apiClient.healthCheck();
   }
 
   /**
    * Get usage statistics
    */
-  async getUsageStats() {
+  getUsageStats() {
     const avgResponseTime =
       this.usageStats.successfulRequests > 0
         ? this.usageStats.totalResponseTime / this.usageStats.successfulRequests
@@ -198,7 +198,10 @@ export class DeepSeekService implements AIService {
   /**
    * Update usage statistics after successful API call
    */
-  private updateUsageStats(response: { usage?: { total_tokens: number } }, responseTime: number): void {
+  private updateUsageStats(
+    response: { usage?: { total_tokens: number } },
+    responseTime: number
+  ): void {
     this.usageStats.successfulRequests++;
     this.usageStats.totalResponseTime += responseTime;
     this.usageStats.costToday += this.calculateCost(
@@ -216,4 +219,4 @@ export class DeepSeekService implements AIService {
 }
 
 // Export singleton instance
-const deepSeekService = new DeepSeekService();
+export const deepSeekService = new DeepSeekService();

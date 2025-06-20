@@ -159,11 +159,11 @@ function NoMatchSection({ t }: { t: Record<string, string | undefined> }) {
   return (
     <div className="bg-gray-50 dark:bg-gray-900 p-8 rounded-xl text-center">
       <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
-        {t.careersNoMatch || "Don't See the Perfect Match?"}
+        {t.careersNoMatch || `Don't See the Perfect Match?`}
       </h3>
       <p className="text-gray-600 dark:text-gray-300 mb-6">
         {t.careersNoMatchDesc ||
-          "We're always looking for talented individuals to join our team. Send us your resume and tell us why you'd be a great fit for PRISMA."}
+          `We're always looking for talented individuals to join our team. Send us your resume and tell us why you'd be a great fit for PRISMA.`}
       </p>
       <Link
         href="/contact"

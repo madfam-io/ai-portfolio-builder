@@ -50,7 +50,12 @@ export class LinkedInParser {
       const skillsList = skills?.map(skill => skill.name) || [];
 
       // Build URLs object
-      const urls: unknown = {
+      const urls: {
+        linkedin?: string;
+        website?: string;
+        github?: string;
+        twitter?: string;
+      } = {
         linkedin: profile.vanityName
           ? `https://linkedin.com/in/${profile.vanityName}`
           : undefined,

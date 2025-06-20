@@ -137,6 +137,7 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
   };
 
   const handleBulkAdd = () => {
+    // eslint-disable-next-line no-alert
     const skillsText = prompt(
       t.bulkAddPrompt ||
         'Enter skills separated by commas (e.g., React, Node.js, TypeScript):'
@@ -259,7 +260,14 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.level}
                   onChange={e =>
-                    setFormData({ ...formData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced' | 'expert' })
+                    setFormData({
+                      ...formData,
+                      level: e.target.value as
+                        | 'beginner'
+                        | 'intermediate'
+                        | 'advanced'
+                        | 'expert',
+                    })
                   }
                 >
                   {SKILL_LEVELS.map(level => (

@@ -20,10 +20,11 @@ import {
  * Handles get, update, and delete operations for specific portfolios
  */
 
-interface RouteParams {
-  params: {
+// Next.js route handler context type
+interface RouteContext {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 /**
@@ -31,8 +32,8 @@ interface RouteParams {
  * Retrieves a specific portfolio by ID
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const { id } = params;
       const { user } = request;
@@ -83,8 +84,8 @@ export const GET = versionedApiHandler(
  * Updates a specific portfolio by ID
  */
 export const PUT = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const { id } = params;
       const { user } = request;
@@ -162,8 +163,10 @@ export const PUT = versionedApiHandler(
       }
 
       // Transform to database format
-      const updateData = transformApiPortfolioToDb(sanitizedData);
-      updateData.updated_at = new Date().toISOString();
+      const updateData = {
+        ...transformApiPortfolioToDb(sanitizedData),
+        updated_at: new Date().toISOString(),
+      };
 
       // Update portfolio
       const { data: updatedPortfolio, error: updateError } = await supabase
@@ -205,8 +208,8 @@ export const PUT = versionedApiHandler(
  * Deletes a specific portfolio by ID
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: any) => {
-    const { params } = context as RouteParams;
+  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+    const params = await context.params;
     try {
       const { id } = params;
       const { user } = request;

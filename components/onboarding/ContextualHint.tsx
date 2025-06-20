@@ -35,7 +35,7 @@ export function ContextualHint({
   action,
 }: ContextualHintProps) {
   const [isVisible, setIsVisible] = useState(false);
-  const [targetElement, setTargetElement] = useState<HTMLElement | null>(null);
+  const [_targetElement, setTargetElement] = useState<HTMLElement | null>(null);
   const [hintPosition, setHintPosition] = useState({ top: 0, left: 0 });
   const { dismissedHints, dismissHint } = useOnboardingStore();
 
@@ -272,7 +272,9 @@ export const CommonHints = {
       type="info"
       action={{
         label: 'Publish now',
-        onClick: () => console.log('Publish clicked'),
+        onClick: () => {
+          /* Publish clicked */
+        },
       }}
     />
   ),

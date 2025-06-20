@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, RefreshCw } from 'lucide-react';
-import React, { ComponentType } from 'react';
+import React from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -242,10 +242,14 @@ export function EditorStep({
         <div className="h-full overflow-hidden">
           <div className="h-full overflow-y-auto">
             <div className="p-8">
-              <LazyWrapper
+              <LazyWrapper<{
+                portfolio: Portfolio;
+                mode: 'mobile' | 'desktop' | 'tablet';
+                isInteractive: boolean;
+              }>
                 component={() =>
                   import('@/components/editor/PortfolioPreview').then(mod => ({
-                    default: mod.PortfolioPreview as ComponentType<unknown>,
+                    default: mod.PortfolioPreview,
                   }))
                 }
                 componentProps={{
