@@ -317,7 +317,7 @@ export function CertificationsSection({
                   setFormData({ ...formData, imageUrl: url || '' })
                 }
                 type="certificate"
-                portfolioId={currentPortfolio?.id || '&apos;}
+                portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="auto"
                 className="mt-2"
               />

@@ -111,7 +111,7 @@ function generateSitemapIndex(
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${sitemaps.join('&apos;)}
+${sitemaps.join('')}
 </sitemapindex>`;
 }
 
@@ -138,7 +138,7 @@ function generateSitemapXML(
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urlElements.join('&apos;)}
+${urlElements.join('')}
 </urlset>`;
 }
 
@@ -149,7 +149,7 @@ function generateSlug(text: string): string {
   return text
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '&apos;)
+    .replace(/^-+|-+$/g, '')
     .substring(0, 50);
 }
 
@@ -158,11 +158,11 @@ function generateSlug(text: string): string {
  */
 function escapeXml(text: string): string {
   const map: Record<string, string> = {
-    '&': '&',
-    '<': '<',
-    '>': '>',
-    '"': '"',
-    "'": ''',
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&apos;',
   };
 
   return text.replace(/[&<>"']/g, m => map[m] || m);
@@ -250,7 +250,7 @@ function generateNewsSitemap(
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">
-${newsElements.join('&apos;)}
+${newsElements.join('')}
 </urlset>`;
 }
 
@@ -293,7 +293,7 @@ function generateImageSitemap(
       return `
   <url>
     <loc>${escapeXml(pageUrl)}</loc>
-    ${imageElements.join('&apos;)}
+    ${imageElements.join('')}
   </url>`;
     }
   );
@@ -301,6 +301,6 @@ function generateImageSitemap(
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-${urlElements.join('&apos;)}
+${urlElements.join('')}
 </urlset>`;
 }

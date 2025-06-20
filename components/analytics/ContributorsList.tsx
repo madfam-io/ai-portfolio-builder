@@ -38,7 +38,7 @@ export function ContributorsList({
             <div className="flex-1">
               <p className="font-medium text-gray-900 dark:text-white">
                 {contributor.contributor.name !== null &&
-                contributor.contributor.name !== '&apos;
+                contributor.contributor.name !== ''
                   ? contributor.contributor.name
                   : contributor.contributor.login}
               </p>

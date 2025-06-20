@@ -270,7 +270,7 @@ export function TemplateShowcase({
           {showWizard && (
             <Button onClick={showWizard} variant="outline">
               <Sparkles className="w-4 h-4 mr-2" />
-              {t.useWizard || 'Use Selection Wizard&apos;}
+              {t.useWizard || 'Use Selection Wizard'}
             </Button>
           )}
         </div>
@@ -298,8 +298,8 @@ export function TemplateShowcase({
           >
             <Card
               className={cn(
-                &apos;overflow-hidden cursor-pointer transition-all hover:shadow-lg&apos;,
-                selectedTemplate === template.id && &apos;ring-2 ring-primary'
+                'overflow-hidden cursor-pointer transition-all hover:shadow-lg',
+                selectedTemplate === template.id && 'ring-2 ring-primary'
               )}
               onClick={() => handleSelect(template.id)}
             >

@@ -276,7 +276,7 @@ export const setupFetchMocks = () => {
       status: 200,
       statusText: 'OK',
       json: () => Promise.resolve({ success: true, data: {} }),
-      text: () => Promise.resolve('&apos;),
+      text: () => Promise.resolve(''),
     } as Response);
   });
 };

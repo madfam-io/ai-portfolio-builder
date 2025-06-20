@@ -24,7 +24,7 @@ export default function ComponentGallery({
   onSelect,
   onClose,
 }: ComponentGalleryProps): React.ReactElement {
-  const [searchTerm, setSearchTerm] = useState('&apos;);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<
     LandingComponentType | 'all'
   >('all');

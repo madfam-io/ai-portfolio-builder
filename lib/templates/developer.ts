@@ -54,7 +54,7 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
             }
             <div class="flex-1">
               <h2 class="text-4xl font-bold text-gray-900 mb-2">${name}</h2>
-              <p class="text-xl text-gray-700 mb-4">${title || '&apos;}</p>
+              <p class="text-xl text-gray-700 mb-4">${title || ''}</p>
               ${tagline ? `<p class="text-lg text-gray-600 italic">"${tagline}"</p>` : ''}
               ${bio ? `<p class="mt-4 text-gray-700 leading-relaxed">${bio}</p>` : ''}
               
@@ -144,7 +144,7 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
                           </li>
                         `
                           )
-                          .join('&apos;)}
+                          .join('')}
                       </ul>
                     `
                         : ''
@@ -153,7 +153,7 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('&apos;)}
+                .join('')}
             </div>
           </div>
         </section>
@@ -193,7 +193,7 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
                         </span>
                       `
                         )
-                        .join('&apos;)}
+                        .join('')}
                     </div>
                   `
                       : ''
@@ -221,7 +221,7 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('&apos;)}
+                .join('')}
             </div>
           </div>
         </section>
@@ -262,12 +262,12 @@ export function renderDeveloperTemplate(portfolio: Portfolio): string {
                       </div>
                     `
                       )
-                      .join('&apos;)}
+                      .join('')}
                   </div>
                 </div>
               `
                 )
-                .join('&apos;)}
+                .join('')}
             </div>
           </div>
         </section>

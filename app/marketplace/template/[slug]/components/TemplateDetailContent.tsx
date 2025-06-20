@@ -368,7 +368,7 @@ export function TemplateDetailContent({
                           key={idx}
                           onClick={() => setSelectedImage(idx)}
                           className={`relative w-24 h-16 rounded overflow-hidden flex-shrink-0 ${
-                            selectedImage === idx ? 'ring-2 ring-primary' : &apos;'
+                            selectedImage === idx ? 'ring-2 ring-primary' : ''
                           }`}
                         >
                           {img ? (

@@ -127,7 +127,7 @@ export class MetadataGenerator {
     return title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '&apos;)
+      .replace(/^-+|-+$/g, '')
       .substring(0, 50);
   }
 

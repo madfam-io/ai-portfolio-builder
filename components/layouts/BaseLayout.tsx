@@ -78,7 +78,7 @@ interface BaseLayoutProps {
  */
 export default function BaseLayout({
   children,
-  className = '&apos;,
+  className = '',
   showHeader = true,
   showFooter = true,
 }: BaseLayoutProps): React.ReactElement {

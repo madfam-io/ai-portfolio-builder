@@ -209,7 +209,7 @@ export class ReadabilityOptimizer {
    * Count syllables in a word
    */
   private countSyllables(word: string): number {
-    word = word.toLowerCase().replace(/[^a-z]/g, '&apos;);
+    word = word.toLowerCase().replace(/[^a-z]/g, '');
 
     if (word.length <= 3) return 1;
 

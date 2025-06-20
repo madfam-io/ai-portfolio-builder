@@ -154,7 +154,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       {
         flow: flow.id,
         progress,
-        reason: 'user_closed&apos;,
+        reason: 'user_closed',
       }
     );
   };

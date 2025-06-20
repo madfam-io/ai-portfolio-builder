@@ -42,7 +42,7 @@ Form.displayName = 'Form';
 export const FormField = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { name?: string }
->(({ children, name = '&apos;, ...props }, ref) => {
+>(({ children, name = '', ...props }, ref) => {
   const id = React.useId();
   const formItemId = `${id}-form-item`;
   const formDescriptionId = `${id}-form-description`;

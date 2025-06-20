@@ -147,7 +147,7 @@ export function MinimalTemplate({ portfolio }: MinimalTemplateProps) {
                     {/* Project Details */}
                     <div
                       className={
-                        project.imageUrl ? &apos;md:col-span-2&apos; : &apos;md:col-span-3'
+                        project.imageUrl ? 'md:col-span-2' : 'md:col-span-3'
                       }
                     >
                       <h4 className="text-xl font-normal mb-3 group-hover:text-gray-600 transition-colors duration-300">

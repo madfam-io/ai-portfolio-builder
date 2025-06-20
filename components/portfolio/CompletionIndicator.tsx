@@ -137,7 +137,7 @@ export function CompletionIndicator({
       <div className="space-y-4">
         <div>
           <h3 className="text-lg font-semibold mb-2">
-            {t.portfolioCompletion || 'Portfolio Completion&apos;}
+            {t.portfolioCompletion || 'Portfolio Completion'}
           </h3>
           <div className="flex items-center gap-4">
             <Progress
@@ -145,7 +145,7 @@ export function CompletionIndicator({
               className="flex-1"
               indicatorClassName={getProgressBarColor()}
             />
-            <span className={cn(&apos;text-2xl font-bold', getCompletionColor())}>
+            <span className={cn('text-2xl font-bold', getCompletionColor())}>
               {completionPercentage}%
             </span>
           </div>
@@ -157,20 +157,20 @@ export function CompletionIndicator({
               ? t.portfolioComplete ||
                 'Your portfolio is complete and ready to publish!'
               : t.completeFollowing ||
-                'Complete the following sections to improve your portfolio:&apos;}
+                'Complete the following sections to improve your portfolio:'}
           </p>
 
           {sectionStatuses.map(status => (
             <div
               key={status.section}
               className={cn(
-                &apos;flex items-center justify-between p-3 rounded-lg border transition-colors&apos;,
+                'flex items-center justify-between p-3 rounded-lg border transition-colors',
                 status.isComplete
-                  ? &apos;bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800&apos;
-                  : &apos;bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800&apos;,
+                  ? 'bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800'
+                  : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-800',
                 onSectionClick &&
                   !status.isComplete &&
-                  &apos;cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'
+                  'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800'
               )}
               onClick={() => {
                 if (onSectionClick && !status.isComplete) {

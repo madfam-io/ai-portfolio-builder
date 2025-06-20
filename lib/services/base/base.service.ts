@@ -15,7 +15,7 @@ import { logger } from '@/lib/utils/logger';
 export interface BaseRepository<T> {
   findAll(options?: QueryOptions): Promise<T[]>;
   findById(id: string): Promise<T | null>;
-  create(data: Omit<T, &apos;id&apos; | &apos;createdAt&apos; | &apos;updatedAt'>): Promise<T>;
+  create(data: Omit<T, 'id' | 'createdAt' | 'updatedAt'>): Promise<T>;
   update(id: string, data: Partial<T>): Promise<T | null>;
   delete(id: string): Promise<boolean>;
 }

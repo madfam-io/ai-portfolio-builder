@@ -246,7 +246,7 @@ export function ExperienceSection({
                   setFormData({ ...formData, companyLogo: url || '' })
                 }
                 type="company"
-                portfolioId={currentPortfolio?.id || '&apos;}
+                portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="square"
                 className="mt-2 max-w-[200px]"
               />
@@ -452,7 +452,7 @@ export function ExperienceSection({
                     {formatDateForDisplay(experience.startDate)} -{' '}
                     {experience.current
                       ? t.present || 'Present'
-                      : formatDateForDisplay(experience.endDate || '&apos;)}
+                      : formatDateForDisplay(experience.endDate || '')}
                     {(experience as unknown).location &&
                       ` • ${(experience as unknown).location}`}
                   </p>

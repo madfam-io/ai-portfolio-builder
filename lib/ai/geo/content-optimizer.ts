@@ -304,7 +304,7 @@ export class ContentOptimizer {
   private extractHeadings(content: string, level: number): string[] {
     const pattern = new RegExp(`^#{${level}}\\s+(.+)$`, 'gm');
     const matches = content.match(pattern) || [];
-    return matches.map(match => match.replace(/^#+\s+/, '&apos;));
+    return matches.map(match => match.replace(/^#+\s+/, ''));
   }
 
   private checkHeadingHierarchy(headings: unknown): boolean {

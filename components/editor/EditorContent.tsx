@@ -302,7 +302,7 @@ export function EditorContent() {
               )}
               {lastSaved && (
                 <span className="text-xs text-muted-foreground">
-                  {t.saved || 'Saved&apos;} {formatTime(lastSaved)}
+                  {t.saved || 'Saved'} {formatTime(lastSaved)}
                 </span>
               )}
             </div>
@@ -313,7 +313,7 @@ export function EditorContent() {
                 variant="ghost"
                 onClick={() => undo()}
                 disabled={!canUndo}
-                title={`${t.undo || &apos;Undo&apos;} (Cmd/Ctrl+Z)`}
+                title={`${t.undo || 'Undo'} (Cmd/Ctrl+Z)`}
               >
                 <Undo className="h-4 w-4" />
               </Button>
@@ -322,7 +322,7 @@ export function EditorContent() {
                 variant="ghost"
                 onClick={() => redo()}
                 disabled={!canRedo}
-                title={`${t.redo || &apos;Redo&apos;} (Cmd/Ctrl+Shift+Z)`}
+                title={`${t.redo || 'Redo'} (Cmd/Ctrl+Shift+Z)`}
               >
                 <Redo className="h-4 w-4" />
               </Button>
@@ -335,7 +335,7 @@ export function EditorContent() {
               size="sm"
               variant="ghost"
               onClick={() => setShowPreview(!showPreview)}
-              title={`${t.togglePreview || &apos;Toggle Preview'} (Cmd/Ctrl+P)`}
+              title={`${t.togglePreview || 'Toggle Preview'} (Cmd/Ctrl+P)`}
               data-tour="preview-toggle"
             >
               {showPreview ? (
@@ -471,7 +471,7 @@ export function EditorContent() {
                 // Track general portfolio update
                 trackPortfolioUpdated(currentPortfolio.id, {
                   section,
-                  update_type: 'manual&apos;,
+                  update_type: 'manual',
                 });
               }
             }}
@@ -481,8 +481,8 @@ export function EditorContent() {
         {/* Preview Area */}
         <div
           className={cn(
-            &apos;border-l transition-all duration-300&apos;,
-            showPreview ? &apos;flex-1&apos; : 'w-0 overflow-hidden'
+            'border-l transition-all duration-300',
+            showPreview ? 'flex-1' : 'w-0 overflow-hidden'
           )}
         >
           <EditorPreview

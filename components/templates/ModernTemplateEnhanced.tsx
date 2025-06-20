@@ -187,7 +187,7 @@ export function ModernTemplateEnhanced({ portfolio }: ModernTemplateProps) {
                         project.projectUrl ||
                         project.liveUrl ||
                         project.githubUrl ||
-                        &apos;#'
+                        '#'
                       }
                       target="_blank"
                       rel="noopener noreferrer"
@@ -302,7 +302,7 @@ export function ModernTemplateEnhanced({ portfolio }: ModernTemplateProps) {
                   <p className="text-gray-500 text-xs mt-1">{cert.date}</p>
                   {(cert.credentialUrl || cert.imageUrl) && (
                     <a
-                      href={cert.credentialUrl || cert.imageUrl || &apos;#'}
+                      href={cert.credentialUrl || cert.imageUrl || '#'}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center text-cyan-400 hover:text-cyan-300 mt-3 text-sm"

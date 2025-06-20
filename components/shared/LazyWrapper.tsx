@@ -100,7 +100,7 @@ class LazyErrorBoundary extends React.Component<
  * with skeleton-style animation and proper accessibility.
  */
 const DefaultLoadingFallback: React.FC<{ className?: string }> = ({
-  className = '&apos;,
+  className = '',
 }) => (
   <div
     className={`animate-pulse ${className}`}
@@ -147,7 +147,7 @@ export const LazyWrapper: React.FC<LazyWrapperProps> = ({
   fallback,
   errorFallback,
   componentProps = {},
-  className = '&apos;,
+  className = '',
 }) => {
   // Create the lazy component
   const LazyComponent = React.lazy(component);

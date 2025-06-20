@@ -125,7 +125,7 @@ export function renderDesignerTemplate(portfolio: Portfolio): string {
                           </span>
                         `
                           )
-                          .join('&apos;)}
+                          .join('')}
                       </div>
                     `
                         : ''
@@ -150,7 +150,7 @@ export function renderDesignerTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('&apos;)}
+                .join('')}
             </div>
           </div>
         </section>
@@ -191,7 +191,7 @@ export function renderDesignerTemplate(portfolio: Portfolio): string {
                   </span>
                 `
                   )
-                  .join('&apos;)}
+                  .join('')}
               </div>
             </div>
           `
@@ -232,7 +232,7 @@ export function renderDesignerTemplate(portfolio: Portfolio): string {
                 </div>
               `
                 )
-                .join('&apos;)}
+                .join('')}
             </div>
           </div>
         </section>

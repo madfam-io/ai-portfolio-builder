@@ -312,7 +312,7 @@ export function UsageStats({
 /**
  * Compact usage summary for smaller spaces
  */
-export function UsageSummary({ className = '&apos; }: { className?: string }) {
+export function UsageSummary({ className = '' }: { className?: string }) {
   const { limits, loading, isFreeTier } = useSubscription();
 
   if (loading || !limits) {

@@ -67,7 +67,7 @@ function ResponsiveTestingPanel({
   onClose,
 }: ResponsiveTestingProps) {
   const [customWidth, setCustomWidth] = useState('');
-  const [customHeight, setCustomHeight] = useState('&apos;);
+  const [customHeight, setCustomHeight] = useState('');
 
   const handleCustomTest = (): void => {
     const width = parseInt(customWidth);
@@ -200,7 +200,7 @@ export function PreviewControls({
               className={`flex items-center space-x-1 px-3 py-1 rounded-md text-sm transition-colors ${
                 previewMode === 'desktop'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : &apos;text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
               title="Desktop Preview"
             >
@@ -212,7 +212,7 @@ export function PreviewControls({
               className={`flex items-center space-x-1 px-3 py-1 rounded-md text-sm transition-colors ${
                 previewMode === 'tablet'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : &apos;text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
               title="Tablet Preview"
             >
@@ -224,7 +224,7 @@ export function PreviewControls({
               className={`flex items-center space-x-1 px-3 py-1 rounded-md text-sm transition-colors ${
                 previewMode === 'mobile'
                   ? 'bg-white dark:bg-gray-600 text-gray-900 dark:text-white shadow-sm'
-                  : &apos;text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
+                  : 'text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white'
               }`}
               title="Mobile Preview"
             >

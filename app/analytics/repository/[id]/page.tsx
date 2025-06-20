@@ -104,7 +104,7 @@ export default function RepositoryAnalyticsPage() {
 
   // Fetch repository analytics on mount
   useEffect(() => {
-    if (repositoryId !== null && repositoryId !== '&apos;) {
+    if (repositoryId !== null && repositoryId !== '') {
       void fetchRepositoryAnalytics();
     }
   }, [repositoryId, fetchRepositoryAnalytics]);
@@ -203,7 +203,7 @@ export default function RepositoryAnalyticsPage() {
 
   // State checks
   if (repo.loading) return renderLoadingState();
-  if (repo.error !== null && repo.error !== '&apos;) return renderErrorState();
+  if (repo.error !== null && repo.error !== '') return renderErrorState();
   if (!repo.data) return renderLoadingState();
 
   const data = repo.data;
@@ -378,7 +378,7 @@ export default function RepositoryAnalyticsPage() {
                   <div className="flex-1">
                     <p className="font-medium text-gray-900 dark:text-white">
                       {contrib.contributor.name !== null &&
-                      contrib.contributor.name !== '&apos;
+                      contrib.contributor.name !== ''
                         ? contrib.contributor.name
                         : contrib.contributor.login}
                     </p>

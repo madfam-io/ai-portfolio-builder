@@ -42,7 +42,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
   const [mfaStatus, setMfaStatus] = useState<MFAStatus | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [setupData, setSetupData] = useState<MFASetupResponse | null>(null);
-  const [verificationCode, setVerificationCode] = useState('&apos;);
+  const [verificationCode, setVerificationCode] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
   const [copiedCodes, setCopiedCodes] = useState<Set<number>>(new Set());
   const [step, setStep] = useState<
@@ -167,7 +167,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
   const handleComplete = () => {
     setStep('status');
     setSetupData(null);
-    setVerificationCode('&apos;);
+    setVerificationCode('');
     loadMFAStatus();
   };
 
@@ -300,7 +300,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
               value={verificationCode}
               onChange={e =>
                 setVerificationCode(
-                  e.target.value.replace(/\D/g, '&apos;).slice(0, 6)
+                  e.target.value.replace(/\D/g, '').slice(0, 6)
                 )
               }
               maxLength={6}

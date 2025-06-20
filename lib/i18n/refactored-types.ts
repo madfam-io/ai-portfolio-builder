@@ -72,7 +72,7 @@ interface LanguageContextValue {
 
 /**
  * Translation key path helper for TypeScript autocomplete
- * Usage: TranslationKey<'common.save'> or TranslationKey<&apos;landing.heroTitle'>
+ * Usage: TranslationKey<'common.save'> or TranslationKey<'landing.heroTitle'>
  */
 type TranslationKey<T extends string> =
   T extends `${infer Namespace}.${infer Key}`

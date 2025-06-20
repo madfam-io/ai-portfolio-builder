@@ -96,8 +96,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {(error || helperText) && (
             <p
               className={cn(
-                &apos;mt-1 text-sm&apos;,
-                error ? &apos;text-destructive&apos; : &apos;text-muted-foreground&apos;
+                'mt-1 text-sm',
+                error ? 'text-destructive' : 'text-muted-foreground'
               )}
             >
               {error || helperText}
@@ -121,8 +121,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {(error || helperText) && (
           <p
             className={cn(
-              &apos;mt-1 text-sm&apos;,
-              error ? &apos;text-destructive&apos; : &apos;text-muted-foreground'
+              'mt-1 text-sm',
+              error ? 'text-destructive' : 'text-muted-foreground'
             )}
           >
             {error || helperText}

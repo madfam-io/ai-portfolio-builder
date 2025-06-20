@@ -16,7 +16,7 @@ export function OptimizedImage({
   alt,
   fallbackSrc = '/images/placeholder.jpg',
   showSkeleton = true,
-  className = '&apos;,
+  className = '',
   ...props
 }: OptimizedImageProps) {
   const [error, setError] = useState(false);

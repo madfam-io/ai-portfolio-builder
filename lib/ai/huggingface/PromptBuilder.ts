@@ -116,7 +116,7 @@ export class PromptBuilder {
         achievements.push(
           line
             .replace(/^\s*[-•*]\s*/, '')
-            .replace(/^\d+\.\s*/, '&apos;)
+            .replace(/^\d+\.\s*/, '')
             .trim()
         );
       }

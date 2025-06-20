@@ -482,7 +482,7 @@ export function RevenueAnalytics() {
                         </span>
                         {trend.growth !== undefined && (
                           <span
-                            className={`w-16 text-right ${trend.growth > 0 ? 'text-green-600' : &apos;text-red-600'}`}
+                            className={`w-16 text-right ${trend.growth > 0 ? 'text-green-600' : 'text-red-600'}`}
                           >
                             {formatPercentage(trend.growth, true)}
                           </span>

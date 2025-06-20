@@ -198,7 +198,7 @@ export class ContentScorer {
 
     words.forEach(word => {
       // Remove non-alphabetic characters
-      word = word.replace(/[^a-z]/g, '&apos;);
+      word = word.replace(/[^a-z]/g, '');
       if (word.length <= 3) {
         count += 1;
       } else {

@@ -448,7 +448,7 @@ export function ProjectsSection({
                   setFormData({ ...formData, imageUrl: url || '' })
                 }
                 type="project"
-                portfolioId={currentPortfolio?.id || '&apos;}
+                portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="video"
                 className="mt-2"
               />

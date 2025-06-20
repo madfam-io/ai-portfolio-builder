@@ -348,7 +348,7 @@ export function SatisfactionSurvey({
                       setSurveyData(prev => ({
                         ...prev,
                         missingFeatures: e.target.value
-                          .split(',&apos;)
+                          .split(',')
                           .map(f => f.trim())
                           .filter(Boolean),
                       }))
@@ -364,7 +364,7 @@ export function SatisfactionSurvey({
                   <Textarea
                     id="comments"
                     placeholder="Share any other thoughts, suggestions, or experiences..."
-                    value={surveyData.additionalComments || &apos;'}
+                    value={surveyData.additionalComments || ''}
                     onChange={e =>
                       setSurveyData(prev => ({
                         ...prev,

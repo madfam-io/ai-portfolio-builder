@@ -78,7 +78,7 @@ export function HeroSection({ data = {}, onUpdate }: HeroSectionProps) {
                 value={data.avatarUrl}
                 onChange={url => handleFieldUpdate('avatarUrl', url)}
                 type="avatar"
-                portfolioId={currentPortfolio?.id || '&apos;}
+                portfolioId={currentPortfolio?.id || ''}
                 aspectRatio="square"
                 className="mt-2 w-32 h-32"
               />

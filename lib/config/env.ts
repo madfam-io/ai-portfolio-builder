@@ -122,7 +122,7 @@ function parseEnv() {
       // Clean up empty string values before parsing
       const cleanedEnv = Object.entries(process.env).reduce(
         (acc, [key, value]) => {
-          acc[key] = value === '&apos; ? undefined : value;
+          acc[key] = value === '' ? undefined : value;
           return acc;
         },
         {} as Record<string, string | undefined>

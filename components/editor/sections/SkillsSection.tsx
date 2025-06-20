@@ -52,7 +52,7 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
   const [editingSkill, setEditingSkill] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('&apos;);
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [formData, setFormData] = useState<SkillFormData>({
     name: '',
     level: 'intermediate',
@@ -274,11 +274,11 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
             {formData.category === 'new' && (
               <div>
                 <Label htmlFor="newCategory">
-                  {t.newCategoryName || 'New Category Name&apos;}
+                  {t.newCategoryName || 'New Category Name'}
                 </Label>
                 <Input
                   id="newCategory"
-                  placeholder={t.enterCategoryName || &apos;Enter category name'}
+                  placeholder={t.enterCategoryName || 'Enter category name'}
                   onChange={e =>
                     setFormData({ ...formData, category: e.target.value })
                   }
