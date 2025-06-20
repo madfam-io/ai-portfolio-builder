@@ -1,10 +1,13 @@
 import { describe, it, expect, jest, beforeEach } from '@jest/globals';
+import { middleware } from '@/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { applySecurityHeaders } from '@/middleware/security-headers';
 
 /**
  * @jest-environment node
  */
+
+global.fetch = jest.fn();
 
 describe('Security Headers Middleware', () => {
   beforeEach(() => {

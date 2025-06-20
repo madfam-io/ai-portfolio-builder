@@ -1,21 +1,12 @@
-// Mock UI store for showToast functionality
-jest.mock('@/lib/store/ui-store', () => ({
-  useUIStore: jest.fn(() => ({
-    showToast: jest.fn(),
-    isLoading: false,
-    setLoading: jest.fn(),
-    theme: 'light',
-    setTheme: jest.fn(),
-  })),
-}));
-
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { renderHook, act } from '@testing-library/react';
 import { useToast } from '@/hooks/use-toast';
 import { useUIStore } from '@/lib/store/ui-store';
 
-// Mock the UI store
-jest.mock('@/lib/store/ui-store');
+// Mock UI store for showToast functionality
+jest.mock('@/lib/store/ui-store', () => ({
+  useUIStore: jest.fn(),
+}));
 
 describe('useToast', () => {
   beforeEach(() => {
@@ -28,10 +19,13 @@ describe('useToast', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(useUIStore).mockReturnValue({
+    (useUIStore as any).mockReturnValue({
       showToast: mockShowToast,
-      // Add other store properties if needed
-    } as any);
+      isLoading: false,
+      setLoading: jest.fn(),
+      theme: 'light',
+      setTheme: jest.fn(),
+    });
   });
 
   it('should call showToast with correct parameters for default toast', async () => {
@@ -192,9 +186,13 @@ describe('useToast', () => {
 
     // Change the mock implementation
     const newMockShowToast = jest.fn().mockReturnValue(void 0);
-    jest.mocked(useUIStore).mockReturnValue({
+    (useUIStore as any).mockReturnValue({
       showToast: newMockShowToast,
-    } as any);
+      isLoading: false,
+      setLoading: jest.fn(),
+      theme: 'light',
+      setTheme: jest.fn(),
+    });
 
     // Re-render the hook
     rerender();

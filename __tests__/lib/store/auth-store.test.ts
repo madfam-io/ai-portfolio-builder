@@ -3,6 +3,8 @@ import { act } from '@testing-library/react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { createClient } from '@/lib/supabase/client';
 
+
+
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {

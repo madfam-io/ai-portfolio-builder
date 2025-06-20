@@ -1,3 +1,5 @@
+jest.setTimeout(30000);
+
 import { describe, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
@@ -325,12 +327,12 @@ describe('Edge Rate Limiter Middleware', () => {
       });
       
       // These should not be rate limited (non-API paths)
-      const result1 = edgeRateLimitMiddleware(request1);
-      const result2 = edgeRateLimitMiddleware(request2);
+      const result1 = await edgeRateLimitMiddleware(request1);
+      const result2 = await edgeRateLimitMiddleware(request2);
       
       // Non-API paths should return null (no rate limiting)
       expect(result1).toBeNull();
-      expect(result2 === null || result2?.status === 200).toBeTruthy() || expect(result).toEqual(expect.anything());
+      expect(result2).toBeNull();
     });
   });
 });

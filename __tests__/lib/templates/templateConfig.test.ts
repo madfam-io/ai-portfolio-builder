@@ -12,7 +12,7 @@ import {
   getAvailableTemplates,
   TemplateConfig,
   TemplateSection,
-} from '@/lib/templates/templateConfig';
+} from '@/lib/templates/template-config';
 
 describe('Template Configuration', () => {
   beforeEach(() => {

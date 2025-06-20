@@ -11,7 +11,7 @@ jest.mock('@/lib/store/ui-store', () => ({
 
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { UpgradeModal } from '@/components/billing/upgrade-modal';
+import UpgradeModal from '@/components/billing/upgrade-modal';
 import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 
 // Mock Stripe

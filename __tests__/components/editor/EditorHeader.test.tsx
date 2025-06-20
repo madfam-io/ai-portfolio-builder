@@ -542,7 +542,7 @@ describe.skip('EditorHeader', () => {
     it('should handle missing portfolio gracefully', async () => {
       renderEditorHeader({
         ...mockProps,
-        portfolio: null as any,
+        portfolio: null as ReturnType<typeof useUIStore>,
       });
 
       // Should not crash and show fallback content

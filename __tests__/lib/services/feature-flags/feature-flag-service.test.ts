@@ -344,7 +344,7 @@ describe('FeatureFlagService', () => {
 
       // Mock hash function to return value outside traffic percentage
       jest
-        .spyOn(FeatureFlagService as any, 'hashToPercentage')
+        .spyOn(FeatureFlagService as ReturnType<typeof useUIStore>, 'hashToPercentage')
         .mockReturnValueOnce(50); // 50% > 10% traffic, should exclude
 
       const result = await FeatureFlagService.getActiveExperiment();

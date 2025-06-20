@@ -1,4 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { middleware } from '@/middleware';
 import { NextRequest, NextResponse } from 'next/server';
 import { csrfMiddleware } from '../../../middleware/csrf';
 import { edgeRateLimitMiddleware } from '../../../middleware/edge-rate-limiter';

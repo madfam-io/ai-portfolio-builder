@@ -1,4 +1,6 @@
-// Mock Supabase client
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { NextRequest } from 'next/server';
+
 jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => ({
     auth: {
@@ -22,12 +24,28 @@ jest.mock('@/lib/auth/supabase-client', () => ({
     from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
   },
 }));
-
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { NextRequest } from 'next/server';
-
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+jest.mock('@/lib/auth/middleware', () => ({
+  authMiddleware: jest.fn((handler) => handler),
+  requireAuth: jest.fn(() => ({ id: 'test-user' })),
+}));
+jest.mock('@/lib/cache/cache-headers', () => ({ 
+  setCacheHeaders: jest.fn(),
+ }));
+jest.mock('@/lib/utils/logger', () => ({
+  logger: {
+    info: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
+    debug: jest.fn(),
+  },
+}));
+
+// Mock Supabase client
+
+
     auth: {
       getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
     },
@@ -42,23 +60,8 @@ jest.mock('@/lib/supabase/server', () => ({
   })),
 }));
 
-jest.mock('@/lib/auth/middleware', () => ({
-  authMiddleware: jest.fn((handler) => handler),
-  requireAuth: jest.fn(() => ({ id: 'test-user' })),
-}));
 
-jest.mock('@/lib/cache/cache-headers', () => ({ 
-  setCacheHeaders: jest.fn(),
- }));
 
-jest.mock('@/lib/utils/logger', () => ({
-  logger: {
-    info: jest.fn(),
-    error: jest.fn(),
-    warn: jest.fn(),
-    debug: jest.fn(),
-  },
-}));
 
 describe('AI Optimize Project API Route', () => {
   beforeEach(() => {

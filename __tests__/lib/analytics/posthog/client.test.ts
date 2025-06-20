@@ -643,7 +643,7 @@ describe('PostHog Analytics Client', () => {
         useAuthStore as jest.MockedFunction<typeof useAuthStore>
       ).mockReturnValue({
         user: null,
-      } as any);
+      } as ReturnType<typeof useUIStore>);
     });
 
     it('should initialize PostHog on mount', async () => {
@@ -658,7 +658,7 @@ describe('PostHog Analytics Client', () => {
         useAuthStore as jest.MockedFunction<typeof useAuthStore>
       ).mockReturnValue({
         user: mockUser,
-      } as any);
+      } as ReturnType<typeof useUIStore>);
 
       renderHook(() => usePostHog());
 
@@ -676,7 +676,7 @@ describe('PostHog Analytics Client', () => {
         useAuthStore as jest.MockedFunction<typeof useAuthStore>
       ).mockReturnValue({
         user: null,
-      } as any);
+      } as ReturnType<typeof useUIStore>);
 
       renderHook(() => usePostHog());
 
@@ -691,7 +691,7 @@ describe('PostHog Analytics Client', () => {
             useAuthStore as jest.MockedFunction<typeof useAuthStore>
           ).mockReturnValue({
             user,
-          } as any);
+          } as ReturnType<typeof useUIStore>);
           return usePostHog();
         },
         { initialProps: { user: null } }

@@ -1,4 +1,11 @@
 // Mock Supabase client
+// Mock Supabase
+const mockSupabaseClient = {
+  auth: {
+    getSession: jest.fn(),
+  },
+};
+
 jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => ({
     auth: {
@@ -68,12 +75,7 @@ const mockConfig = {
   applySecurityToResponse: jest.fn((req, res) => res),
 }));
 
-// Mock Supabase
-const mockSupabaseClient = {
-  auth: {
-    getSession: jest.fn(),
-  },
-};
+
 
   createServerClient: jest.fn(() => mockSupabaseClient),
 }));

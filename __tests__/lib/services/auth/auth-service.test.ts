@@ -24,6 +24,7 @@ jest.mock('@/lib/auth/supabase-client', () => ({
 }));
 
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { AuthService } from '@/lib/services/auth/auth-service';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
@@ -101,7 +102,7 @@ describe('AuthService', () => {
       auth: mockAuthClient,
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
+    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
 
     // Create new instance for each test
     authService = new AuthService();
@@ -173,7 +174,7 @@ describe('AuthService', () => {
     });
 
     it('should handle missing supabase client', async () => {
-      jest.mocked(createClient).mockReturnValue(null);
+      (createClient as jest.Mock).mockReturnValue(null);
       authService = new AuthService();
 
       const result = await authService.signIn(
@@ -407,7 +408,7 @@ describe('AuthService', () => {
     });
 
     it('should handle missing supabase client gracefully', async () => {
-      jest.mocked(createClient).mockReturnValue(null);
+      (createClient as jest.Mock).mockReturnValue(null);
       authService = new AuthService();
 
       const result = await authService.getSession();
@@ -535,7 +536,7 @@ describe('AuthService', () => {
     });
 
     it('should handle missing supabase client', async () => {
-      jest.mocked(createClient).mockReturnValue(null);
+      (createClient as jest.Mock).mockReturnValue(null);
       authService = new AuthService();
 
       const callback = jest.fn().mockReturnValue(void 0);

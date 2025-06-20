@@ -1,7 +1,10 @@
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { Portfolio } from '@/types/portfolio';
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {

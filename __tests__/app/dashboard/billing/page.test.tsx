@@ -396,7 +396,7 @@ describe('BillingPage', () => {
         json: () =>
           Promise.resolve({ url: 'https://billing.stripe.com/portal' }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as ReturnType<typeof useUIStore>);
 
       render(<BillingPage />);
 
@@ -415,7 +415,7 @@ describe('BillingPage', () => {
         ok: false,
         json: () => Promise.resolve({ error: 'Portal unavailable' }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as ReturnType<typeof useUIStore>);
 
       render(<BillingPage />);
 
@@ -443,7 +443,7 @@ describe('BillingPage', () => {
         json: () =>
           Promise.resolve({ checkoutUrl: 'https://checkout.stripe.com/test' }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as ReturnType<typeof useUIStore>);
 
       // Mock window.location.href
       delete (window as any).location;
@@ -475,7 +475,7 @@ describe('BillingPage', () => {
         ok: false,
         json: () => Promise.resolve({ error: 'Payment failed' }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as ReturnType<typeof useUIStore>);
 
       render(<BillingPage />);
 
@@ -515,7 +515,7 @@ describe('BillingPage', () => {
         json: () =>
           Promise.resolve({ url: 'https://checkout.stripe.com/upgrade' }),
       };
-      mockFetch.mockResolvedValue(mockResponse as any);
+      mockFetch.mockResolvedValue(mockResponse as ReturnType<typeof useUIStore>);
 
       render(<BillingPage />);
 

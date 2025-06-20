@@ -82,6 +82,8 @@ jest.mock('@/middleware/security', () => ({
 
 // Import middleware after mocks
 
+global.fetch = jest.fn();
+
 describe('middleware', () => {
   beforeEach(() => {
     jest.spyOn(console, 'log').mockImplementation(() => undefined);

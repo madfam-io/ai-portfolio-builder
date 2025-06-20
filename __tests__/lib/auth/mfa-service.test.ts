@@ -1,8 +1,11 @@
 import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { authenticator } from 'otplib';
 import QRCode from 'qrcode';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -66,10 +69,10 @@ jest.mock('@/lib/utils/logger', () => ({
   },
 }));
 
-const mockAuthenticator = jest.mocked(authenticator);
-const mockQRCode = jest.mocked(QRCode);
-const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
-const mockLogger = jest.mocked(logger);
+const mockAuthenticator = (authenticator as jest.Mock);
+const mockQRCode = (QRCode as jest.Mock);
+const mockCreateSupabaseClient = (createSupabaseClient as jest.Mock);
+const mockLogger = (logger as jest.Mock);
 
 describe('MFA Service', () => {
   beforeEach(() => {
@@ -335,7 +338,7 @@ describe('MFA Service', () => {
         // Mock generating backup codes
         jest.spyOn(global, 'crypto', 'get').mockReturnValue({
           getRandomValues: jest.fn().mockImplementation(arr => arr),
-        } as any);
+        } as ReturnType<typeof useUIStore>);
 
         mockSupabase.single.mockResolvedValueOnce({
           data: { id: userId },

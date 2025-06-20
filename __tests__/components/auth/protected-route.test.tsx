@@ -115,7 +115,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     render(
       <ProtectedRoute>
@@ -130,7 +130,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: true,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     render(
       <ProtectedRoute>
@@ -148,7 +148,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     render(
       <ProtectedRoute>
@@ -166,7 +166,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     render(
       <ProtectedRoute redirectTo="/custom-login">
@@ -188,7 +188,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: true,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     rerender(
       <ProtectedRoute>
@@ -199,7 +199,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     rerender(
       <ProtectedRoute>
@@ -215,7 +215,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: true,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     const { rerender } = render(
       <ProtectedRoute>
@@ -228,7 +228,7 @@ describe('ProtectedRoute', () => {
     mockUseAuthStore.mockReturnValue({
       isAuthenticated: false,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
 
     rerender(
       <ProtectedRoute>

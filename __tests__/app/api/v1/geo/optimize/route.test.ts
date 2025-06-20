@@ -1,9 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
-
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
@@ -30,6 +27,12 @@ const mockSupabaseClient = {
     })),
   },
 };
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+
+
 
 jest.mock('@/lib/auth/supabase-client', () => ({ 
   createClient: jest.fn(() => mockSupabaseClient),

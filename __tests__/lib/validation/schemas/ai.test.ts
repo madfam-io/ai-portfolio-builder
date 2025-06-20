@@ -1,4 +1,6 @@
+import { z } from 'zod';
 import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 
 import {
 
@@ -48,7 +50,7 @@ describe('AI Validation Schemas', () => {
         text: 'I am a software developer with experience in web development.',
       };
 
-      const result = enhanceBioSchema.parse(validData);
+      const result = enhanceBioSchema.safeParse(validData);
       expect(result).toEqual({
         text: validData.text,
         tone: 'professional',
@@ -65,7 +67,7 @@ describe('AI Validation Schemas', () => {
         targetLength: 150,
       };
 
-      const result = enhanceBioSchema.parse(validData);
+      const result = enhanceBioSchema.safeParse(validData);
       expect(result.model).toBe('meta-llama/Llama-3.1-8B-Instruct');
       expect(result.tone).toBe('creative');
       expect(result.industry).toBe('Technology');
@@ -76,7 +78,7 @@ describe('AI Validation Schemas', () => {
         text: 'Too short',
       };
 
-      expect(() => enhanceBioSchema.parse(invalidData)).toThrow(
+      expect(() => enhanceBioSchema.safeParse(invalidData)).toThrow(
         'Bio must be at least 10 characters'
 
     });
@@ -86,7 +88,7 @@ describe('AI Validation Schemas', () => {
         text: 'a'.repeat(501),
       };
 
-      expect(() => enhanceBioSchema.parse(invalidData)).toThrow(
+      expect(() => enhanceBioSchema.safeParse(invalidData)).toThrow(
         'Bio must be less than 500 characters'
 
     });
@@ -97,7 +99,7 @@ describe('AI Validation Schemas', () => {
         model: 'invalid-model',
       };
 
-      expect(() => enhanceBioSchema.parse(invalidData)).toThrow();
+      expect(() => enhanceBioSchema.safeParse(invalidData)).toThrow();
     });
   });
 
@@ -109,7 +111,7 @@ describe('AI Validation Schemas', () => {
           'Built a scalable e-commerce platform using React and Node.js',
       };
 
-      const result = optimizeProjectSchema.parse(validData);
+      const result = optimizeProjectSchema.safeParse(validData);
       expect(result).toEqual({
         title: validData.title,
         description: validData.description,
@@ -130,7 +132,7 @@ describe('AI Validation Schemas', () => {
         targetLength: 200,
       };
 
-      const result = optimizeProjectSchema.parse(validData);
+      const result = optimizeProjectSchema.safeParse(validData);
       expect(result.format).toBe('CAR');
       expect(result.includeMetrics).toBe(false);
     });
@@ -141,7 +143,7 @@ describe('AI Validation Schemas', () => {
         description: 'Too short desc',
       };
 
-      expect(() => optimizeProjectSchema.parse(invalidData)).toThrow(
+      expect(() => optimizeProjectSchema.safeParse(invalidData)).toThrow(
         'Description must be at least 20 characters'
 
     });
@@ -153,7 +155,7 @@ describe('AI Validation Schemas', () => {
         format: 'invalid',
       };
 
-      expect(() => optimizeProjectSchema.parse(invalidData)).toThrow();
+      expect(() => optimizeProjectSchema.safeParse(invalidData)).toThrow();
     });
   });
 
@@ -165,7 +167,7 @@ describe('AI Validation Schemas', () => {
         skills: ['React', 'Node.js', 'Python'],
       };
 
-      const result = recommendTemplateSchema.parse(validData);
+      const result = recommendTemplateSchema.safeParse(validData);
       expect(result).toEqual(validData);
     });
 
@@ -181,7 +183,7 @@ describe('AI Validation Schemas', () => {
         },
       };
 
-      const result = recommendTemplateSchema.parse(validData);
+      const result = recommendTemplateSchema.safeParse(validData);
       expect(result.preferences?.style).toBe('modern');
     });
 
@@ -192,7 +194,7 @@ describe('AI Validation Schemas', () => {
         skills: [],
       };
 
-      expect(() => recommendTemplateSchema.parse(invalidData)).toThrow();
+      expect(() => recommendTemplateSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should validate experience level', async () => {
@@ -202,7 +204,7 @@ describe('AI Validation Schemas', () => {
         skills: ['React'],
       };
 
-      expect(() => recommendTemplateSchema.parse(invalidData)).toThrow();
+      expect(() => recommendTemplateSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should enforce skill limit', async () => {
@@ -212,7 +214,7 @@ describe('AI Validation Schemas', () => {
         skills: Array(21).fill('skill'),
       };
 
-      expect(() => recommendTemplateSchema.parse(invalidData)).toThrow();
+      expect(() => recommendTemplateSchema.safeParse(invalidData)).toThrow();
     });
   });
 
@@ -223,7 +225,7 @@ describe('AI Validation Schemas', () => {
         contentType: 'bio',
       };
 
-      const result = generateContentSchema.parse(validData);
+      const result = generateContentSchema.safeParse(validData);
       expect(result).toEqual({
         prompt: validData.prompt,
         contentType: validData.contentType,
@@ -241,7 +243,7 @@ describe('AI Validation Schemas', () => {
         contentType: 'project',
       };
 
-      const result = generateContentSchema.parse(validData);
+      const result = generateContentSchema.safeParse(validData);
       expect(result.maxTokens).toBe(300);
       expect(result.temperature).toBe(0.9);
     });
@@ -253,7 +255,7 @@ describe('AI Validation Schemas', () => {
         temperature: 1.5,
       };
 
-      expect(() => generateContentSchema.parse(invalidData)).toThrow();
+      expect(() => generateContentSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should validate content type', async () => {
@@ -262,7 +264,7 @@ describe('AI Validation Schemas', () => {
         contentType: 'invalid',
       };
 
-      expect(() => generateContentSchema.parse(invalidData)).toThrow();
+      expect(() => generateContentSchema.safeParse(invalidData)).toThrow();
     });
   });
 
@@ -286,7 +288,7 @@ describe('AI Validation Schemas', () => {
         ],
       };
 
-      const result = batchAIOperationSchema.parse(validData);
+      const result = batchAIOperationSchema.safeParse(validData);
       expect(result.operations).toHaveLength(2);
     });
 
@@ -295,7 +297,7 @@ describe('AI Validation Schemas', () => {
         operations: [],
       };
 
-      expect(() => batchAIOperationSchema.parse(invalidData)).toThrow();
+      expect(() => batchAIOperationSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should enforce maximum operations limit', async () => {
@@ -306,7 +308,7 @@ describe('AI Validation Schemas', () => {
         }),
       };
 
-      expect(() => batchAIOperationSchema.parse(invalidData)).toThrow();
+      expect(() => batchAIOperationSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should validate operation data', async () => {
@@ -321,7 +323,7 @@ describe('AI Validation Schemas', () => {
         ],
       };
 
-      expect(() => batchAIOperationSchema.parse(invalidData)).toThrow();
+      expect(() => batchAIOperationSchema.safeParse(invalidData)).toThrow();
     });
   });
 
@@ -333,7 +335,7 @@ describe('AI Validation Schemas', () => {
         improved: true,
       };
 
-      const result = aiFeedbackSchema.parse(validData);
+      const result = aiFeedbackSchema.safeParse(validData);
       expect(result).toEqual(validData);
     });
 
@@ -345,7 +347,7 @@ describe('AI Validation Schemas', () => {
         improved: true,
       };
 
-      const result = aiFeedbackSchema.parse(validData);
+      const result = aiFeedbackSchema.safeParse(validData);
       expect(result.feedback).toBe(
         'Great improvement, but could be more concise'
 
@@ -358,7 +360,7 @@ describe('AI Validation Schemas', () => {
         improved: true,
       };
 
-      expect(() => aiFeedbackSchema.parse(invalidData)).toThrow();
+      expect(() => aiFeedbackSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should validate UUID format', async () => {
@@ -368,7 +370,7 @@ describe('AI Validation Schemas', () => {
         improved: true,
       };
 
-      expect(() => aiFeedbackSchema.parse(invalidData)).toThrow();
+      expect(() => aiFeedbackSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should enforce feedback length limit', async () => {
@@ -379,7 +381,7 @@ describe('AI Validation Schemas', () => {
         improved: false,
       };
 
-      expect(() => aiFeedbackSchema.parse(invalidData)).toThrow();
+      expect(() => aiFeedbackSchema.safeParse(invalidData)).toThrow();
     });
   });
 });

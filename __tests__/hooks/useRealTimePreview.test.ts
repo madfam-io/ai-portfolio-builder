@@ -215,7 +215,7 @@ describe('useRealTimePreview', () => {
     );
 
     act(() => {
-      result.current.scrollToSection('non-existent' as any);
+      result.current.scrollToSection('non-existent' as ReturnType<typeof useUIStore>);
     });
 
     // Should still set active section even if element doesn't exist

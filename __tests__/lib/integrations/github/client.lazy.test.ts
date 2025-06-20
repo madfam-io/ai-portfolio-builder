@@ -1,7 +1,10 @@
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { GitHubClient } from '@/lib/integrations/github/client.lazy';
 import { createClient } from '@/lib/supabase/server';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -75,7 +78,7 @@ describe('GitHubClient', () => {
       })),
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
     client = new GitHubClient(mockUserId);
   });
 

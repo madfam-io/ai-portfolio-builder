@@ -224,7 +224,7 @@ describe('Enhanced Stripe Service', () => {
         createCheckoutSession({
           userId: mockUserId,
           email: mockEmail,
-          planId: 'invalid' as any,
+          planId: 'invalid' as ReturnType<typeof useUIStore>,
           successUrl: mockSuccessUrl,
           cancelUrl: mockCancelUrl,
         })

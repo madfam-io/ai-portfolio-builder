@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { apiError } from '@/lib/api/versioning';
 
+
+
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
@@ -132,7 +134,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       const result = await authenticateUser(request);
@@ -172,7 +174,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       const result = await authenticateUser(request);
@@ -202,7 +204,7 @@ describe('Auth Middleware', () => {
         },
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       const result = await authenticateUser(request);
@@ -266,7 +268,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       const result = await authenticateUser(request);
@@ -306,7 +308,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       const result = await authenticateUser(request);
@@ -454,7 +456,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const mockResponse = new NextResponse();
       mockHandler.mockResolvedValue(mockResponse);
@@ -482,7 +484,7 @@ describe('Auth Middleware', () => {
         },
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const unauthorizedResp = new NextResponse();
       mockApiError.mockReturnValue(unauthorizedResp);
@@ -550,7 +552,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const mockResponse = new NextResponse();
       mockHandler.mockResolvedValue(mockResponse);
@@ -590,7 +592,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const mockResponse = new NextResponse();
       mockHandler.mockResolvedValue(mockResponse);
@@ -653,7 +655,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const request = createMockRequest();
       await authenticateUser(request);
@@ -696,7 +698,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const handler = createMockHandler('users:manage');
       const wrappedHandler = withAuth(handler);
@@ -729,7 +731,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const forbiddenResp = new NextResponse();
       mockApiError.mockReturnValue(forbiddenResp);
@@ -768,7 +770,7 @@ describe('Auth Middleware', () => {
         }),
       };
 
-      mockCreateClient.mockResolvedValue(mockSupabase as any);
+      mockCreateClient.mockResolvedValue(mockSupabase as ReturnType<typeof useUIStore>);
 
       const handler = createMockHandler('portfolio:manage');
       const wrappedHandler = withAuth(handler);

@@ -1,4 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { HfInference } from '@huggingface/inference';
 import { logger } from '@/lib/utils/logger';
 
@@ -31,8 +32,8 @@ jest.mock('@/lib/utils/logger', () => ({
   },
 }));
 
-const mockHfInference = jest.mocked(HfInference);
-const mockLogger = jest.mocked(logger);
+const mockHfInference = (HfInference as jest.Mock);
+const mockLogger = (logger as jest.Mock);
 
 describe('HuggingFace AI Service', () => {
   beforeEach(() => {
@@ -435,7 +436,7 @@ describe('HuggingFace AI Service', () => {
           generated_text: 'Improved content',
         });
 
-        const result = await improveSection(test.section as any, 'content');
+        const result = await improveSection(test.section as ReturnType<typeof useUIStore>, 'content');
 
         for (const keyword of test.suggestions) {
           expect(

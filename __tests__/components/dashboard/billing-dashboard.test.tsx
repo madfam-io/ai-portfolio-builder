@@ -1,4 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { mockUseLanguage } from '@/test-utils/mock-i18n';
 import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
@@ -97,15 +98,15 @@ const mockRouter = {
   refresh: jest.fn(),
 };
 
-const mockUseRouter = jest.mocked(useRouter);
-const mockCreateCheckoutSession = jest.mocked(
+const mockUseRouter = (useRouter as jest.Mock);
+const mockCreateCheckoutSession = (
   stripeEnhanced.createCheckoutSession
 
-const mockCreatePortalSession = (stripeEnhanced.createPortalSession as jest.MockedFunction<typeof stripeEnhanced.createPortalSession>);
-const mockCreateAICreditCheckout = jest.mocked(
+const mockCreatePortalSession = (stripeEnhanced.createPortalSession as jest.MockedFunction<typeof stripeEnhanced.createPortalSession> as jest.Mock);
+const mockCreateAICreditCheckout = (
   stripeEnhanced.createAICreditCheckout
 
-const mockToast = jest.mocked(toast);
+const mockToast = jest.mocked(toast as jest.Mock);
 
 describe('BillingDashboard', () => {
   beforeEach(() => {

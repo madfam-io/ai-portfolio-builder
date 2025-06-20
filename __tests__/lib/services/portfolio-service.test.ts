@@ -1,9 +1,10 @@
-import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 /**
  * @jest-environment node
-
+ */
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
@@ -63,8 +64,8 @@ jest.mock('@/lib/utils/logger', () => ({
   },
 }));
 
-const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
-const mockLogger = jest.mocked(logger);
+const mockCreateSupabaseClient = (createSupabaseClient as jest.Mock);
+const mockLogger = (logger as jest.Mock);
 
 describe('Portfolio Service', () => {
   beforeEach(() => {
@@ -76,7 +77,7 @@ global.fetch = jest.fn();
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);
   });
 
-  let mockSupabase: any;
+  let mockSupabase: unknown;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -230,7 +231,7 @@ global.fetch = jest.fn();
         template_id: 'developer',
       };
 
-      await expect(createPortfolio(userId, invalidData as any)).rejects.toThrow(
+      await expect(createPortfolio(userId, invalidData as unknown)).rejects.toThrow(
         'Title is required'
 
     });

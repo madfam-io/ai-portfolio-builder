@@ -6,16 +6,6 @@ const mockHuggingFaceService = {
   listModels: jest.fn().mockResolvedValue([{ id: 'test-model', name: 'Test Model' }]),
 };
 
-jest.mock('@/lib/ai/huggingface-service', () => ({ 
-  HuggingFaceService: jest.fn(() => mockHuggingFaceService),
- }));
-
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
-import { NextRequest } from 'next/server';
-
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
-
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
@@ -42,6 +32,19 @@ const mockSupabaseClient = {
     })),
   },
 };
+
+jest.mock('@/lib/ai/huggingface-service', () => ({ 
+  HuggingFaceService: jest.fn(() => mockHuggingFaceService),
+ }));
+
+import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
+import { NextRequest } from 'next/server';
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => ({
+
+
 
 jest.mock('@/lib/auth/supabase-client', () => ({ 
   createClient: jest.fn(() => mockSupabaseClient),

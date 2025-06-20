@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
 import {
   createPortfolioSchema,
@@ -22,7 +23,7 @@ describe('Portfolio Validation Schemas', () => {
         template: 'developer',
       };
 
-      const result = createPortfolioSchema.parse(validData);
+      const result = createPortfolioSchema.safeParse(validData);
       expect(result).toEqual(validData);
     });
 
@@ -47,7 +48,7 @@ describe('Portfolio Validation Schemas', () => {
         },
       };
 
-      const result = createPortfolioSchema.parse(validData);
+      const result = createPortfolioSchema.safeParse(validData);
       expect(result.projects).toHaveLength(1);
       expect(result.socialLinks?.linkedin).toBe(
         'https://linkedin.com/in/johndoe'
@@ -61,7 +62,7 @@ describe('Portfolio Validation Schemas', () => {
         template: 'developer',
       };
 
-      expect(() => createPortfolioSchema.parse(invalidData)).toThrow(
+      expect(() => createPortfolioSchema.safeParse(invalidData)).toThrow(
         'Name must be at least 2 characters'
 
     });
@@ -73,7 +74,7 @@ describe('Portfolio Validation Schemas', () => {
         template: 'developer',
       };
 
-      expect(() => createPortfolioSchema.parse(invalidData)).toThrow(
+      expect(() => createPortfolioSchema.safeParse(invalidData)).toThrow(
         'Invalid email format'
 
     });
@@ -85,7 +86,7 @@ describe('Portfolio Validation Schemas', () => {
         template: 'invalid-template',
       };
 
-      expect(() => createPortfolioSchema.parse(invalidData)).toThrow();
+      expect(() => createPortfolioSchema.safeParse(invalidData)).toThrow();
     });
 
     it('should validate social links', async () => {
@@ -99,7 +100,7 @@ describe('Portfolio Validation Schemas', () => {
         },
       };
 
-      expect(() => createPortfolioSchema.parse(validData)).toThrow(
+      expect(() => createPortfolioSchema.safeParse(validData)).toThrow(
         'Invalid URL format'
 
     });
@@ -111,7 +112,7 @@ describe('Portfolio Validation Schemas', () => {
         name: 'Jane Doe',
       };
 
-      const result = updatePortfolioSchema.parse(updateData);
+      const result = updatePortfolioSchema.safeParse(updateData);
       expect(result).toEqual(updateData);
     });
 
@@ -127,7 +128,7 @@ describe('Portfolio Validation Schemas', () => {
         },
       };
 
-      const result = updatePortfolioSchema.parse(updateData);
+      const result = updatePortfolioSchema.safeParse(updateData);
       expect(result.settings?.customColors?.primary).toBe('#FF0000');
     });
 
@@ -140,7 +141,7 @@ describe('Portfolio Validation Schemas', () => {
         },
       };
 
-      expect(() => updatePortfolioSchema.parse(updateData)).toThrow();
+      expect(() => updatePortfolioSchema.safeParse(updateData)).toThrow();
     });
   });
 
@@ -148,7 +149,7 @@ describe('Portfolio Validation Schemas', () => {
     it('should parse query parameters with defaults', async () => {
       const query = {};
 
-      const result = portfolioQuerySchema.parse(query);
+      const result = portfolioQuerySchema.safeParse(query);
       expect(result).toEqual({
         page: 1,
         limit: 10,
@@ -163,7 +164,7 @@ describe('Portfolio Validation Schemas', () => {
         limit: '25',
       };
 
-      const result = portfolioQuerySchema.parse(query);
+      const result = portfolioQuerySchema.safeParse(query);
       expect(result.page).toBe(2);
       expect(result.limit).toBe(25);
     });
@@ -173,7 +174,7 @@ describe('Portfolio Validation Schemas', () => {
         status: 'published',
       };
 
-      const result = portfolioQuerySchema.parse(query);
+      const result = portfolioQuerySchema.safeParse(query);
       expect(result.status).toBe('published');
     });
 
@@ -182,7 +183,7 @@ describe('Portfolio Validation Schemas', () => {
         status: 'invalid',
       };
 
-      expect(() => portfolioQuerySchema.parse(query)).toThrow();
+      expect(() => portfolioQuerySchema.safeParse(query)).toThrow();
     });
 
     it('should enforce limit constraints', async () => {
@@ -190,7 +191,7 @@ describe('Portfolio Validation Schemas', () => {
         limit: '150',
       };
 
-      expect(() => portfolioQuerySchema.parse(query)).toThrow();
+      expect(() => portfolioQuerySchema.safeParse(query)).toThrow();
     });
   });
 
@@ -200,7 +201,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'john-doe-portfolio',
       };
 
-      const result = subdomainCheckSchema.parse(data);
+      const result = subdomainCheckSchema.safeParse(data);
       expect(result.subdomain).toBe('john-doe-portfolio');
     });
 
@@ -209,7 +210,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'JohnDoe',
       };
 
-      expect(() => subdomainCheckSchema.parse(data)).toThrow(
+      expect(() => subdomainCheckSchema.safeParse(data)).toThrow(
         'Subdomain can only contain lowercase letters, numbers, and hyphens'
 
     });
@@ -219,7 +220,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: '-johndoe',
       };
 
-      expect(() => subdomainCheckSchema.parse(data)).toThrow(
+      expect(() => subdomainCheckSchema.safeParse(data)).toThrow(
         'Subdomain must start with a letter or number'
 
     });
@@ -229,7 +230,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'johndoe-',
       };
 
-      expect(() => subdomainCheckSchema.parse(data)).toThrow(
+      expect(() => subdomainCheckSchema.safeParse(data)).toThrow(
         'Subdomain must end with a letter or number'
 
     });
@@ -239,7 +240,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'ab',
       };
 
-      expect(() => subdomainCheckSchema.parse(data)).toThrow(
+      expect(() => subdomainCheckSchema.safeParse(data)).toThrow(
         'Subdomain must be at least 3 characters'
 
     });
@@ -249,7 +250,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'a'.repeat(64),
       };
 
-      expect(() => subdomainCheckSchema.parse(data)).toThrow(
+      expect(() => subdomainCheckSchema.safeParse(data)).toThrow(
         'Subdomain must be less than 63 characters'
 
     });
@@ -261,7 +262,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'john-portfolio',
       };
 
-      const result = publishPortfolioSchema.parse(data);
+      const result = publishPortfolioSchema.safeParse(data);
       expect(result.subdomain).toBe('john-portfolio');
     });
 
@@ -271,7 +272,7 @@ describe('Portfolio Validation Schemas', () => {
         customDomain: 'john.example.com',
       };
 
-      const result = publishPortfolioSchema.parse(data);
+      const result = publishPortfolioSchema.safeParse(data);
       expect(result.customDomain).toBe('john.example.com');
     });
 
@@ -280,7 +281,7 @@ describe('Portfolio Validation Schemas', () => {
         subdomain: 'INVALID',
       };
 
-      expect(() => publishPortfolioSchema.parse(data)).toThrow();
+      expect(() => publishPortfolioSchema.safeParse(data)).toThrow();
     });
   });
 });

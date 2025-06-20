@@ -3,6 +3,8 @@ import { mfaService, MFAService } from '@/lib/services/auth/mfa-service';
 import { AppError } from '@/types/errors';
 import { createClient } from '@/lib/supabase/client';
 
+
+
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
@@ -85,7 +87,7 @@ describe('MFA Service', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockCreateClient.mockReturnValue(mockSupabase as any);
+    mockCreateClient.mockReturnValue(mockSupabase as ReturnType<typeof useUIStore>);
   });
 
   describe('MFA Status', () => {

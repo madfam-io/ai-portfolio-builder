@@ -272,10 +272,7 @@ describe('Portfolio Creation Journey - 30 Minute Goal', () => {
         publishing: 3 * 60 * 1000, // 3 minutes
       };
 
-      const totalTarget = Object.values(performanceTargets).reduce(
-        (sum, target) => sum + target,
-        0
-
+      const totalTarget = Object.values(performanceTargets).reduce((sum, target) => sum + target, 0);
       // Verify total target is under 30 minutes
       expect(totalTarget).toBeLessThan(30 * 60 * 1000);
 

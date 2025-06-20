@@ -1,8 +1,11 @@
 import { jest, describe, test, it, expect, beforeEach, afterEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { GitHubTokenManager } from '@/lib/integrations/github/tokenManager';
 import { createClient } from '@/lib/supabase/server';
 import * as _crypto from 'crypto';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -112,7 +115,7 @@ describe('GitHubTokenManager', () => {
       })),
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
     tokenManager = new GitHubTokenManager();
   });
 

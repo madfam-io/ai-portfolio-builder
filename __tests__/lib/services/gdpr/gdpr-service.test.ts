@@ -4,6 +4,8 @@ import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
 /**
  * Test suite for GDPR Service
 
+
+
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {

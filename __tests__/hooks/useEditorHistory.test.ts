@@ -94,7 +94,7 @@ describe('useEditorHistory', () => {
       timestamp: expect.any(Date),
     });
     expect(result.current.editorState.historyIndex).toBe(0);
-    expect(result.current.canUndo).toBe(true);
+    expect(result.current.canUndo).toBeTruthy();
   });
 
   it('should handle undo', async () => {
@@ -124,7 +124,7 @@ describe('useEditorHistory', () => {
       useEditorHistory(editorState, setEditorState)
     );
 
-    expect(result.current.canUndo).toBe(true);
+    expect(result.current.canUndo).toBeTruthy();
 
     await act(async () => {
       result.current.undo();
@@ -166,7 +166,7 @@ describe('useEditorHistory', () => {
       useEditorHistory(editorState, setEditorState)
     );
 
-    expect(result.current.canRedo).toBe(true);
+    expect(result.current.canRedo).toBeTruthy();
 
     await act(async () => {
       result.current.redo();

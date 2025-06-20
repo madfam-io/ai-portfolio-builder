@@ -24,6 +24,7 @@ jest.mock('@/lib/auth/supabase-client', () => ({
 }));
 
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { createClient } from '@supabase/supabase-js';
 
 import {
@@ -111,7 +112,7 @@ describe('Auth Service', () => {
       auth: mockAuth,
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
+    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
   });
 
   describe('initialization', () => {

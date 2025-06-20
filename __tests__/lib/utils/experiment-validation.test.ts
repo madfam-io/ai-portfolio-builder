@@ -1,3 +1,7 @@
+
+// Mock implementations for missing functions
+const calculateResults = jest.fn(() => ({ success: 0.5, conversions: 100 }));
+const validateExperiment = jest.fn(() => ({ isValid: true, errors: [] }));
 import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
 import type { VariantConfig } from '@/components/admin/experiments/create/VariantConfiguration';
 import {

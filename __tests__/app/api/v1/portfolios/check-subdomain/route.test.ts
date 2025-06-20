@@ -24,10 +24,12 @@ jest.mock('@/lib/auth/supabase-client', () => ({
 }));
 
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { NextRequest } from 'next/server';
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
     auth: {
       getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
     },
@@ -88,7 +90,7 @@ describe('POST /api/v1/portfolios/check-subdomain', () => {
     mockSupabaseClient = {
       from: jest.fn(),
     };
-    jest.mocked(createClient).mockReturnValue(
+    (createClient as jest.Mock).mockReturnValue(
       mockSupabaseClient
     );
 

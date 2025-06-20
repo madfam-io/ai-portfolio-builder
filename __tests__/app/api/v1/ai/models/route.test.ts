@@ -11,6 +11,7 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
  }));
 
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { NextRequest } from 'next/server';
 import { GET } from '@/app/api/v1/ai/models/route';
 

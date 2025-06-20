@@ -1,4 +1,5 @@
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -60,7 +61,7 @@ describe('AICreditPacks', () => {
         error: 'Error',
         success: 'Success',
       },
-    } as any);
+    } as ReturnType<typeof useUIStore>);
   });
 
   const defaultProps = {

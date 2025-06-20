@@ -24,6 +24,7 @@ jest.mock('@/lib/auth/supabase-client', () => ({
 }));
 
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 
 import { // Mock global fetch
 
@@ -84,7 +85,7 @@ describe('DemoPortfolioService', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.mocked(createClient).mockReturnValue(mockSupabaseClient);
+    (createClient as jest.Mock).mockReturnValue(mockSupabaseClient);
   });
 
   describe('getAvailableDemos', () => {

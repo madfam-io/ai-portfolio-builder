@@ -1,8 +1,11 @@
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { createClient } from '@/lib/supabase/server';
 import { setupCommonMocks, createMockRequest } from '@/__tests__/utils/api-route-test-helpers';
 import {
 // Mock global fetch
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -114,7 +117,7 @@ describe('DashboardAnalyticsService', () => {
       }),
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
     service = new DashboardAnalyticsService();
   });
 

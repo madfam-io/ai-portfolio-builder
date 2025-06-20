@@ -1,8 +1,11 @@
 import { jest, , describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { createSupabaseClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { cookies } from 'next/headers';
 /**
+
+
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -68,9 +71,9 @@ jest.mock('next/headers', () => ({
   headers: jest.fn().mockReturnValue(void 0),
  }));
 
-const mockCreateSupabaseClient = jest.mocked(createSupabaseClient);
-const mockLogger = jest.mocked(logger);
-const mockCookies = jest.mocked(cookies);
+const mockCreateSupabaseClient = (createSupabaseClient as jest.Mock);
+const mockLogger = (logger as jest.Mock);
+const mockCookies = (cookies as jest.Mock);
 
 describe('Auth Service', () => {
   beforeEach(() => {

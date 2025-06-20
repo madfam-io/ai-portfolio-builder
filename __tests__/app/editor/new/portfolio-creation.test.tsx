@@ -1,4 +1,5 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { mockUseLanguage  } from '@/__tests__/utils/mock-i18n';
 import React from 'react';
 
@@ -151,15 +152,15 @@ describe('Portfolio Creation Flow', () => {
       t: mockT,
       language: 'en',
     });
-    jest.mocked(useAuthStore).mockReturnValue({
+    (useAuthStore as jest.Mock).mockReturnValue({
       isAuthenticated: true,
       isLoading: false,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
     (
       usePortfolioStore as jest.MockedFunction<typeof usePortfolioStore>
     ).mockReturnValue({
       createPortfolio: mockCreatePortfolio,
-    } as any);
+    } as ReturnType<typeof useUIStore>);
   });
 
   describe('Basic Info Step', () => {

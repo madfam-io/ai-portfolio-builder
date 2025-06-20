@@ -27,7 +27,8 @@ import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
 
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
     auth: {
       getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
     },

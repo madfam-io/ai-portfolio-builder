@@ -1,8 +1,6 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import type { Mock, MockedClass } from 'jest-mock';
 import { NextRequest } from 'next/server';
-
-jest.mock('@/lib/supabase/server', () => ({
-  createClient: jest.fn(() => ({
 
 // Mock Supabase
 const mockSupabaseClient = {
@@ -30,6 +28,12 @@ const mockSupabaseClient = {
     })),
   },
 };
+
+jest.mock('@/lib/supabase/server', () => ({
+  createClient: jest.fn(() => mockSupabaseClient),
+}));
+
+
 
 jest.mock('@/lib/auth/supabase-client', () => ({ 
   createClient: jest.fn(() => mockSupabaseClient),
@@ -139,7 +143,7 @@ describe('/api/v1/public/[subdomain]', () => {
       }))
     };
 
-    jest.mocked(createClient).mockReturnValue(mockSupabase);
+    (createClient as jest.Mock).mockReturnValue(mockSupabase);
   });
 
 });
