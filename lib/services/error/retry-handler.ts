@@ -112,7 +112,7 @@ export class CircuitBreaker {
       if (now - this.lastFailureTime > this.retryTimeout) {
         this.state = 'half-open';
       } else if (fallback) {
-        return await fallback();
+        return fallback();
       } else {
         throw new AppError(
           'Service temporarily unavailable',
@@ -140,7 +140,7 @@ export class CircuitBreaker {
 
       // Use fallback if available when circuit trips to open state
       if (fallback && this.failureCount >= this.threshold) {
-        return await fallback();
+        return fallback();
       }
 
       throw error;
@@ -184,7 +184,7 @@ export function createDebouncedRetry<
   let timeoutId: NodeJS.Timeout | null = null;
   let lastArgs: any[] | null = null;
 
-  return (async (...args: Parameters<T>) => {
+  return ((...args: Parameters<T>) => {
     lastArgs = args;
 
     if (timeoutId) {
@@ -217,7 +217,7 @@ function sleep(ms: number): Promise<void> {
 /**
  * Timeout wrapper for promises
  */
-export async function withTimeout<T>(
+export function withTimeout<T>(
   promise: Promise<T>,
   timeoutMs: number,
   timeoutError?: Error

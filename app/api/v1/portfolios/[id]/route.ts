@@ -31,7 +31,8 @@ interface RouteParams {
  * Retrieves a specific portfolio by ID
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const { id } = params;
       const { user } = request;
@@ -82,7 +83,8 @@ export const GET = versionedApiHandler(
  * Updates a specific portfolio by ID
  */
 export const PUT = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const { id } = params;
       const { user } = request;
@@ -203,7 +205,8 @@ export const PUT = versionedApiHandler(
  * Deletes a specific portfolio by ID
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const { id } = params;
       const { user } = request;

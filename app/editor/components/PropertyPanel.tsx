@@ -410,7 +410,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
       {/* Tabs */}
       <Tabs
         value={activeTab}
-        onValueChange={value => setActiveTab(value as unknown)}
+        onValueChange={value => setActiveTab(value as 'content' | 'style' | 'responsive')}
         className="flex-1"
       >
         <div className="border-b">

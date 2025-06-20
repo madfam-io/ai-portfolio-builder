@@ -83,7 +83,7 @@ const createLoadingSlice = <T extends object>(
     ...initialState,
 
     startLoading: key =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         isLoading: true,
         loadingKey: key || state.loadingKey,
@@ -93,7 +93,7 @@ const createLoadingSlice = <T extends object>(
       })),
 
     stopLoading: key =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newLoadingKeys = new Set(state.loadingKeys);
         if (key) {
           newLoadingKeys.delete(key);
@@ -112,7 +112,7 @@ const createLoadingSlice = <T extends object>(
     },
 
     resetLoading: () =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         isLoading: false,
         loadingKey: null,
@@ -150,7 +150,7 @@ const createErrorSlice = <T extends object>(
     ...initialState,
 
     setError: (error, key) =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.set(key, error || '');
@@ -163,7 +163,7 @@ const createErrorSlice = <T extends object>(
       }),
 
     clearError: key =>
-      set((state: any) => {
+      set((state: unknown) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.delete(key);
@@ -176,7 +176,7 @@ const createErrorSlice = <T extends object>(
       }),
 
     clearAllErrors: () =>
-      set((state: any) => ({
+      set((state: unknown) => ({
         ...state,
         error: null,
         errors: new Map(),

@@ -1,7 +1,7 @@
 'use client';
 
 import { Check, RefreshCw } from 'lucide-react';
-import React from 'react';
+import React, { ComponentType } from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -245,7 +245,7 @@ export function EditorStep({
               <LazyWrapper
                 component={() =>
                   import('@/components/editor/PortfolioPreview').then(mod => ({
-                    default: mod.PortfolioPreview,
+                    default: mod.PortfolioPreview as ComponentType<unknown>,
                   }))
                 }
                 componentProps={{

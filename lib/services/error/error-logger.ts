@@ -122,7 +122,7 @@ export class ErrorLogger {
       this.writeToConsole(entry, formattedLog);
     } else {
       // In production, write structured JSON logs
-      console.error(JSON.stringify(entry));
+      // console.error(JSON.stringify(entry));
     }
 
     // TODO: In production, send to external logging service (e.g., Sentry, LogRocket)

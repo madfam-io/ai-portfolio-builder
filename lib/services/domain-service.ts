@@ -555,7 +555,7 @@ export class DomainService {
     return suggestions.slice(0, 3);
   }
 
-  private static async lookupDNSRecords(domain: string): Promise<DNSRecord[]> {
+  private static lookupDNSRecords(domain: string): Promise<DNSRecord[]> {
     // In production, this would use a DNS lookup service
     // For now, we'll simulate DNS records
     logger.info('Looking up DNS records for domain', { domain });
@@ -566,7 +566,7 @@ export class DomainService {
     // - Google Cloud DNS
     // - Or a dedicated DNS lookup service
 
-    return [];
+    return Promise.resolve([]);
   }
 
   private static checkDNSRecordsMatch(
@@ -582,7 +582,7 @@ export class DomainService {
     );
   }
 
-  private static async requestSSLCertificate(domain: string): Promise<{
+  private static requestSSLCertificate(domain: string): Promise<{
     status: 'provisioning' | 'active';
     certificateId?: string;
   }> {
@@ -593,10 +593,10 @@ export class DomainService {
 
     logger.info('Requesting SSL certificate for domain', { domain });
 
-    return {
+    return Promise.resolve({
       status: 'provisioning',
       certificateId: `cert-${Date.now()}`,
-    };
+    });
   }
 
   private static transformDomain(data: any): CustomDomain {

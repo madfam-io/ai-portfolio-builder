@@ -1,7 +1,7 @@
 'use client';
 
 import { RefreshCw } from 'lucide-react';
-import React from 'react';
+import React, { ComponentType } from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { TemplateType } from '@/types/portfolio';
@@ -39,7 +39,7 @@ export function TemplateSelectionStep({
       <LazyWrapper
         component={() =>
           import('@/components/editor/TemplateSelector').then(mod => ({
-            default: mod.TemplateSelector,
+            default: mod.TemplateSelector as ComponentType<unknown>,
           }))
         }
         componentProps={{

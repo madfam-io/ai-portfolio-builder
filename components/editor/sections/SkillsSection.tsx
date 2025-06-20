@@ -259,7 +259,7 @@ export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
                   className="w-full px-3 py-2 border rounded-md"
                   value={formData.level}
                   onChange={e =>
-                    setFormData({ ...formData, level: e.target.value as unknown })
+                    setFormData({ ...formData, level: e.target.value as 'beginner' | 'intermediate' | 'advanced' | 'expert' })
                   }
                 >
                   {SKILL_LEVELS.map(level => (

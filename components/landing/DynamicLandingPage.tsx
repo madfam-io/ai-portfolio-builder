@@ -44,12 +44,12 @@ const componentRegistry: Record<
   }
 > = {
   hero: {
-    default: getHeroVariant('default'),
+    default: getHeroVariant('default') as React.ComponentType<unknown>,
     variants: {
-      default: getHeroVariant('default'),
-      minimal: getHeroVariant('minimal'),
-      video: getHeroVariant('video'),
-      split: getHeroVariant('split'),
+      default: getHeroVariant('default') as React.ComponentType<unknown>,
+      minimal: getHeroVariant('minimal') as React.ComponentType<unknown>,
+      video: getHeroVariant('video') as React.ComponentType<unknown>,
+      split: getHeroVariant('split') as React.ComponentType<unknown>,
     },
   },
   social_proof: {

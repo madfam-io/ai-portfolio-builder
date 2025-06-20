@@ -12,8 +12,8 @@ export default function Templates(): React.ReactElement {
     // Store selected template in localStorage for the editor
     localStorage.setItem('selectedTemplate', templateType);
     // Add analytics event
-    if (typeof window !== 'undefined' && (window as unknown).gtag) {
-      (window as unknown).gtag('event', 'template_selected', {
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'template_selected', {
         template_type: templateType,
         event_category: 'engagement',
       });

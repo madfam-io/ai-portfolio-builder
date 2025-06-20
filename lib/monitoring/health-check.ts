@@ -166,7 +166,7 @@ class HealthMonitor {
             : 'Redis unavailable, using memory cache',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           name: 'redis',
           status: 'degraded',
@@ -191,7 +191,7 @@ class HealthMonitor {
             : 'HuggingFace API unavailable',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           name: 'huggingface',
           status: 'degraded',
@@ -215,7 +215,7 @@ class HealthMonitor {
             : 'Stripe API unavailable',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           name: 'stripe',
           status: 'degraded',
@@ -244,7 +244,7 @@ class HealthMonitor {
             cpu: cpuUsage,
           },
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           name: 'system',
           status: 'unhealthy',
@@ -268,7 +268,7 @@ class HealthMonitor {
             : 'Portfolio generation failed',
           lastCheck: Date.now(),
         };
-      } catch (_error) {
+      } catch (error) {
         return {
           name: 'portfolio_generation',
           status: 'unhealthy',
@@ -466,7 +466,7 @@ export function handleLivenessCheck(): Response {
     JSON.stringify({
       alive: true,
       timestamp: Date.now(),
-      uptime: Date.now() - (global as unknown).__startup_time || 0,
+      uptime: Date.now() - ((global as any).__startup_time || 0),
     }),
     {
       status: 200,
@@ -482,7 +482,7 @@ export function handleLivenessCheck(): Response {
  */
 export function initializeHealthMonitoring(): void {
   // Set startup time for uptime calculation
-  (global as unknown).__startup_time = Date.now();
+  (global as any).__startup_time = Date.now();
 
   // Run periodic health checks
   if (process.env.NODE_ENV === 'production') {

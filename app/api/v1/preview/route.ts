@@ -22,7 +22,7 @@ import type { Portfolio, TemplateType } from '@/types/portfolio';
 
 // Template imports
 
-export const GET = versionedApiHandler(async (request: NextRequest) => {
+export const GET = versionedApiHandler((async (request: NextRequest) => {
   try {
     const { searchParams } = new URL(request.url);
 
@@ -125,10 +125,10 @@ export const GET = versionedApiHandler(async (request: NextRequest) => {
     logger.error('Preview generation failed', { error });
     return apiError('Failed to generate preview', { status: 500 });
   }
-});
+}) as any);
 
 // POST endpoint for receiving portfolio updates
-export const POST = versionedApiHandler(async (request: NextRequest) => {
+export const POST = versionedApiHandler((async (request: NextRequest) => {
   try {
     const body = await request.json();
 
@@ -188,4 +188,4 @@ export const POST = versionedApiHandler(async (request: NextRequest) => {
     logger.error('Preview update failed', { error });
     return apiError('Failed to update preview', { status: 500 });
   }
-});
+}) as any);

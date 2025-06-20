@@ -72,7 +72,7 @@ class ErrorTracker {
   private initSentry(): void {
     // This would integrate with @sentry/nextjs
     // For now, we'll use our internal tracking
-    console.log('Sentry would be initialized here in production');
+    // console.log('Sentry would be initialized here in production');
   }
 
   /**

@@ -85,8 +85,8 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
     }
 
     // Get subscription details
-    const subscription = session.subscription as Stripe.Subscription;
-    if (!subscription) {
+    const subscription = session.subscription as Stripe.Subscription | string;
+    if (!subscription || typeof subscription === 'string') {
       return NextResponse.json(
         { error: 'No subscription found' },
         { status: 400 }
@@ -106,6 +106,12 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
       planName = 'enterprise';
     }
 
+    // Get the current period timestamps
+    const currentPeriodStart = (subscription as any).current_period_start || 
+                               Math.floor(Date.now() / 1000);
+    const currentPeriodEnd = (subscription as any).current_period_end || 
+                             Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60; // 30 days
+
     // Update user profile with subscription info
     const { error: updateError } = await supabase
       .from('user_profiles')
@@ -115,10 +121,10 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
         stripe_customer_id: session.customer as string,
         stripe_subscription_id: subscription.id,
         subscription_start_date: new Date(
-          (subscription as unknown).current_period_start * 1000
+          currentPeriodStart * 1000
         ).toISOString(),
         subscription_end_date: new Date(
-          (subscription as unknown).current_period_end * 1000
+          currentPeriodEnd * 1000
         ).toISOString(),
         updated_at: new Date().toISOString(),
       })

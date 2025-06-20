@@ -93,8 +93,8 @@ export function ExperienceSection({
     setFormData({
       company: experience.company,
       position: experience.position,
-      location: (experience as unknown).location || '',
-      employmentType: (experience as unknown).employmentType || 'full-time',
+      location: experience.location || '',
+      employmentType: experience.employmentType || 'full-time',
       startDate: experience.startDate,
       endDate: experience.endDate || '',
       current: experience.current,
@@ -453,8 +453,8 @@ export function ExperienceSection({
                     {experience.current
                       ? t.present || 'Present'
                       : formatDateForDisplay(experience.endDate || '')}
-                    {(experience as unknown).location &&
-                      ` • ${(experience as unknown).location}`}
+                    {experience.location &&
+                      ` • ${experience.location}`}
                   </p>
                   {experience.description && (
                     <p className="mt-3 text-sm">{experience.description}</p>

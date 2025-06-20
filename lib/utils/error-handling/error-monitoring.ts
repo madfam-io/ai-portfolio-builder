@@ -94,7 +94,7 @@ class ErrorMonitoringService {
    */
   async captureError(
     error: unknown,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): Promise<string | null> {
     if (!this.config.enabled) {
       logger.error('Error captured (monitoring disabled):', error as Error);
@@ -144,7 +144,7 @@ class ErrorMonitoringService {
    */
   private createErrorReport(
     error: Error,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): ErrorReport {
     const errorType = getErrorType(error);
     const severity = this.calculateSeverity(error, errorType);
@@ -202,7 +202,7 @@ class ErrorMonitoringService {
    */
   private async runHandlers(
     error: Error,
-    context?: Record<string, any>
+    context?: Record<string, unknown>
   ): Promise<void> {
     if (!this.config.handlers) return;
 

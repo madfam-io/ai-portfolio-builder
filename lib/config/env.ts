@@ -175,7 +175,7 @@ export const env = parseEnv();
 /**
  * Type-safe environment variable access
  */
-type Env = typeof env;
+type _Env = typeof env;
 
 /**
  * Environment checks

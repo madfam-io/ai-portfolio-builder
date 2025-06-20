@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 /**
  * Response compression and caching headers
  */
-export function withPerformanceOptimization<T extends (...args: any[]) => any>(
+export function withPerformanceOptimization<T extends (...args: unknown[]) => any>(
   handler: T,
   options: {
     enableCompression?: boolean;
@@ -23,7 +23,7 @@ export function withPerformanceOptimization<T extends (...args: any[]) => any>(
     maxAge = 3600, // 1 hour default
   } = options;
 
-  return (async (request: NextRequest, ...args: any[]) => {
+  return (async (request: NextRequest, ...args: unknown[]) => {
     const startTime = Date.now();
 
     try {
@@ -107,7 +107,7 @@ export function withPerformanceOptimization<T extends (...args: any[]) => any>(
       }
 
       return response;
-    } catch (error) {
+    } catch (_error) {
       // Even errors should have response time headers
       const processingTime = Date.now() - startTime;
       const errorResponse = NextResponse.json(
@@ -140,7 +140,7 @@ function generateETag(response: NextResponse): string {
 /**
  * Database query optimization middleware
  */
-export function withQueryOptimization<T extends (...args: any[]) => any>(
+export function withQueryOptimization<T extends (...args: unknown[]) => any>(
   handler: T,
   options: {
     enableQueryCache?: boolean;
@@ -154,7 +154,7 @@ export function withQueryOptimization<T extends (...args: any[]) => any>(
     cacheTTL = 300, // 5 minutes
   } = options;
 
-  return (async (request: NextRequest, ...args: any[]) => {
+  return (async (request: NextRequest, ...args: unknown[]) => {
     if (!enableQueryCache) {
       return handler(request, ...args);
     }
@@ -199,9 +199,9 @@ export function withQueryOptimization<T extends (...args: any[]) => any>(
 /**
  * Simple in-memory cache (replace with Redis in production)
  */
-const cache = new Map<string, { data: any; expiry: number }>();
+const cache = new Map<string, { data: unknown; expiry: number }>();
 
-function getFromCache(key: string): any | null {
+function getFromCache(key: string): unknown | null {
   const item = cache.get(key);
 
   if (!item) {
@@ -216,7 +216,7 @@ function getFromCache(key: string): any | null {
   return item.data;
 }
 
-function setCache(key: string, data: any, ttlSeconds: number): void {
+function setCache(key: string, data: unknown, ttlSeconds: number): void {
   const expiry = Date.now() + ttlSeconds * 1000;
   cache.set(key, { data, expiry });
 
@@ -239,7 +239,7 @@ function cleanupExpiredCache(): void {
 /**
  * Resource optimization for API responses
  */
-export function optimizeAPIResponse(data: any): any {
+export function optimizeAPIResponse(data: unknown): unknown {
   // Remove undefined values to reduce payload size
   return JSON.parse(
     JSON.stringify(data, (key, value) => {
@@ -323,7 +323,7 @@ export const bundleOptimization = {
    * Critical CSS extraction
    */
   extractCriticalCSS: (
-    html: string
+    _html: string
   ): { critical: string; remaining: string } => {
     // This would be implemented with a CSS extraction tool
     // For now, return placeholder
@@ -356,7 +356,7 @@ export const bundleOptimization = {
 export function trackPerformanceMetrics(
   operation: string,
   startTime: number,
-  additionalData?: Record<string, any>
+  additionalData?: Record<string, unknown>
 ): void {
   const duration = Date.now() - startTime;
 

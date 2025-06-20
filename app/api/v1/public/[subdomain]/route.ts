@@ -18,7 +18,8 @@ interface RouteParams {
  * Fetch a public portfolio by subdomain (no auth required)
  */
 export const GET = versionedApiHandler(
-  async (_request: Request, { params }: RouteParams) => {
+  (async (_request: Request, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const { subdomain } = params;
 
@@ -90,5 +91,5 @@ export const GET = versionedApiHandler(
       );
       return apiError('Internal server error', { status: 500 });
     }
-  }
+  }) as any
 );

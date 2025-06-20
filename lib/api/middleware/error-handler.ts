@@ -2,7 +2,7 @@
  * Error handling middleware for API routes
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { logger } from '@/lib/utils/logger';
 
 export function withErrorHandling<T extends unknown[]>(

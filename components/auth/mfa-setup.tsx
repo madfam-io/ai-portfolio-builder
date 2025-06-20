@@ -343,7 +343,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Important:</strong> Store these codes safely. They're
+              <strong>Important:</strong> Store these codes safely. {"They're"}
               your only way to access your account if you lose your
               authenticator device.
             </AlertDescription>
@@ -374,7 +374,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
         </CardContent>
         <CardFooter>
           <Button onClick={handleComplete} className="w-full">
-            I've Saved My Backup Codes
+            {"I've Saved My Backup Codes"}
           </Button>
         </CardFooter>
       </Card>

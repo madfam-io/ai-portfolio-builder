@@ -19,7 +19,7 @@ export function renderConsultantTemplate(portfolio: Portfolio): string {
     skills,
   } = portfolio;
 
-  const testimonials: any[] = []; // Portfolio type doesn't have testimonials yet
+  const testimonials: unknown[] = []; // Portfolio type doesn't have testimonials yet
 
   return `
     <div class="min-h-screen bg-gray-50">

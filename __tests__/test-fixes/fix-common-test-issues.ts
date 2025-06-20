@@ -269,7 +269,7 @@ export const createTestUser = (overrides = {}) => ({
 
 // Mock fetch for API calls
 export const setupFetchMocks = () => {
-  global.fetch = jest.fn().mockImplementation((url: string, options?: any) => {
+  global.fetch = jest.fn().mockImplementation((_url: string, _options?: any) => {
     // Default successful response
     return Promise.resolve({
       ok: true,
@@ -283,7 +283,7 @@ export const setupFetchMocks = () => {
 
 // Error boundary mock for component testing
 export const MockErrorBoundary = ({ children }: { children: React.ReactNode }) => {
-  return <div data-testid="error-boundary">{children}</div>;
+  return React.createElement('div', { 'data-testid': 'error-boundary' }, children);
 };
 
 // Common async utilities

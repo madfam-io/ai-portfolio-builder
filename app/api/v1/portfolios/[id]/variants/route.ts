@@ -110,7 +110,8 @@ async function createAudienceProfile(
  * Get all variants for a portfolio
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const portfolioId = params.id;
       const supabase = await createClient();
@@ -163,7 +164,8 @@ export const GET = versionedApiHandler(
  * Create a new variant for a portfolio
  */
 export const POST = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const portfolioId = params.id;
       const body: CreateVariantInput = await request.json();

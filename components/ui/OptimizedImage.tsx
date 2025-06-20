@@ -22,7 +22,13 @@ export function OptimizedImage({
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
   const [mobileOptimizer] = useState(() => createMobileOptimizer());
-  const [optimizedImageConfig, setOptimizedImageConfig] = useState<unknown>(null);
+  const [optimizedImageConfig, setOptimizedImageConfig] = useState<{
+    src: string;
+    srcSet: string;
+    sizes: string;
+    loading: 'lazy' | 'eager';
+    quality: number;
+  } | null>(null);
 
   useEffect(() => {
     if (typeof src === 'string') {

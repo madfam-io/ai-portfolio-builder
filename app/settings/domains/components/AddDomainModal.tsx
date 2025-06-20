@@ -16,6 +16,7 @@ import { X, Globe, Info } from 'lucide-react';
 import { DomainService } from '@/lib/services/domain-service';
 import { logger } from '@/lib/utils/logger';
 import type { Portfolio } from '@/types/portfolio';
+import type { DomainCheckResult } from '@/types/domains';
 
 interface AddDomainModalProps {
   portfolios: Portfolio[];
@@ -31,7 +32,7 @@ export function AddDomainModal({
   const [domain, setDomain] = useState('');
   const [selectedPortfolio, setSelectedPortfolio] = useState('');
   const [checking, setChecking] = useState(false);
-  const [availability, setAvailability] = useState<unknown>(null);
+  const [availability, setAvailability] = useState<DomainCheckResult | null>(null);
   const [adding, setAdding] = useState(false);
 
   const handleCheckAvailability = async () => {

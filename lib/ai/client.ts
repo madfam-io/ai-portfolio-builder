@@ -250,13 +250,13 @@ const AIUtils = {
    * Extract user profile from portfolio data
    */
   extractUserProfile(portfolio: unknown): UserProfile {
-    const portfolioData = portfolio as unknown;
+    const portfolioData = portfolio as any;
     return {
       title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: unknown) => s.name) || [],
+      skills: portfolioData.skills?.map((s: any) => s.name) || [],
       projectCount: portfolioData.projects?.length || 0,
       hasDesignWork:
-        portfolioData.projects?.some((p: unknown) =>
+        portfolioData.projects?.some((p: any) =>
           p.technologies?.some((t: string) =>
             ['figma', 'sketch', 'photoshop', 'illustrator', 'design'].some(
               design => t.toLowerCase().includes(design)
@@ -276,7 +276,7 @@ const AIUtils = {
   calculateExperienceLevel(
     experience: unknown[]
   ): 'entry' | 'mid' | 'senior' | 'lead' {
-    const totalYears = experience.reduce((total, exp) => {
+    const totalYears = experience.reduce((total: number, exp: any) => {
       return (
         total +
         this.calculateYearsExperience(exp.startDate, exp.endDate, exp.current)
@@ -293,12 +293,12 @@ const AIUtils = {
    * Prepare bio context from portfolio data
    */
   prepareBioContext(portfolio: unknown): BioContext {
-    const portfolioData = portfolio as unknown;
+    const portfolioData = portfolio as any;
     return {
       title: portfolioData.title || '',
-      skills: portfolioData.skills?.map((s: unknown) => s.name) || [],
+      skills: portfolioData.skills?.map((s: any) => s.name) || [],
       experience:
-        portfolioData.experience?.map((exp: unknown) => ({
+        portfolioData.experience?.map((exp: any) => ({
           company: exp.company,
           position: exp.position,
           yearsExperience: this.calculateYearsExperience(

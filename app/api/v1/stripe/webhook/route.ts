@@ -17,6 +17,7 @@ import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsSe
 
 // Enhanced Stripe types for better type safety
 interface StripeSubscriptionWithPeriod extends Stripe.Subscription {
+  current_period_start: number;
   current_period_end: number;
 }
 
@@ -239,7 +240,7 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       plan: planId || 'pro',
       status: subscription.status,
       current_period_start: new Date(
-        (subscription as unknown).current_period_start * 1000
+        (subscription as StripeSubscriptionWithPeriod).current_period_start * 1000
       ).toISOString(),
       current_period_end: subscriptionEnd.toISOString(),
       amount: amount,

@@ -231,7 +231,7 @@ export function ModelSelectionModal({
   const loadAvailableModels = React.useCallback(async () => {
     try {
       setLoading(true);
-      const models = await aiClient.getAvailableModels();
+      const models = await aiClient.getAvailableModels() as AIModel[];
       setAvailableModels(models.filter(m => m.capabilities.includes(taskType)));
     } catch (error) {
       logger.error(

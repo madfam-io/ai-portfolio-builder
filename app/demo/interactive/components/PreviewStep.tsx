@@ -2,7 +2,7 @@
 
 import { ArrowLeft, Check, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
-import React from 'react';
+import React, { ComponentType } from 'react';
 
 import { LazyWrapper } from '@/components/shared/LazyWrapper';
 import { Portfolio } from '@/types/portfolio';
@@ -65,7 +65,7 @@ export function PreviewStep({
       <LazyWrapper
         component={() =>
           import('@/components/editor/PreviewControls').then(mod => ({
-            default: mod.PreviewControls,
+            default: mod.PreviewControls as ComponentType<unknown>,
           }))
         }
         componentProps={{
@@ -150,7 +150,7 @@ export function PreviewStep({
               <LazyWrapper
                 component={() =>
                   import('@/components/editor/PortfolioPreview').then(mod => ({
-                    default: mod.PortfolioPreview,
+                    default: mod.PortfolioPreview as ComponentType<unknown>,
                   }))
                 }
                 componentProps={{

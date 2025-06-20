@@ -74,7 +74,8 @@ async function verifyVariantOwnership(
  * Get a specific variant
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const variantId = params.id;
       const supabase = await createClient();
@@ -114,7 +115,8 @@ export const GET = versionedApiHandler(
  * Update a variant
  */
 export const PATCH = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const variantId = params.id;
       const updates = await request.json();
@@ -204,7 +206,8 @@ export const PATCH = versionedApiHandler(
  * Delete a variant
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, { params }: RouteParams) => {
+  withAuth(async (request: AuthenticatedRequest, context: any) => {
+    const { params } = context as RouteParams;
     try {
       const variantId = params.id;
       const supabase = await createClient();

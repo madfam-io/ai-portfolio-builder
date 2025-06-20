@@ -26,6 +26,7 @@ import {
 import {
   useOnboardingStore,
   OnboardingFlow,
+  OnboardingStep,
 } from '@/lib/store/onboarding-store';
 import { useRouter } from 'next/navigation';
 import { track } from '@/lib/monitoring/unified/events';
@@ -33,6 +34,11 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 
 interface OnboardingModalProps {
   flow: OnboardingFlow;
+}
+
+interface StepComponentProps {
+  step: OnboardingStep;
+  onComplete: () => Promise<void>;
 }
 
 // Step icon mapping
@@ -52,7 +58,7 @@ const stepIcons: Record<string, React.ReactNode> = {
 };
 
 // Step content components
-const stepComponents: Record<string, React.ComponentType<unknown>> = {
+const stepComponents: Record<string, React.ComponentType<StepComponentProps>> = {
   welcome: WelcomeStep,
   'profile-setup': ProfileSetupStep,
   'first-portfolio': FirstPortfolioStep,
@@ -69,7 +75,6 @@ const stepComponents: Record<string, React.ComponentType<unknown>> = {
 
 export function OnboardingModal({ flow }: OnboardingModalProps) {
   const router = useRouter();
-  const { t } = useLanguage();
   const {
     completeStep,
     skipStep,
@@ -93,7 +98,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     await track.user.action(
       'onboarding_step_completed',
       'system',
-      async () => {
+      () => {
         completeStep(currentStep.id);
       },
       {
@@ -113,7 +118,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_step_skipped',
       'system',
-      async () => {
+      () => {
         skipStep(currentStep.id);
       },
       {
@@ -127,7 +132,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_completed',
       'system',
-      async () => {
+      () => {
         completeOnboarding();
       },
       {
@@ -148,7 +153,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_closed',
       'system',
-      async () => {
+      () => {
         completeOnboarding();
       },
       {
@@ -261,7 +266,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
 }
 
 // Default step component
-function DefaultStep({ step, onComplete }: unknown) {
+function DefaultStep({ step: _step, onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-4">
       <p className="text-muted-foreground">
@@ -272,8 +277,8 @@ function DefaultStep({ step, onComplete }: unknown) {
 }
 
 // Step implementations
-function WelcomeStep({ onComplete }: unknown) {
-  const { t } = useLanguage();
+function WelcomeStep({ onComplete: _onComplete }: StepComponentProps) {
+  const _t = useLanguage();
 
   return (
     <div className="space-y-6">
@@ -282,7 +287,7 @@ function WelcomeStep({ onComplete }: unknown) {
           Welcome to PRISMA!
         </h3>
         <p className="text-lg text-muted-foreground max-w-md mx-auto">
-          Create stunning portfolios powered by AI in under 30 minutes. Let's
+          Create stunning portfolios powered by AI in under 30 minutes. Let&apos;s
           get you started!
         </p>
       </div>
@@ -329,13 +334,13 @@ function WelcomeStep({ onComplete }: unknown) {
   );
 }
 
-function ProfileSetupStep({ onComplete }: unknown) {
+function ProfileSetupStep({ onComplete: _onComplete }: StepComponentProps) {
   const router = useRouter();
 
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
-        Let's start by setting up your profile. This information will help us
+        Let&apos;s start by setting up your profile. This information will help us
         personalize your experience.
       </p>
 
@@ -370,7 +375,7 @@ function ProfileSetupStep({ onComplete }: unknown) {
   );
 }
 
-function FirstPortfolioStep({ onComplete }: unknown) {
+function FirstPortfolioStep({ onComplete: _onComplete }: StepComponentProps) {
   const router = useRouter();
 
   return (
@@ -417,7 +422,7 @@ function FirstPortfolioStep({ onComplete }: unknown) {
   );
 }
 
-function AIEnhancementStep({ onComplete }: unknown) {
+function AIEnhancementStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -472,7 +477,7 @@ function AIEnhancementStep({ onComplete }: unknown) {
   );
 }
 
-function CustomizeDesignStep({ onComplete }: unknown) {
+function CustomizeDesignStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -505,7 +510,7 @@ function CustomizeDesignStep({ onComplete }: unknown) {
   );
 }
 
-function PublishStep({ onComplete }: unknown) {
+function PublishStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -546,7 +551,7 @@ function PublishStep({ onComplete }: unknown) {
   );
 }
 
-function ExploreFeaturesStep({ onComplete }: unknown) {
+function ExploreFeaturesStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -587,10 +592,10 @@ function ExploreFeaturesStep({ onComplete }: unknown) {
 }
 
 // Additional step implementations for other flows
-function WhatsNewStep({ onComplete }: unknown) {
+function WhatsNewStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Welcome Back! Here's What's New</h3>
+      <h3 className="text-xl font-semibold">Welcome Back! Here&apos;s What&apos;s New</h3>
       <div className="space-y-3">
         <div className="flex items-start gap-3">
           <div className="w-2 h-2 rounded-full bg-green-500 mt-2" />
@@ -615,7 +620,7 @@ function WhatsNewStep({ onComplete }: unknown) {
   );
 }
 
-function FeatureHighlightsStep({ onComplete }: unknown) {
+function FeatureHighlightsStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
@@ -639,14 +644,14 @@ function FeatureHighlightsStep({ onComplete }: unknown) {
   );
 }
 
-function ImportReviewStep({ onComplete }: unknown) {
+function ImportReviewStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <div className="text-center">
         <FileText className="w-12 h-12 text-primary mx-auto mb-4" />
         <h3 className="text-xl font-semibold mb-2">Import Successful!</h3>
         <p className="text-muted-foreground">
-          We've imported your data. Let's review and enhance it.
+          We&apos;ve imported your data. Let&apos;s review and enhance it.
         </p>
       </div>
       <div className="bg-muted/50 p-4 rounded-lg">
@@ -662,11 +667,11 @@ function ImportReviewStep({ onComplete }: unknown) {
   );
 }
 
-function EnhanceImportedStep({ onComplete }: unknown) {
+function EnhanceImportedStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">
-        Let's use AI to enhance your imported content and make it shine.
+        Let&apos;s use AI to enhance your imported content and make it shine.
       </p>
       <div className="space-y-3">
         <Card className="p-4 border-green-500/20 bg-green-500/5">
@@ -682,7 +687,7 @@ function EnhanceImportedStep({ onComplete }: unknown) {
   );
 }
 
-function CustomizeImportedStep({ onComplete }: unknown) {
+function CustomizeImportedStep({ onComplete: _onComplete }: StepComponentProps) {
   return (
     <div className="space-y-6">
       <p className="text-muted-foreground">

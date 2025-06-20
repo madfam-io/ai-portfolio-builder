@@ -183,10 +183,10 @@ export function withLazyLoading<P extends object>(
   return function LazyLoadedComponent(props: P) {
     return (
       <LazyWrapper
-        component={importComponent}
+        component={importComponent as () => Promise<{ default: ComponentType<unknown> }>}
         fallback={options.fallback}
         errorFallback={options.errorFallback}
-        componentProps={props}
+        componentProps={props as Record<string, unknown>}
       />
     );
   };

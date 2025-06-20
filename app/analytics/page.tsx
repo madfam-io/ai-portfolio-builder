@@ -12,7 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, Suspense, ComponentType } from 'react';
 
 import { ContributorsList } from '@/components/analytics/ContributorsList';
 import { RepositoryList } from '@/components/analytics/RepositoryList';
@@ -372,7 +372,7 @@ function AnalyticsDashboard(): React.ReactElement {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Commits Trend Chart */}
             <LazyWrapper
-              component={() => import('@/components/analytics/CommitsChart')}
+              component={() => import('@/components/analytics/CommitsChart').then(mod => ({ default: mod.default as ComponentType<unknown> }))}
               componentProps={{
                 data: data.trends.commitsPerDay,
                 chartColors,
@@ -392,7 +392,7 @@ function AnalyticsDashboard(): React.ReactElement {
             {/* Pull Requests Chart */}
             <LazyWrapper
               component={() =>
-                import('@/components/analytics/PullRequestsChart')
+                import('@/components/analytics/PullRequestsChart').then(mod => ({ default: mod.default as ComponentType<unknown> }))
               }
               componentProps={{
                 data: data.trends.pullRequestsPerWeek,
