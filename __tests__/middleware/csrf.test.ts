@@ -10,16 +10,13 @@ jest.mock('@/lib/utils/logger', () => ({
 jest.setTimeout(30000);
 
   verifyCSRFToken,
-  csrfMiddleware,
- } from '../../middleware/csrf';
+  csrfMiddleware} from '../../middleware/csrf';
 
 // Mock logger
 
   logger: {
     warn: jest.fn(),
-    error: jest.fn(),
-  },
-}));
+    error: jest.fn()}}));
 
 describe('CSRF Middleware', () => {
   beforeEach(() => {
@@ -49,8 +46,7 @@ describe('CSRF Middleware', () => {
     const headers = new Headers(options.headers);
     const request = new NextRequest(url, {
       method: options.method || 'GET',
-      headers,
-    });
+      headers});
 
     // Mock cookies
     if (options.cookies) {
@@ -164,8 +160,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         const result = verifyCSRFToken(request);
 
@@ -176,8 +171,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
-          cookies: { 'prisma-csrf-token': 'different-token' },
-        });
+          cookies: { 'prisma-csrf-token': 'different-token' }});
 
         const result = verifyCSRFToken(request);
 
@@ -186,16 +180,14 @@ describe('CSRF Middleware', () => {
           'CSRF token mismatch',
           expect.objectContaining({
             method: 'POST',
-            url: 'https://example.com/api/test',
-          })
+            url: 'https://example.com/api/test'})
         );
       });
 
       it('should reject missing cookie token', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
-          headers: { 'x-csrf-token': validToken },
-        });
+          headers: { 'x-csrf-token': validToken }});
 
         const result = verifyCSRFToken(request);
 
@@ -204,16 +196,14 @@ describe('CSRF Middleware', () => {
           'CSRF token missing',
           expect.objectContaining({
             hasCookie: false,
-            hasHeader: true,
-          })
+            hasHeader: true})
         );
       });
 
       it('should reject missing header token', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         const result = verifyCSRFToken(request);
 
@@ -222,8 +212,7 @@ describe('CSRF Middleware', () => {
           'CSRF token missing',
           expect.objectContaining({
             hasCookie: true,
-            hasHeader: false,
-          })
+            hasHeader: false})
         );
       });
 
@@ -237,8 +226,7 @@ describe('CSRF Middleware', () => {
           'CSRF token missing',
           expect.objectContaining({
             hasCookie: false,
-            hasHeader: false,
-          })
+            hasHeader: false})
         );
       });
     });
@@ -248,8 +236,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': '' },
-          cookies: { 'prisma-csrf-token': '' },
-        });
+          cookies: { 'prisma-csrf-token': '' }});
 
         const result = verifyCSRFToken(request);
 
@@ -261,8 +248,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': tokenWithSpaces },
-          cookies: { 'prisma-csrf-token': tokenWithSpaces },
-        });
+          cookies: { 'prisma-csrf-token': tokenWithSpaces }});
 
         const result = verifyCSRFToken(request);
 
@@ -275,8 +261,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
-          cookies: { 'prisma-csrf-token': upperToken },
-        });
+          cookies: { 'prisma-csrf-token': upperToken }});
 
         const result = verifyCSRFToken(request);
 
@@ -354,8 +339,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         const response = csrfMiddleware(request);
 
@@ -366,8 +350,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': 'invalid-token' },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         const response = csrfMiddleware(request);
 
@@ -382,8 +365,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': 'invalid-token' },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         csrfMiddleware(request);
 
@@ -391,8 +373,7 @@ describe('CSRF Middleware', () => {
           'CSRF validation failed',
           expect.objectContaining({
             method: 'POST',
-            url: 'https://example.com/api/portfolios',
-          })
+            url: 'https://example.com/api/portfolios'})
         );
       });
 
@@ -401,18 +382,15 @@ describe('CSRF Middleware', () => {
           method: 'POST',
           headers: {
             'x-csrf-token': 'invalid-token',
-            'x-forwarded-for': '192.168.1.1',
-          },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+            'x-forwarded-for': '192.168.1.1'},
+          cookies: { 'prisma-csrf-token': validToken }});
 
         csrfMiddleware(request);
 
         expect(logger.error).toHaveBeenCalledWith(
           'CSRF validation failed',
           expect.objectContaining({
-            ip: '192.168.1.1',
-          })
+            ip: '192.168.1.1'})
         );
       });
     });
@@ -428,8 +406,7 @@ describe('CSRF Middleware', () => {
 
       it('should allow POST to GitHub callback without CSRF token', async () => {
         const request = createRequest('/api/integrations/github/callback', {
-          method: 'POST',
-        });
+          method: 'POST'});
 
         const response = csrfMiddleware(request);
 
@@ -438,8 +415,7 @@ describe('CSRF Middleware', () => {
 
       it('should allow POST to webhooks without CSRF token', async () => {
         const request = createRequest('/api/webhooks/stripe', {
-          method: 'POST',
-        });
+          method: 'POST'});
 
         const response = csrfMiddleware(request);
 
@@ -465,8 +441,7 @@ describe('CSRF Middleware', () => {
         const postRequest = createRequest('/api/portfolios', {
           method: 'POST',
           headers: { 'x-csrf-token': token || '' },
-          cookies: { 'prisma-csrf-token': token || '' },
-        });
+          cookies: { 'prisma-csrf-token': token || '' }});
 
         const postResponse = csrfMiddleware(postRequest);
         expect(postResponse).toBeNull();
@@ -479,8 +454,7 @@ describe('CSRF Middleware', () => {
           createRequest(`/api/test-${i}`, {
             method: 'POST',
             headers: { 'x-csrf-token': validToken },
-            cookies: { 'prisma-csrf-token': validToken },
-          })
+            cookies: { 'prisma-csrf-token': validToken }})
         );
         const responses = requests.map(req => csrfMiddleware(req));
 
@@ -495,8 +469,7 @@ describe('CSRF Middleware', () => {
       it('should handle requests with malformed cookies', async () => {
         const request = createRequest('/api/test', {
           method: 'POST',
-          headers: { 'x-csrf-token': 'valid-token' },
-        });
+          headers: { 'x-csrf-token': 'valid-token' }});
 
         // Manually set malformed cookie
         request.cookies.set('prisma-csrf-token', '');
@@ -511,8 +484,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': longToken },
-          cookies: { 'prisma-csrf-token': longToken },
-        });
+          cookies: { 'prisma-csrf-token': longToken }});
 
         const response = csrfMiddleware(request);
 
@@ -524,8 +496,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': specialToken },
-          cookies: { 'prisma-csrf-token': specialToken },
-        });
+          cookies: { 'prisma-csrf-token': specialToken }});
 
         const response = csrfMiddleware(request);
 
@@ -547,8 +518,7 @@ describe('CSRF Middleware', () => {
         const request = createRequest('/api/test', {
           method: 'POST',
           headers: { 'x-csrf-token': validToken },
-          cookies: { 'prisma-csrf-token': validToken },
-        });
+          cookies: { 'prisma-csrf-token': validToken }});
 
         const startTime = Date.now();
         csrfMiddleware(request);

@@ -16,8 +16,7 @@ jest.mock('zustand', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}));
+  })}));
 
 // Mock zustand
   create: jest.fn((createState) => {
@@ -33,8 +32,7 @@ jest.mock('zustand', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}));
+  })}));
 // Mock zustand
 
 // Mock zustand create function
@@ -51,8 +49,7 @@ jest.mock('zustand', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}))
+  })}))
   });
 
   describe('Starting Onboarding', () => {
@@ -110,8 +107,7 @@ jest.mock('zustand', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}));
+  })}));
 
       expect(result.current.currentFlow?.steps.length).toBe(3);
     });
@@ -136,8 +132,7 @@ jest.mock('zustand', () => ({
       expect(currentStep?.id).toBe('profile-setup');
       expect(result.current.currentFlow?.steps[0].completed).toBe(true);
       expect(result.current.currentFlow?.steps[0].metadata).toEqual({
-        test: 'metadata',
-      });
+        test: 'metadata'});
     });
 
     it('should skip a step', async () => {
@@ -311,8 +306,7 @@ jest.mock('zustand', () => ({
       await act(async () => {
         result.current.updatePreferences({
           skipTours: true,
-          emailReminders: false,
-        });
+          emailReminders: false});
       });
 
       expect(result.current.preferences.skipTours).toBe(true);

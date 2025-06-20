@@ -30,7 +30,7 @@ function fixCommonIssues(content) {
   
   for (const line of lines) {
     if (line.trim().startsWith('import ') && line.includes(' from ')) {
-      if (\!seenImports.has(line.trim())) {
+      if (!seenImports.has(line.trim())) {
         seenImports.add(line.trim());
         uniqueLines.push(line);
       }
@@ -40,21 +40,6 @@ function fixCommonIssues(content) {
   }
   
   content = uniqueLines.join('\n');
-  
-  // Fix mock issues
-  content = content.replace(/jest\.mock\([^)]+\)\s*{\s*jest\.mock/g, (match) => {
-    const firstMockMatch = match.match(/jest\.mock\([^)]+\)/);
-    if (firstMockMatch) {
-      return firstMockMatch[0] + ';\njest.mock';
-    }
-    return match;
-  });
-  
-  // Fix incomplete mock statements
-  content = content.replace(/jest\.mock\('([^']+)'\);\s*jest\.mock/g, "jest.mock('$1');\njest.mock");
-  
-  // Fix stray function implementations
-  content = content.replace(/}\);\s*\n\s*EnhancedStripeService:/g, '});\n\n// Enhanced Stripe Service:');
   
   // Fix duplicate act imports
   content = content.replace(/import\s*{\s*([^}]*),\s*act\s*,\s*act\s*([^}]*)\s*}\s*from\s*'@testing-library\/react'/g, 
@@ -68,12 +53,6 @@ function fixCommonIssues(content) {
   // Fix empty import statements
   content = content.replace(/import\s*{\s*}\s*from\s*['"][^'"]+['"]/g, '');
   
-  // Remove duplicate mockUseLanguage imports
-  const mockUseLanguageLines = content.match(/import.*mockUseLanguage.*from.*/g) || [];
-  if (mockUseLanguageLines.length > 1) {
-    content = content.replace(/import.*mockUseLanguage.*from.*'@\/test-utils\/mock-i18n'.*/g, '');
-  }
-  
   return content;
 }
 
@@ -81,7 +60,7 @@ async function processFile(filePath) {
   try {
     const fullPath = path.join(process.cwd(), filePath);
     
-    if (\!fs.existsSync(fullPath)) {
+    if (!fs.existsSync(fullPath)) {
       console.log(`File not found: ${filePath}`);
       return;
     }
@@ -91,14 +70,14 @@ async function processFile(filePath) {
     
     content = fixCommonIssues(content);
     
-    if (content \!== originalContent) {
+    if (content !== originalContent) {
       fs.writeFileSync(fullPath, content);
-      console.log(`✅ Fixed: ${filePath}`);
+      console.log(`Fixed: ${filePath}`);
     } else {
-      console.log(`⏭️  No changes needed: ${filePath}`);
+      console.log(`No changes needed: ${filePath}`);
     }
   } catch (error) {
-    console.error(`❌ Error processing ${filePath}:`, error.message);
+    console.error(`Error processing ${filePath}:`, error.message);
   }
 }
 
@@ -109,8 +88,7 @@ async function main() {
     await processFile(testFile);
   }
   
-  console.log('\n✨ Done\!');
+  console.log('\nDone!');
 }
 
 main().catch(console.error);
-EOF < /dev/null

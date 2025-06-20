@@ -24,9 +24,7 @@ global.page = {
   locator: jest.fn(() => ({
     click: jest.fn(),
     fill: jest.fn(),
-    isVisible: jest.fn().mockResolvedValue(true),
-  })),
-};
+    isVisible: jest.fn().mockResolvedValue(true)}))};
 
 /**
  * @jest-environment jsdom
@@ -309,8 +307,7 @@ describe('Template Switching E2E', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
-        value: 375,
-      });
+        value: 375});
 
       render(<TemplateSwitchingTest />);
 

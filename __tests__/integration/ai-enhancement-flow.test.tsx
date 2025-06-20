@@ -13,30 +13,24 @@ const mockSupabaseClient = {
     signInWithPassword: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
-    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-  },
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
     insert: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
-  })),
+    single: jest.fn().mockResolvedValue({ data: null, error: null })})),
   rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
   storage: {
     from: jest.fn(() => ({
       upload: jest.fn().mockResolvedValue({ data: null, error: null }),
       download: jest.fn().mockResolvedValue({ data: null, error: null }),
-      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-};
+      remove: jest.fn().mockResolvedValue({ data: null, error: null })}))}};
 
 jest.mock('@/lib/auth/supabase-client', () => ({ 
   createClient: jest.fn(() => mockSupabaseClient),
-  supabase: mockSupabaseClient,
- }));
+  supabase: mockSupabaseClient}));
 
 jest.mock('@/lib/ai/huggingface-service', () => ({
 jest.mock('@/lib/supabase/client', () => ({
@@ -49,20 +43,16 @@ const mockHuggingFaceService = {
   enhanceBio: jest.fn().mockResolvedValue({
     enhancedBio: 'Enhanced bio',
     wordCount: 10,
-    tone: 'professional',
-  }),
+    tone: 'professional'}),
   optimizeProject: jest.fn().mockResolvedValue({
     optimizedTitle: 'Optimized Title',
-    optimizedDescription: 'Optimized description',
-  }),
+    optimizedDescription: 'Optimized description'}),
   getAvailableModels: jest.fn().mockResolvedValue([
     { id: 'model-1', name: 'Model 1' },
     { id: 'model-2', name: 'Model 2' },
-  ]),
-};
+  ])};
 
-  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
-}));
+  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService)}));
 
 // Mock Supabase client
 
@@ -70,18 +60,14 @@ const mockHuggingFaceService = {
     auth: {
       getUser: jest.fn().mockResolvedValue({ data: { user: { id: 'test-user' } }, error: null }),
       signIn: jest.fn(),
-      signOut: jest.fn(),
-    },
+      signOut: jest.fn()},
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: {}, error: null }),
-    })),
-  })),
-}));
+      single: jest.fn().mockResolvedValue({ data: {}, error: null })}))}))}));
 
 // Mock HuggingFace service
 
@@ -90,14 +76,10 @@ const mockHuggingFaceService = {
     enhanceBio: jest.fn().mockResolvedValue({
       enhancedBio: 'Enhanced professional bio',
       wordCount: 10,
-      tone: 'professional',
-    }),
+      tone: 'professional'}),
     optimizeProject: jest.fn().mockResolvedValue({
       optimizedTitle: 'Optimized Title',
-      optimizedDescription: 'Optimized description',
-    }),
-  })),
-}));
+      optimizedDescription: 'Optimized description'})}))}));
 
 /**
  * @jest-environment jsdom
@@ -118,10 +100,8 @@ const MockAIEnhancementFlow = () => {
         id: '1',
         title: 'Basic App',
         description: 'A simple app',
-        technologies: ['React'],
-      },
-    ],
-  });
+        technologies: ['React']},
+    ]});
 
   const [isEnhancing, setIsEnhancing] = React.useState(false);
   const [enhancementStep, setEnhancementStep] = React.useState<
@@ -145,10 +125,7 @@ const MockAIEnhancementFlow = () => {
             skills:
               portfolio.skills?.map(s =>
                 typeof s === 'string' ? s : s.name
-              ) || [],
-          },
-        }),
-      });
+              ) || []}})});
 
       if (bioResponse.ok) {
         const bioData = await bioResponse.json();
@@ -168,9 +145,7 @@ const MockAIEnhancementFlow = () => {
             body: JSON.stringify({
               title: project.title,
               description: project.description,
-              technologies: project.technologies,
-            }),
-          });
+              technologies: project.technologies})});
 
           if (projectResponse.ok) {
             const projectData = await projectResponse.json();
@@ -179,8 +154,7 @@ const MockAIEnhancementFlow = () => {
               projects: [
                 ...(prev.projects || []),
                 projectData.optimizedProject,
-              ],
-            }));
+              ]}));
           }
         }
 
@@ -197,8 +171,7 @@ const MockAIEnhancementFlow = () => {
     setPortfolio(prev => ({
       ...prev,
       bio: enhancementResults.bio || prev.bio,
-      projects: enhancementResults.projects || prev.projects,
-    }));
+      projects: enhancementResults.projects || prev.projects}));
     setEnhancementStep(null);
     setEnhancementResults({});
   };
@@ -360,9 +333,7 @@ describe('AI Enhancement Flow Integration', () => {
           ok: true,
           json: async () => ({
             enhancedBio:
-              'I am a passionate software developer with expertise in modern web technologies.',
-          }),
-        })
+              'I am a passionate software developer with expertise in modern web technologies.'})})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -371,10 +342,7 @@ describe('AI Enhancement Flow Integration', () => {
               title: 'Advanced React Application',
               description:
                 'A sophisticated web application built with React, featuring modern UI/UX patterns.',
-              technologies: ['React', 'TypeScript', 'Redux'],
-            },
-          }),
-        });
+              technologies: ['React', 'TypeScript', 'Redux']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -389,10 +357,7 @@ describe('AI Enhancement Flow Integration', () => {
             bio: 'I am a developer',
             context: {
               title: 'Software Developer',
-              skills: ['React'],
-            },
-          }),
-        });
+              skills: ['React']}})});
       });
     });
 
@@ -419,9 +384,7 @@ describe('AI Enhancement Flow Integration', () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            enhancedBio: 'Enhanced bio content',
-          }),
-        })
+            enhancedBio: 'Enhanced bio content'})})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -429,10 +392,7 @@ describe('AI Enhancement Flow Integration', () => {
               id: '1',
               title: 'Advanced React Application',
               description: 'A sophisticated web application built with React.',
-              technologies: ['React', 'TypeScript'],
-            },
-          }),
-        });
+              technologies: ['React', 'TypeScript']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -452,9 +412,7 @@ describe('AI Enhancement Flow Integration', () => {
             body: JSON.stringify({
               title: 'Basic App',
               description: 'A simple app',
-              technologies: ['React'],
-            }),
-          }
+              technologies: ['React']})}
 
       });
     });
@@ -463,8 +421,7 @@ describe('AI Enhancement Flow Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ enhancedBio: 'Enhanced bio' }),
-        })
+          json: async () => ({ enhancedBio: 'Enhanced bio' })})
         .mockImplementation(
           () => new Promise(resolve => setTimeout(resolve, 50))
 
@@ -487,9 +444,7 @@ describe('AI Enhancement Flow Integration', () => {
           ok: true,
           json: async () => ({
             enhancedBio:
-              'I am a passionate software developer with expertise in modern web technologies and a track record of building scalable applications.',
-          }),
-        })
+              'I am a passionate software developer with expertise in modern web technologies and a track record of building scalable applications.'})})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -498,10 +453,7 @@ describe('AI Enhancement Flow Integration', () => {
               title: 'Advanced React Application',
               description:
                 'A sophisticated, responsive web application built with React and TypeScript, featuring modern UI/UX patterns, state management with Redux, and comprehensive testing coverage.',
-              technologies: ['React', 'TypeScript', 'Redux', 'Jest'],
-            },
-          }),
-        });
+              technologies: ['React', 'TypeScript', 'Redux', 'Jest']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -532,8 +484,7 @@ describe('AI Enhancement Flow Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ enhancedBio: 'Enhanced bio' }),
-        })
+          json: async () => ({ enhancedBio: 'Enhanced bio' })})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -541,10 +492,7 @@ describe('AI Enhancement Flow Integration', () => {
               id: '1',
               title: 'Enhanced Project',
               description: 'Enhanced description',
-              technologies: ['React'],
-            },
-          }),
-        });
+              technologies: ['React']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -566,9 +514,7 @@ describe('AI Enhancement Flow Integration', () => {
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
-            enhancedBio: 'Enhanced professional bio',
-          }),
-        })
+            enhancedBio: 'Enhanced professional bio'})})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -576,10 +522,7 @@ describe('AI Enhancement Flow Integration', () => {
               id: '1',
               title: 'Enhanced Project Title',
               description: 'Enhanced project description',
-              technologies: ['React', 'TypeScript'],
-            },
-          }),
-        });
+              technologies: ['React', 'TypeScript']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -611,8 +554,7 @@ describe('AI Enhancement Flow Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ enhancedBio: 'Enhanced bio' }),
-        })
+          json: async () => ({ enhancedBio: 'Enhanced bio' })})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
@@ -620,10 +562,7 @@ describe('AI Enhancement Flow Integration', () => {
               id: '1',
               title: 'Enhanced Project',
               description: 'Enhanced description',
-              technologies: ['React'],
-            },
-          }),
-        });
+              technologies: ['React']}})});
 
       render(<MockAIEnhancementFlow />);
 
@@ -676,8 +615,7 @@ describe('AI Enhancement Flow Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ enhancedBio: 'Enhanced bio' }),
-        })
+          json: async () => ({ enhancedBio: 'Enhanced bio' })})
         .mockRejectedValueOnce(new Error('Project enhancement failed'));
 
       render(<MockAIEnhancementFlow />);
@@ -699,12 +637,10 @@ describe('AI Enhancement Flow Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ enhancedBio: 'Enhanced bio' }),
-        })
+          json: async () => ({ enhancedBio: 'Enhanced bio' })})
         .mockResolvedValueOnce({
           ok: false,
-          status: 500,
-        });
+          status: 500});
 
       render(<MockAIEnhancementFlow />);
 
@@ -730,8 +666,7 @@ describe('AI Enhancement Flow Integration', () => {
                 () =>
                   resolve({
                     ok: true,
-                    json: async () => ({ enhancedBio: 'Enhanced bio' }),
-                  }),
+                    json: async () => ({ enhancedBio: 'Enhanced bio' })}),
                 50
               )
             )
@@ -748,10 +683,7 @@ describe('AI Enhancement Flow Integration', () => {
                         id: '1',
                         title: 'Enhanced Project',
                         description: 'Enhanced description',
-                        technologies: ['React'],
-                      },
-                    }),
-                  }),
+                        technologies: ['React']}})}),
                 50
               )
             )
@@ -781,8 +713,7 @@ describe('AI Enhancement Flow Integration', () => {
     it('should allow re-enhancement after applying or rejecting', async () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
-        json: async () => ({ enhancedBio: 'Enhanced bio' }),
-      });
+        json: async () => ({ enhancedBio: 'Enhanced bio' })});
 
       render(<MockAIEnhancementFlow />);
 

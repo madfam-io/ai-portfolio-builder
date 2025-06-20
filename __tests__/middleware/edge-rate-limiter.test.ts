@@ -1,13 +1,12 @@
 jest.setTimeout(30000);
 
-import { describe, it, expect, beforeEach, afterEach, jest,  } from '@jest/globals';
+import { describe, it, expect, beforeEach, afterEach, jest} from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   edgeRateLimitMiddleware,
   cleanupExpiredEntries,
   getClientId,
-  getConfigForPath,
-} from '@/middleware/edge-rate-limiter';
+  getConfigForPath} from '@/middleware/edge-rate-limiter';
 
 /**
  * @jest-environment node
@@ -19,9 +18,7 @@ jest.mock('@/lib/utils/logger', () => ({
     warn: jest.fn(),
     error: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
-  },
-}));
+    debug: jest.fn()}}));
 
 describe('Edge Rate Limiter Middleware', () => {
   beforeEach(() => {
@@ -62,15 +59,13 @@ describe('Edge Rate Limiter Middleware', () => {
 
     return new NextRequest(url, {
       method: options.method || 'GET',
-      headers,
-    });
+      headers});
   };
 
   describe('Basic Rate Limiting', () => {
     it('should allow requests under the limit', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Make 5 requests (under the limit of 100)
       for (let i = 0; i < 5; i++) {
@@ -81,8 +76,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should block requests over the limit', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Make requests up to the limit
       for (let i = 0; i < 100; i++) {
@@ -98,14 +92,12 @@ describe('Edge Rate Limiter Middleware', () => {
       const responseBody = await result?.json();
       expect(responseBody).toEqual({
         error: 'Too many requests, please try again later.',
-        retryAfter: expect.any(Number),
-      });
+        retryAfter: expect.any(Number)});
     });
 
     it('should set appropriate rate limit headers', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Make 50 requests
       for (let i = 0; i < 50; i++) {
@@ -119,8 +111,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should handle first request (no existing count)', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       const result = await edgeRateLimitMiddleware(request);
       expect(result).toBeNull();
@@ -130,8 +121,7 @@ describe('Edge Rate Limiter Middleware', () => {
   describe('IP Address Detection', () => {
     it('should extract IP from x-forwarded-for header', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        headers: { 'x-forwarded-for': '203.0.113.1, 192.168.1.1' },
-      });
+        headers: { 'x-forwarded-for': '203.0.113.1, 192.168.1.1' }});
 
       const clientId = getClientId(request);
       expect(clientId).toContain('203.0.113.1');
@@ -139,8 +129,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should extract IP from x-real-ip header', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        headers: { 'x-real-ip': '203.0.113.2' },
-      });
+        headers: { 'x-real-ip': '203.0.113.2' }});
 
       const clientId = getClientId(request);
       expect(clientId).toContain('203.0.113.2');
@@ -156,9 +145,7 @@ describe('Edge Rate Limiter Middleware', () => {
     it('should normalize IPv6 addresses', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
         headers: {
-          'x-forwarded-for': '2001:0db8:85a3:0000:0000:8a2e:0370:7334',
-        },
-      });
+          'x-forwarded-for': '2001:0db8:85a3:0000:0000:8a2e:0370:7334'}});
 
       const clientId = getClientId(request);
       expect(clientId).toContain('2001:0db8:85a3:0000:0000:8a2e:0370:7334');
@@ -166,8 +153,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should handle localhost requests', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        headers: { 'x-forwarded-for': '127.0.0.1' },
-      });
+        headers: { 'x-forwarded-for': '127.0.0.1' }});
 
       const clientId = getClientId(request);
       expect(clientId).toContain('127.0.0.1');
@@ -177,8 +163,7 @@ describe('Edge Rate Limiter Middleware', () => {
   describe('Route-Specific Limits', () => {
     it('should apply stricter limits to auth endpoints', async () => {
       const request = createRequest('https://example.com/api/auth/login', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Auth limit is 5 requests per 15 minutes
       for (let i = 0; i < 5; i++) {
@@ -206,8 +191,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should apply AI endpoint limits', async () => {
       const request = createRequest('https://example.com/api/ai/enhance', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // AI limit is 10 requests per minute
       for (let i = 0; i < 10; i++) {
@@ -222,8 +206,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should not apply rate limiting to non-API routes', async () => {
       const request = createRequest('https://example.com/dashboard', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Should allow unlimited requests for non-API routes
       for (let i = 0; i < 200; i++) {
@@ -246,8 +229,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should reset counters after time window expires', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Make some requests
       for (let i = 0; i < 5; i++) {
@@ -266,8 +248,7 @@ describe('Edge Rate Limiter Middleware', () => {
   describe('Error Messages', () => {
     it('should return appropriate error message for rate limit exceeded', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Exceed the limit
       for (let i = 0; i < 101; i++) {
@@ -282,8 +263,7 @@ describe('Edge Rate Limiter Middleware', () => {
 
     it('should return custom error message for auth endpoints', async () => {
       const request = createRequest('https://example.com/api/auth/login', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Exceed auth limit
       for (let i = 0; i < 6; i++) {
@@ -300,8 +280,7 @@ describe('Edge Rate Limiter Middleware', () => {
   describe('Headers', () => {
     it('should include retry-after header when rate limited', async () => {
       const request = createRequest('https://example.com/api/v1/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       
       // Exceed the limit
       for (let i = 0; i < 101; i++) {
@@ -320,11 +299,9 @@ describe('Edge Rate Limiter Middleware', () => {
     it('should clean up expired entries', async () => {
       // Use non-API path to avoid rate limiting completely
       const request1 = createRequest('https://example.com/static/test', {
-        ip: '192.168.1.1',
-      });
+        ip: '192.168.1.1'});
       const request2 = createRequest('https://example.com/static/test2', {
-        ip: '192.168.1.2',
-      });
+        ip: '192.168.1.2'});
       
       // These should not be rate limited (non-API paths)
       const result1 = await edgeRateLimitMiddleware(request1);

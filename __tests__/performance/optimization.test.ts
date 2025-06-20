@@ -9,21 +9,18 @@ import {   PerformanceMonitor,
   APIOptimizer,
   BundleOptimizer,
   PortfolioPerformanceOptimizer,
-  DEFAULT_OPTIMIZATION_CONFIG,
- } from '@/lib/performance/optimization';
+  DEFAULT_OPTIMIZATION_CONFIG} from '@/lib/performance/optimization';
 
 import {   DeviceDetector,
   MobileImageOptimizer,
   MobileViewportOptimizer,
   MobileDataOptimizer,
   MobileOptimizationSystem,
-  DEFAULT_MOBILE_CONFIG,
- } from '@/lib/performance/mobile-optimization';
+  DEFAULT_MOBILE_CONFIG} from '@/lib/performance/mobile-optimization';
 
 import {   MobileCSSOptimizer,
   TemplateMobileOptimizer,
-  createTemplateMobileOptimizer,
- } from '@/lib/performance/mobile-css-optimization';
+  createTemplateMobileOptimizer} from '@/lib/performance/mobile-css-optimization';
 
 // Mock fetch for API tests
 global.fetch = jest.fn().mockReturnValue(void 0);
@@ -43,8 +40,7 @@ describe('Performance Optimization System', () => {
       getEntriesByName: jest.fn(() => []),
       getEntriesByType: jest.fn(() => []),
       clearMarks: jest.fn(),
-      clearMeasures: jest.fn(),
-    };
+      clearMeasures: jest.fn()};
     jest.clearAllMocks();
     (global.fetch as jest.Mock).mockClear();
 
@@ -59,9 +55,7 @@ describe('Performance Optimization System', () => {
         removeListener: jest.fn().mockReturnValue(void 0),
         addEventListener: jest.fn().mockReturnValue(void 0),
         removeEventListener: jest.fn().mockReturnValue(void 0),
-        dispatchEvent: jest.fn().mockReturnValue(void 0),
-      })),
-    });
+        dispatchEvent: jest.fn().mockReturnValue(void 0)}))});
   });
 
   afterEach(() => {
@@ -141,8 +135,7 @@ describe('Performance Optimization System', () => {
 
       // Create a mock file that's too large
       const largeFile = new File(['x'.repeat(10 * 1024 * 1024)], 'large.jpg', {
-        type: 'image/jpeg',
-      });
+        type: 'image/jpeg'});
 
       await expect(optimizer.optimizeImage(largeFile)).rejects.toThrow(
         'exceeds maximum'
@@ -171,10 +164,8 @@ describe('Performance Optimization System', () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         clone: () => ({
-          json: async () => ({ data: 'test' }),
-        }),
-        json: async () => ({ data: 'test' }),
-      });
+          json: async () => ({ data: 'test' })}),
+        json: async () => ({ data: 'test' })});
 
       // First request
       const response1 = await optimizer.optimizedFetch('/api/test');
@@ -196,8 +187,7 @@ describe('Performance Optimization System', () => {
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         clone: () => ({ json: async () => ({}) }),
-        json: async () => ({}),
-      });
+        json: async () => ({})});
 
       await optimizer.optimizedFetch('/api/test');
 
@@ -226,8 +216,7 @@ describe('Performance Optimization System', () => {
       // Mock mobile user agent
       Object.defineProperty(navigator, 'userAgent', {
         value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X)',
-        configurable: true,
-      });
+        configurable: true});
 
       const detector = new DeviceDetector();
       const capabilities = detector.getCapabilities();
@@ -240,13 +229,11 @@ describe('Performance Optimization System', () => {
       // Mock low-end device indicators
       Object.defineProperty(navigator, 'deviceMemory', {
         value: 1,
-        configurable: true,
-      });
+        configurable: true});
 
       Object.defineProperty(navigator, 'hardwareConcurrency', {
         value: 2,
-        configurable: true,
-      });
+        configurable: true});
 
       const detector = new DeviceDetector();
       const capabilities = detector.getCapabilities();
@@ -260,10 +247,8 @@ describe('Performance Optimization System', () => {
       Object.defineProperty(navigator, 'connection', {
         value: {
           effectiveType: '2g',
-          downlink: 0.5,
-        },
-        configurable: true,
-      });
+          downlink: 0.5},
+        configurable: true});
 
       const detector = new DeviceDetector();
       const capabilities = detector.getCapabilities();
@@ -321,8 +306,7 @@ describe('Performance Optimization System', () => {
       const gridClasses = optimizer.getResponsiveGrid({
         mobile: 1,
         tablet: 2,
-        desktop: 3,
-      });
+        desktop: 3});
 
       expect(gridClasses).toContain('grid-cols-1');
       expect(gridClasses).toContain('md:grid-cols-2');
@@ -388,16 +372,13 @@ describe('Performance Optimization System', () => {
           {
             id: '1',
             title: 'Project 1',
-            imageUrl: 'https://example.com/project1.jpg',
-          },
-        ],
-      };
+            imageUrl: 'https://example.com/project1.jpg'},
+        ]};
 
       (global.fetch as jest.Mock).mockResolvedValue({
         ok: true,
         clone: () => ({ json: async () => ({}) }),
-        json: async () => ({}),
-      });
+        json: async () => ({})});
 
       const result = await optimizer.optimizePortfolioCreation(portfolioData);
 

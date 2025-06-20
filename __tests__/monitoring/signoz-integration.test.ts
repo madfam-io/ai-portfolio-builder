@@ -8,15 +8,10 @@ jest.mock('@opentelemetry/api', () => ({
       startSpan: jest.fn(() => ({
         end: jest.fn(),
         setAttribute: jest.fn(),
-        setStatus: jest.fn(),
-      })),
-    })),
-  },
+        setStatus: jest.fn()}))}))},
   SpanStatusCode: {
     OK: 0,
-    ERROR: 1,
-  },
-}));
+    ERROR: 1}}));
 
 /**
  * SigNoz Integration Tests
@@ -26,16 +21,13 @@ import {   tracer,
   createSpan,
   getCurrentTraceId,
   withTracing,
-  isOtelEnabled,
- } from '@/lib/monitoring/signoz';
+  isOtelEnabled} from '@/lib/monitoring/signoz';
 import {   traceHttpRequest,
   traceDatabaseOperation,
-  traceAIOperation,
- } from '@/lib/monitoring/signoz/tracing';
+  traceAIOperation} from '@/lib/monitoring/signoz/tracing';
 import {   recordBusinessMetric,
   recordPerformanceMetric,
-  measureDuration,
- } from '@/lib/monitoring/signoz/metrics';
+  measureDuration} from '@/lib/monitoring/signoz/metrics';
 
 // Mock environment
 const originalEnv = process.env;
@@ -44,8 +36,7 @@ beforeAll(() => {
   process.env = {
     ...originalEnv,
     OTEL_TRACE_ENABLED: 'true',
-    NODE_ENV: 'test',
-  };
+    NODE_ENV: 'test'};
 });
 
 afterAll(() => {
@@ -71,9 +62,7 @@ describe('SigNoz Integration', () => {
       const span = createSpan('test.operation', {
         attributes: {
           'test.attribute': 'value',
-          'test.number': 123,
-        },
-      });
+          'test.number': 123}});
 
       expect(span).toBeDefined();
       if (span) {
@@ -121,8 +110,7 @@ describe('SigNoz Integration', () => {
     it('should trace AI operations', async () => {
       const mockAI = jest.fn().mockResolvedValue({
         text: 'Enhanced bio',
-        usage: { total_tokens: 150 },
-      });
+        usage: { total_tokens: 150 }});
 
       const result = await traceAIOperation('llama-3.1', 'enhance_bio', mockAI);
 
@@ -144,8 +132,7 @@ describe('SigNoz Integration', () => {
     it('should record business metrics', async () => {
       expect(() => {
         recordBusinessMetric('userSignups', 1, {
-          source: 'landing_page',
-        });
+          source: 'landing_page'});
       }).not.toThrow();
     });
 
@@ -153,8 +140,7 @@ describe('SigNoz Integration', () => {
       expect(() => {
         recordPerformanceMetric('apiResponseTime', 150, {
           endpoint: '/api/v1/portfolios',
-          method: 'GET',
-        });
+          method: 'GET'});
       }).not.toThrow();
     });
 
@@ -165,8 +151,7 @@ describe('SigNoz Integration', () => {
       });
 
       const result = await measureDuration('apiResponseTime', mockOperation, {
-        operation: 'test',
-      });
+        operation: 'test'});
 
       expect(result).toBe('result');
       expect(mockOperation).toHaveBeenCalled();

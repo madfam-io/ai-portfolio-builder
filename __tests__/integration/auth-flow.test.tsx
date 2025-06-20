@@ -13,30 +13,24 @@ const mockSupabaseClient = {
     signInWithPassword: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
-    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-  },
+    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
     insert: jest.fn().mockReturnThis(),
     update: jest.fn().mockReturnThis(),
     delete: jest.fn().mockReturnThis(),
     eq: jest.fn().mockReturnThis(),
-    single: jest.fn().mockResolvedValue({ data: null, error: null }),
-  })),
+    single: jest.fn().mockResolvedValue({ data: null, error: null })})),
   rpc: jest.fn().mockResolvedValue({ data: null, error: null }),
   storage: {
     from: jest.fn(() => ({
       upload: jest.fn().mockResolvedValue({ data: null, error: null }),
       download: jest.fn().mockResolvedValue({ data: null, error: null }),
-      remove: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  },
-};
+      remove: jest.fn().mockResolvedValue({ data: null, error: null })}))}};
 
 jest.mock('@/lib/auth/supabase-client', () => ({ 
   createClient: jest.fn(() => mockSupabaseClient),
-  supabase: mockSupabaseClient,
- }));
+  supabase: mockSupabaseClient}));
 
 import { useRouter } from 'next/navigation';
 import { authService } from '@/lib/services/auth/auth-service';
@@ -58,8 +52,7 @@ jest.mock('zustand', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}));
+  })}));
 
 jest.mock('@/components/auth/protected-route', () => ({
 jest.mock('@/lib/store/auth-store', () => ({
@@ -81,8 +74,7 @@ jest.mock('@/lib/utils/logger', () => ({
     }
 
     return <>{children}</>;
-  },
-}));
+  }}));
 
   create: jest.fn((createState) => {
     const api = (() => {
@@ -97,8 +89,7 @@ jest.mock('@/lib/utils/logger', () => ({
       return state;
     })();
     return Object.assign(() => api, api);
-  }),
-}));
+  })}));
 
   useAuthStore: Object.assign(
     () => ({
@@ -107,19 +98,15 @@ jest.mock('@/lib/utils/logger', () => ({
       isLoading: false,
       login: jest.fn(),
       logout: jest.fn(),
-      checkAuth: jest.fn(),
-    }),
+      checkAuth: jest.fn()}),
     {
       getState: () => ({
         user: null,
         isAuthenticated: false,
-        isLoading: false,
-      }),
+        isLoading: false}),
       setState: jest.fn(),
-      subscribe: jest.fn(),
-    }
-  ),
-}));
+      subscribe: jest.fn()}
+  )}));
 
 // Mock i18n
 
@@ -132,15 +119,11 @@ jest.mock('@/lib/utils/logger', () => ({
     isLoading: false,
     signIn: jest.fn(),
     signOut: jest.fn(),
-    updateUser: jest.fn(),
-  })),
-}));
+    updateUser: jest.fn()}))}));
 
-  useLanguage: mockUseLanguage,
-}));
+  useLanguage: mockUseLanguage}));
 
-  useLanguage: () => mockUseLanguage(),
-}));
+  useLanguage: () => mockUseLanguage()}));
 
 describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
 
@@ -164,10 +147,8 @@ describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
       publish: 'Publish',
       preview: 'Preview',
       // Add more translations as needed
-    },
-  }),
-  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-}));
+    }}),
+  LanguageProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>}));
 
   createClient: jest.fn(() => ({
     auth: {
@@ -175,18 +156,13 @@ describe, test, it, expect, beforeEach, jest  } from '@jest/globals';
       signUp: jest.fn(),
       signOut: jest.fn(),
       getSession: jest.fn(),
-      getUser: jest.fn(),
-    },
-  })),
-}));
+      getUser: jest.fn()}}))}));
 
   logger: {
     error: jest.fn(),
     warn: jest.fn(),
     info: jest.fn(),
-    debug: jest.fn(),
-  },
-}));
+    debug: jest.fn()}}));
 
 // Simple sign in component for testing
 function SignInForm() {
@@ -262,29 +238,25 @@ describe('Authentication Flow Integration', () => {
     app_metadata: {},
     user_metadata: {},
     aud: 'authenticated',
-    created_at: '2023-01-01T00:00:00.000Z',
-  };
+    created_at: '2023-01-01T00:00:00.000Z'};
 
   const mockSession = {
     access_token: 'mock-access-token',
     refresh_token: 'mock-refresh-token',
     expires_at: Date.now() + 3600000,
-    user: mockUser,
-  };
+    user: mockUser};
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useRouter as jest.Mock).mockReturnValue({
-      push: mockPush,
-    });
+      push: mockPush});
     // Reset auth store
     useAuthStore.setState({
       user: null,
       session: null,
       isLoading: false,
       isAuthenticated: false,
-      error: null,
-    });
+      error: null});
   });
 
   describe('Sign In Flow', () => {
@@ -292,8 +264,7 @@ describe('Authentication Flow Integration', () => {
       const user = userEvent.setup();
       (authService.signIn as jest.Mock).mockResolvedValue({
         data: { user: mockUser, session: mockSession },
-        error: null,
-      });
+        error: null});
 
       render(<SignInForm />);
 
@@ -331,8 +302,7 @@ describe('Authentication Flow Integration', () => {
       const user = userEvent.setup();
       (authService.signIn as jest.Mock).mockResolvedValue({
         data: null,
-        error: { message: 'Invalid credentials' },
-      });
+        error: { message: 'Invalid credentials' }});
 
       render(<SignInForm />);
 
@@ -386,8 +356,7 @@ describe('Authentication Flow Integration', () => {
       // Resolve sign in
       resolveSignIn!({
         data: { user: mockUser, session: mockSession },
-        error: null,
-      });
+        error: null});
 
       await waitFor(() => {
         expect(emailInput).not.toBeDisabled();
@@ -401,8 +370,7 @@ describe('Authentication Flow Integration', () => {
     it('should complete sign out flow successfully', async () => {
       const user = userEvent.setup();
       (authService.signOut as jest.Mock).mockResolvedValue({
-        error: null,
-      });
+        error: null});
 
       // Set initial authenticated state
       useAuthStore.setState({
@@ -410,8 +378,7 @@ describe('Authentication Flow Integration', () => {
         session: mockSession,
         isAuthenticated: true,
         isLoading: false,
-        error: null,
-      });
+        error: null});
 
       render(<Dashboard />);
 
@@ -434,8 +401,7 @@ describe('Authentication Flow Integration', () => {
     it('should handle sign out errors', async () => {
       const user = userEvent.setup();
       (authService.signOut as jest.Mock).mockResolvedValue({
-        error: { message: 'Network error' },
-      });
+        error: { message: 'Network error' }});
 
       // Set initial authenticated state
       useAuthStore.setState({
@@ -443,8 +409,7 @@ describe('Authentication Flow Integration', () => {
         session: mockSession,
         isAuthenticated: true,
         isLoading: false,
-        error: null,
-      });
+        error: null});
 
       render(<Dashboard />);
 
@@ -464,11 +429,9 @@ describe('Authentication Flow Integration', () => {
   describe('Session Persistence', () => {
     it('should initialize auth from existing session on mount', async () => {
       (authService.getSession as jest.Mock).mockResolvedValue({
-        data: mockSession,
-      });
+        data: mockSession});
       (authService.getUser as jest.Mock).mockResolvedValue({
-        data: mockUser,
-      });
+        data: mockUser});
 
       // Component that initializes auth on mount
       function App() {
@@ -506,11 +469,9 @@ describe('Authentication Flow Integration', () => {
 
     it('should show sign in form when no session exists', async () => {
       (authService.getSession as jest.Mock).mockResolvedValue({
-        data: null,
-      });
+        data: null});
       (authService.getUser as jest.Mock).mockResolvedValue({
-        data: null,
-      });
+        data: null});
 
       function App() {
         const { initializeAuth, isLoading, isAuthenticated } = useAuthStore();
@@ -567,8 +528,7 @@ describe('Authentication Flow Integration', () => {
         session: mockSession,
         isAuthenticated: true,
         isLoading: false,
-        error: null,
-      });
+        error: null});
 
       render(
         <ProtectedRoute>

@@ -8,7 +8,6 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { toast } from '@/lib/ui/toast';
 import { AI_CREDIT_PACKS } from '@/lib/services/stripe/stripe-enhanced';
 
-jest.mock('@/lib/ai/huggingface-service', () => ({
 jest.mock('@/lib/i18n/refactored-context');
 jest.mock('@/lib/ui/toast');
 
@@ -20,20 +19,15 @@ const mockHuggingFaceService = {
   enhanceBio: jest.fn().mockResolvedValue({
     enhancedBio: 'Enhanced bio',
     wordCount: 10,
-    tone: 'professional',
-  }),
+    tone: 'professional'}),
   optimizeProject: jest.fn().mockResolvedValue({
     optimizedTitle: 'Optimized Title',
-    optimizedDescription: 'Optimized description',
-  }),
+    optimizedDescription: 'Optimized description'}),
   getAvailableModels: jest.fn().mockResolvedValue([
     { id: 'model-1', name: 'Model 1' },
     { id: 'model-2', name: 'Model 2' },
-  ]),
+  ])
 };
-
-  HuggingFaceService: jest.fn().mockImplementation(() => mockHuggingFaceService),
-}));
 
 /**
  * @jest-environment jsdom
@@ -59,15 +53,14 @@ describe('AICreditPacks', () => {
     (mockUseLanguage as any).mockImplementation(() => ({
       t: {
         error: 'Error',
-        success: 'Success',
-      },
-    } as ReturnType<typeof useUIStore>);
+        success: 'Success'
+      }
+    }));
   });
 
   const defaultProps = {
     currentCredits: 15,
-    onPurchase: mockOnPurchase,
-  };
+    onPurchase: mockOnPurchase};
 
   describe('Rendering', () => {
     it('should display current credit balance', async () => {
@@ -211,8 +204,7 @@ describe('AICreditPacks', () => {
         expect(mockToast).toHaveBeenCalledWith(
       {
           title: 'Purchase initiated',
-          description: 'You will be redirected to complete your purchase.',
-    });
+          description: 'You will be redirected to complete your purchase.'});
   });
       });
     });
@@ -232,8 +224,7 @@ describe('AICreditPacks', () => {
       {
           title: 'Error',
           description: 'Failed to initiate purchase',
-          variant: 'destructive',
-    });
+          variant: 'destructive'});
   });
       });
     });
@@ -318,8 +309,7 @@ describe('AICreditPacks', () => {
       render(<AICreditPacks {...defaultProps} />);
 
       const buyButtons = screen.getAllByRole('button', {
-        name: /Buy \d+ Credits/,
-      });
+        name: /Buy \d+ Credits/});
 
       // Should have 3 buy buttons
       expect(buyButtons).toHaveLength(3);

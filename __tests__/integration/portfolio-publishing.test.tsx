@@ -22,8 +22,7 @@ const MockPublishingFlow = () => {
       const response = await fetch('/api/v1/portfolios/check-subdomain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subdomain }),
-      });
+        body: JSON.stringify({ subdomain })});
 
       if (response.ok) {
         setStep('preview');
@@ -43,8 +42,7 @@ const MockPublishingFlow = () => {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subdomain }),
-        }
+          body: JSON.stringify({ subdomain })}
 
       if (response.ok) {
         setStep('success');
@@ -159,8 +157,7 @@ describe('Portfolio Publishing Integration', () => {
     it('should check subdomain availability when button is clicked', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       render(<MockPublishingFlow />);
 
@@ -176,8 +173,7 @@ describe('Portfolio Publishing Integration', () => {
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ subdomain: 'john-doe' }),
-          }
+            body: JSON.stringify({ subdomain: 'john-doe' })}
 
       });
     });
@@ -185,8 +181,7 @@ describe('Portfolio Publishing Integration', () => {
     it('should advance to preview step when subdomain is available', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       render(<MockPublishingFlow />);
 
@@ -224,8 +219,7 @@ describe('Portfolio Publishing Integration', () => {
     it('should show preview with subdomain URL', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       render(<MockPublishingFlow />);
 
@@ -246,8 +240,7 @@ describe('Portfolio Publishing Integration', () => {
     it('should allow navigation back to subdomain step', async () => {
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       render(<MockPublishingFlow />);
 
@@ -275,16 +268,13 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
             success: true,
             url: 'https://john-doe.prisma.dev',
-            deploymentId: 'deploy_123',
-          }),
-        });
+            deploymentId: 'deploy_123'})});
 
       render(<MockPublishingFlow />);
 
@@ -311,12 +301,10 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
-        });
+          json: async () => ({ success: true })});
 
       render(<MockPublishingFlow />);
 
@@ -340,8 +328,7 @@ describe('Portfolio Publishing Integration', () => {
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ subdomain: 'john-doe' }),
-          }
+            body: JSON.stringify({ subdomain: 'john-doe' })}
 
       });
     });
@@ -350,12 +337,10 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
-        });
+          json: async () => ({ success: true })});
 
       render(<MockPublishingFlow />);
 
@@ -386,8 +371,7 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockRejectedValueOnce(new Error('Publishing failed'));
 
       render(<MockPublishingFlow />);
@@ -426,12 +410,10 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
-        });
+          json: async () => ({ success: true })});
 
       render(<MockPublishingFlow />);
 
@@ -463,12 +445,10 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ success: true }),
-        });
+          json: async () => ({ success: true })});
 
       render(<MockPublishingFlow />);
 
@@ -516,8 +496,7 @@ describe('Portfolio Publishing Integration', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       const input = screen.getByTestId('subdomain-input');
       const checkButton = screen.getByTestId('check-subdomain-btn');
@@ -534,8 +513,7 @@ describe('Portfolio Publishing Integration', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ available: true }),
-        })
+          json: async () => ({ available: true })})
         .mockImplementationOnce(
           () => new Promise(resolve => setTimeout(resolve, 100))
 

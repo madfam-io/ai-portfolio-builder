@@ -2,9 +2,7 @@
 // Mock Supabase
 const mockSupabaseClient = {
   auth: {
-    getSession: jest.fn(),
-  },
-};
+    getSession: jest.fn()}};
 
 jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => ({
@@ -13,22 +11,17 @@ jest.mock('@/lib/auth/supabase-client', () => ({
       signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-    },
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  })),
+      single: jest.fn().mockResolvedValue({ data: null, error: null })}))})),
   supabase: {
     auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
-  },
-}));
+    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) }))}}));
 
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
@@ -49,9 +42,7 @@ jest.setTimeout(30000);
   logger: {
     warn: jest.fn(),
     error: jest.fn(),
-    info: jest.fn(),
-  },
-}));
+    info: jest.fn()}}));
 
 // Mock config with dynamic import support
 const mockConfig = {
@@ -59,26 +50,20 @@ const mockConfig = {
     NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
     NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
     NODE_ENV: 'test',
-    CORS_ALLOWED_ORIGINS: 'https://example.com,https://app.example.com',
-  },
+    CORS_ALLOWED_ORIGINS: 'https://example.com,https://app.example.com'},
   services: {
-    supabase: true,
-  },
-};
+    supabase: true}};
 
 // Mock middleware modules
 
-  apiVersionMiddleware: jest.fn(),
-}));
+  apiVersionMiddleware: jest.fn()}));
 
   securityMiddleware: jest.fn(),
-  applySecurityToResponse: jest.fn((req, res) => res),
-}));
+  applySecurityToResponse: jest.fn((req, res) => res)}));
 
 
 
-  createServerClient: jest.fn(() => mockSupabaseClient),
-}));
+  createServerClient: jest.fn(() => mockSupabaseClient)}));
 
 // Import mocked modules
 
@@ -101,8 +86,7 @@ describe('Middleware', () => {
     (securityMiddleware as jest.Mock).mockResolvedValue(null);
     mockSupabaseClient.auth.getSession.mockResolvedValue({
       data: { session: null },
-      error: null,
-    });
+      error: null});
   });
 
   const createRequest = (
@@ -131,8 +115,7 @@ describe('Middleware', () => {
     const headers = new Headers(options.headers);
     const request = new NextRequest(url, {
       method: options.method || 'GET',
-      headers,
-    });
+      headers});
 
     // Mock cookies
     if (options.cookies) {
@@ -209,9 +192,7 @@ describe('Middleware', () => {
           cookies: expect.objectContaining({
             get: expect.any(Function),
             set: expect.any(Function),
-            remove: expect.any(Function),
-          }),
-        })
+            remove: expect.any(Function)})})
       );
     });
 
@@ -231,12 +212,9 @@ describe('Middleware', () => {
       jest.doMock('@/lib/config', () => ({
         env: {
           NODE_ENV: 'test',
-          CORS_ALLOWED_ORIGINS: '',
-        },
+          CORS_ALLOWED_ORIGINS: ''},
         services: {
-          supabase: false,
-        },
-      }));
+          supabase: false}}));
 
       const request = createRequest('/dashboard');
       const result = await middleware(request);
@@ -253,8 +231,7 @@ describe('Middleware', () => {
       it(`should redirect unauthenticated users from ${route} to signin`, async () => {
         mockSupabaseClient.auth.getSession.mockResolvedValue({
           data: { session: null },
-          error: null,
-        });
+          error: null});
 
         const request = createRequest(route);
         const result = await middleware(request);
@@ -273,11 +250,8 @@ describe('Middleware', () => {
           data: {
             session: {
               user: { id: 'test-user' },
-              access_token: 'test-token',
-            },
-          },
-          error: null,
-        });
+              access_token: 'test-token'}},
+          error: null});
 
         const request = createRequest(route);
         const result = await middleware(request);
@@ -291,12 +265,10 @@ describe('Middleware', () => {
       it(`should preserve original URL in redirect for ${route}`, async () => {
         mockSupabaseClient.auth.getSession.mockResolvedValue({
           data: { session: null },
-          error: null,
-        });
+          error: null});
 
         const request = createRequest(route, {
-          searchParams: { tab: 'settings', id: '123' },
-        });
+          searchParams: { tab: 'settings', id: '123' }});
         const result = await middleware(request);
 
         const location = result?.headers.get('location');
@@ -317,11 +289,8 @@ describe('Middleware', () => {
           data: {
             session: {
               user: { id: 'test-user' },
-              access_token: 'test-token',
-            },
-          },
-          error: null,
-        });
+              access_token: 'test-token'}},
+          error: null});
 
         const request = createRequest(route);
         const result = await middleware(request);
@@ -336,8 +305,7 @@ describe('Middleware', () => {
       it(`should allow unauthenticated users to access ${route}`, async () => {
         mockSupabaseClient.auth.getSession.mockResolvedValue({
           data: { session: null },
-          error: null,
-        });
+          error: null});
 
         const request = createRequest(route);
         const result = await middleware(request);
@@ -351,15 +319,11 @@ describe('Middleware', () => {
           data: {
             session: {
               user: { id: 'test-user' },
-              access_token: 'test-token',
-            },
-          },
-          error: null,
-        });
+              access_token: 'test-token'}},
+          error: null});
 
         const request = createRequest(route, {
-          searchParams: { redirectTo: '/dashboard/billing' },
-        });
+          searchParams: { redirectTo: '/dashboard/billing' }});
         const result = await middleware(request);
 
         expect(result?.headers.get('location')).toBe(
@@ -372,15 +336,11 @@ describe('Middleware', () => {
           data: {
             session: {
               user: { id: 'test-user' },
-              access_token: 'test-token',
-            },
-          },
-          error: null,
-        });
+              access_token: 'test-token'}},
+          error: null});
 
         const request = createRequest(route, {
-          searchParams: { redirectTo: '/about' },
-        });
+          searchParams: { redirectTo: '/about' }});
         const result = await middleware(request);
 
         expect(result?.headers.get('location')).toBe(
@@ -420,8 +380,7 @@ describe('Middleware', () => {
 
     it('should read cookies from request', async () => {
       const request = createRequest('/dashboard', {
-        cookies: { 'test-cookie': 'test-value' },
-      });
+        cookies: { 'test-cookie': 'test-value' }});
 
       await middleware(request);
 
@@ -473,9 +432,7 @@ describe('Middleware', () => {
         headers: {
           'x-forwarded-for': '192.168.1.1',
           'user-agent': 'Test Browser',
-          accept: 'text/html',
-        },
-      });
+          accept: 'text/html'}});
 
       const result = await middleware(request);
 

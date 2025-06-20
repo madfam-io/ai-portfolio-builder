@@ -6,22 +6,17 @@ jest.mock('@/lib/auth/supabase-client', () => ({
       signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-    },
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  })),
+      single: jest.fn().mockResolvedValue({ data: null, error: null })}))})),
   supabase: {
     auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
-  },
-}));
+    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) }))}}));
 
 import { jest, describe, test, it, expect, beforeEach } from '@jest/globals';
 import type { Mock, MockedClass } from 'jest-mock';
@@ -41,30 +36,22 @@ jest.mock('@/lib/monitoring/unified/events', () => ({
   PortfolioService: jest.fn().mockImplementation(() => ({
     createPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
     updatePortfolio: jest.fn().mockResolvedValue({ id: 'demo-123' }),
-    getPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123', data: {} }),
-  })),
-}));
+    getPortfolio: jest.fn().mockResolvedValue({ id: 'demo-123', data: {} })}))}));
 
 global.fetch = jest.fn();
 
   DemoPortfolioService,
-  DEMO_PORTFOLIOS,
- } from '@/lib/services/demo-portfolio-service';
+  DEMO_PORTFOLIOS} from '@/lib/services/demo-portfolio-service';
 
 // Mock dependencies
 
-  createClient: jest.fn().mockReturnValue(void 0),
-}));
+  createClient: jest.fn().mockReturnValue(void 0)}));
 
   track: {
     portfolio: {
-      create: jest.fn().mockReturnValue(void 0),
-    },
+      create: jest.fn().mockReturnValue(void 0)},
     user: {
-      action: jest.fn().mockReturnValue(void 0),
-    },
-  },
-}));
+      action: jest.fn().mockReturnValue(void 0)}}}));
 
 const { createClient } = require('@/lib/supabase/client');
 const { track } = require('@/lib/monitoring/unified/events');
@@ -79,9 +66,7 @@ describe('DemoPortfolioService', () => {
   const mockSupabaseClient = {
     from: jest.fn().mockReturnValue(void 0),
     auth: {
-      getUser: jest.fn().mockReturnValue(void 0),
-    },
-  };
+      getUser: jest.fn().mockReturnValue(void 0)}};
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -132,8 +117,7 @@ describe('DemoPortfolioService', () => {
       id: 'portfolio-123',
       name: 'Test Portfolio',
       content: {},
-      settings: {},
-    };
+      settings: {}};
 
     it('should create a portfolio from demo for authenticated user', async () => {
       // Mock successful database insert
@@ -142,17 +126,12 @@ describe('DemoPortfolioService', () => {
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: mockPortfolio,
-              error: null,
-            }),
-          }),
-        }),
-      });
+              error: null})})})});
 
       const result = await DemoPortfolioService.createFromDemo({
         userId: 'user-123',
         demoId: 'dev-startup',
-        aiEnhance: true,
-      });
+        aiEnhance: true});
 
       expect(result.isTemporary).toBe(false);
       expect(result.portfolioId).toBe('portfolio-123');
@@ -162,8 +141,7 @@ describe('DemoPortfolioService', () => {
 
     it('should create temporary portfolio for non-authenticated user', async () => {
       const result = await DemoPortfolioService.createFromDemo({
-        demoId: 'dev-startup',
-      });
+        demoId: 'dev-startup'});
 
       expect(result.isTemporary).toBe(true);
       expect(result.portfolioId).toMatch(/^temp-/);
@@ -176,14 +154,11 @@ describe('DemoPortfolioService', () => {
         title: 'Custom Title',
         colors: {
           primary: '#ff0000',
-          secondary: '#00ff00',
-        },
-      };
+          secondary: '#00ff00'}};
 
       const result = await DemoPortfolioService.createFromDemo({
         demoId: 'dev-startup',
-        customizations,
-      });
+        customizations});
 
       expect(result.portfolio.content.personal.name).toBe('Custom Name');
       expect(result.portfolio.content.personal.title).toBe('Custom Title');
@@ -194,8 +169,7 @@ describe('DemoPortfolioService', () => {
     it('should throw error for non-existent demo', async () => {
       await expect(
         DemoPortfolioService.createFromDemo({
-          demoId: 'non-existent',
-        })
+          demoId: 'non-existent'})
       ).rejects.toThrow('Demo portfolio not found');
     });
   });
@@ -208,8 +182,7 @@ describe('DemoPortfolioService', () => {
 
     it('should filter by user industry', async () => {
       const recommendations = DemoPortfolioService.getRecommendedDemos({
-        industry: 'Technology',
-      });
+        industry: 'Technology'});
 
       // First recommendations should be from Technology or General
       recommendations.forEach(demo => {
@@ -219,12 +192,10 @@ describe('DemoPortfolioService', () => {
 
     it('should boost score for matching experience levels', async () => {
       const seniorRecs = DemoPortfolioService.getRecommendedDemos({
-        experience: 'senior',
-      });
+        experience: 'senior'});
 
       const juniorRecs = DemoPortfolioService.getRecommendedDemos({
-        experience: 'junior',
-      });
+        experience: 'junior'});
 
       // Business template should rank higher for seniors
       const seniorBusinessIndex = seniorRecs.findIndex(
@@ -256,12 +227,7 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
                 data: existingPortfolio,
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      });
+                error: null})})})})});
 
       const portfolioId = await DemoPortfolioService.cloneDemo(
         'dev-startup',
@@ -278,12 +244,7 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               single: jest.fn().mockResolvedValue({
                 data: null,
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      });
+                error: null})})})})});
 
       // Mock successful creation
       mockSupabaseClient.from.mockReturnValueOnce({
@@ -291,11 +252,7 @@ describe('DemoPortfolioService', () => {
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: { id: 'new-portfolio-123' },
-              error: null,
-            }),
-          }),
-        }),
-      });
+              error: null})})})});
 
       const portfolioId = await DemoPortfolioService.cloneDemo(
         'dev-startup',
@@ -312,8 +269,7 @@ describe('DemoPortfolioService', () => {
       name: 'Test Portfolio',
       content: { personal: { name: 'Test' } },
       settings: {},
-      demo_id: 'dev-startup',
-    };
+      demo_id: 'dev-startup'};
 
     beforeEach(() => {
       // Mock sessionStorage
@@ -321,10 +277,8 @@ describe('DemoPortfolioService', () => {
         value: {
           getItem: jest.fn().mockReturnValue(void 0),
           setItem: jest.fn().mockReturnValue(void 0),
-          removeItem: jest.fn().mockReturnValue(void 0),
-        },
-        writable: true,
-      });
+          removeItem: jest.fn().mockReturnValue(void 0)},
+        writable: true});
     });
 
     it('should convert temporary portfolio to permanent', async () => {
@@ -336,11 +290,7 @@ describe('DemoPortfolioService', () => {
           select: jest.fn().mockReturnValue({
             single: jest.fn().mockResolvedValue({
               data: { id: 'permanent-123' },
-              error: null,
-            }),
-          }),
-        }),
-      });
+              error: null})})})});
 
       const portfolioId = await DemoPortfolioService.convertToPermanent(
         'temp-123',
@@ -357,8 +307,7 @@ describe('DemoPortfolioService', () => {
         expect.objectContaining({
           demo_id: 'dev-startup',
           temporary_id: 'temp-123',
-          permanent_id: 'permanent-123',
-        })
+          permanent_id: 'permanent-123'})
     );
   });
 
@@ -384,12 +333,7 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               order: jest.fn().mockResolvedValue({
                 data: mockPortfolios,
-                error: null,
-              }),
-            }),
-          }),
-        }),
-      });
+                error: null})})})})});
 
       const portfolios =
         await DemoPortfolioService.getUserDemoPortfolios('user-123');
@@ -405,12 +349,7 @@ describe('DemoPortfolioService', () => {
             eq: jest.fn().mockReturnValue({
               order: jest.fn().mockResolvedValue({
                 data: null,
-                error: new Error('Database error'),
-              }),
-            }),
-          }),
-        }),
-      });
+                error: new Error('Database error')})})})})});
 
       await expect(
         DemoPortfolioService.getUserDemoPortfolios('user-123')

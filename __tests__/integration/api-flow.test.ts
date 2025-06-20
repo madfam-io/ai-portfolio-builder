@@ -32,13 +32,11 @@ describe('API Flow Integration Tests', () => {
         id: 'new-portfolio',
         name: 'John Doe',
         title: 'Developer',
-        template: 'modern',
-      };
+        template: 'modern'};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
-      });
+        json: async () => ({ portfolio: mockPortfolio })});
 
       const response = await fetch('/api/v1/portfolios', {
         method: 'POST',
@@ -46,9 +44,7 @@ describe('API Flow Integration Tests', () => {
         body: JSON.stringify({
           name: 'John Doe',
           title: 'Developer',
-          template: 'modern',
-        }),
-      });
+          template: 'modern'})});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -59,13 +55,11 @@ describe('API Flow Integration Tests', () => {
       const mockPortfolio = {
         id: 'existing-portfolio',
         name: 'Jane Doe',
-        title: 'Designer',
-      };
+        title: 'Designer'};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: mockPortfolio }),
-      });
+        json: async () => ({ portfolio: mockPortfolio })});
 
       const response = await fetch('/api/v1/portfolios/existing-portfolio');
 
@@ -78,19 +72,16 @@ describe('API Flow Integration Tests', () => {
       const updatedPortfolio = {
         id: 'existing-portfolio',
         name: 'Jane Smith',
-        title: 'Senior Designer',
-      };
+        title: 'Senior Designer'};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: updatedPortfolio }),
-      });
+        json: async () => ({ portfolio: updatedPortfolio })});
 
       const response = await fetch('/api/v1/portfolios/existing-portfolio', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedPortfolio),
-      });
+        body: JSON.stringify(updatedPortfolio)});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -117,8 +108,7 @@ describe('API Flow Integration Tests', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ enhancedBio }),
-      });
+        json: async () => ({ enhancedBio })});
 
       const response = await fetch('/api/v1/ai/enhance-bio', {
         method: 'POST',
@@ -127,10 +117,7 @@ describe('API Flow Integration Tests', () => {
           bio: 'I am a developer',
           context: {
             title: 'Software Developer',
-            skills: ['React', 'Node.js'],
-          },
-        }),
-      });
+            skills: ['React', 'Node.js']}})});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -142,13 +129,11 @@ describe('API Flow Integration Tests', () => {
         title: 'Advanced E-commerce Platform',
         description:
           'A sophisticated, scalable e-commerce solution built with modern technologies.',
-        technologies: ['React', 'Node.js', 'MongoDB', 'TypeScript'],
-      };
+        technologies: ['React', 'Node.js', 'MongoDB', 'TypeScript']};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ optimizedProject }),
-      });
+        json: async () => ({ optimizedProject })});
 
       const response = await fetch('/api/v1/ai/optimize-project', {
         method: 'POST',
@@ -156,9 +141,7 @@ describe('API Flow Integration Tests', () => {
         body: JSON.stringify({
           title: 'E-commerce Site',
           description: 'A basic online store',
-          technologies: ['React', 'Node.js'],
-        }),
-      });
+          technologies: ['React', 'Node.js']})});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -169,13 +152,11 @@ describe('API Flow Integration Tests', () => {
       const recommendation = {
         template: 'business',
         confidence: 0.85,
-        reasoning: 'Based on professional background and corporate experience',
-      };
+        reasoning: 'Based on professional background and corporate experience'};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ recommendation }),
-      });
+        json: async () => ({ recommendation })});
 
       const response = await fetch('/api/v1/ai/recommend-template', {
         method: 'POST',
@@ -183,9 +164,7 @@ describe('API Flow Integration Tests', () => {
         body: JSON.stringify({
           title: 'Business Consultant',
           bio: 'I help companies optimize their operations',
-          industry: 'consulting',
-        }),
-      });
+          industry: 'consulting'})});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -199,15 +178,12 @@ describe('API Flow Integration Tests', () => {
         ok: true,
         json: async () => ({
           available: true,
-          subdomain: 'john-doe',
-        }),
-      });
+          subdomain: 'john-doe'})});
 
       const response = await fetch('/api/v1/portfolios/check-subdomain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subdomain: 'john-doe' }),
-      });
+        body: JSON.stringify({ subdomain: 'john-doe' })});
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -218,21 +194,18 @@ describe('API Flow Integration Tests', () => {
       const publishResult = {
         success: true,
         url: 'https://john-doe.prisma.dev',
-        deploymentId: 'deploy_123',
-      };
+        deploymentId: 'deploy_123'};
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => publishResult,
-      });
+        json: async () => publishResult});
 
       const response = await fetch(
         '/api/v1/portfolios/test-portfolio/publish',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subdomain: 'john-doe' }),
-        }
+          body: JSON.stringify({ subdomain: 'john-doe' })}
 
       expect(response.ok).toBe(true);
       const data = await response.json();
@@ -246,15 +219,12 @@ describe('API Flow Integration Tests', () => {
         json: async () => ({
           available: false,
           message: 'Subdomain already taken',
-          suggestions: ['john-doe-dev', 'john-doe-portfolio'],
-        }),
-      });
+          suggestions: ['john-doe-dev', 'john-doe-portfolio']})});
 
       const response = await fetch('/api/v1/portfolios/check-subdomain', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ subdomain: 'taken-subdomain' }),
-      });
+        body: JSON.stringify({ subdomain: 'taken-subdomain' })});
 
       expect(response.ok).toBe(false);
       expect(response.status).toBe(409);
@@ -271,64 +241,51 @@ describe('API Flow Integration Tests', () => {
             id: 'new-portfolio',
             name: 'John Doe',
             title: 'Developer',
-            template: 'modern',
-          },
-        }),
-      });
+            template: 'modern'}})});
 
       // Step 2: Enhance with AI
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          enhancedBio: 'Enhanced professional bio',
-        }),
-      });
+          enhancedBio: 'Enhanced professional bio'})});
 
       // Step 3: Check subdomain
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
-          available: true,
-        }),
-      });
+          available: true})});
 
       // Step 4: Publish
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
         json: async () => ({
           success: true,
-          url: 'https://john-doe.prisma.dev',
-        }),
-      });
+          url: 'https://john-doe.prisma.dev'})});
 
       // Execute flow
       const createResponse = await fetch('/api/v1/portfolios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: 'John Doe', title: 'Developer' }),
-      });
+        body: JSON.stringify({ name: 'John Doe', title: 'Developer' })});
 
       const enhanceResponse = await fetch('/api/v1/ai/enhance-bio', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ bio: 'I am a developer' }),
-      });
+        body: JSON.stringify({ bio: 'I am a developer' })});
 
       const subdomainResponse = await fetch(
         '/api/v1/portfolios/check-subdomain',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subdomain: 'john-doe' }),
-        }
+          body: JSON.stringify({ subdomain: 'john-doe' })}
 
       const publishResponse = await fetch(
         '/api/v1/portfolios/new-portfolio/publish',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ subdomain: 'john-doe' }),
-        }
+          body: JSON.stringify({ subdomain: 'john-doe' })}
 
       // Verify all steps completed successfully
       expect(createResponse.ok).toBe(true);
@@ -345,8 +302,7 @@ describe('API Flow Integration Tests', () => {
       // Success
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ portfolio: { id: 'test' } }),
-      });
+        json: async () => ({ portfolio: { id: 'test' } })});
 
       // Failure
       (global.fetch as jest.Mock).mockRejectedValueOnce(
@@ -355,22 +311,19 @@ describe('API Flow Integration Tests', () => {
       // Recovery
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ available: true }),
-      });
+        json: async () => ({ available: true })});
 
       try {
         // Step 1: Success
         const createResponse = await fetch('/api/v1/portfolios', {
           method: 'POST',
-          body: JSON.stringify({ name: 'Test' }),
-        });
+          body: JSON.stringify({ name: 'Test' })});
         expect(createResponse.ok).toBe(true);
 
         // Step 2: Failure
         await fetch('/api/v1/ai/enhance-bio', {
           method: 'POST',
-          body: JSON.stringify({ bio: 'test' }),
-        });
+          body: JSON.stringify({ bio: 'test' })});
       } catch (error) {
         expect(error).toBeInstanceOf(Error);
       }
@@ -380,8 +333,7 @@ describe('API Flow Integration Tests', () => {
         '/api/v1/portfolios/check-subdomain',
         {
           method: 'POST',
-          body: JSON.stringify({ subdomain: 'test' }),
-        }
+          body: JSON.stringify({ subdomain: 'test' })}
 
       expect(subdomainResponse.ok).toBe(true);
     });

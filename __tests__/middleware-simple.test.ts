@@ -6,22 +6,17 @@ jest.mock('@/lib/auth/supabase-client', () => ({
       signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
-    },
+      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } }))},
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
       insert: jest.fn().mockReturnThis(),
       update: jest.fn().mockReturnThis(),
       delete: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    })),
-  })),
+      single: jest.fn().mockResolvedValue({ data: null, error: null })}))})),
   supabase: {
     auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
-  },
-}));
+    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) }))}}));
 
 import { describe, test, it, expect, jest, beforeEach } from '@jest/globals';
 import { NextRequest, NextResponse } from 'next/server';
@@ -35,35 +30,27 @@ const mockSecurityMiddleware = jest.fn();
 const mockApplySecurityToResponse = jest.fn();
 
 jest.mock('@supabase/ssr', () => ({ 
-  createServerClient: mockCreateServerClient,
- }));
+  createServerClient: mockCreateServerClient}));
 
 jest.mock('@/lib/utils/logger', () => ({
   logger: {
     warn: jest.fn(),
     error: jest.fn(),
-    info: jest.fn(),
-  },
-}));
+    info: jest.fn()}}));
 
 jest.mock('@/lib/config', () => ({
   env: {
     NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key',
-  },
+    NEXT_PUBLIC_SUPABASE_ANON_KEY: 'test-anon-key'},
   services: {
-    supabase: true,
-  },
-}));
+    supabase: true}}));
 
 jest.mock('@/middleware/api-version', () => ({ 
-  apiVersionMiddleware: mockApiVersionMiddleware,
- }));
+  apiVersionMiddleware: mockApiVersionMiddleware}));
 
 jest.mock('@/middleware/security', () => ({ 
   securityMiddleware: mockSecurityMiddleware,
-  applySecurityToResponse: mockApplySecurityToResponse,
- }));
+  applySecurityToResponse: mockApplySecurityToResponse}));
 
 import { middleware } from '@/middleware';
 
@@ -83,14 +70,11 @@ describe('Middleware Simple Test', () => {
       auth: {
         getSession: jest.fn().mockResolvedValue({
           data: { session: { user: { id: 'test-user' } } },
-          error: null,
-        }),
-      },
+          error: null})},
       from: jest.fn().mockReturnThis(),
       select: jest.fn().mockReturnThis(),
       eq: jest.fn().mockReturnThis(),
-      single: jest.fn().mockResolvedValue({ data: null, error: null }),
-    };
+      single: jest.fn().mockResolvedValue({ data: null, error: null })};
 
     mockCreateServerClient.mockImplementation(() => mockSupabaseClient);
     mockApiVersionMiddleware.mockImplementation((req) => {

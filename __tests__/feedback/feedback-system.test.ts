@@ -7,8 +7,7 @@ import {   FeedbackSystem,
   BetaAnalytics,
   BetaLaunchChecker,
   createFeedbackSystem,
-  createBetaAnalytics,
- } from '@/lib/feedback/feedback-system';
+  createBetaAnalytics} from '@/lib/feedback/feedback-system';
 
 // Mock fetch for API tests
 global.fetch = jest.fn().mockReturnValue(void 0);
@@ -31,8 +30,7 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ id: 'feedback_123', success: true }),
-      });
+        json: async () => ({ id: 'feedback_123', success: true })});
 
       const feedbackData = {
         userId: 'user_123',
@@ -49,9 +47,7 @@ describe('Beta Feedback System', () => {
           plan: 'free',
           accountAge: 7,
           portfoliosCreated: 1,
-          lastActivity: new Date(),
-        },
-      };
+          lastActivity: new Date()}};
 
       const feedbackId = await feedbackSystem.submitFeedback(feedbackData);
 
@@ -61,8 +57,7 @@ describe('Beta Feedback System', () => {
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: expect.stringContaining('Template switching issue'),
-        })
+          body: expect.stringContaining('Template switching issue')})
       );
     });
 
@@ -82,8 +77,7 @@ describe('Beta Feedback System', () => {
         category: 'general',
         userAgent: 'test',
         url: 'test',
-        tags: [],
-      };
+        tags: []};
 
       const feedbackId = await feedbackSystem.submitFeedback(feedbackData);
 
@@ -95,8 +89,7 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ id: 'survey_123', success: true }),
-      });
+        json: async () => ({ id: 'survey_123', success: true })});
 
       const surveyData = {
         userId: 'user_123',
@@ -110,8 +103,7 @@ describe('Beta Feedback System', () => {
         leastUsefulFeature: 'Analytics Dashboard',
         missingFeatures: ['Custom themes', 'Video backgrounds'],
         additionalComments: 'Great product overall!',
-        completedIn: 120,
-      };
+        completedIn: 120};
 
       const surveyId = await feedbackSystem.submitSurvey(surveyData);
 
@@ -121,8 +113,7 @@ describe('Beta Feedback System', () => {
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: expect.stringContaining('AI Content Enhancement'),
-        })
+          body: expect.stringContaining('AI Content Enhancement')})
     });
 
     it('should retrieve feedback with filters', async () => {
@@ -137,20 +128,17 @@ describe('Beta Feedback System', () => {
           title: 'Critical issue',
           description: 'App crashes',
           status: 'open',
-          timestamp: new Date().toISOString(),
-        },
+          timestamp: new Date().toISOString()},
       ];
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockFeedback,
-      });
+        json: async () => mockFeedback});
 
       const feedback = await feedbackSystem.getFeedback({
         type: 'bug',
         severity: 'high',
-        limit: 10,
-      });
+        limit: 10});
 
       expect(feedback).toEqual(mockFeedback);
       expect(global.fetch).toHaveBeenCalledWith(
@@ -198,8 +186,7 @@ describe('Beta Feedback System', () => {
         {
           id: 'f1',
           type: 'bug',
-          timestamp: new Date(),
-        },
+          timestamp: new Date()},
         {
           id: 'f2',
           type: 'feature_request',
@@ -208,8 +195,7 @@ describe('Beta Feedback System', () => {
         {
           id: 'f3',
           type: 'improvement',
-          timestamp: new Date(),
-        },
+          timestamp: new Date()},
       ];
 
       const feedbackMap = new Map();
@@ -236,24 +222,21 @@ describe('Beta Feedback System', () => {
           severity: 'critical',
           status: 'open',
           rating: 2,
-          timestamp: new Date(),
-        },
+          timestamp: new Date()},
         {
           id: 'f2',
           type: 'feature_request',
           severity: 'medium',
           status: 'in_progress',
           rating: 4,
-          timestamp: new Date(),
-        },
+          timestamp: new Date()},
       ];
 
       const mockSurveys = [
         {
           id: 's1',
           likelihood_to_recommend: 9,
-          timestamp: new Date(),
-        },
+          timestamp: new Date()},
       ];
 
       const feedbackMap = new Map();
@@ -282,8 +265,7 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ eventId: 'event_123', success: true }),
-      });
+        json: async () => ({ eventId: 'event_123', success: true })});
 
       await analytics.trackEvent({
         userId: 'user_123',
@@ -291,17 +273,14 @@ describe('Beta Feedback System', () => {
         properties: {
           template: 'modern',
           timeToComplete: 1200,
-          aiUsed: true,
-        },
-      });
+          aiUsed: true}});
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/beta/analytics/track',
         expect.objectContaining({
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: expect.stringContaining('portfolio_created'),
-        })
+          body: expect.stringContaining('portfolio_created')})
     });
 
     it('should track portfolio journey events', async () => {
@@ -309,19 +288,16 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ success: true }),
-      });
+        json: async () => ({ success: true })});
 
       await analytics.trackPortfolioJourney('user_123', 'template_selected', {
         template: 'modern',
-        previousStep: 'basic_info',
-      });
+        previousStep: 'basic_info'});
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/beta/analytics/track',
         expect.objectContaining({
-          body: expect.stringContaining('portfolio_journey'),
-        })
+          body: expect.stringContaining('portfolio_journey')})
     );
   });
 
@@ -330,8 +306,7 @@ describe('Beta Feedback System', () => {
 
       (global.fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => ({ success: true }),
-      });
+        json: async () => ({ success: true })});
 
       await analytics.trackFeatureUsage(
         'user_123',
@@ -340,14 +315,12 @@ describe('Beta Feedback System', () => {
         {
           originalLength: 50,
           enhancedLength: 120,
-          quality: 'high',
-        }
+          quality: 'high'}
 
       expect(global.fetch).toHaveBeenCalledWith(
         '/api/v1/beta/analytics/track',
         expect.objectContaining({
-          body: expect.stringContaining('feature_usage'),
-        })
+          body: expect.stringContaining('feature_usage')})
     );
   });
 
@@ -361,8 +334,7 @@ describe('Beta Feedback System', () => {
       await expect(
         analytics.trackEvent({
           userId: 'user_123',
-          event: 'test_event',
-        })
+          event: 'test_event'})
       ).resolves.not.toThrow();
     });
   });
@@ -388,9 +360,7 @@ describe('Beta Feedback System', () => {
         userRetention: {
           day1: 0.9,
           day7: 0.7,
-          day30: 0.4,
-        },
-      });
+          day30: 0.4}});
 
       const readiness = await checker.checkReadiness();
 
@@ -420,9 +390,7 @@ describe('Beta Feedback System', () => {
         userRetention: {
           day1: 0.9,
           day7: 0.7,
-          day30: 0.4,
-        },
-      });
+          day30: 0.4}});
 
       const readiness = await checker.checkReadiness();
 
@@ -458,17 +426,14 @@ describe('Beta Feedback System', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ id: 'feedback_123', success: true }),
-        })
+          json: async () => ({ id: 'feedback_123', success: true })})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
             totalUsers: 100,
             feedbackEntries: 25,
             criticalBugs: 0,
-            averageNPS: 55,
-          }),
-        });
+            averageNPS: 55})});
 
       // Submit feedback
       const feedbackId = await feedbackSystem.submitFeedback({
@@ -480,8 +445,7 @@ describe('Beta Feedback System', () => {
         category: 'mobile',
         userAgent: 'test',
         url: 'test',
-        tags: ['mobile', 'ux'],
-      });
+        tags: ['mobile', 'ux']});
 
       expect(feedbackId).toBe('feedback_123');
 
@@ -498,22 +462,18 @@ describe('Beta Feedback System', () => {
       (global.fetch as jest.Mock)
         .mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ eventId: 'event_123', success: true }),
-        })
+          json: async () => ({ eventId: 'event_123', success: true })})
         .mockResolvedValueOnce({
           ok: true,
           json: async () => ({
             events: [],
-            summary: { totalEvents: 50, uniqueUsers: 25 },
-          }),
-        });
+            summary: { totalEvents: 50, uniqueUsers: 25 }})});
 
       // Track event
       await analytics.trackEvent({
         userId: 'user_123',
         event: 'portfolio_published',
-        properties: { subdomain: 'test-user', publishTime: 300 },
-      });
+        properties: { subdomain: 'test-user', publishTime: 300 }});
 
       // Get analytics
       const data = await analytics.getUserJourneys(10);

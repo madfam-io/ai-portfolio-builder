@@ -55,8 +55,7 @@ const TemplateRenderer = ({ portfolio }: any) => {
   const templates = {
     modern: MockModernTemplate,
     minimal: MockMinimalTemplate,
-    business: MockBusinessTemplate,
-  };
+    business: MockBusinessTemplate};
 
   const TemplateComponent =
     templates[portfolio.template as keyof typeof templates];
@@ -87,8 +86,7 @@ describe('Template System Integration', () => {
     id: 'test',
     name: 'John Doe',
     title: 'Software Developer',
-    template: 'modern',
-  };
+    template: 'modern'};
 
   it('should render modern template by default', async () => {
     render(<TemplateRenderer portfolio={mockPortfolio} />);
@@ -142,8 +140,7 @@ describe('Template System Integration', () => {
       id: 'test',
       name: '',
       title: '',
-      template: 'modern',
-    };
+      template: 'modern'};
 
     render(<TemplateRenderer portfolio={emptyPortfolio} />);
 
