@@ -58,8 +58,9 @@ export function TemplateDetailContent({
 
   const checkPurchaseStatus = useCallback(async () => {
     try {
+      if (!user) return;
       const purchased = await MarketplaceService.hasUserPurchased(
-        user!.id,
+        user.id,
         template.id
       );
       setIsPurchased(purchased);
@@ -148,9 +149,10 @@ export function TemplateDetailContent({
       const { sessionId } = await response.json();
 
       // Redirect to Stripe checkout
-      const stripe = await loadStripe(
-        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-      );
+      const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+      if (!publishableKey)
+        throw new Error('Stripe publishable key not configured');
+      const stripe = await loadStripe(publishableKey);
       await stripe?.redirectToCheckout({ sessionId });
     } catch (error) {
       logger.error('Purchase failed', error as Error);

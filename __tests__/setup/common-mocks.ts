@@ -122,11 +122,9 @@ export const createSupabaseMock = () => {
       from: jest.fn().mockReturnValue({
         upload: jest.fn().mockResolvedValue({ data: null, error: null }),
         remove: jest.fn().mockResolvedValue({ data: null, error: null }),
-        getPublicUrl: jest
-          .fn()
-          .mockReturnValue({
-            data: { publicUrl: 'https://example.com/image.jpg' },
-          }),
+        getPublicUrl: jest.fn().mockReturnValue({
+          data: { publicUrl: 'https://example.com/image.jpg' },
+        }),
       }),
     },
   };

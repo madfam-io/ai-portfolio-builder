@@ -37,7 +37,10 @@ export default function PaymentSuccess() {
         zIndex: 9999,
       };
 
-      function fire(particleRatio: number, opts: any) {
+      function fire(
+        particleRatio: number,
+        opts: Record<string, number | boolean>
+      ) {
         confetti({
           ...defaults,
           ...opts,
@@ -103,8 +106,8 @@ export default function PaymentSuccess() {
         } else {
           throw new Error('Payment verification failed');
         }
-      } catch (error) {
-        console.error('Payment verification error:', error);
+      } catch (_error) {
+        // Payment verification error
         toast({
           title: t.verificationFailed || 'Verification Failed',
           description:

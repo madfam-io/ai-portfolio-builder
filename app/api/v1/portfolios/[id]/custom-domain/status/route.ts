@@ -70,23 +70,34 @@ export const GET = withErrorHandling(
         const dns = await import('dns').then(m => m.promises);
 
         // Check CNAME records
-        let hasCorrectCNAME = false;
-        try {
-          const records = await dns.resolveCname(portfolio.custom_domain);
-          hasCorrectCNAME = records.some(record =>
-            record.includes(`${portfolio.subdomain}.prisma.madfam.io`)
-          );
-        } catch (_e) {
-          // Try www subdomain
+        const hasCorrectCNAME = await checkCnameRecords(dns, portfolio);
+
+        async function checkCnameRecords(
+          dnsModule: { resolveCname: (domain: string) => Promise<string[]> },
+          portfolioData: { subdomain: string; custom_domain: string }
+        ): Promise<boolean> {
+          const expectedTarget = `${portfolioData.subdomain}.prisma.madfam.io`;
+
+          // Try main domain first
           try {
-            const wwwRecords = await dns.resolveCname(
-              `www.${portfolio.custom_domain}`
+            const records = await dnsModule.resolveCname(
+              portfolioData.custom_domain
             );
-            hasCorrectCNAME = wwwRecords.some(record =>
-              record.includes(`${portfolio.subdomain}.prisma.madfam.io`)
+            return records.some((record: string) =>
+              record.includes(expectedTarget)
             );
           } catch (_e) {
-            // No CNAME records found
+            // Try www subdomain
+            try {
+              const wwwRecords = await dnsModule.resolveCname(
+                `www.${portfolioData.custom_domain}`
+              );
+              return wwwRecords.some((record: string) =>
+                record.includes(expectedTarget)
+              );
+            } catch (_e) {
+              return false;
+            }
           }
         }
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Card,
   CardContent,
@@ -19,7 +19,6 @@ import {
   Users,
   DollarSign,
   CreditCard,
-  Calendar,
   Download,
   RefreshCw,
 } from 'lucide-react';
@@ -84,46 +83,49 @@ interface RevenueData {
 }
 
 export function RevenueAnalytics() {
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<RevenueData | null>(null);
-  const [selectedPeriod, setSelectedPeriod] = useState('12'); // months
+  const [selectedPeriod, _setSelectedPeriod] = useState('12'); // months
 
-  const fetchRevenueData = async (showRefreshToast = false) => {
-    try {
-      if (showRefreshToast) setRefreshing(true);
+  const fetchRevenueData = useCallback(
+    async (showRefreshToast = false) => {
+      try {
+        if (showRefreshToast) setRefreshing(true);
 
-      const response = await fetch(
-        `/api/v1/admin/revenue/metrics?months=${selectedPeriod}`
-      );
-      if (!response.ok) throw new Error('Failed to fetch revenue data');
+        const response = await fetch(
+          `/api/v1/admin/revenue/metrics?months=${selectedPeriod}`
+        );
+        if (!response.ok) throw new Error('Failed to fetch revenue data');
 
-      const result = await response.json();
-      setData(result.data);
+        const result = await response.json();
+        setData(result.data);
 
-      if (showRefreshToast) {
+        if (showRefreshToast) {
+          toast({
+            title: 'Data refreshed',
+            description: 'Revenue metrics have been updated',
+          });
+        }
+      } catch (_error) {
         toast({
-          title: 'Data refreshed',
-          description: 'Revenue metrics have been updated',
+          title: 'Error',
+          description: 'Failed to load revenue data',
+          variant: 'destructive',
         });
+      } finally {
+        setLoading(false);
+        setRefreshing(false);
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'Failed to load revenue data',
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+    },
+    [selectedPeriod, toast]
+  );
 
   useEffect(() => {
     fetchRevenueData();
-  }, [selectedPeriod]);
+  }, [fetchRevenueData]);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -145,13 +147,13 @@ export function RevenueAnalytics() {
     value,
     change,
     icon: Icon,
-    format: formatFn = (v: any) => v,
+    format: formatFn = (v: number | string) => v.toString(),
   }: {
     title: string;
-    value: any;
+    value: number | string;
     change?: number;
-    icon: any;
-    format?: (value: any) => string;
+    icon: React.ComponentType<{ className?: string }>;
+    format?: (value: number | string) => string;
   }) => (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -457,7 +459,7 @@ export function RevenueAnalytics() {
                 <div className="space-y-4">
                   {/* Simple text-based chart for trends */}
                   <div className="space-y-2">
-                    {data.trends.map((trend, index) => (
+                    {data.trends.map(trend => (
                       <div
                         key={trend.month}
                         className="flex items-center justify-between text-sm"
@@ -468,7 +470,7 @@ export function RevenueAnalytics() {
                             <div
                               className="h-full bg-primary transition-all"
                               style={{
-                                width: `${(trend.mrr / Math.max(...data.trends!.map(t => t.mrr))) * 100}%`,
+                                width: `${(trend.mrr / Math.max(...(data.trends?.map(t => t.mrr) || [1]))) * 100}%`,
                               }}
                             />
                           </div>

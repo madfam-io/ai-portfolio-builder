@@ -23,10 +23,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useRouter } from 'next/navigation';
-import {
-  SUBSCRIPTION_PLANS,
-  formatPriceWithPromotion,
-} from '@/lib/services/stripe/stripe-enhanced';
+import { SUBSCRIPTION_PLANS } from '@/lib/services/stripe/stripe-enhanced';
 
 interface UsageData {
   plan: 'free' | 'pro' | 'business' | 'enterprise';
@@ -54,7 +51,7 @@ interface UsageTrackerProps {
 }
 
 export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
   const router = useRouter();
 
   const handleUpgrade = () => {
@@ -292,8 +289,8 @@ export default function UsageTracker({ usage, onUpgrade }: UsageTrackerProps) {
             <AlertDescription>
               <div className="flex items-center justify-between">
                 <span>
-                  You're approaching your plan limits. Upgrade now to unlock
-                  more features and avoid interruptions.
+                  You&apos;re approaching your plan limits. Upgrade now to
+                  unlock more features and avoid interruptions.
                 </span>
                 <Button
                   size="sm"

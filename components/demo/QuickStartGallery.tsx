@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import {
   Sparkles,
@@ -20,7 +20,6 @@ import {
   Eye,
   Copy,
   Check,
-  ArrowRight,
   Zap,
   TrendingUp,
   Users,
@@ -71,7 +70,7 @@ export function QuickStartGallery({
 }: QuickStartGalleryProps) {
   const router = useRouter();
   const { user } = useAuthStore();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
   const [selectedIndustry, setSelectedIndustry] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [demos, setDemos] = useState<DemoPortfolio[]>([]);
@@ -142,8 +141,8 @@ export function QuickStartGallery({
       } else {
         router.push(`/editor/${result.portfolioId}`);
       }
-    } catch (error) {
-      console.error('Failed to create demo portfolio:', error);
+    } catch (_error) {
+      // Failed to create demo portfolio
     } finally {
       setLoadingDemo(null);
     }
@@ -182,8 +181,8 @@ export function QuickStartGallery({
       });
 
       setTimeout(() => setCopiedDemo(null), 2000);
-    } catch (error) {
-      console.error('Failed to clone demo:', error);
+    } catch (_error) {
+      // Failed to clone demo
       setCopiedDemo(null);
     }
   };

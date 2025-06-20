@@ -98,7 +98,7 @@ function BillingContent() {
         setInvoices(invoiceData);
       }
     } catch (_error) {
-      console.error('Failed to load billing data:', _error);
+      // Failed to load billing data
       toast({
         title: t.error || 'Error',
         description:

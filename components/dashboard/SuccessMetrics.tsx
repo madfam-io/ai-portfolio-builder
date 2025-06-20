@@ -48,7 +48,7 @@ interface Goal {
 export function SuccessMetrics() {
   const { t } = useLanguage();
   const { portfolios } = usePortfolioStore();
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
   const [timeRange, setTimeRange] = useState<'7d' | '30d' | '90d'>('30d');
   const [isLoading, setIsLoading] = useState(true);
 
@@ -76,23 +76,25 @@ export function SuccessMetrics() {
         (sum, p) => sum + (p.views || 0),
         0
       );
+      const calculatePortfolioCompletion = (
+        portfolio: Record<string, unknown>
+      ): number => {
+        const sections = ['experience', 'projects', 'skills', 'education'];
+        const completedSections = sections.filter(s => {
+          const sectionData = portfolio[s as keyof typeof portfolio];
+          return Array.isArray(sectionData)
+            ? sectionData.length > 0
+            : !!sectionData;
+        });
+        return (completedSections.length / sections.length) * 100;
+      };
+
       const avgCompletionRate =
         portfolios.length > 0
-          ? portfolios.reduce((sum, p) => {
-              const sections = [
-                'experience',
-                'projects',
-                'skills',
-                'education',
-              ];
-              const completedSections = sections.filter(s => {
-                const sectionData = p[s as keyof typeof p];
-                return Array.isArray(sectionData)
-                  ? sectionData.length > 0
-                  : !!sectionData;
-              }).length;
-              return sum + (completedSections / sections.length) * 100;
-            }, 0) / portfolios.length
+          ? portfolios.reduce(
+              (sum, p) => sum + calculatePortfolioCompletion(p),
+              0
+            ) / portfolios.length
           : 0;
 
       setMetrics({

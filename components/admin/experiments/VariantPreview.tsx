@@ -14,7 +14,7 @@ interface VariantPreviewProps {
   variant: {
     name: string;
     components: ComponentConfig[];
-    themeOverrides: Record<string, any>;
+    themeOverrides: Record<string, string | number | boolean>;
   };
   device?: 'desktop' | 'tablet' | 'mobile';
 }

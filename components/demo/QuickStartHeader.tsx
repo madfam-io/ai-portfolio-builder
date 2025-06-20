@@ -14,7 +14,7 @@ interface QuickStartHeaderProps {
 
 export function QuickStartHeader({ user }: QuickStartHeaderProps) {
   const router = useRouter();
-  const { t } = useLanguage();
+  const { t: _t } = useLanguage();
 
   return (
     <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10 border-b">

@@ -60,7 +60,7 @@ export function UsageStats({
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: 'Upgrade Failed',
         description: 'An unexpected error occurred',

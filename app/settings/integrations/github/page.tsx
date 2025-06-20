@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   Github,
@@ -62,9 +62,28 @@ export default function GitHubIntegrationPage() {
 
   useEffect(() => {
     checkConnectionStatus();
-  }, []);
+  }, [checkConnectionStatus]);
 
-  const checkConnectionStatus = async () => {
+  const fetchRepositoryStats = async () => {
+    try {
+      const statsResponse = await fetch('/api/v1/analytics/repositories');
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setRepositoryStats({
+          total: statsData.data.repositories.length,
+          synced: statsData.data.repositories.length,
+          lastUpdated: statsData.data.repositories[0]?.updated_at,
+        });
+      }
+    } catch (error) {
+      logger.error(
+        'Failed to fetch repository stats:',
+        error instanceof Error ? error : new Error(String(error))
+      );
+    }
+  };
+
+  const checkConnectionStatus = useCallback(async () => {
     try {
       const response = await fetch('/api/v1/integrations/github/status');
       if (response.ok) {
@@ -72,16 +91,7 @@ export default function GitHubIntegrationPage() {
         setConnectionStatus(data);
 
         if (data.isConnected) {
-          // Fetch repository stats
-          const statsResponse = await fetch('/api/v1/analytics/repositories');
-          if (statsResponse.ok) {
-            const statsData = await statsResponse.json();
-            setRepositoryStats({
-              total: statsData.data.repositories.length,
-              synced: statsData.data.repositories.length,
-              lastUpdated: statsData.data.repositories[0]?.updated_at,
-            });
-          }
+          await fetchRepositoryStats();
         }
       }
     } catch (error) {
@@ -92,7 +102,7 @@ export default function GitHubIntegrationPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const handleConnect = async () => {
     try {
@@ -113,6 +123,7 @@ export default function GitHubIntegrationPage() {
   };
 
   const handleDisconnect = async () => {
+    // TODO: Replace with proper modal dialog
     if (
       !window.confirm(
         'Are you sure you want to disconnect GitHub? This will remove all synced repository data.'

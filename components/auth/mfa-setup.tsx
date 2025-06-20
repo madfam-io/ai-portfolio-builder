@@ -274,6 +274,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="text-center">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={setupData.qrCodeUrl}
               alt="MFA QR Code"
@@ -342,9 +343,9 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           <Alert>
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>
-              <strong>Important:</strong> Store these codes safely. They're your
-              only way to access your account if you lose your authenticator
-              device.
+              <strong>Important:</strong> Store these codes safely. They&apos;re
+              your only way to access your account if you lose your
+              authenticator device.
             </AlertDescription>
           </Alert>
 
@@ -373,7 +374,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
         </CardContent>
         <CardFooter>
           <Button onClick={handleComplete} className="w-full">
-            I've Saved My Backup Codes
+            I&apos;ve Saved My Backup Codes
           </Button>
         </CardFooter>
       </Card>

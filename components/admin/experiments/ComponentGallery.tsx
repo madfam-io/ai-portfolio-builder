@@ -154,6 +154,7 @@ export default function ComponentGallery({
                     {/* Component Preview */}
                     <div className="aspect-video bg-gray-100 dark:bg-gray-900 relative">
                       {component.thumbnailUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={component.thumbnailUrl}
                           alt={component.name}

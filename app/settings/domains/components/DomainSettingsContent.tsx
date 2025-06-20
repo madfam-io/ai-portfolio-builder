@@ -58,7 +58,8 @@ export function DomainSettingsContent() {
   const loadDomains = useCallback(async () => {
     try {
       setLoading(true);
-      const userDomains = await DomainService.getUserDomains(user!.id);
+      if (!user) throw new Error('User not authenticated');
+      const userDomains = await DomainService.getUserDomains(user.id);
       setDomains(userDomains);
     } catch (error) {
       logger.error('Failed to load domains', error as Error);
@@ -80,8 +81,9 @@ export function DomainSettingsContent() {
 
   const handleAddDomain = async (portfolioId: string, domain: string) => {
     try {
+      if (!user) throw new Error('User not authenticated');
       const newDomain = await DomainService.addCustomDomain(
-        user!.id,
+        user.id,
         portfolioId,
         domain
       );
@@ -95,10 +97,13 @@ export function DomainSettingsContent() {
         description:
           'Your domain has been added. Please follow the setup instructions to verify ownership.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'Failed to add domain. Please try again.',
+        description:
+          error instanceof Error
+            ? error.message
+            : 'Failed to add domain. Please try again.',
         variant: 'destructive',
       });
     }
@@ -155,11 +160,13 @@ export function DomainSettingsContent() {
         title: 'Domain Activated',
         description: 'Your domain is now active and serving your portfolio!',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
         description:
-          error.message || 'Failed to activate domain. Please try again.',
+          error instanceof Error
+            ? error.message
+            : 'Failed to activate domain. Please try again.',
         variant: 'destructive',
       });
     } finally {
