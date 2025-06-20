@@ -14,19 +14,6 @@ const getServerUser = async () => {
   return user;
 };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Supabase configuration missing');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
-// Cloudflare API for domain verification (if using Cloudflare)
-const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
-const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
-
 interface DomainVerificationResult {
   isValid: boolean;
   hasCorrectCNAME: boolean;
@@ -78,6 +65,24 @@ async function verifyDomain(
 
 export const POST = withErrorHandling(
   async (request: NextRequest, { params }: { params: { id: string } }) => {
+    // Initialize Supabase inside the handler
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      logger.error('Supabase configuration missing');
+      return NextResponse.json(
+        { error: 'Database service not configured' },
+        { status: 503 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Cloudflare API for domain verification (if using Cloudflare)
+    const CLOUDFLARE_API_TOKEN = process.env.CLOUDFLARE_API_TOKEN;
+    const CLOUDFLARE_ZONE_ID = process.env.CLOUDFLARE_ZONE_ID;
+
     const user = await getServerUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
@@ -260,6 +265,20 @@ export const POST = withErrorHandling(
 
 export const DELETE = withErrorHandling(
   async (request: NextRequest, { params }: { params: { id: string } }) => {
+    // Initialize Supabase inside the handler
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      logger.error('Supabase configuration missing');
+      return NextResponse.json(
+        { error: 'Database service not configured' },
+        { status: 503 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const user = await getServerUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

@@ -14,17 +14,22 @@ const getServerUser = async () => {
   return user;
 };
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export const GET = withErrorHandling(
   async (request: NextRequest, { params }: { params: { id: string } }) => {
+    // Initialize Supabase inside the handler
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseKey) {
+      logger.error('Supabase configuration missing');
+      return NextResponse.json(
+        { error: 'Database service not configured' },
+        { status: 503 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
     const user = await getServerUser();
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
