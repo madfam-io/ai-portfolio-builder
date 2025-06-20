@@ -29,7 +29,7 @@ export function AddDomainModal({
   onClose,
 }: AddDomainModalProps) {
   const [domain, setDomain] = useState('');
-  const [selectedPortfolio, setSelectedPortfolio] = useState('&apos;);
+  const [selectedPortfolio, setSelectedPortfolio] = useState('');
   const [checking, setChecking] = useState(false);
   const [availability, setAvailability] = useState<unknown>(null);
   const [adding, setAdding] = useState(false);
@@ -118,7 +118,7 @@ export function AddDomainModal({
                 onClick={handleCheckAvailability}
                 disabled={!domain || checking}
               >
-                {checking ? 'Checking...' : 'Check&apos;}
+                {checking ? 'Checking...' : 'Check'}
               </Button>
             </div>
           </div>
@@ -126,7 +126,7 @@ export function AddDomainModal({
           {/* Availability Status */}
           {availability && (
             <Alert
-              variant={availability.isAvailable ? &apos;default&apos; : 'destructive'}
+              variant={availability.isAvailable ? 'default' : 'destructive'}
             >
               <Globe className="h-4 w-4" />
               <AlertDescription>

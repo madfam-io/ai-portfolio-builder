@@ -240,7 +240,7 @@ export function DragDropEditor({
                   <Undo className="h-4 w-4" />
                 </Button>
                 <Button
-                  variant={canRedo() ? &apos;outline&apos; : &apos;ghost'}
+                  variant={canRedo() ? 'outline' : 'ghost'}
                   size="sm"
                   onClick={redo}
                   disabled={!canRedo()}
@@ -375,7 +375,7 @@ export function DragDropEditor({
                     <Grid className="h-4 w-4" />
                   </Button>
                   <Button
-                    variant={showRulers ? &apos;default&apos; : &apos;outline'}
+                    variant={showRulers ? 'default' : 'outline'}
                     size="sm"
                     onClick={() => setShowRulers(!showRulers)}
                     className="h-8 w-8 p-0"
@@ -479,7 +479,7 @@ export function DragDropEditor({
           <div className="bg-white border-2 border-primary rounded-lg p-4 shadow-lg opacity-90">
             <div className="text-sm font-medium">
               {activeId.startsWith('block-type-')
-                ? blockConfigs[activeId.replace('block-type-', '&apos;) as BlockType]
+                ? blockConfigs[activeId.replace('block-type-', '') as BlockType]
                     ?.name
                 : blocks.find(b => b.id === activeId)?.type}
             </div>

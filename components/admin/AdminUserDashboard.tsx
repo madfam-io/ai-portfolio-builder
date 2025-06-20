@@ -157,7 +157,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                     {t.adminImpersonatingUser}
                   </span>
                   <button
-                    onClick={() => handleImpersonation('&apos;)}
+                    onClick={() => handleImpersonation('')}
                     className="text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200"
                   >
                     <ToggleLeft className="text-lg" />
@@ -423,7 +423,7 @@ export default function AdminUserDashboard(): React.ReactElement {
                             className={`mr-3 px-3 py-1 rounded-lg text-sm transition-colors ${
                               selectedUser === user.id
                                 ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                : &apos;bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800'
+                                : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800'
                             }`}
                           >
                             {selectedUser === user.id
@@ -447,7 +447,7 @@ export default function AdminUserDashboard(): React.ReactElement {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              {t.adminWelcomeBack?.replace('{name}', user?.name || '&apos;) ||
+              {t.adminWelcomeBack?.replace('{name}', user?.name || '') ||
                 `Welcome back, ${user?.name}!`}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
