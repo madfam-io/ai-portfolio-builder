@@ -15,20 +15,34 @@ const getServerUser = async () => {
   return user;
 };
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-05-28.basil',
-});
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Supabase configuration missing');
-}
-
-const supabase = createClient(supabaseUrl, supabaseKey);
-
 export const POST = withErrorHandling(async (request: NextRequest) => {
+  // Initialize Stripe inside the handler
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+  if (!stripeSecretKey) {
+    logger.error('Stripe secret key not configured');
+    return NextResponse.json(
+      { error: 'Payment service not configured' },
+      { status: 503 }
+    );
+  }
+
+  const stripe = new Stripe(stripeSecretKey, {
+    apiVersion: '2025-05-28.basil',
+  });
+
+  // Initialize Supabase inside the handler
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseKey) {
+    logger.error('Supabase configuration missing');
+    return NextResponse.json(
+      { error: 'Database service not configured' },
+      { status: 503 }
+    );
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseKey);
   try {
     // Get authenticated user
     const user = await getServerUser();
