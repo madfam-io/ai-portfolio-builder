@@ -77,7 +77,7 @@ export function SuccessMetrics() {
         0
       );
       const calculatePortfolioCompletion = (
-        portfolio: Record<string, unknown>
+        portfolio: Record<string, unknown> | any
       ): number => {
         const sections = ['experience', 'projects', 'skills', 'education'];
         const completedSections = sections.filter(s => {

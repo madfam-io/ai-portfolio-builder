@@ -127,19 +127,21 @@ export function RevenueAnalytics() {
     fetchRevenueData();
   }, [fetchRevenueData]);
 
-  const formatCurrency = (amount: number) => {
+  const formatCurrency = (amount: number | string) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(amount);
+    }).format(numAmount);
   };
 
-  const formatPercentage = (value: number, showSign = false) => {
-    const formatted = `${value.toFixed(1)}%`;
+  const formatPercentage = (value: number | string, showSign = false) => {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    const formatted = `${numValue.toFixed(1)}%`;
     if (!showSign) return formatted;
-    return value > 0 ? `+${formatted}` : formatted;
+    return numValue > 0 ? `+${formatted}` : formatted;
   };
 
   const MetricCard = ({

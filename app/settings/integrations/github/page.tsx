@@ -60,10 +60,6 @@ export default function GitHubIntegrationPage() {
     synced: 0,
   });
 
-  useEffect(() => {
-    checkConnectionStatus();
-  }, [checkConnectionStatus]);
-
   const fetchRepositoryStats = async () => {
     try {
       const statsResponse = await fetch('/api/v1/analytics/repositories');
@@ -103,6 +99,10 @@ export default function GitHubIntegrationPage() {
       setLoading(false);
     }
   }, []);
+
+  useEffect(() => {
+    checkConnectionStatus();
+  }, [checkConnectionStatus]);
 
   const handleConnect = async () => {
     try {
