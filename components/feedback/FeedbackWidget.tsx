@@ -53,7 +53,6 @@ export function FeedbackWidget({
   userId,
   userContext,
   onClose,
-  trigger = 'manual',
 }: FeedbackWidgetProps) {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);

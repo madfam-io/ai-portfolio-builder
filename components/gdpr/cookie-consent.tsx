@@ -73,8 +73,8 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
 
         setConsents(newConsents);
       }
-    } catch (error) {
-      console.error('Failed to check consent status:', error);
+    } catch (_error) {
+      // Failed to check consent status
     }
   }, [user, consents]);
 
@@ -165,8 +165,8 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
         title: 'Preferences Saved',
         description: 'Your cookie preferences have been saved successfully.',
       });
-    } catch (error) {
-      console.error('Failed to save consents:', error);
+    } catch (_error) {
+      // Failed to save consents
       toast({
         title: t.error || 'Error',
         description: 'Failed to save your preferences. Please try again.',
@@ -270,7 +270,7 @@ export default function CookieConsent({ onConsentGiven }: CookieConsentProps) {
           {!showDetails ? (
             <div className="space-y-4">
               <p className="text-sm text-muted-foreground">
-                By clicking "Accept All", you consent to our use of cookies for
+                By clicking &quot;Accept All&quot;, you consent to our use of cookies for
                 analytics, marketing, and enhanced functionality. You can
                 customize your preferences or accept only essential cookies.
               </p>

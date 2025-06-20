@@ -13,7 +13,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
-import { Star, ThumbsUp, TrendingUp, X } from 'lucide-react';
+import { ThumbsUp, TrendingUp, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { createFeedbackSystem } from '@/lib/feedback/feedback-system';
 import type { UserSatisfactionSurvey } from '@/lib/feedback/feedback-system';
@@ -34,7 +34,7 @@ interface SatisfactionSurveyProps {
  */
 export function SatisfactionSurvey({
   userId,
-  trigger,
+  trigger: _trigger,
   onComplete,
   onSkip,
 }: SatisfactionSurveyProps) {

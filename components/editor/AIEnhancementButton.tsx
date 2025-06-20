@@ -126,7 +126,7 @@ export function AIEnhancementButton({
   const { t } = useLanguage();
   const [isEnhancing, setIsEnhancing] = useState(false);
   const [lastEnhanced, setLastEnhanced] = useState<string | null>(null);
-  const { canUseAI, isUpgradeRequired } = useSubscription();
+  const { canUseAI } = useSubscription();
   const { checkAndShowPrompt } = useUpgradePrompts();
 
   const handleEnhance = async (): Promise<void> => {

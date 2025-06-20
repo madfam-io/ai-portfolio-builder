@@ -4,18 +4,16 @@
 
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 
-export const defaultSupabaseMock = {
-  auth: {
-    getUser: jest.fn().mockResolvedValue({
-
-// Mock Supabase
+// Mock Supabase client
 const mockSupabaseClient = {
   auth: {
     getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
     signInWithPassword: jest.fn(),
     signUp: jest.fn(),
     signOut: jest.fn(),
-    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+    onAuthStateChange: jest.fn(() => ({
+      data: { subscription: { unsubscribe: jest.fn() } },
+    })),
   },
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),
@@ -35,11 +33,14 @@ const mockSupabaseClient = {
   },
 };
 
-jest.mock('@/lib/auth/supabase-client', () => ({ 
+jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
   supabase: mockSupabaseClient,
- }));
+}));
 
+export const defaultSupabaseMock = {
+  auth: {
+    getUser: jest.fn().mockResolvedValue({
       data: { user: { id: 'user_123', email: 'test@example.com' } },
       error: null,
     }),

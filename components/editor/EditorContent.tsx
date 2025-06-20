@@ -8,7 +8,6 @@ import {
   EyeOff,
   Undo,
   Redo,
-  Settings,
   Sparkles,
   Monitor,
   Tablet,
@@ -23,10 +22,7 @@ import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import {
-  createOptimizedPortfolioGenerator,
-  PerformanceMonitor,
-} from '@/lib/performance/optimization';
+import { PerformanceMonitor } from '@/lib/performance/optimization';
 import { createMobileOptimizer } from '@/lib/performance/mobile-optimization';
 import { SectionType } from '@/types/portfolio';
 import {
@@ -91,14 +87,13 @@ export function EditorContent() {
       await savePortfolio();
       setLastSaved(new Date());
 
-      const saveTime = performanceMonitor.endTimer('portfolioSave');
-      console.log(`Portfolio saved in ${saveTime}ms`);
+      performanceMonitor.endTimer('portfolioSave');
 
       toast({
         title: t.success || 'Success',
         description: t.portfolioSaved || 'Portfolio saved successfully',
       });
-    } catch (error) {
+    } catch (_error) {
       performanceMonitor.endTimer('portfolioSave');
       toast({
         title: t.error || 'Error',
@@ -174,15 +169,14 @@ export function EditorContent() {
         }
       }
 
-      const aiTime = performanceMonitor.endTimer('aiProcessing');
-      console.log(`AI enhancement completed in ${aiTime}ms`);
+      performanceMonitor.endTimer('aiProcessing');
 
       toast({
         title: t.success || 'Success',
         description:
           t.contentEnhanced || 'Your content has been enhanced with AI',
       });
-    } catch (error) {
+    } catch (_error) {
       performanceMonitor.endTimer('aiProcessing');
       toast({
         title: t.error || 'Error',

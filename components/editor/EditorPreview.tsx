@@ -1,22 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { Monitor, Tablet, Smartphone } from 'lucide-react';
+import React from 'react';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { cn } from '@/lib/utils';
 import { Portfolio } from '@/types/portfolio';
 import { DeveloperTemplate } from '@/components/templates/DeveloperTemplate';
 import { DesignerTemplate } from '@/components/templates/DesignerTemplate';
 import { ConsultantTemplate } from '@/components/templates/ConsultantTemplate';
-import { Button } from '@/components/ui/button';
-
 interface EditorPreviewProps {
   portfolio: Portfolio;
   mode?: 'desktop' | 'tablet' | 'mobile';
   className?: string;
 }
-
-type PreviewMode = 'desktop' | 'tablet' | 'mobile';
 
 /**
  * EditorPreview Component
