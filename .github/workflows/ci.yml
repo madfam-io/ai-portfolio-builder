@@ -9,6 +9,7 @@ on:
 env:
   NODE_VERSION: '18.18.0'
   PNPM_VERSION: '8.15.4'
+  FORCE_COLOR: 1
 
 jobs:
   # Job 1: Lint and Type Check
@@ -29,6 +30,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Verify Node.js version
+        run: |
+          echo "Expected Node.js version: ${{ env.NODE_VERSION }}"
+          echo "Actual Node.js version: $(node --version)"
+          node --version | grep -q "v${{ env.NODE_VERSION }}" || exit 1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -61,6 +68,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Verify Node.js version
+        run: |
+          echo "Expected Node.js version: ${{ env.NODE_VERSION }}"
+          echo "Actual Node.js version: $(node --version)"
+          node --version | grep -q "v${{ env.NODE_VERSION }}" || exit 1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -156,6 +169,12 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
 
+      - name: Verify Node.js version
+        run: |
+          echo "Expected Node.js version: ${{ env.NODE_VERSION }}"
+          echo "Actual Node.js version: $(node --version)"
+          node --version | grep -q "v${{ env.NODE_VERSION }}" || exit 1
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -199,6 +218,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
+
+      - name: Verify Node.js version
+        run: |
+          echo "Expected Node.js version: ${{ env.NODE_VERSION }}"
+          echo "Actual Node.js version: $(node --version)"
+          node --version | grep -q "v${{ env.NODE_VERSION }}" || exit 1
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
