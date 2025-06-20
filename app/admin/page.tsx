@@ -17,8 +17,6 @@ import {
   TestTube2,
   FileText,
   Shield,
-  DollarSign,
-  UserPlus,
   Activity,
   ArrowUpRight,
 } from 'lucide-react';
@@ -30,11 +28,11 @@ export const metadata: Metadata = {
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
-  
+
   if (!supabase) {
     redirect('/auth/signin');
   }
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser();

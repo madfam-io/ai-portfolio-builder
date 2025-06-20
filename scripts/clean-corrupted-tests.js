@@ -26,16 +26,20 @@ const corruptedFiles = [
 ];
 
 // Clean up portfolio-service.test.ts first
-const portfolioServiceTest = path.join(__dirname, '..', '__tests__/lib/services/portfolio-service.test.ts');
+const portfolioServiceTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/lib/services/portfolio-service.test.ts'
+);
 if (fs.existsSync(portfolioServiceTest)) {
   let content = fs.readFileSync(portfolioServiceTest, 'utf8');
-  
+
   // Fix the syntax error with missing closing comment
   content = content.replace(
     /\/\*\*\s*\n\s*\* @jest-environment node\s*\n\s*$/m,
     '/**\n * @jest-environment node\n */'
   );
-  
+
   fs.writeFileSync(portfolioServiceTest, content, 'utf8');
   totalFixed++;
   console.log('  ✅ Fixed portfolio-service.test.ts syntax');
@@ -46,19 +50,19 @@ corruptedFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Remove duplicate auth definitions
     const authPattern = /auth:\s*{\s*getUser:.*?},?\s*$/gm;
     const authMatches = content.match(authPattern);
     if (authMatches && authMatches.length > 1) {
       // Keep only the first auth definition
       let count = 0;
-      content = content.replace(authPattern, (match) => {
+      content = content.replace(authPattern, match => {
         count++;
         return count === 1 ? match : '';
       });
     }
-    
+
     // Remove duplicate mock definitions
     if (content.includes('jest.mock(@/lib/auth/supabase-client')) {
       content = content.replace(
@@ -66,10 +70,10 @@ corruptedFiles.forEach(file => {
         ''
       );
     }
-    
+
     // Clean up empty lines
     content = content.replace(/\n{3,}/g, '\n\n');
-    
+
     // For API route tests, ensure proper structure
     if (file.includes('/api/')) {
       // Make sure imports come first
@@ -79,10 +83,10 @@ corruptedFiles.forEach(file => {
       const rest = [];
       let inMockDef = false;
       let braceCount = 0;
-      
+
       for (let i = 0; i < lines.length; i++) {
         const line = lines[i];
-        
+
         if (line.startsWith('import ')) {
           imports.push(line);
         } else if (line.includes('jest.mock(') || inMockDef) {
@@ -99,11 +103,11 @@ corruptedFiles.forEach(file => {
           rest.push(line);
         }
       }
-      
+
       // Reconstruct the file
       content = [...imports, '', ...mocks, '', ...rest].join('\n');
     }
-    
+
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;
     console.log(`  ✅ Cleaned ${file}`);
@@ -175,7 +179,7 @@ describe('Portfolio Variants API', () => {
     });
   });
 });
-`
+`,
 };
 
 // Write the fixed content
@@ -192,10 +196,13 @@ console.log('🚀 Running test check...\n');
 // Check progress
 const { execSync } = require('child_process');
 try {
-  const result = execSync('pnpm test 2>&1 | grep -E "(Tests:|Test Suites:)" | tail -2', {
-    cwd: path.join(__dirname, '..'),
-    encoding: 'utf8'
-  });
+  const result = execSync(
+    'pnpm test 2>&1 | grep -E "(Tests:|Test Suites:)" | tail -2',
+    {
+      cwd: path.join(__dirname, '..'),
+      encoding: 'utf8',
+    }
+  );
   console.log('Current test status:');
   console.log(result);
 } catch (error) {

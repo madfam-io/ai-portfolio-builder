@@ -16,11 +16,14 @@ const querySchema = z.object({
 export async function GET(req: NextRequest) {
   try {
     const supabase = await createClient();
-    
+
     if (!supabase) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      );
     }
-    
+
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -60,7 +63,7 @@ export async function GET(req: NextRequest) {
 
       const previous = trends[index - 1];
       if (!previous) return { ...current, growth: 0 };
-      
+
       const mrrGrowth =
         previous.mrr > 0
           ? ((current.mrr - previous.mrr) / previous.mrr) * 100
@@ -75,7 +78,7 @@ export async function GET(req: NextRequest) {
     // Calculate summary statistics
     const firstTrend = trends[0];
     const lastTrend = trends[trends.length - 1];
-    
+
     const summary = {
       totalGrowth:
         trends.length > 1 && firstTrend && lastTrend && firstTrend.mrr > 0

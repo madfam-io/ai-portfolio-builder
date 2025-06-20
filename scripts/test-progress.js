@@ -6,7 +6,7 @@ console.log('📊 Checking test progress...\n');
 // Run a subset of tests to get a sample
 const testSamples = [
   '__tests__/hooks/use-toast.test.ts',
-  '__tests__/lib/utils/date.test.ts', 
+  '__tests__/lib/utils/date.test.ts',
   '__tests__/lib/utils/crypto.test.ts',
   '__tests__/lib/store/ui-store.test.ts',
   '__tests__/lib/store/auth-store.test.ts',
@@ -29,7 +29,7 @@ testSamples.forEach(test => {
       failCount++;
       console.log(`❌ ${test}`);
     }
-    
+
     // Extract test count
     const testMatch = result.match(/Tests:\s+(\d+)\s+(passed|failed)/);
     if (testMatch) {
@@ -44,11 +44,13 @@ testSamples.forEach(test => {
 console.log('\n📊 Sample Results:');
 console.log(`✅ Passing suites: ${passCount}/${testSamples.length}`);
 console.log(`❌ Failing suites: ${failCount}/${testSamples.length}`);
-console.log(`📈 Pass rate: ${((passCount / testSamples.length) * 100).toFixed(1)}%`);
+console.log(
+  `📈 Pass rate: ${((passCount / testSamples.length) * 100).toFixed(1)}%`
+);
 
 // Estimate total based on sample
 const totalSuites = 136; // Total test suites
-const estimatedPassRate = (passCount / testSamples.length);
+const estimatedPassRate = passCount / testSamples.length;
 const estimatedPassing = Math.round(totalSuites * estimatedPassRate);
 
 console.log('\n🎯 Estimated Total Progress:');

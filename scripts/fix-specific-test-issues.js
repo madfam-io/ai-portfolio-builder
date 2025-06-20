@@ -13,12 +13,16 @@ console.log(`Found ${testFiles.length} test files to fix specific issues...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 
   // Fix 1: Fix async syntax errors from zustand mocking
-  if (content.includes('const { create: actualCreate } = await import(\'zustand\');')) {
+  if (
+    content.includes(
+      "const { create: actualCreate } = await import('zustand');"
+    )
+  ) {
     // This needs to be in an async context
     content = content.replace(
       /const \{ create: actualCreate \} = await import\('zustand'\);/,
@@ -32,7 +36,10 @@ beforeAll(async () => {
   }
 
   // Fix 2: Fix the zustand mock to work properly
-  if (content.includes("jest.mock('zustand'") && content.includes('actualCreate')) {
+  if (
+    content.includes("jest.mock('zustand'") &&
+    content.includes('actualCreate')
+  ) {
     content = content.replace(
       /jest\.mock\('zustand'.*?\}\);/s,
       `jest.mock('zustand', () => ({
@@ -84,7 +91,10 @@ beforeAll(async () => {
   }
 
   // Fix 5: Fix middleware test issues with response checks
-  if (file.includes('middleware') && content.includes('expect(response.status)')) {
+  if (
+    file.includes('middleware') &&
+    content.includes('expect(response.status)')
+  ) {
     // Ensure response is defined before checking status
     content = content.replace(
       /const response = await middleware\(request\);[\s]*expect\(response\.status\)/g,
@@ -99,7 +109,8 @@ beforeAll(async () => {
   if (file.includes('portfolio') && file.includes('service')) {
     // Mock Supabase if not already mocked
     if (!content.includes("jest.mock('@/lib/supabase")) {
-      content = `jest.mock('@/lib/supabase/client', () => ({
+      content =
+        `jest.mock('@/lib/supabase/client', () => ({
   createBrowserClient: jest.fn(() => ({
     from: jest.fn().mockReturnThis(),
     select: jest.fn().mockReturnThis(),
@@ -130,7 +141,11 @@ beforeAll(async () => {
   }
 
   // Fix 8: Fix API route tests with missing mocks
-  if (file.includes('app/api') && content.includes('POST') && !content.includes('NextRequest')) {
+  if (
+    file.includes('app/api') &&
+    content.includes('POST') &&
+    !content.includes('NextRequest')
+  ) {
     // Ensure NextRequest is imported
     if (!content.includes('import { NextRequest')) {
       content = content.replace(
@@ -160,7 +175,9 @@ import { NextRequest, NextResponse } from 'next/server';`
   if (file.includes('csrf') && content.includes('FormData')) {
     // Ensure FormData polyfill is at the very top
     if (content.includes('global.FormData = class FormData')) {
-      const formDataPolyfill = content.match(/\/\/ Polyfill FormData[\s\S]*?\};/);
+      const formDataPolyfill = content.match(
+        /\/\/ Polyfill FormData[\s\S]*?\};/
+      );
       if (formDataPolyfill) {
         content = content.replace(formDataPolyfill[0], '');
         content = formDataPolyfill[0] + '\n\n' + content;
@@ -170,15 +187,21 @@ import { NextRequest, NextResponse } from 'next/server';`
   }
 
   // Fix 11: Remove duplicate test names
-  if (content.includes('it(\'should redirect unauthenticated users from /dashboard to signin\'')) {
+  if (
+    content.includes(
+      "it('should redirect unauthenticated users from /dashboard to signin'"
+    )
+  ) {
     // Check for duplicates
-    const matches = content.match(/it\(['"`]should redirect unauthenticated users from \/dashboard to signin['"`]/g);
+    const matches = content.match(
+      /it\(['"`]should redirect unauthenticated users from \/dashboard to signin['"`]/g
+    );
     if (matches && matches.length > 1) {
       // Keep first, remove others
       let firstFound = false;
       content = content.replace(
         /it\(['"`]should redirect unauthenticated users from \/dashboard to signin['"`][\s\S]*?\}\);/g,
-        (match) => {
+        match => {
           if (!firstFound) {
             firstFound = true;
             return match;

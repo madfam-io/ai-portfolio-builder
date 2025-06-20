@@ -12,11 +12,11 @@ function findTestFiles(dir) {
   const results = [];
   try {
     const files = fs.readdirSync(dir);
-    
+
     for (const file of files) {
       const filePath = path.join(dir, file);
       const stat = fs.statSync(filePath);
-      
+
       if (stat.isDirectory()) {
         results.push(...findTestFiles(filePath));
       } else if (file.endsWith('.test.ts') || file.endsWith('.test.tsx')) {
@@ -26,7 +26,7 @@ function findTestFiles(dir) {
   } catch (error) {
     // Skip directories we can't read
   }
-  
+
   return results;
 }
 
@@ -38,13 +38,16 @@ testFiles.forEach(filePath => {
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     let fixed = false;
-    
+
     // Fix incomplete mock definitions
-    if (content.includes('jest.mock(') && content.includes('createClient: jest.fn(() => ({')) {
+    if (
+      content.includes('jest.mock(') &&
+      content.includes('createClient: jest.fn(() => ({')
+    ) {
       // Check if the mock is incomplete
       const mockStart = content.indexOf('jest.mock(');
       const mockEnd = content.indexOf('}));', mockStart);
-      
+
       if (mockEnd === -1 || mockEnd - mockStart > 1000) {
         // Likely incomplete mock, fix it
         content = content.replace(
@@ -56,37 +59,46 @@ testFiles.forEach(filePath => {
         fixed = true;
       }
     }
-    
+
     // Fix misplaced mock definitions
     if (content.includes('// Mock Supabase\nconst mockSupabaseClient = {')) {
       // Move mock definition before jest.mock
-      const mockObjMatch = content.match(/\/\/ Mock Supabase\nconst mockSupabaseClient = {[\s\S]*?^};/m);
+      const mockObjMatch = content.match(
+        /\/\/ Mock Supabase\nconst mockSupabaseClient = {[\s\S]*?^};/m
+      );
       if (mockObjMatch) {
         const mockObj = mockObjMatch[0];
-        
+
         // Remove from current position
         content = content.replace(mockObj, '');
-        
+
         // Insert before jest.mock
         const jestMockIndex = content.indexOf('jest.mock(');
         if (jestMockIndex > -1) {
-          content = content.slice(0, jestMockIndex) + mockObj + '\n\n' + content.slice(jestMockIndex);
+          content =
+            content.slice(0, jestMockIndex) +
+            mockObj +
+            '\n\n' +
+            content.slice(jestMockIndex);
           fixed = true;
         }
       }
     }
-    
+
     // Fix React import issues in TSX files
-    if (filePath.endsWith('.tsx') && !content.includes("import React from 'react'")) {
+    if (
+      filePath.endsWith('.tsx') &&
+      !content.includes("import React from 'react'")
+    ) {
       content = "import React from 'react';\n" + content;
       fixed = true;
     }
-    
+
     // Fix duplicate imports
     const lines = content.split('\n');
     const uniqueLines = [];
     const seenImports = new Set();
-    
+
     lines.forEach(line => {
       if (line.startsWith('import ') && line.includes(' from ')) {
         if (seenImports.has(line.trim())) {
@@ -97,12 +109,14 @@ testFiles.forEach(filePath => {
       }
       uniqueLines.push(line);
     });
-    
+
     if (fixed) {
       content = uniqueLines.join('\n');
       fs.writeFileSync(filePath, content, 'utf8');
       totalFixed++;
-      console.log(`  ✅ Fixed ${path.relative(path.join(__dirname, '..'), filePath)}`);
+      console.log(
+        `  ✅ Fixed ${path.relative(path.join(__dirname, '..'), filePath)}`
+      );
     }
   } catch (error) {
     console.error(`  ❌ Error processing ${filePath}: ${error.message}`);
@@ -110,10 +124,14 @@ testFiles.forEach(filePath => {
 });
 
 // Specific fix for variants route test
-const variantsTest = path.join(__dirname, '..', '__tests__/app/api/v1/portfolios/[id]/variants/route.test.ts');
+const variantsTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/app/api/v1/portfolios/[id]/variants/route.test.ts'
+);
 if (fs.existsSync(variantsTest)) {
   let content = fs.readFileSync(variantsTest, 'utf8');
-  
+
   // Complete rewrite of the broken file
   const fixedContent = `import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
@@ -197,9 +215,12 @@ routeTests.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Fix the mock structure
-    if (content.includes('createClient: jest.fn(() => ({') && !content.includes('mockSupabaseClient))')) {
+    if (
+      content.includes('createClient: jest.fn(() => ({') &&
+      !content.includes('mockSupabaseClient))')
+    ) {
       content = content.replace(
         /jest\.mock\('@\/lib\/supabase\/server', \(\) => \(\{\s*createClient: jest\.fn\(\(\) => \(\{[\s\S]*?\}\)\),\s*\}\)\);/,
         `const mockSupabaseClient = {
@@ -220,7 +241,7 @@ jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
 }));`
       );
-      
+
       fs.writeFileSync(filePath, content, 'utf8');
       totalFixed++;
       console.log(`  ✅ Fixed mock structure in ${file}`);
@@ -234,10 +255,13 @@ console.log('🚀 Checking test progress...\n');
 // Check progress
 const { execSync } = require('child_process');
 try {
-  const result = execSync('pnpm test 2>&1 | grep -E "(Tests:|Test Suites:)" | tail -2', {
-    cwd: path.join(__dirname, '..'),
-    encoding: 'utf8'
-  });
+  const result = execSync(
+    'pnpm test 2>&1 | grep -E "(Tests:|Test Suites:)" | tail -2',
+    {
+      cwd: path.join(__dirname, '..'),
+      encoding: 'utf8',
+    }
+  );
   console.log('Current test status:');
   console.log(result);
 } catch (error) {

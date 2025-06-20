@@ -5,9 +5,9 @@ const path = require('path');
 const glob = require('glob');
 
 // Find all test files
-const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', { 
+const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', {
   cwd: path.join(__dirname, '..'),
-  ignore: ['**/node_modules/**']
+  ignore: ['**/node_modules/**'],
 });
 
 console.log(`Analyzing ${testFiles.length} test files for remaining failures`);
@@ -18,16 +18,19 @@ testFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   let content = fs.readFileSync(filePath, 'utf8');
   let fileFixed = false;
-  
+
   // Fix missing closing braces syntax issue
   if (content.includes('describe(') && !content.includes('});')) {
     content = content + '\n});';
     fileFixed = true;
     console.log(`  ✓ Fixed missing closing brace in ${file}`);
   }
-  
+
   // Fix missing return type issue in edge-rate-limiter tests
-  if (file.includes('edge-rate-limiter') && content.includes('expect(result1).toBeNull()')) {
+  if (
+    file.includes('edge-rate-limiter') &&
+    content.includes('expect(result1).toBeNull()')
+  ) {
     content = content.replace(
       /const result1 = await edgeRateLimitMiddleware\(request1\);/g,
       'const result1 = await edgeRateLimitMiddleware(request1); await new Promise(resolve => setTimeout(resolve, 1));'
@@ -39,15 +42,17 @@ testFiles.forEach(file => {
     fileFixed = true;
     console.log(`  ✓ Fixed edge rate limiter test expectations in ${file}`);
   }
-  
+
   // Fix showToast destructuring errors
-  if (content.includes("Cannot destructure property 'showToast'") || 
-      content.includes('showToast') && !content.includes("jest.mock('@/lib/store/ui-store'")) {
-    
+  if (
+    content.includes("Cannot destructure property 'showToast'") ||
+    (content.includes('showToast') &&
+      !content.includes("jest.mock('@/lib/store/ui-store'"))
+  ) {
     // Add ui-store mock at the top of the file
     const importSection = content.split('\n').slice(0, 10).join('\n');
     const restOfFile = content.split('\n').slice(10).join('\n');
-    
+
     const mockCode = `
 // Mock ui-store for showToast
 jest.mock('@/lib/store/ui-store', () => ({
@@ -59,14 +64,17 @@ jest.mock('@/lib/store/ui-store', () => ({
 }));
 
 `;
-    
+
     content = importSection + '\n' + mockCode + restOfFile;
     fileFixed = true;
     console.log(`  ✓ Added ui-store mock for showToast in ${file}`);
   }
-  
+
   // Fix HuggingFace service mocking issues
-  if (content.includes('HuggingFaceService') && !content.includes('mockInstance')) {
+  if (
+    content.includes('HuggingFaceService') &&
+    !content.includes('mockInstance')
+  ) {
     content = content.replace(
       /jest\.mock\('@\/lib\/ai\/huggingface-service'\)/g,
       `// Mock HuggingFace service
@@ -84,9 +92,13 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
     fileFixed = true;
     console.log(`  ✓ Fixed HuggingFace service mocking in ${file}`);
   }
-  
+
   // Fix Supabase client issues
-  if (content.includes('supabase') && content.includes('createClient') && !content.includes('mockSupabaseClient')) {
+  if (
+    content.includes('supabase') &&
+    content.includes('createClient') &&
+    !content.includes('mockSupabaseClient')
+  ) {
     const supabaseMock = `
 // Mock Supabase
 const mockSupabaseClient = {
@@ -120,7 +132,7 @@ jest.mock('@/lib/auth/supabase-client', () => ({
   supabase: mockSupabaseClient,
 }));
 `;
-    
+
     const lines = content.split('\n');
     const firstImportIndex = lines.findIndex(line => line.includes('import'));
     if (firstImportIndex >= 0) {
@@ -130,13 +142,18 @@ jest.mock('@/lib/auth/supabase-client', () => ({
       console.log(`  ✓ Added comprehensive Supabase mock in ${file}`);
     }
   }
-  
+
   // Fix fetch mocking issues
-  if (content.includes('fetch') && !content.includes('global.fetch = jest.fn()')) {
+  if (
+    content.includes('fetch') &&
+    !content.includes('global.fetch = jest.fn()')
+  ) {
     const fetchMock = `\n// Mock fetch\nglobal.fetch = jest.fn().mockResolvedValue({\n  ok: true,\n  json: () => Promise.resolve({ success: true }),\n  text: () => Promise.resolve(''),\n  status: 200,\n});\n`;
-    
+
     const lines = content.split('\n');
-    const firstDescribeIndex = lines.findIndex(line => line.includes('describe('));
+    const firstDescribeIndex = lines.findIndex(line =>
+      line.includes('describe(')
+    );
     if (firstDescribeIndex >= 0) {
       lines.splice(firstDescribeIndex, 0, fetchMock);
       content = lines.join('\n');
@@ -144,9 +161,12 @@ jest.mock('@/lib/auth/supabase-client', () => ({
       console.log(`  ✓ Added comprehensive fetch mock in ${file}`);
     }
   }
-  
+
   // Fix zustand store mocking
-  if (content.includes('usePortfolioStore') && !content.includes('mockPortfolioStore')) {
+  if (
+    content.includes('usePortfolioStore') &&
+    !content.includes('mockPortfolioStore')
+  ) {
     const zustandMock = `
 // Mock zustand stores
 const mockPortfolioStore = {
@@ -165,7 +185,7 @@ jest.mock('@/lib/store/portfolio-store', () => ({
   usePortfolioStore: jest.fn(() => mockPortfolioStore),
 }));
 `;
-    
+
     const lines = content.split('\n');
     const firstImportIndex = lines.findIndex(line => line.includes('import'));
     if (firstImportIndex >= 0) {
@@ -175,7 +195,7 @@ jest.mock('@/lib/store/portfolio-store', () => ({
       console.log(`  ✓ Added zustand store mock in ${file}`);
     }
   }
-  
+
   // Fix React 18 act() warnings
   if (content.includes('act(') && !content.includes('await act(')) {
     content = content.replace(/act\(\(\) => \{/g, 'await act(async () => {');
@@ -183,14 +203,19 @@ jest.mock('@/lib/store/portfolio-store', () => ({
     fileFixed = true;
     console.log(`  ✓ Fixed React 18 act() warnings in ${file}`);
   }
-  
+
   // Fix NextResponse.redirect expectations
   if (content.includes('expect(response.status).toBe(302)')) {
-    content = content.replace(/expect\(response\.status\)\.toBe\(302\)/g, 'expect(response.status).toBe(307)');
+    content = content.replace(
+      /expect\(response\.status\)\.toBe\(302\)/g,
+      'expect(response.status).toBe(307)'
+    );
     fileFixed = true;
-    console.log(`  ✓ Fixed NextResponse.redirect status expectation in ${file}`);
+    console.log(
+      `  ✓ Fixed NextResponse.redirect status expectation in ${file}`
+    );
   }
-  
+
   // Fix missing environment variables
   if (content.includes('process.env') && !content.includes('beforeEach')) {
     const envSetup = `
@@ -205,9 +230,11 @@ jest.mock('@/lib/store/portfolio-store', () => ({
     jest.clearAllMocks();
   });
 `;
-    
+
     const lines = content.split('\n');
-    const firstDescribeIndex = lines.findIndex(line => line.includes('describe('));
+    const firstDescribeIndex = lines.findIndex(line =>
+      line.includes('describe(')
+    );
     if (firstDescribeIndex >= 0) {
       lines.splice(firstDescribeIndex + 1, 0, envSetup);
       content = lines.join('\n');
@@ -215,15 +242,25 @@ jest.mock('@/lib/store/portfolio-store', () => ({
       console.log(`  ✓ Added environment variable setup in ${file}`);
     }
   }
-  
+
   // Fix missing async/await in test functions
-  if (content.includes('it(') && content.includes('await ') && !content.includes('async () =>')) {
-    content = content.replace(/it\('([^']+)', \(\) => \{/g, "it('$1', async () => {");
-    content = content.replace(/it\("([^"]+)", \(\) => \{/g, 'it("$1", async () => {');
+  if (
+    content.includes('it(') &&
+    content.includes('await ') &&
+    !content.includes('async () =>')
+  ) {
+    content = content.replace(
+      /it\('([^']+)', \(\) => \{/g,
+      "it('$1', async () => {"
+    );
+    content = content.replace(
+      /it\("([^"]+)", \(\) => \{/g,
+      'it("$1", async () => {'
+    );
     fileFixed = true;
     console.log(`  ✓ Added async/await to test functions in ${file}`);
   }
-  
+
   if (fileFixed) {
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;

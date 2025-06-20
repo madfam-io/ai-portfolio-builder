@@ -3,9 +3,6 @@ import { createClient } from '@/lib/supabase/server';
 import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
 import { z } from 'zod';
 import { handleApiError } from '@/lib/api/error-handler';
-import { withAuth } from '@/lib/api/middleware/auth';
-import { withRateLimit } from '@/lib/api/middleware/rate-limit';
-import { withValidation } from '@/lib/api/middleware/validation';
 
 // Query validation schema
 const querySchema = z.object({
@@ -13,53 +10,22 @@ const querySchema = z.object({
   months: z.string().optional(),
 });
 
-// Middleware wrapper for admin authentication
-async function withAdminAuth(
-  req: NextRequest,
-  handler: (req: NextRequest, context: any) => Promise<NextResponse>
-) {
-  const supabase = await createClient();
-  
-  if (!supabase) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
-  }
-  
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-
-  // Check if user has admin role
-  const { data: profile } = await supabase
-    .from('users')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (profile?.role !== 'admin') {
-    return NextResponse.json(
-      { error: 'Forbidden: Admin access required' },
-      { status: 403 }
-    );
-  }
-
-  return handler(req, { user });
-}
-
 export async function GET(req: NextRequest) {
   try {
     // Admin authentication
     const supabase = await createClient();
-    
+
     if (!supabase) {
-      return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      );
     }
-    
-    const { data: { user } } = await supabase.auth.getUser();
-    
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }

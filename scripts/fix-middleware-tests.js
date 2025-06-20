@@ -13,7 +13,7 @@ console.log(`Found ${testFiles.length} middleware test files to fix...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 

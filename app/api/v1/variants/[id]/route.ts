@@ -37,7 +37,11 @@ async function verifyVariantOwnership(
   variantId: string,
   userId: string
 ) {
-  const { data: variant, error } = await supabase!
+  if (!supabase) {
+    throw new Error('Database connection not available');
+  }
+
+  const { data: variant, error } = await supabase
     .from('portfolio_variants')
     .select(
       `

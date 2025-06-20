@@ -3,16 +3,9 @@
 import { useState } from 'react';
 import { ArrowRight, Sparkles, Grid3X3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { TemplateType } from '@/types/portfolio';
-import { cn } from '@/lib/utils';
 import { TemplateSelectionWizard } from '@/components/templates/TemplateSelectionWizard';
 import { TemplateShowcase } from '@/components/templates/TemplateShowcase';
 
@@ -24,7 +17,7 @@ interface TemplateStepProps {
   t: Record<string, string | undefined>; // Translation object
 }
 
-const templates: Array<{
+const _templates: Array<{
   id: TemplateType;
   name: string;
   description: string;

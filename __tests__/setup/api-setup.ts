@@ -11,32 +11,38 @@ global.TextDecoder = TextDecoder as any;
 
 // Mock Request and Response for Next.js
 class MockRequest {
-  constructor(public url: string, public init: RequestInit = {}) {}
+  constructor(
+    public url: string,
+    public init: RequestInit = {}
+  ) {}
   public method = this.init.method || 'GET';
   public headers = new Headers(this.init.headers);
-  
+
   async json() {
     return this.init.body ? JSON.parse(this.init.body as string) : {};
   }
-  
+
   async text() {
-    return this.init.body as string || '';
+    return (this.init.body as string) || '';
   }
 }
 
 class MockResponse {
-  constructor(public body?: BodyInit, public init: ResponseInit = {}) {}
+  constructor(
+    public body?: BodyInit,
+    public init: ResponseInit = {}
+  ) {}
   public status = this.init.status || 200;
   public statusText = this.init.statusText || 'OK';
   public headers = new Headers(this.init.headers);
   public ok = this.status >= 200 && this.status < 300;
-  
+
   async json() {
     return this.body ? JSON.parse(this.body as string) : {};
   }
-  
+
   async text() {
-    return this.body as string || '';
+    return (this.body as string) || '';
   }
 }
 
@@ -59,7 +65,7 @@ jest.mock('next/server', () => ({
         },
       });
     }
-    
+
     static redirect(url: string, status = 307) {
       return new NextResponse(null, {
         status,

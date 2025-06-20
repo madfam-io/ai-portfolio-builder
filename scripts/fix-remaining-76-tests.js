@@ -9,10 +9,10 @@ console.log('Running test suite to identify specific failures...');
 // Get the test output to see what's actually failing
 let testOutput = '';
 try {
-  execSync('pnpm test --verbose 2>&1', { 
+  execSync('pnpm test --verbose 2>&1', {
     cwd: path.join(__dirname, '..'),
     encoding: 'utf8',
-    timeout: 60000 // 1 minute timeout
+    timeout: 60000, // 1 minute timeout
   });
 } catch (error) {
   testOutput = error.stdout || error.message;
@@ -26,7 +26,7 @@ const fixes = [
     pattern: /Cannot destructure property 'showToast'/,
     files: ['**/*test*.{ts,tsx}'],
     fix: (content, file) => {
-      if (!content.includes("useUIStore: jest.fn(() => ({")) {
+      if (!content.includes('useUIStore: jest.fn(() => ({')) {
         const mockSetup = `
 jest.mock('@/lib/store/ui-store', () => ({
   useUIStore: jest.fn(() => ({
@@ -37,14 +37,16 @@ jest.mock('@/lib/store/ui-store', () => ({
 }));
 `;
         const lines = content.split('\n');
-        const firstImportIndex = lines.findIndex(line => line.includes('import'));
+        const firstImportIndex = lines.findIndex(line =>
+          line.includes('import')
+        );
         if (firstImportIndex >= 0) {
           lines.splice(firstImportIndex + 1, 0, mockSetup);
           return lines.join('\n');
         }
       }
       return content;
-    }
+    },
   },
   {
     pattern: /fetch is not defined/,
@@ -61,20 +63,22 @@ global.fetch = jest.fn().mockResolvedValue({
 });
 `;
         const lines = content.split('\n');
-        const firstDescribeIndex = lines.findIndex(line => line.includes('describe('));
+        const firstDescribeIndex = lines.findIndex(line =>
+          line.includes('describe(')
+        );
         if (firstDescribeIndex >= 0) {
           lines.splice(firstDescribeIndex, 0, fetchMock);
           return lines.join('\n');
         }
       }
       return content;
-    }
+    },
   },
   {
     pattern: /Cannot find module '@\/lib\/auth\/supabase-client'/,
     files: ['**/*test*.{ts,tsx}'],
     fix: (content, file) => {
-      if (!content.includes('jest.mock(\'@/lib/auth/supabase-client\'')) {
+      if (!content.includes("jest.mock('@/lib/auth/supabase-client'")) {
         const supabaseMock = `
 jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => ({
@@ -92,22 +96,24 @@ jest.mock('@/lib/auth/supabase-client', () => ({
 }));
 `;
         const lines = content.split('\n');
-        const firstImportIndex = lines.findIndex(line => line.includes('import'));
+        const firstImportIndex = lines.findIndex(line =>
+          line.includes('import')
+        );
         if (firstImportIndex >= 0) {
           lines.splice(firstImportIndex + 1, 0, supabaseMock);
           return lines.join('\n');
         }
       }
       return content;
-    }
-  }
+    },
+  },
 ];
 
 // Apply fixes to test files
 const glob = require('glob');
-const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', { 
+const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', {
   cwd: path.join(__dirname, '..'),
-  ignore: ['**/node_modules/**']
+  ignore: ['**/node_modules/**'],
 });
 
 let totalFixed = 0;
@@ -116,7 +122,7 @@ testFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   let content = fs.readFileSync(filePath, 'utf8');
   let fileFixed = false;
-  
+
   // Apply each fix
   fixes.forEach(fix => {
     if (fix.pattern.test(testOutput) || fix.pattern.test(content)) {
@@ -127,11 +133,14 @@ testFiles.forEach(file => {
       }
     }
   });
-  
+
   // Additional specific fixes
-  
+
   // Fix environment variable issues
-  if (content.includes('process.env.HUGGINGFACE_API_KEY') && !content.includes('HUGGINGFACE_API_KEY = \'test-key\'')) {
+  if (
+    content.includes('process.env.HUGGINGFACE_API_KEY') &&
+    !content.includes("HUGGINGFACE_API_KEY = 'test-key'")
+  ) {
     content = content.replace(
       /beforeEach\(\(\) => \{/g,
       `beforeEach(() => {
@@ -140,9 +149,13 @@ testFiles.forEach(file => {
     );
     fileFixed = true;
   }
-  
+
   // Fix missing mock portfolio data
-  if (content.includes('Portfolio') && !content.includes('mockPortfolio') && file.includes('editor')) {
+  if (
+    content.includes('Portfolio') &&
+    !content.includes('mockPortfolio') &&
+    file.includes('editor')
+  ) {
     const mockPortfolio = `
 const mockPortfolio = {
   id: 'test-portfolio',
@@ -168,20 +181,29 @@ const mockPortfolio = {
 };
 `;
     const lines = content.split('\n');
-    const firstDescribeIndex = lines.findIndex(line => line.includes('describe('));
+    const firstDescribeIndex = lines.findIndex(line =>
+      line.includes('describe(')
+    );
     if (firstDescribeIndex >= 0) {
       lines.splice(firstDescribeIndex, 0, mockPortfolio);
       content = lines.join('\n');
       fileFixed = true;
     }
   }
-  
+
   // Fix async/await issues
-  if (content.includes('await ') && content.includes('it(') && !content.includes('async () =>')) {
-    content = content.replace(/it\('([^']+)', \(\) => \{/g, "it('$1', async () => {");
+  if (
+    content.includes('await ') &&
+    content.includes('it(') &&
+    !content.includes('async () =>')
+  ) {
+    content = content.replace(
+      /it\('([^']+)', \(\) => \{/g,
+      "it('$1', async () => {"
+    );
     fileFixed = true;
   }
-  
+
   if (fileFixed) {
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;
@@ -194,11 +216,14 @@ console.log('Running quick test to check improvement...');
 
 // Run a quick test to see if we improved
 try {
-  const quickTestOutput = execSync('pnpm test --passWithNoTests --silent 2>&1 | tail -5', { 
-    cwd: path.join(__dirname, '..'),
-    encoding: 'utf8',
-    timeout: 30000
-  });
+  const quickTestOutput = execSync(
+    'pnpm test --passWithNoTests --silent 2>&1 | tail -5',
+    {
+      cwd: path.join(__dirname, '..'),
+      encoding: 'utf8',
+      timeout: 30000,
+    }
+  );
   console.log('Quick test result:', quickTestOutput);
 } catch (error) {
   console.log('Test check completed');

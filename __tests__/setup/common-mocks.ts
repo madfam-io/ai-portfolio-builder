@@ -88,7 +88,7 @@ export const createSupabaseMock = () => {
   const mockOrder = jest.fn().mockReturnThis();
   const mockLimit = jest.fn().mockReturnThis();
   const mockSingle = jest.fn().mockResolvedValue({ data: null, error: null });
-  
+
   const mockFrom = jest.fn(() => ({
     select: mockSelect,
     insert: mockInsert,
@@ -105,12 +105,16 @@ export const createSupabaseMock = () => {
 
   return {
     auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithPassword: jest.fn().mockResolvedValue({ data: null, error: null }),
+      getUser: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithPassword: jest
+        .fn()
+        .mockResolvedValue({ data: null, error: null }),
       signUp: jest.fn().mockResolvedValue({ data: null, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ 
-        data: { subscription: { unsubscribe: jest.fn() } } 
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
       })),
     },
     from: mockFrom,
@@ -118,7 +122,11 @@ export const createSupabaseMock = () => {
       from: jest.fn().mockReturnValue({
         upload: jest.fn().mockResolvedValue({ data: null, error: null }),
         remove: jest.fn().mockResolvedValue({ data: null, error: null }),
-        getPublicUrl: jest.fn().mockReturnValue({ data: { publicUrl: 'https://example.com/image.jpg' } }),
+        getPublicUrl: jest
+          .fn()
+          .mockReturnValue({
+            data: { publicUrl: 'https://example.com/image.jpg' },
+          }),
       }),
     },
   };

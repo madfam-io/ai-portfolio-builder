@@ -15,8 +15,10 @@ global.TextDecoder = TextDecoder;
 // Mock next/navigation
 jest.mock('next/navigation', () => ({
   useRouter: () => require('./__tests__/setup/global-mocks').mockUseRouter(),
-  usePathname: () => require('./__tests__/setup/global-mocks').mockUsePathname(),
-  useSearchParams: () => require('./__tests__/setup/global-mocks').mockUseSearchParams(),
+  usePathname: () =>
+    require('./__tests__/setup/global-mocks').mockUsePathname(),
+  useSearchParams: () =>
+    require('./__tests__/setup/global-mocks').mockUseSearchParams(),
   useParams: jest.fn(() => ({})),
   notFound: jest.fn(),
   redirect: jest.fn(),
@@ -24,17 +26,20 @@ jest.mock('next/navigation', () => ({
 
 // Mock i18n
 jest.mock('@/lib/i18n/refactored-context', () => ({
-  useLanguage: () => require('./__tests__/setup/global-mocks').mockUseLanguage(),
+  useLanguage: () =>
+    require('./__tests__/setup/global-mocks').mockUseLanguage(),
   LanguageProvider: ({ children }) => children,
 }));
 
 // Mock Supabase
 jest.mock('@/lib/supabase/server', () => ({
-  createClient: () => require('./__tests__/setup/global-mocks').createSupabaseMock(),
+  createClient: () =>
+    require('./__tests__/setup/global-mocks').createSupabaseMock(),
 }));
 
 jest.mock('@/lib/supabase/client', () => ({
-  createClient: () => require('./__tests__/setup/global-mocks').createSupabaseMock(),
+  createClient: () =>
+    require('./__tests__/setup/global-mocks').createSupabaseMock(),
 }));
 
 // Clean up after each test

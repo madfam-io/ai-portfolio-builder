@@ -13,7 +13,7 @@ console.log(`Found ${testFiles.length} test files to check...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 
@@ -28,7 +28,10 @@ testFiles.forEach((file) => {
   }
 
   // Fix 2: jest.mock for HuggingFaceService
-  if (content.includes("jest.mock('@/lib/ai/huggingface-service')") && !content.includes('HuggingFaceService: jest.fn()')) {
+  if (
+    content.includes("jest.mock('@/lib/ai/huggingface-service')") &&
+    !content.includes('HuggingFaceService: jest.fn()')
+  ) {
     // Update the mock to properly mock the class
     content = content.replace(
       /jest\.mock\('@\/lib\/ai\/huggingface-service'\);/g,
@@ -40,7 +43,10 @@ testFiles.forEach((file) => {
   }
 
   // Fix 3: Add proper type assertions for mocked functions
-  if (content.includes('as jest.MockedFunction') && !content.includes('jest.mocked')) {
+  if (
+    content.includes('as jest.MockedFunction') &&
+    !content.includes('jest.mocked')
+  ) {
     content = content.replace(
       /\((\w+) as jest\.MockedFunction<typeof \w+>\)/g,
       'jest.mocked($1)'
@@ -69,8 +75,8 @@ testFiles.forEach((file) => {
 
   // Fix 6: Add missing test environment comments for node tests
   if (
-    file.includes('/api/') && 
-    !content.includes('@jest-environment') && 
+    file.includes('/api/') &&
+    !content.includes('@jest-environment') &&
     content.includes('NextRequest')
   ) {
     content = `/**
@@ -101,7 +107,7 @@ ${content}`;
 
   // Fix 9: Add missing FormData polyfill for tests that need it
   if (
-    content.includes('FormData') && 
+    content.includes('FormData') &&
     !content.includes('global.FormData') &&
     file.includes('/api/')
   ) {
@@ -130,12 +136,18 @@ global.FormData = class FormData {
   }
 };
 `;
-    
+
     // Add after imports but before jest.mock calls
-    const importMatch = content.match(/(import[\s\S]*?from\s+['"][^'"]+['"];?\s*\n)+/);
+    const importMatch = content.match(
+      /(import[\s\S]*?from\s+['"][^'"]+['"];?\s*\n)+/
+    );
     if (importMatch) {
       const lastImportEnd = importMatch.index + importMatch[0].length;
-      content = content.slice(0, lastImportEnd) + '\n' + formDataPolyfill + content.slice(lastImportEnd);
+      content =
+        content.slice(0, lastImportEnd) +
+        '\n' +
+        formDataPolyfill +
+        content.slice(lastImportEnd);
       modified = true;
     }
   }

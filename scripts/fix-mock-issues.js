@@ -13,23 +13,32 @@ console.log(`Found ${testFiles.length} test files to check for mock issues...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 
   // Fix 1: Add missing afterEach for tests that use jest.useFakeTimers
-  if (content.includes('jest.useFakeTimers') && !content.includes('jest.useRealTimers')) {
+  if (
+    content.includes('jest.useFakeTimers') &&
+    !content.includes('jest.useRealTimers')
+  ) {
     const describeBlocks = content.split(/describe\(/g);
     for (let i = 1; i < describeBlocks.length; i++) {
-      if (describeBlocks[i].includes('jest.useFakeTimers') && !describeBlocks[i].includes('jest.useRealTimers')) {
+      if (
+        describeBlocks[i].includes('jest.useFakeTimers') &&
+        !describeBlocks[i].includes('jest.useRealTimers')
+      ) {
         // Find the end of this describe block
         const blockEnd = describeBlocks[i].lastIndexOf('});');
         if (blockEnd > 0) {
-          describeBlocks[i] = describeBlocks[i].slice(0, blockEnd) + `
+          describeBlocks[i] =
+            describeBlocks[i].slice(0, blockEnd) +
+            `
   afterEach(() => {
     jest.useRealTimers();
   });
-` + describeBlocks[i].slice(blockEnd);
+` +
+            describeBlocks[i].slice(blockEnd);
           modified = true;
         }
       }
@@ -57,14 +66,16 @@ testFiles.forEach((file) => {
   );
 
   // Fix 4: Fix HuggingFace service mock constructor
-  if (content.includes("jest.mock('@/lib/ai/huggingface-service')") && 
-      content.includes('HuggingFaceService:') &&
-      !content.includes('jest.fn(() =>')) {
+  if (
+    content.includes("jest.mock('@/lib/ai/huggingface-service')") &&
+    content.includes('HuggingFaceService:') &&
+    !content.includes('jest.fn(() =>')
+  ) {
     content = content.replace(
       /HuggingFaceService:\s*mockHuggingFaceService/g,
       'HuggingFaceService: jest.fn(() => mockHuggingFaceInstance)'
     );
-    
+
     // Ensure mockHuggingFaceInstance is defined
     if (!content.includes('mockHuggingFaceInstance')) {
       content = content.replace(
@@ -83,7 +94,10 @@ testFiles.forEach((file) => {
   }
 
   // Fix 5: Add missing i18n mock import where useLanguage is used
-  if (content.includes('useLanguage') && !content.includes("jest.mock('@/lib/i18n/refactored-context')")) {
+  if (
+    content.includes('useLanguage') &&
+    !content.includes("jest.mock('@/lib/i18n/refactored-context')")
+  ) {
     // Add the mock before the component imports
     const importMatch = content.match(/(import.*from.*['"]@\/.*['"];?\s*\n)+/);
     if (importMatch) {
@@ -103,7 +117,9 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
   // Fix 6: Fix cache mock issues
   if (content.includes('cache.get') || content.includes('cache.set')) {
     if (!content.includes("jest.mock('@/lib/cache")) {
-      const importMatch = content.match(/(import.*from.*['"]@\/.*['"];?\s*\n)+/);
+      const importMatch = content.match(
+        /(import.*from.*['"]@\/.*['"];?\s*\n)+/
+      );
       if (importMatch) {
         const mockCode = `
 // Mock cache
@@ -124,7 +140,10 @@ jest.mock('@/lib/cache/redis-cache.server', () => ({
   }
 
   // Fix 7: Mock fetch for tests that use it
-  if ((content.includes('fetch(') || content.includes('Response')) && !content.includes('global.fetch')) {
+  if (
+    (content.includes('fetch(') || content.includes('Response')) &&
+    !content.includes('global.fetch')
+  ) {
     // Add fetch mock in beforeEach
     content = content.replace(
       /beforeEach\(\(\) => \{/g,

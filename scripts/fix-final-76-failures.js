@@ -6,28 +6,32 @@ const path = require('path');
 console.log('Fixing final 76 test failures');
 
 // Fix edge-rate-limiter test expectations
-const edgeRateLimiterFile = path.join(__dirname, '..', '__tests__/middleware/edge-rate-limiter.test.ts');
+const edgeRateLimiterFile = path.join(
+  __dirname,
+  '..',
+  '__tests__/middleware/edge-rate-limiter.test.ts'
+);
 if (fs.existsSync(edgeRateLimiterFile)) {
   let content = fs.readFileSync(edgeRateLimiterFile, 'utf8');
-  
+
   // Fix the specific expectation that's failing
   content = content.replace(
     /expect\(result1\)\.toEqual\(expect\.objectContaining\(\{ status: 200 \}\)\) \|\| expect\(result1\)\.toBeNull\(\)/g,
     'expect(result1).toBeNull()'
   );
-  
+
   // Fix the edge rate limiter to return null instead of Response objects
   content = content.replace(
     /const result1 = await edgeRateLimitMiddleware\(request1\); await new Promise\(resolve => setTimeout\(resolve, 1\)\);/g,
     'const result1 = await edgeRateLimitMiddleware(request1);'
   );
-  
+
   // Update expectations to match the actual behavior
   content = content.replace(
     /expect\(result2\)\.toBeNull\(\)/g,
     'expect(result2).toBeNull()'
   );
-  
+
   fs.writeFileSync(edgeRateLimiterFile, content, 'utf8');
   console.log('  ✓ Fixed edge-rate-limiter test expectations');
 }
@@ -43,7 +47,7 @@ envTestFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add environment setup at the top of beforeEach
     if (!content.includes('process.env.HUGGINGFACE_API_KEY')) {
       content = content.replace(
@@ -53,7 +57,7 @@ envTestFiles.forEach(file => {
     process.env.HUGGINGFACE_API_KEY = 'test-key';
     process.env.NODE_ENV = 'test';`
       );
-      
+
       fs.writeFileSync(filePath, content, 'utf8');
       console.log(`  ✓ Added environment variables to ${file}`);
     }
@@ -70,8 +74,11 @@ showToastFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
-    if (content.includes('showToast') && !content.includes("useUIStore: jest.fn(() => ({")) {
+
+    if (
+      content.includes('showToast') &&
+      !content.includes('useUIStore: jest.fn(() => ({')
+    ) {
       // Add proper UI store mock
       const mockSetup = `
 // Mock UI store with showToast
@@ -83,13 +90,13 @@ jest.mock('@/lib/store/ui-store', () => ({
   })),
 }));
 `;
-      
+
       const lines = content.split('\n');
       const firstImportIndex = lines.findIndex(line => line.includes('import'));
       if (firstImportIndex >= 0) {
         lines.splice(firstImportIndex + 1, 0, mockSetup);
         content = lines.join('\n');
-        
+
         fs.writeFileSync(filePath, content, 'utf8');
         console.log(`  ✓ Fixed showToast mock in ${file}`);
       }
@@ -107,7 +114,7 @@ portfolioFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     if (!content.includes('mockPortfolio') && content.includes('Portfolio')) {
       const mockPortfolio = `
 const mockPortfolio = {
@@ -133,13 +140,15 @@ const mockPortfolio = {
   updatedAt: new Date(),
 };
 `;
-      
+
       const lines = content.split('\n');
-      const firstDescribeIndex = lines.findIndex(line => line.includes('describe('));
+      const firstDescribeIndex = lines.findIndex(line =>
+        line.includes('describe(')
+      );
       if (firstDescribeIndex >= 0) {
         lines.splice(firstDescribeIndex, 0, mockPortfolio);
         content = lines.join('\n');
-        
+
         fs.writeFileSync(filePath, content, 'utf8');
         console.log(`  ✓ Added mockPortfolio to ${file}`);
       }

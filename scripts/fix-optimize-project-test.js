@@ -12,12 +12,12 @@ let content = fs.readFileSync(testFile, 'utf8');
 // Fix 1: Update request body format to match the schema
 content = content.replace(
   /const requestBody = \{[\s\S]*?project: \{[\s\S]*?\},[\s\S]*?\};/g,
-  (match) => {
+  match => {
     // Extract the project properties
     const titleMatch = match.match(/title:\s*['"`]([^'"`]+)['"`]/);
     const descMatch = match.match(/description:\s*['"`]([^'"`]+)['"`]/);
     const techMatch = match.match(/technologies:\s*\[([^\]]+)\]/);
-    
+
     if (titleMatch && descMatch && techMatch) {
       return `const requestBody = {
         title: '${titleMatch[1]}',
@@ -95,13 +95,16 @@ content = content.replace(
 // Fix 8: Fix the mock setup for RPC calls
 content = content.replace(
   /single: jest[\s\S]*?\.fn\(\)[\s\S]*?\.mockResolvedValueOnce\(\{[\s\S]*?data: \{[\s\S]*?id: 'user_123',[\s\S]*?ai_credits: \d+,[\s\S]*?subscription_plan: ['"`]\w+['"`],[\s\S]*?\},/g,
-  (match) => {
+  match => {
     // Add rpc mock
-    return match.replace(/\},\s*$/, `},
+    return match.replace(
+      /\},\s*$/,
+      `},
         from: jest.fn().mockReturnThis(),
         select: jest.fn().mockReturnThis(), 
         eq: jest.fn().mockReturnThis(),
-        rpc: jest.fn().mockResolvedValue({ data: true, error: null }),`);
+        rpc: jest.fn().mockResolvedValue({ data: true, error: null }),`
+    );
   }
 );
 
@@ -109,10 +112,13 @@ content = content.replace(
 if (!content.includes('defaultSupabaseMock') || !content.includes('rpc:')) {
   content = content.replace(
     /const defaultSupabaseMock = \{[\s\S]*?\};/,
-    (match) => {
+    match => {
       if (!match.includes('rpc:')) {
-        return match.replace(/\};$/, `  rpc: jest.fn().mockResolvedValue({ data: true, error: null }),
-};`);
+        return match.replace(
+          /\};$/,
+          `  rpc: jest.fn().mockResolvedValue({ data: true, error: null }),
+};`
+        );
       }
       return match;
     }

@@ -13,54 +13,60 @@ const glob = require('glob');
 const fixes = [
   // Fix duplicate mock declarations
   {
-    pattern: /jest\.mock\(['"]@\/lib\/i18n\/refactored-context['"],\s*\(\)\s*=>\s*\({[\s\S]*?}\)\);[\s\S]*?jest\.mock\(['"]@\/lib\/i18n\/refactored-context['"],/g,
-    replacement: (match) => {
+    pattern:
+      /jest\.mock\(['"]@\/lib\/i18n\/refactored-context['"],\s*\(\)\s*=>\s*\({[\s\S]*?}\)\);[\s\S]*?jest\.mock\(['"]@\/lib\/i18n\/refactored-context['"],/g,
+    replacement: match => {
       // Keep only the first mock
       const firstMock = match.split('jest.mock')[1];
       return 'jest.mock' + firstMock + ';';
     },
-    description: 'Remove duplicate i18n mock declarations'
+    description: 'Remove duplicate i18n mock declarations',
   },
 
   // Fix duplicate useLanguage declarations in mocks
   {
-    pattern: /useLanguage:\s*\(\)\s*=>\s*mockUseLanguage\(\),[\s\S]*?useLanguage:/g,
+    pattern:
+      /useLanguage:\s*\(\)\s*=>\s*mockUseLanguage\(\),[\s\S]*?useLanguage:/g,
     replacement: 'useLanguage: () => mockUseLanguage(),',
-    description: 'Remove duplicate useLanguage in mocks'
+    description: 'Remove duplicate useLanguage in mocks',
   },
 
   // Fix duplicate imports
   {
-    pattern: /import\s+{\s*mockUseLanguage\s*}\s+from\s+['"]@\/test-utils\/mock-i18n['"];[\s\S]*?import\s+{\s*mockUseLanguage\s*}\s+from/g,
-    replacement: "import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';",
-    description: 'Fix duplicate mockUseLanguage imports'
+    pattern:
+      /import\s+{\s*mockUseLanguage\s*}\s+from\s+['"]@\/test-utils\/mock-i18n['"];[\s\S]*?import\s+{\s*mockUseLanguage\s*}\s+from/g,
+    replacement:
+      "import { mockUseLanguage } from '@/__tests__/utils/mock-i18n';",
+    description: 'Fix duplicate mockUseLanguage imports',
   },
 
   // Fix malformed mock declarations
   {
     pattern: /}\)\);\s*useLanguage:/g,
     replacement: '}));',
-    description: 'Fix malformed mock endings'
+    description: 'Fix malformed mock endings',
   },
 
   // Fix duplicate mock imports
   {
     pattern: /(import[^;]+from\s+['"][^'"]+['"];)\s*\1/g,
     replacement: '$1',
-    description: 'Remove duplicate import statements'
+    description: 'Remove duplicate import statements',
   },
 
   // Fix React component mock syntax
   {
-    pattern: /jest\.mock\(['"]@\/components\/ui\/([^'"]+)['"],\s*\(\)\s*=>\s*\({[^}]*}\)\s*\);/g,
+    pattern:
+      /jest\.mock\(['"]@\/components\/ui\/([^'"]+)['"],\s*\(\)\s*=>\s*\({[^}]*}\)\s*\);/g,
     replacement: (match, componentPath) => {
       const componentName = componentPath.split('/').pop();
-      const pascalCase = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+      const pascalCase =
+        componentName.charAt(0).toUpperCase() + componentName.slice(1);
       return `jest.mock('@/components/ui/${componentPath}', () => ({
   ${pascalCase}: ({ children, ...props }: any) => <div {...props}>{children}</div>,
 }));`;
     },
-    description: 'Fix UI component mocks'
+    description: 'Fix UI component mocks',
   },
 
   // Fix missing React imports in test files
@@ -72,14 +78,14 @@ const fixes = [
       }
       return match;
     },
-    description: 'Add missing React imports'
+    description: 'Add missing React imports',
   },
 
   // Fix date mock issues
   {
     pattern: /new Date\(['"]2025-06-01['"]\)/g,
     replacement: "new Date('2025-06-01T00:00:00.000Z')",
-    description: 'Fix date timezone issues'
+    description: 'Fix date timezone issues',
   },
 
   // Fix async test patterns
@@ -91,53 +97,57 @@ const fixes = [
       }
       return `it('${testName}', async () => {`;
     },
-    description: 'Add async to test functions'
+    description: 'Add async to test functions',
   },
 
   // Fix Supabase mock conflicts
   {
-    pattern: /jest\.mock\(['"]@\/lib\/supabase\/(?:client|server)['"]\);[\s\S]*?jest\.mock\(['"]@\/lib\/supabase\/(?:client|server)['"]\);/g,
+    pattern:
+      /jest\.mock\(['"]@\/lib\/supabase\/(?:client|server)['"]\);[\s\S]*?jest\.mock\(['"]@\/lib\/supabase\/(?:client|server)['"]\);/g,
     replacement: "jest.mock('@/lib/supabase/server');",
-    description: 'Remove duplicate Supabase mocks'
+    description: 'Remove duplicate Supabase mocks',
   },
 
   // Fix test utility imports
   {
-    pattern: /import\s+{\s*renderWithProviders\s*}\s+from\s+['"][^'"]+test-utils[^'"]*['"];/g,
-    replacement: "import { renderWithProviders } from '@/__tests__/utils/test-utils';",
-    description: 'Standardize test utility imports'
+    pattern:
+      /import\s+{\s*renderWithProviders\s*}\s+from\s+['"][^'"]+test-utils[^'"]*['"];/g,
+    replacement:
+      "import { renderWithProviders } from '@/__tests__/utils/test-utils';",
+    description: 'Standardize test utility imports',
   },
 
   // Fix mock return value patterns
   {
     pattern: /mockResolvedValue\(\s*{\s*data:\s*null\s*}\s*\)/g,
     replacement: 'mockResolvedValue({ data: null, error: null })',
-    description: 'Fix incomplete mock return values'
+    description: 'Fix incomplete mock return values',
   },
 
   // Remove console.log statements from tests
   {
     pattern: /console\.(log|error|warn)\([^)]*\);?\s*\n/g,
     replacement: '',
-    description: 'Remove console statements from tests'
+    description: 'Remove console statements from tests',
   },
 
   // Fix missing semicolons
   {
     pattern: /}\)\)(?!;)[\s]*\n(?![\s]*})/g,
     replacement: '}));\n',
-    description: 'Add missing semicolons'
+    description: 'Add missing semicolons',
   },
 
   // Fix duplicate describe blocks
   {
-    pattern: /describe\(['"]([^'"]+)['"]\s*,[\s\S]*?\n}\);[\s]*describe\(['"]\\1['"]\s*,/g,
-    replacement: (match) => {
+    pattern:
+      /describe\(['"]([^'"]+)['"]\s*,[\s\S]*?\n}\);[\s]*describe\(['"]\\1['"]\s*,/g,
+    replacement: match => {
       // Keep only the first describe block
       return match.split('describe(')[1];
     },
-    description: 'Remove duplicate describe blocks'
-  }
+    description: 'Remove duplicate describe blocks',
+  },
 ];
 
 // Process a single file
@@ -153,7 +163,7 @@ function processFile(filePath) {
     } else {
       content = content.replace(fix.pattern, fix.replacement);
     }
-    
+
     if (content !== originalContent) {
       modified = true;
       changes.push(fix.description);
@@ -161,12 +171,12 @@ function processFile(filePath) {
   });
 
   // Additional specific fixes for common patterns
-  
+
   // Fix multiple mock declarations for the same module
   const mockDeclarations = {};
   const lines = content.split('\n');
   const newLines = [];
-  
+
   lines.forEach(line => {
     const mockMatch = line.match(/jest\.mock\(['"]([^'"]+)['"]/);
     if (mockMatch) {
@@ -181,7 +191,7 @@ function processFile(filePath) {
     }
     newLines.push(line);
   });
-  
+
   if (modified) {
     content = newLines.join('\n');
   }
@@ -193,7 +203,7 @@ function processFile(filePath) {
     changes.forEach(change => console.log(`   - ${change}`));
     return true;
   }
-  
+
   return false;
 }
 
@@ -203,7 +213,7 @@ console.log('🔧 Starting comprehensive test fix...\n');
 // Find all test files
 const testFiles = glob.sync('**/*.test.{ts,tsx,js,jsx}', {
   ignore: ['node_modules/**', '.next/**', 'coverage/**'],
-  cwd: process.cwd()
+  cwd: process.cwd(),
 });
 
 console.log(`Found ${testFiles.length} test files to process\n`);

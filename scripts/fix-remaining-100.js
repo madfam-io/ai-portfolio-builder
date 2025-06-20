@@ -8,11 +8,11 @@ console.log('🚀 Fixing remaining tests to reach 100%...\n');
 // Common patterns that cause failures
 const fixes = {
   // Remove duplicate mocks
-  removeDuplicateMocks: (content) => {
+  removeDuplicateMocks: content => {
     const lines = content.split('\n');
     const seen = new Set();
     const filtered = [];
-    
+
     lines.forEach(line => {
       if (line.startsWith('jest.mock(')) {
         const mockPath = line.match(/jest\.mock\(['"]([^'"]+)['"]/);
@@ -29,16 +29,16 @@ const fixes = {
         filtered.push(line);
       }
     });
-    
+
     return filtered.join('\n');
   },
 
   // Fix duplicate imports
-  fixDuplicateImports: (content) => {
+  fixDuplicateImports: content => {
     const lines = content.split('\n');
     const imports = new Map();
     const otherLines = [];
-    
+
     lines.forEach(line => {
       if (line.startsWith('import ') && line.includes(' from ')) {
         const match = line.match(/from ['"]([^'"]+)['"]/);
@@ -52,27 +52,32 @@ const fixes = {
         otherLines.push(line);
       }
     });
-    
-    return Array.from(imports.values()).join('\n') + '\n' + otherLines.join('\n');
+
+    return (
+      Array.from(imports.values()).join('\n') + '\n' + otherLines.join('\n')
+    );
   },
 
   // Fix missing semicolons
-  fixMissingSemicolons: (content) => {
+  fixMissingSemicolons: content => {
     // Add semicolons after jest.mock if missing
-    content = content.replace(/jest\.mock\([^)]+\)\)[^\n;]/g, (match) => {
+    content = content.replace(/jest\.mock\([^)]+\)\)[^\n;]/g, match => {
       return match.slice(0, -1) + ';' + match.slice(-1);
     });
-    
+
     // Add semicolons after imports if missing
-    content = content.replace(/from ['"][^'"]+['"](?!;|\s*;)/g, (match) => match + ';');
-    
+    content = content.replace(
+      /from ['"][^'"]+['"](?!;|\s*;)/g,
+      match => match + ';'
+    );
+
     return content;
   },
 
   // Fix API route tests
   fixAPIRouteTests: (content, filePath) => {
     if (!filePath.includes('/app/api/')) return content;
-    
+
     // Ensure proper imports and mocks
     const template = `import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
@@ -118,16 +123,19 @@ jest.mock('@/lib/utils/logger', () => ({
     if (testContent) {
       return template + 'describe(' + testContent;
     }
-    
+
     return content;
   },
 
   // Fix store tests
   fixStoreTests: (content, filePath) => {
     if (!filePath.includes('/store/')) return content;
-    
+
     // Ensure zustand mock is properly set up
-    if (!content.includes("jest.mock('zustand')") && content.includes('zustand')) {
+    if (
+      !content.includes("jest.mock('zustand')") &&
+      content.includes('zustand')
+    ) {
       const zustandMock = `
 jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
@@ -146,26 +154,29 @@ jest.mock('zustand', () => ({
   }),
 }));
 `;
-      
+
       const importEnd = content.lastIndexOf('import');
       if (importEnd > -1) {
         const lineEnd = content.indexOf('\n', content.indexOf(';', importEnd));
-        content = content.slice(0, lineEnd + 1) + zustandMock + content.slice(lineEnd + 1);
+        content =
+          content.slice(0, lineEnd + 1) +
+          zustandMock +
+          content.slice(lineEnd + 1);
       }
     }
-    
+
     return content;
   },
 
   // Fix component tests
   fixComponentTests: (content, filePath) => {
     if (!filePath.endsWith('.tsx')) return content;
-    
+
     // Ensure React is imported
     if (!content.includes('import React')) {
       content = "import React from 'react';\n" + content;
     }
-    
+
     // Add act import if needed
     if (content.includes('act(') && !content.includes('import { act }')) {
       content = content.replace(
@@ -178,31 +189,34 @@ jest.mock('zustand', () => ({
         }
       );
     }
-    
+
     return content;
-  }
+  },
 };
 
 // Process all test files
 function processAllTests() {
   console.log('🔍 Finding all test files...\n');
-  
-  const testFiles = execSync('find __tests__ -name "*.test.ts" -o -name "*.test.tsx"', { encoding: 'utf8' })
+
+  const testFiles = execSync(
+    'find __tests__ -name "*.test.ts" -o -name "*.test.tsx"',
+    { encoding: 'utf8' }
+  )
     .split('\n')
     .filter(f => f.trim());
 
   console.log(`Found ${testFiles.length} test files\n`);
 
   let fixedCount = 0;
-  
+
   testFiles.forEach((filePath, index) => {
     if (!fs.existsSync(filePath)) return;
-    
+
     process.stdout.write(`\rProcessing ${index + 1}/${testFiles.length}...`);
-    
+
     let content = fs.readFileSync(filePath, 'utf8');
     let originalContent = content;
-    
+
     // Apply all fixes
     content = fixes.removeDuplicateMocks(content);
     content = fixes.fixDuplicateImports(content);
@@ -210,29 +224,34 @@ function processAllTests() {
     content = fixes.fixAPIRouteTests(content, filePath);
     content = fixes.fixStoreTests(content, filePath);
     content = fixes.fixComponentTests(content, filePath);
-    
+
     // Additional fixes for specific files
     if (filePath.includes('ai/models/route.test.ts')) {
       // Fix the specific duplicate mock issue
-      content = content.replace(/jest\.mock\('@\/lib\/ai\/huggingface-service'[^}]+}\)\);\s*jest\.mock\('@\/lib\/ai\/huggingface-service'/g, 
-        "jest.mock('@/lib/ai/huggingface-service'");
+      content = content.replace(
+        /jest\.mock\('@\/lib\/ai\/huggingface-service'[^}]+}\)\);\s*jest\.mock\('@\/lib\/ai\/huggingface-service'/g,
+        "jest.mock('@/lib/ai/huggingface-service'"
+      );
     }
-    
+
     if (content !== originalContent) {
       fs.writeFileSync(filePath, content);
       fixedCount++;
     }
   });
-  
+
   console.log(`\n\n✅ Fixed ${fixedCount} files`);
 }
 
 // Fix specific known issues
 function fixSpecificIssues() {
   console.log('\n🔧 Fixing specific known issues...\n');
-  
+
   // Fix AI models route test
-  const aiModelsTest = path.join(process.cwd(), '__tests__/app/api/v1/ai/models/route.test.ts');
+  const aiModelsTest = path.join(
+    process.cwd(),
+    '__tests__/app/api/v1/ai/models/route.test.ts'
+  );
   if (fs.existsSync(aiModelsTest)) {
     const content = `import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { NextRequest } from 'next/server';
@@ -275,7 +294,7 @@ describe('GET /api/v1/ai/models', () => {
     expect(data.models[0]).toHaveProperty('id', 'model-1');
   });
 });`;
-    
+
     fs.writeFileSync(aiModelsTest, content);
     console.log('✅ Fixed AI models route test');
   }
@@ -297,11 +316,11 @@ const sampleTests = [
 let passCount = 0;
 sampleTests.forEach(test => {
   try {
-    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, { 
+    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, {
       encoding: 'utf8',
-      timeout: 10000 
+      timeout: 10000,
     });
-    
+
     if (result.includes('PASS ')) {
       console.log(`✅ ${test}`);
       passCount++;

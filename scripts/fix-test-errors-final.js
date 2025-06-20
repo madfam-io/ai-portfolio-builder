@@ -17,10 +17,10 @@ function fixEnhancedStripeServiceMocks() {
     const filePath = path.join(process.cwd(), file);
     if (fs.existsSync(filePath)) {
       let content = fs.readFileSync(filePath, 'utf8');
-      
+
       // Remove old mock setup
       content = content.replace(/const mockEnhancedStripeService[^;]+;/g, '');
-      
+
       // Add proper mock setup before imports
       const mockSetup = `// Mock Enhanced Stripe Service
 const mockEnhancedStripeService = {
@@ -36,12 +36,12 @@ jest.mock('@/lib/services/stripe/enhanced-stripe-service', () => ({
 }));
 
 `;
-      
+
       // Insert at the beginning of the file
       if (!content.includes('const mockEnhancedStripeService = {')) {
         content = mockSetup + content;
       }
-      
+
       fs.writeFileSync(filePath, content);
       console.log(`✅ Fixed Enhanced Stripe Service mock in ${file}`);
     }
@@ -50,25 +50,29 @@ jest.mock('@/lib/services/stripe/enhanced-stripe-service', () => ({
 
 // Fix 2: GitHub API client test module syntax
 function fixGitHubAPIClientTest() {
-  const filePath = path.join(process.cwd(), '__tests__/app/api/v1/analytics/github/client.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/app/api/v1/analytics/github/client.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add jest environment comment
     if (!content.includes('@jest-environment')) {
-      content = `/**
+      content =
+        `/**
  * @jest-environment node
  */
 
 ` + content;
     }
-    
+
     // Fix import issues
     content = content.replace(
       /import { GitHubAPIClient } from '@\/app\/api\/v1\/analytics\/github\/client';/,
-      "// Import will be mocked\nconst GitHubAPIClient = jest.fn();"
+      '// Import will be mocked\nconst GitHubAPIClient = jest.fn();'
     );
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed GitHub API client test');
   }
@@ -76,10 +80,13 @@ function fixGitHubAPIClientTest() {
 
 // Fix 3: Auth Flow Test Protected Route Mock
 function fixAuthFlowTest() {
-  const filePath = path.join(process.cwd(), '__tests__/integration/auth-flow.test.tsx');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/integration/auth-flow.test.tsx'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add ProtectedRoute mock
     const protectedRouteMock = `
 // Mock ProtectedRoute component
@@ -97,14 +104,18 @@ jest.mock('@/components/auth/protected-route', () => ({
   },
 }));
 `;
-    
+
     if (!content.includes("jest.mock('@/components/auth/protected-route'")) {
       const importIndex = content.indexOf('import');
       if (importIndex > -1) {
-        content = content.slice(0, importIndex) + protectedRouteMock + '\n' + content.slice(importIndex);
+        content =
+          content.slice(0, importIndex) +
+          protectedRouteMock +
+          '\n' +
+          content.slice(importIndex);
       }
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed auth flow test');
   }
@@ -112,10 +123,13 @@ jest.mock('@/components/auth/protected-route', () => ({
 
 // Fix 4: Demo Portfolio Service Test
 function fixDemoPortfolioServiceTest() {
-  const filePath = path.join(process.cwd(), '__tests__/services/demo-portfolio-service.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/services/demo-portfolio-service.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add proper mocks
     const mocks = `import { jest } from '@jest/globals';
 
@@ -147,11 +161,11 @@ jest.mock('@/lib/supabase/client', () => ({
 }));
 
 `;
-    
+
     if (!content.includes("jest.mock('@/lib/services/portfolio-service'")) {
       content = mocks + content;
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed demo portfolio service test');
   }
@@ -159,10 +173,13 @@ jest.mock('@/lib/supabase/client', () => ({
 
 // Fix 5: Feedback System Test
 function fixFeedbackSystemTest() {
-  const filePath = path.join(process.cwd(), '__tests__/feedback/feedback-system.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/feedback/feedback-system.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add proper console mocks
     if (!content.includes('beforeEach(() => {')) {
       const setupCode = `
@@ -178,13 +195,13 @@ describe('FeedbackSystem', () => {
     jest.restoreAllMocks();
   });
 `;
-      
+
       content = content.replace(
         /describe\('FeedbackSystem', \(\) => \{/,
         setupCode
       );
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed feedback system test');
   }
@@ -196,12 +213,12 @@ function fixE2ETests() {
     '__tests__/e2e/portfolio-creation-journey.test.ts',
     '__tests__/e2e/template-switching.test.ts',
   ];
-  
+
   e2eTests.forEach(testFile => {
     const filePath = path.join(process.cwd(), testFile);
     if (fs.existsSync(filePath)) {
       let content = fs.readFileSync(filePath, 'utf8');
-      
+
       // Replace Playwright imports with mocks
       content = content.replace(
         /import { test, expect } from '@playwright\/test';?/,
@@ -231,11 +248,14 @@ global.page = {
   $$: jest.fn().mockResolvedValue([]),
 };`
       );
-      
+
       // Replace test syntax
-      content = content.replace(/test\('([^']+)', async \(\) => \{/g, "it('$1', async () => {");
-      content = content.replace(/test\.describe\(/g, "describe(");
-      
+      content = content.replace(
+        /test\('([^']+)', async \(\) => \{/g,
+        "it('$1', async () => {"
+      );
+      content = content.replace(/test\.describe\(/g, 'describe(');
+
       fs.writeFileSync(filePath, content);
       console.log(`✅ Fixed E2E test: ${testFile}`);
     }
@@ -244,15 +264,18 @@ global.page = {
 
 // Fix 7: Performance Optimization Test
 function fixPerformanceOptimizationTest() {
-  const filePath = path.join(process.cwd(), '__tests__/performance/optimization.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/performance/optimization.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add missing imports
     if (!content.includes("import React from 'react'")) {
       content = "import React from 'react';\n" + content;
     }
-    
+
     // Fix console mocks
     if (!content.includes('jest.spyOn(console')) {
       content = content.replace(
@@ -263,7 +286,7 @@ function fixPerformanceOptimizationTest() {
     jest.spyOn(console, 'warn').mockImplementation(() => undefined);`
       );
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed performance optimization test');
   }
@@ -271,12 +294,15 @@ function fixPerformanceOptimizationTest() {
 
 // Fix 8: Onboarding Store Test
 function fixOnboardingStoreTest() {
-  const filePath = path.join(process.cwd(), '__tests__/onboarding/onboarding-store.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/onboarding/onboarding-store.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Fix zustand mock
-    if (!content.includes('jest.mock(\'zustand\'')) {
+    if (!content.includes("jest.mock('zustand'")) {
       const zustandMock = `
 jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
@@ -298,7 +324,7 @@ jest.mock('zustand', () => ({
 `;
       content = zustandMock + content;
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed onboarding store test');
   }
@@ -311,17 +337,17 @@ function fixIntegrationTests() {
     '__tests__/integration/portfolio-publishing.test.tsx',
     '__tests__/integration/ai-enhancement-flow.test.tsx',
   ];
-  
+
   tests.forEach(testFile => {
     const filePath = path.join(process.cwd(), testFile);
     if (fs.existsSync(filePath)) {
       let content = fs.readFileSync(filePath, 'utf8');
-      
+
       // Add React import for TSX files
       if (!content.includes("import React from 'react'")) {
         content = "import React from 'react';\n" + content;
       }
-      
+
       // Add missing act import
       if (content.includes('act(') && !content.includes('import { act }')) {
         content = content.replace(
@@ -329,7 +355,7 @@ function fixIntegrationTests() {
           ", act } from '@testing-library/react';"
         );
       }
-      
+
       fs.writeFileSync(filePath, content);
       console.log(`✅ Fixed integration test: ${testFile}`);
     }
@@ -338,15 +364,18 @@ function fixIntegrationTests() {
 
 // Fix 10: AI Models Route Test Timeout
 function fixAIModelsRouteTest() {
-  const filePath = path.join(process.cwd(), '__tests__/app/api/v1/ai/models/route.test.ts');
+  const filePath = path.join(
+    process.cwd(),
+    '__tests__/app/api/v1/ai/models/route.test.ts'
+  );
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Add timeout configuration
     if (!content.includes('jest.setTimeout')) {
       content = 'jest.setTimeout(30000);\n\n' + content;
     }
-    
+
     // Mock HuggingFace properly
     if (!content.includes('mockHuggingFaceService')) {
       const mockSetup = `
@@ -365,7 +394,7 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
 `;
       content = mockSetup + content;
     }
-    
+
     fs.writeFileSync(filePath, content);
     console.log('✅ Fixed AI models route test');
   }
@@ -384,20 +413,19 @@ function main() {
     fixOnboardingStoreTest();
     fixIntegrationTests();
     fixAIModelsRouteTest();
-    
+
     console.log('\n✨ All fixes applied!');
     console.log('\n📊 Running tests to check progress...\n');
-    
+
     // Run tests and show summary
     try {
-      execSync('npm test 2>&1 | grep -E "(Test Suites:|Tests:)" | tail -2', { 
+      execSync('npm test 2>&1 | grep -E "(Test Suites:|Tests:)" | tail -2', {
         stdio: 'inherit',
-        encoding: 'utf8' 
+        encoding: 'utf8',
       });
     } catch (e) {
       // Test command will fail if tests fail, but we still want to see the output
     }
-    
   } catch (error) {
     console.error('Error during fixes:', error.message);
   }

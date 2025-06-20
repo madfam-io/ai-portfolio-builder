@@ -19,7 +19,7 @@ function isStructurallyBroken(content) {
     /expect\(\s*$/, // Incomplete expect statements
     /^\s*(auth|from|select):\s*{/, // Orphaned object properties
   ];
-  
+
   return patterns.some(pattern => pattern.test(content));
 }
 
@@ -29,8 +29,10 @@ function fixBrokenStructure(filePath) {
 
   // Fix 1: Completely broken API route tests - replace with working template
   if (filePath.includes('/api/') && isStructurallyBroken(content)) {
-    console.log(`Rebuilding broken API test: ${path.relative(testDir, filePath)}`);
-    
+    console.log(
+      `Rebuilding broken API test: ${path.relative(testDir, filePath)}`
+    );
+
     const routeName = path.basename(path.dirname(filePath));
     const template = `import '../../../../setup/api-setup';
 
@@ -86,15 +88,17 @@ describe('/api/v1/${routeName}', () => {
     }
   });
 });`;
-    
+
     content = template;
     changed = true;
   }
 
   // Fix 2: Broken component tests - replace with basic working template
   else if (filePath.includes('/components/') && isStructurallyBroken(content)) {
-    console.log(`Rebuilding broken component test: ${path.relative(testDir, filePath)}`);
-    
+    console.log(
+      `Rebuilding broken component test: ${path.relative(testDir, filePath)}`
+    );
+
     const componentName = path.basename(filePath, '.test.tsx');
     const template = `import React from 'react';
 import { render, screen } from '@testing-library/react';
@@ -138,15 +142,17 @@ describe('${componentName}', () => {
     expect(true).toBe(true);
   });
 });`;
-    
+
     content = template;
     changed = true;
   }
 
   // Fix 3: Broken hook tests - fix common issues
   else if (filePath.includes('/hooks/') && isStructurallyBroken(content)) {
-    console.log(`Rebuilding broken hook test: ${path.relative(testDir, filePath)}`);
-    
+    console.log(
+      `Rebuilding broken hook test: ${path.relative(testDir, filePath)}`
+    );
+
     const hookName = path.basename(filePath, '.test.ts');
     const template = `import { renderHook } from '@testing-library/react';
 
@@ -172,14 +178,17 @@ describe('${hookName}', () => {
     expect(true).toBe(true);
   });
 });`;
-    
+
     content = template;
     changed = true;
   }
 
   // Fix 4: Remove trailing orphaned object properties
-  content = content.replace(/^\s*(auth|from|select|insert|update|delete):\s*{[^}]*$/gm, '');
-  
+  content = content.replace(
+    /^\s*(auth|from|select|insert|update|delete):\s*{[^}]*$/gm,
+    ''
+  );
+
   // Fix 5: Fix incomplete statements
   content = content.replace(/render\(\s*$/gm, 'render(<div>Test</div>);');
   content = content.replace(/expect\(\s*$/gm, 'expect(true).toBe(true);');
@@ -193,15 +202,15 @@ describe('${hookName}', () => {
 
 function scanAndFixBrokenTests() {
   console.log('🔍 Scanning for structurally broken tests...\n');
-  
+
   function scanDir(dir) {
     const items = fs.readdirSync(dir);
     let fixedCount = 0;
-    
+
     for (const item of items) {
       const fullPath = path.join(dir, item);
       const stat = fs.statSync(fullPath);
-      
+
       if (stat.isDirectory()) {
         fixedCount += scanDir(fullPath);
       } else if (item.endsWith('.test.ts') || item.endsWith('.test.tsx')) {
@@ -217,13 +226,13 @@ function scanAndFixBrokenTests() {
         }
       }
     }
-    
+
     return fixedCount;
   }
-  
+
   const fixedCount = scanDir(testDir);
   console.log(`\n✅ Fixed ${fixedCount} structurally broken test files`);
-  
+
   return fixedCount;
 }
 

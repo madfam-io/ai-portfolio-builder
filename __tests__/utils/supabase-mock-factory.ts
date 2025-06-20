@@ -2,11 +2,19 @@
 jest.mock('@/lib/auth/supabase-client', () => ({
   createClient: jest.fn(() => ({
     auth: {
-      getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signInWithPassword: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
-      signUp: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
+      getUser: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+      signInWithPassword: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+      signUp: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
       signOut: jest.fn().mockResolvedValue({ error: null }),
-      onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
     },
     from: jest.fn(() => ({
       select: jest.fn().mockReturnThis(),
@@ -18,8 +26,15 @@ jest.mock('@/lib/auth/supabase-client', () => ({
     })),
   })),
   supabase: {
-    auth: { getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }) },
-    from: jest.fn(() => ({ select: jest.fn().mockReturnThis(), single: jest.fn().mockResolvedValue({ data: null, error: null }) })),
+    auth: {
+      getUser: jest
+        .fn()
+        .mockResolvedValue({ data: { user: null }, error: null }),
+    },
+    from: jest.fn(() => ({
+      select: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
+    })),
   },
 }));
 

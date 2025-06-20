@@ -14,7 +14,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import {
   Shield,
   ShieldCheck,
@@ -56,7 +55,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       const status = await mfaService.getMFAStatus();
       setMfaStatus(status);
       onStatusChange?.(status.enabled);
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: 'Failed to load MFA status',
@@ -77,7 +76,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
       const data = await mfaService.setupMFA();
       setSetupData(data);
       setStep('setup');
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: 'Failed to set up MFA',
@@ -112,7 +111,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           variant: 'destructive',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: 'Failed to verify MFA setup',
@@ -134,7 +133,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
         title: 'MFA Disabled',
         description: 'Two-factor authentication has been disabled.',
       });
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: 'Failed to disable MFA',
@@ -156,7 +155,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
           return newSet;
         });
       }, 2000);
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: 'Failed to copy to clipboard',

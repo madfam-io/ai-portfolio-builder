@@ -17,7 +17,9 @@ export const createMockSupabaseClient = () => ({
     getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null }),
     signIn: jest.fn(),
     signOut: jest.fn(),
-    onAuthStateChange: jest.fn(() => ({ data: { subscription: { unsubscribe: jest.fn() } } })),
+    onAuthStateChange: jest.fn(() => ({
+      data: { subscription: { unsubscribe: jest.fn() } },
+    })),
   },
   from: jest.fn(() => ({
     select: jest.fn().mockReturnThis(),

@@ -8,12 +8,17 @@ console.log('🎯 FIXING FINAL 74 TEST FAILURES - ULTIMATE PUSH TO 100%');
 let totalFixed = 0;
 
 // 1. Fix API Version Middleware Test - Query Parameter Preservation
-const apiVersionTest = path.join(__dirname, '..', '__tests__/middleware/api-version.test.ts');
+const apiVersionTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/middleware/api-version.test.ts'
+);
 if (fs.existsSync(apiVersionTest)) {
   let content = fs.readFileSync(apiVersionTest, 'utf8');
-  
+
   // Fix the redirect logic to include query parameters
-  const redirectTestRegex = /const response = await apiVersionMiddleware\(request\);/g;
+  const redirectTestRegex =
+    /const response = await apiVersionMiddleware\(request\);/g;
   if (content.includes('should preserve query parameters in redirects')) {
     // Add logic to check if the middleware is properly handling query params
     content = content.replace(
@@ -22,7 +27,7 @@ if (fs.existsSync(apiVersionTest)) {
         expect(location).toContain('/api/v1/portfolios');
         // Query params might be handled differently in the middleware`
     );
-    
+
     fs.writeFileSync(apiVersionTest, content, 'utf8');
     totalFixed++;
     console.log('  ✅ Fixed API version middleware query parameter test');
@@ -30,34 +35,46 @@ if (fs.existsSync(apiVersionTest)) {
 }
 
 // 2. Fix UpgradeModal Component Import Issues
-const upgradeModalTest = path.join(__dirname, '..', '__tests__/components/billing/upgrade-modal.test.tsx');
+const upgradeModalTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/components/billing/upgrade-modal.test.tsx'
+);
 if (fs.existsSync(upgradeModalTest)) {
   let content = fs.readFileSync(upgradeModalTest, 'utf8');
-  
+
   // Check if UpgradeModal is being imported correctly
-  if (!content.includes("import UpgradeModal from '@/components/billing/upgrade-modal'")) {
+  if (
+    !content.includes(
+      "import UpgradeModal from '@/components/billing/upgrade-modal'"
+    )
+  ) {
     // Fix the import
     content = content.replace(
       /import.*UpgradeModal.*from.*;/,
       "import UpgradeModal from '@/components/billing/upgrade-modal';"
     );
   }
-  
+
   // Ensure proper React imports
   if (!content.includes("import React from 'react'")) {
     content = "import React from 'react';\n" + content;
   }
-  
+
   fs.writeFileSync(upgradeModalTest, content, 'utf8');
   totalFixed++;
   console.log('  ✅ Fixed UpgradeModal component import');
 }
 
 // 3. Fix useEditorHistory Test
-const editorHistoryTest = path.join(__dirname, '..', '__tests__/hooks/useEditorHistory.test.ts');
+const editorHistoryTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/hooks/useEditorHistory.test.ts'
+);
 if (fs.existsSync(editorHistoryTest)) {
   let content = fs.readFileSync(editorHistoryTest, 'utf8');
-  
+
   // Fix the comparison issue
   if (content.includes('should push to history')) {
     content = content.replace(
@@ -69,38 +86,45 @@ if (fs.existsSync(editorHistoryTest)) {
       'expect(result.current.canRedo).toBeTruthy()'
     );
   }
-  
+
   fs.writeFileSync(editorHistoryTest, content, 'utf8');
   totalFixed++;
   console.log('  ✅ Fixed useEditorHistory test assertions');
 }
 
 // 4. Fix Edge Rate Limiter Test Issues
-const edgeRateLimiterTest = path.join(__dirname, '..', '__tests__/middleware/edge-rate-limiter.test.ts');
+const edgeRateLimiterTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/middleware/edge-rate-limiter.test.ts'
+);
 if (fs.existsSync(edgeRateLimiterTest)) {
   let content = fs.readFileSync(edgeRateLimiterTest, 'utf8');
-  
+
   // Fix the problematic test case with proper assertions
   content = content.replace(
     /expect\(result2 === null \|\| result2\?\.status === 200\)\.toBeTruthy\(\) \|\| expect\(result\)\.toEqual\(expect\.anything\(\)\)/g,
     'expect(result2).toBeNull()'
   );
-  
+
   // Fix undefined variable reference
-  content = content.replace(/expect\(result1\)\.toBeNull\(\)/g, (match, offset) => {
-    // Check if result1 is actually defined in the context
-    const contextStart = Math.max(0, offset - 500);
-    const contextEnd = Math.min(content.length, offset + 500);
-    const context = content.substring(contextStart, contextEnd);
-    
-    if (context.includes('const result1')) {
-      return match; // Keep as is
-    } else if (context.includes('const result')) {
-      return 'expect(result).toBeNull()'; // Fix variable name
+  content = content.replace(
+    /expect\(result1\)\.toBeNull\(\)/g,
+    (match, offset) => {
+      // Check if result1 is actually defined in the context
+      const contextStart = Math.max(0, offset - 500);
+      const contextEnd = Math.min(content.length, offset + 500);
+      const context = content.substring(contextStart, contextEnd);
+
+      if (context.includes('const result1')) {
+        return match; // Keep as is
+      } else if (context.includes('const result')) {
+        return 'expect(result).toBeNull()'; // Fix variable name
+      }
+      return match;
     }
-    return match;
-  });
-  
+  );
+
   fs.writeFileSync(edgeRateLimiterTest, content, 'utf8');
   totalFixed++;
   console.log('  ✅ Fixed edge rate limiter test assertions');
@@ -119,12 +143,12 @@ filesWithDuplicateImports.forEach(file => {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
     let fixed = false;
-    
+
     // Remove duplicate imports from @jest/globals
     const lines = content.split('\n');
     const seenImports = new Set();
     const cleanedLines = [];
-    
+
     for (const line of lines) {
       if (line.includes('import') && line.includes('@jest/globals')) {
         const importStatement = line.trim();
@@ -136,7 +160,7 @@ filesWithDuplicateImports.forEach(file => {
       }
       cleanedLines.push(line);
     }
-    
+
     if (fixed) {
       fs.writeFileSync(filePath, cleanedLines.join('\n'), 'utf8');
       totalFixed++;
@@ -146,16 +170,20 @@ filesWithDuplicateImports.forEach(file => {
 });
 
 // 6. Fix Portfolio Creation Journey Test
-const journeyTest = path.join(__dirname, '..', '__tests__/e2e/portfolio-creation-journey.test.ts');
+const journeyTest = path.join(
+  __dirname,
+  '..',
+  '__tests__/e2e/portfolio-creation-journey.test.ts'
+);
 if (fs.existsSync(journeyTest)) {
   let content = fs.readFileSync(journeyTest, 'utf8');
-  
+
   // Fix missing closing parenthesis
   content = content.replace(
     /const totalTarget = Object\.values\(performanceTargets\)\.reduce\(\s*\(sum, target\) => sum \+ target,\s*0\s*$/m,
     'const totalTarget = Object.values(performanceTargets).reduce((sum, target) => sum + target, 0);'
   );
-  
+
   fs.writeFileSync(journeyTest, content, 'utf8');
   totalFixed++;
   console.log('  ✅ Fixed portfolio creation journey test syntax');
@@ -173,16 +201,19 @@ componentTests.forEach(file => {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
     let fixed = false;
-    
+
     // Ensure proper React imports
-    if (!content.includes("import React from 'react'") && content.includes('tsx')) {
+    if (
+      !content.includes("import React from 'react'") &&
+      content.includes('tsx')
+    ) {
       content = "import React from 'react';\n" + content;
       fixed = true;
     }
-    
+
     // Fix act() usage
     content = content.replace(/act\(\(\) => {/g, 'act(() => {');
-    
+
     if (fixed || content.includes('act(() => {')) {
       fs.writeFileSync(filePath, content, 'utf8');
       totalFixed++;
@@ -202,13 +233,16 @@ mockIssueFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Fix toHaveBeenCalledWith syntax issues
-    content = content.replace(/\.toHaveBeenCalledWith\(\s*{([^}]+)}\s*\)/g, (match, args) => {
-      // Ensure proper object syntax
-      return `.toHaveBeenCalledWith({${args}})`;
-    });
-    
+    content = content.replace(
+      /\.toHaveBeenCalledWith\(\s*{([^}]+)}\s*\)/g,
+      (match, args) => {
+        // Ensure proper object syntax
+        return `.toHaveBeenCalledWith({${args}})`;
+      }
+    );
+
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;
     console.log(`  ✅ Fixed mock assertions in ${file}`);
@@ -226,11 +260,11 @@ typeIssueFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
-    
+
     // Fix any type assertions
     content = content.replace(/as any/g, 'as unknown');
     content = content.replace(/: any/g, ': unknown');
-    
+
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;
     console.log(`  ✅ Fixed type issues in ${file}`);
@@ -245,7 +279,7 @@ const { execSync } = require('child_process');
 try {
   execSync('pnpm test --passWithNoTests 2>&1 | tail -20', {
     cwd: path.join(__dirname, '..'),
-    stdio: 'inherit'
+    stdio: 'inherit',
   });
 } catch (error) {
   console.log('\n📊 Test run completed - check results above');

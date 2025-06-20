@@ -13,7 +13,7 @@ function createApiTestTemplate(routePath) {
   const segments = routePath.split('/').filter(Boolean);
   const routeName = segments[segments.length - 1];
   const apiPath = segments.slice(1).join('/'); // Remove 'api' from path
-  
+
   return `import '../../../../setup/api-setup';
 
 // Mock required modules for ${routeName}
@@ -105,32 +105,36 @@ describe('/api/${apiPath}', () => {
 function replaceApiTests() {
   const apiTestDir = path.join(testDir, 'app', 'api');
   let replacedCount = 0;
-  
+
   if (!fs.existsSync(apiTestDir)) {
     console.log('No API test directory found');
     return 0;
   }
-  
+
   function processDir(dir, relativePath = '') {
     const items = fs.readdirSync(dir);
-    
+
     for (const item of items) {
       const fullPath = path.join(dir, item);
       const stat = fs.statSync(fullPath);
-      
+
       if (stat.isDirectory()) {
         processDir(fullPath, path.join(relativePath, item));
       } else if (item === 'route.test.ts' || item === 'route.test.tsx') {
         try {
           const content = fs.readFileSync(fullPath, 'utf8');
-          
+
           // Check if file appears to be broken (syntax errors or malformed structure)
-          if (content.includes('auth: {') && content.includes('Expression expected') || 
-              content.includes('}\);') && content.includes('auth:') ||
-              content.length < 100) {
-            
-            console.log(`Replacing broken API test: ${relativePath}/route.test.ts`);
-            
+          if (
+            (content.includes('auth: {') &&
+              content.includes('Expression expected')) ||
+            (content.includes('}\);') && content.includes('auth:')) ||
+            content.length < 100
+          ) {
+            console.log(
+              `Replacing broken API test: ${relativePath}/route.test.ts`
+            );
+
             // Generate new content
             const newContent = createApiTestTemplate(relativePath);
             fs.writeFileSync(fullPath, newContent);
@@ -138,9 +142,11 @@ function replaceApiTests() {
           }
         } catch (error) {
           console.error(`Error processing ${fullPath}:`, error.message);
-          
+
           // If we can't even read the file, replace it
-          console.log(`Replacing unreadable API test: ${relativePath}/route.test.ts`);
+          console.log(
+            `Replacing unreadable API test: ${relativePath}/route.test.ts`
+          );
           const newContent = createApiTestTemplate(relativePath);
           fs.writeFileSync(fullPath, newContent);
           replacedCount++;
@@ -148,7 +154,7 @@ function replaceApiTests() {
       }
     }
   }
-  
+
   processDir(apiTestDir);
   return replacedCount;
 }
@@ -157,17 +163,21 @@ function main() {
   console.log('🔧 Replacing broken API route tests...\n');
   const replacedCount = replaceApiTests();
   console.log(`\n✅ Replaced ${replacedCount} broken API test files`);
-  
+
   if (replacedCount > 0) {
     console.log('\n🧪 Testing a few replaced files...');
     try {
       // Test one of the replaced files
       const { execSync } = require('child_process');
-      const result = execSync('npm test -- __tests__/app/api/v1/health/route.test.ts --testTimeout=5000', 
-        { encoding: 'utf8', timeout: 10000 });
+      const result = execSync(
+        'npm test -- __tests__/app/api/v1/health/route.test.ts --testTimeout=5000',
+        { encoding: 'utf8', timeout: 10000 }
+      );
       console.log('✅ Replacement successful - test is now passing');
     } catch (error) {
-      console.log('ℹ️  Test completed (some tests may need additional specific mocks)');
+      console.log(
+        'ℹ️  Test completed (some tests may need additional specific mocks)'
+      );
     }
   }
 }

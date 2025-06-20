@@ -67,7 +67,7 @@ function EditorContent({ searchParams }: EditorPageProps) {
   );
 
   const loadTemplate = useCallback(
-    async (templateId: string) => {
+    (templateId: string) => {
       // In a real implementation, this would fetch from the template marketplace
       logger.info('Loading template', { templateId });
 

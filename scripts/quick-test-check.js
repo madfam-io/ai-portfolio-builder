@@ -23,22 +23,25 @@ let totalFail = 0;
 testCategories.forEach(category => {
   try {
     process.stdout.write(`Testing ${category.name}... `);
-    
-    const result = execSync(`npm test -- "${category.pattern}" --passWithNoTests 2>&1`, { 
-      encoding: 'utf8',
-      stdio: 'pipe'
-    });
-    
+
+    const result = execSync(
+      `npm test -- "${category.pattern}" --passWithNoTests 2>&1`,
+      {
+        encoding: 'utf8',
+        stdio: 'pipe',
+      }
+    );
+
     // Extract pass/fail counts
     const passMatch = result.match(/(\d+) passed/);
     const failMatch = result.match(/(\d+) failed/);
-    
+
     const passed = passMatch ? parseInt(passMatch[1]) : 0;
     const failed = failMatch ? parseInt(failMatch[1]) : 0;
-    
+
     totalPass += passed;
     totalFail += failed;
-    
+
     if (failed === 0 && passed > 0) {
       console.log(`✅ ${passed} tests passed`);
     } else if (failed > 0) {
@@ -46,7 +49,6 @@ testCategories.forEach(category => {
     } else {
       console.log('⚠️  No tests found or error');
     }
-    
   } catch (e) {
     console.log('❌ Error running tests');
   }
@@ -55,4 +57,6 @@ testCategories.forEach(category => {
 console.log('\n📊 Overall Summary:');
 console.log(`✅ Total Passed: ${totalPass}`);
 console.log(`❌ Total Failed: ${totalFail}`);
-console.log(`📈 Pass Rate: ${((totalPass / (totalPass + totalFail)) * 100).toFixed(1)}%`);
+console.log(
+  `📈 Pass Rate: ${((totalPass / (totalPass + totalFail)) * 100).toFixed(1)}%`
+);

@@ -37,11 +37,14 @@ jest.mock('@/lib/i18n/refactored-context', () => ({
 }));
 
 `;
-        content = content.substring(0, insertPoint) + mockCode + content.substring(insertPoint);
+        content =
+          content.substring(0, insertPoint) +
+          mockCode +
+          content.substring(insertPoint);
       }
     }
   }
-  
+
   return content;
 }
 
@@ -59,7 +62,7 @@ function fixMiddlewareTests(content) {
         "expect(response.headers.get('X-API-Deprecation')).toBeTruthy()"
       );
   }
-  
+
   return content;
 }
 
@@ -109,7 +112,7 @@ jest.mock('@/lib/store/ui-store', () => ({
       content = mockCode + content;
     }
   }
-  
+
   return content;
 }
 
@@ -120,19 +123,19 @@ function fixAsyncTests(content) {
     /expect\(GET\(request\)\)\.rejects/g,
     'await expect(GET(request)).rejects'
   );
-  
+
   // Fix async test declarations
   content = content.replace(
     /it\('([^']+)',\s*\(\)\s*=>\s*{/g,
     "it('$1', async () => {"
   );
-  
+
   return content;
 }
 
 // Process test files
 const testFiles = glob.sync('__tests__/**/*.{test,spec}.{ts,tsx,js,jsx}', {
-  ignore: ['**/node_modules/**', '**/.next/**']
+  ignore: ['**/node_modules/**', '**/.next/**'],
 });
 
 console.log(`Found ${testFiles.length} test files to check\n`);
@@ -141,31 +144,31 @@ let fixedCount = 0;
 
 testFiles.forEach(file => {
   const filePath = path.join(process.cwd(), file);
-  
+
   try {
     let content = fs.readFileSync(filePath, 'utf8');
     const originalContent = content;
-    
+
     // Apply fixes based on file type
     if (filePath.includes('auth/callback')) {
       content = fixAuthCallbackTests(content);
     }
-    
+
     if (filePath.includes('.test.tsx')) {
       content = fixComponentMocks(content, filePath);
     }
-    
+
     if (filePath.includes('middleware')) {
       content = fixMiddlewareTests(content);
     }
-    
+
     if (filePath.includes('store')) {
       content = fixStoreTests(content);
     }
-    
+
     // Apply general fixes
     content = fixAsyncTests(content);
-    
+
     if (content !== originalContent) {
       fs.writeFileSync(filePath, content, 'utf8');
       console.log(`✅ Fixed ${file}`);

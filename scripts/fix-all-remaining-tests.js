@@ -11,16 +11,22 @@ const fixes = {
   fixImportOrder: (content, filePath) => {
     // Move jest imports to the top
     if (content.includes('jest.mock') && !content.startsWith('import')) {
-      const jestImports = "import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';\n\n";
+      const jestImports =
+        "import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';\n\n";
       const mocks = content.match(/^jest\.mock[\s\S]*?(?=\nimport|$)/gm);
       const imports = content.match(/^import[\s\S]*?(?=\n(?!import))/gm);
-      
+
       if (mocks && imports) {
-        const otherContent = content.replace(/^jest\.mock[\s\S]*?(?=\nimport|$)/gm, '')
-                                   .replace(/^import[\s\S]*?(?=\n(?!import))/gm, '');
-        
-        return jestImports + (imports ? imports.join('\n') + '\n\n' : '') + 
-               (mocks ? mocks.join('\n') + '\n\n' : '') + otherContent.trim();
+        const otherContent = content
+          .replace(/^jest\.mock[\s\S]*?(?=\nimport|$)/gm, '')
+          .replace(/^import[\s\S]*?(?=\n(?!import))/gm, '');
+
+        return (
+          jestImports +
+          (imports ? imports.join('\n') + '\n\n' : '') +
+          (mocks ? mocks.join('\n') + '\n\n' : '') +
+          otherContent.trim()
+        );
       }
     }
     return content;
@@ -28,7 +34,11 @@ const fixes = {
 
   // Fix 2: Missing React imports in TSX files
   fixReactImports: (content, filePath) => {
-    if (filePath.endsWith('.tsx') && !content.includes('import React') && !content.includes('import * as React')) {
+    if (
+      filePath.endsWith('.tsx') &&
+      !content.includes('import React') &&
+      !content.includes('import * as React')
+    ) {
       return "import React from 'react';\n" + content;
     }
     return content;
@@ -36,7 +46,10 @@ const fixes = {
 
   // Fix 3: Missing console mocks
   fixConsoleMocks: (content, filePath) => {
-    if (content.includes('beforeEach') && !content.includes('jest.spyOn(console')) {
+    if (
+      content.includes('beforeEach') &&
+      !content.includes('jest.spyOn(console')
+    ) {
       return content.replace(
         /beforeEach\(\(\) => \{/,
         `beforeEach(() => {
@@ -57,7 +70,7 @@ const fixes = {
         'beforeEach(() => {\n    global.fetch = jest.fn();'
       );
     }
-    
+
     // Add FormData polyfill
     if (content.includes('FormData') && !content.includes('global.FormData')) {
       const polyfill = `// Polyfill FormData for Node environment
@@ -88,13 +101,16 @@ global.FormData = class FormData {
 `;
       content = polyfill + content;
     }
-    
+
     return content;
   },
 
   // Fix 5: API route mocks
   fixAPIRouteMocks: (content, filePath) => {
-    if (filePath.includes('/app/api/') && !content.includes("jest.mock('@/lib/supabase/server')")) {
+    if (
+      filePath.includes('/app/api/') &&
+      !content.includes("jest.mock('@/lib/supabase/server')")
+    ) {
       const apiMocks = `
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(() => ({
@@ -121,7 +137,11 @@ jest.mock('@/lib/auth/middleware', () => ({
       const importIndex = content.indexOf('import');
       if (importIndex > -1) {
         const firstImportEnd = content.indexOf('\n', importIndex);
-        return content.slice(0, firstImportEnd + 1) + apiMocks + content.slice(firstImportEnd + 1);
+        return (
+          content.slice(0, firstImportEnd + 1) +
+          apiMocks +
+          content.slice(firstImportEnd + 1)
+        );
       }
     }
     return content;
@@ -129,7 +149,10 @@ jest.mock('@/lib/auth/middleware', () => ({
 
   // Fix 6: Zustand mock issues
   fixZustandMocks: (content, filePath) => {
-    if (content.includes('zustand') && !content.includes("jest.mock('zustand')")) {
+    if (
+      content.includes('zustand') &&
+      !content.includes("jest.mock('zustand')")
+    ) {
       const zustandMock = `
 jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
@@ -151,8 +174,15 @@ jest.mock('zustand', () => ({
 `;
       const importIndex = content.lastIndexOf('import');
       if (importIndex > -1) {
-        const importEnd = content.indexOf('\n', content.indexOf(';', importIndex));
-        return content.slice(0, importEnd + 1) + zustandMock + content.slice(importEnd + 1);
+        const importEnd = content.indexOf(
+          '\n',
+          content.indexOf(';', importIndex)
+        );
+        return (
+          content.slice(0, importEnd + 1) +
+          zustandMock +
+          content.slice(importEnd + 1)
+        );
       }
     }
     return content;
@@ -160,7 +190,11 @@ jest.mock('zustand', () => ({
 
   // Fix 7: Missing act import
   fixActImport: (content, filePath) => {
-    if (content.includes('act(') && !content.includes('import { act }') && !content.includes('import {act}')) {
+    if (
+      content.includes('act(') &&
+      !content.includes('import { act }') &&
+      !content.includes('import {act}')
+    ) {
       content = content.replace(
         /import { ([^}]+)} from '@testing-library\/react';/,
         (match, imports) => {
@@ -177,9 +211,10 @@ jest.mock('zustand', () => ({
   // Fix 8: E2E test playwright mocks
   fixE2EMocks: (content, filePath) => {
     if (filePath.includes('/e2e/') && content.includes('@playwright/test')) {
-      return content.replace(
-        /import { test, expect } from '@playwright\/test';?/,
-        `import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
+      return content
+        .replace(
+          /import { test, expect } from '@playwright\/test';?/,
+          `import { jest, describe, it, expect, beforeEach, afterEach } from '@jest/globals';
 
 // Mock Playwright for unit test environment
 const test = {
@@ -204,16 +239,20 @@ global.page = {
   $: jest.fn(),
   $$: jest.fn().mockResolvedValue([]),
 };`
-      ).replace(/test\('([^']+)', async \(\) => \{/g, "it('$1', async () => {")
-       .replace(/test\.describe\(/g, "describe(");
+        )
+        .replace(/test\('([^']+)', async \(\) => \{/g, "it('$1', async () => {")
+        .replace(/test\.describe\(/g, 'describe(');
     }
     return content;
-  }
+  },
 };
 
 // Process all test files
 function processTestFiles() {
-  const testFiles = execSync('find __tests__ -name "*.test.ts" -o -name "*.test.tsx"', { encoding: 'utf8' })
+  const testFiles = execSync(
+    'find __tests__ -name "*.test.ts" -o -name "*.test.tsx"',
+    { encoding: 'utf8' }
+  )
     .split('\n')
     .filter(f => f.trim());
 
@@ -260,11 +299,11 @@ const sampleTests = [
 let passCount = 0;
 sampleTests.forEach(test => {
   try {
-    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, { 
+    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, {
       encoding: 'utf8',
-      timeout: 10000 
+      timeout: 10000,
     });
-    
+
     if (result.includes('PASS ')) {
       console.log(`✅ ${test}`);
       passCount++;
@@ -276,4 +315,6 @@ sampleTests.forEach(test => {
   }
 });
 
-console.log(`\n🎯 Sample pass rate: ${passCount}/${sampleTests.length} (${(passCount/sampleTests.length*100).toFixed(0)}%)`);
+console.log(
+  `\n🎯 Sample pass rate: ${passCount}/${sampleTests.length} (${((passCount / sampleTests.length) * 100).toFixed(0)}%)`
+);

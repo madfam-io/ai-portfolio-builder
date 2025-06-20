@@ -18,7 +18,7 @@ export default function PaymentSuccess() {
   const searchParams = useSearchParams();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
   const { refresh: refetch } = useSubscription();
 
   const [isVerifying, setIsVerifying] = useState(true);

@@ -13,21 +13,18 @@ console.log(`Found ${testFiles.length} AI route test files to fix...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 
   // For models route test - fix the expected values to match actual implementation
   if (file.includes('models/route.test.ts')) {
     // Fix the mock models to match what ModelManager actually returns
-    content = content.replace(
-      /qualityRating: 0\.\d+/g,
-      (match) => {
-        const value = parseFloat(match.split(':')[1]);
-        return `qualityRating: ${Math.round(value * 100)}`;
-      }
-    );
-    
+    content = content.replace(/qualityRating: 0\.\d+/g, match => {
+      const value = parseFloat(match.split(':')[1]);
+      return `qualityRating: ${Math.round(value * 100)}`;
+    });
+
     // Fix test expectations to not expect exact mock values
     content = content.replace(
       /expect\(data\)\.toMatchObject\(\{[\s\S]*?models: mockModels,/g,
@@ -36,7 +33,7 @@ testFiles.forEach((file) => {
       data: {
         models: expect.any(Array),`
     );
-    
+
     // Fix fallback test to check for the actual fallback response
     content = content.replace(
       /expect\(data\)\.toMatchObject\(\{[\s\S]*?fallback: true,[\s\S]*?totalModels: 2,/g,
@@ -47,7 +44,7 @@ testFiles.forEach((file) => {
         fallback: true,
         totalModels: expect.any(Number),`
     );
-    
+
     modified = true;
   }
 
@@ -67,7 +64,7 @@ const mockHuggingFaceInstance = {
   getUsageStats: jest.fn(),
 };`
       );
-      
+
       content = content.replace(
         /jest\.mock\('@\/lib\/ai\/huggingface-service'.*?\}\);/s,
         `jest.mock('@/lib/ai/huggingface-service', () => ({
@@ -94,7 +91,7 @@ const mockHuggingFaceInstance = {
   getUsageStats: jest.fn(),
 };`
       );
-      
+
       content = content.replace(
         /jest\.mock\('@\/lib\/ai\/huggingface-service'.*?\}\);/s,
         `jest.mock('@/lib/ai/huggingface-service', () => ({

@@ -13,7 +13,7 @@ try {
   testOutput = execSync('pnpm test --verbose --no-coverage __tests__ 2>&1', {
     cwd: path.join(__dirname, '..'),
     encoding: 'utf8',
-    timeout: 120000 // 2 minutes
+    timeout: 120000, // 2 minutes
   });
 } catch (error) {
   testOutput = error.stdout || error.stderr || error.message;
@@ -49,9 +49,9 @@ Object.entries(patternCounts).forEach(([pattern, count]) => {
 
 // Apply targeted fixes based on the most common patterns
 const glob = require('glob');
-const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', { 
+const testFiles = glob.sync('__tests__/**/*.{ts,tsx}', {
   cwd: path.join(__dirname, '..'),
-  ignore: ['**/node_modules/**']
+  ignore: ['**/node_modules/**'],
 });
 
 let totalFixed = 0;
@@ -60,9 +60,12 @@ testFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   let content = fs.readFileSync(filePath, 'utf8');
   let fileFixed = false;
-  
+
   // Fix 1: Add comprehensive UI store mock if showToast is used
-  if (content.includes('showToast') && !content.includes('useUIStore: jest.fn(() => ({')) {
+  if (
+    content.includes('showToast') &&
+    !content.includes('useUIStore: jest.fn(() => ({')
+  ) {
     const mockSetup = `
 // Mock UI store for showToast functionality
 jest.mock('@/lib/store/ui-store', () => ({
@@ -78,9 +81,12 @@ jest.mock('@/lib/store/ui-store', () => ({
     content = mockSetup + '\n' + content;
     fileFixed = true;
   }
-  
+
   // Fix 2: Add fetch mock if fetch is used
-  if (content.includes('fetch(') && !content.includes('global.fetch = jest.fn()')) {
+  if (
+    content.includes('fetch(') &&
+    !content.includes('global.fetch = jest.fn()')
+  ) {
     const fetchMock = `
 // Mock fetch for API calls
 global.fetch = jest.fn().mockImplementation(() =>
@@ -96,10 +102,12 @@ global.fetch = jest.fn().mockImplementation(() =>
     content = fetchMock + '\n' + content;
     fileFixed = true;
   }
-  
+
   // Fix 3: Add Supabase mock if Supabase is used
-  if ((content.includes('supabase') || content.includes('createClient')) && 
-      !content.includes('jest.mock(\'@/lib/auth/supabase-client\'')) {
+  if (
+    (content.includes('supabase') || content.includes('createClient')) &&
+    !content.includes("jest.mock('@/lib/auth/supabase-client'")
+  ) {
     const supabaseMock = `
 // Mock Supabase client
 jest.mock('@/lib/auth/supabase-client', () => ({
@@ -129,9 +137,12 @@ jest.mock('@/lib/auth/supabase-client', () => ({
     content = supabaseMock + '\n' + content;
     fileFixed = true;
   }
-  
+
   // Fix 4: Add environment variables in beforeEach
-  if (content.includes('process.env.') && !content.includes('process.env.NODE_ENV = \'test\'')) {
+  if (
+    content.includes('process.env.') &&
+    !content.includes("process.env.NODE_ENV = 'test'")
+  ) {
     content = content.replace(
       /beforeEach\(\(\) => \{/g,
       `beforeEach(() => {
@@ -145,15 +156,25 @@ jest.mock('@/lib/auth/supabase-client', () => ({
     );
     fileFixed = true;
   }
-  
+
   // Fix 5: Fix async test functions
-  if (content.includes('await ') && content.includes('it(\'') && !content.includes('async () =>')) {
-    content = content.replace(/it\('([^']+)', \(\) => \{/g, "it('$1', async () => {");
+  if (
+    content.includes('await ') &&
+    content.includes("it('") &&
+    !content.includes('async () =>')
+  ) {
+    content = content.replace(
+      /it\('([^']+)', \(\) => \{/g,
+      "it('$1', async () => {"
+    );
     fileFixed = true;
   }
-  
+
   // Fix 6: Add HuggingFace service mock if needed
-  if (content.includes('HuggingFaceService') && !content.includes('mockHuggingFaceService')) {
+  if (
+    content.includes('HuggingFaceService') &&
+    !content.includes('mockHuggingFaceService')
+  ) {
     const hfMock = `
 // Mock HuggingFace service
 const mockHuggingFaceService = {
@@ -170,9 +191,12 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
     content = hfMock + '\n' + content;
     fileFixed = true;
   }
-  
+
   // Fix 7: Add portfolio store mock if needed
-  if (content.includes('usePortfolioStore') && !content.includes('mockPortfolioStore')) {
+  if (
+    content.includes('usePortfolioStore') &&
+    !content.includes('mockPortfolioStore')
+  ) {
     const portfolioMock = `
 // Mock Portfolio store
 const mockPortfolioStore = {
@@ -194,7 +218,7 @@ jest.mock('@/lib/store/portfolio-store', () => ({
     content = portfolioMock + '\n' + content;
     fileFixed = true;
   }
-  
+
   if (fileFixed) {
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;
@@ -210,7 +234,7 @@ try {
   const quickTest = execSync('pnpm test 2>&1 | tail -5', {
     cwd: path.join(__dirname, '..'),
     encoding: 'utf8',
-    timeout: 30000
+    timeout: 30000,
   });
   console.log('Quick test result:', quickTest);
 } catch (error) {

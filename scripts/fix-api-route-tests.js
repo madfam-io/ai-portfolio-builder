@@ -23,23 +23,30 @@ function fixApiRouteTest(filePath) {
   let modified = false;
 
   // Fix 1: Add missing mocks for createClient
-  if (!content.includes("jest.mock('@/lib/supabase/server')") && content.includes("import { createClient }")) {
+  if (
+    !content.includes("jest.mock('@/lib/supabase/server')") &&
+    content.includes('import { createClient }')
+  ) {
     const mockSection = `
 // Mock Supabase server client
 jest.mock('@/lib/supabase/server', () => ({
   createClient: jest.fn(),
 }));
 `;
-    const importIndex = content.indexOf("import {");
+    const importIndex = content.indexOf('import {');
     if (importIndex > -1) {
       const insertPos = content.indexOf('\n', importIndex) + 1;
-      content = content.slice(0, insertPos) + mockSection + content.slice(insertPos);
+      content =
+        content.slice(0, insertPos) + mockSection + content.slice(insertPos);
       modified = true;
     }
   }
 
   // Fix 2: Mock the auth middleware properly
-  if (!content.includes("jest.mock('@/lib/api/middleware/auth')") && content.includes("withAuth")) {
+  if (
+    !content.includes("jest.mock('@/lib/api/middleware/auth')") &&
+    content.includes('withAuth')
+  ) {
     const authMock = `
 // Mock auth middleware
 jest.mock('@/lib/api/middleware/auth', () => ({
@@ -47,16 +54,20 @@ jest.mock('@/lib/api/middleware/auth', () => ({
   AuthenticatedRequest: {},
 }));
 `;
-    const importIndex = content.indexOf("import {");
+    const importIndex = content.indexOf('import {');
     if (importIndex > -1) {
       const insertPos = content.indexOf('\n', importIndex) + 1;
-      content = content.slice(0, insertPos) + authMock + content.slice(insertPos);
+      content =
+        content.slice(0, insertPos) + authMock + content.slice(insertPos);
       modified = true;
     }
   }
 
   // Fix 3: Mock error handling utilities
-  if (!content.includes("jest.mock('@/lib/services/error')") && content.includes("errorLogger")) {
+  if (
+    !content.includes("jest.mock('@/lib/services/error')") &&
+    content.includes('errorLogger')
+  ) {
     const errorMock = `
 // Mock error utilities
 jest.mock('@/lib/services/error', () => ({
@@ -67,16 +78,20 @@ jest.mock('@/lib/services/error', () => ({
   errorLogger: jest.fn(),
 }));
 `;
-    const importIndex = content.indexOf("import {");
+    const importIndex = content.indexOf('import {');
     if (importIndex > -1) {
       const insertPos = content.indexOf('\n', importIndex) + 1;
-      content = content.slice(0, insertPos) + errorMock + content.slice(insertPos);
+      content =
+        content.slice(0, insertPos) + errorMock + content.slice(insertPos);
       modified = true;
     }
   }
 
   // Fix 4: Ensure request has user property for authenticated routes
-  if (content.includes("const request = createMockRequest") && !content.includes("request.user =")) {
+  if (
+    content.includes('const request = createMockRequest') &&
+    !content.includes('request.user =')
+  ) {
     content = content.replace(
       /const request = createMockRequest\(([\s\S]*?)\);/g,
       (match, args) => {
@@ -87,7 +102,10 @@ jest.mock('@/lib/services/error', () => ({
   }
 
   // Fix 5: Add createClient mock in setupCommonMocks
-  if (content.includes("setupCommonMocks(") && !content.includes("createClient:")) {
+  if (
+    content.includes('setupCommonMocks(') &&
+    !content.includes('createClient:')
+  ) {
     content = content.replace(
       /setupCommonMocks\(\{/g,
       `setupCommonMocks({
@@ -126,7 +144,10 @@ jest.mock('@/lib/services/error', () => ({
   }
 
   // Fix 6: Mock HuggingFaceService instances
-  if (content.includes("HuggingFaceService") && !content.includes("mockImplementation(() => ({")) {
+  if (
+    content.includes('HuggingFaceService') &&
+    !content.includes('mockImplementation(() => ({')
+  ) {
     content = content.replace(
       /HuggingFaceService: jest\.fn\(\)/g,
       `HuggingFaceService: jest.fn().mockImplementation(() => ({
@@ -153,13 +174,16 @@ jest.mock('@/lib/services/error', () => ({
   }
 
   // Fix 7: Fix module mocking syntax
-  if (content.includes("jest.doMock")) {
-    content = content.replace(/jest\.doMock/g, "jest.mock");
+  if (content.includes('jest.doMock')) {
+    content = content.replace(/jest\.doMock/g, 'jest.mock');
     modified = true;
   }
 
   // Fix 8: Add proper mock for createClient import
-  if (content.includes("const { createClient }") && !content.includes("jest.mocked(createClient)")) {
+  if (
+    content.includes('const { createClient }') &&
+    !content.includes('jest.mocked(createClient)')
+  ) {
     content = content.replace(
       /const \{ createClient \} = jest\.requireMock\('@\/lib\/supabase\/server'\);/g,
       `const { createClient } = await import('@/lib/supabase/server');

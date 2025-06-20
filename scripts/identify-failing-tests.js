@@ -6,7 +6,10 @@ const path = require('path');
 console.log('🔍 Identifying all failing tests...\n');
 
 // Get all test files
-const allTests = execSync('find __tests__ -name "*.test.ts" -o -name "*.test.tsx" | sort', { encoding: 'utf8' })
+const allTests = execSync(
+  'find __tests__ -name "*.test.ts" -o -name "*.test.tsx" | sort',
+  { encoding: 'utf8' }
+)
   .split('\n')
   .filter(f => f.trim());
 
@@ -15,20 +18,23 @@ console.log(`Total test files: ${allTests.length}\n`);
 const results = {
   passing: [],
   failing: [],
-  error: []
+  error: [],
 };
 
 // Test each file individually
 allTests.forEach((testFile, index) => {
   process.stdout.write(`\rTesting ${index + 1}/${allTests.length}...`);
-  
+
   try {
-    const result = execSync(`npm test -- "${testFile}" --passWithNoTests 2>&1`, { 
-      encoding: 'utf8',
-      timeout: 10000,
-      stdio: 'pipe'
-    });
-    
+    const result = execSync(
+      `npm test -- "${testFile}" --passWithNoTests 2>&1`,
+      {
+        encoding: 'utf8',
+        timeout: 10000,
+        stdio: 'pipe',
+      }
+    );
+
     if (result.includes('PASS ')) {
       results.passing.push(testFile);
     } else if (result.includes('FAIL ')) {
@@ -43,7 +49,9 @@ allTests.forEach((testFile, index) => {
 });
 
 console.log('\n\n📊 Test Results Summary:');
-console.log(`✅ Passing: ${results.passing.length}/${allTests.length} (${((results.passing.length/allTests.length)*100).toFixed(1)}%)`);
+console.log(
+  `✅ Passing: ${results.passing.length}/${allTests.length} (${((results.passing.length / allTests.length) * 100).toFixed(1)}%)`
+);
 console.log(`❌ Failing: ${results.failing.length}/${allTests.length}`);
 console.log(`⚠️  Errors: ${results.error.length}/${allTests.length}`);
 

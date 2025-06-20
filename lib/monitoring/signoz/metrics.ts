@@ -9,7 +9,6 @@ import type {
   Counter,
   Histogram,
   UpDownCounter,
-  ObservableGauge,
   Meter,
 } from '@opentelemetry/api';
 

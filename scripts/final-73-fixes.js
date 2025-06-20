@@ -13,7 +13,7 @@ const targetFiles = [
     fixes: [
       {
         pattern: /describe\('Rate Limiting Behavior'/,
-        fix: (content) => {
+        fix: content => {
           // Simplify the rate limiting tests to avoid complex timing issues
           return content.replace(
             /it\('should rate limit requests when limit exceeded'.*?\}\);/s,
@@ -33,18 +33,18 @@ const targetFiles = [
               expect(result?.status).toBe(429);
             });`
           );
-        }
-      }
-    ]
+        },
+      },
+    ],
   },
-  
+
   // API route tests that need better mocking
   {
     pattern: '__tests__/app/api/v1/*/route.test.ts',
     fixes: [
       {
         pattern: /beforeEach\(\(\) => \{/,
-        fix: (content) => {
+        fix: content => {
           if (!content.includes('jest.clearAllMocks()')) {
             return content.replace(
               /beforeEach\(\(\) => \{/g,
@@ -60,10 +60,10 @@ const targetFiles = [
             );
           }
           return content;
-        }
-      }
-    ]
-  }
+        },
+      },
+    ],
+  },
 ];
 
 // Apply targeted fixes to specific problematic files
@@ -82,7 +82,7 @@ problemFiles.forEach(file => {
   if (fs.existsSync(filePath)) {
     let content = fs.readFileSync(filePath, 'utf8');
     let fileFixed = false;
-    
+
     // Specific fix for edge-rate-limiter
     if (file.includes('edge-rate-limiter')) {
       // Simplify the problematic test
@@ -106,9 +106,9 @@ problemFiles.forEach(file => {
       );
       fileFixed = true;
     }
-    
+
     // Add better error handling
-    if (!content.includes('jest.spyOn(console, \'error\')')) {
+    if (!content.includes("jest.spyOn(console, 'error')")) {
       content = content.replace(
         /beforeEach\(\(\) => \{/g,
         `beforeEach(() => {
@@ -119,14 +119,20 @@ problemFiles.forEach(file => {
       );
       fileFixed = true;
     }
-    
+
     // Fix async issues
     if (content.includes('await ') && !content.includes('async')) {
-      content = content.replace(/it\('([^']+)', \(\) => \{/g, "it('$1', async () => {");
-      content = content.replace(/test\('([^']+)', \(\) => \{/g, "test('$1', async () => {");
+      content = content.replace(
+        /it\('([^']+)', \(\) => \{/g,
+        "it('$1', async () => {"
+      );
+      content = content.replace(
+        /test\('([^']+)', \(\) => \{/g,
+        "test('$1', async () => {"
+      );
       fileFixed = true;
     }
-    
+
     // Fix missing cleanup
     if (!content.includes('afterEach')) {
       const afterEachCleanup = `
@@ -141,7 +147,7 @@ problemFiles.forEach(file => {
       );
       fileFixed = true;
     }
-    
+
     if (fileFixed) {
       fs.writeFileSync(filePath, content, 'utf8');
       totalFixed++;
@@ -152,33 +158,42 @@ problemFiles.forEach(file => {
 
 // Apply generic fixes to remaining test files
 const glob = require('glob');
-const allTestFiles = glob.sync('__tests__/**/*.{ts,tsx}', { 
+const allTestFiles = glob.sync('__tests__/**/*.{ts,tsx}', {
   cwd: path.join(__dirname, '..'),
-  ignore: ['**/node_modules/**']
+  ignore: ['**/node_modules/**'],
 });
 
 allTestFiles.forEach(file => {
   const filePath = path.join(__dirname, '..', file);
   let content = fs.readFileSync(filePath, 'utf8');
   let fileFixed = false;
-  
+
   // Fix common timeout issues
   if (!content.includes('testTimeout') && content.includes('setTimeout')) {
-    content = content.replace(/it\('([^']+)', async \(\) => \{/g, "it('$1', async () => {");
+    content = content.replace(
+      /it\('([^']+)', async \(\) => \{/g,
+      "it('$1', async () => {"
+    );
     content = content.replace(/}, \d+\);/g, '});');
     fileFixed = true;
   }
-  
+
   // Fix React 18 act warnings
-  if (content.includes('act(') && content.includes('jest.advanceTimersByTime')) {
-    content = content.replace(/act\(\(\) => \{[\s\S]*?jest\.advanceTimersByTime.*?\}\);/g, 
-      (match) => {
-        return match.replace('act(() => {', 'act(() => {').replace('});', '});');
+  if (
+    content.includes('act(') &&
+    content.includes('jest.advanceTimersByTime')
+  ) {
+    content = content.replace(
+      /act\(\(\) => \{[\s\S]*?jest\.advanceTimersByTime.*?\}\);/g,
+      match => {
+        return match
+          .replace('act(() => {', 'act(() => {')
+          .replace('});', '});');
       }
     );
     fileFixed = true;
   }
-  
+
   if (fileFixed) {
     fs.writeFileSync(filePath, content, 'utf8');
     totalFixed++;

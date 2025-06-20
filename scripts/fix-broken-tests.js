@@ -129,7 +129,10 @@ describe('middleware', () => {
   });
 });`;
 
-  fs.writeFileSync(path.join(process.cwd(), '__tests__/middleware.test.ts'), content);
+  fs.writeFileSync(
+    path.join(process.cwd(), '__tests__/middleware.test.ts'),
+    content
+  );
   console.log('✅ Fixed middleware.test.ts');
 }
 
@@ -204,7 +207,10 @@ describe('Auth Store', () => {
   });
 });`;
 
-  fs.writeFileSync(path.join(process.cwd(), '__tests__/lib/store/auth-store.test.ts'), content);
+  fs.writeFileSync(
+    path.join(process.cwd(), '__tests__/lib/store/auth-store.test.ts'),
+    content
+  );
   console.log('✅ Fixed auth-store.test.ts');
 }
 
@@ -295,7 +301,10 @@ describe('Enhanced CSRF Middleware', () => {
   });
 });`;
 
-  fs.writeFileSync(path.join(process.cwd(), '__tests__/middleware/csrf-enhanced.test.ts'), content);
+  fs.writeFileSync(
+    path.join(process.cwd(), '__tests__/middleware/csrf-enhanced.test.ts'),
+    content
+  );
   console.log('✅ Fixed csrf-enhanced.test.ts');
 }
 
@@ -318,11 +327,11 @@ const testsToVerify = [
 
 testsToVerify.forEach(test => {
   try {
-    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, { 
+    const result = execSync(`npm test -- ${test} --passWithNoTests 2>&1`, {
       encoding: 'utf8',
-      timeout: 10000 
+      timeout: 10000,
     });
-    
+
     if (result.includes('PASS ')) {
       console.log(`✅ ${test} - FIXED!`);
     } else {

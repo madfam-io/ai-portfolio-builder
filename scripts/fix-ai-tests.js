@@ -13,7 +13,7 @@ console.log(`Found ${testFiles.length} AI test files to fix...`);
 
 let totalFixed = 0;
 
-testFiles.forEach((file) => {
+testFiles.forEach(file => {
   let content = fs.readFileSync(file, 'utf8');
   let modified = false;
 
@@ -81,7 +81,10 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
   }
 
   // Fix 4: Mock timers for tests that check timestamps
-  if (content.includes('lastUpdated') && !content.includes('jest.useFakeTimers')) {
+  if (
+    content.includes('lastUpdated') &&
+    !content.includes('jest.useFakeTimers')
+  ) {
     // Add fake timers setup
     content = content.replace(
       /beforeEach\(\(\) => \{/,
@@ -89,19 +92,19 @@ jest.mock('@/lib/ai/huggingface-service', () => ({
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2024-01-15T10:00:00Z'));`
     );
-    
+
     // Add cleanup
-    content = content.replace(
-      /beforeEach\(\(\) => \{[\s\S]*?\}\);/,
-      (match) => {
-        if (!match.includes('afterEach')) {
-          return match + `\n\n  afterEach(() => {
+    content = content.replace(/beforeEach\(\(\) => \{[\s\S]*?\}\);/, match => {
+      if (!match.includes('afterEach')) {
+        return (
+          match +
+          `\n\n  afterEach(() => {
     jest.useRealTimers();
-  });`;
-        }
-        return match;
+  });`
+        );
       }
-    );
+      return match;
+    });
     modified = true;
   }
 

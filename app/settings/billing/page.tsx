@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   CreditCard,
@@ -17,7 +17,13 @@ import {
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -65,7 +71,7 @@ function BillingContent() {
   const router = useRouter();
   const { t } = useLanguage();
   const { toast } = useToast();
-  const { user } = useAuthStore();
+  const { user: _user } = useAuthStore();
   const subscriptionData = useSubscription();
   const subscription = subscriptionData.limits;
   const subLoading = subscriptionData.loading;
@@ -76,11 +82,7 @@ function BillingContent() {
   const [deleteMethodId, setDeleteMethodId] = useState<string | null>(null);
   const [isCanceling, setIsCanceling] = useState(false);
 
-  useEffect(() => {
-    loadBillingData();
-  }, []);
-
-  const loadBillingData = async () => {
+  const loadBillingData = useCallback(async () => {
     try {
       // Load payment methods
       const methodsRes = await fetch('/api/v1/billing/payment-methods');
@@ -95,8 +97,8 @@ function BillingContent() {
         const invoiceData = await invoicesRes.json();
         setInvoices(invoiceData);
       }
-    } catch (error) {
-      console.error('Failed to load billing data:', error);
+    } catch (_error) {
+      console.error('Failed to load billing data:', _error);
       toast({
         title: t.error || 'Error',
         description:
@@ -106,7 +108,11 @@ function BillingContent() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast, t]);
+
+  useEffect(() => {
+    loadBillingData();
+  }, [loadBillingData]);
 
   const handleAddPaymentMethod = async () => {
     try {
@@ -119,7 +125,7 @@ function BillingContent() {
         const { url } = await response.json();
         window.location.href = url;
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: t.failedToAddPayment || 'Failed to add payment method',
@@ -144,7 +150,7 @@ function BillingContent() {
           description: t.paymentMethodRemoved || 'Payment method removed',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description:
@@ -175,7 +181,7 @@ function BillingContent() {
             t.defaultPaymentUpdated || 'Default payment method updated',
         });
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description:
@@ -202,7 +208,7 @@ function BillingContent() {
         // Refresh the page to update subscription status
         window.location.reload();
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description: t.failedToCancel || 'Failed to cancel subscription',
@@ -226,7 +232,7 @@ function BillingContent() {
         });
         window.location.reload();
       }
-    } catch (error) {
+    } catch (_error) {
       toast({
         title: t.error || 'Error',
         description:

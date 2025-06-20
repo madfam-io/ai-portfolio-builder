@@ -8,7 +8,10 @@ console.log('🔧 Comprehensive test suite fix...\n');
 // Get all test files
 function getAllTestFiles() {
   try {
-    const files = execSync('find __tests__ -name "*.test.ts" -o -name "*.test.tsx" | grep -v node_modules', { encoding: 'utf8' })
+    const files = execSync(
+      'find __tests__ -name "*.test.ts" -o -name "*.test.tsx" | grep -v node_modules',
+      { encoding: 'utf8' }
+    )
       .split('\n')
       .filter(f => f.trim());
     return files;
@@ -23,7 +26,11 @@ function fixCommonIssues(filePath, content) {
   let newContent = content;
 
   // 1. Fix duplicate jest imports
-  if (newContent.match(/import { jest } from '@jest\/globals';[\s\S]*?import {.*jest.*} from '@jest\/globals';/)) {
+  if (
+    newContent.match(
+      /import { jest } from '@jest\/globals';[\s\S]*?import {.*jest.*} from '@jest\/globals';/
+    )
+  ) {
     newContent = newContent.replace(
       /import { jest } from '@jest\/globals';([\s\S]*?)import {(.*)} from '@jest\/globals';/,
       (match, between, imports) => {
@@ -35,13 +42,21 @@ function fixCommonIssues(filePath, content) {
   }
 
   // 2. Fix React imports for TSX files
-  if (filePath.endsWith('.tsx') && !newContent.includes("import React") && !newContent.includes("import * as React")) {
+  if (
+    filePath.endsWith('.tsx') &&
+    !newContent.includes('import React') &&
+    !newContent.includes('import * as React')
+  ) {
     newContent = "import React from 'react';\n" + newContent;
     modified = true;
   }
 
   // 3. Fix missing act import
-  if (newContent.includes('act(') && !newContent.includes('import { act }') && !newContent.includes('import {act}')) {
+  if (
+    newContent.includes('act(') &&
+    !newContent.includes('import { act }') &&
+    !newContent.includes('import {act}')
+  ) {
     newContent = newContent.replace(
       /import { (render[^}]*)} from '@testing-library\/react';/,
       "import { $1, act } from '@testing-library/react';"
@@ -50,7 +65,10 @@ function fixCommonIssues(filePath, content) {
   }
 
   // 4. Fix console mocks
-  if (!newContent.includes('jest.spyOn(console') && newContent.includes('beforeEach')) {
+  if (
+    !newContent.includes('jest.spyOn(console') &&
+    newContent.includes('beforeEach')
+  ) {
     newContent = newContent.replace(
       /beforeEach\(\(\) => \{/,
       `beforeEach(() => {
@@ -62,8 +80,11 @@ function fixCommonIssues(filePath, content) {
   }
 
   // 5. Fix broken import statements
-  newContent = newContent.replace(/import\s*{\s*$[\s\S]*?^([^}]+)} from/gm, 'import { $1 } from');
-  
+  newContent = newContent.replace(
+    /import\s*{\s*$[\s\S]*?^([^}]+)} from/gm,
+    'import { $1 } from'
+  );
+
   // 6. Fix mock-i18n import paths
   newContent = newContent.replace(
     /from ['"]@\/test-utils\/mock-i18n['"]/g,
@@ -100,7 +121,10 @@ global.Blob = class Blob {
   }
 
   // 9. Add missing FormData polyfill
-  if (newContent.includes('FormData') && !newContent.includes('global.FormData')) {
+  if (
+    newContent.includes('FormData') &&
+    !newContent.includes('global.FormData')
+  ) {
     const polyfill = `// Polyfill FormData for Node environment
 global.FormData = class FormData {
   private data: Map<string, any> = new Map();
@@ -132,7 +156,10 @@ global.FormData = class FormData {
   }
 
   // 10. Fix zustand mocks
-  if (newContent.includes('useAuthStore') && !newContent.includes("jest.mock('zustand')")) {
+  if (
+    newContent.includes('useAuthStore') &&
+    !newContent.includes("jest.mock('zustand')")
+  ) {
     const zustandMock = `jest.mock('zustand', () => ({
   create: jest.fn((createState) => {
     const api = (() => {
@@ -153,7 +180,10 @@ global.FormData = class FormData {
 `;
     const importIndex = newContent.indexOf('import');
     if (importIndex > -1) {
-      newContent = newContent.slice(0, importIndex) + zustandMock + newContent.slice(importIndex);
+      newContent =
+        newContent.slice(0, importIndex) +
+        zustandMock +
+        newContent.slice(importIndex);
       modified = true;
     }
   }
@@ -167,7 +197,11 @@ function fixSpecificIssues(filePath, content) {
   const fileName = path.basename(filePath);
 
   // Fix Enhanced Stripe Service mocks
-  if (fileName.includes('payments') || fileName.includes('billing') || fileName.includes('upgrade')) {
+  if (
+    fileName.includes('payments') ||
+    fileName.includes('billing') ||
+    fileName.includes('upgrade')
+  ) {
     if (!newContent.includes('const mockEnhancedStripeService = {')) {
       const stripeMock = `// Mock Enhanced Stripe Service
 const mockEnhancedStripeService = {
@@ -248,15 +282,22 @@ global.page = {
   $$: jest.fn().mockResolvedValue([]),
 };`
       );
-      
+
       // Replace test syntax
-      newContent = newContent.replace(/test\('([^']+)', async \(\) => \{/g, "it('$1', async () => {");
-      newContent = newContent.replace(/test\.describe\(/g, "describe(");
+      newContent = newContent.replace(
+        /test\('([^']+)', async \(\) => \{/g,
+        "it('$1', async () => {"
+      );
+      newContent = newContent.replace(/test\.describe\(/g, 'describe(');
     }
   }
 
   // Add timeout for slow tests
-  if (fileName.includes('middleware') || fileName.includes('csrf') || fileName.includes('ai')) {
+  if (
+    fileName.includes('middleware') ||
+    fileName.includes('csrf') ||
+    fileName.includes('ai')
+  ) {
     if (!newContent.includes('jest.setTimeout')) {
       newContent = 'jest.setTimeout(30000);\n\n' + newContent;
     }
@@ -269,7 +310,7 @@ global.page = {
 function fixTestFile(filePath) {
   try {
     if (!fs.existsSync(filePath)) return false;
-    
+
     let content = fs.readFileSync(filePath, 'utf8');
     let modified = false;
 
@@ -303,7 +344,7 @@ function fixTestFile(filePath) {
 // Main execution
 async function main() {
   console.log('🔍 Scanning for test files...\n');
-  
+
   const testFiles = getAllTestFiles();
   console.log(`Found ${testFiles.length} test files\n`);
 
@@ -315,7 +356,7 @@ async function main() {
   });
 
   console.log(`\n✨ Fixed ${fixedCount} test files!`);
-  
+
   // Create missing test utilities if needed
   const testUtilsDir = path.join(process.cwd(), '__tests__/utils');
   if (!fs.existsSync(testUtilsDir)) {
@@ -351,11 +392,11 @@ export const mockUseLanguage = jest.fn(() => ({
   }
 
   console.log('\n📊 Running tests to check final progress...\n');
-  
+
   try {
-    execSync('npm test 2>&1 | grep -E "(Test Suites:|Tests:)" | tail -2', { 
+    execSync('npm test 2>&1 | grep -E "(Test Suites:|Tests:)" | tail -2', {
       stdio: 'inherit',
-      encoding: 'utf8' 
+      encoding: 'utf8',
     });
   } catch (e) {
     // Test command will fail if tests fail, but we still want to see the output

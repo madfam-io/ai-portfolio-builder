@@ -76,16 +76,16 @@ export const MockLanguageProvider = ({
 // Export a setup function to mock the language module
 export function setupLanguageMocks() {
   // Mock the entire language module
-  jest.mock('@/lib/i18n/minimal-context', () => ({ 
+  jest.mock('@/lib/i18n/minimal-context', () => ({
     useLanguage: () => mockUseLanguage('es'),
     LanguageProvider: MockLanguageProvider,
-   }));
+  }));
 
-  jest.mock('@/lib/i18n/refactored-context', () => ({ 
+  jest.mock('@/lib/i18n/refactored-context', () => ({
     useLanguage: () => mockUseLanguage('es'),
     LanguageProvider: MockLanguageProvider,
     LanguageContext: React.createContext(mockLanguageContext),
-   }));
+  }));
 
   // Clear any saved language preference
   beforeEach(() => {
