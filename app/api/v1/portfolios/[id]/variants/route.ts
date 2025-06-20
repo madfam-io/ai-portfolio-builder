@@ -1,4 +1,4 @@
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, AuthenticatedRequest, RouteContext } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,
@@ -8,12 +8,7 @@ import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import type { CreateVariantInput } from '@/types/portfolio-variants';
 
-// Next.js route handler context type
-interface RouteContext {
-  params: Promise<{
-    id: string;
-  }>;
-}
+// Using RouteContext from auth middleware
 
 // Helper function to transform variant data
 function transformVariant(variant: Record<string, unknown>) {
@@ -113,10 +108,16 @@ async function createAudienceProfile(
  * Get all variants for a portfolio
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
       const portfolioId = params.id;
+      if (!portfolioId || typeof portfolioId !== 'string') {
+        return apiError('Invalid portfolio ID', { status: 400 });
+      }
       const supabase = await createClient();
 
       if (!supabase) {
@@ -167,10 +168,16 @@ export const GET = versionedApiHandler(
  * Create a new variant for a portfolio
  */
 export const POST = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
       const portfolioId = params.id;
+      if (!portfolioId || typeof portfolioId !== 'string') {
+        return apiError('Invalid portfolio ID', { status: 400 });
+      }
       const body: CreateVariantInput = await request.json();
       const supabase = await createClient();
 

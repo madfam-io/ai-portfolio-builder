@@ -1,4 +1,4 @@
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, AuthenticatedRequest, RouteContext } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,
@@ -20,22 +20,23 @@ import {
  * Handles get, update, and delete operations for specific portfolios
  */
 
-// Next.js route handler context type
-interface RouteContext {
-  params: Promise<{
-    id: string;
-  }>;
-}
+// Import RouteContext from auth middleware
 
 /**
  * GET /api/v1/portfolios/[id]
  * Retrieves a specific portfolio by ID
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
-      const { id } = params;
+      const id = params.id;
+      if (!id || typeof id !== 'string') {
+        return apiError('Invalid portfolio ID', { status: 400 });
+      }
       const { user } = request;
 
       // Create Supabase client
@@ -84,10 +85,16 @@ export const GET = versionedApiHandler(
  * Updates a specific portfolio by ID
  */
 export const PUT = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
-      const { id } = params;
+      const id = params.id;
+      if (!id || typeof id !== 'string') {
+        return apiError('Invalid portfolio ID', { status: 400 });
+      }
       const { user } = request;
 
       // Create Supabase client
@@ -208,10 +215,16 @@ export const PUT = versionedApiHandler(
  * Deletes a specific portfolio by ID
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
-      const { id } = params;
+      const id = params.id;
+      if (!id || typeof id !== 'string') {
+        return apiError('Invalid portfolio ID', { status: 400 });
+      }
       const { user } = request;
 
       // Create Supabase client

@@ -1,4 +1,4 @@
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, AuthenticatedRequest, RouteContext } from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,
@@ -65,22 +65,23 @@ async function verifyVariantOwnership(
   return { variant };
 }
 
-// Next.js route handler context type
-interface RouteContext {
-  params: Promise<{
-    id: string;
-  }>;
-}
+// Using RouteContext from auth middleware
 
 /**
  * GET /api/v1/variants/[id]
  * Get a specific variant
  */
 export const GET = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
       const variantId = params.id;
+      if (!variantId || typeof variantId !== 'string') {
+        return apiError('Invalid variant ID', { status: 400 });
+      }
       const supabase = await createClient();
 
       if (!supabase) {
@@ -118,10 +119,16 @@ export const GET = versionedApiHandler(
  * Update a variant
  */
 export const PATCH = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
       const variantId = params.id;
+      if (!variantId || typeof variantId !== 'string') {
+        return apiError('Invalid variant ID', { status: 400 });
+      }
       const updates = await request.json();
       const supabase = await createClient();
 
@@ -209,10 +216,16 @@ export const PATCH = versionedApiHandler(
  * Delete a variant
  */
 export const DELETE = versionedApiHandler(
-  withAuth(async (request: AuthenticatedRequest, context: RouteContext) => {
+  withAuth(async (request: AuthenticatedRequest, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
       const variantId = params.id;
+      if (!variantId || typeof variantId !== 'string') {
+        return apiError('Invalid variant ID', { status: 400 });
+      }
       const supabase = await createClient();
 
       if (!supabase) {

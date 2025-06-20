@@ -165,8 +165,12 @@ export class ModelManager {
    * Get models for a specific capability
    */
   getModelsForCapability(capability: string): AvailableModel[] {
+    const validCapabilities: string[] = ['bio', 'project', 'template', 'scoring'];
+    if (!validCapabilities.includes(capability)) {
+      return [];
+    }
     return this.availableModels.filter(m =>
-      m.capabilities.includes(capability as unknown)
+      m.capabilities.some(c => c === capability)
     );
   }
 

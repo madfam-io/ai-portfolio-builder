@@ -124,7 +124,7 @@ export class HuggingFaceService implements AIService {
 
       return result;
     } catch (error) {
-      logger.error('Bio enhancement failed', error as Error);
+      logger.error('Bio enhancement failed', error instanceof Error ? error : new Error(String(error)));
       throw this.handleError(error, 'bio enhancement');
     }
   }
@@ -175,7 +175,7 @@ export class HuggingFaceService implements AIService {
 
       return result;
     } catch (error) {
-      logger.error('Project optimization failed', error as Error);
+      logger.error('Project optimization failed', error instanceof Error ? error : new Error(String(error)));
       throw this.handleError(error, 'project optimization');
     }
   }
@@ -183,7 +183,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  recommendTemplate(profile: UserProfile): TemplateRecommendation {
+  async recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation> {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -223,7 +223,7 @@ export class HuggingFaceService implements AIService {
           })),
       };
     } catch (error) {
-      logger.error('Template recommendation failed', error as Error);
+      logger.error('Template recommendation failed', error instanceof Error ? error : new Error(String(error)));
       throw this.handleError(error, 'template recommendation');
     }
   }
@@ -231,7 +231,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  scoreContent(content: string, type: string): QualityScore {
+  async scoreContent(content: string, type: string): Promise<QualityScore> {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -257,12 +257,12 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  getUsageStats(): {
+  async getUsageStats(): Promise<{
     requestsToday: number;
     costToday: number;
     avgResponseTime: number;
     successRate: number;
-  } {
+  }> {
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
@@ -672,7 +672,7 @@ export async function enhanceBio(
       error: null,
     };
   } catch (error) {
-    logger.error('Failed to enhance bio', error as Error);
+    logger.error('Failed to enhance bio', error instanceof Error ? error : new Error(String(error)));
     const selectedModel = model && AI_MODELS[model] ? model : 'llama-3.1-70b';
     return {
       enhanced: bio,
@@ -758,7 +758,7 @@ export async function optimizeProjectDescription(projectInfo: {
       error: null,
     };
   } catch (error) {
-    logger.error('Failed to optimize project description', error as Error);
+    logger.error('Failed to optimize project description', error instanceof Error ? error : new Error(String(error)));
     return {
       optimized: projectInfo.description,
       metrics: [],
@@ -856,7 +856,7 @@ export async function recommendTemplate(userProfile: UserProfile): Promise<{
       error: null,
     };
   } catch (error) {
-    logger.error('Failed to recommend template', error as Error);
+    logger.error('Failed to recommend template', error instanceof Error ? error : new Error(String(error)));
     return {
       template: 'developer',
       confidence: 50,

@@ -103,7 +103,7 @@ export function OnboardingChecklist() {
     track.user.action(
       'checklist_item_clicked',
       'system',
-      () => {
+      async () => {
         if (item.route) {
           router.push(item.route);
         }

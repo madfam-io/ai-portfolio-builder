@@ -82,16 +82,16 @@ export function getApiVersion(request: NextRequest): string {
  * Provides version context and standard error handling
  * Supports Next.js App Router route handlers
  */
-type RouteSegment = { params: Record<string, string> };
+export type RouteContext = { params: Promise<Record<string, string>> };
 type RouteHandler<T> = (
   request: NextRequest,
-  ...args: RouteSegment[]
+  context?: RouteContext
 ) => Promise<T> | T;
 
 export function versionedApiHandler<TReturn = NextResponse>(
   handler: RouteHandler<TReturn>
 ): RouteHandler<TReturn | NextResponse> {
-  return async (request: NextRequest, ...args) => {
+  return async (request: NextRequest, context?: RouteContext) => {
     try {
       const version = getApiVersion(request);
 
@@ -99,7 +99,7 @@ export function versionedApiHandler<TReturn = NextResponse>(
       const versionedRequest = Object.assign(request, { apiVersion: version });
 
       // Call handler with versioned request
-      const result = await handler(versionedRequest, ...args);
+      const result = await handler(versionedRequest, context);
 
       // If the handler returns a NextResponse, add version headers
       if (result instanceof Response) {

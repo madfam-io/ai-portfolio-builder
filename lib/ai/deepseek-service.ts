@@ -175,7 +175,7 @@ export class DeepSeekService implements AIService {
   /**
    * Get usage statistics
    */
-  getUsageStats() {
+  async getUsageStats() {
     const avgResponseTime =
       this.usageStats.successfulRequests > 0
         ? this.usageStats.totalResponseTime / this.usageStats.successfulRequests

@@ -14,6 +14,16 @@ export interface LanguageDataPoint {
   color: string;
 }
 
+interface CommitDayData {
+  date: string;
+  count?: number;
+}
+
+interface LanguageData {
+  name: string;
+  percentage?: number;
+}
+
 /**
  * Transform commit data for charts
  */
@@ -24,10 +34,17 @@ export function transformCommitData(
     return [];
   }
 
-  return commitsByDay.map(day => ({
-    date: day.date,
-    commits: day.count || 0,
-  }));
+  return commitsByDay
+    .filter((day): day is CommitDayData => 
+      typeof day === 'object' && 
+      day !== null && 
+      'date' in day &&
+      typeof day.date === 'string'
+    )
+    .map(day => ({
+      date: day.date,
+      commits: day.count || 0,
+    }));
 }
 
 /**
@@ -41,7 +58,14 @@ export function transformLanguageData(
     return [];
   }
 
-  const sortedLanguages = languages
+  const validLanguages = languages.filter((lang): lang is LanguageData =>
+    typeof lang === 'object' &&
+    lang !== null &&
+    'name' in lang &&
+    typeof lang.name === 'string'
+  );
+
+  const sortedLanguages = validLanguages
     .sort((a, b) => (b.percentage || 0) - (a.percentage || 0))
     .slice(0, 8); // Top 8 languages
 
@@ -51,7 +75,7 @@ export function transformLanguageData(
     name: lang.name,
     value: lang.percentage || 0,
     color:
-      (colors as unknown)[colorKeys[index % colorKeys.length] || 'primary'] ||
+      colors[colorKeys[index % colorKeys.length] || 'primary'] ||
       colors.primary,
   }));
 }

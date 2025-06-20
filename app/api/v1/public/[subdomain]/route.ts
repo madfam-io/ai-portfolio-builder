@@ -3,26 +3,28 @@ import {
   apiError,
   versionedApiHandler,
 } from '@/lib/api/response-helpers';
+import { RouteContext } from '@/lib/api/versioning';
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
 import { transformDbPortfolioToApi } from '@/lib/utils/portfolio-transformer';
 
-// Next.js route handler context type
-interface RouteContext {
-  params: Promise<{
-    subdomain: string;
-  }>;
-}
+// Using RouteContext from versioning
 
 /**
  * GET /api/v1/public/[subdomain]
  * Fetch a public portfolio by subdomain (no auth required)
  */
 export const GET = versionedApiHandler(
-  async (_request: Request, context: RouteContext) => {
+  async (_request, context?: RouteContext) => {
+    if (!context) {
+      return apiError('Invalid route context', { status: 500 });
+    }
     const params = await context.params;
     try {
-      const { subdomain } = params;
+      const subdomain = params.subdomain;
+      if (!subdomain || typeof subdomain !== 'string') {
+        return apiError('Invalid subdomain', { status: 400 });
+      }
 
       if (!subdomain) {
         return apiError('Subdomain is required', { status: 400 });

@@ -453,8 +453,21 @@ export class OptimizedAnalyticsService {
       };
     }
 
+    // Type guard to validate ContributorWithJoin structure
+    function isContributorWithJoin(item: unknown): item is ContributorWithJoin {
+      return (
+        typeof item === 'object' &&
+        item !== null &&
+        'commitCount' in item &&
+        'contributorId' in item &&
+        'contributors' in item &&
+        typeof item.contributors === 'object'
+      );
+    }
+
     // Transform to proper Contributor type
-    return ((data || []) as ContributorWithJoin[]).map(item => ({
+    const validData = (data || []).filter(isContributorWithJoin);
+    return validData.map(item => ({
       id: item.contributors?.id || '',
       githubId: item.contributors?.githubId || 0,
       login: item.contributors?.login || '',
@@ -475,7 +488,7 @@ export class OptimizedAnalyticsService {
         : undefined,
       createdAt: new Date(item.contributors?.createdAt || new Date()),
       updatedAt: new Date(item.contributors?.updatedAt || new Date()),
-    })) as Contributor[];
+    }));
   }
 
   /**

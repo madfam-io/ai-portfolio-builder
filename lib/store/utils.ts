@@ -150,7 +150,7 @@ const createErrorSlice = <T extends object>(
     ...initialState,
 
     setError: (error, key) =>
-      set((state: unknown) => {
+      set((state) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.set(key, error || '');
@@ -163,7 +163,7 @@ const createErrorSlice = <T extends object>(
       }),
 
     clearError: key =>
-      set((state: unknown) => {
+      set((state) => {
         const newErrors = new Map(state.errors);
         if (key) {
           newErrors.delete(key);

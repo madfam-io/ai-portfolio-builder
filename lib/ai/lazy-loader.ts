@@ -1,6 +1,6 @@
 import { logger } from '@/lib/utils/logger';
 
-import { BioContext, UserProfile } from './types';
+import { BioContext, UserProfile, AIService } from './types';
 
 /**
  * Lazy loading wrapper for AI services
@@ -8,12 +8,12 @@ import { BioContext, UserProfile } from './types';
  */
 
 // Cache for loaded services
-let huggingFaceService: unknown = null;
+let huggingFaceService: AIService | null = null;
 
 /**
  * Lazy load HuggingFace service
  */
-async function getHuggingFaceService(): Promise<unknown> {
+async function getHuggingFaceService(): Promise<AIService> {
   if (!huggingFaceService) {
     logger.info('Loading HuggingFace service...');
     const { HuggingFaceService } = await import('./huggingface-service');
@@ -31,7 +31,8 @@ async function enhanceBioLazy(
   selectedModel?: string
 ): Promise<string> {
   const service = await getHuggingFaceService();
-  return service.enhanceBio(bio, context, selectedModel);
+  const result = await service.enhanceBio(bio, context);
+  return result.content;
 }
 
 /**
@@ -44,12 +45,12 @@ async function optimizeProjectLazy(
   selectedModel?: string
 ): Promise<string> {
   const service = await getHuggingFaceService();
-  return service.optimizeProjectDescription(
-    title,
+  const result = await service.optimizeProjectDescription(
     description,
     technologies,
-    selectedModel
+    title // Using title as industryContext
   );
+  return result.enhanced;
 }
 
 /**
@@ -60,7 +61,7 @@ async function recommendTemplateLazy(
   selectedModel?: string
 ): Promise<unknown> {
   const service = await getHuggingFaceService();
-  return service.recommendTemplate(profile, selectedModel);
+  return service.recommendTemplate(profile);
 }
 
 /**
@@ -68,7 +69,12 @@ async function recommendTemplateLazy(
  */
 async function getAvailableModelsLazy(task?: string): Promise<unknown[]> {
   const service = await getHuggingFaceService();
-  return service.getAvailableModels(task);
+  // getAvailableModels is HuggingFace-specific, not part of AIService interface
+  // So we need to check if it exists
+  if ('getAvailableModels' in service && typeof service.getAvailableModels === 'function') {
+    return service.getAvailableModels();
+  }
+  return [];
 }
 
 /**

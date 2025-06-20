@@ -196,10 +196,13 @@ function _requireAuth(
  * Higher-order function that wraps API route handlers with authentication
  * Works seamlessly with versionedApiHandler and Next.js route handlers
  */
-export function withAuth<TArgs extends unknown[], TReturn>(
-  handler: (req: AuthenticatedRequest, ...args: TArgs) => TReturn
-): (req: NextRequest, ...args: TArgs) => Promise<TReturn | NextResponse> {
-  return async (req: NextRequest, ...args: TArgs) => {
+// Route context type for Next.js 15
+export type RouteContext = { params: Promise<Record<string, string>> };
+
+export function withAuth<TReturn>(
+  handler: (req: AuthenticatedRequest, context?: RouteContext) => TReturn
+): (req: NextRequest, context?: RouteContext) => Promise<TReturn | NextResponse> {
+  return async (req: NextRequest, context?: RouteContext) => {
     try {
       const user = await authenticateUser(req);
 
@@ -216,7 +219,7 @@ export function withAuth<TArgs extends unknown[], TReturn>(
       }) as AuthenticatedRequest;
 
       // Call the original handler with authenticated request
-      return handler(authenticatedReq, ...args);
+      return handler(authenticatedReq, context);
     } catch (error) {
       logger.error('Auth middleware error:', error as Error);
       return apiError('Authentication failed', { status: 500 });

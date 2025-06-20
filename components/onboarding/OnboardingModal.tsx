@@ -101,7 +101,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     await track.user.action(
       'onboarding_step_completed',
       'system',
-      () => {
+      async () => {
         completeStep(currentStep.id);
       },
       {
@@ -121,7 +121,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_step_skipped',
       'system',
-      () => {
+      async () => {
         skipStep(currentStep.id);
       },
       {
@@ -135,7 +135,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_completed',
       'system',
-      () => {
+      async () => {
         completeOnboarding();
       },
       {
@@ -156,7 +156,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
     track.user.action(
       'onboarding_closed',
       'system',
-      () => {
+      async () => {
         completeOnboarding();
       },
       {
