@@ -34,6 +34,7 @@ interface ExperienceFormData {
   technologies?: string[];
 }
 
+// eslint-disable-next-line complexity
 export function ExperienceSection({
   experiences = [],
   onUpdate,

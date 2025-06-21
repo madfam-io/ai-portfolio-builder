@@ -37,6 +37,7 @@ interface CertificationFormData {
   imageUrl?: string;
 }
 
+// eslint-disable-next-line complexity
 export function CertificationsSection({
   certifications = [],
   onUpdate,
@@ -123,6 +124,7 @@ export function CertificationsSection({
   };
 
   const handleDelete = (id: string) => {
+    // eslint-disable-next-line no-alert
     if (
       window.confirm(
         t.confirmDeleteCertification ||

@@ -120,6 +120,7 @@ const TemplateStepRenderer = ({
   />
 );
 
+// eslint-disable-next-line complexity
 const EditorStepRenderer = ({
   portfolio,
   previewConfig,

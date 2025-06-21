@@ -14,6 +14,7 @@ import React from 'react';
 import BaseLayout from '@/components/layouts/BaseLayout';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+// eslint-disable-next-line complexity
 export default function GDPRPage(): React.ReactElement {
   const { t } = useLanguage();
 

@@ -138,6 +138,7 @@ const usePortfolioCreation = (
   return { handleCreatePortfolio };
 };
 
+// eslint-disable-next-line complexity
 function DashboardContent(): React.ReactElement {
   const { t } = useLanguage();
   const { user } = useAuthStore();

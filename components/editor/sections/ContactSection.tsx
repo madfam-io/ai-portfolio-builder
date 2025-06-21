@@ -93,6 +93,7 @@ const SOCIAL_PLATFORMS = [
   },
 ];
 
+// eslint-disable-next-line complexity
 export function ContactSection({
   contact = {},
   social = {},

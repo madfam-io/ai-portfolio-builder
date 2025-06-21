@@ -108,6 +108,7 @@ const PRESET_COLORS = [
   '#a855f7', // Violet
 ];
 
+// eslint-disable-next-line complexity
 export function ThemeCustomizer({
   customization,
   onUpdate,

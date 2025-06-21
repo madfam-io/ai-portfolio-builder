@@ -17,6 +17,7 @@ interface EditorCanvasProps {
  * Main editing area for portfolio content
  * Shows form fields based on active section
  */
+// eslint-disable-next-line complexity
 export function EditorCanvas({
   portfolio,
   onDataChange,

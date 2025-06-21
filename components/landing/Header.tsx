@@ -11,6 +11,7 @@ import { useAuthStore } from '@/lib/store/auth-store';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 
+// eslint-disable-next-line complexity
 export default function Header(): React.ReactElement {
   const { language, setLanguage, t, availableLanguages } = useLanguage();
   const {

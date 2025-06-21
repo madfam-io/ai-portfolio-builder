@@ -34,6 +34,34 @@ const FIX_PATTERNS = [
   },
 ];
 
+function processTestFile(file: string): { processed: boolean; fixed: boolean } {
+  const content = fs.readFileSync(file, 'utf-8');
+  
+  // Check if file contains useLanguage mock
+  if (!content.includes('mockUseLanguage') && !content.includes('@/lib/i18n/refactored-context')) {
+    return { processed: false, fixed: false };
+  }
+
+  let newContent = content;
+  let changed = false;
+
+  for (const fix of FIX_PATTERNS) {
+    const beforeLength = newContent.length;
+    newContent = newContent.replace(fix.pattern, fix.replacement);
+    
+    if (newContent.length !== beforeLength) {
+      changed = true;
+    }
+  }
+
+  if (changed) {
+    fs.writeFileSync(file, newContent);
+    console.log(`✅ Fixed: ${path.relative(process.cwd(), file)}`);
+  }
+
+  return { processed: true, fixed: changed };
+}
+
 async function fixTestFiles() {
   try {
     // Find all test files with useLanguage mocks
@@ -46,36 +74,9 @@ async function fixTestFiles() {
     let totalFiles = 0;
 
     for (const file of testFiles) {
-      const content = fs.readFileSync(file, 'utf-8');
-
-      // Check if file contains useLanguage mock
-      if (
-        content.includes('mockUseLanguage') ||
-        content.includes('@/lib/i18n/refactored-context')
-      ) {
-        totalFiles++;
-        let newContent = content;
-        let changed = false;
-
-        for (const fix of FIX_PATTERNS) {
-          const beforeLength = newContent.length;
-          if (typeof fix.replacement === 'string') {
-            newContent = newContent.replace(fix.pattern, fix.replacement);
-          } else {
-            newContent = newContent.replace(fix.pattern, fix.replacement);
-          }
-
-          if (newContent.length !== beforeLength) {
-            changed = true;
-          }
-        }
-
-        if (changed) {
-          fs.writeFileSync(file, newContent);
-          filesFixed++;
-          console.log(`✅ Fixed: ${path.relative(process.cwd(), file)}`);
-        }
-      }
+      const result = processTestFile(file);
+      if (result.processed) totalFiles++;
+      if (result.fixed) filesFixed++;
     }
 
     console.log(`\n📊 Summary:`);

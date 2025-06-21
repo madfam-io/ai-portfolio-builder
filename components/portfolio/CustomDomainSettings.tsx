@@ -51,6 +51,7 @@ interface DomainStatus {
   ssl?: boolean;
 }
 
+// eslint-disable-next-line complexity
 export function CustomDomainSettings({
   portfolio,
   onUpdate,

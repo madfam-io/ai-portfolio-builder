@@ -124,6 +124,7 @@ export default function GitHubIntegrationPage() {
 
   const handleDisconnect = async () => {
     // TODO: Replace with proper modal dialog
+    // eslint-disable-next-line no-alert
     if (
       !window.confirm(
         'Are you sure you want to disconnect GitHub? This will remove all synced repository data.'

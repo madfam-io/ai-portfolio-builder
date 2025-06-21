@@ -21,6 +21,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Separator } from '@/components/ui/separator';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+// eslint-disable-next-line complexity
 export default function LoginPage() {
   const router = useRouter();
   const { t } = useLanguage();

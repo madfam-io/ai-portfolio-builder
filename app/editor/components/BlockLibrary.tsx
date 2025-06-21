@@ -44,6 +44,7 @@ const iconMap: Record<string, React.ReactNode> = {
   'graduation-cap': <GraduationCap className="h-4 w-4" />,
   mail: <Mail className="h-4 w-4" />,
   quote: <Quote className="h-4 w-4" />,
+  // eslint-disable-next-line jsx-a11y/alt-text
   image: <Image className="h-4 w-4" />,
   type: <Type className="h-4 w-4" />,
   video: <Video className="h-4 w-4" />,

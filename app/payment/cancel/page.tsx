@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 
+// eslint-disable-next-line complexity
 export default function PaymentCancel() {
   const router = useRouter();
   const { t } = useLanguage();

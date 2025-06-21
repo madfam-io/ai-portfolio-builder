@@ -19,9 +19,11 @@ export const signOut = jest.fn();
 
 export const SessionProvider = ({ children }) => children;
 
-export default {
+const nextAuthReactMock = {
   useSession,
   signIn,
   signOut,
   SessionProvider,
 };
+
+export default nextAuthReactMock;

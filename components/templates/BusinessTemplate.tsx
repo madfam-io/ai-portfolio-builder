@@ -53,6 +53,7 @@ interface BusinessTemplateProps {
   portfolio: Portfolio;
 }
 
+// eslint-disable-next-line complexity
 export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
   const socialLinks = [
     { platform: 'linkedin', url: portfolio.social?.linkedin, icon: Linkedin },

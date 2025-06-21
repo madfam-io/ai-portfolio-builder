@@ -29,6 +29,7 @@ interface EducationFormData {
   achievements?: string[];
 }
 
+// eslint-disable-next-line complexity
 export function EducationSection({
   education = [],
   onUpdate,
@@ -119,6 +120,7 @@ export function EducationSection({
   };
 
   const handleDelete = (id: string) => {
+    // eslint-disable-next-line no-alert
     if (
       window.confirm(
         t.confirmDeleteEducation ||

@@ -198,6 +198,7 @@ export function PropertyPanel({ blockId }: PropertyPanelProps) {
                 placeholder="Image URL or upload"
               />
               <Button variant="outline" size="sm" className="w-full">
+                {/* eslint-disable-next-line jsx-a11y/alt-text */}
                 <Image className="h-4 w-4 mr-2" />
                 Upload Image
               </Button>

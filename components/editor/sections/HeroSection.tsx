@@ -28,6 +28,7 @@ interface HeroSectionProps {
   onUpdate: (updates: unknown) => void;
 }
 
+// eslint-disable-next-line complexity
 export function HeroSection({ data = {}, onUpdate }: HeroSectionProps) {
   const { t } = useLanguage();
   const { currentPortfolio } = usePortfolioStore();

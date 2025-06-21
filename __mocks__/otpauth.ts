@@ -26,7 +26,9 @@ export const Secret = {
   }),
 };
 
-export default {
+const otpauthMock = {
   TOTP,
   Secret,
 };
+
+export default otpauthMock;

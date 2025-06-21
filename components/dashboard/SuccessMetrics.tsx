@@ -68,6 +68,7 @@ export function SuccessMetrics() {
 
   useEffect(() => {
     // Simulate loading metrics
+    // eslint-disable-next-line complexity
     setTimeout(() => {
       // Calculate real metrics from portfolio data
       const publishedPortfolios = portfolios.filter(

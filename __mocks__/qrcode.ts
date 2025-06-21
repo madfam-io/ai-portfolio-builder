@@ -14,9 +14,11 @@ export const toBuffer = jest
 
 export const toFile = jest.fn().mockResolvedValue(undefined);
 
-export default {
+const qrcodeMock = {
   toDataURL,
   toString,
   toBuffer,
   toFile,
 };
+
+export default qrcodeMock;

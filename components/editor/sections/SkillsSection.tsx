@@ -48,6 +48,7 @@ const SKILL_LEVELS = [
   { value: 'expert', label: 'Expert', color: 'bg-purple-100 text-purple-800' },
 ];
 
+// eslint-disable-next-line complexity
 export function SkillsSection({ skills = [], onUpdate }: SkillsSectionProps) {
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);

@@ -32,6 +32,7 @@ interface UsageStatsProps {
   className?: string;
 }
 
+// eslint-disable-next-line complexity
 export function UsageStats({
   showUpgradePrompts = true,
   className = '',

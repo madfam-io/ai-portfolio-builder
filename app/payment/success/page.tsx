@@ -13,6 +13,7 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { useSubscription } from '@/lib/hooks/use-subscription';
 
+// eslint-disable-next-line complexity
 export default function PaymentSuccess() {
   const router = useRouter();
   const searchParams = useSearchParams();

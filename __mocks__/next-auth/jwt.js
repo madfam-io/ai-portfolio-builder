@@ -4,6 +4,8 @@ export const getToken = jest.fn().mockResolvedValue({
   name: 'Test User',
 });
 
-export default {
+const jwtMock = {
   getToken,
 };
+
+export default jwtMock;

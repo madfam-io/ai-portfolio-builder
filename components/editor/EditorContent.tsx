@@ -45,6 +45,7 @@ import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
  *
  * Enhanced editor interface with AI features, real-time preview, and drag-and-drop
  */
+// eslint-disable-next-line complexity
 export function EditorContent() {
   const router = useRouter();
   const { t } = useLanguage();

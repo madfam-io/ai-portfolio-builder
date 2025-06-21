@@ -277,10 +277,10 @@ export const renderWithOptions = (
     router?: Partial<NextRouter>;
   } = {}
 ) => {
-  const Wrapper = createTestWrapper({ 
-    initialLanguage: initialLanguage, 
-    session: session, 
-    router: router 
+  const Wrapper = createTestWrapper({
+    initialLanguage: initialLanguage,
+    session: session,
+    router: router,
   });
 
   return rtlRender(ui, {
