@@ -10,6 +10,7 @@ import { LanguageProvider } from '@/lib/i18n/refactored-context';
 import { StoreProvider } from '@/lib/store/provider';
 import { AuthProvider } from '@/components/providers/auth-provider';
 import { PostHogProvider } from '@/components/providers/posthog-provider';
+import { FeedbackProvider } from '@/components/providers/feedback-provider';
 import { initializeAllMonitoring } from '@/lib/monitoring';
 
 const inter = Inter({
@@ -78,9 +79,11 @@ export default function RootLayout({
                 <AuthProvider>
                   <Suspense fallback={null}>
                     <PostHogProvider>
-                      <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
-                        {children}
-                      </div>
+                      <FeedbackProvider>
+                        <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+                          {children}
+                        </div>
+                      </FeedbackProvider>
                     </PostHogProvider>
                   </Suspense>
                 </AuthProvider>

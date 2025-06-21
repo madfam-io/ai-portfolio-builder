@@ -31,7 +31,6 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createFeedbackSystem } from '@/lib/feedback/feedback-system';
 import type { FeedbackEntry } from '@/lib/feedback/feedback-system';
 
 interface FeedbackWidgetProps {
@@ -67,8 +66,6 @@ export function FeedbackWidget({
     userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : '',
     url: typeof window !== 'undefined' ? window.location.href : '',
   });
-
-  const feedbackSystem = createFeedbackSystem();
 
   const feedbackTypes = [
     {
@@ -129,7 +126,19 @@ export function FeedbackWidget({
         tags: feedbackData.tags || [],
       } as Omit<FeedbackEntry, 'id' | 'timestamp' | 'status'>;
 
-      await feedbackSystem.submitFeedback(feedbackEntry);
+      // Submit to API
+      const response = await fetch('/api/v1/feedback/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
+        body: JSON.stringify(feedbackEntry),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit feedback');
+      }
 
       setStep('success');
 

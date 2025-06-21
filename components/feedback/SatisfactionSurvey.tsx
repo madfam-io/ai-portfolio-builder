@@ -15,18 +15,19 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { ThumbsUp, TrendingUp, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { createFeedbackSystem } from '@/lib/feedback/feedback-system';
 import type { UserSatisfactionSurvey } from '@/lib/feedback/feedback-system';
 
 interface SatisfactionSurveyProps {
   userId: string;
-  trigger:
-    | 'portfolio_created'
-    | 'portfolio_published'
-    | 'weekly_active'
-    | 'before_churn';
+  userContext?: {
+    plan: string;
+    accountAge: number;
+    portfoliosCreated: number;
+    lastActivity: Date;
+  };
+  context: 'after_publish' | 'weekly_prompt' | 'manual';
   onComplete?: () => void;
-  onSkip?: () => void;
+  onDismiss?: () => void;
 }
 
 /**
@@ -34,9 +35,10 @@ interface SatisfactionSurveyProps {
  */
 export function SatisfactionSurvey({
   userId,
-  trigger: _trigger,
+  userContext: _userContext,
+  context,
   onComplete,
-  onSkip,
+  onDismiss,
 }: SatisfactionSurveyProps) {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,7 +59,6 @@ export function SatisfactionSurvey({
     }
   );
 
-  const feedbackSystem = createFeedbackSystem();
   const startTime = Date.now();
 
   const steps = [
@@ -140,9 +141,22 @@ export function SatisfactionSurvey({
       const surveyEntry = {
         ...surveyData,
         completedIn,
+        completionContext: context,
       } as Omit<UserSatisfactionSurvey, 'id' | 'timestamp'>;
 
-      await feedbackSystem.submitSurvey(surveyEntry);
+      // Submit to API instead of feedbackSystem
+      const response = await fetch('/api/v1/feedback/survey', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-user-id': userId,
+        },
+        body: JSON.stringify(surveyEntry),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit survey');
+      }
 
       toast({
         title: 'Survey Submitted',
@@ -218,7 +232,7 @@ export function SatisfactionSurvey({
                 Your feedback shapes the future of PRISMA Portfolio Builder
               </CardDescription>
             </div>
-            <Button variant="ghost" size="icon" onClick={onSkip}>
+            <Button variant="ghost" size="icon" onClick={onDismiss}>
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -410,7 +424,11 @@ export function SatisfactionSurvey({
             </Button>
 
             {currentStep === 0 && (
-              <Button variant="ghost" onClick={onSkip} disabled={isSubmitting}>
+              <Button
+                variant="ghost"
+                onClick={onDismiss}
+                disabled={isSubmitting}
+              >
                 Skip Survey
               </Button>
             )}
