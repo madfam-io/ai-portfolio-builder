@@ -84,7 +84,7 @@ function hasSuspiciousContent(request: NextRequest): boolean {
 /**
  * Validate request size
  */
-async function isRequestTooLarge(request: NextRequest): Promise<boolean> {
+function isRequestTooLarge(request: NextRequest): boolean {
   const contentLength = request.headers.get('content-length');
 
   if (contentLength) {
@@ -155,9 +155,7 @@ function logSecurityEvent(
 /**
  * Comprehensive security middleware
  */
-export async function securityMiddleware(
-  request: NextRequest
-): Promise<NextResponse | null> {
+export function securityMiddleware(request: NextRequest): NextResponse | null {
   try {
     // 1. Check if IP is blocked
     if (isIPBlocked(request)) {
@@ -172,7 +170,7 @@ export async function securityMiddleware(
     }
 
     // 3. Check request size
-    if (await isRequestTooLarge(request)) {
+    if (isRequestTooLarge(request)) {
       logSecurityEvent('REQUEST_TOO_LARGE', request);
       return NextResponse.json(
         { error: 'Request entity too large' },

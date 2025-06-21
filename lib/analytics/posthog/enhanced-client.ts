@@ -256,7 +256,7 @@ class EnhancedPostHogService {
 
     // Check cache first
     if (this.abTestCache.has(testKey)) {
-      return this.abTestCache.get(testKey)!;
+      return this.abTestCache.get(testKey) as boolean;
     }
 
     const testConfig = AB_TESTS[testKey];
@@ -319,7 +319,7 @@ class EnhancedPostHogService {
 
     // Check cache first
     if (this.featureFlagCache.has(flagKey)) {
-      return this.featureFlagCache.get(flagKey)!;
+      return this.featureFlagCache.get(flagKey) as boolean;
     }
 
     try {

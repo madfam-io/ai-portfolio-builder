@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import crypto from 'crypto';
 
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
@@ -189,9 +190,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  async recommendTemplate(
-    profile: UserProfile
-  ): Promise<TemplateRecommendation> {
+  recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation> {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -242,7 +241,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  async scoreContent(content: string, type: string): Promise<QualityScore> {
+  scoreContent(content: string, type: string): Promise<QualityScore> {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -268,7 +267,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  async getUsageStats(): Promise<{
+  getUsageStats(): Promise<{
     requestsToday: number;
     costToday: number;
     avgResponseTime: number;

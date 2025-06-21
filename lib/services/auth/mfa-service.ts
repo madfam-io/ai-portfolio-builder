@@ -105,7 +105,7 @@ export class MFAService {
       // Generate QR code
       const totp = new OTPAuth.TOTP({
         issuer: 'AI Portfolio Builder',
-        label: userData.user.email!,
+        label: userData.user.email || 'user',
         secret: enrollData.totp.secret,
         algorithm: 'SHA1',
         digits: 6,

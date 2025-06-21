@@ -5,7 +5,7 @@ import { PRISMATestHelpers } from './utils/test-helpers';
 test.describe('PRISMA Geolocation Features', () => {
   let helpers: PRISMATestHelpers;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(({ page }) => {
     helpers = new PRISMATestHelpers(page);
   });
 

@@ -13,8 +13,10 @@ export function toast(options: ToastOptions): void {
   // Simple console implementation for now
   // In a real app, this would integrate with a toast library like sonner or react-hot-toast
   if (options.variant === 'destructive') {
+    // eslint-disable-next-line no-console
     console.error(`${options.title}: ${options.description || ''}`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`${options.title}: ${options.description || ''}`);
   }
 
@@ -22,6 +24,7 @@ export function toast(options: ToastOptions): void {
   if (typeof window !== 'undefined') {
     // Simple browser notification as fallback
     if (options.variant === 'destructive') {
+      // eslint-disable-next-line no-alert
       alert(`Error: ${options.title}`);
     }
   }

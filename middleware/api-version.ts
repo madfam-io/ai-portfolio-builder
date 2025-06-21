@@ -51,9 +51,7 @@ export function getDeprecationInfo(version: string) {
  * API Version Middleware
  * Validates API version and adds appropriate headers
  */
-export async function apiVersionMiddleware(
-  request: NextRequest
-): Promise<NextResponse> {
+export function apiVersionMiddleware(request: NextRequest): NextResponse {
   const pathname = request.nextUrl.pathname;
 
   // Only process API routes
@@ -167,7 +165,7 @@ export function withApiVersion<T extends (...args: unknown[]) => unknown>(
     maxVersion?: string;
   }
 ): T {
-  return (async (...args: Parameters<T>) => {
+  return ((...args: Parameters<T>) => {
     const [request] = args as unknown as [NextRequest];
     const version =
       extractApiVersion(request.nextUrl.pathname) ||

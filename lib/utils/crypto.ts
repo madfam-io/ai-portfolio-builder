@@ -116,7 +116,7 @@ export function decrypt(encryptedData: {
  * Generate a secure encryption key for production use
  * This should be run once during setup and the result stored securely
  */
-function generateEncryptionKey(): string {
+export function generateEncryptionKey(): string {
   return crypto.randomBytes(32).toString('hex');
 }
 
@@ -128,7 +128,7 @@ function generateEncryptionKey(): string {
  * @param encryptedData - The data to re-encrypt
  * @returns The re-encrypted data with the new key
  */
-function rotateEncryptionKey(
+export function rotateEncryptionKey(
   oldKey: Buffer,
   newKey: Buffer,
   encryptedData: { encrypted: string; iv: string; tag: string }
@@ -161,7 +161,7 @@ function rotateEncryptionKey(
  * @param text - The text to encrypt
  * @returns Encrypted data or null if encryption fails
  */
-function safeEncrypt(text: string): {
+export function safeEncrypt(text: string): {
   encrypted: string;
   iv: string;
   tag: string;
@@ -179,7 +179,7 @@ function safeEncrypt(text: string): {
  * @param encryptedData - The encrypted data object
  * @returns Decrypted text or null if decryption fails
  */
-function safeDecrypt(encryptedData: {
+export function safeDecrypt(encryptedData: {
   encrypted: string;
   iv: string;
   tag: string;

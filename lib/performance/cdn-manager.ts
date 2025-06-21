@@ -87,7 +87,7 @@ class CDNManager {
     this.config = { ...this.config, ...config };
 
     if (this.config.enabled) {
-      await this.setupCDN();
+      this.setupCDN();
       await this.configureCaching();
       logger.info('CDN manager initialized', {
         provider: this.config.provider,
@@ -174,7 +174,7 @@ class CDNManager {
   ): Promise<void> {
     if (!this.config.enabled) return;
 
-    const preloadPromises = assets.map(async asset => {
+    const preloadPromises = assets.map(asset => {
       try {
         if (typeof window !== 'undefined') {
           const link = document.createElement('link');
@@ -214,10 +214,10 @@ class CDNManager {
           await this.purgeCloudflareCache(urls);
           break;
         case 'aws':
-          await this.purgeAWSCache(urls);
+          this.purgeAWSCache(urls);
           break;
         case 'vercel':
-          await this.purgeVercelCache(urls);
+          this.purgeVercelCache(urls);
           break;
         default:
           logger.warn('Cache purging not supported for provider', {
@@ -334,22 +334,7 @@ class CDNManager {
 
       // Get all performance metric keys from timeline
       const keys = await redis.lrange('perf:timeline', 0, -1);
-      const metrics: PerformanceMetrics[] = [];
-
-      // Fetch metrics within date range
-      for (const key of keys) {
-        try {
-          const data = await redis.get(key);
-          if (data) {
-            const metric: PerformanceMetrics = JSON.parse(data);
-            if (metric.timestamp >= startDate && metric.timestamp <= endDate) {
-              metrics.push(metric);
-            }
-          }
-        } catch (_error) {
-          // Skip invalid entries
-        }
-      }
+      const metrics = await this.fetchMetricsInRange(keys, startDate, endDate);
 
       if (metrics.length === 0) {
         return this.getEmptyAnalytics();
@@ -381,16 +366,16 @@ class CDNManager {
   /**
    * Setup CDN configuration
    */
-  private async setupCDN(): Promise<void> {
+  private setupCDN(): void {
     switch (this.config.provider) {
       case 'cloudflare':
-        await this.setupCloudflare();
+        this.setupCloudflare();
         break;
       case 'aws':
-        await this.setupAWS();
+        this.setupAWS();
         break;
       case 'vercel':
-        await this.setupVercel();
+        this.setupVercel();
         break;
       default:
         logger.warn('Unknown CDN provider', { provider: this.config.provider });
@@ -474,17 +459,17 @@ class CDNManager {
   }
 
   // CDN-specific setup methods
-  private async setupCloudflare(): Promise<void> {
+  private setupCloudflare(): void {
     // Cloudflare-specific configuration
     logger.info('Cloudflare CDN configured');
   }
 
-  private async setupAWS(): Promise<void> {
+  private setupAWS(): void {
     // AWS CloudFront configuration
     logger.info('AWS CloudFront configured');
   }
 
-  private async setupVercel(): Promise<void> {
+  private setupVercel(): void {
     // Vercel Edge Network configuration
     logger.info('Vercel Edge Network configured');
   }
@@ -512,17 +497,41 @@ class CDNManager {
     }
   }
 
-  private async purgeAWSCache(_urls: string[]): Promise<void> {
+  private purgeAWSCache(_urls: string[]): void {
     // AWS CloudFront invalidation
     logger.info('AWS cache purge not implemented');
   }
 
-  private async purgeVercelCache(_urls: string[]): Promise<void> {
+  private purgeVercelCache(_urls: string[]): void {
     // Vercel cache purging
     logger.info('Vercel cache purge not implemented');
   }
 
   // Analytics helper methods
+  private async fetchMetricsInRange(
+    keys: string[],
+    startDate: Date,
+    endDate: Date
+  ): Promise<PerformanceMetrics[]> {
+    const metrics: PerformanceMetrics[] = [];
+
+    for (const key of keys) {
+      try {
+        const data = await redis.get(key);
+        if (!data) continue;
+
+        const metric: PerformanceMetrics = JSON.parse(data);
+        if (metric.timestamp >= startDate && metric.timestamp <= endDate) {
+          metrics.push(metric);
+        }
+      } catch (_error) {
+        // Skip invalid entries
+      }
+    }
+
+    return metrics;
+  }
+
   private average(numbers: number[]): number {
     return numbers.length > 0
       ? numbers.reduce((a, b) => a + b, 0) / numbers.length
@@ -541,7 +550,10 @@ class CDNManager {
         dailyMetrics.set(date, []);
       }
       if (date) {
-        dailyMetrics.get(date)!.push(metric);
+        const dayMetrics = dailyMetrics.get(date);
+        if (dayMetrics) {
+          dayMetrics.push(metric);
+        }
       }
     });
 
@@ -570,7 +582,10 @@ class CDNManager {
       if (!pageMetrics.has(url)) {
         pageMetrics.set(url, []);
       }
-      pageMetrics.get(url)!.push(metric.metrics.tti);
+      const urlMetrics = pageMetrics.get(url);
+      if (urlMetrics) {
+        urlMetrics.push(metric.metrics.tti);
+      }
     });
 
     return Array.from(pageMetrics.entries())

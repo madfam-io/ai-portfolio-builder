@@ -319,6 +319,36 @@ export const findUserByEmail = async (email: string): Promise<any | null> => {
 };
 
 /**
+ * Update encrypted records in batch
+ */
+const updateEncryptedRecords = async (
+  supabase: any,
+  tableName: string,
+  records: any[]
+): Promise<{ successCount: number }> => {
+  let successCount = 0;
+
+  for (const record of records) {
+    const { error: updateError } = await supabase
+      .from(tableName)
+      .update(record)
+      .eq('id', record.id);
+
+    if (updateError) {
+      logger.error('Failed to encrypt record', {
+        tableName,
+        recordId: record.id,
+        error: updateError,
+      });
+    } else {
+      successCount++;
+    }
+  }
+
+  return { successCount };
+};
+
+/**
  * Migrate existing data to encrypted format
  */
 export const migrateTableToEncryption = async (
@@ -371,22 +401,12 @@ export const migrateTableToEncryption = async (
       });
 
       // Update records
-      for (const record of encryptedRecords) {
-        const { error: updateError } = await supabase
-          .from(tableName)
-          .update(record)
-          .eq('id', record.id);
-
-        if (updateError) {
-          logger.error('Failed to encrypt record', {
-            tableName,
-            recordId: record.id,
-            error: updateError,
-          });
-        } else {
-          totalEncrypted++;
-        }
-      }
+      const updateResults = await updateEncryptedRecords(
+        supabase,
+        tableName,
+        encryptedRecords
+      );
+      totalEncrypted += updateResults.successCount;
 
       // Update progress
       await supabase

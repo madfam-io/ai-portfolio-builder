@@ -34,15 +34,15 @@ export class PortfolioRepository {
   /**
    * Get all portfolios (optionally filtered)
    */
-  async findAll(options?: QueryOptions): Promise<Portfolio[]> {
+  findAll(options?: QueryOptions): Promise<Portfolio[]> {
     // For now, we'll use a default userId from options or return empty array
     // In a real implementation, this would use proper filtering
     const userId = options?.filters?.userId as string;
     if (!userId) {
       logger.warn('findAll called without userId filter');
-      return [];
+      return Promise.resolve([]);
     }
-    return await this.findByUserId(userId);
+    return this.findByUserId(userId);
   }
 
   /**
@@ -264,8 +264,8 @@ export class PortfolioRepository {
   /**
    * Check subdomain availability
    */
-  async checkSubdomainAvailability(subdomain: string): Promise<boolean> {
-    return await this.isSubdomainAvailable(subdomain);
+  checkSubdomainAvailability(subdomain: string): Promise<boolean> {
+    return this.isSubdomainAvailable(subdomain);
   }
 
   /**

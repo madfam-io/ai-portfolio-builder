@@ -1,8 +1,8 @@
+#!/usr/bin/env tsx
+
 import { DatabaseSeeder } from '@/lib/database/seeder';
 import { logger } from '@/lib/utils/logger';
 import type { SeedingOptions } from '@/lib/database/seeder';
-
-#!/usr/bin/env tsx
 /**
  * @fileoverview Database Seeding CLI Script
  * @module scripts/seed-database
@@ -276,7 +276,7 @@ async function main(): Promise<void> {
     }
 
     // Remove CLI-specific options before passing to seeder
-    const { help, status, reset, ...seedingOptions } = options;
+    const { help: _help, status: _status, reset: _reset, ...seedingOptions } = options;
     await seedDatabase(seedingOptions);
   } catch (error) {
     if (error instanceof Error) {

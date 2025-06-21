@@ -29,7 +29,7 @@ const posthogConfig: Partial<PostHogConfig> = {
   session_recording: {
     maskAllInputs: true, // Privacy: mask sensitive inputs
   },
-  loaded: posthog => {
+  loaded: _posthog => {
     if (process.env.NODE_ENV === 'development') {
       // PostHog loaded
     }

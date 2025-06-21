@@ -330,7 +330,7 @@ export const useEditorStore = create<EditorStore>()(
         },
 
         save: () => {
-          const state = get();
+          const _state = get();
           // Implementation would save to backend
           // Saving editor state
         },

@@ -110,6 +110,7 @@ interface WizardState {
   recommendation?: TemplateType;
 }
 
+// eslint-disable-next-line complexity
 export function TemplateSelectionWizard({
   onSelect,
   onCancel,

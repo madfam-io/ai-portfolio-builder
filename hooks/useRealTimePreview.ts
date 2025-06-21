@@ -201,9 +201,7 @@ export function useRealTimePreview({
   );
 
   // Preview utilities
-  const capturePreviewScreenshot = useCallback(async (): Promise<
-    string | null
-  > => {
+  const capturePreviewScreenshot = useCallback((): string | null => {
     try {
       if (typeof window === 'undefined') return null;
 

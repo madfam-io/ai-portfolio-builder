@@ -188,6 +188,6 @@ export function edgeRateLimitMiddleware(
 /**
  * Create a custom rate limiter with specific configuration
  */
-function createRateLimiter(config: RateLimitConfig) {
+export function createRateLimiter(config: RateLimitConfig) {
   return (request: NextRequest) => edgeRateLimitMiddleware(request, config);
 }

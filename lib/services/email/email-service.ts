@@ -187,16 +187,9 @@ class EmailService {
 
       for (const campaign of campaigns) {
         // Check if user has already received this campaign recently
-        const cacheKey = `retention:${userId}:${campaign.id}`;
-        if (isRedisAvailable()) {
-          const lastSent = await redis.get(cacheKey);
-          if (lastSent) {
-            logger.debug('User already received this campaign', {
-              userId,
-              campaignId: campaign.id,
-            });
-            continue;
-          }
+        const shouldSkip = await this.shouldSkipCampaign(userId, campaign);
+        if (shouldSkip) {
+          continue;
         }
 
         // Check send count limit
@@ -274,7 +267,7 @@ class EmailService {
       // For marketing emails, check GDPR consent
       if (category === 'marketing') {
         // Get user ID from email (you'd implement this lookup)
-        const userId = await this.getUserIdFromEmail(email);
+        const userId = this.getUserIdFromEmail(email);
         if (!userId) return false;
 
         return await gdprService.canContactForMarketing(userId);
@@ -306,7 +299,7 @@ class EmailService {
         }
       } else if (type === 'marketing') {
         // Update marketing consent
-        const userId = await this.getUserIdFromEmail(email);
+        const userId = this.getUserIdFromEmail(email);
         if (userId) {
           await gdprService.recordConsent({
             userId,
@@ -320,7 +313,7 @@ class EmailService {
       }
 
       await auditLogger.logDataAccess('data.update', {
-        userId: (await this.getUserIdFromEmail(email)) || 'unknown',
+        userId: this.getUserIdFromEmail(email) || 'unknown',
         userIp: 'system',
         resource: 'user',
         outcome: 'success',
@@ -341,14 +334,14 @@ class EmailService {
   /**
    * Track email engagement
    */
-  async trackEmailEngagement(
+  trackEmailEngagement(
     jobId: string,
     event: 'opened' | 'clicked' | 'bounced' | 'complained',
     metadata: Record<string, any> = {}
-  ): Promise<void> {
+  ): void {
     try {
       // Update job status
-      const job = await this.getEmailJob(jobId);
+      const job = this.getEmailJob(jobId);
       if (!job) {
         logger.warn('Email job not found for tracking', { jobId, event });
         return;
@@ -361,7 +354,7 @@ class EmailService {
         job.clickedAt = now;
       }
 
-      await this.updateEmailJob(job);
+      this.updateEmailJob(job);
 
       // Log engagement analytics
       logger.info('Email engagement tracked', {
@@ -379,11 +372,11 @@ class EmailService {
   /**
    * Get email performance metrics
    */
-  async getEmailMetrics(
+  getEmailMetrics(
     _startDate: Date,
     _endDate: Date,
     _template?: string
-  ): Promise<{
+  ): {
     sent: number;
     delivered: number;
     opened: number;
@@ -391,7 +384,7 @@ class EmailService {
     unsubscribed: number;
     openRate: number;
     clickRate: number;
-  }> {
+  } {
     try {
       // In a real implementation, this would query your email database
       // For now, return mock data
@@ -540,40 +533,7 @@ class EmailService {
       logger.info('Processing email queue', { count: jobsToProcess.length });
 
       for (const job of jobsToProcess) {
-        try {
-          job.status = 'processing';
-          job.attempts++;
-
-          await this.sendEmail(job);
-
-          job.status = 'sent';
-          job.sentAt = new Date();
-
-          logger.info('Email sent successfully', {
-            jobId: job.id,
-            to: job.to,
-            template: job.template,
-          });
-        } catch (error) {
-          logger.error('Failed to send email', {
-            error,
-            jobId: job.id,
-            to: job.to,
-            template: job.template,
-          });
-
-          job.error = error instanceof Error ? error.message : 'Unknown error';
-
-          if (job.attempts >= job.maxAttempts) {
-            job.status = 'failed';
-          } else {
-            job.status = 'pending';
-            // Exponential backoff
-            job.scheduledAt = new Date(
-              Date.now() + Math.pow(2, job.attempts) * 60000
-            );
-          }
-        }
+        await this.processEmailJob(job);
       }
 
       // Remove completed jobs from queue
@@ -616,18 +576,18 @@ class EmailService {
     }
   }
 
-  private async getEmailJob(jobId: string): Promise<EmailJob | null> {
+  private getEmailJob(jobId: string): EmailJob | null {
     return this.emailQueue.find(job => job.id === jobId) || null;
   }
 
-  private async updateEmailJob(job: EmailJob): Promise<void> {
+  private updateEmailJob(job: EmailJob): void {
     const index = this.emailQueue.findIndex(j => j.id === job.id);
     if (index !== -1) {
       this.emailQueue[index] = job;
     }
   }
 
-  private async getUserIdFromEmail(_email: string): Promise<string | null> {
+  private getUserIdFromEmail(_email: string): string | null {
     // In production, implement email -> userId lookup
     return null;
   }
@@ -640,6 +600,65 @@ class EmailService {
 
     const count = await redis.get(`retention:count:${userId}:${campaignId}`);
     return count ? parseInt(count, 10) : 0;
+  }
+
+  private async shouldSkipCampaign(
+    userId: string,
+    campaign: RetentionCampaign
+  ): Promise<boolean> {
+    const cacheKey = `retention:${userId}:${campaign.id}`;
+
+    if (!isRedisAvailable()) {
+      return false;
+    }
+
+    const lastSent = await redis.get(cacheKey);
+    if (lastSent) {
+      logger.debug('User already received this campaign', {
+        userId,
+        campaignId: campaign.id,
+      });
+      return true;
+    }
+
+    return false;
+  }
+
+  private async processEmailJob(job: EmailJob): Promise<void> {
+    try {
+      job.status = 'processing';
+      job.attempts++;
+
+      await this.sendEmail(job);
+
+      job.status = 'sent';
+      job.sentAt = new Date();
+
+      logger.info('Email sent successfully', {
+        jobId: job.id,
+        to: job.to,
+        template: job.template,
+      });
+    } catch (error) {
+      logger.error('Failed to send email', {
+        error,
+        jobId: job.id,
+        to: job.to,
+        template: job.template,
+      });
+
+      job.error = error instanceof Error ? error.message : 'Unknown error';
+
+      if (job.attempts >= job.maxAttempts) {
+        job.status = 'failed';
+      } else {
+        job.status = 'pending';
+        // Exponential backoff
+        job.scheduledAt = new Date(
+          Date.now() + Math.pow(2, job.attempts) * 60000
+        );
+      }
+    }
   }
 
   private async incrementCampaignSendCount(

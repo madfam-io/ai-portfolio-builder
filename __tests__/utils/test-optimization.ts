@@ -88,22 +88,29 @@ export async function waitForOptimized(
   const { timeout = 3000, interval = 50, onTimeout } = options;
   const startTime = Date.now();
 
-  const checkTimeout = () => {
-    const timeRemaining = timeout - (Date.now() - startTime);
-    return timeRemaining <= interval;
+  const executeCallback = async () => {
+    try {
+      await callback();
+      return { success: true };
+    } catch (error) {
+      return { success: false, error };
+    }
   };
 
   while (Date.now() - startTime < timeout) {
-    try {
-      await callback();
+    const result = await executeCallback();
+
+    if (result.success) {
       return;
-    } catch (error) {
-      if (checkTimeout()) {
-        if (onTimeout) onTimeout();
-        throw error;
-      }
-      await new Promise(resolve => setTimeout(resolve, interval));
     }
+
+    const timeRemaining = timeout - (Date.now() - startTime);
+    if (timeRemaining <= interval) {
+      if (onTimeout) onTimeout();
+      throw result.error;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, interval));
   }
 }
 

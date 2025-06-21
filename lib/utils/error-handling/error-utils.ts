@@ -57,6 +57,7 @@ export function serializeError(error: unknown): Record<string, any> {
 /**
  * Detect error type from error object
  */
+// eslint-disable-next-line complexity
 export function getErrorType(error: unknown): ErrorType {
   if (!error) return 'unknown';
 

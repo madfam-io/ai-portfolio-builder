@@ -295,11 +295,15 @@ class GDPRService {
   async requestDataDeletion(
     userId: string,
     userEmail: string,
-    requestIp: string,
-    deletionType: 'soft' | 'hard' = 'soft',
-    reason?: string
+    options: {
+      requestIp: string;
+      deletionType?: 'soft' | 'hard';
+      reason?: string;
+    }
   ): Promise<DataDeletionRequest> {
     try {
+      const { requestIp, deletionType = 'soft', reason } = options;
+
       const request: DataDeletionRequest = {
         id: `deletion_${Date.now()}_${Math.random().toString(36).substring(2)}`,
         userId,
@@ -522,7 +526,7 @@ class GDPRService {
       };
 
       // In production, upload to secure storage and generate download URL
-      const downloadUrl = await this.generateExportFile(exportData);
+      const downloadUrl = this.generateExportFile(exportData);
 
       // Update request with download URL
       await this.updateExportRequestStatus(
@@ -635,7 +639,7 @@ class GDPRService {
   /**
    * Generate export file and return download URL
    */
-  private async generateExportFile(data: any): Promise<string> {
+  private generateExportFile(data: any): string {
     // In production, this would:
     // 1. Upload to secure cloud storage (S3, etc.)
     // 2. Generate a signed URL with expiration

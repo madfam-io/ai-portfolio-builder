@@ -1,6 +1,5 @@
 import { SupabaseClient } from '@supabase/supabase-js';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
-import { z } from 'zod';
 
 // Revenue metrics types
 export interface RevenueMetrics {

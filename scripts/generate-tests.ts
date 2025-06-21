@@ -199,7 +199,7 @@ function createTestFile(filePath: string): void {
 /**
  * Main function
  */
-async function main() {
+function main() {
   console.log('🧪 Generating tests for uncovered files...\n');
 
   const uncoveredFiles = getUncoveredFiles();

@@ -235,7 +235,7 @@ export class DomainAnalyticsService {
     const current = new Date(dateRange.from);
 
     while (current <= dateRange.to) {
-      const dateStr = current.toISOString().split('T')[0]!;
+      const dateStr = current.toISOString().split('T')[0] || '';
       days.push({
         date: dateStr,
         views: dailyCounts[dateStr] || 0,
@@ -257,9 +257,11 @@ export class DomainAnalyticsService {
       if (!sessions.has(sessionId)) {
         sessions.set(sessionId, { start: eventTime, end: eventTime });
       } else {
-        const session = sessions.get(sessionId)!;
-        if (eventTime < session.start) session.start = eventTime;
-        if (eventTime > session.end) session.end = eventTime;
+        const session = sessions.get(sessionId);
+        if (session) {
+          if (eventTime < session.start) session.start = eventTime;
+          if (eventTime > session.end) session.end = eventTime;
+        }
       }
     });
 

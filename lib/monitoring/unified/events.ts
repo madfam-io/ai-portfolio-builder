@@ -50,7 +50,7 @@ export const user = {
     correlation.event('user_logged_out');
   },
 
-  action: async <T>(
+  action: <T>(
     action: string,
     userId: string,
     operation: () => Promise<T>,
@@ -64,7 +64,7 @@ export const user = {
  * Unified portfolio events
  */
 export const portfolio = {
-  create: async <T>(
+  create: <T>(
     portfolioId: string,
     fn: () => Promise<T>,
     properties?: {
@@ -85,7 +85,7 @@ export const portfolio = {
     );
   },
 
-  update: async <T>(
+  update: <T>(
     portfolioId: string,
     fn: () => Promise<T>,
     properties?: {
@@ -106,7 +106,7 @@ export const portfolio = {
     );
   },
 
-  publish: async <T>(
+  publish: <T>(
     portfolioId: string,
     fn: () => Promise<T>,
     properties?: {
@@ -142,7 +142,7 @@ export const portfolio = {
     });
   },
 
-  delete: async <T>(
+  delete: <T>(
     portfolioId: string,
     fn: () => Promise<T>,
     metadata?: Record<string, unknown>
@@ -192,7 +192,7 @@ export const editor = {
  * Unified AI events
  */
 export const ai = {
-  enhance: async <T>(
+  enhance: <T>(
     contentType: 'bio' | 'project' | 'experience' | 'skills',
     model: string,
     fn: () => Promise<T>,
@@ -277,7 +277,7 @@ export const engagement = {
  * Unified revenue events
  */
 export const revenue = {
-  payment: async <T>(
+  payment: <T>(
     amount: number,
     fn: () => Promise<T>,
     properties?: {
@@ -302,7 +302,7 @@ export const revenue = {
     );
   },
 
-  subscription: async <T>(
+  subscription: <T>(
     amount: number,
     fn: () => Promise<T>,
     properties?: {
@@ -335,7 +335,7 @@ export const revenue = {
     correlation.event('subscription_cancelled', properties);
   },
 
-  refund: async <T>(
+  refund: <T>(
     amount: number,
     fn: () => Promise<T>,
     metadata?: Record<string, unknown>
@@ -353,27 +353,27 @@ export { CorrelatedSession } from '../signoz/correlation';
  * Unified marketplace events
  */
 export const marketplace = {
-  search: async (params: Record<string, unknown>) => {
+  search: (params: Record<string, unknown>) => {
     correlation.event('marketplace_search', params);
   },
 
-  view: async (params: Record<string, unknown>) => {
+  view: (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_viewed', params);
   },
 
-  purchase: async (params: Record<string, unknown>) => {
+  purchase: (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_purchased', params);
   },
 
-  useTemplate: async (params: Record<string, unknown>) => {
+  useTemplate: (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_used', params);
   },
 
-  review: async (params: Record<string, unknown>) => {
+  review: (params: Record<string, unknown>) => {
     correlation.event('marketplace_template_reviewed', params);
   },
 
-  wishlist: async (params: Record<string, unknown>) => {
+  wishlist: (params: Record<string, unknown>) => {
     correlation.event('marketplace_wishlist_action', params);
   },
 };
@@ -382,23 +382,23 @@ export const marketplace = {
  * Unified domain events
  */
 export const domain = {
-  add: async (params: Record<string, unknown>) => {
+  add: (params: Record<string, unknown>) => {
     correlation.event('domain_added', params);
   },
 
-  verify: async (params: Record<string, unknown>) => {
+  verify: (params: Record<string, unknown>) => {
     correlation.event('domain_verified', params);
   },
 
-  activate: async (params: Record<string, unknown>) => {
+  activate: (params: Record<string, unknown>) => {
     correlation.event('domain_activated', params);
   },
 
-  setPrimary: async (params: Record<string, unknown>) => {
+  setPrimary: (params: Record<string, unknown>) => {
     correlation.event('domain_set_primary', params);
   },
 
-  remove: async (params: Record<string, unknown>) => {
+  remove: (params: Record<string, unknown>) => {
     correlation.event('domain_removed', params);
   },
 };

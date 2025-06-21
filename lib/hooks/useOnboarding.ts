@@ -16,7 +16,8 @@ export interface UseOnboardingOptions {
 }
 
 export function useOnboarding(options: UseOnboardingOptions = {}) {
-  const { autoStart = true, skipIfCompleted = true } = options;
+  const { autoStart = true, skipIfCompleted: _skipIfCompleted = true } =
+    options;
 
   const router = useRouter();
   const { user } = useAuthStore();
@@ -59,7 +60,7 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
       await track.user.action(
         'onboarding_step_completed',
         user?.id || 'anonymous',
-        async () => completeStep(currentStep.id, metadata),
+        () => Promise.resolve(completeStep(currentStep.id, metadata)),
         {
           step_id: currentStep.id,
           step_title: currentStep.title,
@@ -80,7 +81,7 @@ export function useOnboarding(options: UseOnboardingOptions = {}) {
       await track.user.action(
         'onboarding_step_skipped',
         user?.id || 'anonymous',
-        async () => skipStep(currentStep.id),
+        () => Promise.resolve(skipStep(currentStep.id)),
         {
           step_id: currentStep.id,
           step_title: currentStep.title,

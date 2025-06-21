@@ -20,7 +20,7 @@ interface ChartColors {
   danger: string;
 }
 
-const transformCommitData = (
+export const transformCommitData = (
   commits: CommitData[]
 ): Array<{ date: string; commits: number }> => {
   return commits.map(item => ({
@@ -29,7 +29,7 @@ const transformCommitData = (
   }));
 };
 
-const transformLanguageData = (
+export const transformLanguageData = (
   languages: LanguageData[],
   chartColors: ChartColors
 ): Array<{ name: string; value: number; color: string }> => {

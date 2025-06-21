@@ -82,7 +82,7 @@ export function withEncryption(
 /**
  * Encrypt request data based on type
  */
-async function encryptRequestData(
+function encryptRequestData(
   data: unknown,
   config: EncryptionConfig
 ): Promise<unknown> {
@@ -131,7 +131,7 @@ async function encryptRequestData(
 /**
  * Decrypt response data based on type
  */
-async function decryptResponseData(
+function decryptResponseData(
   data: unknown,
   config: EncryptionConfig
 ): Promise<unknown> {

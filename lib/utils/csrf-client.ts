@@ -7,7 +7,7 @@ import { getCSRFToken } from '@/middleware/csrf-enhanced';
 /**
  * Fetch wrapper that automatically includes CSRF token
  */
-function fetchWithCSRF(
+export function fetchWithCSRF(
   url: string,
   options: RequestInit = {}
 ): Promise<Response> {
@@ -30,7 +30,7 @@ function fetchWithCSRF(
 /**
  * Hook to get CSRF token (for React components)
  */
-function useCSRFToken(): string | null {
+export function useCSRFToken(): string | null {
   if (typeof window === 'undefined') return null;
   return getCSRFToken();
 }
@@ -38,7 +38,7 @@ function useCSRFToken(): string | null {
 /**
  * Add CSRF token to form data
  */
-function addCSRFToFormData(formData: FormData): FormData {
+export function addCSRFToFormData(formData: FormData): FormData {
   const csrfToken = getCSRFToken();
   if (csrfToken) {
     formData.append('_csrf', csrfToken);

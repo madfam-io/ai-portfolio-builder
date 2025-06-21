@@ -71,7 +71,7 @@ class RedisRateLimiter {
   /**
    * Check rate limit using Redis or fallback to in-memory
    */
-  async checkRateLimit(
+  checkRateLimit(
     key: string,
     config: RateLimitConfig
   ): Promise<RateLimitResult> {
@@ -312,7 +312,7 @@ const rateLimiter = new RedisRateLimiter();
 /**
  * Rate limiting middleware function
  */
-export async function withRateLimit<T extends unknown[]>(
+export function withRateLimit<T extends unknown[]>(
   handler: (...args: T) => Promise<NextResponse>,
   type: keyof typeof RATE_LIMIT_CONFIGS | RateLimitConfig = 'api',
   customLimit?: number

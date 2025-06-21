@@ -105,7 +105,7 @@ export class ImageOptimizer {
   /**
    * Optimize image for web delivery
    */
-  async optimizeImage(imageData: File | string): Promise<string> {
+  optimizeImage(imageData: File | string): string {
     if (!this.config.enableImageOptimization) {
       return typeof imageData === 'string'
         ? imageData
@@ -446,7 +446,7 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Preload template assets
    */
-  private async preloadTemplateAssets(template: string): Promise<void> {
+  private preloadTemplateAssets(template: string): void {
     const templateAssets = [
       `/templates/${template}.css`,
       `/templates/${template}.js`,

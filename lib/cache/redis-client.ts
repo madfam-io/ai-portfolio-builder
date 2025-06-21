@@ -64,25 +64,26 @@ export function isRedisAvailable(): boolean {
  */
 export const redis = redisClient || {
   // Mock Redis client for development/fallback
-  get: async () => null,
-  set: async () => 'OK',
-  setex: async () => 'OK',
-  del: async () => 1,
-  exists: async () => 0,
-  incr: async () => 1,
-  expire: async () => 1,
-  lpush: async () => 1,
-  ltrim: async () => 'OK',
-  lrange: async () => [],
-  sismember: async () => 0,
-  sadd: async () => 1,
+  get: () => Promise.resolve(null),
+  set: () => Promise.resolve('OK'),
+  setex: () => Promise.resolve('OK'),
+  del: () => Promise.resolve(1),
+  exists: () => Promise.resolve(0),
+  incr: () => Promise.resolve(1),
+  expire: () => Promise.resolve(1),
+  lpush: () => Promise.resolve(1),
+  ltrim: () => Promise.resolve('OK'),
+  lrange: () => Promise.resolve([]),
+  sismember: () => Promise.resolve(0),
+  sadd: () => Promise.resolve(1),
   pipeline: () => ({
     incr: () => {},
     expire: () => {},
-    exec: async () => [
-      [null, 1],
-      [null, 1],
-    ],
+    exec: () =>
+      Promise.resolve([
+        [null, 1],
+        [null, 1],
+      ]),
   }),
 };
 

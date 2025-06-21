@@ -1,8 +1,8 @@
+#!/usr/bin/env tsx
+
 import { promises as fs } from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
-
-#!/usr/bin/env tsx
 
 /**
  * Performance Measurement Script
@@ -23,7 +23,7 @@ interface PerformanceMetrics {
   buildTime: number;
 }
 
-async function measurePerformance(): Promise<PerformanceMetrics> {
+function measurePerformance(): PerformanceMetrics {
   console.log('📊 Measuring Performance Metrics...\n');
   
   const metrics: PerformanceMetrics = {

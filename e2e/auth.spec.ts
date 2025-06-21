@@ -5,7 +5,7 @@ import { TestHelpers } from './utils/test-helpers';
 test.describe('PRISMA Authentication', () => {
   let helpers: TestHelpers;
 
-  test.beforeEach(async ({ page }) => {
+  test.beforeEach(({ page }) => {
     helpers = new TestHelpers(page);
   });
 

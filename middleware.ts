@@ -64,8 +64,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   if (isCustomDomain) {
     // Create a Supabase client for custom domain lookup
     const supabase = createServerClient(
-      env.NEXT_PUBLIC_SUPABASE_URL!,
-      env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      env.NEXT_PUBLIC_SUPABASE_URL || '',
+      env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
       {
         cookies: {
           get(name: string) {
@@ -78,49 +78,14 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
     );
 
     try {
-      // Look up the domain in the database
-      const { data: domain } = await supabase
-        .from('custom_domains')
-        .select('portfolio_id, status')
-        .eq('domain', hostname)
-        .eq('status', 'active')
-        .single();
-
-      if (domain && domain.portfolio_id) {
-        // Get portfolio details
-        const { data: portfolio } = await supabase
-          .from('portfolios')
-          .select('subdomain')
-          .eq('id', domain.portfolio_id)
-          .single();
-
-        if (portfolio && portfolio.subdomain) {
-          // Track page view analytics (async, don't block request)
-          const userAgent = req.headers.get('user-agent') || '';
-          const referrer = req.headers.get('referer') || '';
-
-          // Fire and forget analytics tracking
-          void supabase.from('domain_analytics').insert({
-            domain_id: domain.portfolio_id,
-            event_type: 'page_view',
-            path: pathname,
-            referrer: referrer || null,
-            user_agent: userAgent,
-            visitor_id:
-              req.headers.get('x-forwarded-for') ||
-              req.headers.get('x-real-ip') ||
-              'unknown',
-            session_id:
-              req.headers.get('x-forwarded-for') ||
-              req.headers.get('x-real-ip') ||
-              'unknown',
-          });
-
-          // Rewrite to the portfolio route
-          const url = req.nextUrl.clone();
-          url.pathname = `/p/${portfolio.subdomain}${pathname}`;
-          return NextResponse.rewrite(url);
-        }
+      const result = await handleCustomDomain(
+        supabase,
+        hostname,
+        pathname,
+        req
+      );
+      if (result) {
+        return result;
       }
     } catch (error) {
       logger.error('Custom domain lookup failed', { error, hostname });
@@ -142,8 +107,8 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
 
   // Create a Supabase client configured to use cookies
   const supabase = createServerClient(
-    env.NEXT_PUBLIC_SUPABASE_URL!,
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    env.NEXT_PUBLIC_SUPABASE_URL || '',
+    env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
     {
       cookies: {
         get(name: string) {
@@ -236,6 +201,65 @@ export async function middleware(req: NextRequest): Promise<NextResponse> {
   response = applySecurityToResponse(req, response);
 
   return response;
+}
+
+/**
+ * Handle custom domain requests
+ */
+async function handleCustomDomain(
+  supabase: any,
+  hostname: string,
+  pathname: string,
+  req: NextRequest
+): Promise<NextResponse | null> {
+  // Look up the domain in the database
+  const { data: domain } = await supabase
+    .from('custom_domains')
+    .select('portfolio_id, status')
+    .eq('domain', hostname)
+    .eq('status', 'active')
+    .single();
+
+  if (!domain || !domain.portfolio_id) {
+    return null;
+  }
+
+  // Get portfolio details
+  const { data: portfolio } = await supabase
+    .from('portfolios')
+    .select('subdomain')
+    .eq('id', domain.portfolio_id)
+    .single();
+
+  if (!portfolio || !portfolio.subdomain) {
+    return null;
+  }
+
+  // Track page view analytics (async, don't block request)
+  const userAgent = req.headers.get('user-agent') || '';
+  const referrer = req.headers.get('referer') || '';
+
+  // Fire and forget analytics tracking
+  void supabase.from('domain_analytics').insert({
+    domain_id: domain.portfolio_id,
+    event_type: 'page_view',
+    path: pathname,
+    referrer: referrer || null,
+    user_agent: userAgent,
+    visitor_id:
+      req.headers.get('x-forwarded-for') ||
+      req.headers.get('x-real-ip') ||
+      'unknown',
+    session_id:
+      req.headers.get('x-forwarded-for') ||
+      req.headers.get('x-real-ip') ||
+      'unknown',
+  });
+
+  // Rewrite to the portfolio route
+  const url = req.nextUrl.clone();
+  url.pathname = `/p/${portfolio.subdomain}${pathname}`;
+  return NextResponse.rewrite(url);
 }
 
 /**

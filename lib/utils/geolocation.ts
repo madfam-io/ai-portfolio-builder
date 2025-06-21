@@ -313,7 +313,7 @@ export function getFlag(
  *
  * @returns Promise resolving to language detection result
  */
-async function detectUserLanguage(): Promise<LanguageDetectionResult> {
+export async function detectUserLanguage(): Promise<LanguageDetectionResult> {
   // Method 1: Try IP-based geolocation first
   try {
     const countryCode = await detectCountryFromIP();
@@ -372,7 +372,7 @@ async function detectUserLanguage(): Promise<LanguageDetectionResult> {
  *
  * @returns Language detection result (synchronous)
  */
-function detectUserLanguageSync(): LanguageDetectionResult {
+export function detectUserLanguageSync(): LanguageDetectionResult {
   // Try timezone detection first
   const timezoneCountry = detectCountryFromTimezone();
   if (timezoneCountry) {

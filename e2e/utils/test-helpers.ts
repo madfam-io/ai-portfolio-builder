@@ -352,13 +352,13 @@ export class PRISMATestHelpers extends TestHelpers {
 }
 
 // Database helpers for E2E testing
-export async function cleanupTestData(): Promise<void> {
+export function cleanupTestData(): void {
   // Clean up PRISMA test data after tests
   console.log('🧹 Cleaning up PRISMA E2E test data');
   // TODO: Implement cleanup for Supabase test database
 }
 
-export async function seedTestData(): Promise<void> {
+export function seedTestData(): void {
   // Seed PRISMA test data before tests
   console.log('🌱 Seeding PRISMA E2E test data');
   // TODO: Implement seeding for portfolios, users, etc.

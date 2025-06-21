@@ -10,8 +10,6 @@ import {
   migrateTableToEncryption,
   getEncryptionMigrationStatus,
 } from '@/lib/services/encryption-service';
-import { logger } from '@/lib/utils/logger';
-import { createClient } from '@supabase/supabase-js';
 
 // Load environment variables
 config();
