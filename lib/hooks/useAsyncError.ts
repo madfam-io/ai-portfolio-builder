@@ -172,7 +172,7 @@ export function useAsync<T>(
 /**
  * Hook for handling async operations that run on mount
  */
-function useAsyncEffect<T>(
+export function useAsyncEffect<T>(
   asyncFunction: () => Promise<T>,
   deps: React.DependencyList = [],
   options: UseAsyncOptions = {}
@@ -249,7 +249,7 @@ export function useAsyncForm<TData, TResponse>(
 /**
  * Hook for handling errors in event handlers
  */
-function useErrorHandler() {
+export function useErrorHandler() {
   return useCallback((error: Error, errorInfo?: React.ErrorInfo) => {
     errorLogger.logError(error, {
       component: 'useErrorHandler',

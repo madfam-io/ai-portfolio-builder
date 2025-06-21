@@ -10,7 +10,6 @@ import {
   captureEnhancedEvent,
 } from '@/lib/analytics/posthog/client';
 import { recordBusinessMetric, recordPerformanceMetric } from './metrics';
-import type { Span } from '@opentelemetry/api';
 
 /**
  * Enhanced event tracking that includes trace correlation

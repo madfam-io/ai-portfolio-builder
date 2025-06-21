@@ -420,21 +420,21 @@ export function getTemplateConfig(template: TemplateType): TemplateConfig {
 /**
  * Get default section order for a template
  */
-function getDefaultSectionOrder(template: TemplateType): SectionType[] {
+export function getDefaultSectionOrder(template: TemplateType): SectionType[] {
   return TEMPLATE_CONFIGS[template].defaultOrder;
 }
 
 /**
  * Get template-specific color scheme
  */
-function getTemplateColors(template: TemplateType) {
+export function getTemplateColors(template: TemplateType) {
   return TEMPLATE_CONFIGS[template].colorScheme;
 }
 
 /**
  * Check if a section should be visible by default for a template
  */
-function isSectionDefaultVisible(
+export function isSectionDefaultVisible(
   template: TemplateType,
   section: SectionType
 ): boolean {
@@ -446,7 +446,7 @@ function isSectionDefaultVisible(
 /**
  * Get template features configuration
  */
-function getTemplateFeatures(template: TemplateType) {
+export function getTemplateFeatures(template: TemplateType) {
   return TEMPLATE_CONFIGS[template].features;
 }
 

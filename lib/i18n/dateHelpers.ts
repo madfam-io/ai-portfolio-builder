@@ -12,7 +12,7 @@ import {
 /**
  * Get dynamic translation values that include dates
  */
-function getDynamicTranslations() {
+export function getDynamicTranslations() {
   const currentYear = getCurrentYear();
   const promoDeadline = getPromotionalDeadline(); // No parameters needed
 

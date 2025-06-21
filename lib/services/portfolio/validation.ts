@@ -51,7 +51,7 @@ const VALIDATION_RULES = {
  * @param portfolio - Portfolio to validate
  * @returns Validation result with errors and warnings
  */
-function validatePortfolio(portfolio: Portfolio): ValidationResult {
+export function validatePortfolio(portfolio: Portfolio): ValidationResult {
   const errors: ValidationResult['errors'] = [];
   const warnings: ValidationResult['warnings'] = [];
 

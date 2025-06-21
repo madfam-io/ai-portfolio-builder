@@ -1,10 +1,5 @@
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
-import {
-  encryptUserData,
-  decryptUserData,
-  findUserByEmail,
-} from '@/lib/services/encryption-service';
 
 import type { User, Session, AuthError } from '@supabase/supabase-js';
 

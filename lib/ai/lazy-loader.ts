@@ -25,10 +25,10 @@ async function getHuggingFaceService(): Promise<AIService> {
 /**
  * Enhance bio with AI - lazy loaded
  */
-async function enhanceBioLazy(
+export async function enhanceBioLazy(
   bio: string,
   context: BioContext,
-  selectedModel?: string
+  _selectedModel?: string
 ): Promise<string> {
   const service = await getHuggingFaceService();
   const result = await service.enhanceBio(bio, context);
@@ -38,11 +38,11 @@ async function enhanceBioLazy(
 /**
  * Optimize project description - lazy loaded
  */
-async function optimizeProjectLazy(
+export async function optimizeProjectLazy(
   title: string,
   description: string,
   technologies: string[],
-  selectedModel?: string
+  _selectedModel?: string
 ): Promise<string> {
   const service = await getHuggingFaceService();
   const result = await service.optimizeProjectDescription(
@@ -56,9 +56,9 @@ async function optimizeProjectLazy(
 /**
  * Recommend template - lazy loaded
  */
-async function recommendTemplateLazy(
+export async function recommendTemplateLazy(
   profile: UserProfile,
-  selectedModel?: string
+  _selectedModel?: string
 ): Promise<unknown> {
   const service = await getHuggingFaceService();
   return service.recommendTemplate(profile);
@@ -67,7 +67,7 @@ async function recommendTemplateLazy(
 /**
  * Get available models - lazy loaded
  */
-async function getAvailableModelsLazy(task?: string): Promise<unknown[]> {
+export async function getAvailableModelsLazy(_task?: string): Promise<unknown[]> {
   const service = await getHuggingFaceService();
   // getAvailableModels is HuggingFace-specific, not part of AIService interface
   // So we need to check if it exists
@@ -83,14 +83,14 @@ async function getAvailableModelsLazy(task?: string): Promise<unknown[]> {
 /**
  * Preload AI services (useful for predictive loading)
  */
-async function preloadAIServices(): Promise<void> {
+export async function preloadAIServices(): Promise<void> {
   await getHuggingFaceService();
 }
 
 /**
  * Clear service cache (useful for memory management)
  */
-function clearAIServiceCache(): void {
+export function clearAIServiceCache(): void {
   huggingFaceService = null;
   logger.info('AI service cache cleared');
 }

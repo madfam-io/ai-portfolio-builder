@@ -215,7 +215,7 @@ function useModal(modalId: string) {
 
   const open = useCallback(
     (component: React.ComponentType<any>, props?: unknown) => {
-      openModal({ id: modalId, component, props });
+      openModal({ id: modalId, component, props: props as Record<string, unknown> });
     },
     [modalId, openModal]
   );

@@ -32,7 +32,7 @@ const ERROR_TYPES = {
 /**
  * Creates a standardized API error
  */
-function createApiError(
+export function createApiError(
   message: string,
   type: keyof typeof ERROR_TYPES = 'INTERNAL_ERROR',
   metadata?: Record<string, unknown>
@@ -57,7 +57,7 @@ export function handleApiError(
     operation?: string;
     userId?: string;
     path?: string;
-    [key: string]: any;
+    [key: string]: unknown;
   }
 ): NextResponse {
   // Log the error with context
@@ -147,7 +147,7 @@ export function handleApiError(
  * Async error wrapper for route handlers
  * Automatically catches and handles errors
  */
-function withErrorHandler<T extends (...args: unknown[]) => any>(
+export function withErrorHandler<T extends (...args: unknown[]) => any>(
   handler: T,
   context?: Record<string, unknown>
 ): T {
@@ -174,15 +174,15 @@ export function isApiError(error: unknown): error is ApiError {
 /**
  * Extract error details for logging
  */
-function extractErrorDetails(error: unknown): {
+export function extractErrorDetails(error: unknown): {
   message: string;
   stack?: string;
   code?: string;
   statusCode?: number;
-  [key: string]: any;
+  [key: string]: unknown;
 } {
   if (error instanceof Error) {
-    const details: any = {
+    const details: Record<string, unknown> = {
       message: error.message,
       stack: error.stack,
     };
@@ -193,7 +193,13 @@ function extractErrorDetails(error: unknown): {
       details.metadata = error.metadata;
     }
 
-    return details;
+    return details as {
+      message: string;
+      stack?: string;
+      code?: string;
+      statusCode?: number;
+      [key: string]: unknown;
+    };
   }
 
   return {

@@ -68,7 +68,7 @@ export const captureServerEvent = async (
 };
 
 // Identify user server-side
-const identifyServerUser = (
+export const identifyServerUser = (
   userId: string,
   properties?: Record<string, unknown>
 ) => {
@@ -90,7 +90,7 @@ const identifyServerUser = (
 };
 
 // Track feature flag usage
-const trackFeatureFlagUsage = async (
+export const trackFeatureFlagUsage = async (
   userId: string,
   flagName: string,
   variant: string | boolean
@@ -163,7 +163,7 @@ export const trackServerError = async (
 };
 
 // Batch events
-const batchServerEvents = async (
+export const batchServerEvents = async (
   events: Array<{
     distinctId: string;
     event: string;
@@ -194,7 +194,7 @@ const batchServerEvents = async (
 };
 
 // Shutdown gracefully
-const shutdownPostHog = async () => {
+export const shutdownPostHog = async () => {
   try {
     const client = getPostHogClient();
     if (!client) return;
@@ -207,7 +207,7 @@ const shutdownPostHog = async () => {
 };
 
 // Middleware helper for automatic API tracking
-const withPostHogTracking = (
+export const withPostHogTracking = (
   handler: (req: Request, ...args: unknown[]) => Promise<Response>
 ) => {
   return async (req: Request, ...args: unknown[]): Promise<Response> => {

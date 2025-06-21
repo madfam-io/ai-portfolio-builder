@@ -305,7 +305,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       },
 
       // Tour actions
-      startTour: tourId => {
+      startTour: _tourId => {
         set(state => {
           state.tourActive = true;
           state.currentTourStep = 0;

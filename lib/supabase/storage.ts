@@ -40,7 +40,7 @@ export interface UploadResult {
  */
 export function validateFile(file: File): { valid: boolean; error?: string } {
   // Check file type
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type as any)) {
+  if (!ALLOWED_IMAGE_TYPES.some(type => type === file.type)) {
     return {
       valid: false,
       error: `Invalid file type. Allowed types: ${ALLOWED_IMAGE_TYPES.join(', ')}`,
@@ -175,7 +175,7 @@ export async function deleteFile(
 /**
  * Gets the public URL for a file
  */
-function getPublicUrl(
+export function getPublicUrl(
   bucket: keyof typeof STORAGE_BUCKETS,
   path: string
 ): string | null {

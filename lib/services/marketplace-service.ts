@@ -14,7 +14,6 @@ import type {
   TemplateSearchParams,
   Currency,
   LicenseType,
-  TemplateFilters,
 } from '@/types/marketplace';
 
 export class MarketplaceService {
@@ -618,7 +617,7 @@ export class MarketplaceService {
       .eq('id', templateId);
   }
 
-  private static async getTemplateContent(demoPortfolioId: string) {
+  private static async getTemplateContent(_demoPortfolioId: string) {
     // Get content from demo portfolio
     // This would fetch the actual content structure
     return {};

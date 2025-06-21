@@ -250,9 +250,9 @@ export const createMockTranslations = (overrides?: any) => ({
 
 // Create test wrapper with all providers
 export const createTestWrapper = ({
-  initialLanguage = 'es',
-  session = null,
-  router = mockRouter,
+  initialLanguage: _initialLanguage = 'es',
+  session: _session = null,
+  router: _router = mockRouter,
 }: {
   initialLanguage?: Language;
   session?: Session | null;
@@ -277,7 +277,11 @@ export const renderWithOptions = (
     router?: Partial<NextRouter>;
   } = {}
 ) => {
-  const Wrapper = createTestWrapper({ initialLanguage, session, router });
+  const Wrapper = createTestWrapper({ 
+    initialLanguage: initialLanguage, 
+    session: session, 
+    router: router 
+  });
 
   return rtlRender(ui, {
     wrapper: Wrapper,

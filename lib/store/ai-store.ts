@@ -209,7 +209,12 @@ export const useAIStore = create<AIState & AIActions>()(
                 state.isProcessing = false;
               });
 
-              return recommendation;
+              // Transform to expected format
+              return {
+                recommendedTemplate: recommendation.recommendedTemplate,
+                confidence: recommendation.confidence,
+                alternatives: recommendation.alternatives.map(alt => alt.template),
+              };
             } catch (error: unknown) {
               set(state => {
                 state.error =
@@ -266,15 +271,3 @@ export const useAIStore = create<AIState & AIActions>()(
   )
 );
 
-// Selectors
-const selectSelectedModels = (state: AIState & AIActions) =>
-  state.selectedModels;
-const selectAvailableModels = (state: AIState & AIActions) =>
-  state.availableModels;
-const selectEnhancementHistory = (state: AIState & AIActions) =>
-  state.enhancementHistory;
-const selectAIQuota = (state: AIState & AIActions) => ({
-  used: state.quotaUsed,
-  limit: state.quotaLimit,
-  remaining: state.quotaLimit - state.quotaUsed,
-});

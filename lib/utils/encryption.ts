@@ -195,7 +195,7 @@ export const hashForIndex = (value: string, salt?: string): string => {
  * @param fieldPath - Dot-notation path to encrypt (e.g., 'contact.email')
  * @returns Encrypted JSON data
  */
-export const encryptJsonField = (data: any, fieldPath: string): any => {
+export const encryptJsonField = <T = unknown>(data: T, fieldPath: string): T => {
   if (!data) return data;
 
   const cloned = JSON.parse(JSON.stringify(data));
@@ -224,7 +224,7 @@ export const encryptJsonField = (data: any, fieldPath: string): any => {
  * @param fieldPath - Dot-notation path to decrypt
  * @returns Decrypted JSON data
  */
-export const decryptJsonField = (data: any, fieldPath: string): any => {
+export const decryptJsonField = <T = unknown>(data: T, fieldPath: string): T => {
   if (!data) return data;
 
   const cloned = JSON.parse(JSON.stringify(data));

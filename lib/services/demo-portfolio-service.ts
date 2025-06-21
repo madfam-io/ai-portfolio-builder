@@ -5,6 +5,8 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { Portfolio } from '@/types/portfolio';
+import type { SampleDataConfig } from '@/lib/utils/sample-data/types';
 import {
   developerSampleData,
   designerSampleData,
@@ -28,7 +30,7 @@ export interface DemoPortfolio {
   template: TemplateType;
   thumbnail: string;
   features: string[];
-  sampleData: any;
+  sampleData: SampleDataConfig;
   popularity: number;
 }
 
@@ -167,7 +169,7 @@ export class DemoPortfolioService {
    */
   static async createFromDemo(options: QuickStartOptions): Promise<{
     portfolioId: string;
-    portfolio: any;
+    portfolio: Partial<Portfolio>;
     isTemporary: boolean;
   }> {
     const demo = this.getDemo(options.demoId);
@@ -181,15 +183,29 @@ export class DemoPortfolioService {
       ai_assisted: options.aiEnhance,
     });
 
+    // Transform demo data to portfolio format
+    const { personal, skills, ...restSampleData } = demo.sampleData;
+    
     // Create portfolio content from demo
-    const portfolioContent = {
-      ...demo.sampleData,
-      // Apply customizations
-      personal: {
-        ...demo.sampleData.personal,
-        name: options.customizations?.name || demo.sampleData.personal.name,
-        title: options.customizations?.title || demo.sampleData.personal.title,
+    const portfolioContent: Partial<Portfolio> = {
+      // Personal info
+      name: options.customizations?.name || personal.name,
+      title: options.customizations?.title || personal.title,
+      bio: personal.bio,
+      avatarUrl: personal.avatarUrl,
+      
+      // Contact info
+      contact: {
+        email: personal.email,
+        phone: personal.phone,
+        location: personal.location,
       },
+      
+      // Skills - flatten the skill groups
+      skills: [...skills.technical, ...skills.soft],
+      
+      // Rest of the data
+      ...restSampleData,
     };
 
     // Create portfolio settings
@@ -217,11 +233,9 @@ export class DemoPortfolioService {
         },
       },
       seo: {
-        title: `${portfolioContent.personal.name} - ${portfolioContent.personal.title}`,
-        description: portfolioContent.personal.bio,
-        keywords: portfolioContent.skills.technical.concat(
-          portfolioContent.skills.soft
-        ),
+        title: `${portfolioContent.name} - ${portfolioContent.title}`,
+        description: portfolioContent.bio,
+        keywords: portfolioContent.skills?.map(skill => skill.name) || [],
       },
       customization: {
         showProjects: true,

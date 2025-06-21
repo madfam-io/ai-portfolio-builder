@@ -48,7 +48,7 @@ export interface TranslationNamespace {
 /**
  * Complete translations for all languages
  */
-type Translations = {
+export type Translations = {
   [key in Language]: TranslationNamespace;
 };
 
@@ -62,7 +62,7 @@ export type FlattenedTranslations = {
 /**
  * Language context value
  */
-interface LanguageContextValue {
+export interface LanguageContextValue {
   language: Language;
   setLanguage: (lang: Language) => void;
   t: FlattenedTranslations;
@@ -74,7 +74,7 @@ interface LanguageContextValue {
  * Translation key path helper for TypeScript autocomplete
  * Usage: TranslationKey<'common.save'> or TranslationKey<'landing.heroTitle'>
  */
-type TranslationKey<T extends string> =
+export type TranslationKey<T extends string> =
   T extends `${infer Namespace}.${infer Key}`
     ? Namespace extends keyof TranslationNamespace
       ? Key extends keyof TranslationNamespace[Namespace]

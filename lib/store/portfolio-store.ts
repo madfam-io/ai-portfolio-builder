@@ -310,7 +310,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             // Handle nested data fields
             if (field.includes('.')) {
               const parts = field.split('.');
-              let target: any = state.currentPortfolio;
+              let target: Record<string, unknown> = state.currentPortfolio as Record<string, unknown>;
 
               // Navigate to the parent of the field to update
               for (let i = 0; i < parts.length - 1; i++) {
@@ -319,7 +319,7 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
                 if (!target[part]) {
                   target[part] = {};
                 }
-                target = target[part];
+                target = target[part] as Record<string, unknown>;
               }
 
               // Update the final field
@@ -386,14 +386,3 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
 // Example: const usePortfolioStore = create<PortfolioState & PortfolioActions>()(persist(...))
 // Currently disabled to avoid localStorage conflicts
 
-// Selectors
-const selectPortfolios = (state: PortfolioState & PortfolioActions) =>
-  state.portfolios;
-const selectCurrentPortfolio = (state: PortfolioState & PortfolioActions) =>
-  state.currentPortfolio;
-const selectIsEditing = (state: PortfolioState & PortfolioActions) =>
-  state.isEditing;
-const selectIsSaving = (state: PortfolioState & PortfolioActions) =>
-  state.isSaving;
-const selectHasUnsavedChanges = (state: PortfolioState & PortfolioActions) =>
-  state.hasUnsavedChanges;

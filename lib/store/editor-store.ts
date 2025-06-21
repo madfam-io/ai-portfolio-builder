@@ -5,8 +5,6 @@ import type {
   EditorState,
   EditorBlock,
   EditorTheme,
-  EditorAction,
-  BlockType,
   EditorPreferences,
   BlockValidation,
   EditorContextMenu,
@@ -476,7 +474,7 @@ let autoSaveTimer: NodeJS.Timeout;
 
 useEditorStore.subscribe(
   state => state.blocks,
-  blocks => {
+  _blocks => {
     const { preferences, save } = useEditorStore.getState();
 
     if (preferences.autoSave) {

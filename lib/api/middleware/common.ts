@@ -28,7 +28,7 @@ export function apiError(
 /**
  * Standard API success response
  */
-function apiSuccess<T>(
+export function apiSuccess<T>(
   data: T,
   options?: { status?: number; message?: string }
 ) {
@@ -44,7 +44,7 @@ function apiSuccess<T>(
 /**
  * Get Supabase client with error handling
  */
-async function getSupabaseClient() {
+export async function getSupabaseClient() {
   const supabase = await createClient();
 
   if (!supabase) {
@@ -57,7 +57,7 @@ async function getSupabaseClient() {
 /**
  * Validate request body with Zod schema
  */
-async function validateRequestBody<T>(
+export async function validateRequestBody<T>(
   request: NextRequest,
   schema: ZodSchema<T>
 ): Promise<T> {
@@ -68,7 +68,7 @@ async function validateRequestBody<T>(
 /**
  * Wrapper for API route handlers with common error handling
  */
-function withErrorHandling<T extends unknown[], R>(
+export function withErrorHandling<T extends unknown[], R>(
   handler: (...args: T) => Promise<R>
 ) {
   return async (...args: T): Promise<Response> => {
@@ -102,7 +102,7 @@ function withErrorHandling<T extends unknown[], R>(
 /**
  * Combine multiple middleware functions
  */
-function composeMiddleware(...middlewares: Function[]) {
+export function composeMiddleware(...middlewares: Function[]) {
   return (handler: Function) => {
     return middlewares.reduceRight(
       (acc, middleware) => middleware(acc),

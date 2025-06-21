@@ -40,19 +40,6 @@ export interface CustomerMetrics {
   conversionRate: number;
 }
 
-// Validation schemas
-const subscriptionSchema = z.object({
-  id: z.string(),
-  user_id: z.string(),
-  stripe_subscription_id: z.string().nullable(),
-  plan: z.enum(['free', 'pro', 'business', 'enterprise']),
-  status: z.enum(['active', 'canceled', 'past_due', 'trialing']),
-  current_period_start: z.string(),
-  current_period_end: z.string(),
-  amount: z.number().nullable(),
-  created_at: z.string(),
-  updated_at: z.string(),
-});
 
 export class RevenueMetricsService {
   constructor(private supabase: SupabaseClient) {}

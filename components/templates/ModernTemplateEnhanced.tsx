@@ -6,13 +6,8 @@ import {
   Github,
   Linkedin,
   Mail,
-  MapPin,
-  Phone,
   Twitter,
-  Globe,
-  Calendar,
   Trophy,
-  Star,
   ExternalLink,
 } from 'lucide-react';
 
@@ -324,7 +319,7 @@ export function ModernTemplateEnhanced({ portfolio }: ModernTemplateProps) {
             Get In Touch
           </h2>
           <p className="text-gray-300 mb-8">
-            I'm always open to discussing new opportunities and interesting
+            I&apos;m always open to discussing new opportunities and interesting
             projects.
           </p>
           <div className="flex justify-center gap-6">

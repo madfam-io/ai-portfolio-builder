@@ -100,11 +100,11 @@ export const setupUseLanguageMock = () => {
   const mockUseLanguage = Object.assign(
     jest.fn(() => mockReturnValue),
     {
-      mockReturnValue: jest.fn((value: any) => {
+      mockReturnValue: jest.fn((value: unknown) => {
         mockUseLanguage.mockImplementation(() => value);
         return mockUseLanguage;
       }),
-      mockImplementation: jest.fn((fn: any) => {
+      mockImplementation: jest.fn((fn: (...args: unknown[]) => unknown) => {
         Object.setPrototypeOf(mockUseLanguage, jest.fn(fn));
         return mockUseLanguage;
       }),

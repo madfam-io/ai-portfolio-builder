@@ -269,10 +269,10 @@ const metricsCollector = new APIMetricsCollector();
  * Caches API responses based on configuration.
  */
 export function withCache(config: CacheConfig) {
-  return function <T extends (...args: any[]) => Promise<NextResponse>>(
+  return function <T extends (...args: unknown[]) => Promise<NextResponse>>(
     handler: T
   ): T {
-    return (async (req: NextRequest, ...args: any[]) => {
+    return (async (req: NextRequest, ...args: unknown[]) => {
       // Skip caching for non-GET requests
       if (req.method !== 'GET' || config.strategy === 'none') {
         return handler(req, ...args);
@@ -282,7 +282,7 @@ export function withCache(config: CacheConfig) {
       const cacheKey = config.key || `${req.url}_${req.method}`;
 
       // Try to get from cache
-      const cached = memoryCache.get(cacheKey) as any;
+      const cached = memoryCache.get(cacheKey) as { body: string; status: number; headers: Record<string, string> } | undefined;
       if (cached) {
         // Return cached response with cache headers
         const response = new NextResponse(cached.body, {
@@ -337,10 +337,10 @@ export function withCache(config: CacheConfig) {
  * Applies rate limiting to API endpoints.
  */
 export function withRateLimit(config: RateLimitConfig) {
-  return function <T extends (...args: any[]) => Promise<NextResponse>>(
+  return function <T extends (...args: unknown[]) => Promise<NextResponse>>(
     handler: T
   ): T {
-    return (async (req: NextRequest, ...args: any[]) => {
+    return (async (req: NextRequest, ...args: unknown[]) => {
       // Get identifier (IP address by default)
       const identifier = config.identifier
         ? config.identifier(req)
@@ -395,10 +395,10 @@ export function withRateLimit(config: RateLimitConfig) {
  * Collects performance metrics for API endpoints.
  */
 export function withMetrics() {
-  return function <T extends (...args: any[]) => Promise<NextResponse>>(
+  return function <T extends (...args: unknown[]) => Promise<NextResponse>>(
     handler: T
   ): T {
-    return (async (req: NextRequest, ...args: any[]) => {
+    return (async (req: NextRequest, ...args: unknown[]) => {
       const startTime = Date.now();
       const endpoint = new URL(req.url).pathname;
 

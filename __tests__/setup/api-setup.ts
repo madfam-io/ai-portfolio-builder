@@ -7,7 +7,7 @@ import { TextEncoder, TextDecoder } from 'util';
 
 // Polyfills for Node.js environment
 global.TextEncoder = TextEncoder;
-global.TextDecoder = TextDecoder as any;
+global.TextDecoder = TextDecoder as typeof global.TextDecoder;
 
 // Mock Request and Response for Next.js
 class MockRequest {
@@ -18,11 +18,11 @@ class MockRequest {
   public method = this.init.method || 'GET';
   public headers = new Headers(this.init.headers);
 
-  async json() {
+  json() {
     return this.init.body ? JSON.parse(this.init.body as string) : {};
   }
 
-  async text() {
+  text() {
     return (this.init.body as string) || '';
   }
 }
@@ -37,18 +37,18 @@ class MockResponse {
   public headers = new Headers(this.init.headers);
   public ok = this.status >= 200 && this.status < 300;
 
-  async json() {
+  json() {
     return this.body ? JSON.parse(this.body as string) : {};
   }
 
-  async text() {
+  text() {
     return (this.body as string) || '';
   }
 }
 
 // Set up globals
-global.Request = MockRequest as any;
-global.Response = MockResponse as any;
+global.Request = MockRequest as typeof global.Request;
+global.Response = MockResponse as typeof global.Response;
 global.Headers = Headers;
 global.fetch = jest.fn();
 
@@ -56,7 +56,7 @@ global.fetch = jest.fn();
 jest.mock('next/server', () => ({
   NextRequest: MockRequest,
   NextResponse: class NextResponse extends MockResponse {
-    static json(object: any, init?: ResponseInit) {
+    static json(object: unknown, init?: ResponseInit) {
       return new NextResponse(JSON.stringify(object), {
         ...init,
         headers: {

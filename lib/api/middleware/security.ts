@@ -170,8 +170,6 @@ export function detectSuspiciousActivity(request: NextRequest): {
   }
 
   // Check for rapid sequential requests (basic rate limiting check)
-  const clientIP = getClientIP(request);
-  const rateLimitKey = `rate_limit_${clientIP}`;
   // This would ideally use Redis, but for now we'll just flag it
 
   const forwardedFor = request.headers.get('x-forwarded-for');

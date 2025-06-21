@@ -10,7 +10,7 @@ import { lazy, ComponentType, ReactNode } from 'react';
  */
 export function createLazyComponent<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
-  fallback?: ReactNode
+  _fallback?: ReactNode
 ): T {
   return lazy(importFn) as unknown as T;
 }

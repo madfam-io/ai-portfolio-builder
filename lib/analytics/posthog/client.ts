@@ -131,7 +131,7 @@ export const isFeatureEnabled = (flagName: string): boolean => {
 };
 
 // Get feature flag payload
-export const getFeatureFlagPayload = (flagName: string): any => {
+export const getFeatureFlagPayload = (flagName: string): unknown => {
   if (typeof window === 'undefined' || !posthog.__loaded) return null;
 
   return posthog.getFeatureFlagPayload(flagName);

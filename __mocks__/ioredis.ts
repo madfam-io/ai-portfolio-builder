@@ -3,7 +3,7 @@
  */
 
 class MockRedis {
-  constructor(options?: any) {
+  constructor(options?: Record<string, unknown>) {
     // Mock constructor
   }
 

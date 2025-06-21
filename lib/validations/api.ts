@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { logger } from '@/lib/utils/logger';
 /**
  * API Input Validation Schemas
  * Comprehensive validation for all API routes
@@ -203,97 +202,97 @@ export const previewBodySchema = z.object({
 });
 
 // GitHub Integration schemas
-const githubCallbackSchema = z.object({
-  code: z.string().min(1, 'Authorization code is required'),
-  state: z.string().uuid('Invalid state parameter'),
-  error: z.string().optional(),
-  error_description: z.string().optional(),
-});
+// const githubCallbackSchema = z.object({
+//   code: z.string().min(1, 'Authorization code is required'),
+//   state: z.string().uuid('Invalid state parameter'),
+//   error: z.string().optional(),
+//   error_description: z.string().optional(),
+// });
 
 // Analytics schemas
-const syncRepositoriesSchema = z.object({
-  force: z.boolean().optional().default(false),
-});
+// const syncRepositoriesSchema = z.object({
+//   force: z.boolean().optional().default(false),
+// });
 
-const repositoryParamsSchema = z.object({
-  id: uuidSchema,
-});
+// const repositoryParamsSchema = z.object({
+//   id: uuidSchema,
+// });
 
-const syncOptionsSchema = z.object({
-  syncMetrics: z.boolean().optional().default(true),
-  syncPullRequests: z.boolean().optional().default(true),
-  syncContributors: z.boolean().optional().default(true),
-  syncCommits: z.boolean().optional().default(true),
-  force: z.boolean().optional().default(false),
-});
+// const syncOptionsSchema = z.object({
+//   syncMetrics: z.boolean().optional().default(true),
+//   syncPullRequests: z.boolean().optional().default(true),
+//   syncContributors: z.boolean().optional().default(true),
+//   syncCommits: z.boolean().optional().default(true),
+//   force: z.boolean().optional().default(false),
+// });
 
 // AI Model selection schemas
-const modelSelectionSchema = z.object({
-  modelId: z.string().min(1, 'Model ID is required'),
-  taskType: z.enum(['bio', 'project', 'template']),
-});
+// const modelSelectionSchema = z.object({
+//   modelId: z.string().min(1, 'Model ID is required'),
+//   taskType: z.enum(['bio', 'project', 'template']),
+// });
 
 // Portfolio API schemas
-const portfolioIdSchema = z.object({
-  id: uuidSchema,
-});
+// const portfolioIdSchema = z.object({
+//   id: uuidSchema,
+// });
 
-const publishPortfolioSchema = z.object({
-  subdomain: z
-    .string()
-    .min(3, 'Subdomain must be at least 3 characters')
-    .max(63, 'Subdomain must be less than 63 characters')
-    .regex(
-      /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/,
-      'Subdomain must contain only lowercase letters, numbers, and hyphens'
-    ),
-  customDomain: z.string().url().optional(),
-});
+// const publishPortfolioSchema = z.object({
+//   subdomain: z
+//     .string()
+//     .min(3, 'Subdomain must be at least 3 characters')
+//     .max(63, 'Subdomain must be less than 63 characters')
+//     .regex(
+//       /^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/,
+//       'Subdomain must contain only lowercase letters, numbers, and hyphens'
+//     ),
+//   customDomain: z.string().url().optional(),
+// });
 
 // Pagination schemas
-const paginationSchema = z.object({
-  page: z.coerce.number().int().min(1).optional().default(1),
-  limit: z.coerce.number().int().min(1).max(100).optional().default(10),
-  sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
-});
+// const paginationSchema = z.object({
+//   page: z.coerce.number().int().min(1).optional().default(1),
+//   limit: z.coerce.number().int().min(1).max(100).optional().default(10),
+//   sortBy: z.string().optional(),
+//   sortOrder: z.enum(['asc', 'desc']).optional().default('desc'),
+// });
 
 // Search schemas
-const searchSchema = z.object({
-  query: z.string().min(1).max(100).optional(),
-  filters: z
-    .object({
-      status: z.enum(['draft', 'published', 'archived']).optional(),
-      template: z.enum(['developer', 'designer', 'consultant']).optional(),
-      dateFrom: z.string().datetime().optional(),
-      dateTo: z.string().datetime().optional(),
-    })
-    .optional(),
-});
+// const searchSchema = z.object({
+//   query: z.string().min(1).max(100).optional(),
+//   filters: z
+//     .object({
+//       status: z.enum(['draft', 'published', 'archived']).optional(),
+//       template: z.enum(['developer', 'designer', 'consultant']).optional(),
+//       dateFrom: z.string().datetime().optional(),
+//       dateTo: z.string().datetime().optional(),
+//     })
+//     .optional(),
+// });
 
 // Error response helper
-function createValidationError(errors: z.ZodError): {
-  error: string;
-  details: unknown;
-} {
-  return {
-    error: 'Validation failed',
-    details: errors.format(),
-  };
-}
+// function createValidationError(errors: z.ZodError): {
+//   error: string;
+//   details: unknown;
+// } {
+//   return {
+//     error: 'Validation failed',
+//     details: errors.format(),
+//   };
+// }
 
 // Safe parse helper with logging
-function safeParseWithLogging<T>(
-  schema: z.ZodSchema<T>,
-  data: unknown,
-  context: string
-): { success: true; data: T } | { success: false; error: unknown } {
-  const result = schema.safeParse(data);
-
-  if (!result.success) {
-    // Log validation errors for debugging
-    logger.error(`Validation failed for ${context}:`, result.error.format());
-  }
-
-  return result;
-}
+// function safeParseWithLogging<T>(
+//   schema: z.ZodSchema<T>,
+//   data: unknown,
+//   context: string
+// ): { success: true; data: T } | { success: false; error: unknown } {
+//   const result = schema.safeParse(data);
+//
+//   if (!result.success) {
+//     // Log validation errors for debugging
+//     logger.error(`Validation failed for ${context}:`, result.error.format());
+//   }
+//
+//   return result;
+// }

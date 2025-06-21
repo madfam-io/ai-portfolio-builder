@@ -30,7 +30,6 @@ export function withObservability<T extends (...args: unknown[]) => any>(
   const {
     trackAnalytics = true,
     trackPerformance = true,
-    sensitiveFields = [],
     customAttributes = {},
   } = config;
 

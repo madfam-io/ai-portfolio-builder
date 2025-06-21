@@ -224,12 +224,12 @@ export async function waitForStoreUpdate() {
 
 // Test store middleware
 export function createStoreMiddleware<T extends object>(
-  middleware: (config: any) => any
+  middleware: (config: unknown) => unknown
 ) {
-  const logs: any[] = [];
+  const logs: Array<{ type: string; args: unknown[]; state: unknown }> = [];
 
-  const testMiddleware = (config: any) => (set: any, get: any, api: any) => {
-    const wrappedSet = (...args: any[]) => {
+  const testMiddleware = (config: unknown) => (set: (...args: unknown[]) => void, get: () => unknown, api: unknown) => {
+    const wrappedSet = (...args: unknown[]) => {
       logs.push({ type: 'set', args, state: get() });
       return set(...args);
     };

@@ -29,7 +29,6 @@ export function createMockNextRequest(
     method = 'GET',
     headers = {},
     body,
-    query = {},
     cookies = {},
     searchParams = {},
     pathname,
@@ -123,12 +122,12 @@ export function createMockResponse() {
       if (text) statusText = text;
       return response;
     },
-    json: async (data: any) => {
+    json: (data: any) => {
       body = data;
       headers.set('Content-Type', 'application/json');
       return Response.json(data, { status: statusCode, statusText });
     },
-    text: async (data: string) => {
+    text: (data: string) => {
       body = data;
       headers.set('Content-Type', 'text/plain');
       return new Response(data, { status: statusCode, statusText });
@@ -153,7 +152,7 @@ export function createMockResponse() {
 /**
  * Test an API route handler
  */
-export async function testApiRoute(
+export function testApiRoute(
   handler: Function,
   request: NextRequest,
   context?: any
@@ -203,17 +202,17 @@ export function mockRedis() {
   const cache = new Map<string, any>();
 
   return {
-    get: jest.fn(async (key: string) => cache.get(key) || null),
-    setEx: jest.fn(async (key: string, ttl: number, value: string) => {
+    get: jest.fn((key: string) => cache.get(key) || null),
+    setEx: jest.fn((key: string, _ttl: number, value: string) => {
       cache.set(key, value);
       return 'OK';
     }),
-    del: jest.fn(async (key: string) => {
+    del: jest.fn((key: string) => {
       const had = cache.has(key);
       cache.delete(key);
       return had ? 1 : 0;
     }),
-    keys: jest.fn(async (pattern: string) => {
+    keys: jest.fn((pattern: string) => {
       const regex = new RegExp(pattern.replace('*', '.*'));
       return Array.from(cache.keys()).filter(key => regex.test(key));
     }),
@@ -298,7 +297,7 @@ export function mockSupabase() {
         });
         return builder;
       }),
-      then: async (resolve: Function) => {
+      then: (resolve: Function) => {
         const filtered = query.filter((item: any) =>
           filters.every(f => f(item))
         );
@@ -312,11 +311,11 @@ export function mockSupabase() {
   return {
     from: jest.fn((table: string) => createQueryBuilder(table)),
     auth: {
-      signUp: jest.fn(async ({ email, password }) => ({
+      signUp: jest.fn(({ email, _password }) => ({
         data: { user: { id: 'user-123', email }, session: null },
         error: null,
       })),
-      signInWithPassword: jest.fn(async ({ email, password }) => ({
+      signInWithPassword: jest.fn(({ email, _password }) => ({
         data: {
           user: { id: 'user-123', email },
           session: {
@@ -326,27 +325,27 @@ export function mockSupabase() {
         },
         error: null,
       })),
-      signOut: jest.fn(async () => ({ error: null })),
-      getUser: jest.fn(async () => ({
+      signOut: jest.fn(() => ({ error: null })),
+      getUser: jest.fn(() => ({
         data: { user: { id: 'user-123', email: 'test@example.com' } },
         error: null,
       })),
-      getSession: jest.fn(async () => ({
+      getSession: jest.fn(() => ({
         data: { session: { access_token: 'token-123' } },
         error: null,
       })),
     },
     storage: {
       from: jest.fn((bucket: string) => ({
-        upload: jest.fn(async (path: string, file: any) => ({
+        upload: jest.fn((path: string, _file: any) => ({
           data: { path },
           error: null,
         })),
-        download: jest.fn(async (path: string) => ({
+        download: jest.fn((_path: string) => ({
           data: new Blob(['test']),
           error: null,
         })),
-        remove: jest.fn(async (paths: string[]) => ({
+        remove: jest.fn((paths: string[]) => ({
           data: paths.map(path => ({ path })),
           error: null,
         })),

@@ -55,13 +55,11 @@ export default function DemoPreviewPage({ params }: PageProps) {
       phone: demo.sampleData.personal.phone,
       location: demo.sampleData.personal.location,
     },
-    skills: demo.sampleData.skills.technical.concat(
-      demo.sampleData.skills.soft
-    ),
-    experience: demo.sampleData.experience,
+    skills: [...demo.sampleData.skills.technical, ...demo.sampleData.skills.soft],
+    experience: demo.sampleData.experience || [],
     education: demo.sampleData.education || [],
-    projects: demo.sampleData.projects,
-    social: demo.sampleData.social,
+    projects: demo.sampleData.projects || [],
+    social: demo.sampleData.social || {},
     certifications: demo.sampleData.certifications || [],
     template: demo.template,
     customization: {

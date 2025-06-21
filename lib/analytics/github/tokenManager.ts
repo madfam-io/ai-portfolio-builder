@@ -44,32 +44,6 @@ export function decryptAccessToken(
   }
 }
 
-/**
- * Decrypt a GitHub refresh token
- */
-function decryptRefreshToken(tokenData: EncryptedTokenData): string | null {
-  try {
-    if (
-      !tokenData.encrypted_refresh_token ||
-      !tokenData.refresh_token_iv ||
-      !tokenData.refresh_token_tag
-    ) {
-      // No refresh token stored
-      return null;
-    }
-
-    const decrypted = decrypt({
-      encrypted: tokenData.encrypted_refresh_token,
-      iv: tokenData.refresh_token_iv,
-      tag: tokenData.refresh_token_tag,
-    });
-
-    return decrypted;
-  } catch (error) {
-    logger.error('Failed to decrypt refresh token', { error });
-    return null;
-  }
-}
 
 /**
  * Check if the integration has encrypted tokens

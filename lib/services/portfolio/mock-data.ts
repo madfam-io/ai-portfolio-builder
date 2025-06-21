@@ -236,20 +236,20 @@ export const mockPortfolios: Portfolio[] = [
 /**
  * Get a mock portfolio by ID
  */
-function getMockPortfolioById(id: string): Portfolio | undefined {
+export function getMockPortfolioById(id: string): Portfolio | undefined {
   return mockPortfolios.find(p => p.id === id);
 }
 
 /**
  * Get mock portfolios by user ID
  */
-function getMockPortfoliosByUserId(userId: string): Portfolio[] {
+export function getMockPortfoliosByUserId(userId: string): Portfolio[] {
   return mockPortfolios.filter(p => p.userId === userId);
 }
 
 /**
  * Generate a new mock portfolio ID
  */
-function generateMockId(): string {
+export function generateMockId(): string {
   return `mock-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 }

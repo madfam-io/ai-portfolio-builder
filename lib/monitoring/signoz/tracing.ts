@@ -10,9 +10,7 @@ import {
   SpanKind,
   SpanStatusCode,
   Attributes,
-  Exception,
 } from '@opentelemetry/api';
-import type { Span, SpanOptions } from '@opentelemetry/api';
 import { SemanticAttributes } from '@opentelemetry/semantic-conventions';
 import { tracer } from './index';
 

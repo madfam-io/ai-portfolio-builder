@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/client';
-import type { DomainAnalytics } from '@/types/domains';
 
 interface DetailedDomainAnalytics {
   totalViews: number;

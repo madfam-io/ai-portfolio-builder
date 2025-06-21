@@ -94,7 +94,7 @@ export function GET(request: NextRequest) {
     const event = searchParams.get('event');
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
-    const _limit = parseInt(searchParams.get('limit') || '100');
+    // const limit = parseInt(searchParams.get('limit') || '100');
 
     // Validate required parameters for analytics queries
     if (!userId && !event && !startDate) {

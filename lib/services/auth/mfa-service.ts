@@ -147,7 +147,7 @@ export class MFAService {
         );
       }
 
-      const { data, error } = await this.supabase.auth.mfa.verify({
+      const { error } = await this.supabase.auth.mfa.verify({
         factorId,
         challengeId: '', // Will be provided by the challenge
         code,
@@ -217,7 +217,7 @@ export class MFAService {
         );
       }
 
-      const { data, error } = await this.supabase.auth.mfa.verify({
+      const { error } = await this.supabase.auth.mfa.verify({
         factorId: '', // Will be determined by challenge
         challengeId,
         code,

@@ -123,9 +123,9 @@ export async function POST(request: NextRequest) {
 export function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const _userId = searchParams.get('userId');
+    // const userId = searchParams.get('userId');
     const days = parseInt(searchParams.get('days') || '30');
-    const _limit = parseInt(searchParams.get('limit') || '100');
+    // const limit = parseInt(searchParams.get('limit') || '100');
 
     // TODO: Implement database queries for survey analytics
     // const surveys = await getSurveysFromDatabase({ userId, days, limit });

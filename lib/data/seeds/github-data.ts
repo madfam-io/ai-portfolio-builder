@@ -492,7 +492,7 @@ export async function seedRepositories(
 /**
  * Combined seeding function for GitHub data
  */
-async function seedGitHubData(
+export async function seedGitHubData(
   client: SupabaseClient,
   options: SeedingOptions
 ): Promise<number> {

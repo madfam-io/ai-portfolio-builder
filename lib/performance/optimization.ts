@@ -161,13 +161,13 @@ export class ImageOptimizer {
 export class APIOptimizer {
   private cache = new Map<
     string,
-    { data: any; timestamp: number; ttl: number }
+    { data: unknown; timestamp: number; ttl: number }
   >();
 
   /**
    * Cache API response with TTL
    */
-  cacheResponse(key: string, data: any, ttlMs: number = 300000): void {
+  cacheResponse(key: string, data: unknown, ttlMs: number = 300000): void {
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
@@ -178,7 +178,7 @@ export class APIOptimizer {
   /**
    * Get cached response if valid
    */
-  getCachedResponse(key: string): any | null {
+  getCachedResponse(key: string): unknown | null {
     const cached = this.cache.get(key);
     if (!cached) return null;
 
@@ -321,8 +321,8 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize portfolio creation workflow
    */
-  async optimizePortfolioCreation(portfolioData: any): Promise<{
-    optimizedData: any;
+  async optimizePortfolioCreation(portfolioData: Record<string, unknown>): Promise<{
+    optimizedData: Record<string, unknown>;
     metrics: PerformanceMetrics;
     success: boolean;
   }> {
@@ -333,10 +333,10 @@ export class PortfolioPerformanceOptimizer {
       const optimizationTasks = [
         this.optimizeImages(portfolioData),
         this.optimizeApiCalls(portfolioData),
-        this.preloadTemplateAssets(portfolioData.template),
+        this.preloadTemplateAssets(String(portfolioData.template)),
       ];
 
-      const [optimizedImages, optimizedApi, preloadedAssets] =
+      const [optimizedImages, optimizedApi] =
         await Promise.all(optimizationTasks);
 
       const optimizedData = {
@@ -368,7 +368,7 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize images in portfolio data
    */
-  private async optimizeImages(portfolioData: any): Promise<any> {
+  private async optimizeImages(portfolioData: Record<string, unknown>): Promise<Record<string, unknown>> {
     this.monitor.startTimer('imageOptimization');
 
     try {
@@ -377,20 +377,20 @@ export class PortfolioPerformanceOptimizer {
       // Optimize avatar
       if (portfolioData.avatarUrl) {
         optimizedData.avatarUrl = await this.imageOptimizer.optimizeImage(
-          portfolioData.avatarUrl
+          String(portfolioData.avatarUrl)
         );
         optimizedData.avatarSizes = this.imageOptimizer.generateResponsiveSizes(
-          optimizedData.avatarUrl
+          String(optimizedData.avatarUrl)
         );
       }
 
       // Optimize project images
       if (portfolioData.projects) {
         optimizedData.projects = await Promise.all(
-          portfolioData.projects.map(async (project: any) => {
+          (portfolioData.projects as Array<Record<string, unknown>>).map(async (project) => {
             if (project.imageUrl) {
               const optimizedUrl = await this.imageOptimizer.optimizeImage(
-                project.imageUrl
+                String(project.imageUrl)
               );
               return {
                 ...project,
@@ -413,7 +413,7 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize API calls
    */
-  private async optimizeApiCalls(portfolioData: any): Promise<any> {
+  private async optimizeApiCalls(portfolioData: Record<string, unknown>): Promise<Record<string, unknown>> {
     this.monitor.startTimer('apiResponseTime');
 
     try {

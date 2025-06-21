@@ -70,7 +70,7 @@ export interface QualityScore {
 }
 
 // AI model configuration
-interface ModelConfig {
+export interface ModelConfig {
   name: string;
   endpoint: string;
   maxTokens: number;
@@ -104,7 +104,7 @@ export interface AIService {
 export type AIProvider = 'huggingface';
 
 // Enhancement request options
-interface EnhancementOptions {
+export interface EnhancementOptions {
   provider?: AIProvider;
   selectedModel?: string;
   maxRetries?: number;

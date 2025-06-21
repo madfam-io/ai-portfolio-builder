@@ -5,7 +5,7 @@
 /**
  * Wraps async test functions with timeout handling
  */
-export function withTimeout<T extends (...args: any[]) => Promise<any>>(
+export function withTimeout<T extends (...args: unknown[]) => Promise<unknown>>(
   fn: T,
   timeoutMs = 5000
 ): T {

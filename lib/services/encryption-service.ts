@@ -5,8 +5,6 @@
 import {
   encryptField,
   decryptField,
-  encryptObjectFields,
-  decryptObjectFields,
   hashForIndex,
   encryptJsonField,
   decryptJsonField,

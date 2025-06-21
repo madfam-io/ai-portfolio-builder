@@ -127,12 +127,6 @@ export const useUIStore = create<UIState & UIActions>()(
   )
 );
 
-// Selectors
-const selectTheme = (state: UIState & UIActions) => state.theme;
-const selectSidebarOpen = (state: UIState & UIActions) => state.sidebarOpen;
-const selectModals = (state: UIState & UIActions) => state.modals;
-const selectToasts = (state: UIState & UIActions) => state.toasts;
-const selectGlobalLoading = (state: UIState & UIActions) => state.globalLoading;
 
 // Utility functions for common toast patterns
 export const showSuccessToast = (title: string, description?: string) => {

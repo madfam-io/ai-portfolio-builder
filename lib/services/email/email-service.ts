@@ -7,7 +7,6 @@ import { logger } from '@/lib/utils/logger';
 import { gdprService } from '@/lib/services/gdpr/gdpr-service';
 import { auditLogger } from '@/lib/services/audit/audit-logger';
 import { redis, isRedisAvailable } from '@/lib/cache/redis-client';
-import { env } from '@/lib/config/env';
 
 export interface EmailTemplate {
   id: string;
@@ -381,9 +380,9 @@ class EmailService {
    * Get email performance metrics
    */
   async getEmailMetrics(
-    startDate: Date,
-    endDate: Date,
-    template?: string
+    _startDate: Date,
+    _endDate: Date,
+    _template?: string
   ): Promise<{
     sent: number;
     delivered: number;
@@ -628,7 +627,7 @@ class EmailService {
     }
   }
 
-  private async getUserIdFromEmail(email: string): Promise<string | null> {
+  private async getUserIdFromEmail(_email: string): Promise<string | null> {
     // In production, implement email -> userId lookup
     return null;
   }

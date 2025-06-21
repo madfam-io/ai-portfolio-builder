@@ -121,7 +121,6 @@ class CDNManager {
       quality = 85,
       format = 'auto',
       fit = 'cover',
-      background = 'transparent',
     } = options;
 
     switch (this.config.provider) {
@@ -152,7 +151,7 @@ class CDNManager {
   /**
    * Get optimized asset URL
    */
-  getAssetUrl(path: string, type: 'css' | 'js' | 'image' | 'font'): string {
+  getAssetUrl(path: string, _type: 'css' | 'js' | 'image' | 'font'): string {
     if (!this.config.enabled) {
       return path;
     }
@@ -461,7 +460,7 @@ class CDNManager {
   /**
    * AWS CloudFront image optimization
    */
-  private awsImageUrl(url: string, options: any): string {
+  private awsImageUrl(url: string, _options: any): string {
     // Implement AWS CloudFront image optimization
     return `${this.config.domain}${url}`;
   }
@@ -469,7 +468,7 @@ class CDNManager {
   /**
    * Get cache buster for asset
    */
-  private getCacheBuster(path: string): string {
+  private getCacheBuster(_path: string): string {
     // In production, this would be based on file hash or build timestamp
     return env.NODE_ENV === 'production' ? 'prod-v1' : Date.now().toString();
   }
@@ -513,12 +512,12 @@ class CDNManager {
     }
   }
 
-  private async purgeAWSCache(urls: string[]): Promise<void> {
+  private async purgeAWSCache(_urls: string[]): Promise<void> {
     // AWS CloudFront invalidation
     logger.info('AWS cache purge not implemented');
   }
 
-  private async purgeVercelCache(urls: string[]): Promise<void> {
+  private async purgeVercelCache(_urls: string[]): Promise<void> {
     // Vercel cache purging
     logger.info('Vercel cache purge not implemented');
   }

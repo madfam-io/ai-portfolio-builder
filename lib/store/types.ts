@@ -10,7 +10,13 @@ import { Portfolio } from '@/types/portfolio';
 // Auth Store Types
 export interface AuthState {
   user: User | null;
-  session: unknown | null;
+  session: {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
+    user: User;
+  } | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   error: string | null;
@@ -18,14 +24,20 @@ export interface AuthState {
 
 export interface AuthActions {
   setUser: (user: User | null) => void;
-  setSession: (session: unknown | null) => void;
+  setSession: (session: {
+    access_token: string;
+    refresh_token: string;
+    expires_in: number;
+    token_type: string;
+    user: User;
+  } | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (
     email: string,
     password: string,
-    metadata?: unknown
+    metadata?: Record<string, string>
   ) => Promise<void>;
   signOut: () => Promise<void>;
   signInWithOAuth: (
@@ -45,7 +57,7 @@ export interface PortfolioState {
   isLoading: boolean;
   error: string | null;
   lastSaved: Date | null;
-  history: any[];
+  history: Portfolio[];
   historyIndex: number;
   hasUnsavedChanges: boolean;
 }
@@ -63,7 +75,7 @@ export interface PortfolioActions {
   updatePortfolio: (id: string, data: Partial<Portfolio>) => Promise<Portfolio>;
   deletePortfolio: (id: string) => Promise<void>;
   savePortfolio: () => Promise<void>;
-  updatePortfolioData: (field: string, value: any) => void;
+  updatePortfolioData: (field: string, value: unknown) => void;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -82,8 +94,8 @@ export interface Toast {
 
 export interface Modal {
   id: string;
-  component: React.ComponentType<any>;
-  props?: unknown;
+  component: React.ComponentType<Record<string, unknown>>;
+  props?: Record<string, unknown>;
 }
 
 export interface UIState {
@@ -156,7 +168,11 @@ export interface AIActions {
   setError: (error: string | null) => void;
   enhanceBio: (text: string) => Promise<string>;
   enhanceProject: (text: string) => Promise<string>;
-  recommendTemplate: (data: unknown) => Promise<any>;
+  recommendTemplate: (data: Record<string, unknown>) => Promise<{
+    recommendedTemplate: string;
+    confidence: number;
+    alternatives: string[];
+  }>;
   loadModels: () => Promise<void>;
 }
 
@@ -169,8 +185,8 @@ export interface RootState {
 }
 
 // Persist Config Type
-interface PersistConfig {
+export interface PersistConfig {
   name: string;
   version: number;
-  partialize?: (state: unknown) => any;
+  partialize?: <T>(state: T) => Partial<T>;
 }

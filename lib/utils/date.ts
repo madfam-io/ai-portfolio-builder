@@ -101,7 +101,7 @@ export function parseISO(isoString: string): Date {
  * @param date - Date to check
  * @returns true if valid date
  */
-export function isValid(date: any): boolean {
+export function isValid(date: unknown): boolean {
   return date instanceof Date && !isNaN(date.getTime());
 }
 

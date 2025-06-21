@@ -8,7 +8,7 @@ import { Portfolio, Project, Experience, Education } from '@/types/portfolio';
 /**
  * Generate complete structured data for a portfolio
  */
-function generatePortfolioStructuredData(portfolio: Portfolio): string {
+export function generatePortfolioStructuredData(portfolio: Portfolio): string {
   const structuredData = {
     '@context': 'https://schema.org',
     '@graph': [
@@ -203,7 +203,7 @@ function generateEducationSchemas(education: Education[]): any[] {
 /**
  * Generate Article schema for blog posts
  */
-function generateArticleSchema(article: {
+export function generateArticleSchema(article: {
   title: string;
   description: string;
   content: string;
@@ -235,7 +235,7 @@ function generateArticleSchema(article: {
 /**
  * Generate Service schema for freelance services
  */
-function generateServiceSchema(service: {
+export function generateServiceSchema(service: {
   name: string;
   description: string;
   provider: string;
@@ -281,7 +281,7 @@ function generateServiceSchema(service: {
 /**
  * Generate FAQ schema
  */
-function generateFAQSchema(
+export function generateFAQSchema(
   faqs: Array<{
     question: string;
     answer: string;
@@ -306,7 +306,7 @@ function generateFAQSchema(
 /**
  * Generate How-To schema for tutorials
  */
-function generateHowToSchema(howTo: {
+export function generateHowToSchema(howTo: {
   name: string;
   description: string;
   totalTime?: string;
@@ -368,7 +368,7 @@ function generateHowToSchema(howTo: {
 /**
  * Generate LocalBusiness schema
  */
-function generateLocalBusinessSchema(business: {
+export function generateLocalBusinessSchema(business: {
   name: string;
   description: string;
   address: {

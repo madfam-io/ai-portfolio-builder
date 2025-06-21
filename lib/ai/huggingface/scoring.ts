@@ -5,7 +5,7 @@ import { QualityScore } from '../types';
  * Evaluates enhanced content across multiple dimensions
  */
 
-class ContentScorer {
+export class ContentScorer {
   /**
    * Calculate quality score for enhanced content
    */
