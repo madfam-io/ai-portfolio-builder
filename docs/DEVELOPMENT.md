@@ -238,6 +238,25 @@ ai-portfolio-builder/
 
 ## 📝 Code Standards
 
+### Code Formatting (MADFAM Gold Standard)
+
+All code must pass Prettier formatting checks. This is enforced through:
+
+**Pre-commit Hooks**: Automatic formatting on git commit  
+**CI/CD Checks**: `pnpm format:check` must pass in GitHub Actions  
+**Editor Integration**: VS Code/WebStorm auto-format on save
+
+**Commands**:
+```bash
+pnpm format        # Format all files
+pnpm format:check  # Check formatting (CI/CD)
+```
+
+**Pre-commit Hook**: Husky + lint-staged automatically runs:
+- ESLint fixes
+- Prettier formatting
+- License header checks
+
 ### TypeScript Guidelines
 
 ```typescript

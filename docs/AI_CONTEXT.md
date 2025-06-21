@@ -84,6 +84,10 @@ pnpm type-check            # TypeScript validation
 pnpm test:unit             # Unit tests only
 pnpm test:e2e              # E2E tests
 pnpm test:watch            # Watch mode
+
+# Code Formatting
+pnpm format                # Format all code files
+pnpm format:check          # Check formatting compliance
 ```
 
 ## 🚀 Current Codebase Status
