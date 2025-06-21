@@ -226,7 +226,7 @@ class HealthMonitor {
     });
 
     // System resources check
-    this.registerCheck('system', () => {
+    this.registerCheck('system', async () => {
       try {
         const memoryUsage = process.memoryUsage();
         const cpuUsage = process.cpuUsage();

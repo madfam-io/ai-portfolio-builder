@@ -82,7 +82,7 @@ export function withEncryption(
 /**
  * Encrypt request data based on type
  */
-function encryptRequestData(data: unknown, config: EncryptionConfig): unknown {
+async function encryptRequestData(data: unknown, config: EncryptionConfig): Promise<unknown> {
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {
@@ -128,7 +128,7 @@ function encryptRequestData(data: unknown, config: EncryptionConfig): unknown {
 /**
  * Decrypt response data based on type
  */
-function decryptResponseData(data: unknown, config: EncryptionConfig): unknown {
+async function decryptResponseData(data: unknown, config: EncryptionConfig): Promise<unknown> {
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {

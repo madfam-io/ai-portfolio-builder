@@ -244,7 +244,7 @@ export async function seedUsers(
         id: `00000000-0000-0000-0000-${String(i + 1).padStart(12, '0')}`,
         email: userData.email,
         full_name: userData.full_name,
-        avatar_url: userData.profile.avatar_url,
+        avatar_url: (userData.profile as { avatar_url: string }).avatar_url,
         subscription_tier: userData.subscription_tier,
         subscription_status: 'active',
         subscription_expires_at: new Date(

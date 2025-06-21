@@ -72,8 +72,12 @@ function useCurrentPortfolio() {
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];
         if (!key) continue;
-        current[key] = { ...current[key] };
-        current = current[key];
+        if (typeof current[key] !== 'object' || current[key] === null) {
+          current[key] = {};
+        } else {
+          current[key] = { ...(current[key] as Record<string, unknown>) };
+        }
+        current = current[key] as Record<string, unknown>;
       }
 
       const lastKey = keys[keys.length - 1];

@@ -479,16 +479,17 @@ export function useEnhancedPostHog() {
 
   useEffect(() => {
     if (isInitialized && user) {
+      const userAny = user as any;
       const userWithMetadata = {
         ...user,
-        user_metadata: (user as Record<string, unknown>).user_metadata as
+        user_metadata: userAny.user_metadata as
           | { full_name?: string }
           | undefined,
-        created_at: (user as Record<string, unknown>).created_at as
+        created_at: userAny.created_at as string | undefined,
+        email_confirmed_at: userAny.email_confirmed_at as
           | string
+          | null
           | undefined,
-        email_confirmed_at: (user as Record<string, unknown>)
-          .email_confirmed_at as string | null | undefined,
       };
       enhancedPostHog.identify(user.id, {
         email: user.email,

@@ -628,7 +628,7 @@ export class BetaLaunchChecker {
     };
   }
 
-  private checkPerformance(): Promise<{
+  private async checkPerformance(): Promise<{
     passed: boolean;
     message: string;
   }> {
@@ -655,7 +655,7 @@ export class BetaLaunchChecker {
     };
   }
 
-  private checkFeatures(): Promise<{ passed: boolean; message: string }> {
+  private async checkFeatures(): Promise<{ passed: boolean; message: string }> {
     // Check if core features are implemented
     const _coreFeatures = [
       'portfolio_creation',
@@ -671,7 +671,7 @@ export class BetaLaunchChecker {
     };
   }
 
-  private checkTesting(): Promise<{ passed: boolean; message: string }> {
+  private async checkTesting(): Promise<{ passed: boolean; message: string }> {
     // Mock test coverage check
     return {
       passed: true,
@@ -679,7 +679,7 @@ export class BetaLaunchChecker {
     };
   }
 
-  private checkMonitoring(): Promise<{
+  private async checkMonitoring(): Promise<{
     passed: boolean;
     message: string;
   }> {

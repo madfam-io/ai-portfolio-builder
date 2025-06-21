@@ -227,7 +227,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const signUp = useCallback(
-    (email: string, _password: string, name: string) => {
+    async (email: string, _password: string, name: string) => {
       logger.info('Sign up attempt', { email, name });
       // Implementation would go here
     },
@@ -253,7 +253,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, []);
 
-  const resetPassword = useCallback((email: string) => {
+  const resetPassword = useCallback(async (email: string) => {
     logger.info('Reset password for', { email });
     // Implementation would go here
   }, []);
@@ -261,7 +261,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Admin mode switching
    */
-  const switchToAdminMode = useCallback(() => {
+  const switchToAdminMode = useCallback(async () => {
     if (!user || !canSwitchToAdminMode(user)) {
       throw new Error('Cannot switch to admin mode');
     }
@@ -285,7 +285,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     logger.info('Switched to admin mode');
   }, [user, createSession]);
 
-  const switchToUserMode = useCallback(() => {
+  const switchToUserMode = useCallback(async () => {
     if (!user || !user.adminProfile) {
       throw new Error('Cannot switch to user mode');
     }
@@ -312,7 +312,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * User impersonation (admin only)
    */
   const impersonateUser = useCallback(
-    (targetUserId: string) => {
+    async (targetUserId: string) => {
       if (!user || !hasPermission(user, 'impersonation:users')) {
         throw new Error('No permission to impersonate users');
       }
@@ -349,7 +349,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user]
   );
 
-  const stopImpersonation = useCallback(() => {
+  const stopImpersonation = useCallback(async () => {
     if (impersonatedUser) {
       logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
@@ -360,7 +360,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Profile management (stub implementations)
    */
   const updateProfile = useCallback(
-    (updates: Partial<User>) => {
+    async (updates: Partial<User>) => {
       if (!user) return;
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
@@ -369,7 +369,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     [user]
   );
 
-  const upgradeSubscription = useCallback((plan: SubscriptionPlan) => {
+  const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
     logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
   }, []);

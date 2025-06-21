@@ -225,6 +225,7 @@ class EmailService {
 
         // Mark as sent
         if (isRedisAvailable()) {
+          const cacheKey = `retention:${userId}:${campaign.id}`;
           await redis.setex(cacheKey, 30 * 24 * 60 * 60, Date.now().toString()); // 30 days
         }
 
