@@ -47,19 +47,21 @@ export class AuthenticationError extends AppError {
   }
 }
 
-class AuthorizationError extends AppError {
-  constructor(message: string = 'Insufficient permissions') {
-    super(message, 'AUTHORIZATION_ERROR', 403);
-    this.name = 'AuthorizationError';
-  }
-}
+// Commented out - currently unused
+// class AuthorizationError extends AppError {
+//   constructor(message: string = 'Insufficient permissions') {
+//     super(message, 'AUTHORIZATION_ERROR', 403);
+//     this.name = 'AuthorizationError';
+//   }
+// }
 
-class NotFoundError extends AppError {
-  constructor(resource: string) {
-    super(`${resource} not found`, 'NOT_FOUND', 404);
-    this.name = 'NotFoundError';
-  }
-}
+// Commented out - currently unused
+// class NotFoundError extends AppError {
+//   constructor(resource: string) {
+//     super(`${resource} not found`, 'NOT_FOUND', 404);
+//     this.name = 'NotFoundError';
+//   }
+// }
 
 export class ConflictError extends AppError {
   constructor(message: string) {
@@ -68,12 +70,13 @@ export class ConflictError extends AppError {
   }
 }
 
-class RateLimitError extends AppError {
-  constructor(retryAfter?: number) {
-    super('Too many requests', 'RATE_LIMIT_EXCEEDED', 429, { retryAfter });
-    this.name = 'RateLimitError';
-  }
-}
+// Commented out - currently unused
+// class RateLimitError extends AppError {
+//   constructor(retryAfter?: number) {
+//     super('Too many requests', 'RATE_LIMIT_EXCEEDED', 429, { retryAfter });
+//     this.name = 'RateLimitError';
+//   }
+// }
 
 export class ExternalServiceError extends AppError {
   constructor(service: string, originalError?: unknown) {

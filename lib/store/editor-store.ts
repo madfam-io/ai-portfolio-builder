@@ -308,7 +308,8 @@ export const useEditorStore = create<EditorStore>()(
         undo: () => {
           set(state => {
             if (state.history.past.length > 0) {
-              const previous = state.history.past.pop()!;
+              const previous = state.history.past.pop();
+              if (!previous) return;
               state.history.future.unshift([...state.blocks]);
               state.blocks = previous;
               state.selectedBlockId = null;
@@ -319,7 +320,8 @@ export const useEditorStore = create<EditorStore>()(
         redo: () => {
           set(state => {
             if (state.history.future.length > 0) {
-              const next = state.history.future.shift()!;
+              const next = state.history.future.shift();
+              if (!next) return;
               state.history.past.push([...state.blocks]);
               state.blocks = next;
               state.selectedBlockId = null;
@@ -327,10 +329,10 @@ export const useEditorStore = create<EditorStore>()(
           });
         },
 
-        save: async () => {
+        save: () => {
           const state = get();
           // Implementation would save to backend
-          console.log('Saving editor state:', state.blocks);
+          // Saving editor state
         },
 
         load: (blocks, theme) => {
@@ -353,7 +355,7 @@ export const useEditorStore = create<EditorStore>()(
           set(initialState);
         },
 
-        startDragging: blockId => {
+        startDragging: _blockId => {
           set(state => {
             state.isDragging = true;
           });

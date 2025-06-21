@@ -19,12 +19,13 @@ export interface GEOContent {
   optimizationScore: number;
 }
 
-interface OptimizeContentRequest {
-  content: string;
-  targetLocale: string;
-  keywords: string[];
-  settings: GEOSettings;
-}
+// Commented out - currently unused
+// interface OptimizeContentRequest {
+//   content: string;
+//   targetLocale: string;
+//   keywords: string[];
+//   settings: GEOSettings;
+// }
 
 export interface SEOMetadata {
   title: string;
@@ -44,10 +45,11 @@ export interface KeywordResearch {
   suggestions: string[];
 }
 
-interface GEOAnalysisResult {
-  content: GEOContent;
-  suggestions: string[];
-  optimizationTips: string[];
-  keywordDensity: Record<string, number>;
-  readabilityScore: number;
-}
+// Commented out - currently unused
+// interface GEOAnalysisResult {
+//   content: GEOContent;
+//   suggestions: string[];
+//   optimizationTips: string[];
+//   keywordDensity: Record<string, number>;
+//   readabilityScore: number;
+// }

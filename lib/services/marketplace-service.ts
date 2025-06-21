@@ -14,6 +14,11 @@ import type {
   TemplateSearchParams,
   Currency,
   LicenseType,
+  TemplateFeature,
+  CustomizationOption,
+  TemplateStatus,
+  PurchaseStatus,
+  ReviewStatus,
 } from '@/types/marketplace';
 
 export class MarketplaceService {
@@ -279,7 +284,9 @@ export class MarketplaceService {
 
     if (error) throw error;
 
-    return (data || []).map(this.transformPurchase);
+    return (data || []).map(purchase =>
+      MarketplaceService.transformPurchase(purchase as Record<string, unknown>)
+    );
   }
 
   /**
@@ -447,7 +454,9 @@ export class MarketplaceService {
       rating: review.rating,
     });
 
-    return this.transformReview(newReview);
+    return this.transformReview(
+      newReview as unknown as Record<string, unknown>
+    );
   }
 
   /**
@@ -493,7 +502,11 @@ export class MarketplaceService {
       : 0;
 
     return {
-      reviews: (data || []).map(this.transformReview),
+      reviews: (data || []).map(review =>
+        MarketplaceService.transformReview(
+          review as unknown as Record<string, unknown>
+        )
+      ),
       total: count || 0,
       averageRating,
     };
@@ -565,9 +578,12 @@ export class MarketplaceService {
     if (error) throw error;
 
     return (data || [])
-      .map(item => item.template)
+      .map(
+        item =>
+          (item as Record<string, unknown>).template as Record<string, unknown>
+      )
       .filter(Boolean)
-      .map(this.transformTemplate);
+      .map(template => MarketplaceService.transformTemplate(template));
   }
 
   // Helper methods
@@ -617,95 +633,117 @@ export class MarketplaceService {
       .eq('id', templateId);
   }
 
-  private static async getTemplateContent(_demoPortfolioId: string) {
+  private static getTemplateContent(_demoPortfolioId: string) {
     // Get content from demo portfolio
     // This would fetch the actual content structure
     return {};
   }
 
-  private static transformTemplate(data: any): PremiumTemplate {
+  private static transformTemplate(
+    data: Record<string, unknown>
+  ): PremiumTemplate {
     return {
-      id: data.id,
-      name: data.name,
-      slug: data.slug,
-      description: data.description,
-      longDescription: data.long_description,
-      category: data.category,
-      tags: data.tags || [],
-      priceUsd: parseFloat(data.price_usd),
-      priceMxn: parseFloat(data.price_mxn),
-      priceEur: parseFloat(data.price_eur),
-      discountPercentage: data.discount_percentage || 0,
-      templateType: data.template_type,
-      previewUrl: data.preview_url,
-      thumbnailUrl: data.thumbnail_url,
-      galleryImages: data.gallery_images || [],
-      demoPortfolioId: data.demo_portfolio_id,
-      features: data.features || [],
-      industries: data.industries || [],
-      bestFor: data.best_for || [],
-      customizationOptions: data.customization_options || [],
-      purchasesCount: data.purchases_count || 0,
-      rating: parseFloat(data.rating) || 0,
-      reviewsCount: data.reviews_count || 0,
-      authorId: data.author_id,
-      authorName: data.author_name,
-      authorAvatar: data.author_avatar,
-      revenueShare: parseFloat(data.revenue_share) || 0.7,
-      status: data.status,
-      featured: data.featured || false,
-      newArrival: data.new_arrival || false,
-      bestSeller: data.best_seller || false,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
-      publishedAt: data.published_at ? new Date(data.published_at) : undefined,
-    };
-  }
-
-  private static transformTemplates(data: any[]): PremiumTemplate[] {
-    return data.map(this.transformTemplate);
-  }
-
-  private static transformPurchase(data: any): TemplatePurchase {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      templateId: data.template_id,
-      template: data.template
-        ? this.transformTemplate(data.template)
+      id: data.id as string,
+      name: data.name as string,
+      slug: data.slug as string,
+      description: data.description as string,
+      longDescription: data.long_description as string | undefined,
+      category: data.category as string,
+      tags: (data.tags as string[]) || [],
+      priceUsd: parseFloat(data.price_usd as string),
+      priceMxn: parseFloat(data.price_mxn as string),
+      priceEur: parseFloat(data.price_eur as string),
+      discountPercentage: (data.discount_percentage as number) || 0,
+      templateType: data.template_type as string,
+      previewUrl: data.preview_url as string | undefined,
+      thumbnailUrl: data.thumbnail_url as string | undefined,
+      galleryImages: (data.gallery_images as string[]) || [],
+      demoPortfolioId: data.demo_portfolio_id as string | undefined,
+      features: (data.features as TemplateFeature[]) || [],
+      industries: (data.industries as string[]) || [],
+      bestFor: (data.best_for as string[]) || [],
+      customizationOptions:
+        (data.customization_options as CustomizationOption[]) || [],
+      purchasesCount: (data.purchases_count as number) || 0,
+      rating: parseFloat((data.rating as string) || '0') || 0,
+      reviewsCount: (data.reviews_count as number) || 0,
+      authorId: data.author_id as string,
+      authorName: data.author_name as string,
+      authorAvatar: data.author_avatar as string | undefined,
+      revenueShare: parseFloat((data.revenue_share as string) || '0.7') || 0.7,
+      status: data.status as TemplateStatus,
+      featured: (data.featured as boolean) || false,
+      newArrival: (data.new_arrival as boolean) || false,
+      bestSeller: (data.best_seller as boolean) || false,
+      createdAt: new Date(data.created_at as string),
+      updatedAt: new Date(data.updated_at as string),
+      publishedAt: data.published_at
+        ? new Date(data.published_at as string)
         : undefined,
-      purchasePrice: parseFloat(data.purchase_price),
-      currency: data.currency,
-      discountApplied: parseFloat(data.discount_applied) || 0,
-      stripePaymentId: data.stripe_payment_id,
-      licenseKey: data.license_key,
-      licenseType: data.license_type,
-      timesUsed: data.times_used || 0,
-      lastUsedAt: data.last_used_at ? new Date(data.last_used_at) : undefined,
-      status: data.status,
-      purchasedAt: new Date(data.purchased_at),
-      expiresAt: data.expires_at ? new Date(data.expires_at) : undefined,
     };
   }
 
-  private static transformReview(data: any): TemplateReview {
+  private static transformTemplates(
+    data: Array<Record<string, unknown>>
+  ): PremiumTemplate[] {
+    return data.map(item => MarketplaceService.transformTemplate(item));
+  }
+
+  private static transformPurchase(
+    data: Record<string, unknown>
+  ): TemplatePurchase {
     return {
-      id: data.id,
-      templateId: data.template_id,
-      userId: data.user_id,
-      purchaseId: data.purchase_id,
-      rating: data.rating,
-      title: data.title,
-      comment: data.comment,
+      id: data.id as string,
+      userId: data.user_id as string,
+      templateId: data.template_id as string,
+      template: data.template
+        ? this.transformTemplate(data.template as Record<string, unknown>)
+        : undefined,
+      purchasePrice: parseFloat(data.purchase_price as string),
+      currency: data.currency as Currency,
+      discountApplied:
+        parseFloat((data.discount_applied as string) || '0') || 0,
+      stripePaymentId: data.stripe_payment_id as string | undefined,
+      licenseKey: data.license_key as string,
+      licenseType: data.license_type as LicenseType,
+      timesUsed: (data.times_used as number) || 0,
+      lastUsedAt: data.last_used_at
+        ? new Date(data.last_used_at as string)
+        : undefined,
+      status: data.status as PurchaseStatus,
+      purchasedAt: new Date(data.purchased_at as string),
+      expiresAt: data.expires_at
+        ? new Date(data.expires_at as string)
+        : undefined,
+    };
+  }
+
+  private static transformReview(
+    data: Record<string, unknown>
+  ): TemplateReview {
+    const user = data.user as Record<string, unknown> | undefined;
+    const userMetaData = user?.raw_user_meta_data as
+      | Record<string, unknown>
+      | undefined;
+
+    return {
+      id: data.id as string,
+      templateId: data.template_id as string,
+      userId: data.user_id as string,
+      purchaseId: data.purchase_id as string,
+      rating: data.rating as number,
+      title: data.title as string | undefined,
+      comment: data.comment as string | undefined,
       userName:
-        data.user?.raw_user_meta_data?.name || data.user?.email?.split('@')[0],
-      userAvatar: data.user?.raw_user_meta_data?.avatar_url,
-      helpfulCount: data.helpful_count || 0,
-      notHelpfulCount: data.not_helpful_count || 0,
-      status: data.status,
-      featured: data.featured || false,
-      createdAt: new Date(data.created_at),
-      updatedAt: new Date(data.updated_at),
+        (userMetaData?.name as string) ||
+        (user?.email as string)?.split('@')[0],
+      userAvatar: userMetaData?.avatar_url as string | undefined,
+      helpfulCount: (data.helpful_count as number) || 0,
+      notHelpfulCount: (data.not_helpful_count as number) || 0,
+      status: data.status as ReviewStatus,
+      featured: (data.featured as boolean) || false,
+      createdAt: new Date(data.created_at as string),
+      updatedAt: new Date(data.updated_at as string),
     };
   }
 }

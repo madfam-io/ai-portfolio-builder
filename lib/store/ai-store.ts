@@ -201,7 +201,7 @@ export const useAIStore = create<AIState & AIActions>()(
               );
 
               const recommendation = await aiClient.recommendTemplate(
-                data as any
+                data as Parameters<typeof aiClient.recommendTemplate>[0]
               );
 
               set(state => {
@@ -213,7 +213,9 @@ export const useAIStore = create<AIState & AIActions>()(
               return {
                 recommendedTemplate: recommendation.recommendedTemplate,
                 confidence: recommendation.confidence,
-                alternatives: recommendation.alternatives.map(alt => alt.template),
+                alternatives: recommendation.alternatives.map(
+                  alt => alt.template
+                ),
               };
             } catch (error: unknown) {
               set(state => {
@@ -270,4 +272,3 @@ export const useAIStore = create<AIState & AIActions>()(
     }
   )
 );
-

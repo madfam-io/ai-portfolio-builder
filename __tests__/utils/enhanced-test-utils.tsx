@@ -51,8 +51,8 @@ export const mockFetch = (response: any, ok = true) => {
   global.fetch = jest.fn().mockResolvedValue({
     ok,
     status: ok ? 200 : 400,
-    json: async () => response,
-    text: async () => JSON.stringify(response),
+    json: () => Promise.resolve(response),
+    text: () => Promise.resolve(JSON.stringify(response)),
     headers: new Headers({
       'content-type': 'application/json',
     }),

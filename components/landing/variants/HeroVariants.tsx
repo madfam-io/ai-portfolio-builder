@@ -9,6 +9,7 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import React from 'react';
 
 import { useLanguage } from '@/lib/i18n/refactored-context';
@@ -288,9 +289,11 @@ export function HeroSplit(props: HeroProps): React.ReactElement {
           {/* Right Image/Illustration */}
           <div className="relative">
             {props.backgroundImage ? (
-              <img
+              <Image
                 src={props.backgroundImage}
                 alt="PRISMA Portfolio Builder"
+                width={600}
+                height={400}
                 className="w-full h-auto rounded-2xl shadow-2xl"
               />
             ) : (

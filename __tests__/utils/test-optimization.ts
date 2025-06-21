@@ -93,7 +93,8 @@ export async function waitForOptimized(
       await callback();
       return;
     } catch (error) {
-      if (Date.now() - startTime + interval >= timeout) {
+      const timeRemaining = timeout - (Date.now() - startTime);
+      if (timeRemaining <= interval) {
         if (onTimeout) onTimeout();
         throw error;
       }

@@ -15,7 +15,7 @@ export interface OnboardingStep {
   completed: boolean;
   skipped: boolean;
   completedAt?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface OnboardingFlow {
@@ -47,7 +47,7 @@ export interface OnboardingState {
 
   // Actions
   startOnboarding: (userType: 'new' | 'returning' | 'imported') => void;
-  completeStep: (stepId: string, metadata?: Record<string, any>) => void;
+  completeStep: (stepId: string, metadata?: Record<string, unknown>) => void;
   skipStep: (stepId: string) => void;
   goToStep: (stepIndex: number) => void;
   completeOnboarding: () => void;

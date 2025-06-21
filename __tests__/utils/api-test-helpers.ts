@@ -232,7 +232,7 @@ export function mockSupabase() {
     let filters: Array<(item: any) => boolean> = [];
 
     const builder = {
-      select: jest.fn((columns?: string) => builder),
+      select: jest.fn((_columns?: string) => builder),
       insert: jest.fn((values: any | any[]) => {
         if (!data[table]) data[table] = [];
         const items = Array.isArray(values) ? values : [values];
@@ -274,7 +274,7 @@ export function mockSupabase() {
         filters.push(item => values.includes(item[column]));
         return builder;
       }),
-      single: jest.fn(async () => {
+      single: jest.fn(() => {
         const filtered = query.filter((item: any) =>
           filters.every(f => f(item))
         );

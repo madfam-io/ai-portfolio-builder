@@ -2,7 +2,7 @@
  * Test data factories for consistent test data generation
  */
 
-import { Portfolio, PortfolioSection } from '@/types/portfolio';
+import { Portfolio } from '@/types/portfolio';
 
 // User factory
 export const createUser = (overrides = {}) => ({

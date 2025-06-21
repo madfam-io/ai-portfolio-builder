@@ -31,7 +31,7 @@ const posthogConfig: Partial<PostHogConfig> = {
   },
   loaded: posthog => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('PostHog loaded', posthog);
+      // PostHog loaded
     }
   },
   bootstrap: {

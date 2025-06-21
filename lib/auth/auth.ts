@@ -107,7 +107,9 @@ function isValidPassword(password: string): boolean {
 /**
  * Get password strength rating
  */
-export function getPasswordStrength(password: string): 'weak' | 'medium' | 'strong' {
+export function getPasswordStrength(
+  password: string
+): 'weak' | 'medium' | 'strong' {
   if (password.length < 8) return 'weak';
   if (password.length < 12) return 'medium';
   if (!isValidPassword(password)) return 'medium';

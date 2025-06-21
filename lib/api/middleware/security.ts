@@ -189,7 +189,7 @@ export function detectSuspiciousActivity(request: NextRequest): {
 /**
  * Security middleware wrapper for API routes
  */
-export function withSecurity<T extends (...args: unknown[]) => any>(
+export function withSecurity<T extends (...args: unknown[]) => unknown>(
   handler: T,
   options: {
     requireCSRF?: boolean;

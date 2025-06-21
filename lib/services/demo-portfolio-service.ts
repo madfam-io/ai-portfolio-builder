@@ -185,7 +185,7 @@ export class DemoPortfolioService {
 
     // Transform demo data to portfolio format
     const { personal, skills, ...restSampleData } = demo.sampleData;
-    
+
     // Create portfolio content from demo
     const portfolioContent: Partial<Portfolio> = {
       // Personal info
@@ -193,17 +193,17 @@ export class DemoPortfolioService {
       title: options.customizations?.title || personal.title,
       bio: personal.bio,
       avatarUrl: personal.avatarUrl,
-      
+
       // Contact info
       contact: {
         email: personal.email,
         phone: personal.phone,
         location: personal.location,
       },
-      
+
       // Skills - flatten the skill groups
       skills: [...skills.technical, ...skills.soft],
-      
+
       // Rest of the data
       ...restSampleData,
     };

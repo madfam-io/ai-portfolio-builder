@@ -67,7 +67,7 @@ function useCurrentPortfolio() {
 
       const keys = path.split('.');
       const updated = { ...currentPortfolio };
-      let current: any = updated;
+      let current: Record<string, unknown> = updated as Record<string, unknown>;
 
       for (let i = 0; i < keys.length - 1; i++) {
         const key = keys[i];
@@ -214,8 +214,15 @@ function useModal(modalId: string) {
   const isOpen = modals.some(m => m.id === modalId);
 
   const open = useCallback(
-    (component: React.ComponentType<any>, props?: unknown) => {
-      openModal({ id: modalId, component, props: props as Record<string, unknown> });
+    (
+      component: React.ComponentType<Record<string, unknown>>,
+      props?: unknown
+    ) => {
+      openModal({
+        id: modalId,
+        component,
+        props: props as Record<string, unknown>,
+      });
     },
     [modalId, openModal]
   );

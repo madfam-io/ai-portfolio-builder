@@ -25,10 +25,16 @@ export const logger =
       ) => {
         if (process.env.NODE_ENV === 'development') {
           utilLogger.debug('  applying', { partial: partial as unknown });
-          (set as any)(partial, replace);
+          (set as (partial: unknown, replace?: boolean) => void)(
+            partial,
+            replace
+          );
           utilLogger.debug('  new state', { state: get() as unknown });
         } else {
-          (set as any)(partial, replace);
+          (set as (partial: unknown, replace?: boolean) => void)(
+            partial,
+            replace
+          );
         }
       }) as typeof set,
       get,
@@ -93,11 +99,17 @@ export const actionLogger =
           // const timestamp = new Date().toISOString();
           // Group logging removed
           utilLogger.debug('Previous State:', { state: get() as unknown });
-          (set as any)(partial, replace);
+          (set as (partial: unknown, replace?: boolean) => void)(
+            partial,
+            replace
+          );
           utilLogger.debug('Next State:', { state: get() as unknown });
           // Group end removed
         } else {
-          (set as any)(partial, replace);
+          (set as (partial: unknown, replace?: boolean) => void)(
+            partial,
+            replace
+          );
         }
       }) as typeof set,
       get,
@@ -118,7 +130,8 @@ export const actionLogger =
           )(...args);
         }) as T[keyof T];
       } else {
-        (wrappedState as any)[key] = state[key as keyof typeof state];
+        (wrappedState as Record<string, unknown>)[key] =
+          state[key as keyof typeof state];
       }
     }
 

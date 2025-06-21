@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   BookOpen,
   GraduationCap,
@@ -59,9 +60,11 @@ export function EducatorTemplate({ portfolio }: EducatorTemplateProps) {
           {/* Avatar */}
           {portfolio.avatarUrl && (
             <div className="mb-8 flex justify-center">
-              <img
+              <Image
                 src={portfolio.avatarUrl}
                 alt={portfolio.name}
+                width={128}
+                height={128}
                 className="w-32 h-32 rounded-full object-cover border-4 border-green-200 shadow-lg"
               />
             </div>
@@ -234,9 +237,11 @@ export function EducatorTemplate({ portfolio }: EducatorTemplateProps) {
                   {/* Course Image */}
                   {project.imageUrl && (
                     <div className="h-48 bg-gradient-to-br from-green-200 to-amber-200 relative overflow-hidden">
-                      <img
+                      <Image
                         src={project.imageUrl}
                         alt={project.title}
+                        width={400}
+                        height={192}
                         className="w-full h-full object-cover"
                       />
                     </div>

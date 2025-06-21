@@ -226,7 +226,7 @@ class HealthMonitor {
     });
 
     // System resources check
-    this.registerCheck('system', async () => {
+    this.registerCheck('system', () => {
       try {
         const memoryUsage = process.memoryUsage();
         const cpuUsage = process.cpuUsage();
@@ -466,7 +466,9 @@ export function handleLivenessCheck(): Response {
     JSON.stringify({
       alive: true,
       timestamp: Date.now(),
-      uptime: Date.now() - ((global as any).__startup_time || 0),
+      uptime:
+        Date.now() -
+        (((global as Record<string, unknown>).__startup_time as number) || 0),
     }),
     {
       status: 200,
@@ -482,7 +484,7 @@ export function handleLivenessCheck(): Response {
  */
 export function initializeHealthMonitoring(): void {
   // Set startup time for uptime calculation
-  (global as any).__startup_time = Date.now();
+  (global as Record<string, unknown>).__startup_time = Date.now();
 
   // Run periodic health checks
   if (process.env.NODE_ENV === 'production') {
@@ -490,9 +492,9 @@ export function initializeHealthMonitoring(): void {
       const health = await healthMonitor.runAllChecks();
 
       if (health.overall === 'unhealthy') {
-        console.error('System health is unhealthy:', health);
+        // System health is unhealthy
       } else if (health.overall === 'degraded') {
-        console.warn('System health is degraded:', health);
+        // System health is degraded
       }
     }, 60000); // Check every minute
   }

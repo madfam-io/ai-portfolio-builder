@@ -103,11 +103,15 @@ export function createStoreWrapper(stores: Record<string, StoreApi<unknown>>) {
 /**
  * Reset all stores to initial state
  */
-export function resetStores(...stores: Array<{ getState: () => {
-  reset?: () => void;
-  resetAuth?: () => void;
-  resetPortfolios?: () => void;
-} }>) {
+export function resetStores(
+  ...stores: Array<{
+    getState: () => {
+      reset?: () => void;
+      resetAuth?: () => void;
+      resetPortfolios?: () => void;
+    };
+  }>
+) {
   stores.forEach(store => {
     const state = store.getState();
     if (typeof state.reset === 'function') {

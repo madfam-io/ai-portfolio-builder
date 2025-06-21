@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import {
   Plus,
   Edit2,
@@ -109,9 +110,11 @@ function SortableProjectItem({
           {/* Project Image */}
           {project.imageUrl && (
             <div className="w-32 h-24 bg-muted rounded-lg overflow-hidden flex-shrink-0">
-              <img
+              <Image
                 src={project.imageUrl}
                 alt={project.title}
+                width={128}
+                height={96}
                 className="w-full h-full object-cover"
               />
             </div>

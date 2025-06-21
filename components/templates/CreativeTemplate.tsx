@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   Palette,
   Sparkles,
@@ -85,9 +86,11 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
               <div className="mb-12 flex justify-center">
                 <div className="relative">
                   <div className="w-40 h-40 rounded-full bg-gradient-to-br from-purple-400 via-pink-400 to-orange-400 p-2">
-                    <img
+                    <Image
                       src={portfolio.avatarUrl}
                       alt={portfolio.name}
+                      width={144}
+                      height={144}
                       className="w-full h-full rounded-full object-cover"
                     />
                   </div>
@@ -187,9 +190,11 @@ export function CreativeTemplate({ portfolio }: CreativeTemplateProps) {
                       {/* Project Image */}
                       <div className="relative h-64 bg-gradient-to-br from-purple-200 via-pink-200 to-orange-200 overflow-hidden">
                         {project.imageUrl ? (
-                          <img
+                          <Image
                             src={project.imageUrl}
                             alt={project.title}
+                            width={400}
+                            height={256}
                             className="w-full h-full object-cover"
                           />
                         ) : (

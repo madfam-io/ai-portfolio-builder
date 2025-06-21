@@ -67,7 +67,9 @@ export async function recommendTemplateLazy(
 /**
  * Get available models - lazy loaded
  */
-export async function getAvailableModelsLazy(_task?: string): Promise<unknown[]> {
+export async function getAvailableModelsLazy(
+  _task?: string
+): Promise<unknown[]> {
   const service = await getHuggingFaceService();
   // getAvailableModels is HuggingFace-specific, not part of AIService interface
   // So we need to check if it exists

@@ -147,7 +147,7 @@ export function handleApiError(
  * Async error wrapper for route handlers
  * Automatically catches and handles errors
  */
-export function withErrorHandler<T extends (...args: unknown[]) => any>(
+export function withErrorHandler<T extends (...args: unknown[]) => unknown>(
   handler: T,
   context?: Record<string, unknown>
 ): T {

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   Mail,
   MapPin,
@@ -57,9 +58,11 @@ export function MinimalTemplate({ portfolio }: MinimalTemplateProps) {
           {/* Avatar */}
           {portfolio.avatarUrl && (
             <div className="mb-8 flex justify-center">
-              <img
+              <Image
                 src={portfolio.avatarUrl}
                 alt={portfolio.name}
+                width={96}
+                height={96}
                 className="w-24 h-24 rounded-full object-cover border border-gray-200 hover:border-gray-300 transition-colors duration-300"
               />
             </div>
@@ -136,9 +139,11 @@ export function MinimalTemplate({ portfolio }: MinimalTemplateProps) {
                     {/* Project Image */}
                     {project.imageUrl && (
                       <div className="md:col-span-1">
-                        <img
+                        <Image
                           src={project.imageUrl}
                           alt={project.title}
+                          width={300}
+                          height={224}
                           className="w-full h-48 md:h-56 object-cover border border-gray-200 group-hover:border-gray-300 transition-colors duration-300"
                         />
                       </div>

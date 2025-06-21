@@ -310,7 +310,8 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
             // Handle nested data fields
             if (field.includes('.')) {
               const parts = field.split('.');
-              let target: Record<string, unknown> = state.currentPortfolio as Record<string, unknown>;
+              let target: Record<string, unknown> =
+                state.currentPortfolio as Record<string, unknown>;
 
               // Navigate to the parent of the field to update
               for (let i = 0; i < parts.length - 1; i++) {
@@ -328,7 +329,8 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
                 target[lastPart] = value;
               }
             } else {
-              (state.currentPortfolio as any)[field] = value;
+              (state.currentPortfolio as Record<string, unknown>)[field] =
+                value;
             }
 
             state.isEditing = true;
@@ -385,4 +387,3 @@ export const usePortfolioStore = create<PortfolioState & PortfolioActions>()(
 // Persist selected state can be enabled by wrapping the store creation
 // Example: const usePortfolioStore = create<PortfolioState & PortfolioActions>()(persist(...))
 // Currently disabled to avoid localStorage conflicts
-

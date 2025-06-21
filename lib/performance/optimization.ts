@@ -321,7 +321,9 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize portfolio creation workflow
    */
-  async optimizePortfolioCreation(portfolioData: Record<string, unknown>): Promise<{
+  async optimizePortfolioCreation(
+    portfolioData: Record<string, unknown>
+  ): Promise<{
     optimizedData: Record<string, unknown>;
     metrics: PerformanceMetrics;
     success: boolean;
@@ -368,7 +370,9 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize images in portfolio data
    */
-  private async optimizeImages(portfolioData: Record<string, unknown>): Promise<Record<string, unknown>> {
+  private async optimizeImages(
+    portfolioData: Record<string, unknown>
+  ): Promise<Record<string, unknown>> {
     this.monitor.startTimer('imageOptimization');
 
     try {
@@ -387,20 +391,22 @@ export class PortfolioPerformanceOptimizer {
       // Optimize project images
       if (portfolioData.projects) {
         optimizedData.projects = await Promise.all(
-          (portfolioData.projects as Array<Record<string, unknown>>).map(async (project) => {
-            if (project.imageUrl) {
-              const optimizedUrl = await this.imageOptimizer.optimizeImage(
-                String(project.imageUrl)
-              );
-              return {
-                ...project,
-                imageUrl: optimizedUrl,
-                imageSizes:
-                  this.imageOptimizer.generateResponsiveSizes(optimizedUrl),
-              };
+          (portfolioData.projects as Array<Record<string, unknown>>).map(
+            async project => {
+              if (project.imageUrl) {
+                const optimizedUrl = await this.imageOptimizer.optimizeImage(
+                  String(project.imageUrl)
+                );
+                return {
+                  ...project,
+                  imageUrl: optimizedUrl,
+                  imageSizes:
+                    this.imageOptimizer.generateResponsiveSizes(optimizedUrl),
+                };
+              }
+              return project;
             }
-            return project;
-          })
+          )
         );
       }
 
@@ -413,7 +419,9 @@ export class PortfolioPerformanceOptimizer {
   /**
    * Optimize API calls
    */
-  private async optimizeApiCalls(portfolioData: Record<string, unknown>): Promise<Record<string, unknown>> {
+  private async optimizeApiCalls(
+    portfolioData: Record<string, unknown>
+  ): Promise<Record<string, unknown>> {
     this.monitor.startTimer('apiResponseTime');
 
     try {

@@ -24,13 +24,15 @@ export interface AuthState {
 
 export interface AuthActions {
   setUser: (user: User | null) => void;
-  setSession: (session: {
-    access_token: string;
-    refresh_token: string;
-    expires_in: number;
-    token_type: string;
-    user: User;
-  } | null) => void;
+  setSession: (
+    session: {
+      access_token: string;
+      refresh_token: string;
+      expires_in: number;
+      token_type: string;
+      user: User;
+    } | null
+  ) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
   signIn: (email: string, password: string) => Promise<void>;

@@ -106,7 +106,7 @@ const USER_TEMPLATES = [
 /**
  * Generate additional users beyond templates
  */
-function generateUser(index: number): any {
+function generateUser(index: number): Record<string, unknown> {
   const languages = ['es', 'en'];
   const currencies = ['MXN', 'USD', 'EUR'];
   const tiers = ['free', 'pro', 'business'];

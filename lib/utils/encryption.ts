@@ -16,7 +16,7 @@ const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const TAG_LENGTH = 16;
 const SALT_LENGTH = 32;
-const KEY_LENGTH = 32;
+// const KEY_LENGTH = 32; // Currently unused
 
 // Get encryption key from environment
 const getEncryptionKey = (): Buffer => {
@@ -126,7 +126,7 @@ export const decryptField = (
  * @param fieldsToEncrypt - Array of field names to encrypt
  * @returns Object with specified fields encrypted
  */
-export const encryptObjectFields = <T extends Record<string, any>>(
+export const encryptObjectFields = <T extends Record<string, unknown>>(
   obj: T,
   fieldsToEncrypt: (keyof T)[]
 ): T => {
@@ -155,7 +155,7 @@ export const encryptObjectFields = <T extends Record<string, any>>(
  * @param fieldsToDecrypt - Array of field names to decrypt
  * @returns Object with specified fields decrypted
  */
-export const decryptObjectFields = <T extends Record<string, any>>(
+export const decryptObjectFields = <T extends Record<string, unknown>>(
   obj: T,
   fieldsToDecrypt: (keyof T)[]
 ): T => {
@@ -195,7 +195,10 @@ export const hashForIndex = (value: string, salt?: string): string => {
  * @param fieldPath - Dot-notation path to encrypt (e.g., 'contact.email')
  * @returns Encrypted JSON data
  */
-export const encryptJsonField = <T = unknown>(data: T, fieldPath: string): T => {
+export const encryptJsonField = <T = unknown>(
+  data: T,
+  fieldPath: string
+): T => {
   if (!data) return data;
 
   const cloned = JSON.parse(JSON.stringify(data));
@@ -224,7 +227,10 @@ export const encryptJsonField = <T = unknown>(data: T, fieldPath: string): T => 
  * @param fieldPath - Dot-notation path to decrypt
  * @returns Decrypted JSON data
  */
-export const decryptJsonField = <T = unknown>(data: T, fieldPath: string): T => {
+export const decryptJsonField = <T = unknown>(
+  data: T,
+  fieldPath: string
+): T => {
   if (!data) return data;
 
   const cloned = JSON.parse(JSON.stringify(data));
@@ -253,7 +259,7 @@ export const decryptJsonField = <T = unknown>(data: T, fieldPath: string): T => 
  * @param fieldsToEncrypt - Fields to encrypt on each record
  * @returns Array of records with encrypted fields
  */
-export const batchEncryptFields = <T extends Record<string, any>>(
+export const batchEncryptFields = <T extends Record<string, unknown>>(
   records: T[],
   fieldsToEncrypt: (keyof T)[]
 ): T[] => {
@@ -266,7 +272,7 @@ export const batchEncryptFields = <T extends Record<string, any>>(
  * @param fieldsToDecrypt - Fields to decrypt on each record
  * @returns Array of records with decrypted fields
  */
-export const batchDecryptFields = <T extends Record<string, any>>(
+export const batchDecryptFields = <T extends Record<string, unknown>>(
   records: T[],
   fieldsToDecrypt: (keyof T)[]
 ): T[] => {

@@ -141,17 +141,18 @@ export interface PortfolioVariant {
   updatedAt: Date;
 }
 
-interface VariantComparison {
-  variantA: string;
-  variantB: string;
-  metrics: {
-    views: { a: number; b: number };
-    engagement: { a: number; b: number };
-    conversion: { a: number; b: number };
-  };
-  winner?: string;
-  confidence?: number;
-}
+// Commented out - currently unused
+// interface VariantComparison {
+//   variantA: string;
+//   variantB: string;
+//   metrics: {
+//     views: { a: number; b: number };
+//     engagement: { a: number; b: number };
+//     conversion: { a: number; b: number };
+//   };
+//   winner?: string;
+//   confidence?: number;
+// }
 
 export interface ContentOptimizationSuggestion {
   variantId: string;
@@ -201,15 +202,16 @@ export interface CreateVariantInput {
 }
 
 // Type for variant preview/comparison
-interface VariantPreview {
-  id: string;
-  name: string;
-  audienceType: AudienceType;
-  thumbnailUrl?: string;
-  lastUpdated: Date;
-  performance: {
-    views: number;
-    conversion: number;
-    trend: 'up' | 'down' | 'stable';
-  };
-}
+// Commented out - currently unused
+// interface VariantPreview {
+//   id: string;
+//   name: string;
+//   audienceType: AudienceType;
+//   thumbnailUrl?: string;
+//   lastUpdated: Date;
+//   performance: {
+//     views: number;
+//     conversion: number;
+//     trend: 'up' | 'down' | 'stable';
+//   };
+// }

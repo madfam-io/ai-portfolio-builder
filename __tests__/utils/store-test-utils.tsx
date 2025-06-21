@@ -7,7 +7,7 @@ import type { StoreApi } from 'zustand';
  */
 
 // Create a test store wrapper
-export function createStoreWrapper<T>(useStore: () => T) {
+export function createStoreWrapper<T>(_useStore: () => T) {
   const StoreWrapper = ({ children }: { children: ReactNode }) => {
     return <>{children}</>;
   };

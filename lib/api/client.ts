@@ -119,13 +119,17 @@ export const apiClient = {
   /**
    * GET request
    */
-  get: <T = any>(endpoint: string, config?: ApiClientConfig) =>
+  get: <T = unknown>(endpoint: string, config?: ApiClientConfig) =>
     apiFetch<T>(endpoint, { method: 'GET', config }),
 
   /**
    * POST request
    */
-  post: <T = any>(endpoint: string, data?: unknown, config?: ApiClientConfig) =>
+  post: <T = unknown>(
+    endpoint: string,
+    data?: unknown,
+    config?: ApiClientConfig
+  ) =>
     apiFetch<T>(endpoint, {
       method: 'POST',
       body: data ? JSON.stringify(data) : undefined,
@@ -135,7 +139,11 @@ export const apiClient = {
   /**
    * PUT request
    */
-  put: <T = any>(endpoint: string, data?: unknown, config?: ApiClientConfig) =>
+  put: <T = unknown>(
+    endpoint: string,
+    data?: unknown,
+    config?: ApiClientConfig
+  ) =>
     apiFetch<T>(endpoint, {
       method: 'PUT',
       body: data ? JSON.stringify(data) : undefined,
@@ -145,7 +153,7 @@ export const apiClient = {
   /**
    * PATCH request
    */
-  patch: <T = any>(
+  patch: <T = unknown>(
     endpoint: string,
     data?: unknown,
     config?: ApiClientConfig
@@ -159,7 +167,7 @@ export const apiClient = {
   /**
    * DELETE request
    */
-  delete: <T = any>(endpoint: string, config?: ApiClientConfig) =>
+  delete: <T = unknown>(endpoint: string, config?: ApiClientConfig) =>
     apiFetch<T>(endpoint, { method: 'DELETE', config }),
 };
 

@@ -387,7 +387,7 @@ Avatar.displayName = 'Avatar';
 export const AvatarImage = React.forwardRef<
   HTMLImageElement,
   React.ImgHTMLAttributes<HTMLImageElement>
->((props, ref) => <img ref={ref} {...props} />);
+>((props, ref) => <img ref={ref} alt="" {...props} />);
 AvatarImage.displayName = 'AvatarImage';
 
 export const AvatarFallback = React.forwardRef<

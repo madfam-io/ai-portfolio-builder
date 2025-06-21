@@ -44,7 +44,6 @@ export function decryptAccessToken(
   }
 }
 
-
 /**
  * Check if the integration has encrypted tokens
  */

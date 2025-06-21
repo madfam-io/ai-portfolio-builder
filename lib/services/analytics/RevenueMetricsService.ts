@@ -40,7 +40,6 @@ export interface CustomerMetrics {
   conversionRate: number;
 }
 
-
 export class RevenueMetricsService {
   constructor(private supabase: SupabaseClient) {}
 

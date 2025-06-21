@@ -35,13 +35,14 @@ export type LandingComponentType =
 /**
  * Component variant names for each component type
  */
-interface ComponentVariants {
-  hero: 'default' | 'video' | 'minimal' | 'split' | 'animated';
-  features: 'grid' | 'carousel' | 'list' | 'tabs';
-  pricing: 'default' | 'comparison' | 'slider' | 'minimal';
-  cta: 'default' | 'banner' | 'floating' | 'inline';
-  // Add more as needed
-}
+// Commented out - currently unused
+// interface ComponentVariants {
+//   hero: 'default' | 'video' | 'minimal' | 'split' | 'animated';
+//   features: 'grid' | 'carousel' | 'list' | 'tabs';
+//   pricing: 'default' | 'comparison' | 'slider' | 'minimal';
+//   cta: 'default' | 'banner' | 'floating' | 'inline';
+//   // Add more as needed
+// }
 
 /**
  * Targeting criteria for experiments
@@ -120,19 +121,20 @@ export interface LandingPageVariant {
 /**
  * Analytics event tracking
  */
-interface AnalyticsEvent {
-  sessionId: string;
-  visitorId?: string;
-  userId?: string;
-  experimentId: string;
-  variantId: string;
-  eventType: 'pageview' | 'click' | 'scroll' | 'conversion' | 'engagement';
-  eventData: Record<
-    string,
-    string | number | boolean | Record<string, unknown>
-  >;
-  timestamp: Date;
-}
+// Commented out - currently unused
+// interface AnalyticsEvent {
+//   sessionId: string;
+//   visitorId?: string;
+//   userId?: string;
+//   experimentId: string;
+//   variantId: string;
+//   eventType: 'pageview' | 'click' | 'scroll' | 'conversion' | 'engagement';
+//   eventData: Record<
+//     string,
+//     string | number | boolean | Record<string, unknown>
+//   >;
+//   timestamp: Date;
+// }
 
 /**
  * Landing page analytics data
@@ -275,28 +277,30 @@ export interface HeroProps {
   showStats?: boolean;
 }
 
-interface FeaturesProps {
-  columns?: number;
-  showIcons?: boolean;
-  layout?: 'grid' | 'list' | 'carousel';
-  features?: Array<{
-    title: string;
-    description: string;
-    icon?: string;
-  }>;
-}
+// Commented out - currently unused
+// interface FeaturesProps {
+//   columns?: number;
+//   showIcons?: boolean;
+//   layout?: 'grid' | 'list' | 'carousel';
+//   features?: Array<{
+//     title: string;
+//     description: string;
+//     icon?: string;
+//   }>;
+// }
 
-interface PricingProps {
-  plans?: Array<{
-    name: string;
-    price: number;
-    features: string[];
-    highlighted?: boolean;
-  }>;
-  currency?: string;
-  billingPeriod?: 'monthly' | 'yearly';
-  showComparison?: boolean;
-}
+// Commented out - currently unused
+// interface PricingProps {
+//   plans?: Array<{
+//     name: string;
+//     price: number;
+//     features: string[];
+//     highlighted?: boolean;
+//   }>;
+//   currency?: string;
+//   billingPeriod?: 'monthly' | 'yearly';
+//   showComparison?: boolean;
+// }
 
 /**
  * API request/response types
@@ -322,14 +326,15 @@ export interface CreateExperimentRequest {
   endDate?: Date;
 }
 
-interface UpdateExperimentRequest {
-  name?: string;
-  description?: string;
-  status?: ExperimentStatus;
-  trafficPercentage?: number;
-  targetAudience?: TargetAudience;
-  endDate?: Date;
-}
+// Commented out - currently unused
+// interface UpdateExperimentRequest {
+//   name?: string;
+//   description?: string;
+//   status?: ExperimentStatus;
+//   trafficPercentage?: number;
+//   targetAudience?: TargetAudience;
+//   endDate?: Date;
+// }
 
 export interface GetActiveExperimentResponse {
   experimentId: string;
@@ -352,14 +357,15 @@ export interface ExperimentAnalyticsResponse {
 /**
  * Conversion metrics
  */
-type ConversionMetric =
-  | 'signup_rate'
-  | 'demo_click_rate'
-  | 'cta_click_rate'
-  | 'pricing_view_rate'
-  | 'scroll_depth'
-  | 'time_on_page'
-  | 'bounce_rate';
+// Commented out - currently unused
+// type ConversionMetric =
+//   | 'signup_rate'
+//   | 'demo_click_rate'
+//   | 'cta_click_rate'
+//   | 'pricing_view_rate'
+//   | 'scroll_depth'
+//   | 'time_on_page'
+//   | 'bounce_rate';
 
 /**
  * A/B test assignment for a visitor

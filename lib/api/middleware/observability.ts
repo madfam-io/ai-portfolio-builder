@@ -23,7 +23,7 @@ export interface ObservabilityConfig {
 /**
  * Apply observability to API routes
  */
-export function withObservability<T extends (...args: unknown[]) => any>(
+export function withObservability<T extends (...args: unknown[]) => unknown>(
   handler: T,
   config: ObservabilityConfig = {}
 ): T {
@@ -181,7 +181,7 @@ export const extractUserContext = (
 export const sanitizeData = (
   data: unknown,
   sensitiveFields: string[] = ['password', 'token', 'secret', 'key']
-): any => {
+): unknown => {
   if (!data || typeof data !== 'object') return data;
 
   const sanitized = { ...data } as Record<string, unknown>;
@@ -232,7 +232,7 @@ export class ObservabilityContext {
   /**
    * Track success
    */
-  async success(result?: unknown): Promise<void> {
+  async success(_result?: unknown): Promise<void> {
     const duration = performance.now() - this.startTime;
 
     // Record metrics

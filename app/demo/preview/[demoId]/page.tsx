@@ -55,7 +55,10 @@ export default function DemoPreviewPage({ params }: PageProps) {
       phone: demo.sampleData.personal.phone,
       location: demo.sampleData.personal.location,
     },
-    skills: [...demo.sampleData.skills.technical, ...demo.sampleData.skills.soft],
+    skills: [
+      ...demo.sampleData.skills.technical,
+      ...demo.sampleData.skills.soft,
+    ],
     experience: demo.sampleData.experience || [],
     education: demo.sampleData.education || [],
     projects: demo.sampleData.projects || [],

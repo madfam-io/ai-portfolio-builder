@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   TrendingUp,
   Award,
@@ -127,9 +128,11 @@ export function BusinessTemplate({ portfolio }: BusinessTemplateProps) {
                 {portfolio.avatarUrl && (
                   <div className="mb-8 flex justify-center">
                     <div className="w-48 h-48 rounded-lg overflow-hidden border-4 border-white/20 shadow-2xl">
-                      <img
+                      <Image
                         src={portfolio.avatarUrl}
                         alt={portfolio.name}
+                        width={192}
+                        height={192}
                         className="w-full h-full object-cover"
                       />
                     </div>

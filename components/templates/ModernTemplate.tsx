@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 import {
   ArrowUpRight,
   Github,
@@ -70,9 +71,11 @@ export function ModernTemplate({ portfolio }: ModernTemplateProps) {
               <div className="mb-8 flex justify-center">
                 <div className="relative">
                   <div className="w-32 h-32 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 p-1">
-                    <img
+                    <Image
                       src={portfolio.avatarUrl}
                       alt={portfolio.name}
+                      width={120}
+                      height={120}
                       className="w-full h-full rounded-full object-cover bg-gray-800"
                     />
                   </div>
@@ -156,9 +159,11 @@ export function ModernTemplate({ portfolio }: ModernTemplateProps) {
                     {/* Project Image */}
                     {project.imageUrl && (
                       <div className="mb-4 rounded-lg overflow-hidden">
-                        <img
+                        <Image
                           src={project.imageUrl}
                           alt={project.title}
+                          width={400}
+                          height={192}
                           className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>

@@ -286,7 +286,8 @@ export function sanitizePortfolioData<T extends Partial<Portfolio>>(
     urlFields.forEach(field => {
       const value = sanitized.social?.[field as keyof typeof sanitized.social];
       if (typeof value === 'string') {
-        (sanitized.social as any)[field] = sanitizeUrl(value);
+        (sanitized.social as Record<string, unknown>)[field] =
+          sanitizeUrl(value);
       }
     });
 

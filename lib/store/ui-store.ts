@@ -127,7 +127,6 @@ export const useUIStore = create<UIState & UIActions>()(
   )
 );
 
-
 // Utility functions for common toast patterns
 export const showSuccessToast = (title: string, description?: string) => {
   useUIStore.getState().showToast({
