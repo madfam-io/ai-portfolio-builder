@@ -1,13 +1,13 @@
 /**
  * MADFAM Code Available License (MCAL) v1.0
- * 
+ *
  * Copyright (c) 2025-present MADFAM. All rights reserved.
- * 
+ *
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
- * 
+ *
  * For commercial licensing: licensing@madfam.com
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
@@ -137,7 +137,12 @@ export async function POST(request: NextRequest) {
     const domain = new URL(url).hostname.toLowerCase();
 
     // Find matching insights based on URL patterns
-    let selectedInsights = COMPETITOR_INSIGHTS[0]; // Default to developer
+    // TypeScript safe: COMPETITOR_INSIGHTS is a non-empty const array
+    const defaultInsights = COMPETITOR_INSIGHTS[0];
+    if (!defaultInsights) {
+      throw new Error('COMPETITOR_INSIGHTS array is empty');
+    }
+    let selectedInsights = defaultInsights;
 
     for (const insight of COMPETITOR_INSIGHTS) {
       const hasPattern = insight.patterns.some(
@@ -148,11 +153,6 @@ export async function POST(request: NextRequest) {
         selectedInsights = insight;
         break;
       }
-    }
-
-    // Ensure selectedInsights is not undefined
-    if (!selectedInsights) {
-      selectedInsights = COMPETITOR_INSIGHTS[0];
     }
 
     // Add some dynamic elements based on the URL
