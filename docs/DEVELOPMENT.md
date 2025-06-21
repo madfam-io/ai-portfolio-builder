@@ -1,9 +1,13 @@
 # 🛠️ PRISMA Development Guide
 
+[← Back to Documentation Hub](./README.md) | [↑ Back to Main README](../README.md)
+
+---
+
 Complete guide for developing, testing, and contributing to the PRISMA AI Portfolio Builder platform.
 
 **Last Updated**: June 15, 2025  
-**Version**: v0.3.0-beta
+**Version**: v0.4.0-beta
 
 ## 📋 Table of Contents
 

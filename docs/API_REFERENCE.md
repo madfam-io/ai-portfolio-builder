@@ -1,9 +1,13 @@
 # 📡 PRISMA API Reference
 
+[← Back to Documentation Hub](./README.md) | [↑ Back to Main README](../README.md)
+
+---
+
 Complete API documentation for the PRISMA AI Portfolio Builder platform.
 
 **Last Updated**: June 15, 2025  
-**Version**: v0.3.0-beta  
+**Version**: v0.4.0-beta  
 **API Version**: v1
 
 ## 📋 Table of Contents

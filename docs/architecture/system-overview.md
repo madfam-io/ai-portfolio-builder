@@ -1,7 +1,7 @@
 # 🏗️ PRISMA System Architecture Overview
 
 **Last Updated**: June 15, 2025  
-**Version**: v0.3.0-beta
+**Version**: v0.4.0-beta
 
 ## High-Level Architecture
 

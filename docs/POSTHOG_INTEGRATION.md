@@ -5,7 +5,7 @@
 PRISMA integrates PostHog for comprehensive product analytics, enabling data-driven decisions while maintaining user privacy through self-hosted infrastructure.
 
 **Last Updated**: December 2024  
-**Version**: 0.3.0-beta
+**Version**: 0.4.0-beta
 
 ## 🚀 Features
 
@@ -46,7 +46,7 @@ PostHog is included in our Docker development environment:
 docker-compose -f docker-compose.dev.yml up -d
 
 # Access PostHog at http://localhost:8000
-# Default credentials: admin@prisma.io / prisma-posthog-2025
+# Default credentials: admin@madfam.io / prisma-posthog-2025
 ```
 
 ### 3. Cloud Setup (Alternative)

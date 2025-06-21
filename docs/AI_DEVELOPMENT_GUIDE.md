@@ -1,7 +1,7 @@
 # AI Development Guide - PRISMA Portfolio Builder
 
 **Last Updated**: June 21, 2025  
-**Version**: 0.3.0-beta  
+**Version**: 0.4.0-beta  
 **Primary Provider**: HuggingFace
 
 ## Overview

@@ -4,11 +4,11 @@
 
 **AI-Powered Portfolio Builder for Modern Professionals**
 
-[![Version](https://img.shields.io/badge/version-0.3.1--beta-blue.svg)](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/releases)
-[![License](https://img.shields.io/badge/license-Proprietary-red.svg)](#-license)
+[![Version](https://img.shields.io/badge/version-0.4.0--beta-blue.svg)](https://github.com/aldoruizluna/labspace/ai-portfolio-builder/releases)
+[![License](https://img.shields.io/badge/license-MCAL%20v1.0-red.svg)](#-license)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black.svg)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue.svg)](https://typescriptlang.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](./docs/DOCKER.md)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](./docs/guides/docker-quickstart.md)
 [![Tests](https://img.shields.io/badge/Tests-730%2B%20Tests%20%7C%20100%25%20Passing-brightgreen.svg)](#-testing)
 [![Code Quality](https://img.shields.io/badge/Code%20Quality-95%2F100-brightgreen.svg)](#-architecture)
 [![Production](https://img.shields.io/badge/Production-Vercel%20Ready-success.svg)](#-deployment)
@@ -19,7 +19,7 @@
 
 <div align="center">
 
-**Transform scattered professional profiles into stunning portfolio websites in under 30 minutes**
+**Transform scattered professional profiles into stunning portfolio websites in under 3 minutes**
 
 [🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation-hub) • [🎯 Roadmap](#-roadmap) • [🤝 Contributing](#-contributing)
 
@@ -57,14 +57,14 @@
 
 ### 🌟 Mission Statement
 
-PRISMA revolutionizes portfolio creation by enabling professionals to generate stunning, AI-enhanced portfolio websites in under 30 minutes. We democratize professional web presence for freelancers, consultants, designers, developers, and creative professionals worldwide.
+PRISMA revolutionizes portfolio creation by enabling professionals to generate stunning, AI-enhanced portfolio websites in under 3 minutes. We democratize professional web presence for freelancers, consultants, designers, developers, and creative professionals worldwide.
 
 ### 🚀 Current Status
 
 <table>
 <tr>
 <td><strong>Version</strong></td>
-<td><code>0.3.1-beta - Beta Launch Ready with Feedback System</code></td>
+<td><code>0.4.0-beta - Market-Ready with Enterprise Architecture</code></td>
 </tr>
 <tr>
 <td><strong>Phase</strong></td>
@@ -312,7 +312,7 @@ PRISMA revolutionizes portfolio creation by enabling professionals to generate s
 | 📥 Profile Import (LinkedIn/GitHub)  | Medium   | 📋 Planned     | Q3 2025 |
 | 🌐 Publishing Pipeline               | High     | 📋 Planned     | Q3 2025 |
 
-> 🗺️ **See complete feature roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md) | **Track progress**: [**ISSUES.md**](./docs/ISSUES.md)
+> 🗺️ **See complete feature roadmap**: [**ROADMAP.md**](./docs/ROADMAP.md)
 
 ---
 
@@ -394,7 +394,7 @@ Security:
   Environment: Secure environment variable handling
 ```
 
-> 📖 **Deep dive into architecture**: [**ARCHITECTURE.md**](./docs/ARCHITECTURE.md)
+> 📖 **Deep dive into architecture**: [**Architecture Documentation**](./docs/architecture/)
 
 </details>
 
@@ -480,7 +480,7 @@ docker-compose -f docker-compose.dev.yml ps
 | Service        | URL                   | Credentials             | Purpose             |
 | -------------- | --------------------- | ----------------------- | ------------------- |
 | **PRISMA App** | http://localhost:3000 | N/A                     | Main application    |
-| **pgAdmin**    | http://localhost:5050 | admin@prisma.io / admin | Database management |
+| **pgAdmin**    | http://localhost:5050 | admin@madfam.io / admin | Database management |
 | **PostgreSQL** | localhost:5432        | postgres / password     | Primary database    |
 | **Redis**      | localhost:6379        | N/A                     | Caching layer       |
 
@@ -501,7 +501,7 @@ docker-compose -f docker-compose.dev.yml down -v
 ./scripts/docker-dev.sh
 ```
 
-> 📖 **Complete Docker guide**: [**DOCKER.md**](./docs/DOCKER.md)
+> 📖 **Complete Docker guide**: [**Docker Quick Start**](./docs/guides/docker-quickstart.md)
 
 </details>
 
@@ -651,7 +651,7 @@ Coverage:    ✅ Critical paths fully tested
 | Mobile Menu             | ⏳ Pending Updates | 60%      |
 | E2E Flows               | ✅ Passing         | 80%      |
 
-> 📖 **Testing guidelines**: [**Testing Documentation**](./docs/CONTRIBUTING.md#testing)
+> 📖 **Testing guidelines**: [**Testing Documentation**](./CONTRIBUTING.md#testing)
 
 </details>
 
@@ -722,20 +722,19 @@ ai-portfolio-builder/
 │   └── 🔧 setup-git.sh       # Git configuration
 │
 ├── 📖 docs/                  # Documentation
-│   ├── 🏗️ ARCHITECTURE.md    # System architecture
-│   ├── 🤝 CONTRIBUTING.md    # Contribution guidelines
-│   ├── 🐳 DOCKER.md          # Docker setup guide
+│   ├── 🏗️ architecture/      # System architecture documentation
+│   ├── 📝 API_REFERENCE.md   # API documentation
+│   ├── 🐳 guides/            # Setup and usage guides
 │   ├── 🚀 DEPLOYMENT.md      # Deployment instructions
-│   ├── 🌿 GIT_WORKFLOW.md    # Git branching strategy
-│   ├── 🗺️ ROADMAP.md         # Development roadmap
-│   └── 🐛 ISSUES.md          # Issue tracking
+│   ├── 🧪 DEVELOPMENT.md     # Development guidelines
+│   └── 🗺️ ROADMAP.md         # Development roadmap
 │
 ├── 🐳 docker-compose.*.yml   # Docker configurations
 ├── 🔧 Configuration Files    # Next.js, TypeScript, ESLint, etc.
-└── 📄 Documentation         # README, CLAUDE.md, etc.
+└── 📄 Documentation         # README, AI_CONTEXT.md, etc.
 ```
 
-> 📖 **Architecture deep dive**: [**ARCHITECTURE.md**](./docs/ARCHITECTURE.md)
+> 📖 **Architecture deep dive**: [**Architecture Documentation**](./docs/architecture/)
 
 </details>
 
@@ -826,7 +825,7 @@ export default function Component() {
 }
 ```
 
-> 📖 **Complete i18n guide**: [**Internationalization Documentation**](./docs/ARCHITECTURE.md#internationalization)
+> 📖 **Complete i18n guide**: [**Internationalization Documentation**](./docs/architecture/system-overview.md#internationalization)
 
 </details>
 
@@ -909,7 +908,7 @@ export function middleware(request: NextRequest) {
 }
 ```
 
-> 📖 **Security documentation**: [**Authentication Guide**](./docs/ARCHITECTURE.md#authentication)
+> 📖 **Security documentation**: [**Authentication Guide**](./docs/architecture/system-overview.md#authentication)
 
 </details>
 
@@ -984,20 +983,19 @@ export function middleware(request: NextRequest) {
 
 #### **🏗️ Technical Documentation**
 
-- **[Architecture Guide](./docs/ARCHITECTURE.md)** - System design & patterns
-- **[Docker Setup](./docs/DOCKER.md)** - Containerized development
+- **[Architecture Guide](./docs/architecture/)** - System design & patterns
+- **[Docker Setup](./docs/guides/docker-quickstart.md)** - Containerized development
 - **[Deployment Guide](./docs/DEPLOYMENT.md)** - Production deployment
-- **[API Documentation](./docs/API.md)** - Backend API reference
+- **[API Documentation](./docs/API_REFERENCE.md)** - Backend API reference
 
 </td>
 <td width="50%">
 
 #### **🚀 Development Resources**
 
-- **[Contributing Guide](./docs/CONTRIBUTING.md)** - How to contribute
-- **[Git Workflow](./docs/GIT_WORKFLOW.md)** - Branching strategy
+- **[Contributing Guide](./CONTRIBUTING.md)** - How to contribute
 - **[Development Roadmap](./docs/ROADMAP.md)** - Feature timeline
-- **[Issue Tracker](./docs/ISSUES.md)** - Bug reports & tasks
+- **[Roadmap](./docs/ROADMAP.md)** - Project roadmap and milestones
 
 </td>
 </tr>
@@ -1006,8 +1004,8 @@ export function middleware(request: NextRequest) {
 
 #### **🤖 AI Development**
 
-- **[CLAUDE.md](./CLAUDE.md)** - AI assistant context
-- **[Testing Guidelines](./docs/CONTRIBUTING.md#testing)** - Test strategies
+- **[AI_CONTEXT.md](./docs/AI_CONTEXT.md)** - AI assistant context
+- **[Testing Guidelines](./CONTRIBUTING.md#testing)** - Test strategies
 - **[Code Standards](./docs/CONTRIBUTING.md#code-style)** - Style guide
 
 </td>
@@ -1190,11 +1188,25 @@ refactor/component-name  # Code refactoring
 
 ---
 
-## 📝 License
+## 📜 License
 
-**Proprietary License** - All rights reserved by MADFAM Team.
+This project is released under the **MADFAM Code Available License (MCAL) v1.0**.
 
-This project is proprietary software. Unauthorized copying, modification, distribution, or use is strictly prohibited without explicit written permission from MADFAM.
+### What this means:
+- ✅ **You CAN** view and study the code
+- ✅ **You CAN** use it for personal, non-commercial purposes  
+- ✅ **You CAN** contribute improvements back to the project
+- ❌ **You CANNOT** use it commercially without explicit license
+- ❌ **You CANNOT** compete with MADFAM using this code
+- ❌ **You CANNOT** redistribute or resell the code
+
+**For commercial licensing inquiries**: licensing@madfam.com
+
+⚠️ **WARNING**: Unauthorized commercial use is prohibited and will be prosecuted.
+
+See [LICENSE.md](./LICENSE.md) for full terms. Additional information available in:
+- [LICENSE-FAQ.md](./LICENSE-FAQ.md) - Frequently asked questions
+- [LICENSE-COMMERCIAL.md](./LICENSE-COMMERCIAL.md) - Commercial licensing options
 
 ---
 

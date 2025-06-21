@@ -1,23 +1,21 @@
-# 🤝 Contributing to PRISMA by MADFAM
+# Contributing to PRISMA by MADFAM
 
-Welcome to the PRISMA project! We're excited that you're interested in contributing to our AI-powered portfolio builder. This guide will help you get started with contributing to our codebase.
+We appreciate your interest in contributing to PRISMA! This document outlines the process for contributing to our code available project.
 
-**Last Updated**: June 15, 2025  
-**Version**: v0.3.0-beta  
-**Repository Started**: June 2025
+## ⚖️ Contributor License Agreement (CLA)
 
-## 📋 Table of Contents
+**IMPORTANT**: By submitting a pull request, you agree to our Contributor License Agreement:
 
-- [Code of Conduct](#code-of-conduct)
-- [Getting Started](#getting-started)
-- [Development Setup](#development-setup)
-- [How to Contribute](#how-to-contribute)
-- [Coding Standards](#coding-standards)
-- [Testing Guidelines](#testing-guidelines)
-- [Pull Request Process](#pull-request-process)
-- [Reporting Issues](#reporting-issues)
-- [Feature Requests](#feature-requests)
-- [Community](#community)
+1. You grant MADFAM an irrevocable, worldwide, royalty-free license to use, modify, and commercially exploit your contributions
+2. You retain copyright to your contributions
+3. You confirm you have the right to grant these rights
+4. Your contributions will be subject to the MADFAM Code Available License (MCAL)
+
+## 📋 Before You Contribute
+
+1. **Read the License**: Familiarize yourself with our [LICENSE.md](./LICENSE.md)
+2. **Check Existing Issues**: Look for existing issues or discussions
+3. **Discuss Major Changes**: Open an issue to discuss significant changes before implementing
 
 ## 📜 Code of Conduct
 
@@ -451,12 +449,39 @@ Current areas where we especially need contributions:
 5. **Translations**: Additional language support
 6. **UI/UX**: Design system improvements
 
-## 🙏 Thank You!
+## 🏆 Recognition
 
-Thank you for contributing to PRISMA! Your efforts help make portfolio creation accessible to professionals worldwide. Every contribution, no matter how small, is valued and appreciated.
+Contributors are recognized in our [CONTRIBUTORS.md](./CONTRIBUTORS.md) file. Significant contributors may receive:
+- Special mentions in release notes
+- Early access to new features
+- Consideration for commercial license grants
 
-Happy coding! 🚀
+## ⚖️ Legal Notice
+
+By contributing, you acknowledge that:
+1. Your contributions become part of the MCAL-licensed codebase
+2. MADFAM gains commercial rights to your contributions
+3. You cannot revoke these rights once granted
+4. You must have legal authority to make contributions
+
+## 📜 Full CLA Text
+
+```
+MADFAM Contributor License Agreement
+
+By submitting code to this repository, you ("Contributor") grant MADFAM and 
+its affiliates a perpetual, worldwide, non-exclusive, royalty-free, irrevocable 
+license to reproduce, prepare derivative works, publicly display, publicly perform, 
+sublicense, and distribute your contributions and derivative works.
+
+You represent that:
+1. You are legally entitled to grant this license
+2. Each contribution is your original creation
+3. Your contributions don't violate any third-party rights
+
+This agreement is governed by the laws of MADFAM's jurisdiction.
+```
 
 ---
 
-_Contributing guidelines last updated: June 15, 2025_
+Thank you for contributing to PRISMA by MADFAM! 🚀

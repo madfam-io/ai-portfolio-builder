@@ -81,7 +81,7 @@ services:
       - '6380:6379'
     volumes:
       - staging_redis_data:/data
-      - ./redis.staging.conf:/usr/local/etc/redis/redis.conf:ro
+      - ./config/redis/staging.conf:/usr/local/etc/redis/redis.conf:ro
     networks:
       - staging-network
     restart: unless-stopped

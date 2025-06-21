@@ -99,7 +99,7 @@ services:
     command: ['--config=/etc/otel-collector-config.yaml']
     user: root
     volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./config/monitoring/otel-collector-config.yaml:/etc/otel-collector-config.yaml
       - otel-data:/var/lib/otel
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=host.name=signoz-host,os.type=linux

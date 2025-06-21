@@ -44,7 +44,7 @@ PRISMA addresses a critical gap in the professional services market: the need fo
    - Customizable without complexity
 
 4. **One-Click Publishing**
-   - Instant subdomain (username.prisma.mx)
+   - Instant subdomain (username.prisma.madfam.io)
    - Custom domain support (coming soon)
    - SSL certificates included
    - Global CDN distribution

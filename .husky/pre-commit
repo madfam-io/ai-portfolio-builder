@@ -1,6 +1,17 @@
 # Run lint-staged for code formatting and linting
 pnpm lint-staged
 
+# Check license headers
+echo "🔍 Checking license headers..."
+pnpm check:license
+
+# Prevent accidental license changes
+if git diff --cached --name-only | grep -E "(LICENSE|LICENSE\.md|LICENSE-.*\.md)$"; then
+  echo "⚠️  WARNING: You're modifying license files. This requires approval."
+  echo "If this is intentional, use: git commit --no-verify"
+  exit 1
+fi
+
 # Run type check (temporarily disabled - some test file errors remain)
 # echo "🔍 Running TypeScript type check..."
 # pnpm type-check

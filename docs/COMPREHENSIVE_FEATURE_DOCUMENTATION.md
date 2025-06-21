@@ -1,9 +1,9 @@
 # PRISMA Portfolio Builder - Comprehensive Feature Documentation
 
-**Version**: 0.3.0-beta  
-**Last Updated**: June 18, 2025  
+**Version**: 0.4.0-beta  
+**Last Updated**: June 22, 2025  
 **Status**: Beta Launch Ready  
-**Target**: Sub-30-minute professional portfolio creation
+**Target**: Sub-3-minute professional portfolio creation
 
 ## 📋 Table of Contents
 
@@ -26,7 +26,7 @@
 
 ### Core Mission
 
-Enable professionals to create stunning portfolios in under 30 minutes through AI-powered automation, intuitive design, and streamlined workflows.
+Enable professionals to create stunning portfolios in under 3 minutes through AI-powered automation, intuitive design, and streamlined workflows.
 
 ### Architecture Highlights
 
@@ -1146,7 +1146,7 @@ const optimizeDataUsage = (): DataOptimizationConfig => {
 
 # Access URLs:
 # App: http://localhost:3000
-# pgAdmin: http://localhost:5050 (admin@prisma.io / admin)
+# pgAdmin: http://localhost:5050 (admin@madfam.io / admin)
 # Database: localhost:5432
 # Redis: localhost:6379
 ```

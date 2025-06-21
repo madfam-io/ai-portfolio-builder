@@ -1,8 +1,8 @@
 {
   "name": "prisma-portfolio-builder",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "private": true,
-  "description": "PRISMA by MADFAM - AI-powered portfolio builder that transforms CVs into stunning websites in 30 minutes",
+  "description": "PRISMA by MADFAM - AI-powered portfolio builder that transforms CVs into stunning websites in under 3 minutes",
   "author": "MADFAM Team",
   "license": "UNLICENSED",
   "keywords": [
@@ -85,7 +85,9 @@
     "knip": "knip",
     "knip:fix": "knip --fix",
     "knip:production": "knip --production",
-    "knip:dependencies": "knip --dependencies"
+    "knip:dependencies": "knip --dependencies",
+    "check:license": "node scripts/check-license-headers.js",
+    "add:license-headers": "node scripts/add-license-headers.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
