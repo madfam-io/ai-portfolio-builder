@@ -73,7 +73,7 @@ function SortableProjectItem({
   projectsLength: number;
   onEdit: (project: Project) => void;
   onDelete: (id: string) => void;
-  t: any;
+  t: Record<string, string>;
 }) {
   const {
     attributes,

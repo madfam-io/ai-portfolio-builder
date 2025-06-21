@@ -394,7 +394,7 @@ export class OptimizedAnalyticsService {
       return [];
     }
 
-    const { data, error } = await supabase
+    const { data, error } = (await supabase
       .from('repository_contributors')
       .select(
         `
@@ -422,7 +422,7 @@ export class OptimizedAnalyticsService {
       )
       .in('repositoryId', repoIds)
       .order('commitCount', { ascending: false })
-      .limit(10) as { data: unknown[] | null; error: any };
+      .limit(10)) as { data: unknown[] | null; error: any };
 
     if (error) {
       logger.error('Failed to fetch contributors', { error });

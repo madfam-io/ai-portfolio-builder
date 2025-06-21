@@ -102,7 +102,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       'onboarding_step_completed',
       'system',
       async () => {
-        completeStep(currentStep.id);
+        await Promise.resolve(completeStep(currentStep.id));
       },
       {
         step: currentStep.id,
@@ -122,7 +122,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       'onboarding_step_skipped',
       'system',
       async () => {
-        skipStep(currentStep.id);
+        await Promise.resolve(skipStep(currentStep.id));
       },
       {
         step: currentStep.id,
@@ -136,7 +136,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       'onboarding_completed',
       'system',
       async () => {
-        completeOnboarding();
+        await Promise.resolve(completeOnboarding());
       },
       {
         flow: flow.id,
@@ -157,7 +157,7 @@ export function OnboardingModal({ flow }: OnboardingModalProps) {
       'onboarding_closed',
       'system',
       async () => {
-        completeOnboarding();
+        await Promise.resolve(completeOnboarding());
       },
       {
         flow: flow.id,

@@ -31,7 +31,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useToast } from '@/hooks/use-toast';
+import { useToast, type ToastOptions } from '@/hooks/use-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -55,7 +55,7 @@ import { CompletionBadge } from '@/components/portfolio/CompletionBadge';
 const usePortfolioLoader = (
   loadPortfolios: () => Promise<Portfolio[]>,
   t: Record<string, string | undefined>,
-  toast: any
+  toast: (options: ToastOptions) => void
 ) => {
   useEffect(() => {
     const loadPortfoliosAsync = async () => {
@@ -83,7 +83,7 @@ const usePortfolioLoader = (
 const usePortfolioDeletion = (
   deletePortfolio: (id: string) => Promise<void>,
   t: Record<string, string | undefined>,
-  toast: any
+  toast: (options: ToastOptions) => void
 ) => {
   const [deletePortfolioId, setDeletePortfolioId] = useState<string | null>(
     null
@@ -117,8 +117,8 @@ const usePortfolioDeletion = (
 const usePortfolioCreation = (
   canCreatePortfolio: boolean,
   checkAndShowPrompt: (type: 'ai_limit' | 'portfolio_limit') => boolean,
-  toast: any,
-  router: any
+  toast: (options: ToastOptions) => void,
+  router: ReturnType<typeof useRouter>
 ) => {
   const handleCreatePortfolio = () => {
     if (!canCreatePortfolio) {

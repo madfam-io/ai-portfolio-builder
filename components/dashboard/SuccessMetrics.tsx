@@ -25,6 +25,7 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { cn } from '@/lib/utils';
+import type { Portfolio } from '@/types/portfolio';
 
 interface Metric {
   label: string;
@@ -76,9 +77,7 @@ export function SuccessMetrics() {
         (sum, p) => sum + (p.views || 0),
         0
       );
-      const calculatePortfolioCompletion = (
-        portfolio: Record<string, unknown> | any
-      ): number => {
+      const calculatePortfolioCompletion = (portfolio: Portfolio): number => {
         const sections = ['experience', 'projects', 'skills', 'education'];
         const completedSections = sections.filter(s => {
           const sectionData = portfolio[s as keyof typeof portfolio];

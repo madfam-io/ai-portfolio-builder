@@ -34,7 +34,11 @@ export function OnboardingProvider({ children }: OnboardingProviderProps) {
       new Date(user.created_at).getTime() > Date.now() - 5 * 60 * 1000;
 
     // Check if user has portfolios
-    const hasPortfolios = (user as any).portfolio_count > 0;
+    const userWithMetadata = user as typeof user & {
+      user_metadata?: { portfolio_count?: number };
+    };
+    const hasPortfolios =
+      (userWithMetadata.user_metadata?.portfolio_count ?? 0) > 0;
 
     // Determine user type and start onboarding if needed
     if (isNewUser && !completedFlows.includes('new-user-flow')) {

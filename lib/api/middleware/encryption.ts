@@ -108,9 +108,15 @@ async function encryptRequestData(
     case 'analytics':
       // Hash IP addresses in analytics data
       if (typeof data === 'object' && data !== null && 'ip_address' in data) {
-        const analyticsData = data as { ip_address?: string; ip_address_hash?: string; [key: string]: unknown };
+        const analyticsData = data as {
+          ip_address?: string;
+          ip_address_hash?: string;
+          [key: string]: unknown;
+        };
         if (analyticsData.ip_address) {
-          analyticsData.ip_address_hash = hashIPAddress(analyticsData.ip_address);
+          analyticsData.ip_address_hash = hashIPAddress(
+            analyticsData.ip_address
+          );
           delete analyticsData.ip_address;
         }
         return analyticsData;
@@ -137,10 +143,15 @@ async function decryptResponseData(
         return data.map(item => decryptUserData(item));
       } else if (typeof data === 'object' && 'users' in data) {
         // Handle paginated responses
-        const paginatedData = data as { users: unknown[]; [key: string]: unknown };
+        const paginatedData = data as {
+          users: unknown[];
+          [key: string]: unknown;
+        };
         return {
           ...paginatedData,
-          users: paginatedData.users.map((user: unknown) => decryptUserData(user as Partial<EncryptedUser>)),
+          users: paginatedData.users.map((user: unknown) =>
+            decryptUserData(user as Partial<EncryptedUser>)
+          ),
         };
       } else {
         return decryptUserData(data);
@@ -154,7 +165,10 @@ async function decryptResponseData(
         return data.map(item => decryptPortfolioContact(item));
       } else if (typeof data === 'object' && 'portfolios' in data) {
         // Handle paginated responses
-        const paginatedData = data as { portfolios: unknown[]; [key: string]: unknown };
+        const paginatedData = data as {
+          portfolios: unknown[];
+          [key: string]: unknown;
+        };
         return {
           ...paginatedData,
           portfolios: paginatedData.portfolios.map((portfolio: unknown) =>
@@ -169,7 +183,10 @@ async function decryptResponseData(
       if (Array.isArray(data)) {
         return data.map(item => decryptAILogs(item));
       } else if (typeof data === 'object' && 'logs' in data) {
-        const paginatedData = data as { logs: unknown[]; [key: string]: unknown };
+        const paginatedData = data as {
+          logs: unknown[];
+          [key: string]: unknown;
+        };
         return {
           ...paginatedData,
           logs: paginatedData.logs.map((log: unknown) => decryptAILogs(log)),

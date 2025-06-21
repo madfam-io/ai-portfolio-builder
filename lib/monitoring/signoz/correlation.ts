@@ -132,7 +132,10 @@ export const trackPortfolioOperation = async <T>(
       });
 
       // Record business metric
-      const metricMap: Record<string, keyof typeof import('./metrics').businessMetrics> = {
+      const metricMap: Record<
+        string,
+        keyof typeof import('./metrics').businessMetrics
+      > = {
         create: 'portfoliosCreated',
         publish: 'portfoliosPublished',
         update: 'portfoliosCreated', // Note: portfoliosUpdated doesn't exist in businessMetrics
@@ -188,7 +191,9 @@ export const trackAIEnhancement = async <T>(
       const duration = performance.now() - startTime;
 
       // Extract token count if available
-      const tokenCount = (result as { usage?: { total_tokens?: number } })?.usage?.total_tokens || 0;
+      const tokenCount =
+        (result as { usage?: { total_tokens?: number } })?.usage
+          ?.total_tokens || 0;
 
       // Track in PostHog
       captureEnhancedEvent('ai_content_generated', {

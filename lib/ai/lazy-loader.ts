@@ -71,7 +71,10 @@ async function getAvailableModelsLazy(task?: string): Promise<unknown[]> {
   const service = await getHuggingFaceService();
   // getAvailableModels is HuggingFace-specific, not part of AIService interface
   // So we need to check if it exists
-  if ('getAvailableModels' in service && typeof service.getAvailableModels === 'function') {
+  if (
+    'getAvailableModels' in service &&
+    typeof service.getAvailableModels === 'function'
+  ) {
     return service.getAvailableModels();
   }
   return [];

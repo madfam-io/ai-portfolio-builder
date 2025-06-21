@@ -481,9 +481,14 @@ export function useEnhancedPostHog() {
     if (isInitialized && user) {
       const userWithMetadata = {
         ...user,
-        user_metadata: (user as any).user_metadata as { full_name?: string } | undefined,
+        user_metadata: (user as any).user_metadata as
+          | { full_name?: string }
+          | undefined,
         created_at: (user as any).created_at as string | undefined,
-        email_confirmed_at: (user as any).email_confirmed_at as string | null | undefined,
+        email_confirmed_at: (user as any).email_confirmed_at as
+          | string
+          | null
+          | undefined,
       };
       enhancedPostHog.identify(user.id, {
         email: user.email,

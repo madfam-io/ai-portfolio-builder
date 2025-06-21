@@ -35,11 +35,12 @@ export function transformCommitData(
   }
 
   return commitsByDay
-    .filter((day): day is CommitDayData => 
-      typeof day === 'object' && 
-      day !== null && 
-      'date' in day &&
-      typeof day.date === 'string'
+    .filter(
+      (day): day is CommitDayData =>
+        typeof day === 'object' &&
+        day !== null &&
+        'date' in day &&
+        typeof day.date === 'string'
     )
     .map(day => ({
       date: day.date,
@@ -58,11 +59,12 @@ export function transformLanguageData(
     return [];
   }
 
-  const validLanguages = languages.filter((lang): lang is LanguageData =>
-    typeof lang === 'object' &&
-    lang !== null &&
-    'name' in lang &&
-    typeof lang.name === 'string'
+  const validLanguages = languages.filter(
+    (lang): lang is LanguageData =>
+      typeof lang === 'object' &&
+      lang !== null &&
+      'name' in lang &&
+      typeof lang.name === 'string'
   );
 
   const sortedLanguages = validLanguages

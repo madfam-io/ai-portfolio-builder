@@ -1,6 +1,6 @@
-import { 
-  Portfolio, 
-  TemplateType, 
+import {
+  Portfolio,
+  TemplateType,
   PortfolioStatus,
   Experience,
   Education,
@@ -17,60 +17,63 @@ import {
 // Helper functions to validate and transform arrays
 function validateAndTransformExperience(data: unknown): Experience[] {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is Experience => 
-    typeof item === 'object' && 
-    item !== null && 
-    'id' in item && 
-    'company' in item && 
-    'position' in item &&
-    'startDate' in item
+  return data.filter(
+    (item): item is Experience =>
+      typeof item === 'object' &&
+      item !== null &&
+      'id' in item &&
+      'company' in item &&
+      'position' in item &&
+      'startDate' in item
   );
 }
 
 function validateAndTransformEducation(data: unknown): Education[] {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is Education => 
-    typeof item === 'object' && 
-    item !== null && 
-    'id' in item && 
-    'institution' in item && 
-    'degree' in item &&
-    'field' in item &&
-    'startDate' in item
+  return data.filter(
+    (item): item is Education =>
+      typeof item === 'object' &&
+      item !== null &&
+      'id' in item &&
+      'institution' in item &&
+      'degree' in item &&
+      'field' in item &&
+      'startDate' in item
   );
 }
 
 function validateAndTransformProjects(data: unknown): Project[] {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is Project => 
-    typeof item === 'object' && 
-    item !== null && 
-    'id' in item && 
-    'title' in item && 
-    'description' in item &&
-    'technologies' in item &&
-    Array.isArray(item.technologies)
+  return data.filter(
+    (item): item is Project =>
+      typeof item === 'object' &&
+      item !== null &&
+      'id' in item &&
+      'title' in item &&
+      'description' in item &&
+      'technologies' in item &&
+      Array.isArray(item.technologies)
   );
 }
 
 function validateAndTransformSkills(data: unknown): Skill[] {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is Skill => 
-    typeof item === 'object' && 
-    item !== null && 
-    'name' in item
+  return data.filter(
+    (item): item is Skill =>
+      typeof item === 'object' && item !== null && 'name' in item
   );
 }
 
 function validateAndTransformCertifications(data: unknown): Certification[] {
   if (!Array.isArray(data)) return [];
-  return data.filter((item): item is Certification => 
-    typeof item === 'object' && 
-    item !== null && 
-    'id' in item && 
-    'name' in item && 
-    'issuer' in item &&
-    'issueDate' in item
+  return data.filter(
+    (item): item is Certification =>
+      typeof item === 'object' &&
+      item !== null &&
+      'id' in item &&
+      'name' in item &&
+      'issuer' in item &&
+      'issueDate' in item
   );
 }
 
@@ -201,7 +204,8 @@ export function transformApiPortfolioToDb(
   if (apiPortfolio.status) dbData.status = apiPortfolio.status;
   if (apiPortfolio.customization)
     dbData.customization = { ...apiPortfolio.customization };
-  if (apiPortfolio.aiSettings) dbData.ai_settings = { ...apiPortfolio.aiSettings };
+  if (apiPortfolio.aiSettings)
+    dbData.ai_settings = { ...apiPortfolio.aiSettings };
   if (apiPortfolio.subdomain) dbData.subdomain = apiPortfolio.subdomain;
   if (apiPortfolio.customDomain)
     dbData.custom_domain = apiPortfolio.customDomain;

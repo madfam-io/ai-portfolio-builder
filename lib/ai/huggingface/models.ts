@@ -165,7 +165,12 @@ export class ModelManager {
    * Get models for a specific capability
    */
   getModelsForCapability(capability: string): AvailableModel[] {
-    const validCapabilities: string[] = ['bio', 'project', 'template', 'scoring'];
+    const validCapabilities: string[] = [
+      'bio',
+      'project',
+      'template',
+      'scoring',
+    ];
     if (!validCapabilities.includes(capability)) {
       return [];
     }

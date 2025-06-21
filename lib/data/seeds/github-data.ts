@@ -341,7 +341,7 @@ export async function seedGitHubIntegrations(
     for (let i = 0; i < users.length; i++) {
       const user = users[i];
       if (!user) continue;
-      
+
       if (
         Math.random() < integrationChance ||
         i < GITHUB_INTEGRATION_TEMPLATES.length

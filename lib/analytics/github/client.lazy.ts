@@ -49,12 +49,16 @@ const lazyGitHubClient = {
     return client.fetchLanguages(owner, repo);
   },
 
-  async fetchPullRequests(owner: string, repo: string, options?: {
-    state?: 'open' | 'closed' | 'all';
-    page?: number;
-    perPage?: number;
-    since?: Date;
-  }) {
+  async fetchPullRequests(
+    owner: string,
+    repo: string,
+    options?: {
+      state?: 'open' | 'closed' | 'all';
+      page?: number;
+      perPage?: number;
+      since?: Date;
+    }
+  ) {
     const client = await getGitHubClient();
     return client.fetchPullRequests(owner, repo, options);
   },

@@ -105,7 +105,7 @@ export function OnboardingChecklist() {
       'system',
       async () => {
         if (item.route) {
-          router.push(item.route);
+          await router.push(item.route);
         }
       },
       {

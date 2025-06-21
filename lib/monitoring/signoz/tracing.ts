@@ -49,7 +49,8 @@ export const traceHttpRequest = async <T>(
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (error) {
-      const statusCode = (error as { response?: { status?: number } })?.response?.status || 500;
+      const statusCode =
+        (error as { response?: { status?: number } })?.response?.status || 500;
 
       span.setAttributes({
         [SemanticAttributes.HTTP_STATUS_CODE]: statusCode,
@@ -145,7 +146,9 @@ export const traceAIOperation = async <T>(
       const duration = Date.now() - startTime;
 
       // Extract token count if available
-      const tokenCount = (result as { usage?: { total_tokens?: number } })?.usage?.total_tokens || 0;
+      const tokenCount =
+        (result as { usage?: { total_tokens?: number } })?.usage
+          ?.total_tokens || 0;
 
       span.setAttributes({
         'ai.duration_ms': duration,
@@ -252,7 +255,11 @@ export const traceStripeOperation = async <T>(
       span.setStatus({ code: SpanStatusCode.OK });
       return result;
     } catch (error) {
-      const stripeError = error as { type?: string; code?: string; requestId?: string };
+      const stripeError = error as {
+        type?: string;
+        code?: string;
+        requestId?: string;
+      };
 
       span.setAttributes({
         'stripe.error_type': stripeError?.type,

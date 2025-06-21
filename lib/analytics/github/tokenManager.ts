@@ -83,8 +83,8 @@ export function hasEncryptedTokens(
   const obj = integration as Record<string, unknown>;
   return Boolean(
     typeof obj.encrypted_access_token === 'string' &&
-    typeof obj.access_token_iv === 'string' &&
-    typeof obj.access_token_tag === 'string'
+      typeof obj.access_token_iv === 'string' &&
+      typeof obj.access_token_tag === 'string'
   );
 }
 

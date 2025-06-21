@@ -98,7 +98,11 @@ export function withTracing<T extends (...args: unknown[]) => unknown>(
       };
       if (options?.attributes) {
         Object.entries(options.attributes).forEach(([key, value]) => {
-          if (value !== undefined && value !== null && typeof value !== 'object') {
+          if (
+            value !== undefined &&
+            value !== null &&
+            typeof value !== 'object'
+          ) {
             attributes[key] = value;
           }
         });
@@ -132,10 +136,7 @@ export function withTracing<T extends (...args: unknown[]) => unknown>(
 /**
  * Record an error in the current span
  */
-export const recordError = (
-  error: Error,
-  attributes?: Attributes
-): void => {
+export const recordError = (error: Error, attributes?: Attributes): void => {
   const span = getCurrentSpan();
   if (!span) return;
 
@@ -152,9 +153,7 @@ export const recordError = (
 /**
  * Add attributes to the current span
  */
-export const addSpanAttributes = (
-  attributes: Attributes
-): void => {
+export const addSpanAttributes = (attributes: Attributes): void => {
   const span = getCurrentSpan();
   if (!span) return;
 

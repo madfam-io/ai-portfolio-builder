@@ -207,9 +207,9 @@ export function withAPMTracking<T extends (...args: unknown[]) => unknown>(
   operationName?: string
 ): T {
   return (async (...args: unknown[]) => {
-    const request = args[0] as { 
-      method?: string; 
-      nextUrl?: { pathname?: string }; 
+    const request = args[0] as {
+      method?: string;
+      nextUrl?: { pathname?: string };
       url?: string;
       headers?: { get: (key: string) => string | null };
     };

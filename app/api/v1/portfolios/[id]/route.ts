@@ -1,4 +1,8 @@
-import { withAuth, AuthenticatedRequest, RouteContext } from '@/lib/api/middleware/auth';
+import {
+  withAuth,
+  AuthenticatedRequest,
+  RouteContext,
+} from '@/lib/api/middleware/auth';
 import {
   apiSuccess,
   apiError,

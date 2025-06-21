@@ -201,7 +201,10 @@ export type RouteContext = { params: Promise<Record<string, string>> };
 
 export function withAuth<TReturn>(
   handler: (req: AuthenticatedRequest, context?: RouteContext) => TReturn
-): (req: NextRequest, context?: RouteContext) => Promise<TReturn | NextResponse> {
+): (
+  req: NextRequest,
+  context?: RouteContext
+) => Promise<TReturn | NextResponse> {
   return async (req: NextRequest, context?: RouteContext) => {
     try {
       const user = await authenticateUser(req);
