@@ -176,6 +176,9 @@ export class DeepSeekService implements AIService {
    * Get usage statistics
    */
   async getUsageStats() {
+    // Simulate async operation for interface compliance
+    await Promise.resolve();
+
     const avgResponseTime =
       this.usageStats.successfulRequests > 0
         ? this.usageStats.totalResponseTime / this.usageStats.successfulRequests

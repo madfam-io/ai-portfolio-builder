@@ -633,6 +633,7 @@ export class BetaLaunchChecker {
     message: string;
   }> {
     // Mock performance check - in real implementation, this would check actual metrics
+    await Promise.resolve(); // Simulate async metric check
     return {
       passed: true,
       message: 'Portfolio generation meets sub-30-second target',
@@ -665,6 +666,7 @@ export class BetaLaunchChecker {
       'subdomain_setup',
     ];
 
+    await Promise.resolve(); // Simulate async feature check
     return {
       passed: true, // Assuming features are implemented
       message: 'All core features implemented and functional',
@@ -673,6 +675,7 @@ export class BetaLaunchChecker {
 
   private async checkTesting(): Promise<{ passed: boolean; message: string }> {
     // Mock test coverage check
+    await Promise.resolve(); // Simulate async coverage check
     return {
       passed: true,
       message: 'Test coverage above 60% for critical paths',
@@ -683,6 +686,7 @@ export class BetaLaunchChecker {
     passed: boolean;
     message: string;
   }> {
+    await Promise.resolve(); // Simulate async monitoring check
     return {
       passed: true,
       message: 'Feedback collection and analytics systems operational',

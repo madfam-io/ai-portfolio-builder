@@ -333,6 +333,7 @@ export const useEditorStore = create<EditorStore>()(
           const _state = get();
           // Implementation would save to backend
           // Saving editor state
+          await Promise.resolve();
         },
 
         load: (blocks, theme) => {

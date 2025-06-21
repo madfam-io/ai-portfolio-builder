@@ -223,6 +223,9 @@ const usePortfolioVariantsStore = create<PortfolioVariantsState>()(
             const variant = get().variants.find(v => v.id === variantId);
             if (!variant) throw new Error('Variant not found');
 
+            // Simulate async operation
+            await Promise.resolve();
+
             set({ currentVariantId: variantId, isSwitching: false });
           } catch (error) {
             logger.error(

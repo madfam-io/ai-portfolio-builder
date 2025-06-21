@@ -230,6 +230,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async (email: string, _password: string, name: string) => {
       logger.info('Sign up attempt', { email, name });
       // Implementation would go here
+      await Promise.resolve();
     },
     []
   );
@@ -256,6 +257,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const resetPassword = useCallback(async (email: string) => {
     logger.info('Reset password for', { email });
     // Implementation would go here
+    await Promise.resolve();
   }, []);
 
   /**
@@ -283,6 +285,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setSession(createSession(updatedUser));
 
     logger.info('Switched to admin mode');
+    await Promise.resolve();
   }, [user, createSession]);
 
   const switchToUserMode = useCallback(async () => {
@@ -306,6 +309,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     setImpersonatedUser(null);
 
     logger.info('Switched to user mode');
+    await Promise.resolve();
   }, [user, createSession]);
 
   /**
@@ -318,6 +322,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       }
 
       // In real implementation, this would load the target user from database
+      await Promise.resolve(); // Simulate async database call
+
       const mockTargetUser: User = {
         id: targetUserId,
         email: `user${targetUserId}@example.com`,
@@ -354,6 +360,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       logger.info('Stopped impersonating', { email: impersonatedUser.email });
       setImpersonatedUser(null);
     }
+    await Promise.resolve();
   }, [impersonatedUser]);
 
   /**
@@ -365,6 +372,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const updatedUser = { ...user, ...updates };
       setUser(updatedUser);
       logger.info('Profile updated', { updates });
+      await Promise.resolve();
     },
     [user]
   );
@@ -372,6 +380,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const upgradeSubscription = useCallback(async (plan: SubscriptionPlan) => {
     logger.info('Upgrading to plan', { plan });
     // Implementation would integrate with Stripe
+    await Promise.resolve();
   }, []);
 
   const refreshUser = useCallback(async () => {

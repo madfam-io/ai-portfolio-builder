@@ -201,7 +201,9 @@ export const useAIStore = create<AIState & AIActions>()(
               );
 
               const recommendation = await aiClient.recommendTemplate(
-                data as unknown as Parameters<typeof aiClient.recommendTemplate>[0]
+                data as unknown as Parameters<
+                  typeof aiClient.recommendTemplate
+                >[0]
               );
 
               set(state => {

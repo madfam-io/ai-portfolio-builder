@@ -36,9 +36,12 @@ const FIX_PATTERNS = [
 
 function processTestFile(file: string): { processed: boolean; fixed: boolean } {
   const content = fs.readFileSync(file, 'utf-8');
-  
+
   // Check if file contains useLanguage mock
-  if (!content.includes('mockUseLanguage') && !content.includes('@/lib/i18n/refactored-context')) {
+  if (
+    !content.includes('mockUseLanguage') &&
+    !content.includes('@/lib/i18n/refactored-context')
+  ) {
     return { processed: false, fixed: false };
   }
 
@@ -48,7 +51,7 @@ function processTestFile(file: string): { processed: boolean; fixed: boolean } {
   for (const fix of FIX_PATTERNS) {
     const beforeLength = newContent.length;
     newContent = newContent.replace(fix.pattern, fix.replacement);
-    
+
     if (newContent.length !== beforeLength) {
       changed = true;
     }

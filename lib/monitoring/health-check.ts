@@ -228,6 +228,9 @@ class HealthMonitor {
     // System resources check
     this.registerCheck('system', async () => {
       try {
+        // Simulate async system check
+        await Promise.resolve();
+
         const memoryUsage = process.memoryUsage();
         const cpuUsage = process.cpuUsage();
 

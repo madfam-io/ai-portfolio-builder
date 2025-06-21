@@ -82,22 +82,30 @@ export function withEncryption(
 /**
  * Encrypt request data based on type
  */
-async function encryptRequestData(data: unknown, config: EncryptionConfig): Promise<unknown> {
+async function encryptRequestData(
+  data: unknown,
+  config: EncryptionConfig
+): Promise<unknown> {
+  // Small delay to ensure async behavior
+  await Promise.resolve();
+
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {
     case 'user':
-      return Array.isArray(data)
-        ? data.map(item => encryptUserData(item))
-        : encryptUserData(data);
+      if (Array.isArray(data)) {
+        return Promise.all(data.map(item => encryptUserData(item)));
+      }
+      return encryptUserData(data);
 
     case 'oauth':
       return encryptOAuthTokens(data);
 
     case 'portfolio':
-      return Array.isArray(data)
-        ? data.map(item => encryptPortfolioContact(item))
-        : encryptPortfolioContact(data);
+      if (Array.isArray(data)) {
+        return Promise.all(data.map(item => encryptPortfolioContact(item)));
+      }
+      return encryptPortfolioContact(data);
 
     case 'ai':
       return encryptAILogs(data);
@@ -128,24 +136,30 @@ async function encryptRequestData(data: unknown, config: EncryptionConfig): Prom
 /**
  * Decrypt response data based on type
  */
-async function decryptResponseData(data: unknown, config: EncryptionConfig): Promise<unknown> {
+async function decryptResponseData(
+  data: unknown,
+  config: EncryptionConfig
+): Promise<unknown> {
   if (!data || typeof data !== 'object') return data;
 
   switch (config.type) {
     case 'user':
       if (Array.isArray(data)) {
-        return data.map(item => decryptUserData(item));
+        return Promise.all(data.map(item => decryptUserData(item)));
       } else if (typeof data === 'object' && 'users' in data) {
         // Handle paginated responses
         const paginatedData = data as {
           users: unknown[];
           [key: string]: unknown;
         };
+        const decryptedUsers = await Promise.all(
+          paginatedData.users.map((user: unknown) =>
+            decryptUserData(user as Partial<EncryptedUser>)
+          )
+        );
         return {
           ...paginatedData,
-          users: paginatedData.users.map((user: unknown) =>
-            decryptUserData(user as Partial<EncryptedUser>)
-          ),
+          users: decryptedUsers,
         };
       } else {
         return decryptUserData(data);
@@ -156,18 +170,21 @@ async function decryptResponseData(data: unknown, config: EncryptionConfig): Pro
 
     case 'portfolio':
       if (Array.isArray(data)) {
-        return data.map(item => decryptPortfolioContact(item));
+        return Promise.all(data.map(item => decryptPortfolioContact(item)));
       } else if (typeof data === 'object' && 'portfolios' in data) {
         // Handle paginated responses
         const paginatedData = data as {
           portfolios: unknown[];
           [key: string]: unknown;
         };
+        const decryptedPortfolios = await Promise.all(
+          paginatedData.portfolios.map((portfolio: unknown) =>
+            decryptPortfolioContact(portfolio)
+          )
+        );
         return {
           ...paginatedData,
-          portfolios: paginatedData.portfolios.map((portfolio: unknown) =>
-            decryptPortfolioContact(portfolio)
-          ),
+          portfolios: decryptedPortfolios,
         };
       } else {
         return decryptPortfolioContact(data);
@@ -175,15 +192,18 @@ async function decryptResponseData(data: unknown, config: EncryptionConfig): Pro
 
     case 'ai':
       if (Array.isArray(data)) {
-        return data.map(item => decryptAILogs(item));
+        return Promise.all(data.map(item => decryptAILogs(item)));
       } else if (typeof data === 'object' && 'logs' in data) {
         const paginatedData = data as {
           logs: unknown[];
           [key: string]: unknown;
         };
+        const decryptedLogs = await Promise.all(
+          paginatedData.logs.map((log: unknown) => decryptAILogs(log))
+        );
         return {
           ...paginatedData,
-          logs: paginatedData.logs.map((log: unknown) => decryptAILogs(log)),
+          logs: decryptedLogs,
         };
       } else {
         return decryptAILogs(data);

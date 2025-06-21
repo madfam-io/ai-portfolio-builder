@@ -190,8 +190,13 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  async recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation> {
+  async recommendTemplate(
+    profile: UserProfile
+  ): Promise<TemplateRecommendation> {
     try {
+      // Simulate async operation for interface compliance
+      await Promise.resolve();
+
       // Simple rule-based recommendation with scoring
       const templates = [
         'developer',
@@ -242,7 +247,11 @@ export class HuggingFaceService implements AIService {
    * Score content quality
    */
   async scoreContent(content: string, type: string): Promise<QualityScore> {
-    return this.contentScorer.scoreContent(content, type);
+    // The contentScorer method is synchronous, but we need async for interface
+    const result = await Promise.resolve(
+      this.contentScorer.scoreContent(content, type)
+    );
+    return result;
   }
 
   /**
@@ -273,6 +282,9 @@ export class HuggingFaceService implements AIService {
     avgResponseTime: number;
     successRate: number;
   }> {
+    // Simulate async operation for interface compliance
+    await Promise.resolve();
+
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
