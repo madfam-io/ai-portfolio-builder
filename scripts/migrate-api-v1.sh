@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#!/bin/bash
+# MADFAM Code Available License (MCAL) v1.0
+# Copyright (c) 2025-present MADFAM. All rights reserved.
+# Commercial use prohibited except by MADFAM and licensed partners.
+# For licensing: licensing@madfam.com
+
+
 # Script to migrate API routes to v1 structure
 
 API_DIR="/Users/aldoruizluna/labspace/ai-portfolio-builder/app/api"

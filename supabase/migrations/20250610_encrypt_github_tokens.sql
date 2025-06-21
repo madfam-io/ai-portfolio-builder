@@ -1,3 +1,8 @@
+-- MADFAM Code Available License (MCAL) v1.0
+-- Copyright (c) 2025-present MADFAM. All rights reserved.
+-- Commercial use prohibited except by MADFAM and licensed partners.
+-- For licensing: licensing@madfam.com
+
 -- Migration: Encrypt GitHub Tokens
 -- Date: 2025-06-10
 -- Purpose: Add columns for encrypted token storage and migrate existing tokens

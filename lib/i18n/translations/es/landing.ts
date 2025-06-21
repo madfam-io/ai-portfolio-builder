@@ -1,4 +1,17 @@
 /**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+/**
  * @fileoverview Spanish translations for landing page sections
  * @module i18n/translations/es/landing
  */
@@ -7,7 +20,7 @@ const landing = {
   // Hero Section
   heroTitle: 'Tu portafolio, elevado por IA.',
   heroTitle2: 'Conecta tus perfiles. Mejora tu historia.',
-  heroTitle3: 'Publica en minutos.',
+  heroTitle3: 'Publica en menos de 3 minutos.',
   heroDesc:
     'Presenta tu talento con estilo profesional, sin escribir una línea de código. Conecta tu LinkedIn, GitHub o CV y lanza tu portafolio con inteligencia artificial.',
   watchDemo: 'Ver Demo',
@@ -42,14 +55,15 @@ const landing = {
   analyticsTitle: 'Métricas en tiempo real',
   analyticsDesc:
     'Desde tu CV o LinkedIn hasta un sitio web funcional en menos de media hora.',
-  publishTitle: 'Publica en 30 minutos',
+  publishTitle: 'Publica en menos de 3 minutos',
   mobileTitle: 'Para quien es PRISMA',
   mobileDesc:
     'Freelancers, desarrolladores, consultores y creativos que quieren impresionar.',
 
   // How it Works Section
-  howItWorksTitle: 'Del CV al portafolio en 3 simples pasos',
-  howItWorksSubtitle: 'Sin código. Sin diseño. Solo resultados.',
+  howItWorksTitle: 'Del CV al portafolio en menos de 3 minutos',
+  howItWorksSubtitle:
+    'Sin código. Sin diseño. Solo resultados en menos de 3 minutos.',
 
   // Steps
   step1Number: '01',
@@ -182,7 +196,7 @@ const landing = {
   companiesHiring: 'Empresas que contratan a través de PRISMA',
 
   // Footer
-  footerTagline: 'Crea portafolios profesionales con IA en minutos',
+  footerTagline: 'Crea portafolios profesionales con IA en menos de 3 minutos',
   footerProduct: 'Producto',
   footerCompany: 'Empresa',
   footerLegal: 'Legal',

@@ -1,3 +1,8 @@
+-- MADFAM Code Available License (MCAL) v1.0
+-- Copyright (c) 2025-present MADFAM. All rights reserved.
+-- Commercial use prohibited except by MADFAM and licensed partners.
+-- For licensing: licensing@madfam.com
+
 -- Create subscriptions table if not exists
 CREATE TABLE IF NOT EXISTS subscriptions (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,

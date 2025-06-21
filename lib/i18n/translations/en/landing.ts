@@ -1,4 +1,17 @@
 /**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+/**
  * @fileoverview English translations for landing page sections
  * @module i18n/translations/en/landing
  */
@@ -7,7 +20,7 @@ const landing = {
   // Hero Section
   heroTitle: 'Your portfolio, elevated by AI.',
   heroTitle2: 'Connect your profiles. Enhance your story.',
-  heroTitle3: 'Publish in minutes.',
+  heroTitle3: 'Publish in under 3 minutes.',
   heroDesc:
     'Showcase your talent with professional style, without writing a line of code. Connect your LinkedIn, GitHub or CV and launch your portfolio with artificial intelligence.',
   watchDemo: 'Watch Demo',
@@ -37,13 +50,13 @@ const landing = {
   seoDesc: 'Built-in optimization to stand out in search results.',
   analyticsTitle: 'Real-time metrics',
   analyticsDesc: 'Track visits, downloads and performance of your portfolio.',
-  publishTitle: 'Publish in 30 minutes',
+  publishTitle: 'Publish in under 3 minutes',
   mobileTitle: 'Who PRISMA is for',
   mobileDesc: 'Responsive designs that look perfect on any device.',
 
   // How it Works Section
-  howItWorksTitle: 'From CV to portfolio in 3 simple steps',
-  howItWorksSubtitle: 'No code. No design. Just results.',
+  howItWorksTitle: 'From CV to portfolio in under 3 minutes',
+  howItWorksSubtitle: 'No code. No design. Just results in under 3 minutes.',
 
   // Steps
   step1Number: '01',
@@ -176,7 +189,7 @@ const landing = {
   companiesHiring: 'Companies hiring through PRISMA',
 
   // Footer
-  footerTagline: 'Create professional portfolios with AI in minutes',
+  footerTagline: 'Create professional portfolios with AI in under 3 minutes',
   footerProduct: 'Product',
   footerCompany: 'Company',
   footerLegal: 'Legal',

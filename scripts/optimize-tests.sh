@@ -1,5 +1,12 @@
 #!/bin/bash
 
+#!/bin/bash
+# MADFAM Code Available License (MCAL) v1.0
+# Copyright (c) 2025-present MADFAM. All rights reserved.
+# Commercial use prohibited except by MADFAM and licensed partners.
+# For licensing: licensing@madfam.com
+
+
 echo "🔧 Optimizing test files..."
 
 # Replace original test files with refactored versions

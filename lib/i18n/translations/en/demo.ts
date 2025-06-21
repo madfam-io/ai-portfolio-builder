@@ -1,4 +1,17 @@
 /**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+/**
  * @fileoverview Demo page English translations
  * @module i18n/translations/en/demo
  */
@@ -7,7 +20,7 @@ export default {
   // Page titles
   demoPageTitle: 'See PRISMA in Action',
   demoSubtitle:
-    'Watch how PRISMA transforms a simple resume into a stunning professional portfolio in under 5 minutes.',
+    'Watch how PRISMA transforms a simple resume into a stunning professional portfolio in under 3 minutes.',
 
   // Demo options
   demoTryInteractive: 'Try Interactive Demo',
@@ -19,7 +32,7 @@ export default {
   // Demo content
   demoPortfolioCreation: 'Portfolio Creation Demo',
   demoCompleteProcess: 'See the complete resume to portfolio process',
-  demoStepByStep: '5 minutes • Step-by-step walkthrough',
+  demoStepByStep: '3 minutes • Step-by-step walkthrough',
 
   // How it works
   demoHowItWorks: 'How It Works',

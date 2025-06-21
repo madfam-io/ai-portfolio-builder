@@ -1,3 +1,16 @@
+/**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
 'use client';
 
 import { useEffect, useMemo } from 'react';
@@ -93,18 +106,16 @@ export function UsageTracker() {
   const stats: UsageStats = useMemo(
     () => ({
       portfoliosCreated: portfolios.length,
-      portfoliosPublished: portfolios.filter(p => p.isPublished).length,
-      totalViews: portfolios.reduce(
-        (sum, p) => sum + (p.analytics?.views || 0),
-        0
-      ),
+      portfoliosPublished: portfolios.filter(p => p.status === 'published')
+        .length,
+      totalViews: portfolios.reduce((sum, p) => sum + (p.views || 0), 0),
       aiEnhancements: portfolios.reduce(
-        (sum, p) => sum + (p.analytics?.aiEnhancements || 0),
+        (sum, p) => sum + 0, // AI enhancements count - needs implementation
         0
       ),
       customDomains: portfolios.filter(p => p.customDomain).length,
       storageUsed: portfolios.reduce(
-        (sum, p) => sum + (p.storageSize || 10),
+        (sum, p) => sum + 10, // Estimated storage per portfolio
         0
       ), // MB
       lastUpdated: new Date(),

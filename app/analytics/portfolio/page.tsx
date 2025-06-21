@@ -1,3 +1,16 @@
+/**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
 'use client';
 
 import { ProtectedRoute } from '@/components/auth/protected-route';
@@ -25,11 +38,13 @@ function PortfolioAnalyticsContent() {
 
   // Calculate some basic metrics
   const totalViews = portfolios.reduce((sum, p) => sum + (p.views || 0), 0);
-  const publishedCount = portfolios.filter(p => p.isPublished).length;
+  const publishedCount = portfolios.filter(
+    p => p.status === 'published'
+  ).length;
   const avgCompletionRate =
     portfolios.reduce((sum, p) => {
       const sections = [
-        p.personalInfo?.name,
+        p.name,
         p.experience?.length,
         p.education?.length,
         p.skills?.length,

@@ -1,10 +1,21 @@
+/**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/logger';
 import { redisRateLimitMiddleware } from '@/lib/api/middleware/redis-rate-limiter';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
-import { withErrorHandler } from '@/lib/api/middleware/error-handler';
-import { withCORS } from '@/lib/api/middleware/cors';
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
 import crypto from 'crypto';
 
@@ -122,113 +133,116 @@ const SKILL_DATABASE: Record<
 };
 
 export async function POST(request: NextRequest) {
-  await Promise.resolve(); // Satisfies ESLint
-  return withErrorHandler(async () => {
+  try {
     await Promise.resolve(); // Satisfies ESLint
-    return withCORS(request, async () => {
-      await Promise.resolve(); // Satisfies ESLint
-      // Rate limiting
-      const rateLimitResponse = await redisRateLimitMiddleware(request, {
-        windowMs: 60 * 60 * 1000, // 1 hour
-        max: 50, // 50 skill suggestions per hour
-        message: 'Too many skill suggestion requests. Please try again later.',
-      });
+    await Promise.resolve(); // Satisfies ESLint
+    // Rate limiting
+    const rateLimitResponse = await redisRateLimitMiddleware(request, {
+      windowMs: 60 * 60 * 1000, // 1 hour
+      max: 50, // 50 skill suggestions per hour
+      message: 'Too many skill suggestion requests. Please try again later.',
+    });
 
-      if (rateLimitResponse) {
-        return rateLimitResponse;
-      }
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
 
-      // Parse and validate request
-      const body = await request.json();
-      const validation = requestSchema.safeParse(body);
+    // Parse and validate request
+    const body = await request.json();
+    const validation = requestSchema.safeParse(body);
 
-      if (!validation.success) {
-        return NextResponse.json(
-          { error: 'Invalid request data', details: validation.error.errors },
-          { status: 400 }
-        );
-      }
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: validation.error.errors },
+        { status: 400 }
+      );
+    }
 
-      const { currentSkills, industry, model } = validation.data;
-      const userId = request.headers.get('x-user-id') || 'anonymous';
+    const { currentSkills, industry, model } = validation.data;
+    const userId = request.headers.get('x-user-id') || 'anonymous';
 
-      // Generate cache key
-      const cacheKey = `${CACHE_KEYS.AI_RESULT}skills:${crypto
-        .createHash('md5')
-        .update(JSON.stringify({ currentSkills, industry }))
-        .digest('hex')
-        .substring(0, 8)}`;
+    // Generate cache key
+    const cacheKey = `${CACHE_KEYS.AI_RESULT}skills:${crypto
+      .createHash('md5')
+      .update(JSON.stringify({ currentSkills, industry }))
+      .digest('hex')
+      .substring(0, 8)}`;
 
-      // Check cache
-      const cached = await cache.get(cacheKey);
-      if (cached) {
-        logger.info('Returning cached skill suggestions', {
-          userId,
-          feature: 'ai_skills',
-        });
-        return NextResponse.json(JSON.parse(cached as string));
-      }
-
-      // Initialize AI service
-      const aiService = new HuggingFaceService();
-      if (model) {
-        aiService.updateModelSelection('general', model);
-      }
-
-      // Find related skills based on current skills
-      const suggestedSkills = new Map<
-        string,
-        { relevance: number; trending: boolean }
-      >();
-
-      // Normalize current skills for matching
-      const normalizedSkills = currentSkills.map(s => s.toLowerCase().trim());
-
-      // Find related skills from database
-      addRelatedSkills(normalizedSkills, suggestedSkills);
-
-      // Add industry-specific skills
-      const industrySkills = getIndustrySkills(industry.toLowerCase());
-      for (const skill of industrySkills) {
-        if (!normalizedSkills.includes(skill.toLowerCase())) {
-          const existing = suggestedSkills.get(skill);
-          const relevance = existing ? existing.relevance + 10 : 60;
-          suggestedSkills.set(skill, {
-            relevance: Math.min(relevance, 100),
-            trending: SKILL_DATABASE[skill.toLowerCase()]?.trending || false,
-          });
-        }
-      }
-
-      // Convert to array and sort by relevance
-      const suggestions = Array.from(suggestedSkills.entries())
-        .map(([skill, data]) => ({
-          skill,
-          relevance: data.relevance,
-          trending: data.trending,
-        }))
-        .sort((a, b) => b.relevance - a.relevance)
-        .slice(0, 10); // Top 10 suggestions
-
-      const response = {
-        suggestions,
-        totalFound: suggestedSkills.size,
-        basedOn: currentSkills,
-        industry,
-      };
-
-      // Cache for 24 hours
-      await cache.set(cacheKey, JSON.stringify(response), 86400);
-
-      logger.info('Skill suggestions generated', {
+    // Check cache
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      logger.info('Returning cached skill suggestions', {
         userId,
-        suggestionsCount: suggestions.length,
         feature: 'ai_skills',
       });
+      return NextResponse.json(JSON.parse(cached as string));
+    }
 
-      return NextResponse.json(response);
+    // Initialize AI service
+    const aiService = new HuggingFaceService();
+    if (model) {
+      aiService.updateModelSelection('general', model);
+    }
+
+    // Find related skills based on current skills
+    const suggestedSkills = new Map<
+      string,
+      { relevance: number; trending: boolean }
+    >();
+
+    // Normalize current skills for matching
+    const normalizedSkills = currentSkills.map(s => s.toLowerCase().trim());
+
+    // Find related skills from database
+    addRelatedSkills(normalizedSkills, suggestedSkills);
+
+    // Add industry-specific skills
+    const industrySkills = getIndustrySkills(industry.toLowerCase());
+    for (const skill of industrySkills) {
+      if (!normalizedSkills.includes(skill.toLowerCase())) {
+        const existing = suggestedSkills.get(skill);
+        const relevance = existing ? existing.relevance + 10 : 60;
+        suggestedSkills.set(skill, {
+          relevance: Math.min(relevance, 100),
+          trending: SKILL_DATABASE[skill.toLowerCase()]?.trending || false,
+        });
+      }
+    }
+
+    // Convert to array and sort by relevance
+    const suggestions = Array.from(suggestedSkills.entries())
+      .map(([skill, data]) => ({
+        skill,
+        relevance: data.relevance,
+        trending: data.trending,
+      }))
+      .sort((a, b) => b.relevance - a.relevance)
+      .slice(0, 10); // Top 10 suggestions
+
+    const response = {
+      suggestions,
+      totalFound: suggestedSkills.size,
+      basedOn: currentSkills,
+      industry,
+    };
+
+    // Cache for 24 hours
+    await cache.set(cacheKey, JSON.stringify(response), 86400);
+
+    logger.info('Skill suggestions generated', {
+      userId,
+      suggestionsCount: suggestions.length,
+      feature: 'ai_skills',
     });
-  });
+
+    return NextResponse.json(response);
+  } catch (error) {
+    logger.error('Failed to suggest skills:', error as Error);
+    return NextResponse.json(
+      { error: 'Failed to suggest skills' },
+      { status: 500 }
+    );
+  }
 }
 
 // Get industry-specific skills
@@ -280,7 +294,7 @@ function getIndustrySkills(industry: string): string[] {
     ],
   };
 
-  return industryMap[industry] || industryMap.technology;
+  return industryMap[industry] || industryMap.technology || [];
 }
 
 // Helper function to add related skills
@@ -306,10 +320,14 @@ function addRelatedSkills(
   }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   await Promise.resolve(); // Satisfies ESLint
-  return withCORS(request, async () => {
-    await Promise.resolve(); // Satisfies ESLint
-    return new NextResponse(null, { status: 200 });
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
   });
 }

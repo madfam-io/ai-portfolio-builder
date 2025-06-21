@@ -1,9 +1,20 @@
+/**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { logger } from '@/lib/utils/logger';
 import { redisRateLimitMiddleware } from '@/lib/api/middleware/redis-rate-limiter';
-import { withErrorHandler } from '@/lib/api/middleware/error-handler';
-import { withCORS } from '@/lib/api/middleware/cors';
 import { cache, CACHE_KEYS } from '@/lib/cache/redis-cache.server';
 import crypto from 'crypto';
 
@@ -74,77 +85,78 @@ Recommendations:
 ];
 
 export async function POST(request: NextRequest) {
-  await Promise.resolve(); // Satisfies ESLint
-  return withErrorHandler(async () => {
+  try {
     await Promise.resolve(); // Satisfies ESLint
-    return withCORS(request, async () => {
-      await Promise.resolve(); // Satisfies ESLint
 
-      // Rate limiting
-      const rateLimitResponse = await redisRateLimitMiddleware(request, {
-        windowMs: 60 * 60 * 1000, // 1 hour
-        max: 20, // 20 competitor analyses per hour
-        message:
-          'Too many competitor analysis requests. Please try again later.',
+    // Rate limiting
+    const rateLimitResponse = await redisRateLimitMiddleware(request, {
+      windowMs: 60 * 60 * 1000, // 1 hour
+      max: 20, // 20 competitor analyses per hour
+      message: 'Too many competitor analysis requests. Please try again later.',
+    });
+
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
+    // Parse and validate request
+    const body = await request.json();
+    const validation = requestSchema.safeParse(body);
+
+    if (!validation.success) {
+      return NextResponse.json(
+        { error: 'Invalid request data', details: validation.error.errors },
+        { status: 400 }
+      );
+    }
+
+    const { url } = validation.data;
+    const userId = request.headers.get('x-user-id') || 'anonymous';
+
+    // Generate cache key
+    const cacheKey = `${CACHE_KEYS.AI_RESULT}competitor:${crypto
+      .createHash('md5')
+      .update(url)
+      .digest('hex')
+      .substring(0, 8)}`;
+
+    // Check cache
+    const cached = await cache.get(cacheKey);
+    if (cached) {
+      logger.info('Returning cached competitor analysis', {
+        userId,
+        feature: 'ai_competitor',
       });
+      return NextResponse.json(JSON.parse(cached as string));
+    }
 
-      if (rateLimitResponse) {
-        return rateLimitResponse;
+    // Simulate analysis delay
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Extract domain for pattern matching
+    const domain = new URL(url).hostname.toLowerCase();
+
+    // Find matching insights based on URL patterns
+    let selectedInsights = COMPETITOR_INSIGHTS[0]; // Default to developer
+
+    for (const insight of COMPETITOR_INSIGHTS) {
+      const hasPattern = insight.patterns.some(
+        pattern =>
+          domain.includes(pattern) || url.toLowerCase().includes(pattern)
+      );
+      if (hasPattern) {
+        selectedInsights = insight;
+        break;
       }
+    }
 
-      // Parse and validate request
-      const body = await request.json();
-      const validation = requestSchema.safeParse(body);
+    // Ensure selectedInsights is not undefined
+    if (!selectedInsights) {
+      selectedInsights = COMPETITOR_INSIGHTS[0];
+    }
 
-      if (!validation.success) {
-        return NextResponse.json(
-          { error: 'Invalid request data', details: validation.error.errors },
-          { status: 400 }
-        );
-      }
-
-      const { url } = validation.data;
-      const userId = request.headers.get('x-user-id') || 'anonymous';
-
-      // Generate cache key
-      const cacheKey = `${CACHE_KEYS.AI_RESULT}competitor:${crypto
-        .createHash('md5')
-        .update(url)
-        .digest('hex')
-        .substring(0, 8)}`;
-
-      // Check cache
-      const cached = await cache.get(cacheKey);
-      if (cached) {
-        logger.info('Returning cached competitor analysis', {
-          userId,
-          feature: 'ai_competitor',
-        });
-        return NextResponse.json(JSON.parse(cached as string));
-      }
-
-      // Simulate analysis delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Extract domain for pattern matching
-      const domain = new URL(url).hostname.toLowerCase();
-
-      // Find matching insights based on URL patterns
-      let selectedInsights = COMPETITOR_INSIGHTS[0]; // Default to developer
-
-      for (const insight of COMPETITOR_INSIGHTS) {
-        const hasPattern = insight.patterns.some(
-          pattern =>
-            domain.includes(pattern) || url.toLowerCase().includes(pattern)
-        );
-        if (hasPattern) {
-          selectedInsights = insight;
-          break;
-        }
-      }
-
-      // Add some dynamic elements based on the URL
-      const enhancedInsights = `${selectedInsights.insights}
+    // Add some dynamic elements based on the URL
+    const enhancedInsights = `${selectedInsights.insights}
 
 URL Analysis: ${domain}
 • Mobile responsiveness detected
@@ -152,38 +164,47 @@ URL Analysis: ${domain}
 • SEO optimization: Strong
 • Accessibility score: 92/100`;
 
-      const response = {
-        insights: enhancedInsights,
-        url,
-        analyzedAt: new Date().toISOString(),
-        competitorType: selectedInsights.patterns[0],
-        recommendations: [
-          'Optimize for mobile-first experience',
-          'Improve page load speed to under 2 seconds',
-          'Add structured data for better SEO',
-          'Implement progressive enhancement',
-        ],
-      };
+    const response = {
+      insights: enhancedInsights,
+      url,
+      analyzedAt: new Date().toISOString(),
+      competitorType: selectedInsights.patterns[0],
+      recommendations: [
+        'Optimize for mobile-first experience',
+        'Improve page load speed to under 2 seconds',
+        'Add structured data for better SEO',
+        'Implement progressive enhancement',
+      ],
+    };
 
-      // Cache for 7 days (competitor sites change less frequently)
-      await cache.set(cacheKey, JSON.stringify(response), 604800);
+    // Cache for 7 days (competitor sites change less frequently)
+    await cache.set(cacheKey, JSON.stringify(response), 604800);
 
-      logger.info('Competitor analysis completed', {
-        userId,
-        url,
-        competitorType: response.competitorType,
-        feature: 'ai_competitor',
-      });
-
-      return NextResponse.json(response);
+    logger.info('Competitor analysis completed', {
+      userId,
+      url,
+      competitorType: response.competitorType,
+      feature: 'ai_competitor',
     });
-  });
+
+    return NextResponse.json(response);
+  } catch (error) {
+    logger.error('Failed to analyze competitor:', error as Error);
+    return NextResponse.json(
+      { error: 'Failed to analyze competitor' },
+      { status: 500 }
+    );
+  }
 }
 
-export async function OPTIONS(request: NextRequest) {
+export async function OPTIONS(_request: NextRequest) {
   await Promise.resolve(); // Satisfies ESLint
-  return withCORS(request, async () => {
-    await Promise.resolve(); // Satisfies ESLint
-    return new NextResponse(null, { status: 200 });
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
   });
 }

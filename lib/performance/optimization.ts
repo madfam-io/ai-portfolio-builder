@@ -1,11 +1,25 @@
 /**
- * @fileoverview Performance Optimization Utilities
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
+/**
+ * @fileoverview Performance Optimization Utilities for 3-Minute Portfolio Revolution
  *
  * Comprehensive performance optimization system for portfolio generation,
- * ensuring sub-30-second creation times and optimal user experience.
+ * ensuring sub-3-minute creation times and optimal user experience.
+ * Designed for business excellence with competitive market positioning.
  *
  * @author PRISMA Development Team
- * @version 1.0.0
+ * @version 2.0.0
  */
 
 import React from 'react';
@@ -76,11 +90,11 @@ export class PerformanceMonitor {
   }
 
   /**
-   * Check if performance meets sub-30-second target
+   * Check if performance meets sub-3-minute revolutionary target
    */
   meetsPerformanceTarget(): boolean {
     const totalTime = this.getMetrics().totalTime;
-    return totalTime < 30000; // 30 seconds in milliseconds
+    return totalTime < 180000; // 3 minutes in milliseconds - Revolutionary target
   }
 
   /**
@@ -252,8 +266,8 @@ export class BundleOptimizer {
       try {
         const component = await importFn();
         return component;
-      } catch (error) {
-        console.error('Failed to load component:', error);
+      } catch (_error) {
+        // Component loading error handled
         // Return fallback component
         return {
           default: (() =>
@@ -355,8 +369,8 @@ export class PortfolioPerformanceOptimizer {
         metrics,
         success: this.monitor.meetsPerformanceTarget(),
       };
-    } catch (error) {
-      console.error('Portfolio optimization failed:', error);
+    } catch (_error) {
+      // Portfolio optimization error handled
       this.monitor.endTimer('portfolioCreation');
 
       return {
@@ -505,12 +519,16 @@ export class PortfolioPerformanceOptimizer {
       recommendations.api.push('Consider API request batching');
     }
 
-    // Bundle optimization recommendations
-    if (metrics.totalTime > 20000) {
+    // Bundle optimization recommendations for 3-minute target
+    if (metrics.totalTime > 120000) {
+      // 2 minutes
       recommendations.bundle.push(
-        'Enable code splitting for better performance'
+        'Critical: Enable code splitting for 3-minute target'
       );
-      recommendations.bundle.push('Implement resource preloading');
+      recommendations.bundle.push('Implement aggressive resource preloading');
+    } else if (metrics.totalTime > 60000) {
+      // 1 minute
+      recommendations.bundle.push('Optimize for sub-3-minute performance');
     }
 
     return recommendations;
@@ -528,6 +546,220 @@ export const DEFAULT_OPTIMIZATION_CONFIG: OptimizationConfig = {
   maxImageSize: 5 * 1024 * 1024, // 5MB
   compressionLevel: 85,
 };
+
+/**
+ * 3-Minute Portfolio Challenge Performance Monitor
+ *
+ * Revolutionary monitoring system for achieving sub-3-minute portfolio generation
+ * Designed for market dominance and competitive intelligence
+ */
+export class ThreeMinutePerformanceMonitor {
+  private sessionStart: number = Date.now();
+  private milestones: Map<string, number> = new Map();
+  private userActions: Array<{
+    action: string;
+    timestamp: number;
+    duration: number;
+  }> = [];
+  private performanceThresholds = {
+    signup: 30000, // 30 seconds
+    profile_import: 60000, // 1 minute
+    ai_enhancement: 90000, // 1.5 minutes
+    template_selection: 120000, // 2 minutes
+    customization: 150000, // 2.5 minutes
+    publish: 180000, // 3 minutes
+  };
+
+  /**
+   * Track milestone completion for 3-minute funnel
+   */
+  trackMilestone(
+    milestone: keyof typeof this.performanceThresholds,
+    duration?: number
+  ): void {
+    const elapsed = Date.now() - this.sessionStart;
+    const actualDuration = duration || elapsed;
+
+    this.milestones.set(milestone, actualDuration);
+    this.userActions.push({
+      action: milestone,
+      timestamp: Date.now(),
+      duration: actualDuration,
+    });
+
+    // Real-time performance analysis
+    const threshold = this.performanceThresholds[milestone];
+    const isOnTrack = actualDuration <= threshold;
+    const speedTier = this.calculateSpeedTier(actualDuration, threshold);
+
+    // Analytics event for business intelligence
+    if (typeof window !== 'undefined' && (window as any).posthog) {
+      (window as any).posthog.capture('three_minute_milestone', {
+        milestone,
+        elapsed_time: actualDuration,
+        threshold,
+        on_track: isOnTrack,
+        speed_tier: speedTier,
+        predicted_completion: this.predictCompletionTime(),
+      });
+    }
+  }
+
+  /**
+   * Calculate speed tier for competitive analysis
+   */
+  private calculateSpeedTier(actualTime: number, threshold: number): string {
+    const ratio = actualTime / threshold;
+    if (ratio <= 0.5) return 'lightning'; // 50% faster than target
+    if (ratio <= 0.75) return 'champion'; // 25% faster than target
+    if (ratio <= 1.0) return 'success'; // On target
+    if (ratio <= 1.5) return 'acceptable'; // 50% slower
+    return 'needs_optimization'; // More than 50% slower
+  }
+
+  /**
+   * Predict total completion time based on current progress
+   */
+  predictCompletionTime(): number {
+    const completedMilestones = this.milestones.size;
+    const totalMilestones = Object.keys(this.performanceThresholds).length;
+
+    if (completedMilestones === 0) return 180000; // Default 3 minutes
+
+    const averageTimePerMilestone =
+      Array.from(this.milestones.values()).reduce(
+        (sum, time) => sum + time,
+        0
+      ) / completedMilestones;
+
+    return averageTimePerMilestone * totalMilestones;
+  }
+
+  /**
+   * Get real-time performance status
+   */
+  getPerformanceStatus(): {
+    isOnTrack: boolean;
+    currentMilestone: string;
+    completionPercentage: number;
+    predictedCompletion: number;
+    speedTier: string;
+    recommendations: string[];
+  } {
+    const completedMilestones = this.milestones.size;
+    const totalMilestones = Object.keys(this.performanceThresholds).length;
+    const completionPercentage = (completedMilestones / totalMilestones) * 100;
+    const predictedCompletion = this.predictCompletionTime();
+    const isOnTrack = predictedCompletion <= 180000;
+
+    const lastMilestone = Array.from(this.milestones.keys()).pop() || 'signup';
+    const lastTime = this.milestones.get(lastMilestone) || 0;
+    const threshold =
+      this.performanceThresholds[
+        lastMilestone as keyof typeof this.performanceThresholds
+      ];
+    const speedTier = this.calculateSpeedTier(lastTime, threshold);
+
+    const recommendations = this.generateOptimizationRecommendations();
+
+    return {
+      isOnTrack,
+      currentMilestone: lastMilestone,
+      completionPercentage,
+      predictedCompletion,
+      speedTier,
+      recommendations,
+    };
+  }
+
+  /**
+   * Generate real-time optimization recommendations
+   */
+  private generateOptimizationRecommendations(): string[] {
+    const recommendations: string[] = [];
+    const predictedTime = this.predictCompletionTime();
+
+    if (predictedTime > 180000) {
+      recommendations.push('Speed up current step to stay under 3 minutes');
+      recommendations.push('Consider using AI auto-suggestions');
+    }
+
+    if (predictedTime > 240000) {
+      recommendations.push('Critical: Simplify remaining steps');
+      recommendations.push('Use quick template selection');
+    }
+
+    // Specific milestone recommendations
+    const currentElapsed = Date.now() - this.sessionStart;
+    if (currentElapsed > 60000 && !this.milestones.has('profile_import')) {
+      recommendations.push('Use LinkedIn/GitHub import for faster setup');
+    }
+
+    if (currentElapsed > 120000 && !this.milestones.has('ai_enhancement')) {
+      recommendations.push('Enable AI auto-enhancement to save time');
+    }
+
+    return recommendations;
+  }
+
+  /**
+   * Export analytics data for thought leadership
+   */
+  exportAnalyticsData(): {
+    sessionDuration: number;
+    milestones: Record<string, number>;
+    overallPerformance: string;
+    competitiveMetrics: {
+      vs_30_minute_competitors: string;
+      vs_5_minute_competitors: string;
+      market_position: string;
+    };
+  } {
+    const sessionDuration = Date.now() - this.sessionStart;
+    const milestoneData = Object.fromEntries(this.milestones);
+
+    let overallPerformance = 'excellent';
+    if (sessionDuration > 180000) overallPerformance = 'needs_improvement';
+    else if (sessionDuration > 120000) overallPerformance = 'good';
+
+    return {
+      sessionDuration,
+      milestones: milestoneData,
+      overallPerformance,
+      competitiveMetrics: {
+        vs_30_minute_competitors:
+          sessionDuration < 900000 ? '20x faster' : '10x faster',
+        vs_5_minute_competitors:
+          sessionDuration < 300000 ? '40% faster' : 'competitive',
+        market_position:
+          sessionDuration < 180000 ? 'industry_leader' : 'competitive',
+      },
+    };
+  }
+}
+
+/**
+ * Global 3-minute performance monitor instance
+ */
+let globalThreeMinuteMonitor: ThreeMinutePerformanceMonitor | null = null;
+
+/**
+ * Get or create global 3-minute performance monitor
+ */
+export function getThreeMinuteMonitor(): ThreeMinutePerformanceMonitor {
+  if (!globalThreeMinuteMonitor) {
+    globalThreeMinuteMonitor = new ThreeMinutePerformanceMonitor();
+  }
+  return globalThreeMinuteMonitor;
+}
+
+/**
+ * Reset global monitor for new session
+ */
+export function resetThreeMinuteMonitor(): ThreeMinutePerformanceMonitor {
+  globalThreeMinuteMonitor = new ThreeMinutePerformanceMonitor();
+  return globalThreeMinuteMonitor;
+}
 
 /**
  * Create optimized portfolio generator

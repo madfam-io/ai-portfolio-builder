@@ -1,3 +1,16 @@
+/**
+ * MADFAM Code Available License (MCAL) v1.0
+ * 
+ * Copyright (c) 2025-present MADFAM. All rights reserved.
+ * 
+ * This source code is made available for viewing and educational purposes only.
+ * Commercial use is strictly prohibited except by MADFAM and licensed partners.
+ * 
+ * For commercial licensing: licensing@madfam.com
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+ */
+
 'use client';
 
 import { useState } from 'react';
@@ -44,7 +57,7 @@ interface SkillSuggestion {
 
 export function AIAdvancedFeatures({ portfolioId }: { portfolioId: string }) {
   const { user } = useAuthStore();
-  const { selectedModel, updateModelSelection } = useAIStore();
+  const { selectedModels, setSelectedModel } = useAIStore();
   const { toast } = useToast();
 
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -86,7 +99,7 @@ export function AIAdvancedFeatures({ portfolioId }: { portfolioId: string }) {
         },
         body: JSON.stringify({
           userProfile,
-          model: selectedModel,
+          model: selectedModels.bio,
         }),
       });
 
@@ -144,7 +157,7 @@ export function AIAdvancedFeatures({ portfolioId }: { portfolioId: string }) {
         body: JSON.stringify({
           currentSkills: currentSkills.split(',').map(s => s.trim()),
           industry: 'technology', // Could be dynamic
-          model: selectedModel,
+          model: selectedModels.bio,
         }),
       });
 
@@ -194,7 +207,7 @@ export function AIAdvancedFeatures({ portfolioId }: { portfolioId: string }) {
         },
         body: JSON.stringify({
           url: competitorUrl,
-          model: selectedModel,
+          model: selectedModels.bio,
         }),
       });
 
@@ -422,8 +435,8 @@ export function AIAdvancedFeatures({ portfolioId }: { portfolioId: string }) {
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">AI Model</span>
             <Select
-              value={selectedModel}
-              onValueChange={value => updateModelSelection('general', value)}
+              value={selectedModels.bio}
+              onValueChange={value => setSelectedModel('bio', value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue />
