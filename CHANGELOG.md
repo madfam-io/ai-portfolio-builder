@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.3.1](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.3.0...v0.3.1) (2025-06-21)
+
+
+### Features
+
+* implement feedback system with API endpoints and UI components ([09b46ed](https://github.com/madfam-io/ai-portfolio-builder/commit/09b46ed800d31c5af2772c003109d4a9b83b6ea9))
+
 ## 0.3.0 (2025-06-21)
 
 
