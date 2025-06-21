@@ -256,7 +256,7 @@ class EnhancedPostHogService {
 
     // Check cache first
     if (this.abTestCache.has(testKey)) {
-      return this.abTestCache.get(testKey) as boolean;
+      return this.abTestCache.get(testKey) as string;
     }
 
     const testConfig = AB_TESTS[testKey];
@@ -342,7 +342,7 @@ class EnhancedPostHogService {
   /**
    * Get feature flag payload
    */
-  getFeatureFlagPayload(flagKey: string): any {
+  getFeatureFlagPayload(flagKey: string): unknown {
     if (!this.posthog || !this.initialized) return null;
 
     try {
@@ -481,14 +481,14 @@ export function useEnhancedPostHog() {
     if (isInitialized && user) {
       const userWithMetadata = {
         ...user,
-        user_metadata: (user as any).user_metadata as
+        user_metadata: (user as Record<string, unknown>).user_metadata as
           | { full_name?: string }
           | undefined,
-        created_at: (user as any).created_at as string | undefined,
-        email_confirmed_at: (user as any).email_confirmed_at as
+        created_at: (user as Record<string, unknown>).created_at as
           | string
-          | null
           | undefined,
+        email_confirmed_at: (user as Record<string, unknown>)
+          .email_confirmed_at as string | null | undefined,
       };
       enhancedPostHog.identify(user.id, {
         email: user.email,

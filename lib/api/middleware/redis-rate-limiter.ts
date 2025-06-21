@@ -316,7 +316,7 @@ export function withRateLimit<T extends unknown[]>(
   handler: (...args: T) => Promise<NextResponse>,
   type: keyof typeof RATE_LIMIT_CONFIGS | RateLimitConfig = 'api',
   customLimit?: number
-): Promise<(...args: T) => Promise<NextResponse>> {
+): (...args: T) => Promise<NextResponse> {
   return async (...args: T): Promise<NextResponse> => {
     // Extract request from arguments (assuming first arg is NextRequest)
     const request = args[0] as NextRequest;

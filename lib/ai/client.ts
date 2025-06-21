@@ -46,7 +46,7 @@ export class AIClient {
   async getAvailableModels(): Promise<unknown[]> {
     const { data, error } = await apiClient.get(API_ENDPOINTS.ai.models);
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as unknown[];
   }
 
   /**
@@ -57,7 +57,7 @@ export class AIClient {
       API_ENDPOINTS.ai.modelSelection
     );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as Record<string, string>;
   }
 
   /**
@@ -85,7 +85,7 @@ export class AIClient {
       autoUpdate: this.autoUpdateModels,
     });
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as EnhancedContent;
   }
 
   /**
@@ -107,7 +107,7 @@ export class AIClient {
       }
     );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as ProjectEnhancement;
   }
 
   /**
@@ -136,7 +136,18 @@ export class AIClient {
       { projects }
     );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as {
+      results: Array<{
+        success: boolean;
+        data: ProjectEnhancement | null;
+        error: string | null;
+      }>;
+      summary: {
+        total: number;
+        successful: number;
+        failed: number;
+      };
+    };
   }
 
   /**
@@ -160,7 +171,7 @@ export class AIClient {
       }
     );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as TemplateRecommendation;
   }
 
   /**
@@ -183,7 +194,19 @@ export class AIClient {
       API_ENDPOINTS.ai.recommendTemplate
     );
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as {
+      templates: Record<
+        string,
+        {
+          name: string;
+          description: string;
+          features: string[];
+          preview: string;
+          bestFor: string[];
+          industries: string[];
+        }
+      >;
+    };
   }
 
   /**
@@ -200,7 +223,15 @@ export class AIClient {
   }> {
     const { data, error } = await apiClient.get(API_ENDPOINTS.ai.enhanceBio);
     if (error) throw new AIClientError(error, 'REQUEST_FAILED');
-    return data;
+    return data as {
+      history: Array<{
+        id: string;
+        operation_type: string;
+        metadata: Record<string, unknown>;
+        created_at: string;
+      }>;
+      totalEnhancements: number;
+    };
   }
 
   /**

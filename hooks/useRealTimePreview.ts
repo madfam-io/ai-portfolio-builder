@@ -59,7 +59,7 @@ interface UseRealTimePreviewReturn {
   testResponsiveBreakpoint: (width: number, height: number) => void;
 
   // Preview utilities
-  capturePreviewScreenshot: () => Promise<string | null>;
+  capturePreviewScreenshot: () => string | null;
   exportPreviewHTML: () => string;
   getPreviewUrl: () => string | null;
 }

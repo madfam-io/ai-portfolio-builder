@@ -69,7 +69,7 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
           method,
           path: pathname,
           status: 'success',
-          status_code: response.status,
+          status_code: (response as { status?: number })?.status || 200,
         });
       }
 
@@ -81,15 +81,25 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
           {
             ...metadata,
             duration_ms: duration,
-            status_code: response.status,
+            status_code: (response as { status?: number })?.status || 200,
             success: true,
           }
         );
       }
 
       // Add trace ID to response headers
-      if (traceId) {
-        response.headers.set('x-trace-id', traceId);
+      if (
+        traceId &&
+        response &&
+        typeof response === 'object' &&
+        'headers' in response
+      ) {
+        const responseWithHeaders = response as {
+          headers?: { set?: (key: string, value: string) => void };
+        };
+        if (responseWithHeaders.headers?.set) {
+          responseWithHeaders.headers.set('x-trace-id', traceId);
+        }
       }
 
       return response;

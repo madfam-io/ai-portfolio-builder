@@ -190,7 +190,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Recommend template based on user profile
    */
-  recommendTemplate(profile: UserProfile): Promise<TemplateRecommendation> {
+  recommendTemplate(profile: UserProfile): TemplateRecommendation {
     try {
       // Simple rule-based recommendation with scoring
       const templates = [
@@ -241,7 +241,7 @@ export class HuggingFaceService implements AIService {
   /**
    * Score content quality
    */
-  scoreContent(content: string, type: string): Promise<QualityScore> {
+  scoreContent(content: string, type: string): QualityScore {
     return this.contentScorer.scoreContent(content, type);
   }
 
@@ -267,12 +267,12 @@ export class HuggingFaceService implements AIService {
   /**
    * Get usage statistics
    */
-  getUsageStats(): Promise<{
+  getUsageStats(): {
     requestsToday: number;
     costToday: number;
     avgResponseTime: number;
     successRate: number;
-  }> {
+  } {
     // This would typically come from a monitoring service
     return {
       requestsToday: 0,
