@@ -97,7 +97,7 @@ export interface CodeQualityReport {
 export class AICodeQualityEngine {
   private performanceBaseline: Map<string, number> = new Map();
   private competitorBenchmarks: Map<string, number> = new Map();
-  private userBehaviorData: Map<string, any> = new Map();
+  private userBehaviorData: Map<string, unknown> = new Map();
 
   constructor() {
     this.initializeBaselines();
@@ -106,16 +106,16 @@ export class AICodeQualityEngine {
   /**
    * Analyze codebase and generate comprehensive business impact report
    */
-  async analyzeCodebase(
+  analyzeCodebase(
     codeFiles: string[],
     userTier: string = 'free',
     includeBusinessIntelligence: boolean = true
-  ): Promise<CodeQualityReport> {
+  ): CodeQualityReport {
     logger.info('Starting AI-powered code quality analysis...');
 
-    const metrics = await this.calculateQualityMetrics(codeFiles);
-    const businessImpact = await this.analyzeBusinessImpact(metrics);
-    const recommendations = await this.generateOptimizationRecommendations(
+    const metrics = this.calculateQualityMetrics(codeFiles);
+    const businessImpact = this.analyzeBusinessImpact(metrics);
+    const recommendations = this.generateOptimizationRecommendations(
       metrics,
       businessImpact,
       userTier
@@ -126,7 +126,7 @@ export class AICodeQualityEngine {
       metrics,
       businessImpact,
       recommendations,
-      industryBenchmarks: await this.getIndustryBenchmarks(),
+      industryBenchmarks: this.getIndustryBenchmarks(),
       executiveSummary: this.generateExecutiveSummary(metrics, businessImpact),
       technicalSummary: this.generateTechnicalSummary(metrics, recommendations),
       nextActions: this.prioritizeActions(recommendations),
@@ -134,7 +134,7 @@ export class AICodeQualityEngine {
 
     // Track usage for premium features
     if (includeBusinessIntelligence && userTier !== 'business') {
-      await this.trackPremiumFeatureUsage('advanced_code_analysis');
+      this.trackPremiumFeatureUsage('advanced_code_analysis');
     }
 
     logger.info('Code quality analysis completed', {
@@ -176,7 +176,7 @@ export class AICodeQualityEngine {
    */
   private analyzeBusinessImpact(
     metrics: CodeQualityMetrics
-  ): Promise<BusinessImpactAnalysis> {
+  ): BusinessImpactAnalysis {
     const loadTimeImprovement = (100 - metrics.performanceScore) * 10; // ms
     const conversionRateIncrease = loadTimeImprovement * 0.1; // 0.1% per 10ms improvement
 
@@ -207,7 +207,7 @@ export class AICodeQualityEngine {
     metrics: CodeQualityMetrics,
     businessImpact: BusinessImpactAnalysis,
     userTier: string
-  ): Promise<OptimizationRecommendation[]> {
+  ): OptimizationRecommendation[] {
     const recommendations: OptimizationRecommendation[] = [];
 
     // Critical performance optimizations
@@ -341,11 +341,11 @@ export class AICodeQualityEngine {
   /**
    * Get industry benchmarks for competitive analysis
    */
-  private getIndustryBenchmarks(): Promise<{
+  private getIndustryBenchmarks(): {
     performancePercentile: number;
     qualityRanking: number;
     innovationScore: number;
-  }> {
+  } {
     // In production, this would fetch real industry data
     return {
       performancePercentile: Math.random() * 30 + 70, // 70-100th percentile
@@ -465,7 +465,7 @@ SUCCESS METRICS:
   /**
    * Track premium feature usage for monetization
    */
-  private trackPremiumFeatureUsage(feature: string): Promise<void> {
+  private trackPremiumFeatureUsage(feature: string): void {
     logger.info('Premium feature usage tracked', { feature });
     // In production, this would track usage for billing and analytics
   }
@@ -500,19 +500,14 @@ export const aiCodeQualityEngine = new AICodeQualityEngine();
 export function analyzeCodeQuality(
   codeFiles: string[],
   userTier: string = 'free'
-): Promise<CodeQualityReport> {
+): CodeQualityReport {
   return aiCodeQualityEngine.analyzeCodebase(codeFiles, userTier);
 }
 
 /**
  * Generate business impact report for executives
  */
-export async function generateBusinessImpactReport(
-  codeFiles: string[]
-): Promise<string> {
-  const report = await aiCodeQualityEngine.analyzeCodebase(
-    codeFiles,
-    'business'
-  );
+export function generateBusinessImpactReport(codeFiles: string[]): string {
+  const report = aiCodeQualityEngine.analyzeCodebase(codeFiles, 'business');
   return report.executiveSummary;
 }
