@@ -64,12 +64,7 @@ const PACKAGE_LICENSES = {
 };
 
 // File patterns to check
-const FILE_PATTERNS = [
-  '**/*.js',
-  '**/*.jsx',
-  '**/*.ts',
-  '**/*.tsx',
-];
+const FILE_PATTERNS = ['**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx'];
 
 // Directories to exclude
 const IGNORE_PATTERNS = [
@@ -103,23 +98,26 @@ function getPackageForFile(filePath) {
 function addLicenseHeader(filePath, licenseType) {
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
-  
+
   // Check if file already has a license header
-  if (lines[0].includes('/**') && (lines[1].includes('@license') || lines[1].includes('License'))) {
+  if (
+    lines[0].includes('/**') &&
+    (lines[1].includes('@license') || lines[1].includes('License'))
+  ) {
     return false;
   }
-  
+
   const header = LICENSE_HEADERS[licenseType];
-  
+
   // Handle shebang lines
   let insertIndex = 0;
   if (lines[0].startsWith('#!')) {
     insertIndex = 1;
   }
-  
+
   // Insert header
   lines.splice(insertIndex, 0, header, '');
-  
+
   fs.writeFileSync(filePath, lines.join('\n'));
   return true;
 }
@@ -130,16 +128,16 @@ function processPackage(packageName, packagePath) {
     console.warn(`No license type configured for ${packageName}`);
     return { processed: 0, skipped: 0 };
   }
-  
+
   let processed = 0;
   let skipped = 0;
-  
+
   FILE_PATTERNS.forEach(pattern => {
     const files = glob.sync(path.join(packagePath, 'src', pattern), {
       ignore: IGNORE_PATTERNS,
       nodir: true,
     });
-    
+
     files.forEach(file => {
       if (addLicenseHeader(file, licenseType)) {
         processed++;
@@ -149,7 +147,7 @@ function processPackage(packageName, packagePath) {
       }
     });
   });
-  
+
   return { processed, skipped };
 }
 
@@ -172,4 +170,6 @@ packages.forEach(packageName => {
   }
 });
 
-console.log(`\n✨ Done! Added headers to ${totalProcessed} files (${totalSkipped} already had headers)\n`);
+console.log(
+  `\n✨ Done! Added headers to ${totalProcessed} files (${totalSkipped} already had headers)\n`
+);

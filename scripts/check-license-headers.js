@@ -21,7 +21,7 @@ const glob = require('glob');
 const LICENSE_HEADERS = [
   'MADFAM Code Available License (MCAL) v1.0',
   '@license MIT',
-  'MIT License'
+  'MIT License',
 ];
 
 // File patterns to check
@@ -103,7 +103,7 @@ function checkLicenseHeaders() {
       const hasLicenseHeader = LICENSE_HEADERS.some(header =>
         firstLines.includes(header)
       );
-      
+
       if (!hasLicenseHeader) {
         missingHeaders.push(file);
       }
