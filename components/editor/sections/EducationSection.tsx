@@ -23,6 +23,16 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Education } from '@/types/portfolio';
 
@@ -50,6 +60,8 @@ export function EducationSection({
   const { t } = useLanguage();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eduToDelete, setEduToDelete] = useState<string | null>(null);
   const [formData, setFormData] = useState<EducationFormData>({
     institution: '',
     degree: '',
@@ -133,14 +145,15 @@ export function EducationSection({
   };
 
   const handleDelete = (id: string) => {
-    // eslint-disable-next-line no-alert
-    if (
-      window.confirm(
-        t.confirmDeleteEducation ||
-          'Are you sure you want to delete this education?'
-      )
-    ) {
-      onUpdate(education.filter(edu => edu.id !== id));
+    setEduToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (eduToDelete) {
+      onUpdate(education.filter(edu => edu.id !== eduToDelete));
+      setDeleteDialogOpen(false);
+      setEduToDelete(null);
     }
   };
 
@@ -456,6 +469,25 @@ export function EducationSection({
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Education</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.confirmDeleteEducation ||
+                'Are you sure you want to delete this education?'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

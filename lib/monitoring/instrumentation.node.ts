@@ -22,6 +22,8 @@
 // The build warnings about missing winston-transport and exporter-jaeger are from optional
 // dependencies that are not needed for our use case
 if (process.env.OTEL_ENABLED === 'true') {
+  // Using console.log here is intentional - this runs during initialization
+  // before any logging infrastructure is set up
   console.log('OpenTelemetry instrumentation is currently disabled');
 }
 

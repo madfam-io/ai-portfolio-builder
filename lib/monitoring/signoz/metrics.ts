@@ -25,6 +25,7 @@ import type {
   Meter,
   Attributes,
 } from '@opentelemetry/api';
+import { logger } from '../../utils/logger';
 
 // Get the global meter
 const meter: Meter = metrics.getMeter(
@@ -199,7 +200,7 @@ export const recordBusinessMetric = (
       counter.add(value, attributes);
     }
   } catch (error) {
-    console.error(`Failed to record business metric ${metric}:`, error);
+    logger.error(`Failed to record business metric ${metric}:`, error as Error);
   }
 };
 
@@ -223,7 +224,10 @@ export const recordPerformanceMetric = (
       }
     }
   } catch (error) {
-    console.error(`Failed to record performance metric ${metric}:`, error);
+    logger.error(
+      `Failed to record performance metric ${metric}:`,
+      error as Error
+    );
   }
 };
 

@@ -29,6 +29,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { ImageUpload } from '@/components/ui/image-upload';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Certification } from '@/types/portfolio';
@@ -59,6 +69,8 @@ export function CertificationsSection({
   const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [certToDelete, setCertToDelete] = useState<string | null>(null);
   const [formData, setFormData] = useState<CertificationFormData>({
     name: '',
     issuer: '',
@@ -137,14 +149,15 @@ export function CertificationsSection({
   };
 
   const handleDelete = (id: string) => {
-    // eslint-disable-next-line no-alert
-    if (
-      window.confirm(
-        t.confirmDeleteCertification ||
-          'Are you sure you want to delete this certification?'
-      )
-    ) {
-      onUpdate(certifications.filter(cert => cert.id !== id));
+    setCertToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (certToDelete) {
+      onUpdate(certifications.filter(cert => cert.id !== certToDelete));
+      setDeleteDialogOpen(false);
+      setCertToDelete(null);
     }
   };
 
@@ -483,6 +496,25 @@ export function CertificationsSection({
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Certification</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.confirmDeleteCertification ||
+                'Are you sure you want to delete this certification?'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

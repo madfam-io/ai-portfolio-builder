@@ -113,6 +113,9 @@ class ErrorTracker {
 
     // Log to console in development or if enabled
     if (!this.isProduction || this.enableConsoleLogging) {
+      // Console logging is necessary here as a fallback mechanism
+      // This is the error tracking module itself, so we can't use other loggers
+      // which might depend on this module (circular dependency)
       console.error('Error captured:', {
         message: report.message,
         category: report.category,
@@ -135,6 +138,9 @@ class ErrorTracker {
    */
   capturePerformance(metric: PerformanceMetric): void {
     if (!this.isProduction || this.enableConsoleLogging) {
+      // Console logging is necessary here as a fallback mechanism
+      // This is the error tracking module itself, so we can't use other loggers
+      // which might depend on this module (circular dependency)
       console.log('Performance metric:', metric);
     }
 
@@ -162,6 +168,8 @@ class ErrorTracker {
         });
       }
     } catch (error) {
+      // Console error is necessary here as a last resort
+      // We can't use the error tracker to report its own failures
       console.error('Failed to send error report:', error);
     }
   }
@@ -185,6 +193,8 @@ class ErrorTracker {
         });
       }
     } catch (error) {
+      // Console error is necessary here as a last resort
+      // We can't use the error tracker to report its own failures
       console.error('Failed to send performance metric:', error);
     }
   }

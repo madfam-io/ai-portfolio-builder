@@ -13,6 +13,7 @@
 
 import { SupabaseClient } from '@supabase/supabase-js';
 import { startOfMonth, endOfMonth, subMonths, format } from 'date-fns';
+import { logger } from '@/lib/utils/logger';
 
 // Revenue metrics types
 export interface RevenueMetrics {
@@ -43,6 +44,17 @@ export interface RevenueTrend {
   mrr: number;
   customerCount: number;
   churnRate: number;
+}
+
+export interface SubscriptionRecord {
+  id: string;
+  user_id: string;
+  plan: string;
+  status: 'active' | 'trialing' | 'canceled' | 'past_due';
+  amount?: number;
+  created_at: string;
+  updated_at: string;
+  canceled_at?: string;
 }
 
 export interface CustomerMetrics {
@@ -275,7 +287,9 @@ export class RevenueMetricsService {
   /**
    * Calculate MRR from a list of subscriptions
    */
-  private calculateMrrFromSubscriptions(subscriptions: any[]): number {
+  private calculateMrrFromSubscriptions(
+    subscriptions: SubscriptionRecord[]
+  ): number {
     return subscriptions.reduce((total, sub) => {
       return total + this.getSubscriptionMrr(sub);
     }, 0);
@@ -284,7 +298,7 @@ export class RevenueMetricsService {
   /**
    * Get MRR for a single subscription
    */
-  private getSubscriptionMrr(subscription: any): number {
+  private getSubscriptionMrr(subscription: SubscriptionRecord): number {
     // Skip free plans
     if (subscription.plan === 'free') return 0;
 
@@ -328,7 +342,7 @@ export class RevenueMetricsService {
     });
 
     if (error) {
-      console.error('Failed to track revenue event:', error);
+      logger.error('Failed to track revenue event:', error);
     }
   }
 }

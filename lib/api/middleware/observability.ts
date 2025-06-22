@@ -34,6 +34,135 @@ export interface ObservabilityConfig {
 }
 
 /**
+ * Helper to extract request context
+ */
+function extractRequestContext(
+  req: NextRequest,
+  customAttributes: Record<string, unknown>
+) {
+  const method = req.method;
+  const pathname = req.nextUrl.pathname;
+  const traceId = getCurrentTraceId();
+
+  const metadata = {
+    method,
+    path: pathname,
+    trace_id: traceId,
+    user_agent: req.headers.get('user-agent'),
+    referer: req.headers.get('referer'),
+    ...customAttributes,
+  };
+
+  return { method, pathname, traceId, metadata };
+}
+
+/**
+ * Helper to track success response
+ */
+async function trackSuccessResponse(
+  response: unknown,
+  duration: number,
+  context: {
+    metadata: Record<string, unknown>;
+    config: { trackPerformance: boolean; trackAnalytics: boolean };
+    req: NextRequest;
+  }
+) {
+  const { metadata, config, req } = context;
+  const statusCode = (response as { status?: number })?.status || 200;
+
+  if (config.trackPerformance) {
+    recordPerformanceMetric('apiResponseTime', duration, {
+      method: String(metadata.method),
+      path: String(metadata.path),
+      status: 'success',
+      status_code: statusCode,
+    });
+  }
+
+  if (config.trackAnalytics && process.env.NODE_ENV === 'production') {
+    await captureServerEvent(
+      req.headers.get('x-user-id') || 'anonymous',
+      'api_request',
+      {
+        ...metadata,
+        duration_ms: duration,
+        status_code: statusCode,
+        success: true,
+      }
+    );
+  }
+}
+
+/**
+ * Helper to track error response
+ */
+async function trackErrorResponse(
+  error: unknown,
+  duration: number,
+  context: {
+    metadata: Record<string, unknown>;
+    config: { trackPerformance: boolean; trackAnalytics: boolean };
+    req: NextRequest;
+  }
+) {
+  const { metadata, config, req } = context;
+  const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+  const statusCode = (error as { statusCode?: number })?.statusCode || 500;
+  const errorType = error instanceof Error ? error.constructor.name : 'unknown';
+
+  if (config.trackPerformance) {
+    recordPerformanceMetric('apiErrors', 1, {
+      method: String(metadata.method),
+      path: String(metadata.path),
+      error_type: errorType,
+      status_code: statusCode,
+    });
+
+    recordPerformanceMetric('apiResponseTime', duration, {
+      method: String(metadata.method),
+      path: String(metadata.path),
+      status: 'error',
+      status_code: statusCode,
+    });
+  }
+
+  if (config.trackAnalytics && process.env.NODE_ENV === 'production') {
+    await captureServerEvent(
+      req.headers.get('x-user-id') || 'anonymous',
+      'api_error',
+      {
+        ...metadata,
+        duration_ms: duration,
+        status_code: statusCode,
+        error: errorMessage,
+        error_type: errorType,
+      }
+    );
+  }
+
+  return { errorMessage, statusCode };
+}
+
+/**
+ * Helper to add trace ID to response headers
+ */
+function addTraceIdToResponse(response: unknown, traceId: string | undefined) {
+  if (!traceId || !response || typeof response !== 'object') {
+    return;
+  }
+
+  if ('headers' in response) {
+    const responseWithHeaders = response as {
+      headers?: { set?: (key: string, value: string) => void };
+    };
+    if (responseWithHeaders.headers?.set) {
+      responseWithHeaders.headers.set('x-trace-id', traceId);
+    }
+  }
+}
+
+/**
  * Apply observability to API routes
  */
 export function withObservability<T extends (...args: unknown[]) => unknown>(
@@ -49,19 +178,12 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
   return withAPMTracking(async (...args: unknown[]) => {
     const req = args[0] as NextRequest;
     const startTime = performance.now();
-    const method = req.method;
-    const pathname = req.nextUrl.pathname;
-    const traceId = getCurrentTraceId();
 
-    // Extract request metadata
-    const metadata = {
-      method,
-      path: pathname,
-      trace_id: traceId,
-      user_agent: req.headers.get('user-agent'),
-      referer: req.headers.get('referer'),
-      ...customAttributes,
-    };
+    // Extract request context
+    const { method, pathname, traceId, metadata } = extractRequestContext(
+      req,
+      customAttributes
+    );
 
     // Add span attributes
     addSpanAttributes({
@@ -76,85 +198,30 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
       const response = await handler(req, ...args);
       const duration = performance.now() - startTime;
 
-      // Track success metrics
-      if (trackPerformance) {
-        recordPerformanceMetric('apiResponseTime', duration, {
-          method,
-          path: pathname,
-          status: 'success',
-          status_code: (response as { status?: number })?.status || 200,
-        });
-      }
-
-      // Track analytics event
-      if (trackAnalytics && process.env.NODE_ENV === 'production') {
-        await captureServerEvent(
-          req.headers.get('x-user-id') || 'anonymous',
-          'api_request',
-          {
-            ...metadata,
-            duration_ms: duration,
-            status_code: (response as { status?: number })?.status || 200,
-            success: true,
-          }
-        );
-      }
+      // Track success metrics and analytics
+      await trackSuccessResponse(response, duration, {
+        metadata,
+        config: { trackPerformance, trackAnalytics },
+        req,
+      });
 
       // Add trace ID to response headers
-      if (
-        traceId &&
-        response &&
-        typeof response === 'object' &&
-        'headers' in response
-      ) {
-        const responseWithHeaders = response as {
-          headers?: { set?: (key: string, value: string) => void };
-        };
-        if (responseWithHeaders.headers?.set) {
-          responseWithHeaders.headers.set('x-trace-id', traceId);
-        }
-      }
+      addTraceIdToResponse(response, traceId);
 
       return response;
     } catch (error) {
       const duration = performance.now() - startTime;
-      const errorMessage =
-        error instanceof Error ? error.message : 'Unknown error';
-      const statusCode = (error as { statusCode?: number })?.statusCode || 500;
 
-      // Track error metrics
-      if (trackPerformance) {
-        recordPerformanceMetric('apiErrors', 1, {
-          method,
-          path: pathname,
-          error_type:
-            error instanceof Error ? error.constructor.name : 'unknown',
-          status_code: statusCode,
-        });
-
-        recordPerformanceMetric('apiResponseTime', duration, {
-          method,
-          path: pathname,
-          status: 'error',
-          status_code: statusCode,
-        });
-      }
-
-      // Track analytics event
-      if (trackAnalytics && process.env.NODE_ENV === 'production') {
-        await captureServerEvent(
-          req.headers.get('x-user-id') || 'anonymous',
-          'api_error',
-          {
-            ...metadata,
-            duration_ms: duration,
-            status_code: statusCode,
-            error: errorMessage,
-            error_type:
-              error instanceof Error ? error.constructor.name : 'unknown',
-          }
-        );
-      }
+      // Track error metrics and analytics
+      const { errorMessage, statusCode } = await trackErrorResponse(
+        error,
+        duration,
+        {
+          metadata,
+          config: { trackPerformance, trackAnalytics },
+          req,
+        }
+      );
 
       // Create error response
       const errorResponse = NextResponse.json(

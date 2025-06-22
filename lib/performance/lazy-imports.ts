@@ -17,6 +17,7 @@
  */
 
 import { lazy, ComponentType, ReactNode } from 'react';
+import { logger } from '../utils/logger';
 
 /**
  * Enhanced lazy loading with error boundaries and loading states
@@ -212,10 +213,10 @@ export const serviceWorkerUtils = {
     if ('serviceWorker' in navigator && process.env.NODE_ENV === 'production') {
       try {
         const registration = await navigator.serviceWorker.register('/sw.js');
-        console.log('Service Worker registered:', registration);
+        logger.info('Service Worker registered', { registration });
         return registration;
       } catch (error) {
-        console.error('Service Worker registration failed:', error);
+        logger.error('Service Worker registration failed:', error as Error);
         return undefined;
       }
     }
@@ -245,7 +246,7 @@ export const performanceMonitoring = {
       const entries = list.getEntries();
       const lastEntry = entries[entries.length - 1];
       if (lastEntry) {
-        console.log('LCP:', lastEntry.startTime);
+        logger.debug('LCP metric', { value: lastEntry.startTime });
       }
     }).observe({ entryTypes: ['largest-contentful-paint'] });
 
@@ -255,7 +256,9 @@ export const performanceMonitoring = {
       entries.forEach(entry => {
         const fidEntry = entry as PerformanceEventTiming;
         if (fidEntry.processingStart && fidEntry.startTime) {
-          console.log('FID:', fidEntry.processingStart - fidEntry.startTime);
+          logger.debug('FID metric', {
+            value: fidEntry.processingStart - fidEntry.startTime,
+          });
         }
       });
     }).observe({ entryTypes: ['first-input'] });
@@ -270,7 +273,7 @@ export const performanceMonitoring = {
           cumulativeScore += clsEntry.value;
         }
       });
-      console.log('CLS:', cumulativeScore);
+      logger.debug('CLS metric', { value: cumulativeScore });
     }).observe({ entryTypes: ['layout-shift'] });
   },
 
@@ -294,7 +297,7 @@ export const performanceMonitoring = {
         total: timing.loadEventEnd - timing.startTime,
       };
 
-      console.log('Navigation Timing:', metrics);
+      logger.debug('Navigation Timing', { metrics });
     });
   },
 };

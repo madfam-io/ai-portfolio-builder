@@ -147,7 +147,7 @@ export class IndustryBenchmarkingEngine {
    *
    * Creates PR-worthy research that positions MADFAM as market authority
    */
-  async generateStateOfIndustryReport(
+  generateStateOfIndustryReport(
     year: number = 2025
   ): Promise<StateOfIndustryReport> {
     logger.info('Generating State of Industry report', { year });
@@ -155,16 +155,16 @@ export class IndustryBenchmarkingEngine {
     const reportId = `state-of-industry-${year}`;
 
     // Analyze performance across all industries
-    const performanceAnalysis = await this.analyzeGlobalPerformance();
+    const performanceAnalysis = this.analyzeGlobalPerformance();
 
     // Identify key trends and patterns
-    const industryTrends = await this.identifyIndustryTrends();
+    const industryTrends = this.identifyIndustryTrends();
 
     // Generate market intelligence
-    const marketIntelligence = await this.generateMarketIntelligence();
+    const marketIntelligence = this.generateMarketIntelligence();
 
     // Create future predictions
-    const futureOutlook = await this.generateFutureOutlook();
+    const futureOutlook = this.generateFutureOutlook();
 
     const report: StateOfIndustryReport = {
       year,
@@ -239,7 +239,7 @@ and correlation studies between technical metrics and business outcomes.
     this.researchHistory.push(report);
 
     // Generate thought leadership content based on report
-    await this.generateThoughtLeadershipContent(report);
+    this.generateThoughtLeadershipContent(report);
 
     logger.info('State of Industry report generated', {
       reportId,
@@ -247,7 +247,7 @@ and correlation studies between technical metrics and business outcomes.
       dataPoints: report.dataPoints,
     });
 
-    return report;
+    return Promise.resolve(report);
   }
 
   /**
@@ -274,8 +274,8 @@ and correlation studies between technical metrics and business outcomes.
   /**
    * Generate thought leadership content for PR and marketing
    */
-  async generateThoughtLeadershipContent(
-    report: StateOfIndustryReport
+  generateThoughtLeadershipContent(
+    _report: StateOfIndustryReport
   ): Promise<ThoughtLeadershipContent[]> {
     const contentPieces: ThoughtLeadershipContent[] = [
       {
@@ -377,15 +377,13 @@ and correlation studies between technical metrics and business outcomes.
     ];
 
     this.contentLibrary.push(...contentPieces);
-    return contentPieces;
+    return Promise.resolve(contentPieces);
   }
 
   /**
    * Generate competitive intelligence report
    */
-  async generateCompetitiveIntelligence(
-    targetCompetitors: string[] = []
-  ): Promise<{
+  generateCompetitiveIntelligence(targetCompetitors: string[] = []): Promise<{
     competitorAnalysis: Array<{
       company: string;
       strengths: string[];
@@ -412,7 +410,7 @@ and correlation studies between technical metrics and business outcomes.
     const competitors =
       targetCompetitors.length > 0 ? targetCompetitors : defaultCompetitors;
 
-    return {
+    return Promise.resolve({
       competitorAnalysis: competitors.map(competitor => ({
         company: competitor,
         strengths: this.getCompetitorStrengths(competitor),
@@ -441,13 +439,13 @@ and correlation studies between technical metrics and business outcomes.
         'Create thought leadership through industry research',
         'Build sustainable competitive moats through technical excellence',
       ],
-    };
+    });
   }
 
   /**
    * Analyze global performance across all portfolios
    */
-  private async analyzeGlobalPerformance() {
+  private analyzeGlobalPerformance() {
     return {
       globalAverages: {
         performanceScore: 73.2,
@@ -499,7 +497,7 @@ and correlation studies between technical metrics and business outcomes.
   /**
    * Identify key industry trends
    */
-  private async identifyIndustryTrends() {
+  private identifyIndustryTrends() {
     return [
       {
         trend: 'AI-Powered Performance Optimization',
@@ -534,7 +532,7 @@ and correlation studies between technical metrics and business outcomes.
   /**
    * Generate market intelligence insights
    */
-  private async generateMarketIntelligence() {
+  private generateMarketIntelligence() {
     return {
       investmentFlows: [
         {
@@ -577,7 +575,7 @@ and correlation studies between technical metrics and business outcomes.
   /**
    * Generate future outlook and predictions
    */
-  private async generateFutureOutlook() {
+  private generateFutureOutlook() {
     return {
       predictions: [
         {
@@ -622,8 +620,8 @@ and correlation studies between technical metrics and business outcomes.
    * Generate executive summary for industry report
    */
   private generateExecutiveSummary(
-    performanceAnalysis: any,
-    trends: any
+    _performanceAnalysis: any,
+    _trends: any
   ): string {
     return `
 THE PORTFOLIO PERFORMANCE REVOLUTION: 2025 STATE OF THE INDUSTRY
@@ -758,7 +756,7 @@ and positions technical excellence as the primary driver of professional success
     );
   }
 
-  private getCompetitorThreats(competitor: string): string[] {
+  private getCompetitorThreats(_competitor: string): string[] {
     return [
       'AI-powered optimization becoming standard',
       'Mobile performance requirements increasing',
@@ -767,7 +765,7 @@ and positions technical excellence as the primary driver of professional success
     ];
   }
 
-  private getCompetitorOpportunities(competitor: string): string[] {
+  private getCompetitorOpportunities(_competitor: string): string[] {
     return [
       'AI optimization integration',
       'Mobile performance improvement',
@@ -779,7 +777,7 @@ and positions technical excellence as the primary driver of professional success
   /**
    * Generate industry-specific benchmark data
    */
-  private async generateIndustryBenchmark(
+  private generateIndustryBenchmark(
     industry: string
   ): Promise<IndustryBenchmark> {
     const baseMetrics = {
@@ -836,7 +834,7 @@ and positions technical excellence as the primary driver of professional success
     };
 
     this.benchmarkData.set(industry, benchmark);
-    return benchmark;
+    return Promise.resolve(benchmark);
   }
 
   /**
@@ -867,11 +865,11 @@ and positions technical excellence as the primary driver of professional success
   /**
    * Enhance benchmarks with competitive intelligence
    */
-  private async enhanceWithCompetitiveIntelligence(
+  private enhanceWithCompetitiveIntelligence(
     benchmark: IndustryBenchmark,
-    industry: string
+    _industry: string
   ): Promise<IndustryBenchmark['insights']> {
-    return {
+    return Promise.resolve({
       ...benchmark.insights,
       marketOpportunities: [
         ...benchmark.insights.marketOpportunities,
@@ -891,7 +889,7 @@ and positions technical excellence as the primary driver of professional success
         'Predictive performance analytics',
         'Automated competitive benchmarking',
       ],
-    };
+    });
   }
 
   /**
@@ -929,15 +927,15 @@ export const industryBenchmarkingEngine = new IndustryBenchmarkingEngine();
 /**
  * Convenience functions for research and analysis
  */
-export async function generateStateOfIndustryReport(year?: number) {
+export function generateStateOfIndustryReport(year?: number) {
   return industryBenchmarkingEngine.generateStateOfIndustryReport(year);
 }
 
-export async function getIndustryBenchmarks(industry: string) {
+export function getIndustryBenchmarks(industry: string) {
   return industryBenchmarkingEngine.getIndustryBenchmarks(industry, true);
 }
 
-export async function generateCompetitiveIntelligence(competitors?: string[]) {
+export function generateCompetitiveIntelligence(competitors?: string[]) {
   return industryBenchmarkingEngine.generateCompetitiveIntelligence(
     competitors
   );

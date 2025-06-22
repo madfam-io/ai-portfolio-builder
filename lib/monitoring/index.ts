@@ -45,6 +45,7 @@ export {
 // Import the individual functions for internal use
 import { initializeMonitoring } from './error-tracking';
 import { initializeHealthMonitoring } from './health-check';
+import { logger } from '../utils/logger';
 
 export type { ErrorReport, PerformanceMetric } from './error-tracking';
 
@@ -59,19 +60,19 @@ export function initializeAllMonitoring(): void {
   try {
     // Initialize error tracking and performance monitoring
     initializeMonitoring();
-    console.log('✅ Error tracking and performance monitoring initialized');
+    logger.info('Error tracking and performance monitoring initialized');
 
     // Initialize health monitoring
     initializeHealthMonitoring();
-    console.log('✅ Health monitoring initialized');
+    logger.info('Health monitoring initialized');
 
     // Start APM if in production
     if (process.env.NODE_ENV === 'production') {
-      console.log('✅ APM enabled for production environment');
+      logger.info('APM enabled for production environment');
     }
 
-    console.log('🚀 All monitoring systems initialized successfully');
+    logger.info('All monitoring systems initialized successfully');
   } catch (error) {
-    console.error('❌ Failed to initialize monitoring systems:', error);
+    logger.error('Failed to initialize monitoring systems:', error as Error);
   }
 }

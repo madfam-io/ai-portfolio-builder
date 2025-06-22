@@ -569,7 +569,38 @@ export class UniversalExperimentEngine {
       throw new Error(`Experiment ${experimentId} not found`);
     }
 
-    // Check time limits
+    // Check time-based stopping conditions
+    const timeCheck = this.checkTimeBasedStopping(experiment);
+    if (timeCheck) return timeCheck;
+
+    // Check sample size stopping conditions
+    const sampleSizeCheck = this.checkSampleSizeStopping(experiment);
+    if (sampleSizeCheck) return sampleSizeCheck;
+
+    // Get experiment results for statistical analysis
+    const results = await this.getExperimentResults(experimentId);
+
+    // Check for valid experiment setup
+    const setupCheck = this.checkExperimentSetup(experiment);
+    if (setupCheck) return setupCheck;
+
+    // Check for statistical significance and determine recommendation
+    return this.checkStatisticalSignificance(experiment, results);
+  }
+
+  /**
+   * Check time-based stopping conditions
+   */
+  private checkTimeBasedStopping(experiment: UniversalExperimentConfig): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } | null {
     const now = new Date();
     if (experiment.schedule.endDate && now > experiment.schedule.endDate) {
       return {
@@ -578,8 +609,22 @@ export class UniversalExperimentEngine {
         recommendation: 'continue', // Manual review needed
       };
     }
+    return null;
+  }
 
-    // Check sample size requirements
+  /**
+   * Check sample size stopping conditions
+   */
+  private checkSampleSizeStopping(experiment: UniversalExperimentConfig): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } | null {
     const totalAssignments = experiment.variants.reduce(
       (sum, v) => sum + v.performance.assignments,
       0
@@ -592,9 +637,22 @@ export class UniversalExperimentEngine {
         recommendation: 'continue',
       };
     }
+    return null;
+  }
 
-    // Statistical significance analysis
-    const results = await this.getExperimentResults(experimentId);
+  /**
+   * Check experiment setup validity
+   */
+  private checkExperimentSetup(experiment: UniversalExperimentConfig): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } | null {
     const controlVariant = experiment.variants.find(v => v.isControl);
     const treatmentVariants = experiment.variants.filter(v => !v.isControl);
 
@@ -605,11 +663,72 @@ export class UniversalExperimentEngine {
         recommendation: 'redesign',
       };
     }
+    return null;
+  }
+
+  /**
+   * Check statistical significance and business metrics
+   */
+  private checkStatisticalSignificance(
+    experiment: UniversalExperimentConfig,
+    results: Map<string, ExperimentResult[]>
+  ): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } {
+    const controlVariant = experiment.variants.find(v => v.isControl);
+    if (!controlVariant) {
+      return {
+        shouldStop: true,
+        reason: 'No control variant found',
+        recommendation: 'redesign',
+      };
+    }
+    const treatmentVariants = experiment.variants.filter(v => !v.isControl);
+
+    // Check if we have sufficient data
+    const dataCheck = this.checkSufficientData(
+      experiment,
+      results,
+      controlVariant
+    );
+    if (dataCheck) return dataCheck;
 
     // Find best performing treatment
-    let bestTreatment: { variantId: string; improvement: number } | null = null;
-    let hasSignificantResult = false;
+    const { bestTreatment, hasSignificantResult } = this.findBestTreatment(
+      experiment,
+      results,
+      controlVariant,
+      treatmentVariants
+    );
 
+    // Make recommendation based on results
+    return this.makeRecommendation(hasSignificantResult, bestTreatment);
+  }
+
+  /**
+   * Check if we have sufficient data for analysis
+   */
+  private checkSufficientData(
+    experiment: UniversalExperimentConfig,
+    results: Map<string, ExperimentResult[]>,
+    controlVariant: UniversalExperimentVariant
+  ): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } | null {
     const controlResults = results.get(controlVariant.id) || [];
     const primaryControlResult = controlResults.find(
       r => r.metricId === experiment.metrics.primary.id
@@ -622,6 +741,23 @@ export class UniversalExperimentEngine {
         recommendation: 'continue',
       };
     }
+    return null;
+  }
+
+  /**
+   * Find the best performing treatment variant
+   */
+  private findBestTreatment(
+    experiment: UniversalExperimentConfig,
+    results: Map<string, ExperimentResult[]>,
+    controlVariant: UniversalExperimentVariant,
+    treatmentVariants: UniversalExperimentVariant[]
+  ): {
+    bestTreatment: { variantId: string; improvement: number } | null;
+    hasSignificantResult: boolean;
+  } {
+    let bestTreatment: { variantId: string; improvement: number } | null = null;
+    let hasSignificantResult = false;
 
     for (const treatmentVariant of treatmentVariants) {
       const treatmentResults = results.get(treatmentVariant.id) || [];
@@ -646,30 +782,40 @@ export class UniversalExperimentEngine {
       }
     }
 
-    // Decision logic
-    if (
-      hasSignificantResult &&
-      bestTreatment &&
-      bestTreatment.improvement > 0
-    ) {
-      return {
-        shouldStop: true,
-        reason: `Significant positive result found: ${(bestTreatment.improvement * 100).toFixed(2)}% improvement`,
-        recommendation: 'deploy_winner',
-        winnerVariantId: bestTreatment.variantId,
-      };
-    }
+    return { bestTreatment, hasSignificantResult };
+  }
 
-    if (
-      hasSignificantResult &&
-      bestTreatment &&
-      bestTreatment.improvement < 0
-    ) {
-      return {
-        shouldStop: true,
-        reason: `Significant negative result found: ${(Math.abs(bestTreatment.improvement) * 100).toFixed(2)}% decrease`,
-        recommendation: 'deploy_control',
-      };
+  /**
+   * Make recommendation based on statistical results
+   */
+  private makeRecommendation(
+    hasSignificantResult: boolean,
+    bestTreatment: { variantId: string; improvement: number } | null
+  ): {
+    shouldStop: boolean;
+    reason: string;
+    recommendation:
+      | 'deploy_winner'
+      | 'deploy_control'
+      | 'continue'
+      | 'redesign';
+    winnerVariantId?: string;
+  } {
+    if (hasSignificantResult && bestTreatment) {
+      if (bestTreatment.improvement > 0) {
+        return {
+          shouldStop: true,
+          reason: `Significant positive result found: ${(bestTreatment.improvement * 100).toFixed(2)}% improvement`,
+          recommendation: 'deploy_winner',
+          winnerVariantId: bestTreatment.variantId,
+        };
+      } else {
+        return {
+          shouldStop: true,
+          reason: `Significant negative result found: ${(Math.abs(bestTreatment.improvement) * 100).toFixed(2)}% decrease`,
+          recommendation: 'deploy_control',
+        };
+      }
     }
 
     return {

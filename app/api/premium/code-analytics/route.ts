@@ -30,19 +30,102 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { aiCodeQualityEngine } from '@/lib/ai/code-quality/engine';
+import {
+  aiCodeQualityEngine,
+  CodeQualityReport,
+} from '@/lib/ai/code-quality/engine';
 import { logger } from '@/lib/utils/logger';
 // import { withRateLimit } from '@/lib/api/middleware/rate-limit';
 import { usageTracker } from '@/lib/analytics/usage-tracking';
 
 export const dynamic = 'force-dynamic';
 
+// Type definitions for usage metrics and analytics
+interface UsageAnalytics {
+  currentTier: string;
+  totalUsage: number;
+  revenueOpportunity: number;
+  suggestedTier: string;
+  competitiveRanking: number;
+  billing: {
+    nextBillingDate: Date;
+    usage: number;
+    limit: number;
+  };
+}
+
+interface UpsellOpportunity {
+  type: string;
+  message: string;
+  value: number | string;
+  urgency: 'high' | 'medium' | 'low';
+}
+
+interface ClientBranding {
+  logo?: string;
+  companyName?: string;
+  brandColors?: {
+    primary: string;
+    secondary: string;
+  };
+}
+
+interface PDFReportData {
+  format: 'pdf';
+  data: CodeQualityReport;
+  branding?: ClientBranding;
+  downloadUrl: string;
+}
+
+interface DashboardWidget {
+  type: string;
+  data: unknown;
+}
+
+interface DashboardData {
+  format: 'dashboard';
+  widgets: DashboardWidget[];
+}
+
+interface UsageRecommendation {
+  type: string;
+  message: string;
+  action: string;
+}
+
+interface UpgradeOpportunity {
+  type: string;
+  value: number;
+  message: string;
+}
+
+interface EnhancedCodeQualityReport extends CodeQualityReport {
+  enterpriseFeatures?: {
+    customBenchmarking: ReturnType<typeof generateCustomBenchmarks>;
+    competitiveIntelligence: ReturnType<
+      typeof generateCompetitiveIntelligence
+    > | null;
+    executiveReadyReports: boolean;
+    apiIntegrationSupport: boolean;
+    dedicatedSupport: boolean;
+  };
+  brandingOptions?: {
+    customLogo?: string;
+    companyName?: string;
+    brandColors?: {
+      primary: string;
+      secondary: string;
+    };
+    whiteLabeled: boolean;
+  };
+}
+
 // Helper functions for business intelligence features
 function generateUpsellOpportunities(
-  report: any,
+  report: CodeQualityReport,
   userTier: string,
-  usageMetrics: any
-) {
+  usageMetrics: UsageAnalytics
+): { opportunities: UpsellOpportunity[]; upgradeRecommended: boolean } {
   const opportunities = [];
 
   if (userTier === 'free' && report.metrics.revenueImpact > 5000) {
@@ -50,7 +133,7 @@ function generateUpsellOpportunities(
       type: 'upgrade_professional',
       message: 'Unlock advanced analytics with Professional plan',
       value: report.metrics.revenueImpact,
-      urgency: 'high',
+      urgency: 'high' as const,
     });
   }
 
@@ -60,14 +143,17 @@ function generateUpsellOpportunities(
       type: 'usage_limit_approaching',
       message: `You've used ${usageMetrics.totalUsage} of ${usageMetrics.billing?.limit} monthly requests`,
       value: 'Upgrade for higher limits',
-      urgency: 'medium',
+      urgency: 'medium' as const,
     });
   }
 
   return { opportunities, upgradeRecommended: opportunities.length > 0 };
 }
 
-function generatePDFReport(report: any, branding?: any) {
+function generatePDFReport(
+  report: CodeQualityReport,
+  branding?: ClientBranding
+): PDFReportData {
   // Simplified PDF report - return structured data
   return {
     format: 'pdf',
@@ -77,7 +163,7 @@ function generatePDFReport(report: any, branding?: any) {
   };
 }
 
-function generateDashboardData(report: any) {
+function generateDashboardData(report: CodeQualityReport): DashboardData {
   // Transform report into dashboard-friendly format
   return {
     format: 'dashboard',
@@ -94,7 +180,10 @@ function generateDashboardData(report: any) {
   };
 }
 
-async function getUserUsageAnalytics(userId: string, tier: string) {
+async function getUserUsageAnalytics(
+  userId: string,
+  tier: string
+): Promise<UsageAnalytics> {
   // Get usage analytics for the user
   const analytics = await usageTracker.getUsageAnalytics(userId);
 
@@ -409,15 +498,15 @@ function getPortfolioCodeFiles(portfolioId: string, _userId: string): string[] {
  * Enhance report based on tier and options
  */
 function enhanceReportForTier(
-  baseReport: any,
+  baseReport: CodeQualityReport,
   analysisType: string,
   options: {
     includeCompetitiveIntelligence?: boolean;
     customBenchmarks?: string[];
-    clientBranding?: any;
+    clientBranding?: ClientBranding;
   }
-) {
-  let enhancedReport = { ...baseReport };
+): EnhancedCodeQualityReport {
+  let enhancedReport: EnhancedCodeQualityReport = { ...baseReport };
 
   switch (analysisType) {
     case 'enterprise':
@@ -448,7 +537,10 @@ function enhanceReportForTier(
 /**
  * Generate usage recommendations
  */
-function generateUsageRecommendations(usageData: any, _userTier: string) {
+function generateUsageRecommendations(
+  usageData: UsageAnalytics,
+  _userTier: string
+): UsageRecommendation[] {
   const recommendations = [];
 
   if (usageData.totalUsage > usageData.billing.limit * 0.8) {
@@ -465,7 +557,10 @@ function generateUsageRecommendations(usageData: any, _userTier: string) {
 /**
  * Calculate upgrade opportunities
  */
-function calculateUpgradeOpportunities(usageData: any, _userTier: string) {
+function calculateUpgradeOpportunities(
+  usageData: UsageAnalytics,
+  _userTier: string
+): UpgradeOpportunity[] {
   const opportunities = [];
 
   if (_userTier === 'free' && usageData.revenueOpportunity > 1000) {

@@ -293,6 +293,7 @@ export default function MFASetup({ onStatusChange }: MFASetupProps) {
               alt="MFA QR Code"
               className="mx-auto border rounded-lg"
               style={{ maxWidth: '200px' }}
+              loading="lazy"
             />
           </div>
 

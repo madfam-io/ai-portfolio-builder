@@ -172,6 +172,7 @@ export default function ComponentGallery({
                           src={component.thumbnailUrl}
                           alt={component.name}
                           className="w-full h-full object-cover"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="flex items-center justify-center h-full">

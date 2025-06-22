@@ -267,7 +267,7 @@ export function useFeatureUsage(userId: string, userTier: string = 'free') {
     } finally {
       setLoading(false);
     }
-  }, [userId, userTier]);
+  }, [userTier]);
 
   const getFeatureUsagePercentage = useCallback(
     (feature: string): number => {

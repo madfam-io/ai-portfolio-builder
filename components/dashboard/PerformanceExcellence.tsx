@@ -117,7 +117,7 @@ export function PerformanceExcellenceDashboard({
     } finally {
       setLoading(false);
     }
-  }, [portfolioId, userTier]);
+  }, [portfolioId, userTier, isPremium]);
 
   useEffect(() => {
     loadPerformanceData();

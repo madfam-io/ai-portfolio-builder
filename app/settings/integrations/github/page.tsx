@@ -32,6 +32,16 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useLanguage } from '@/lib/i18n/refactored-context';
 import { logger } from '@/lib/utils/logger';
 import { showToast } from '@/lib/utils/toast';
@@ -64,6 +74,7 @@ export default function GitHubIntegrationPage() {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
+  const [disconnectDialogOpen, setDisconnectDialogOpen] = useState(false);
   const [connectionStatus, setConnectionStatus] =
     useState<GitHubConnectionStatus>({
       isConnected: false,
@@ -135,17 +146,11 @@ export default function GitHubIntegrationPage() {
     }
   };
 
-  const handleDisconnect = async () => {
-    // TODO: Replace with proper modal dialog
-    // eslint-disable-next-line no-alert
-    if (
-      !window.confirm(
-        'Are you sure you want to disconnect GitHub? This will remove all synced repository data.'
-      )
-    ) {
-      return;
-    }
+  const handleDisconnect = () => {
+    setDisconnectDialogOpen(true);
+  };
 
+  const confirmDisconnect = async () => {
     setDisconnecting(true);
     try {
       const response = await fetch('/api/v1/integrations/github/disconnect', {
@@ -167,6 +172,7 @@ export default function GitHubIntegrationPage() {
       showToast.error('Failed to disconnect GitHub');
     } finally {
       setDisconnecting(false);
+      setDisconnectDialogOpen(false);
     }
   };
 
@@ -539,6 +545,28 @@ export default function GitHubIntegrationPage() {
           </Button>
         </Card>
       )}
+
+      {/* Disconnect Confirmation Dialog */}
+      <AlertDialog
+        open={disconnectDialogOpen}
+        onOpenChange={setDisconnectDialogOpen}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disconnect GitHub</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to disconnect GitHub? This will remove all
+              synced repository data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDisconnect}>
+              Disconnect
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

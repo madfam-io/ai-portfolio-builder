@@ -55,6 +55,16 @@ import { useLanguage } from '@/lib/i18n/refactored-context';
 import { Project } from '@/types/portfolio';
 import { useToast } from '@/hooks/use-toast';
 import { usePortfolioStore } from '@/lib/store/portfolio-store';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 interface ProjectsSectionProps {
   projects: Project[];
@@ -247,6 +257,8 @@ export function ProjectsSection({
   const { currentPortfolio } = usePortfolioStore();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
   const [formData, setFormData] = useState<ProjectFormData>({
     title: '',
     description: '',
@@ -346,14 +358,15 @@ export function ProjectsSection({
   };
 
   const handleDelete = (id: string) => {
-    // eslint-disable-next-line no-alert
-    if (
-      window.confirm(
-        t.confirmDeleteProject ||
-          'Are you sure you want to delete this project?'
-      )
-    ) {
-      onUpdate(projects.filter(proj => proj.id !== id));
+    setProjectToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (projectToDelete) {
+      onUpdate(projects.filter(proj => proj.id !== projectToDelete));
+      setDeleteDialogOpen(false);
+      setProjectToDelete(null);
     }
   };
 
@@ -645,6 +658,25 @@ export function ProjectsSection({
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Project</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t.confirmDeleteProject ||
+                'Are you sure you want to delete this project?'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

@@ -20,6 +20,7 @@
 import { initializePostHog } from '@/lib/analytics/posthog/client';
 import { initializeAllMonitoring } from '../index';
 import { isOtelEnabled } from '../signoz';
+import { logger } from '../../utils/logger';
 
 /**
  * Initialize all monitoring systems
@@ -32,17 +33,17 @@ export const initializeUnifiedMonitoring = (): void => {
     // Initialize PostHog if not already initialized
     if (typeof window !== 'undefined') {
       initializePostHog();
-      console.log('✅ PostHog analytics initialized');
+      logger.info('PostHog analytics initialized');
     }
 
     // OpenTelemetry is initialized via instrumentation.ts
     if (isOtelEnabled()) {
-      console.log('✅ OpenTelemetry/SigNoz integration active');
+      logger.info('OpenTelemetry/SigNoz integration active');
     }
 
-    console.log('🚀 Unified monitoring system initialized successfully');
+    logger.info('Unified monitoring system initialized successfully');
   } catch (error) {
-    console.error('❌ Failed to initialize unified monitoring:', error);
+    logger.error('Failed to initialize unified monitoring:', error as Error);
   }
 };
 

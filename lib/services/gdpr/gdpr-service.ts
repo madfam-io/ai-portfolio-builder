@@ -87,6 +87,34 @@ export interface PrivacySettings {
   updatedAt: Date;
 }
 
+interface ConsentDatabaseRecord {
+  user_id: string;
+  consent_type: ConsentType;
+  granted: boolean;
+  timestamp: string;
+  ip_address: string;
+  user_agent?: string;
+  purpose: string;
+  legal_basis: LegalBasis;
+  expiry_date?: string;
+}
+
+interface UserExportData {
+  profile: unknown[];
+  portfolios: unknown[];
+  aiRequests: unknown[];
+  subscriptions: unknown[];
+  consent: unknown[];
+  auditLogs: unknown[];
+}
+
+interface ExportFileData {
+  userId: string;
+  exportDate: string;
+  requestId: string;
+  data: UserExportData;
+}
+
 /**
  * GDPR Compliance Service
  */
@@ -197,7 +225,7 @@ class GDPRService {
       const consentMap: Record<ConsentType, ConsentRecord | null> =
         this.getDefaultConsent();
 
-      data?.forEach((record: any) => {
+      data?.forEach((record: ConsentDatabaseRecord) => {
         consentMap[record.consent_type as ConsentType] = {
           userId: record.user_id,
           consentType: record.consent_type,
@@ -652,7 +680,7 @@ class GDPRService {
   /**
    * Generate export file and return download URL
    */
-  private generateExportFile(data: any): string {
+  private generateExportFile(data: ExportFileData): string {
     // In production, this would:
     // 1. Upload to secure cloud storage (S3, etc.)
     // 2. Generate a signed URL with expiration
@@ -759,7 +787,11 @@ class GDPRService {
   ): Promise<void> {
     if (!this.supabase) return;
 
-    const updateData: any = { status };
+    const updateData: {
+      status: DataExportRequest['status'];
+      completed_date?: string;
+      download_url?: string;
+    } = { status };
     if (status === 'completed') {
       updateData.completed_date = new Date().toISOString();
       if (downloadUrl) {
@@ -779,7 +811,10 @@ class GDPRService {
   ): Promise<void> {
     if (!this.supabase) return;
 
-    const updateData: any = { status };
+    const updateData: {
+      status: DataDeletionRequest['status'];
+      completed_date?: string;
+    } = { status };
     if (status === 'completed') {
       updateData.completed_date = new Date().toISOString();
     }

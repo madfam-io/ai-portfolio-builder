@@ -30,6 +30,16 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Globe,
   Plus,
   Shield,
@@ -67,6 +77,10 @@ export function DomainSettingsContent() {
   const [showAddModal, setShowAddModal] = useState(false);
   const [verifying, setVerifying] = useState<string | null>(null);
   const [activating, setActivating] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [domainToDelete, setDomainToDelete] = useState<CustomDomain | null>(
+    null
+  );
 
   const loadDomains = useCallback(async () => {
     try {
@@ -218,19 +232,17 @@ export function DomainSettingsContent() {
     }
   };
 
-  const handleRemoveDomain = async (domain: CustomDomain) => {
-    // eslint-disable-next-line no-alert
-    if (
-      !window.confirm(
-        `Are you sure you want to remove ${domain.domain}? This action cannot be undone.`
-      )
-    ) {
-      return;
-    }
+  const handleRemoveDomain = (domain: CustomDomain) => {
+    setDomainToDelete(domain);
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmRemoveDomain = async () => {
+    if (!domainToDelete) return;
 
     try {
-      await DomainService.removeDomain(domain.id);
-      setDomains(domains.filter(d => d.id !== domain.id));
+      await DomainService.removeDomain(domainToDelete.id);
+      setDomains(domains.filter(d => d.id !== domainToDelete.id));
 
       toast({
         title: 'Domain Removed',
@@ -243,6 +255,9 @@ export function DomainSettingsContent() {
         description: 'Failed to remove domain. Please try again.',
         variant: 'destructive',
       });
+    } finally {
+      setDeleteDialogOpen(false);
+      setDomainToDelete(null);
     }
   };
 
@@ -592,6 +607,29 @@ export function DomainSettingsContent() {
               onClose={() => setShowAddModal(false)}
             />
           )}
+
+          {/* Delete Confirmation Dialog */}
+          <AlertDialog
+            open={deleteDialogOpen}
+            onOpenChange={setDeleteDialogOpen}
+          >
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Remove Domain</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to remove{' '}
+                  <strong>{domainToDelete?.domain}</strong>? This action cannot
+                  be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmRemoveDomain}>
+                  Remove
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </BaseLayout>
