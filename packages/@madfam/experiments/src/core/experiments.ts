@@ -92,13 +92,11 @@ export class Experiments extends EventEmitter {
 
     // Check if experiment is running
     if (experiment.status !== 'running') {
-      return this.createAssignment(
-        experiment,
-        userContext,
-        null,
-        false,
-        'Experiment not running'
-      );
+      return this.createAssignment(experiment, userContext, {
+        variation: null,
+        eligible: false,
+        reason: 'Experiment not running',
+      });
     }
 
     // Execute pre-assignment hook
@@ -113,26 +111,22 @@ export class Experiments extends EventEmitter {
     );
 
     if (!isEligible) {
-      return this.createAssignment(
-        experiment,
-        userContext,
-        null,
-        false,
-        'User not eligible'
-      );
+      return this.createAssignment(experiment, userContext, {
+        variation: null,
+        eligible: false,
+        reason: 'User not eligible',
+      });
     }
 
     // Check for overrides
     const override = this.checkOverrides(experiment, userContext);
     if (override) {
-      const assignment = this.createAssignment(
-        experiment,
-        userContext,
-        override,
-        true,
-        'Override',
-        true
-      );
+      const assignment = this.createAssignment(experiment, userContext, {
+        variation: override,
+        eligible: true,
+        reason: 'Override',
+        forced: true,
+      });
       await this.trackAssignment(assignment);
       return assignment;
     }
@@ -152,12 +146,10 @@ export class Experiments extends EventEmitter {
     // Allocate variation
     const variation = await this.allocation.allocate(experiment, userContext);
 
-    const assignment = this.createAssignment(
-      experiment,
-      userContext,
+    const assignment = this.createAssignment(experiment, userContext, {
       variation,
-      true
-    );
+      eligible: true,
+    });
 
     // Cache assignment if sticky
     if (experiment.allocation.sticky) {
@@ -340,15 +332,17 @@ export class Experiments extends EventEmitter {
   async trackMetric(
     experimentId: string,
     userId: string,
-    metricName: string,
-    value: number,
-    properties?: Record<string, unknown>
+    data: {
+      metricName: string;
+      value: number;
+      properties?: Record<string, unknown>;
+    }
   ): Promise<void> {
     this.logger.debug('Tracking metric', {
       experimentId,
       userId,
-      metricName,
-      value,
+      metricName: data.metricName,
+      value: data.value,
     });
 
     const event: ExperimentEvent = {
@@ -357,10 +351,10 @@ export class Experiments extends EventEmitter {
       experimentId,
       userId,
       timestamp: new Date(),
-      value,
+      value: data.value,
       properties: {
-        ...properties,
-        metricName,
+        ...data.properties,
+        metricName: data.metricName,
       },
     };
 
@@ -538,19 +532,21 @@ export class Experiments extends EventEmitter {
   private createAssignment(
     experiment: Experiment,
     userContext: UserContext,
-    variation: Variation | null,
-    eligible: boolean,
-    reason?: string,
-    forced?: boolean
+    options: {
+      variation: Variation | null;
+      eligible: boolean;
+      reason?: string;
+      forced?: boolean;
+    }
   ): Assignment {
     return {
       experimentId: experiment.id,
       userId: userContext.userId,
-      variationId: variation?.id || '',
+      variationId: options.variation?.id || '',
       timestamp: new Date(),
-      eligible,
-      reason,
-      forced,
+      eligible: options.eligible,
+      reason: options.reason,
+      forced: options.forced,
       context: userContext.attributes,
     };
   }

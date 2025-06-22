@@ -60,7 +60,7 @@ export function experimentsMiddleware(config: MiddlewareConfig) {
       }
 
       next();
-    } catch (error) {
+    } catch {
       next();
     }
   };
@@ -70,7 +70,7 @@ export function experimentsMiddleware(config: MiddlewareConfig) {
  * Next.js middleware
  */
 export function withExperiments(config: MiddlewareConfig) {
-  return async (req: any, res: any) => {
+  return async (req: any, _res: any) => {
     const userContext = config.getUserContext
       ? await config.getUserContext(req)
       : {
@@ -113,7 +113,7 @@ export function koaExperiments(config: MiddlewareConfig) {
       }
 
       await next();
-    } catch (error) {
+    } catch {
       await next();
     }
   };
@@ -122,10 +122,7 @@ export function koaExperiments(config: MiddlewareConfig) {
 /**
  * Fastify plugin
  */
-export async function fastifyExperiments(
-  fastify: any,
-  options: MiddlewareConfig
-) {
+export function fastifyExperiments(fastify: any, options: MiddlewareConfig) {
   fastify.decorateRequest('experiments', null);
   fastify.decorateRequest('userContext', null);
 
@@ -150,7 +147,7 @@ export async function fastifyExperiments(
           maxAge: 365 * 24 * 60 * 60 * 1000,
         });
       }
-    } catch (error) {
+    } catch {
       // Continue without experiments
     }
   });

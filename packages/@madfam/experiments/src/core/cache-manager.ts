@@ -42,7 +42,7 @@ export class CacheManager {
   /**
    * Get experiment from cache
    */
-  async getExperiment(experimentId: string): Promise<Experiment | null> {
+  getExperiment(experimentId: string): Promise<Experiment | null> {
     return this.get(`experiment:${experimentId}`);
   }
 
@@ -59,7 +59,7 @@ export class CacheManager {
   /**
    * Get feature flag from cache
    */
-  async getFlag(flagKey: string): Promise<FeatureFlag | null> {
+  getFlag(flagKey: string): Promise<FeatureFlag | null> {
     return this.get(`flag:${flagKey}`);
   }
 
@@ -73,7 +73,7 @@ export class CacheManager {
   /**
    * Get assignment from cache
    */
-  async getAssignment(
+  getAssignment(
     experimentId: string,
     userId: string
   ): Promise<Assignment | null> {
@@ -94,7 +94,7 @@ export class CacheManager {
   /**
    * Get value from cache
    */
-  private async get<T>(key: string): Promise<T | null> {
+  private get<T>(key: string): Promise<T | null> {
     switch (this.strategy.type) {
       case 'memory':
         return this.getFromMemory(key);
@@ -261,18 +261,22 @@ export class CacheManager {
 
     // Check each key
     for (const key of keys) {
-      try {
-        const item = localStorage.getItem(key);
-        if (item) {
-          const entry = JSON.parse(item);
-          if (entry.ttl && Date.now() - entry.timestamp > entry.ttl) {
-            localStorage.removeItem(key);
-          }
-        }
-      } catch {
-        // Remove invalid entries
+      this.cleanupKey(key);
+    }
+  }
+
+  private cleanupKey(key: string): void {
+    try {
+      const item = localStorage.getItem(key);
+      if (!item) return;
+
+      const entry = JSON.parse(item);
+      if (entry.ttl && Date.now() - entry.timestamp > entry.ttl) {
         localStorage.removeItem(key);
       }
+    } catch {
+      // Remove invalid entries
+      localStorage.removeItem(key);
     }
   }
 

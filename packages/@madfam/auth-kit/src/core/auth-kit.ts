@@ -113,7 +113,10 @@ export class AuthKit extends EventEmitter {
       );
 
       // Create user
-      const user = await this.config.adapter!.createUser({
+      if (!this.config.adapter) {
+        throw new Error('Storage adapter not configured');
+      }
+      const user = await this.config.adapter.createUser({
         id: generateId(),
         email: processedData.email,
         emailVerified: false,
@@ -239,7 +242,10 @@ export class AuthKit extends EventEmitter {
       });
 
       // Update last sign in
-      await this.config.adapter!.updateUser(user.id, {
+      if (!this.config.adapter) {
+        throw new Error('Storage adapter not configured');
+      }
+      await this.config.adapter.updateUser(user.id, {
         metadata: {
           ...user.metadata,
           lastSignInAt: new Date(),
@@ -345,7 +351,10 @@ export class AuthKit extends EventEmitter {
 
       if (!user) {
         // Create new user
-        user = await this.config.adapter!.createUser({
+        if (!this.config.adapter) {
+          throw new Error('Storage adapter not configured');
+        }
+        user = await this.config.adapter.createUser({
           id: generateId(),
           email: providerUser.email,
           emailVerified: true, // OAuth providers verify email
@@ -361,7 +370,10 @@ export class AuthKit extends EventEmitter {
       }
 
       // Link provider account
-      await this.config.adapter!.createAccountLink(
+      if (!this.config.adapter) {
+        throw new Error('Storage adapter not configured');
+      }
+      await this.config.adapter.createAccountLink(
         user.id,
         provider,
         providerUser.id
@@ -388,7 +400,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Get current session
    */
-  async getSession(token: string): Promise<Session | null> {
+  getSession(token: string): Promise<Session | null> {
     return this.sessionManager.getSession(token);
   }
 
@@ -404,7 +416,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Validate password against requirements
    */
-  async validatePassword(password: string): Promise<PasswordValidationResult> {
+  validatePassword(password: string): Promise<PasswordValidationResult> {
     const requirements = this.config.providers.email?.passwordRequirements;
     return validatePassword(password, requirements);
   }
@@ -431,7 +443,10 @@ export class AuthKit extends EventEmitter {
       const resetExpiry = new Date(Date.now() + 60 * 60 * 1000); // 1 hour
 
       // Save reset token
-      await this.config.adapter!.updateUser(user.id, {
+      if (!this.config.adapter) {
+        throw new Error('Storage adapter not configured');
+      }
+      await this.config.adapter.updateUser(user.id, {
         metadata: {
           ...user.metadata,
           passwordResetToken: resetToken,
@@ -457,7 +472,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Reset password with token
    */
-  async resetPassword(token: string, newPassword: string): Promise<void> {
+  resetPassword(_token: string, _newPassword: string): Promise<void> {
     try {
       this.logger.debug('Password reset attempt');
 
@@ -606,7 +621,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Emit auth event
    */
-  private async emit(type: AuthEventType, data?: any): Promise<void> {
+  private emit(type: AuthEventType, data?: any): void {
     const event: AuthEvent = {
       type,
       timestamp: new Date(),

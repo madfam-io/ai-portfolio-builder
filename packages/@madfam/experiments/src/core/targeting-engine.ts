@@ -78,7 +78,7 @@ export class TargetingEngine {
         return true;
       }
 
-      if (segment.id && userContext.segments!.includes(segment.id)) {
+      if (segment.id && userContext.segments?.includes(segment.id)) {
         return true;
       }
 

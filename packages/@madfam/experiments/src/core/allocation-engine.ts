@@ -27,7 +27,7 @@ export class AllocationEngine {
   /**
    * Allocate a user to a variation
    */
-  async allocate(
+  allocate(
     experiment: Experiment,
     userContext: UserContext
   ): Promise<Variation> {
@@ -74,7 +74,7 @@ export class AllocationEngine {
   /**
    * Allocate a user to a feature flag variation
    */
-  async allocateFlag(
+  allocateFlag(
     flag: FeatureFlag,
     userContext: UserContext
   ): Promise<FeatureFlagVariation> {

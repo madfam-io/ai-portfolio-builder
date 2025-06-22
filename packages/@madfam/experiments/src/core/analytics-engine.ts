@@ -34,7 +34,7 @@ export class AnalyticsEngine {
   /**
    * Track an experiment event
    */
-  async trackEvent(event: ExperimentEvent): Promise<void> {
+  trackEvent(event: ExperimentEvent): void {
     if (!this.enabled) return;
 
     const experimentId = event.experimentId || event.flagKey || '';
@@ -57,7 +57,7 @@ export class AnalyticsEngine {
   /**
    * Calculate experiment results
    */
-  async calculateResults(experiment: Experiment): Promise<ExperimentResults> {
+  calculateResults(experiment: Experiment): Promise<ExperimentResults> {
     const exposures = this.events.exposures.get(experiment.id) || [];
     const conversions = this.events.conversions.get(experiment.id) || [];
     const metrics = this.events.metrics.get(experiment.id) || [];
@@ -84,7 +84,10 @@ export class AnalyticsEngine {
     // Group exposures
     for (const event of exposures) {
       if (event.variationId && variationData.has(event.variationId)) {
-        variationData.get(event.variationId)!.exposures.push(event);
+        const data = variationData.get(event.variationId);
+        if (data) {
+          data.exposures.push(event);
+        }
       }
     }
 
@@ -116,7 +119,8 @@ export class AnalyticsEngine {
       experiment.variations.find(v => v.isControl) || experiment.variations[0];
 
     for (const variation of experiment.variations) {
-      const data = variationData.get(variation.id)!;
+      const data = variationData.get(variation.id);
+      if (!data) continue;
       const uniqueUsers = new Set(data.exposures.map(e => e.userId));
       const convertedUsers = new Set(data.conversions.map(e => e.userId));
 
@@ -238,7 +242,7 @@ export class AnalyticsEngine {
    */
   private getControlValue(
     controlData: any,
-    metric: any
+    _metric: any
   ): { value: number; sampleSize: number } {
     // Simplified - in production would match the metric calculation logic
     const sampleSize = controlData.exposures.length;
@@ -359,10 +363,11 @@ export class AnalyticsEngine {
       if (
         metricResult &&
         metricResult.significant &&
-        metricResult.uplift! > bestUplift
+        metricResult.uplift !== undefined &&
+        metricResult.uplift > bestUplift
       ) {
         bestVariation = result.variationId;
-        bestUplift = metricResult.uplift!;
+        bestUplift = metricResult.uplift;
         isSignificant = true;
       }
     }
@@ -389,7 +394,10 @@ export class AnalyticsEngine {
     if (!store.has(key)) {
       store.set(key, []);
     }
-    store.get(key)!.push(event);
+    const events = store.get(key);
+    if (events) {
+      events.push(event);
+    }
   }
 
   /**

@@ -148,11 +148,11 @@ export class EmailManager {
   /**
    * Send email with SendGrid
    */
-  private async sendWithSendGrid(
-    to: string,
-    subject: string,
-    templateId?: string,
-    data?: Record<string, any>
+  private sendWithSendGrid(
+    _to: string,
+    _subject: string,
+    _templateId?: string,
+    _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the SendGrid API
     this.logger.debug('SendGrid email would be sent', {
@@ -165,11 +165,11 @@ export class EmailManager {
   /**
    * Send email with AWS SES
    */
-  private async sendWithSES(
-    to: string,
-    subject: string,
-    templateId?: string,
-    data?: Record<string, any>
+  private sendWithSES(
+    _to: string,
+    _subject: string,
+    _templateId?: string,
+    _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the AWS SES API
     this.logger.debug('SES email would be sent', { to, subject, templateId });
@@ -178,11 +178,11 @@ export class EmailManager {
   /**
    * Send email with SMTP
    */
-  private async sendWithSMTP(
-    to: string,
-    subject: string,
-    templateId?: string,
-    data?: Record<string, any>
+  private sendWithSMTP(
+    _to: string,
+    _subject: string,
+    _templateId?: string,
+    _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use nodemailer with SMTP
     this.logger.debug('SMTP email would be sent', { to, subject });
@@ -191,11 +191,11 @@ export class EmailManager {
   /**
    * Send email with Resend
    */
-  private async sendWithResend(
-    to: string,
-    subject: string,
-    templateId?: string,
-    data?: Record<string, any>
+  private sendWithResend(
+    _to: string,
+    _subject: string,
+    _templateId?: string,
+    _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the Resend API
     this.logger.debug('Resend email would be sent', {
