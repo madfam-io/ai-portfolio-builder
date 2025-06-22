@@ -175,14 +175,20 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
 
   const tierConfig = useMemo(() => BUSINESS_USER_TIERS[userTier], [userTier]);
 
-  const getUpgradeRecommendations = useCallback(async () => {
+  const getUpgradeRecommendations = useCallback(() => {
     setLoading(true);
     try {
-      const recommendations = await premiumGating.getUpgradeRecommendations(
+      const recommendations = premiumGating.getUpgradeRecommendations(
         userId,
         userTier
       );
-      setUpgradeRecommendations(recommendations);
+      // Transform the data to match the expected state shape
+      setUpgradeRecommendations({
+        currentTier: userTier,
+        recommendedTier: recommendations.recommendedTier,
+        reasons: recommendations.keyBenefits,
+        potentialRevenue: recommendations.monthlyValue,
+      });
     } catch (_error) {
       // Error handled silently
     } finally {
