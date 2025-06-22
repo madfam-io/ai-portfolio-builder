@@ -535,7 +535,18 @@ export class ExperimentationEngine {
 
     // Fallback to control
     const controlVariant = experiment.variants.find(v => v.isControl);
-    return controlVariant ? controlVariant.id : experiment.variants[0].id;
+    if (controlVariant) {
+      return controlVariant.id;
+    }
+
+    // Fallback to first variant if exists
+    const firstVariant = experiment.variants[0];
+    if (firstVariant) {
+      return firstVariant.id;
+    }
+
+    // This should never happen as experiments should have at least one variant
+    throw new Error(`Experiment ${experiment.id} has no variants`);
   }
 
   private hashUserId(input: string): number {
