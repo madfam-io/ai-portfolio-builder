@@ -33,7 +33,9 @@ const FILE_PATTERNS = [
 // Directories and patterns to ignore
 const IGNORE_PATTERNS = [
   'node_modules/**',
+  '**/node_modules/**',
   'packages/*/node_modules/**',
+  'packages/@madfam/*/node_modules/**',
   'dist/**',
   'build/**',
   '.next/**',
@@ -75,6 +77,17 @@ function checkLicenseHeaders() {
     });
 
     files.forEach(file => {
+      // Skip if not a file (e.g., currency.js directory)
+      try {
+        const stats = fs.statSync(file);
+        if (!stats.isFile()) {
+          return;
+        }
+      } catch (err) {
+        console.warn(`Warning: Could not stat ${file}: ${err.message}`);
+        return;
+      }
+
       checkedFiles++;
       const content = fs.readFileSync(file, 'utf8');
       const firstLines = content.split('\n').slice(0, 15).join('\n');
