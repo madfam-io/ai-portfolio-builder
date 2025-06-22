@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -16,9 +16,9 @@
  *
  * B2B API platform that monetizes our code quality innovation.
  * Creates multiple enterprise revenue streams:
- * 
+ *
  * - API subscriptions for other platforms ($500-$5000/month)
- * - White-label integration for agencies ($1000-$10000/month)  
+ * - White-label integration for agencies ($1000-$10000/month)
  * - Enterprise consulting based on our expertise ($10000+/project)
  * - Thought leadership driving conference speakers and media coverage
  *
@@ -30,7 +30,10 @@
  */
 
 import { logger } from '@/lib/utils/logger';
-import { aiCodeQualityEngine, CodeQualityReport } from '@/lib/ai/code-quality/engine';
+import {
+  aiCodeQualityEngine,
+  CodeQualityReport,
+} from '@/lib/ai/code-quality/engine';
 
 export interface DeveloperExperienceMetrics {
   codeQualityScore: number;
@@ -43,7 +46,12 @@ export interface DeveloperExperienceMetrics {
 
 export interface DXOptimizationSuggestion {
   id: string;
-  category: 'performance' | 'maintainability' | 'security' | 'scalability' | 'ux';
+  category:
+    | 'performance'
+    | 'maintainability'
+    | 'security'
+    | 'scalability'
+    | 'ux';
   title: string;
   description: string;
   businessImpact: {
@@ -100,13 +108,16 @@ export interface APIUsageMetrics {
 
 /**
  * Developer Experience API Service
- * 
+ *
  * Exposes our AI-powered code quality engine as a B2B service,
  * creating new revenue streams and demonstrating technical leadership.
  */
 export class DeveloperExperienceAPI {
   private clientUsage = new Map<string, APIUsageMetrics>();
-  private rateLimits = new Map<string, { requests: number; resetTime: number }>();
+  private rateLimits = new Map<
+    string,
+    { requests: number; resetTime: number }
+  >();
 
   constructor() {
     this.initializeAPIMetrics();
@@ -114,7 +125,7 @@ export class DeveloperExperienceAPI {
 
   /**
    * Analyze developer experience for external platforms
-   * 
+   *
    * Primary B2B API endpoint that other companies can integrate
    * to offer code quality insights to their users.
    */
@@ -140,7 +151,7 @@ export class DeveloperExperienceAPI {
       clientId: options.clientId,
       codebaseSize: codebase.size,
       language: codebase.language,
-      includeBusinessMetrics: options.includeBusinessMetrics
+      includeBusinessMetrics: options.includeBusinessMetrics,
     });
 
     // Analyze code quality using our AI engine
@@ -152,12 +163,15 @@ export class DeveloperExperienceAPI {
 
     // Transform into developer-focused metrics
     const dxMetrics = this.calculateDeveloperMetrics(baseReport, codebase);
-    
+
     // Generate DX-specific optimization suggestions
     const suggestions = await this.generateDXSuggestions(baseReport, codebase);
 
     // Create industry benchmarks
-    const benchmarks = await this.generateDXBenchmarks(codebase.language, codebase.size);
+    const benchmarks = await this.generateDXBenchmarks(
+      codebase.language,
+      codebase.size
+    );
 
     const report: DeveloperExperienceReport = {
       projectId: `dx-${Date.now()}-${options.clientId}`,
@@ -166,8 +180,12 @@ export class DeveloperExperienceAPI {
       suggestions,
       benchmarks,
       executiveSummary: this.generateDXExecutiveSummary(dxMetrics, suggestions),
-      technicalRecommendations: this.generateTechnicalRecommendations(suggestions),
-      businessJustification: this.generateBusinessJustification(dxMetrics, suggestions),
+      technicalRecommendations:
+        this.generateTechnicalRecommendations(suggestions),
+      businessJustification: this.generateBusinessJustification(
+        dxMetrics,
+        suggestions
+      ),
       nextSteps: this.prioritizeNextSteps(suggestions),
     };
 
@@ -175,7 +193,7 @@ export class DeveloperExperienceAPI {
     await this.trackAPIUsage(options.clientId, 'analyze_dx', {
       codebaseSize: codebase.size,
       language: codebase.language,
-      responseTime: Date.now() - Date.now() // Will be calculated properly
+      responseTime: Date.now() - Date.now(), // Will be calculated properly
     });
 
     return report;
@@ -183,7 +201,7 @@ export class DeveloperExperienceAPI {
 
   /**
    * Get developer productivity insights
-   * 
+   *
    * Helps companies understand how code quality affects their team's productivity
    */
   async getProductivityInsights(
@@ -214,31 +232,31 @@ export class DeveloperExperienceAPI {
         {
           metric: 'Bug Resolution Time',
           improvement: 35,
-          impact: 'Developers spend 35% less time on bug fixes'
+          impact: 'Developers spend 35% less time on bug fixes',
         },
         {
           metric: 'Feature Development Speed',
           improvement: 22,
-          impact: '22% faster feature development cycles'
+          impact: '22% faster feature development cycles',
         },
         {
           metric: 'Code Review Efficiency',
           improvement: 40,
-          impact: '40% reduction in code review time'
-        }
+          impact: '40% reduction in code review time',
+        },
       ],
       recommendations: [
         'Implement automated code quality checks in CI/CD pipeline',
         'Establish code quality metrics dashboard for teams',
         'Provide developer training on performance best practices',
-        'Create code quality incentives and recognition programs'
-      ]
+        'Create code quality incentives and recognition programs',
+      ],
     };
   }
 
   /**
    * Generate competitive analysis for client platforms
-   * 
+   *
    * Helps companies understand their position in the market
    */
   async generateCompetitiveAnalysis(
@@ -271,42 +289,42 @@ export class DeveloperExperienceAPI {
       marketPosition: {
         ranking: Math.floor(Math.random() * 50) + 1,
         totalCompetitors: 500,
-        percentile: Math.random() * 30 + 70
+        percentile: Math.random() * 30 + 70,
       },
       competitiveGaps: [
         {
           area: 'Mobile Performance',
           gap: 25,
           impact: 'Lower conversion rates on mobile devices',
-          solution: 'Implement progressive web app optimizations'
+          solution: 'Implement progressive web app optimizations',
         },
         {
           area: 'Code Maintainability',
           gap: 15,
           impact: 'Slower feature development cycles',
-          solution: 'Refactor core modules and improve documentation'
-        }
+          solution: 'Refactor core modules and improve documentation',
+        },
       ],
       opportunities: [
         {
           opportunity: 'AI-Powered Performance Optimization',
           potential: 'Industry leadership position',
           effort: 'Medium',
-          timeline: '3-6 months'
+          timeline: '3-6 months',
         },
         {
           opportunity: 'Advanced Developer Analytics',
           potential: '$500K+ annual revenue',
           effort: 'High',
-          timeline: '6-12 months'
-        }
+          timeline: '6-12 months',
+        },
       ],
       strategicRecommendations: [
         'Invest in AI-powered optimization to gain competitive advantage',
         'Focus on mobile performance to capture growing mobile market',
         'Develop advanced analytics capabilities for premium positioning',
-        'Create developer-focused features to attract technical users'
-      ]
+        'Create developer-focused features to attract technical users',
+      ],
     };
   }
 
@@ -316,14 +334,16 @@ export class DeveloperExperienceAPI {
   async getAPIAnalytics(clientId: string): Promise<APIUsageMetrics> {
     await this.validateAPIAccess(clientId);
 
-    return this.clientUsage.get(clientId) || {
-      requestsToday: 0,
-      requestsThisMonth: 0,
-      averageResponseTime: 0,
-      successRate: 100,
-      topEndpoints: [],
-      clientDistribution: []
-    };
+    return (
+      this.clientUsage.get(clientId) || {
+        requestsToday: 0,
+        requestsThisMonth: 0,
+        averageResponseTime: 0,
+        successRate: 100,
+        topEndpoints: [],
+        clientDistribution: [],
+      }
+    );
   }
 
   /**
@@ -334,14 +354,14 @@ export class DeveloperExperienceAPI {
     codebase: any
   ): DeveloperExperienceMetrics {
     const baseScore = baseReport.metrics.performanceScore;
-    
+
     return {
       codeQualityScore: baseScore,
       performanceImpact: Math.min(100, baseScore + 5),
       developerProductivity: this.calculateProductivityScore(baseScore),
       maintainabilityIndex: 100 - baseReport.metrics.technicalDebtScore,
       businessValue: Math.min(100, baseScore + 10),
-      competitiveAdvantage: baseReport.metrics.competitiveAdvantage
+      competitiveAdvantage: baseReport.metrics.competitiveAdvantage,
     };
   }
 
@@ -360,12 +380,13 @@ export class DeveloperExperienceAPI {
         id: 'dx-performance-opt',
         category: 'performance',
         title: 'Optimize Critical Performance Bottlenecks',
-        description: 'Implement advanced performance optimizations to improve user experience and developer productivity',
+        description:
+          'Implement advanced performance optimizations to improve user experience and developer productivity',
         businessImpact: {
           productivity: 8, // hours saved per developer per month
           maintenance: 50000, // annual cost reduction
           performance: 35, // user experience improvement percentage
-          revenue: baseReport.metrics.revenueImpact * 0.7
+          revenue: baseReport.metrics.revenueImpact * 0.7,
         },
         implementation: {
           effort: 'medium',
@@ -375,14 +396,14 @@ export class DeveloperExperienceAPI {
             'Implement code splitting for large bundles',
             'Add performance monitoring and alerting',
             'Optimize database queries and caching',
-            'Implement lazy loading for non-critical components'
-          ]
+            'Implement lazy loading for non-critical components',
+          ],
         },
         roi: {
           costSavings: 50000,
           revenueIncrease: baseReport.metrics.revenueImpact * 0.7,
-          paybackPeriod: 3
-        }
+          paybackPeriod: 3,
+        },
       });
     }
 
@@ -392,12 +413,13 @@ export class DeveloperExperienceAPI {
         id: 'dx-maintainability',
         category: 'maintainability',
         title: 'Reduce Technical Debt',
-        description: 'Systematically address technical debt to improve long-term maintainability and development speed',
+        description:
+          'Systematically address technical debt to improve long-term maintainability and development speed',
         businessImpact: {
           productivity: 12,
           maintenance: 75000,
           performance: 20,
-          revenue: 25000
+          revenue: 25000,
         },
         implementation: {
           effort: 'high',
@@ -407,14 +429,14 @@ export class DeveloperExperienceAPI {
             'Refactor legacy code modules',
             'Improve test coverage to 90%+',
             'Standardize coding patterns and conventions',
-            'Create comprehensive documentation'
-          ]
+            'Create comprehensive documentation',
+          ],
         },
         roi: {
           costSavings: 75000,
           revenueIncrease: 25000,
-          paybackPeriod: 6
-        }
+          paybackPeriod: 6,
+        },
       });
     }
 
@@ -423,12 +445,13 @@ export class DeveloperExperienceAPI {
       id: 'dx-tooling',
       category: 'ux',
       title: 'Enhance Developer Tooling',
-      description: 'Implement advanced developer tools and automation to boost team productivity',
+      description:
+        'Implement advanced developer tools and automation to boost team productivity',
       businessImpact: {
         productivity: 15,
         maintenance: 40000,
         performance: 10,
-        revenue: 15000
+        revenue: 15000,
       },
       implementation: {
         effort: 'medium',
@@ -438,14 +461,14 @@ export class DeveloperExperienceAPI {
           'Set up advanced CI/CD pipelines',
           'Implement automated testing and quality gates',
           'Add development environment automation',
-          'Create developer productivity dashboards'
-        ]
+          'Create developer productivity dashboards',
+        ],
       },
       roi: {
         costSavings: 40000,
         revenueIncrease: 15000,
-        paybackPeriod: 4
-      }
+        paybackPeriod: 4,
+      },
     });
 
     return suggestions;
@@ -459,15 +482,15 @@ export class DeveloperExperienceAPI {
       small: 75,
       medium: 70,
       large: 65,
-      enterprise: 60
+      enterprise: 60,
     };
 
     const industryAverage = baseBenchmark[size as keyof typeof baseBenchmark];
-    
+
     return {
       industryAverage,
       topPerformers: industryAverage + 20,
-      yourRanking: Math.floor(Math.random() * 100) + 1
+      yourRanking: Math.floor(Math.random() * 100) + 1,
     };
   }
 
@@ -486,8 +509,13 @@ export class DeveloperExperienceAPI {
     metrics: DeveloperExperienceMetrics,
     suggestions: DXOptimizationSuggestion[]
   ): string {
-    const totalROI = suggestions.reduce((sum, s) => sum + s.roi.costSavings + s.roi.revenueIncrease, 0);
-    const avgPayback = suggestions.reduce((sum, s) => sum + s.roi.paybackPeriod, 0) / suggestions.length;
+    const totalROI = suggestions.reduce(
+      (sum, s) => sum + s.roi.costSavings + s.roi.revenueIncrease,
+      0
+    );
+    const avgPayback =
+      suggestions.reduce((sum, s) => sum + s.roi.paybackPeriod, 0) /
+      suggestions.length;
 
     return `
 DEVELOPER EXPERIENCE EXECUTIVE SUMMARY
@@ -503,7 +531,13 @@ OPTIMIZATION OPPORTUNITY:
 • ${suggestions.length} optimization opportunities identified
 
 KEY RECOMMENDATIONS:
-${suggestions.slice(0, 3).map(s => `• ${s.title}: $${(s.roi.costSavings + s.roi.revenueIncrease).toLocaleString()} potential value`).join('\n')}
+${suggestions
+  .slice(0, 3)
+  .map(
+    s =>
+      `• ${s.title}: $${(s.roi.costSavings + s.roi.revenueIncrease).toLocaleString()} potential value`
+  )
+  .join('\n')}
 
 COMPETITIVE POSITIONING:
 Your developer experience metrics position you for sustained competitive advantage through superior team productivity and code quality.
@@ -513,9 +547,11 @@ Your developer experience metrics position you for sustained competitive advanta
   /**
    * Generate technical recommendations
    */
-  private generateTechnicalRecommendations(suggestions: DXOptimizationSuggestion[]): string[] {
-    return suggestions.map(s => 
-      `${s.title}: ${s.implementation.codeChanges.join(', ')}`
+  private generateTechnicalRecommendations(
+    suggestions: DXOptimizationSuggestion[]
+  ): string[] {
+    return suggestions.map(
+      s => `${s.title}: ${s.implementation.codeChanges.join(', ')}`
     );
   }
 
@@ -526,8 +562,14 @@ Your developer experience metrics position you for sustained competitive advanta
     metrics: DeveloperExperienceMetrics,
     suggestions: DXOptimizationSuggestion[]
   ): string {
-    const totalProductivityGain = suggestions.reduce((sum, s) => sum + s.businessImpact.productivity, 0);
-    const totalCostSavings = suggestions.reduce((sum, s) => sum + s.businessImpact.maintenance, 0);
+    const totalProductivityGain = suggestions.reduce(
+      (sum, s) => sum + s.businessImpact.productivity,
+      0
+    );
+    const totalCostSavings = suggestions.reduce(
+      (sum, s) => sum + s.businessImpact.maintenance,
+      0
+    );
 
     return `
 Developer experience improvements will deliver:
@@ -541,15 +583,22 @@ Developer experience improvements will deliver:
   /**
    * Prioritize next steps based on ROI and effort
    */
-  private prioritizeNextSteps(suggestions: DXOptimizationSuggestion[]): string[] {
+  private prioritizeNextSteps(
+    suggestions: DXOptimizationSuggestion[]
+  ): string[] {
     return suggestions
       .sort((a, b) => {
-        const aScore = (a.roi.costSavings + a.roi.revenueIncrease) / a.roi.paybackPeriod;
-        const bScore = (b.roi.costSavings + b.roi.revenueIncrease) / b.roi.paybackPeriod;
+        const aScore =
+          (a.roi.costSavings + a.roi.revenueIncrease) / a.roi.paybackPeriod;
+        const bScore =
+          (b.roi.costSavings + b.roi.revenueIncrease) / b.roi.paybackPeriod;
         return bScore - aScore;
       })
       .slice(0, 5)
-      .map(s => `${s.title} (${s.implementation.timeframe}, ${s.implementation.effort} effort)`);
+      .map(
+        s =>
+          `${s.title} (${s.implementation.timeframe}, ${s.implementation.effort} effort)`
+      );
   }
 
   /**
@@ -557,13 +606,18 @@ Developer experience improvements will deliver:
    */
   private generateProductivityTrends(timeframe: string) {
     const days = timeframe === '7d' ? 7 : timeframe === '30d' ? 30 : 90;
-    
-    return Array.from({ length: days }, (_, i) => ({
-      date: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-      productivity: Math.random() * 20 + 70,
-      codeQuality: Math.random() * 15 + 80,
-      issuesResolved: Math.floor(Math.random() * 10) + 5
-    })).reverse();
+
+    return Array.from({ length: days }, (_, i) => {
+      const dateString = new Date(
+        Date.now() - i * 24 * 60 * 60 * 1000
+      ).toISOString();
+      return {
+        date: dateString.split('T')[0] || dateString.substring(0, 10),
+        productivity: Math.random() * 20 + 70,
+        codeQuality: Math.random() * 15 + 80,
+        issuesResolved: Math.floor(Math.random() * 10) + 5,
+      };
+    }).reverse();
   }
 
   /**
@@ -582,7 +636,7 @@ Developer experience improvements will deliver:
   private async enforceRateLimit(clientId: string): Promise<void> {
     const now = Date.now();
     const limit = this.rateLimits.get(clientId);
-    
+
     if (limit && limit.requests >= 100 && limit.resetTime > now) {
       throw new Error('Rate limit exceeded');
     }
@@ -591,7 +645,7 @@ Developer experience improvements will deliver:
     if (!limit || limit.resetTime <= now) {
       this.rateLimits.set(clientId, {
         requests: 1,
-        resetTime: now + 60 * 60 * 1000 // 1 hour
+        resetTime: now + 60 * 60 * 1000, // 1 hour
       });
     } else {
       limit.requests++;
@@ -602,8 +656,8 @@ Developer experience improvements will deliver:
    * Track API usage for billing and analytics
    */
   private async trackAPIUsage(
-    clientId: string, 
-    endpoint: string, 
+    clientId: string,
+    endpoint: string,
     metadata: any
   ): Promise<void> {
     const usage = this.clientUsage.get(clientId) || {
@@ -612,7 +666,7 @@ Developer experience improvements will deliver:
       averageResponseTime: 0,
       successRate: 100,
       topEndpoints: [],
-      clientDistribution: []
+      clientDistribution: [],
     };
 
     usage.requestsToday++;
@@ -623,7 +677,7 @@ Developer experience improvements will deliver:
     logger.info('API usage tracked', {
       clientId,
       endpoint,
-      metadata
+      metadata,
     });
   }
 
@@ -650,7 +704,7 @@ export async function analyzeDeveloperExperience(
 ) {
   return developerExperienceAPI.analyzeDeveloperExperience(codebase, {
     clientId,
-    includeBusinessMetrics: true
+    includeBusinessMetrics: true,
   });
 }
 

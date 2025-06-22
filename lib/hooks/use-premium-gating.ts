@@ -68,7 +68,7 @@ export function usePremiumFeature({
   feature,
   autoTrack = false,
   onUpgradeRequired,
-  onLimitApproaching,
+  onLimitApproaching: _onLimitApproaching,
 }: UsePremiumFeatureOptions): PremiumFeatureState & {
   checkAccess: () => Promise<boolean>;
   trackUsage: () => Promise<void>;
@@ -165,8 +165,12 @@ export function usePremiumFeature({
  */
 export function useUserTier(userId: string, initialTier: string = 'free') {
   const [userTier, setUserTier] = useState(initialTier);
-  const [upgradeRecommendations, setUpgradeRecommendations] =
-    useState<any>(null);
+  const [upgradeRecommendations, setUpgradeRecommendations] = useState<{
+    currentTier: string;
+    recommendedTier: string;
+    reasons: string[];
+    potentialRevenue: number;
+  } | null>(null);
   const [loading, setLoading] = useState(false);
 
   const tierConfig = useMemo(() => BUSINESS_USER_TIERS[userTier], [userTier]);
@@ -186,14 +190,11 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
     }
   }, [userId, userTier]);
 
-  const upgradeTier = useCallback(
-    (newTier: string) => {
-      // In a real implementation, this would handle the payment flow
-      setUserTier(newTier);
-      // Upgrade tracked
-    },
-    []
-  );
+  const upgradeTier = useCallback((newTier: string) => {
+    // In a real implementation, this would handle the payment flow
+    setUserTier(newTier);
+    // Upgrade tracked
+  }, []);
 
   const getWatermarkConfig = useCallback(() => {
     return premiumGating.getWatermarkConfig(userTier);
@@ -223,7 +224,9 @@ interface FeatureUsageData {
 }
 
 export function useFeatureUsage(userId: string, userTier: string = 'free') {
-  const [usageData, setUsageData] = useState<Record<string, FeatureUsageData>>({});
+  const [usageData, setUsageData] = useState<Record<string, FeatureUsageData>>(
+    {}
+  );
   const [loading, setLoading] = useState(true);
 
   const refreshUsage = useCallback(() => {
@@ -312,7 +315,7 @@ export function useFeatureUsage(userId: string, userTier: string = 'free') {
 export function usePremiumFeatureExperiment(
   experimentId: string,
   userId: string,
-  feature: string
+  _feature: string
 ) {
   const [variant, setVariant] = useState<'control' | 'treatment'>('control');
   const [experimentActive, setExperimentActive] = useState(false);
@@ -351,8 +354,8 @@ export function usePremiumFeatureExperiment(
 /**
  * Hook for conversion optimization
  */
-export function useConversionOptimization(userId: string, userTier: string) {
-  const [conversionData, setConversionData] = useState<{
+export function useConversionOptimization(userId: string, _userTier: string) {
+  const [_conversionData, _setConversionData] = useState<{
     score: number;
     opportunities: string[];
     urgency: number;
@@ -364,13 +367,13 @@ export function useConversionOptimization(userId: string, userTier: string) {
 
   const trackConversionEvent = useCallback(
     async (
-      event:
+      _event:
         | 'feature_blocked'
         | 'limit_reached'
         | 'upgrade_prompt_shown'
         | 'upgrade_prompt_clicked',
-      feature: string,
-      metadata?: Record<string, unknown>
+      _feature: string,
+      _metadata?: Record<string, unknown>
     ) => {
       // Track conversion events for optimization
       // Conversion event tracked

@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -386,7 +386,8 @@ export function UpgradePrompt({
                         .filter(([_, config]) => config.enabled)
                         .filter(([feature]) => {
                           const profFeatures =
-                            (BUSINESS_USER_TIERS.professional?.features as Record<
+                            (BUSINESS_USER_TIERS.professional
+                              ?.features as Record<
                               string,
                               { enabled: boolean; limit?: number }
                             >) || {};

@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -127,7 +127,7 @@ export class FeedbackSystem {
 
       return result.id || feedbackEntry.id;
     } catch (error) {
-      logger.error('Error submitting feedback:', error);
+      logger.error('Error submitting feedback:', error as Error);
       // Store locally as fallback
       this.feedbackEntries.set(feedbackEntry.id, feedbackEntry);
       return feedbackEntry.id;
@@ -162,7 +162,7 @@ export class FeedbackSystem {
       this.surveys.set(surveyEntry.id, surveyEntry);
       return surveyEntry.id;
     } catch (error) {
-      logger.error('Error submitting survey:', error);
+      logger.error('Error submitting survey:', error as Error);
       this.surveys.set(surveyEntry.id, surveyEntry);
       return surveyEntry.id;
     }
@@ -201,7 +201,7 @@ export class FeedbackSystem {
 
       return await response.json();
     } catch (error) {
-      logger.error('Error fetching feedback:', error);
+      logger.error('Error fetching feedback:', error as Error);
       // Return local entries as fallback
       return Array.from(this.feedbackEntries.values())
         .filter(entry => {
@@ -235,7 +235,7 @@ export class FeedbackSystem {
 
       return await response.json();
     } catch (error) {
-      logger.error('Error fetching beta metrics:', error);
+      logger.error('Error fetching beta metrics:', error as Error);
       // Return basic metrics from local data
       return this.calculateLocalMetrics();
     }
@@ -474,7 +474,7 @@ export class BetaAnalytics {
       userEvents.push(eventData);
       this.events.set(event.userId, userEvents);
     } catch (error) {
-      logger.error('Error tracking event:', error);
+      logger.error('Error tracking event:', error as Error);
       // Store locally on error
       const userEvents = this.events.get(event.userId) || [];
       userEvents.push(eventData);
@@ -552,7 +552,7 @@ export class BetaAnalytics {
       const data = await response.json();
       return Array.isArray(data) ? data : data.journeys || [];
     } catch (error) {
-      logger.error('Error fetching user journeys:', error);
+      logger.error('Error fetching user journeys:', error as Error);
       return [];
     }
   }
@@ -566,7 +566,7 @@ export class BetaAnalytics {
       if (!response.ok) throw new Error('Failed to fetch feature usage');
       return await response.json();
     } catch (error) {
-      logger.error('Error fetching feature usage:', error);
+      logger.error('Error fetching feature usage:', error as Error);
       return {};
     }
   }

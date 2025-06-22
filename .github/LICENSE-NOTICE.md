@@ -14,4 +14,4 @@ Unauthorized commercial use will result in:
 3. Injunctive relief
 
 ## Questions?
-Contact: licensing@madfam.com
+Contact: licensing@madfam.io

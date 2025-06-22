@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -16,7 +16,7 @@
  *
  * Thought leadership engine that establishes MADFAM as the authority
  * on portfolio performance and developer productivity. Creates:
- * 
+ *
  * - Annual "State of Portfolio Performance" reports (PR worthy)
  * - Industry benchmarks cited by media and competitors
  * - Conference presentation data and speaking opportunities
@@ -129,7 +129,7 @@ export interface ThoughtLeadershipContent {
 
 /**
  * Industry Benchmarking and Research Engine
- * 
+ *
  * Generates authoritative industry research that establishes MADFAM
  * as the thought leader in portfolio performance and developer productivity.
  */
@@ -144,44 +144,51 @@ export class IndustryBenchmarkingEngine {
 
   /**
    * Generate comprehensive State of the Industry report
-   * 
+   *
    * Creates PR-worthy research that positions MADFAM as market authority
    */
-  async generateStateOfIndustryReport(year: number = 2025): Promise<StateOfIndustryReport> {
+  async generateStateOfIndustryReport(
+    year: number = 2025
+  ): Promise<StateOfIndustryReport> {
     logger.info('Generating State of Industry report', { year });
 
     const reportId = `state-of-industry-${year}`;
-    
+
     // Analyze performance across all industries
     const performanceAnalysis = await this.analyzeGlobalPerformance();
-    
+
     // Identify key trends and patterns
     const industryTrends = await this.identifyIndustryTrends();
-    
+
     // Generate market intelligence
     const marketIntelligence = await this.generateMarketIntelligence();
-    
+
     // Create future predictions
     const futureOutlook = await this.generateFutureOutlook();
 
     const report: StateOfIndustryReport = {
       year,
       reportId,
-      executiveSummary: this.generateExecutiveSummary(performanceAnalysis, industryTrends),
+      executiveSummary: this.generateExecutiveSummary(
+        performanceAnalysis,
+        industryTrends
+      ),
       keyFindings: [
         {
-          finding: 'Portfolio Performance Gap Widens Between Leaders and Laggards',
-          impact: '75% performance gap between top 10% and bottom 50% of portfolios',
+          finding:
+            'Portfolio Performance Gap Widens Between Leaders and Laggards',
+          impact:
+            '75% performance gap between top 10% and bottom 50% of portfolios',
           evidence: [
             'Top performers achieve <1s load times vs 4.2s average',
             'Leaders show 340% higher conversion rates',
-            'Best-in-class portfolios generate 5x more engagement'
+            'Best-in-class portfolios generate 5x more engagement',
           ],
           implications: [
             'Technical excellence directly correlates with business success',
             'Performance optimization is now a competitive necessity',
-            'AI-powered optimization becoming standard for market leaders'
-          ]
+            'AI-powered optimization becoming standard for market leaders',
+          ],
         },
         {
           finding: 'Mobile-First Performance Becomes Make-or-Break Factor',
@@ -189,13 +196,13 @@ export class IndustryBenchmarkingEngine {
           evidence: [
             'Mobile conversion rates 45% lower than desktop average',
             'Progressive Web Apps show 89% better retention',
-            'Mobile performance directly impacts SEO rankings'
+            'Mobile performance directly impacts SEO rankings',
           ],
           implications: [
             'Mobile optimization essential for portfolio success',
             'PWA adoption accelerating among top performers',
-            'Traditional portfolio builders losing mobile market share'
-          ]
+            'Traditional portfolio builders losing mobile market share',
+          ],
         },
         {
           finding: 'AI-Powered Optimization Emerges as Differentiator',
@@ -203,14 +210,14 @@ export class IndustryBenchmarkingEngine {
           evidence: [
             'AI-optimized portfolios achieve 92% average performance scores',
             'Manual optimization plateaus at 73% performance ceiling',
-            'AI enables continuous optimization beyond human capacity'
+            'AI enables continuous optimization beyond human capacity',
           ],
           implications: [
             'AI optimization becoming competitive requirement',
             'Manual portfolio management increasingly obsolete',
-            'Early AI adopters establishing sustainable advantages'
-          ]
-        }
+            'Early AI adopters establishing sustainable advantages',
+          ],
+        },
       ],
       industryTrends,
       performanceAnalysis,
@@ -226,18 +233,18 @@ Methodology includes automated performance testing, machine learning trend analy
 and correlation studies between technical metrics and business outcomes.
       `.trim(),
       dataPoints: 50000,
-      confidenceLevel: 95
+      confidenceLevel: 95,
     };
 
     this.researchHistory.push(report);
-    
+
     // Generate thought leadership content based on report
     await this.generateThoughtLeadershipContent(report);
 
     logger.info('State of Industry report generated', {
       reportId,
       keyFindings: report.keyFindings.length,
-      dataPoints: report.dataPoints
+      dataPoints: report.dataPoints,
     });
 
     return report;
@@ -250,10 +257,15 @@ and correlation studies between technical metrics and business outcomes.
     industry: string,
     includeCompetitiveIntelligence: boolean = false
   ): Promise<IndustryBenchmark> {
-    const benchmark = this.benchmarkData.get(industry) || await this.generateIndustryBenchmark(industry);
+    const benchmark =
+      this.benchmarkData.get(industry) ||
+      (await this.generateIndustryBenchmark(industry));
 
     if (includeCompetitiveIntelligence) {
-      benchmark.insights = await this.enhanceWithCompetitiveIntelligence(benchmark, industry);
+      benchmark.insights = await this.enhanceWithCompetitiveIntelligence(
+        benchmark,
+        industry
+      );
     }
 
     return benchmark;
@@ -262,11 +274,14 @@ and correlation studies between technical metrics and business outcomes.
   /**
    * Generate thought leadership content for PR and marketing
    */
-  async generateThoughtLeadershipContent(report: StateOfIndustryReport): Promise<ThoughtLeadershipContent[]> {
+  async generateThoughtLeadershipContent(
+    report: StateOfIndustryReport
+  ): Promise<ThoughtLeadershipContent[]> {
     const contentPieces: ThoughtLeadershipContent[] = [
       {
         type: 'article',
-        title: 'The Great Portfolio Performance Divide: Why 75% of Professionals Are Losing Opportunities',
+        title:
+          'The Great Portfolio Performance Divide: Why 75% of Professionals Are Losing Opportunities',
         abstract: `New research reveals a stunning performance gap in professional portfolios, 
         with top performers achieving 340% higher conversion rates. This analysis of 50,000+ 
         portfolios exposes the technical factors separating winners from losers.`,
@@ -274,60 +289,91 @@ and correlation studies between technical metrics and business outcomes.
           'Performance gap between leaders and laggards widens to 75%',
           'Mobile optimization remains critically underutilized',
           'AI-powered optimization emerges as key differentiator',
-          'Technical excellence directly correlates with career success'
+          'Technical excellence directly correlates with career success',
         ],
-        targetAudience: ['Professionals', 'Career coaches', 'HR leaders', 'Tech media'],
-        distributionChannels: ['Forbes', 'Harvard Business Review', 'TechCrunch', 'LinkedIn'],
+        targetAudience: [
+          'Professionals',
+          'Career coaches',
+          'HR leaders',
+          'Tech media',
+        ],
+        distributionChannels: [
+          'Forbes',
+          'Harvard Business Review',
+          'TechCrunch',
+          'LinkedIn',
+        ],
         expectedReach: 500000,
         businessValue: {
           leadGeneration: 2500,
           brandAwareness: 85,
           speakingOpportunities: 12,
-          mediaPickup: 45
-        }
+          mediaPickup: 45,
+        },
       },
       {
         type: 'whitepaper',
-        title: 'AI-Powered Portfolio Optimization: The Technical Implementation Guide',
+        title:
+          'AI-Powered Portfolio Optimization: The Technical Implementation Guide',
         abstract: `Comprehensive technical guide for implementing AI-driven portfolio 
         optimization, based on analysis of top-performing portfolios and emerging AI techniques.`,
         keyPoints: [
           'Machine learning models for performance prediction',
           'Automated optimization workflow implementation',
           'ROI analysis and business case development',
-          'Technical architecture and scaling considerations'
+          'Technical architecture and scaling considerations',
         ],
-        targetAudience: ['CTOs', 'Engineering leaders', 'Product managers', 'Developers'],
-        distributionChannels: ['Technical conferences', 'Engineering blogs', 'GitHub', 'Academic journals'],
+        targetAudience: [
+          'CTOs',
+          'Engineering leaders',
+          'Product managers',
+          'Developers',
+        ],
+        distributionChannels: [
+          'Technical conferences',
+          'Engineering blogs',
+          'GitHub',
+          'Academic journals',
+        ],
         expectedReach: 50000,
         businessValue: {
           leadGeneration: 500,
           brandAwareness: 95,
           speakingOpportunities: 8,
-          mediaPickup: 15
-        }
+          mediaPickup: 15,
+        },
       },
       {
         type: 'presentation',
-        title: 'The Future of Professional Portfolios: AI, Performance, and Career Success',
+        title:
+          'The Future of Professional Portfolios: AI, Performance, and Career Success',
         abstract: `Keynote presentation revealing how AI and performance optimization 
         are reshaping professional portfolio success, with data-driven insights and future predictions.`,
         keyPoints: [
           'Industry transformation through AI optimization',
           'Performance as competitive advantage',
           'Future trends and market predictions',
-          'Action items for professionals and organizations'
+          'Action items for professionals and organizations',
         ],
-        targetAudience: ['Conference attendees', 'Industry executives', 'Career professionals'],
-        distributionChannels: ['TechCrunch Disrupt', 'Web Summit', 'HR conferences', 'University events'],
+        targetAudience: [
+          'Conference attendees',
+          'Industry executives',
+          'Career professionals',
+        ],
+        distributionChannels: [
+          'TechCrunch Disrupt',
+          'Web Summit',
+          'HR conferences',
+          'University events',
+        ],
         expectedReach: 10000,
         businessValue: {
           leadGeneration: 1000,
           brandAwareness: 90,
           speakingOpportunities: 25,
-          mediaPickup: 30
-        }
-      }
+          mediaPickup: 30,
+        },
+      },
     ];
 
     this.contentLibrary.push(...contentPieces);
@@ -353,11 +399,18 @@ and correlation studies between technical metrics and business outcomes.
     strategicRecommendations: string[];
   }> {
     const defaultCompetitors = [
-      'Wix', 'Squarespace', 'Webflow', 'WordPress', 'Notion', 
-      'GitHub Pages', 'Netlify', 'Vercel'
+      'Wix',
+      'Squarespace',
+      'Webflow',
+      'WordPress',
+      'Notion',
+      'GitHub Pages',
+      'Netlify',
+      'Vercel',
     ];
 
-    const competitors = targetCompetitors.length > 0 ? targetCompetitors : defaultCompetitors;
+    const competitors =
+      targetCompetitors.length > 0 ? targetCompetitors : defaultCompetitors;
 
     return {
       competitorAnalysis: competitors.map(competitor => ({
@@ -366,28 +419,28 @@ and correlation studies between technical metrics and business outcomes.
         weaknesses: this.getCompetitorWeaknesses(competitor),
         marketPosition: this.getMarketPosition(competitor),
         threats: this.getCompetitorThreats(competitor),
-        opportunities: this.getCompetitorOpportunities(competitor)
+        opportunities: this.getCompetitorOpportunities(competitor),
       })),
       marketTrends: [
         'AI-powered optimization becoming standard',
         'Mobile-first design mandatory for success',
         'Performance directly correlating with conversion rates',
         'Developer experience tools gaining importance',
-        'No-code solutions increasing market penetration'
+        'No-code solutions increasing market penetration',
       ],
       disruptionRisks: [
         'New AI-native portfolio builders entering market',
         'Big Tech companies expanding into portfolio space',
         'Voice and AR interfaces changing user expectations',
-        'Blockchain-based portfolio verification emerging'
+        'Blockchain-based portfolio verification emerging',
       ],
       strategicRecommendations: [
         'Invest heavily in AI optimization capabilities',
         'Focus on mobile performance differentiation',
         'Develop API ecosystem for B2B monetization',
         'Create thought leadership through industry research',
-        'Build sustainable competitive moats through technical excellence'
-      ]
+        'Build sustainable competitive moats through technical excellence',
+      ],
     };
   }
 
@@ -401,37 +454,45 @@ and correlation studies between technical metrics and business outcomes.
         loadTimeSeconds: 2.8,
         conversionRate: 2.4,
         mobileScore: 68.5,
-        technicalDebtIndex: 34.7
+        technicalDebtIndex: 34.7,
       },
       regionalDifferences: {
         'North America': 75.8,
-        'Europe': 72.1,
+        Europe: 72.1,
         'Asia Pacific': 70.3,
         'Latin America': 67.9,
-        'Africa': 65.2
+        Africa: 65.2,
       },
       industryLeaders: [
         {
           company: 'MADFAM Users (Top 10%)',
           score: 94.2,
-          strengths: ['AI optimization', 'Mobile performance', 'Technical excellence']
+          strengths: [
+            'AI optimization',
+            'Mobile performance',
+            'Technical excellence',
+          ],
         },
         {
           company: 'Custom Development',
           score: 87.6,
-          strengths: ['Tailored solutions', 'Performance focus', 'Developer expertise']
+          strengths: [
+            'Tailored solutions',
+            'Performance focus',
+            'Developer expertise',
+          ],
         },
         {
           company: 'Enterprise Platforms',
           score: 82.1,
-          strengths: ['Scalability', 'Security', 'Integration capabilities']
-        }
+          strengths: ['Scalability', 'Security', 'Integration capabilities'],
+        },
       ],
       emergingPatterns: [
         'AI-optimized portfolios consistently outperform manual optimization',
         'Mobile performance gap widening between leaders and laggards',
-        'Technical metrics directly correlating with business outcomes'
-      ]
+        'Technical metrics directly correlating with business outcomes',
+      ],
     };
   }
 
@@ -445,22 +506,28 @@ and correlation studies between technical metrics and business outcomes.
         magnitude: 156, // percentage improvement over baseline
         timeframe: '2024-2025',
         affectedSegments: ['All industries', 'Particularly tech and finance'],
-        businessImpact: 'Sustainable competitive advantage through technical excellence'
+        businessImpact:
+          'Sustainable competitive advantage through technical excellence',
       },
       {
         trend: 'Mobile-First Portfolio Design',
         magnitude: 89,
         timeframe: '2024-2026',
-        affectedSegments: ['Creative industries', 'Sales professionals', 'Consultants'],
-        businessImpact: 'Essential for market relevance and user engagement'
+        affectedSegments: [
+          'Creative industries',
+          'Sales professionals',
+          'Consultants',
+        ],
+        businessImpact: 'Essential for market relevance and user engagement',
       },
       {
         trend: 'Performance-Driven Career Success',
         magnitude: 234,
         timeframe: '2024-2027',
         affectedSegments: ['All professional sectors'],
-        businessImpact: 'Portfolio performance becomes proxy for professional competence'
-      }
+        businessImpact:
+          'Portfolio performance becomes proxy for professional competence',
+      },
     ];
   }
 
@@ -473,37 +540,37 @@ and correlation studies between technical metrics and business outcomes.
         {
           area: 'AI-Powered Tools',
           investment: 2400000000, // $2.4B
-          growth: 340
+          growth: 340,
         },
         {
           area: 'Mobile Optimization',
           investment: 890000000, // $890M
-          growth: 156
+          growth: 156,
         },
         {
           area: 'Developer Experience',
           investment: 1200000000, // $1.2B
-          growth: 234
-        }
+          growth: 234,
+        },
       ],
       competitiveLandscape: [
         'Traditional builders struggling with performance demands',
         'AI-native platforms gaining market share rapidly',
         'Developer-focused tools creating new market segments',
-        'Enterprise demand driving B2B opportunities'
+        'Enterprise demand driving B2B opportunities',
       ],
       disruptionThreats: [
         'Big Tech entry into portfolio space',
         'AI making traditional tools obsolete',
         'No-code platforms democratizing development',
-        'Voice and AR interfaces changing expectations'
+        'Voice and AR interfaces changing expectations',
       ],
       opportunityAreas: [
         'B2B API monetization for portfolio platforms',
         'Enterprise consulting based on performance expertise',
         'Thought leadership through industry research',
-        'White-label solutions for agencies and consultants'
-      ]
+        'White-label solutions for agencies and consultants',
+      ],
     };
   }
 
@@ -514,44 +581,50 @@ and correlation studies between technical metrics and business outcomes.
     return {
       predictions: [
         {
-          prediction: 'AI optimization becomes standard for all portfolio platforms',
+          prediction:
+            'AI optimization becomes standard for all portfolio platforms',
           confidence: 92,
           timeline: '12-18 months',
-          impact: 'Platforms without AI optimization become obsolete'
+          impact: 'Platforms without AI optimization become obsolete',
         },
         {
-          prediction: 'Performance metrics become primary portfolio evaluation criteria',
+          prediction:
+            'Performance metrics become primary portfolio evaluation criteria',
           confidence: 87,
           timeline: '6-12 months',
-          impact: 'Technical excellence directly tied to career advancement'
+          impact: 'Technical excellence directly tied to career advancement',
         },
         {
-          prediction: 'Mobile portfolio performance reaches parity with desktop',
+          prediction:
+            'Mobile portfolio performance reaches parity with desktop',
           confidence: 78,
           timeline: '18-24 months',
-          impact: 'Mobile-first design becomes universal requirement'
-        }
+          impact: 'Mobile-first design becomes universal requirement',
+        },
       ],
       recommendedActions: [
         'Invest immediately in AI-powered optimization capabilities',
         'Prioritize mobile performance optimization',
         'Develop comprehensive performance monitoring',
         'Create educational content about portfolio performance',
-        'Build strategic partnerships with career services organizations'
+        'Build strategic partnerships with career services organizations',
       ],
       strategyImplications: [
         'Technical excellence becomes primary competitive differentiator',
         'Performance optimization drives customer acquisition and retention',
         'Thought leadership through research creates sustainable market position',
-        'B2B opportunities emerge from performance expertise'
-      ]
+        'B2B opportunities emerge from performance expertise',
+      ],
     };
   }
 
   /**
    * Generate executive summary for industry report
    */
-  private generateExecutiveSummary(performanceAnalysis: any, trends: any): string {
+  private generateExecutiveSummary(
+    performanceAnalysis: any,
+    trends: any
+  ): string {
     return `
 THE PORTFOLIO PERFORMANCE REVOLUTION: 2025 STATE OF THE INDUSTRY
 
@@ -590,44 +663,99 @@ and positions technical excellence as the primary driver of professional success
    */
   private getCompetitorStrengths(competitor: string): string[] {
     const strengths = {
-      'Wix': ['Market reach', 'Template variety', 'Ease of use'],
-      'Squarespace': ['Design quality', 'Brand recognition', 'E-commerce integration'],
-      'Webflow': ['Developer tools', 'Design flexibility', 'CMS capabilities'],
-      'WordPress': ['Market dominance', 'Plugin ecosystem', 'SEO capabilities'],
-      'Notion': ['Productivity integration', 'Collaboration features', 'Viral growth'],
+      Wix: ['Market reach', 'Template variety', 'Ease of use'],
+      Squarespace: [
+        'Design quality',
+        'Brand recognition',
+        'E-commerce integration',
+      ],
+      Webflow: ['Developer tools', 'Design flexibility', 'CMS capabilities'],
+      WordPress: ['Market dominance', 'Plugin ecosystem', 'SEO capabilities'],
+      Notion: [
+        'Productivity integration',
+        'Collaboration features',
+        'Viral growth',
+      ],
       'GitHub Pages': ['Developer adoption', 'Free hosting', 'Git integration'],
-      'Netlify': ['Developer experience', 'JAMstack focus', 'Performance optimization'],
-      'Vercel': ['Next.js integration', 'Edge computing', 'Developer tools']
+      Netlify: [
+        'Developer experience',
+        'JAMstack focus',
+        'Performance optimization',
+      ],
+      Vercel: ['Next.js integration', 'Edge computing', 'Developer tools'],
     };
-    return strengths[competitor as keyof typeof strengths] || ['Market presence', 'User base', 'Platform stability'];
+    return (
+      strengths[competitor as keyof typeof strengths] || [
+        'Market presence',
+        'User base',
+        'Platform stability',
+      ]
+    );
   }
 
   private getCompetitorWeaknesses(competitor: string): string[] {
     const weaknesses = {
-      'Wix': ['Performance issues', 'Limited customization', 'SEO limitations'],
-      'Squarespace': ['High pricing', 'Limited developer tools', 'Performance concerns'],
-      'Webflow': ['Steep learning curve', 'Pricing complexity', 'Limited AI features'],
-      'WordPress': ['Security vulnerabilities', 'Maintenance overhead', 'Performance optimization complexity'],
-      'Notion': ['Not portfolio-focused', 'Limited customization', 'Performance limitations'],
-      'GitHub Pages': ['Limited features', 'Technical requirements', 'Design limitations'],
-      'Netlify': ['Pricing for high usage', 'Limited design tools', 'Complex for non-developers'],
-      'Vercel': ['Vendor lock-in', 'Pricing concerns', 'Limited portfolio features']
+      Wix: ['Performance issues', 'Limited customization', 'SEO limitations'],
+      Squarespace: [
+        'High pricing',
+        'Limited developer tools',
+        'Performance concerns',
+      ],
+      Webflow: [
+        'Steep learning curve',
+        'Pricing complexity',
+        'Limited AI features',
+      ],
+      WordPress: [
+        'Security vulnerabilities',
+        'Maintenance overhead',
+        'Performance optimization complexity',
+      ],
+      Notion: [
+        'Not portfolio-focused',
+        'Limited customization',
+        'Performance limitations',
+      ],
+      'GitHub Pages': [
+        'Limited features',
+        'Technical requirements',
+        'Design limitations',
+      ],
+      Netlify: [
+        'Pricing for high usage',
+        'Limited design tools',
+        'Complex for non-developers',
+      ],
+      Vercel: [
+        'Vendor lock-in',
+        'Pricing concerns',
+        'Limited portfolio features',
+      ],
     };
-    return weaknesses[competitor as keyof typeof weaknesses] || ['Limited AI optimization', 'Performance gaps', 'Feature limitations'];
+    return (
+      weaknesses[competitor as keyof typeof weaknesses] || [
+        'Limited AI optimization',
+        'Performance gaps',
+        'Feature limitations',
+      ]
+    );
   }
 
   private getMarketPosition(competitor: string): string {
     const positions = {
-      'Wix': 'Mass market leader with performance challenges',
-      'Squarespace': 'Premium design-focused platform',
-      'Webflow': 'Developer-friendly design platform',
-      'WordPress': 'Dominant CMS with complexity issues',
-      'Notion': 'Productivity platform expanding into portfolios',
+      Wix: 'Mass market leader with performance challenges',
+      Squarespace: 'Premium design-focused platform',
+      Webflow: 'Developer-friendly design platform',
+      WordPress: 'Dominant CMS with complexity issues',
+      Notion: 'Productivity platform expanding into portfolios',
       'GitHub Pages': 'Developer-first free hosting solution',
-      'Netlify': 'JAMstack hosting and deployment platform',
-      'Vercel': 'Next.js-focused deployment platform'
+      Netlify: 'JAMstack hosting and deployment platform',
+      Vercel: 'Next.js-focused deployment platform',
     };
-    return positions[competitor as keyof typeof positions] || 'Established platform with traditional approach';
+    return (
+      positions[competitor as keyof typeof positions] ||
+      'Established platform with traditional approach'
+    );
   }
 
   private getCompetitorThreats(competitor: string): string[] {
@@ -635,7 +763,7 @@ and positions technical excellence as the primary driver of professional success
       'AI-powered optimization becoming standard',
       'Mobile performance requirements increasing',
       'Developer experience expectations rising',
-      'Performance correlation with business success proven'
+      'Performance correlation with business success proven',
     ];
   }
 
@@ -644,14 +772,16 @@ and positions technical excellence as the primary driver of professional success
       'AI optimization integration',
       'Mobile performance improvement',
       'Developer tool enhancement',
-      'Business intelligence features'
+      'Business intelligence features',
     ];
   }
 
   /**
    * Generate industry-specific benchmark data
    */
-  private async generateIndustryBenchmark(industry: string): Promise<IndustryBenchmark> {
+  private async generateIndustryBenchmark(
+    industry: string
+  ): Promise<IndustryBenchmark> {
     const baseMetrics = {
       averagePerformanceScore: Math.random() * 20 + 65,
       topPercentileScore: Math.random() * 10 + 90,
@@ -660,7 +790,7 @@ and positions technical excellence as the primary driver of professional success
       mobilePerformanceGap: Math.random() * 30 + 10,
       technicalDebtIndex: Math.random() * 40 + 20,
       developmentVelocity: Math.random() * 50 + 50,
-      maintenanceCostPerDeveloper: Math.random() * 50000 + 75000
+      maintenanceCostPerDeveloper: Math.random() * 50000 + 75000,
     };
 
     const benchmark: IndustryBenchmark = {
@@ -673,36 +803,36 @@ and positions technical excellence as the primary driver of professional success
         emergingPatterns: [
           'AI optimization adoption accelerating',
           'Mobile performance gap widening',
-          'Performance correlation with business outcomes strengthening'
+          'Performance correlation with business outcomes strengthening',
         ],
         riskFactors: [
           'Traditional platforms losing competitiveness',
           'Manual optimization hitting performance ceiling',
-          'Developer experience expectations rising'
-        ]
+          'Developer experience expectations rising',
+        ],
       },
       insights: {
         marketOpportunities: [
           'AI-powered optimization services',
           'Mobile performance consulting',
-          'Developer experience improvements'
+          'Developer experience improvements',
         ],
         competitiveThreats: [
           'New AI-native platforms',
           'Big Tech platform expansion',
-          'Performance-focused competitors'
+          'Performance-focused competitors',
         ],
         innovationAreas: [
           'Machine learning optimization',
           'Automated performance monitoring',
-          'Intelligent mobile optimization'
+          'Intelligent mobile optimization',
         ],
         investmentPriorities: [
           'AI optimization capabilities',
           'Mobile performance tools',
-          'Developer experience enhancement'
-        ]
-      }
+          'Developer experience enhancement',
+        ],
+      },
     };
 
     this.benchmarkData.set(industry, benchmark);
@@ -714,15 +844,19 @@ and positions technical excellence as the primary driver of professional success
    */
   private categorizeIndustry(industry: string): string {
     const categories = {
-      'Technology': ['Software', 'Hardware', 'IT Services', 'Cybersecurity'],
-      'Creative': ['Design', 'Marketing', 'Media', 'Entertainment'],
+      Technology: ['Software', 'Hardware', 'IT Services', 'Cybersecurity'],
+      Creative: ['Design', 'Marketing', 'Media', 'Entertainment'],
       'Professional Services': ['Consulting', 'Legal', 'Accounting', 'Finance'],
-      'Healthcare': ['Medical', 'Pharmaceutical', 'Biotech', 'Health Tech'],
-      'Education': ['EdTech', 'Higher Education', 'Training', 'Research']
+      Healthcare: ['Medical', 'Pharmaceutical', 'Biotech', 'Health Tech'],
+      Education: ['EdTech', 'Higher Education', 'Training', 'Research'],
     };
 
     for (const [category, industries] of Object.entries(categories)) {
-      if (industries.some(ind => industry.toLowerCase().includes(ind.toLowerCase()))) {
+      if (
+        industries.some(ind =>
+          industry.toLowerCase().includes(ind.toLowerCase())
+        )
+      ) {
         return category;
       }
     }
@@ -743,20 +877,20 @@ and positions technical excellence as the primary driver of professional success
         ...benchmark.insights.marketOpportunities,
         'White-label optimization solutions for agencies',
         'Industry-specific performance consulting',
-        'B2B API monetization opportunities'
+        'B2B API monetization opportunities',
       ],
       competitiveThreats: [
         ...benchmark.insights.competitiveThreats,
         'Industry leaders adopting AI optimization',
         'New entrants with performance focus',
-        'Traditional platforms upgrading capabilities'
+        'Traditional platforms upgrading capabilities',
       ],
       innovationAreas: [
         ...benchmark.insights.innovationAreas,
         'Industry-specific optimization models',
         'Predictive performance analytics',
-        'Automated competitive benchmarking'
-      ]
+        'Automated competitive benchmarking',
+      ],
     };
   }
 
@@ -765,17 +899,24 @@ and positions technical excellence as the primary driver of professional success
    */
   private initializeBenchmarkData(): void {
     const industries = [
-      'Technology', 'Creative', 'Professional Services', 
-      'Healthcare', 'Education', 'Finance', 'Legal',
-      'Marketing', 'Consulting', 'Design'
+      'Technology',
+      'Creative',
+      'Professional Services',
+      'Healthcare',
+      'Education',
+      'Finance',
+      'Legal',
+      'Marketing',
+      'Consulting',
+      'Design',
     ];
 
     industries.forEach(industry => {
       this.generateIndustryBenchmark(industry);
     });
 
-    logger.info('Industry benchmark data initialized', { 
-      industries: industries.length 
+    logger.info('Industry benchmark data initialized', {
+      industries: industries.length,
     });
   }
 }
@@ -797,5 +938,7 @@ export async function getIndustryBenchmarks(industry: string) {
 }
 
 export async function generateCompetitiveIntelligence(competitors?: string[]) {
-  return industryBenchmarkingEngine.generateCompetitiveIntelligence(competitors);
+  return industryBenchmarkingEngine.generateCompetitiveIntelligence(
+    competitors
+  );
 }

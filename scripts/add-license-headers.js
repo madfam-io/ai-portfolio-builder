@@ -8,7 +8,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -27,7 +27,7 @@ const LICENSE_HEADERS = {
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  * 
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */`,
@@ -36,31 +36,31 @@ const LICENSE_HEADERS = {
  * MADFAM Code Available License (MCAL) v1.0
  * Copyright (c) 2025-present MADFAM. All rights reserved.
  * Commercial use prohibited except by MADFAM and licensed partners.
- * For licensing: licensing@madfam.com
+ * For licensing: licensing@madfam.io
  */`,
 
   html: `<!--
 MADFAM Code Available License (MCAL) v1.0
 Copyright (c) 2025-present MADFAM. All rights reserved.
 Commercial use prohibited except by MADFAM and licensed partners.
-For licensing: licensing@madfam.com
+For licensing: licensing@madfam.io
 -->`,
 
   yml: `# MADFAM Code Available License (MCAL) v1.0
 # Copyright (c) 2025-present MADFAM. All rights reserved.
 # Commercial use prohibited except by MADFAM and licensed partners.
-# For licensing: licensing@madfam.com`,
+# For licensing: licensing@madfam.io`,
 
   sh: `#!/bin/bash
 # MADFAM Code Available License (MCAL) v1.0
 # Copyright (c) 2025-present MADFAM. All rights reserved.
 # Commercial use prohibited except by MADFAM and licensed partners.
-# For licensing: licensing@madfam.com`,
+# For licensing: licensing@madfam.io`,
 
   sql: `-- MADFAM Code Available License (MCAL) v1.0
 -- Copyright (c) 2025-present MADFAM. All rights reserved.
 -- Commercial use prohibited except by MADFAM and licensed partners.
--- For licensing: licensing@madfam.com`,
+-- For licensing: licensing@madfam.io`,
 };
 
 // Map file extensions to header types

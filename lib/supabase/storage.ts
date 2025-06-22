@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -129,7 +129,7 @@ export async function uploadFile({
       });
 
     if (error) {
-      logger.error('Storage upload error:', error);
+      logger.error('Storage upload error:', error as Error);
       return {
         success: false,
         error: error.message,
@@ -174,7 +174,7 @@ export async function deleteFile(
       .remove([path]);
 
     if (error) {
-      logger.error('Storage delete error:', error);
+      logger.error('Storage delete error:', error as Error);
       return false;
     }
 

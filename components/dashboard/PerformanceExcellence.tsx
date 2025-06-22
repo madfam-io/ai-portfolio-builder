@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -16,7 +16,7 @@
  *
  * Revolutionary user-facing dashboard that transforms technical metrics into
  * business value propositions. This component:
- * 
+ *
  * - Shows users how performance directly impacts their portfolio success
  * - Gamifies optimization with competitive rankings and achievements
  * - Demonstrates value of premium features through performance insights
@@ -131,17 +131,19 @@ export function PerformanceExcellenceDashboard({
 
   const updateAchievements = (report: CodeQualityReport) => {
     const newAchievements: string[] = [];
-    
+
     if (report.metrics.performanceScore > 90) {
       newAchievements.push('Performance Champion');
     }
     if (report.industryBenchmarks.performancePercentile > 95) {
       newAchievements.push('Top 5% Performer');
     }
-    if (report.businessImpact.competitivePositioning.technicalLeadershipScore > 85) {
+    if (
+      report.businessImpact.competitivePositioning.technicalLeadershipScore > 85
+    ) {
       newAchievements.push('Technical Leader');
     }
-    
+
     setAchievements(newAchievements);
   };
 
@@ -152,15 +154,27 @@ export function PerformanceExcellenceDashboard({
   };
 
   const getPerformanceLevel = (score: number) => {
-    if (score >= 95) return { level: 'Elite', icon: Crown, color: 'bg-purple-500' };
-    if (score >= 90) return { level: 'Excellent', icon: Trophy, color: 'bg-yellow-500' };
-    if (score >= 80) return { level: 'Good', icon: Target, color: 'bg-blue-500' };
-    if (score >= 70) return { level: 'Fair', icon: Activity, color: 'bg-orange-500' };
-    return { level: 'Needs Improvement', icon: TrendingUp, color: 'bg-red-500' };
+    if (score >= 95)
+      return { level: 'Elite', icon: Crown, color: 'bg-purple-500' };
+    if (score >= 90)
+      return { level: 'Excellent', icon: Trophy, color: 'bg-yellow-500' };
+    if (score >= 80)
+      return { level: 'Good', icon: Target, color: 'bg-blue-500' };
+    if (score >= 70)
+      return { level: 'Fair', icon: Activity, color: 'bg-orange-500' };
+    return {
+      level: 'Needs Improvement',
+      icon: TrendingUp,
+      color: 'bg-red-500',
+    };
   };
 
   const competitorData = [
-    { name: 'Your Portfolio', score: report?.metrics.performanceScore || 0, color: '#3b82f6' },
+    {
+      name: 'Your Portfolio',
+      score: report?.metrics.performanceScore || 0,
+      color: '#3b82f6',
+    },
     { name: 'Wix', score: 65, color: '#e5e7eb' },
     { name: 'Squarespace', score: 72, color: '#e5e7eb' },
     { name: 'Webflow', score: 78, color: '#e5e7eb' },
@@ -168,8 +182,14 @@ export function PerformanceExcellenceDashboard({
   ];
 
   const performanceHistoryData = [
-    { date: '1 week ago', score: (report?.metrics.performanceScore || 80) - 15 },
-    { date: '5 days ago', score: (report?.metrics.performanceScore || 80) - 10 },
+    {
+      date: '1 week ago',
+      score: (report?.metrics.performanceScore || 80) - 15,
+    },
+    {
+      date: '5 days ago',
+      score: (report?.metrics.performanceScore || 80) - 10,
+    },
     { date: '3 days ago', score: (report?.metrics.performanceScore || 80) - 5 },
     { date: 'Today', score: report?.metrics.performanceScore || 80 },
   ];
@@ -180,7 +200,9 @@ export function PerformanceExcellenceDashboard({
         <div className="flex items-center justify-center h-64">
           <div className="flex items-center space-x-2">
             <Sparkles className="w-6 h-6 animate-spin text-blue-600" />
-            <span className="text-lg font-medium">Analyzing your portfolio performance...</span>
+            <span className="text-lg font-medium">
+              Analyzing your portfolio performance...
+            </span>
           </div>
         </div>
       </div>
@@ -234,12 +256,19 @@ export function PerformanceExcellenceDashboard({
                     Performance Excellence Score
                   </CardTitle>
                   <CardDescription className="text-lg">
-                    Your portfolio ranks in the {report.industryBenchmarks.performancePercentile}th percentile
+                    Your portfolio ranks in the{' '}
+                    {report.industryBenchmarks.performancePercentile}th
+                    percentile
                   </CardDescription>
                 </div>
               </div>
               <div className="text-right">
-                <div className={cn('text-4xl font-bold', getPerformanceColor(report.metrics.performanceScore))}>
+                <div
+                  className={cn(
+                    'text-4xl font-bold',
+                    getPerformanceColor(report.metrics.performanceScore)
+                  )}
+                >
                   {report.metrics.performanceScore.toFixed(1)}
                 </div>
                 <div className="text-sm text-gray-600">/ 100</div>
@@ -256,9 +285,11 @@ export function PerformanceExcellenceDashboard({
                 <div className="text-2xl font-bold text-green-600">
                   +${report.metrics.revenueImpact.toLocaleString()}
                 </div>
-                <p className="text-sm text-gray-600">Annual potential increase</p>
+                <p className="text-sm text-gray-600">
+                  Annual potential increase
+                </p>
               </div>
-              
+
               <div className="space-y-2">
                 <div className="flex items-center space-x-2">
                   <Users className="w-4 h-4 text-blue-600" />
@@ -290,7 +321,11 @@ export function PerformanceExcellenceDashboard({
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {achievements.map((achievement, index) => (
-                    <Badge key={index} variant="secondary" className="bg-yellow-100 text-yellow-800">
+                    <Badge
+                      key={index}
+                      variant="secondary"
+                      className="bg-yellow-100 text-yellow-800"
+                    >
                       <Star className="w-3 h-3 mr-1" />
                       {achievement}
                     </Badge>
@@ -310,9 +345,7 @@ export function PerformanceExcellenceDashboard({
           <TabsTrigger value="optimization">Optimization</TabsTrigger>
           <TabsTrigger value="insights" className="relative">
             Insights
-            {!isPremium && (
-              <Lock className="w-3 h-3 ml-1 text-gray-400" />
-            )}
+            {!isPremium && <Lock className="w-3 h-3 ml-1 text-gray-400" />}
           </TabsTrigger>
         </TabsList>
 
@@ -369,26 +402,35 @@ export function PerformanceExcellenceDashboard({
                   </div>
                   <Progress value={92} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium">Code Quality</span>
-                    <span className="text-sm text-gray-600">{(100 - report.metrics.technicalDebtScore).toFixed(0)}/100</span>
+                    <span className="text-sm text-gray-600">
+                      {(100 - report.metrics.technicalDebtScore).toFixed(0)}/100
+                    </span>
                   </div>
-                  <Progress value={100 - report.metrics.technicalDebtScore} className="h-2" />
+                  <Progress
+                    value={100 - report.metrics.technicalDebtScore}
+                    className="h-2"
+                  />
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">SEO Optimization</span>
+                    <span className="text-sm font-medium">
+                      SEO Optimization
+                    </span>
                     <span className="text-sm text-gray-600">88/100</span>
                   </div>
                   <Progress value={88} className="h-2" />
                 </div>
-                
+
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Mobile Performance</span>
+                    <span className="text-sm font-medium">
+                      Mobile Performance
+                    </span>
                     <span className="text-sm text-gray-600">85/100</span>
                   </div>
                   <Progress value={85} className="h-2" />
@@ -421,15 +463,30 @@ export function PerformanceExcellenceDashboard({
                   </BarChart>
                 </ResponsiveContainer>
               </div>
-              
+
               <div className="mt-6 p-4 bg-blue-50 rounded-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Trophy className="w-5 h-5 text-blue-600" />
-                  <span className="font-medium text-blue-900">Competitive Advantage</span>
+                  <span className="font-medium text-blue-900">
+                    Competitive Advantage
+                  </span>
                 </div>
                 <p className="text-blue-800 text-sm">
-                  Your portfolio outperforms {competitorData.filter(c => c.score < (report?.metrics.performanceScore || 0)).length} out of {competitorData.length - 1} major competitors. 
-                  You're in the top {Math.round((1 - (report?.industryBenchmarks.performancePercentile || 0) / 100) * 100)}% of all portfolio websites.
+                  Your portfolio outperforms{' '}
+                  {
+                    competitorData.filter(
+                      c => c.score < (report?.metrics.performanceScore || 0)
+                    ).length
+                  }{' '}
+                  out of {competitorData.length - 1} major competitors. You're
+                  in the top{' '}
+                  {Math.round(
+                    (1 -
+                      (report?.industryBenchmarks.performancePercentile || 0) /
+                        100) *
+                      100
+                  )}
+                  % of all portfolio websites.
                 </p>
               </div>
             </CardContent>
@@ -438,99 +495,125 @@ export function PerformanceExcellenceDashboard({
 
         <TabsContent value="optimization" className="space-y-6">
           <div className="space-y-4">
-            {report.recommendations.slice(0, isPremium ? 5 : 2).map((rec, index) => (
-              <motion.div
-                key={rec.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <Card className={cn(
-                  'border-l-4',
-                  rec.priority === 'critical' ? 'border-l-red-500' :
-                  rec.priority === 'high' ? 'border-l-orange-500' :
-                  'border-l-blue-500'
-                )}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <Badge variant={rec.priority === 'critical' ? 'destructive' : 'secondary'}>
-                          {rec.priority}
-                        </Badge>
-                        <CardTitle className="text-lg">{rec.title}</CardTitle>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-lg font-bold text-green-600">
-                          +{rec.expectedImpact.performance}%
-                        </div>
-                        <div className="text-xs text-gray-600">Performance</div>
-                      </div>
-                    </div>
-                    <CardDescription>{rec.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                      <div className="text-center p-3 bg-green-50 rounded-lg">
-                        <div className="text-lg font-bold text-green-600">
-                          +${rec.expectedImpact.revenue.toLocaleString()}
-                        </div>
-                        <div className="text-xs text-gray-600">Revenue Impact</div>
-                      </div>
-                      <div className="text-center p-3 bg-blue-50 rounded-lg">
-                        <div className="text-lg font-bold text-blue-600">
-                          +{rec.expectedImpact.userExperience}%
-                        </div>
-                        <div className="text-xs text-gray-600">User Experience</div>
-                      </div>
-                      <div className="text-center p-3 bg-purple-50 rounded-lg">
-                        <div className="text-lg font-bold text-purple-600">
-                          {rec.implementationEffort}
-                        </div>
-                        <div className="text-xs text-gray-600">Effort Level</div>
-                      </div>
-                    </div>
-                    
-                    <div className="text-sm text-gray-700 mb-4">
-                      <strong>Business Impact:</strong> {rec.businessJustification}
-                    </div>
-                    
-                    {isPremium && (
-                      <details className="text-sm">
-                        <summary className="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
-                          View Implementation Details
-                        </summary>
-                        <div className="mt-3 space-y-2">
-                          <div>
-                            <strong>Required Changes:</strong>
-                            <ul className="list-disc list-inside mt-1 space-y-1">
-                              {rec.codeChanges.map((change, i) => (
-                                <li key={i} className="text-gray-600">{change}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div>
-                            <strong>Success Metrics:</strong>
-                            <ul className="list-disc list-inside mt-1 space-y-1">
-                              {rec.successMetrics.map((metric, i) => (
-                                <li key={i} className="text-gray-600">{metric}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      </details>
+            {report.recommendations
+              .slice(0, isPremium ? 5 : 2)
+              .map((rec, index) => (
+                <motion.div
+                  key={rec.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                >
+                  <Card
+                    className={cn(
+                      'border-l-4',
+                      rec.priority === 'critical'
+                        ? 'border-l-red-500'
+                        : rec.priority === 'high'
+                          ? 'border-l-orange-500'
+                          : 'border-l-blue-500'
                     )}
-                  </CardContent>
-                </Card>
-              </motion.div>
-            ))}
-            
+                  >
+                    <CardHeader>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <Badge
+                            variant={
+                              rec.priority === 'critical'
+                                ? 'destructive'
+                                : 'secondary'
+                            }
+                          >
+                            {rec.priority}
+                          </Badge>
+                          <CardTitle className="text-lg">{rec.title}</CardTitle>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-lg font-bold text-green-600">
+                            +{rec.expectedImpact.performance}%
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Performance
+                          </div>
+                        </div>
+                      </div>
+                      <CardDescription>{rec.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                        <div className="text-center p-3 bg-green-50 rounded-lg">
+                          <div className="text-lg font-bold text-green-600">
+                            +${rec.expectedImpact.revenue.toLocaleString()}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Revenue Impact
+                          </div>
+                        </div>
+                        <div className="text-center p-3 bg-blue-50 rounded-lg">
+                          <div className="text-lg font-bold text-blue-600">
+                            +{rec.expectedImpact.userExperience}%
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            User Experience
+                          </div>
+                        </div>
+                        <div className="text-center p-3 bg-purple-50 rounded-lg">
+                          <div className="text-lg font-bold text-purple-600">
+                            {rec.implementationEffort}
+                          </div>
+                          <div className="text-xs text-gray-600">
+                            Effort Level
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-sm text-gray-700 mb-4">
+                        <strong>Business Impact:</strong>{' '}
+                        {rec.businessJustification}
+                      </div>
+
+                      {isPremium && (
+                        <details className="text-sm">
+                          <summary className="cursor-pointer font-medium text-blue-600 hover:text-blue-800">
+                            View Implementation Details
+                          </summary>
+                          <div className="mt-3 space-y-2">
+                            <div>
+                              <strong>Required Changes:</strong>
+                              <ul className="list-disc list-inside mt-1 space-y-1">
+                                {rec.codeChanges.map((change, i) => (
+                                  <li key={i} className="text-gray-600">
+                                    {change}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            <div>
+                              <strong>Success Metrics:</strong>
+                              <ul className="list-disc list-inside mt-1 space-y-1">
+                                {rec.successMetrics.map((metric, i) => (
+                                  <li key={i} className="text-gray-600">
+                                    {metric}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+                        </details>
+                      )}
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
+
             {!isPremium && (
               <Card className="border-2 border-dashed border-gray-300">
                 <CardContent className="flex items-center justify-center h-32">
                   <div className="text-center">
                     <Lock className="w-8 h-8 mx-auto mb-2 text-gray-400" />
                     <p className="text-gray-600 mb-3">
-                      Unlock {report.recommendations.length - 2} more optimization recommendations
+                      Unlock {report.recommendations.length - 2} more
+                      optimization recommendations
                     </p>
                     <Button size="sm">
                       <Crown className="w-4 h-4 mr-2" />
@@ -559,14 +642,18 @@ export function PerformanceExcellenceDashboard({
                 <CardContent>
                   <div className="prose max-w-none">
                     <div className="bg-purple-50 p-4 rounded-lg mb-4">
-                      <h4 className="font-semibold text-purple-900 mb-2">Executive Summary</h4>
+                      <h4 className="font-semibold text-purple-900 mb-2">
+                        Executive Summary
+                      </h4>
                       <div className="text-purple-800 text-sm whitespace-pre-line">
                         {report.executiveSummary}
                       </div>
                     </div>
-                    
+
                     <div className="bg-blue-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-blue-900 mb-2">Technical Analysis</h4>
+                      <h4 className="font-semibold text-blue-900 mb-2">
+                        Technical Analysis
+                      </h4>
                       <div className="text-blue-800 text-sm whitespace-pre-line">
                         {report.technicalSummary}
                       </div>
@@ -584,8 +671,9 @@ export function PerformanceExcellenceDashboard({
                     Premium AI Insights
                   </h3>
                   <p className="text-purple-700 mb-4 max-w-md">
-                    Get detailed business impact analysis, competitive intelligence, 
-                    and AI-powered optimization recommendations to maximize your portfolio's success.
+                    Get detailed business impact analysis, competitive
+                    intelligence, and AI-powered optimization recommendations to
+                    maximize your portfolio's success.
                   </p>
                   <Button className="bg-purple-600 hover:bg-purple-700">
                     <Rocket className="w-4 h-4 mr-2" />

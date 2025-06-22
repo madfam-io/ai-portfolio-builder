@@ -35,7 +35,7 @@ You may NOT:
 
 ## Commercial Licensing
 
-For commercial use rights, contact: licensing@madfam.com
+For commercial use rights, contact: licensing@madfam.io
 
 ## Authorized Commercial Users
 
@@ -67,4 +67,4 @@ law provisions.
 
 **Effective Date**: March 1, 2025  
 **License Version**: 1.0  
-**Contact**: licensing@madfam.com
+**Contact**: licensing@madfam.io

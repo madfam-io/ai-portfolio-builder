@@ -79,6 +79,8 @@ import {
   UniversalExperimentVariant,
   ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
+import { StatisticalAnalysisChart } from './ExperimentAnalytics/StatisticalAnalysisChart';
+import { DetailedVariantTable } from './ExperimentAnalytics/DetailedVariantTable';
 
 interface ExperimentAnalyticsProps {
   experiment: UniversalExperimentConfig;
@@ -143,26 +145,28 @@ export function ExperimentAnalytics({
         !best || (current && current.improvement > best.improvement)
           ? current
           : best,
-      null as typeof variantComparisons[0] | null
+      null as (typeof variantComparisons)[0] | null
     );
 
     return {
-      control: { 
+      control: {
         result: {
           conversionRate: primaryControlResult.conversionRate,
-          sampleSize: primaryControlResult.sampleSize
-        }
+          sampleSize: primaryControlResult.sampleSize,
+        },
       },
       treatments: variantComparisons.map(comp => ({
         variant: { name: comp.variant.name },
         improvement: comp.improvement,
         confidenceInterval: comp.confidenceInterval as [number, number],
-        isSignificant: comp.isSignificant
+        isSignificant: comp.isSignificant,
       })),
-      bestPerformer: bestPerformer ? {
-        improvement: bestPerformer.improvement,
-        variant: { name: bestPerformer.variant.name }
-      } : null
+      bestPerformer: bestPerformer
+        ? {
+            improvement: bestPerformer.improvement,
+            variant: { name: bestPerformer.variant.name },
+          }
+        : null,
     };
   }, [experiment, results, selectedMetric]);
 
@@ -277,7 +281,9 @@ export function ExperimentAnalytics({
               {(experiment.statistics.statisticalPower * 100).toFixed(0)}%
             </div>
             <p className="text-xs text-muted-foreground">
-              {statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) ? (
+              {statisticalSummary?.treatments.some(
+                t => t.isSignificant && t.improvement > 0
+              ) ? (
                 <span className="text-green-600 flex items-center">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   Significant
@@ -544,106 +550,7 @@ function ConversionFunnelChart({
   );
 }
 
-interface StatisticalAnalysisChartProps {
-  statisticalSummary: {
-    control: {
-      result: {
-        conversionRate?: number;
-        sampleSize: number;
-      };
-    };
-    treatments: Array<{
-      variant: { name: string };
-      improvement: number;
-      confidenceInterval: [number, number];
-      isSignificant: boolean;
-    }>;
-    bestPerformer?: {
-      improvement: number;
-      variant: { name: string };
-    } | null;
-  } | null;
-}
-
-function StatisticalAnalysisChart({
-  statisticalSummary,
-}: StatisticalAnalysisChartProps) {
-  if (!statisticalSummary) {
-    return (
-      <div className="h-[300px] flex items-center justify-center text-gray-500">
-        <div className="text-center">
-          <BarChart3 className="w-12 h-12 mx-auto mb-4 opacity-50" />
-          <p>Insufficient data for statistical analysis</p>
-        </div>
-      </div>
-    );
-  }
-
-  const confidenceData = statisticalSummary.treatments.map(
-    (treatment, _index) => ({
-      variant: treatment.variant.name,
-      improvement: treatment.improvement * 100,
-      lowerBound: treatment.confidenceInterval[0] * 100,
-      upperBound: treatment.confidenceInterval[1] * 100,
-      isSignificant: treatment.isSignificant,
-    })
-  );
-
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
-          <h4 className="font-semibold mb-2">Control Performance</h4>
-          <div className="text-2xl font-bold">
-            {(statisticalSummary.control.result.conversionRate || 0).toFixed(2)}
-            %
-          </div>
-          <p className="text-sm text-gray-600">
-            {statisticalSummary.control.result.sampleSize.toLocaleString()}{' '}
-            participants
-          </p>
-        </div>
-
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <h4 className="font-semibold mb-2">Best Treatment</h4>
-          <div className="text-2xl font-bold text-blue-600">
-            +
-            {(
-              (statisticalSummary.bestPerformer?.improvement || 0) * 100
-            ).toFixed(1)}
-            %
-          </div>
-          <p className="text-sm text-gray-600">
-            {statisticalSummary.bestPerformer?.variant.name ||
-              'None significant'}
-          </p>
-        </div>
-      </div>
-
-      <div className="h-[200px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={confidenceData} layout="horizontal">
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis type="number" domain={['dataMin - 5', 'dataMax + 5']} />
-            <YAxis dataKey="variant" type="category" width={80} />
-            <Tooltip
-              formatter={(value: unknown) => [
-                `${parseFloat(String(value)).toFixed(1)}%`,
-                'Improvement',
-              ]}
-            />
-            <Bar
-              dataKey="improvement"
-              fill="#3b82f6"
-              name="Improvement"
-              radius={[0, 4, 4, 0]}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
-  );
-}
+// Extracted to separate file
 
 interface ExperimentInsightsProps {
   experiment: UniversalExperimentConfig;
@@ -691,7 +598,9 @@ function ExperimentInsights({
   }
 
   // Statistical significance
-  const hasSignificantWinner = statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0);
+  const hasSignificantWinner = statisticalSummary?.treatments.some(
+    t => t.isSignificant && t.improvement > 0
+  );
   if (hasSignificantWinner && statisticalSummary?.bestPerformer) {
     insights.push({
       type: 'success',
@@ -710,7 +619,10 @@ function ExperimentInsights({
   }
 
   // Revenue impact estimation
-  if (statisticalSummary?.bestPerformer && statisticalSummary.bestPerformer.improvement > 0) {
+  if (
+    statisticalSummary?.bestPerformer &&
+    statisticalSummary.bestPerformer.improvement > 0
+  ) {
     const estimatedMonthlyImpact =
       statisticalSummary.bestPerformer.improvement * 10000; // Mock calculation
     insights.push({
@@ -770,11 +682,13 @@ function ExperimentInsights({
           {progressPercentage < 100 && (
             <li>• Continue running until minimum sample size is reached</li>
           )}
-          {statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) && (
-            <li>• Consider deploying winning variant to all users</li>
-          )}
+          {statisticalSummary?.treatments.some(
+            t => t.isSignificant && t.improvement > 0
+          ) && <li>• Consider deploying winning variant to all users</li>}
           {progressPercentage >= 100 &&
-            !statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) && (
+            !statisticalSummary?.treatments.some(
+              t => t.isSignificant && t.improvement > 0
+            ) && (
               <li>• Consider extending duration or redesigning experiment</li>
             )}
         </ul>
@@ -783,97 +697,4 @@ function ExperimentInsights({
   );
 }
 
-interface DetailedVariantTableProps {
-  experiment: UniversalExperimentConfig;
-  results: Map<string, ExperimentResult[]>;
-  selectedMetric: string;
-}
-
-function DetailedVariantTable({
-  experiment,
-  results,
-  selectedMetric,
-}: DetailedVariantTableProps) {
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b">
-            <th className="text-left p-3">Variant</th>
-            <th className="text-right p-3">Participants</th>
-            <th className="text-right p-3">Conversions</th>
-            <th className="text-right p-3">Rate</th>
-            <th className="text-right p-3">Improvement</th>
-            <th className="text-right p-3">Confidence</th>
-            <th className="text-center p-3">Significance</th>
-          </tr>
-        </thead>
-        <tbody>
-          {experiment.variants.map(variant => {
-            const variantResults = results.get(variant.id) || [];
-            const metricResult = variantResults.find(
-              r => r.metricId === selectedMetric
-            );
-            const conversionRate =
-              variant.performance.assignments > 0
-                ? (variant.performance.conversions /
-                    variant.performance.assignments) *
-                  100
-                : 0;
-
-            return (
-              <tr key={variant.id} className="border-b">
-                <td className="p-3">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        variant.isControl ? 'bg-gray-400' : 'bg-blue-500'
-                      }`}
-                    />
-                    <span className="font-medium">{variant.name}</span>
-                    {variant.isControl && (
-                      <Badge variant="outline">Control</Badge>
-                    )}
-                  </div>
-                </td>
-                <td className="text-right p-3">
-                  {variant.performance.assignments.toLocaleString()}
-                </td>
-                <td className="text-right p-3">
-                  {variant.performance.conversions.toLocaleString()}
-                </td>
-                <td className="text-right p-3">{conversionRate.toFixed(2)}%</td>
-                <td className="text-right p-3">
-                  {metricResult ? (
-                    <span
-                      className={`${metricResult.effect > 0 ? 'text-green-600' : 'text-red-600'}`}
-                    >
-                      {metricResult.effect > 0 ? '+' : ''}
-                      {(metricResult.effect * 100).toFixed(1)}%
-                    </span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="text-right p-3">
-                  {metricResult ? (
-                    <span>{((1 - metricResult.pValue) * 100).toFixed(1)}%</span>
-                  ) : (
-                    <span className="text-gray-400">-</span>
-                  )}
-                </td>
-                <td className="text-center p-3">
-                  {metricResult?.statisticalSignificance ? (
-                    <CheckCircle className="w-4 h-4 text-green-600 mx-auto" />
-                  ) : (
-                    <XCircle className="w-4 h-4 text-gray-400 mx-auto" />
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
-  );
-}
+// Extracted to separate file

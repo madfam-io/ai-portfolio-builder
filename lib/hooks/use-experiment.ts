@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -146,7 +146,7 @@ export function useExperiment({
           metadata
         );
       } catch (error) {
-        logger.error('Failed to track experiment conversion:', error);
+        logger.error('Failed to track experiment conversion:', error as Error);
       }
     },
     [userId, experimentId]
@@ -156,7 +156,7 @@ export function useExperiment({
     try {
       await experimentationEngine.trackExposure(userId, experimentId);
     } catch (error) {
-      logger.error('Failed to track experiment exposure:', error);
+      logger.error('Failed to track experiment exposure:', error as Error);
     }
   }, [userId, experimentId]);
 
@@ -328,7 +328,7 @@ export function useFeatureFlag(
           setConfig(null);
         }
       } catch (error) {
-        logger.error('Failed to check feature flag:', error);
+        logger.error('Failed to check feature flag:', error as Error);
         setIsEnabled(defaultValue);
       }
     }

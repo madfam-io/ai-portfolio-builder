@@ -55,7 +55,12 @@ export type ExperimentType =
   | 'business_logic' // Core business rule variations
   | 'personalization'; // User-specific customizations
 
-export type ExperimentStatus = 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+export type ExperimentStatus =
+  | 'draft'
+  | 'active'
+  | 'paused'
+  | 'completed'
+  | 'archived';
 
 export type TargetingRule = {
   property: string;
@@ -443,9 +448,11 @@ export class UniversalExperimentEngine {
   async trackConversion(
     userId: string,
     experimentId: string,
-    metricId: string,
-    value: number,
-    metadata?: Record<string, unknown>
+    options: {
+      metricId: string;
+      value: number;
+      metadata?: Record<string, unknown>;
+    }
   ): Promise<void> {
     const assignment = this.assignments.get(userId)?.get(experimentId);
     if (!assignment) return;
@@ -453,10 +460,10 @@ export class UniversalExperimentEngine {
     // Record conversion
     const conversion: ExperimentConversion = {
       conversionId: crypto.randomUUID(),
-      metricId,
-      value,
+      metricId: options.metricId,
+      value: options.value,
       timestamp: new Date(),
-      metadata: metadata || {},
+      metadata: options.metadata || {},
     };
 
     assignment.conversions.push(conversion);
@@ -469,8 +476,8 @@ export class UniversalExperimentEngine {
       );
       if (variant) {
         variant.performance.conversions++;
-        if (metricId === 'revenue') {
-          variant.performance.revenue += value;
+        if (options.metricId === 'revenue') {
+          variant.performance.revenue += options.value;
         }
       }
     }
@@ -481,9 +488,9 @@ export class UniversalExperimentEngine {
       eventName: 'experiment_conversion',
       timestamp: new Date(),
       properties: {
-        metricId,
-        value,
-        ...metadata,
+        metricId: options.metricId,
+        value: options.value,
+        ...(options.metadata || {}),
       },
     };
 
@@ -704,8 +711,8 @@ export class UniversalExperimentEngine {
   ): number {
     // Simplified sample size calculation
     // In production, use proper statistical libraries
-    const alpha = 1 - confidence;
-    const beta = 1 - power;
+    const _alpha = 1 - confidence;
+    const _beta = 1 - power;
 
     // Approximate z-scores
     const zAlpha = confidence > 0.95 ? 1.96 : 1.645;
@@ -874,7 +881,9 @@ export class UniversalExperimentEngine {
 
     // Fallback to control
     const controlVariant = experiment.variants.find(v => v.isControl);
-    return controlVariant ? controlVariant.id : experiment.variants[0]?.id || 'control';
+    return controlVariant
+      ? controlVariant.id
+      : experiment.variants[0]?.id || 'control';
   }
 
   private hashUserId(input: string): number {
@@ -926,9 +935,7 @@ export class UniversalExperimentEngine {
     };
   }
 
-  private persistExperiment(
-    config: UniversalExperimentConfig
-  ): void {
+  private persistExperiment(_config: UniversalExperimentConfig): void {
     // Persist to Supabase database
     // This would extend the existing landing_page_experiments table
     // or create a new universal_experiments table
@@ -956,7 +963,7 @@ export const universalExperimentEngine = new UniversalExperimentEngine();
 /**
  * Convenience functions
  */
-export async function getExperimentVariant(
+export function getExperimentVariant(
   userId: string,
   context: ExperimentContext,
   userContext?: Record<string, unknown>
@@ -964,7 +971,7 @@ export async function getExperimentVariant(
   return universalExperimentEngine.assignUser(userId, context, userContext);
 }
 
-export async function trackExperimentExposure(
+export function trackExperimentExposure(
   userId: string,
   experimentId: string,
   context: ExperimentContext,
@@ -978,18 +985,16 @@ export async function trackExperimentExposure(
   );
 }
 
-export async function trackExperimentConversion(
+export function trackExperimentConversion(
   userId: string,
   experimentId: string,
   metricId: string,
   value: number,
   metadata?: Record<string, unknown>
 ): Promise<void> {
-  return universalExperimentEngine.trackConversion(
-    userId,
-    experimentId,
+  return universalExperimentEngine.trackConversion(userId, experimentId, {
     metricId,
     value,
-    metadata
-  );
+    metadata,
+  });
 }

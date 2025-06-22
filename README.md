@@ -1346,7 +1346,7 @@ This project is released under the **MADFAM Code Available License (MCAL) v1.0**
 - ❌ **You CANNOT** compete with MADFAM using this code
 - ❌ **You CANNOT** redistribute or resell the code
 
-**For commercial licensing inquiries**: licensing@madfam.com
+**For commercial licensing inquiries**: licensing@madfam.io
 
 ⚠️ **WARNING**: Unauthorized commercial use is prohibited and will be prosecuted.
 

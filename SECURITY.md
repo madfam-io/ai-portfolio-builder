@@ -8,7 +8,7 @@ MADFAM takes the security of our software seriously. If you believe you have fou
 
 **Please do not report security vulnerabilities through public GitHub issues.**
 
-Instead, please report them via email to: **security@madfam.com**
+Instead, please report them via email to: **security@madfam.io**
 
 You should receive a response within 48 hours. If for some reason you do not, please follow up via email to ensure we received your original message.
 
@@ -23,7 +23,7 @@ Please include the following information (as much as you can provide):
 
 ## Disclosure Timeline
 
-- **Initial Report**: Send to security@madfam.com
+- **Initial Report**: Send to security@madfam.io
 - **Acknowledgment**: Within 48 hours
 - **Initial Assessment**: Within 7 days
 - **Resolution Timeline**: Depends on severity
@@ -102,8 +102,8 @@ When contributing to PRISMA:
 
 ## Contact
 
-**Security Issues**: security@madfam.com  
-**General Support**: support@madfam.com  
+**Security Issues**: security@madfam.io  
+**General Support**: support@madfam.io  
 **Response Time**: 48 hours
 
 Thank you for helping keep PRISMA and our users safe!

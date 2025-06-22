@@ -94,9 +94,9 @@ The following entities have pre-negotiated commercial terms:
 
 ## 12. Contact Information
 
-**Sales Inquiries**: sales@madfam.com  
-**License Compliance**: licensing@madfam.com  
-**Technical Support**: support@madfam.com
+**Sales Inquiries**: sales@madfam.io  
+**License Compliance**: licensing@madfam.io  
+**Technical Support**: support@madfam.io
 
 ---
 

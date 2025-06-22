@@ -680,18 +680,19 @@ export class ExperimentManager {
                 name: variant.name,
                 description: variant.description || '',
                 isControl: variant.is_control,
-              allocation: (variant.traffic_percentage || 0) / 100,
-              config: {
-                componentProps: variant.components || {},
-                cssOverrides: variant.theme_overrides || {},
-              },
-              performance: {
-                assignments: variant.visitors || 0,
-                exposures: variant.visitors || 0,
-                conversions: variant.conversions || 0,
-                revenue: 0,
-              },
-            })) || [],
+                allocation: (variant.traffic_percentage || 0) / 100,
+                config: {
+                  componentProps: variant.components || {},
+                  cssOverrides: variant.theme_overrides || {},
+                },
+                performance: {
+                  assignments: variant.visitors || 0,
+                  exposures: variant.visitors || 0,
+                  conversions: variant.conversions || 0,
+                  revenue: 0,
+                },
+              })
+            ) || [],
 
           metrics: {
             primary: {

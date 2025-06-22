@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -52,7 +52,7 @@ export class AuthService {
       });
 
       if (error) {
-        logger.error('Sign in error:', error);
+        logger.error('Sign in error:', error as Error);
         return { data: null, error };
       }
 
@@ -92,7 +92,7 @@ export class AuthService {
       });
 
       if (error) {
-        logger.error('Sign up error:', error);
+        logger.error('Sign up error:', error as Error);
         return { data: null, error };
       }
 
@@ -125,7 +125,7 @@ export class AuthService {
       const { error } = await this.supabase.auth.signOut();
 
       if (error) {
-        logger.error('Sign out error:', error);
+        logger.error('Sign out error:', error as Error);
         return { data: null, error };
       }
 
@@ -157,7 +157,7 @@ export class AuthService {
       });
 
       if (error) {
-        logger.error('Password reset error:', error);
+        logger.error('Password reset error:', error as Error);
         return { data: null, error };
       }
 
@@ -190,7 +190,7 @@ export class AuthService {
       });
 
       if (error) {
-        logger.error('Password update error:', error);
+        logger.error('Password update error:', error as Error);
         return { data: null, error };
       }
 
@@ -221,7 +221,7 @@ export class AuthService {
       const { data, error } = await this.supabase.auth.getSession();
 
       if (error) {
-        logger.error('Get session error:', error);
+        logger.error('Get session error:', error as Error);
         return { data: null, error };
       }
 
@@ -251,7 +251,7 @@ export class AuthService {
       const { data, error } = await this.supabase.auth.getUser();
 
       if (error) {
-        logger.error('Get user error:', error);
+        logger.error('Get user error:', error as Error);
         return { data: null, error };
       }
 
@@ -287,7 +287,7 @@ export class AuthService {
       });
 
       if (error) {
-        logger.error('OAuth sign in error:', error);
+        logger.error('OAuth sign in error:', error as Error);
         return { data: null, error };
       }
 

@@ -53,14 +53,17 @@ export class UsageTracker {
     // PostHog will be initialized elsewhere
   }
 
-  async trackFeatureUsage(metrics: UsageMetrics): Promise<void> {
+  trackFeatureUsage(metrics: UsageMetrics): void {
     const key = `${metrics.userId}_${metrics.feature}`;
     
     if (!this.usageCache.has(key)) {
       this.usageCache.set(key, []);
     }
     
-    this.usageCache.get(key)!.push(metrics);
+    const cache = this.usageCache.get(key);
+    if (cache) {
+      cache.push(metrics);
+    }
 
     if (typeof window !== 'undefined' && posthog) {
       posthog.capture('feature_usage', {
@@ -72,7 +75,7 @@ export class UsageTracker {
     }
   }
 
-  async trackApiUsage(data: ApiUsageData): Promise<void> {
+  trackApiUsage(data: ApiUsageData): void {
     if (typeof window !== 'undefined' && posthog) {
       posthog.capture('api_usage', {
         endpoint: data.endpoint,
@@ -85,12 +88,12 @@ export class UsageTracker {
     }
   }
 
-  async getUsageAnalytics(userId: string): Promise<{
+  getUsageAnalytics(userId: string): {
     totalUsage: number;
     revenueOpportunity: number;
     suggestedTier: string;
     competitiveRanking: number;
-  }> {
+  } {
     const userMetrics = this.usageCache.get(`${userId}_*`) || [];
     
     const totalUsage = userMetrics.length;
@@ -113,7 +116,7 @@ export class UsageTracker {
     };
   }
 
-  async getRateLimitInfo(userId: string, tier: string): Promise<{
+  getRateLimitInfo(userId: string, tier: string): {
     requests: number;
     windowMs: number;
     remaining: number;

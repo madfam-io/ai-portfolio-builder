@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -250,12 +250,7 @@ export class ExperimentationEngine {
     });
 
     // Update experiment results
-    this.updateResults(
-      experimentId,
-      assignment.variantId,
-      metricId,
-      value
-    );
+    this.updateResults(experimentId, assignment.variantId, metricId, value);
   }
 
   /**
@@ -370,7 +365,7 @@ export class ExperimentationEngine {
     for (const treatmentVariant of treatmentVariants) {
       const treatmentResults = results.get(treatmentVariant.id);
       if (!treatmentResults) continue;
-      
+
       const primaryMetricTreatment = treatmentResults.find(
         r => r.metric === experiment.metrics.primary.id
       );

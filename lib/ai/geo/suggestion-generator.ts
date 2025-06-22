@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -55,21 +55,21 @@ export class SuggestionGenerator {
     const metrics = this.analyzeContent(content, keywords);
 
     // Generate suggestions based on scores
-    if (scoreBreakdown.keyword < 70) {
+    if ((scoreBreakdown.keywordDensity || 100) < 70) {
       suggestions.push(...this.generateKeywordSuggestions(metrics, keywords));
     }
 
-    if (scoreBreakdown.readability < 70) {
+    if ((scoreBreakdown.contentQuality || 100) < 70) {
       suggestions.push(...this.generateReadabilitySuggestions(metrics));
     }
 
-    if (scoreBreakdown.structure < 70) {
+    if ((scoreBreakdown.structure || 100) < 70) {
       suggestions.push(
         ...this.generateStructureSuggestions(metrics, contentType)
       );
     }
 
-    if (scoreBreakdown.length < 70) {
+    if ((scoreBreakdown.contentQuality || 100) < 70) {
       suggestions.push(...this.generateLengthSuggestions(metrics, contentType));
     }
 

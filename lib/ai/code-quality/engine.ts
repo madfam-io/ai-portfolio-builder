@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -16,7 +16,7 @@
  *
  * Revolutionary code quality system that transforms traditional linting into
  * business intelligence and competitive advantage. This engine:
- * 
+ *
  * - Analyzes code performance impact on user experience
  * - Provides revenue-focused optimization recommendations
  * - Generates enterprise-grade quality reports
@@ -90,7 +90,7 @@ export interface CodeQualityReport {
 
 /**
  * AI-Powered Code Quality Engine
- * 
+ *
  * Transforms traditional code analysis into business intelligence
  * that drives revenue, retention, and competitive advantage.
  */
@@ -149,7 +149,9 @@ export class AICodeQualityEngine {
   /**
    * Calculate comprehensive quality metrics with business focus
    */
-  private async calculateQualityMetrics(codeFiles: string[]): Promise<CodeQualityMetrics> {
+  private async calculateQualityMetrics(
+    codeFiles: string[]
+  ): Promise<CodeQualityMetrics> {
     // Simulate advanced AI analysis of code quality
     // In production, this would integrate with:
     // - Static analysis tools
@@ -179,7 +181,7 @@ export class AICodeQualityEngine {
   ): Promise<BusinessImpactAnalysis> {
     const loadTimeImprovement = (100 - metrics.performanceScore) * 10; // ms
     const conversionRateIncrease = loadTimeImprovement * 0.1; // 0.1% per 10ms improvement
-    
+
     return {
       conversionImpact: {
         loadTimeImprovement,
@@ -194,7 +196,8 @@ export class AICodeQualityEngine {
       competitivePositioning: {
         performanceRanking: metrics.competitiveAdvantage,
         technicalLeadershipScore: Math.min(95, metrics.performanceScore + 15),
-        acquisitionReadiness: (metrics.performanceScore + metrics.competitiveAdvantage) / 2,
+        acquisitionReadiness:
+          (metrics.performanceScore + metrics.competitiveAdvantage) / 2,
       },
     };
   }
@@ -214,7 +217,8 @@ export class AICodeQualityEngine {
       recommendations.push({
         id: 'performance-critical-path',
         title: 'Optimize Critical Rendering Path',
-        description: 'Implement advanced code splitting and lazy loading for 40% faster initial page loads',
+        description:
+          'Implement advanced code splitting and lazy loading for 40% faster initial page loads',
         businessJustification: `Improving load times by ${businessImpact.conversionImpact.loadTimeImprovement}ms could increase conversions by ${businessImpact.conversionImpact.conversionRateIncrease.toFixed(2)}%, generating $${businessImpact.conversionImpact.revenueIncrease.toLocaleString()} annually`,
         implementationEffort: 'medium',
         expectedImpact: {
@@ -235,7 +239,8 @@ export class AICodeQualityEngine {
           'Cumulative Layout Shift < 0.1',
           'Conversion rate increase > 2%',
         ],
-        competitorComparison: 'This optimization would place us in the top 10% of portfolio platforms for performance',
+        competitorComparison:
+          'This optimization would place us in the top 10% of portfolio platforms for performance',
       });
     }
 
@@ -244,8 +249,10 @@ export class AICodeQualityEngine {
       recommendations.push({
         id: 'enterprise-monitoring',
         title: 'Enterprise Performance Monitoring',
-        description: 'Deploy advanced APM with real-time business metrics correlation',
-        businessJustification: 'Enterprise monitoring enables proactive optimization and demonstrates technical sophistication to potential acquirers',
+        description:
+          'Deploy advanced APM with real-time business metrics correlation',
+        businessJustification:
+          'Enterprise monitoring enables proactive optimization and demonstrates technical sophistication to potential acquirers',
         implementationEffort: 'high',
         expectedImpact: {
           performance: 25,
@@ -264,7 +271,8 @@ export class AICodeQualityEngine {
           'Performance regression prevention > 95%',
           'Executive report automation 100%',
         ],
-        competitorComparison: 'Enterprise-grade monitoring positions us ahead of 90% of competitors',
+        competitorComparison:
+          'Enterprise-grade monitoring positions us ahead of 90% of competitors',
       });
     }
 
@@ -272,8 +280,10 @@ export class AICodeQualityEngine {
     recommendations.push({
       id: 'ai-performance-optimization',
       title: 'AI-Driven Performance Optimization',
-      description: 'Implement machine learning for predictive performance optimization',
-      businessJustification: 'AI-powered optimization creates a sustainable competitive moat and generates thought leadership opportunities',
+      description:
+        'Implement machine learning for predictive performance optimization',
+      businessJustification:
+        'AI-powered optimization creates a sustainable competitive moat and generates thought leadership opportunities',
       implementationEffort: 'high',
       expectedImpact: {
         performance: 60,
@@ -293,7 +303,8 @@ export class AICodeQualityEngine {
         'Thought leadership article publication',
         'Conference presentation acceptance',
       ],
-      competitorComparison: 'AI-powered optimization would establish us as the undisputed technical leader in the portfolio platform space',
+      competitorComparison:
+        'AI-powered optimization would establish us as the undisputed technical leader in the portfolio platform space',
     });
 
     return recommendations.slice(0, userTier === 'business' ? 10 : 3);
@@ -412,7 +423,9 @@ SUCCESS METRICS:
   /**
    * Prioritize actions based on business impact and effort
    */
-  private prioritizeActions(recommendations: OptimizationRecommendation[]): string[] {
+  private prioritizeActions(
+    recommendations: OptimizationRecommendation[]
+  ): string[] {
     return recommendations
       .sort((a, b) => {
         const aScore = this.calculatePriorityScore(a);
@@ -427,16 +440,26 @@ SUCCESS METRICS:
    * Calculate priority score based on impact vs effort
    */
   private calculatePriorityScore(rec: OptimizationRecommendation): number {
-    const impactScore = rec.expectedImpact.performance + 
-                       (rec.expectedImpact.revenue / 10000) + 
-                       rec.expectedImpact.userExperience;
-    
-    const effortPenalty = rec.implementationEffort === 'low' ? 0 :
-                         rec.implementationEffort === 'medium' ? 10 : 20;
-    
-    const priorityBonus = rec.priority === 'critical' ? 50 :
-                         rec.priority === 'high' ? 30 : 
-                         rec.priority === 'medium' ? 10 : 0;
+    const impactScore =
+      rec.expectedImpact.performance +
+      rec.expectedImpact.revenue / 10000 +
+      rec.expectedImpact.userExperience;
+
+    const effortPenalty =
+      rec.implementationEffort === 'low'
+        ? 0
+        : rec.implementationEffort === 'medium'
+          ? 10
+          : 20;
+
+    const priorityBonus =
+      rec.priority === 'critical'
+        ? 50
+        : rec.priority === 'high'
+          ? 30
+          : rec.priority === 'medium'
+            ? 10
+            : 0;
 
     return impactScore + priorityBonus - effortPenalty;
   }
@@ -459,7 +482,7 @@ SUCCESS METRICS:
     this.competitorBenchmarks.set('webflow', 78);
     this.competitorBenchmarks.set('notion', 68);
     this.competitorBenchmarks.set('github_pages', 85);
-    
+
     // Performance baselines
     this.performanceBaseline.set('first_contentful_paint', 1200);
     this.performanceBaseline.set('largest_contentful_paint', 2500);
@@ -489,6 +512,9 @@ export async function analyzeCodeQuality(
 export async function generateBusinessImpactReport(
   codeFiles: string[]
 ): Promise<string> {
-  const report = await aiCodeQualityEngine.analyzeCodebase(codeFiles, 'business');
+  const report = await aiCodeQualityEngine.analyzeCodebase(
+    codeFiles,
+    'business'
+  );
   return report.executiveSummary;
 }

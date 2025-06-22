@@ -17,7 +17,7 @@
 **A**: Yes, you can run and modify the software for non-commercial, personal use on your own devices. This includes learning, experimentation, and personal portfolio websites that don't generate revenue.
 
 ### Q: Can I use this code for my freelance business?
-**A**: No. Any business use, including freelance work, requires a commercial license. Contact licensing@madfam.com for options.
+**A**: No. Any business use, including freelance work, requires a commercial license. Contact licensing@madfam.io for options.
 
 ### Q: Can I use this code in my company?
 **A**: No. Corporate use of any kind requires a commercial license, even for internal tools or proof-of-concepts.
@@ -36,7 +36,7 @@
 - Any activity that generates revenue directly or indirectly
 
 ### Q: How do I get a commercial license?
-**A**: Contact licensing@madfam.com with:
+**A**: Contact licensing@madfam.io with:
 - Your company information
 - Intended use case
 - Expected scale of deployment
@@ -50,7 +50,7 @@
 - Custom arrangements for specific needs
 
 ### Q: How much does a commercial license cost?
-**A**: Pricing varies based on use case and scale. Contact sales@madfam.com for a quote.
+**A**: Pricing varies based on use case and scale. Contact sales@madfam.io for a quote.
 
 ## Contributions
 
@@ -80,7 +80,7 @@
 - Potentially face legal action for damages
 
 ### Q: I found someone using this commercially without a license. What should I do?
-**A**: Report it to licensing@madfam.com with evidence (URLs, screenshots, etc.). We investigate all credible reports.
+**A**: Report it to licensing@madfam.io with evidence (URLs, screenshots, etc.). We investigate all credible reports.
 
 ## Technical Questions
 
@@ -102,7 +102,7 @@
 **A**: Yes, for non-commercial educational projects. If your school might commercialize the project later, they need a license.
 
 ### Q: I work for a non-profit. Do we get free commercial use?
-**A**: No, but we offer significant discounts for registered non-profits. Contact licensing@madfam.com.
+**A**: No, but we offer significant discounts for registered non-profits. Contact licensing@madfam.io.
 
 ### Q: Can I write blog posts or tutorials about this code?
 **A**: Yes! Educational content about the code is encouraged. Please include proper attribution and clarify that commercial use requires a license.
@@ -113,9 +113,9 @@
 ## Contact
 
 For questions not covered here:
-- **Licensing**: licensing@madfam.com
-- **Technical**: support@madfam.com
-- **Legal**: legal@madfam.com
+- **Licensing**: licensing@madfam.io
+- **Technical**: support@madfam.io
+- **Legal**: legal@madfam.io
 
 ---
 
