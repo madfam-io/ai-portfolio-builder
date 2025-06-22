@@ -20,7 +20,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { referralEngine } from '@madfam/referral';
+import { referralEngine } from '@madfam/referral/engine';
 import { logger } from '@/lib/utils/logger';
 
 async function getUserStatsHandler(
@@ -35,6 +35,14 @@ async function getUserStatsHandler(
       return NextResponse.json(
         { error: 'User ID is required' },
         { status: 400 }
+      );
+    }
+
+    // Check if referral engine is initialized
+    if (!referralEngine) {
+      return NextResponse.json(
+        { error: 'Referral system not configured' },
+        { status: 503 }
       );
     }
 

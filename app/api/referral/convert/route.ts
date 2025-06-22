@@ -21,7 +21,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { referralEngine, ConvertReferralRequest } from '@madfam/referral';
+import { referralEngine } from '@madfam/referral/engine';
+import type { ConvertReferralRequest } from '@madfam/referral/types';
 import { logger } from '@/lib/utils/logger';
 
 async function convertReferralHandler(request: NextRequest) {
@@ -41,6 +42,14 @@ async function convertReferralHandler(request: NextRequest) {
       return NextResponse.json(
         { error: 'Referee ID is required' },
         { status: 400 }
+      );
+    }
+
+    // Check if referral engine is initialized
+    if (!referralEngine) {
+      return NextResponse.json(
+        { error: 'Referral system not configured' },
+        { status: 503 }
       );
     }
 

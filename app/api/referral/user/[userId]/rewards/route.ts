@@ -120,7 +120,7 @@ async function getUserRewardsHandler(
       by_status: {} as Record<string, number>,
     };
 
-    rewards?.forEach((reward) => {
+    rewards?.forEach(reward => {
       summary.by_type[reward.type] =
         (summary.by_type[reward.type] || 0) + reward.amount;
       summary.by_status[reward.status] =

@@ -20,7 +20,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { referralEngine, TrackReferralClickRequest } from '@madfam/referral';
+import { referralEngine } from '@madfam/referral/engine';
+import type { TrackReferralClickRequest } from '@madfam/referral/types';
 import { logger } from '@/lib/utils/logger';
 
 async function trackReferralClickHandler(request: NextRequest) {
@@ -55,6 +56,14 @@ async function trackReferralClickHandler(request: NextRequest) {
       referrer:
         trackingRequest.attribution_data.referrer || referer || undefined,
     };
+
+    // Check if referral engine is initialized
+    if (!referralEngine) {
+      return NextResponse.json(
+        { error: 'Referral system not configured' },
+        { status: 503 }
+      );
+    }
 
     // Track click using engine
     const result = await referralEngine.trackReferralClick({

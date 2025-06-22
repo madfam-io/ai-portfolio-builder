@@ -9,6 +9,9 @@
 // Export engine
 export * from './engine';
 
+// Export components
+export * from './components';
+
 // Export hooks (only if React is available)
 export * from './hooks';
 

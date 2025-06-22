@@ -19,13 +19,21 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { referralEngine } from '@madfam/referral';
+import { referralEngine } from '@madfam/referral/engine';
 import { logger } from '@/lib/utils/logger';
 
 async function getCampaignsHandler(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams;
     const userId = searchParams.get('userId');
+
+    // Check if referral engine is initialized
+    if (!referralEngine) {
+      return NextResponse.json(
+        { error: 'Referral system not configured' },
+        { status: 503 }
+      );
+    }
 
     // Get active campaigns, filtered by user eligibility if userId provided
     const campaigns = await referralEngine.getActiveCampaigns(

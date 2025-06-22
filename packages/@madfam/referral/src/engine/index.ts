@@ -966,5 +966,20 @@ export function createReferralEngine(
   return new ReferralEngine(supabaseUrl, supabaseKey, config);
 }
 
+/**
+ * Global referral engine instance (requires environment variables)
+ */
+export const referralEngine = (() => {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  
+  if (!supabaseUrl || !supabaseKey) {
+    console.warn('[ReferralEngine] Missing Supabase credentials. Engine will not be initialized.');
+    return null;
+  }
+  
+  return new ReferralEngine(supabaseUrl, supabaseKey);
+})();
+
 // Re-export types
 export * from '../types';

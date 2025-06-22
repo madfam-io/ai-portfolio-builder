@@ -18,19 +18,53 @@
  * access to all referral features including sharing, tracking, and rewards.
  */
 
-import { Metadata } from 'next';
-import { ReferralDashboard } from '@madfam/referral';
+'use client';
 
-export const metadata: Metadata = {
-  title: 'Referrals - PRISMA by MADFAM',
-  description: 'Share PRISMA with friends and earn rewards. Track your referrals, view earnings, and grow your network.',
-  keywords: ['referrals', 'rewards', 'sharing', 'earnings', 'MADFAM', 'PRISMA'],
-};
+import { useEffect, useState } from 'react';
+import { ReferralDashboard } from '@madfam/referral/components';
+import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 export function ReferralsPage() {
+  const [userId, setUserId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const supabase = createClient();
+
+  useEffect(() => {
+    const checkUser = async () => {
+      if (!supabase) {
+        router.push('/auth/signin');
+        return;
+      }
+      
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        router.push('/auth/signin');
+        return;
+      }
+      setUserId(user.id);
+      setLoading(false);
+    };
+
+    checkUser();
+  }, [router, supabase]);
+
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!userId) {
+    return null;
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
-      <ReferralDashboard />
+      <ReferralDashboard userId={userId} />
     </div>
   );
 }
