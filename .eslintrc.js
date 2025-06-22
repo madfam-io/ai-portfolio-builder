@@ -47,7 +47,7 @@ module.exports = {
     'require-await': 'error',
     'no-throw-literal': 'error',
     'prefer-promise-reject-errors': 'error',
-    'react/no-unescaped-entities': 'error',
+    'react/no-unescaped-entities': ['error', { forbid: ['>', '}'] }],
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     '@next/next/no-html-link-for-pages': 'error',

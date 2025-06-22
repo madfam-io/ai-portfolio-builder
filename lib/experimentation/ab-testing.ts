@@ -226,9 +226,11 @@ export class ExperimentationEngine {
   trackConversion(
     userId: string,
     experimentId: string,
-    metricId: string,
-    value: number,
-    metadata?: Record<string, unknown>
+    options: {
+      metricId: string;
+      value: number;
+      metadata?: Record<string, unknown>;
+    }
   ): void {
     const assignment = this.userAssignments.get(userId)?.get(experimentId);
     if (!assignment) return;
@@ -243,14 +245,19 @@ export class ExperimentationEngine {
       experiment_id: experimentId,
       variant_id: assignment.variantId,
       user_id: userId,
-      metric_id: metricId,
-      value,
+      metric_id: options.metricId,
+      value: options.value,
       conversion_time: assignment.conversionTime,
-      ...metadata,
+      ...(options.metadata || {}),
     });
 
     // Update experiment results
-    this.updateResults(experimentId, assignment.variantId, metricId, value);
+    this.updateResults(
+      experimentId,
+      assignment.variantId,
+      options.metricId,
+      options.value
+    );
   }
 
   /**
@@ -279,9 +286,7 @@ export class ExperimentationEngine {
   /**
    * Calculate current experiment results
    */
-  async getResults(
-    experimentId: string
-  ): Promise<Map<string, ExperimentResult[]>> {
+  getResults(experimentId: string): Map<string, ExperimentResult[]> {
     const experiment = this.experiments.get(experimentId);
     if (!experiment) {
       throw new Error(`Experiment ${experimentId} not found`);
@@ -294,7 +299,7 @@ export class ExperimentationEngine {
       const variantResults: ExperimentResult[] = [];
 
       // Calculate primary metric
-      const primaryResult = await this.calculateMetricResult(
+      const primaryResult = this.calculateMetricResult(
         experimentId,
         variant.id,
         experiment.metrics.primary
@@ -303,7 +308,7 @@ export class ExperimentationEngine {
 
       // Calculate secondary metrics
       for (const metric of experiment.metrics.secondary) {
-        const secondaryResult = await this.calculateMetricResult(
+        const secondaryResult = this.calculateMetricResult(
           experimentId,
           variant.id,
           metric
@@ -452,7 +457,7 @@ export class ExperimentationEngine {
     // Simplified sample size calculation for conversion rate experiments
     // In production, use more sophisticated statistical libraries
     const alpha = 1 - confidence;
-    const beta = 1 - statisticalPower;
+    const _beta = 1 - statisticalPower;
 
     // Z-scores for two-tailed test
     const zAlpha = this.getZScore(1 - alpha / 2);
@@ -501,7 +506,7 @@ export class ExperimentationEngine {
   private isUserEligible(
     userId: string,
     experiment: ExperimentConfig,
-    userContext?: Record<string, unknown>
+    _userContext?: Record<string, unknown>
   ): boolean {
     // Check traffic allocation
     const userHash = this.hashUserId(userId);
@@ -529,7 +534,8 @@ export class ExperimentationEngine {
     }
 
     // Fallback to control
-    return experiment.variants.find(v => v.isControl)!.id;
+    const controlVariant = experiment.variants.find(v => v.isControl);
+    return controlVariant ? controlVariant.id : experiment.variants[0].id;
   }
 
   private hashUserId(input: string): number {
@@ -544,11 +550,11 @@ export class ExperimentationEngine {
     return Math.abs(hash) / Math.pow(2, 31);
   }
 
-  private async calculateMetricResult(
+  private calculateMetricResult(
     experimentId: string,
     variantId: string,
     metric: MetricDefinition
-  ): Promise<ExperimentResult> {
+  ): ExperimentResult {
     // In a real implementation, this would query the analytics database
     // For now, return mock data
     const mockSampleSize = 1000 + Math.floor(Math.random() * 500);
@@ -680,15 +686,11 @@ export function getExperimentVariant(
 export function trackExperimentConversion(
   userId: string,
   experimentId: string,
-  metricId: string,
-  value: number,
-  metadata?: Record<string, unknown>
+  options: {
+    metricId: string;
+    value: number;
+    metadata?: Record<string, unknown>;
+  }
 ): void {
-  return experimentationEngine.trackConversion(
-    userId,
-    experimentId,
-    metricId,
-    value,
-    metadata
-  );
+  return experimentationEngine.trackConversion(userId, experimentId, options);
 }

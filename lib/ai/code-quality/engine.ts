@@ -149,9 +149,7 @@ export class AICodeQualityEngine {
   /**
    * Calculate comprehensive quality metrics with business focus
    */
-  private async calculateQualityMetrics(
-    codeFiles: string[]
-  ): Promise<CodeQualityMetrics> {
+  private calculateQualityMetrics(_codeFiles: string[]): CodeQualityMetrics {
     // Simulate advanced AI analysis of code quality
     // In production, this would integrate with:
     // - Static analysis tools
@@ -176,7 +174,7 @@ export class AICodeQualityEngine {
   /**
    * Analyze business impact of code quality improvements
    */
-  private async analyzeBusinessImpact(
+  private analyzeBusinessImpact(
     metrics: CodeQualityMetrics
   ): Promise<BusinessImpactAnalysis> {
     const loadTimeImprovement = (100 - metrics.performanceScore) * 10; // ms
@@ -205,7 +203,7 @@ export class AICodeQualityEngine {
   /**
    * Generate AI-powered optimization recommendations
    */
-  private async generateOptimizationRecommendations(
+  private generateOptimizationRecommendations(
     metrics: CodeQualityMetrics,
     businessImpact: BusinessImpactAnalysis,
     userTier: string
@@ -343,7 +341,7 @@ export class AICodeQualityEngine {
   /**
    * Get industry benchmarks for competitive analysis
    */
-  private async getIndustryBenchmarks(): Promise<{
+  private getIndustryBenchmarks(): Promise<{
     performancePercentile: number;
     qualityRanking: number;
     innovationScore: number;
@@ -467,7 +465,7 @@ SUCCESS METRICS:
   /**
    * Track premium feature usage for monetization
    */
-  private async trackPremiumFeatureUsage(feature: string): Promise<void> {
+  private trackPremiumFeatureUsage(feature: string): Promise<void> {
     logger.info('Premium feature usage tracked', { feature });
     // In production, this would track usage for billing and analytics
   }
@@ -499,7 +497,7 @@ export const aiCodeQualityEngine = new AICodeQualityEngine();
 /**
  * Convenience function for quick code quality analysis
  */
-export async function analyzeCodeQuality(
+export function analyzeCodeQuality(
   codeFiles: string[],
   userTier: string = 'free'
 ): Promise<CodeQualityReport> {

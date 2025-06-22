@@ -144,8 +144,8 @@ export class DeveloperExperienceAPI {
     }
   ): Promise<DeveloperExperienceReport> {
     // Validate API access and rate limits
-    await this.validateAPIAccess(options.clientId);
-    await this.enforceRateLimit(options.clientId);
+    this.validateAPIAccess(options.clientId);
+    this.enforceRateLimit(options.clientId);
 
     logger.info('DX API analysis requested', {
       clientId: options.clientId,
@@ -165,10 +165,10 @@ export class DeveloperExperienceAPI {
     const dxMetrics = this.calculateDeveloperMetrics(baseReport, codebase);
 
     // Generate DX-specific optimization suggestions
-    const suggestions = await this.generateDXSuggestions(baseReport, codebase);
+    const suggestions = this.generateDXSuggestions(baseReport, codebase);
 
     // Create industry benchmarks
-    const benchmarks = await this.generateDXBenchmarks(
+    const benchmarks = this.generateDXBenchmarks(
       codebase.language,
       codebase.size
     );
@@ -190,7 +190,7 @@ export class DeveloperExperienceAPI {
     };
 
     // Track usage for billing
-    await this.trackAPIUsage(options.clientId, 'analyze_dx', {
+    this.trackAPIUsage(options.clientId, 'analyze_dx', {
       codebaseSize: codebase.size,
       language: codebase.language,
       responseTime: Date.now() - Date.now(), // Will be calculated properly
@@ -204,10 +204,10 @@ export class DeveloperExperienceAPI {
    *
    * Helps companies understand how code quality affects their team's productivity
    */
-  async getProductivityInsights(
+  getProductivityInsights(
     clientId: string,
     timeframe: '7d' | '30d' | '90d' = '30d'
-  ): Promise<{
+  ): {
     productivityScore: number;
     trends: Array<{
       date: string;
@@ -221,8 +221,8 @@ export class DeveloperExperienceAPI {
       impact: string;
     }>;
     recommendations: string[];
-  }> {
-    await this.validateAPIAccess(clientId);
+  } {
+    this.validateAPIAccess(clientId);
 
     // Generate productivity insights based on code quality trends
     return {
@@ -259,11 +259,11 @@ export class DeveloperExperienceAPI {
    *
    * Helps companies understand their position in the market
    */
-  async generateCompetitiveAnalysis(
+  generateCompetitiveAnalysis(
     clientId: string,
-    competitors: string[],
-    industry: string
-  ): Promise<{
+    _competitors: string[],
+    _industry: string
+  ): {
     marketPosition: {
       ranking: number;
       totalCompetitors: number;
@@ -282,8 +282,8 @@ export class DeveloperExperienceAPI {
       timeline: string;
     }>;
     strategicRecommendations: string[];
-  }> {
-    await this.validateAPIAccess(clientId);
+  } {
+    this.validateAPIAccess(clientId);
 
     return {
       marketPosition: {
@@ -331,8 +331,8 @@ export class DeveloperExperienceAPI {
   /**
    * Get API usage analytics for client billing and optimization
    */
-  async getAPIAnalytics(clientId: string): Promise<APIUsageMetrics> {
-    await this.validateAPIAccess(clientId);
+  getAPIAnalytics(clientId: string): APIUsageMetrics {
+    this.validateAPIAccess(clientId);
 
     return (
       this.clientUsage.get(clientId) || {
@@ -351,7 +351,7 @@ export class DeveloperExperienceAPI {
    */
   private calculateDeveloperMetrics(
     baseReport: CodeQualityReport,
-    codebase: any
+    _codebase: any
   ): DeveloperExperienceMetrics {
     const baseScore = baseReport.metrics.performanceScore;
 
@@ -368,10 +368,10 @@ export class DeveloperExperienceAPI {
   /**
    * Generate developer experience optimization suggestions
    */
-  private async generateDXSuggestions(
+  private generateDXSuggestions(
     baseReport: CodeQualityReport,
-    codebase: any
-  ): Promise<DXOptimizationSuggestion[]> {
+    _codebase: any
+  ): DXOptimizationSuggestion[] {
     const suggestions: DXOptimizationSuggestion[] = [];
 
     // Performance optimization suggestion
@@ -477,7 +477,7 @@ export class DeveloperExperienceAPI {
   /**
    * Generate industry benchmarks for developer experience
    */
-  private async generateDXBenchmarks(language: string, size: string) {
+  private generateDXBenchmarks(language: string, size: string) {
     const baseBenchmark = {
       small: 75,
       medium: 70,
@@ -623,7 +623,7 @@ Developer experience improvements will deliver:
   /**
    * Validate API access for clients
    */
-  private async validateAPIAccess(clientId: string): Promise<void> {
+  private validateAPIAccess(clientId: string): void {
     // In production, this would validate API keys and subscription status
     if (!clientId || clientId === 'invalid') {
       throw new Error('Invalid API credentials');
@@ -633,7 +633,7 @@ Developer experience improvements will deliver:
   /**
    * Enforce rate limiting based on client plan
    */
-  private async enforceRateLimit(clientId: string): Promise<void> {
+  private enforceRateLimit(clientId: string): void {
     const now = Date.now();
     const limit = this.rateLimits.get(clientId);
 
@@ -655,11 +655,11 @@ Developer experience improvements will deliver:
   /**
    * Track API usage for billing and analytics
    */
-  private async trackAPIUsage(
+  private trackAPIUsage(
     clientId: string,
     endpoint: string,
     metadata: any
-  ): Promise<void> {
+  ): void {
     const usage = this.clientUsage.get(clientId) || {
       requestsToday: 0,
       requestsThisMonth: 0,
@@ -698,16 +698,13 @@ export const developerExperienceAPI = new DeveloperExperienceAPI();
 /**
  * Convenience functions for external integrations
  */
-export async function analyzeDeveloperExperience(
-  codebase: any,
-  clientId: string
-) {
+export function analyzeDeveloperExperience(codebase: any, clientId: string) {
   return developerExperienceAPI.analyzeDeveloperExperience(codebase, {
     clientId,
     includeBusinessMetrics: true,
   });
 }
 
-export async function getProductivityInsights(clientId: string) {
+export function getProductivityInsights(clientId: string) {
   return developerExperienceAPI.getProductivityInsights(clientId);
 }

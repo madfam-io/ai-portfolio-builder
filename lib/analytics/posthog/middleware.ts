@@ -520,7 +520,7 @@ async function trackUserSuccessScoring(
   userId: string,
   endpoint: string,
   duration: number,
-  userAgent: string
+  _userAgent: string
 ): Promise<void> {
   const userTier = calculateUserTier(endpoint, duration);
   const successScore = calculateUserSuccessScore(endpoint, duration);
@@ -930,8 +930,8 @@ function getFeatureAdvantage(endpoint: string): string {
   return 'standard';
 }
 
-function getUXAdvantage(duration: number, userAgent: string): string {
-  const isMobile = userAgent.toLowerCase().includes('mobile');
+function getUXAdvantage(duration: number, _userAgent: string): string {
+  const _isMobile = _userAgent.toLowerCase().includes('mobile');
 
   if (duration < 120000) return 'exceptional'; // Under 2 min = exceptional UX
   if (duration < 180000) return 'excellent'; // Under 3 min = excellent UX

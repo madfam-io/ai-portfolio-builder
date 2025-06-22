@@ -32,7 +32,6 @@ import {
   experimentationEngine,
   getExperimentVariant,
   trackExperimentConversion,
-  ExperimentConfig,
   ExperimentResult,
 } from '@/lib/experimentation/ab-testing';
 import { logger } from '@/lib/utils/logger';
@@ -138,13 +137,11 @@ export function useExperiment({
       metadata?: Record<string, unknown>
     ) => {
       try {
-        await trackExperimentConversion(
-          userId,
-          experimentId,
+        await trackExperimentConversion(userId, experimentId, {
           metricId,
           value,
-          metadata
-        );
+          metadata,
+        });
       } catch (error) {
         logger.error('Failed to track experiment conversion:', error as Error);
       }

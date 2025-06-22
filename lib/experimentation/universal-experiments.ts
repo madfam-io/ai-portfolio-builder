@@ -988,13 +988,15 @@ export function trackExperimentExposure(
 export function trackExperimentConversion(
   userId: string,
   experimentId: string,
-  metricId: string,
-  value: number,
-  metadata?: Record<string, unknown>
+  options: {
+    metricId: string;
+    value: number;
+    metadata?: Record<string, unknown>;
+  }
 ): Promise<void> {
-  return universalExperimentEngine.trackConversion(userId, experimentId, {
-    metricId,
-    value,
-    metadata,
-  });
+  return universalExperimentEngine.trackConversion(
+    userId,
+    experimentId,
+    options
+  );
 }

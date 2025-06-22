@@ -771,8 +771,8 @@ export class ExperimentManager {
     power: number
   ): number {
     // Simplified sample size calculation
-    const alpha = 1 - confidence;
-    const beta = 1 - power;
+    const _alpha = 1 - confidence;
+    const _beta = 1 - power;
 
     const zAlpha = confidence > 0.95 ? 1.96 : 1.645;
     const zBeta = power > 0.8 ? 0.84 : 0.67;

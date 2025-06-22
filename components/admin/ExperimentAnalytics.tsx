@@ -36,7 +36,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import {
@@ -66,9 +65,7 @@ import {
   DollarSign,
   Clock,
   CheckCircle,
-  XCircle,
   AlertTriangle,
-  BarChart3,
   Calculator,
   Download,
   Calendar,

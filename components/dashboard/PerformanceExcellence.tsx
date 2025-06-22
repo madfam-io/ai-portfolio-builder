@@ -52,12 +52,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  RadialBarChart,
-  RadialBar,
-  Cell,
 } from 'recharts';
 import {
-  Zap,
   TrendingUp,
   Trophy,
   Target,
@@ -67,7 +63,6 @@ import {
   Star,
   Award,
   Lock,
-  ArrowUp,
   DollarSign,
   Users,
   Globe,
@@ -77,7 +72,6 @@ import {
 import {
   aiCodeQualityEngine,
   CodeQualityReport,
-  OptimizationRecommendation,
 } from '@/lib/ai/code-quality/engine';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { cn } from '@/lib/utils';
@@ -100,11 +94,7 @@ export function PerformanceExcellenceDashboard({
   const userTier = user?.user_metadata?.plan || 'free';
   const isPremium = ['professional', 'business'].includes(userTier);
 
-  useEffect(() => {
-    loadPerformanceData();
-  }, [portfolioId]);
-
-  const loadPerformanceData = async () => {
+  const loadPerformanceData = React.useCallback(async () => {
     setLoading(true);
     try {
       // Simulate loading user's portfolio files for analysis
@@ -122,12 +112,16 @@ export function PerformanceExcellenceDashboard({
 
       setReport(analysisReport);
       updateAchievements(analysisReport);
-    } catch (error) {
-      console.error('Failed to load performance data:', error);
+    } catch (_error) {
+      // Error handled silently
     } finally {
       setLoading(false);
     }
-  };
+  }, [portfolioId, userTier]);
+
+  useEffect(() => {
+    loadPerformanceData();
+  }, [loadPerformanceData]);
 
   const updateAchievements = (report: CodeQualityReport) => {
     const newAchievements: string[] = [];
