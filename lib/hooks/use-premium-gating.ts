@@ -408,7 +408,7 @@ export function useConversionOptimization(userId: string, _userTier: string) {
   );
 
   return {
-    conversionData,
+    conversionData: _conversionData,
     trackConversionEvent,
     getOptimalUpgradePrompt,
   };
