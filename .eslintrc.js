@@ -54,11 +54,14 @@ module.exports = {
     'import/order': 'off',
     'prettier/prettier': 'warn',
     // MADFAM AI-Powered Linting with Business Intelligence
-    'madfam-ai/performance-impact': ['warn', {
-      includeBusinessMetrics: true,
-      performanceThreshold: 85,
-      industryBenchmarks: true
-    }],
+    'madfam-ai/performance-impact': [
+      'warn',
+      {
+        includeBusinessMetrics: true,
+        performanceThreshold: 85,
+        industryBenchmarks: true,
+      },
+    ],
     'madfam-ai/bundle-optimization': 'warn',
     'madfam-ai/mobile-performance': 'warn',
   },
