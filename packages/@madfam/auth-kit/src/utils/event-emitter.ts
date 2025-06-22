@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Simple event emitter for internal use
  */
 
@@ -47,6 +47,7 @@ export class EventEmitter {
       try {
         handler(...args);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error(`Error in event handler for ${event}:`, error);
       }
     });

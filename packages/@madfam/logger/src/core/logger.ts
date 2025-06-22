@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Core logger implementation
  */
 
@@ -17,7 +17,7 @@ import type {
 import { ConsoleTransport } from '../transports/console';
 import { createTransport } from '../transports/factory';
 import { redactData } from '../utils/redact';
-import { getTimestamp } from '../utils/time';
+// import { getTimestamp } from '../utils/time';
 
 const LOG_LEVELS: LogLevelValue = {
   trace: 0,
@@ -28,9 +28,9 @@ const LOG_LEVELS: LogLevelValue = {
   fatal: 5,
 };
 
-export class Logger<TEvents extends Record<string, any> = Record<string, any>> 
-  implements ILogger<TEvents> {
-  
+export class Logger<TEvents extends Record<string, any> = Record<string, any>>
+  implements ILogger<TEvents>
+{
   private config: LoggerConfig;
   private transports: Transport[] = [];
   private context: Record<string, any> = {};
@@ -39,18 +39,18 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
   constructor(config: LoggerConfig) {
     this.config = config;
     this.levelValue = LOG_LEVELS[config.level || 'info'];
-    
+
     // Initialize context with default fields
     if (config.defaultFields) {
       this.context = { ...config.defaultFields };
     }
-    
+
     // Add system info if requested
     if (config.processInfo && typeof process !== 'undefined') {
       this.context.pid = process.pid;
       this.context.hostname = process.env.HOSTNAME;
     }
-    
+
     // Initialize transports
     if (config.transports && config.transports.length > 0) {
       config.transports.forEach(transport => {
@@ -62,10 +62,12 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
       });
     } else {
       // Default to console transport
-      this.transports.push(new ConsoleTransport({ 
-        type: 'console',
-        pretty: config.pretty,
-      }));
+      this.transports.push(
+        new ConsoleTransport({
+          type: 'console',
+          pretty: config.pretty,
+        })
+      );
     }
   }
 
@@ -91,10 +93,14 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
   }
 
   error(message: string, error?: Error | any, data?: any): void;
-  error<K extends keyof TEvents>(event: K, error: Error, data: TEvents[K]): void;
+  error<K extends keyof TEvents>(
+    event: K,
+    error: Error,
+    data: TEvents[K]
+  ): void;
   error(
-    messageOrEvent: string | keyof TEvents, 
-    errorOrData?: Error | any, 
+    messageOrEvent: string | keyof TEvents,
+    errorOrData?: Error | any,
     additionalData?: any
   ): void {
     let message = messageOrEvent as string;
@@ -135,17 +141,17 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
         ...context,
       },
     };
-    
+
     const childLogger = new Logger<TEvents>(childConfig);
     childLogger.transports = this.transports; // Share transports
-    
+
     return childLogger;
   }
 
   // Start a timer
   startTimer(): Timer {
     const start = Date.now();
-    
+
     return {
       done: (message: string, data?: any) => {
         const duration = Date.now() - start;
@@ -171,7 +177,7 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
   // Flush all transports
   async flush(): Promise<void> {
     await Promise.all(
-      this.transports.map(transport => 
+      this.transports.map(transport =>
         transport.flush ? transport.flush() : Promise.resolve()
       )
     );
@@ -181,7 +187,7 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
   async close(): Promise<void> {
     await this.flush();
     await Promise.all(
-      this.transports.map(transport => 
+      this.transports.map(transport =>
         transport.close ? transport.close() : Promise.resolve()
       )
     );
@@ -189,9 +195,9 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
 
   // Main logging method
   private log(
-    level: LogLevel, 
-    message: string, 
-    data?: any, 
+    level: LogLevel,
+    message: string,
+    data?: any,
     error?: Error
   ): void {
     // Check if level is enabled
@@ -212,7 +218,11 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
     if (data) {
       // Apply redaction if configured
       if (this.config.redact || this.config.redactPaths) {
-        entry.data = redactData(data, this.config.redact, this.config.redactPaths);
+        entry.data = redactData(
+          data,
+          this.config.redact,
+          this.config.redactPaths
+        );
       } else {
         entry.data = data;
       }
@@ -221,7 +231,7 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
     // Add error if provided
     if (error) {
       entry.error = error;
-      
+
       // Extract error details
       if (!entry.data) {
         entry.data = {};
@@ -244,6 +254,7 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
         }
       } catch (err) {
         // Avoid infinite loop - log transport errors to console
+        // eslint-disable-next-line no-console
         console.error('Logger transport error:', err);
       }
     });

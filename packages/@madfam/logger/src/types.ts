@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Core type definitions
  */
 
@@ -33,26 +33,26 @@ export interface LoggerConfig {
   // Basic configuration
   service: string;
   level?: LogLevel;
-  
+
   // Output configuration
   pretty?: boolean;
   json?: boolean;
   timestamp?: boolean | string; // true, false, or format string
-  
+
   // Redaction
   redact?: string[];
   redactPaths?: string[];
-  
+
   // Context
   defaultFields?: Record<string, any>;
-  
+
   // Transports
   transports?: Transport[] | TransportConfig[];
-  
+
   // Performance
   bufferSize?: number;
   flushInterval?: number;
-  
+
   // Environment specific
   processInfo?: boolean;
   systemInfo?: boolean;
@@ -130,7 +130,9 @@ export interface Timer {
   elapsed(): number;
 }
 
-export interface Logger<TEvents extends Record<string, any> = Record<string, any>> {
+export interface Logger<
+  TEvents extends Record<string, any> = Record<string, any>,
+> {
   // Basic logging methods
   trace(message: string, data?: any): void;
   debug(message: string, data?: any): void;
@@ -138,25 +140,29 @@ export interface Logger<TEvents extends Record<string, any> = Record<string, any
   warn(message: string, data?: any): void;
   error(message: string, error?: Error | any, data?: any): void;
   fatal(message: string, error?: Error | any, data?: any): void;
-  
+
   // Typed event logging
   info<K extends keyof TEvents>(event: K, data: TEvents[K]): void;
   warn<K extends keyof TEvents>(event: K, data: TEvents[K]): void;
-  error<K extends keyof TEvents>(event: K, error: Error, data: TEvents[K]): void;
-  
+  error<K extends keyof TEvents>(
+    event: K,
+    error: Error,
+    data: TEvents[K]
+  ): void;
+
   // Child logger
   child(context: Record<string, any>): Logger<TEvents>;
-  
+
   // Timer
   startTimer(): Timer;
-  
+
   // Transport management
   addTransport(transport: Transport | TransportConfig): void;
   removeTransport(name: string): void;
-  
+
   // Flush all transports
   flush(): Promise<void>;
-  
+
   // Close logger
   close(): Promise<void>;
 }

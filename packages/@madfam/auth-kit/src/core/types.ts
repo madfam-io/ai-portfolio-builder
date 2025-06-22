@@ -1,16 +1,16 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * World-class authentication system with multi-provider support, MFA, and enterprise features
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -124,7 +124,7 @@ export type AuthErrorCode =
   | 'INTERNAL_ERROR';
 
 // Provider types
-export type AuthProvider = 
+export type AuthProvider =
   | 'email'
   | 'google'
   | 'github'
@@ -347,7 +347,7 @@ export interface AuthAdapter {
   deleteUser(id: string): Promise<void>;
   findUserById(id: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
-  
+
   // Session operations
   createSession(data: Partial<Session>): Promise<Session>;
   updateSession(id: string, data: Partial<Session>): Promise<Session>;
@@ -356,16 +356,26 @@ export interface AuthAdapter {
   findSessionByToken(token: string): Promise<Session | null>;
   findUserSessions(userId: string): Promise<Session[]>;
   deleteUserSessions(userId: string): Promise<void>;
-  
+
   // MFA operations
-  saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void>;
+  saveMFASecret(
+    userId: string,
+    method: MFAMethod,
+    secret: string
+  ): Promise<void>;
   getMFASecret(userId: string, method: MFAMethod): Promise<string | null>;
   saveBackupCodes(userId: string, codes: string[]): Promise<void>;
   verifyBackupCode(userId: string, code: string): Promise<boolean>;
-  
+
   // Account operations
-  createAccountLink(userId: string, provider: AuthProvider, providerId: string): Promise<void>;
-  findAccountLinks(userId: string): Promise<Array<{ provider: AuthProvider; providerId: string }>>;
+  createAccountLink(
+    userId: string,
+    provider: AuthProvider,
+    providerId: string
+  ): Promise<void>;
+  findAccountLinks(
+    userId: string
+  ): Promise<Array<{ provider: AuthProvider; providerId: string }>>;
   deleteAccountLink(userId: string, provider: AuthProvider): Promise<void>;
 }
 

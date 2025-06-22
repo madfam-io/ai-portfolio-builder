@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * HTTP transport implementation
  */
 
@@ -32,7 +32,7 @@ export class HttpTransport implements Transport {
     this.buffer.push(entry);
 
     // Flush if buffer is full
-    if (this.buffer.length >= this.config.batchSize!) {
+    if (this.config.batchSize && this.buffer.length >= this.config.batchSize) {
       this.flush();
     }
   }
@@ -43,13 +43,14 @@ export class HttpTransport implements Transport {
     }
 
     const entries = this.buffer.splice(0, this.buffer.length);
-    
+
     try {
       await this.sendBatch(entries);
     } catch (error) {
       // In production, we might want to retry or use a fallback
+      // eslint-disable-next-line no-console
       console.error('Failed to send logs:', error);
-      
+
       // Put entries back in buffer for retry
       this.buffer.unshift(...entries);
     }
@@ -66,7 +67,10 @@ export class HttpTransport implements Transport {
     const body = entries.map(entry => formatJson(entry)).join('\n');
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.config.timeout!);
+    const timeoutId = setTimeout(
+      () => controller.abort(),
+      this.config.timeout || 30000
+    );
 
     try {
       const response = await fetch(this.config.url, {
@@ -90,7 +94,7 @@ export class HttpTransport implements Transport {
   private startFlushTimer(): void {
     this.flushTimer = setInterval(() => {
       this.flush();
-    }, this.config.flushInterval!);
+    }, this.config.flushInterval || 5000);
 
     // Don't prevent process from exiting
     if (this.flushTimer.unref) {

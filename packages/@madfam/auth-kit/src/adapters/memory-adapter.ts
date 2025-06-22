@@ -1,16 +1,11 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * In-memory adapter for development and testing
  */
 
 import { BaseAdapter } from './base-adapter';
-import type {
-  User,
-  Session,
-  MFAMethod,
-  AuthProvider,
-} from '../core/types';
+import type { User, Session, MFAMethod, AuthProvider } from '../core/types';
 
 interface AccountLink {
   userId: string;
@@ -42,21 +37,25 @@ export class MemoryAdapter extends BaseAdapter {
   private backupCodes: BackupCode[] = [];
 
   // User operations
-  async createUser(data: Partial<User>): Promise<User> {
+  createUser(data: Partial<User>): Promise<User> {
+    if (!data.id || !data.email) {
+      throw new Error('User id and email are required');
+    }
+
     const user = {
       ...data,
-      id: data.id!,
-      email: data.email!,
+      id: data.id,
+      email: data.email,
       emailVerified: data.emailVerified || false,
       createdAt: data.createdAt || new Date(),
       updatedAt: data.updatedAt || new Date(),
     } as User;
 
     this.users.set(user.id, user);
-    return user;
+    return Promise.resolve(user);
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
+  updateUser(id: string, data: Partial<User>): Promise<User> {
     const user = this.users.get(id);
     if (!user) {
       throw new Error('User not found');
@@ -69,10 +68,10 @@ export class MemoryAdapter extends BaseAdapter {
     };
 
     this.users.set(id, updatedUser);
-    return updatedUser;
+    return Promise.resolve(updatedUser);
   }
 
-  async deleteUser(id: string): Promise<void> {
+  deleteUser(id: string): Promise<void> {
     this.users.delete(id);
     // Clean up related data
     this.sessions.forEach((session, sessionId) => {
@@ -83,38 +82,43 @@ export class MemoryAdapter extends BaseAdapter {
     this.accountLinks = this.accountLinks.filter(link => link.userId !== id);
     this.mfaSecrets = this.mfaSecrets.filter(secret => secret.userId !== id);
     this.backupCodes = this.backupCodes.filter(code => code.userId !== id);
+    return Promise.resolve();
   }
 
-  async findUserById(id: string): Promise<User | null> {
-    return this.users.get(id) || null;
+  findUserById(id: string): Promise<User | null> {
+    return Promise.resolve(this.users.get(id) || null);
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  findUserByEmail(email: string): Promise<User | null> {
     for (const user of this.users.values()) {
       if (user.email === email) {
-        return user;
+        return Promise.resolve(user);
       }
     }
-    return null;
+    return Promise.resolve(null);
   }
 
   // Session operations
-  async createSession(data: Partial<Session>): Promise<Session> {
+  createSession(data: Partial<Session>): Promise<Session> {
+    if (!data.id || !data.userId || !data.token || !data.expiresAt) {
+      throw new Error('Session id, userId, token, and expiresAt are required');
+    }
+
     const session = {
       ...data,
-      id: data.id!,
-      userId: data.userId!,
-      token: data.token!,
-      expiresAt: data.expiresAt!,
+      id: data.id,
+      userId: data.userId,
+      token: data.token,
+      expiresAt: data.expiresAt,
       createdAt: data.createdAt || new Date(),
       lastAccessedAt: data.lastAccessedAt || new Date(),
     } as Session;
 
     this.sessions.set(session.id, session);
-    return session;
+    return Promise.resolve(session);
   }
 
-  async updateSession(id: string, data: Partial<Session>): Promise<Session> {
+  updateSession(id: string, data: Partial<Session>): Promise<Session> {
     const session = this.sessions.get(id);
     if (!session) {
       throw new Error('Session not found');
@@ -126,37 +130,38 @@ export class MemoryAdapter extends BaseAdapter {
     };
 
     this.sessions.set(id, updatedSession);
-    return updatedSession;
+    return Promise.resolve(updatedSession);
   }
 
-  async deleteSession(id: string): Promise<void> {
+  deleteSession(id: string): Promise<void> {
     this.sessions.delete(id);
+    return Promise.resolve();
   }
 
-  async findSessionById(id: string): Promise<Session | null> {
-    return this.sessions.get(id) || null;
+  findSessionById(id: string): Promise<Session | null> {
+    return Promise.resolve(this.sessions.get(id) || null);
   }
 
-  async findSessionByToken(token: string): Promise<Session | null> {
+  findSessionByToken(token: string): Promise<Session | null> {
     for (const session of this.sessions.values()) {
       if (session.token === token) {
-        return session;
+        return Promise.resolve(session);
       }
     }
-    return null;
+    return Promise.resolve(null);
   }
 
-  async findUserSessions(userId: string): Promise<Session[]> {
+  findUserSessions(userId: string): Promise<Session[]> {
     const userSessions: Session[] = [];
     for (const session of this.sessions.values()) {
       if (session.userId === userId) {
         userSessions.push(session);
       }
     }
-    return userSessions;
+    return Promise.resolve(userSessions);
   }
 
-  async deleteUserSessions(userId: string): Promise<void> {
+  deleteUserSessions(userId: string): Promise<void> {
     const sessionIds: string[] = [];
     for (const [id, session] of this.sessions) {
       if (session.userId === userId) {
@@ -164,70 +169,92 @@ export class MemoryAdapter extends BaseAdapter {
       }
     }
     sessionIds.forEach(id => this.sessions.delete(id));
+    return Promise.resolve();
   }
 
   // MFA operations
-  async saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void> {
+  saveMFASecret(
+    userId: string,
+    method: MFAMethod,
+    secret: string
+  ): Promise<void> {
     // Remove existing secret for this method
     this.mfaSecrets = this.mfaSecrets.filter(
       s => !(s.userId === userId && s.method === method)
     );
-    
+
     if (secret) {
       this.mfaSecrets.push({ userId, method, secret });
     }
+    return Promise.resolve();
   }
 
-  async getMFASecret(userId: string, method: MFAMethod): Promise<string | null> {
+  getMFASecret(
+    userId: string,
+    method: MFAMethod
+  ): Promise<string | null> {
     const secret = this.mfaSecrets.find(
       s => s.userId === userId && s.method === method
     );
-    return secret?.secret || null;
+    return Promise.resolve(secret?.secret || null);
   }
 
-  async saveBackupCodes(userId: string, codes: string[]): Promise<void> {
+  saveBackupCodes(userId: string, codes: string[]): Promise<void> {
     // Remove existing codes
     this.backupCodes = this.backupCodes.filter(c => c.userId !== userId);
-    
+
     // Add new codes
     codes.forEach(code => {
       this.backupCodes.push({ userId, code, used: false });
     });
+    return Promise.resolve();
   }
 
-  async verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  verifyBackupCode(userId: string, code: string): Promise<boolean> {
     const backupCode = this.backupCodes.find(
       c => c.userId === userId && c.code === code && !c.used
     );
-    
+
     if (backupCode) {
       backupCode.used = true;
-      return true;
+      return Promise.resolve(true);
     }
-    
-    return false;
+
+    return Promise.resolve(false);
   }
 
   // Account operations
-  async createAccountLink(userId: string, provider: AuthProvider, providerId: string): Promise<void> {
+  createAccountLink(
+    userId: string,
+    provider: AuthProvider,
+    providerId: string
+  ): Promise<void> {
     // Remove existing link for this provider
     this.accountLinks = this.accountLinks.filter(
       link => !(link.userId === userId && link.provider === provider)
     );
-    
+
     this.accountLinks.push({ userId, provider, providerId });
+    return Promise.resolve();
   }
 
-  async findAccountLinks(userId: string): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
-    return this.accountLinks
+  findAccountLinks(
+    userId: string
+  ): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
+    const links = this.accountLinks
       .filter(link => link.userId === userId)
       .map(({ provider, providerId }) => ({ provider, providerId }));
+    return Promise.resolve(links);
   }
 
-  async deleteAccountLink(userId: string, provider: AuthProvider): Promise<void> {
+  deleteAccountLink(
+    userId: string,
+    provider: AuthProvider
+  ): Promise<void> {
     this.accountLinks = this.accountLinks.filter(
       link => !(link.userId === userId && link.provider === provider)
     );
+    return Promise.resolve();
   }
 
   // Utility methods for testing

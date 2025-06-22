@@ -1,15 +1,11 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Session management module
  */
 
 import jwt from 'jsonwebtoken';
-import type {
-  Session,
-  SessionConfig,
-  AuthAdapter,
-} from './types';
+import type { Session, SessionConfig, AuthAdapter } from './types';
 import { generateId } from '../utils/id-generator';
 import { Logger } from '../utils/logger';
 import { parseTimeToMs } from '../utils/time-parser';
@@ -34,12 +30,13 @@ export class SessionManager {
   ): Promise<Session> {
     const sessionId = generateId();
     const now = new Date();
-    
+
     // Calculate expiry
-    const expiresIn = options?.rememberMe && this.config.absoluteTimeout
-      ? parseTimeToMs(this.config.absoluteTimeout)
-      : parseTimeToMs(this.config.expiresIn);
-    
+    const expiresIn =
+      options?.rememberMe && this.config.absoluteTimeout
+        ? parseTimeToMs(this.config.absoluteTimeout)
+        : parseTimeToMs(this.config.expiresIn);
+
     const expiresAt = new Date(now.getTime() + expiresIn);
 
     // Create tokens based on session type
@@ -48,12 +45,17 @@ export class SessionManager {
 
     if (this.config.type === 'jwt') {
       token = this.createJWT(userId, sessionId, expiresIn);
-      
+
       if (this.config.refreshThreshold) {
         const refreshExpiresIn = this.config.absoluteTimeout
           ? parseTimeToMs(this.config.absoluteTimeout)
           : expiresIn * 2;
-        refreshToken = this.createJWT(userId, sessionId, refreshExpiresIn, true);
+        refreshToken = this.createJWT(
+          userId,
+          sessionId,
+          refreshExpiresIn,
+          true
+        );
       }
     } else {
       // Database sessions use random tokens
@@ -201,11 +203,16 @@ export class SessionManager {
 
     if (this.config.type === 'jwt') {
       newToken = this.createJWT(session.userId, session.id, expiresIn);
-      
+
       const refreshExpiresIn = this.config.absoluteTimeout
         ? parseTimeToMs(this.config.absoluteTimeout)
         : expiresIn * 2;
-      newRefreshToken = this.createJWT(session.userId, session.id, refreshExpiresIn, true);
+      newRefreshToken = this.createJWT(
+        session.userId,
+        session.id,
+        refreshExpiresIn,
+        true
+      );
     } else {
       newToken = generateId();
       newRefreshToken = generateId();

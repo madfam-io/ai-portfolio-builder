@@ -1,8 +1,8 @@
 /**
  * @madfam/logger
- * 
+ *
  * Production-ready logging with beautiful formatting, structured logs, and automatic PII redaction
- * 
+ *
  * @version 1.0.0
  * @license MIT
  * @copyright 2025 MADFAM LLC
@@ -19,9 +19,9 @@ export * from './utils/redact';
 import { Logger } from './core/logger';
 import type { LoggerConfig } from './types';
 
-export function createLogger<TEvents extends Record<string, any> = Record<string, any>>(
-  config: LoggerConfig
-): Logger<TEvents> {
+export function createLogger<
+  TEvents extends Record<string, any> = Record<string, any>,
+>(config: LoggerConfig): Logger<TEvents> {
   return new Logger<TEvents>(config);
 }
 

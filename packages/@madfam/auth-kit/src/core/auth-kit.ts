@@ -1,8 +1,8 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * World-class authentication system with multi-provider support, MFA, and enterprise features
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
@@ -19,7 +19,7 @@ import type {
   AuthError,
   AuthProvider,
   MFASetupResult,
-  MFAChallenge,
+  // MFAChallenge,
   AuthEvent,
   AuthEventType,
   PasswordValidationResult,
@@ -35,7 +35,7 @@ import { Logger } from '../utils/logger';
 
 /**
  * Main AuthKit class
- * 
+ *
  * Provides a comprehensive authentication system with support for:
  * - Multiple authentication providers
  * - Multi-factor authentication
@@ -60,7 +60,10 @@ export class AuthKit extends EventEmitter {
     // Initialize managers
     this.sessionManager = new SessionManager(config.session, config.adapter);
     this.mfaManager = new MFAManager(config.mfa, config.adapter);
-    this.providerManager = new ProviderManager(config.providers, config.adapter);
+    this.providerManager = new ProviderManager(
+      config.providers,
+      config.adapter
+    );
     this.securityManager = new SecurityManager(config.security);
 
     if (config.email) {
@@ -86,19 +89,28 @@ export class AuthKit extends EventEmitter {
       await this.securityManager.checkRateLimit('signup', data.email);
 
       // Check if user already exists
-      const existingUser = await this.config.adapter?.findUserByEmail(processedData.email);
+      const existingUser = await this.config.adapter?.findUserByEmail(
+        processedData.email
+      );
       if (existingUser) {
         throw this.createError('INVALID_CREDENTIALS', 'User already exists');
       }
 
       // Validate password
-      const passwordValidation = await this.validatePassword(processedData.password);
+      const passwordValidation = await this.validatePassword(
+        processedData.password
+      );
       if (!passwordValidation.valid) {
-        throw this.createError('INVALID_CREDENTIALS', passwordValidation.feedback?.join(', ') || 'Invalid password');
+        throw this.createError(
+          'INVALID_CREDENTIALS',
+          passwordValidation.feedback?.join(', ') || 'Invalid password'
+        );
       }
 
       // Hash password
-      const hashedPassword = await this.providerManager.hashPassword(processedData.password);
+      const hashedPassword = await this.providerManager.hashPassword(
+        processedData.password
+      );
 
       // Create user
       const user = await this.config.adapter!.createUser({
@@ -155,15 +167,23 @@ export class AuthKit extends EventEmitter {
       await this.securityManager.checkRateLimit('signin', data.email);
 
       // Find user
-      const user = await this.config.adapter?.findUserByEmail(processedData.email);
+      const user = await this.config.adapter?.findUserByEmail(
+        processedData.email
+      );
       if (!user) {
         await this.securityManager.recordFailedAttempt(processedData.email);
-        throw this.createError('INVALID_CREDENTIALS', 'Invalid email or password');
+        throw this.createError(
+          'INVALID_CREDENTIALS',
+          'Invalid email or password'
+        );
       }
 
       // Check if account is locked
       if (await this.securityManager.isAccountLocked(user.id)) {
-        throw this.createError('ACCOUNT_LOCKED', 'Account is locked due to multiple failed attempts');
+        throw this.createError(
+          'ACCOUNT_LOCKED',
+          'Account is locked due to multiple failed attempts'
+        );
       }
 
       // Verify password
@@ -175,12 +195,21 @@ export class AuthKit extends EventEmitter {
 
       if (!isValidPassword) {
         await this.securityManager.recordFailedAttempt(user.id);
-        throw this.createError('INVALID_CREDENTIALS', 'Invalid email or password');
+        throw this.createError(
+          'INVALID_CREDENTIALS',
+          'Invalid email or password'
+        );
       }
 
       // Check email verification
-      if (this.config.providers.email?.verification === 'required' && !user.emailVerified) {
-        throw this.createError('EMAIL_NOT_VERIFIED', 'Please verify your email address');
+      if (
+        this.config.providers.email?.verification === 'required' &&
+        !user.emailVerified
+      ) {
+        throw this.createError(
+          'EMAIL_NOT_VERIFIED',
+          'Please verify your email address'
+        );
       }
 
       // Reset failed attempts on successful login
@@ -188,10 +217,13 @@ export class AuthKit extends EventEmitter {
 
       // Check if MFA is required
       if (user.mfa?.enabled) {
-        const challenge = await this.mfaManager.createChallenge(user.id, user.mfa.preferredMethod || 'totp');
-        
+        const challenge = await this.mfaManager.createChallenge(
+          user.id,
+          user.mfa.preferredMethod || 'totp'
+        );
+
         this.logger.info('MFA challenge created', { userId: user.id });
-        
+
         return {
           user,
           session: {} as Session, // Placeholder - actual session created after MFA
@@ -260,7 +292,9 @@ export class AuthKit extends EventEmitter {
         await this.config.hooks.afterSignOut(session.userId);
       }
 
-      this.logger.info('User signed out successfully', { userId: session.userId });
+      this.logger.info('User signed out successfully', {
+        userId: session.userId,
+      });
     } catch (error) {
       this.logger.error('Sign out failed', error as Error);
       throw error;
@@ -300,11 +334,15 @@ export class AuthKit extends EventEmitter {
       this.logger.debug('OAuth callback', { provider });
 
       // Exchange code for tokens and user info
-      const providerUser = await this.providerManager.handleOAuthCallback(provider, code, state);
+      const providerUser = await this.providerManager.handleOAuthCallback(
+        provider,
+        code,
+        state
+      );
 
       // Find or create user
       let user = await this.config.adapter?.findUserByEmail(providerUser.email);
-      
+
       if (!user) {
         // Create new user
         user = await this.config.adapter!.createUser({
@@ -323,7 +361,11 @@ export class AuthKit extends EventEmitter {
       }
 
       // Link provider account
-      await this.config.adapter!.createAccountLink(user.id, provider, providerUser.id);
+      await this.config.adapter!.createAccountLink(
+        user.id,
+        provider,
+        providerUser.id
+      );
 
       // Create session
       const session = await this.sessionManager.createSession(user.id);
@@ -331,7 +373,10 @@ export class AuthKit extends EventEmitter {
       // Emit event
       await this.emit('user.signed_in', { user, session });
 
-      this.logger.info('OAuth sign in successful', { userId: user.id, provider });
+      this.logger.info('OAuth sign in successful', {
+        userId: user.id,
+        provider,
+      });
 
       return { user, session };
     } catch (error) {
@@ -417,7 +462,7 @@ export class AuthKit extends EventEmitter {
       this.logger.debug('Password reset attempt');
 
       // Find user with reset token
-      const users = await this.config.adapter?.findUserByEmail(''); // This needs to be improved
+      // const users = await this.config.adapter?.findUserByEmail(''); // This needs to be improved
       // In a real implementation, we'd have a method to find user by reset token
 
       throw new Error('Reset password not fully implemented');
@@ -432,20 +477,23 @@ export class AuthKit extends EventEmitter {
    */
   get mfa() {
     return {
-      enable: (userId: string, method: MFAMethod = 'totp') => 
+      enable: (userId: string, method: MFAMethod = 'totp') =>
         this.enableMFA(userId, method),
-      disable: (userId: string, method?: MFAMethod) => 
+      disable: (userId: string, method?: MFAMethod) =>
         this.disableMFA(userId, method),
-      verify: (challengeId: string, token: string) => 
+      verify: (challengeId: string, token: string) =>
         this.verifyMFA(challengeId, token),
-      challenge: (challengeId: string, token: string) => 
+      challenge: (challengeId: string, token: string) =>
         this.completeMFAChallenge(challengeId, token),
     };
   }
 
-  private async enableMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
+  private async enableMFA(
+    userId: string,
+    method: MFAMethod
+  ): Promise<MFASetupResult> {
     const result = await this.mfaManager.setupMFA(userId, method);
-    
+
     await this.config.adapter?.updateUser(userId, {
       mfa: {
         enabled: true,
@@ -456,7 +504,7 @@ export class AuthKit extends EventEmitter {
     });
 
     await this.emit('mfa.enabled', { userId, method });
-    
+
     if (this.config.hooks?.onMFAEnabled) {
       const user = await this.config.adapter?.findUserById(userId);
       if (user) {
@@ -469,9 +517,9 @@ export class AuthKit extends EventEmitter {
 
   private async disableMFA(userId: string, method?: MFAMethod): Promise<void> {
     await this.mfaManager.disableMFA(userId, method);
-    
+
     await this.emit('mfa.disabled', { userId, method });
-    
+
     if (this.config.hooks?.onMFADisabled) {
       const user = await this.config.adapter?.findUserById(userId);
       if (user && method) {
@@ -480,17 +528,23 @@ export class AuthKit extends EventEmitter {
     }
   }
 
-  private async verifyMFA(challengeId: string, token: string): Promise<boolean> {
+  private async verifyMFA(
+    challengeId: string,
+    token: string
+  ): Promise<boolean> {
     const isValid = await this.mfaManager.verifyToken(challengeId, token);
-    
+
     if (isValid) {
       await this.emit('mfa.verified', { challengeId });
     }
-    
+
     return isValid;
   }
 
-  private async completeMFAChallenge(challengeId: string, token: string): Promise<AuthResult> {
+  private async completeMFAChallenge(
+    challengeId: string,
+    token: string
+  ): Promise<AuthResult> {
     const challenge = await this.mfaManager.getChallenge(challengeId);
     if (!challenge) {
       throw this.createError('MFA_INVALID', 'Invalid or expired MFA challenge');
@@ -524,7 +578,7 @@ export class AuthKit extends EventEmitter {
     if (!this.emailManager) return;
 
     const verificationToken = generateId();
-    
+
     await this.config.adapter?.updateUser(user.id, {
       metadata: {
         ...user.metadata,
@@ -532,13 +586,20 @@ export class AuthKit extends EventEmitter {
       },
     });
 
-    await this.emailManager.sendVerificationEmail(user.email, verificationToken);
+    await this.emailManager.sendVerificationEmail(
+      user.email,
+      verificationToken
+    );
   }
 
   /**
    * Create auth error
    */
-  private createError(code: AuthErrorCode, message: string, details?: Record<string, any>): AuthError {
+  private createError(
+    code: AuthErrorCode,
+    message: string,
+    details?: Record<string, any>
+  ): AuthError {
     return { code, message, details };
   }
 

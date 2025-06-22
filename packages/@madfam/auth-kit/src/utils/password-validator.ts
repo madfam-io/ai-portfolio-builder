@@ -1,27 +1,55 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Password validation utilities
  */
 
-import type { PasswordRequirements, PasswordValidationResult } from '../core/types';
+import type {
+  PasswordRequirements,
+  PasswordValidationResult,
+} from '../core/types';
 
 // Common weak passwords to check against
 const COMMON_PASSWORDS = [
-  'password', '123456', '12345678', 'qwerty', 'abc123', 'password123',
-  'admin', 'letmein', 'welcome', 'monkey', '1234567890', 'password1',
-  'qwerty123', 'dragon', 'baseball', 'iloveyou', 'trustno1', 'sunshine',
-  'master', 'hello', 'freedom', 'whatever', 'shadow', 'superman',
-  'michael', 'football', 'jesus', 'ninja', 'mustang', 'password123'
+  'password',
+  '123456',
+  '12345678',
+  'qwerty',
+  'abc123',
+  'password123',
+  'admin',
+  'letmein',
+  'welcome',
+  'monkey',
+  '1234567890',
+  'password1',
+  'qwerty123',
+  'dragon',
+  'baseball',
+  'iloveyou',
+  'trustno1',
+  'sunshine',
+  'master',
+  'hello',
+  'freedom',
+  'whatever',
+  'shadow',
+  'superman',
+  'michael',
+  'football',
+  'jesus',
+  'ninja',
+  'mustang',
+  'password123',
 ];
 
 /**
  * Check if password has been breached (simplified version)
  * In production, this would check against haveibeenpwned.com API
  */
-async function isPasswordBreached(password: string): Promise<boolean> {
+function isPasswordBreached(password: string): Promise<boolean> {
   // For now, just check against common passwords
-  return COMMON_PASSWORDS.includes(password.toLowerCase());
+  return Promise.resolve(COMMON_PASSWORDS.includes(password.toLowerCase()));
 }
 
 /**
@@ -29,23 +57,23 @@ async function isPasswordBreached(password: string): Promise<boolean> {
  */
 function calculateStrength(password: string): number {
   let score = 0;
-  
+
   // Length score
   if (password.length >= 8) score += 1;
   if (password.length >= 12) score += 1;
   if (password.length >= 16) score += 1;
-  
+
   // Character variety score
   if (/[a-z]/.test(password)) score += 1;
   if (/[A-Z]/.test(password)) score += 1;
   if (/[0-9]/.test(password)) score += 1;
   if (/[^a-zA-Z0-9]/.test(password)) score += 1;
-  
+
   // Pattern checks (reduce score for bad patterns)
   if (/(.)\1{2,}/.test(password)) score -= 1; // Repeated characters
   if (/^[0-9]+$/.test(password)) score -= 1; // Only numbers
   if (/^[a-zA-Z]+$/.test(password)) score -= 1; // Only letters
-  
+
   // Normalize to 0-5 scale
   return Math.max(0, Math.min(5, score));
 }
@@ -71,12 +99,16 @@ export async function validatePassword(
 
   // Length validation
   if (reqs.minLength && password.length < reqs.minLength) {
-    feedback.push(`Password must be at least ${reqs.minLength} characters long`);
+    feedback.push(
+      `Password must be at least ${reqs.minLength} characters long`
+    );
     valid = false;
   }
 
   if (reqs.maxLength && password.length > reqs.maxLength) {
-    feedback.push(`Password must be no more than ${reqs.maxLength} characters long`);
+    feedback.push(
+      `Password must be no more than ${reqs.maxLength} characters long`
+    );
     valid = false;
   }
 
@@ -103,13 +135,17 @@ export async function validatePassword(
 
   // Common password check
   if (reqs.preventCommon && COMMON_PASSWORDS.includes(password.toLowerCase())) {
-    feedback.push('This password is too common. Please choose a more unique password');
+    feedback.push(
+      'This password is too common. Please choose a more unique password'
+    );
     valid = false;
   }
 
   // Breached password check
-  if (reqs.preventBreached && await isPasswordBreached(password)) {
-    feedback.push('This password has been found in data breaches. Please choose a different password');
+  if (reqs.preventBreached && (await isPasswordBreached(password))) {
+    feedback.push(
+      'This password has been found in data breaches. Please choose a different password'
+    );
     valid = false;
   }
 
@@ -131,7 +167,9 @@ export async function validatePassword(
   // Provide suggestions
   if (score < 3) {
     if (!feedback.length) {
-      feedback.push('Consider using a longer password with a mix of characters');
+      feedback.push(
+        'Consider using a longer password with a mix of characters'
+      );
     }
   }
 
@@ -139,7 +177,10 @@ export async function validatePassword(
     valid,
     score,
     feedback: feedback.length > 0 ? feedback : undefined,
-    warning: score < 3 ? 'This password is weak. Consider making it stronger.' : undefined,
+    warning:
+      score < 3
+        ? 'This password is weak. Consider making it stronger.'
+        : undefined,
   };
 }
 
@@ -151,21 +192,24 @@ export function generateStrongPassword(length: number = 16): string {
   const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const numbers = '0123456789';
   const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
-  
+
   const allChars = lowercase + uppercase + numbers + symbols;
   let password = '';
-  
+
   // Ensure at least one of each required character type
   password += lowercase[Math.floor(Math.random() * lowercase.length)];
   password += uppercase[Math.floor(Math.random() * uppercase.length)];
   password += numbers[Math.floor(Math.random() * numbers.length)];
   password += symbols[Math.floor(Math.random() * symbols.length)];
-  
+
   // Fill the rest randomly
   for (let i = password.length; i < length; i++) {
     password += allChars[Math.floor(Math.random() * allChars.length)];
   }
-  
+
   // Shuffle the password
-  return password.split('').sort(() => Math.random() - 0.5).join('');
+  return password
+    .split('')
+    .sort(() => Math.random() - 0.5)
+    .join('');
 }

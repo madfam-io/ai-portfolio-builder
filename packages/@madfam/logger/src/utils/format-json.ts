@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * JSON formatting for structured logs
  */
 

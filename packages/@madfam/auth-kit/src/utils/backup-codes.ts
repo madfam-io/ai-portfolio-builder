@@ -1,16 +1,19 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Backup code generation utilities
  */
 
 /**
  * Generate secure backup codes
  */
-export function generateBackupCodes(count: number = 10, length: number = 8): string[] {
+export function generateBackupCodes(
+  count: number = 10,
+  length: number = 8
+): string[] {
   const codes: string[] = [];
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing characters
-  
+
   for (let i = 0; i < count; i++) {
     let code = '';
     for (let j = 0; j < length; j++) {
@@ -22,7 +25,7 @@ export function generateBackupCodes(count: number = 10, length: number = 8): str
     }
     codes.push(code);
   }
-  
+
   return codes;
 }
 
@@ -30,5 +33,7 @@ export function generateBackupCodes(count: number = 10, length: number = 8): str
  * Format backup codes for display
  */
 export function formatBackupCodes(codes: string[]): string {
-  return codes.map((code, index) => `${(index + 1).toString().padStart(2, '0')}. ${code}`).join('\n');
+  return codes
+    .map((code, index) => `${(index + 1).toString().padStart(2, '0')}. ${code}`)
+    .join('\n');
 }

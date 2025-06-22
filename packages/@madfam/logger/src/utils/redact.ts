@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Data redaction utilities
  */
 
@@ -38,33 +38,33 @@ function redactObject(
 
   // Handle arrays
   if (Array.isArray(obj)) {
-    return obj.map((item, index) => 
+    return obj.map((item, index) =>
       redactObject(item, redactKeys, redactPaths, `${currentPath}[${index}]`)
     );
   }
 
   // Handle objects
   const result: any = {};
-  
+
   for (const [key, value] of Object.entries(obj)) {
     const path = currentPath ? `${currentPath}.${key}` : key;
-    
+
     // Check if key should be redacted
     if (redactKeys.some(k => key.toLowerCase().includes(k.toLowerCase()))) {
       result[key] = REDACTED;
       continue;
     }
-    
+
     // Check if path should be redacted
     if (redactPaths.includes(path)) {
       result[key] = REDACTED;
       continue;
     }
-    
+
     // Recursively process nested objects
     result[key] = redactObject(value, redactKeys, redactPaths, path);
   }
-  
+
   return result;
 }
 

@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Console transport implementation
  */
 
@@ -17,7 +17,7 @@ export class ConsoleTransport implements Transport {
   }
 
   log(entry: LogEntry): void {
-    const output = this.config.pretty 
+    const output = this.config.pretty
       ? formatPretty(entry, { colors: this.config.colors !== false })
       : formatJson(entry);
 
@@ -25,16 +25,20 @@ export class ConsoleTransport implements Transport {
     switch (entry.level) {
       case 'trace':
       case 'debug':
+        // eslint-disable-next-line no-console
         console.debug(output);
         break;
       case 'info':
+        // eslint-disable-next-line no-console
         console.info(output);
         break;
       case 'warn':
+        // eslint-disable-next-line no-console
         console.warn(output);
         break;
       case 'error':
       case 'fatal':
+        // eslint-disable-next-line no-console
         console.error(output);
         break;
     }

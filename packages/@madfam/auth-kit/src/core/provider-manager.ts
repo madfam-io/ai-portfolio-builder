@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Provider management module
  */
 
@@ -55,7 +55,7 @@ export class ProviderManager {
     options?: { redirectTo?: string; scopes?: string[] }
   ): Promise<string> {
     const providerConfig = this.config[provider] as OAuthProviderConfig;
-    
+
     if (!providerConfig?.enabled) {
       throw new Error(`OAuth provider ${provider} is not enabled`);
     }
@@ -65,8 +65,11 @@ export class ProviderManager {
     }
 
     const state = this.generateState();
-    const redirectUri = options?.redirectTo || providerConfig.redirectUri || this.getDefaultRedirectUri();
-    
+    const redirectUri =
+      options?.redirectTo ||
+      providerConfig.redirectUri ||
+      this.getDefaultRedirectUri();
+
     // Store state for verification
     if (this.adapter) {
       // In a real implementation, we'd store this state temporarily
@@ -74,11 +77,26 @@ export class ProviderManager {
 
     switch (provider) {
       case 'google':
-        return this.getGoogleAuthUrl(providerConfig, redirectUri, state, options?.scopes);
+        return this.getGoogleAuthUrl(
+          providerConfig,
+          redirectUri,
+          state,
+          options?.scopes
+        );
       case 'github':
-        return this.getGithubAuthUrl(providerConfig, redirectUri, state, options?.scopes);
+        return this.getGithubAuthUrl(
+          providerConfig,
+          redirectUri,
+          state,
+          options?.scopes
+        );
       case 'linkedin':
-        return this.getLinkedInAuthUrl(providerConfig, redirectUri, state, options?.scopes);
+        return this.getLinkedInAuthUrl(
+          providerConfig,
+          redirectUri,
+          state,
+          options?.scopes
+        );
       default:
         throw new Error(`Unsupported OAuth provider: ${provider}`);
     }
@@ -93,7 +111,7 @@ export class ProviderManager {
     state?: string
   ): Promise<OAuthUser> {
     const providerConfig = this.config[provider] as OAuthProviderConfig;
-    
+
     if (!providerConfig?.enabled) {
       throw new Error(`OAuth provider ${provider} is not enabled`);
     }
@@ -105,12 +123,15 @@ export class ProviderManager {
 
     // Exchange code for tokens
     const tokens = await this.exchangeCodeForTokens(provider, code);
-    
+
     // Get user info
     const userInfo = await this.getUserInfo(provider, tokens.access_token);
-    
-    this.logger.info('OAuth callback handled', { provider, userId: userInfo.id });
-    
+
+    this.logger.info('OAuth callback handled', {
+      provider,
+      userId: userInfo.id,
+    });
+
     return userInfo;
   }
 
@@ -126,7 +147,7 @@ export class ProviderManager {
     const baseUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
     const defaultScopes = ['openid', 'email', 'profile'];
     const finalScopes = scopes || config.scope || defaultScopes;
-    
+
     const params = new URLSearchParams({
       client_id: config.clientId!,
       redirect_uri: redirectUri,
@@ -152,7 +173,7 @@ export class ProviderManager {
     const baseUrl = 'https://github.com/login/oauth/authorize';
     const defaultScopes = ['user:email'];
     const finalScopes = scopes || config.scope || defaultScopes;
-    
+
     const params = new URLSearchParams({
       client_id: config.clientId!,
       redirect_uri: redirectUri,
@@ -175,7 +196,7 @@ export class ProviderManager {
     const baseUrl = 'https://www.linkedin.com/oauth/v2/authorization';
     const defaultScopes = ['openid', 'profile', 'email'];
     const finalScopes = scopes || config.scope || defaultScopes;
-    
+
     const params = new URLSearchParams({
       response_type: 'code',
       client_id: config.clientId!,
@@ -195,7 +216,7 @@ export class ProviderManager {
     code: string
   ): Promise<{ access_token: string; refresh_token?: string }> {
     const config = this.config[provider] as OAuthProviderConfig;
-    
+
     switch (provider) {
       case 'google':
         return this.exchangeGoogleCode(config, code);
@@ -216,7 +237,7 @@ export class ProviderManager {
     code: string
   ): Promise<{ access_token: string; refresh_token?: string }> {
     const tokenUrl = 'https://oauth2.googleapis.com/token';
-    
+
     const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
@@ -232,7 +253,7 @@ export class ProviderManager {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(`Failed to exchange Google code: ${data.error}`);
     }
@@ -251,12 +272,12 @@ export class ProviderManager {
     code: string
   ): Promise<{ access_token: string }> {
     const tokenUrl = 'https://github.com/login/oauth/access_token';
-    
+
     const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Accept': 'application/json',
+        Accept: 'application/json',
       },
       body: new URLSearchParams({
         code,
@@ -267,7 +288,7 @@ export class ProviderManager {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok || data.error) {
       throw new Error(`Failed to exchange GitHub code: ${data.error}`);
     }
@@ -285,7 +306,7 @@ export class ProviderManager {
     code: string
   ): Promise<{ access_token: string; refresh_token?: string }> {
     const tokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken';
-    
+
     const response = await fetch(tokenUrl, {
       method: 'POST',
       headers: {
@@ -301,7 +322,7 @@ export class ProviderManager {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error(`Failed to exchange LinkedIn code: ${data.error}`);
     }
@@ -315,7 +336,10 @@ export class ProviderManager {
   /**
    * Get user info from OAuth provider
    */
-  private async getUserInfo(provider: AuthProvider, accessToken: string): Promise<OAuthUser> {
+  private async getUserInfo(
+    provider: AuthProvider,
+    accessToken: string
+  ): Promise<OAuthUser> {
     switch (provider) {
       case 'google':
         return this.getGoogleUserInfo(accessToken);
@@ -332,14 +356,17 @@ export class ProviderManager {
    * Get Google user info
    */
   private async getGoogleUserInfo(accessToken: string): Promise<OAuthUser> {
-    const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await fetch(
+      'https://www.googleapis.com/oauth2/v2/userinfo',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch Google user info');
     }
@@ -364,7 +391,7 @@ export class ProviderManager {
     });
 
     const data = await response.json();
-    
+
     if (!response.ok) {
       throw new Error('Failed to fetch GitHub user info');
     }
@@ -396,14 +423,17 @@ export class ProviderManager {
    */
   private async getLinkedInUserInfo(accessToken: string): Promise<OAuthUser> {
     // Get basic profile
-    const profileResponse = await fetch('https://api.linkedin.com/v2/userinfo', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const profileResponse = await fetch(
+      'https://api.linkedin.com/v2/userinfo',
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
 
     const profile = await profileResponse.json();
-    
+
     if (!profileResponse.ok) {
       throw new Error('Failed to fetch LinkedIn user info');
     }
@@ -420,7 +450,8 @@ export class ProviderManager {
    * Generate state for OAuth
    */
   private generateState(): string {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let state = '';
     for (let i = 0; i < 32; i++) {
       state += chars.charAt(Math.floor(Math.random() * chars.length));

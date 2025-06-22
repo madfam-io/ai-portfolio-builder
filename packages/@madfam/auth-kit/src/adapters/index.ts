@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Storage adapter exports
  */
 

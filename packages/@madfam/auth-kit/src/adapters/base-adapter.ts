@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Base adapter class
  */
 
@@ -22,7 +22,7 @@ export abstract class BaseAdapter implements AuthAdapter {
   abstract deleteUser(id: string): Promise<void>;
   abstract findUserById(id: string): Promise<User | null>;
   abstract findUserByEmail(email: string): Promise<User | null>;
-  
+
   // Session operations
   abstract createSession(data: Partial<Session>): Promise<Session>;
   abstract updateSession(id: string, data: Partial<Session>): Promise<Session>;
@@ -31,15 +31,31 @@ export abstract class BaseAdapter implements AuthAdapter {
   abstract findSessionByToken(token: string): Promise<Session | null>;
   abstract findUserSessions(userId: string): Promise<Session[]>;
   abstract deleteUserSessions(userId: string): Promise<void>;
-  
+
   // MFA operations
-  abstract saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void>;
-  abstract getMFASecret(userId: string, method: MFAMethod): Promise<string | null>;
+  abstract saveMFASecret(
+    userId: string,
+    method: MFAMethod,
+    secret: string
+  ): Promise<void>;
+  abstract getMFASecret(
+    userId: string,
+    method: MFAMethod
+  ): Promise<string | null>;
   abstract saveBackupCodes(userId: string, codes: string[]): Promise<void>;
   abstract verifyBackupCode(userId: string, code: string): Promise<boolean>;
-  
+
   // Account operations
-  abstract createAccountLink(userId: string, provider: AuthProvider, providerId: string): Promise<void>;
-  abstract findAccountLinks(userId: string): Promise<Array<{ provider: AuthProvider; providerId: string }>>;
-  abstract deleteAccountLink(userId: string, provider: AuthProvider): Promise<void>;
+  abstract createAccountLink(
+    userId: string,
+    provider: AuthProvider,
+    providerId: string
+  ): Promise<void>;
+  abstract findAccountLinks(
+    userId: string
+  ): Promise<Array<{ provider: AuthProvider; providerId: string }>>;
+  abstract deleteAccountLink(
+    userId: string,
+    provider: AuthProvider
+  ): Promise<void>;
 }

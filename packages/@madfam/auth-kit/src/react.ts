@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * React components and hooks
  */
 

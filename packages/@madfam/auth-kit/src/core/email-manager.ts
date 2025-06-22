@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Email management module
  */
 
@@ -21,7 +21,7 @@ export class EmailManager {
    */
   async sendVerificationEmail(email: string, token: string): Promise<void> {
     const verificationUrl = this.buildVerificationUrl(token);
-    
+
     await this.sendEmail({
       to: email,
       subject: 'Verify your email address',
@@ -40,7 +40,7 @@ export class EmailManager {
    */
   async sendPasswordResetEmail(email: string, token: string): Promise<void> {
     const resetUrl = this.buildPasswordResetUrl(token);
-    
+
     await this.sendEmail({
       to: email,
       subject: 'Reset your password',
@@ -107,7 +107,10 @@ export class EmailManager {
       },
     });
 
-    this.logger.info('Security alert email sent', { email, alertType: alert.type });
+    this.logger.info('Security alert email sent', {
+      email,
+      alertType: alert.type,
+    });
   }
 
   /**
@@ -135,7 +138,10 @@ export class EmailManager {
         await this.sendWithResend(to, subject, template, data);
         break;
       default:
-        this.logger.warn('No email provider configured, email not sent', { to, subject });
+        this.logger.warn('No email provider configured, email not sent', {
+          to,
+          subject,
+        });
     }
   }
 
@@ -149,7 +155,11 @@ export class EmailManager {
     data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the SendGrid API
-    this.logger.debug('SendGrid email would be sent', { to, subject, templateId });
+    this.logger.debug('SendGrid email would be sent', {
+      to,
+      subject,
+      templateId,
+    });
   }
 
   /**
@@ -188,7 +198,11 @@ export class EmailManager {
     data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the Resend API
-    this.logger.debug('Resend email would be sent', { to, subject, templateId });
+    this.logger.debug('Resend email would be sent', {
+      to,
+      subject,
+      templateId,
+    });
   }
 
   /**

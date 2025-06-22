@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Simple logger utility
  */
 
@@ -17,24 +17,28 @@ export class Logger {
 
   debug(message: string, data?: any): void {
     if (this.shouldLog('debug')) {
+      // eslint-disable-next-line no-console
       console.debug(`[${this.context}] ${message}`, data);
     }
   }
 
   info(message: string, data?: any): void {
     if (this.shouldLog('info')) {
+      // eslint-disable-next-line no-console
       console.info(`[${this.context}] ${message}`, data);
     }
   }
 
   warn(message: string, data?: any): void {
     if (this.shouldLog('warn')) {
+      // eslint-disable-next-line no-console
       console.warn(`[${this.context}] ${message}`, data);
     }
   }
 
   error(message: string, error?: Error | any): void {
     if (this.shouldLog('error')) {
+      // eslint-disable-next-line no-console
       console.error(`[${this.context}] ${message}`, error);
     }
   }

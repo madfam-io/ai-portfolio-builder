@@ -1,20 +1,15 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Supabase adapter for production use
  */
 
 import { BaseAdapter } from './base-adapter';
-import type {
-  User,
-  Session,
-  MFAMethod,
-  AuthProvider,
-} from '../core/types';
+import type { User, Session, MFAMethod, AuthProvider } from '../core/types';
 
 /**
  * Supabase storage adapter
- * 
+ *
  * Uses Supabase as the backend for authentication data
  */
 export class SupabaseAdapter extends BaseAdapter {
@@ -28,83 +23,99 @@ export class SupabaseAdapter extends BaseAdapter {
   }
 
   // User operations
-  async createUser(data: Partial<User>): Promise<User> {
+  createUser(_data: Partial<User>): Promise<User> {
     // Implementation would use Supabase client
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
+  updateUser(_id: string, _data: Partial<User>): Promise<User> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async deleteUser(id: string): Promise<void> {
+  deleteUser(_id: string): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findUserById(id: string): Promise<User | null> {
+  findUserById(_id: string): Promise<User | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  findUserByEmail(_email: string): Promise<User | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
   // Session operations
-  async createSession(data: Partial<Session>): Promise<Session> {
+  createSession(_data: Partial<Session>): Promise<Session> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async updateSession(id: string, data: Partial<Session>): Promise<Session> {
+  updateSession(_id: string, _data: Partial<Session>): Promise<Session> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async deleteSession(id: string): Promise<void> {
+  deleteSession(_id: string): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findSessionById(id: string): Promise<Session | null> {
+  findSessionById(_id: string): Promise<Session | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findSessionByToken(token: string): Promise<Session | null> {
+  findSessionByToken(_token: string): Promise<Session | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findUserSessions(userId: string): Promise<Session[]> {
+  findUserSessions(_userId: string): Promise<Session[]> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async deleteUserSessions(userId: string): Promise<void> {
+  deleteUserSessions(_userId: string): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
   // MFA operations
-  async saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void> {
+  saveMFASecret(
+    _userId: string,
+    _method: MFAMethod,
+    _secret: string
+  ): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async getMFASecret(userId: string, method: MFAMethod): Promise<string | null> {
+  getMFASecret(
+    _userId: string,
+    _method: MFAMethod
+  ): Promise<string | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async saveBackupCodes(userId: string, codes: string[]): Promise<void> {
+  saveBackupCodes(_userId: string, _codes: string[]): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  verifyBackupCode(_userId: string, _code: string): Promise<boolean> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
   // Account operations
-  async createAccountLink(userId: string, provider: AuthProvider, providerId: string): Promise<void> {
+  createAccountLink(
+    _userId: string,
+    _provider: AuthProvider,
+    _providerId: string
+  ): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async findAccountLinks(userId: string): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
+  findAccountLinks(
+    _userId: string
+  ): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  async deleteAccountLink(userId: string, provider: AuthProvider): Promise<void> {
+  deleteAccountLink(
+    _userId: string,
+    _provider: AuthProvider
+  ): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 }

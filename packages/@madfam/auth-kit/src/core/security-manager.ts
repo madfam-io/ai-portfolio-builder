@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Security management module
  */
 
@@ -26,7 +26,7 @@ export class SecurityManager {
   constructor(config?: SecurityConfig) {
     this.config = config;
     this.logger = new Logger('SecurityManager');
-    
+
     // Clean up expired entries periodically
     setInterval(() => this.cleanup(), 60 * 1000); // Every minute
   }
@@ -46,14 +46,20 @@ export class SecurityManager {
     if (entry) {
       if (now < entry.resetAt) {
         if (entry.count >= this.config.rateLimit.maxAttempts) {
-          const retryAfter = Math.ceil((entry.resetAt.getTime() - now.getTime()) / 1000);
-          throw new Error(`Rate limit exceeded. Try again in ${retryAfter} seconds`);
+          const retryAfter = Math.ceil(
+            (entry.resetAt.getTime() - now.getTime()) / 1000
+          );
+          throw new Error(
+            `Rate limit exceeded. Try again in ${retryAfter} seconds`
+          );
         }
         entry.count++;
       } else {
         // Reset window
         entry.count = 1;
-        entry.resetAt = new Date(now.getTime() + this.config.rateLimit.windowMs);
+        entry.resetAt = new Date(
+          now.getTime() + this.config.rateLimit.windowMs
+        );
       }
     } else {
       // First request
@@ -63,7 +69,11 @@ export class SecurityManager {
       });
     }
 
-    this.logger.debug('Rate limit check', { action, identifier, count: entry?.count || 1 });
+    this.logger.debug('Rate limit check', {
+      action,
+      identifier,
+      count: entry?.count || 1,
+    });
   }
 
   /**
@@ -104,9 +114,9 @@ export class SecurityManager {
       // Lock account
       const lockDuration = this.config.accountLockout.lockoutDuration;
       entry.lockedUntil = new Date(Date.now() + lockDuration);
-      
-      this.logger.warn('Account locked due to failed attempts', { 
-        identifier, 
+
+      this.logger.warn('Account locked due to failed attempts', {
+        identifier,
         attempts: entry.attempts,
         lockedUntil: entry.lockedUntil,
       });
@@ -154,13 +164,14 @@ export class SecurityManager {
       return '';
     }
 
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let token = '';
-    
+
     for (let i = 0; i < 32; i++) {
       token += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    
+
     return token;
   }
 
@@ -181,7 +192,7 @@ export class SecurityManager {
    */
   private cleanup(): void {
     const now = new Date();
-    
+
     // Clean up rate limit entries
     for (const [key, entry] of this.rateLimitStore) {
       if (now >= entry.resetAt) {

@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Transport factory
  */
 

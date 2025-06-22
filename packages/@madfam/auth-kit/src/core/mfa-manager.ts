@@ -1,6 +1,6 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Multi-Factor Authentication management module
  */
 
@@ -60,10 +60,10 @@ export class MFAManager {
    */
   private async setupTOTP(userId: string): Promise<MFASetupResult> {
     const totpConfig = this.config?.methods.totp as TOTPConfig;
-    
+
     // Generate secret
     const secret = new OTPAuth.Secret({ size: 32 });
-    
+
     // Create TOTP instance
     const totp = new OTPAuth.TOTP({
       issuer: totpConfig.issuer || 'AuthKit',
@@ -126,9 +126,12 @@ export class MFAManager {
   /**
    * Create MFA challenge
    */
-  async createChallenge(userId: string, method: MFAMethod): Promise<MFAChallenge> {
+  async createChallenge(
+    userId: string,
+    method: MFAMethod
+  ): Promise<MFAChallenge> {
     const challengeId = generateId();
-    
+
     const challenge: MFAChallenge = {
       id: challengeId,
       userId,
@@ -153,7 +156,7 @@ export class MFAManager {
    */
   async getChallenge(challengeId: string): Promise<MFAChallenge | null> {
     const challenge = this.challenges.get(challengeId);
-    
+
     if (!challenge) {
       return null;
     }
@@ -177,7 +180,7 @@ export class MFAManager {
 
     // Increment attempts
     challenge.attempts++;
-    
+
     if (challenge.attempts > challenge.maxAttempts) {
       this.challenges.delete(challengeId);
       this.logger.warn('MFA challenge exceeded max attempts', { challengeId });
@@ -203,7 +206,10 @@ export class MFAManager {
       this.challenges.delete(challengeId);
       this.logger.info('MFA token verified', { challengeId });
     } else {
-      this.logger.warn('Invalid MFA token', { challengeId, attempts: challenge.attempts });
+      this.logger.warn('Invalid MFA token', {
+        challengeId,
+        attempts: challenge.attempts,
+      });
     }
 
     return isValid;
@@ -223,7 +229,7 @@ export class MFAManager {
     }
 
     const totpConfig = this.config?.methods.totp as TOTPConfig;
-    
+
     const totp = new OTPAuth.TOTP({
       secret: OTPAuth.Secret.fromBase32(secret),
       algorithm: totpConfig?.algorithm || 'SHA256',
@@ -243,7 +249,10 @@ export class MFAManager {
   /**
    * Verify backup code
    */
-  private async verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  private async verifyBackupCode(
+    userId: string,
+    code: string
+  ): Promise<boolean> {
     if (!this.adapter) {
       return false;
     }
@@ -294,7 +303,9 @@ export class MFAManager {
     }
 
     if (expiredIds.length > 0) {
-      this.logger.debug('Cleaned up expired challenges', { count: expiredIds.length });
+      this.logger.debug('Cleaned up expired challenges', {
+        count: expiredIds.length,
+      });
     }
   }
 }

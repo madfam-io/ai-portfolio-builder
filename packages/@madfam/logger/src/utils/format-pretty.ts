@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * Pretty formatting for console output
  */
 
@@ -88,7 +88,7 @@ function formatData(data: any, colors: boolean, indent: string): string {
   for (const [key, value] of Object.entries(data)) {
     const formattedKey = colors ? chalk.gray(key + ':') : key + ':';
     const formattedValue = formatValue(value, colors, indent + '  ');
-    
+
     if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
       lines.push(`${indent}${formattedKey}`);
       lines.push(formattedValue);
@@ -125,8 +125,8 @@ function formatValue(value: any, colors: boolean, indent: string): string {
     if (value.length === 0) {
       return '[]';
     }
-    const items = value.map(item => 
-      indent + '- ' + formatValue(item, colors, indent + '  ')
+    const items = value.map(
+      item => indent + '- ' + formatValue(item, colors, indent + '  ')
     );
     return '\n' + items.join('\n');
   }
@@ -140,21 +140,25 @@ function formatValue(value: any, colors: boolean, indent: string): string {
 
 function formatError(error: Error, colors: boolean, indent: string): string {
   const lines: string[] = [];
-  
+
   // Error message
   const errorLabel = colors ? chalk.red('Error:') : 'Error:';
   lines.push(`${indent}${errorLabel} ${error.message}`);
-  
+
   // Stack trace
   if (error.stack) {
     const stackLines = error.stack.split('\n').slice(1); // Skip first line (already shown)
     const stackLabel = colors ? chalk.gray('Stack:') : 'Stack:';
     lines.push(`${indent}${stackLabel}`);
-    
+
     stackLines.forEach(line => {
-      lines.push(colors ? chalk.gray(`${indent}  ${line.trim()}`) : `${indent}  ${line.trim()}`);
+      lines.push(
+        colors
+          ? chalk.gray(`${indent}  ${line.trim()}`)
+          : `${indent}  ${line.trim()}`
+      );
     });
   }
-  
+
   return lines.join('\n');
 }

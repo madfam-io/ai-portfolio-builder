@@ -1,6 +1,6 @@
 /**
  * @madfam/logger
- * 
+ *
  * File transport implementation (placeholder)
  */
 
@@ -19,7 +19,11 @@ export class FileTransport implements Transport {
     // In a real implementation, this would write to a file
     // For now, just log to console that we would write
     if (process.env.NODE_ENV === 'development') {
-      console.log(`[FileTransport] Would write to ${this.config.filename}:`, formatJson(entry));
+      // eslint-disable-next-line no-console
+      console.log(
+        `[FileTransport] Would write to ${this.config.filename}:`,
+        formatJson(entry)
+      );
     }
   }
 
