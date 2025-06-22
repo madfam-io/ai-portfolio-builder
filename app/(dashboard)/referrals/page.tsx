@@ -37,8 +37,10 @@ export function ReferralsPage() {
         router.push('/auth/signin');
         return;
       }
-      
-      const { data: { user } } = await supabase.auth.getUser();
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         router.push('/auth/signin');
         return;

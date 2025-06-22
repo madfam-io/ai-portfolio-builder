@@ -35,6 +35,7 @@ import type {
   ReferralEngineConfig,
   ReferralValidationError,
   FraudDetectionError,
+  RewardConfiguration,
 } from '../types';
 import { Logger } from '../utils/logger';
 import { Analytics } from '../utils/analytics';
@@ -108,7 +109,8 @@ export class ReferralEngine {
           risk_score: 0,
           fraud_flags: [],
           expires_at: new Date(
-            Date.now() + this.config.conversion_window_days * 24 * 60 * 60 * 1000
+            Date.now() +
+              this.config.conversion_window_days * 24 * 60 * 60 * 1000
           ).toISOString(),
         })
         .select()
@@ -402,14 +404,18 @@ export class ReferralEngine {
           total_reward_value: rewards.reduce((sum, r) => sum + r.amount, 0),
         });
 
-        await this.analytics.track(referral.referrer_id, 'referral_successful', {
-          referral_id: referral.id,
-          referee_id: request.referee_id,
-          campaign_id: referral.campaign_id,
-          rewards_earned: rewards.filter(
-            r => r.user_id === referral.referrer_id
-          ).length,
-        });
+        await this.analytics.track(
+          referral.referrer_id,
+          'referral_successful',
+          {
+            referral_id: referral.id,
+            referee_id: request.referee_id,
+            campaign_id: referral.campaign_id,
+            rewards_earned: rewards.filter(
+              r => r.user_id === referral.referrer_id
+            ).length,
+          }
+        );
       }
 
       this.logger.info('Referral converted successfully', {
@@ -447,7 +453,10 @@ export class ReferralEngine {
 
       if (error && error.code !== 'PGRST116') {
         // PGRST116 is "not found", which is expected for new users
-        this.logger.error('Failed to fetch user referral stats', { error, userId });
+        this.logger.error('Failed to fetch user referral stats', {
+          error,
+          userId,
+        });
         throw new Error('Failed to fetch referral statistics');
       }
 
@@ -473,7 +482,10 @@ export class ReferralEngine {
         }
       );
     } catch (error) {
-      this.logger.error('Error fetching user referral stats', { error, userId });
+      this.logger.error('Error fetching user referral stats', {
+        error,
+        userId,
+      });
       throw error;
     }
   }
@@ -502,22 +514,23 @@ export class ReferralEngine {
         return [];
       }
 
-      // Filter campaigns based on user eligibility if userId provided
-      if (userId) {
-        const eligibleCampaigns = [];
-        for (const campaign of campaigns) {
-          const isEligible = await this.checkCampaignEligibility(
-            userId,
-            campaign
-          );
-          if (isEligible) {
-            eligibleCampaigns.push(campaign);
-          }
-        }
-        return eligibleCampaigns;
+      // If no userId provided, return all campaigns
+      if (!userId) {
+        return campaigns || [];
       }
 
-      return campaigns || [];
+      // Filter campaigns based on user eligibility
+      const eligibleCampaigns = [];
+      for (const campaign of campaigns) {
+        const isEligible = await this.checkCampaignEligibility(
+          userId,
+          campaign
+        );
+        if (isEligible) {
+          eligibleCampaigns.push(campaign);
+        }
+      }
+      return eligibleCampaigns;
     } catch (error) {
       this.logger.error('Error fetching active campaigns', { error });
       return [];
@@ -626,8 +639,7 @@ export class ReferralEngine {
   }
 
   private generateShareUrl(code: string, campaign?: ReferralCampaign): string {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || 'https://app.madfam.io';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.madfam.io';
     const params = new URLSearchParams({
       ref: code,
     });
@@ -643,8 +655,7 @@ export class ReferralEngine {
     referral: Referral,
     attributionData: Partial<AttributionData>
   ): string {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || 'https://app.madfam.io';
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://app.madfam.io';
     const params = new URLSearchParams({
       ref: referral.code,
     });
@@ -898,7 +909,7 @@ export class ReferralEngine {
   private async createReward(
     userId: string,
     referralId: string,
-    rewardConfig: any,
+    rewardConfig: RewardConfiguration,
     recipientType: 'referrer' | 'referee'
   ): Promise<ReferralReward | null> {
     try {
@@ -918,7 +929,11 @@ export class ReferralEngine {
         .single();
 
       if (error) {
-        this.logger.error('Failed to create reward', { error, userId, referralId });
+        this.logger.error('Failed to create reward', {
+          error,
+          userId,
+          referralId,
+        });
         return null;
       }
 
@@ -972,12 +987,14 @@ export function createReferralEngine(
 export const referralEngine = (() => {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  
+
   if (!supabaseUrl || !supabaseKey) {
-    console.warn('[ReferralEngine] Missing Supabase credentials. Engine will not be initialized.');
+    console.warn(
+      '[ReferralEngine] Missing Supabase credentials. Engine will not be initialized.'
+    );
     return null;
   }
-  
+
   return new ReferralEngine(supabaseUrl, supabaseKey);
 })();
 
