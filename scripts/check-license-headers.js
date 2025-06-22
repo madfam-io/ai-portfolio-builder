@@ -33,6 +33,7 @@ const FILE_PATTERNS = [
 // Directories and patterns to ignore
 const IGNORE_PATTERNS = [
   'node_modules/**',
+  'packages/*/node_modules/**',
   'dist/**',
   'build/**',
   '.next/**',

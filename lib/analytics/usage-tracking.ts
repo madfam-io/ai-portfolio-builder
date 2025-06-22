@@ -13,10 +13,10 @@
 
 /**
  * @fileoverview Usage Tracking for Business Excellence
- * 
+ *
  * Comprehensive usage analytics system that powers:
  * - Revenue correlation analysis
- * - Business intelligence dashboards  
+ * - Business intelligence dashboards
  * - Premium tier upsell opportunities
  * - Competitive positioning metrics
  */
@@ -55,11 +55,11 @@ export class UsageTracker {
 
   trackFeatureUsage(metrics: UsageMetrics): void {
     const key = `${metrics.userId}_${metrics.feature}`;
-    
+
     if (!this.usageCache.has(key)) {
       this.usageCache.set(key, []);
     }
-    
+
     const cache = this.usageCache.get(key);
     if (cache) {
       cache.push(metrics);
@@ -95,19 +95,19 @@ export class UsageTracker {
     competitiveRanking: number;
   } {
     const userMetrics = this.usageCache.get(`${userId}_*`) || [];
-    
+
     const totalUsage = userMetrics.length;
     const revenueOpportunity = userMetrics.reduce(
       (sum, metric) => sum + (metric.businessImpact?.revenueOpportunity || 0),
       0
     );
-    
+
     let suggestedTier = 'free';
     if (revenueOpportunity > 10000) suggestedTier = 'business';
     else if (revenueOpportunity > 2000) suggestedTier = 'professional';
-    
-    const competitiveRanking = Math.min(95, 65 + (revenueOpportunity / 1000));
-    
+
+    const competitiveRanking = Math.min(95, 65 + revenueOpportunity / 1000);
+
     return {
       totalUsage,
       revenueOpportunity,
@@ -116,11 +116,14 @@ export class UsageTracker {
     };
   }
 
-  getRateLimitInfo(userId: string, tier: string): {
+  getRateLimitInfo(
+    userId: string,
+    tier: string
+  ): {
     requests: number;
     windowMs: number;
     remaining: number;
-  }> {
+  } {
     const limits = {
       free: { requests: 100, windowMs: 3600000 }, // 100/hour
       professional: { requests: 1000, windowMs: 3600000 }, // 1000/hour
@@ -129,7 +132,7 @@ export class UsageTracker {
     };
 
     const limit = limits[tier as keyof typeof limits] || limits.free;
-    
+
     // Get current usage from cache (simplified)
     const currentUsage = this.usageCache.get(`${userId}_api`) || [];
     const recentUsage = currentUsage.filter(
