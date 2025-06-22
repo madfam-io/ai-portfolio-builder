@@ -53,6 +53,7 @@
     "test-results",
     "components/disabled",
     "scripts",
+    "packages",
     "**/*.test.ts",
     "**/*.test.tsx",
     "**/*.spec.ts",
