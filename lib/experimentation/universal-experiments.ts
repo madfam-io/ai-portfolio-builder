@@ -361,7 +361,10 @@ export class UniversalExperimentEngine {
         if (!this.assignments.has(userId)) {
           this.assignments.set(userId, new Map());
         }
-        this.assignments.get(userId)!.set(experiment.id, assignment);
+        const userAssignments = this.assignments.get(userId);
+        if (userAssignments) {
+          userAssignments.set(experiment.id, assignment);
+        }
       }
     }
 
@@ -435,13 +438,13 @@ export class UniversalExperimentEngine {
   /**
    * Track experiment conversion
    */
-  async trackConversion(
+  trackConversion(
     userId: string,
     experimentId: string,
     metricId: string,
     value: number,
     metadata?: Record<string, unknown>
-  ): Promise<void> {
+  ): void {
     const assignment = this.assignments.get(userId)?.get(experimentId);
     if (!assignment) return;
 
@@ -718,11 +721,11 @@ export class UniversalExperimentEngine {
     return Math.ceil(numerator / denominator);
   }
 
-  private async assignUserToExperiment(
+  private assignUserToExperiment(
     userId: string,
     experiment: UniversalExperimentConfig,
     userContext?: Record<string, unknown>
-  ): Promise<ExperimentAssignment | null> {
+  ): ExperimentAssignment | null {
     // Check if user already assigned
     const existingAssignment = this.assignments.get(userId)?.get(experiment.id);
     if (existingAssignment) {
@@ -868,7 +871,8 @@ export class UniversalExperimentEngine {
     }
 
     // Fallback to control
-    return experiment.variants.find(v => v.isControl)!.id;
+    const controlVariant = experiment.variants.find(v => v.isControl);
+    return controlVariant ? controlVariant.id : experiment.variants[0].id;
   }
 
   private hashUserId(input: string): number {
@@ -881,11 +885,11 @@ export class UniversalExperimentEngine {
     return Math.abs(hash) / Math.pow(2, 31);
   }
 
-  private async calculateMetricResult(
+  private calculateMetricResult(
     experimentId: string,
     variantId: string,
     metric: ExperimentMetric
-  ): Promise<ExperimentResult> {
+  ): ExperimentResult {
     // In a real implementation, this would query the analytics database
     // For now, return mock statistical data
 
@@ -920,21 +924,21 @@ export class UniversalExperimentEngine {
     };
   }
 
-  private async persistExperiment(
+  private persistExperiment(
     config: UniversalExperimentConfig
-  ): Promise<void> {
+  ): void {
     // Persist to Supabase database
     // This would extend the existing landing_page_experiments table
     // or create a new universal_experiments table
-    console.log(`Persisting universal experiment: ${config.id}`);
+    // console.log(`Persisting universal experiment: ${config.id}`);
   }
 
-  private async trackEvent(
+  private trackEvent(
     userId: string,
     experimentId: string,
     variantId: string,
     event: ExperimentEvent
-  ): Promise<void> {
+  ): void {
     // Track to PostHog and other analytics systems
     logger.info(
       `Tracking experiment event: ${event.eventName} for ${experimentId}:${variantId}`
@@ -950,20 +954,20 @@ export const universalExperimentEngine = new UniversalExperimentEngine();
 /**
  * Convenience functions
  */
-export async function getExperimentVariant(
+export function getExperimentVariant(
   userId: string,
   context: ExperimentContext,
   userContext?: Record<string, unknown>
-): Promise<Map<string, ExperimentAssignment>> {
+): Map<string, ExperimentAssignment> {
   return universalExperimentEngine.assignUser(userId, context, userContext);
 }
 
-export async function trackExperimentExposure(
+export function trackExperimentExposure(
   userId: string,
   experimentId: string,
   context: ExperimentContext,
   metadata?: Record<string, unknown>
-): Promise<void> {
+): void {
   return universalExperimentEngine.trackExposure(
     userId,
     experimentId,
@@ -972,13 +976,13 @@ export async function trackExperimentExposure(
   );
 }
 
-export async function trackExperimentConversion(
+export function trackExperimentConversion(
   userId: string,
   experimentId: string,
   metricId: string,
   value: number,
   metadata?: Record<string, unknown>
-): Promise<void> {
+): void {
   return universalExperimentEngine.trackConversion(
     userId,
     experimentId,

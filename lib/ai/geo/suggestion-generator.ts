@@ -41,7 +41,14 @@ export class SuggestionGenerator {
   generateSuggestions(
     content: string,
     keywords: string[],
-    scoreBreakdown: any,
+    scoreBreakdown: {
+      keywordDensity?: number;
+      keywordDistribution?: number;
+      contentQuality?: number;
+      metadata?: number;
+      mobile?: number;
+      structure?: number;
+    },
     contentType: string
   ): Suggestion[] {
     const suggestions: Suggestion[] = [];

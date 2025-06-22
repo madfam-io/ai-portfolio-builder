@@ -21,6 +21,8 @@
  * @version 1.0.0
  */
 
+import { logger } from '@/lib/utils/logger';
+
 export interface FeedbackEntry {
   id: string;
   userId: string;
@@ -125,7 +127,7 @@ export class FeedbackSystem {
 
       return result.id || feedbackEntry.id;
     } catch (error) {
-      console.error('Error submitting feedback:', error);
+      logger.error('Error submitting feedback:', error);
       // Store locally as fallback
       this.feedbackEntries.set(feedbackEntry.id, feedbackEntry);
       return feedbackEntry.id;
@@ -160,7 +162,7 @@ export class FeedbackSystem {
       this.surveys.set(surveyEntry.id, surveyEntry);
       return surveyEntry.id;
     } catch (error) {
-      console.error('Error submitting survey:', error);
+      logger.error('Error submitting survey:', error);
       this.surveys.set(surveyEntry.id, surveyEntry);
       return surveyEntry.id;
     }
@@ -199,7 +201,7 @@ export class FeedbackSystem {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching feedback:', error);
+      logger.error('Error fetching feedback:', error);
       // Return local entries as fallback
       return Array.from(this.feedbackEntries.values())
         .filter(entry => {
@@ -233,7 +235,7 @@ export class FeedbackSystem {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching beta metrics:', error);
+      logger.error('Error fetching beta metrics:', error);
       // Return basic metrics from local data
       return this.calculateLocalMetrics();
     }
@@ -472,7 +474,7 @@ export class BetaAnalytics {
       userEvents.push(eventData);
       this.events.set(event.userId, userEvents);
     } catch (error) {
-      console.error('Error tracking event:', error);
+      logger.error('Error tracking event:', error);
       // Store locally on error
       const userEvents = this.events.get(event.userId) || [];
       userEvents.push(eventData);
@@ -550,7 +552,7 @@ export class BetaAnalytics {
       const data = await response.json();
       return Array.isArray(data) ? data : data.journeys || [];
     } catch (error) {
-      console.error('Error fetching user journeys:', error);
+      logger.error('Error fetching user journeys:', error);
       return [];
     }
   }
@@ -564,7 +566,7 @@ export class BetaAnalytics {
       if (!response.ok) throw new Error('Failed to fetch feature usage');
       return await response.json();
     } catch (error) {
-      console.error('Error fetching feature usage:', error);
+      logger.error('Error fetching feature usage:', error);
       return {};
     }
   }

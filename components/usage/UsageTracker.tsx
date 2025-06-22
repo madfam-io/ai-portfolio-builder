@@ -110,12 +110,12 @@ export function UsageTracker() {
         .length,
       totalViews: portfolios.reduce((sum, p) => sum + (p.views || 0), 0),
       aiEnhancements: portfolios.reduce(
-        (sum, p) => sum + 0, // AI enhancements count - needs implementation
+        (sum, _p) => sum + 0, // AI enhancements count - needs implementation
         0
       ),
       customDomains: portfolios.filter(p => p.customDomain).length,
       storageUsed: portfolios.reduce(
-        (sum, p) => sum + 10, // Estimated storage per portfolio
+        (sum, _p) => sum + 10, // Estimated storage per portfolio
         0
       ), // MB
       lastUpdated: new Date(),

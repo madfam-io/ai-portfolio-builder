@@ -31,7 +31,6 @@ import {
   ExperimentContext,
   ExperimentType,
   ExperimentMetric,
-  TargetingRule,
 } from '@/lib/experimentation/universal-experiments';
 import { createClient } from '@/lib/supabase/client';
 import { logger } from '@/lib/utils/logger';
@@ -515,7 +514,7 @@ export class ExperimentManager {
   /**
    * Start an experiment
    */
-  async startExperiment(experimentId: string): Promise<void> {
+  startExperiment(experimentId: string): void {
     // Implementation would update experiment status to 'active'
     // and set start date
     logger.info(`Starting experiment: ${experimentId}`);
@@ -524,7 +523,7 @@ export class ExperimentManager {
   /**
    * Pause an experiment
    */
-  async pauseExperiment(experimentId: string): Promise<void> {
+  pauseExperiment(experimentId: string): void {
     // Implementation would update experiment status to 'paused'
     logger.info(`Pausing experiment: ${experimentId}`);
   }
@@ -532,11 +531,11 @@ export class ExperimentManager {
   /**
    * Stop an experiment and declare winner
    */
-  async stopExperiment(
+  stopExperiment(
     experimentId: string,
     winnerVariantId?: string,
-    reason?: string
-  ): Promise<void> {
+    _reason?: string
+  ): void {
     // Implementation would:
     // 1. Update experiment status to 'completed'
     // 2. Set winning variant if provided
@@ -549,10 +548,10 @@ export class ExperimentManager {
   /**
    * Clone an existing experiment
    */
-  async cloneExperiment(
+  cloneExperiment(
     experimentId: string,
-    modifications: Partial<UniversalExperimentConfig> = {}
-  ): Promise<string> {
+    _modifications: Partial<UniversalExperimentConfig> = {}
+  ): string {
     // Implementation would:
     // 1. Fetch existing experiment
     // 2. Create new experiment with cloned config
@@ -567,7 +566,7 @@ export class ExperimentManager {
   /**
    * Schedule experiment action
    */
-  async scheduleAction(schedule: ExperimentSchedule): Promise<void> {
+  scheduleAction(schedule: ExperimentSchedule): void {
     // Implementation would store scheduled action in database
     // and set up cron job or timer to execute
     logger.info(
@@ -578,26 +577,26 @@ export class ExperimentManager {
   /**
    * Perform bulk operations on multiple experiments
    */
-  async bulkOperation(operation: BulkExperimentOperation): Promise<void> {
+  bulkOperation(operation: BulkExperimentOperation): void {
     const { experimentIds, operation: action, options = {} } = operation;
 
     for (const experimentId of experimentIds) {
       try {
         switch (action) {
           case 'start':
-            await this.startExperiment(experimentId);
+            this.startExperiment(experimentId);
             break;
           case 'pause':
-            await this.pauseExperiment(experimentId);
+            this.pauseExperiment(experimentId);
             break;
           case 'stop':
-            await this.stopExperiment(experimentId);
+            this.stopExperiment(experimentId);
             break;
           case 'archive':
             // Implementation for archiving
             break;
           case 'clone':
-            await this.cloneExperiment(
+            this.cloneExperiment(
               experimentId,
               options as Partial<UniversalExperimentConfig>
             );
@@ -621,9 +620,12 @@ export class ExperimentManager {
    */
   async migrateLandingPageExperiments(): Promise<void> {
     try {
-      const { data: existingExperiments, error } = await this.supabase!.from(
-        'landing_page_experiments'
-      )
+      if (!this.supabase) {
+        logger.error('Supabase client not initialized');
+        return;
+      }
+      const { data: existingExperiments, error } = await this.supabase
+        .from('landing_page_experiments')
         .select(
           `
           *,
@@ -646,7 +648,7 @@ export class ExperimentManager {
 
           context: 'landing_page',
           type: 'component',
-          status: oldExperiment.status as any,
+          status: oldExperiment.status as ExperimentStatus,
           priority: 'medium',
 
           targeting: {
@@ -660,11 +662,20 @@ export class ExperimentManager {
           },
 
           variants:
-            oldExperiment.variants?.map((variant: any) => ({
-              id: variant.id,
-              name: variant.name,
-              description: variant.description || '',
-              isControl: variant.is_control,
+            oldExperiment.variants?.map(
+              (variant: {
+                id: string;
+                name: string;
+                description?: string;
+                is_control: boolean;
+                traffic_percentage?: number;
+                components?: Record<string, unknown>;
+                content?: Record<string, unknown>;
+              }) => ({
+                id: variant.id,
+                name: variant.name,
+                description: variant.description || '',
+                isControl: variant.is_control,
               allocation: (variant.traffic_percentage || 0) / 100,
               config: {
                 componentProps: variant.components || {},
@@ -775,13 +786,13 @@ export class ExperimentManager {
   /**
    * Get experiment performance summary
    */
-  async getPerformanceSummary(): Promise<{
+  getPerformanceSummary(): {
     totalExperiments: number;
     activeExperiments: number;
     significantWinners: number;
     averageUplift: number;
     totalRevenueLift: number;
-  }> {
+  } {
     // Implementation would aggregate data from all experiments
     return {
       totalExperiments: 42,

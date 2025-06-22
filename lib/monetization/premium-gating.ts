@@ -588,17 +588,17 @@ export class PremiumGatingEngine {
   /**
    * Get upgrade recommendations based on usage patterns
    */
-  async getUpgradeRecommendations(
+  getUpgradeRecommendations(
     userId: string,
     userTier: string = 'free'
-  ): Promise<{
+  ): {
     recommendedTier: string;
     monthlyValue: number;
     keyBenefits: string[];
     urgencyScore: number;
     conversionProbability: number;
     limitingFeatures: string[];
-  }> {
+  } {
     const userUsage = this.userUsageCache.get(userId) || new Map();
     const currentTier = BUSINESS_USER_TIERS[userTier];
 
@@ -690,11 +690,11 @@ export class PremiumGatingEngine {
 
   // Private helper methods
 
-  private async getUserFeatureUsage(
+  private getUserFeatureUsage(
     userId: string,
     feature: string,
     userTier: string
-  ): Promise<FeatureUsage> {
+  ): FeatureUsage {
     const cached = this.userUsageCache.get(userId)?.get(feature);
     if (cached && !this.isUsageExpired(cached)) {
       return cached;
@@ -853,7 +853,7 @@ export class PremiumGatingEngine {
 
     const benefits: string[] = [];
     Object.entries(nextTierConfig?.features || {}).forEach(
-      ([feature, config]) => {
+      ([_feature, config]) => {
         if (config.enabled && config.marketingMessage) {
           benefits.push(config.marketingMessage);
         }

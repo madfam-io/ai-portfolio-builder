@@ -157,7 +157,7 @@ export function ExperimentAnalytics({
   // Generate time series data
   const timeSeriesData = useMemo(() => {
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days.map((day, index) => ({
+    return days.map((day, _index) => ({
       day,
       control: 12 + Math.random() * 8,
       treatment: 15 + Math.random() * 10,
@@ -467,8 +467,8 @@ function VariantComparisonChart({
           <XAxis dataKey="name" />
           <YAxis />
           <Tooltip
-            formatter={(value: any, name: string) => [
-              `${parseFloat(value).toFixed(2)}${name.includes('Rate') || name.includes('effect') ? '%' : ''}`,
+            formatter={(value: unknown, name: string) => [
+              `${parseFloat(String(value)).toFixed(2)}${name.includes('Rate') || name.includes('effect') ? '%' : ''}`,
               name,
             ]}
           />
@@ -533,7 +533,24 @@ function ConversionFunnelChart({
 }
 
 interface StatisticalAnalysisChartProps {
-  statisticalSummary: any;
+  statisticalSummary: {
+    control: {
+      result: {
+        conversionRate?: number;
+        sampleSize: number;
+      };
+    };
+    treatments: Array<{
+      variant: { name: string };
+      improvement: number;
+      confidenceInterval: [number, number];
+      isSignificant: boolean;
+    }>;
+    bestPerformer?: {
+      improvement: number;
+      variant: { name: string };
+    } | null;
+  } | null;
 }
 
 function StatisticalAnalysisChart({
@@ -551,7 +568,7 @@ function StatisticalAnalysisChart({
   }
 
   const confidenceData = statisticalSummary.treatments.map(
-    (treatment: any, index: number) => ({
+    (treatment, _index) => ({
       variant: treatment.variant.name,
       improvement: treatment.improvement * 100,
       lowerBound: treatment.confidenceInterval[0] * 100,
@@ -598,8 +615,8 @@ function StatisticalAnalysisChart({
             <XAxis type="number" domain={['dataMin - 5', 'dataMax + 5']} />
             <YAxis dataKey="variant" type="category" width={80} />
             <Tooltip
-              formatter={(value: any) => [
-                `${parseFloat(value).toFixed(1)}%`,
+              formatter={(value: unknown) => [
+                `${parseFloat(String(value)).toFixed(1)}%`,
                 'Improvement',
               ]}
             />
@@ -618,7 +635,13 @@ function StatisticalAnalysisChart({
 
 interface ExperimentInsightsProps {
   experiment: UniversalExperimentConfig;
-  statisticalSummary: any;
+  statisticalSummary: {
+    hasSignificantWinner?: boolean;
+    bestPerformer?: {
+      variant: { name: string };
+      improvement: number;
+    } | null;
+  } | null;
 }
 
 function ExperimentInsights({

@@ -36,8 +36,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   BarChart,
   Bar,
-  LineChart,
-  Line,
+  // LineChart,
+  // Line,
   PieChart,
   Pie,
   Cell,
@@ -46,17 +46,17 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  AreaChart,
-  Area,
+  // AreaChart,
+  // Area,
 } from 'recharts';
 import {
   TrendingUp,
-  TrendingDown,
+  // TrendingDown,
   Clock,
   Users,
   DollarSign,
   Target,
-  Zap,
+  // Zap,
   Crown,
   Star,
   Activity,
@@ -510,7 +510,7 @@ export function PerformanceDashboard({
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {metrics.funnelMetrics.conversionByStep.map((step, index) => (
+                {metrics.funnelMetrics.conversionByStep.map((step, _index) => (
                   <div key={step.step} className="space-y-2">
                     <div className="flex items-center justify-between">
                       <span className="font-medium">{step.step}</span>

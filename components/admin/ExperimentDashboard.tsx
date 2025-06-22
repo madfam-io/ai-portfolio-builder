@@ -46,8 +46,8 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { Separator } from '@/components/ui/separator';
+// import { Switch } from '@/components/ui/switch';
+// import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Dialog,
@@ -64,25 +64,25 @@ import {
   Eye,
   DollarSign,
   Plus,
-  Filter,
+  // Filter,
   Search,
-  Calendar,
+  // Calendar,
   BarChart3,
   Target,
   Beaker,
-  Lightbulb,
+  // Lightbulb,
   CheckCircle,
   XCircle,
   Clock,
-  AlertTriangle,
+  // AlertTriangle,
 } from 'lucide-react';
 
 import {
   universalExperimentEngine,
   UniversalExperimentConfig,
-  UniversalExperimentVariant,
-  ExperimentContext,
-  ExperimentType,
+  // UniversalExperimentVariant,
+  // ExperimentContext,
+  // ExperimentType,
   ExperimentResult,
 } from '@/lib/experimentation/universal-experiments';
 
@@ -113,8 +113,8 @@ export function ExperimentDashboard({
       // In a real implementation, this would fetch from the API
       // For now, we'll simulate with the existing data
       await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Failed to refresh experiments:', error);
+    } catch (_error) {
+      // console.error('Failed to refresh experiments:', error);
     } finally {
       setLoading(false);
     }
@@ -126,8 +126,8 @@ export function ExperimentDashboard({
       const experimentResults =
         await universalExperimentEngine.getExperimentResults(experimentId);
       setResults(prev => new Map(prev).set(experimentId, experimentResults));
-    } catch (error) {
-      console.error('Failed to load experiment results:', error);
+    } catch (_error) {
+      // console.error('Failed to load experiment results:', error);
     }
   }, []);
 
@@ -387,7 +387,7 @@ function ExperimentCard({
   experiment,
   onSelect,
   onLoadResults,
-  results,
+  results: _results,
   isSelected,
 }: ExperimentCardProps) {
   const statusColors = {
@@ -462,7 +462,7 @@ function ExperimentCard({
 
       <div className="flex justify-between items-center mt-3">
         <div className="flex gap-2">
-          {experiment.variants.map((variant, index) => (
+          {experiment.variants.map((variant, _index) => (
             <div key={variant.id} className="flex items-center gap-1">
               <div
                 className={`w-2 h-2 rounded-full ${

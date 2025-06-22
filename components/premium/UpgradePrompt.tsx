@@ -32,7 +32,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
+  // DialogHeader,
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog';
@@ -386,11 +386,15 @@ export function UpgradePrompt({
                         .filter(([_, config]) => config.enabled)
                         .filter(([feature]) => {
                           const profFeatures =
-                            (BUSINESS_USER_TIERS.professional
-                              ?.features as any) || {};
+                            (BUSINESS_USER_TIERS.professional?.features as Record<
+                              string,
+                              { enabled: boolean; limit?: number }
+                            >) || {};
                           const bizFeatures =
-                            (BUSINESS_USER_TIERS.business?.features as any) ||
-                            {};
+                            (BUSINESS_USER_TIERS.business?.features as Record<
+                              string,
+                              { enabled: boolean; limit?: number }
+                            >) || {};
                           return (
                             !profFeatures[feature]?.enabled ||
                             bizFeatures[feature]?.limit !==
@@ -485,7 +489,7 @@ export function UpgradePrompt({
 export function InlineUpgradePrompt({
   result,
   onUpgrade,
-  feature,
+  feature: _feature,
   className = '',
 }: {
   result: PremiumGatingResult;
@@ -535,7 +539,7 @@ export function UsageIndicator({
   feature,
   used,
   limit,
-  userTier,
+  userTier: _userTier,
   onUpgrade,
 }: {
   feature: string;

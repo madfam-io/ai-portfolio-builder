@@ -123,7 +123,7 @@ export function ExperimentProvider({
         } else {
           context.userSegment = 'returning_user';
         }
-      } catch (error) {
+      } catch (_error) {
         // localStorage not available - silently continue
       }
     }
@@ -180,7 +180,11 @@ function detectPageContext(pathname: string): ExperimentContext {
  * Debug component to show experiment information (when debug=true)
  */
 function ExperimentDebugInfo({ show }: { show: boolean }) {
-  const [debugInfo, setDebugInfo] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<{
+    experiments: Array<unknown>;
+    userContext: Record<string, unknown>;
+    timestamp: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!show) return;
@@ -213,7 +217,7 @@ function ExperimentDebugInfo({ show }: { show: boolean }) {
  */
 export function withExperiments<P extends object>(
   Component: React.ComponentType<P>,
-  experimentConfig?: {
+  _experimentConfig?: {
     context: ExperimentContext;
     componentId: string;
     autoTrack?: boolean;
@@ -228,10 +232,10 @@ export function withExperiments<P extends object>(
  * Utility component for conditional rendering based on experiments
  */
 export function ExperimentGate({
-  experimentId,
-  variant,
+  experimentId: _experimentId,
+  variant: _variant,
   children,
-  fallback = null,
+  fallback: _fallback = null,
 }: {
   experimentId: string;
   variant: string;
@@ -247,7 +251,7 @@ export function ExperimentGate({
  * Component for A/B testing content
  */
 export function ABTestContent({
-  variants,
+  variants: _variants,
   defaultContent,
 }: {
   variants: Record<string, ReactNode>;
@@ -283,7 +287,7 @@ export function useExperimentNavigation() {
  */
 export function useExperimentStyles(
   baseClasses: string,
-  variantClasses?: Record<string, string>
+  _variantClasses?: Record<string, string>
 ): string {
   // This would return classes based on active experiment variant
   // For now, return base classes
@@ -294,8 +298,8 @@ export function useExperimentStyles(
  * Component for experiment-specific styling
  */
 export function ExperimentStyles({
-  experimentId,
-  variants,
+  experimentId: _experimentId,
+  variants: _variants,
 }: {
   experimentId: string;
   variants: Record<string, React.CSSProperties>;

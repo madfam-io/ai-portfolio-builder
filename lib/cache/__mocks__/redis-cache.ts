@@ -24,17 +24,17 @@ export const CACHE_KEYS = {
 } as const;
 
 class MockCacheService {
-  private mockCache = new Map<string, any>();
+  private mockCache = new Map<string, unknown>();
 
   connect(): void {
     // Mock connection
   }
 
-  get<T = any>(key: string): T | null {
+  get<T = unknown>(key: string): T | null {
     return this.mockCache.get(key) || null;
   }
 
-  set<T = any>(key: string, value: T, _ttl?: number): void {
+  set<T = unknown>(key: string, value: T, _ttl?: number): void {
     this.mockCache.set(key, value);
   }
 

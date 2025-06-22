@@ -132,7 +132,7 @@ export class ExperimentationEngine {
   /**
    * Create a new monetization experiment
    */
-  async createExperiment(config: ExperimentConfig): Promise<void> {
+  createExperiment(config: ExperimentConfig): void {
     // Validate experiment configuration
     this.validateExperimentConfig(config);
 
@@ -155,11 +155,11 @@ export class ExperimentationEngine {
   /**
    * Assign user to experiment variant
    */
-  async assignUser(
+  assignUser(
     userId: string,
     experimentId: string,
     userContext?: Record<string, unknown>
-  ): Promise<string | null> {
+  ): string | null {
     const experiment = this.experiments.get(experimentId);
     if (!experiment || experiment.status !== 'running') {
       return null;
@@ -193,7 +193,10 @@ export class ExperimentationEngine {
     if (!this.userAssignments.has(userId)) {
       this.userAssignments.set(userId, new Map());
     }
-    this.userAssignments.get(userId)!.set(experimentId, assignment);
+    const userAssignments = this.userAssignments.get(userId);
+    if (userAssignments) {
+      userAssignments.set(experimentId, assignment);
+    }
 
     return variantId;
   }
@@ -220,13 +223,13 @@ export class ExperimentationEngine {
   /**
    * Track conversion event for experiment
    */
-  async trackConversion(
+  trackConversion(
     userId: string,
     experimentId: string,
     metricId: string,
     value: number,
     metadata?: Record<string, unknown>
-  ): Promise<void> {
+  ): void {
     const assignment = this.userAssignments.get(userId)?.get(experimentId);
     if (!assignment) return;
 
@@ -236,7 +239,7 @@ export class ExperimentationEngine {
     }
 
     // Log conversion for analytics
-    await this.logEvent('experiment_conversion', {
+    this.logEvent('experiment_conversion', {
       experiment_id: experimentId,
       variant_id: assignment.variantId,
       user_id: userId,
@@ -247,7 +250,7 @@ export class ExperimentationEngine {
     });
 
     // Update experiment results
-    await this.updateResults(
+    this.updateResults(
       experimentId,
       assignment.variantId,
       metricId,
@@ -334,7 +337,10 @@ export class ExperimentationEngine {
       | 'need_more_data';
   }> {
     const results = await this.getResults(experimentId);
-    const experiment = this.experiments.get(experimentId)!;
+    const experiment = this.experiments.get(experimentId);
+    if (!experiment) {
+      throw new Error('Experiment not found');
+    }
 
     // Get control and treatment results for primary metric
     const controlVariant = experiment.variants.find(v => v.isControl);
@@ -346,20 +352,29 @@ export class ExperimentationEngine {
       );
     }
 
-    const controlResults = results.get(controlVariant.id)!;
+    const controlResults = results.get(controlVariant.id);
+    if (!controlResults) {
+      throw new Error('Control results not found');
+    }
     const primaryMetricControl = controlResults.find(
       r => r.metric === experiment.metrics.primary.id
-    )!;
+    );
+    if (!primaryMetricControl) {
+      throw new Error('Primary metric control results not found');
+    }
 
     // Calculate significance against each treatment
     let bestTreatment: ExperimentResult | null = null;
     let maxEffect = 0;
 
     for (const treatmentVariant of treatmentVariants) {
-      const treatmentResults = results.get(treatmentVariant.id)!;
+      const treatmentResults = results.get(treatmentVariant.id);
+      if (!treatmentResults) continue;
+      
       const primaryMetricTreatment = treatmentResults.find(
         r => r.metric === experiment.metrics.primary.id
-      )!;
+      );
+      if (!primaryMetricTreatment) continue;
 
       if (Math.abs(primaryMetricTreatment.effect) > Math.abs(maxEffect)) {
         maxEffect = primaryMetricTreatment.effect;
@@ -626,12 +641,12 @@ export class ExperimentationEngine {
     return true; // Mock implementation
   }
 
-  private async updateResults(
+  private updateResults(
     experimentId: string,
     variantId: string,
     metricId: string,
     value: number
-  ): Promise<void> {
+  ): void {
     // Update experiment results cache
     // In a real implementation, this would update a database
     logger.info(
@@ -639,10 +654,10 @@ export class ExperimentationEngine {
     );
   }
 
-  private async logEvent(
+  private logEvent(
     eventName: string,
     properties: Record<string, unknown>
-  ): Promise<void> {
+  ): void {
     // Log to analytics system (PostHog, etc.)
     logger.info(`Event logged: ${eventName}`, properties);
   }
@@ -656,24 +671,24 @@ export const experimentationEngine = new ExperimentationEngine();
 /**
  * Convenience function for checking experiment variants
  */
-export async function getExperimentVariant(
+export function getExperimentVariant(
   userId: string,
   experimentId: string,
   userContext?: Record<string, unknown>
-): Promise<string | null> {
+): string | null {
   return experimentationEngine.assignUser(userId, experimentId, userContext);
 }
 
 /**
  * Convenience function for tracking experiment conversions
  */
-export async function trackExperimentConversion(
+export function trackExperimentConversion(
   userId: string,
   experimentId: string,
   metricId: string,
   value: number,
   metadata?: Record<string, unknown>
-): Promise<void> {
+): void {
   return experimentationEngine.trackConversion(
     userId,
     experimentId,

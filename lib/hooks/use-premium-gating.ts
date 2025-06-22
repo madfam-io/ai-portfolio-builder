@@ -119,7 +119,7 @@ export function usePremiumFeature({
       }));
       return false;
     }
-  }, [userId, userTier, feature, onUpgradeRequired, onLimitApproaching]);
+  }, [userId, userTier, feature, onUpgradeRequired]);
 
   const trackUsage = useCallback(async (): Promise<void> => {
     try {
@@ -187,12 +187,12 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
   }, [userId, userTier]);
 
   const upgradeTier = useCallback(
-    async (newTier: string) => {
+    (newTier: string) => {
       // In a real implementation, this would handle the payment flow
       setUserTier(newTier);
       // Upgrade tracked
     },
-    [userId]
+    []
   );
 
   const getWatermarkConfig = useCallback(() => {
@@ -218,10 +218,10 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
  * Hook for feature usage analytics and limits
  */
 export function useFeatureUsage(userId: string, userTier: string = 'free') {
-  const [usageData, setUsageData] = useState<Record<string, any>>({});
+  const [usageData, setUsageData] = useState<Record<string, unknown>>({});
   const [loading, setLoading] = useState(true);
 
-  const refreshUsage = useCallback(async () => {
+  const refreshUsage = useCallback(() => {
     setLoading(true);
     try {
       // In a real implementation, this would fetch usage data from the backend
@@ -372,7 +372,7 @@ export function useConversionOptimization(userId: string, userTier: string) {
       // In a real implementation, this would send data to analytics
       // await analytics.track('conversion_event', { event, feature, userId, userTier, ...metadata });
     },
-    [userId, userTier]
+    []
   );
 
   const getOptimalUpgradePrompt = useCallback(
@@ -412,7 +412,7 @@ export function usePremiumSystem(userId: string, initialTier: string = 'free') {
   );
 
   const checkFeature = useCallback(
-    async (feature: string) => {
+    (feature: string) => {
       // Return configuration for premium feature checking
       return {
         userId,

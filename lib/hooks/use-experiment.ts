@@ -35,6 +35,7 @@ import {
   ExperimentConfig,
   ExperimentResult,
 } from '@/lib/experimentation/ab-testing';
+import { logger } from '@/lib/utils/logger';
 
 export interface UseExperimentOptions {
   userId: string;
@@ -145,7 +146,7 @@ export function useExperiment({
           metadata
         );
       } catch (error) {
-        console.error('Failed to track experiment conversion:', error);
+        logger.error('Failed to track experiment conversion:', error);
       }
     },
     [userId, experimentId]
@@ -155,7 +156,7 @@ export function useExperiment({
     try {
       await experimentationEngine.trackExposure(userId, experimentId);
     } catch (error) {
-      console.error('Failed to track experiment exposure:', error);
+      logger.error('Failed to track experiment exposure:', error);
     }
   }, [userId, experimentId]);
 
@@ -327,7 +328,7 @@ export function useFeatureFlag(
           setConfig(null);
         }
       } catch (error) {
-        console.error('Failed to check feature flag:', error);
+        logger.error('Failed to check feature flag:', error);
         setIsEnabled(defaultValue);
       }
     }
