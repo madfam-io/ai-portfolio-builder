@@ -41,7 +41,7 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "prepare": "husky install",
-    "postinstall": "cd packages/eslint-plugin-madfam-ai && pnpm build",
+    "postinstall": "cd packages/eslint-plugin-madfam-ai && npm install && npm run build",
     "pre-commit": "lint-staged",
     "commit": "git-cz",
     "release": "standard-version",

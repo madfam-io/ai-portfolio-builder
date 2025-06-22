@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier'],
+  plugins: ['@typescript-eslint', 'prettier', 'madfam-ai'],
   rules: {
     'no-console': 'warn',
     'no-debugger': 'error',
@@ -54,17 +54,16 @@ module.exports = {
     'import/order': 'off',
     'prettier/prettier': 'warn',
     // MADFAM AI-Powered Linting with Business Intelligence
-    // Temporarily disabled for CI - plugin needs to be built in CI environment
-    // 'madfam-ai/performance-impact': [
-    //   'warn',
-    //   {
-    //     includeBusinessMetrics: true,
-    //     performanceThreshold: 85,
-    //     industryBenchmarks: true,
-    //   },
-    // ],
-    // 'madfam-ai/bundle-optimization': 'warn',
-    // 'madfam-ai/mobile-performance': 'warn',
+    'madfam-ai/performance-impact': [
+      'warn',
+      {
+        includeBusinessMetrics: true,
+        performanceThreshold: 85,
+        industryBenchmarks: true,
+      },
+    ],
+    'madfam-ai/bundle-optimization': 'warn',
+    'madfam-ai/mobile-performance': 'warn',
   },
   overrides: [
     {
