@@ -2,6 +2,46 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.3.1...v0.4.1) (2025-06-22)
+
+
+### Features
+
+* comprehensive code quality improvements and optimization overhaul ([8296cd8](https://github.com/madfam-io/ai-portfolio-builder/commit/8296cd84343db2f1e2c56845382e3d7b8f29152c))
+* implement AI advanced features UI and API endpoints ([cbe6fcc](https://github.com/madfam-io/ai-portfolio-builder/commit/cbe6fcc84af4b32f62475b9102fad9bda5460336))
+* implement comprehensive v0.4.0-beta features and improvements ([4d2fef0](https://github.com/madfam-io/ai-portfolio-builder/commit/4d2fef0cb180478e8a4b2bf386ee023012891ccd))
+* implement MADFAM AI ESLint plugin and fix all TypeScript/ESLint errors ([1f9f64b](https://github.com/madfam-io/ai-portfolio-builder/commit/1f9f64bb8e02227c79c9e100413077413e1ea404))
+* implement MADFAM empire-building architecture with AI-powered business intelligence ([fd3f637](https://github.com/madfam-io/ai-portfolio-builder/commit/fd3f637e7114e632760941eb5ffe6d5853c5be17))
+* implement onboarding, usage tracking, and A/B testing features ([4ec99d8](https://github.com/madfam-io/ai-portfolio-builder/commit/4ec99d8de39e1f78c99dfca1c3707751fb1ae651))
+* implement proper build process for MADFAM AI ESLint plugin ([2b105c0](https://github.com/madfam-io/ai-portfolio-builder/commit/2b105c0e3e16489f0d06ec4998b0fa7f10af99cc))
+
+
+### Bug Fixes
+
+* correct TypeScript syntax error in usage-tracking.ts ([61c6c01](https://github.com/madfam-io/ai-portfolio-builder/commit/61c6c014d2bda36afc37f1192895ef4f6583bbda))
+* correct undefined variable reference in code-analytics route ([2c76049](https://github.com/madfam-io/ai-portfolio-builder/commit/2c76049394d125ee1afe07319f4ffd0760a0c385))
+* exclude packages directory from Next.js TypeScript compilation ([a8dc40c](https://github.com/madfam-io/ai-portfolio-builder/commit/a8dc40cc795ef0b81b303fa48e7869d741921526))
+* handle potential undefined array access in ab-testing ([7e8ea5e](https://github.com/madfam-io/ai-portfolio-builder/commit/7e8ea5e6dadd8099168fbbcda5d0a4193f5e5417))
+* remove unused imports and apply Prettier formatting ([685fe83](https://github.com/madfam-io/ai-portfolio-builder/commit/685fe83d8b25012135262a7d96e0d646891e57c9))
+* resolve all ESLint errors and improve code quality ([47900a0](https://github.com/madfam-io/ai-portfolio-builder/commit/47900a01e92c8794cc27225e1e5c4a16dcd546b9))
+* resolve remaining TypeScript and ESLint issues ([757fb82](https://github.com/madfam-io/ai-portfolio-builder/commit/757fb82f946f337a3dab2973fba6ffcac9cfb65e))
+* resolve type mismatch in use-premium-gating hook ([d160e12](https://github.com/madfam-io/ai-portfolio-builder/commit/d160e12f7fcae0099bfbf22cd486f3acfabd20e4))
+* resolve TypeScript build errors while maintaining business excellence ([df31ebb](https://github.com/madfam-io/ai-portfolio-builder/commit/df31ebb472c74f81475675e347ddd6f2b2d17aab))
+* resolve TypeScript error in analyze-competitor route ([767c129](https://github.com/madfam-io/ai-portfolio-builder/commit/767c129502c692fb8cb8873813b0b89dfb7f5fde))
+* resolve TypeScript error in redis-cache mock ([aff28c8](https://github.com/madfam-io/ai-portfolio-builder/commit/aff28c853ac29136ab84815d8c3bdd5f2343d8e9))
+* resolve TypeScript error in useConversionOptimization hook ([9232417](https://github.com/madfam-io/ai-portfolio-builder/commit/923241725d8bb632e11d9fea8970227022722dd7))
+* temporarily disable MADFAM AI ESLint plugin for CI compatibility ([df8a646](https://github.com/madfam-io/ai-portfolio-builder/commit/df8a646432d0065e0ceb25f824f4a5beca379a60))
+* update all remaining trackExperimentConversion calls to new signature ([dc4295a](https://github.com/madfam-io/ai-portfolio-builder/commit/dc4295a73d8d01d6f6da2923466233c31df35b64))
+* update remaining trackExperimentConversion calls to use options object ([d9d73a7](https://github.com/madfam-io/ai-portfolio-builder/commit/d9d73a7134d4ca0c2bab8e5f444cdcb8d128c8ad))
+
+
+### Documentation
+
+* add comprehensive business excellence architecture documentation ([0d5f6e8](https://github.com/madfam-io/ai-portfolio-builder/commit/0d5f6e8caff815d8e11a015c6b70f9f15bbcb889))
+* add Prettier formatting to MADFAM gold standard ([2f5dd4d](https://github.com/madfam-io/ai-portfolio-builder/commit/2f5dd4d0c421cc65e40e2aaf0cda509ca7b51778))
+* complete v0.4.0-beta documentation overhaul meeting MADFAM gold standard ([b90d322](https://github.com/madfam-io/ai-portfolio-builder/commit/b90d322450ebe90ea56d5b2c860e1e381da52554))
+* implement comprehensive business excellence documentation and AI-ESLint integration ([ffb5c75](https://github.com/madfam-io/ai-portfolio-builder/commit/ffb5c759737b0cee57d2a97f58fb2cdc5bca7f6b))
+
 ## 0.4.0-beta (2025-06-22)
 
 ### 🚀 Major Achievements
