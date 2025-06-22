@@ -448,7 +448,7 @@ function enhanceReportForTier(
 /**
  * Generate usage recommendations
  */
-function generateUsageRecommendations(usageData: any, userTier: string) {
+function generateUsageRecommendations(usageData: any, _userTier: string) {
   const recommendations = [];
 
   if (usageData.totalUsage > usageData.billing.limit * 0.8) {
@@ -468,7 +468,7 @@ function generateUsageRecommendations(usageData: any, userTier: string) {
 function calculateUpgradeOpportunities(usageData: any, _userTier: string) {
   const opportunities = [];
 
-  if (userTier === 'free' && usageData.revenueOpportunity > 1000) {
+  if (_userTier === 'free' && usageData.revenueOpportunity > 1000) {
     opportunities.push({
       type: 'revenue_opportunity',
       value: usageData.revenueOpportunity,
