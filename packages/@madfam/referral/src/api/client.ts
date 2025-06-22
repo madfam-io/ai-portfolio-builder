@@ -1,0 +1,138 @@
+/**
+ * API client for referral system
+ */
+
+import type {
+  CreateReferralRequest,
+  CreateReferralResponse,
+  TrackReferralClickRequest,
+  TrackReferralClickResponse,
+  ConvertReferralRequest,
+  ConvertReferralResponse,
+  Referral,
+  ReferralCampaign,
+  ReferralReward,
+  UserReferralStats,
+} from '../types';
+
+export interface ReferralAPIConfig {
+  baseUrl: string;
+  apiKey?: string;
+  timeout?: number;
+}
+
+export class ReferralAPIClient {
+  private config: ReferralAPIConfig;
+
+  constructor(config: ReferralAPIConfig) {
+    this.config = {
+      timeout: 30000,
+      ...config,
+    };
+  }
+
+  private async request<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    const url = `${this.config.baseUrl}${endpoint}`;
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json',
+      ...options.headers,
+    };
+
+    if (this.config.apiKey) {
+      headers['Authorization'] = `Bearer ${this.config.apiKey}`;
+    }
+
+    const response = await fetch(url, {
+      ...options,
+      headers,
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || `Request failed: ${response.statusText}`);
+    }
+
+    return response.json();
+  }
+
+  // Referral management
+  async createReferral(
+    userId: string,
+    request: CreateReferralRequest = {}
+  ): Promise<CreateReferralResponse> {
+    return this.request('/referral/create', {
+      method: 'POST',
+      body: JSON.stringify({ userId, ...request }),
+    });
+  }
+
+  async trackClick(
+    request: TrackReferralClickRequest
+  ): Promise<TrackReferralClickResponse> {
+    return this.request('/referral/track', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  async convertReferral(
+    request: ConvertReferralRequest
+  ): Promise<ConvertReferralResponse> {
+    return this.request('/referral/convert', {
+      method: 'POST',
+      body: JSON.stringify(request),
+    });
+  }
+
+  // User data
+  async getUserReferrals(userId: string): Promise<Referral[]> {
+    return this.request(`/referral/user/${userId}/referrals`);
+  }
+
+  async getUserRewards(userId: string): Promise<ReferralReward[]> {
+    return this.request(`/referral/user/${userId}/rewards`);
+  }
+
+  async getUserStats(userId: string): Promise<UserReferralStats> {
+    return this.request(`/referral/user/${userId}/stats`);
+  }
+
+  // Campaigns
+  async getCampaigns(userId?: string): Promise<ReferralCampaign[]> {
+    const params = userId ? `?userId=${userId}` : '';
+    return this.request(`/referral/campaigns${params}`);
+  }
+
+  async getCampaign(campaignId: string): Promise<ReferralCampaign> {
+    return this.request(`/referral/campaigns/${campaignId}`);
+  }
+
+  // Analytics
+  async getAnalytics(params: {
+    startDate: string;
+    endDate: string;
+    campaignId?: string;
+  }): Promise<any> {
+    const queryParams = new URLSearchParams(params);
+    return this.request(`/referral/analytics?${queryParams}`);
+  }
+
+  // Leaderboard
+  async getLeaderboard(params: {
+    period?: 'daily' | 'weekly' | 'monthly' | 'all-time';
+    limit?: number;
+  } = {}): Promise<any[]> {
+    const queryParams = new URLSearchParams(params as any);
+    return this.request(`/referral/leaderboard?${queryParams}`);
+  }
+}
+
+// Factory function
+export function createReferralAPIClient(
+  config: ReferralAPIConfig
+): ReferralAPIClient {
+  return new ReferralAPIClient(config);
+}

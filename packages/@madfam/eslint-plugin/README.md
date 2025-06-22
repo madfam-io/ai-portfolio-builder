@@ -1,9 +1,9 @@
-# 🤖 eslint-plugin-madfam-ai
+# 🤖 @madfam/eslint-plugin
 
 **AI-Powered ESLint Plugin for Business Excellence**
 
-[![npm version](https://badge.fury.io/js/eslint-plugin-madfam-ai.svg)](https://badge.fury.io/js/eslint-plugin-madfam-ai)
-[![GitHub stars](https://img.shields.io/github/stars/madfam/eslint-plugin-madfam-ai.svg)](https://github.com/madfam/eslint-plugin-madfam-ai/stargazers)
+[![npm version](https://badge.fury.io/js/@madfam%2Feslint-plugin.svg)](https://badge.fury.io/js/@madfam%2Feslint-plugin)
+[![GitHub stars](https://img.shields.io/github/stars/madfam/eslint-plugin.svg)](https://github.com/madfam/eslint-plugin/stargazers)
 [![License: MCAL-1.0](https://img.shields.io/badge/License-MCAL--1.0-blue.svg)](https://opensource.org/licenses/MCAL-1.0)
 
 > Transform traditional code linting into **AI-powered business intelligence** that correlates technical metrics with revenue impact, competitive positioning, and acquisition readiness.
@@ -30,7 +30,7 @@ console.log('Debug info');
 
 ### **🎯 Enterprise-Grade Rules**
 
-#### **`madfam-ai/performance-impact`**
+#### **`@madfam/performance-impact`**
 Analyzes code for performance impact on user experience and business metrics.
 
 **Business Impact:**
@@ -38,7 +38,7 @@ Analyzes code for performance impact on user experience and business metrics.
 - **Performance Gain**: 35-60% improvement in load times and user experience  
 - **Competitive Advantage**: Position in top 10% of industry performers
 
-#### **`madfam-ai/bundle-optimization`**
+#### **`@madfam/bundle-optimization`**
 AI analysis of bundle size impact on loading performance and conversion rates.
 
 **Key Benefits:**
@@ -46,7 +46,7 @@ AI analysis of bundle size impact on loading performance and conversion rates.
 - 20-40% reduction in initial bundle size
 - Faster loading than 85% of competitors
 
-#### **`madfam-ai/mobile-performance`**
+#### **`@madfam/mobile-performance`**
 Mobile-first optimization for the 68% of traffic that's mobile.
 
 **Strategic Value:**
@@ -54,7 +54,7 @@ Mobile-first optimization for the 68% of traffic that's mobile.
 - Mobile experience better than 90% of portfolio platforms
 - Critical for capturing growing mobile market
 
-#### **`madfam-ai/competitive-benchmarking`** *(Business Tier)*
+#### **`@madfam/competitive-benchmarking`** *(Business Tier)*
 AI-powered competitive analysis against industry leaders.
 
 **Enterprise Features:**
@@ -65,7 +65,7 @@ AI-powered competitive analysis against industry leaders.
 ## 📦 **Installation**
 
 ```bash
-npm install eslint-plugin-madfam-ai --save-dev
+npm install @madfam/eslint-plugin --save-dev
 ```
 
 ## ⚙️ **Configuration**
@@ -74,8 +74,8 @@ npm install eslint-plugin-madfam-ai --save-dev
 ```javascript
 // .eslintrc.js
 module.exports = {
-  plugins: ['madfam-ai'],
-  extends: ['plugin:madfam-ai/recommended'],
+  plugins: ['@madfam'],
+  extends: ['plugin:@madfam/recommended'],
 };
 ```
 
@@ -83,15 +83,15 @@ module.exports = {
 ```javascript
 // .eslintrc.js
 module.exports = {
-  plugins: ['madfam-ai'],
-  extends: ['plugin:madfam-ai/business'],
+  plugins: ['@madfam'],
+  extends: ['plugin:@madfam/business'],
   rules: {
-    'madfam-ai/performance-impact': ['error', {
+    '@madfam/performance-impact': ['error', {
       includeBusinessMetrics: true,
       performanceThreshold: 85,
       industryBenchmarks: true
     }],
-    'madfam-ai/competitive-benchmarking': 'warn'
+    '@madfam/competitive-benchmarking': 'warn'
   }
 };
 ```
@@ -100,15 +100,15 @@ module.exports = {
 ```javascript
 // .eslintrc.js
 module.exports = {
-  plugins: ['madfam-ai'],
+  plugins: ['@madfam'],
   rules: {
-    'madfam-ai/performance-impact': ['warn', {
+    '@madfam/performance-impact': ['warn', {
       includeBusinessMetrics: true,
       performanceThreshold: 90,
       industryBenchmarks: true
     }],
-    'madfam-ai/bundle-optimization': 'error',
-    'madfam-ai/mobile-performance': 'warn'
+    '@madfam/bundle-optimization': 'error',
+    '@madfam/mobile-performance': 'warn'
   }
 };
 ```
@@ -250,7 +250,7 @@ const report = await generateBusinessReport(eslintResults);
 
 ## 🚀 **Getting Started**
 
-1. **Install** the plugin: `npm install eslint-plugin-madfam-ai --save-dev`
+1. **Install** the plugin: `npm install @madfam/eslint-plugin --save-dev`
 2. **Configure** your `.eslintrc.js` with business-focused rules
 3. **Run ESLint** and discover revenue opportunities in your code
 4. **Implement** AI-recommended optimizations
@@ -277,7 +277,7 @@ MADFAM Code Available License (MCAL) v1.0 - See [LICENSE](LICENSE) file for deta
 
 **🏗️ Achieving Business Excellence Through Code Quality**
 
-[⭐ Star on GitHub](https://github.com/madfam/eslint-plugin-madfam-ai) | [📖 Documentation](https://docs.madfam.com/eslint-ai) | [💼 Enterprise](https://madfam.com/enterprise)
+[⭐ Star on GitHub](https://github.com/madfam/eslint-plugin) | [📖 Documentation](https://docs.madfam.com/eslint-ai) | [💼 Enterprise](https://madfam.com/enterprise)
 
 *Developed by [MADFAM](https://madfam.com) - Transforming portfolios through business excellence*
 

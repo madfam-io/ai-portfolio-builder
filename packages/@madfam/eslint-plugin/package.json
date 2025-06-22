@@ -1,5 +1,5 @@
 {
-  "name": "eslint-plugin-madfam-ai",
+  "name": "@madfam/eslint-plugin",
   "version": "1.0.0",
   "description": "AI-powered ESLint plugin that provides business impact analysis and performance optimization recommendations",
   "main": "dist/index.js",
@@ -25,12 +25,12 @@
   "license": "MCAL-1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/madfam/eslint-plugin-madfam-ai.git"
+    "url": "https://github.com/madfam/eslint-plugin.git"
   },
   "bugs": {
-    "url": "https://github.com/madfam/eslint-plugin-madfam-ai/issues"
+    "url": "https://github.com/madfam/eslint-plugin/issues"
   },
-  "homepage": "https://github.com/madfam/eslint-plugin-madfam-ai#readme",
+  "homepage": "https://github.com/madfam/eslint-plugin#readme",
   "engines": {
     "node": ">=16.0.0"
   },

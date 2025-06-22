@@ -163,9 +163,32 @@ function addTraceIdToResponse(response: unknown, traceId: string | undefined) {
 }
 
 /**
+ * Next.js route handler types
+ */
+type RouteHandlerContext<Params = Record<string, string | string[]>> = {
+  params: Params;
+};
+
+// Handler without params (for routes like /api/something)
+type SimpleRouteHandler = (
+  request: NextRequest
+) => Promise<NextResponse> | NextResponse;
+
+// Handler with params (for routes like /api/[id]/something)
+type ParamsRouteHandler<Params = Record<string, string | string[]>> = (
+  request: NextRequest,
+  context: RouteHandlerContext<Params>
+) => Promise<NextResponse> | NextResponse;
+
+// Union type for both handlers
+type RouteHandler<Params = Record<string, string | string[]>> = 
+  | SimpleRouteHandler 
+  | ParamsRouteHandler<Params>;
+
+/**
  * Apply observability to API routes
  */
-export function withObservability<T extends (...args: unknown[]) => unknown>(
+export function withObservability<T extends RouteHandler<any>>(
   handler: T,
   config: ObservabilityConfig = {}
 ): T {
@@ -175,8 +198,11 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
     customAttributes = {},
   } = config;
 
-  return withAPMTracking(async (...args: unknown[]) => {
-    const req = args[0] as NextRequest;
+  const wrappedHandler = async (...args: unknown[]) => {
+    const request = args[0] as NextRequest;
+    const context = args[1] as RouteHandlerContext<any> | undefined;
+    
+    const req = request;
     const startTime = performance.now();
 
     // Extract request context
@@ -194,8 +220,15 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
     });
 
     try {
-      // Execute the handler
-      const response = await handler(req, ...args);
+      // Execute the handler with proper arguments
+      let response: NextResponse;
+      if (context && handler.length > 1) {
+        // Handler expects context parameter
+        response = await (handler as ParamsRouteHandler<any>)(req, context);
+      } else {
+        // Handler doesn't expect context or context is not provided
+        response = await (handler as SimpleRouteHandler)(req);
+      }
       const duration = performance.now() - startTime;
 
       // Track success metrics and analytics
@@ -242,7 +275,9 @@ export function withObservability<T extends (...args: unknown[]) => unknown>(
 
       return errorResponse;
     }
-  }) as T;
+  };
+
+  return withAPMTracking(wrappedHandler) as T;
 }
 
 /**

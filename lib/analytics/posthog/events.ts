@@ -289,6 +289,77 @@ export const trackPaymentCompleted = (properties?: {
   captureEnhancedEvent(EVENTS.PAYMENT_COMPLETED, properties);
 };
 
+// Referral Events
+export const trackReferralLinkGenerated = (properties?: {
+  referral_id?: string;
+  campaign_id?: string;
+  campaign_name?: string;
+  share_url?: string;
+}) => {
+  captureEnhancedEvent('referral_link_generated', properties);
+};
+
+export const trackReferralLinkClicked = (properties?: {
+  referral_id?: string;
+  campaign_id?: string;
+  source?: string;
+  medium?: string;
+  click_count?: number;
+}) => {
+  captureEvent('referral_link_clicked', properties);
+};
+
+export const trackReferralShared = (properties?: {
+  platform?: string;
+  referral_id?: string;
+  share_url?: string;
+  campaign_id?: string;
+}) => {
+  captureEvent('referral_shared', properties);
+};
+
+export const trackReferralConverted = (properties?: {
+  referral_id?: string;
+  referrer_id?: string;
+  referee_id?: string;
+  campaign_id?: string;
+  campaign_name?: string;
+  rewards_earned?: number;
+  total_reward_value?: number;
+}) => {
+  captureEnhancedEvent('referral_converted', properties);
+};
+
+export const trackReferralRewardEarned = (properties?: {
+  reward_id?: string;
+  referral_id?: string;
+  reward_type?: string;
+  reward_amount?: number;
+  currency?: string;
+  recipient_type?: 'referrer' | 'referee';
+}) => {
+  captureEnhancedEvent('referral_reward_earned', properties);
+};
+
+export const trackReferralRewardRedeemed = (properties?: {
+  reward_id?: string;
+  reward_type?: string;
+  reward_amount?: number;
+  currency?: string;
+  redemption_method?: string;
+}) => {
+  captureEnhancedEvent('referral_reward_redeemed', properties);
+};
+
+export const trackReferralFraudDetected = (properties?: {
+  referral_id?: string;
+  risk_score?: number;
+  risk_level?: string;
+  fraud_flags?: string[];
+}) => {
+  captureEvent('referral_fraud_detected', properties);
+};
+
 // Funnel tracking
 export const trackOnboardingStep = (
   step: number,

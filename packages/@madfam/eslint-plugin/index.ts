@@ -61,7 +61,7 @@ const performanceImpactRule: PerformanceRule = {
         'AI-powered analysis of code performance impact on business metrics',
       category: 'Performance',
       recommended: true,
-      url: 'https://github.com/madfam/eslint-plugin-madfam-ai#performance-impact',
+      url: 'https://github.com/madfam/eslint-plugin#performance-impact',
     },
     fixable: 'code',
     schema: [
@@ -598,7 +598,7 @@ function hasLazyLoading(node: any): boolean {
  */
 const plugin: ESLint.Plugin = {
   meta: {
-    name: 'eslint-plugin-madfam-ai',
+    name: '@madfam/eslint-plugin',
     version: '1.0.0',
   },
   rules: {
@@ -609,20 +609,20 @@ const plugin: ESLint.Plugin = {
   },
   configs: {
     recommended: {
-      plugins: ['madfam-ai'],
+      plugins: ['@madfam'],
       rules: {
-        'madfam-ai/performance-impact': 'warn',
-        'madfam-ai/bundle-optimization': 'warn',
-        'madfam-ai/mobile-performance': 'warn',
+        '@madfam/performance-impact': 'warn',
+        '@madfam/bundle-optimization': 'warn',
+        '@madfam/mobile-performance': 'warn',
       },
     },
     business: {
-      plugins: ['madfam-ai'],
+      plugins: ['@madfam'],
       rules: {
-        'madfam-ai/performance-impact': 'error',
-        'madfam-ai/bundle-optimization': 'error',
-        'madfam-ai/mobile-performance': 'error',
-        'madfam-ai/competitive-benchmarking': 'warn',
+        '@madfam/performance-impact': 'error',
+        '@madfam/bundle-optimization': 'error',
+        '@madfam/mobile-performance': 'error',
+        '@madfam/competitive-benchmarking': 'warn',
       },
     },
   },

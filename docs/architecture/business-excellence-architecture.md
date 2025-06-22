@@ -75,7 +75,7 @@ interface CodeQualityMetrics {
 - Business impact correlation studies
 
 ### **5. AI-ESLint Plugin (Open Source Strategy)**
-**Location**: `/packages/eslint-plugin-madfam-ai/`
+**Location**: `/packages/@madfam/eslint-plugin/`
 
 **Community Engagement:**
 - **GitHub Stars**: Target 1000+ stars for developer mindshare

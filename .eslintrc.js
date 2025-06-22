@@ -9,7 +9,7 @@ module.exports = {
     ecmaVersion: 2021,
     sourceType: 'module',
   },
-  plugins: ['@typescript-eslint', 'prettier', 'madfam-ai'],
+  plugins: ['@typescript-eslint', 'prettier', '@madfam'],
   rules: {
     'no-console': 'warn',
     'no-debugger': 'error',
@@ -54,7 +54,7 @@ module.exports = {
     'import/order': 'off',
     'prettier/prettier': 'warn',
     // MADFAM AI-Powered Linting with Business Intelligence
-    'madfam-ai/performance-impact': [
+    '@madfam/performance-impact': [
       'warn',
       {
         includeBusinessMetrics: true,
@@ -62,8 +62,8 @@ module.exports = {
         industryBenchmarks: true,
       },
     ],
-    'madfam-ai/bundle-optimization': 'warn',
-    'madfam-ai/mobile-performance': 'warn',
+    '@madfam/bundle-optimization': 'warn',
+    '@madfam/mobile-performance': 'warn',
   },
   overrides: [
     {
