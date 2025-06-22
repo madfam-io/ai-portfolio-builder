@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -55,6 +55,8 @@ export type ExperimentType =
   | 'business_logic' // Core business rule variations
   | 'personalization'; // User-specific customizations
 
+export type ExperimentStatus = 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+
 export type TargetingRule = {
   property: string;
   operator:
@@ -82,7 +84,7 @@ export interface UniversalExperimentConfig {
   component?: string; // Specific component identifier
 
   // Experiment settings
-  status: 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+  status: ExperimentStatus;
   priority: 'low' | 'medium' | 'high' | 'critical';
 
   // Targeting
@@ -438,13 +440,13 @@ export class UniversalExperimentEngine {
   /**
    * Track experiment conversion
    */
-  trackConversion(
+  async trackConversion(
     userId: string,
     experimentId: string,
     metricId: string,
     value: number,
     metadata?: Record<string, unknown>
-  ): void {
+  ): Promise<void> {
     const assignment = this.assignments.get(userId)?.get(experimentId);
     if (!assignment) return;
 
@@ -872,7 +874,7 @@ export class UniversalExperimentEngine {
 
     // Fallback to control
     const controlVariant = experiment.variants.find(v => v.isControl);
-    return controlVariant ? controlVariant.id : experiment.variants[0].id;
+    return controlVariant ? controlVariant.id : experiment.variants[0]?.id || 'control';
   }
 
   private hashUserId(input: string): number {
@@ -954,20 +956,20 @@ export const universalExperimentEngine = new UniversalExperimentEngine();
 /**
  * Convenience functions
  */
-export function getExperimentVariant(
+export async function getExperimentVariant(
   userId: string,
   context: ExperimentContext,
   userContext?: Record<string, unknown>
-): Map<string, ExperimentAssignment> {
+): Promise<Map<string, ExperimentAssignment>> {
   return universalExperimentEngine.assignUser(userId, context, userContext);
 }
 
-export function trackExperimentExposure(
+export async function trackExperimentExposure(
   userId: string,
   experimentId: string,
   context: ExperimentContext,
   metadata?: Record<string, unknown>
-): void {
+): Promise<void> {
   return universalExperimentEngine.trackExposure(
     userId,
     experimentId,
@@ -976,13 +978,13 @@ export function trackExperimentExposure(
   );
 }
 
-export function trackExperimentConversion(
+export async function trackExperimentConversion(
   userId: string,
   experimentId: string,
   metricId: string,
   value: number,
   metadata?: Record<string, unknown>
-): void {
+): Promise<void> {
   return universalExperimentEngine.trackConversion(
     userId,
     experimentId,

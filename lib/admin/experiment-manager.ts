@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -30,6 +30,7 @@ import {
   UniversalExperimentVariant,
   ExperimentContext,
   ExperimentType,
+  ExperimentStatus,
   ExperimentMetric,
 } from '@/lib/experimentation/universal-experiments';
 import { createClient } from '@/lib/supabase/client';
@@ -635,7 +636,7 @@ export class ExperimentManager {
         .eq('status', 'active');
 
       if (error) {
-        logger.error('Failed to fetch existing experiments:', error);
+        logger.error('Failed to fetch existing experiments:', error as Error);
         return;
       }
 
@@ -671,6 +672,9 @@ export class ExperimentManager {
                 traffic_percentage?: number;
                 components?: Record<string, unknown>;
                 content?: Record<string, unknown>;
+                theme_overrides?: Record<string, unknown>;
+                visitors?: number;
+                conversions?: number;
               }) => ({
                 id: variant.id,
                 name: variant.name,

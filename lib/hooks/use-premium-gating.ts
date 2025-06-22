@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -217,8 +217,13 @@ export function useUserTier(userId: string, initialTier: string = 'free') {
 /**
  * Hook for feature usage analytics and limits
  */
+interface FeatureUsageData {
+  used: number;
+  limit: number | 'unlimited';
+}
+
 export function useFeatureUsage(userId: string, userTier: string = 'free') {
-  const [usageData, setUsageData] = useState<Record<string, unknown>>({});
+  const [usageData, setUsageData] = useState<Record<string, FeatureUsageData>>({});
   const [loading, setLoading] = useState(true);
 
   const refreshUsage = useCallback(() => {

@@ -6,7 +6,7 @@
  * This source code is made available for viewing and educational purposes only.
  * Commercial use is strictly prohibited except by MADFAM and licensed partners.
  *
- * For commercial licensing: licensing@madfam.com
+ * For commercial licensing: licensing@madfam.io
  *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
@@ -136,21 +136,33 @@ export function ExperimentAnalytics({
           sampleSize: primaryVariantResult.sampleSize,
         };
       })
-      .filter(Boolean);
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    const bestPerformer = variantComparisons.reduce(
+      (best, current) =>
+        !best || (current && current.improvement > best.improvement)
+          ? current
+          : best,
+      null as typeof variantComparisons[0] | null
+    );
 
     return {
-      control: { variant: controlVariant, result: primaryControlResult },
-      treatments: variantComparisons,
-      bestPerformer: variantComparisons.reduce(
-        (best, current) =>
-          !best || (current && current.improvement > best.improvement)
-            ? current
-            : best,
-        null
-      ),
-      hasSignificantWinner: variantComparisons.some(
-        v => v && v.isSignificant && v.improvement > 0
-      ),
+      control: { 
+        result: {
+          conversionRate: primaryControlResult.conversionRate,
+          sampleSize: primaryControlResult.sampleSize
+        }
+      },
+      treatments: variantComparisons.map(comp => ({
+        variant: { name: comp.variant.name },
+        improvement: comp.improvement,
+        confidenceInterval: comp.confidenceInterval as [number, number],
+        isSignificant: comp.isSignificant
+      })),
+      bestPerformer: bestPerformer ? {
+        improvement: bestPerformer.improvement,
+        variant: { name: bestPerformer.variant.name }
+      } : null
     };
   }, [experiment, results, selectedMetric]);
 
@@ -265,7 +277,7 @@ export function ExperimentAnalytics({
               {(experiment.statistics.statisticalPower * 100).toFixed(0)}%
             </div>
             <p className="text-xs text-muted-foreground">
-              {statisticalSummary?.hasSignificantWinner ? (
+              {statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) ? (
                 <span className="text-green-600 flex items-center">
                   <CheckCircle className="w-3 h-3 mr-1" />
                   Significant
@@ -636,10 +648,21 @@ function StatisticalAnalysisChart({
 interface ExperimentInsightsProps {
   experiment: UniversalExperimentConfig;
   statisticalSummary: {
-    hasSignificantWinner?: boolean;
-    bestPerformer?: {
+    control: {
+      result: {
+        conversionRate?: number;
+        sampleSize: number;
+      };
+    };
+    treatments: Array<{
       variant: { name: string };
       improvement: number;
+      confidenceInterval: [number, number];
+      isSignificant: boolean;
+    }>;
+    bestPerformer?: {
+      improvement: number;
+      variant: { name: string };
     } | null;
   } | null;
 }
@@ -668,7 +691,8 @@ function ExperimentInsights({
   }
 
   // Statistical significance
-  if (statisticalSummary?.hasSignificantWinner) {
+  const hasSignificantWinner = statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0);
+  if (hasSignificantWinner && statisticalSummary?.bestPerformer) {
     insights.push({
       type: 'success',
       title: 'Winner Found',
@@ -686,7 +710,7 @@ function ExperimentInsights({
   }
 
   // Revenue impact estimation
-  if (statisticalSummary?.bestPerformer?.improvement > 0) {
+  if (statisticalSummary?.bestPerformer && statisticalSummary.bestPerformer.improvement > 0) {
     const estimatedMonthlyImpact =
       statisticalSummary.bestPerformer.improvement * 10000; // Mock calculation
     insights.push({
@@ -746,11 +770,11 @@ function ExperimentInsights({
           {progressPercentage < 100 && (
             <li>• Continue running until minimum sample size is reached</li>
           )}
-          {statisticalSummary?.hasSignificantWinner && (
+          {statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) && (
             <li>• Consider deploying winning variant to all users</li>
           )}
           {progressPercentage >= 100 &&
-            !statisticalSummary?.hasSignificantWinner && (
+            !statisticalSummary?.treatments.some(t => t.isSignificant && t.improvement > 0) && (
               <li>• Consider extending duration or redesigning experiment</li>
             )}
         </ul>
