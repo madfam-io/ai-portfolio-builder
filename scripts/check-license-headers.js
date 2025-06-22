@@ -17,8 +17,12 @@ const fs = require('fs');
 const path = require('path');
 const glob = require('glob');
 
-// License header pattern to check for
-const LICENSE_HEADER = 'MADFAM Code Available License (MCAL) v1.0';
+// License header patterns to check for
+const LICENSE_HEADERS = [
+  'MADFAM Code Available License (MCAL) v1.0',
+  '@license MIT',
+  'MIT License'
+];
 
 // File patterns to check
 const FILE_PATTERNS = [
@@ -37,6 +41,9 @@ const IGNORE_PATTERNS = [
   'packages/*/node_modules/**',
   'packages/@madfam/*/node_modules/**',
   'dist/**',
+  '**/dist/**',
+  'packages/*/dist/**',
+  'packages/@madfam/*/dist/**',
   'build/**',
   '.next/**',
   'coverage/**',
@@ -55,6 +62,7 @@ const IGNORE_PATTERNS = [
   'jest.config.js',
   'next-env.d.ts',
   '**/*.d.ts',
+  '**/rollup.config.js',
 ];
 
 // Special files that should have different headers
@@ -92,7 +100,11 @@ function checkLicenseHeaders() {
       const content = fs.readFileSync(file, 'utf8');
       const firstLines = content.split('\n').slice(0, 15).join('\n');
 
-      if (!firstLines.includes(LICENSE_HEADER)) {
+      const hasLicenseHeader = LICENSE_HEADERS.some(header =>
+        firstLines.includes(header)
+      );
+      
+      if (!hasLicenseHeader) {
         missingHeaders.push(file);
       }
     });
