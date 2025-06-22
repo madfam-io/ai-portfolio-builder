@@ -49,18 +49,13 @@ import {
   Clock,
   CheckCircle,
   XCircle,
-  AlertCircle,
   TrendingUp,
   Download,
   Filter,
   Calendar,
 } from 'lucide-react';
 import { useReferral } from '@/lib/referral/hooks/use-referral';
-import type {
-  ReferralReward,
-  RewardStatus,
-  RewardType,
-} from '@/lib/referral/types';
+import type { RewardStatus, RewardType } from '@/lib/referral/types';
 import { cn } from '@/lib/utils';
 
 interface RewardHistoryProps {
@@ -168,15 +163,15 @@ export function RewardHistory({ className }: RewardHistoryProps) {
       if (!stats.by_status[reward.status]) {
         stats.by_status[reward.status] = { count: 0, amount: 0 };
       }
-      stats.by_status[reward.status]!.count++;
-      stats.by_status[reward.status]!.amount += reward.amount;
+      stats.by_status[reward.status].count++;
+      stats.by_status[reward.status].amount += reward.amount;
 
       // By type
       if (!stats.by_type[reward.type]) {
         stats.by_type[reward.type] = { count: 0, amount: 0 };
       }
-      stats.by_type[reward.type]!.count++;
-      stats.by_type[reward.type]!.amount += reward.amount;
+      stats.by_type[reward.type].count++;
+      stats.by_type[reward.type].amount += reward.amount;
 
       // Monthly comparison
       const rewardDate = new Date(reward.created_at);

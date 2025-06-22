@@ -84,7 +84,7 @@ export class ReferralEngine {
   /**
    * Create a new referral for a user
    */
-  async createReferral(
+  createReferral(
     userId: string,
     request: CreateReferralRequest = {}
   ): Promise<CreateReferralResponse> {
@@ -175,7 +175,7 @@ export class ReferralEngine {
   /**
    * Track referral link click with attribution
    */
-  async trackReferralClick(
+  trackReferralClick(
     request: TrackReferralClickRequest
   ): Promise<TrackReferralClickResponse> {
     try {
@@ -296,100 +296,17 @@ export class ReferralEngine {
         refereeId: request.referee_id,
       });
 
-      // Get referral by code
-      const { data: referral, error: referralError } = await this.supabase
-        .from('referrals')
-        .select('*, referral_campaigns(*)')
-        .eq('code', request.code)
-        .eq('status', 'pending')
-        .single();
+      // Validate and get referral
+      const referral = await this.validateAndGetReferral(request);
 
-      if (referralError || !referral) {
-        throw new ReferralValidationError(
-          'Invalid referral code for conversion',
-          'INVALID_CODE'
-        );
-      }
-
-      // Prevent self-referral
-      if (referral.referrer_id === request.referee_id) {
-        throw new ReferralValidationError(
-          'Self-referral not allowed',
-          'SELF_REFERRAL'
-        );
-      }
-
-      // Check if user already converted another referral
-      const { data: existingConversion } = await this.supabase
-        .from('referrals')
-        .select('id')
-        .eq('referee_id', request.referee_id)
-        .eq('status', 'converted')
-        .single();
-
-      if (existingConversion) {
-        throw new ReferralValidationError(
-          'User has already converted another referral',
-          'ALREADY_CONVERTED'
-        );
-      }
-
-      // Fraud detection
-      if (this.config.fraud_detection_enabled) {
-        const fraudResult = await this.detectFraud(
-          referral,
-          request.referee_id
-        );
-
-        if (fraudResult.risk_level === 'critical') {
-          await this.markReferralFraudulent(referral.id, fraudResult);
-          throw new FraudDetectionError(
-            'Referral blocked due to fraud detection',
-            fraudResult.risk_score,
-            fraudResult.flags
-          );
-        }
-
-        if (
-          fraudResult.risk_level === 'high' &&
-          !this.config.auto_approve_low_risk
-        ) {
-          // Mark for manual review
-          await this.flagForReview(referral.id, fraudResult);
-          logger.warn('Referral flagged for manual review', {
-            referralId: referral.id,
-            riskScore: fraudResult.risk_score,
-          });
-        }
-      }
+      // Handle fraud detection
+      await this.performFraudCheck(referral, request.referee_id);
 
       // Update referral status
-      const supabaseConvert = await this.serverSupabase;
-      if (!supabaseConvert) throw new Error('Failed to create Supabase client');
-
-      const { data: updatedReferral, error: updateError } =
-        await supabaseConvert
-          .from('referrals')
-          .update({
-            referee_id: request.referee_id,
-            status: 'converted',
-            converted_at: new Date().toISOString(),
-            metadata: {
-              ...referral.metadata,
-              conversion_metadata: request.conversion_metadata,
-            },
-          })
-          .eq('id', referral.id)
-          .select()
-          .single();
-
-      if (updateError) {
-        logger.error('Failed to update referral status', {
-          error: updateError,
-          referralId: referral.id,
-        });
-        throw new Error('Failed to convert referral');
-      }
+      const updatedReferral = await this.updateReferralStatus(
+        referral,
+        request
+      );
 
       // Calculate and create rewards
       const rewards = await this.calculateAndCreateRewards(
@@ -397,38 +314,8 @@ export class ReferralEngine {
         referral.referral_campaigns
       );
 
-      // Track conversion event
-      await this.trackEvent({
-        referral_id: referral.id,
-        campaign_id: referral.campaign_id,
-        event_type: 'referral_converted',
-        user_id: request.referee_id,
-        properties: {
-          conversion_metadata: request.conversion_metadata,
-          rewards_count: rewards.length,
-          total_reward_value: rewards.reduce((sum, r) => sum + r.amount, 0),
-        },
-      });
-
-      // Analytics tracking
-      if (this.config.enable_analytics) {
-        await captureServerEvent(request.referee_id, 'referral_converted', {
-          referral_id: referral.id,
-          referrer_id: referral.referrer_id,
-          campaign_id: referral.campaign_id,
-          rewards_earned: rewards.length,
-          total_reward_value: rewards.reduce((sum, r) => sum + r.amount, 0),
-        });
-
-        await captureServerEvent(referral.referrer_id, 'referral_successful', {
-          referral_id: referral.id,
-          referee_id: request.referee_id,
-          campaign_id: referral.campaign_id,
-          rewards_earned: rewards.filter(
-            r => r.user_id === referral.referrer_id
-          ).length,
-        });
-      }
+      // Track events
+      await this.trackConversionEvents(referral, request, rewards);
 
       logger.info('Referral converted successfully', {
         referralId: referral.id,
@@ -452,10 +339,158 @@ export class ReferralEngine {
     }
   }
 
+  private async validateAndGetReferral(
+    request: ConvertReferralRequest
+  ): Promise<any> {
+    // Get referral by code
+    const { data: referral, error: referralError } = await this.supabase
+      .from('referrals')
+      .select('*, referral_campaigns(*)')
+      .eq('code', request.code)
+      .eq('status', 'pending')
+      .single();
+
+    if (referralError || !referral) {
+      throw new ReferralValidationError(
+        'Invalid referral code for conversion',
+        'INVALID_CODE'
+      );
+    }
+
+    // Prevent self-referral
+    if (referral.referrer_id === request.referee_id) {
+      throw new ReferralValidationError(
+        'Self-referral not allowed',
+        'SELF_REFERRAL'
+      );
+    }
+
+    // Check if user already converted another referral
+    const { data: existingConversion } = await this.supabase
+      .from('referrals')
+      .select('id')
+      .eq('referee_id', request.referee_id)
+      .eq('status', 'converted')
+      .single();
+
+    if (existingConversion) {
+      throw new ReferralValidationError(
+        'User has already converted another referral',
+        'ALREADY_CONVERTED'
+      );
+    }
+
+    return referral;
+  }
+
+  private async performFraudCheck(
+    referral: any,
+    refereeId: string
+  ): Promise<void> {
+    if (!this.config.fraud_detection_enabled) {
+      return;
+    }
+
+    const fraudResult = await this.detectFraud(referral, refereeId);
+
+    if (fraudResult.risk_level === 'critical') {
+      await this.markReferralFraudulent(referral.id, fraudResult);
+      throw new FraudDetectionError(
+        'Referral blocked due to fraud detection',
+        fraudResult.risk_score,
+        fraudResult.flags
+      );
+    }
+
+    if (
+      fraudResult.risk_level === 'high' &&
+      !this.config.auto_approve_low_risk
+    ) {
+      await this.flagForReview(referral.id, fraudResult);
+      logger.warn('Referral flagged for manual review', {
+        referralId: referral.id,
+        riskScore: fraudResult.risk_score,
+      });
+    }
+  }
+
+  private async updateReferralStatus(
+    referral: any,
+    request: ConvertReferralRequest
+  ): Promise<any> {
+    const supabaseConvert = await this.serverSupabase;
+    if (!supabaseConvert) throw new Error('Failed to create Supabase client');
+
+    const { data: updatedReferral, error: updateError } = await supabaseConvert
+      .from('referrals')
+      .update({
+        referee_id: request.referee_id,
+        status: 'converted',
+        converted_at: new Date().toISOString(),
+        metadata: {
+          ...referral.metadata,
+          conversion_metadata: request.conversion_metadata,
+        },
+      })
+      .eq('id', referral.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      logger.error('Failed to update referral status', {
+        error: updateError,
+        referralId: referral.id,
+      });
+      throw new Error('Failed to convert referral');
+    }
+
+    return updatedReferral;
+  }
+
+  private async trackConversionEvents(
+    referral: any,
+    request: ConvertReferralRequest,
+    rewards: ReferralReward[]
+  ): Promise<void> {
+    // Track conversion event
+    await this.trackEvent({
+      referral_id: referral.id,
+      campaign_id: referral.campaign_id,
+      event_type: 'referral_converted',
+      user_id: request.referee_id,
+      properties: {
+        conversion_metadata: request.conversion_metadata,
+        rewards_count: rewards.length,
+        total_reward_value: rewards.reduce((sum, r) => sum + r.amount, 0),
+      },
+    });
+
+    // Analytics tracking
+    if (!this.config.enable_analytics) {
+      return;
+    }
+
+    await captureServerEvent(request.referee_id, 'referral_converted', {
+      referral_id: referral.id,
+      referrer_id: referral.referrer_id,
+      campaign_id: referral.campaign_id,
+      rewards_earned: rewards.length,
+      total_reward_value: rewards.reduce((sum, r) => sum + r.amount, 0),
+    });
+
+    await captureServerEvent(referral.referrer_id, 'referral_successful', {
+      referral_id: referral.id,
+      referee_id: request.referee_id,
+      campaign_id: referral.campaign_id,
+      rewards_earned: rewards.filter(r => r.user_id === referral.referrer_id)
+        .length,
+    });
+  }
+
   /**
    * Get user's referral statistics
    */
-  async getUserReferralStats(userId: string): Promise<UserReferralStats> {
+  getUserReferralStats(userId: string): Promise<UserReferralStats> {
     try {
       const { data: stats, error } = await this.supabase
         .from('user_referral_stats')
@@ -501,50 +536,61 @@ export class ReferralEngine {
    */
   async getActiveCampaigns(userId?: string): Promise<ReferralCampaign[]> {
     try {
-      let query = this.supabase
-        .from('referral_campaigns')
-        .select('*')
-        .eq('status', 'active')
-        .lte('start_date', new Date().toISOString())
-        .order('priority', { ascending: false });
+      const campaigns = await this.fetchActiveCampaigns();
 
-      // Filter by end date if specified
-      query = query.or(
-        'end_date.is.null,end_date.gte.' + new Date().toISOString()
-      );
-
-      const { data: campaigns, error } = await query;
-
-      if (error) {
-        logger.error('Failed to fetch active campaigns', { error });
-        return [];
+      if (!userId) {
+        return campaigns;
       }
 
-      // Filter campaigns based on user eligibility if userId provided
-      if (userId) {
-        const eligibleCampaigns = [];
-        for (const campaign of campaigns) {
-          const isEligible = await this.checkCampaignEligibility(
-            userId,
-            campaign
-          );
-          if (isEligible) {
-            eligibleCampaigns.push(campaign);
-          }
-        }
-        return eligibleCampaigns;
-      }
-
-      return campaigns || [];
+      return this.filterCampaignsByEligibility(campaigns, userId);
     } catch (error) {
       logger.error('Error fetching active campaigns', { error });
       return [];
     }
   }
 
+  private async fetchActiveCampaigns(): Promise<ReferralCampaign[]> {
+    let query = this.supabase
+      .from('referral_campaigns')
+      .select('*')
+      .eq('status', 'active')
+      .lte('start_date', new Date().toISOString())
+      .order('priority', { ascending: false });
+
+    // Filter by end date if specified
+    query = query.or(
+      'end_date.is.null,end_date.gte.' + new Date().toISOString()
+    );
+
+    const { data: campaigns, error } = await query;
+
+    if (error) {
+      logger.error('Failed to fetch active campaigns', { error });
+      return [];
+    }
+
+    return campaigns || [];
+  }
+
+  private async filterCampaignsByEligibility(
+    campaigns: ReferralCampaign[],
+    userId: string
+  ): Promise<ReferralCampaign[]> {
+    const eligibleCampaigns = [];
+
+    for (const campaign of campaigns) {
+      const isEligible = await this.checkCampaignEligibility(userId, campaign);
+      if (isEligible) {
+        eligibleCampaigns.push(campaign);
+      }
+    }
+
+    return eligibleCampaigns;
+  }
+
   // Private helper methods
 
-  private async validateUserEligibility(
+  private validateUserEligibility(
     userId: string,
     campaignId?: string
   ): Promise<void> {
@@ -585,7 +631,7 @@ export class ReferralEngine {
     }
   }
 
-  private async getActiveCampaign(
+  private getActiveCampaign(
     campaignId?: string
   ): Promise<ReferralCampaign | null> {
     if (campaignId) {
@@ -611,7 +657,7 @@ export class ReferralEngine {
     return defaultCampaign;
   }
 
-  private async generateUniqueCode(): Promise<string> {
+  private generateUniqueCode(): Promise<string> {
     const maxAttempts = 10;
     let attempts = 0;
 
@@ -678,7 +724,7 @@ export class ReferralEngine {
     return `${baseUrl}/signup?${params.toString()}`;
   }
 
-  private async checkCampaignEligibility(
+  private checkCampaignEligibility(
     userId: string,
     campaign: ReferralCampaign
   ): Promise<boolean> {
@@ -722,7 +768,7 @@ export class ReferralEngine {
 
   private async detectFraud(
     referral: Referral,
-    refereeId: string
+    _refereeId: string
   ): Promise<FraudDetectionResult> {
     const flags: FraudFlag[] = [];
     let riskScore = 0;
@@ -821,7 +867,7 @@ export class ReferralEngine {
     }
   }
 
-  private async markReferralFraudulent(
+  private markReferralFraudulent(
     referralId: string,
     fraudResult: FraudDetectionResult
   ): Promise<void> {
@@ -849,7 +895,7 @@ export class ReferralEngine {
     });
   }
 
-  private async flagForReview(
+  private flagForReview(
     referralId: string,
     fraudResult: FraudDetectionResult
   ): Promise<void> {
@@ -870,7 +916,7 @@ export class ReferralEngine {
       .eq('id', referralId);
   }
 
-  private async expireReferral(referralId: string): Promise<void> {
+  private expireReferral(referralId: string): Promise<void> {
     const supabase = await this.serverSupabase;
     if (!supabase) throw new Error('Failed to create Supabase client');
 
@@ -883,7 +929,7 @@ export class ReferralEngine {
       .eq('id', referralId);
   }
 
-  private async calculateAndCreateRewards(
+  private calculateAndCreateRewards(
     referral: Referral,
     campaign?: ReferralCampaign
   ): Promise<ReferralReward[]> {
@@ -922,7 +968,7 @@ export class ReferralEngine {
     return rewards;
   }
 
-  private async createReward(
+  private createReward(
     userId: string,
     referralId: string,
     rewardConfig: any,
@@ -971,7 +1017,7 @@ export class ReferralEngine {
     }
   }
 
-  private async trackEvent(event: Partial<ReferralEvent>): Promise<void> {
+  private trackEvent(event: Partial<ReferralEvent>): Promise<void> {
     try {
       const supabaseEvent = await this.serverSupabase;
       if (!supabaseEvent) throw new Error('Failed to create Supabase client');
@@ -996,32 +1042,32 @@ export const referralEngine = new ReferralEngine();
 /**
  * Convenience functions for common operations
  */
-export async function createReferralForUser(
+export function createReferralForUser(
   userId: string,
   request: CreateReferralRequest = {}
 ): Promise<CreateReferralResponse> {
   return referralEngine.createReferral(userId, request);
 }
 
-export async function trackReferralClick(
+export function trackReferralClick(
   request: TrackReferralClickRequest
 ): Promise<TrackReferralClickResponse> {
   return referralEngine.trackReferralClick(request);
 }
 
-export async function convertReferral(
+export function convertReferral(
   request: ConvertReferralRequest
 ): Promise<ConvertReferralResponse> {
   return referralEngine.convertReferral(request);
 }
 
-export async function getUserReferralStats(
+export function getUserReferralStats(
   userId: string
 ): Promise<UserReferralStats> {
   return referralEngine.getUserReferralStats(userId);
 }
 
-export async function getActiveCampaigns(
+export function getActiveCampaigns(
   userId?: string
 ): Promise<ReferralCampaign[]> {
   return referralEngine.getActiveCampaigns(userId);

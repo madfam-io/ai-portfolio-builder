@@ -56,13 +56,11 @@ import {
   TrendingUp,
   Gift,
   Crown,
-  Star,
   Target,
   Calendar,
   Share2,
   Award,
   Zap,
-  Clock,
 } from 'lucide-react';
 import { useReferral } from '@/lib/referral/hooks/use-referral';
 import { ShareHub } from './ShareHub';
@@ -79,10 +77,10 @@ export function ReferralDashboard({ className }: ReferralDashboardProps) {
   const {
     referrals,
     stats,
-    rewards,
+    rewards: _rewards,
     totalEarnings,
     pendingRewards,
-    availableCampaigns,
+    availableCampaigns: _availableCampaigns,
     createReferral,
     creating,
     loading,

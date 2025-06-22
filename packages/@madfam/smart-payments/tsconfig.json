@@ -28,6 +28,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "allowJs": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "types": ["node", "jest"]
   },
   "include": ["src/**/*"],

@@ -51,9 +51,7 @@ import {
   Check,
   ExternalLink,
   Gift,
-  Users,
   TrendingUp,
-  QrCode,
 } from 'lucide-react';
 import { useReferral } from '@/lib/referral/hooks/use-referral';
 import type { SharePlatform, Referral } from '@/lib/referral/types';
@@ -115,7 +113,7 @@ export function ShareHub({
     copyShareLink,
     generateShareContent,
     sharing,
-    lastShareSuccess,
+    lastShareSuccess: _lastShareSuccess,
   } = useReferral();
 
   const [copiedLink, setCopiedLink] = useState(false);
@@ -278,33 +276,35 @@ export function ShareHub({
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-            {SHARE_PLATFORMS.map(({ platform, name, icon: Icon, color }) => (
-              <motion.div
-                key={platform}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={() => handleShare(platform)}
-                  disabled={sharing}
-                  className="w-full h-16 flex flex-col items-center justify-center space-y-1 hover:shadow-md transition-all"
+            {SHARE_PLATFORMS.map(
+              ({ platform, name, icon: Icon, color: _color }) => (
+                <motion.div
+                  key={platform}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Icon className="w-5 h-5" />
-                  <span className="text-xs font-medium">{name}</span>
-                  {selectedPlatform === platform && sharing && (
-                    <motion.div
-                      className="absolute inset-0 bg-gray-100 rounded-md flex items-center justify-center"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                    >
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
-                    </motion.div>
-                  )}
-                </Button>
-              </motion.div>
-            ))}
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    onClick={() => handleShare(platform)}
+                    disabled={sharing}
+                    className="w-full h-16 flex flex-col items-center justify-center space-y-1 hover:shadow-md transition-all"
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="text-xs font-medium">{name}</span>
+                    {selectedPlatform === platform && sharing && (
+                      <motion.div
+                        className="absolute inset-0 bg-gray-100 rounded-md flex items-center justify-center"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                      >
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                      </motion.div>
+                    )}
+                  </Button>
+                </motion.div>
+              )
+            )}
           </div>
         </CardContent>
       </Card>
