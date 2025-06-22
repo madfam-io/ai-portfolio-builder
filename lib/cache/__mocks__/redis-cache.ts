@@ -31,7 +31,7 @@ class MockCacheService {
   }
 
   get<T = unknown>(key: string): T | null {
-    return this.mockCache.get(key) || null;
+    return (this.mockCache.get(key) as T) ?? null;
   }
 
   set<T = unknown>(key: string, value: T, _ttl?: number): void {
