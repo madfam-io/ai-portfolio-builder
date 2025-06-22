@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * White-Label Platform
- * 
+ *
  * Enterprise-ready white-label payment intelligence platform
  * Enables partners to offer MADFAM's capabilities under their own brand
  */
@@ -360,7 +360,10 @@ export class WhiteLabelPlatform {
   /**
    * Provision new white-label instance for partner
    */
-  async provisionInstance(partnerId: string, environment: 'sandbox' | 'production'): Promise<{
+  async provisionInstance(
+    partnerId: string,
+    environment: 'sandbox' | 'production'
+  ): Promise<{
     instanceId: string;
     apiCredentials: ApiCredentials;
     customDomain?: string;
@@ -368,7 +371,7 @@ export class WhiteLabelPlatform {
   }> {
     return this.performanceMonitor.measure('instanceProvisioning', async () => {
       const instanceId = this.generateInstanceId(partnerId, environment);
-      
+
       // Create instance configuration
       const instance: WhiteLabelInstance = {
         instanceId,
@@ -382,7 +385,10 @@ export class WhiteLabelPlatform {
       };
 
       // Generate API credentials
-      const apiCredentials = await this.generateApiCredentials(partnerId, environment);
+      const apiCredentials = await this.generateApiCredentials(
+        partnerId,
+        environment
+      );
 
       // Set up infrastructure
       await this.setupInfrastructure(instance);
@@ -425,16 +431,25 @@ export class WhiteLabelPlatform {
     return this.performanceMonitor.measure('customerOnboarding', async () => {
       const customerId = this.generateCustomerId();
       const onboardingPlan = await this.createOnboardingPlan(customerData);
-      
+
       // Calculate estimated completion based on plan complexity
       const estimatedCompletion = new Date();
-      estimatedCompletion.setDate(estimatedCompletion.getDate() + onboardingPlan.estimatedDays);
+      estimatedCompletion.setDate(
+        estimatedCompletion.getDate() + onboardingPlan.estimatedDays
+      );
 
       // Initialize customer environment
-      await this.initializeCustomerEnvironment(instanceId, customerId, customerData);
+      await this.initializeCustomerEnvironment(
+        instanceId,
+        customerId,
+        customerData
+      );
 
       // Send welcome materials
-      await this.sendWelcomeMaterials(customerData.contactEmail, onboardingPlan);
+      await this.sendWelcomeMaterials(
+        customerData.contactEmail,
+        onboardingPlan
+      );
 
       return {
         customerId,
@@ -470,7 +485,10 @@ export class WhiteLabelPlatform {
   /**
    * Apply custom branding to instance
    */
-  async updateBranding(instanceId: string, branding: Partial<BrandingConfig>): Promise<void> {
+  async updateBranding(
+    instanceId: string,
+    branding: Partial<BrandingConfig>
+  ): Promise<void> {
     const instance = this.instances.get(instanceId);
     if (!instance) {
       throw new Error('Instance not found');
@@ -490,7 +508,10 @@ export class WhiteLabelPlatform {
   /**
    * Configure feature set for instance
    */
-  async updateFeatureSet(instanceId: string, features: Partial<FeatureSet>): Promise<void> {
+  async updateFeatureSet(
+    instanceId: string,
+    features: Partial<FeatureSet>
+  ): Promise<void> {
     const instance = this.instances.get(instanceId);
     if (!instance) {
       throw new Error('Instance not found');
@@ -518,7 +539,7 @@ export class WhiteLabelPlatform {
 
     // Collect real-time metrics
     const metrics = await this.collectInstanceMetrics(instance);
-    
+
     // Update instance metrics
     instance.metrics = metrics;
     instance.lastUpdated = new Date();
@@ -541,8 +562,11 @@ export class WhiteLabelPlatform {
   }> {
     return this.performanceMonitor.measure('reportGeneration', async () => {
       const revenueData = await this.calculateRevenueAnalytics(partnerId);
-      const detailedReport = await this.buildDetailedRevenueReport(partnerId, period);
-      
+      const detailedReport = await this.buildDetailedRevenueReport(
+        partnerId,
+        period
+      );
+
       let downloadUrl: string | undefined;
       let reportContent: any;
 
@@ -578,7 +602,8 @@ export class WhiteLabelPlatform {
     // Initialize intelligence engines with partner configuration
     this.paymentIntelligence = new PaymentIntelligenceEngine({
       enableAdvancedAnalytics: this.config.featureSet.advancedAnalytics,
-      enableCompetitiveIntelligence: this.config.featureSet.competitiveIntelligence,
+      enableCompetitiveIntelligence:
+        this.config.featureSet.competitiveIntelligence,
       enableIndustryResearch: this.config.featureSet.industryResearch,
       updateInterval: 24,
       dataRetention: 365,
@@ -623,7 +648,12 @@ export class WhiteLabelPlatform {
         retentionPeriod: 2555, // 7 years
         enableIntegrityChecking: true,
         enableTamperProof: true,
-        auditEventTypes: ['authentication', 'authorization', 'data_access', 'payment_processing'],
+        auditEventTypes: [
+          'authentication',
+          'authorization',
+          'data_access',
+          'payment_processing',
+        ],
         alertThresholds: [],
       },
     });
@@ -633,12 +663,16 @@ export class WhiteLabelPlatform {
     return `wl_${partnerId}_${environment}_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`;
   }
 
-  private async generateApiCredentials(partnerId: string, environment: string): Promise<ApiCredentials> {
+  private async generateApiCredentials(
+    partnerId: string,
+    environment: string
+  ): Promise<ApiCredentials> {
     return {
       publicKey: `pk_${environment}_${partnerId}_${Math.random().toString(36).substr(2, 32)}`,
       privateKey: `sk_${environment}_${partnerId}_${Math.random().toString(36).substr(2, 32)}`,
       environment,
-      allowedDomains: this.config.integrationSettings.apiCredentials.allowedDomains,
+      allowedDomains:
+        this.config.integrationSettings.apiCredentials.allowedDomains,
       rateLimit: this.config.integrationSettings.apiCredentials.rateLimit,
       permissions: this.config.integrationSettings.apiCredentials.permissions,
     };
@@ -663,7 +697,9 @@ export class WhiteLabelPlatform {
     };
   }
 
-  private async setupInfrastructure(instance: WhiteLabelInstance): Promise<void> {
+  private async setupInfrastructure(
+    instance: WhiteLabelInstance
+  ): Promise<void> {
     // Simulate infrastructure setup
     // In production, this would provision cloud resources, databases, etc.
     await new Promise(resolve => setTimeout(resolve, 1000));
@@ -675,7 +711,9 @@ export class WhiteLabelPlatform {
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  private async configureSecurityCompliance(instance: WhiteLabelInstance): Promise<void> {
+  private async configureSecurityCompliance(
+    instance: WhiteLabelInstance
+  ): Promise<void> {
     // Configure security and compliance settings
     await this.security.performSecurityAssessment();
   }
@@ -701,13 +739,19 @@ export class WhiteLabelPlatform {
     return `cust_${Date.now()}_${Math.random().toString(36).substr(2, 16)}`;
   }
 
-  private async createOnboardingPlan(customerData: any): Promise<OnboardingPlan> {
+  private async createOnboardingPlan(
+    customerData: any
+  ): Promise<OnboardingPlan> {
     return {
       phases: [
         {
           name: 'Discovery & Setup',
           duration: 3,
-          tasks: ['Requirements gathering', 'Technical assessment', 'Account setup'],
+          tasks: [
+            'Requirements gathering',
+            'Technical assessment',
+            'Account setup',
+          ],
         },
         {
           name: 'Integration',
@@ -721,40 +765,71 @@ export class WhiteLabelPlatform {
         },
       ],
       estimatedDays: 12,
-      resources: ['Technical documentation', 'Integration support', 'Training materials'],
-      milestones: ['Technical integration complete', 'Security verification passed', 'Production launch'],
+      resources: [
+        'Technical documentation',
+        'Integration support',
+        'Training materials',
+      ],
+      milestones: [
+        'Technical integration complete',
+        'Security verification passed',
+        'Production launch',
+      ],
     };
   }
 
-  private async initializeCustomerEnvironment(instanceId: string, customerId: string, customerData: any): Promise<void> {
+  private async initializeCustomerEnvironment(
+    instanceId: string,
+    customerId: string,
+    customerData: any
+  ): Promise<void> {
     // Set up customer-specific configuration
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 
-  private async sendWelcomeMaterials(email: string, onboardingPlan: OnboardingPlan): Promise<void> {
+  private async sendWelcomeMaterials(
+    email: string,
+    onboardingPlan: OnboardingPlan
+  ): Promise<void> {
     // Send welcome email with onboarding information
     await new Promise(resolve => setTimeout(resolve, 200));
   }
 
-  private async generatePartnerOverview(partnerId: string): Promise<PartnerOverview> {
+  private async generatePartnerOverview(
+    partnerId: string
+  ): Promise<PartnerOverview> {
     return {
       totalCustomers: 47,
       activeCustomers: 42,
-      monthlyRecurringRevenue: { amount: 125000, currency: 'USD', display: '$125,000' },
-      totalTransactionVolume: { amount: 8400000, currency: 'USD', display: '$8.4M' },
+      monthlyRecurringRevenue: {
+        amount: 125000,
+        currency: 'USD',
+        display: '$125,000',
+      },
+      totalTransactionVolume: {
+        amount: 8400000,
+        currency: 'USD',
+        display: '$8.4M',
+      },
       platformHealth: 98,
       customerSatisfaction: 94,
     };
   }
 
-  private async getCustomerSummaries(partnerId: string): Promise<CustomerSummary[]> {
+  private async getCustomerSummaries(
+    partnerId: string
+  ): Promise<CustomerSummary[]> {
     return [
       {
         customerId: 'cust_001',
         companyName: 'TechCorp Inc.',
         plan: 'Enterprise',
         monthlyRevenue: { amount: 15000, currency: 'USD', display: '$15,000' },
-        transactionVolume: { amount: 850000, currency: 'USD', display: '$850,000' },
+        transactionVolume: {
+          amount: 850000,
+          currency: 'USD',
+          display: '$850,000',
+        },
         status: 'active',
         healthScore: 95,
       },
@@ -763,23 +838,41 @@ export class WhiteLabelPlatform {
         companyName: 'RetailMax',
         plan: 'Professional',
         monthlyRevenue: { amount: 8500, currency: 'USD', display: '$8,500' },
-        transactionVolume: { amount: 420000, currency: 'USD', display: '$420,000' },
+        transactionVolume: {
+          amount: 420000,
+          currency: 'USD',
+          display: '$420,000',
+        },
         status: 'active',
         healthScore: 88,
       },
     ];
   }
 
-  private async calculateRevenueAnalytics(partnerId: string): Promise<RevenueAnalytics> {
+  private async calculateRevenueAnalytics(
+    partnerId: string
+  ): Promise<RevenueAnalytics> {
     return {
       currentMonth: { amount: 125000, currency: 'USD', display: '$125,000' },
       previousMonth: { amount: 118000, currency: 'USD', display: '$118,000' },
       growth: 5.9,
       forecast: { amount: 132000, currency: 'USD', display: '$132,000' },
       breakdown: [
-        { source: 'transaction_fees', amount: { amount: 85000, currency: 'USD', display: '$85,000' }, percentage: 68 },
-        { source: 'subscription', amount: { amount: 35000, currency: 'USD', display: '$35,000' }, percentage: 28 },
-        { source: 'setup_fees', amount: { amount: 5000, currency: 'USD', display: '$5,000' }, percentage: 4 },
+        {
+          source: 'transaction_fees',
+          amount: { amount: 85000, currency: 'USD', display: '$85,000' },
+          percentage: 68,
+        },
+        {
+          source: 'subscription',
+          amount: { amount: 35000, currency: 'USD', display: '$35,000' },
+          percentage: 28,
+        },
+        {
+          source: 'setup_fees',
+          amount: { amount: 5000, currency: 'USD', display: '$5,000' },
+          percentage: 4,
+        },
       ],
       trends: [
         {
@@ -798,7 +891,9 @@ export class WhiteLabelPlatform {
     };
   }
 
-  private async analyzeUsageMetrics(partnerId: string): Promise<UsageAnalytics> {
+  private async analyzeUsageMetrics(
+    partnerId: string
+  ): Promise<UsageAnalytics> {
     return {
       totalTransactions: 45230,
       totalVolume: { amount: 8400000, currency: 'USD', display: '$8.4M' },
@@ -813,7 +908,11 @@ export class WhiteLabelPlatform {
         },
       ],
       efficiency: {
-        optimizationSavings: { amount: 84000, currency: 'USD', display: '$84,000' },
+        optimizationSavings: {
+          amount: 84000,
+          currency: 'USD',
+          display: '$84,000',
+        },
         fraudPrevention: { amount: 12500, currency: 'USD', display: '$12,500' },
         uptimePercentage: 99.97,
         averageResponseTime: 42,
@@ -821,7 +920,9 @@ export class WhiteLabelPlatform {
     };
   }
 
-  private async compileSupportMetrics(partnerId: string): Promise<SupportMetrics> {
+  private async compileSupportMetrics(
+    partnerId: string
+  ): Promise<SupportMetrics> {
     return {
       ticketsOpen: 3,
       ticketsResolved: 47,
@@ -836,7 +937,8 @@ export class WhiteLabelPlatform {
       {
         type: 'documentation',
         title: 'White-Label Integration Guide',
-        description: 'Complete guide to integrating and customizing your white-label platform',
+        description:
+          'Complete guide to integrating and customizing your white-label platform',
         url: '/docs/white-label/integration',
         category: 'Integration',
         difficulty: 'intermediate',
@@ -854,7 +956,9 @@ export class WhiteLabelPlatform {
     ];
   }
 
-  private async collectInstanceMetrics(instance: WhiteLabelInstance): Promise<InstanceMetrics> {
+  private async collectInstanceMetrics(
+    instance: WhiteLabelInstance
+  ): Promise<InstanceMetrics> {
     // Simulate metrics collection
     return {
       uptime: 99.95 + Math.random() * 0.05,
@@ -874,7 +978,10 @@ export class WhiteLabelPlatform {
     };
   }
 
-  private async buildDetailedRevenueReport(partnerId: string, period: string): Promise<any> {
+  private async buildDetailedRevenueReport(
+    partnerId: string,
+    period: string
+  ): Promise<any> {
     // Build comprehensive revenue report
     return {
       partnerId,

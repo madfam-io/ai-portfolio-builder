@@ -24,7 +24,7 @@ export interface Experiment {
   metadata?: Record<string, unknown>;
 }
 
-export type ExperimentStatus = 
+export type ExperimentStatus =
   | 'draft'
   | 'scheduled'
   | 'running'
@@ -32,7 +32,7 @@ export type ExperimentStatus =
   | 'completed'
   | 'archived';
 
-export type ExperimentType = 
+export type ExperimentType =
   | 'a/b'
   | 'multivariate'
   | 'feature-flag'
@@ -72,7 +72,7 @@ export interface FeatureFlag {
   updatedAt: Date;
 }
 
-export type FeatureFlagType = 
+export type FeatureFlagType =
   | 'boolean'
   | 'string'
   | 'number'
@@ -118,7 +118,7 @@ export interface TargetingCondition {
   negate?: boolean;
 }
 
-export type ConditionOperator = 
+export type ConditionOperator =
   | 'equals'
   | 'not_equals'
   | 'contains'
@@ -148,7 +148,7 @@ export interface AllocationStrategy {
   overrides?: AllocationOverride[];
 }
 
-export type AllocationType = 
+export type AllocationType =
   | 'random'
   | 'deterministic'
   | 'weighted'
@@ -172,7 +172,7 @@ export interface Metric {
   winCondition?: WinCondition;
 }
 
-export type MetricType = 
+export type MetricType =
   | 'conversion'
   | 'revenue'
   | 'count'
@@ -180,12 +180,9 @@ export type MetricType =
   | 'percentage'
   | 'custom';
 
-export type MetricGoal = 
-  | 'increase'
-  | 'decrease'
-  | 'maintain';
+export type MetricGoal = 'increase' | 'decrease' | 'maintain';
 
-export type AggregationType = 
+export type AggregationType =
   | 'sum'
   | 'average'
   | 'median'
@@ -249,11 +246,7 @@ export interface ExperimentEvent {
   value?: number;
 }
 
-export type EventType = 
-  | 'exposure'
-  | 'conversion'
-  | 'metric'
-  | 'custom';
+export type EventType = 'exposure' | 'conversion' | 'metric' | 'custom';
 
 // Analytics types
 export interface ExperimentResults {
@@ -267,7 +260,7 @@ export interface ExperimentResults {
   sampleSize: number;
 }
 
-export type ResultStatus = 
+export type ResultStatus =
   | 'insufficient_data'
   | 'no_winner'
   | 'winner_found'
@@ -298,7 +291,7 @@ export interface ExperimentProvider {
   config: ProviderConfig;
 }
 
-export type ProviderType = 
+export type ProviderType =
   | 'local'
   | 'remote'
   | 'launchdarkly'
@@ -336,7 +329,10 @@ export interface LoggerConfig {
 }
 
 export interface ExperimentHooks {
-  beforeAssignment?: (experiment: Experiment, user: UserContext) => void | Promise<void>;
+  beforeAssignment?: (
+    experiment: Experiment,
+    user: UserContext
+  ) => void | Promise<void>;
   afterAssignment?: (assignment: Assignment) => void | Promise<void>;
   onExposure?: (event: ExperimentEvent) => void | Promise<void>;
   onConversion?: (event: ExperimentEvent) => void | Promise<void>;
@@ -350,7 +346,7 @@ export interface ExperimentError {
   details?: Record<string, unknown>;
 }
 
-export type ExperimentErrorCode = 
+export type ExperimentErrorCode =
   | 'EXPERIMENT_NOT_FOUND'
   | 'FLAG_NOT_FOUND'
   | 'INVALID_CONFIGURATION'

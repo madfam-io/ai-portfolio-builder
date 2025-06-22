@@ -181,8 +181,8 @@ type ParamsRouteHandler<Params = Record<string, string | string[]>> = (
 ) => Promise<NextResponse> | NextResponse;
 
 // Union type for both handlers
-type RouteHandler<Params = Record<string, string | string[]>> = 
-  | SimpleRouteHandler 
+type RouteHandler<Params = Record<string, string | string[]>> =
+  | SimpleRouteHandler
   | ParamsRouteHandler<Params>;
 
 /**
@@ -201,7 +201,7 @@ export function withObservability<T extends RouteHandler<any>>(
   const wrappedHandler = async (...args: unknown[]) => {
     const request = args[0] as NextRequest;
     const context = args[1] as RouteHandlerContext<any> | undefined;
-    
+
     const req = request;
     const startTime = performance.now();
 

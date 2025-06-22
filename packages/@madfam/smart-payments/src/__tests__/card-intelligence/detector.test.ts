@@ -1,19 +1,22 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Card Detector Test Suite
- * 
+ *
  * Tests for card detection and intelligence
  */
 
-import { CardDetector, CardDetectorConfig } from '../../card-intelligence/detector';
+import {
+  CardDetector,
+  CardDetectorConfig,
+} from '../../card-intelligence/detector';
 import { CardInfo, ValidationResult, Gateway } from '../../types';
 
 describe('CardDetector', () => {
@@ -26,7 +29,7 @@ describe('CardDetector', () => {
   describe('detectCardCountry', () => {
     it('should detect US Visa card', async () => {
       const cardInfo = await detector.detectCardCountry('4111111111111111');
-      
+
       expect(cardInfo).toMatchObject({
         bin: '41111111',
         lastFour: '1111',
@@ -40,14 +43,14 @@ describe('CardDetector', () => {
     it('should cache repeated lookups', async () => {
       const card1 = await detector.detectCardCountry('4111111111111111');
       const card2 = await detector.detectCardCountry('4111111111111112');
-      
+
       // Same BIN should return cached result
       expect(card1.bin).toBe(card2.bin);
     });
 
     it('should detect Mexican card with local payment methods', async () => {
       const cardInfo = await detector.detectCardCountry('4213940000000000');
-      
+
       expect(cardInfo.issuerCountry).toBe('MX');
       expect(cardInfo.localPaymentMethods).toEqual(
         expect.arrayContaining([
@@ -59,7 +62,7 @@ describe('CardDetector', () => {
 
     it('should detect Brazilian card features', async () => {
       const cardInfo = await detector.detectCardCountry('5481290000000000');
-      
+
       expect(cardInfo.issuerCountry).toBe('BR');
       expect(cardInfo.supportedGateways).toContain('mercadopago');
       expect(cardInfo.features.supportsInstallments).toBe(true);
@@ -85,7 +88,7 @@ describe('CardDetector', () => {
   describe('validateCard', () => {
     it('should validate valid card', async () => {
       const result = await detector.validateCard('4111111111111111');
-      
+
       expect(result.valid).toBe(true);
       expect(result.cardBrand).toBe('visa');
       expect(result.errors).toHaveLength(0);
@@ -93,7 +96,7 @@ describe('CardDetector', () => {
 
     it('should detect invalid length', async () => {
       const result = await detector.validateCard('411111');
-      
+
       expect(result.valid).toBe(false);
       expect(result.errors).toContainEqual(
         expect.objectContaining({
@@ -104,7 +107,7 @@ describe('CardDetector', () => {
 
     it('should detect invalid Luhn', async () => {
       const result = await detector.validateCard('4111111111111112');
-      
+
       expect(result.valid).toBe(false);
       expect(result.errors).toContainEqual(
         expect.objectContaining({
@@ -118,7 +121,7 @@ describe('CardDetector', () => {
     it('should suggest Stripe for US cards', async () => {
       const cardInfo = await detector.detectCardCountry('4111111111111111');
       const gateway = await detector.suggestOptimalGateway(cardInfo);
-      
+
       expect(gateway).toBe('stripe');
     });
 
@@ -136,7 +139,7 @@ describe('CardDetector', () => {
           requiresCVV: true,
         },
       };
-      
+
       const gateway = await detector.suggestOptimalGateway(cardInfo);
       expect(gateway).toBe('mercadopago');
     });
@@ -155,7 +158,7 @@ describe('CardDetector', () => {
           requiresCVV: true,
         },
       };
-      
+
       const gateway = await detector.suggestOptimalGateway(cardInfo);
       expect(gateway).toBe('razorpay');
     });
@@ -174,7 +177,7 @@ describe('CardDetector', () => {
           requiresCVV: true,
         },
       };
-      
+
       const gateway = await detector.suggestOptimalGateway(cardInfo);
       expect(gateway).toBe('lemonsqueezy');
     });
@@ -183,7 +186,7 @@ describe('CardDetector', () => {
   describe('detectBankInfo', () => {
     it('should detect bank information', async () => {
       const bankInfo = await detector.detectBankInfo('4213940000000000');
-      
+
       expect(bankInfo).toMatchObject({
         bank: 'Banamex',
         country: 'MX',
@@ -193,7 +196,7 @@ describe('CardDetector', () => {
 
     it('should handle unknown banks', async () => {
       const bankInfo = await detector.detectBankInfo('4111111111111111');
-      
+
       expect(bankInfo).toMatchObject({
         bank: expect.any(String),
         country: 'US',
@@ -205,7 +208,7 @@ describe('CardDetector', () => {
   describe('lookupBIN', () => {
     it('should return successful lookup response', async () => {
       const response = await detector.lookupBIN('411111');
-      
+
       expect(response.success).toBe(true);
       expect(response.cardInfo).toBeDefined();
       expect(response.cached).toBe(false);
@@ -214,20 +217,20 @@ describe('CardDetector', () => {
     it('should indicate cached results', async () => {
       await detector.lookupBIN('411111');
       const response = await detector.lookupBIN('411111');
-      
+
       expect(response.cached).toBe(true);
     });
 
     it('should pad short BINs', async () => {
       const response = await detector.lookupBIN('4111');
-      
+
       expect(response.success).toBe(true);
       expect(response.cardInfo?.brand).toBe('visa');
     });
 
     it('should handle errors gracefully', async () => {
       const response = await detector.lookupBIN('');
-      
+
       expect(response.success).toBe(false);
       expect(response.error).toBeDefined();
       expect(response.cached).toBe(false);

@@ -1,30 +1,30 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Dynamic Pricing Engine Test Suite
- * 
+ *
  * Tests for geographical pricing with fraud prevention
  */
 
 import { DynamicPricingEngine } from '../../pricing/dynamic-pricing';
-import { 
-  PricingContext, 
-  Money, 
-  Customer, 
+import {
+  PricingContext,
+  Money,
+  Customer,
   PricingStrategy,
-  Discount 
+  Discount,
 } from '../../types';
 
 describe('DynamicPricingEngine', () => {
   let engine: DynamicPricingEngine;
-  
+
   const basePrice: Money = {
     amount: 100,
     currency: 'USD',
@@ -119,7 +119,9 @@ describe('DynamicPricingEngine', () => {
 
       expect(result.discountApplied).toBe(false);
       expect(result.displayPrice.amount).toBe(basePrice.amount);
-      expect(result.reasoning.factors).toContain('Suspicious activity detected');
+      expect(result.reasoning.factors).toContain(
+        'Suspicious activity detected'
+      );
     });
 
     it('should use card country when VPN detected', async () => {
@@ -145,12 +147,14 @@ describe('DynamicPricingEngine', () => {
         totalSpent: { amount: 50, currency: 'USD', display: '$50' },
       };
 
-      const customDiscounts: Discount[] = [{
-        id: 'student_verified',
-        type: 'student',
-        amount: 50,
-        eligibility: { requiresVerification: true },
-      }];
+      const customDiscounts: Discount[] = [
+        {
+          id: 'student_verified',
+          type: 'student',
+          amount: 50,
+          eligibility: { requiresVerification: true },
+        },
+      ];
 
       const studentEngine = new DynamicPricingEngine({
         strategy: defaultStrategy,
@@ -256,7 +260,7 @@ describe('DynamicPricingEngine', () => {
 
     it('should handle unknown countries', async () => {
       const unknownPrice = await engine.getCountryPrice(basePrice, 'ZZ');
-      
+
       expect(unknownPrice.amount).toBeLessThan(100); // Default 30% multiplier
       expect(unknownPrice.amount).toBeGreaterThan(20);
     });

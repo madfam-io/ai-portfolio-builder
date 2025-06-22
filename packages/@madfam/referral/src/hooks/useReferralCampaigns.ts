@@ -25,7 +25,12 @@ export function useReferralCampaigns(
   refresh: () => Promise<void>;
   getCampaignById: (id: string) => ReferralCampaign | undefined;
 } {
-  const { userId, apiEndpoint = '/api/referral/campaigns', autoRefresh = true, refreshInterval = 300000 } = config;
+  const {
+    userId,
+    apiEndpoint = '/api/referral/campaigns',
+    autoRefresh = true,
+    refreshInterval = 300000,
+  } = config;
 
   const [state, setState] = useState<UseReferralCampaignsState>({
     campaigns: [],
@@ -38,9 +43,7 @@ export function useReferralCampaigns(
     try {
       setState(prev => ({ ...prev, loading: true, error: null }));
 
-      const url = userId
-        ? `${apiEndpoint}?userId=${userId}`
-        : apiEndpoint;
+      const url = userId ? `${apiEndpoint}?userId=${userId}` : apiEndpoint;
 
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch campaigns');

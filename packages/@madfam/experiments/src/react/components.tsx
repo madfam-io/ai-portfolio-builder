@@ -145,13 +145,7 @@ export interface WhenProps {
   fallback?: React.ReactNode;
 }
 
-export function When({
-  flag,
-  is,
-  not,
-  children,
-  fallback = null,
-}: WhenProps) {
+export function When({ flag, is, not, children, fallback = null }: WhenProps) {
   const { value } = useFeatureFlag(flag);
 
   let shouldRender = false;
@@ -174,12 +168,7 @@ export interface UnlessProps extends Omit<WhenProps, 'is' | 'not'> {
   is?: unknown;
 }
 
-export function Unless({
-  flag,
-  is,
-  children,
-  fallback = null,
-}: UnlessProps) {
+export function Unless({ flag, is, children, fallback = null }: UnlessProps) {
   const { value } = useFeatureFlag(flag);
 
   const shouldRender = is !== undefined ? value !== is : !Boolean(value);

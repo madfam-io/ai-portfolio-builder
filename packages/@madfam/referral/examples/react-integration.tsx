@@ -350,11 +350,7 @@ function StatusBadge({ status }: { status: string }) {
     }
   };
 
-  return (
-    <span className={`status-badge status-${getColor()}`}>
-      {status}
-    </span>
-  );
+  return <span className={`status-badge status-${getColor()}`}>{status}</span>;
 }
 
 // App component

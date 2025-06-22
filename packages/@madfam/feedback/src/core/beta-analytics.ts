@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -29,7 +29,7 @@ import { EventEmitter } from '../utils/event-emitter';
 
 /**
  * Beta Analytics System
- * 
+ *
  * Advanced analytics and user behavior tracking for beta testing
  * with journey mapping, feature usage analysis, and conversion tracking
  */
@@ -43,7 +43,7 @@ export class BetaAnalytics extends EventEmitter {
 
   constructor(config: BetaAnalyticsConfig = {}) {
     super();
-    
+
     this.config = {
       flushInterval: 30000, // 30 seconds
       maxQueueSize: 100,
@@ -51,10 +51,10 @@ export class BetaAnalytics extends EventEmitter {
       enableJourneyMapping: true,
       ...config,
     };
-    
+
     this.logger = new Logger('BetaAnalytics');
     this.storage = createStorageAdapter(config.storage || { type: 'memory' });
-    
+
     this.initialize();
   }
 
@@ -101,7 +101,7 @@ export class BetaAnalytics extends EventEmitter {
 
     // Add to queue
     this.eventQueue.push(analyticsEvent);
-    
+
     // Emit event for real-time processing
     this.emit('event:tracked', analyticsEvent);
 
@@ -199,7 +199,7 @@ export class BetaAnalytics extends EventEmitter {
     };
 
     await this.trackEvent(sessionEvent);
-    
+
     // Clear session data
     this.sessionData.delete(userId);
   }
@@ -217,7 +217,7 @@ export class BetaAnalytics extends EventEmitter {
 
       // Group events by user and reconstruct journeys
       const journeyMap = new Map<string, AnalyticsEvent[]>();
-      
+
       events
         .filter(e => e.event === 'portfolio_journey')
         .forEach(event => {
@@ -228,7 +228,7 @@ export class BetaAnalytics extends EventEmitter {
 
       // Convert to journey objects
       const journeys: UserJourney[] = [];
-      
+
       for (const [userId, userEvents] of journeyMap) {
         const sortedEvents = userEvents.sort(
           (a, b) => a.timestamp.getTime() - b.timestamp.getTime()
@@ -237,13 +237,14 @@ export class BetaAnalytics extends EventEmitter {
         const journey: UserJourney = {
           userId,
           steps: sortedEvents.map(e => ({
-            step: e.properties?.step as string || 'unknown',
+            step: (e.properties?.step as string) || 'unknown',
             timestamp: e.timestamp,
             duration: e.properties?.duration as number,
             completed: e.properties?.completed as boolean,
           })),
           startTime: sortedEvents[0]?.timestamp || new Date(),
-          endTime: sortedEvents[sortedEvents.length - 1]?.timestamp || new Date(),
+          endTime:
+            sortedEvents[sortedEvents.length - 1]?.timestamp || new Date(),
           completed: sortedEvents.some(e => e.properties?.completed === true),
         };
 
@@ -271,8 +272,8 @@ export class BetaAnalytics extends EventEmitter {
       events
         .filter(e => e.event === 'feature_usage')
         .forEach(event => {
-          const feature = event.properties?.feature as string || 'unknown';
-          const action = event.properties?.action as string || 'unknown';
+          const feature = (event.properties?.feature as string) || 'unknown';
+          const action = (event.properties?.action as string) || 'unknown';
 
           if (!featureStats[feature]) {
             featureStats[feature] = {
@@ -321,14 +322,15 @@ export class BetaAnalytics extends EventEmitter {
 
       // Calculate conversion for each step
       let previousCount = journeys.length;
-      
+
       for (let i = 0; i < steps.length; i++) {
         const step = steps[i];
         const usersAtStep = journeys.filter(journey =>
           journey.steps.some(s => s.step === step)
         ).length;
 
-        const conversion = previousCount > 0 ? (usersAtStep / previousCount) * 100 : 0;
+        const conversion =
+          previousCount > 0 ? (usersAtStep / previousCount) * 100 : 0;
 
         funnel.steps.push({
           name: step,
@@ -342,9 +344,10 @@ export class BetaAnalytics extends EventEmitter {
 
       // Calculate overall conversion
       const completedJourneys = journeys.filter(j => j.completed).length;
-      funnel.overallConversion = journeys.length > 0
-        ? Math.round((completedJourneys / journeys.length) * 1000) / 10
-        : 0;
+      funnel.overallConversion =
+        journeys.length > 0
+          ? Math.round((completedJourneys / journeys.length) * 1000) / 10
+          : 0;
 
       return funnel;
     } catch (error) {
@@ -363,26 +366,30 @@ export class BetaAnalytics extends EventEmitter {
 
       // Calculate average session duration
       const durations = sessions
-        .map(s => s.properties?.duration as number || 0)
+        .map(s => (s.properties?.duration as number) || 0)
         .filter(d => d > 0);
-      
-      const avgSessionDuration = durations.length > 0
-        ? durations.reduce((sum, d) => sum + d, 0) / durations.length
-        : 0;
+
+      const avgSessionDuration =
+        durations.length > 0
+          ? durations.reduce((sum, d) => sum + d, 0) / durations.length
+          : 0;
 
       // Calculate average pages per session
       const pagesPerSession = sessions
-        .map(s => (s.properties?.pagesViewed as string[] || []).length)
+        .map(s => ((s.properties?.pagesViewed as string[]) || []).length)
         .filter(p => p > 0);
-      
-      const avgPagesPerSession = pagesPerSession.length > 0
-        ? pagesPerSession.reduce((sum, p) => sum + p, 0) / pagesPerSession.length
-        : 0;
+
+      const avgPagesPerSession =
+        pagesPerSession.length > 0
+          ? pagesPerSession.reduce((sum, p) => sum + p, 0) /
+            pagesPerSession.length
+          : 0;
 
       // Find most common actions
       const actionCounts: Record<string, number> = {};
       sessions.forEach(session => {
-        const actions = session.properties?.actionsPerformed as string[] || [];
+        const actions =
+          (session.properties?.actionsPerformed as string[]) || [];
         actions.forEach(action => {
           actionCounts[action] = (actionCounts[action] || 0) + 1;
         });
@@ -394,13 +401,14 @@ export class BetaAnalytics extends EventEmitter {
         .map(([action, count]) => ({ action, count }));
 
       // Calculate bounce rate
-      const bouncedSessions = sessions.filter(s =>
-        (s.properties?.pagesViewed as string[] || []).length <= 1
+      const bouncedSessions = sessions.filter(
+        s => ((s.properties?.pagesViewed as string[]) || []).length <= 1
       ).length;
-      
-      const bounceRate = sessions.length > 0
-        ? Math.round((bouncedSessions / sessions.length) * 1000) / 10
-        : 0;
+
+      const bounceRate =
+        sessions.length > 0
+          ? Math.round((bouncedSessions / sessions.length) * 1000) / 10
+          : 0;
 
       return {
         avgSessionDuration: Math.round(avgSessionDuration),
@@ -435,9 +443,7 @@ export class BetaAnalytics extends EventEmitter {
       const batchSize = 50;
       for (let i = 0; i < eventsToFlush.length; i += batchSize) {
         const batch = eventsToFlush.slice(i, i + batchSize);
-        await Promise.all(
-          batch.map(event => this.storage.trackEvent(event))
-        );
+        await Promise.all(batch.map(event => this.storage.trackEvent(event)));
       }
 
       this.logger.debug(`Flushed ${eventsToFlush.length} events`);
@@ -478,7 +484,11 @@ export class BetaAnalytics extends EventEmitter {
     this.sessionData.set(userId, session);
   }
 
-  private trackJourneyProgression(userId: string, step: string, completed: boolean): void {
+  private trackJourneyProgression(
+    userId: string,
+    step: string,
+    completed: boolean
+  ): void {
     this.emit('journey:progress', {
       userId,
       step,
@@ -500,16 +510,16 @@ export class BetaAnalytics extends EventEmitter {
    */
   async shutdown(): Promise<void> {
     this.logger.info('Shutting down beta analytics');
-    
+
     // Flush remaining events
     await this.flushEvents();
-    
+
     // Clear interval
     if (this.flushInterval) {
       clearInterval(this.flushInterval);
       this.flushInterval = null;
     }
-    
+
     // Clear data
     this.sessionData.clear();
     this.eventQueue = [];
@@ -576,6 +586,8 @@ interface BehaviorInsights {
 /**
  * Factory function to create beta analytics instance
  */
-export function createBetaAnalytics(config?: BetaAnalyticsConfig): BetaAnalytics {
+export function createBetaAnalytics(
+  config?: BetaAnalyticsConfig
+): BetaAnalytics {
   return new BetaAnalytics(config);
 }

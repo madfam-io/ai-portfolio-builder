@@ -1,15 +1,15 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Card Validators Test Suite
- * 
+ *
  * Tests for card validation utilities
  */
 

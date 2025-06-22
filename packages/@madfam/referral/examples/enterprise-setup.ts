@@ -13,13 +13,9 @@ class EnterpriseReferralSystem {
   private engine: ReferralEngine;
   private webhookUrl: string;
 
-  constructor(
-    supabaseUrl: string,
-    supabaseKey: string,
-    webhookUrl: string
-  ) {
+  constructor(supabaseUrl: string, supabaseKey: string, webhookUrl: string) {
     this.webhookUrl = webhookUrl;
-    
+
     // Initialize with enterprise configuration
     this.engine = createReferralEngine(supabaseUrl, supabaseKey, {
       fraud_detection_enabled: true,
@@ -114,13 +110,17 @@ class EnterpriseReferralSystem {
   ): Promise<FraudDetectionResult> {
     // Get basic fraud detection from engine
     const basicResult = await this.engine.getUserReferralStats(referralId);
-    
+
     // Add enterprise-specific checks
     const enhancedChecks = {
       corporate_email_verified: this.verifyCorporateEmail(additionalData.email),
       company_domain_valid: this.validateCompanyDomain(additionalData.domain),
-      linkedin_profile_verified: await this.verifyLinkedInProfile(additionalData.linkedin),
-      business_registration_valid: await this.checkBusinessRegistration(additionalData.company),
+      linkedin_profile_verified: await this.verifyLinkedInProfile(
+        additionalData.linkedin
+      ),
+      business_registration_valid: await this.checkBusinessRegistration(
+        additionalData.company
+      ),
     };
 
     // Calculate enhanced risk score
@@ -130,10 +130,14 @@ class EnterpriseReferralSystem {
     if (!enhancedChecks.linkedin_profile_verified) riskScore += 15;
     if (!enhancedChecks.business_registration_valid) riskScore += 30;
 
-    const riskLevel = 
-      riskScore >= 70 ? 'critical' :
-      riskScore >= 50 ? 'high' :
-      riskScore >= 30 ? 'medium' : 'low';
+    const riskLevel =
+      riskScore >= 70
+        ? 'critical'
+        : riskScore >= 50
+          ? 'high'
+          : riskScore >= 30
+            ? 'medium'
+            : 'low';
 
     return {
       risk_score: riskScore,
@@ -159,7 +163,7 @@ class EnterpriseReferralSystem {
       },
       total_referrals: 1250,
       successful_referrals: 375,
-      conversion_rate: 0.30,
+      conversion_rate: 0.3,
       viral_coefficient: 2.1,
       total_rewards_paid: 1875000,
       average_reward_per_referral: 5000,
@@ -174,7 +178,7 @@ class EnterpriseReferralSystem {
           campaign_name: 'Enterprise Partner Program',
           referrals: 450,
           conversions: 135,
-          conversion_rate: 0.30,
+          conversion_rate: 0.3,
           total_rewards: 675000,
           roi: 4.2,
           fraud_rate: 0.01,
@@ -187,7 +191,7 @@ class EnterpriseReferralSystem {
           total_referrals: 45,
           successful_referrals: 18,
           total_rewards: 90000,
-          conversion_rate: 0.40,
+          conversion_rate: 0.4,
         },
       ],
       geographic_breakdown: [
@@ -195,7 +199,7 @@ class EnterpriseReferralSystem {
           country: 'US',
           referrals: 750,
           conversions: 225,
-          conversion_rate: 0.30,
+          conversion_rate: 0.3,
           average_reward: 5000,
         },
       ],
@@ -231,7 +235,7 @@ class EnterpriseReferralSystem {
   async processRewardApproval(rewardId: string): Promise<boolean> {
     // Get reward details
     const reward = await this.getRewardDetails(rewardId);
-    
+
     // Check approval criteria
     const criteria = {
       fraud_check_passed: reward.fraud_score < 30,
@@ -290,7 +294,10 @@ class EnterpriseReferralSystem {
     console.log(`Reward ${rewardId} approved automatically`);
   }
 
-  private async flagForManualReview(rewardId: string, criteria: any): Promise<void> {
+  private async flagForManualReview(
+    rewardId: string,
+    criteria: any
+  ): Promise<void> {
     console.log(`Reward ${rewardId} flagged for review:`, criteria);
   }
 }
@@ -333,7 +340,10 @@ async function runEnterpriseExample() {
 
   // Process reward approval
   const approved = await enterprise.processRewardApproval('reward-456');
-  console.log('Reward approval:', approved ? 'Auto-approved' : 'Manual review required');
+  console.log(
+    'Reward approval:',
+    approved ? 'Auto-approved' : 'Manual review required'
+  );
 }
 
 // Export for use

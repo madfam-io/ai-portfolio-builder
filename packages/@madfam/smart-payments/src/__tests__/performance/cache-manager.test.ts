@@ -1,8 +1,8 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
@@ -69,14 +69,14 @@ describe('CacheManager', () => {
     it('should expire values after TTL', async () => {
       cache.set('key1', 'value1', 100); // 100ms TTL
       expect(cache.get('key1')).toBe('value1');
-      
+
       await new Promise(resolve => setTimeout(resolve, 150));
       expect(cache.get('key1')).toBeNull();
     });
 
     it('should use custom TTL over default', async () => {
       cache.set('key1', 'value1', 2000); // 2s TTL
-      
+
       await new Promise(resolve => setTimeout(resolve, 1100));
       expect(cache.get('key1')).toBe('value1'); // Still valid
     });
@@ -94,13 +94,13 @@ describe('CacheManager', () => {
       smallCache.set('key1', 'value1');
       smallCache.set('key2', 'value2');
       smallCache.set('key3', 'value3');
-      
+
       // Access key1 to make it more recent
       smallCache.get('key1');
-      
+
       // Add new item, should evict key2
       smallCache.set('key4', 'value4');
-      
+
       expect(smallCache.get('key1')).toBe('value1');
       expect(smallCache.get('key2')).toBeNull(); // Evicted
       expect(smallCache.get('key3')).toBe('value3');
@@ -117,7 +117,7 @@ describe('CacheManager', () => {
 
       sizeCache.set('key1', 'short');
       sizeCache.set('key2', 'a'.repeat(50)); // Large value
-      
+
       expect(sizeCache.get('key1')).toBeNull(); // Evicted due to size
       expect(sizeCache.get('key2')).toBe('a'.repeat(50));
     });
@@ -143,11 +143,11 @@ describe('CacheManager', () => {
   describe('Statistics', () => {
     it('should track hits and misses', () => {
       cache.set('key1', 'value1');
-      
+
       cache.get('key1'); // Hit
       cache.get('key1'); // Hit
       cache.get('missing'); // Miss
-      
+
       const stats = cache.getStats();
       expect(stats.hits).toBe(2);
       expect(stats.misses).toBe(1);
@@ -155,12 +155,12 @@ describe('CacheManager', () => {
 
     it('should calculate hit rate', () => {
       cache.set('key1', 'value1');
-      
+
       cache.get('key1'); // Hit
       cache.get('key1'); // Hit
       cache.get('key1'); // Hit
       cache.get('missing'); // Miss
-      
+
       expect(cache.getHitRate()).toBe(75); // 3/4 = 75%
     });
 
@@ -183,7 +183,7 @@ describe('CacheManager', () => {
     it('should track size and entries', () => {
       cache.set('key1', 'test');
       cache.set('key2', { foo: 'bar' });
-      
+
       const stats = cache.getStats();
       expect(stats.entries).toBe(2);
       expect(stats.size).toBeGreaterThan(0);
@@ -247,7 +247,7 @@ describe('MultiLevelCache', () => {
 
   it('should set values in all levels', () => {
     multiCache.set('key1', 'value1');
-    
+
     // Should be available in all levels
     multiCache.get('key1').then(value => {
       expect(value).toBe('value1');
@@ -258,11 +258,11 @@ describe('MultiLevelCache', () => {
     // Set only in L3
     const caches = (multiCache as any).levels;
     caches[2].set('key1', 'value1');
-    
+
     // Get should promote to L1 and L2
     const value = await multiCache.get('key1');
     expect(value).toBe('value1');
-    
+
     // Check all levels have the value
     expect(caches[0].get('key1')).toBe('value1');
     expect(caches[1].get('key1')).toBe('value1');
@@ -271,10 +271,10 @@ describe('MultiLevelCache', () => {
 
   it('should handle TTL differences between levels', async () => {
     multiCache.set('key1', 'value1');
-    
+
     // Wait for L1 to expire
     await new Promise(resolve => setTimeout(resolve, 150));
-    
+
     // Should still get from L2
     const value = await multiCache.get('key1');
     expect(value).toBe('value1');
@@ -283,9 +283,9 @@ describe('MultiLevelCache', () => {
   it('should clear all levels', () => {
     multiCache.set('key1', 'value1');
     multiCache.set('key2', 'value2');
-    
+
     multiCache.clear();
-    
+
     multiCache.get('key1').then(value => {
       expect(value).toBeNull();
     });
@@ -296,7 +296,7 @@ describe('MultiLevelCache', () => {
 
   it('should return aggregated stats', () => {
     multiCache.set('key1', 'value1');
-    
+
     const stats = multiCache.getStats();
     expect(stats).toHaveLength(3); // 3 levels
     expect(stats[0]).toHaveProperty('hits');

@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -20,17 +20,29 @@ import type { FeedbackEntry, SatisfactionSurvey } from '../core/types';
 
 /**
  * Validation Utilities
- * 
+ *
  * Zod schemas and validation functions for feedback data
  */
 
 // Feedback validation schema
 export const feedbackSchema = z.object({
   userId: z.string().min(1, 'User ID is required'),
-  type: z.enum(['bug', 'feature_request', 'improvement', 'general', 'usability']),
+  type: z.enum([
+    'bug',
+    'feature_request',
+    'improvement',
+    'general',
+    'usability',
+  ]),
   severity: z.enum(['low', 'medium', 'high', 'critical']),
-  title: z.string().min(1, 'Title is required').max(200, 'Title must be 200 characters or less'),
-  description: z.string().min(10, 'Description must be at least 10 characters').max(2000, 'Description must be 2000 characters or less'),
+  title: z
+    .string()
+    .min(1, 'Title is required')
+    .max(200, 'Title must be 200 characters or less'),
+  description: z
+    .string()
+    .min(10, 'Description must be at least 10 characters')
+    .max(2000, 'Description must be 2000 characters or less'),
   category: z.string().min(1, 'Category is required'),
   userAgent: z.string(),
   url: z.string().url('Invalid URL format').or(z.string().length(0)),
@@ -40,13 +52,15 @@ export const feedbackSchema = z.object({
   actualBehavior: z.string().optional(),
   tags: z.array(z.string()),
   rating: z.number().min(1).max(5).optional(),
-  userContext: z.object({
-    plan: z.string(),
-    accountAge: z.number(),
-    portfoliosCreated: z.number(),
-    lastActivity: z.date().or(z.string().transform(val => new Date(val))),
-    customFields: z.record(z.unknown()).optional(),
-  }).optional(),
+  userContext: z
+    .object({
+      plan: z.string(),
+      accountAge: z.number(),
+      portfoliosCreated: z.number(),
+      lastActivity: z.date().or(z.string().transform(val => new Date(val))),
+      customFields: z.record(z.unknown()).optional(),
+    })
+    .optional(),
   metadata: z.record(z.unknown()).optional(),
 });
 
@@ -87,7 +101,12 @@ export function validateFeedback(
     if (error instanceof z.ZodError) {
       return { valid: false, errors: error.errors };
     }
-    return { valid: false, errors: [{ path: [], message: 'Unknown validation error', code: 'custom' }] };
+    return {
+      valid: false,
+      errors: [
+        { path: [], message: 'Unknown validation error', code: 'custom' },
+      ],
+    };
   }
 }
 
@@ -104,7 +123,12 @@ export function validateSurvey(
     if (error instanceof z.ZodError) {
       return { valid: false, errors: error.errors };
     }
-    return { valid: false, errors: [{ path: [], message: 'Unknown validation error', code: 'custom' }] };
+    return {
+      valid: false,
+      errors: [
+        { path: [], message: 'Unknown validation error', code: 'custom' },
+      ],
+    };
   }
 }
 

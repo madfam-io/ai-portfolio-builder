@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -28,7 +28,7 @@ import { BaseStorageAdapter } from './interface';
 
 /**
  * In-Memory Storage Adapter
- * 
+ *
  * Simple in-memory storage for development and testing
  * Data is lost when the process restarts
  */
@@ -213,9 +213,10 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     const npsScores = surveyArray.map(s => s.likelihoodToRecommend);
     const promoters = npsScores.filter(score => score >= 9).length;
     const detractors = npsScores.filter(score => score <= 6).length;
-    const nps = npsScores.length > 0
-      ? Math.round(((promoters - detractors) / npsScores.length) * 100)
-      : 0;
+    const nps =
+      npsScores.length > 0
+        ? Math.round(((promoters - detractors) / npsScores.length) * 100)
+        : 0;
 
     // Count bugs and features
     const criticalBugs = feedbackArray.filter(
@@ -251,7 +252,11 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     const trends: Record<string, FeedbackTrend> = {};
 
     // Initialize all dates
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
       const dateStr = d.toISOString().split('T')[0];
       trends[dateStr] = {
         date: dateStr,

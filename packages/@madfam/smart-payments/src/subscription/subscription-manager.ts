@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Subscription Management System
- * 
+ *
  * Comprehensive tiered subscription model with usage tracking, billing, and optimization
  */
 
@@ -209,12 +209,12 @@ export interface Subscription {
   metadata: Record<string, any>;
 }
 
-export type SubscriptionStatus = 
-  | 'trial' 
-  | 'active' 
-  | 'past_due' 
-  | 'canceled' 
-  | 'suspended' 
+export type SubscriptionStatus =
+  | 'trial'
+  | 'active'
+  | 'past_due'
+  | 'canceled'
+  | 'suspended'
   | 'expired';
 
 export interface SubscriptionPricing {
@@ -262,7 +262,11 @@ export interface UsageAlert {
 }
 
 export interface OptimizationSuggestion {
-  type: 'plan_upgrade' | 'plan_downgrade' | 'usage_optimization' | 'feature_toggle';
+  type:
+    | 'plan_upgrade'
+    | 'plan_downgrade'
+    | 'usage_optimization'
+    | 'feature_toggle';
   title: string;
   description: string;
   impact: OptimizationImpact;
@@ -464,7 +468,7 @@ export class SubscriptionManager {
 
       const subscriptionId = this.generateSubscriptionId();
       const currentDate = new Date();
-      
+
       // Calculate trial end if applicable
       let trialEnd: Date | undefined;
       if (request.trialDays && request.trialDays > 0) {
@@ -473,7 +477,9 @@ export class SubscriptionManager {
       }
 
       // Calculate billing period
-      const billingCycle = this.config.billingCycles.find(bc => bc.id === request.billingCycle);
+      const billingCycle = this.config.billingCycles.find(
+        bc => bc.id === request.billingCycle
+      );
       if (!billingCycle) {
         throw new Error('Billing cycle not found');
       }
@@ -482,7 +488,11 @@ export class SubscriptionManager {
       periodEnd.setDate(periodEnd.getDate() + billingCycle.duration);
 
       // Calculate pricing
-      const pricing = await this.calculateSubscriptionPricing(plan, billingCycle, request);
+      const pricing = await this.calculateSubscriptionPricing(
+        plan,
+        billingCycle,
+        request
+      );
 
       // Create subscription
       const subscription: Subscription = {
@@ -502,7 +512,10 @@ export class SubscriptionManager {
           alerts: [],
           optimizationSuggestions: [],
         },
-        discounts: await this.applyDiscounts(request.discountCodes || [], pricing),
+        discounts: await this.applyDiscounts(
+          request.discountCodes || [],
+          pricing
+        ),
         addOns: await this.processAddOns(request.addOns || []),
         customizations: request.customizations || [],
         metadata: {},
@@ -512,8 +525,9 @@ export class SubscriptionManager {
 
       // Generate initial invoice if payment required
       let invoice: Invoice | undefined;
-      const paymentRequired = !request.trialDays && pricing.totalAmount.amount > 0;
-      
+      const paymentRequired =
+        !request.trialDays && pricing.totalAmount.amount > 0;
+
       if (paymentRequired) {
         invoice = await this.generateInvoice(subscription);
       }
@@ -530,11 +544,14 @@ export class SubscriptionManager {
   /**
    * Track usage for subscription
    */
-  async trackUsage(subscriptionId: string, metrics: Array<{
-    metric: string;
-    value: number;
-    timestamp?: Date;
-  }>): Promise<{
+  async trackUsage(
+    subscriptionId: string,
+    metrics: Array<{
+      metric: string;
+      value: number;
+      timestamp?: Date;
+    }>
+  ): Promise<{
     usage: UsageData[];
     alerts: UsageAlert[];
     suggestions: OptimizationSuggestion[];
@@ -554,7 +571,8 @@ export class SubscriptionManager {
       const alerts = await this.checkUsageAlerts(subscription);
 
       // Generate optimization suggestions
-      const suggestions = await this.generateOptimizationSuggestions(subscription);
+      const suggestions =
+        await this.generateOptimizationSuggestions(subscription);
 
       // Update subscription
       subscription.usage.alerts = alerts;
@@ -603,7 +621,7 @@ export class SubscriptionManager {
    */
   async analyzeSubscriptionMetrics(): Promise<SubscriptionAnalytics> {
     const allSubscriptions = Array.from(this.subscriptions.values());
-    
+
     const churnRate = this.calculateChurnRate(allSubscriptions);
     const averageRevenuePerUser = this.calculateARPU(allSubscriptions);
     const customerLifetimeValue = this.calculateCLV(allSubscriptions);
@@ -638,19 +656,24 @@ export class SubscriptionManager {
       throw new Error('Subscription not found');
     }
 
-    const currentPlan = this.config.plans.find(p => p.id === subscription.planId);
+    const currentPlan = this.config.plans.find(
+      p => p.id === subscription.planId
+    );
     if (!currentPlan) {
       throw new Error('Current plan not found');
     }
 
     // Analyze usage patterns
     const usageAnalysis = await this.analyzeCustomerUsage(subscription);
-    
+
     // Find optimal plan
-    const recommendedPlan = await this.findOptimalPlan(subscription, usageAnalysis);
-    
+    const recommendedPlan = await this.findOptimalPlan(
+      subscription,
+      usageAnalysis
+    );
+
     // Calculate potential savings/costs
-    const potentialSavings = recommendedPlan 
+    const potentialSavings = recommendedPlan
       ? this.calculatePlanDifference(currentPlan, recommendedPlan)
       : undefined;
 
@@ -661,9 +684,10 @@ export class SubscriptionManager {
       recommendedPlan
     );
 
-    const upgradeBenefits = recommendedPlan && recommendedPlan.tier !== currentPlan.tier
-      ? this.getUpgradeBenefits(currentPlan, recommendedPlan)
-      : undefined;
+    const upgradeBenefits =
+      recommendedPlan && recommendedPlan.tier !== currentPlan.tier
+        ? this.getUpgradeBenefits(currentPlan, recommendedPlan)
+        : undefined;
 
     return {
       currentPlan,
@@ -682,21 +706,65 @@ export class SubscriptionManager {
       {
         id: 'starter',
         name: 'Starter',
-        description: 'Perfect for small businesses getting started with payment optimization',
+        description:
+          'Perfect for small businesses getting started with payment optimization',
         tier: 'starter',
         basePrice: { amount: 99, currency: 'USD', display: '$99' },
         features: [
-          { feature: 'Payment Optimization', included: true, description: 'AI-powered gateway routing', businessValue: 'Reduce processing costs by 10-15%' },
-          { feature: 'Basic Analytics', included: true, description: 'Monthly payment reports', businessValue: 'Track payment performance' },
-          { feature: 'Email Support', included: true, description: 'Business hours support', businessValue: 'Get help when needed' },
-          { feature: 'Fraud Detection', included: false, description: 'Advanced fraud prevention', businessValue: 'Prevent fraudulent transactions' },
+          {
+            feature: 'Payment Optimization',
+            included: true,
+            description: 'AI-powered gateway routing',
+            businessValue: 'Reduce processing costs by 10-15%',
+          },
+          {
+            feature: 'Basic Analytics',
+            included: true,
+            description: 'Monthly payment reports',
+            businessValue: 'Track payment performance',
+          },
+          {
+            feature: 'Email Support',
+            included: true,
+            description: 'Business hours support',
+            businessValue: 'Get help when needed',
+          },
+          {
+            feature: 'Fraud Detection',
+            included: false,
+            description: 'Advanced fraud prevention',
+            businessValue: 'Prevent fraudulent transactions',
+          },
         ],
         limits: [
-          { metric: 'transactions', limit: 1000, overage: { enabled: true, ratePerUnit: { amount: 0.10, currency: 'USD', display: '$0.10' }, tiers: [] }, resetPeriod: 'monthly' },
-          { metric: 'volume', limit: 50000, overage: { enabled: false, ratePerUnit: { amount: 0, currency: 'USD', display: '$0' }, tiers: [] }, resetPeriod: 'monthly' },
+          {
+            metric: 'transactions',
+            limit: 1000,
+            overage: {
+              enabled: true,
+              ratePerUnit: { amount: 0.1, currency: 'USD', display: '$0.10' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
+          {
+            metric: 'volume',
+            limit: 50000,
+            overage: {
+              enabled: false,
+              ratePerUnit: { amount: 0, currency: 'USD', display: '$0' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
         ],
         support: {
-          responseTime: { critical: 'N/A', high: '24h', medium: '48h', low: '72h' },
+          responseTime: {
+            critical: 'N/A',
+            high: '24h',
+            medium: '48h',
+            low: '72h',
+          },
           channels: ['email'],
           availability: 'Business hours',
           dedicatedManager: false,
@@ -710,28 +778,86 @@ export class SubscriptionManager {
           credits: [{ threshold: 99, creditPercentage: 5 }],
         },
         targetMarket: ['Small businesses', 'Startups', 'Solo entrepreneurs'],
-        competitiveAdvantages: ['AI optimization at entry level', 'No setup fees', 'Quick implementation'],
+        competitiveAdvantages: [
+          'AI optimization at entry level',
+          'No setup fees',
+          'Quick implementation',
+        ],
       },
       {
         id: 'professional',
         name: 'Professional',
-        description: 'Advanced features for growing businesses that need comprehensive payment intelligence',
+        description:
+          'Advanced features for growing businesses that need comprehensive payment intelligence',
         tier: 'professional',
         basePrice: { amount: 299, currency: 'USD', display: '$299' },
         features: [
-          { feature: 'Payment Optimization', included: true, description: 'Advanced AI routing with A/B testing', businessValue: 'Reduce processing costs by 15-25%' },
-          { feature: 'Advanced Analytics', included: true, description: 'Real-time dashboards and custom reports', businessValue: 'Make data-driven decisions' },
-          { feature: 'Fraud Detection', included: true, description: 'ML-powered fraud prevention', businessValue: 'Prevent up to 99% of fraud attempts' },
-          { feature: 'Business Intelligence', included: true, description: 'Revenue impact analysis', businessValue: 'Identify optimization opportunities' },
-          { feature: 'API Access', included: true, description: 'Full REST API access', businessValue: 'Integrate with existing systems' },
-          { feature: 'Chat Support', included: true, description: '24/7 chat support', businessValue: 'Get immediate help' },
+          {
+            feature: 'Payment Optimization',
+            included: true,
+            description: 'Advanced AI routing with A/B testing',
+            businessValue: 'Reduce processing costs by 15-25%',
+          },
+          {
+            feature: 'Advanced Analytics',
+            included: true,
+            description: 'Real-time dashboards and custom reports',
+            businessValue: 'Make data-driven decisions',
+          },
+          {
+            feature: 'Fraud Detection',
+            included: true,
+            description: 'ML-powered fraud prevention',
+            businessValue: 'Prevent up to 99% of fraud attempts',
+          },
+          {
+            feature: 'Business Intelligence',
+            included: true,
+            description: 'Revenue impact analysis',
+            businessValue: 'Identify optimization opportunities',
+          },
+          {
+            feature: 'API Access',
+            included: true,
+            description: 'Full REST API access',
+            businessValue: 'Integrate with existing systems',
+          },
+          {
+            feature: 'Chat Support',
+            included: true,
+            description: '24/7 chat support',
+            businessValue: 'Get immediate help',
+          },
         ],
         limits: [
-          { metric: 'transactions', limit: 10000, overage: { enabled: true, ratePerUnit: { amount: 0.05, currency: 'USD', display: '$0.05' }, tiers: [] }, resetPeriod: 'monthly' },
-          { metric: 'volume', limit: 500000, overage: { enabled: false, ratePerUnit: { amount: 0, currency: 'USD', display: '$0' }, tiers: [] }, resetPeriod: 'monthly' },
+          {
+            metric: 'transactions',
+            limit: 10000,
+            overage: {
+              enabled: true,
+              ratePerUnit: { amount: 0.05, currency: 'USD', display: '$0.05' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
+          {
+            metric: 'volume',
+            limit: 500000,
+            overage: {
+              enabled: false,
+              ratePerUnit: { amount: 0, currency: 'USD', display: '$0' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
         ],
         support: {
-          responseTime: { critical: '4h', high: '8h', medium: '24h', low: '48h' },
+          responseTime: {
+            critical: '4h',
+            high: '8h',
+            medium: '24h',
+            low: '48h',
+          },
           channels: ['email', 'chat'],
           availability: '24/7',
           dedicatedManager: false,
@@ -747,27 +873,89 @@ export class SubscriptionManager {
             { threshold: 99, creditPercentage: 10 },
           ],
         },
-        targetMarket: ['Growing businesses', 'E-commerce platforms', 'SaaS companies'],
-        competitiveAdvantages: ['Comprehensive BI suite', 'Advanced fraud protection', 'API-first approach'],
+        targetMarket: [
+          'Growing businesses',
+          'E-commerce platforms',
+          'SaaS companies',
+        ],
+        competitiveAdvantages: [
+          'Comprehensive BI suite',
+          'Advanced fraud protection',
+          'API-first approach',
+        ],
       },
       {
         id: 'enterprise',
         name: 'Enterprise',
-        description: 'Complete payment intelligence platform for large organizations with custom requirements',
+        description:
+          'Complete payment intelligence platform for large organizations with custom requirements',
         tier: 'enterprise',
         basePrice: { amount: 999, currency: 'USD', display: '$999' },
         features: [
-          { feature: 'Payment Optimization', included: true, description: 'Enterprise AI with custom models', businessValue: 'Reduce processing costs by 25-35%' },
-          { feature: 'Advanced Analytics', included: true, description: 'Executive dashboards and white-label reporting', businessValue: 'Enterprise-grade insights' },
-          { feature: 'Fraud Detection', included: true, description: 'Custom fraud models with real-time training', businessValue: 'Industry-leading fraud prevention' },
-          { feature: 'Business Intelligence', included: true, description: 'Competitive intelligence and industry research', businessValue: 'Market leadership insights' },
-          { feature: 'White-Label Solutions', included: true, description: 'Full white-label platform', businessValue: 'Brand consistency across touchpoints' },
-          { feature: 'Enterprise Security', included: true, description: 'SOC 2, PCI DSS compliance', businessValue: 'Meet enterprise security requirements' },
-          { feature: 'Dedicated Support', included: true, description: 'Dedicated success manager', businessValue: 'Proactive optimization and support' },
+          {
+            feature: 'Payment Optimization',
+            included: true,
+            description: 'Enterprise AI with custom models',
+            businessValue: 'Reduce processing costs by 25-35%',
+          },
+          {
+            feature: 'Advanced Analytics',
+            included: true,
+            description: 'Executive dashboards and white-label reporting',
+            businessValue: 'Enterprise-grade insights',
+          },
+          {
+            feature: 'Fraud Detection',
+            included: true,
+            description: 'Custom fraud models with real-time training',
+            businessValue: 'Industry-leading fraud prevention',
+          },
+          {
+            feature: 'Business Intelligence',
+            included: true,
+            description: 'Competitive intelligence and industry research',
+            businessValue: 'Market leadership insights',
+          },
+          {
+            feature: 'White-Label Solutions',
+            included: true,
+            description: 'Full white-label platform',
+            businessValue: 'Brand consistency across touchpoints',
+          },
+          {
+            feature: 'Enterprise Security',
+            included: true,
+            description: 'SOC 2, PCI DSS compliance',
+            businessValue: 'Meet enterprise security requirements',
+          },
+          {
+            feature: 'Dedicated Support',
+            included: true,
+            description: 'Dedicated success manager',
+            businessValue: 'Proactive optimization and support',
+          },
         ],
         limits: [
-          { metric: 'transactions', limit: 100000, overage: { enabled: true, ratePerUnit: { amount: 0.02, currency: 'USD', display: '$0.02' }, tiers: [] }, resetPeriod: 'monthly' },
-          { metric: 'volume', limit: 10000000, overage: { enabled: false, ratePerUnit: { amount: 0, currency: 'USD', display: '$0' }, tiers: [] }, resetPeriod: 'monthly' },
+          {
+            metric: 'transactions',
+            limit: 100000,
+            overage: {
+              enabled: true,
+              ratePerUnit: { amount: 0.02, currency: 'USD', display: '$0.02' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
+          {
+            metric: 'volume',
+            limit: 10000000,
+            overage: {
+              enabled: false,
+              ratePerUnit: { amount: 0, currency: 'USD', display: '$0' },
+              tiers: [],
+            },
+            resetPeriod: 'monthly',
+          },
         ],
         support: {
           responseTime: { critical: '1h', high: '2h', medium: '4h', low: '8h' },
@@ -787,8 +975,16 @@ export class SubscriptionManager {
             { threshold: 99, creditPercentage: 25 },
           ],
         },
-        targetMarket: ['Enterprise corporations', 'Large e-commerce', 'Payment service providers'],
-        competitiveAdvantages: ['Complete platform suite', 'Custom AI models', 'Enterprise-grade compliance'],
+        targetMarket: [
+          'Enterprise corporations',
+          'Large e-commerce',
+          'Payment service providers',
+        ],
+        competitiveAdvantages: [
+          'Complete platform suite',
+          'Custom AI models',
+          'Enterprise-grade compliance',
+        ],
       },
     ];
   }
@@ -803,15 +999,16 @@ export class SubscriptionManager {
     request: any
   ): Promise<SubscriptionPricing> {
     let baseAmount = plan.basePrice.amount;
-    
+
     // Apply billing cycle discount
     if (billingCycle.discountPercentage > 0) {
-      baseAmount *= (1 - billingCycle.discountPercentage / 100);
+      baseAmount *= 1 - billingCycle.discountPercentage / 100;
     }
 
     // Add customizations cost
     const customizationCost = (request.customizations || []).reduce(
-      (sum: number, custom: Customization) => sum + (custom.additionalCost?.amount || 0),
+      (sum: number, custom: Customization) =>
+        sum + (custom.additionalCost?.amount || 0),
       0
     );
 
@@ -821,12 +1018,36 @@ export class SubscriptionManager {
     const totalAmount = subtotal - discountAmount + taxAmount;
 
     return {
-      baseAmount: { amount: baseAmount, currency: plan.basePrice.currency, display: `$${baseAmount}` },
-      discountAmount: { amount: discountAmount, currency: plan.basePrice.currency, display: `$${discountAmount}` },
-      taxAmount: { amount: taxAmount, currency: plan.basePrice.currency, display: `$${taxAmount}` },
-      totalAmount: { amount: totalAmount, currency: plan.basePrice.currency, display: `$${totalAmount}` },
-      nextBillingAmount: { amount: totalAmount, currency: plan.basePrice.currency, display: `$${totalAmount}` },
-      projectedOverage: { amount: 0, currency: plan.basePrice.currency, display: '$0' },
+      baseAmount: {
+        amount: baseAmount,
+        currency: plan.basePrice.currency,
+        display: `$${baseAmount}`,
+      },
+      discountAmount: {
+        amount: discountAmount,
+        currency: plan.basePrice.currency,
+        display: `$${discountAmount}`,
+      },
+      taxAmount: {
+        amount: taxAmount,
+        currency: plan.basePrice.currency,
+        display: `$${taxAmount}`,
+      },
+      totalAmount: {
+        amount: totalAmount,
+        currency: plan.basePrice.currency,
+        display: `$${totalAmount}`,
+      },
+      nextBillingAmount: {
+        amount: totalAmount,
+        currency: plan.basePrice.currency,
+        display: `$${totalAmount}`,
+      },
+      projectedOverage: {
+        amount: 0,
+        currency: plan.basePrice.currency,
+        display: '$0',
+      },
     };
   }
 
@@ -841,11 +1062,16 @@ export class SubscriptionManager {
     }));
   }
 
-  private async applyDiscounts(discountCodes: string[], pricing: SubscriptionPricing): Promise<AppliedDiscount[]> {
+  private async applyDiscounts(
+    discountCodes: string[],
+    pricing: SubscriptionPricing
+  ): Promise<AppliedDiscount[]> {
     return []; // Simplified - would implement discount code logic
   }
 
-  private async processAddOns(addOnIds: string[]): Promise<AddOnSubscription[]> {
+  private async processAddOns(
+    addOnIds: string[]
+  ): Promise<AddOnSubscription[]> {
     return []; // Simplified - would implement add-on processing
   }
 
@@ -877,8 +1103,13 @@ export class SubscriptionManager {
     };
   }
 
-  private async updateUsageMetric(subscription: Subscription, metric: { metric: string; value: number; timestamp?: Date }): Promise<void> {
-    const usageData = subscription.usage.currentPeriod.find(u => u.metric === metric.metric);
+  private async updateUsageMetric(
+    subscription: Subscription,
+    metric: { metric: string; value: number; timestamp?: Date }
+  ): Promise<void> {
+    const usageData = subscription.usage.currentPeriod.find(
+      u => u.metric === metric.metric
+    );
     if (usageData) {
       usageData.current += metric.value;
       usageData.percentage = (usageData.current / usageData.limit) * 100;
@@ -886,9 +1117,11 @@ export class SubscriptionManager {
     }
   }
 
-  private async checkUsageAlerts(subscription: Subscription): Promise<UsageAlert[]> {
+  private async checkUsageAlerts(
+    subscription: Subscription
+  ): Promise<UsageAlert[]> {
     const alerts: UsageAlert[] = [];
-    
+
     for (const usage of subscription.usage.currentPeriod) {
       if (usage.percentage > 80) {
         alerts.push({
@@ -899,7 +1132,10 @@ export class SubscriptionManager {
           severity: usage.percentage > 95 ? 'critical' : 'warning',
           message: `${usage.metric} usage is at ${usage.percentage.toFixed(1)}% of limit`,
           actionRequired: usage.percentage > 95,
-          suggestions: usage.percentage > 95 ? ['Consider upgrading plan', 'Optimize usage patterns'] : ['Monitor usage closely'],
+          suggestions:
+            usage.percentage > 95
+              ? ['Consider upgrading plan', 'Optimize usage patterns']
+              : ['Monitor usage closely'],
         });
       }
     }
@@ -907,17 +1143,24 @@ export class SubscriptionManager {
     return alerts;
   }
 
-  private async generateOptimizationSuggestions(subscription: Subscription): Promise<OptimizationSuggestion[]> {
+  private async generateOptimizationSuggestions(
+    subscription: Subscription
+  ): Promise<OptimizationSuggestion[]> {
     const suggestions: OptimizationSuggestion[] = [];
-    
+
     // Check if plan upgrade would be beneficial
-    const averageUsage = subscription.usage.currentPeriod.reduce((sum, u) => sum + u.percentage, 0) / subscription.usage.currentPeriod.length;
-    
+    const averageUsage =
+      subscription.usage.currentPeriod.reduce(
+        (sum, u) => sum + u.percentage,
+        0
+      ) / subscription.usage.currentPeriod.length;
+
     if (averageUsage > 85) {
       suggestions.push({
         type: 'plan_upgrade',
         title: 'Consider Plan Upgrade',
-        description: 'Your usage patterns suggest you might benefit from a higher tier plan',
+        description:
+          'Your usage patterns suggest you might benefit from a higher tier plan',
         impact: {
           featureBenefit: 'Higher limits and additional features',
           additionalCost: { amount: 200, currency: 'USD', display: '$200' },
@@ -945,19 +1188,25 @@ export class SubscriptionManager {
   }
 
   private calculateChurnRate(subscriptions: Subscription[]): number {
-    const canceledThisMonth = subscriptions.filter(s => 
-      s.status === 'canceled' && 
-      s.endDate && 
-      s.endDate >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
+    const canceledThisMonth = subscriptions.filter(
+      s =>
+        s.status === 'canceled' &&
+        s.endDate &&
+        s.endDate >= new Date(Date.now() - 30 * 24 * 60 * 60 * 1000)
     ).length;
-    
+
     return (canceledThisMonth / subscriptions.length) * 100;
   }
 
   private calculateARPU(subscriptions: Subscription[]): Money {
-    const totalRevenue = subscriptions.reduce((sum, s) => sum + s.pricing.totalAmount.amount, 0);
-    const activeSubscriptions = subscriptions.filter(s => s.status === 'active').length;
-    
+    const totalRevenue = subscriptions.reduce(
+      (sum, s) => sum + s.pricing.totalAmount.amount,
+      0
+    );
+    const activeSubscriptions = subscriptions.filter(
+      s => s.status === 'active'
+    ).length;
+
     return {
       amount: totalRevenue / activeSubscriptions,
       currency: 'USD',
@@ -968,7 +1217,7 @@ export class SubscriptionManager {
   private calculateCLV(subscriptions: Subscription[]): Money {
     const arpu = this.calculateARPU(subscriptions);
     const averageLifetime = 24; // months (estimated)
-    
+
     return {
       amount: arpu.amount * averageLifetime,
       currency: 'USD',
@@ -981,11 +1230,16 @@ export class SubscriptionManager {
     return { amount: 25000, currency: 'USD', display: '$25,000' };
   }
 
-  private analyzePlanDistribution(subscriptions: Subscription[]): PlanDistribution[] {
+  private analyzePlanDistribution(
+    subscriptions: Subscription[]
+  ): PlanDistribution[] {
     const distribution = new Map<string, { count: number; revenue: number }>();
-    
+
     for (const subscription of subscriptions) {
-      const current = distribution.get(subscription.planId) || { count: 0, revenue: 0 };
+      const current = distribution.get(subscription.planId) || {
+        count: 0,
+        revenue: 0,
+      };
       current.count++;
       current.revenue += subscription.pricing.totalAmount.amount;
       distribution.set(subscription.planId, current);
@@ -998,7 +1252,11 @@ export class SubscriptionManager {
         planName: plan?.name || 'Unknown',
         customerCount: data.count,
         percentage: (data.count / subscriptions.length) * 100,
-        revenue: { amount: data.revenue, currency: 'USD', display: `$${data.revenue}` },
+        revenue: {
+          amount: data.revenue,
+          currency: 'USD',
+          display: `$${data.revenue}`,
+        },
       };
     });
   }
@@ -1029,30 +1287,47 @@ export class SubscriptionManager {
 
   private async analyzeCustomerUsage(subscription: Subscription): Promise<any> {
     return {
-      averageUsage: subscription.usage.currentPeriod.reduce((sum, u) => sum + u.percentage, 0) / subscription.usage.currentPeriod.length,
-      peakUsage: Math.max(...subscription.usage.currentPeriod.map(u => u.percentage)),
+      averageUsage:
+        subscription.usage.currentPeriod.reduce(
+          (sum, u) => sum + u.percentage,
+          0
+        ) / subscription.usage.currentPeriod.length,
+      peakUsage: Math.max(
+        ...subscription.usage.currentPeriod.map(u => u.percentage)
+      ),
       growthTrend: 'increasing',
       utilizationEfficiency: 75,
     };
   }
 
-  private async findOptimalPlan(subscription: Subscription, usageAnalysis: any): Promise<SubscriptionPlan | undefined> {
+  private async findOptimalPlan(
+    subscription: Subscription,
+    usageAnalysis: any
+  ): Promise<SubscriptionPlan | undefined> {
     if (usageAnalysis.averageUsage > 85) {
       // Find next tier up
-      const currentPlan = this.config.plans.find(p => p.id === subscription.planId);
+      const currentPlan = this.config.plans.find(
+        p => p.id === subscription.planId
+      );
       const tiers = ['starter', 'professional', 'enterprise', 'custom'];
       const currentTierIndex = tiers.indexOf(currentPlan?.tier || 'starter');
-      
+
       if (currentTierIndex < tiers.length - 1) {
-        return this.config.plans.find(p => p.tier === tiers[currentTierIndex + 1]);
+        return this.config.plans.find(
+          p => p.tier === tiers[currentTierIndex + 1]
+        );
       }
     }
-    
+
     return undefined;
   }
 
-  private calculatePlanDifference(currentPlan: SubscriptionPlan, recommendedPlan: SubscriptionPlan): Money {
-    const difference = recommendedPlan.basePrice.amount - currentPlan.basePrice.amount;
+  private calculatePlanDifference(
+    currentPlan: SubscriptionPlan,
+    recommendedPlan: SubscriptionPlan
+  ): Money {
+    const difference =
+      recommendedPlan.basePrice.amount - currentPlan.basePrice.amount;
     return {
       amount: Math.abs(difference),
       currency: 'USD',
@@ -1060,31 +1335,44 @@ export class SubscriptionManager {
     };
   }
 
-  private generateOptimizationReasons(subscription: Subscription, usageAnalysis: any, recommendedPlan?: SubscriptionPlan): string[] {
+  private generateOptimizationReasons(
+    subscription: Subscription,
+    usageAnalysis: any,
+    recommendedPlan?: SubscriptionPlan
+  ): string[] {
     const reasons: string[] = [];
-    
+
     if (usageAnalysis.averageUsage > 85) {
       reasons.push('Current usage exceeds 85% of plan limits');
     }
-    
+
     if (recommendedPlan) {
-      reasons.push(`${recommendedPlan.name} plan offers better value for your usage patterns`);
-      reasons.push('Additional features would benefit your business operations');
+      reasons.push(
+        `${recommendedPlan.name} plan offers better value for your usage patterns`
+      );
+      reasons.push(
+        'Additional features would benefit your business operations'
+      );
     }
-    
+
     return reasons;
   }
 
-  private getUpgradeBenefits(currentPlan: SubscriptionPlan, recommendedPlan: SubscriptionPlan): string[] {
+  private getUpgradeBenefits(
+    currentPlan: SubscriptionPlan,
+    recommendedPlan: SubscriptionPlan
+  ): string[] {
     const benefits: string[] = [];
-    
+
     for (const feature of recommendedPlan.features) {
-      const currentFeature = currentPlan.features.find(f => f.feature === feature.feature);
+      const currentFeature = currentPlan.features.find(
+        f => f.feature === feature.feature
+      );
       if (!currentFeature?.included && feature.included) {
         benefits.push(feature.businessValue);
       }
     }
-    
+
     return benefits;
   }
 }

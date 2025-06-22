@@ -57,7 +57,9 @@ export function ExperimentsProvider({
 export function useExperimentsContext(): ExperimentsContextValue {
   const context = useContext(ExperimentsContext);
   if (!context) {
-    throw new Error('useExperimentsContext must be used within ExperimentsProvider');
+    throw new Error(
+      'useExperimentsContext must be used within ExperimentsProvider'
+    );
   }
   return context;
 }

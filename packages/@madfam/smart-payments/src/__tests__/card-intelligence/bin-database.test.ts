@@ -1,22 +1,22 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * BIN Database Test Suite
- * 
+ *
  * Tests for BIN lookup functionality
  */
 
-import { 
-  InMemoryBINDatabase, 
+import {
+  InMemoryBINDatabase,
   APIBINDatabase,
-  BINLookupError 
+  BINLookupError,
 } from '../../card-intelligence/bin-database';
 import { CardInfo } from '../../types';
 
@@ -79,7 +79,9 @@ describe('BIN Database', () => {
 
     it('should throw error for invalid BIN format', async () => {
       await expect(db.lookup('123')).rejects.toThrow(BINLookupError);
-      await expect(db.lookup('')).rejects.toThrow('BIN must be at least 6 digits');
+      await expect(db.lookup('')).rejects.toThrow(
+        'BIN must be at least 6 digits'
+      );
     });
 
     it('should clean BIN input', async () => {
@@ -111,7 +113,11 @@ describe('BIN Database', () => {
 
     beforeEach(() => {
       fallbackDb = new InMemoryBINDatabase();
-      apiDb = new APIBINDatabase('test-api-key', 'https://api.test.com', fallbackDb);
+      apiDb = new APIBINDatabase(
+        'test-api-key',
+        'https://api.test.com',
+        fallbackDb
+      );
     });
 
     it('should fallback to in-memory database when API fails', async () => {

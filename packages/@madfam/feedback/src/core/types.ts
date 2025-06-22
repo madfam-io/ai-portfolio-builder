@@ -1,23 +1,23 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Core Types and Interfaces
- * 
+ *
  * Comprehensive type definitions for the feedback system
  */
 
@@ -25,7 +25,12 @@
 // Feedback Entry Types
 // ============================================
 
-export type FeedbackType = 'bug' | 'feature_request' | 'improvement' | 'general' | 'usability';
+export type FeedbackType =
+  | 'bug'
+  | 'feature_request'
+  | 'improvement'
+  | 'general'
+  | 'usability';
 export type FeedbackSeverity = 'low' | 'medium' | 'high' | 'critical';
 export type FeedbackStatus = 'open' | 'in_progress' | 'resolved' | 'closed';
 export type NPSCategory = 'promoter' | 'passive' | 'detractor';
@@ -372,16 +377,27 @@ export class ValidationError extends FeedbackError {
 
 export interface StorageAdapter {
   // Feedback operations
-  createFeedback(feedback: Omit<FeedbackEntry, 'id' | 'timestamp'>): Promise<FeedbackEntry>;
+  createFeedback(
+    feedback: Omit<FeedbackEntry, 'id' | 'timestamp'>
+  ): Promise<FeedbackEntry>;
   getFeedback(id: string): Promise<FeedbackEntry | null>;
-  listFeedback(filter?: FeedbackFilter): Promise<PaginatedResponse<FeedbackEntry>>;
-  updateFeedback(id: string, updates: Partial<FeedbackEntry>): Promise<FeedbackEntry>;
+  listFeedback(
+    filter?: FeedbackFilter
+  ): Promise<PaginatedResponse<FeedbackEntry>>;
+  updateFeedback(
+    id: string,
+    updates: Partial<FeedbackEntry>
+  ): Promise<FeedbackEntry>;
   deleteFeedback(id: string): Promise<boolean>;
 
   // Survey operations
-  createSurvey(survey: Omit<SatisfactionSurvey, 'id' | 'timestamp'>): Promise<SatisfactionSurvey>;
+  createSurvey(
+    survey: Omit<SatisfactionSurvey, 'id' | 'timestamp'>
+  ): Promise<SatisfactionSurvey>;
   getSurvey(id: string): Promise<SatisfactionSurvey | null>;
-  listSurveys(filter?: Partial<FeedbackFilter>): Promise<PaginatedResponse<SatisfactionSurvey>>;
+  listSurveys(
+    filter?: Partial<FeedbackFilter>
+  ): Promise<PaginatedResponse<SatisfactionSurvey>>;
 
   // Event operations
   trackEvent(event: Omit<FeedbackEvent, 'id' | 'timestamp'>): Promise<void>;

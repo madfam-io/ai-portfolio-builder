@@ -1,32 +1,28 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
-import type {
-  BetaReadinessReport,
-  ReadinessCheck,
-  BetaMetrics,
-} from './types';
+import type { BetaReadinessReport, ReadinessCheck, BetaMetrics } from './types';
 import { FeedbackSystem } from './feedback-system';
 import { BetaAnalytics } from './beta-analytics';
 import { Logger } from '../utils/logger';
 
 /**
  * Beta Launch Readiness Checker
- * 
+ *
  * Comprehensive system to evaluate if your application is ready for beta launch
  * by checking performance, stability, features, testing, and monitoring
  */
@@ -44,7 +40,7 @@ export class BetaLaunchChecker {
     this.feedbackSystem = feedbackSystem;
     this.analytics = analytics;
     this.logger = new Logger('BetaLaunchChecker');
-    
+
     this.config = {
       readinessThreshold: 80,
       performanceTargets: {
@@ -90,7 +86,9 @@ export class BetaLaunchChecker {
       monitoring: await this.checkMonitoring(),
     };
 
-    const passedCount = Object.values(checks).filter(check => check.passed).length;
+    const passedCount = Object.values(checks).filter(
+      check => check.passed
+    ).length;
     const score = (passedCount / Object.keys(checks).length) * 100;
     const ready = score >= this.config.readinessThreshold;
 
@@ -228,7 +226,11 @@ export class BetaLaunchChecker {
         message,
         details: {
           bugCounts,
-          totalBugs: metrics.criticalBugs + bugCounts.high + bugCounts.medium + bugCounts.low,
+          totalBugs:
+            metrics.criticalBugs +
+            bugCounts.high +
+            bugCounts.medium +
+            bugCounts.low,
           checks,
         },
       };
@@ -247,19 +249,24 @@ export class BetaLaunchChecker {
    */
   private async checkFeatures(): Promise<ReadinessCheck> {
     try {
-      const { coreFeatures, optionalFeatures } = this.config.featureCompleteness;
-      
+      const { coreFeatures, optionalFeatures } =
+        this.config.featureCompleteness;
+
       // In a real implementation, this would check actual feature flags or completion status
       const implementedCore = coreFeatures.filter(() => true); // Mock: all implemented
-      const implementedOptional = optionalFeatures.filter(() => Math.random() > 0.3); // Mock: 70% implemented
+      const implementedOptional = optionalFeatures.filter(
+        () => Math.random() > 0.3
+      ); // Mock: 70% implemented
 
-      const coreCompletion = coreFeatures.length > 0
-        ? (implementedCore.length / coreFeatures.length) * 100
-        : 100;
-      
-      const optionalCompletion = optionalFeatures.length > 0
-        ? (implementedOptional.length / optionalFeatures.length) * 100
-        : 100;
+      const coreCompletion =
+        coreFeatures.length > 0
+          ? (implementedCore.length / coreFeatures.length) * 100
+          : 100;
+
+      const optionalCompletion =
+        optionalFeatures.length > 0
+          ? (implementedOptional.length / optionalFeatures.length) * 100
+          : 100;
 
       const passed = coreCompletion === 100;
 
@@ -299,7 +306,7 @@ export class BetaLaunchChecker {
   private async checkTesting(): Promise<ReadinessCheck> {
     try {
       const requirements = this.config.testingRequirements;
-      
+
       // In a real implementation, this would fetch actual test metrics
       const testMetrics = {
         unitTestCoverage: 72, // Mock data
@@ -309,7 +316,9 @@ export class BetaLaunchChecker {
         lastTestRun: new Date(),
       };
 
-      const overallCoverage = (testMetrics.unitTestCoverage + testMetrics.integrationTestCoverage) / 2;
+      const overallCoverage =
+        (testMetrics.unitTestCoverage + testMetrics.integrationTestCoverage) /
+        2;
 
       const checks = [
         {
@@ -320,7 +329,9 @@ export class BetaLaunchChecker {
         },
         {
           name: 'Critical Paths',
-          passed: testMetrics.criticalPathsCovered && requirements.criticalPathsCovered,
+          passed:
+            testMetrics.criticalPathsCovered &&
+            requirements.criticalPathsCovered,
           value: testMetrics.criticalPathsCovered,
           target: requirements.criticalPathsCovered,
         },
@@ -363,7 +374,7 @@ export class BetaLaunchChecker {
   private async checkMonitoring(): Promise<ReadinessCheck> {
     try {
       const requirements = this.config.monitoringRequirements;
-      
+
       // Check if monitoring systems are operational
       const monitoringStatus = {
         logging: requirements.loggingEnabled,
@@ -373,12 +384,14 @@ export class BetaLaunchChecker {
         feedbackSystem: true, // We know this is operational
       };
 
-      const checks = Object.entries(monitoringStatus).map(([name, enabled]) => ({
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        passed: enabled,
-        value: enabled,
-        target: true,
-      }));
+      const checks = Object.entries(monitoringStatus).map(
+        ([name, enabled]) => ({
+          name: name.charAt(0).toUpperCase() + name.slice(1),
+          passed: enabled,
+          value: enabled,
+          target: true,
+        })
+      );
 
       const failedChecks = checks.filter(c => !c.passed);
       const passed = failedChecks.length === 0;
@@ -424,17 +437,28 @@ export class BetaLaunchChecker {
   /**
    * Generate recommendations based on check results
    */
-  private generateRecommendations(checks: BetaReadinessReport['checks']): string[] {
+  private generateRecommendations(
+    checks: BetaReadinessReport['checks']
+  ): string[] {
     const recommendations: string[] = [];
 
     // Performance recommendations
     if (!checks.performance.passed) {
       const details = checks.performance.details as any;
-      if (details?.metrics?.avgResponseTime > this.config.performanceTargets.responseTime) {
-        recommendations.push('Optimize API response times - consider caching, query optimization, or CDN');
+      if (
+        details?.metrics?.avgResponseTime >
+        this.config.performanceTargets.responseTime
+      ) {
+        recommendations.push(
+          'Optimize API response times - consider caching, query optimization, or CDN'
+        );
       }
-      if (details?.metrics?.errorRate > this.config.performanceTargets.errorRate) {
-        recommendations.push('Reduce error rate - implement better error handling and validation');
+      if (
+        details?.metrics?.errorRate > this.config.performanceTargets.errorRate
+      ) {
+        recommendations.push(
+          'Reduce error rate - implement better error handling and validation'
+        );
       }
     }
 
@@ -442,17 +466,24 @@ export class BetaLaunchChecker {
     if (!checks.stability.passed) {
       const details = checks.stability.details as any;
       if (details?.bugCounts?.critical > 0) {
-        recommendations.push(`Fix ${details.bugCounts.critical} critical bugs before launch`);
+        recommendations.push(
+          `Fix ${details.bugCounts.critical} critical bugs before launch`
+        );
       }
-      if (details?.bugCounts?.high > this.config.stabilityRequirements.maxHighBugs) {
-        recommendations.push(`Resolve high priority bugs - currently ${details.bugCounts.high} open`);
+      if (
+        details?.bugCounts?.high > this.config.stabilityRequirements.maxHighBugs
+      ) {
+        recommendations.push(
+          `Resolve high priority bugs - currently ${details.bugCounts.high} open`
+        );
       }
     }
 
     // Feature recommendations
     if (!checks.features.passed) {
       const details = checks.features.details as any;
-      const missingCore = details?.coreFeatures?.total - details?.coreFeatures?.implemented;
+      const missingCore =
+        details?.coreFeatures?.total - details?.coreFeatures?.implemented;
       if (missingCore > 0) {
         recommendations.push(`Complete ${missingCore} remaining core features`);
       }
@@ -461,9 +492,14 @@ export class BetaLaunchChecker {
     // Testing recommendations
     if (!checks.testing.passed) {
       const details = checks.testing.details as any;
-      const coverage = (details?.metrics?.unitTestCoverage + details?.metrics?.integrationTestCoverage) / 2;
+      const coverage =
+        (details?.metrics?.unitTestCoverage +
+          details?.metrics?.integrationTestCoverage) /
+        2;
       if (coverage < this.config.testingRequirements.minCoverage) {
-        recommendations.push(`Increase test coverage from ${Math.round(coverage)}% to ${this.config.testingRequirements.minCoverage}%`);
+        recommendations.push(
+          `Increase test coverage from ${Math.round(coverage)}% to ${this.config.testingRequirements.minCoverage}%`
+        );
       }
     }
 
@@ -473,7 +509,7 @@ export class BetaLaunchChecker {
       const missing = Object.entries(details?.status || {})
         .filter(([_, enabled]) => !enabled)
         .map(([name]) => name);
-      
+
       if (missing.length > 0) {
         recommendations.push(`Enable monitoring for: ${missing.join(', ')}`);
       }
@@ -481,9 +517,15 @@ export class BetaLaunchChecker {
 
     // General recommendations
     if (recommendations.length === 0) {
-      recommendations.push('System is ready for beta launch! Consider setting up a gradual rollout plan.');
-      recommendations.push('Prepare beta user onboarding materials and support channels.');
-      recommendations.push('Set up alerts for critical metrics during beta period.');
+      recommendations.push(
+        'System is ready for beta launch! Consider setting up a gradual rollout plan.'
+      );
+      recommendations.push(
+        'Prepare beta user onboarding materials and support channels.'
+      );
+      recommendations.push(
+        'Set up alerts for critical metrics during beta period.'
+      );
     }
 
     return recommendations;
@@ -558,8 +600,12 @@ export class BetaLaunchChecker {
       });
     }
 
-    const overallRisk = risks.length === 0 ? 'low' :
-                       risks.some(r => r.severity === 'high') ? 'high' : 'medium';
+    const overallRisk =
+      risks.length === 0
+        ? 'low'
+        : risks.some(r => r.severity === 'high')
+          ? 'high'
+          : 'medium';
 
     return {
       overallRisk,

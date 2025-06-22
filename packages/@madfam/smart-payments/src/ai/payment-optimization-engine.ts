@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * AI-Powered Payment Optimization Engine
- * 
+ *
  * Advanced machine learning for payment routing, fraud detection, and conversion optimization
  */
 
@@ -211,16 +211,19 @@ export class PaymentOptimizationEngine {
   /**
    * Get AI-powered optimization recommendation
    */
-  async getOptimizationRecommendation(context: PaymentContext): Promise<OptimizationPrediction> {
+  async getOptimizationRecommendation(
+    context: PaymentContext
+  ): Promise<OptimizationPrediction> {
     return this.performanceMonitor.measure('mlPrediction', async () => {
       // Feature extraction
       const features = await this.extractFeatures(context);
-      
+
       // Run ML models
       const routingPrediction = await this.predictOptimalRouting(features);
       const fraudAssessment = await this.assessFraudRisk(features);
-      const conversionPrediction = await this.predictConversionLikelihood(features);
-      
+      const conversionPrediction =
+        await this.predictConversionLikelihood(features);
+
       // Combine predictions
       const recommendation = await this.combineModelOutputs(
         routingPrediction,
@@ -230,7 +233,10 @@ export class PaymentOptimizationEngine {
       );
 
       // Generate reasoning
-      const reasoning = await this.generateAIReasoning(features, recommendation);
+      const reasoning = await this.generateAIReasoning(
+        features,
+        recommendation
+      );
 
       return {
         recommendedGateway: recommendation.gateway,
@@ -253,9 +259,14 @@ export class PaymentOptimizationEngine {
   async detectFraud(context: PaymentContext): Promise<FraudDetectionResult> {
     return this.performanceMonitor.measure('fraudDetection', async () => {
       const features = await this.extractFraudFeatures(context);
-      
+
       // Ensemble of fraud detection models
-      const models = ['gradient_boosting', 'neural_network', 'isolation_forest', 'svm'];
+      const models = [
+        'gradient_boosting',
+        'neural_network',
+        'isolation_forest',
+        'svm',
+      ];
       const predictions = await Promise.all(
         models.map(model => this.runFraudModel(model, features))
       );
@@ -263,18 +274,22 @@ export class PaymentOptimizationEngine {
       // Combine predictions using weighted voting
       const fraudScore = this.combineModelPredictions(predictions);
       const fraudProbability = this.sigmoid(fraudScore);
-      
+
       // Extract risk factors
       const riskFactors = await this.identifyRiskFactors(features, fraudScore);
-      
+
       // Determine recommended action
-      const recommendedAction = this.determineRecommendedAction(fraudProbability);
-      
+      const recommendedAction =
+        this.determineRecommendedAction(fraudProbability);
+
       // Calculate confidence
       const confidence = this.calculatePredictionConfidence(predictions);
-      
+
       // Generate explanation
-      const explanation = this.generateFraudExplanation(riskFactors, fraudScore);
+      const explanation = this.generateFraudExplanation(
+        riskFactors,
+        fraudScore
+      );
 
       return {
         fraudScore: Math.round(fraudScore * 100),
@@ -291,36 +306,41 @@ export class PaymentOptimizationEngine {
   /**
    * Optimize payment flow for conversion
    */
-  async optimizeConversionFlow(context: PaymentContext): Promise<ConversionOptimization> {
-    return this.performanceMonitor.measure('conversionOptimization', async () => {
-      // Analyze current flow
-      const currentFlow = await this.analyzeCurrentFlow(context);
-      
-      // Generate optimization variants
-      const variants = await this.generateFlowVariants(currentFlow);
-      
-      // Predict impact of each variant
-      const variantPredictions = await Promise.all(
-        variants.map(variant => this.predictVariantImpact(variant, context))
-      );
-      
-      // Select best variant
-      const bestVariant = variantPredictions.reduce((best, current) => 
-        current.expectedImpact > best.expectedImpact ? current : best
-      );
-      
-      // Calculate test parameters
-      const testParams = this.calculateABTestParameters(bestVariant);
+  async optimizeConversionFlow(
+    context: PaymentContext
+  ): Promise<ConversionOptimization> {
+    return this.performanceMonitor.measure(
+      'conversionOptimization',
+      async () => {
+        // Analyze current flow
+        const currentFlow = await this.analyzeCurrentFlow(context);
 
-      return {
-        optimizedFlow: bestVariant.flow,
-        expectedLift: bestVariant.expectedImpact,
-        confidence: bestVariant.confidence,
-        testDuration: testParams.duration,
-        requiredSampleSize: testParams.sampleSize,
-        variants,
-      };
-    });
+        // Generate optimization variants
+        const variants = await this.generateFlowVariants(currentFlow);
+
+        // Predict impact of each variant
+        const variantPredictions = await Promise.all(
+          variants.map(variant => this.predictVariantImpact(variant, context))
+        );
+
+        // Select best variant
+        const bestVariant = variantPredictions.reduce((best, current) =>
+          current.expectedImpact > best.expectedImpact ? current : best
+        );
+
+        // Calculate test parameters
+        const testParams = this.calculateABTestParameters(bestVariant);
+
+        return {
+          optimizedFlow: bestVariant.flow,
+          expectedLift: bestVariant.expectedImpact,
+          confidence: bestVariant.confidence,
+          testDuration: testParams.duration,
+          requiredSampleSize: testParams.sampleSize,
+          variants,
+        };
+      }
+    );
   }
 
   /**
@@ -332,7 +352,7 @@ export class PaymentOptimizationEngine {
     primaryMetric: 'conversion_rate' | 'revenue' | 'fraud_rate'
   ): Promise<string> {
     const testId = this.generateTestId();
-    
+
     const test: ABTestResult = {
       testId,
       status: 'running',
@@ -371,10 +391,10 @@ export class PaymentOptimizationEngine {
     // Calculate statistical significance
     const significance = this.calculateStatisticalSignificance(test);
     const confidence = this.calculateConfidence(test);
-    
+
     // Determine winner
     const winner = this.determineWinner(test);
-    
+
     test.statisticalSignificance = significance;
     test.confidence = confidence;
     test.winner = winner;
@@ -387,17 +407,17 @@ export class PaymentOptimizationEngine {
    */
   async trainModels(trainingData: any[]): Promise<void> {
     this.trainingData.push(...trainingData);
-    
+
     // Retrain routing model
     if (this.config.enableMLRouting) {
       await this.trainRoutingModel();
     }
-    
+
     // Retrain fraud model
     if (this.config.enableFraudML) {
       await this.trainFraudModel();
     }
-    
+
     // Retrain conversion model
     if (this.config.enableConversionOptimization) {
       await this.trainConversionModel();
@@ -417,19 +437,28 @@ export class PaymentOptimizationEngine {
       accuracy: 0.92,
       lastTrained: new Date(),
       trainingDataPoints: 50000,
-      features: ['amount', 'country', 'card_type', 'time_of_day', 'merchant_category'],
+      features: [
+        'amount',
+        'country',
+        'card_type',
+        'time_of_day',
+        'merchant_category',
+      ],
       performance: {
         accuracy: 0.92,
         precision: 0.89,
         recall: 0.94,
         f1Score: 0.91,
         auc: 0.96,
-        confusionMatrix: [[8500, 500], [300, 700]],
+        confusionMatrix: [
+          [8500, 500],
+          [300, 700],
+        ],
         featureImportance: [
           { feature: 'amount', importance: 0.35 },
           { feature: 'country', importance: 0.28 },
-          { feature: 'card_type', importance: 0.20 },
-          { feature: 'time_of_day', importance: 0.10 },
+          { feature: 'card_type', importance: 0.2 },
+          { feature: 'time_of_day', importance: 0.1 },
           { feature: 'merchant_category', importance: 0.07 },
         ],
       },
@@ -443,18 +472,26 @@ export class PaymentOptimizationEngine {
       accuracy: 0.98,
       lastTrained: new Date(),
       trainingDataPoints: 100000,
-      features: ['velocity', 'geolocation', 'device_fingerprint', 'behavioral_score'],
+      features: [
+        'velocity',
+        'geolocation',
+        'device_fingerprint',
+        'behavioral_score',
+      ],
       performance: {
         accuracy: 0.98,
         precision: 0.95,
         recall: 0.93,
         f1Score: 0.94,
         auc: 0.99,
-        confusionMatrix: [[9500, 200], [100, 200]],
+        confusionMatrix: [
+          [9500, 200],
+          [100, 200],
+        ],
         featureImportance: [
-          { feature: 'velocity', importance: 0.40 },
+          { feature: 'velocity', importance: 0.4 },
           { feature: 'geolocation', importance: 0.25 },
-          { feature: 'device_fingerprint', importance: 0.20 },
+          { feature: 'device_fingerprint', importance: 0.2 },
           { feature: 'behavioral_score', importance: 0.15 },
         ],
       },
@@ -493,7 +530,7 @@ export class PaymentOptimizationEngine {
     const scores = gateways.map(() => Math.random());
     const maxScore = Math.max(...scores);
     const bestGatewayIndex = scores.indexOf(maxScore);
-    
+
     return {
       gateway: gateways[bestGatewayIndex],
       confidence: maxScore,
@@ -501,48 +538,79 @@ export class PaymentOptimizationEngine {
     };
   }
 
-  private async assessFraudRisk(features: any): Promise<{ fraudScore: number }> {
+  private async assessFraudRisk(
+    features: any
+  ): Promise<{ fraudScore: number }> {
     // Simulate fraud assessment
     let score = 0;
-    
+
     if (features.hasVPN) score += 0.3;
     if (features.riskScore > 0) score += 0.4;
     if (features.amount > 1000) score += 0.2;
-    
+
     return { fraudScore: Math.min(score, 1) };
   }
 
   private async predictConversionLikelihood(features: any): Promise<any> {
     // Simulate conversion prediction
     let likelihood = 0.85; // Base conversion rate
-    
+
     if (features.isWeekend) likelihood *= 0.95;
-    if (features.amount > 500) likelihood *= 0.90;
+    if (features.amount > 500) likelihood *= 0.9;
     if (features.hasVPN) likelihood *= 0.85;
-    
+
     return { likelihood, lift: 0 };
   }
 
-  private async combineModelOutputs(routing: any, fraud: any, conversion: any, context: PaymentContext): Promise<any> {
+  private async combineModelOutputs(
+    routing: any,
+    fraud: any,
+    conversion: any,
+    context: PaymentContext
+  ): Promise<any> {
     return {
       gateway: routing.gateway,
-      confidence: routing.confidence * (1 - fraud.fraudScore) * conversion.likelihood,
+      confidence:
+        routing.confidence * (1 - fraud.fraudScore) * conversion.likelihood,
       successProbability: routing.confidence * (1 - fraud.fraudScore),
       processingCost: { amount: 2.9, currency: 'USD', display: '$2.90' },
       conversionLift: conversion.lift,
       alternatives: [
-        { gateway: 'stripe', confidence: 0.85, tradeoffs: ['Higher fees', 'Better reliability'] },
-        { gateway: 'paypal', confidence: 0.78, tradeoffs: ['Brand trust', 'Higher fees'] },
+        {
+          gateway: 'stripe',
+          confidence: 0.85,
+          tradeoffs: ['Higher fees', 'Better reliability'],
+        },
+        {
+          gateway: 'paypal',
+          confidence: 0.78,
+          tradeoffs: ['Brand trust', 'Higher fees'],
+        },
       ],
     };
   }
 
-  private async generateAIReasoning(features: any, recommendation: any): Promise<AIReasoning> {
+  private async generateAIReasoning(
+    features: any,
+    recommendation: any
+  ): Promise<AIReasoning> {
     return {
       primaryFactors: [
-        { factor: 'Transaction amount', impact: 0.35, explanation: 'Large transactions favor more reliable gateways' },
-        { factor: 'Geographic location', impact: 0.28, explanation: 'Local payment preferences influence optimal routing' },
-        { factor: 'Fraud risk', impact: 0.25, explanation: 'Higher fraud risk requires more secure processing' },
+        {
+          factor: 'Transaction amount',
+          impact: 0.35,
+          explanation: 'Large transactions favor more reliable gateways',
+        },
+        {
+          factor: 'Geographic location',
+          impact: 0.28,
+          explanation: 'Local payment preferences influence optimal routing',
+        },
+        {
+          factor: 'Fraud risk',
+          impact: 0.25,
+          explanation: 'Higher fraud risk requires more secure processing',
+        },
       ],
       dataPoints: {
         historicalSuccessRate: 0.94,
@@ -550,7 +618,11 @@ export class PaymentOptimizationEngine {
         marketConditions: ['Normal processing times', 'Stable fraud rates'],
       },
       modelOutputs: [
-        { model: 'routing_v1', prediction: recommendation.gateway, confidence: 0.92 },
+        {
+          model: 'routing_v1',
+          prediction: recommendation.gateway,
+          confidence: 0.92,
+        },
         { model: 'fraud_v1', prediction: 'low_risk', confidence: 0.89 },
       ],
       riskAssessment: {
@@ -605,14 +677,19 @@ export class PaymentOptimizationEngine {
 
   private combineModelPredictions(predictions: number[]): number {
     // Weighted average of predictions
-    return predictions.reduce((sum, pred) => sum + pred, 0) / predictions.length;
+    return (
+      predictions.reduce((sum, pred) => sum + pred, 0) / predictions.length
+    );
   }
 
   private sigmoid(x: number): number {
     return 1 / (1 + Math.exp(-x));
   }
 
-  private async identifyRiskFactors(features: any, fraudScore: number): Promise<RiskFactor[]> {
+  private async identifyRiskFactors(
+    features: any,
+    fraudScore: number
+  ): Promise<RiskFactor[]> {
     return [
       {
         factor: 'Transaction velocity',
@@ -624,7 +701,9 @@ export class PaymentOptimizationEngine {
     ];
   }
 
-  private determineRecommendedAction(probability: number): 'approve' | 'review' | 'decline' | 'challenge' {
+  private determineRecommendedAction(
+    probability: number
+  ): 'approve' | 'review' | 'decline' | 'challenge' {
     if (probability < 0.1) return 'approve';
     if (probability < 0.3) return 'challenge';
     if (probability < 0.7) return 'review';
@@ -642,37 +721,71 @@ export class PaymentOptimizationEngine {
     return squaredDiffs.reduce((sum, sq) => sum + sq, 0) / numbers.length;
   }
 
-  private generateFraudExplanation(riskFactors: RiskFactor[], fraudScore: number): string {
+  private generateFraudExplanation(
+    riskFactors: RiskFactor[],
+    fraudScore: number
+  ): string {
     const topFactors = riskFactors
       .sort((a, b) => b.contribution - a.contribution)
       .slice(0, 3)
       .map(f => f.factor);
-    
+
     return `Fraud score of ${Math.round(fraudScore * 100)}% based primarily on: ${topFactors.join(', ')}`;
   }
 
-  private async analyzeCurrentFlow(context: PaymentContext): Promise<PaymentFlow> {
+  private async analyzeCurrentFlow(
+    context: PaymentContext
+  ): Promise<PaymentFlow> {
     return {
       steps: [
-        { step: 'Payment method selection', order: 1, completionRate: 0.95, averageTime: 15, optimizations: [] },
-        { step: 'Payment details', order: 2, completionRate: 0.87, averageTime: 45, optimizations: [] },
-        { step: 'Confirmation', order: 3, completionRate: 0.92, averageTime: 10, optimizations: [] },
+        {
+          step: 'Payment method selection',
+          order: 1,
+          completionRate: 0.95,
+          averageTime: 15,
+          optimizations: [],
+        },
+        {
+          step: 'Payment details',
+          order: 2,
+          completionRate: 0.87,
+          averageTime: 45,
+          optimizations: [],
+        },
+        {
+          step: 'Confirmation',
+          order: 3,
+          completionRate: 0.92,
+          averageTime: 10,
+          optimizations: [],
+        },
       ],
       estimatedCompletionRate: 0.76,
       averageCompletionTime: 70,
       dropoffPoints: [
-        { step: 'Payment details', dropoffRate: 0.13, reasons: ['Complex form', 'Security concerns'], optimizations: ['Simplify form', 'Add trust signals'] },
+        {
+          step: 'Payment details',
+          dropoffRate: 0.13,
+          reasons: ['Complex form', 'Security concerns'],
+          optimizations: ['Simplify form', 'Add trust signals'],
+        },
       ],
     };
   }
 
-  private async generateFlowVariants(currentFlow: PaymentFlow): Promise<FlowVariant[]> {
+  private async generateFlowVariants(
+    currentFlow: PaymentFlow
+  ): Promise<FlowVariant[]> {
     return [
       {
         id: 'variant_1',
         name: 'Simplified checkout',
         description: 'Reduce form fields and add progress indicator',
-        changes: ['Remove optional fields', 'Add progress bar', 'Inline validation'],
+        changes: [
+          'Remove optional fields',
+          'Add progress bar',
+          'Inline validation',
+        ],
         expectedImpact: 0.08,
         implementationCost: 5000,
       },
@@ -680,14 +793,21 @@ export class PaymentOptimizationEngine {
         id: 'variant_2',
         name: 'Express payment',
         description: 'Add one-click payment options',
-        changes: ['Apple Pay integration', 'Google Pay integration', 'Saved payment methods'],
+        changes: [
+          'Apple Pay integration',
+          'Google Pay integration',
+          'Saved payment methods',
+        ],
         expectedImpact: 0.15,
         implementationCost: 12000,
       },
     ];
   }
 
-  private async predictVariantImpact(variant: FlowVariant, context: PaymentContext): Promise<any> {
+  private async predictVariantImpact(
+    variant: FlowVariant,
+    context: PaymentContext
+  ): Promise<any> {
     return {
       flow: {} as PaymentFlow,
       expectedImpact: variant.expectedImpact,
@@ -695,7 +815,10 @@ export class PaymentOptimizationEngine {
     };
   }
 
-  private calculateABTestParameters(variant: any): { duration: number; sampleSize: number } {
+  private calculateABTestParameters(variant: any): {
+    duration: number;
+    sampleSize: number;
+  } {
     return {
       duration: 14, // days
       sampleSize: 1000, // minimum sample size per variant
@@ -716,10 +839,10 @@ export class PaymentOptimizationEngine {
   }
 
   private determineWinner(test: ABTestResult): string | undefined {
-    const bestVariant = test.variants.reduce((best, current) => 
+    const bestVariant = test.variants.reduce((best, current) =>
       current.conversionRate > best.conversionRate ? current : best
     );
-    
+
     return test.statisticalSignificance > 95 ? bestVariant.id : undefined;
   }
 

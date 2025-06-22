@@ -7,14 +7,10 @@ const packageJson = {
   name: '@madfam/smart-payments',
   main: 'dist/index.js',
   module: 'dist/index.esm.js',
-  types: 'dist/index.d.ts'
+  types: 'dist/index.d.ts',
 };
 
-const external = [
-  'react',
-  'react-dom',
-  'react/jsx-runtime'
-];
+const external = ['react', 'react-dom', 'react/jsx-runtime'];
 
 const entries = [
   'src/index.ts',
@@ -22,7 +18,7 @@ const entries = [
   'src/geo/index.ts',
   'src/routing/index.ts',
   'src/pricing/index.ts',
-  'src/performance/index.ts'
+  'src/performance/index.ts',
 ];
 
 export default [
@@ -34,36 +30,36 @@ export default [
         file: input.replace('src/', 'dist/').replace('.ts', '.js'),
         format: 'cjs',
         sourcemap: true,
-        exports: 'named'
+        exports: 'named',
       },
       {
         file: input.replace('src/', 'dist/').replace('.ts', '.esm.js'),
         format: 'esm',
-        sourcemap: true
-      }
+        sourcemap: true,
+      },
     ],
     plugins: [
       peerDepsExternal(),
       resolve({
-        extensions: ['.js', '.jsx', '.ts', '.tsx']
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
       }),
       esbuild({
         target: 'es2020',
         jsx: 'automatic',
-        tsconfig: './tsconfig.json'
-      })
+        tsconfig: './tsconfig.json',
+      }),
     ],
-    external
+    external,
   })),
-  
+
   // TypeScript declarations
   ...entries.map(input => ({
     input,
     output: {
       file: input.replace('src/', 'dist/').replace('.ts', '.d.ts'),
-      format: 'esm'
+      format: 'esm',
     },
     plugins: [dts()],
-    external: [/\.css$/]
-  }))
+    external: [/\.css$/],
+  })),
 ];

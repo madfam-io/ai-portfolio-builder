@@ -7,13 +7,17 @@ export interface RewardHistoryProps {
   className?: string;
 }
 
-export function RewardHistory({ userId, limit = 10, className = '' }: RewardHistoryProps) {
+export function RewardHistory({
+  userId,
+  limit = 10,
+  className = '',
+}: RewardHistoryProps) {
   const { rewards, totalEarnings, pendingRewards } = useReferral({ userId });
 
   return (
     <div className={`reward-history ${className}`}>
       <h3>Reward History</h3>
-      
+
       <div className="reward-summary">
         <div>
           <span>Total Earned:</span>
@@ -38,7 +42,9 @@ export function RewardHistory({ userId, limit = 10, className = '' }: RewardHist
           {rewards.slice(0, limit).map(reward => (
             <tr key={reward.id}>
               <td>{reward.type}</td>
-              <td>${reward.amount} {reward.currency}</td>
+              <td>
+                ${reward.amount} {reward.currency}
+              </td>
               <td className={`status-${reward.status}`}>{reward.status}</td>
               <td>{new Date(reward.created_at).toLocaleDateString()}</td>
             </tr>

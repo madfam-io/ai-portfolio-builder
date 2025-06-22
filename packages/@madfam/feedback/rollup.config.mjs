@@ -6,7 +6,9 @@ import peerDepsExternal from 'rollup-plugin-peer-deps-external';
 import { terser } from 'rollup-plugin-terser';
 import dts from 'rollup-plugin-dts';
 
-const packageJson = await import('./package.json', { assert: { type: 'json' } });
+const packageJson = await import('./package.json', {
+  assert: { type: 'json' },
+});
 
 const external = [
   ...Object.keys(packageJson.default.dependencies || {}),

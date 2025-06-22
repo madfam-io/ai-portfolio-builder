@@ -6,7 +6,10 @@ export interface ReferralDashboardProps {
   className?: string;
 }
 
-export function ReferralDashboard({ userId, className = '' }: ReferralDashboardProps) {
+export function ReferralDashboard({
+  userId,
+  className = '',
+}: ReferralDashboardProps) {
   const {
     stats,
     activeReferral,

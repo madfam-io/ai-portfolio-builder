@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Competitive Intelligence Engine
- * 
+ *
  * Real-time competitive analysis and market positioning for payment optimization
  */
 
@@ -191,14 +191,14 @@ export class CompetitiveIntelligenceEngine {
    */
   async generateCompetitiveAnalysis(): Promise<CompetitiveAdvantageReport> {
     await this.updateCompetitorData();
-    
+
     const keyDifferentiators = this.identifyKeyDifferentiators();
     const competitiveGaps = this.identifyCompetitiveGaps();
     const opportunities = this.identifyOpportunities();
     const threats = this.assessThreats();
     const strategicRecommendations = this.generateStrategicRecommendations();
     const marketPositioning = this.analyzeMarketPositioning();
-    
+
     const overallPosition = this.calculateOverallPosition();
 
     return {
@@ -215,7 +215,10 @@ export class CompetitiveIntelligenceEngine {
   /**
    * Get real-time competitive pricing intelligence
    */
-  async getCompetitivePricing(gateway: Gateway, transactionAmount: number): Promise<{
+  async getCompetitivePricing(
+    gateway: Gateway,
+    transactionAmount: number
+  ): Promise<{
     ourRate: number;
     competitorRates: Array<{
       competitor: string;
@@ -227,11 +230,13 @@ export class CompetitiveIntelligenceEngine {
   }> {
     const ourRate = this.getOurRate(gateway, transactionAmount);
     const competitorRates = await this.getCompetitorRates(transactionAmount);
-    
+
     const sortedRates = competitorRates.sort((a, b) => a.rate - b.rate);
     const lowestRate = sortedRates[0]?.rate || ourRate;
-    const averageRate = competitorRates.reduce((sum, comp) => sum + comp.rate, 0) / competitorRates.length;
-    
+    const averageRate =
+      competitorRates.reduce((sum, comp) => sum + comp.rate, 0) /
+      competitorRates.length;
+
     let marketPosition: 'lowest' | 'competitive' | 'premium';
     if (ourRate <= lowestRate * 1.02) {
       marketPosition = 'lowest';
@@ -240,10 +245,11 @@ export class CompetitiveIntelligenceEngine {
     } else {
       marketPosition = 'premium';
     }
-    
-    const recommendedAdjustment = marketPosition === 'premium' 
-      ? averageRate * 0.95 // Price 5% below average
-      : undefined;
+
+    const recommendedAdjustment =
+      marketPosition === 'premium'
+        ? averageRate * 0.95 // Price 5% below average
+        : undefined;
 
     return {
       ourRate,
@@ -276,7 +282,7 @@ export class CompetitiveIntelligenceEngine {
   }> {
     // Simulate real-time market monitoring
     // In production, this would integrate with various data sources
-    
+
     return {
       newEntrants: ['FinFlow', 'PaymentIQ', 'SwiftPay'],
       pricingChanges: [
@@ -290,7 +296,7 @@ export class CompetitiveIntelligenceEngine {
           competitor: 'PayPal',
           oldRate: 3.49,
           newRate: 3.29,
-          change: -0.20,
+          change: -0.2,
         },
       ],
       productUpdates: [
@@ -340,16 +346,34 @@ export class CompetitiveIntelligenceEngine {
         pricingModel: {
           standardRate: 2.9,
           internationalRate: 3.9,
-          fixedFee: 0.30,
+          fixedFee: 0.3,
           volumeDiscounts: [
-            { threshold: 80000, discount: 0.05, description: 'Volume discount for $80K+/month' },
+            {
+              threshold: 80000,
+              discount: 0.05,
+              description: 'Volume discount for $80K+/month',
+            },
           ],
           specialRates: [
-            { segment: 'enterprise', rate: 2.7, conditions: ['$1M+ annual volume', 'Custom contract'] },
+            {
+              segment: 'enterprise',
+              rate: 2.7,
+              conditions: ['$1M+ annual volume', 'Custom contract'],
+            },
           ],
           hiddenFees: [
-            { type: 'chargeback', amount: 15, description: 'Per chargeback fee', frequency: 'per_transaction' },
-            { type: 'currency_conversion', amount: 1, description: 'FX conversion fee', frequency: 'per_transaction' },
+            {
+              type: 'chargeback',
+              amount: 15,
+              description: 'Per chargeback fee',
+              frequency: 'per_transaction',
+            },
+            {
+              type: 'currency_conversion',
+              amount: 1,
+              description: 'FX conversion fee',
+              frequency: 'per_transaction',
+            },
           ],
         },
         technicalCapabilities: {
@@ -361,12 +385,39 @@ export class CompetitiveIntelligenceEngine {
           innovationIndex: 88,
           supportedCountries: 46,
           supportedCurrencies: 135,
-          advancedFeatures: ['Connect marketplace', 'Sigma analytics', 'Radar fraud detection'],
-          limitations: ['Limited white-label options', 'No built-in accounting integration'],
+          advancedFeatures: [
+            'Connect marketplace',
+            'Sigma analytics',
+            'Radar fraud detection',
+          ],
+          limitations: [
+            'Limited white-label options',
+            'No built-in accounting integration',
+          ],
         },
         customerSegments: [
-          { segment: 'Enterprise', penetration: 45, satisfaction: 89, churnRate: 8, averageRevenue: { amount: 50000, currency: 'USD', display: '$50,000' } },
-          { segment: 'SMB', penetration: 28, satisfaction: 85, churnRate: 15, averageRevenue: { amount: 2400, currency: 'USD', display: '$2,400' } },
+          {
+            segment: 'Enterprise',
+            penetration: 45,
+            satisfaction: 89,
+            churnRate: 8,
+            averageRevenue: {
+              amount: 50000,
+              currency: 'USD',
+              display: '$50,000',
+            },
+          },
+          {
+            segment: 'SMB',
+            penetration: 28,
+            satisfaction: 85,
+            churnRate: 15,
+            averageRevenue: {
+              amount: 2400,
+              currency: 'USD',
+              display: '$2,400',
+            },
+          },
         ],
         recentNews: [
           {
@@ -379,8 +430,20 @@ export class CompetitiveIntelligenceEngine {
           },
         ],
         marketTrends: [
-          { trend: 'API-first payments', direction: 'increasing', impact: 'high', timeframe: '2025-2027', confidence: 90 },
-          { trend: 'Embedded finance', direction: 'increasing', impact: 'high', timeframe: '2024-2026', confidence: 85 },
+          {
+            trend: 'API-first payments',
+            direction: 'increasing',
+            impact: 'high',
+            timeframe: '2025-2027',
+            confidence: 90,
+          },
+          {
+            trend: 'Embedded finance',
+            direction: 'increasing',
+            impact: 'high',
+            timeframe: '2024-2026',
+            confidence: 85,
+          },
         ],
         threatLevel: 'high',
       },
@@ -408,14 +471,32 @@ export class CompetitiveIntelligenceEngine {
           internationalRate: 4.99,
           fixedFee: 0.49,
           volumeDiscounts: [
-            { threshold: 3000, discount: 0.1, description: 'Reduced rate for $3K+/month' },
+            {
+              threshold: 3000,
+              discount: 0.1,
+              description: 'Reduced rate for $3K+/month',
+            },
           ],
           specialRates: [
-            { segment: 'nonprofit', rate: 2.2, conditions: ['Verified nonprofit status'] },
+            {
+              segment: 'nonprofit',
+              rate: 2.2,
+              conditions: ['Verified nonprofit status'],
+            },
           ],
           hiddenFees: [
-            { type: 'withdrawal', amount: 1, description: 'Instant transfer fee', frequency: 'per_transaction' },
-            { type: 'currency_conversion', amount: 2.5, description: 'FX conversion fee', frequency: 'per_transaction' },
+            {
+              type: 'withdrawal',
+              amount: 1,
+              description: 'Instant transfer fee',
+              frequency: 'per_transaction',
+            },
+            {
+              type: 'currency_conversion',
+              amount: 2.5,
+              description: 'FX conversion fee',
+              frequency: 'per_transaction',
+            },
           ],
         },
         technicalCapabilities: {
@@ -427,12 +508,35 @@ export class CompetitiveIntelligenceEngine {
           innovationIndex: 72,
           supportedCountries: 200,
           supportedCurrencies: 100,
-          advancedFeatures: ['PayPal Commerce Platform', 'Buy Now Pay Later', 'Cryptocurrency support'],
-          limitations: ['Limited API flexibility', 'Strict compliance requirements'],
+          advancedFeatures: [
+            'PayPal Commerce Platform',
+            'Buy Now Pay Later',
+            'Cryptocurrency support',
+          ],
+          limitations: [
+            'Limited API flexibility',
+            'Strict compliance requirements',
+          ],
         },
         customerSegments: [
-          { segment: 'SMB', penetration: 52, satisfaction: 79, churnRate: 18, averageRevenue: { amount: 1800, currency: 'USD', display: '$1,800' } },
-          { segment: 'Consumer', penetration: 67, satisfaction: 83, churnRate: 12, averageRevenue: { amount: 450, currency: 'USD', display: '$450' } },
+          {
+            segment: 'SMB',
+            penetration: 52,
+            satisfaction: 79,
+            churnRate: 18,
+            averageRevenue: {
+              amount: 1800,
+              currency: 'USD',
+              display: '$1,800',
+            },
+          },
+          {
+            segment: 'Consumer',
+            penetration: 67,
+            satisfaction: 83,
+            churnRate: 12,
+            averageRevenue: { amount: 450, currency: 'USD', display: '$450' },
+          },
         ],
         recentNews: [
           {
@@ -445,8 +549,20 @@ export class CompetitiveIntelligenceEngine {
           },
         ],
         marketTrends: [
-          { trend: 'Buy Now Pay Later', direction: 'increasing', impact: 'medium', timeframe: '2024-2025', confidence: 88 },
-          { trend: 'Cryptocurrency payments', direction: 'increasing', impact: 'medium', timeframe: '2025-2027', confidence: 75 },
+          {
+            trend: 'Buy Now Pay Later',
+            direction: 'increasing',
+            impact: 'medium',
+            timeframe: '2024-2025',
+            confidence: 88,
+          },
+          {
+            trend: 'Cryptocurrency payments',
+            direction: 'increasing',
+            impact: 'medium',
+            timeframe: '2025-2027',
+            confidence: 75,
+          },
         ],
         threatLevel: 'medium',
       },
@@ -494,30 +610,44 @@ export class CompetitiveIntelligenceEngine {
     return [
       {
         title: 'SMB Payment Optimization Market',
-        description: 'Underserved small-medium businesses need cost-effective payment optimization with business intelligence.',
+        description:
+          'Underserved small-medium businesses need cost-effective payment optimization with business intelligence.',
         marketSize: { amount: 2400000000, currency: 'USD', display: '$2.4B' },
         difficulty: 'medium',
         timeToCapture: 18,
         expectedRevenue: { amount: 50000000, currency: 'USD', display: '$50M' },
-        competitorVulnerability: ['High fees from incumbents', 'Limited SMB focus', 'No business intelligence'],
+        competitorVulnerability: [
+          'High fees from incumbents',
+          'Limited SMB focus',
+          'No business intelligence',
+        ],
       },
       {
         title: 'Enterprise White-Label Solutions',
-        description: 'Large enterprises want payment intelligence integrated into their existing platforms.',
+        description:
+          'Large enterprises want payment intelligence integrated into their existing platforms.',
         marketSize: { amount: 800000000, currency: 'USD', display: '$800M' },
         difficulty: 'high',
         timeToCapture: 24,
         expectedRevenue: { amount: 25000000, currency: 'USD', display: '$25M' },
-        competitorVulnerability: ['Limited white-label options', 'No business intelligence APIs'],
+        competitorVulnerability: [
+          'Limited white-label options',
+          'No business intelligence APIs',
+        ],
       },
       {
         title: 'Emerging Markets Expansion',
-        description: 'Growing payment processing needs in Southeast Asia, Africa, and Latin America.',
+        description:
+          'Growing payment processing needs in Southeast Asia, Africa, and Latin America.',
         marketSize: { amount: 1200000000, currency: 'USD', display: '$1.2B' },
         difficulty: 'high',
         timeToCapture: 36,
         expectedRevenue: { amount: 30000000, currency: 'USD', display: '$30M' },
-        competitorVulnerability: ['High fees', 'Limited local optimization', 'Poor customer service'],
+        competitorVulnerability: [
+          'High fees',
+          'Limited local optimization',
+          'Poor customer service',
+        ],
       },
     ];
   }
@@ -529,7 +659,8 @@ export class CompetitiveIntelligenceEngine {
     return [
       {
         title: 'Stripe AI Initiative',
-        description: 'Stripe is investing heavily in AI capabilities that could match our optimization features.',
+        description:
+          'Stripe is investing heavily in AI capabilities that could match our optimization features.',
         probability: 75,
         impact: 'high',
         timeframe: '12-18 months',
@@ -541,7 +672,8 @@ export class CompetitiveIntelligenceEngine {
       },
       {
         title: 'New Fintech Entrants',
-        description: 'Well-funded startups entering payment optimization space with similar value propositions.',
+        description:
+          'Well-funded startups entering payment optimization space with similar value propositions.',
         probability: 60,
         impact: 'medium',
         timeframe: '6-12 months',
@@ -553,7 +685,8 @@ export class CompetitiveIntelligenceEngine {
       },
       {
         title: 'Economic Downturn Impact',
-        description: 'Economic challenges could reduce SMB spending on optimization tools.',
+        description:
+          'Economic challenges could reduce SMB spending on optimization tools.',
         probability: 40,
         impact: 'medium',
         timeframe: '3-6 months',
@@ -574,10 +707,16 @@ export class CompetitiveIntelligenceEngine {
       {
         category: 'product',
         title: 'Accelerate AI Development',
-        description: 'Invest in advanced machine learning capabilities to maintain technological advantage over competitors.',
-        rationale: 'Competitors are investing heavily in AI. Need to stay ahead of curve.',
+        description:
+          'Invest in advanced machine learning capabilities to maintain technological advantage over competitors.',
+        rationale:
+          'Competitors are investing heavily in AI. Need to stay ahead of curve.',
         expectedImpact: 'Maintain 12-18 month technological lead',
-        implementationCost: { amount: 500000, currency: 'USD', display: '$500,000' },
+        implementationCost: {
+          amount: 500000,
+          currency: 'USD',
+          display: '$500,000',
+        },
         timeToImplement: 6,
         priority: 'critical',
         riskLevel: 'medium',
@@ -585,10 +724,16 @@ export class CompetitiveIntelligenceEngine {
       {
         category: 'partnerships',
         title: 'Build Channel Partner Network',
-        description: 'Establish partnerships with payment consultants, system integrators, and software vendors.',
-        rationale: 'Competitors have stronger channel presence. Need to build distribution network.',
+        description:
+          'Establish partnerships with payment consultants, system integrators, and software vendors.',
+        rationale:
+          'Competitors have stronger channel presence. Need to build distribution network.',
         expectedImpact: '3x customer acquisition through partners',
-        implementationCost: { amount: 200000, currency: 'USD', display: '$200,000' },
+        implementationCost: {
+          amount: 200000,
+          currency: 'USD',
+          display: '$200,000',
+        },
         timeToImplement: 9,
         priority: 'high',
         riskLevel: 'low',
@@ -596,10 +741,16 @@ export class CompetitiveIntelligenceEngine {
       {
         category: 'marketing',
         title: 'Industry Thought Leadership Campaign',
-        description: 'Establish market authority through research reports, speaking engagements, and media coverage.',
-        rationale: 'Need to build brand recognition and credibility against established competitors.',
+        description:
+          'Establish market authority through research reports, speaking engagements, and media coverage.',
+        rationale:
+          'Need to build brand recognition and credibility against established competitors.',
         expectedImpact: '50+ media mentions, 5+ conference presentations',
-        implementationCost: { amount: 150000, currency: 'USD', display: '$150,000' },
+        implementationCost: {
+          amount: 150000,
+          currency: 'USD',
+          display: '$150,000',
+        },
         timeToImplement: 12,
         priority: 'high',
         riskLevel: 'low',
@@ -627,14 +778,19 @@ export class CompetitiveIntelligenceEngine {
   /**
    * Calculate overall competitive position
    */
-  private calculateOverallPosition(): 'leader' | 'strong' | 'favorable' | 'challenged' {
+  private calculateOverallPosition():
+    | 'leader'
+    | 'strong'
+    | 'favorable'
+    | 'challenged' {
     // Based on market share, innovation, and differentiation
     const marketShareScore = 15; // Low market share
     const innovationScore = 90; // High innovation
     const differentiationScore = 85; // Strong differentiation
-    
-    const overallScore = (marketShareScore + innovationScore + differentiationScore) / 3;
-    
+
+    const overallScore =
+      (marketShareScore + innovationScore + differentiationScore) / 3;
+
     if (overallScore >= 80) return 'leader';
     if (overallScore >= 70) return 'strong';
     if (overallScore >= 60) return 'favorable';
@@ -655,22 +811,24 @@ export class CompetitiveIntelligenceEngine {
       payu: 2.65,
       custom: 2.45,
     };
-    
+
     // Apply volume discounts
     let rate = baseRates[gateway] || 2.65;
     if (amount > 10000) rate *= 0.95; // 5% volume discount
-    if (amount > 50000) rate *= 0.90; // Additional 10% volume discount
-    
+    if (amount > 50000) rate *= 0.9; // Additional 10% volume discount
+
     return rate;
   }
 
   /**
    * Get competitor rates for comparison
    */
-  private async getCompetitorRates(amount: number): Promise<Array<{
-    competitor: string;
-    rate: number;
-  }>> {
+  private async getCompetitorRates(amount: number): Promise<
+    Array<{
+      competitor: string;
+      rate: number;
+    }>
+  > {
     // In production, this would fetch real-time competitor pricing
     return [
       { competitor: 'Stripe', rate: 2.9 },
@@ -691,7 +849,7 @@ export class CompetitiveIntelligenceEngine {
     // - News APIs
     // - Financial data providers
     // - Customer feedback platforms
-    
+
     this.lastUpdate = new Date();
   }
 }

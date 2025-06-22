@@ -21,16 +21,14 @@ async function basicExample() {
   try {
     // 1. Create a referral
     console.log('Creating referral...');
-    const { referral, share_url, share_code } = await referralEngine.createReferral(
-      userId,
-      {
+    const { referral, share_url, share_code } =
+      await referralEngine.createReferral(userId, {
         campaign_id: 'default-campaign',
         metadata: {
           source: 'dashboard',
           user_tier: 'premium',
         },
-      }
-    );
+      });
 
     console.log('Referral created:');
     console.log(`- Code: ${share_code}`);
@@ -83,7 +81,9 @@ async function basicExample() {
     console.log(`- Total referrals: ${stats.total_referrals}`);
     console.log(`- Successful: ${stats.successful_referrals}`);
     console.log(`- Total earned: $${stats.total_rewards_earned}`);
-    console.log(`- Conversion rate: ${(stats.conversion_rate * 100).toFixed(2)}%`);
+    console.log(
+      `- Conversion rate: ${(stats.conversion_rate * 100).toFixed(2)}%`
+    );
 
     // 5. Get active campaigns
     console.log('\nFetching active campaigns...');
@@ -92,10 +92,13 @@ async function basicExample() {
     console.log(`Found ${campaigns.length} active campaigns:`);
     campaigns.forEach(campaign => {
       console.log(`- ${campaign.name} (${campaign.type})`);
-      console.log(`  Referrer reward: ${campaign.referrer_reward.type} - $${campaign.referrer_reward.amount}`);
-      console.log(`  Referee reward: ${campaign.referee_reward.type} - $${campaign.referee_reward.amount}`);
+      console.log(
+        `  Referrer reward: ${campaign.referrer_reward.type} - $${campaign.referrer_reward.amount}`
+      );
+      console.log(
+        `  Referee reward: ${campaign.referee_reward.type} - $${campaign.referee_reward.amount}`
+      );
     });
-
   } catch (error) {
     console.error('Error:', error);
   }

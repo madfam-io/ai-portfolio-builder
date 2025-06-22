@@ -1,8 +1,8 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
@@ -11,10 +11,10 @@
  * Tests for performance monitoring system
  */
 
-import { 
-  PerformanceMonitor, 
-  globalPerformanceMonitor, 
-  measurePerformance 
+import {
+  PerformanceMonitor,
+  globalPerformanceMonitor,
+  measurePerformance,
 } from '../../performance/performance-monitor';
 
 describe('PerformanceMonitor', () => {
@@ -35,31 +35,33 @@ describe('PerformanceMonitor', () => {
   describe('Timer operations', () => {
     it('should measure operation duration', async () => {
       monitor.startTimer('testOperation');
-      
+
       await new Promise(resolve => setTimeout(resolve, 100));
-      
+
       const duration = monitor.endTimer('testOperation');
-      
+
       expect(duration).toBeGreaterThanOrEqual(100);
       expect(duration).toBeLessThan(150);
     });
 
     it('should handle missing timer gracefully', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-      
+
       const duration = monitor.endTimer('nonExistentTimer');
-      
+
       expect(duration).toBe(0);
-      expect(consoleSpy).toHaveBeenCalledWith('Timer nonExistentTimer was not started');
-      
+      expect(consoleSpy).toHaveBeenCalledWith(
+        'Timer nonExistentTimer was not started'
+      );
+
       consoleSpy.mockRestore();
     });
 
     it('should record metrics with tags', () => {
       monitor.startTimer('apiCall');
-      const duration = monitor.endTimer('apiCall', { 
-        endpoint: '/users', 
-        method: 'GET' 
+      const duration = monitor.endTimer('apiCall', {
+        endpoint: '/users',
+        method: 'GET',
       });
 
       const report = monitor.generateReport(1);
@@ -69,16 +71,16 @@ describe('PerformanceMonitor', () => {
 
     it('should warn when threshold exceeded', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
-      
+
       monitor.startTimer('binLookup');
       // Simulate slow operation
       jest.advanceTimersByTime(100);
       monitor.endTimer('binLookup');
-      
+
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining('Performance warning: binLookup')
       );
-      
+
       consoleSpy.mockRestore();
     });
   });
@@ -91,9 +93,9 @@ describe('PerformanceMonitor', () => {
       };
 
       const result = await monitor.measure('asyncOp', asyncOperation);
-      
+
       expect(result).toBe('result');
-      
+
       const report = monitor.generateReport(1);
       expect(report.metrics.asyncOp).toBeDefined();
       expect(report.metrics.asyncOp.count).toBe(1);
@@ -115,11 +117,10 @@ describe('PerformanceMonitor', () => {
     });
 
     it('should pass tags to metrics', async () => {
-      await monitor.measure(
-        'taggedOp',
-        async () => 'result',
-        { service: 'payment', region: 'us-east' }
-      );
+      await monitor.measure('taggedOp', async () => 'result', {
+        service: 'payment',
+        region: 'us-east',
+      });
 
       const report = monitor.generateReport(1);
       expect(report.metrics.taggedOp).toBeDefined();
@@ -187,7 +188,7 @@ describe('PerformanceMonitor', () => {
 
       expect(report.period.start).toBeInstanceOf(Date);
       expect(report.period.end).toBeInstanceOf(Date);
-      
+
       expect(report.metrics.processPayment).toMatchObject({
         count: 1,
         average: expect.any(Number),
@@ -258,7 +259,7 @@ describe('PerformanceMonitor', () => {
     it('should detect high variance', async () => {
       // Operations with high variance
       const durations = [10, 15, 12, 200, 11, 13, 250, 14];
-      
+
       for (const duration of durations) {
         monitor.startTimer('variantOp');
         await new Promise(resolve => setTimeout(resolve, duration));
@@ -266,7 +267,7 @@ describe('PerformanceMonitor', () => {
       }
 
       const report = monitor.generateReport(1);
-      
+
       expect(report.recommendations).toContainEqual(
         expect.stringContaining('High variance in variantOp performance')
       );
@@ -275,7 +276,7 @@ describe('PerformanceMonitor', () => {
     it('should calculate percentiles correctly', () => {
       // Record metrics with known distribution
       const values = [10, 20, 30, 40, 50, 60, 70, 80, 90, 100];
-      
+
       values.forEach(value => {
         monitor.recordMetric({
           name: 'test',
@@ -285,7 +286,7 @@ describe('PerformanceMonitor', () => {
       });
 
       const report = monitor.generateReport(1);
-      
+
       expect(report.metrics.test.p50).toBe(60);
       expect(report.metrics.test.p95).toBe(100);
       expect(report.metrics.test.p99).toBe(100);
@@ -307,7 +308,7 @@ describe('PerformanceMonitor', () => {
       });
 
       const stats = monitor.getRealtimeStats();
-      
+
       expect(stats.operation1_avg).toBeCloseTo(15, 0);
       expect(stats.operation1_count).toBe(2);
       expect(stats.operation2_avg).toBeCloseTo(30, 0);
@@ -330,7 +331,7 @@ describe('PerformanceMonitor', () => {
       });
 
       const stats = monitor.getRealtimeStats();
-      
+
       expect(stats.oldMetric_avg).toBeUndefined();
       expect(stats.recentMetric_avg).toBe(50);
     });
@@ -346,7 +347,7 @@ describe('PerformanceMonitor', () => {
 
       const exported = monitor.exportMetrics('json');
       const parsed = JSON.parse(exported);
-      
+
       expect(parsed).toBeInstanceOf(Array);
       expect(parsed[0]).toMatchObject({
         name: 'test',
@@ -369,9 +370,13 @@ describe('PerformanceMonitor', () => {
       });
 
       const exported = monitor.exportMetrics('prometheus');
-      
-      expect(exported).toContain('# HELP smart_payments_api_latency_milliseconds');
-      expect(exported).toContain('# TYPE smart_payments_api_latency_milliseconds histogram');
+
+      expect(exported).toContain(
+        '# HELP smart_payments_api_latency_milliseconds'
+      );
+      expect(exported).toContain(
+        '# TYPE smart_payments_api_latency_milliseconds histogram'
+      );
       expect(exported).toContain('smart_payments_api_latency_milliseconds 150');
       expect(exported).toContain('smart_payments_api_latency_milliseconds 200');
     });
@@ -390,7 +395,7 @@ describe('PerformanceMonitor', () => {
 
       const report = monitor.generateReport(1);
       expect(Object.keys(report.metrics)).toHaveLength(0);
-      
+
       // Timer should be cleared
       const duration = monitor.endTimer('timer1');
       expect(duration).toBe(0);
@@ -418,24 +423,26 @@ describe('Performance decorator', () => {
 
   it('should measure decorated methods', async () => {
     const service = new TestService();
-    
+
     const result = await service.slowOperation();
-    
+
     expect(result).toBe('completed');
-    
+
     const report = globalPerformanceMonitor.generateReport(1);
     expect(report.metrics['TestService.slowOperation']).toBeDefined();
     expect(report.metrics['TestService.slowOperation'].count).toBe(1);
-    expect(report.metrics['TestService.slowOperation'].average).toBeGreaterThanOrEqual(100);
+    expect(
+      report.metrics['TestService.slowOperation'].average
+    ).toBeGreaterThanOrEqual(100);
   });
 
   it('should use custom metric name', async () => {
     const service = new TestService();
-    
+
     const result = await service.fastOperation();
-    
+
     expect(result).toBe(42);
-    
+
     const report = globalPerformanceMonitor.generateReport(1);
     expect(report.metrics.customName).toBeDefined();
     expect(report.metrics.customName.count).toBe(1);

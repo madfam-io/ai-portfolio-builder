@@ -1,16 +1,16 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -49,7 +49,7 @@ export class RequestBatcher<TRequest = any, TResponse = any> {
    */
   async add(request: TRequest): Promise<TResponse> {
     return new Promise((resolve, reject) => {
-      const key = this.config.keyExtractor 
+      const key = this.config.keyExtractor
         ? this.config.keyExtractor(request)
         : JSON.stringify(request);
 
@@ -118,7 +118,7 @@ export class RequestBatcher<TRequest = any, TResponse = any> {
       // Resolve promises
       uniqueBatch.forEach((item, index) => {
         const response = responses[index];
-        
+
         if (this.config.enableDeduplication) {
           const duplicates = this.duplicateMap.get(item.key) || [];
           duplicates.forEach(dup => dup.resolve(response));
@@ -154,7 +154,9 @@ export class RequestBatcher<TRequest = any, TResponse = any> {
   /**
    * Remove duplicate requests from batch
    */
-  private deduplicateBatch(batch: BatchRequest<TRequest>[]): BatchRequest<TRequest>[] {
+  private deduplicateBatch(
+    batch: BatchRequest<TRequest>[]
+  ): BatchRequest<TRequest>[] {
     const seen = new Set<string>();
     return batch.filter(item => {
       if (seen.has(item.key)) {
@@ -240,14 +242,12 @@ export class BatcherFactory {
   /**
    * Create generic API batcher
    */
-  static createAPIBatcher<T, R>(
-    config: {
-      endpoint: string;
-      maxBatchSize?: number;
-      maxWaitTime?: number;
-      headers?: Record<string, string>;
-    }
-  ): RequestBatcher<T, R> {
+  static createAPIBatcher<T, R>(config: {
+    endpoint: string;
+    maxBatchSize?: number;
+    maxWaitTime?: number;
+    headers?: Record<string, string>;
+  }): RequestBatcher<T, R> {
     return new RequestBatcher({
       maxBatchSize: config.maxBatchSize || 25,
       maxWaitTime: config.maxWaitTime || 100,

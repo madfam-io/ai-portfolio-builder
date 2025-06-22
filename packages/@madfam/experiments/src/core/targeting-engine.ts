@@ -24,7 +24,10 @@ export class TargetingEngine {
 
     // Check percentage targeting
     if (rules.percentage !== undefined && rules.percentage < 100) {
-      const inPercentage = this.isInPercentage(userContext.userId, rules.percentage);
+      const inPercentage = this.isInPercentage(
+        userContext.userId,
+        rules.percentage
+      );
       if (!inPercentage) return false;
     }
 
@@ -36,13 +39,19 @@ export class TargetingEngine {
 
     // Check audiences
     if (rules.audiences && rules.audiences.length > 0) {
-      const inAudience = await this.evaluateAudiences(rules.audiences, userContext);
+      const inAudience = await this.evaluateAudiences(
+        rules.audiences,
+        userContext
+      );
       if (!inAudience) return false;
     }
 
     // Check conditions
     if (rules.conditions && rules.conditions.length > 0) {
-      const meetsConditions = this.evaluateConditions(rules.conditions, userContext);
+      const meetsConditions = this.evaluateConditions(
+        rules.conditions,
+        userContext
+      );
       if (!meetsConditions) return false;
     }
 
@@ -55,7 +64,7 @@ export class TargetingEngine {
   private isInPercentage(userId: string, percentage: number): boolean {
     // Simple hash-based percentage check
     const hash = this.hashUserId(userId);
-    return (hash % 100) < percentage;
+    return hash % 100 < percentage;
   }
 
   /**

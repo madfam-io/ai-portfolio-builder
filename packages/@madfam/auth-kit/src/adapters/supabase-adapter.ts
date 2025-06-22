@@ -82,10 +82,7 @@ export class SupabaseAdapter extends BaseAdapter {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  getMFASecret(
-    _userId: string,
-    _method: MFAMethod
-  ): Promise<string | null> {
+  getMFASecret(_userId: string, _method: MFAMethod): Promise<string | null> {
     throw new Error('Supabase adapter not yet implemented');
   }
 
@@ -112,10 +109,7 @@ export class SupabaseAdapter extends BaseAdapter {
     throw new Error('Supabase adapter not yet implemented');
   }
 
-  deleteAccountLink(
-    _userId: string,
-    _provider: AuthProvider
-  ): Promise<void> {
+  deleteAccountLink(_userId: string, _provider: AuthProvider): Promise<void> {
     throw new Error('Supabase adapter not yet implemented');
   }
 }

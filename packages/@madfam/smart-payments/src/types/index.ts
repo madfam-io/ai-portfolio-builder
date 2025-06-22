@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * @madfam/smart-payments - Core type definitions
- * 
+ *
  * Comprehensive type system for payment gateway detection and routing
  */
 
@@ -51,7 +51,7 @@ export interface CardFeatures {
   maxInstallments?: number;
 }
 
-export type CardBrand = 
+export type CardBrand =
   | 'visa'
   | 'mastercard'
   | 'amex'
@@ -66,7 +66,7 @@ export type CardBrand =
 export type CardType = 'credit' | 'debit' | 'prepaid' | 'unknown';
 
 // Gateway types
-export type Gateway = 
+export type Gateway =
   | 'stripe'
   | 'mercadopago'
   | 'lemonsqueezy'
@@ -358,7 +358,11 @@ export interface AnalyticsConfig {
 
 // Analytics types
 export interface AnalyticsEvent {
-  type: 'gateway_selected' | 'pricing_displayed' | 'fraud_detected' | 'edge_case';
+  type:
+    | 'gateway_selected'
+    | 'pricing_displayed'
+    | 'fraud_detected'
+    | 'edge_case';
   timestamp: Date;
   data: Record<string, any>;
 }

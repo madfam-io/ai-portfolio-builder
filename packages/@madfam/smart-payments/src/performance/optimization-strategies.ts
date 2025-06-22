@@ -1,16 +1,16 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -50,7 +50,7 @@ export class ConnectionPool {
    */
   async getConnection(key: string, factory: () => Promise<any>): Promise<any> {
     const existing = this.connections.get(key);
-    
+
     if (existing && existing.isValid()) {
       return existing;
     }
@@ -126,7 +126,7 @@ export class LazyLoader<T> {
    */
   async get(): Promise<T> {
     const now = Date.now();
-    
+
     // Check if value is still valid
     if (this.value && now - this.lastAccess < this.ttl) {
       this.lastAccess = now;
@@ -140,7 +140,7 @@ export class LazyLoader<T> {
 
     // Load value
     this.loading = this.loader();
-    
+
     try {
       this.value = await this.loading;
       this.lastAccess = now;
@@ -190,7 +190,7 @@ export class DataPreloader {
   async preload(patterns: string[]): Promise<void> {
     const promises = patterns.map(async pattern => {
       const loader = this.patterns.get(pattern);
-      
+
       if (loader) {
         try {
           const data = await loader();
@@ -207,7 +207,9 @@ export class DataPreloader {
   /**
    * Preload common BINs
    */
-  async preloadCommonBINs(binLookup: (bin: string) => Promise<any>): Promise<void> {
+  async preloadCommonBINs(
+    binLookup: (bin: string) => Promise<any>
+  ): Promise<void> {
     const commonBINs = [
       '411111', // Visa test
       '555555', // Mastercard test
@@ -230,7 +232,9 @@ export class DataPreloader {
   /**
    * Preload common countries
    */
-  async preloadCommonCountries(geoLookup: (country: string) => Promise<any>): Promise<void> {
+  async preloadCommonCountries(
+    geoLookup: (country: string) => Promise<any>
+  ): Promise<void> {
     const commonCountries = ['US', 'BR', 'MX', 'IN', 'GB', 'CA', 'AU'];
 
     await Promise.all(
@@ -251,7 +255,7 @@ export class CompressionUtils {
    */
   static compress(data: any): string {
     const json = JSON.stringify(data);
-    
+
     // Simple compression by removing whitespace
     const compressed = json
       .replace(/\s+/g, ' ')
@@ -261,7 +265,7 @@ export class CompressionUtils {
       .replace(/\s*}\s*/g, '}')
       .replace(/\s*\[\s*/g, '[')
       .replace(/\s*\]\s*/g, ']');
-    
+
     return compressed;
   }
 
@@ -304,7 +308,7 @@ export class QueryOptimizer {
    */
   async query(sql: string, params?: any[]): Promise<any> {
     const cacheKey = `${sql}:${JSON.stringify(params || [])}`;
-    
+
     // Check cache
     const cached = this.queryCache.get(cacheKey);
     if (cached) {
@@ -313,10 +317,10 @@ export class QueryOptimizer {
 
     // Execute query
     const result = await this.queryBatcher.add({ sql, params });
-    
+
     // Cache result
     this.queryCache.set(cacheKey, result);
-    
+
     // Limit cache size
     if (this.queryCache.size > 1000) {
       const firstKey = this.queryCache.keys().next().value;
@@ -353,7 +357,7 @@ export class OptimizationManager {
 
   constructor(config: OptimizationConfig) {
     this.config = config;
-    
+
     this.cache = new CacheManager({
       maxSize: 50 * 1024 * 1024, // 50MB
       maxEntries: 10000,

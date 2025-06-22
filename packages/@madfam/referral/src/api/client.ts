@@ -52,7 +52,9 @@ export class ReferralAPIClient {
 
     if (!response.ok) {
       const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || `Request failed: ${response.statusText}`);
+      throw new Error(
+        error.message || `Request failed: ${response.statusText}`
+      );
     }
 
     return response.json();
@@ -121,10 +123,12 @@ export class ReferralAPIClient {
   }
 
   // Leaderboard
-  async getLeaderboard(params: {
-    period?: 'daily' | 'weekly' | 'monthly' | 'all-time';
-    limit?: number;
-  } = {}): Promise<any[]> {
+  async getLeaderboard(
+    params: {
+      period?: 'daily' | 'weekly' | 'monthly' | 'all-time';
+      limit?: number;
+    } = {}
+  ): Promise<any[]> {
     const queryParams = new URLSearchParams(params as any);
     return this.request(`/referral/leaderboard?${queryParams}`);
   }

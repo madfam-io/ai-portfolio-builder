@@ -38,16 +38,16 @@ export class AnalyticsEngine {
     if (!this.enabled) return;
 
     const experimentId = event.experimentId || event.flagKey || '';
-    
+
     switch (event.type) {
       case 'exposure':
         this.addEvent(this.events.exposures, experimentId, event);
         break;
-      
+
       case 'conversion':
         this.addEvent(this.events.conversions, experimentId, event);
         break;
-      
+
       case 'metric':
         this.addEvent(this.events.metrics, experimentId, event);
         break;
@@ -63,11 +63,14 @@ export class AnalyticsEngine {
     const metrics = this.events.metrics.get(experiment.id) || [];
 
     // Group events by variation
-    const variationData = new Map<string, {
-      exposures: ExperimentEvent[];
-      conversions: ExperimentEvent[];
-      metrics: ExperimentEvent[];
-    }>();
+    const variationData = new Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >();
 
     // Initialize variation data
     for (const variation of experiment.variations) {
@@ -109,7 +112,8 @@ export class AnalyticsEngine {
 
     // Calculate results for each variation
     const variationResults: VariationResults[] = [];
-    const controlVariation = experiment.variations.find(v => v.isControl) || experiment.variations[0];
+    const controlVariation =
+      experiment.variations.find(v => v.isControl) || experiment.variations[0];
 
     for (const variation of experiment.variations) {
       const data = variationData.get(variation.id)!;
@@ -125,7 +129,9 @@ export class AnalyticsEngine {
           experiment,
           variation.id,
           data,
-          controlVariation.id === variation.id ? null : variationData.get(controlVariation.id)
+          controlVariation.id === variation.id
+            ? null
+            : variationData.get(controlVariation.id)
         ),
       };
 
@@ -168,7 +174,8 @@ export class AnalyticsEngine {
       switch (metric.type) {
         case 'conversion':
           sampleSize = data.exposures.length;
-          value = sampleSize > 0 ? (data.conversions.length / sampleSize) * 100 : 0;
+          value =
+            sampleSize > 0 ? (data.conversions.length / sampleSize) * 100 : 0;
           break;
 
         case 'revenue':
@@ -205,11 +212,12 @@ export class AnalyticsEngine {
       }
 
       // Calculate statistics
-      const { standardError, pValue, uplift, significant } = this.calculateStatistics(
-        value,
-        sampleSize,
-        controlData ? this.getControlValue(controlData, metric) : null
-      );
+      const { standardError, pValue, uplift, significant } =
+        this.calculateStatistics(
+          value,
+          sampleSize,
+          controlData ? this.getControlValue(controlData, metric) : null
+        );
 
       results.push({
         metricId: metric.id,
@@ -228,12 +236,14 @@ export class AnalyticsEngine {
   /**
    * Get control value for comparison
    */
-  private getControlValue(controlData: any, metric: any): { value: number; sampleSize: number } {
+  private getControlValue(
+    controlData: any,
+    metric: any
+  ): { value: number; sampleSize: number } {
     // Simplified - in production would match the metric calculation logic
     const sampleSize = controlData.exposures.length;
-    const conversionRate = sampleSize > 0 
-      ? (controlData.conversions.length / sampleSize) * 100 
-      : 0;
+    const conversionRate =
+      sampleSize > 0 ? (controlData.conversions.length / sampleSize) * 100 : 0;
 
     return { value: conversionRate, sampleSize };
   }
@@ -263,7 +273,7 @@ export class AnalyticsEngine {
     // Calculate standard error (simplified)
     const treatmentRate = treatmentValue / 100;
     const controlRate = control.value / 100;
-    
+
     const treatmentSE = Math.sqrt(
       (treatmentRate * (1 - treatmentRate)) / treatmentSize
     );
@@ -279,9 +289,8 @@ export class AnalyticsEngine {
     const pValue = 2 * (1 - this.normalCDF(Math.abs(zScore)));
 
     // Calculate uplift
-    const uplift = controlRate > 0 
-      ? ((treatmentRate - controlRate) / controlRate) * 100
-      : 0;
+    const uplift =
+      controlRate > 0 ? ((treatmentRate - controlRate) / controlRate) * 100 : 0;
 
     // Check significance at 95% confidence
     const significant = pValue < 0.05;
@@ -309,7 +318,9 @@ export class AnalyticsEngine {
     z = Math.abs(z) / Math.sqrt(2.0);
 
     const t = 1.0 / (1.0 + p * z);
-    const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
+    const y =
+      1.0 -
+      ((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t * Math.exp(-z * z);
 
     return 0.5 * (1.0 + sign * y);
   }
@@ -342,8 +353,14 @@ export class AnalyticsEngine {
     let isSignificant = false;
 
     for (const result of results) {
-      const metricResult = result.metrics.find(m => m.metricId === primaryMetric.id);
-      if (metricResult && metricResult.significant && metricResult.uplift! > bestUplift) {
+      const metricResult = result.metrics.find(
+        m => m.metricId === primaryMetric.id
+      );
+      if (
+        metricResult &&
+        metricResult.significant &&
+        metricResult.uplift! > bestUplift
+      ) {
         bestVariation = result.variationId;
         bestUplift = metricResult.uplift!;
         isSignificant = true;

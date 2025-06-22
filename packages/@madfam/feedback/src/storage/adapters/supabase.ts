@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -30,7 +30,7 @@ import { BaseStorageAdapter } from './interface';
 
 /**
  * Supabase Storage Adapter
- * 
+ *
  * Production-ready storage adapter using Supabase PostgreSQL
  */
 export class SupabaseStorageAdapter extends BaseStorageAdapter {
@@ -43,7 +43,7 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     tablePrefix?: string;
   }) {
     super(config);
-    
+
     if (!config.supabaseUrl || !config.supabaseKey) {
       throw new StorageError('Supabase URL and key are required');
     }
@@ -71,7 +71,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       .single();
 
     if (error) {
-      throw new StorageError(`Failed to create feedback: ${error.message}`, { error });
+      throw new StorageError(`Failed to create feedback: ${error.message}`, {
+        error,
+      });
     }
 
     return this.mapFeedbackFromDb(data);
@@ -86,7 +88,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
 
     if (error) {
       if (error.code === 'PGRST116') return null; // Not found
-      throw new StorageError(`Failed to get feedback: ${error.message}`, { error });
+      throw new StorageError(`Failed to get feedback: ${error.message}`, {
+        error,
+      });
     }
 
     return data ? this.mapFeedbackFromDb(data) : null;
@@ -95,7 +99,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
   async listFeedback(
     filter?: FeedbackFilter
   ): Promise<PaginatedResponse<FeedbackEntry>> {
-    let query = this.supabase.from(`${this.tablePrefix}entries`).select('*', { count: 'exact' });
+    let query = this.supabase
+      .from(`${this.tablePrefix}entries`)
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (filter?.type) query = query.eq('type', filter.type);
@@ -103,7 +109,7 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     if (filter?.status) query = query.eq('status', filter.status);
     if (filter?.userId) query = query.eq('user_id', filter.userId);
     if (filter?.category) query = query.eq('category', filter.category);
-    
+
     if (filter?.tags && filter.tags.length > 0) {
       query = query.contains('tags', filter.tags);
     }
@@ -115,8 +121,11 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     }
 
     // Sorting
-    const sortColumn = filter?.sortBy === 'date' ? 'timestamp' : filter?.sortBy || 'timestamp';
-    query = query.order(sortColumn, { ascending: filter?.sortOrder !== 'desc' });
+    const sortColumn =
+      filter?.sortBy === 'date' ? 'timestamp' : filter?.sortBy || 'timestamp';
+    query = query.order(sortColumn, {
+      ascending: filter?.sortOrder !== 'desc',
+    });
 
     // Pagination
     const limit = filter?.limit || 20;
@@ -126,7 +135,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new StorageError(`Failed to list feedback: ${error.message}`, { error });
+      throw new StorageError(`Failed to list feedback: ${error.message}`, {
+        error,
+      });
     }
 
     return {
@@ -151,14 +162,14 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     updates: Partial<FeedbackEntry>
   ): Promise<FeedbackEntry> {
     const dbUpdates: any = {};
-    
+
     // Map fields to database columns
     if (updates.status !== undefined) dbUpdates.status = updates.status;
     if (updates.severity !== undefined) dbUpdates.severity = updates.severity;
     if (updates.category !== undefined) dbUpdates.category = updates.category;
     if (updates.tags !== undefined) dbUpdates.tags = updates.tags;
     if (updates.metadata !== undefined) dbUpdates.metadata = updates.metadata;
-    
+
     const { data, error } = await this.supabase
       .from(`${this.tablePrefix}entries`)
       .update(dbUpdates)
@@ -167,7 +178,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       .single();
 
     if (error) {
-      throw new StorageError(`Failed to update feedback: ${error.message}`, { error });
+      throw new StorageError(`Failed to update feedback: ${error.message}`, {
+        error,
+      });
     }
 
     return this.mapFeedbackFromDb(data);
@@ -180,7 +193,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       .eq('id', id);
 
     if (error) {
-      throw new StorageError(`Failed to delete feedback: ${error.message}`, { error });
+      throw new StorageError(`Failed to delete feedback: ${error.message}`, {
+        error,
+      });
     }
 
     return true;
@@ -210,7 +225,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       .single();
 
     if (error) {
-      throw new StorageError(`Failed to create survey: ${error.message}`, { error });
+      throw new StorageError(`Failed to create survey: ${error.message}`, {
+        error,
+      });
     }
 
     return this.mapSurveyFromDb(data);
@@ -225,7 +242,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
 
     if (error) {
       if (error.code === 'PGRST116') return null; // Not found
-      throw new StorageError(`Failed to get survey: ${error.message}`, { error });
+      throw new StorageError(`Failed to get survey: ${error.message}`, {
+        error,
+      });
     }
 
     return data ? this.mapSurveyFromDb(data) : null;
@@ -234,11 +253,13 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
   async listSurveys(
     filter?: Partial<FeedbackFilter>
   ): Promise<PaginatedResponse<SatisfactionSurvey>> {
-    let query = this.supabase.from(`${this.tablePrefix}surveys`).select('*', { count: 'exact' });
+    let query = this.supabase
+      .from(`${this.tablePrefix}surveys`)
+      .select('*', { count: 'exact' });
 
     // Apply filters
     if (filter?.userId) query = query.eq('user_id', filter.userId);
-    
+
     if (filter?.dateRange) {
       query = query
         .gte('timestamp', filter.dateRange.start.toISOString())
@@ -246,7 +267,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     }
 
     // Sorting
-    query = query.order('timestamp', { ascending: filter?.sortOrder !== 'desc' });
+    query = query.order('timestamp', {
+      ascending: filter?.sortOrder !== 'desc',
+    });
 
     // Pagination
     const limit = filter?.limit || 20;
@@ -256,7 +279,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     const { data, error, count } = await query;
 
     if (error) {
-      throw new StorageError(`Failed to list surveys: ${error.message}`, { error });
+      throw new StorageError(`Failed to list surveys: ${error.message}`, {
+        error,
+      });
     }
 
     return {
@@ -290,7 +315,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       });
 
     if (error) {
-      throw new StorageError(`Failed to track event: ${error.message}`, { error });
+      throw new StorageError(`Failed to track event: ${error.message}`, {
+        error,
+      });
     }
   }
 
@@ -299,7 +326,7 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
 
     // Apply filters
     if (filter?.userId) query = query.eq('user_id', filter.userId);
-    
+
     if (filter?.dateRange) {
       query = query
         .gte('timestamp', filter.dateRange.start.toISOString())
@@ -313,7 +340,9 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     const { data, error } = await query;
 
     if (error) {
-      throw new StorageError(`Failed to get events: ${error.message}`, { error });
+      throw new StorageError(`Failed to get events: ${error.message}`, {
+        error,
+      });
     }
 
     return data?.map(item => this.mapEventFromDb(item)) || [];
@@ -322,35 +351,34 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
   // Metrics
   async getMetrics(): Promise<BetaMetrics> {
     // Run multiple queries in parallel
-    const [
-      feedbackStats,
-      surveyStats,
-      bugStats,
-      userStats,
-    ] = await Promise.all([
-      this.supabase
-        .from(`${this.tablePrefix}entries`)
-        .select('id', { count: 'exact', head: true }),
-      this.supabase
-        .from(`${this.tablePrefix}surveys`)
-        .select('id', { count: 'exact', head: true }),
-      this.supabase
-        .from(`${this.tablePrefix}entries`)
-        .select('severity', { count: 'exact' })
-        .eq('type', 'bug'),
-      this.supabase
-        .from(`${this.tablePrefix}entries`)
-        .select('user_id')
-        .limit(1000),
-    ]);
+    const [feedbackStats, surveyStats, bugStats, userStats] = await Promise.all(
+      [
+        this.supabase
+          .from(`${this.tablePrefix}entries`)
+          .select('id', { count: 'exact', head: true }),
+        this.supabase
+          .from(`${this.tablePrefix}surveys`)
+          .select('id', { count: 'exact', head: true }),
+        this.supabase
+          .from(`${this.tablePrefix}entries`)
+          .select('severity', { count: 'exact' })
+          .eq('type', 'bug'),
+        this.supabase
+          .from(`${this.tablePrefix}entries`)
+          .select('user_id')
+          .limit(1000),
+      ]
+    );
 
     // Calculate unique users
-    const uniqueUsers = new Set(userStats.data?.map(item => item.user_id) || []);
+    const uniqueUsers = new Set(
+      userStats.data?.map(item => item.user_id) || []
+    );
 
     // Calculate critical bugs and feature requests
     const bugs = bugStats.data || [];
     const criticalBugs = bugs.filter(b => b.severity === 'critical').length;
-    
+
     const { data: featureData } = await this.supabase
       .from(`${this.tablePrefix}entries`)
       .select('id', { count: 'exact', head: true })
@@ -399,14 +427,21 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
       .lte('timestamp', endDate.toISOString());
 
     if (error) {
-      throw new StorageError(`Failed to get feedback trends: ${error.message}`, { error });
+      throw new StorageError(
+        `Failed to get feedback trends: ${error.message}`,
+        { error }
+      );
     }
 
     // Group by date
     const trends: Record<string, FeedbackTrend> = {};
 
     // Initialize all dates
-    for (let d = new Date(startDate); d <= endDate; d.setDate(d.getDate() + 1)) {
+    for (
+      let d = new Date(startDate);
+      d <= endDate;
+      d.setDate(d.getDate() + 1)
+    ) {
       const dateStr = d.toISOString().split('T')[0];
       trends[dateStr] = {
         date: dateStr,
@@ -438,7 +473,7 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
         .from(`${this.tablePrefix}entries`)
         .select('id')
         .limit(1);
-      
+
       return !error;
     } catch {
       return false;

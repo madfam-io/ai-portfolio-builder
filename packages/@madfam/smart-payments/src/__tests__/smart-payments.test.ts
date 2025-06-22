@@ -1,25 +1,25 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * SmartPayments Orchestrator Test Suite
- * 
+ *
  * Integration tests for the main SmartPayments class
  */
 
 import { SmartPayments, ProcessPaymentRequest } from '../smart-payments';
-import { 
-  SmartPaymentsConfig, 
-  Money, 
+import {
+  SmartPaymentsConfig,
+  Money,
   Customer,
   Gateway,
-  SmartPaymentsError
+  SmartPaymentsError,
 } from '../types';
 
 describe('SmartPayments', () => {
@@ -150,7 +150,9 @@ describe('SmartPayments', () => {
       const response = await smartPayments.processPayment(request);
 
       expect(response.riskAssessment?.risk).toMatch(/high|critical/);
-      expect(response.warnings).toContain(response.riskAssessment?.recommendation);
+      expect(response.warnings).toContain(
+        response.riskAssessment?.recommendation
+      );
     });
 
     it('should include headers in context building', async () => {
@@ -204,7 +206,9 @@ describe('SmartPayments', () => {
 
       // PayPal has $10k limit
       if (response.paymentOptions.recommendedGateway.gateway === 'paypal') {
-        expect(response.warnings).toContain('Transaction amount exceeds gateway limit');
+        expect(response.warnings).toContain(
+          'Transaction amount exceeds gateway limit'
+        );
       }
     });
   });
@@ -249,21 +253,21 @@ describe('SmartPayments', () => {
   describe('calculateGatewayFees', () => {
     it('should calculate fees for specific gateway', () => {
       const amount: Money = { amount: 100, currency: 'USD', display: '$100' };
-      
+
       const fees = smartPayments.calculateGatewayFees('stripe', amount);
 
       expect(fees.percentageFee.amount).toBe(2.9);
-      expect(fees.fixedFee.amount).toBe(0.30);
-      expect(fees.totalFee.amount).toBe(3.20);
+      expect(fees.fixedFee.amount).toBe(0.3);
+      expect(fees.totalFee.amount).toBe(3.2);
     });
 
     it('should calculate international fees', () => {
       const amount: Money = { amount: 100, currency: 'USD', display: '$100' };
-      
+
       const fees = smartPayments.calculateGatewayFees('stripe', amount, true);
 
       expect(fees.internationalFee).toBeDefined();
-      expect(fees.totalFee.amount).toBeGreaterThan(3.20);
+      expect(fees.totalFee.amount).toBeGreaterThan(3.2);
     });
   });
 
@@ -313,7 +317,9 @@ describe('SmartPayments', () => {
         amount: { amount: -100, currency: 'INVALID', display: 'Invalid' },
       };
 
-      await expect(smartPayments.processPayment(request)).rejects.toThrow(SmartPaymentsError);
+      await expect(smartPayments.processPayment(request)).rejects.toThrow(
+        SmartPaymentsError
+      );
     });
   });
 });

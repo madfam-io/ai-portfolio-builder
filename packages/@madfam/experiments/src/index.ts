@@ -19,12 +19,12 @@ export type {
   ExperimentType,
   Variation,
   VariationChanges,
-  
+
   // Feature flag types
   FeatureFlag,
   FeatureFlagType,
   FeatureFlagVariation,
-  
+
   // Targeting types
   TargetingRules,
   Audience,
@@ -32,52 +32,52 @@ export type {
   TargetingCondition,
   ConditionOperator,
   AudienceCondition,
-  
+
   // Allocation types
   AllocationStrategy,
   AllocationType,
   AllocationOverride,
-  
+
   // Metric types
   Metric,
   MetricType,
   MetricGoal,
   AggregationType,
   WinCondition,
-  
+
   // User context types
   UserContext,
   UserAttributes,
-  
+
   // Assignment types
   Assignment,
   FeatureFlagAssignment,
-  
+
   // Event types
   ExperimentEvent,
   EventType,
-  
+
   // Analytics types
   ExperimentResults,
   ResultStatus,
   VariationResults,
   MetricResults,
-  
+
   // Provider types
   ExperimentProvider,
   ProviderType,
   ProviderConfig,
-  
+
   // Configuration types
   ExperimentsConfig,
   CacheStrategy,
   LoggerConfig,
   ExperimentHooks,
-  
+
   // Error types
   ExperimentError,
   ExperimentErrorCode,
-  
+
   // Utility types
   DeepPartial,
   Nullable,
@@ -85,6 +85,8 @@ export type {
 } from './core/types';
 
 // Factory function
-export function createExperiments(config?: import('./core/types').ExperimentsConfig) {
+export function createExperiments(
+  config?: import('./core/types').ExperimentsConfig
+) {
   return new Experiments(config);
 }

@@ -1,6 +1,6 @@
 /**
  * React components for referral system
- * 
+ *
  * Note: These components are only available when React is installed
  */
 

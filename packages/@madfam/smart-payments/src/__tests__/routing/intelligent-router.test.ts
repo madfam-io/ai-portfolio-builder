@@ -1,29 +1,29 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Intelligent Router Test Suite
- * 
+ *
  * Tests for smart gateway routing decisions
  */
 
 import { IntelligentRouter } from '../../routing/intelligent-router';
 import { CardDetector } from '../../card-intelligence/detector';
 import { GeographicalContextEngine } from '../../geo/context-engine';
-import { 
-  PaymentContext, 
-  CardInfo, 
-  GeographicalContext, 
+import {
+  PaymentContext,
+  CardInfo,
+  GeographicalContext,
   Customer,
   Money,
   PriceCalculation,
-  Gateway
+  Gateway,
 } from '../../types';
 
 // Mock dependencies
@@ -37,8 +37,9 @@ describe('IntelligentRouter', () => {
 
   beforeEach(() => {
     mockCardDetector = new CardDetector() as jest.Mocked<CardDetector>;
-    mockGeoEngine = new GeographicalContextEngine() as jest.Mocked<GeographicalContextEngine>;
-    
+    mockGeoEngine =
+      new GeographicalContextEngine() as jest.Mocked<GeographicalContextEngine>;
+
     router = new IntelligentRouter(
       {
         enableUserChoice: true,
@@ -84,7 +85,9 @@ describe('IntelligentRouter', () => {
       const result = await router.route(context);
 
       expect(result.recommendedGateway.gateway).toBe('stripe');
-      expect(result.recommendedGateway.benefits).toContain('Low processing fees (3.2%)');
+      expect(result.recommendedGateway.benefits).toContain(
+        'Low processing fees (3.2%)'
+      );
       expect(result.userChoice).toBe(true);
     });
 
@@ -96,7 +99,14 @@ describe('IntelligentRouter', () => {
         issuerCountry: 'BR',
         supportedGateways: ['mercadopago', 'stripe', 'lemonsqueezy'],
         localPaymentMethods: [
-          { id: 'pix', name: 'PIX', type: 'bank_transfer', countries: ['BR'], gateway: 'mercadopago', processingTime: 'Instant' },
+          {
+            id: 'pix',
+            name: 'PIX',
+            type: 'bank_transfer',
+            countries: ['BR'],
+            gateway: 'mercadopago',
+            processingTime: 'Instant',
+          },
         ],
         features: {
           supports3DSecure: true,
@@ -127,7 +137,9 @@ describe('IntelligentRouter', () => {
       const result = await router.route(context);
 
       expect(result.recommendedGateway.gateway).toBe('mercadopago');
-      expect(result.recommendedGateway.benefits).toContain('Supports local payment methods');
+      expect(result.recommendedGateway.benefits).toContain(
+        'Supports local payment methods'
+      );
       expect(result.recommendedGateway.benefits).toContain('Optimized for BR');
       expect(result.recommendedGateway.installmentOptions).toBeDefined();
     });
@@ -156,7 +168,9 @@ describe('IntelligentRouter', () => {
 
       expect(result.userChoice).toBe(true);
       expect(result.alternativeGateways.length).toBeGreaterThan(0);
-      expect(result.reasoning.userFriendlyExplanation).toContain('you have other great options');
+      expect(result.reasoning.userFriendlyExplanation).toContain(
+        'you have other great options'
+      );
     });
 
     it('should not offer choice when disabled', async () => {
@@ -255,7 +269,7 @@ describe('IntelligentRouter', () => {
 
       expect(result.recommendedGateway.installmentOptions).toBeDefined();
       expect(result.recommendedGateway.installmentOptions).toHaveLength(3); // 3, 6, 12 months
-      
+
       const threeMonths = result.recommendedGateway.installmentOptions?.[0];
       expect(threeMonths?.months).toBe(3);
       expect(threeMonths?.label).toContain('interest-free');
@@ -296,7 +310,9 @@ describe('IntelligentRouter', () => {
 
       const result = await router.route(context);
 
-      expect(result.recommendedGateway.trustSignals).toContain('Most popular in your country');
+      expect(result.recommendedGateway.trustSignals).toContain(
+        'Most popular in your country'
+      );
     });
 
     it('should handle no available gateways', async () => {
@@ -319,7 +335,9 @@ describe('IntelligentRouter', () => {
         cardInfo,
       };
 
-      await expect(router.route(context)).rejects.toThrow('No available payment gateways');
+      await expect(router.route(context)).rejects.toThrow(
+        'No available payment gateways'
+      );
     });
 
     it('should calculate fees correctly', async () => {
@@ -328,9 +346,13 @@ describe('IntelligentRouter', () => {
       const result = await router.route(context);
 
       expect(result.recommendedGateway.fees.processing).toBeDefined();
-      expect(result.recommendedGateway.fees.display).toMatch(/\d+\.\d+%.*\$\d+\.\d+/);
+      expect(result.recommendedGateway.fees.display).toMatch(
+        /\d+\.\d+%.*\$\d+\.\d+/
+      );
       expect(result.recommendedGateway.fees.breakdown).toBeDefined();
-      expect(result.recommendedGateway.estimatedTotal.amount).toBeGreaterThan(baseAmount.amount);
+      expect(result.recommendedGateway.estimatedTotal.amount).toBeGreaterThan(
+        baseAmount.amount
+      );
     });
 
     it('should localize gateway names', async () => {

@@ -1,15 +1,15 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Geographical Context Engine Test Suite
- * 
+ *
  * Tests for geographical context building and risk assessment
  */
 
@@ -30,7 +30,7 @@ describe('GeographicalContextEngine', () => {
   describe('buildContext', () => {
     it('should build context from IP address', async () => {
       const context = await engine.buildContext('8.8.8.8');
-      
+
       expect(context).toMatchObject({
         ipCountry: 'US',
         ipCurrency: 'USD',
@@ -43,7 +43,7 @@ describe('GeographicalContextEngine', () => {
 
     it('should detect VPN usage', async () => {
       const context = await engine.buildContext('104.200.50.123');
-      
+
       expect(context.vpnDetected).toBe(true);
       expect(context.vpnConfidence).toBeGreaterThan(0.5);
       expect(context.riskScore).toBeGreaterThan(20);
@@ -51,7 +51,7 @@ describe('GeographicalContextEngine', () => {
 
     it('should handle private IPs', async () => {
       const context = await engine.buildContext('192.168.1.1');
-      
+
       expect(context).toMatchObject({
         ipCountry: 'US',
         ipRegion: 'California',
@@ -65,9 +65,9 @@ describe('GeographicalContextEngine', () => {
         'x-timezone': 'Asia/Tokyo',
         'accept-language': 'ja-JP,ja;q=0.9',
       };
-      
+
       const context = await engine.buildContext('8.8.8.8', headers);
-      
+
       expect(context.timezone).toBe('Asia/Tokyo');
       expect(context.language).toBe('ja');
     });
@@ -75,7 +75,7 @@ describe('GeographicalContextEngine', () => {
     it('should flag suspicious countries', async () => {
       // Mock IP from Nigeria
       const context = await engine.buildContext('197.210.0.1');
-      
+
       // This would require mocking the IP lookup
       // For now, we test the logic with a constructed context
       const testContext: GeographicalContext = {
@@ -89,7 +89,7 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 0,
       };
-      
+
       const assessment = engine.assessRisk(testContext);
       expect(assessment.factors).toContainEqual(
         expect.objectContaining({
@@ -101,10 +101,10 @@ describe('GeographicalContextEngine', () => {
 
     it('should cache results', async () => {
       const ip = '8.8.8.8';
-      
+
       const context1 = await engine.buildContext(ip);
       const context2 = await engine.buildContext(ip);
-      
+
       // Should return same object reference from cache
       expect(context1).toEqual(context2);
     });
@@ -123,9 +123,9 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 10,
       };
-      
+
       const assessment = engine.assessRisk(context);
-      
+
       expect(assessment.risk).toBe('low');
       expect(assessment.score).toBeLessThan(25);
       expect(assessment.requiresManualReview).toBe(false);
@@ -143,9 +143,9 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 30,
       };
-      
+
       const assessment = engine.assessRisk(context);
-      
+
       expect(assessment.factors).toContainEqual(
         expect.objectContaining({
           type: 'vpn_detected',
@@ -167,9 +167,9 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 10,
       };
-      
+
       const assessment = engine.assessRisk(context, 'US');
-      
+
       expect(assessment.factors).toContainEqual(
         expect.objectContaining({
           type: 'country_mismatch',
@@ -191,7 +191,7 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 10,
       };
-      
+
       const customer: Customer = {
         id: 'cust_123',
         accountCreatedAt: new Date('2023-01-01'),
@@ -203,9 +203,9 @@ describe('GeographicalContextEngine', () => {
           lastUpdated: new Date(),
         },
       };
-      
+
       const assessment = engine.assessRisk(context, undefined, customer);
-      
+
       expect(assessment.factors).toContainEqual(
         expect.objectContaining({
           type: 'customer_risk',
@@ -227,9 +227,9 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: false,
         riskScore: 10,
       };
-      
+
       const assessment = engine.assessRisk(context);
-      
+
       expect(assessment.factors).toContainEqual(
         expect.objectContaining({
           type: 'timezone_mismatch',
@@ -250,9 +250,9 @@ describe('GeographicalContextEngine', () => {
         suspiciousActivity: true,
         riskScore: 80,
       };
-      
+
       const assessment = engine.assessRisk(context);
-      
+
       expect(assessment.risk).toBe('critical');
       expect(assessment.score).toBeGreaterThan(75);
       expect(assessment.requiresManualReview).toBe(true);
@@ -263,34 +263,34 @@ describe('GeographicalContextEngine', () => {
   describe('detectGeographicalArbitrage', () => {
     it('should detect VPN discount abuse', () => {
       const isArbitrage = engine.detectGeographicalArbitrage(
-        'US',    // Card from US
-        'IN',    // IP from India
-        true,    // VPN detected
-        'IN'     // Trying to get India pricing
+        'US', // Card from US
+        'IN', // IP from India
+        true, // VPN detected
+        'IN' // Trying to get India pricing
       );
-      
+
       expect(isArbitrage).toBe(true);
     });
 
     it('should allow legitimate travel', () => {
       const isArbitrage = engine.detectGeographicalArbitrage(
-        'US',    // Card from US
-        'GB',    // IP from UK
-        false,   // No VPN
-        'GB'     // UK pricing
+        'US', // Card from US
+        'GB', // IP from UK
+        false, // No VPN
+        'GB' // UK pricing
       );
-      
+
       expect(isArbitrage).toBe(false);
     });
 
     it('should detect significant discount differences', () => {
       const isArbitrage = engine.detectGeographicalArbitrage(
-        'IN',    // Card from India (high discount)
-        'US',    // IP from US
-        false,   // No VPN
-        'IN'     // Trying to get India pricing
+        'IN', // Card from India (high discount)
+        'US', // IP from US
+        false, // No VPN
+        'IN' // Trying to get India pricing
       );
-      
+
       expect(isArbitrage).toBe(true);
     });
   });
@@ -298,7 +298,7 @@ describe('GeographicalContextEngine', () => {
   describe('lookup', () => {
     it('should return successful response', async () => {
       const response = await engine.lookup('8.8.8.8');
-      
+
       expect(response.success).toBe(true);
       expect(response.context).toBeDefined();
       expect(response.cached).toBe(false);
@@ -307,13 +307,13 @@ describe('GeographicalContextEngine', () => {
     it('should indicate cached results', async () => {
       await engine.lookup('8.8.8.8');
       const response = await engine.lookup('8.8.8.8');
-      
+
       expect(response.cached).toBe(true);
     });
 
     it('should handle errors gracefully', async () => {
       const response = await engine.lookup('invalid-ip');
-      
+
       expect(response.success).toBe(false);
       expect(response.error).toBeDefined();
     });
@@ -324,9 +324,9 @@ describe('GeographicalContextEngine', () => {
       const engineNoVPN = new GeographicalContextEngine({
         enableVPNDetection: false,
       });
-      
+
       const context = await engineNoVPN.buildContext('104.200.50.123');
-      
+
       expect(context.vpnDetected).toBe(false);
       expect(context.vpnConfidence).toBe(0);
     });

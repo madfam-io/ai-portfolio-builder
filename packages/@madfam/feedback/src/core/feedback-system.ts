@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -34,7 +34,7 @@ import { EventEmitter } from '../utils/event-emitter';
 
 /**
  * Core Feedback System
- * 
+ *
  * Enterprise-grade feedback collection and management system with
  * advanced analytics, real-time notifications, and flexible storage
  */
@@ -46,18 +46,18 @@ export class FeedbackSystem extends EventEmitter {
 
   constructor(config: FeedbackSystemConfig = {}) {
     super();
-    
+
     // Initialize configuration with defaults
     this.config = this.mergeConfig(config);
-    
+
     // Initialize logger
     this.logger = new Logger('FeedbackSystem', {
       level: process.env.NODE_ENV === 'production' ? 'info' : 'debug',
     });
-    
+
     // Initialize storage adapter
     this.storage = createStorageAdapter(this.config.storage);
-    
+
     // Initialize system
     this.initialize();
   }
@@ -69,13 +69,13 @@ export class FeedbackSystem extends EventEmitter {
     try {
       // Run storage migrations
       await this.storage.migrate();
-      
+
       // Verify storage health
       const isHealthy = await this.storage.health();
       if (!isHealthy) {
         throw new Error('Storage adapter health check failed');
       }
-      
+
       this.logger.info('Feedback system initialized successfully');
       this.emit('initialized');
     } catch (error) {
@@ -117,7 +117,10 @@ export class FeedbackSystem extends EventEmitter {
       this.emit('feedback:created', feedbackEntry);
 
       // Handle critical feedback
-      if (feedbackEntry.severity === 'critical' || feedbackEntry.type === 'bug') {
+      if (
+        feedbackEntry.severity === 'critical' ||
+        feedbackEntry.type === 'bug'
+      ) {
         await this.handleCriticalFeedback(feedbackEntry);
       }
 
@@ -149,7 +152,9 @@ export class FeedbackSystem extends EventEmitter {
       }
 
       // Calculate NPS category
-      const npsCategory = this.calculateNPSCategory(survey.likelihoodToRecommend);
+      const npsCategory = this.calculateNPSCategory(
+        survey.likelihoodToRecommend
+      );
 
       // Create survey entry
       const surveyEntry = await this.storage.createSurvey({
@@ -182,17 +187,20 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Get feedback entries with filtering
    */
-  async getFeedback(filter?: FeedbackFilter): Promise<PaginatedResponse<FeedbackEntry>> {
+  async getFeedback(
+    filter?: FeedbackFilter
+  ): Promise<PaginatedResponse<FeedbackEntry>> {
     try {
       const cacheKey = `feedback:${JSON.stringify(filter)}`;
-      const cached = this.getFromCache<PaginatedResponse<FeedbackEntry>>(cacheKey);
+      const cached =
+        this.getFromCache<PaginatedResponse<FeedbackEntry>>(cacheKey);
       if (cached) return cached;
 
       const result = await this.storage.listFeedback(filter);
-      
+
       // Cache for 5 minutes
       this.setCache(cacheKey, result, 5 * 60 * 1000);
-      
+
       return result;
     } catch (error) {
       this.logger.error('Error fetching feedback', error as Error);
@@ -209,10 +217,10 @@ export class FeedbackSystem extends EventEmitter {
       if (cached) return cached;
 
       const metrics = await this.storage.getMetrics();
-      
+
       // Cache for 10 minutes
       this.setCache('metrics', metrics, 10 * 60 * 1000);
-      
+
       return metrics;
     } catch (error) {
       this.logger.error('Error fetching beta metrics', error as Error);
@@ -240,10 +248,10 @@ export class FeedbackSystem extends EventEmitter {
       const total = scores.length;
 
       const nps = Math.round(((promoters - detractors) / total) * 100);
-      
+
       // Cache for 1 hour
       this.setCache('nps', nps, 60 * 60 * 1000);
-      
+
       return nps;
     } catch (error) {
       this.logger.error('Error calculating NPS', error as Error);
@@ -261,10 +269,10 @@ export class FeedbackSystem extends EventEmitter {
       if (cached) return cached;
 
       const trends = await this.storage.getFeedbackTrends(days);
-      
+
       // Cache for 30 minutes
       this.setCache(cacheKey, trends, 30 * 60 * 1000);
-      
+
       return trends;
     } catch (error) {
       this.logger.error('Error fetching feedback trends', error as Error);
@@ -291,7 +299,10 @@ export class FeedbackSystem extends EventEmitter {
       const criticalIssues = feedbackData.filter(
         f => f.severity === 'critical'
       ).length;
-      const ratingsSum = feedbackData.reduce((sum, f) => sum + (f.rating || 0), 0);
+      const ratingsSum = feedbackData.reduce(
+        (sum, f) => sum + (f.rating || 0),
+        0
+      );
       const ratingsCount = feedbackData.filter(f => f.rating).length;
       const averageRating = ratingsCount > 0 ? ratingsSum / ratingsCount : 0;
 
@@ -383,15 +394,18 @@ export class FeedbackSystem extends EventEmitter {
 
     // Send notifications if configured
     if (this.config.notifications) {
-      const { criticalBugWebhook, emailOnCritical, slackIntegration } = this.config.notifications;
+      const { criticalBugWebhook, emailOnCritical, slackIntegration } =
+        this.config.notifications;
 
       const promises: Promise<void>[] = [];
 
       if (criticalBugWebhook) {
-        promises.push(this.sendWebhook(criticalBugWebhook, {
-          type: 'critical_feedback',
-          feedback,
-        }));
+        promises.push(
+          this.sendWebhook(criticalBugWebhook, {
+            type: 'critical_feedback',
+            feedback,
+          })
+        );
       }
 
       if (slackIntegration) {
@@ -440,19 +454,21 @@ export class FeedbackSystem extends EventEmitter {
     const message = {
       channel: config.channel,
       text: `🚨 Critical Feedback Received`,
-      attachments: [{
-        color: 'danger',
-        fields: [
-          { title: 'Type', value: feedback.type, short: true },
-          { title: 'Severity', value: feedback.severity, short: true },
-          { title: 'Title', value: feedback.title },
-          { title: 'Description', value: feedback.description },
-          { title: 'User', value: feedback.userId, short: true },
-          { title: 'URL', value: feedback.url, short: true },
-        ],
-        footer: 'MADFAM Feedback System',
-        ts: Math.floor(feedback.timestamp.getTime() / 1000),
-      }],
+      attachments: [
+        {
+          color: 'danger',
+          fields: [
+            { title: 'Type', value: feedback.type, short: true },
+            { title: 'Severity', value: feedback.severity, short: true },
+            { title: 'Title', value: feedback.title },
+            { title: 'Description', value: feedback.description },
+            { title: 'User', value: feedback.userId, short: true },
+            { title: 'URL', value: feedback.url, short: true },
+          ],
+          footer: 'MADFAM Feedback System',
+          ts: Math.floor(feedback.timestamp.getTime() / 1000),
+        },
+      ],
     };
 
     await this.sendWebhook(config.webhookUrl, message);
@@ -461,7 +477,9 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Calculate NPS category from score
    */
-  private calculateNPSCategory(score: number): 'promoter' | 'passive' | 'detractor' {
+  private calculateNPSCategory(
+    score: number
+  ): 'promoter' | 'passive' | 'detractor' {
     if (score >= 9) return 'promoter';
     if (score >= 7) return 'passive';
     return 'detractor';
@@ -470,7 +488,9 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Merge configuration with defaults
    */
-  private mergeConfig(config: FeedbackSystemConfig): Required<FeedbackSystemConfig> {
+  private mergeConfig(
+    config: FeedbackSystemConfig
+  ): Required<FeedbackSystemConfig> {
     return {
       apiEndpoint: config.apiEndpoint || '/api/v1/feedback',
       storage: config.storage || { type: 'memory' },
@@ -488,14 +508,16 @@ export class FeedbackSystem extends EventEmitter {
    * Cache management
    */
   private getFromCache<T>(key: string): T | undefined {
-    const cached = this.cache.get(key) as { value: T; expires: number } | undefined;
+    const cached = this.cache.get(key) as
+      | { value: T; expires: number }
+      | undefined;
     if (!cached) return undefined;
-    
+
     if (Date.now() > cached.expires) {
       this.cache.delete(key);
       return undefined;
     }
-    
+
     return cached.value;
   }
 
@@ -532,6 +554,8 @@ export class FeedbackSystem extends EventEmitter {
 /**
  * Factory function to create feedback system instance
  */
-export function createFeedbackSystem(config?: FeedbackSystemConfig): FeedbackSystem {
+export function createFeedbackSystem(
+  config?: FeedbackSystemConfig
+): FeedbackSystem {
   return new FeedbackSystem(config);
 }

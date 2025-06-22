@@ -20,8 +20,15 @@ export function useExperiment(experimentId: string): {
   variation: Variation | null;
   loading: boolean;
   error: Error | null;
-  trackConversion: (eventName: string, properties?: Record<string, unknown>) => Promise<void>;
-  trackMetric: (metricName: string, value: number, properties?: Record<string, unknown>) => Promise<void>;
+  trackConversion: (
+    eventName: string,
+    properties?: Record<string, unknown>
+  ) => Promise<void>;
+  trackMetric: (
+    metricName: string,
+    value: number,
+    properties?: Record<string, unknown>
+  ) => Promise<void>;
 } {
   const { experiments, user, ready } = useExperimentsContext();
   const [assignment, setAssignment] = useState<Assignment | null>(null);
@@ -66,15 +73,30 @@ export function useExperiment(experimentId: string): {
   const trackConversion = useCallback(
     async (eventName: string, properties?: Record<string, unknown>) => {
       if (!experiments || !user) return;
-      await experiments.trackConversion(experimentId, user.userId, eventName, properties);
+      await experiments.trackConversion(
+        experimentId,
+        user.userId,
+        eventName,
+        properties
+      );
     },
     [experiments, experimentId, user]
   );
 
   const trackMetric = useCallback(
-    async (metricName: string, value: number, properties?: Record<string, unknown>) => {
+    async (
+      metricName: string,
+      value: number,
+      properties?: Record<string, unknown>
+    ) => {
       if (!experiments || !user) return;
-      await experiments.trackMetric(experimentId, user.userId, metricName, value, properties);
+      await experiments.trackMetric(
+        experimentId,
+        user.userId,
+        metricName,
+        value,
+        properties
+      );
     },
     [experiments, experimentId, user]
   );
@@ -109,7 +131,9 @@ export function useFeatureFlag(
   error: Error | null;
 } {
   const { experiments, user, ready } = useExperimentsContext();
-  const [assignment, setAssignment] = useState<FeatureFlagAssignment | null>(null);
+  const [assignment, setAssignment] = useState<FeatureFlagAssignment | null>(
+    null
+  );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -124,7 +148,11 @@ export function useFeatureFlag(
     async function evaluateFlag() {
       try {
         setLoading(true);
-        const result = await experiments.evaluateFlag(flagKey, user, defaultValue);
+        const result = await experiments.evaluateFlag(
+          flagKey,
+          user,
+          defaultValue
+        );
         if (!cancelled) {
           setAssignment(result);
           setError(null);
@@ -206,9 +234,7 @@ export function useExperimentResults(experimentId: string): {
 /**
  * Hook for multiple feature flags
  */
-export function useFeatureFlags(
-  flagKeys: string[]
-): {
+export function useFeatureFlags(flagKeys: string[]): {
   flags: Record<string, boolean>;
   values: Record<string, unknown>;
   loading: boolean;

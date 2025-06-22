@@ -23,7 +23,12 @@ export function useReferralStats(
 ): UseReferralStatsState & {
   refresh: () => Promise<void>;
 } {
-  const { userId, apiEndpoint = '/api/referral', autoRefresh = true, refreshInterval = 60000 } = config;
+  const {
+    userId,
+    apiEndpoint = '/api/referral',
+    autoRefresh = true,
+    refreshInterval = 60000,
+  } = config;
 
   const [state, setState] = useState<UseReferralStatsState>({
     stats: null,

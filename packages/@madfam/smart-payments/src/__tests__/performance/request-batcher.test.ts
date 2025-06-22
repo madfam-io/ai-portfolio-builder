@@ -1,8 +1,8 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
@@ -11,16 +11,21 @@
  * Tests for request batching optimization
  */
 
-import { RequestBatcher, BatcherFactory } from '../../performance/request-batcher';
+import {
+  RequestBatcher,
+  BatcherFactory,
+} from '../../performance/request-batcher';
 
 describe('RequestBatcher', () => {
   let batcher: RequestBatcher<string, string>;
   let processorMock: jest.Mock;
 
   beforeEach(() => {
-    processorMock = jest.fn().mockImplementation(
-      (requests: string[]) => Promise.resolve(requests.map(r => `processed-${r}`))
-    );
+    processorMock = jest
+      .fn()
+      .mockImplementation((requests: string[]) =>
+        Promise.resolve(requests.map(r => `processed-${r}`))
+      );
 
     batcher = new RequestBatcher({
       maxBatchSize: 3,
@@ -44,15 +49,23 @@ describe('RequestBatcher', () => {
       const results = await Promise.all(promises);
 
       expect(processorMock).toHaveBeenCalledTimes(1);
-      expect(processorMock).toHaveBeenCalledWith(['request1', 'request2', 'request3']);
-      expect(results).toEqual(['processed-request1', 'processed-request2', 'processed-request3']);
+      expect(processorMock).toHaveBeenCalledWith([
+        'request1',
+        'request2',
+        'request3',
+      ]);
+      expect(results).toEqual([
+        'processed-request1',
+        'processed-request2',
+        'processed-request3',
+      ]);
     });
 
     it('should process immediately when batch is full', async () => {
       const promise1 = batcher.add('request1');
       const promise2 = batcher.add('request2');
       const promise3 = batcher.add('request3');
-      
+
       // This should trigger immediate processing
       const startTime = Date.now();
       await Promise.all([promise1, promise2, promise3]);
@@ -64,11 +77,8 @@ describe('RequestBatcher', () => {
 
     it('should wait for maxWaitTime if batch not full', async () => {
       const startTime = Date.now();
-      
-      const promises = [
-        batcher.add('request1'),
-        batcher.add('request2'),
-      ];
+
+      const promises = [batcher.add('request1'), batcher.add('request2')];
 
       await Promise.all(promises);
       const duration = Date.now() - startTime;
@@ -89,16 +99,20 @@ describe('RequestBatcher', () => {
       await Promise.all(batch1);
 
       // Second batch (partial)
-      const batch2 = [
-        batcher.add('request4'),
-        batcher.add('request5'),
-      ];
+      const batch2 = [batcher.add('request4'), batcher.add('request5')];
 
       await Promise.all(batch2);
 
       expect(processorMock).toHaveBeenCalledTimes(2);
-      expect(processorMock).toHaveBeenNthCalledWith(1, ['request1', 'request2', 'request3']);
-      expect(processorMock).toHaveBeenNthCalledWith(2, ['request4', 'request5']);
+      expect(processorMock).toHaveBeenNthCalledWith(1, [
+        'request1',
+        'request2',
+        'request3',
+      ]);
+      expect(processorMock).toHaveBeenNthCalledWith(2, [
+        'request4',
+        'request5',
+      ]);
     });
   });
 
@@ -123,8 +137,12 @@ describe('RequestBatcher', () => {
       const results = await Promise.all(promises);
 
       expect(processorMock).toHaveBeenCalledTimes(1);
-      expect(processorMock).toHaveBeenCalledWith(['request1', 'request2', 'request3']);
-      
+      expect(processorMock).toHaveBeenCalledWith([
+        'request1',
+        'request2',
+        'request3',
+      ]);
+
       // All duplicates should get the same result
       expect(results[0]).toBe('processed-request1');
       expect(results[1]).toBe('processed-request1');
@@ -137,10 +155,13 @@ describe('RequestBatcher', () => {
         data: any;
       }
 
-      const complexProcessor = jest.fn().mockImplementation(
-        (requests: ComplexRequest[]) => 
-          Promise.resolve(requests.map(r => ({ id: r.id, result: 'processed' })))
-      );
+      const complexProcessor = jest
+        .fn()
+        .mockImplementation((requests: ComplexRequest[]) =>
+          Promise.resolve(
+            requests.map(r => ({ id: r.id, result: 'processed' }))
+          )
+        );
 
       const complexBatcher = new RequestBatcher<ComplexRequest, any>({
         maxBatchSize: 3,
@@ -209,7 +230,7 @@ describe('RequestBatcher', () => {
   describe('Flush and clear', () => {
     it('should flush all pending requests', async () => {
       const promises = [];
-      
+
       // Add requests without waiting
       for (let i = 0; i < 7; i++) {
         promises.push(batcher.add(`request${i}`));
@@ -236,10 +257,10 @@ describe('RequestBatcher', () => {
 
     it('should report queue size', () => {
       expect(batcher.getQueueSize()).toBe(0);
-      
+
       batcher.add('request1');
       batcher.add('request2');
-      
+
       expect(batcher.getQueueSize()).toBe(2);
     });
   });
@@ -248,9 +269,11 @@ describe('RequestBatcher', () => {
 describe('BatcherFactory', () => {
   describe('BIN batcher', () => {
     it('should create BIN batcher with proper config', async () => {
-      const binLookup = jest.fn().mockImplementation(
-        (bins: string[]) => Promise.resolve(bins.map(bin => ({ bin, country: 'US' })))
-      );
+      const binLookup = jest
+        .fn()
+        .mockImplementation((bins: string[]) =>
+          Promise.resolve(bins.map(bin => ({ bin, country: 'US' })))
+        );
 
       const binBatcher = BatcherFactory.createBINBatcher(binLookup);
 
@@ -269,9 +292,11 @@ describe('BatcherFactory', () => {
 
   describe('Geo batcher', () => {
     it('should create geo batcher with proper config', async () => {
-      const geoLookup = jest.fn().mockImplementation(
-        (ips: string[]) => Promise.resolve(ips.map(ip => ({ ip, country: 'US' })))
-      );
+      const geoLookup = jest
+        .fn()
+        .mockImplementation((ips: string[]) =>
+          Promise.resolve(ips.map(ip => ({ ip, country: 'US' })))
+        );
 
       const geoBatcher = BatcherFactory.createGeoBatcher(geoLookup);
 

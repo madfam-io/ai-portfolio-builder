@@ -95,7 +95,12 @@ export interface UseReferralConfig {
 export function useReferral(
   config: UseReferralConfig
 ): UseReferralState & UseReferralActions {
-  const { userId, apiEndpoint = '/api/referral', autoRefresh = true, refreshInterval = 60000 } = config;
+  const {
+    userId,
+    apiEndpoint = '/api/referral',
+    autoRefresh = true,
+    refreshInterval = 60000,
+  } = config;
 
   // State management
   const [state, setState] = useState<UseReferralState>({

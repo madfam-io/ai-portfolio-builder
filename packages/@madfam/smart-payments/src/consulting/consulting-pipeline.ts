@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Consulting Services Pipeline
- * 
+ *
  * Enterprise consulting services for payment optimization, digital transformation,
  * and strategic advisory to establish MADFAM as the premier payment intelligence consultancy
  */
@@ -37,7 +37,12 @@ export interface ConsultingConfig {
 export interface ConsultingService {
   id: string;
   name: string;
-  category: 'strategic' | 'implementation' | 'optimization' | 'transformation' | 'training';
+  category:
+    | 'strategic'
+    | 'implementation'
+    | 'optimization'
+    | 'transformation'
+    | 'training';
   description: string;
   objectives: string[];
   deliverables: Deliverable[];
@@ -52,7 +57,13 @@ export interface ConsultingService {
 
 export interface Deliverable {
   name: string;
-  type: 'report' | 'presentation' | 'implementation' | 'training' | 'dashboard' | 'framework';
+  type:
+    | 'report'
+    | 'presentation'
+    | 'implementation'
+    | 'training'
+    | 'dashboard'
+    | 'framework';
   description: string;
   timeline: number; // days from start
   dependencies: string[];
@@ -96,7 +107,12 @@ export interface DurationFactor {
 }
 
 export interface ServicePricing {
-  model: 'fixed' | 'time_materials' | 'value_based' | 'retainer' | 'outcome_based';
+  model:
+    | 'fixed'
+    | 'time_materials'
+    | 'value_based'
+    | 'retainer'
+    | 'outcome_based';
   basePrice: Money;
   hourlyRate?: Money;
   valueDrivers?: ValueDriver[];
@@ -248,7 +264,7 @@ export interface ConsultingEngagement {
   outcomes: EngagementOutcome[];
 }
 
-export type EngagementStatus = 
+export type EngagementStatus =
   | 'prospecting'
   | 'proposal'
   | 'negotiation'
@@ -455,7 +471,14 @@ export interface QualificationScore {
 }
 
 export interface ProposalDetails {
-  status: 'drafting' | 'review' | 'submitted' | 'presented' | 'negotiation' | 'won' | 'lost';
+  status:
+    | 'drafting'
+    | 'review'
+    | 'submitted'
+    | 'presented'
+    | 'negotiation'
+    | 'won'
+    | 'lost';
   submissionDate?: Date;
   presentationDate?: Date;
   decisionDate?: Date;
@@ -564,87 +587,96 @@ export class ConsultingPipeline {
     nextSteps: string[];
     recommendedServices: ConsultingService[];
   }> {
-    return this.performanceMonitor.measure('opportunityQualification', async () => {
-      const opportunityId = this.generateOpportunityId();
-      
-      // Score the opportunity
-      const qualificationScore = await this.scoreOpportunity(request);
-      
-      // Determine recommendation
-      const recommendation = this.getRecommendation(qualificationScore);
-      
-      // Identify next steps
-      const nextSteps = this.generateNextSteps(qualificationScore, recommendation);
-      
-      // Recommend relevant services
-      const recommendedServices = await this.matchServices(request);
+    return this.performanceMonitor.measure(
+      'opportunityQualification',
+      async () => {
+        const opportunityId = this.generateOpportunityId();
 
-      // Create opportunity record
-      const opportunity: ConsultingOpportunity = {
-        id: opportunityId,
-        clientName: request.clientName,
-        industry: request.industry,
-        opportunity: {
-          description: request.description,
-          estimatedValue: request.estimatedValue,
-          duration: this.parseTimelineToDuration(request.timeline),
-          services: recommendedServices.map(s => s.id),
-          decisionCriteria: request.decisionCriteria,
-          painPoints: [], // Would be identified during discovery
-          successFactors: [], // Would be defined during scoping
-        },
-        qualification: qualificationScore,
-        proposal: {
-          status: 'drafting',
-          winProbability: qualificationScore.overall,
-          differentiators: [],
-          pricing: {
-            totalValue: request.estimatedValue,
-            breakdown: [],
-            options: [],
-            terms: this.getStandardTerms(),
+        // Score the opportunity
+        const qualificationScore = await this.scoreOpportunity(request);
+
+        // Determine recommendation
+        const recommendation = this.getRecommendation(qualificationScore);
+
+        // Identify next steps
+        const nextSteps = this.generateNextSteps(
+          qualificationScore,
+          recommendation
+        );
+
+        // Recommend relevant services
+        const recommendedServices = await this.matchServices(request);
+
+        // Create opportunity record
+        const opportunity: ConsultingOpportunity = {
+          id: opportunityId,
+          clientName: request.clientName,
+          industry: request.industry,
+          opportunity: {
+            description: request.description,
+            estimatedValue: request.estimatedValue,
+            duration: this.parseTimelineToDuration(request.timeline),
+            services: recommendedServices.map(s => s.id),
+            decisionCriteria: request.decisionCriteria,
+            painPoints: [], // Would be identified during discovery
+            successFactors: [], // Would be defined during scoping
           },
-        },
-        competition: {
-          competitors: await this.identifyCompetitors(request.industry),
-          ourAdvantages: this.getCompetitiveAdvantages(),
-          competitorAdvantages: [],
-          differentiationStrategy: [],
-          pricingPosition: 'competitive',
-        },
-        timeline: {
-          projectStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
-        },
-        team: {
-          leadConsultant: '',
-          proposalManager: '',
-          subjectMatterExperts: [],
-          clientRelationshipOwner: '',
-        },
-      };
+          qualification: qualificationScore,
+          proposal: {
+            status: 'drafting',
+            winProbability: qualificationScore.overall,
+            differentiators: [],
+            pricing: {
+              totalValue: request.estimatedValue,
+              breakdown: [],
+              options: [],
+              terms: this.getStandardTerms(),
+            },
+          },
+          competition: {
+            competitors: await this.identifyCompetitors(request.industry),
+            ourAdvantages: this.getCompetitiveAdvantages(),
+            competitorAdvantages: [],
+            differentiationStrategy: [],
+            pricingPosition: 'competitive',
+          },
+          timeline: {
+            projectStartDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+          },
+          team: {
+            leadConsultant: '',
+            proposalManager: '',
+            subjectMatterExperts: [],
+            clientRelationshipOwner: '',
+          },
+        };
 
-      this.opportunities.set(opportunityId, opportunity);
+        this.opportunities.set(opportunityId, opportunity);
 
-      return {
-        opportunityId,
-        qualificationScore,
-        recommendation,
-        nextSteps,
-        recommendedServices,
-      };
-    });
+        return {
+          opportunityId,
+          qualificationScore,
+          recommendation,
+          nextSteps,
+          recommendedServices,
+        };
+      }
+    );
   }
 
   /**
    * Generate comprehensive proposal
    */
-  async generateProposal(opportunityId: string, requirements: {
-    executiveSummary: string;
-    technicalApproach: string;
-    timeline: string;
-    team: string[];
-    pricing: 'competitive' | 'premium' | 'value';
-  }): Promise<{
+  async generateProposal(
+    opportunityId: string,
+    requirements: {
+      executiveSummary: string;
+      technicalApproach: string;
+      timeline: string;
+      team: string[];
+      pricing: 'competitive' | 'premium' | 'value';
+    }
+  ): Promise<{
     proposal: ConsultingProposal;
     winProbability: number;
     differentiators: string[];
@@ -658,13 +690,16 @@ export class ConsultingPipeline {
 
       // Generate comprehensive proposal
       const proposal = await this.buildProposal(opportunity, requirements);
-      
+
       // Calculate win probability
-      const winProbability = await this.calculateWinProbability(opportunity, proposal);
-      
+      const winProbability = await this.calculateWinProbability(
+        opportunity,
+        proposal
+      );
+
       // Identify key differentiators
       const differentiators = await this.identifyDifferentiators(opportunity);
-      
+
       // Define next steps
       const nextSteps = this.getProposalNextSteps(opportunity);
 
@@ -691,14 +726,17 @@ export class ConsultingPipeline {
   /**
    * Plan and initiate engagement
    */
-  async planEngagement(opportunityId: string, contractDetails: {
-    signedDate: Date;
-    startDate: Date;
-    budget: Money;
-    scope: string[];
-    team: string[];
-    milestones: string[];
-  }): Promise<{
+  async planEngagement(
+    opportunityId: string,
+    contractDetails: {
+      signedDate: Date;
+      startDate: Date;
+      budget: Money;
+      scope: string[];
+      team: string[];
+      milestones: string[];
+    }
+  ): Promise<{
     engagementId: string;
     engagementPlan: EngagementPlan;
     riskAssessment: RiskAssessment;
@@ -711,13 +749,19 @@ export class ConsultingPipeline {
       }
 
       const engagementId = this.generateEngagementId();
-      
+
       // Create detailed engagement plan
-      const engagementPlan = await this.createEngagementPlan(opportunity, contractDetails);
-      
+      const engagementPlan = await this.createEngagementPlan(
+        opportunity,
+        contractDetails
+      );
+
       // Assess project risks
-      const riskAssessment = await this.assessEngagementRisks(opportunity, contractDetails);
-      
+      const riskAssessment = await this.assessEngagementRisks(
+        opportunity,
+        contractDetails
+      );
+
       // Develop quality management plan
       const qualityPlan = await this.createQualityPlan(opportunity);
 
@@ -759,7 +803,8 @@ export class ConsultingPipeline {
     const progress = await this.calculateEngagementProgress(engagement);
     const risks = await this.assessActiveRisks(engagement);
     const qualityMetrics = engagement.qualityMetrics;
-    const recommendations = await this.generateManagementRecommendations(engagement);
+    const recommendations =
+      await this.generateManagementRecommendations(engagement);
 
     return {
       status,
@@ -804,7 +849,8 @@ export class ConsultingPipeline {
         id: 'payment_strategy',
         name: 'Payment Strategy & Optimization',
         category: 'strategic',
-        description: 'Comprehensive payment strategy development and optimization consulting for enterprises',
+        description:
+          'Comprehensive payment strategy development and optimization consulting for enterprises',
         objectives: [
           'Reduce payment processing costs by 20-35%',
           'Improve payment conversion rates by 15-25%',
@@ -819,8 +865,16 @@ export class ConsultingPipeline {
             timeline: 14,
             dependencies: [],
             qualityStandards: [
-              { criteria: 'Accuracy', measurement: 'Fact verification', target: '100%' },
-              { criteria: 'Actionability', measurement: 'Implementable recommendations', target: '95%' },
+              {
+                criteria: 'Accuracy',
+                measurement: 'Fact verification',
+                target: '100%',
+              },
+              {
+                criteria: 'Actionability',
+                measurement: 'Implementable recommendations',
+                target: '95%',
+              },
             ],
           },
           {
@@ -830,7 +884,11 @@ export class ConsultingPipeline {
             timeline: 21,
             dependencies: ['Payment Strategy Assessment'],
             qualityStandards: [
-              { criteria: 'ROI Accuracy', measurement: 'Projected vs actual ROI', target: '±10%' },
+              {
+                criteria: 'ROI Accuracy',
+                measurement: 'Projected vs actual ROI',
+                target: '±10%',
+              },
             ],
           },
         ],
@@ -840,30 +898,57 @@ export class ConsultingPipeline {
             {
               name: 'Discovery & Assessment',
               duration: 14,
-              activities: ['Current state analysis', 'Stakeholder interviews', 'Data collection'],
+              activities: [
+                'Current state analysis',
+                'Stakeholder interviews',
+                'Data collection',
+              ],
               deliverables: ['Assessment Report'],
               stakeholders: ['CFO', 'CTO', 'Payment Team'],
-              successCriteria: ['Complete data collection', 'Stakeholder alignment'],
+              successCriteria: [
+                'Complete data collection',
+                'Stakeholder alignment',
+              ],
             },
             {
               name: 'Strategy Development',
               duration: 10,
-              activities: ['Strategy formulation', 'ROI modeling', 'Risk assessment'],
+              activities: [
+                'Strategy formulation',
+                'ROI modeling',
+                'Risk assessment',
+              ],
               deliverables: ['Strategy Document', 'ROI Model'],
               stakeholders: ['Executive Team'],
               successCriteria: ['Strategy approval', 'Budget allocation'],
             },
           ],
-          tools: ['MADFAM Analytics Platform', 'ROI Calculator', 'Competitive Intelligence'],
-          bestPractices: ['Data-driven analysis', 'Stakeholder engagement', 'Iterative refinement'],
-          riskMitigation: ['Regular checkpoints', 'Change management', 'Executive sponsorship'],
+          tools: [
+            'MADFAM Analytics Platform',
+            'ROI Calculator',
+            'Competitive Intelligence',
+          ],
+          bestPractices: [
+            'Data-driven analysis',
+            'Stakeholder engagement',
+            'Iterative refinement',
+          ],
+          riskMitigation: [
+            'Regular checkpoints',
+            'Change management',
+            'Executive sponsorship',
+          ],
         },
         duration: {
           typical: 8,
           minimum: 6,
           maximum: 12,
           factors: [
-            { factor: 'Organization complexity', impact: 'increase', percentage: 25 },
+            {
+              factor: 'Organization complexity',
+              impact: 'increase',
+              percentage: 25,
+            },
             { factor: 'Data availability', impact: 'decrease', percentage: 15 },
           ],
         },
@@ -871,30 +956,71 @@ export class ConsultingPipeline {
           model: 'value_based',
           basePrice: { amount: 150000, currency: 'USD', display: '$150,000' },
           valueDrivers: [
-            { driver: 'Cost savings achieved', measurement: 'Annual savings', pricing: { amount: 50000, currency: 'USD', display: '$50,000' } },
-            { driver: 'Revenue improvement', measurement: 'Conversion lift', pricing: { amount: 75000, currency: 'USD', display: '$75,000' } },
+            {
+              driver: 'Cost savings achieved',
+              measurement: 'Annual savings',
+              pricing: { amount: 50000, currency: 'USD', display: '$50,000' },
+            },
+            {
+              driver: 'Revenue improvement',
+              measurement: 'Conversion lift',
+              pricing: { amount: 75000, currency: 'USD', display: '$75,000' },
+            },
           ],
-          expensePolicy: 'Client covers reasonable travel and accommodation expenses',
+          expensePolicy:
+            'Client covers reasonable travel and accommodation expenses',
         },
-        prerequisites: ['Executive sponsorship', 'Data access permissions', 'Stakeholder availability'],
-        targetClients: ['Enterprise corporations', 'High-volume e-commerce', 'Payment service providers'],
+        prerequisites: [
+          'Executive sponsorship',
+          'Data access permissions',
+          'Stakeholder availability',
+        ],
+        targetClients: [
+          'Enterprise corporations',
+          'High-volume e-commerce',
+          'Payment service providers',
+        ],
         successMetrics: [
-          { metric: 'Cost reduction', target: '20-35%', measurement: 'Annual processing costs', timeline: '12 months' },
-          { metric: 'Conversion improvement', target: '15-25%', measurement: 'Payment success rate', timeline: '6 months' },
+          {
+            metric: 'Cost reduction',
+            target: '20-35%',
+            measurement: 'Annual processing costs',
+            timeline: '12 months',
+          },
+          {
+            metric: 'Conversion improvement',
+            target: '15-25%',
+            measurement: 'Payment success rate',
+            timeline: '6 months',
+          },
         ],
         caseStudies: [
           {
             title: 'Global E-commerce Payment Transformation',
             client: 'Fortune 500 Retailer',
             industry: 'E-commerce',
-            challenge: 'High processing costs and declining conversion rates across multiple regions',
-            solution: 'AI-powered payment optimization with regional gateway routing',
+            challenge:
+              'High processing costs and declining conversion rates across multiple regions',
+            solution:
+              'AI-powered payment optimization with regional gateway routing',
             results: [
-              { metric: 'Processing cost reduction', improvement: '28%', quantifiedValue: { amount: 2400000, currency: 'USD', display: '$2.4M' } },
+              {
+                metric: 'Processing cost reduction',
+                improvement: '28%',
+                quantifiedValue: {
+                  amount: 2400000,
+                  currency: 'USD',
+                  display: '$2.4M',
+                },
+              },
               { metric: 'Conversion rate improvement', improvement: '22%' },
-              { metric: 'Implementation time', improvement: '50% faster than industry average' },
+              {
+                metric: 'Implementation time',
+                improvement: '50% faster than industry average',
+              },
             ],
-            testimonial: 'MADFAM transformed our payment operations and delivered exceptional ROI',
+            testimonial:
+              'MADFAM transformed our payment operations and delivered exceptional ROI',
             duration: 12,
           },
         ],
@@ -903,7 +1029,8 @@ export class ConsultingPipeline {
         id: 'digital_transformation',
         name: 'Payment Digital Transformation',
         category: 'transformation',
-        description: 'End-to-end digital transformation of payment operations and technology stack',
+        description:
+          'End-to-end digital transformation of payment operations and technology stack',
         objectives: [
           'Modernize legacy payment infrastructure',
           'Implement AI-powered optimization',
@@ -918,8 +1045,16 @@ export class ConsultingPipeline {
             timeline: 28,
             dependencies: [],
             qualityStandards: [
-              { criteria: 'Technical accuracy', measurement: 'Architecture review', target: '100%' },
-              { criteria: 'Implementation feasibility', measurement: 'Technical validation', target: '95%' },
+              {
+                criteria: 'Technical accuracy',
+                measurement: 'Architecture review',
+                target: '100%',
+              },
+              {
+                criteria: 'Implementation feasibility',
+                measurement: 'Technical validation',
+                target: '95%',
+              },
             ],
           },
           {
@@ -929,7 +1064,11 @@ export class ConsultingPipeline {
             timeline: 120,
             dependencies: ['Technology Roadmap'],
             qualityStandards: [
-              { criteria: 'Milestone achievement', measurement: 'On-time delivery', target: '90%' },
+              {
+                criteria: 'Milestone achievement',
+                measurement: 'On-time delivery',
+                target: '90%',
+              },
             ],
           },
         ],
@@ -939,30 +1078,60 @@ export class ConsultingPipeline {
             {
               name: 'Current State Assessment',
               duration: 21,
-              activities: ['Technology audit', 'Process analysis', 'Gap identification'],
+              activities: [
+                'Technology audit',
+                'Process analysis',
+                'Gap identification',
+              ],
               deliverables: ['Assessment Report'],
               stakeholders: ['CTO', 'IT Team', 'Payment Team'],
-              successCriteria: ['Complete technology inventory', 'Gap analysis completion'],
+              successCriteria: [
+                'Complete technology inventory',
+                'Gap analysis completion',
+              ],
             },
             {
               name: 'Future State Design',
               duration: 14,
-              activities: ['Architecture design', 'Technology selection', 'Integration planning'],
+              activities: [
+                'Architecture design',
+                'Technology selection',
+                'Integration planning',
+              ],
               deliverables: ['Technical Architecture', 'Implementation Plan'],
               stakeholders: ['Technical Leadership'],
-              successCriteria: ['Architecture approval', 'Technology decisions'],
+              successCriteria: [
+                'Architecture approval',
+                'Technology decisions',
+              ],
             },
           ],
-          tools: ['Enterprise Architecture Tools', 'MADFAM Platform', 'Integration Testing'],
-          bestPractices: ['Agile implementation', 'Continuous testing', 'Change management'],
-          riskMitigation: ['Phased rollout', 'Rollback procedures', 'Performance monitoring'],
+          tools: [
+            'Enterprise Architecture Tools',
+            'MADFAM Platform',
+            'Integration Testing',
+          ],
+          bestPractices: [
+            'Agile implementation',
+            'Continuous testing',
+            'Change management',
+          ],
+          riskMitigation: [
+            'Phased rollout',
+            'Rollback procedures',
+            'Performance monitoring',
+          ],
         },
         duration: {
           typical: 24,
           minimum: 16,
           maximum: 36,
           factors: [
-            { factor: 'Legacy system complexity', impact: 'increase', percentage: 40 },
+            {
+              factor: 'Legacy system complexity',
+              impact: 'increase',
+              percentage: 40,
+            },
             { factor: 'Team readiness', impact: 'decrease', percentage: 20 },
           ],
         },
@@ -972,22 +1141,50 @@ export class ConsultingPipeline {
           hourlyRate: { amount: 350, currency: 'USD', display: '$350' },
           expensePolicy: 'All expenses included in hourly rate',
         },
-        prerequisites: ['Executive commitment', 'Technical team availability', 'Budget approval'],
-        targetClients: ['Large enterprises', 'Legacy system organizations', 'Growth companies'],
+        prerequisites: [
+          'Executive commitment',
+          'Technical team availability',
+          'Budget approval',
+        ],
+        targetClients: [
+          'Large enterprises',
+          'Legacy system organizations',
+          'Growth companies',
+        ],
         successMetrics: [
-          { metric: 'System performance', target: '90% improvement', measurement: 'Response time and throughput', timeline: '6 months' },
-          { metric: 'Operational efficiency', target: '50% reduction', measurement: 'Manual processes', timeline: '12 months' },
+          {
+            metric: 'System performance',
+            target: '90% improvement',
+            measurement: 'Response time and throughput',
+            timeline: '6 months',
+          },
+          {
+            metric: 'Operational efficiency',
+            target: '50% reduction',
+            measurement: 'Manual processes',
+            timeline: '12 months',
+          },
         ],
         caseStudies: [
           {
             title: 'Legacy Banking Payment Modernization',
             client: 'Regional Bank',
             industry: 'Financial Services',
-            challenge: 'Outdated payment infrastructure limiting growth and increasing costs',
-            solution: 'Cloud-native payment platform with AI optimization capabilities',
+            challenge:
+              'Outdated payment infrastructure limiting growth and increasing costs',
+            solution:
+              'Cloud-native payment platform with AI optimization capabilities',
             results: [
               { metric: 'Processing speed', improvement: '300% faster' },
-              { metric: 'Operational costs', improvement: '45% reduction', quantifiedValue: { amount: 1800000, currency: 'USD', display: '$1.8M' } },
+              {
+                metric: 'Operational costs',
+                improvement: '45% reduction',
+                quantifiedValue: {
+                  amount: 1800000,
+                  currency: 'USD',
+                  display: '$1.8M',
+                },
+              },
               { metric: 'Customer satisfaction', improvement: '35% increase' },
             ],
             duration: 20,
@@ -1014,7 +1211,8 @@ export class ConsultingPipeline {
     const relationship = 70; // New client = lower score
     const competition = 60; // Assumes competitive situation
 
-    const overall = (budget + authority + need + timeline + relationship + competition) / 6;
+    const overall =
+      (budget + authority + need + timeline + relationship + competition) / 6;
 
     return {
       overall,
@@ -1027,15 +1225,20 @@ export class ConsultingPipeline {
     };
   }
 
-  private getRecommendation(score: QualificationScore): 'pursue' | 'conditional' | 'decline' {
+  private getRecommendation(
+    score: QualificationScore
+  ): 'pursue' | 'conditional' | 'decline' {
     if (score.overall >= 80) return 'pursue';
     if (score.overall >= 60) return 'conditional';
     return 'decline';
   }
 
-  private generateNextSteps(score: QualificationScore, recommendation: string): string[] {
+  private generateNextSteps(
+    score: QualificationScore,
+    recommendation: string
+  ): string[] {
     const steps: string[] = [];
-    
+
     if (recommendation === 'pursue') {
       steps.push('Schedule discovery call with decision makers');
       steps.push('Prepare detailed proposal');
@@ -1054,9 +1257,11 @@ export class ConsultingPipeline {
 
   private async matchServices(request: any): Promise<ConsultingService[]> {
     // Match services based on requirements
-    return this.config.servicePortfolio.filter(service => 
-      service.targetClients.some(target => 
-        request.description.toLowerCase().includes(target.toLowerCase().split(' ')[0])
+    return this.config.servicePortfolio.filter(service =>
+      service.targetClients.some(target =>
+        request.description
+          .toLowerCase()
+          .includes(target.toLowerCase().split(' ')[0])
       )
     );
   }
@@ -1078,24 +1283,44 @@ export class ConsultingPipeline {
       paymentSchedule: '30% upfront, 40% at midpoint, 30% at completion',
       deliveryTimeline: 'As specified in project timeline',
       warrantyPeriod: '90 days post-delivery',
-      changeManagement: 'Change requests require written approval and budget adjustment',
-      intellectualProperty: 'Client owns deliverables, MADFAM retains methodology rights',
+      changeManagement:
+        'Change requests require written approval and budget adjustment',
+      intellectualProperty:
+        'Client owns deliverables, MADFAM retains methodology rights',
     };
   }
 
-  private async identifyCompetitors(industry: string): Promise<ConsultingCompetitor[]> {
+  private async identifyCompetitors(
+    industry: string
+  ): Promise<ConsultingCompetitor[]> {
     return [
       {
         name: 'McKinsey & Company',
-        strengths: ['Brand recognition', 'Global reach', 'C-suite relationships'],
-        weaknesses: ['High cost', 'Limited technical depth', 'Generic solutions'],
+        strengths: [
+          'Brand recognition',
+          'Global reach',
+          'C-suite relationships',
+        ],
+        weaknesses: [
+          'High cost',
+          'Limited technical depth',
+          'Generic solutions',
+        ],
         likelyStrategy: 'Premium positioning with broad business case',
         winProbability: 25,
       },
       {
         name: 'Deloitte',
-        strengths: ['Implementation capability', 'Technology depth', 'Industry presence'],
-        weaknesses: ['Higher cost', 'Complex organization', 'Slower innovation'],
+        strengths: [
+          'Implementation capability',
+          'Technology depth',
+          'Industry presence',
+        ],
+        weaknesses: [
+          'Higher cost',
+          'Complex organization',
+          'Slower innovation',
+        ],
         likelyStrategy: 'Comprehensive solution with technology focus',
         winProbability: 35,
       },
@@ -1113,7 +1338,10 @@ export class ConsultingPipeline {
     ];
   }
 
-  private async buildProposal(opportunity: ConsultingOpportunity, requirements: any): Promise<ConsultingProposal> {
+  private async buildProposal(
+    opportunity: ConsultingOpportunity,
+    requirements: any
+  ): Promise<ConsultingProposal> {
     return {
       id: `prop_${Date.now()}_${Math.random().toString(36).substr(2, 8)}`,
       opportunityId: opportunity.id,
@@ -1131,17 +1359,23 @@ export class ConsultingPipeline {
     };
   }
 
-  private async calculateWinProbability(opportunity: ConsultingOpportunity, proposal: any): Promise<number> {
+  private async calculateWinProbability(
+    opportunity: ConsultingOpportunity,
+    proposal: any
+  ): Promise<number> {
     let probability = opportunity.qualification.overall;
-    
+
     // Adjust based on proposal quality
     if (proposal.differentiators?.length > 3) probability += 10;
-    if (opportunity.proposal.pricing.totalValue.amount < 200000) probability += 5;
-    
+    if (opportunity.proposal.pricing.totalValue.amount < 200000)
+      probability += 5;
+
     return Math.min(probability, 95);
   }
 
-  private async identifyDifferentiators(opportunity: ConsultingOpportunity): Promise<string[]> {
+  private async identifyDifferentiators(
+    opportunity: ConsultingOpportunity
+  ): Promise<string[]> {
     return [
       'AI-powered optimization delivering 20-35% cost savings',
       'Rapid 6-8 week implementation vs 12-16 week industry average',
@@ -1161,27 +1395,44 @@ export class ConsultingPipeline {
     ];
   }
 
-  private async createEngagementPlan(opportunity: ConsultingOpportunity, contractDetails: any): Promise<EngagementPlan> {
+  private async createEngagementPlan(
+    opportunity: ConsultingOpportunity,
+    contractDetails: any
+  ): Promise<EngagementPlan> {
     return {
       phases: [
         {
           name: 'Discovery & Assessment',
           duration: 14,
-          objectives: ['Understand current state', 'Identify optimization opportunities'],
+          objectives: [
+            'Understand current state',
+            'Identify optimization opportunities',
+          ],
           deliverables: ['Current State Assessment', 'Opportunity Analysis'],
           resources: ['Senior Consultant', 'Data Analyst'],
         },
         {
           name: 'Strategy Development',
           duration: 10,
-          objectives: ['Develop optimization strategy', 'Create implementation roadmap'],
+          objectives: [
+            'Develop optimization strategy',
+            'Create implementation roadmap',
+          ],
           deliverables: ['Strategic Plan', 'Implementation Roadmap'],
           resources: ['Principal Consultant', 'Strategy Analyst'],
         },
       ],
       milestones: [
-        { name: 'Assessment Complete', date: new Date(), criteria: ['Stakeholder sign-off'] },
-        { name: 'Strategy Approved', date: new Date(), criteria: ['Executive approval'] },
+        {
+          name: 'Assessment Complete',
+          date: new Date(),
+          criteria: ['Stakeholder sign-off'],
+        },
+        {
+          name: 'Strategy Approved',
+          date: new Date(),
+          criteria: ['Executive approval'],
+        },
       ],
       resources: contractDetails.team,
       budget: contractDetails.budget,
@@ -1189,7 +1440,10 @@ export class ConsultingPipeline {
     };
   }
 
-  private async assessEngagementRisks(opportunity: ConsultingOpportunity, contractDetails: any): Promise<RiskAssessment> {
+  private async assessEngagementRisks(
+    opportunity: ConsultingOpportunity,
+    contractDetails: any
+  ): Promise<RiskAssessment> {
     return {
       risks: [
         {
@@ -1208,16 +1462,29 @@ export class ConsultingPipeline {
         },
       ],
       overallRiskLevel: 'medium',
-      contingencyPlans: ['Extended timeline buffer', 'Alternative data sources'],
+      contingencyPlans: [
+        'Extended timeline buffer',
+        'Alternative data sources',
+      ],
     };
   }
 
-  private async createQualityPlan(opportunity: ConsultingOpportunity): Promise<QualityPlan> {
+  private async createQualityPlan(
+    opportunity: ConsultingOpportunity
+  ): Promise<QualityPlan> {
     return {
       standards: ['ISO 9001', 'MADFAM Quality Framework'],
       metrics: [
-        { name: 'Client satisfaction', target: 4.5, measurement: 'Weekly surveys' },
-        { name: 'Deliverable quality', target: 95, measurement: 'Peer review scores' },
+        {
+          name: 'Client satisfaction',
+          target: 4.5,
+          measurement: 'Weekly surveys',
+        },
+        {
+          name: 'Deliverable quality',
+          target: 95,
+          measurement: 'Peer review scores',
+        },
       ],
       reviews: [
         { type: 'Phase gate review', frequency: 'End of each phase' },
@@ -1240,19 +1507,23 @@ export class ConsultingPipeline {
       status: 'contracted',
       team: {
         leadConsultant: contractDetails.team[0],
-        teamMembers: contractDetails.team.map((member: string, index: number) => ({
-          consultantId: member,
-          role: index === 0 ? 'Lead' : 'Consultant',
-          allocation: 100,
-          startDate: contractDetails.startDate,
-          responsibilities: [],
-        })),
+        teamMembers: contractDetails.team.map(
+          (member: string, index: number) => ({
+            consultantId: member,
+            role: index === 0 ? 'Lead' : 'Consultant',
+            allocation: 100,
+            startDate: contractDetails.startDate,
+            responsibilities: [],
+          })
+        ),
         clientContacts: [],
         escalationPath: [],
       },
       timeline: {
         startDate: contractDetails.startDate,
-        endDate: new Date(contractDetails.startDate.getTime() + 60 * 24 * 60 * 60 * 1000), // 60 days
+        endDate: new Date(
+          contractDetails.startDate.getTime() + 60 * 24 * 60 * 60 * 1000
+        ), // 60 days
         phases: [],
         milestones: [],
         criticalPath: [],
@@ -1281,7 +1552,9 @@ export class ConsultingPipeline {
     };
   }
 
-  private async calculateEngagementProgress(engagement: ConsultingEngagement): Promise<EngagementProgress> {
+  private async calculateEngagementProgress(
+    engagement: ConsultingEngagement
+  ): Promise<EngagementProgress> {
     return {
       overallProgress: 45,
       phaseProgress: [
@@ -1295,7 +1568,9 @@ export class ConsultingPipeline {
     };
   }
 
-  private async assessActiveRisks(engagement: ConsultingEngagement): Promise<ActiveRisk[]> {
+  private async assessActiveRisks(
+    engagement: ConsultingEngagement
+  ): Promise<ActiveRisk[]> {
     return [
       {
         description: 'Client data access delays',
@@ -1308,7 +1583,9 @@ export class ConsultingPipeline {
     ];
   }
 
-  private async generateManagementRecommendations(engagement: ConsultingEngagement): Promise<string[]> {
+  private async generateManagementRecommendations(
+    engagement: ConsultingEngagement
+  ): Promise<string[]> {
     return [
       'Schedule weekly client check-ins to maintain momentum',
       'Accelerate data collection to stay on schedule',
@@ -1352,7 +1629,11 @@ export class ConsultingPipeline {
         { service: 'Payment Strategy', margin: 72 },
         { service: 'Digital Transformation', margin: 65 },
       ],
-      clientProfitability: { amount: 125000, currency: 'USD', display: '$125,000' },
+      clientProfitability: {
+        amount: 125000,
+        currency: 'USD',
+        display: '$125,000',
+      },
     };
   }
 

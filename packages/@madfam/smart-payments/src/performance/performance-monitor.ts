@@ -1,16 +1,16 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -90,7 +90,7 @@ export class PerformanceMonitor {
    */
   endTimer(name: string, tags?: Record<string, string>): number {
     const startTime = this.timers.get(name);
-    
+
     if (!startTime) {
       console.warn(`Timer ${name} was not started`);
       return 0;
@@ -109,7 +109,9 @@ export class PerformanceMonitor {
     // Check threshold
     const threshold = this.thresholds[name as keyof PerformanceThresholds];
     if (threshold && duration > threshold) {
-      console.warn(`Performance warning: ${name} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`);
+      console.warn(
+        `Performance warning: ${name} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`
+      );
     }
 
     return duration;
@@ -136,7 +138,7 @@ export class PerformanceMonitor {
     tags?: Record<string, string>
   ): Promise<T> {
     this.startTimer(name);
-    
+
     try {
       const result = await fn();
       this.endTimer(name, { ...tags, status: 'success' });
@@ -153,15 +155,13 @@ export class PerformanceMonitor {
   generateReport(periodMinutes = 60): PerformanceReport {
     const now = Date.now();
     const periodStart = now - periodMinutes * 60 * 1000;
-    
+
     // Filter metrics for period
-    const periodMetrics = this.metrics.filter(
-      m => m.timestamp >= periodStart
-    );
+    const periodMetrics = this.metrics.filter(m => m.timestamp >= periodStart);
 
     // Group by metric name
     const grouped = this.groupMetrics(periodMetrics);
-    
+
     // Calculate statistics
     const metrics: PerformanceReport['metrics'] = {};
     const alerts: PerformanceReport['alerts'] = [];
@@ -169,12 +169,12 @@ export class PerformanceMonitor {
     for (const [name, values] of Object.entries(grouped)) {
       const sorted = values.sort((a, b) => a - b);
       const count = sorted.length;
-      
+
       if (count === 0) continue;
 
       const total = sorted.reduce((sum, val) => sum + val, 0);
       const average = total / count;
-      
+
       metrics[name] = {
         count,
         total,
@@ -234,7 +234,8 @@ export class PerformanceMonitor {
 
     for (const [name, values] of Object.entries(grouped)) {
       if (values.length > 0) {
-        stats[`${name}_avg`] = values.reduce((sum, val) => sum + val, 0) / values.length;
+        stats[`${name}_avg`] =
+          values.reduce((sum, val) => sum + val, 0) / values.length;
         stats[`${name}_count`] = values.length;
       }
     }
@@ -257,7 +258,7 @@ export class PerformanceMonitor {
     if (format === 'prometheus') {
       return this.exportPrometheus();
     }
-    
+
     return JSON.stringify(this.metrics);
   }
 
@@ -266,14 +267,14 @@ export class PerformanceMonitor {
    */
   private groupMetrics(metrics: PerformanceMetric[]): Record<string, number[]> {
     const grouped: Record<string, number[]> = {};
-    
+
     for (const metric of metrics) {
       if (!grouped[metric.name]) {
         grouped[metric.name] = [];
       }
       grouped[metric.name].push(metric.value);
     }
-    
+
     return grouped;
   }
 
@@ -345,9 +346,11 @@ export class PerformanceMonitor {
 
     for (const [name, values] of Object.entries(grouped)) {
       const metricName = `smart_payments_${name}_milliseconds`;
-      lines.push(`# HELP ${metricName} Duration of ${name} operation in milliseconds`);
+      lines.push(
+        `# HELP ${metricName} Duration of ${name} operation in milliseconds`
+      );
       lines.push(`# TYPE ${metricName} histogram`);
-      
+
       values.forEach((value, index) => {
         lines.push(`${metricName} ${value} ${this.metrics[index].timestamp}`);
       });
@@ -374,14 +377,13 @@ export function measurePerformance(name?: string) {
     if (!descriptor || !descriptor.value) {
       return descriptor;
     }
-    
+
     const originalMethod = descriptor.value;
     const metricName = name || `${target.constructor.name}.${propertyKey}`;
 
     descriptor.value = async function (...args: any[]) {
-      return globalPerformanceMonitor.measure(
-        metricName,
-        () => originalMethod.apply(this, args)
+      return globalPerformanceMonitor.measure(metricName, () =>
+        originalMethod.apply(this, args)
       );
     };
 

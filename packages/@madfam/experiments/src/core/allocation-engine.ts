@@ -36,7 +36,7 @@ export class AllocationEngine {
     switch (strategy.type) {
       case 'random':
         return this.randomAllocation(experiment.variations);
-      
+
       case 'deterministic':
         return this.deterministicAllocation(
           experiment.variations,
@@ -44,7 +44,7 @@ export class AllocationEngine {
           experiment.id,
           strategy.seed
         );
-      
+
       case 'weighted':
         return this.weightedAllocation(
           experiment.variations,
@@ -52,20 +52,20 @@ export class AllocationEngine {
           experiment.id,
           strategy.seed
         );
-      
+
       case 'percentage':
         return this.percentageAllocation(
           experiment.variations,
           userContext.userId,
           experiment.id
         );
-      
+
       case 'custom':
         if (!strategy.customAllocator) {
           throw new Error('Custom allocator not provided');
         }
         return strategy.customAllocator(experiment, userContext);
-      
+
       default:
         throw new Error(`Unknown allocation type: ${strategy.type}`);
     }
@@ -118,7 +118,7 @@ export class AllocationEngine {
     seed?: string
   ): Variation {
     const bucket = this.getBucket(userId, experimentId, seed);
-    
+
     // For equal weight variations
     if (this.hasEqualWeights(variations)) {
       const index = Math.floor((bucket / 100) * variations.length);
@@ -151,11 +151,11 @@ export class AllocationEngine {
     experimentId: string
   ): Variation {
     const bucket = this.getBucket(userId, experimentId);
-    
+
     // Find control variation
     const control = variations.find(v => v.isControl) || variations[0];
     const treatment = variations.find(v => !v.isControl) || variations[1];
-    
+
     // Allocate based on treatment weight
     return bucket < treatment.weight ? treatment : control;
   }
@@ -164,10 +164,10 @@ export class AllocationEngine {
    * Get bucket value (0-100) for user
    */
   private getBucket(userId: string, namespace: string, seed?: string): number {
-    const hashInput = seed 
+    const hashInput = seed
       ? `${seed}:${namespace}:${userId}`
       : `${namespace}:${userId}`;
-    
+
     const hash = murmurhash.v3(hashInput);
     return Math.abs(hash % 100);
   }
@@ -177,14 +177,14 @@ export class AllocationEngine {
    */
   private selectByWeight(variations: Variation[], bucket: number): Variation {
     let cumulative = 0;
-    
+
     for (const variation of variations) {
       cumulative += variation.weight;
       if (bucket < cumulative) {
         return variation;
       }
     }
-    
+
     // Fallback to last variation
     return variations[variations.length - 1];
   }
@@ -194,7 +194,7 @@ export class AllocationEngine {
    */
   private hasEqualWeights(variations: Variation[]): boolean {
     if (variations.length === 0) return true;
-    
+
     const firstWeight = variations[0].weight;
     return variations.every(v => v.weight === firstWeight);
   }

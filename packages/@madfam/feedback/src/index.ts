@@ -1,23 +1,23 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Main Entry Point
- * 
+ *
  * Export all public APIs for the feedback system
  */
 
@@ -40,11 +40,11 @@ export type {
   FeedbackSeverity,
   FeedbackStatus,
   UserContext,
-  
+
   // Survey types
   SatisfactionSurvey,
   NPSCategory,
-  
+
   // Analytics types
   BetaMetrics,
   UserRetention,
@@ -55,7 +55,7 @@ export type {
   PortfolioJourneyEvent,
   FeatureUsageEvent,
   SessionEvent,
-  
+
   // Configuration types
   FeedbackSystemConfig,
   StorageConfig,
@@ -66,21 +66,21 @@ export type {
   FeatureConfig,
   SurveyTriggers,
   CustomTrigger,
-  
+
   // API types
   FeedbackFilter,
   APIResponse,
   PaginatedResponse,
-  
+
   // Beta launch types
   BetaReadinessReport,
   ReadinessCheck,
-  
+
   // Error types
   FeedbackError,
   StorageError,
   ValidationError,
-  
+
   // Storage interface
   StorageAdapter,
 } from './core/types';
@@ -114,15 +114,16 @@ export function quickStart(config?: {
   supabaseUrl?: string;
   supabaseKey?: string;
 }) {
-  const storageConfig = config?.storage === 'supabase' && config.supabaseUrl && config.supabaseKey
-    ? {
-        type: 'supabase' as const,
-        options: {
-          supabaseUrl: config.supabaseUrl,
-          supabaseKey: config.supabaseKey,
-        },
-      }
-    : { type: 'memory' as const };
+  const storageConfig =
+    config?.storage === 'supabase' && config.supabaseUrl && config.supabaseKey
+      ? {
+          type: 'supabase' as const,
+          options: {
+            supabaseUrl: config.supabaseUrl,
+            supabaseKey: config.supabaseKey,
+          },
+        }
+      : { type: 'memory' as const };
 
   const feedbackSystem = createFeedbackSystem({ storage: storageConfig });
   const analytics = createBetaAnalytics({ storage: storageConfig });

@@ -189,10 +189,7 @@ export class MemoryAdapter extends BaseAdapter {
     return Promise.resolve();
   }
 
-  getMFASecret(
-    userId: string,
-    method: MFAMethod
-  ): Promise<string | null> {
+  getMFASecret(userId: string, method: MFAMethod): Promise<string | null> {
     const secret = this.mfaSecrets.find(
       s => s.userId === userId && s.method === method
     );
@@ -247,10 +244,7 @@ export class MemoryAdapter extends BaseAdapter {
     return Promise.resolve(links);
   }
 
-  deleteAccountLink(
-    userId: string,
-    provider: AuthProvider
-  ): Promise<void> {
+  deleteAccountLink(userId: string, provider: AuthProvider): Promise<void> {
     this.accountLinks = this.accountLinks.filter(
       link => !(link.userId === userId && link.provider === provider)
     );

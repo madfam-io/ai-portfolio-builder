@@ -1,8 +1,8 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
@@ -58,13 +58,15 @@ describe('ConnectionPool', () => {
   });
 
   it('should evict oldest connection when pool is full', async () => {
-    const factories = Array(4).fill(null).map((_, i) => 
-      jest.fn().mockResolvedValue({ 
-        id: i, 
-        created: Date.now(),
-        close: jest.fn(),
-      })
-    );
+    const factories = Array(4)
+      .fill(null)
+      .map((_, i) =>
+        jest.fn().mockResolvedValue({
+          id: i,
+          created: Date.now(),
+          close: jest.fn(),
+        })
+      );
 
     // Fill pool
     await pool.getConnection('api1', factories[0]);
@@ -127,7 +129,7 @@ describe('LazyLoader', () => {
       resolveLoader = resolve;
     });
     const loaderMock = jest.fn().mockReturnValue(loaderPromise);
-    
+
     const lazy = new LazyLoader(loaderMock);
 
     // Start multiple concurrent loads
@@ -141,7 +143,11 @@ describe('LazyLoader', () => {
     // Resolve the loader
     resolveLoader!('loaded value');
 
-    const [value1, value2, value3] = await Promise.all([promise1, promise2, promise3]);
+    const [value1, value2, value3] = await Promise.all([
+      promise1,
+      promise2,
+      promise3,
+    ]);
 
     expect(value1).toBe('loaded value');
     expect(value2).toBe('loaded value');
@@ -149,10 +155,11 @@ describe('LazyLoader', () => {
   });
 
   it('should reload after TTL expires', async () => {
-    const loaderMock = jest.fn()
+    const loaderMock = jest
+      .fn()
       .mockResolvedValueOnce('value1')
       .mockResolvedValueOnce('value2');
-    
+
     const lazy = new LazyLoader(loaderMock, 100); // 100ms TTL
 
     const value1 = await lazy.get();
@@ -166,10 +173,11 @@ describe('LazyLoader', () => {
   });
 
   it('should invalidate cached value', async () => {
-    const loaderMock = jest.fn()
+    const loaderMock = jest
+      .fn()
       .mockResolvedValueOnce('value1')
       .mockResolvedValueOnce('value2');
-    
+
     const lazy = new LazyLoader(loaderMock);
 
     const value1 = await lazy.get();
@@ -246,9 +254,9 @@ describe('DataPreloader', () => {
   });
 
   it('should preload common BINs', async () => {
-    const binLookup = jest.fn().mockImplementation(bin => 
-      Promise.resolve({ bin, country: 'US' })
-    );
+    const binLookup = jest
+      .fn()
+      .mockImplementation(bin => Promise.resolve({ bin, country: 'US' }));
 
     await preloader.preloadCommonBINs(binLookup);
 
@@ -258,9 +266,11 @@ describe('DataPreloader', () => {
   });
 
   it('should preload common countries', async () => {
-    const geoLookup = jest.fn().mockImplementation(country =>
-      Promise.resolve({ country, currency: 'USD' })
-    );
+    const geoLookup = jest
+      .fn()
+      .mockImplementation(country =>
+        Promise.resolve({ country, currency: 'USD' })
+      );
 
     await preloader.preloadCommonCountries(geoLookup);
 
@@ -281,7 +291,7 @@ describe('CompressionUtils', () => {
     };
 
     const compressed = CompressionUtils.compress(data);
-    
+
     expect(compressed).not.toContain(' : ');
     expect(compressed).not.toContain(' , ');
     expect(compressed).not.toContain(' { ');
@@ -318,16 +328,24 @@ describe('QueryOptimizer', () => {
   });
 
   it('should cache query results', async () => {
-    const result1 = await optimizer.query('SELECT * FROM users WHERE id = ?', [1]);
-    const result2 = await optimizer.query('SELECT * FROM users WHERE id = ?', [1]);
+    const result1 = await optimizer.query('SELECT * FROM users WHERE id = ?', [
+      1,
+    ]);
+    const result2 = await optimizer.query('SELECT * FROM users WHERE id = ?', [
+      1,
+    ]);
 
     // Should return same cached result
     expect(result1).toBe(result2);
   });
 
   it('should differentiate queries by parameters', async () => {
-    const result1 = await optimizer.query('SELECT * FROM users WHERE id = ?', [1]);
-    const result2 = await optimizer.query('SELECT * FROM users WHERE id = ?', [2]);
+    const result1 = await optimizer.query('SELECT * FROM users WHERE id = ?', [
+      1,
+    ]);
+    const result2 = await optimizer.query('SELECT * FROM users WHERE id = ?', [
+      2,
+    ]);
 
     expect(result1).not.toBe(result2);
   });
@@ -345,7 +363,7 @@ describe('QueryOptimizer', () => {
   it('should clear cache', async () => {
     await optimizer.query('SELECT * FROM users', []);
     optimizer.clearCache();
-    
+
     // After clearing, should execute query again
     await optimizer.query('SELECT * FROM users', []);
   });
@@ -372,7 +390,7 @@ describe('OptimizationManager', () => {
   it('should provide cache instance', () => {
     const cache = manager.getCache();
     expect(cache).toBeInstanceOf(CacheManager);
-    
+
     cache.set('test', 'value');
     expect(cache.get('test')).toBe('value');
   });
@@ -403,7 +421,7 @@ describe('OptimizationManager', () => {
     cache.get('missing');
 
     const stats = manager.getStats();
-    
+
     expect(stats.cache).toMatchObject({
       hits: 1,
       misses: 1,
@@ -415,11 +433,11 @@ describe('OptimizationManager', () => {
   it('should cleanup resources', async () => {
     const cache = manager.getCache();
     const pool = manager.getConnectionPool();
-    
+
     cache.set('test', 'value');
-    
+
     await manager.cleanup();
-    
+
     expect(cache.get('test')).toBeNull();
   });
 });

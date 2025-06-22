@@ -1,15 +1,15 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Integration Test Suite
- * 
+ *
  * End-to-end tests for the complete smart payments flow
  */
 
@@ -84,7 +84,9 @@ describe('SmartPayments Integration', () => {
       expect(result.pricing.displayCurrency).toBe('BRL');
       expect(result.pricing.discountApplied).toBe(true);
       expect(result.pricing.displayPrice.amount).toBeLessThan(100);
-      expect(result.paymentOptions.recommendedGateway.gateway).toBe('mercadopago');
+      expect(result.paymentOptions.recommendedGateway.gateway).toBe(
+        'mercadopago'
+      );
     });
 
     it('should detect and handle VPN usage', async () => {
@@ -124,8 +126,12 @@ describe('SmartPayments Integration', () => {
       });
 
       expect(result.cardInfo?.issuerCountry).toBe('MX');
-      expect(result.paymentOptions.recommendedGateway.installmentOptions).toBeDefined();
-      expect(result.paymentOptions.recommendedGateway.installmentOptions).toHaveLength(3);
+      expect(
+        result.paymentOptions.recommendedGateway.installmentOptions
+      ).toBeDefined();
+      expect(
+        result.paymentOptions.recommendedGateway.installmentOptions
+      ).toHaveLength(3);
     });
 
     it('should respect customer preferences', async () => {
@@ -177,9 +183,9 @@ describe('SmartPayments Integration', () => {
       );
 
       expect(fees.percentageFee.amount).toBe(2.9);
-      expect(fees.fixedFee.amount).toBe(0.30);
+      expect(fees.fixedFee.amount).toBe(0.3);
       expect(fees.internationalFee?.amount).toBe(1);
-      expect(fees.totalFee.amount).toBe(4.20);
+      expect(fees.totalFee.amount).toBe(4.2);
     });
 
     it('should provide correct available gateways by country', () => {
@@ -189,10 +195,10 @@ describe('SmartPayments Integration', () => {
 
       expect(brazilGateways).toContain('mercadopago');
       expect(brazilGateways).toContain('stripe');
-      
+
       expect(indiaGateways).toContain('razorpay');
       expect(indiaGateways).not.toContain('mercadopago');
-      
+
       expect(usGateways).toContain('stripe');
       expect(usGateways).not.toContain('razorpay');
     });
@@ -201,13 +207,13 @@ describe('SmartPayments Integration', () => {
   describe('Performance', () => {
     it('should process payments within 200ms', async () => {
       const start = Date.now();
-      
+
       await smartPayments.processPayment({
         amount: { amount: 100, currency: 'USD', display: '$100' },
         cardNumber: '4111111111111111',
         ipAddress: '8.8.8.8',
       });
-      
+
       const duration = Date.now() - start;
       expect(duration).toBeLessThan(200);
     });
@@ -217,12 +223,12 @@ describe('SmartPayments Integration', () => {
       const start1 = Date.now();
       await smartPayments.lookupBIN('411111');
       const duration1 = Date.now() - start1;
-      
+
       // Second call (cached)
       const start2 = Date.now();
       await smartPayments.lookupBIN('411111');
       const duration2 = Date.now() - start2;
-      
+
       // Cached call should be much faster
       expect(duration2).toBeLessThan(duration1 / 2);
     });

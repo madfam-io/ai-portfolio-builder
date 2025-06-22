@@ -1,16 +1,16 @@
 /**
  * @madfam/feedback
- * 
+ *
  * World-class feedback collection and analytics system
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -28,7 +28,7 @@ import type {
 
 /**
  * Base Storage Adapter
- * 
+ *
  * Abstract base class for all storage implementations
  */
 export abstract class BaseStorageAdapter implements StorageAdapter {
@@ -42,27 +42,27 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
   abstract createFeedback(
     feedback: Omit<FeedbackEntry, 'id' | 'timestamp'>
   ): Promise<FeedbackEntry>;
-  
+
   abstract getFeedback(id: string): Promise<FeedbackEntry | null>;
-  
+
   abstract listFeedback(
     filter?: FeedbackFilter
   ): Promise<PaginatedResponse<FeedbackEntry>>;
-  
+
   abstract updateFeedback(
     id: string,
     updates: Partial<FeedbackEntry>
   ): Promise<FeedbackEntry>;
-  
+
   abstract deleteFeedback(id: string): Promise<boolean>;
 
   // Survey operations
   abstract createSurvey(
     survey: Omit<SatisfactionSurvey, 'id' | 'timestamp'>
   ): Promise<SatisfactionSurvey>;
-  
+
   abstract getSurvey(id: string): Promise<SatisfactionSurvey | null>;
-  
+
   abstract listSurveys(
     filter?: Partial<FeedbackFilter>
   ): Promise<PaginatedResponse<SatisfactionSurvey>>;
@@ -71,8 +71,10 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
   abstract trackEvent(
     event: Omit<FeedbackEvent, 'id' | 'timestamp'>
   ): Promise<void>;
-  
-  abstract getEvents(filter?: Partial<FeedbackFilter>): Promise<FeedbackEvent[]>;
+
+  abstract getEvents(
+    filter?: Partial<FeedbackFilter>
+  ): Promise<FeedbackEvent[]>;
 
   // Metrics
   abstract getMetrics(): Promise<BetaMetrics>;
@@ -104,7 +106,10 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
     if (filter.dateRange) {
       filtered = filtered.filter(item => {
         const timestamp = new Date(item.timestamp);
-        return timestamp >= filter.dateRange!.start && timestamp <= filter.dateRange!.end;
+        return (
+          timestamp >= filter.dateRange!.start &&
+          timestamp <= filter.dateRange!.end
+        );
       });
     }
 
@@ -113,7 +118,7 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
       filtered.sort((a, b) => {
         const aValue = this.getSortValue(a, filter.sortBy!);
         const bValue = this.getSortValue(b, filter.sortBy!);
-        
+
         const comparison = aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
         return filter.sortOrder === 'desc' ? -comparison : comparison;
       });

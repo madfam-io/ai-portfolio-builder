@@ -31,7 +31,10 @@ export class CacheManager {
     this.maxSize = this.strategy.maxSize || 1000;
 
     // Set up localStorage if needed
-    if (this.strategy.type === 'localStorage' && typeof window !== 'undefined') {
+    if (
+      this.strategy.type === 'localStorage' &&
+      typeof window !== 'undefined'
+    ) {
       this.initLocalStorage();
     }
   }
@@ -46,7 +49,10 @@ export class CacheManager {
   /**
    * Set experiment in cache
    */
-  async setExperiment(experimentId: string, experiment: Experiment): Promise<void> {
+  async setExperiment(
+    experimentId: string,
+    experiment: Experiment
+  ): Promise<void> {
     await this.set(`experiment:${experimentId}`, experiment);
   }
 
@@ -67,7 +73,10 @@ export class CacheManager {
   /**
    * Get assignment from cache
    */
-  async getAssignment(experimentId: string, userId: string): Promise<Assignment | null> {
+  async getAssignment(
+    experimentId: string,
+    userId: string
+  ): Promise<Assignment | null> {
     return this.get(`assignment:${experimentId}:${userId}`);
   }
 
@@ -89,16 +98,16 @@ export class CacheManager {
     switch (this.strategy.type) {
       case 'memory':
         return this.getFromMemory(key);
-      
+
       case 'localStorage':
         return this.getFromLocalStorage(key);
-      
+
       case 'custom':
         if (this.strategy.customGet) {
           return this.strategy.customGet(key);
         }
         return null;
-      
+
       default:
         return null;
     }
@@ -112,11 +121,11 @@ export class CacheManager {
       case 'memory':
         this.setInMemory(key, value);
         break;
-      
+
       case 'localStorage':
         this.setInLocalStorage(key, value);
         break;
-      
+
       case 'custom':
         if (this.strategy.customSet) {
           await this.strategy.customSet(key, value);
@@ -212,7 +221,10 @@ export class CacheManager {
             timestamp: Date.now(),
             ttl: this.strategy.ttl,
           };
-          localStorage.setItem(`madfam:experiments:${key}`, JSON.stringify(entry));
+          localStorage.setItem(
+            `madfam:experiments:${key}`,
+            JSON.stringify(entry)
+          );
         } catch {
           // Give up
         }

@@ -17,10 +17,10 @@ const DEFAULT_PLATFORMS: SharePlatform[] = [
   'copy_link',
 ];
 
-export function ShareHub({ 
-  userId, 
+export function ShareHub({
+  userId,
   platforms = DEFAULT_PLATFORMS,
-  className = '' 
+  className = '',
 }: ShareHubProps) {
   const { activeReferral, shareToSocial, sharing } = useReferral({ userId });
 

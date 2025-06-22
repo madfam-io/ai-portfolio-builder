@@ -1,16 +1,16 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -63,7 +63,7 @@ export class CacheManager<T = any> {
    */
   get(key: string): T | null {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       if (this.config.enableStats) {
         this.stats.misses++;
@@ -82,7 +82,7 @@ export class CacheManager<T = any> {
 
     // Update access order (LRU)
     this.updateAccessOrder(key);
-    
+
     // Update stats
     if (this.config.enableStats) {
       entry.hits++;
@@ -101,8 +101,10 @@ export class CacheManager<T = any> {
     const expiry = Date.now() + (ttl || this.config.ttl);
 
     // Check if we need to evict
-    if (this.cache.size >= this.config.maxEntries || 
-        this.currentSize + size > this.config.maxSize) {
+    if (
+      this.cache.size >= this.config.maxEntries ||
+      this.currentSize + size > this.config.maxSize
+    ) {
       this.evictLRU();
     }
 
@@ -135,7 +137,7 @@ export class CacheManager<T = any> {
    */
   delete(key: string): boolean {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       return false;
     }
@@ -189,7 +191,9 @@ export class CacheManager<T = any> {
   /**
    * Prewarm cache with entries
    */
-  async prewarm(entries: Array<{ key: string; value: T; ttl?: number }>): Promise<void> {
+  async prewarm(
+    entries: Array<{ key: string; value: T; ttl?: number }>
+  ): Promise<void> {
     for (const entry of entries) {
       this.set(entry.key, entry.value, entry.ttl);
     }
@@ -211,21 +215,21 @@ export class CacheManager<T = any> {
    */
   private evictLRU(): void {
     while (
-      (this.cache.size >= this.config.maxEntries || 
-       this.currentSize > this.config.maxSize) &&
+      (this.cache.size >= this.config.maxEntries ||
+        this.currentSize > this.config.maxSize) &&
       this.accessOrder.length > 0
     ) {
       const key = this.accessOrder.shift()!;
       const entry = this.cache.get(key);
-      
+
       if (entry) {
         this.cache.delete(key);
         this.currentSize -= entry.size;
-        
+
         if (this.config.enableStats) {
           this.stats.evictions++;
         }
-        
+
         if (this.config.onEvict) {
           this.config.onEvict(key, entry.value);
         }
@@ -245,19 +249,19 @@ export class CacheManager<T = any> {
     if (typeof value === 'string') {
       return value.length * 2; // UTF-16
     }
-    
+
     if (typeof value === 'number') {
       return 8;
     }
-    
+
     if (typeof value === 'boolean') {
       return 4;
     }
-    
+
     if (value === null || value === undefined) {
       return 0;
     }
-    
+
     // For objects, estimate based on JSON string
     try {
       return JSON.stringify(value).length * 2;
@@ -283,7 +287,7 @@ export class MultiLevelCache {
   async get(key: string): Promise<any> {
     for (let i = 0; i < this.levels.length; i++) {
       const value = this.levels[i].get(key);
-      
+
       if (value !== null) {
         // Promote to higher levels
         for (let j = 0; j < i; j++) {
@@ -292,7 +296,7 @@ export class MultiLevelCache {
         return value;
       }
     }
-    
+
     return null;
   }
 

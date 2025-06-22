@@ -7,7 +7,11 @@ export interface CampaignSelectorProps {
   className?: string;
 }
 
-export function CampaignSelector({ userId, onSelect, className = '' }: CampaignSelectorProps) {
+export function CampaignSelector({
+  userId,
+  onSelect,
+  className = '',
+}: CampaignSelectorProps) {
   const { activeCampaigns, loading, error } = useReferralCampaigns({ userId });
 
   if (loading) return <div className={className}>Loading campaigns...</div>;
@@ -25,13 +29,19 @@ export function CampaignSelector({ userId, onSelect, className = '' }: CampaignS
               <div>
                 <span>You earn:</span>
                 <strong>
-                  ${campaign.referrer_reward.amount || campaign.referrer_reward.base_amount || 0}
+                  $
+                  {campaign.referrer_reward.amount ||
+                    campaign.referrer_reward.base_amount ||
+                    0}
                 </strong>
               </div>
               <div>
                 <span>Friend gets:</span>
                 <strong>
-                  ${campaign.referee_reward.amount || campaign.referee_reward.base_amount || 0}
+                  $
+                  {campaign.referee_reward.amount ||
+                    campaign.referee_reward.base_amount ||
+                    0}
                 </strong>
               </div>
             </div>
@@ -43,9 +53,7 @@ export function CampaignSelector({ userId, onSelect, className = '' }: CampaignS
           </div>
         ))}
       </div>
-      {activeCampaigns.length === 0 && (
-        <p>No active campaigns available.</p>
-      )}
+      {activeCampaigns.length === 0 && <p>No active campaigns available.</p>}
     </div>
   );
 }

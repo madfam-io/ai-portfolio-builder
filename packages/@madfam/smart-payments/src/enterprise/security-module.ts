@@ -1,23 +1,23 @@
 /**
  * @madfam/smart-payments
- * 
+ *
  * World-class payment gateway detection and routing system with AI-powered optimization
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
 /**
  * Enterprise Security Module
- * 
+ *
  * Bank-grade security features for enterprise payment processing
  * Includes PCI DSS compliance, SOC 2 Type II readiness, and advanced threat detection
  */
@@ -64,7 +64,7 @@ export interface AuditSettings {
   alertThresholds: AlertThreshold[];
 }
 
-export type AuditEventType = 
+export type AuditEventType =
   | 'authentication'
   | 'authorization'
   | 'data_access'
@@ -128,7 +128,13 @@ export interface SecurityVulnerability {
   description: string;
   severity: 'critical' | 'high' | 'medium' | 'low';
   cvssScore: number;
-  category: 'authentication' | 'encryption' | 'access_control' | 'data_protection' | 'network' | 'application';
+  category:
+    | 'authentication'
+    | 'encryption'
+    | 'access_control'
+    | 'data_protection'
+    | 'network'
+    | 'application';
   impact: string;
   likelihood: number; // 0-100
   remediation: string;
@@ -144,7 +150,14 @@ export interface ThreatAnalysis {
 
 export interface DetectedThreat {
   id: string;
-  type: 'brute_force' | 'sql_injection' | 'xss' | 'ddos' | 'fraud_attempt' | 'data_breach' | 'insider_threat';
+  type:
+    | 'brute_force'
+    | 'sql_injection'
+    | 'xss'
+    | 'ddos'
+    | 'fraud_attempt'
+    | 'data_breach'
+    | 'insider_threat';
   severity: 'low' | 'medium' | 'high' | 'critical';
   confidence: number; // 0-100
   source: string;
@@ -241,7 +254,8 @@ export class EnterpriseSecurityModule {
   async performSecurityAssessment(): Promise<SecurityAssessment> {
     return this.performanceMonitor.measure('securityAssessment', async () => {
       const complianceStatus = await this.assessCompliance();
-      const vulnerabilityAssessment = await this.performVulnerabilityAssessment();
+      const vulnerabilityAssessment =
+        await this.performVulnerabilityAssessment();
       const threatAnalysis = await this.analyzeThreatLandscape();
       const recommendedActions = await this.generateSecurityRecommendations();
       const certificationReadiness = await this.assessCertificationReadiness();
@@ -293,7 +307,9 @@ export class EnterpriseSecurityModule {
       threats.push(...mlThreats);
 
       // Calculate overall risk score
-      riskScore = Math.max(...threats.map(t => this.mapSeverityToScore(t.severity)));
+      riskScore = Math.max(
+        ...threats.map(t => this.mapSeverityToScore(t.severity))
+      );
 
       const recommendedActions = this.generateThreatMitigationActions(threats);
 
@@ -309,7 +325,9 @@ export class EnterpriseSecurityModule {
   /**
    * Log audit event
    */
-  async logAuditEvent(event: Omit<AuditEvent, 'id' | 'timestamp'>): Promise<void> {
+  async logAuditEvent(
+    event: Omit<AuditEvent, 'id' | 'timestamp'>
+  ): Promise<void> {
     const auditEvent: AuditEvent = {
       id: this.generateEventId(),
       timestamp: new Date(),
@@ -332,7 +350,10 @@ export class EnterpriseSecurityModule {
   /**
    * Encrypt sensitive data using field-level encryption
    */
-  async encryptSensitiveData(data: any, classification: 'confidential' | 'restricted'): Promise<{
+  async encryptSensitiveData(
+    data: any,
+    classification: 'confidential' | 'restricted'
+  ): Promise<{
     encryptedData: string;
     keyId: string;
     algorithm: string;
@@ -344,10 +365,10 @@ export class EnterpriseSecurityModule {
 
     const algorithm = this.config.encryptionSettings.algorithm;
     const keyId = await this.generateEncryptionKey();
-    
+
     // Implement AES-256-GCM encryption
     const encryptedData = await this.performEncryption(data, keyId, algorithm);
-    
+
     const metadata = {
       classification,
       encryptedAt: new Date(),
@@ -394,19 +415,29 @@ export class EnterpriseSecurityModule {
         {
           requirement: '1. Install and maintain firewall configuration',
           status: 'compliant' as const,
-          evidence: ['Firewall rules configured', 'Network segmentation implemented'],
+          evidence: [
+            'Firewall rules configured',
+            'Network segmentation implemented',
+          ],
           recommendations: ['Regular firewall rule review'],
         },
         {
           requirement: '2. Do not use vendor-supplied defaults',
           status: 'compliant' as const,
-          evidence: ['Default passwords changed', 'Security configurations hardened'],
+          evidence: [
+            'Default passwords changed',
+            'Security configurations hardened',
+          ],
           recommendations: ['Automated configuration scanning'],
         },
         {
           requirement: '3. Protect stored cardholder data',
           status: 'compliant' as const,
-          evidence: ['Data encryption at rest', 'Field-level encryption', 'Key management'],
+          evidence: [
+            'Data encryption at rest',
+            'Field-level encryption',
+            'Key management',
+          ],
           recommendations: ['Regular encryption key rotation'],
         },
         {
@@ -419,11 +450,16 @@ export class EnterpriseSecurityModule {
           requirement: '11. Regularly test security systems',
           status: 'non_compliant' as const,
           evidence: [],
-          recommendations: ['Implement quarterly vulnerability scans', 'Annual penetration testing'],
+          recommendations: [
+            'Implement quarterly vulnerability scans',
+            'Annual penetration testing',
+          ],
         },
       ];
 
-      const compliantCount = requirements.filter(r => r.status === 'compliant').length;
+      const compliantCount = requirements.filter(
+        r => r.status === 'compliant'
+      ).length;
       const complianceScore = (compliantCount / requirements.length) * 100;
 
       const gaps = requirements
@@ -452,8 +488,14 @@ export class EnterpriseSecurityModule {
         status: 'partial',
         score: 85,
         requirements: [],
-        gaps: ['Quarterly vulnerability scanning', 'Annual penetration testing'],
-        remediation: ['Implement automated scanning', 'Schedule penetration tests'],
+        gaps: [
+          'Quarterly vulnerability scanning',
+          'Annual penetration testing',
+        ],
+        remediation: [
+          'Implement automated scanning',
+          'Schedule penetration tests',
+        ],
       },
       soc2Type2: {
         status: 'partial',
@@ -543,7 +585,9 @@ export class EnterpriseSecurityModule {
     };
   }
 
-  private async generateSecurityRecommendations(): Promise<SecurityRecommendation[]> {
+  private async generateSecurityRecommendations(): Promise<
+    SecurityRecommendation[]
+  > {
     return [
       {
         category: 'immediate',
@@ -559,7 +603,8 @@ export class EnterpriseSecurityModule {
       {
         category: 'short_term',
         title: 'Implement Zero Trust Architecture',
-        description: 'Deploy zero trust network access controls and micro-segmentation',
+        description:
+          'Deploy zero trust network access controls and micro-segmentation',
         impact: 'high',
         effort: 'high',
         cost: 50000,
@@ -598,13 +643,14 @@ export class EnterpriseSecurityModule {
     vulnerabilities: VulnerabilityAssessment,
     threats: ThreatAnalysis
   ): number {
-    const complianceScore = Object.values(compliance)
-      .filter(c => c.status !== 'not_applicable')
-      .reduce((sum, c) => sum + c.score, 0) / 5;
-    
+    const complianceScore =
+      Object.values(compliance)
+        .filter(c => c.status !== 'not_applicable')
+        .reduce((sum, c) => sum + c.score, 0) / 5;
+
     const vulnerabilityScore = vulnerabilities.totalScore;
     const threatScore = 100 - threats.riskScore;
-    
+
     return Math.round((complianceScore + vulnerabilityScore + threatScore) / 3);
   }
 
@@ -613,12 +659,16 @@ export class EnterpriseSecurityModule {
     return [];
   }
 
-  private async detectBehavioralAnomalies(requestData: any): Promise<DetectedThreat[]> {
+  private async detectBehavioralAnomalies(
+    requestData: any
+  ): Promise<DetectedThreat[]> {
     // Behavioral analysis and anomaly detection
     return [];
   }
 
-  private async detectKnownPatterns(requestData: any): Promise<DetectedThreat[]> {
+  private async detectKnownPatterns(
+    requestData: any
+  ): Promise<DetectedThreat[]> {
     // Known attack pattern matching
     return [];
   }
@@ -628,7 +678,9 @@ export class EnterpriseSecurityModule {
     return [];
   }
 
-  private mapSeverityToScore(severity: 'low' | 'medium' | 'high' | 'critical'): number {
+  private mapSeverityToScore(
+    severity: 'low' | 'medium' | 'high' | 'critical'
+  ): number {
     const scoreMap = { low: 25, medium: 50, high: 75, critical: 100 };
     return scoreMap[severity];
   }
@@ -660,7 +712,11 @@ export class EnterpriseSecurityModule {
     return `key_${Date.now()}_${Math.random().toString(36).substr(2, 16)}`;
   }
 
-  private async performEncryption(data: any, keyId: string, algorithm: string): Promise<string> {
+  private async performEncryption(
+    data: any,
+    keyId: string,
+    algorithm: string
+  ): Promise<string> {
     // Implement actual encryption logic
     const jsonData = JSON.stringify(data);
     return Buffer.from(jsonData).toString('base64');

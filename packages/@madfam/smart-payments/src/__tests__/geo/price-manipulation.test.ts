@@ -1,15 +1,15 @@
 /**
  * @madfam/smart-payments - Test Suite
- * 
+ *
  * Test suite for world-class payment gateway detection and routing system
- * 
+ *
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
  */
 
 /**
  * Price Manipulation Detection Test Suite
- * 
+ *
  * Tests for detecting geographical pricing manipulation
  */
 
@@ -61,7 +61,9 @@ describe('PriceManipulationDetector', () => {
       expect(result.detected).toBe(true);
       expect(result.type).toBe('vpn_discount_abuse');
       expect(result.confidence).toBeGreaterThan(0.6);
-      expect(result.evidence.factors).toContain('VPN detected while requesting regional pricing');
+      expect(result.evidence.factors).toContain(
+        'VPN detected while requesting regional pricing'
+      );
     });
 
     it('should detect card country mismatch', () => {
@@ -91,11 +93,18 @@ describe('PriceManipulationDetector', () => {
         },
       };
 
-      const result = detector.detectManipulation(geoContext, cardInfo, null, 'BR');
+      const result = detector.detectManipulation(
+        geoContext,
+        cardInfo,
+        null,
+        'BR'
+      );
 
       expect(result.detected).toBe(true);
       expect(result.type).toBe('card_country_mismatch');
-      expect(result.evidence.factors).toContain('Card country differs from location');
+      expect(result.evidence.factors).toContain(
+        'Card country differs from location'
+      );
     });
 
     it('should detect suspicious customer behavior', () => {
@@ -138,7 +147,9 @@ describe('PriceManipulationDetector', () => {
 
       expect(result.detected).toBe(true);
       expect(result.type).toBe('suspicious_behavior');
-      expect(result.evidence.factors).toContain('Suspicious customer behavior detected');
+      expect(result.evidence.factors).toContain(
+        'Suspicious customer behavior detected'
+      );
       expect(result.evidence.riskScore).toBeGreaterThan(50);
     });
 
@@ -159,7 +170,9 @@ describe('PriceManipulationDetector', () => {
 
       expect(result.detected).toBe(true);
       expect(result.type).toBe('location_spoofing');
-      expect(result.evidence.factors).toContain('Location spoofing indicators found');
+      expect(result.evidence.factors).toContain(
+        'Location spoofing indicators found'
+      );
     });
 
     it('should not detect manipulation for legitimate usage', () => {
@@ -189,7 +202,12 @@ describe('PriceManipulationDetector', () => {
         },
       };
 
-      const result = detector.detectManipulation(geoContext, cardInfo, null, 'US');
+      const result = detector.detectManipulation(
+        geoContext,
+        cardInfo,
+        null,
+        'US'
+      );
 
       expect(result.detected).toBe(false);
       expect(result.type).toBe('none');
@@ -224,10 +242,17 @@ describe('PriceManipulationDetector', () => {
       };
 
       // US card trying to get Bangladesh pricing (80% discount)
-      const result = detector.detectManipulation(geoContext, cardInfo, null, 'BD');
+      const result = detector.detectManipulation(
+        geoContext,
+        cardInfo,
+        null,
+        'BD'
+      );
 
       expect(result.detected).toBe(true);
-      expect(result.evidence.factors).toContain('Extreme discount difference between card and pricing country');
+      expect(result.evidence.factors).toContain(
+        'Extreme discount difference between card and pricing country'
+      );
     });
 
     it('should handle new accounts differently', () => {
@@ -254,7 +279,9 @@ describe('PriceManipulationDetector', () => {
       const result = detector.detectManipulation(geoContext, null, customer);
 
       expect(result.detected).toBe(true);
-      expect(result.evidence.factors).toContain('New account with different country');
+      expect(result.evidence.factors).toContain(
+        'New account with different country'
+      );
     });
 
     it('should generate appropriate recommendations', () => {
@@ -303,7 +330,12 @@ describe('PriceManipulationDetector', () => {
         },
       };
 
-      const result = detector.detectManipulation(geoContext, cardInfo, null, 'CA');
+      const result = detector.detectManipulation(
+        geoContext,
+        cardInfo,
+        null,
+        'CA'
+      );
 
       // US-CA is a common travel pair, should not trigger strong detection
       expect(result.evidence.riskScore).toBeLessThan(30);

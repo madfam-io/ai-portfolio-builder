@@ -54,7 +54,9 @@ export class Experiments extends EventEmitter {
    * Register an experiment
    */
   async registerExperiment(experiment: Experiment): Promise<void> {
-    this.logger.debug('Registering experiment', { experimentId: experiment.id });
+    this.logger.debug('Registering experiment', {
+      experimentId: experiment.id,
+    });
 
     // Validate experiment
     this.validateExperiment(experiment);
@@ -74,17 +76,29 @@ export class Experiments extends EventEmitter {
     experimentId: string,
     userContext: UserContext
   ): Promise<Assignment> {
-    this.logger.debug('Getting variation', { experimentId, userId: userContext.userId });
+    this.logger.debug('Getting variation', {
+      experimentId,
+      userId: userContext.userId,
+    });
 
     // Get experiment
     const experiment = await this.getExperiment(experimentId);
     if (!experiment) {
-      throw this.createError('EXPERIMENT_NOT_FOUND', `Experiment ${experimentId} not found`);
+      throw this.createError(
+        'EXPERIMENT_NOT_FOUND',
+        `Experiment ${experimentId} not found`
+      );
     }
 
     // Check if experiment is running
     if (experiment.status !== 'running') {
-      return this.createAssignment(experiment, userContext, null, false, 'Experiment not running');
+      return this.createAssignment(
+        experiment,
+        userContext,
+        null,
+        false,
+        'Experiment not running'
+      );
     }
 
     // Execute pre-assignment hook
@@ -99,20 +113,36 @@ export class Experiments extends EventEmitter {
     );
 
     if (!isEligible) {
-      return this.createAssignment(experiment, userContext, null, false, 'User not eligible');
+      return this.createAssignment(
+        experiment,
+        userContext,
+        null,
+        false,
+        'User not eligible'
+      );
     }
 
     // Check for overrides
     const override = this.checkOverrides(experiment, userContext);
     if (override) {
-      const assignment = this.createAssignment(experiment, userContext, override, true, 'Override', true);
+      const assignment = this.createAssignment(
+        experiment,
+        userContext,
+        override,
+        true,
+        'Override',
+        true
+      );
       await this.trackAssignment(assignment);
       return assignment;
     }
 
     // Get cached assignment if sticky
     if (experiment.allocation.sticky) {
-      const cached = await this.cache.getAssignment(experimentId, userContext.userId);
+      const cached = await this.cache.getAssignment(
+        experimentId,
+        userContext.userId
+      );
       if (cached) {
         await this.trackExposure(cached);
         return cached;
@@ -120,16 +150,22 @@ export class Experiments extends EventEmitter {
     }
 
     // Allocate variation
-    const variation = await this.allocation.allocate(
-      experiment,
-      userContext
-    );
+    const variation = await this.allocation.allocate(experiment, userContext);
 
-    const assignment = this.createAssignment(experiment, userContext, variation, true);
+    const assignment = this.createAssignment(
+      experiment,
+      userContext,
+      variation,
+      true
+    );
 
     // Cache assignment if sticky
     if (experiment.allocation.sticky) {
-      await this.cache.setAssignment(experimentId, userContext.userId, assignment);
+      await this.cache.setAssignment(
+        experimentId,
+        userContext.userId,
+        assignment
+      );
     }
 
     // Execute post-assignment hook
@@ -168,7 +204,10 @@ export class Experiments extends EventEmitter {
     userContext: UserContext,
     defaultValue?: unknown
   ): Promise<FeatureFlagAssignment> {
-    this.logger.debug('Evaluating flag', { flagKey, userId: userContext.userId });
+    this.logger.debug('Evaluating flag', {
+      flagKey,
+      userId: userContext.userId,
+    });
 
     // Get flag
     const flag = await this.getFlag(flagKey);
@@ -197,7 +236,10 @@ export class Experiments extends EventEmitter {
 
     // Check prerequisites
     if (flag.prerequisites && flag.prerequisites.length > 0) {
-      const prerequisitesMet = await this.checkPrerequisites(flag.prerequisites, userContext);
+      const prerequisitesMet = await this.checkPrerequisites(
+        flag.prerequisites,
+        userContext
+      );
       if (!prerequisitesMet) {
         return {
           flagKey,
@@ -212,7 +254,10 @@ export class Experiments extends EventEmitter {
 
     // Check targeting
     if (flag.targeting) {
-      const isEligible = await this.targeting.evaluate(flag.targeting, userContext);
+      const isEligible = await this.targeting.evaluate(
+        flag.targeting,
+        userContext
+      );
       if (!isEligible) {
         return {
           flagKey,
@@ -242,7 +287,7 @@ export class Experiments extends EventEmitter {
 
     // Handle variations
     const variation = await this.allocation.allocateFlag(flag, userContext);
-    
+
     return {
       flagKey,
       userId: userContext.userId,
@@ -262,7 +307,11 @@ export class Experiments extends EventEmitter {
     eventName: string,
     properties?: Record<string, unknown>
   ): Promise<void> {
-    this.logger.debug('Tracking conversion', { experimentId, userId, eventName });
+    this.logger.debug('Tracking conversion', {
+      experimentId,
+      userId,
+      eventName,
+    });
 
     const event: ExperimentEvent = {
       id: this.generateId(),
@@ -295,7 +344,12 @@ export class Experiments extends EventEmitter {
     value: number,
     properties?: Record<string, unknown>
   ): Promise<void> {
-    this.logger.debug('Tracking metric', { experimentId, userId, metricName, value });
+    this.logger.debug('Tracking metric', {
+      experimentId,
+      userId,
+      metricName,
+      value,
+    });
 
     const event: ExperimentEvent = {
       id: this.generateId(),
@@ -322,7 +376,10 @@ export class Experiments extends EventEmitter {
 
     const experiment = await this.getExperiment(experimentId);
     if (!experiment) {
-      throw this.createError('EXPERIMENT_NOT_FOUND', `Experiment ${experimentId} not found`);
+      throw this.createError(
+        'EXPERIMENT_NOT_FOUND',
+        `Experiment ${experimentId} not found`
+      );
     }
 
     return this.analytics.calculateResults(experiment);
@@ -339,7 +396,10 @@ export class Experiments extends EventEmitter {
 
     const experiment = await this.getExperiment(experimentId);
     if (!experiment) {
-      throw this.createError('EXPERIMENT_NOT_FOUND', `Experiment ${experimentId} not found`);
+      throw this.createError(
+        'EXPERIMENT_NOT_FOUND',
+        `Experiment ${experimentId} not found`
+      );
     }
 
     experiment.status = status;
@@ -347,7 +407,10 @@ export class Experiments extends EventEmitter {
 
     if (status === 'running' && !experiment.startDate) {
       experiment.startDate = new Date();
-    } else if ((status === 'completed' || status === 'archived') && !experiment.endDate) {
+    } else if (
+      (status === 'completed' || status === 'archived') &&
+      !experiment.endDate
+    ) {
       experiment.endDate = new Date();
     }
 
@@ -360,7 +423,9 @@ export class Experiments extends EventEmitter {
   /**
    * Private helper methods
    */
-  private async getExperiment(experimentId: string): Promise<Experiment | null> {
+  private async getExperiment(
+    experimentId: string
+  ): Promise<Experiment | null> {
     // Check cache first
     const cached = await this.cache.getExperiment(experimentId);
     if (cached) return cached;
@@ -380,28 +445,46 @@ export class Experiments extends EventEmitter {
 
   private validateExperiment(experiment: Experiment): void {
     if (!experiment.id || !experiment.name) {
-      throw this.createError('INVALID_CONFIGURATION', 'Experiment must have id and name');
+      throw this.createError(
+        'INVALID_CONFIGURATION',
+        'Experiment must have id and name'
+      );
     }
 
     if (!experiment.variations || experiment.variations.length < 2) {
-      throw this.createError('INVALID_CONFIGURATION', 'Experiment must have at least 2 variations');
+      throw this.createError(
+        'INVALID_CONFIGURATION',
+        'Experiment must have at least 2 variations'
+      );
     }
 
-    const totalWeight = experiment.variations.reduce((sum, v) => sum + v.weight, 0);
+    const totalWeight = experiment.variations.reduce(
+      (sum, v) => sum + v.weight,
+      0
+    );
     if (Math.abs(totalWeight - 100) > 0.01) {
-      throw this.createError('INVALID_CONFIGURATION', 'Variation weights must sum to 100');
+      throw this.createError(
+        'INVALID_CONFIGURATION',
+        'Variation weights must sum to 100'
+      );
     }
   }
 
   private validateFlag(flag: FeatureFlag): void {
     if (!flag.key || !flag.name) {
-      throw this.createError('INVALID_CONFIGURATION', 'Flag must have key and name');
+      throw this.createError(
+        'INVALID_CONFIGURATION',
+        'Flag must have key and name'
+      );
     }
 
     if (flag.variations) {
       const totalWeight = flag.variations.reduce((sum, v) => sum + v.weight, 0);
       if (Math.abs(totalWeight - 100) > 0.01) {
-        throw this.createError('INVALID_CONFIGURATION', 'Variation weights must sum to 100');
+        throw this.createError(
+          'INVALID_CONFIGURATION',
+          'Variation weights must sum to 100'
+        );
       }
     }
   }
@@ -414,11 +497,18 @@ export class Experiments extends EventEmitter {
 
     for (const override of experiment.allocation.overrides) {
       if (override.userId === userContext.userId) {
-        return experiment.variations.find(v => v.id === override.variationId) || null;
+        return (
+          experiment.variations.find(v => v.id === override.variationId) || null
+        );
       }
 
-      if (override.segmentId && userContext.segments?.includes(override.segmentId)) {
-        return experiment.variations.find(v => v.id === override.variationId) || null;
+      if (
+        override.segmentId &&
+        userContext.segments?.includes(override.segmentId)
+      ) {
+        return (
+          experiment.variations.find(v => v.id === override.variationId) || null
+        );
       }
     }
 
@@ -436,9 +526,13 @@ export class Experiments extends EventEmitter {
     return true;
   }
 
-  private isInRollout(userId: string, flagKey: string, percentage: number): boolean {
+  private isInRollout(
+    userId: string,
+    flagKey: string,
+    percentage: number
+  ): boolean {
     const hash = this.hash(`${userId}:${flagKey}`);
-    return (hash % 100) < percentage;
+    return hash % 100 < percentage;
   }
 
   private createAssignment(

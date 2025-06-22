@@ -16,14 +16,14 @@ export function ReferralStats({ userId, className = '' }: ReferralStatsProps) {
   return (
     <div className={`referral-stats ${className}`}>
       <h3>Your Performance</h3>
-      
+
       <div className="stats-grid">
         <div className="stat-card">
           <h4>Total Referrals</h4>
           <p className="stat-value">{stats.total_referrals}</p>
           <p className="stat-label">All time</p>
         </div>
-        
+
         <div className="stat-card">
           <h4>Success Rate</h4>
           <p className="stat-value">
@@ -31,13 +31,13 @@ export function ReferralStats({ userId, className = '' }: ReferralStatsProps) {
           </p>
           <p className="stat-label">Conversion</p>
         </div>
-        
+
         <div className="stat-card">
           <h4>Total Earned</h4>
           <p className="stat-value">${stats.total_rewards_earned}</p>
           <p className="stat-label">Lifetime</p>
         </div>
-        
+
         <div className="stat-card">
           <h4>Current Streak</h4>
           <p className="stat-value">{stats.current_streak}</p>
