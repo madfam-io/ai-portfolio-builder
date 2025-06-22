@@ -330,18 +330,16 @@ export function useFlowExperiment(
     async (stepId: string, metadata?: Record<string, unknown>) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'step_completion',
-        1,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'step_completion',
+        value: 1,
+        metadata: {
           flowId,
           stepId,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, flowId]
   );
@@ -350,17 +348,15 @@ export function useFlowExperiment(
     async (metadata?: Record<string, unknown>) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'flow_completion',
-        1,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'flow_completion',
+        value: 1,
+        metadata: {
           flowId,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, flowId]
   );
@@ -408,19 +404,17 @@ export function useContentExperiment(
     async (interactionType: string, metadata?: Record<string, unknown>) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'content_interaction',
-        1,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'content_interaction',
+        value: 1,
+        metadata: {
           contentKey,
           interactionType,
           content,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, contentKey, content]
   );
@@ -500,20 +494,18 @@ export function usePricingExperiment(
     async (actualPrice: number, metadata?: Record<string, unknown>) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'purchase',
-        actualPrice,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'purchase',
+        value: actualPrice,
+        metadata: {
           basePrice,
           experimentPrice: getPrice(),
           actualPrice,
           currency,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, basePrice, getPrice, currency]
   );
@@ -565,18 +557,16 @@ export function useFeatureFlagExperiment(
     async (metadata?: Record<string, unknown>) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'feature_usage',
-        1,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'feature_usage',
+        value: 1,
+        metadata: {
           featureName,
           enabled: isEnabled,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, featureName, isEnabled]
   );
@@ -628,20 +618,18 @@ export function useAlgorithmExperiment(
     ) => {
       if (!experimentId || !userId) return;
 
-      await trackExperimentConversion(
-        userId,
-        experimentId,
-        'algorithm_usage',
-        1,
-        {
+      await trackExperimentConversion(userId, experimentId, {
+        metricId: 'algorithm_usage',
+        value: 1,
+        metadata: {
           algorithmName,
           params,
           resultQuality,
           processingTime,
           timestamp: Date.now(),
           ...metadata,
-        }
-      );
+        },
+      });
     },
     [experimentId, userId, algorithmName, params]
   );
