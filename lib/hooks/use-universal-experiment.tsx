@@ -243,10 +243,14 @@ export function useComponentExperiment(
       if (!experimentId || !userId) return;
 
       try {
-        await trackExperimentConversion(userId, experimentId, metricId, value, {
-          componentId,
-          timestamp: Date.now(),
-          ...metadata,
+        await trackExperimentConversion(userId, experimentId, {
+          metricId,
+          value,
+          metadata: {
+            componentId,
+            timestamp: Date.now(),
+            ...metadata,
+          },
         });
 
         if (onConversion) {
@@ -480,11 +484,15 @@ export function usePricingExperiment(
   const trackPriceView = useCallback(async () => {
     if (!experimentId || !userId) return;
 
-    await trackExperimentConversion(userId, experimentId, 'price_view', 1, {
-      basePrice,
-      finalPrice: getPrice(),
-      currency,
-      timestamp: Date.now(),
+    await trackExperimentConversion(userId, experimentId, {
+      metricId: 'price_view',
+      value: 1,
+      metadata: {
+        basePrice,
+        finalPrice: getPrice(),
+        currency,
+        timestamp: Date.now(),
+      },
     });
   }, [experimentId, userId, basePrice, getPrice, currency]);
 
