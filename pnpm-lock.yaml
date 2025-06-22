@@ -1,8 +1,3 @@
-# MADFAM Code Available License (MCAL) v1.0
-# Copyright (c) 2025-present MADFAM. All rights reserved.
-# Commercial use prohibited except by MADFAM and licensed partners.
-# For licensing: licensing@madfam.com
-
 lockfileVersion: '6.0'
 
 settings:
@@ -261,6 +256,9 @@ devDependencies:
   eslint-config-prettier:
     specifier: ^10.1.5
     version: 10.1.5(eslint@8.57.1)
+  eslint-plugin-madfam-ai:
+    specifier: link:packages/eslint-plugin-madfam-ai
+    version: link:packages/eslint-plugin-madfam-ai
   eslint-plugin-prettier:
     specifier: ^5.5.0
     version: 5.5.0(eslint-config-prettier@10.1.5)(eslint@8.57.1)(prettier@3.5.3)

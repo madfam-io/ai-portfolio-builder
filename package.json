@@ -175,6 +175,7 @@
     "eslint": "^8.57.0",
     "eslint-config-next": "15.3.3",
     "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-madfam-ai": "link:packages/eslint-plugin-madfam-ai",
     "eslint-plugin-prettier": "^5.5.0",
     "glob": "^11.0.3",
     "husky": "^9.1.7",

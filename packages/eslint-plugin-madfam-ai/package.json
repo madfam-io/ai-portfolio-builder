@@ -2,8 +2,8 @@
   "name": "eslint-plugin-madfam-ai",
   "version": "1.0.0",
   "description": "AI-powered ESLint plugin that provides business impact analysis and performance optimization recommendations",
-  "main": "index.js",
-  "types": "index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "keywords": [
     "eslint",
     "eslint-plugin",
@@ -38,10 +38,10 @@
     "eslint": ">=8.0.0"
   },
   "devDependencies": {
-    "@types/eslint": "^8.44.0",
+    "@types/eslint": "^8.56.12",
     "@typescript-eslint/parser": "^6.0.0",
     "@typescript-eslint/utils": "^6.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "build": "tsc",
@@ -50,8 +50,7 @@
     "prepublishOnly": "npm run build"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
+    "dist/",
     "README.md",
     "LICENSE"
   ]
