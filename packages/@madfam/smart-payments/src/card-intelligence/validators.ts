@@ -154,7 +154,7 @@ export function validateExpiry(month: string, year: string): ValidationResult {
   const currentYear = new Date().getFullYear();
   const fullYear = yearNum < 100 ? 2000 + yearNum : yearNum;
 
-  if (isNaN(yearNum) || fullYear < currentYear || fullYear > currentYear + 20) {
+  if (isNaN(yearNum) || fullYear > currentYear + 20) {
     errors.push({
       field: 'expiryYear',
       code: 'INVALID_YEAR',
@@ -165,7 +165,7 @@ export function validateExpiry(month: string, year: string): ValidationResult {
   // Check if expired
   if (errors.length === 0) {
     const currentMonth = new Date().getMonth() + 1;
-    if (fullYear === currentYear && monthNum < currentMonth) {
+    if (fullYear < currentYear || (fullYear === currentYear && monthNum < currentMonth)) {
       errors.push({
         field: 'expiry',
         code: 'EXPIRED',
@@ -211,7 +211,7 @@ export function validateCVV(
   }
 
   // Check if all digits
-  if (!/^\d+$/.test(cleanCVV)) {
+  if (!/^\d+$/.test(cvv)) {
     errors.push({
       field: 'cvv',
       code: 'INVALID_FORMAT',

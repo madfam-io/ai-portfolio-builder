@@ -25,7 +25,7 @@
  * Main referral hook - provides comprehensive referral functionality
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type {
   Referral,
   ReferralCampaign,
@@ -527,7 +527,7 @@ export function useReferral(
 
 // Helper functions for sharing
 
-async function shareToTwitter(content: ShareContent): Promise<boolean> {
+function shareToTwitter(content: ShareContent): Promise<boolean> {
   const text = encodeURIComponent(content.text);
   const url = encodeURIComponent(content.url);
   const hashtags = content.hashtags?.join(',') || '';
@@ -538,7 +538,7 @@ async function shareToTwitter(content: ShareContent): Promise<boolean> {
   return openShareWindow(twitterUrl);
 }
 
-async function shareToLinkedIn(content: ShareContent): Promise<boolean> {
+function shareToLinkedIn(content: ShareContent): Promise<boolean> {
   const url = encodeURIComponent(content.url);
   const title = encodeURIComponent('Check this out!');
   const summary = encodeURIComponent(content.text);
@@ -548,7 +548,7 @@ async function shareToLinkedIn(content: ShareContent): Promise<boolean> {
   return openShareWindow(linkedinUrl);
 }
 
-async function shareToFacebook(content: ShareContent): Promise<boolean> {
+function shareToFacebook(content: ShareContent): Promise<boolean> {
   const url = encodeURIComponent(content.url);
   const quote = encodeURIComponent(content.text);
 
@@ -557,21 +557,21 @@ async function shareToFacebook(content: ShareContent): Promise<boolean> {
   return openShareWindow(facebookUrl);
 }
 
-async function shareToWhatsApp(content: ShareContent): Promise<boolean> {
+function shareToWhatsApp(content: ShareContent): Promise<boolean> {
   const text = encodeURIComponent(`${content.text} ${content.url}`);
   const whatsappUrl = `https://wa.me/?text=${text}`;
 
   return openShareWindow(whatsappUrl);
 }
 
-async function shareToEmail(content: ShareContent): Promise<boolean> {
+function shareToEmail(content: ShareContent): Promise<boolean> {
   const subject = encodeURIComponent('Check this out!');
   const body = encodeURIComponent(`${content.text}\n\n${content.url}`);
 
   const emailUrl = `mailto:?subject=${subject}&body=${body}`;
 
   window.location.href = emailUrl;
-  return true;
+  return Promise.resolve(true);
 }
 
 async function copyToClipboard(text: string): Promise<boolean> {

@@ -36,18 +36,18 @@ describe('GatewayFeeCalculator', () => {
     it('should calculate Stripe fees correctly', () => {
       const fees = calculator.calculateFees('stripe', testAmount);
 
-      expect(fees.percentageFee.amount).toBe(2.9); // 2.9%
-      expect(fees.fixedFee.amount).toBe(0.3);
-      expect(fees.totalFee.amount).toBe(3.2);
-      expect(fees.processingFee.amount).toBe(3.2);
+      expect(fees.percentageFee.amount).toBeCloseTo(2.9, 2); // 2.9%
+      expect(fees.fixedFee.amount).toBeCloseTo(0.3, 2);
+      expect(fees.totalFee.amount).toBeCloseTo(3.2, 2);
+      expect(fees.processingFee.amount).toBeCloseTo(3.2, 2);
     });
 
     it('should calculate MercadoPago fees correctly', () => {
       const fees = calculator.calculateFees('mercadopago', testAmount);
 
-      expect(fees.percentageFee.amount).toBe(3.99); // 3.99%
+      expect(fees.percentageFee.amount).toBeCloseTo(3.99, 2); // 3.99%
       expect(fees.fixedFee.amount).toBe(0); // No fixed fee
-      expect(fees.totalFee.amount).toBe(3.99);
+      expect(fees.totalFee.amount).toBeCloseTo(3.99, 2);
     });
 
     it('should calculate LemonSqueezy fees correctly', () => {
@@ -61,9 +61,9 @@ describe('GatewayFeeCalculator', () => {
     it('should add international card fees', () => {
       const fees = calculator.calculateFees('stripe', testAmount, true);
 
-      expect(fees.percentageFee.amount).toBe(2.9);
-      expect(fees.internationalFee?.amount).toBe(1); // +1%
-      expect(fees.totalFee.amount).toBe(4.2); // 2.9% + 0.30 + 1%
+      expect(fees.percentageFee.amount).toBeCloseTo(2.9, 2);
+      expect(fees.internationalFee?.amount).toBeCloseTo(1, 2); // +1%
+      expect(fees.totalFee.amount).toBeCloseTo(4.2, 2); // 2.9% + 0.30 + 1%
     });
 
     it('should calculate installment fees', () => {

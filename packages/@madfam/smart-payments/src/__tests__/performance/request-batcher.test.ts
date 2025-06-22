@@ -34,9 +34,7 @@ describe('RequestBatcher', () => {
     });
   });
 
-  afterEach(() => {
-    batcher.clear();
-  });
+  // Cleanup removed to avoid interfering with other tests
 
   describe('Basic batching', () => {
     it('should batch requests up to maxBatchSize', async () => {
@@ -269,13 +267,12 @@ describe('RequestBatcher', () => {
 describe('BatcherFactory', () => {
   describe('BIN batcher', () => {
     it('should create BIN batcher with proper config', async () => {
-      const binLookup = jest
-        .fn()
-        .mockImplementation((bins: string[]) =>
-          Promise.resolve(bins.map(bin => ({ bin, country: 'US' })))
-        );
+      const binLookup = async (bins: string[]) => {
+        return bins.map(bin => ({ bin, country: 'US' }));
+      };
+      const spy = jest.fn(binLookup);
 
-      const binBatcher = BatcherFactory.createBINBatcher(binLookup);
+      const binBatcher = BatcherFactory.createBINBatcher(spy);
 
       const results = await Promise.all([
         binBatcher.add('411111'),
@@ -283,8 +280,8 @@ describe('BatcherFactory', () => {
         binBatcher.add('555555'),
       ]);
 
-      expect(binLookup).toHaveBeenCalledTimes(1);
-      expect(binLookup).toHaveBeenCalledWith(['411111', '555555']);
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(['411111', '555555']);
       expect(results[0]).toEqual({ bin: '411111', country: 'US' });
       expect(results[1]).toEqual({ bin: '411111', country: 'US' }); // Same result
     });

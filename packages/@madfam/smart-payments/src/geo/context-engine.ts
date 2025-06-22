@@ -22,7 +22,7 @@
  */
 
 import { LRUCache } from 'lru-cache';
-const IPinfoWrapper = require('node-ipinfo');
+import { IPinfoWrapper } from 'node-ipinfo';
 import {
   GeographicalContext,
   VPNCheckResult,

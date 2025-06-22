@@ -36,88 +36,8 @@ interface BINRange {
 
 // Hardcoded BIN ranges for common cards (fallback data)
 const FALLBACK_BIN_RANGES: BINRange[] = [
-  // Visa
-  {
-    start: '400000',
-    end: '499999',
-    brand: 'visa',
-    type: 'credit',
-    issuerName: 'Generic Visa',
-    issuerCountry: 'US',
-  },
-
-  // Mastercard
-  {
-    start: '510000',
-    end: '559999',
-    brand: 'mastercard',
-    type: 'credit',
-    issuerName: 'Generic Mastercard',
-    issuerCountry: 'US',
-  },
-  {
-    start: '222100',
-    end: '272099',
-    brand: 'mastercard',
-    type: 'credit',
-    issuerName: 'Generic Mastercard',
-    issuerCountry: 'US',
-  },
-
-  // American Express
-  {
-    start: '340000',
-    end: '349999',
-    brand: 'amex',
-    type: 'credit',
-    issuerName: 'American Express',
-    issuerCountry: 'US',
-  },
-  {
-    start: '370000',
-    end: '379999',
-    brand: 'amex',
-    type: 'credit',
-    issuerName: 'American Express',
-    issuerCountry: 'US',
-  },
-
-  // Discover
-  {
-    start: '601100',
-    end: '601199',
-    brand: 'discover',
-    type: 'credit',
-    issuerName: 'Discover',
-    issuerCountry: 'US',
-  },
-  {
-    start: '644000',
-    end: '659999',
-    brand: 'discover',
-    type: 'credit',
-    issuerName: 'Discover',
-    issuerCountry: 'US',
-  },
-
-  // Regional cards
-  {
-    start: '506700',
-    end: '506899',
-    brand: 'elo',
-    type: 'credit',
-    issuerName: 'Elo',
-    issuerCountry: 'BR',
-  },
-  {
-    start: '636297',
-    end: '636297',
-    brand: 'elo',
-    type: 'credit',
-    issuerName: 'Elo',
-    issuerCountry: 'BR',
-  },
-
+  // Specific bank BINs first (more specific matches should come before generic ones)
+  
   // Mexican banks (common BINs)
   {
     start: '421394',
@@ -185,6 +105,90 @@ const FALLBACK_BIN_RANGES: BINRange[] = [
     issuerName: 'ICICI Bank',
     issuerCountry: 'IN',
     issuerCurrency: 'INR',
+  },
+
+  // Regional cards
+  {
+    start: '506700',
+    end: '506899',
+    brand: 'elo',
+    type: 'credit',
+    issuerName: 'Elo',
+    issuerCountry: 'BR',
+  },
+  {
+    start: '636297',
+    end: '636297',
+    brand: 'elo',
+    type: 'credit',
+    issuerName: 'Elo',
+    issuerCountry: 'BR',
+  },
+
+  // Generic ranges (must come after specific BINs)
+  
+  // Visa
+  {
+    start: '400000',
+    end: '499999',
+    brand: 'visa',
+    type: 'credit',
+    issuerName: 'Generic Visa',
+    issuerCountry: 'US',
+  },
+
+  // Mastercard
+  {
+    start: '510000',
+    end: '559999',
+    brand: 'mastercard',
+    type: 'credit',
+    issuerName: 'Generic Mastercard',
+    issuerCountry: 'US',
+  },
+  {
+    start: '222100',
+    end: '272099',
+    brand: 'mastercard',
+    type: 'credit',
+    issuerName: 'Generic Mastercard',
+    issuerCountry: 'US',
+  },
+
+  // American Express
+  {
+    start: '340000',
+    end: '349999',
+    brand: 'amex',
+    type: 'credit',
+    issuerName: 'American Express',
+    issuerCountry: 'US',
+  },
+  {
+    start: '370000',
+    end: '379999',
+    brand: 'amex',
+    type: 'credit',
+    issuerName: 'American Express',
+    issuerCountry: 'US',
+  },
+
+  // Discover
+  {
+    start: '601100',
+    end: '601199',
+    brand: 'discover',
+    type: 'credit',
+    issuerName: 'Discover',
+    issuerCountry: 'US',
+  },
+  {
+    start: '644000',
+    end: '659999',
+    brand: 'discover',
+    type: 'credit',
+    issuerName: 'Discover',
+    issuerCountry: 'US',
   },
 ];
 
@@ -288,10 +292,8 @@ export class InMemoryBINDatabase implements BINDatabase {
 
   isSupported(bin: string): boolean {
     const cleanBIN = bin.replace(/\D/g, '');
-    return (
-      this.findRange(cleanBIN) !== null ||
-      this.detectBrandByPattern(cleanBIN) !== 'unknown'
-    );
+    // Only consider a BIN supported if we have specific data for it
+    return this.findRange(cleanBIN) !== null;
   }
 
   private findRange(bin: string): BINRange | null {

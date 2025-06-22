@@ -117,7 +117,7 @@ export class RequestBatcher<TRequest = any, TResponse = any> {
 
       // Resolve promises
       uniqueBatch.forEach((item, index) => {
-        const response = responses[index];
+        const response = responses?.[index];
 
         if (this.config.enableDeduplication) {
           const duplicates = this.duplicateMap.get(item.key) || [];
