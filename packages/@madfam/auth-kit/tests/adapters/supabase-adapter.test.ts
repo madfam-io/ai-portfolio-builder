@@ -30,42 +30,32 @@ const mockSupabaseClient = {
   rpc: jest.fn(),
 };
 
-const mockSelect = jest.fn();
-const mockInsert = jest.fn();
-const mockUpdate = jest.fn();
-const mockDelete = jest.fn();
-const mockEq = jest.fn();
-const mockSingle = jest.fn();
-const mockMaybeSingle = jest.fn();
-
-// Setup proper method chaining
-const setupMockChain = () => {
-  const chainObj = {
-    eq: mockEq,
-    single: mockSingle,
-    maybeSingle: mockMaybeSingle,
-    select: mockSelect,
+// Setup method chaining
+const createChainableMock = () => {
+  const methods = {
+    select: jest.fn(),
+    insert: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+    eq: jest.fn(),
+    single: jest.fn(),
+    maybeSingle: jest.fn(),
   };
 
-  mockSelect.mockReturnValue(chainObj);
-  mockInsert.mockReturnValue({ select: () => chainObj });
-  mockUpdate.mockReturnValue(chainObj);
-  mockDelete.mockReturnValue(chainObj);
-  mockEq.mockReturnValue(chainObj);
+  // Make each method return the methods object for chaining
+  Object.values(methods).forEach(method => {
+    method.mockReturnValue(methods);
+  });
 
-  return chainObj;
+  // Set up resolved values for terminal methods
+  methods.single.mockResolvedValue({ data: null, error: null });
+  methods.maybeSingle.mockResolvedValue({ data: null, error: null });
+
+  return methods;
 };
 
-setupMockChain();
-mockSingle.mockResolvedValue({ data: null, error: null });
-mockMaybeSingle.mockResolvedValue({ data: null, error: null });
-
-mockSupabaseClient.from.mockReturnValue({
-  select: mockSelect,
-  insert: mockInsert,
-  update: mockUpdate,
-  delete: mockDelete,
-});
+// Create a fresh chainable mock for each from() call
+mockSupabaseClient.from.mockImplementation(() => createChainableMock());
 
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => mockSupabaseClient),
@@ -73,17 +63,14 @@ jest.mock('@supabase/supabase-js', () => ({
 
 describe('SupabaseAdapter', () => {
   let adapter: SupabaseAdapter;
+  let mockMethods: any;
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Setup mock chain
-    mockSupabaseClient.from.mockReturnValue({
-      select: mockSelect,
-      insert: mockInsert,
-      update: mockUpdate,
-      delete: mockDelete,
-    });
+    // Setup fresh mocks for each test
+    mockMethods = createChainableMock();
+    mockSupabaseClient.from.mockImplementation(() => mockMethods);
 
     adapter = new SupabaseAdapter({
       url: 'https://test.supabase.co',
@@ -110,7 +97,7 @@ describe('SupabaseAdapter', () => {
           metadata: { fullName: 'Test User' },
         };
 
-        mockSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: {
             id: 'user-123',
             email: 'test@example.com',
@@ -124,8 +111,8 @@ describe('SupabaseAdapter', () => {
 
         const user = await adapter.createUser(userData);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith('auth.users');
-        expect(mockInsert).toHaveBeenCalledWith(
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith('auth_users');
+        expect(mockMethods.insert).toHaveBeenCalledWith(
           expect.objectContaining({
             email: 'test@example.com',
             email_verified: false,
@@ -137,7 +124,7 @@ describe('SupabaseAdapter', () => {
       });
 
       it('should handle Supabase error', async () => {
-        mockSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: null,
           error: { message: 'Email already exists' },
         });
@@ -152,7 +139,7 @@ describe('SupabaseAdapter', () => {
       it('should update user successfully', async () => {
         const updates = { emailVerified: true };
 
-        mockSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: {
             id: 'user-123',
             email: 'test@example.com',
@@ -165,18 +152,18 @@ describe('SupabaseAdapter', () => {
 
         const user = await adapter.updateUser('user-123', updates);
 
-        expect(mockUpdate).toHaveBeenCalledWith({
+        expect(mockMethods.update).toHaveBeenCalledWith({
           email_verified: true,
           updated_at: expect.any(String),
         });
-        expect(mockEq).toHaveBeenCalledWith('id', 'user-123');
+        expect(mockMethods.eq).toHaveBeenCalledWith('id', 'user-123');
         expect(user.emailVerified).toBe(true);
       });
     });
 
     describe('findUserByEmail', () => {
       it('should find user by email', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: {
             id: 'user-123',
             email: 'test@example.com',
@@ -189,12 +176,15 @@ describe('SupabaseAdapter', () => {
 
         const user = await adapter.findUserByEmail('test@example.com');
 
-        expect(mockEq).toHaveBeenCalledWith('email', 'test@example.com');
+        expect(mockMethods.eq).toHaveBeenCalledWith(
+          'email',
+          'test@example.com'
+        );
         expect(user?.email).toBe('test@example.com');
       });
 
       it('should return null when user not found', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: null,
           error: null,
         });
@@ -250,7 +240,7 @@ describe('SupabaseAdapter', () => {
           expiresAt: new Date('2024-12-31'),
         };
 
-        mockSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: {
             id: 'session-123',
             user_id: 'user-123',
@@ -265,7 +255,7 @@ describe('SupabaseAdapter', () => {
         const session = await adapter.createSession(sessionData);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('auth_sessions');
-        expect(mockInsert).toHaveBeenCalledWith(
+        expect(mockMethods.insert).toHaveBeenCalledWith(
           expect.objectContaining({
             user_id: 'user-123',
             token: 'token-abc',
@@ -279,7 +269,7 @@ describe('SupabaseAdapter', () => {
 
     describe('findSessionByToken', () => {
       it('should find session by token', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: {
             id: 'session-123',
             user_id: 'user-123',
@@ -293,13 +283,13 @@ describe('SupabaseAdapter', () => {
 
         const session = await adapter.findSessionByToken('token-abc');
 
-        expect(mockEq).toHaveBeenCalledWith('token', 'token-abc');
+        expect(mockMethods.eq).toHaveBeenCalledWith('token', 'token-abc');
         expect(session?.token).toBe('token-abc');
         expect(session?.userId).toBe('user-123');
       });
 
       it('should return null when session not found', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: null,
           error: null,
         });
@@ -314,8 +304,8 @@ describe('SupabaseAdapter', () => {
       it('should delete session successfully', async () => {
         await adapter.deleteSession('session-123');
 
-        expect(mockDelete).toHaveBeenCalled();
-        expect(mockEq).toHaveBeenCalledWith('id', 'session-123');
+        expect(mockMethods.delete).toHaveBeenCalled();
+        expect(mockMethods.eq).toHaveBeenCalledWith('id', 'session-123');
       });
     });
 
@@ -323,8 +313,8 @@ describe('SupabaseAdapter', () => {
       it('should delete all user sessions', async () => {
         await adapter.deleteUserSessions('user-123');
 
-        expect(mockDelete).toHaveBeenCalled();
-        expect(mockEq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(mockMethods.delete).toHaveBeenCalled();
+        expect(mockMethods.eq).toHaveBeenCalledWith('user_id', 'user-123');
       });
     });
   });
@@ -337,7 +327,7 @@ describe('SupabaseAdapter', () => {
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
           'user_mfa_secrets'
         );
-        expect(mockInsert).toHaveBeenCalledWith({
+        expect(mockMethods.insert).toHaveBeenCalledWith({
           user_id: 'user-123',
           method: 'totp',
           secret: 'secret-abc',
@@ -347,14 +337,14 @@ describe('SupabaseAdapter', () => {
 
       it('should update existing MFA secret', async () => {
         // First call returns existing secret (for upsert logic)
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: { id: 'secret-123' },
           error: null,
         });
 
         await adapter.saveMFASecret('user-123', 'totp', 'new-secret');
 
-        expect(mockUpdate).toHaveBeenCalledWith({
+        expect(mockMethods.update).toHaveBeenCalledWith({
           secret: 'new-secret',
           updated_at: expect.any(String),
         });
@@ -363,19 +353,19 @@ describe('SupabaseAdapter', () => {
 
     describe('getMFASecret', () => {
       it('should retrieve MFA secret', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: { secret: 'secret-abc' },
           error: null,
         });
 
         const secret = await adapter.getMFASecret('user-123', 'totp');
 
-        expect(mockEq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(mockMethods.eq).toHaveBeenCalledWith('user_id', 'user-123');
         expect(secret).toBe('secret-abc');
       });
 
       it('should return null when secret not found', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: null,
           error: null,
         });
@@ -395,7 +385,7 @@ describe('SupabaseAdapter', () => {
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
           'user_backup_codes'
         );
-        expect(mockInsert).toHaveBeenCalledWith(
+        expect(mockMethods.insert).toHaveBeenCalledWith(
           codes.map(code => ({
             user_id: 'user-123',
             code,
@@ -405,7 +395,7 @@ describe('SupabaseAdapter', () => {
       });
 
       it('should verify and consume backup code', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: { id: 'code-123', code: 'CODE1' },
           error: null,
         });
@@ -413,11 +403,11 @@ describe('SupabaseAdapter', () => {
         const isValid = await adapter.verifyBackupCode('user-123', 'CODE1');
 
         expect(isValid).toBe(true);
-        expect(mockDelete).toHaveBeenCalled();
+        expect(mockMethods.delete).toHaveBeenCalled();
       });
 
       it('should return false for invalid backup code', async () => {
-        mockMaybeSingle.mockResolvedValueOnce({
+        mockMethods.maybeSingle.mockResolvedValueOnce({
           data: null,
           error: null,
         });
@@ -437,7 +427,7 @@ describe('SupabaseAdapter', () => {
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
           'user_account_links'
         );
-        expect(mockInsert).toHaveBeenCalledWith({
+        expect(mockMethods.insert).toHaveBeenCalledWith({
           user_id: 'user-123',
           provider: 'google',
           provider_id: 'google-456',
@@ -448,7 +438,7 @@ describe('SupabaseAdapter', () => {
 
     describe('findAccountLinks', () => {
       it('should find user account links', async () => {
-        mockSelect.mockResolvedValueOnce({
+        mockMethods.select.mockResolvedValueOnce({
           data: [
             { provider: 'google', provider_id: 'google-456' },
             { provider: 'github', provider_id: 'github-789' },
@@ -474,15 +464,15 @@ describe('SupabaseAdapter', () => {
       it('should delete account link', async () => {
         await adapter.deleteAccountLink('user-123', 'google');
 
-        expect(mockDelete).toHaveBeenCalled();
-        expect(mockEq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(mockMethods.delete).toHaveBeenCalled();
+        expect(mockMethods.eq).toHaveBeenCalledWith('user_id', 'user-123');
       });
     });
   });
 
   describe('error handling', () => {
     it('should handle Supabase connection errors', async () => {
-      mockSingle.mockRejectedValueOnce(new Error('Connection failed'));
+      mockMethods.single.mockRejectedValueOnce(new Error('Connection failed'));
 
       await expect(
         adapter.createUser({ email: 'test@example.com' })
@@ -490,7 +480,7 @@ describe('SupabaseAdapter', () => {
     });
 
     it('should handle malformed data gracefully', async () => {
-      mockMaybeSingle.mockResolvedValueOnce({
+      mockMethods.maybeSingle.mockResolvedValueOnce({
         data: { invalid: 'data' },
         error: null,
       });
@@ -515,7 +505,7 @@ describe('SupabaseAdapter', () => {
         app_metadata: { roles: ['admin'] },
       };
 
-      mockMaybeSingle.mockResolvedValueOnce({
+      mockMethods.maybeSingle.mockResolvedValueOnce({
         data: supabaseUser,
         error: null,
       });
@@ -548,7 +538,7 @@ describe('SupabaseAdapter', () => {
         device_id: 'device-123',
       };
 
-      mockMaybeSingle.mockResolvedValueOnce({
+      mockMethods.maybeSingle.mockResolvedValueOnce({
         data: supabaseSession,
         error: null,
       });

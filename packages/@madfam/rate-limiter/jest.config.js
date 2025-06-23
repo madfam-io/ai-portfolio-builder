@@ -32,12 +32,10 @@ module.exports = {
       statements: 80,
     },
   },
-  setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     // Mock external dependencies
-    otpauth: '<rootDir>/__mocks__/otpauth.ts',
-    qrcode: '<rootDir>/__mocks__/qrcode.ts',
+    ioredis: '<rootDir>/__mocks__/ioredis.ts',
   },
   testTimeout: 10000,
   clearMocks: true,

@@ -48,9 +48,8 @@ const customJestConfig = {
     '^@/components/ui/button$': '<rootDir>/__mocks__/components/ui/button.tsx',
     '^@/components/ui/card$': '<rootDir>/__mocks__/components/ui/card.tsx',
     // Mock external dependencies
-    otpauth: '<rootDir>/__mocks__/otpauth.ts',
-    qrcode: '<rootDir>/__mocks__/qrcode.ts',
-    ioredis: '<rootDir>/__mocks__/ioredis.ts',
+    'isomorphic-dompurify': '<rootDir>/__mocks__/isomorphic-dompurify.ts',
+    '@huggingface/inference': '<rootDir>/__mocks__/@huggingface/inference.ts',
   },
   collectCoverageFrom: [
     '**/*.{ts,tsx}',

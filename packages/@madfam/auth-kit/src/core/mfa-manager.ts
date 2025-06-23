@@ -46,7 +46,7 @@ export class MFAManager {
   /**
    * Setup MFA for a user
    */
-  async setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
+  setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
     if (!this.config?.enabled) {
       throw new Error('MFA is not enabled');
     }
@@ -66,6 +66,51 @@ export class MFAManager {
       default:
         throw new Error(`Unsupported MFA method: ${method}`);
     }
+  }
+
+  /**
+   * Generate TOTP secret
+   */
+  generateTOTPSecret(): string {
+    const secret = new OTPAuth.Secret({ size: 32 });
+    return secret.base32;
+  }
+
+  /**
+   * Generate QR code for TOTP
+   */
+  generateQRCode(secret: string, userIdentifier: string): Promise<string> {
+    const totpConfig = this.config?.methods.totp as TOTPConfig;
+
+    const totp = new OTPAuth.TOTP({
+      issuer: totpConfig?.issuer || 'AuthKit',
+      label: userIdentifier,
+      algorithm: totpConfig?.algorithm || 'SHA256',
+      digits: totpConfig?.digits || 6,
+      period: totpConfig?.period || 30,
+      secret: OTPAuth.Secret.fromBase32(secret),
+    });
+
+    const uri = totp.toString();
+    return QRCode.toDataURL(uri);
+  }
+
+  /**
+   * Generate backup codes
+   */
+  generateBackupCodes(count: number = 8): string[] {
+    const codes: string[] = [];
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+
+    for (let i = 0; i < count; i++) {
+      let code = '';
+      for (let j = 0; j < 8; j++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      codes.push(code);
+    }
+
+    return codes;
   }
 
   /**
@@ -108,7 +153,7 @@ export class MFAManager {
   /**
    * Setup SMS authentication
    */
-  private async setupSMS(userId: string): Promise<MFASetupResult> {
+  private setupSMS(userId: string): MFASetupResult {
     // SMS setup would involve verifying phone number
     // For now, this is a placeholder
     this.logger.info('SMS setup completed', { userId });
@@ -139,10 +184,7 @@ export class MFAManager {
   /**
    * Create MFA challenge
    */
-  async createChallenge(
-    userId: string,
-    method: MFAMethod
-  ): Promise<MFAChallenge> {
+  createChallenge(userId: string, method: MFAMethod): MFAChallenge {
     const challengeId = generateId();
 
     const challenge: MFAChallenge = {
@@ -167,7 +209,7 @@ export class MFAManager {
   /**
    * Get challenge by ID
    */
-  async getChallenge(challengeId: string): Promise<MFAChallenge | null> {
+  getChallenge(challengeId: string): MFAChallenge | null {
     const challenge = this.challenges.get(challengeId);
 
     if (!challenge) {
@@ -231,7 +273,7 @@ export class MFAManager {
   /**
    * Verify TOTP code
    */
-  private async verifyTOTP(userId: string, token: string): Promise<boolean> {
+  async verifyTOTP(userId: string, token: string): Promise<boolean> {
     if (!this.adapter) {
       return false;
     }
@@ -262,12 +304,9 @@ export class MFAManager {
   /**
    * Verify backup code
    */
-  private async verifyBackupCode(
-    userId: string,
-    code: string
-  ): Promise<boolean> {
+  private verifyBackupCode(userId: string, code: string): Promise<boolean> {
     if (!this.adapter) {
-      return false;
+      return Promise.resolve(false);
     }
 
     return this.adapter.verifyBackupCode(userId, code);

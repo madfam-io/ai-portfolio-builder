@@ -87,6 +87,10 @@ function calculateStrength(password: string): number {
   if (/^[0-9]+$/.test(password)) score -= 1; // Only numbers
   if (/^[a-zA-Z]+$/.test(password)) score -= 1; // Only letters
 
+  // Reduce score if missing important elements
+  const hasSymbols = /[^a-zA-Z0-9]/.test(password);
+  if (!hasSymbols && password.length < 12) score -= 1;
+
   // Normalize to 0-5 scale
   return Math.max(0, Math.min(5, score));
 }
@@ -136,7 +140,7 @@ function checkLengthRequirements(
 
   if (reqs.minLength && password.length < reqs.minLength) {
     feedback.push(
-      `Password must be at least ${reqs.minLength} characters long`
+      `Password must be at least ${reqs.minLength} characters in length`
     );
     valid = false;
   }
