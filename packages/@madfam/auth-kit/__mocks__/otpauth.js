@@ -47,7 +47,7 @@ class TOTP {
 
 // Mock Secret class
 class Secret {
-  constructor(options = {}) {
+  constructor(_options = {}) {
     // Generate unique secret for each instance
     const suffix = Math.random().toString(36).substring(2, 7).toUpperCase();
     this.base32 = 'TESTSECRETBASE32' + suffix;

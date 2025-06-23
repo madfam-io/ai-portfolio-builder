@@ -16,10 +16,10 @@
  */
 
 // Create mock functions with explicit implementations
-const toDataURL = (data) => Promise.resolve('data:image/png;base64,MOCK_QR_CODE_DATA');
-const toString = (data, opts) => Promise.resolve('<svg>mock qr code</svg>');
-const toBuffer = (data, opts) => Promise.resolve(Buffer.from('mock qr code buffer'));
-const toFile = (data, path, opts) => Promise.resolve(undefined);
+const toDataURL = (_data) => Promise.resolve('data:image/png;base64,MOCK_QR_CODE_DATA');
+const toString = (_data, _opts) => Promise.resolve('<svg>mock qr code</svg>');
+const toBuffer = (_data, _opts) => Promise.resolve(Buffer.from('mock qr code buffer'));
+const toFile = (_data, _path, _opts) => Promise.resolve(undefined);
 
 // Create the module exports
 const QRCode = {

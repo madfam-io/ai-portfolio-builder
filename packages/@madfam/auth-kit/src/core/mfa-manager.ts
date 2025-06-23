@@ -46,7 +46,7 @@ export class MFAManager {
   /**
    * Setup MFA for a user
    */
-  async setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
+  setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
     if (!this.config?.enabled) {
       throw new Error('MFA is not enabled');
     }
