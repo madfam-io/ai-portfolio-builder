@@ -44,7 +44,7 @@ export const SUBSCRIPTION_PLANS = {
   pro: {
     id: 'pro',
     name: 'Pro',
-    price: 1500, // $15.00 in cents
+    price: 2400, // $24.00 in cents
     currency: 'usd',
     interval: 'month' as const,
     stripePriceId: process.env.STRIPE_PRO_PRICE_ID,

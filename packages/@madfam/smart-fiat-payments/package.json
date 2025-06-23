@@ -1,5 +1,5 @@
 {
-  "name": "@madfam/smart-payments",
+  "name": "@madfam/smart-fiat-payments",
   "version": "1.0.0",
   "description": "Sophisticated payment gateway detection and routing system with card-centric intelligence, VPN awareness, and geographical pricing optimization",
   "main": "dist/index.js",
@@ -30,12 +30,12 @@
   "license": "MCAL-1.0",
   "repository": {
     "type": "git",
-    "url": "https://github.com/madfam/smart-payments.git"
+    "url": "https://github.com/madfam/smart-fiat-payments.git"
   },
   "bugs": {
-    "url": "https://github.com/madfam/smart-payments/issues"
+    "url": "https://github.com/madfam/smart-fiat-payments/issues"
   },
-  "homepage": "https://github.com/madfam/smart-payments#readme",
+  "homepage": "https://github.com/madfam/smart-fiat-payments#readme",
   "engines": {
     "node": ">=16.0.0"
   },

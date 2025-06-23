@@ -33,8 +33,8 @@ const EXCHANGE_RATES = {
 const BASE_PRICES = {
   free: 0,
   pro: 430, // ~$24 USD
-  business: 875, // ~$49 USD
-  enterprise: 1750, // ~$99 USD
+  business: 700, // ~$39 USD
+  enterprise: 1415, // ~$79 USD
 };
 
 const CURRENCY_SYMBOLS = {
@@ -174,7 +174,7 @@ export default function Pricing(): React.ReactElement {
             <ul className="space-y-3 mb-8">
               <li className="flex items-center">
                 <Check className="mr-3" />
-                <span>{t.portfolios3}</span>
+                <span>{t.portfolios5 || '5 portfolios'}</span>
               </li>
               <li className="flex items-center">
                 <Check className="mr-3" />
