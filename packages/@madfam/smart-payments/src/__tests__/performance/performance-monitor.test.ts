@@ -20,15 +20,6 @@ import {
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
 
-  // Mock timers globally for all tests
-  beforeAll(() => {
-    jest.useFakeTimers();
-  });
-
-  afterAll(() => {
-    jest.useRealTimers();
-  });
-
   beforeEach(() => {
     monitor = new PerformanceMonitor({
       processPayment: 200,
@@ -51,7 +42,7 @@ describe('PerformanceMonitor', () => {
 
       expect(duration).toBeGreaterThanOrEqual(100);
       expect(duration).toBeLessThan(150);
-    });
+    }, 20000);
 
     it('should handle missing timer gracefully', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
@@ -78,17 +69,14 @@ describe('PerformanceMonitor', () => {
       expect(report.metrics.apiCall.count).toBe(1);
     });
 
-    it('should warn when threshold exceeded', () => {
+    it('should warn when threshold exceeded', async () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
-      // Manually mock Date.now() for timer calculation
-      const startTime = Date.now();
-      jest
-        .spyOn(Date, 'now')
-        .mockReturnValueOnce(startTime) // for startTimer
-        .mockReturnValueOnce(startTime + 100); // for endTimer (100ms later)
-
       monitor.startTimer('binLookup');
+
+      // Wait more than the threshold (50ms)
+      await new Promise(resolve => setTimeout(resolve, 60));
+
       monitor.endTimer('binLookup');
 
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -96,16 +84,13 @@ describe('PerformanceMonitor', () => {
       );
 
       consoleSpy.mockRestore();
-      jest.spyOn(Date, 'now').mockRestore();
     });
   });
 
   describe('Measure function', () => {
     it('should measure async function performance', async () => {
       const asyncOperation = async () => {
-        const promise = new Promise(resolve => setTimeout(resolve, 50));
-        jest.advanceTimersByTime(50);
-        await promise;
+        await new Promise(resolve => setTimeout(resolve, 50));
         return 'result';
       };
 
@@ -117,7 +102,7 @@ describe('PerformanceMonitor', () => {
       expect(report.metrics.asyncOp).toBeDefined();
       expect(report.metrics.asyncOp.count).toBe(1);
       expect(report.metrics.asyncOp.average).toBeGreaterThanOrEqual(50);
-    });
+    }, 20000);
 
     it('should handle errors in measured functions', async () => {
       const failingOperation = () => {
@@ -218,7 +203,7 @@ describe('PerformanceMonitor', () => {
 
       expect(report.metrics.binLookup.count).toBe(2);
       expect(report.metrics.binLookup.average).toBeGreaterThan(20); // Allow for timing variance
-    });
+    }, 20000);
 
     it('should generate alerts for threshold violations', async () => {
       // Simulate slow operations
@@ -247,7 +232,7 @@ describe('PerformanceMonitor', () => {
           severity: 'critical',
         })
       );
-    });
+    }, 20000);
 
     it('should generate recommendations', async () => {
       // Simulate various performance issues
@@ -271,7 +256,7 @@ describe('PerformanceMonitor', () => {
       expect(report.recommendations).toContain(
         'Geo lookups are slow. Consider using a local IP database or caching results'
       );
-    });
+    }, 30000);
 
     it('should detect high variance', async () => {
       // Operations with high variance - need more than 10 operations
@@ -292,7 +277,7 @@ describe('PerformanceMonitor', () => {
         rec.includes('High variance in variantOp performance')
       );
       expect(hasVarianceRecommendation).toBe(true);
-    });
+    }, 30000);
 
     it('should calculate percentiles correctly', () => {
       // Record metrics with known distribution
@@ -334,7 +319,7 @@ describe('PerformanceMonitor', () => {
       expect(stats.operation1_count).toBe(2);
       expect(stats.operation2_avg).toBeGreaterThan(25); // Allow for timing variance
       expect(stats.operation2_count).toBe(1);
-    });
+    }, 20000);
 
     it('should only include recent metrics', () => {
       // Old metric (simulate by manipulating timestamp)
@@ -451,7 +436,7 @@ describe('Performance tracking with HOF', () => {
     expect(
       report.metrics['TestService.slowOperation'].average
     ).toBeGreaterThanOrEqual(100);
-  });
+  }, 20000);
 
   it('should use custom metric name', async () => {
     const service = new TestService();

@@ -98,7 +98,7 @@ export class MFAManager {
   /**
    * Generate backup codes
    */
-  generateBackupCodes(count: number = 8): string[] {
+  generateBackupCodes(count: number = 10): string[] {
     const codes: string[] = [];
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
 
