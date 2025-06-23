@@ -201,7 +201,7 @@ function generateUserId(req: Request): string {
 /**
  * Helper to extract attributes from request
  */
-function extractAttributes(req: Request): Record<string, any> {
+function extractAttributes(req: Request): Record<string, unknown> {
   return {
     userAgent: req.headers?.['user-agent'],
     ip: req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'],

@@ -288,10 +288,10 @@ export class LeakyBucketAlgorithm {
 export class HierarchicalRateLimiter {
   private tiers: Array<{
     algorithm: SlidingWindowAlgorithm | TokenBucketAlgorithm | FixedWindowAlgorithm;
-    config: any;
+    config: RateLimitConfig;
   }> = [];
 
-  addTier(algorithm: any, config: any): void {
+  addTier(algorithm: SlidingWindowAlgorithm | TokenBucketAlgorithm | FixedWindowAlgorithm, config: RateLimitConfig): void {
     this.tiers.push({ algorithm, config });
   }
 

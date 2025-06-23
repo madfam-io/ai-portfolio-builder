@@ -92,6 +92,7 @@ export class PerformanceMonitor {
     const startTime = this.timers.get(name);
 
     if (!startTime) {
+      // eslint-disable-next-line no-console
       console.warn(`Timer ${name} was not started`);
       return 0;
     }
@@ -109,6 +110,7 @@ export class PerformanceMonitor {
     // Check threshold
     const threshold = this.thresholds[name as keyof PerformanceThresholds];
     if (threshold && duration > threshold) {
+      // eslint-disable-next-line no-console
       console.warn(
         `Performance warning: ${name} took ${duration.toFixed(2)}ms (threshold: ${threshold}ms)`
       );
@@ -371,7 +373,7 @@ export const globalPerformanceMonitor = new PerformanceMonitor();
  */
 export function measurePerformance(name?: string) {
   return function (
-    target: any,
+    target: object,
     propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
@@ -382,7 +384,7 @@ export function measurePerformance(name?: string) {
     const originalMethod = descriptor.value;
     const metricName = name || `${target.constructor.name}.${propertyKey}`;
 
-    descriptor.value = async function (...args: any[]) {
+    descriptor.value = function (...args: any[]) {
       return globalPerformanceMonitor.measure(metricName, () =>
         originalMethod.apply(this, args)
       );

@@ -302,7 +302,7 @@ class EnterpriseReferralSystem {
     return company.length > 3;
   }
 
-  private async getRewardDetails(rewardId: string): Promise<any> {
+  private async getRewardDetails(rewardId: string): Promise<unknown> {
     // Mock data - in production, fetch from database
     return {
       id: rewardId,

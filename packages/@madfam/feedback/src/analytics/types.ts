@@ -47,17 +47,17 @@ export interface AnalyticsProvider {
   /**
    * Set user properties
    */
-  setUserProperties?(userId: string, properties: Record<string, any>): Promise<void>;
+  setUserProperties?(userId: string, properties: Record<string, unknown>): Promise<void>;
 
   /**
    * Group tracking (for team/organization analytics)
    */
-  group?(userId: string, groupId: string, traits?: Record<string, any>): Promise<void>;
+  group?(userId: string, groupId: string, traits?: Record<string, unknown>): Promise<void>;
 
   /**
    * Page/screen tracking
    */
-  page?(userId: string, name: string, properties?: Record<string, any>): Promise<void>;
+  page?(userId: string, name: string, properties?: Record<string, unknown>): Promise<void>;
 
   /**
    * Reset user data (for privacy compliance)
@@ -86,8 +86,8 @@ export interface UserIdentity {
   accountType?: 'free' | 'pro' | 'enterprise';
   portfoliosCreated?: number;
   lastActive?: Date;
-  preferences?: Record<string, any>;
-  customTraits?: Record<string, any>;
+  preferences?: Record<string, unknown>;
+  customTraits?: Record<string, unknown>;
 }
 
 export interface AnalyticsResult {
@@ -102,14 +102,14 @@ export interface EventBatch {
   events: AnalyticsEvent[];
   timestamp: Date;
   batchId: string;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface TrackingOptions {
   immediate?: boolean;
   retry?: boolean;
   timeout?: number;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
 }
 
 export interface AnalyticsMetrics {
@@ -170,7 +170,7 @@ export interface AmplitudeConfig {
 
 export interface CustomProviderConfig {
   provider: AnalyticsProvider;
-  options?: Record<string, any>;
+  options?: Record<string, unknown>;
 }
 
 // Event context types
@@ -203,14 +203,14 @@ export interface FeatureEventContext {
   action: string;
   successful: boolean;
   errorCode?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 // Funnel and conversion tracking
 export interface FunnelStep {
   name: string;
   timestamp: Date;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface ConversionEvent {
@@ -228,7 +228,7 @@ export interface ExperimentVariant {
   variantId: string;
   userId: string;
   assignedAt: Date;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface ExperimentEvent {
@@ -236,7 +236,7 @@ export interface ExperimentEvent {
   variantId: string;
   userId: string;
   eventName: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   timestamp: Date;
 }
 
@@ -244,7 +244,7 @@ export interface ExperimentEvent {
 export interface CohortDefinition {
   id: string;
   name: string;
-  criteria: Record<string, any>;
+  criteria: Record<string, unknown>;
   createdAt: Date;
   size: number;
 }
@@ -253,7 +253,7 @@ export interface CohortEvent {
   cohortId: string;
   userId: string;
   eventName: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   timestamp: Date;
 }
 

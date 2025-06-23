@@ -290,7 +290,7 @@ export class GeographicalContextEngine {
 
   // Private methods
 
-  private async lookupIP(ipAddress: string): Promise<any> {
+  private async lookupIP(ipAddress: string): Promise<unknown> {
     // Skip for localhost/private IPs
     if (this.isPrivateIP(ipAddress)) {
       return {

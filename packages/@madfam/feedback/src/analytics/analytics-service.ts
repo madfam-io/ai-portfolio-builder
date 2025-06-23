@@ -200,7 +200,7 @@ export class AnalyticsService extends EventEmitter {
   /**
    * Set user properties
    */
-  async setUserProperties(userId: string, properties: Record<string, any>): Promise<void> {
+  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
     if (!this.isEnabled || !this.provider) return;
 
     try {

@@ -21,6 +21,8 @@
  * Type definitions for email notifications and messaging
  */
 
+import type { FeedbackEntry, SatisfactionSurvey, FeedbackReport } from '../core/types';
+
 export interface NotificationConfig {
   // Email configuration
   email?: EmailConfig;
@@ -109,11 +111,11 @@ export interface EmailNotification {
   html?: string;
   text?: string;
   templateId?: string;
-  templateData?: Record<string, any>;
+  templateData?: Record<string, string | number | boolean | Date>;
   attachments?: EmailAttachment[];
   priority: 'low' | 'normal' | 'high';
   tags?: string[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 export interface WebhookConfig {
@@ -153,8 +155,8 @@ export type NotificationEvent =
 export interface NotificationPayload {
   event: NotificationEvent;
   timestamp: Date;
-  data: any;
-  metadata?: Record<string, any>;
+  data: FeedbackEntry | SatisfactionSurvey | FeedbackReport | { feedback: FeedbackEntry; previousStatus?: string } | { recipient: string; message: string };
+  metadata?: Record<string, string | number | boolean>;
 }
 
 export interface EmailDeliveryStatus {
@@ -163,7 +165,7 @@ export interface EmailDeliveryStatus {
   status: 'queued' | 'sent' | 'delivered' | 'failed' | 'bounced' | 'complained';
   timestamp: Date;
   errorMessage?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, string | number | boolean>;
 }
 
 export interface NotificationQueue {
@@ -212,19 +214,19 @@ export interface EmailDeliveryResult {
 
 // Template context types
 export interface FeedbackEmailContext {
-  feedback: any; // FeedbackEntry type
+  feedback: FeedbackEntry;
   dashboardUrl: string;
   resolveUrl?: string;
   trackingUrl?: string;
 }
 
 export interface SurveyEmailContext {
-  survey: any; // SatisfactionSurvey type
+  survey: SatisfactionSurvey;
   dashboardUrl: string;
 }
 
 export interface DigestEmailContext {
-  report: any; // FeedbackReport type
+  report: FeedbackReport;
   weekStart: Date;
   weekEnd: Date;
   dashboardUrl: string;

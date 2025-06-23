@@ -284,7 +284,7 @@ export class MultiLevelCache {
   /**
    * Get from first available level
    */
-  async get(key: string): Promise<any> {
+  async get(key: string): Promise<unknown> {
     for (let i = 0; i < this.levels.length; i++) {
       const value = this.levels[i].get(key);
 

@@ -31,7 +31,7 @@ export interface OAuthUser {
   email: string;
   name?: string;
   avatar?: string;
-  [key: string]: any;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 export class ProviderManager {
@@ -50,23 +50,23 @@ export class ProviderManager {
    */
   async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
-    return bcrypt.hash(password, saltRounds);
+    return await bcrypt.hash(password, saltRounds);
   }
 
   /**
    * Verify password against hash
    */
   async verifyPassword(password: string, hash: string): Promise<boolean> {
-    return bcrypt.compare(password, hash);
+    return await bcrypt.compare(password, hash);
   }
 
   /**
    * Get OAuth authorization URL
    */
-  async getOAuthUrl(
+  getOAuthUrl(
     provider: AuthProvider,
     options?: { redirectTo?: string; scopes?: string[] }
-  ): Promise<string> {
+  ): string {
     const providerConfig = this.config[provider] as OAuthProviderConfig;
 
     if (!providerConfig?.enabled) {
@@ -162,7 +162,7 @@ export class ProviderManager {
     const finalScopes = scopes || config.scope || defaultScopes;
 
     const params = new URLSearchParams({
-      client_id: config.clientId!,
+      client_id: config.clientId || '',
       redirect_uri: redirectUri,
       response_type: 'code',
       scope: finalScopes.join(' '),
@@ -188,7 +188,7 @@ export class ProviderManager {
     const finalScopes = scopes || config.scope || defaultScopes;
 
     const params = new URLSearchParams({
-      client_id: config.clientId!,
+      client_id: config.clientId || '',
       redirect_uri: redirectUri,
       scope: finalScopes.join(' '),
       state,
@@ -212,7 +212,7 @@ export class ProviderManager {
 
     const params = new URLSearchParams({
       response_type: 'code',
-      client_id: config.clientId!,
+      client_id: config.clientId || '',
       redirect_uri: redirectUri,
       scope: finalScopes.join(' '),
       state,
@@ -232,11 +232,11 @@ export class ProviderManager {
 
     switch (provider) {
       case 'google':
-        return this.exchangeGoogleCode(config, code);
+        return await this.exchangeGoogleCode(config, code);
       case 'github':
-        return this.exchangeGithubCode(config, code);
+        return await this.exchangeGithubCode(config, code);
       case 'linkedin':
-        return this.exchangeLinkedInCode(config, code);
+        return await this.exchangeLinkedInCode(config, code);
       default:
         throw new Error(`Unsupported OAuth provider: ${provider}`);
     }
@@ -258,8 +258,8 @@ export class ProviderManager {
       },
       body: new URLSearchParams({
         code,
-        client_id: config.clientId!,
-        client_secret: config.clientSecret!,
+        client_id: config.clientId || '',
+        client_secret: config.clientSecret || '',
         redirect_uri: config.redirectUri || this.getDefaultRedirectUri(),
         grant_type: 'authorization_code',
       }),
@@ -294,8 +294,8 @@ export class ProviderManager {
       },
       body: new URLSearchParams({
         code,
-        client_id: config.clientId!,
-        client_secret: config.clientSecret!,
+        client_id: config.clientId || '',
+        client_secret: config.clientSecret || '',
         redirect_uri: config.redirectUri || this.getDefaultRedirectUri(),
       }),
     });
@@ -328,8 +328,8 @@ export class ProviderManager {
       body: new URLSearchParams({
         grant_type: 'authorization_code',
         code,
-        client_id: config.clientId!,
-        client_secret: config.clientSecret!,
+        client_id: config.clientId || '',
+        client_secret: config.clientSecret || '',
         redirect_uri: config.redirectUri || this.getDefaultRedirectUri(),
       }),
     });
@@ -355,11 +355,11 @@ export class ProviderManager {
   ): Promise<OAuthUser> {
     switch (provider) {
       case 'google':
-        return this.getGoogleUserInfo(accessToken);
+        return await this.getGoogleUserInfo(accessToken);
       case 'github':
-        return this.getGithubUserInfo(accessToken);
+        return await this.getGithubUserInfo(accessToken);
       case 'linkedin':
-        return this.getLinkedInUserInfo(accessToken);
+        return await this.getLinkedInUserInfo(accessToken);
       default:
         throw new Error(`Unsupported OAuth provider: ${provider}`);
     }

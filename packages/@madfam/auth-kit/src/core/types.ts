@@ -54,7 +54,7 @@ export interface UserMetadata {
   acceptedTermsAt?: Date;
   lastSignInAt?: Date;
   signInCount?: number;
-  [key: string]: any;
+  [key: string]: string | number | boolean | Date | null | undefined;
 }
 
 export interface UserProfile {
@@ -63,7 +63,7 @@ export interface UserProfile {
   location?: string;
   website?: string;
   company?: string;
-  [key: string]: any;
+  [key: string]: string | number | boolean | null | undefined;
 }
 
 // Session types
@@ -93,7 +93,7 @@ export interface SessionConfig {
 
 export interface SessionStorageConfig {
   adapter: 'memory' | 'redis' | 'database';
-  options?: Record<string, any>;
+  options?: Record<string, string | number | boolean>;
 }
 
 // Authentication types
@@ -121,7 +121,7 @@ export interface AuthResult {
 export interface AuthError {
   code: AuthErrorCode;
   message: string;
-  details?: Record<string, any>;
+  details?: Record<string, string | number | boolean | string[] | number[]>;
 }
 
 export type AuthErrorCode =
@@ -157,7 +157,7 @@ export interface ProviderConfig {
   clientSecret?: string;
   redirectUri?: string;
   scope?: string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface EmailProviderConfig extends ProviderConfig {
@@ -219,7 +219,7 @@ export interface MFAConfig {
 
 export interface MFAMethodConfig {
   enabled: boolean;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface TOTPConfig extends MFAMethodConfig {
@@ -278,7 +278,7 @@ export interface RateLimitConfig {
   maxAttempts: number;
   blockDuration?: number;
   skipSuccessfulRequests?: boolean;
-  keyGenerator?: (req: any) => string;
+  keyGenerator?: (req: { ip?: string; userId?: string; path?: string }) => string;
 }
 
 export interface AccountLockoutConfig {
@@ -294,7 +294,7 @@ export interface EmailConfig {
   from: string;
   replyTo?: string;
   templates?: EmailTemplates;
-  options?: Record<string, any>;
+  options?: Record<string, string | number | boolean>;
 }
 
 export interface EmailTemplates {
@@ -352,7 +352,7 @@ export interface ProvidersConfig {
 export interface DatabaseConfig {
   provider: 'supabase' | 'prisma' | 'mongodb' | 'postgres';
   url: string;
-  options?: Record<string, any>;
+  options?: Record<string, string | number | boolean>;
 }
 
 // Adapter interface
@@ -365,7 +365,7 @@ export interface AuthAdapter {
   findUserByEmail(email: string): Promise<User | null>;
 
   // Optional method for complex queries (used for password reset token lookup)
-  findUsers?(filter: Record<string, any>): Promise<User[]>;
+  findUsers?(filter: Record<string, string | number | boolean | Date>): Promise<User[]>;
 
   // Session operations
   createSession(data: Partial<Session>): Promise<Session>;
@@ -404,7 +404,7 @@ export interface AuthEvent {
   userId?: string;
   sessionId?: string;
   timestamp: Date;
-  data?: Record<string, any>;
+  data?: Record<string, string | number | boolean | null>;
 }
 
 export type AuthEventType =

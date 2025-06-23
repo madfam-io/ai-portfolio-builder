@@ -48,7 +48,7 @@ export class ConnectionPool {
   /**
    * Get or create connection
    */
-  async getConnection(key: string, factory: () => Promise<any>): Promise<any> {
+  async getConnection(key: string, factory: () => Promise<unknown>): Promise<unknown> {
     const existing = this.connections.get(key);
 
     if (existing && existing.isValid()) {
@@ -171,7 +171,7 @@ export class LazyLoader<T> {
  */
 export class DataPreloader {
   private cache: CacheManager;
-  private patterns: Map<string, () => Promise<any>> = new Map();
+  private patterns: Map<string, () => Promise<unknown>> = new Map();
 
   constructor(cache: CacheManager) {
     this.cache = cache;
@@ -180,7 +180,7 @@ export class DataPreloader {
   /**
    * Register preload pattern
    */
-  register(pattern: string, loader: () => Promise<any>): void {
+  register(pattern: string, loader: () => Promise<unknown>): void {
     this.patterns.set(pattern, loader);
   }
 
@@ -208,7 +208,7 @@ export class DataPreloader {
    * Preload common BINs
    */
   async preloadCommonBINs(
-    binLookup: (bin: string) => Promise<any>
+    binLookup: (bin: string) => Promise<unknown>
   ): Promise<void> {
     const commonBINs = [
       '411111', // Visa test
@@ -233,7 +233,7 @@ export class DataPreloader {
    * Preload common countries
    */
   async preloadCommonCountries(
-    geoLookup: (country: string) => Promise<any>
+    geoLookup: (country: string) => Promise<unknown>
   ): Promise<void> {
     const commonCountries = ['US', 'BR', 'MX', 'IN', 'GB', 'CA', 'AU'];
 
@@ -306,7 +306,7 @@ export class QueryOptimizer {
   /**
    * Optimize and execute query
    */
-  async query(sql: string, params?: any[]): Promise<any> {
+  async query(sql: string, params?: any[]): Promise<unknown> {
     const cacheKey = `${sql}:${JSON.stringify(params || [])}`;
 
     // Check cache
@@ -333,7 +333,7 @@ export class QueryOptimizer {
   /**
    * Execute single query
    */
-  private async executeQuery(query: any): Promise<any> {
+  private async executeQuery(query: any): Promise<unknown> {
     // Placeholder - implement actual query execution
     return { query, result: 'mock' };
   }

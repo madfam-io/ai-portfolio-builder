@@ -981,7 +981,7 @@ export class WhiteLabelPlatform {
   private async buildDetailedRevenueReport(
     partnerId: string,
     period: string
-  ): Promise<any> {
+  ): Promise<unknown> {
     // Build comprehensive revenue report
     return {
       partnerId,

@@ -498,7 +498,7 @@ export class PaymentOptimizationEngine {
     });
   }
 
-  private async extractFeatures(context: PaymentContext): Promise<any> {
+  private async extractFeatures(context: PaymentContext): Promise<unknown> {
     return {
       amount: context.amount.amount,
       currency: context.amount.currency,
@@ -513,7 +513,7 @@ export class PaymentOptimizationEngine {
     };
   }
 
-  private async extractFraudFeatures(context: PaymentContext): Promise<any> {
+  private async extractFraudFeatures(context: PaymentContext): Promise<unknown> {
     return {
       velocity: this.calculateVelocity(context),
       geolocation: this.analyzeGeolocation(context),
@@ -524,7 +524,7 @@ export class PaymentOptimizationEngine {
     };
   }
 
-  private async predictOptimalRouting(features: any): Promise<any> {
+  private async predictOptimalRouting(features: any): Promise<unknown> {
     // Simulate ML prediction
     const gateways: Gateway[] = ['stripe', 'paypal', 'mercadopago'];
     const scores = gateways.map(() => Math.random());
@@ -551,7 +551,7 @@ export class PaymentOptimizationEngine {
     return { fraudScore: Math.min(score, 1) };
   }
 
-  private async predictConversionLikelihood(features: any): Promise<any> {
+  private async predictConversionLikelihood(features: any): Promise<unknown> {
     // Simulate conversion prediction
     let likelihood = 0.85; // Base conversion rate
 
@@ -567,7 +567,7 @@ export class PaymentOptimizationEngine {
     fraud: any,
     conversion: any,
     context: PaymentContext
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       gateway: routing.gateway,
       confidence:
@@ -807,7 +807,7 @@ export class PaymentOptimizationEngine {
   private async predictVariantImpact(
     variant: FlowVariant,
     context: PaymentContext
-  ): Promise<any> {
+  ): Promise<unknown> {
     return {
       flow: {} as PaymentFlow,
       expectedImpact: variant.expectedImpact,

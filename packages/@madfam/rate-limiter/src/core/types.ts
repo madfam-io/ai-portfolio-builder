@@ -22,6 +22,29 @@
  * SOFTWARE.
  */
 
+// HTTP Request/Response interfaces
+export interface Request {
+  ip?: string;
+  headers?: Record<string, string | string[]>;
+  user?: { id: string };
+  userId?: string;
+  apiKey?: string;
+  session?: { id: string };
+  sessionId?: string;
+  path?: string;
+  url?: string;
+  method?: string;
+  fingerprint?: string;
+  [key: string]: unknown;
+}
+
+export interface Response {
+  setHeader(name: string, value: string | number): void;
+  status(code: number): Response;
+  json(body: Record<string, unknown>): void;
+  send(body: string): void;
+}
+
 /**
  * @madfam/rate-limiter
  *
@@ -82,12 +105,12 @@ export interface RateLimitConfig {
   /**
    * Handler for when rate limit is exceeded
    */
-  handler?: (req: any, res: any, limit: RateLimitInfo) => void;
+  handler?: (req: Request, res: Response, limit: RateLimitInfo) => void;
 
   /**
    * Callback when rate limit is hit
    */
-  onLimitReached?: (req: any, limit: RateLimitInfo) => void;
+  onLimitReached?: (req: Request, limit: RateLimitInfo) => void;
 }
 
 export interface RateLimitInfo {
@@ -239,11 +262,11 @@ export interface DatabaseStoreConfig {
 }
 
 // Utility types
-export type RateLimitMiddleware = (req: any, res: any, next: any) => Promise<void> | void;
+export type RateLimitMiddleware = (req: Request, res: Response, next: () => void) => Promise<void> | void;
 
-export type KeyGenerator = (req: any) => string;
+export type KeyGenerator = (req: Request) => string;
 
-export type RateLimitHandler = (req: any, res: any, limit: RateLimitInfo) => void;
+export type RateLimitHandler = (req: Request, res: Response, limit: RateLimitInfo) => void;
 
 export interface RateLimitHeaders {
   'X-RateLimit-Limit'?: string;

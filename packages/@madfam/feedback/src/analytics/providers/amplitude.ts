@@ -171,7 +171,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     }
   }
 
-  async setUserProperties(userId: string, properties: Record<string, any>): Promise<void> {
+  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -182,7 +182,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async group(userId: string, groupId: string, traits: Record<string, any> = {}): Promise<void> {
+  async group(userId: string, groupId: string, traits: Record<string, string | number | boolean> = {}): Promise<void> {
     await this.ensureInitialized();
 
     const groupIdentifyEvent = {
@@ -203,7 +203,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     });
   }
 
-  async page(userId: string, name: string, properties: Record<string, any> = {}): Promise<void> {
+  async page(userId: string, name: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
     await this.ensureInitialized();
 
     await this.track({
@@ -283,7 +283,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async setUserPropertyOnce(userId: string, properties: Record<string, any>): Promise<void> {
+  async setUserPropertyOnce(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -319,7 +319,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     productId: string,
     price: number,
     quantity: number = 1,
-    properties: Record<string, any> = {}
+    properties: Record<string, string | number | boolean> = {}
   ): Promise<void> {
     await this.ensureInitialized();
 
@@ -353,7 +353,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
   /**
    * User lookup
    */
-  async getUserProfile(userId: string): Promise<any> {
+  async getUserProfile(userId: string): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.secretKey) {
@@ -367,7 +367,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
   /**
    * Custom queries
    */
-  async runQuery(query: Record<string, any>): Promise<any> {
+  async runQuery(query: Record<string, string | number | boolean | string[]>): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.secretKey) {

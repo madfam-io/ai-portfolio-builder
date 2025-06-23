@@ -149,7 +149,7 @@ export class PostHogProvider implements AnalyticsProvider {
     return results;
   }
 
-  async setUserProperties(userId: string, properties: Record<string, any>): Promise<void> {
+  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
     await this.ensureInitialized();
 
     this.client.identify({
@@ -158,7 +158,7 @@ export class PostHogProvider implements AnalyticsProvider {
     });
   }
 
-  async group(userId: string, groupId: string, traits: Record<string, any> = {}): Promise<void> {
+  async group(userId: string, groupId: string, traits: Record<string, string | number | boolean> = {}): Promise<void> {
     await this.ensureInitialized();
 
     this.client.groupIdentify({
@@ -169,7 +169,7 @@ export class PostHogProvider implements AnalyticsProvider {
     });
   }
 
-  async page(userId: string, name: string, properties: Record<string, any> = {}): Promise<void> {
+  async page(userId: string, name: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
     await this.ensureInitialized();
 
     this.client.capture({
@@ -245,7 +245,7 @@ export class PostHogProvider implements AnalyticsProvider {
   /**
    * Cohort analysis
    */
-  async createCohort(name: string, query: Record<string, any>): Promise<string> {
+  async createCohort(name: string, query: Record<string, string | number | boolean | string[]>): Promise<string> {
     await this.ensureInitialized();
 
     if (!this.config.personalApiKey) {
@@ -259,7 +259,7 @@ export class PostHogProvider implements AnalyticsProvider {
   /**
    * Custom insights and queries
    */
-  async runQuery(query: Record<string, any>): Promise<any> {
+  async runQuery(query: Record<string, string | number | boolean | string[]>): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.personalApiKey) {

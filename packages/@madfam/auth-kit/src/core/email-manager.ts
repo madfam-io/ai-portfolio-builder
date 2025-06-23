@@ -133,7 +133,7 @@ export class EmailManager {
     to: string;
     subject: string;
     template?: string;
-    data?: Record<string, any>;
+    data?: Record<string, string | number | boolean>;
   }): Promise<void> {
     const { to, subject, template, data } = params;
 
@@ -165,7 +165,7 @@ export class EmailManager {
     _to: string,
     _subject: string,
     _templateId?: string,
-    _data?: Record<string, any>
+    _data?: Record<string, string | number | boolean>
   ): Promise<void> {
     // In a real implementation, this would use the SendGrid API
     this.logger.debug('SendGrid email would be sent', {
@@ -183,7 +183,7 @@ export class EmailManager {
     _to: string,
     _subject: string,
     _templateId?: string,
-    _data?: Record<string, any>
+    _data?: Record<string, string | number | boolean>
   ): Promise<void> {
     // In a real implementation, this would use the AWS SES API
     this.logger.debug('SES email would be sent', {
@@ -201,7 +201,7 @@ export class EmailManager {
     _to: string,
     _subject: string,
     _templateId?: string,
-    _data?: Record<string, any>
+    _data?: Record<string, string | number | boolean>
   ): Promise<void> {
     // In a real implementation, this would use nodemailer with SMTP
     this.logger.debug('SMTP email would be sent', {
@@ -218,7 +218,7 @@ export class EmailManager {
     _to: string,
     _subject: string,
     _templateId?: string,
-    _data?: Record<string, any>
+    _data?: Record<string, string | number | boolean>
   ): Promise<void> {
     // In a real implementation, this would use the Resend API
     this.logger.debug('Resend email would be sent', {

@@ -21,6 +21,8 @@
  * Comprehensive type definitions for the feedback system
  */
 
+import type { AnalyticsProvider } from '../analytics/types';
+
 // ============================================
 // Feedback Entry Types
 // ============================================
@@ -54,7 +56,7 @@ export interface FeedbackEntry {
   tags: string[];
   rating?: number; // 1-5 star rating
   userContext?: UserContext;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean | string[] | null>;
 }
 
 export interface UserContext {
@@ -62,7 +64,7 @@ export interface UserContext {
   accountAge: number;
   portfoliosCreated: number;
   lastActivity: Date;
-  customFields?: Record<string, unknown>;
+  customFields?: Record<string, string | number | boolean | Date | null>;
 }
 
 // ============================================
@@ -86,7 +88,7 @@ export interface SatisfactionSurvey {
   additionalComments: string;
   completionContext: string;
   completedIn: number; // seconds
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean | string[] | null>;
 }
 
 // ============================================
@@ -120,7 +122,7 @@ export interface FeedbackEvent {
   userId: string;
   timestamp: Date;
   properties: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, string | number | boolean | string[] | null>;
 }
 
 export interface FeedbackTrend {
@@ -166,7 +168,7 @@ export interface FeedbackSystemConfig {
 export interface StorageConfig {
   type: 'supabase' | 'prisma' | 'memory' | 'custom';
   connectionString?: string;
-  options?: Record<string, unknown>;
+  options?: Record<string, string | number | boolean>;
 }
 
 export interface AnalyticsConfig {
@@ -175,8 +177,8 @@ export interface AnalyticsConfig {
   apiKey?: string;
   batchSize?: number;
   flushInterval?: number;
-  options?: Record<string, unknown>;
-  customProvider?: any;
+  options?: Record<string, string | number | boolean>;
+  customProvider?: AnalyticsProvider;
 }
 
 export interface NotificationConfig {
@@ -184,7 +186,7 @@ export interface NotificationConfig {
   email?: {
     enabled: boolean;
     provider: 'sendgrid' | 'ses' | 'smtp' | 'resend';
-    credentials?: Record<string, any>;
+    credentials?: Record<string, string>;
     criticalBugRecipients?: string[];
     newFeedbackRecipients?: string[];
     surveyRecipients?: string[];
@@ -315,7 +317,7 @@ export interface PortfolioJourneyEvent extends AnalyticsEvent {
     step: string;
     duration?: number;
     completed?: boolean;
-    metadata?: Record<string, unknown>;
+    metadata?: Record<string, string | number | boolean | string[] | null>;
   };
 }
 
@@ -325,7 +327,7 @@ export interface FeatureUsageEvent extends AnalyticsEvent {
     feature: string;
     action: string;
     value?: unknown;
-    metadata?: Record<string, unknown>;
+    metadata?: Record<string, string | number | boolean | string[] | null>;
   };
 }
 

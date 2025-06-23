@@ -27,7 +27,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuthStore } from '@/lib/store/auth-store';
 import { captureEvent } from '@/lib/analytics/posthog/client';
 import { logger } from '@/lib/utils/logger';
@@ -306,6 +306,62 @@ export function useReferral(): UseReferralState & UseReferralActions {
     [user?.id, fetchStats]
   );
 
+  // Generate share content for platform (defined before shareToSocial to avoid dependency issues)
+  const generateShareContent = (platform: SharePlatform, referral?: Referral): ShareContent => {
+    const targetReferral = referral || state.activeReferral;
+    if (!targetReferral) {
+      return { text: '', url: '' };
+    }
+
+    const baseUrl =
+      process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io';
+    const shareUrl = `${baseUrl}/signup?ref=${targetReferral.code}`;
+
+    const templates: Record<
+      SharePlatform,
+      { text: string; hashtags?: string[]; via?: string }
+    > = {
+      twitter: {
+        text: `🚀 Just discovered PRISMA by MADFAM - it transforms CVs into stunning portfolio websites in under 3 minutes! Try it out with my referral link:`,
+        hashtags: ['portfolio', 'AI', 'career', 'MADFAM'],
+        via: 'MADFAM_io',
+      },
+      linkedin: {
+        text: `I've been using PRISMA by MADFAM to create professional portfolio websites with AI assistance. It's incredibly fast and the results are impressive. Check it out:`,
+      },
+      facebook: {
+        text: `Check out PRISMA by MADFAM - an AI-powered tool that creates beautiful portfolio websites from your CV in minutes. Perfect for job seekers and professionals!`,
+      },
+      whatsapp: {
+        text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
+      },
+      telegram: {
+        text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
+      },
+      email: {
+        text: `I wanted to share PRISMA by MADFAM with you - it's an AI-powered platform that creates stunning portfolio websites from CVs in under 3 minutes. Perfect for showcasing your skills and experience professionally.`,
+      },
+      copy_link: {
+        text: shareUrl,
+      },
+      qr_code: {
+        text: shareUrl,
+      },
+      sms: {
+        text: `Hey! Check out PRISMA by MADFAM - creates portfolio websites from CVs in 3 minutes:`,
+      },
+    };
+
+    const template = templates[platform] || templates.copy_link;
+
+    return {
+      text: template.text,
+      url: shareUrl,
+      hashtags: template.hashtags,
+      via: template.via,
+    };
+  };
+
   // Share to social platform
   const shareToSocial = useCallback(
     async (platform: SharePlatform, referral?: Referral): Promise<boolean> => {
@@ -340,7 +396,7 @@ export function useReferral(): UseReferralState & UseReferralActions {
             success = await shareToWhatsApp(shareContent);
             break;
           case 'email':
-            success = await shareToEmail(shareContent);
+            success = shareToEmail(shareContent);
             break;
           case 'copy_link':
             success = await copyToClipboard(shareContent.url);
@@ -400,74 +456,16 @@ export function useReferral(): UseReferralState & UseReferralActions {
 
   // Copy share link to clipboard
   const copyShareLink = useCallback(
-    async (referral?: Referral): Promise<boolean> => {
+    (referral?: Referral): Promise<boolean> => {
       const targetReferral = referral || state.activeReferral;
-      if (!targetReferral) return false;
+      if (!targetReferral) return Promise.resolve(false);
 
-      const shareContent = generateShareContent('copy_link', targetReferral);
+      // Call shareToSocial which returns a Promise
       return shareToSocial('copy_link', targetReferral);
     },
     [state.activeReferral, shareToSocial]
-  );
+  )
 
-  // Generate share content for platform
-  const generateShareContent = useCallback(
-    (platform: SharePlatform, referral?: Referral): ShareContent => {
-      const targetReferral = referral || state.activeReferral;
-      if (!targetReferral) {
-        return { text: '', url: '' };
-      }
-
-      const baseUrl =
-        process.env.NEXT_PUBLIC_APP_URL || 'https://prisma.madfam.io';
-      const shareUrl = `${baseUrl}/signup?ref=${targetReferral.code}`;
-
-      const templates: Record<
-        SharePlatform,
-        { text: string; hashtags?: string[]; via?: string }
-      > = {
-        twitter: {
-          text: `🚀 Just discovered PRISMA by MADFAM - it transforms CVs into stunning portfolio websites in under 3 minutes! Try it out with my referral link:`,
-          hashtags: ['portfolio', 'AI', 'career', 'MADFAM'],
-          via: 'MADFAM_io',
-        },
-        linkedin: {
-          text: `I've been using PRISMA by MADFAM to create professional portfolio websites with AI assistance. It's incredibly fast and the results are impressive. Check it out:`,
-        },
-        facebook: {
-          text: `Check out PRISMA by MADFAM - an AI-powered tool that creates beautiful portfolio websites from your CV in minutes. Perfect for job seekers and professionals!`,
-        },
-        whatsapp: {
-          text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
-        },
-        telegram: {
-          text: `Hey! I found this amazing AI tool called PRISMA that creates portfolio websites from CVs in just 3 minutes. You should try it:`,
-        },
-        email: {
-          text: `I wanted to share PRISMA by MADFAM with you - it's an AI-powered platform that creates stunning portfolio websites from CVs in under 3 minutes. Perfect for showcasing your skills and experience professionally.`,
-        },
-        copy_link: {
-          text: shareUrl,
-        },
-        qr_code: {
-          text: shareUrl,
-        },
-        sms: {
-          text: `Hey! Check out PRISMA by MADFAM - creates portfolio websites from CVs in 3 minutes:`,
-        },
-      };
-
-      const template = templates[platform] || templates.copy_link;
-
-      return {
-        text: template.text,
-        url: shareUrl,
-        hashtags: template.hashtags,
-        via: template.via,
-      };
-    },
-    [state.activeReferral]
-  );
 
   // Select campaign
   const selectCampaign = useCallback((campaign: ReferralCampaign) => {
@@ -510,19 +508,8 @@ export function useReferral(): UseReferralState & UseReferralActions {
     }
   }, [user?.id, refetch]);
 
-  // Memoized derived values
-  const totalReferrals = useMemo(
-    () => state.stats?.total_referrals || 0,
-    [state.stats]
-  );
-  const conversionRate = useMemo(
-    () => state.stats?.conversion_rate || 0,
-    [state.stats]
-  );
-  const hasActiveReferral = useMemo(
-    () => !!state.activeReferral,
-    [state.activeReferral]
-  );
+  // Memoized derived values (removed unused variables)
+  // These values could be exposed in the return object if needed
 
   return {
     ...state,
@@ -540,7 +527,7 @@ export function useReferral(): UseReferralState & UseReferralActions {
 
 // Helper functions for sharing
 
-async function shareToTwitter(content: ShareContent): Promise<boolean> {
+function shareToTwitter(content: ShareContent): Promise<boolean> {
   const text = encodeURIComponent(content.text);
   const url = encodeURIComponent(content.url);
   const hashtags = content.hashtags?.join(',') || '';
@@ -551,7 +538,7 @@ async function shareToTwitter(content: ShareContent): Promise<boolean> {
   return openShareWindow(twitterUrl);
 }
 
-async function shareToLinkedIn(content: ShareContent): Promise<boolean> {
+function shareToLinkedIn(content: ShareContent): Promise<boolean> {
   const url = encodeURIComponent(content.url);
   const title = encodeURIComponent('PRISMA by MADFAM - AI Portfolio Builder');
   const summary = encodeURIComponent(content.text);
@@ -561,7 +548,7 @@ async function shareToLinkedIn(content: ShareContent): Promise<boolean> {
   return openShareWindow(linkedinUrl);
 }
 
-async function shareToFacebook(content: ShareContent): Promise<boolean> {
+function shareToFacebook(content: ShareContent): Promise<boolean> {
   const url = encodeURIComponent(content.url);
   const quote = encodeURIComponent(content.text);
 
@@ -570,14 +557,14 @@ async function shareToFacebook(content: ShareContent): Promise<boolean> {
   return openShareWindow(facebookUrl);
 }
 
-async function shareToWhatsApp(content: ShareContent): Promise<boolean> {
+function shareToWhatsApp(content: ShareContent): Promise<boolean> {
   const text = encodeURIComponent(`${content.text} ${content.url}`);
   const whatsappUrl = `https://wa.me/?text=${text}`;
 
   return openShareWindow(whatsappUrl);
 }
 
-async function shareToEmail(content: ShareContent): Promise<boolean> {
+function shareToEmail(content: ShareContent): boolean {
   const subject = encodeURIComponent('Check out PRISMA by MADFAM');
   const body = encodeURIComponent(`${content.text}\n\n${content.url}`);
 

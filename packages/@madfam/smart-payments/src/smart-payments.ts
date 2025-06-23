@@ -47,7 +47,7 @@ export interface ProcessPaymentRequest {
   ipAddress?: string;
   headers?: Record<string, string>;
   customer?: Customer;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   requestedCountry?: string;
   discountCode?: string;
 }

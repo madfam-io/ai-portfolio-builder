@@ -140,7 +140,7 @@ export class ReferralAPIClient {
     startDate: string;
     endDate: string;
     campaignId?: string;
-  }): Promise<any> {
+  }): Promise<unknown> {
     const queryParams = new URLSearchParams(params);
     return this.request(`/referral/analytics?${queryParams}`);
   }

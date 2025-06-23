@@ -28,33 +28,33 @@
  * Common key generator functions
  */
 
-import type { KeyGenerator } from '../core/types';
+import type { KeyGenerator, Request } from '../core/types';
 
 /**
  * Generate key based on IP address
  */
-export const ipKeyGenerator: KeyGenerator = (req: any): string => {
+export const ipKeyGenerator: KeyGenerator = (req: Request): string => {
   return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
 };
 
 /**
  * Generate key based on user ID
  */
-export const userKeyGenerator: KeyGenerator = (req: any): string => {
+export const userKeyGenerator: KeyGenerator = (req: Request): string => {
   return req.user?.id || req.userId || 'anonymous';
 };
 
 /**
  * Generate key based on API key
  */
-export const apiKeyGenerator: KeyGenerator = (req: any): string => {
+export const apiKeyGenerator: KeyGenerator = (req: Request): string => {
   return req.headers?.['x-api-key'] || req.query?.apiKey || 'no-api-key';
 };
 
 /**
  * Generate key based on Authorization header
  */
-export const authKeyGenerator: KeyGenerator = (req: any): string => {
+export const authKeyGenerator: KeyGenerator = (req: Request): string => {
   const auth = req.headers?.authorization;
   if (!auth) return 'no-auth';
   
@@ -68,7 +68,7 @@ export const authKeyGenerator: KeyGenerator = (req: any): string => {
 /**
  * Generate key based on session ID
  */
-export const sessionKeyGenerator: KeyGenerator = (req: any): string => {
+export const sessionKeyGenerator: KeyGenerator = (req: Request): string => {
   return req.sessionID || req.session?.id || 'no-session';
 };
 
@@ -76,7 +76,7 @@ export const sessionKeyGenerator: KeyGenerator = (req: any): string => {
  * Generate composite key with multiple factors
  */
 export const compositeKeyGenerator = (generators: KeyGenerator[]): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     const parts = generators.map(gen => gen(req));
     return parts.join(':');
   };
@@ -85,14 +85,14 @@ export const compositeKeyGenerator = (generators: KeyGenerator[]): KeyGenerator 
 /**
  * Generate key based on request path
  */
-export const pathKeyGenerator: KeyGenerator = (req: any): string => {
+export const pathKeyGenerator: KeyGenerator = (req: Request): string => {
   return req.path || req.url || '/';
 };
 
 /**
  * Generate key based on HTTP method and path
  */
-export const methodPathKeyGenerator: KeyGenerator = (req: any): string => {
+export const methodPathKeyGenerator: KeyGenerator = (req: Request): string => {
   const method = req.method || 'GET';
   const path = req.path || req.url || '/';
   return `${method}:${path}`;
@@ -101,7 +101,7 @@ export const methodPathKeyGenerator: KeyGenerator = (req: any): string => {
 /**
  * Generate key based on user agent
  */
-export const userAgentKeyGenerator: KeyGenerator = (req: any): string => {
+export const userAgentKeyGenerator: KeyGenerator = (req: Request): string => {
   const userAgent = req.headers?.['user-agent'] || 'unknown-agent';
   return hashString(userAgent);
 };
@@ -109,7 +109,7 @@ export const userAgentKeyGenerator: KeyGenerator = (req: any): string => {
 /**
  * Generate key for IP + User Agent combination
  */
-export const ipUserAgentKeyGenerator: KeyGenerator = (req: any): string => {
+export const ipUserAgentKeyGenerator: KeyGenerator = (req: Request): string => {
   const ip = ipKeyGenerator(req);
   const userAgent = req.headers?.['user-agent'] || 'unknown-agent';
   return `${ip}:${hashString(userAgent)}`;
@@ -119,7 +119,7 @@ export const ipUserAgentKeyGenerator: KeyGenerator = (req: any): string => {
  * Generate key based on custom header
  */
 export const headerKeyGenerator = (headerName: string): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     return req.headers?.[headerName.toLowerCase()] || `no-${headerName}`;
   };
 };
@@ -128,7 +128,7 @@ export const headerKeyGenerator = (headerName: string): KeyGenerator => {
  * Generate key based on query parameter
  */
 export const queryKeyGenerator = (paramName: string): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     return req.query?.[paramName] || `no-${paramName}`;
   };
 };
@@ -137,7 +137,7 @@ export const queryKeyGenerator = (paramName: string): KeyGenerator => {
  * Generate key with prefix
  */
 export const prefixedKeyGenerator = (prefix: string, generator: KeyGenerator): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     return `${prefix}:${generator(req)}`;
   };
 };
@@ -146,7 +146,7 @@ export const prefixedKeyGenerator = (prefix: string, generator: KeyGenerator): K
  * Generate key with suffix
  */
 export const suffixedKeyGenerator = (generator: KeyGenerator, suffix: string): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     return `${generator(req)}:${suffix}`;
   };
 };
@@ -154,7 +154,7 @@ export const suffixedKeyGenerator = (generator: KeyGenerator, suffix: string): K
 /**
  * Generate key based on fingerprinting
  */
-export const fingerprintKeyGenerator: KeyGenerator = (req: any): string => {
+export const fingerprintKeyGenerator: KeyGenerator = (req: Request): string => {
   const components = [
     req.ip || 'no-ip',
     req.headers?.['user-agent'] || 'no-ua',
@@ -185,7 +185,7 @@ export const timeBasedKeyGenerator = (
   baseGenerator: KeyGenerator,
   windowMs: number
 ): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     const baseKey = baseGenerator(req);
     const timeWindow = Math.floor(Date.now() / windowMs);
     return `${baseKey}:${timeWindow}`;
@@ -196,11 +196,11 @@ export const timeBasedKeyGenerator = (
  * Conditional key generator
  */
 export const conditionalKeyGenerator = (
-  condition: (req: any) => boolean,
+  condition: (req: Request) => boolean,
   trueGenerator: KeyGenerator,
   falseGenerator: KeyGenerator
 ): KeyGenerator => {
-  return (req: any): string => {
+  return (req: Request): string => {
     return condition(req) ? trueGenerator(req) : falseGenerator(req);
   };
 };

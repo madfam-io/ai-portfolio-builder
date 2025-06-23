@@ -30,8 +30,21 @@
 
 import type { RateLimitStore, RateLimitInfo, RedisStoreConfig } from '../core/types';
 
+interface RedisClient {
+  get(key: string): Promise<string | null>;
+  set(key: string, value: string, mode?: string, duration?: number): Promise<string | null>;
+  incr(key: string): Promise<number>;
+  expire(key: string, seconds: number): Promise<number>;
+  del(key: string): Promise<number>;
+  pipeline(): RedisClient;
+  zadd(key: string, ...args: (string | number)[]): Promise<number>;
+  zremrangebyscore(key: string, min: string | number, max: string | number): Promise<number>;
+  zcard(key: string): Promise<number>;
+  exec(): Promise<unknown[]>;
+}
+
 export class RedisStore implements RateLimitStore {
-  private redis: any;
+  private redis: RedisClient;
   private prefix: string;
   private ttl: number;
 

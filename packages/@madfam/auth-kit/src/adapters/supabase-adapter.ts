@@ -20,9 +20,60 @@
 import { BaseAdapter } from './base-adapter';
 import type { User, Session, MFAMethod, AuthProvider } from '../core/types';
 
+// Supabase type definitions
+interface SupabaseQueryBuilder {
+  select(columns?: string): this;
+  insert(data: Record<string, string | number | boolean | Date | null>): this;
+  update(data: Record<string, string | number | boolean | Date | null>): this;
+  delete(): this;
+  eq(column: string, value: string | number | boolean | Date | null): this;
+  neq(column: string, value: string | number | boolean | Date | null): this;
+  gte(column: string, value: string | number | Date): this;
+  order(column: string, options?: { ascending?: boolean }): this;
+  limit(count: number): this;
+  single(): this;
+  throwOnError(): this;
+}
+
+interface SupabaseAuthClient {
+  signUp(credentials: { email: string; password: string }): Promise<{ data?: { user?: SupabaseUserRecord }; error?: Error }>;
+  signInWithPassword(credentials: { email: string; password: string }): Promise<{ data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord }; error?: Error }>;
+  signOut(): Promise<{ error?: Error }>;
+  resetPasswordForEmail(email: string, options?: { redirectTo?: string }): Promise<{ error?: Error }>;
+  updateUser(attributes: { password?: string }): Promise<{ error?: Error }>;
+  verifyOtp(params: { token: string; type: string }): Promise<{ data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord }; error?: Error }>;
+}
+
+interface SupabaseUserRecord {
+  id: string;
+  email: string;
+  email_verified: boolean;
+  created_at: string;
+  updated_at: string;
+  user_metadata?: Record<string, string | number | boolean | null>;
+  app_metadata?: Record<string, string | number | boolean | null>;
+}
+
+interface SupabaseSessionRecord {
+  id: string;
+  user_id: string;
+  access_token: string;
+  refresh_token?: string;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface SupabaseOAuthLinkRecord {
+  user_id: string;
+  provider: string;
+  provider_user_id: string;
+  created_at: string;
+}
+
 interface SupabaseClient {
-  from(table: string): any;
-  auth: any;
+  from(table: string): SupabaseQueryBuilder;
+  auth: SupabaseAuthClient;
 }
 
 interface SupabaseConfig {
@@ -166,7 +217,7 @@ export class SupabaseAdapter extends BaseAdapter {
     return user ? this.mapSupabaseUser(user) : null;
   }
 
-  async findUsers(filter: Record<string, any>): Promise<User[]> {
+  async findUsers(filter: Record<string, string | number | boolean | Date>): Promise<User[]> {
     const client = this.getClient();
     let query = client.from('auth_users').select('*');
 
@@ -187,7 +238,7 @@ export class SupabaseAdapter extends BaseAdapter {
       throw new Error(`Failed to find users: ${error.message}`);
     }
 
-    return users ? users.map((user: any) => this.mapSupabaseUser(user)) : [];
+    return users ? users.map((user: SupabaseUserRecord) => this.mapSupabaseUser(user)) : [];
   }
 
   // Session operations
@@ -304,7 +355,7 @@ export class SupabaseAdapter extends BaseAdapter {
     }
 
     return sessions
-      ? sessions.map((session: any) => this.mapSupabaseSession(session))
+      ? sessions.map((session: SupabaseSessionRecord) => this.mapSupabaseSession(session))
       : [];
   }
 
@@ -439,7 +490,7 @@ export class SupabaseAdapter extends BaseAdapter {
     }
 
     return data
-      ? data.map((link: any) => ({
+      ? data.map((link: SupabaseOAuthLinkRecord) => ({
           provider: link.provider,
           providerId: link.provider_id,
         }))
@@ -463,7 +514,7 @@ export class SupabaseAdapter extends BaseAdapter {
   }
 
   // Helper methods
-  private mapSupabaseUser(supabaseUser: any): User {
+  private mapSupabaseUser(supabaseUser: SupabaseUserRecord): User {
     return {
       id: supabaseUser.id,
       email: supabaseUser.email,
@@ -476,7 +527,7 @@ export class SupabaseAdapter extends BaseAdapter {
     };
   }
 
-  private mapSupabaseSession(supabaseSession: any): Session {
+  private mapSupabaseSession(supabaseSession: SupabaseSessionRecord): Session {
     return {
       id: supabaseSession.id,
       userId: supabaseSession.user_id,

@@ -690,7 +690,7 @@ export class AuthKit extends EventEmitter {
   private createError(
     code: AuthErrorCode,
     message: string,
-    details?: Record<string, any>
+    details?: Record<string, string | number | boolean | string[] | number[]>
   ): AuthError {
     return { code, message, details };
   }
@@ -698,7 +698,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Emit auth event
    */
-  public emit(type: AuthEventType, data?: any): void {
+  public emit(type: AuthEventType, data?: User | Session | AuthError | { userId: string; provider: string } | null): void {
     const event: AuthEvent = {
       type,
       timestamp: new Date(),

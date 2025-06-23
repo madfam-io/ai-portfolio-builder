@@ -43,7 +43,7 @@ import { Logger } from './core/logger';
 import type { LoggerConfig } from './types';
 
 export function createLogger<
-  TEvents extends Record<string, any> = Record<string, any>,
+  TEvents extends Record<string, unknown> = Record<string, unknown>,
 >(config: LoggerConfig): Logger<TEvents> {
   return new Logger<TEvents>(config);
 }

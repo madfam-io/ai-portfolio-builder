@@ -225,7 +225,7 @@ export interface AuditEvent {
   };
   action: string;
   outcome: 'success' | 'failure' | 'denied';
-  details: Record<string, any>;
+  details: Record<string, unknown>;
   riskScore: number; // 0-100
   compliance: string[];
 }

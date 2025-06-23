@@ -191,7 +191,7 @@ export class EmailService {
   async sendTeamNotification(
     subject: string,
     templateId: string,
-    templateData: Record<string, any>,
+    templateData: Record<string, unknown>,
     priority: 'low' | 'normal' | 'high' = 'normal'
   ): Promise<void> {
     if (!this.config.email?.enabled || !this.config.email.teamRecipients?.length) {
@@ -342,7 +342,7 @@ export class EmailService {
   /**
    * Render template with data
    */
-  private renderTemplate(template: string, data: Record<string, any>): string {
+  private renderTemplate(template: string, data: Record<string, unknown>): string {
     let rendered = template;
     
     // Simple template rendering (in production, use a proper template engine)

@@ -84,7 +84,7 @@ export class ReferralEngine {
   /**
    * Create a new referral for a user
    */
-  createReferral(
+  async createReferral(
     userId: string,
     request: CreateReferralRequest = {}
   ): Promise<CreateReferralResponse> {
@@ -175,7 +175,7 @@ export class ReferralEngine {
   /**
    * Track referral link click with attribution
    */
-  trackReferralClick(
+  async trackReferralClick(
     request: TrackReferralClickRequest
   ): Promise<TrackReferralClickResponse> {
     try {
@@ -490,7 +490,7 @@ export class ReferralEngine {
   /**
    * Get user's referral statistics
    */
-  getUserReferralStats(userId: string): Promise<UserReferralStats> {
+  async getUserReferralStats(userId: string): Promise<UserReferralStats> {
     try {
       const { data: stats, error } = await this.supabase
         .from('user_referral_stats')
@@ -590,7 +590,7 @@ export class ReferralEngine {
 
   // Private helper methods
 
-  private validateUserEligibility(
+  private async validateUserEligibility(
     userId: string,
     campaignId?: string
   ): Promise<void> {
@@ -631,7 +631,7 @@ export class ReferralEngine {
     }
   }
 
-  private getActiveCampaign(
+  private async getActiveCampaign(
     campaignId?: string
   ): Promise<ReferralCampaign | null> {
     if (campaignId) {
@@ -657,7 +657,7 @@ export class ReferralEngine {
     return defaultCampaign;
   }
 
-  private generateUniqueCode(): Promise<string> {
+  private async generateUniqueCode(): Promise<string> {
     const maxAttempts = 10;
     let attempts = 0;
 
@@ -724,7 +724,7 @@ export class ReferralEngine {
     return `${baseUrl}/signup?${params.toString()}`;
   }
 
-  private checkCampaignEligibility(
+  private async checkCampaignEligibility(
     userId: string,
     campaign: ReferralCampaign
   ): Promise<boolean> {
@@ -867,7 +867,7 @@ export class ReferralEngine {
     }
   }
 
-  private markReferralFraudulent(
+  private async markReferralFraudulent(
     referralId: string,
     fraudResult: FraudDetectionResult
   ): Promise<void> {
@@ -895,7 +895,7 @@ export class ReferralEngine {
     });
   }
 
-  private flagForReview(
+  private async flagForReview(
     referralId: string,
     fraudResult: FraudDetectionResult
   ): Promise<void> {
@@ -916,7 +916,7 @@ export class ReferralEngine {
       .eq('id', referralId);
   }
 
-  private expireReferral(referralId: string): Promise<void> {
+  private async expireReferral(referralId: string): Promise<void> {
     const supabase = await this.serverSupabase;
     if (!supabase) throw new Error('Failed to create Supabase client');
 
@@ -929,7 +929,7 @@ export class ReferralEngine {
       .eq('id', referralId);
   }
 
-  private calculateAndCreateRewards(
+  private async calculateAndCreateRewards(
     referral: Referral,
     campaign?: ReferralCampaign
   ): Promise<ReferralReward[]> {
@@ -968,7 +968,7 @@ export class ReferralEngine {
     return rewards;
   }
 
-  private createReward(
+  private async createReward(
     userId: string,
     referralId: string,
     rewardConfig: any,
@@ -1017,7 +1017,7 @@ export class ReferralEngine {
     }
   }
 
-  private trackEvent(event: Partial<ReferralEvent>): Promise<void> {
+  private async trackEvent(event: Partial<ReferralEvent>): Promise<void> {
     try {
       const supabaseEvent = await this.serverSupabase;
       if (!supabaseEvent) throw new Error('Failed to create Supabase client');

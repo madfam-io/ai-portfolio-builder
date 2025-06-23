@@ -51,12 +51,12 @@ const LOG_LEVELS: LogLevelValue = {
   fatal: 5,
 };
 
-export class Logger<TEvents extends Record<string, any> = Record<string, any>>
+export class Logger<TEvents extends Record<string, unknown> = Record<string, unknown>>
   implements ILogger<TEvents>
 {
   private config: LoggerConfig;
   private transports: Transport[] = [];
-  private context: Record<string, any> = {};
+  private context: Record<string, unknown> = {};
   private levelValue: number;
 
   constructor(config: LoggerConfig) {
@@ -156,7 +156,7 @@ export class Logger<TEvents extends Record<string, any> = Record<string, any>>
   }
 
   // Create child logger with additional context
-  child(context: Record<string, any>): Logger<TEvents> {
+  child(context: Record<string, unknown>): Logger<TEvents> {
     const childConfig = {
       ...this.config,
       defaultFields: {

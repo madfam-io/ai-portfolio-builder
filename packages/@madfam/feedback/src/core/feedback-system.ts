@@ -386,7 +386,7 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Identify user for analytics tracking
    */
-  async identifyUser(userId: string, traits: Record<string, any> = {}): Promise<void> {
+  async identifyUser(userId: string, traits: Record<string, string | number | boolean | Date | null> = {}): Promise<void> {
     if (this.analyticsService) {
       await this.analyticsService.identify(userId, traits);
     }
@@ -395,7 +395,7 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Track custom analytics event
    */
-  async trackEvent(userId: string, event: string, properties: Record<string, any> = {}): Promise<void> {
+  async trackEvent(userId: string, event: string, properties: Record<string, string | number | boolean | Date> = {}): Promise<void> {
     if (this.analyticsService) {
       await this.analyticsService.track({
         userId,
@@ -412,7 +412,7 @@ export class FeedbackSystem extends EventEmitter {
   async updateFeedbackStatus(
     feedbackId: string,
     status: FeedbackEntry['status'],
-    metadata?: Record<string, unknown>
+    metadata?: Record<string, string | number | boolean | string[]>
   ): Promise<FeedbackEntry> {
     try {
       // Get original feedback for comparison

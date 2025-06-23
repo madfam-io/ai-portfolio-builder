@@ -48,7 +48,7 @@ export interface RouterConfig {
   userChoiceThreshold?: number; // Percentage difference to show alternatives
   preferProfitableGateways?: boolean;
   blockHighRiskGateways?: string[];
-  customGatewayConfigs?: Record<string, any>;
+  customGatewayConfigs?: Record<string, unknown>;
 }
 
 /**

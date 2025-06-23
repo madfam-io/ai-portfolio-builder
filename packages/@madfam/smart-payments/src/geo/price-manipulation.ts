@@ -43,7 +43,7 @@ export type ManipulationType =
 export interface ManipulationEvidence {
   factors: string[];
   riskScore: number;
-  details: Record<string, any>;
+  details: Record<string, unknown>;
 }
 
 /**

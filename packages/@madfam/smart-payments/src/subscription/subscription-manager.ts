@@ -206,7 +206,7 @@ export interface Subscription {
   discounts: AppliedDiscount[];
   addOns: AddOnSubscription[];
   customizations: Customization[];
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }
 
 export type SubscriptionStatus =
@@ -337,7 +337,7 @@ export interface InvoiceLineItem {
     start: Date;
     end: Date;
   };
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface TaxBreakdown {
@@ -1285,7 +1285,7 @@ export class SubscriptionManager {
     return 87.3;
   }
 
-  private async analyzeCustomerUsage(subscription: Subscription): Promise<any> {
+  private async analyzeCustomerUsage(subscription: Subscription): Promise<unknown> {
     return {
       averageUsage:
         subscription.usage.currentPeriod.reduce(

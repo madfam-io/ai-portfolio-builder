@@ -34,6 +34,8 @@ import type {
   RateLimitResult,
   RateLimitInfo,
   RateLimitStore,
+  Request,
+  Response,
 } from './types';
 
 export class RateLimiter {
@@ -129,7 +131,7 @@ export class RateLimiter {
    * Create Express middleware
    */
   middleware() {
-    return async (req: any, res: any, next: any) => {
+    return async (req: Request, res: Response, next: () => void) => {
       const identifier = this.getIdentifier(req);
       const result = await this.checkLimit(identifier);
 
@@ -153,7 +155,7 @@ export class RateLimiter {
   /**
    * Create async function wrapper
    */
-  wrap<T extends (...args: any[]) => any>(
+  wrap<T extends (...args: unknown[]) => unknown>(
     fn: T,
     getIdentifier: (...args: Parameters<T>) => string
   ) {
@@ -167,8 +169,8 @@ export class RateLimiter {
             ? this.config.message
             : this.config.message(result.limit)
         );
-        (error as any).rateLimitInfo = result.limit;
-        (error as any).retryAfter = result.retryAfter;
+        (error as Error & { rateLimitInfo?: RateLimitInfo; retryAfter?: number }).rateLimitInfo = result.limit;
+        (error as Error & { rateLimitInfo?: RateLimitInfo; retryAfter?: number }).retryAfter = result.retryAfter;
         throw error;
       }
 
@@ -188,7 +190,7 @@ export class RateLimiter {
   /**
    * Extract identifier from request
    */
-  private getIdentifier(req: any): string {
+  private getIdentifier(req: Request): string {
     // Try common identifier sources
     return (
       req.ip ||
@@ -202,7 +204,7 @@ export class RateLimiter {
   /**
    * Add rate limit headers to response
    */
-  private addHeaders(res: any, limit: RateLimitInfo, retryAfter?: number): void {
+  private addHeaders(res: Response, limit: RateLimitInfo, retryAfter?: number): void {
     if (this.config.standardHeaders) {
       res.setHeader('RateLimit-Limit', limit.limit.toString());
       res.setHeader('RateLimit-Remaining', limit.remaining.toString());
@@ -224,7 +226,7 @@ export class RateLimiter {
   /**
    * Default handler for rate limit exceeded
    */
-  private defaultHandler = (req: any, res: any, limit: RateLimitInfo): void => {
+  private defaultHandler = (req: Request, res: Response, limit: RateLimitInfo): void => {
     const message = typeof this.config.message === 'string'
       ? this.config.message
       : this.config.message(limit);

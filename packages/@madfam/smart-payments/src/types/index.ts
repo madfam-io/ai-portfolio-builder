@@ -180,7 +180,7 @@ export interface PaymentContext {
   cardInfo?: CardInfo;
   geoContext?: GeographicalContext;
   customer?: Customer;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface PaymentOptions {
@@ -364,7 +364,7 @@ export interface AnalyticsEvent {
     | 'fraud_detected'
     | 'edge_case';
   timestamp: Date;
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 // Validation types

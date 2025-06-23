@@ -28,7 +28,7 @@
 export interface AnalyticsEvent {
   userId: string;
   event: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   timestamp?: string;
 }
 
@@ -39,7 +39,7 @@ export class Analytics {
     this.endpoint = endpoint;
   }
 
-  async track(userId: string, event: string, properties?: Record<string, any>) {
+  async track(userId: string, event: string, properties?: Record<string, unknown>) {
     const analyticsEvent: AnalyticsEvent = {
       userId,
       event,

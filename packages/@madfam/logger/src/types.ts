@@ -36,7 +36,7 @@ export interface LogEntry {
   message: string;
   data?: any;
   error?: Error;
-  context?: Record<string, any>;
+  context?: Record<string, unknown>;
   metadata?: LogMetadata;
 }
 
@@ -67,7 +67,7 @@ export interface LoggerConfig {
   redactPaths?: string[];
 
   // Context
-  defaultFields?: Record<string, any>;
+  defaultFields?: Record<string, unknown>;
 
   // Transports
   transports?: Transport[] | TransportConfig[];
@@ -154,7 +154,7 @@ export interface Timer {
 }
 
 export interface Logger<
-  TEvents extends Record<string, any> = Record<string, any>,
+  TEvents extends Record<string, unknown> = Record<string, unknown>,
 > {
   // Basic logging methods
   trace(message: string, data?: any): void;
@@ -174,7 +174,7 @@ export interface Logger<
   ): void;
 
   // Child logger
-  child(context: Record<string, any>): Logger<TEvents>;
+  child(context: Record<string, unknown>): Logger<TEvents>;
 
   // Timer
   startTimer(): Timer;

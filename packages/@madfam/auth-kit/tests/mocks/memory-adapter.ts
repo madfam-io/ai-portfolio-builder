@@ -81,7 +81,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return this.usersByEmail.get(email) || null;
   }
 
-  async findUsers(filter: Record<string, any>): Promise<User[]> {
+  async findUsers(filter: Record<string, unknown>): Promise<User[]> {
     const users = Array.from(this.users.values());
     return users.filter(user => {
       return Object.entries(filter).every(([key, value]) => {

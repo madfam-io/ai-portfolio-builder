@@ -163,15 +163,21 @@ export function RewardHistory({ className }: RewardHistoryProps) {
       if (!stats.by_status[reward.status]) {
         stats.by_status[reward.status] = { count: 0, amount: 0 };
       }
-      stats.by_status[reward.status].count++;
-      stats.by_status[reward.status].amount += reward.amount;
+      const statusStat = stats.by_status[reward.status];
+      if (statusStat) {
+        statusStat.count++;
+        statusStat.amount += reward.amount;
+      }
 
       // By type
       if (!stats.by_type[reward.type]) {
         stats.by_type[reward.type] = { count: 0, amount: 0 };
       }
-      stats.by_type[reward.type].count++;
-      stats.by_type[reward.type].amount += reward.amount;
+      const typeStat = stats.by_type[reward.type];
+      if (typeStat) {
+        typeStat.count++;
+        typeStat.amount += reward.amount;
+      }
 
       // Monthly comparison
       const rewardDate = new Date(reward.created_at);
