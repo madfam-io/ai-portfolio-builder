@@ -286,12 +286,12 @@ export class MultiLevelCache {
    */
   async get(key: string): Promise<unknown> {
     for (let i = 0; i < this.levels.length; i++) {
-      const value = this.levels[i].get(key);
+      const value = this.levels[i]!.get(key);
 
       if (value !== null) {
         // Promote to higher levels
         for (let j = 0; j < i; j++) {
-          this.levels[j].set(key, value);
+          this.levels[j]!.set(key, value);
         }
         return value;
       }
