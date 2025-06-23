@@ -44,27 +44,18 @@ export { DynamicPricingEngine } from './pricing/dynamic-pricing';
 // Performance exports
 export * from './performance';
 
-// Business Intelligence exports
+// Module exports - export everything from each module
+// TypeScript will use the first export for conflicts
 export * from './business-intelligence';
-
-// AI exports
 export * from './ai';
-
-// Enterprise exports
 export * from './enterprise';
-export { EnterpriseSecurityModule } from './enterprise/security-module';
-
-// Research exports
 export * from './research';
-
-// White Label exports
 export * from './white-label';
-
-// Subscription exports
 export * from './subscription';
-
-// Consulting exports
 export * from './consulting';
+
+// Specific class exports
+export { EnterpriseSecurityModule } from './enterprise/security-module';
 
 // Default export
 export { SmartPayments as default } from './smart-payments';

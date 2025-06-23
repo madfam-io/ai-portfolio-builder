@@ -13,7 +13,7 @@ const packageJson = {
 const external = ['react', 'react-dom', 'react/jsx-runtime'];
 
 const entries = [
-  'src/index.ts',
+  // Build module bundles first
   'src/card-intelligence/index.ts',
   'src/geo/index.ts',
   'src/routing/index.ts',
@@ -26,6 +26,8 @@ const entries = [
   'src/white-label/index.ts',
   'src/subscription/index.ts',
   'src/consulting/index.ts',
+  // Build main index last
+  'src/index.ts',
 ];
 
 export default [
