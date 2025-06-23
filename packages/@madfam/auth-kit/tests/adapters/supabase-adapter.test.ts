@@ -38,16 +38,25 @@ const mockEq = jest.fn();
 const mockSingle = jest.fn();
 const mockMaybeSingle = jest.fn();
 
-// Chain mock methods
-mockSelect.mockReturnValue({ eq: mockEq });
-mockInsert.mockReturnValue({ select: mockSelect });
-mockUpdate.mockReturnValue({ eq: mockEq });
-mockDelete.mockReturnValue({ eq: mockEq });
-mockEq.mockReturnValue({ 
-  single: mockSingle,
-  maybeSingle: mockMaybeSingle,
-  select: mockSelect,
-});
+// Setup proper method chaining
+const setupMockChain = () => {
+  const chainObj = {
+    eq: mockEq,
+    single: mockSingle,
+    maybeSingle: mockMaybeSingle,
+    select: mockSelect,
+  };
+
+  mockSelect.mockReturnValue(chainObj);
+  mockInsert.mockReturnValue({ select: () => chainObj });
+  mockUpdate.mockReturnValue(chainObj);
+  mockDelete.mockReturnValue(chainObj);
+  mockEq.mockReturnValue(chainObj);
+
+  return chainObj;
+};
+
+setupMockChain();
 mockSingle.mockResolvedValue({ data: null, error: null });
 mockMaybeSingle.mockResolvedValue({ data: null, error: null });
 
@@ -67,14 +76,24 @@ describe('SupabaseAdapter', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // Setup mock chain
+    mockSupabaseClient.from.mockReturnValue({
+      select: mockSelect,
+      insert: mockInsert,
+      update: mockUpdate,
+      delete: mockDelete,
+    });
+
     adapter = new SupabaseAdapter({
       url: 'https://test.supabase.co',
       key: 'test-key',
+      client: mockSupabaseClient as any,
     });
   });
 
   describe('user operations', () => {
-    const mockUser: User = {
+    const _mockUser: User = {
       id: 'user-123',
       email: 'test@example.com',
       emailVerified: true,
@@ -106,11 +125,13 @@ describe('SupabaseAdapter', () => {
         const user = await adapter.createUser(userData);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('auth.users');
-        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
-          email: 'test@example.com',
-          email_verified: false,
-          raw_user_meta_data: { fullName: 'Test User' },
-        }));
+        expect(mockInsert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            email: 'test@example.com',
+            email_verified: false,
+            raw_user_meta_data: { fullName: 'Test User' },
+          })
+        );
         expect(user.email).toBe('test@example.com');
         expect(user.emailVerified).toBe(false);
       });
@@ -121,8 +142,9 @@ describe('SupabaseAdapter', () => {
           error: { message: 'Email already exists' },
         });
 
-        await expect(adapter.createUser({ email: 'test@example.com' }))
-          .rejects.toThrow('Email already exists');
+        await expect(
+          adapter.createUser({ email: 'test@example.com' })
+        ).rejects.toThrow('Email already exists');
       });
     });
 
@@ -192,7 +214,9 @@ describe('SupabaseAdapter', () => {
 
         await adapter.deleteUser('user-123');
 
-        expect(mockSupabaseClient.auth.admin.deleteUser).toHaveBeenCalledWith('user-123');
+        expect(mockSupabaseClient.auth.admin.deleteUser).toHaveBeenCalledWith(
+          'user-123'
+        );
       });
 
       it('should handle deletion error', async () => {
@@ -201,14 +225,15 @@ describe('SupabaseAdapter', () => {
           error: { message: 'User not found' },
         });
 
-        await expect(adapter.deleteUser('user-123'))
-          .rejects.toThrow('User not found');
+        await expect(adapter.deleteUser('user-123')).rejects.toThrow(
+          'User not found'
+        );
       });
     });
   });
 
   describe('session operations', () => {
-    const mockSession: Session = {
+    const _mockSession: Session = {
       id: 'session-123',
       userId: 'user-123',
       token: 'token-abc',
@@ -240,11 +265,13 @@ describe('SupabaseAdapter', () => {
         const session = await adapter.createSession(sessionData);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith('auth_sessions');
-        expect(mockInsert).toHaveBeenCalledWith(expect.objectContaining({
-          user_id: 'user-123',
-          token: 'token-abc',
-          expires_at: '2024-12-31T00:00:00.000Z',
-        }));
+        expect(mockInsert).toHaveBeenCalledWith(
+          expect.objectContaining({
+            user_id: 'user-123',
+            token: 'token-abc',
+            expires_at: '2024-12-31T00:00:00.000Z',
+          })
+        );
         expect(session.userId).toBe('user-123');
         expect(session.token).toBe('token-abc');
       });
@@ -307,7 +334,9 @@ describe('SupabaseAdapter', () => {
       it('should save MFA secret successfully', async () => {
         await adapter.saveMFASecret('user-123', 'totp', 'secret-abc');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith('user_mfa_secrets');
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
+          'user_mfa_secrets'
+        );
         expect(mockInsert).toHaveBeenCalledWith({
           user_id: 'user-123',
           method: 'totp',
@@ -363,7 +392,9 @@ describe('SupabaseAdapter', () => {
 
         await adapter.saveBackupCodes('user-123', codes);
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith('user_backup_codes');
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
+          'user_backup_codes'
+        );
         expect(mockInsert).toHaveBeenCalledWith(
           codes.map(code => ({
             user_id: 'user-123',
@@ -403,7 +434,9 @@ describe('SupabaseAdapter', () => {
       it('should create account link successfully', async () => {
         await adapter.createAccountLink('user-123', 'google', 'google-456');
 
-        expect(mockSupabaseClient.from).toHaveBeenCalledWith('user_account_links');
+        expect(mockSupabaseClient.from).toHaveBeenCalledWith(
+          'user_account_links'
+        );
         expect(mockInsert).toHaveBeenCalledWith({
           user_id: 'user-123',
           provider: 'google',
@@ -426,8 +459,14 @@ describe('SupabaseAdapter', () => {
         const links = await adapter.findAccountLinks('user-123');
 
         expect(links).toHaveLength(2);
-        expect(links[0]).toEqual({ provider: 'google', providerId: 'google-456' });
-        expect(links[1]).toEqual({ provider: 'github', providerId: 'github-789' });
+        expect(links[0]).toEqual({
+          provider: 'google',
+          providerId: 'google-456',
+        });
+        expect(links[1]).toEqual({
+          provider: 'github',
+          providerId: 'github-789',
+        });
       });
     });
 
@@ -445,8 +484,9 @@ describe('SupabaseAdapter', () => {
     it('should handle Supabase connection errors', async () => {
       mockSingle.mockRejectedValueOnce(new Error('Connection failed'));
 
-      await expect(adapter.createUser({ email: 'test@example.com' }))
-        .rejects.toThrow('Connection failed');
+      await expect(
+        adapter.createUser({ email: 'test@example.com' })
+      ).rejects.toThrow('Connection failed');
     });
 
     it('should handle malformed data gracefully', async () => {

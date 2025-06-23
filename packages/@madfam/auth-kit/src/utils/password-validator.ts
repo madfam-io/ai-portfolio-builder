@@ -92,40 +92,15 @@ function calculateStrength(password: string): number {
 }
 
 /**
- * Validate password against requirements
+ * Check character requirements
  */
-export async function validatePassword(
+function checkCharacterRequirements(
   password: string,
-  requirements?: PasswordRequirements
-): Promise<PasswordValidationResult> {
-  const feedback: string[] = [];
+  reqs: PasswordRequirements,
+  feedback: string[]
+): boolean {
   let valid = true;
 
-  // Default requirements if not provided
-  const reqs = requirements || {
-    minLength: 8,
-    requireUppercase: true,
-    requireLowercase: true,
-    requireNumbers: true,
-    requireSymbols: true,
-  };
-
-  // Length validation
-  if (reqs.minLength && password.length < reqs.minLength) {
-    feedback.push(
-      `Password must be at least ${reqs.minLength} characters long`
-    );
-    valid = false;
-  }
-
-  if (reqs.maxLength && password.length > reqs.maxLength) {
-    feedback.push(
-      `Password must be no more than ${reqs.maxLength} characters long`
-    );
-    valid = false;
-  }
-
-  // Character requirements
   if (reqs.requireUppercase && !/[A-Z]/.test(password)) {
     feedback.push('Password must contain at least one uppercase letter');
     valid = false;
@@ -145,6 +120,72 @@ export async function validatePassword(
     feedback.push('Password must contain at least one special character');
     valid = false;
   }
+
+  return valid;
+}
+
+/**
+ * Check length requirements
+ */
+function checkLengthRequirements(
+  password: string,
+  reqs: PasswordRequirements,
+  feedback: string[]
+): boolean {
+  let valid = true;
+
+  if (reqs.minLength && password.length < reqs.minLength) {
+    feedback.push(
+      `Password must be at least ${reqs.minLength} characters long`
+    );
+    valid = false;
+  }
+
+  if (reqs.maxLength && password.length > reqs.maxLength) {
+    feedback.push(
+      `Password must be no more than ${reqs.maxLength} characters long`
+    );
+    valid = false;
+  }
+
+  return valid;
+}
+
+/**
+ * Validate password against requirements
+ */
+export async function validatePassword(
+  password: string,
+  requirements?: PasswordRequirements
+): Promise<PasswordValidationResult> {
+  // Handle edge case - password with only whitespace
+  if (password.trim().length === 0) {
+    return {
+      valid: false,
+      score: 0,
+      feedback: ['Password cannot be empty or only whitespace'],
+    };
+  }
+
+  const feedback: string[] = [];
+  let valid = true;
+
+  // Default requirements if not provided
+  const reqs = requirements || {
+    minLength: 8,
+    requireUppercase: true,
+    requireLowercase: true,
+    requireNumbers: true,
+    requireSymbols: true,
+  };
+
+  // Length validation
+  const lengthValid = checkLengthRequirements(password, reqs, feedback);
+  valid = valid && lengthValid;
+
+  // Character requirements
+  const charValid = checkCharacterRequirements(password, reqs, feedback);
+  valid = valid && charValid;
 
   // Common password check
   if (reqs.preventCommon && COMMON_PASSWORDS.includes(password.toLowerCase())) {
@@ -178,20 +219,16 @@ export async function validatePassword(
   const score = calculateStrength(password);
 
   // Provide suggestions
-  if (score < 3) {
-    if (!feedback.length) {
-      feedback.push(
-        'Consider using a longer password with a mix of characters'
-      );
-    }
+  if (score < 3 && !feedback.length) {
+    feedback.push('Consider using a longer password with a mix of characters');
   }
 
   return {
     valid,
     score,
-    feedback: feedback.length > 0 ? feedback : undefined,
+    feedback: feedback.length > 0 ? feedback : [],
     warning:
-      score < 3
+      score < 3 && valid
         ? 'This password is weak. Consider making it stronger.'
         : undefined,
   };

@@ -20,6 +20,15 @@ import {
 describe('PerformanceMonitor', () => {
   let monitor: PerformanceMonitor;
 
+  // Mock timers globally for all tests
+  beforeAll(() => {
+    jest.useFakeTimers();
+  });
+
+  afterAll(() => {
+    jest.useRealTimers();
+  });
+
   beforeEach(() => {
     monitor = new PerformanceMonitor({
       processPayment: 200,
@@ -72,9 +81,14 @@ describe('PerformanceMonitor', () => {
     it('should warn when threshold exceeded', () => {
       const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
 
+      // Manually mock Date.now() for timer calculation
+      const startTime = Date.now();
+      jest
+        .spyOn(Date, 'now')
+        .mockReturnValueOnce(startTime) // for startTimer
+        .mockReturnValueOnce(startTime + 100); // for endTimer (100ms later)
+
       monitor.startTimer('binLookup');
-      // Simulate slow operation
-      jest.advanceTimersByTime(100);
       monitor.endTimer('binLookup');
 
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -82,13 +96,16 @@ describe('PerformanceMonitor', () => {
       );
 
       consoleSpy.mockRestore();
+      jest.spyOn(Date, 'now').mockRestore();
     });
   });
 
   describe('Measure function', () => {
     it('should measure async function performance', async () => {
       const asyncOperation = async () => {
-        await new Promise(resolve => setTimeout(resolve, 50));
+        const promise = new Promise(resolve => setTimeout(resolve, 50));
+        jest.advanceTimersByTime(50);
+        await promise;
         return 'result';
       };
 
@@ -258,7 +275,9 @@ describe('PerformanceMonitor', () => {
 
     it('should detect high variance', async () => {
       // Operations with high variance - need more than 10 operations
-      const durations = [10, 15, 12, 200, 11, 13, 250, 14, 16, 300, 12, 15, 18, 250];
+      const durations = [
+        10, 15, 12, 200, 11, 13, 250, 14, 16, 300, 12, 15, 18, 250,
+      ];
 
       for (const duration of durations) {
         monitor.startTimer('variantOp');
@@ -269,8 +288,8 @@ describe('PerformanceMonitor', () => {
       const report = monitor.generateReport(1);
 
       // Check that variance recommendation is generated
-      const hasVarianceRecommendation = report.recommendations.some(
-        rec => rec.includes('High variance in variantOp performance')
+      const hasVarianceRecommendation = report.recommendations.some(rec =>
+        rec.includes('High variance in variantOp performance')
       );
       expect(hasVarianceRecommendation).toBe(true);
     });
@@ -407,18 +426,12 @@ describe('PerformanceMonitor', () => {
 
 describe('Performance tracking with HOF', () => {
   class TestService {
-    slowOperation = withPerformanceTracking(
-      async (): Promise<string> => {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        return 'completed';
-      },
-      'TestService.slowOperation'
-    );
+    slowOperation = withPerformanceTracking(async (): Promise<string> => {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      return 'completed';
+    }, 'TestService.slowOperation');
 
-    fastOperation = withPerformanceTracking(
-      (): number => 42,
-      'customName'
-    );
+    fastOperation = withPerformanceTracking((): number => 42, 'customName');
   }
 
   beforeEach(() => {
@@ -440,10 +453,10 @@ describe('Performance tracking with HOF', () => {
     ).toBeGreaterThanOrEqual(100);
   });
 
-  it('should use custom metric name', () => {
+  it('should use custom metric name', async () => {
     const service = new TestService();
 
-    const result = service.fastOperation();
+    const result = await service.fastOperation();
 
     expect(result).toBe(42);
 
