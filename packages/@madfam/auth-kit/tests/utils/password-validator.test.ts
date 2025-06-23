@@ -290,7 +290,7 @@ describe('validatePassword', () => {
 
       expect(result.feedback).toBeDefined();
       expect(result.feedback!.length).toBeGreaterThan(0);
-      expect(result.feedback!.some(msg => msg.includes('length'))).toBe(true);
+      expect(result.feedback!.some(msg => msg.includes('long') || msg.includes('short'))).toBe(true);
     });
 
     it('should provide multiple feedback messages for multiple issues', async () => {

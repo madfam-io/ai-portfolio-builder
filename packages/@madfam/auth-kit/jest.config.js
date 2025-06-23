@@ -13,7 +13,7 @@
 
 module.exports = {
   preset: 'ts-jest',
-  testEnvironment: 'node',
+  testEnvironment: 'jsdom',
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   testMatch: [
     '**/tests/**/*.test.ts',
@@ -32,12 +32,13 @@ module.exports = {
       statements: 80,
     },
   },
+  setupFiles: ['<rootDir>/jest-setup-dom.js'],
   setupFilesAfterEnv: ['<rootDir>/tests/setup.ts'],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     // Mock external dependencies
-    otpauth: '<rootDir>/__mocks__/otpauth.ts',
-    qrcode: '<rootDir>/__mocks__/qrcode.ts',
+    otpauth: '<rootDir>/__mocks__/otpauth.js',
+    qrcode: '<rootDir>/__mocks__/qrcode.js',
   },
   testTimeout: 10000,
   clearMocks: true,

@@ -36,6 +36,7 @@ const createChainableMock = () => {
     select: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
+    upsert: jest.fn(),
     delete: jest.fn(),
     eq: jest.fn(),
     single: jest.fn(),
@@ -116,7 +117,7 @@ describe('SupabaseAdapter', () => {
           expect.objectContaining({
             email: 'test@example.com',
             email_verified: false,
-            raw_user_meta_data: { fullName: 'Test User' },
+            metadata: { fullName: 'Test User' },
           })
         );
         expect(user.email).toBe('test@example.com');
@@ -154,7 +155,7 @@ describe('SupabaseAdapter', () => {
 
         expect(mockMethods.update).toHaveBeenCalledWith({
           email_verified: true,
-          updated_at: expect.any(String),
+          updated_at: expect.any(Date),
         });
         expect(mockMethods.eq).toHaveBeenCalledWith('id', 'user-123');
         expect(user.emailVerified).toBe(true);
@@ -163,13 +164,16 @@ describe('SupabaseAdapter', () => {
 
     describe('findUserByEmail', () => {
       it('should find user by email', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: {
             id: 'user-123',
             email: 'test@example.com',
             email_verified: true,
             created_at: '2024-01-01T00:00:00Z',
             updated_at: '2024-01-01T00:00:00Z',
+            metadata: {},
+            profile: {},
+            mfa: null,
           },
           error: null,
         });
@@ -184,9 +188,9 @@ describe('SupabaseAdapter', () => {
       });
 
       it('should return null when user not found', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: null,
-          error: null,
+          error: { code: 'PGRST116', message: 'No rows returned' },
         });
 
         const user = await adapter.findUserByEmail('nonexistent@example.com');
@@ -197,26 +201,38 @@ describe('SupabaseAdapter', () => {
 
     describe('deleteUser', () => {
       it('should delete user successfully', async () => {
-        mockSupabaseClient.auth.admin.deleteUser.mockResolvedValueOnce({
-          data: { user: null },
-          error: null,
-        });
+        // Mock for deleteUserSessions
+        const deleteSessionsMock = createChainableMock();
+        mockSupabaseClient.from.mockImplementationOnce(() => deleteSessionsMock);
+        
+        // Mock for deleteUser
+        const deleteUserMock = createChainableMock();
+        mockSupabaseClient.from.mockImplementationOnce(() => deleteUserMock);
 
         await adapter.deleteUser('user-123');
 
-        expect(mockSupabaseClient.auth.admin.deleteUser).toHaveBeenCalledWith(
-          'user-123'
-        );
+        expect(deleteSessionsMock.delete).toHaveBeenCalled();
+        expect(deleteSessionsMock.eq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(deleteUserMock.delete).toHaveBeenCalled();
+        expect(deleteUserMock.eq).toHaveBeenCalledWith('id', 'user-123');
       });
 
       it('should handle deletion error', async () => {
-        mockSupabaseClient.auth.admin.deleteUser.mockResolvedValueOnce({
+        // Mock for deleteUserSessions
+        const deleteSessionsMock = createChainableMock();
+        mockSupabaseClient.from.mockImplementationOnce(() => deleteSessionsMock);
+        
+        // Mock for deleteUser with error
+        const deleteUserMock = createChainableMock();
+        deleteUserMock.delete.mockReturnValue(deleteUserMock);
+        deleteUserMock.eq.mockReturnValue({
           data: null,
-          error: { message: 'User not found' },
+          error: { message: 'User not found' }
         });
+        mockSupabaseClient.from.mockImplementationOnce(() => deleteUserMock);
 
         await expect(adapter.deleteUser('user-123')).rejects.toThrow(
-          'User not found'
+          'Failed to delete user: User not found'
         );
       });
     });
@@ -259,7 +275,7 @@ describe('SupabaseAdapter', () => {
           expect.objectContaining({
             user_id: 'user-123',
             token: 'token-abc',
-            expires_at: '2024-12-31T00:00:00.000Z',
+            expires_at: sessionData.expiresAt,
           })
         );
         expect(session.userId).toBe('user-123');
@@ -269,7 +285,7 @@ describe('SupabaseAdapter', () => {
 
     describe('findSessionByToken', () => {
       it('should find session by token', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: {
             id: 'session-123',
             user_id: 'user-123',
@@ -289,9 +305,9 @@ describe('SupabaseAdapter', () => {
       });
 
       it('should return null when session not found', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: null,
-          error: null,
+          error: { code: 'PGRST116', message: 'No rows returned' },
         });
 
         const session = await adapter.findSessionByToken('nonexistent-token');
@@ -325,49 +341,49 @@ describe('SupabaseAdapter', () => {
         await adapter.saveMFASecret('user-123', 'totp', 'secret-abc');
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'user_mfa_secrets'
+          'auth_mfa_secrets'
         );
-        expect(mockMethods.insert).toHaveBeenCalledWith({
+        expect(mockMethods.upsert).toHaveBeenCalledWith({
           user_id: 'user-123',
           method: 'totp',
           secret: 'secret-abc',
-          created_at: expect.any(String),
+          created_at: expect.any(Date),
+          updated_at: expect.any(Date),
         });
       });
 
       it('should update existing MFA secret', async () => {
-        // First call returns existing secret (for upsert logic)
-        mockMethods.maybeSingle.mockResolvedValueOnce({
-          data: { id: 'secret-123' },
-          error: null,
-        });
-
         await adapter.saveMFASecret('user-123', 'totp', 'new-secret');
 
-        expect(mockMethods.update).toHaveBeenCalledWith({
+        expect(mockMethods.upsert).toHaveBeenCalledWith({
+          user_id: 'user-123',
+          method: 'totp',
           secret: 'new-secret',
-          updated_at: expect.any(String),
+          created_at: expect.any(Date),
+          updated_at: expect.any(Date),
         });
       });
     });
 
     describe('getMFASecret', () => {
       it('should retrieve MFA secret', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: { secret: 'secret-abc' },
           error: null,
         });
 
         const secret = await adapter.getMFASecret('user-123', 'totp');
 
+        expect(mockMethods.select).toHaveBeenCalledWith('secret');
         expect(mockMethods.eq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(mockMethods.eq).toHaveBeenCalledWith('method', 'totp');
         expect(secret).toBe('secret-abc');
       });
 
       it('should return null when secret not found', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: null,
-          error: null,
+          error: { code: 'PGRST116', message: 'No rows returned' },
         });
 
         const secret = await adapter.getMFASecret('user-123', 'totp');
@@ -383,33 +399,42 @@ describe('SupabaseAdapter', () => {
         await adapter.saveBackupCodes('user-123', codes);
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'user_backup_codes'
+          'auth_backup_codes'
         );
-        expect(mockMethods.insert).toHaveBeenCalledWith(
-          codes.map(code => ({
-            user_id: 'user-123',
-            code,
-            created_at: expect.any(String),
-          }))
-        );
+        expect(mockMethods.upsert).toHaveBeenCalledWith({
+          user_id: 'user-123',
+          codes,
+          created_at: expect.any(Date),
+          updated_at: expect.any(Date),
+        });
       });
 
       it('should verify and consume backup code', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
-          data: { id: 'code-123', code: 'CODE1' },
+        // First mock for select
+        const selectMock = createChainableMock();
+        selectMock.single.mockResolvedValueOnce({
+          data: { codes: ['CODE1', 'CODE2'] },
           error: null,
         });
+        mockSupabaseClient.from.mockImplementationOnce(() => selectMock);
+        
+        // Second mock for update
+        const updateMock = createChainableMock();
+        mockSupabaseClient.from.mockImplementationOnce(() => updateMock);
 
         const isValid = await adapter.verifyBackupCode('user-123', 'CODE1');
 
         expect(isValid).toBe(true);
-        expect(mockMethods.delete).toHaveBeenCalled();
+        expect(updateMock.update).toHaveBeenCalledWith({
+          codes: ['CODE2'],
+          updated_at: expect.any(Date)
+        });
       });
 
       it('should return false for invalid backup code', async () => {
-        mockMethods.maybeSingle.mockResolvedValueOnce({
+        mockMethods.single.mockResolvedValueOnce({
           data: null,
-          error: null,
+          error: { code: 'PGRST116', message: 'No rows returned' },
         });
 
         const isValid = await adapter.verifyBackupCode('user-123', 'INVALID');
@@ -425,25 +450,28 @@ describe('SupabaseAdapter', () => {
         await adapter.createAccountLink('user-123', 'google', 'google-456');
 
         expect(mockSupabaseClient.from).toHaveBeenCalledWith(
-          'user_account_links'
+          'auth_account_links'
         );
         expect(mockMethods.insert).toHaveBeenCalledWith({
           user_id: 'user-123',
           provider: 'google',
           provider_id: 'google-456',
-          created_at: expect.any(String),
+          created_at: expect.any(Date),
         });
       });
     });
 
     describe('findAccountLinks', () => {
       it('should find user account links', async () => {
-        mockMethods.select.mockResolvedValueOnce({
-          data: [
-            { provider: 'google', provider_id: 'google-456' },
-            { provider: 'github', provider_id: 'github-789' },
-          ],
-          error: null,
+        // Make select return the eq method for chaining
+        mockMethods.select.mockReturnValueOnce({
+          eq: jest.fn().mockResolvedValueOnce({
+            data: [
+              { provider: 'google', provider_id: 'google-456' },
+              { provider: 'github', provider_id: 'github-789' },
+            ],
+            error: null,
+          })
         });
 
         const links = await adapter.findAccountLinks('user-123');
@@ -480,7 +508,7 @@ describe('SupabaseAdapter', () => {
     });
 
     it('should handle malformed data gracefully', async () => {
-      mockMethods.maybeSingle.mockResolvedValueOnce({
+      mockMethods.single.mockResolvedValueOnce({
         data: { invalid: 'data' },
         error: null,
       });
@@ -500,12 +528,12 @@ describe('SupabaseAdapter', () => {
         email_verified: true,
         created_at: '2024-01-01T00:00:00Z',
         updated_at: '2024-01-02T00:00:00Z',
-        raw_user_meta_data: { fullName: 'Test User' },
-        user_metadata: { bio: 'Test bio' },
-        app_metadata: { roles: ['admin'] },
+        metadata: { fullName: 'Test User' },
+        profile: { bio: 'Test bio' },
+        mfa: null,
       };
 
-      mockMethods.maybeSingle.mockResolvedValueOnce({
+      mockMethods.single.mockResolvedValueOnce({
         data: supabaseUser,
         error: null,
       });
@@ -520,7 +548,7 @@ describe('SupabaseAdapter', () => {
         updatedAt: new Date('2024-01-02T00:00:00Z'),
         metadata: { fullName: 'Test User' },
         profile: { bio: 'Test bio' },
-        roles: ['admin'],
+        mfa: null,
       });
     });
 
@@ -538,7 +566,7 @@ describe('SupabaseAdapter', () => {
         device_id: 'device-123',
       };
 
-      mockMethods.maybeSingle.mockResolvedValueOnce({
+      mockMethods.single.mockResolvedValueOnce({
         data: supabaseSession,
         error: null,
       });

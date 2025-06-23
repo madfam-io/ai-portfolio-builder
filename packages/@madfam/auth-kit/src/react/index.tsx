@@ -48,3 +48,10 @@ export type {
   MFAFormProps,
   FormStyles,
 } from './forms';
+
+// Protected Route Component
+export { ProtectedRoute } from './protected-route';
+export type { ProtectedRouteProps } from './protected-route';
+
+// Export LoginForm as an alias for SignInForm for backward compatibility
+export { SignInForm as LoginForm } from './forms';

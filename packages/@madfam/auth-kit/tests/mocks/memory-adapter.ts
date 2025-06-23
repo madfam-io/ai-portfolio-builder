@@ -119,6 +119,11 @@ export class MockMemoryAdapter extends BaseAdapter {
       throw new Error('Session not found');
     }
 
+    // If token is being updated, remove the old token mapping
+    if (data.token && data.token !== session.token) {
+      this.sessionsByToken.delete(session.token);
+    }
+
     const updatedSession = {
       ...session,
       ...data,
@@ -145,6 +150,10 @@ export class MockMemoryAdapter extends BaseAdapter {
     return this.sessionsByToken.get(token) || null;
   }
 
+  async findSessionByRefreshToken(refreshToken: string): Promise<Session | null> {
+    return Array.from(this.sessions.values()).find(s => s.refreshToken === refreshToken) || null;
+  }
+
   async findUserSessions(userId: string): Promise<Session[]> {
     return Array.from(this.sessions.values()).filter(s => s.userId === userId);
   }
@@ -158,13 +167,18 @@ export class MockMemoryAdapter extends BaseAdapter {
 
   async saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void> {
     const existing = this.mfaSecrets.get(userId) || {};
-    existing[method] = secret;
+    if (secret) {
+      existing[method] = secret;
+    } else {
+      delete existing[method];
+    }
     this.mfaSecrets.set(userId, existing);
   }
 
   async getMFASecret(userId: string, method: MFAMethod): Promise<string | null> {
     const secrets = this.mfaSecrets.get(userId);
-    return secrets?.[method] || null;
+    const secret = secrets?.[method];
+    return secret || null;
   }
 
   async saveBackupCodes(userId: string, codes: string[]): Promise<void> {

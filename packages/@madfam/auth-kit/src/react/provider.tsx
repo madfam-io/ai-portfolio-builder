@@ -159,7 +159,7 @@ export function AuthProvider({
     async (email: string, password: string, options?: SignInOptions) => {
       updateState({ isLoading: true, error: null });
       try {
-        const result = await authKit.signIn(email, password, options);
+        const result = await authKit.signIn({ email, password, ...options });
 
         if ('mfaChallengeId' in result) {
           updateState({
@@ -193,7 +193,7 @@ export function AuthProvider({
     async (email: string, password: string, options?: SignUpOptions) => {
       updateState({ isLoading: true, error: null });
       try {
-        const result = await authKit.signUp(email, password, options);
+        const result = await authKit.signUp({ email, password, ...options });
         updateState({
           user: result.user,
           session: result.session,
@@ -215,7 +215,10 @@ export function AuthProvider({
   const signOut = useCallback(async () => {
     updateState({ isLoading: true, error: null });
     try {
-      await authKit.signOut();
+      if (!state.session) {
+        throw new Error('No active session');
+      }
+      await authKit.signOut(state.session.token);
       updateState({
         user: null,
         session: null,
@@ -231,7 +234,7 @@ export function AuthProvider({
       });
       throw error;
     }
-  }, [authKit, updateState]);
+  }, [authKit, state.session, updateState]);
 
   const signInWithOAuth = useCallback(
     async (provider: string) => {

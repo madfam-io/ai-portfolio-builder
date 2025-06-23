@@ -12,6 +12,7 @@
  */
 
 import { jest } from '@jest/globals';
+import '@testing-library/jest-dom';
 
 // Mock crypto module for Node.js compatibility
 Object.defineProperty(globalThis, 'crypto', {
@@ -38,15 +39,17 @@ Object.defineProperty(globalThis, 'localStorage', {
   value: localStorageMock,
 });
 
-// Mock window object for browser-specific code
-Object.defineProperty(globalThis, 'window', {
-  value: {
-    location: {
-      origin: 'http://localhost:3000',
-      href: 'http://localhost:3000',
-    },
-  },
-});
+// Mock window.location for browser-specific code
+if (typeof window !== 'undefined') {
+  delete (window as any).location;
+  (window as any).location = {
+    origin: 'http://localhost:3000',
+    href: 'http://localhost:3000',
+    pathname: '/',
+    search: '',
+    hash: '',
+  };
+}
 
 // Mock process.env
 process.env.NEXT_PUBLIC_APP_URL = 'http://localhost:3000';

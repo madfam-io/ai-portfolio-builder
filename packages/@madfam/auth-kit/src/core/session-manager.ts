@@ -39,7 +39,7 @@ export class SessionManager {
    */
   async createSession(
     userId: string,
-    options?: { rememberMe?: boolean; deviceId?: string }
+    options?: { rememberMe?: boolean; deviceId?: string; ipAddress?: string; userAgent?: string }
   ): Promise<Session> {
     const sessionId = generateId();
     const now = new Date();
@@ -85,6 +85,8 @@ export class SessionManager {
       createdAt: now,
       lastAccessedAt: now,
       deviceId: options?.deviceId,
+      ipAddress: options?.ipAddress,
+      userAgent: options?.userAgent,
     };
 
     // Store session
@@ -121,11 +123,11 @@ export class SessionManager {
           }
 
           // Update last accessed
-          await this.adapter.updateSession(session.id, {
+          const updatedSession = await this.adapter.updateSession(session.id, {
             lastAccessedAt: new Date(),
           });
 
-          return session;
+          return updatedSession;
         }
 
         // For JWT without database, reconstruct session
@@ -153,11 +155,11 @@ export class SessionManager {
         }
 
         // Update last accessed
-        await this.adapter.updateSession(session.id, {
+        const updatedSession = await this.adapter.updateSession(session.id, {
           lastAccessedAt: new Date(),
         });
 
-        return session;
+        return updatedSession;
       }
     } catch (error) {
       this.logger.error('Failed to get session', error as Error);
@@ -178,7 +180,7 @@ export class SessionManager {
     if (this.config.type === 'jwt') {
       const payload = this.verifyJWT(refreshToken, true);
       if (!payload) {
-        throw new Error('Invalid refresh token');
+        throw new Error('Invalid or expired refresh token');
       }
 
       if (this.adapter) {
@@ -190,26 +192,28 @@ export class SessionManager {
       }
 
       // Find session by refresh token
-      const sessions = await this.adapter.findUserSessions(''); // This needs improvement
-      session = sessions.find(s => s.refreshToken === refreshToken) || null;
+      // We need to search through all sessions since we don't have the user ID
+      const allSessions = await (this.adapter as any).getAllSessions?.();
+      if (allSessions) {
+        session = allSessions.find((s: Session) => s.refreshToken === refreshToken) || null;
+      } else if ((this.adapter as any).findSessionByRefreshToken) {
+        session = await (this.adapter as any).findSessionByRefreshToken(refreshToken);
+      } else {
+        throw new Error('Adapter does not support refresh token lookup');
+      }
     }
 
-    if (!session) {
-      throw new Error('Session not found');
+    if (!session || new Date() > session.expiresAt) {
+      throw new Error('Invalid or expired refresh token');
     }
 
-    // Check if refresh is needed
-    const refreshThreshold = parseTimeToMs(this.config.refreshThreshold);
-    const timeUntilExpiry = session.expiresAt.getTime() - Date.now();
-
-    if (timeUntilExpiry > refreshThreshold) {
-      // No need to refresh yet
-      return session;
-    }
+    // Always refresh when called - don't check threshold
+    // The threshold is for client-side logic to determine when to call refresh
 
     // Create new tokens
     const expiresIn = parseTimeToMs(this.config.expiresIn);
-    const newExpiresAt = new Date(Date.now() + expiresIn);
+    // Add 1ms to ensure the timestamp is different when refreshing immediately
+    const newExpiresAt = new Date(Date.now() + expiresIn + 1);
 
     let newToken: string;
     let newRefreshToken: string | undefined;
@@ -241,11 +245,18 @@ export class SessionManager {
     };
 
     if (this.adapter) {
-      await this.adapter.updateSession(session.id, updatedSession);
+      const refreshedSession = await this.adapter.updateSession(session.id, {
+        token: newToken,
+        refreshToken: newRefreshToken,
+        expiresAt: newExpiresAt,
+        lastAccessedAt: new Date(),
+      });
+      
+      this.logger.debug('Session refreshed', { sessionId: session.id });
+      return refreshedSession;
     }
 
     this.logger.debug('Session refreshed', { sessionId: session.id });
-
     return updatedSession;
   }
 
@@ -272,6 +283,44 @@ export class SessionManager {
   }
 
   /**
+   * Revoke all sessions for a user (alias for revokeAllUserSessions)
+   */
+  async revokeUserSessions(userId: string): Promise<void> {
+    return this.revokeAllUserSessions(userId);
+  }
+
+  /**
+   * Validate if a session token is valid
+   */
+  async validateSession(token: string): Promise<boolean> {
+    const session = await this.getSession(token);
+    return session !== null;
+  }
+
+  /**
+   * Get all sessions for a user
+   */
+  async getUserSessions(userId: string): Promise<Session[]> {
+    if (!this.adapter) {
+      return [];
+    }
+
+    const sessions = await this.adapter.findUserSessions(userId);
+    
+    // Filter out expired sessions
+    const now = new Date();
+    const validSessions = sessions.filter(session => session.expiresAt > now);
+    
+    // Clean up expired sessions
+    const expiredSessions = sessions.filter(session => session.expiresAt <= now);
+    for (const session of expiredSessions) {
+      await this.adapter.deleteSession(session.id);
+    }
+
+    return validSessions;
+  }
+
+  /**
    * Create JWT token
    */
   private createJWT(
@@ -294,6 +343,7 @@ export class SessionManager {
       expiresIn: Math.floor(expiresIn / 1000), // JWT uses seconds
       issuer: 'auth-kit',
       audience: 'auth-kit',
+      jwtid: generateId(), // Make each token unique
     });
   }
 

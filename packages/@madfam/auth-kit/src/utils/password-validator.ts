@@ -140,7 +140,7 @@ function checkLengthRequirements(
 
   if (reqs.minLength && password.length < reqs.minLength) {
     feedback.push(
-      `Password must be at least ${reqs.minLength} characters in length`
+      `Password must be at least ${reqs.minLength} characters long`
     );
     valid = false;
   }
@@ -232,7 +232,7 @@ export async function validatePassword(
     score,
     feedback: feedback.length > 0 ? feedback : [],
     warning:
-      score < 3 && valid
+      score <= 3 && valid
         ? 'This password is weak. Consider making it stronger.'
         : undefined,
   };

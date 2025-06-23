@@ -46,7 +46,7 @@ export class MFAManager {
   /**
    * Setup MFA for a user
    */
-  setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
+  async setupMFA(userId: string, method: MFAMethod): Promise<MFASetupResult> {
     if (!this.config?.enabled) {
       throw new Error('MFA is not enabled');
     }
@@ -332,6 +332,15 @@ export class MFAManager {
           backupCodesGenerated: false,
         },
       });
+      
+      // Clear all MFA secrets
+      const mfaMethods: MFAMethod[] = ['totp', 'sms', 'backup'];
+      for (const m of mfaMethods) {
+        await this.adapter.saveMFASecret(userId, m, '');
+      }
+      
+      // Clear backup codes
+      await this.adapter.saveBackupCodes(userId, []);
     }
 
     this.logger.info('MFA disabled', { userId, method });
