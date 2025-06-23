@@ -1,5 +1,5 @@
 /**
- * @madfam/smart-payments
+ * @madfam/smart-fiat-payments
  *
  * World-class payment gateway detection and routing system with AI-powered optimization
  *
@@ -16,7 +16,7 @@
  */
 
 /**
- * @madfam/smart-payments - Core type definitions
+ * @madfam/smart-fiat-payments - Core type definitions
  *
  * Comprehensive type system for payment gateway detection and routing
  */

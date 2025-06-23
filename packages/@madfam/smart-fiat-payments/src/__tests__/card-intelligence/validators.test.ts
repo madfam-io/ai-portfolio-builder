@@ -1,5 +1,5 @@
 /**
- * @madfam/smart-payments - Test Suite
+ * @madfam/smart-fiat-payments - Test Suite
  *
  * Test suite for world-class payment gateway detection and routing system
  *
