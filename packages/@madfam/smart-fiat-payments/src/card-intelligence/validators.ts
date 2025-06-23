@@ -457,7 +457,7 @@ export function isValidLuhn(cardNumber: string): boolean {
 
   // Loop through values starting from the rightmost
   for (let i = cleanNumber.length - 1; i >= 0; i--) {
-    let digit = parseInt(cleanNumber[i], 10);
+    let digit = parseInt(cleanNumber[i]!, 10);
 
     if (isNaN(digit)) {
       return false;

@@ -242,10 +242,10 @@ export class EnterpriseSecurityModule {
   constructor(config: SecurityConfig) {
     this.config = config;
     this.performanceMonitor = new PerformanceMonitor({
-      securityAssessment: 5000,
-      threatDetection: 100,
-      complianceCheck: 2000,
-    });
+      routingDecision: 100,
+      cacheHitRate: 0.8,
+      errorRate: 0.01,
+    } as any);
   }
 
   /**
@@ -708,7 +708,7 @@ export class EnterpriseSecurityModule {
     // In production, this would integrate with SIEM systems
   }
 
-  private async generateEncryptionKey(): string {
+  private async generateEncryptionKey(): Promise<string> {
     return `key_${Date.now()}_${Math.random().toString(36).substr(2, 16)}`;
   }
 

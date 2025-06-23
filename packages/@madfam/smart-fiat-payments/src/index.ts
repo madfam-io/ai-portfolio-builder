@@ -25,7 +25,8 @@
 export * from './smart-payments';
 export * from './types';
 
-// Module exports
+// Module exports - export everything from each module
+// Rollup will warn about conflicts but will handle them
 export * from './card-intelligence';
 export * from './geo';
 export * from './routing';
@@ -39,22 +40,17 @@ export * from './white-label';
 export * from './subscription';
 export * from './consulting';
 
-// Main class
-export { SmartPayments } from './smart-payments';
+// Main class (already exported from ./smart-payments)
+// export { SmartPayments } from './smart-payments';
 
-// Convenience re-exports
+// Convenience re-exports (already exported from modules above)
 export { CardDetector } from './card-intelligence/detector';
 export { GeographicalContextEngine } from './geo/context-engine';
 export { IntelligentRouter } from './routing/intelligent-router';
 export { DynamicPricingEngine } from './pricing/dynamic-pricing';
-export { PaymentIntelligenceEngine } from './business-intelligence/payment-intelligence-engine';
-export { CompetitiveIntelligenceEngine } from './business-intelligence/competitive-intelligence';
-export { PaymentOptimizationEngine } from './ai/payment-optimization-engine';
+// Already exported above: PaymentIntelligenceEngine, CompetitiveIntelligenceEngine, PaymentOptimizationEngine
 export { EnterpriseSecurityModule } from './enterprise/security-module';
-export { IndustryResearchEngine } from './research/industry-research-engine';
-export { WhiteLabelPlatform } from './white-label/white-label-platform';
-export { SubscriptionManager } from './subscription/subscription-manager';
-export { ConsultingPipeline } from './consulting/consulting-pipeline';
+// Already exported above: IndustryResearchEngine, WhiteLabelPlatform, SubscriptionManager, ConsultingPipeline
 
 // Default export
 export { SmartPayments as default } from './smart-payments';

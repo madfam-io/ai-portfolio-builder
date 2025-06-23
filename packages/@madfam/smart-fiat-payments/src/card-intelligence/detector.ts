@@ -303,7 +303,7 @@ export class CardDetector {
 
     // Loop through values starting from the rightmost
     for (let i = cardNumber.length - 1; i >= 0; i--) {
-      let digit = parseInt(cardNumber[i], 10);
+      let digit = parseInt(cardNumber[i]!, 10);
 
       if (isEven) {
         digit *= 2;

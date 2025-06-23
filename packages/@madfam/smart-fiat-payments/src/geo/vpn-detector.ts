@@ -165,12 +165,12 @@ export class VPNDetector {
     }
 
     // Google Cloud ranges
-    if (parts[0] === 35 && parts[1] >= 190 && parts[1] <= 255) {
+    if (parts[0] === 35 && parts[1]! >= 190 && parts[1]! <= 255) {
       return true;
     }
 
     // DigitalOcean ranges
-    if (parts[0] === 104 && parts[1] >= 16 && parts[1] <= 31) {
+    if (parts[0] === 104 && parts[1]! >= 16 && parts[1]! <= 31) {
       return true;
     }
 
@@ -187,11 +187,11 @@ export class VPNDetector {
     const parts = ipAddress.split('.').map(Number);
 
     // Known Tor exit node patterns
-    if (parts[0] === 192 && parts[1] === 42 && parts[2] >= 100) {
+    if (parts[0] === 192 && parts[1] === 42 && parts[2]! >= 100) {
       return true;
     }
 
-    if (parts[0] === 23 && parts[1] >= 92 && parts[1] <= 95) {
+    if (parts[0] === 23 && parts[1]! >= 92 && parts[1]! <= 95) {
       return true;
     }
 
@@ -213,14 +213,14 @@ export class VPNDetector {
     }
 
     // Round numbers in third octet
-    if (parts[2] % 10 === 0) {
+    if (parts[2]! % 10 === 0) {
       score += 0.1;
     }
 
     // Check for residential patterns (inverse)
     const residentialPatterns = [
-      parts[0] >= 70 && parts[0] <= 100, // Common residential ranges
-      parts[1] >= 100 && parts[1] <= 200, // Varied second octet
+      parts[0]! >= 70 && parts[0]! <= 100, // Common residential ranges
+      parts[1]! >= 100 && parts[1]! <= 200, // Varied second octet
     ];
 
     if (!residentialPatterns.some(p => p)) {
@@ -261,12 +261,12 @@ export class VPNDetector {
     const parts = ipAddress.split('.').map(Number);
 
     // Simplified provider detection
-    if (parts[0] === 104 && parts[1] >= 200) return 'NordVPN';
-    if (parts[0] === 45 && parts[1] >= 32 && parts[1] <= 95)
+    if (parts[0] === 104 && parts[1]! >= 200) return 'NordVPN';
+    if (parts[0] === 45 && parts[1]! >= 32 && parts[1]! <= 95)
       return 'ExpressVPN';
-    if (parts[0] === 185 && parts[1] >= 230) return 'Surfshark';
+    if (parts[0] === 185 && parts[1]! >= 230) return 'Surfshark';
     if (parts[0] === 54 || parts[0] === 52) return 'Amazon AWS';
-    if (parts[0] === 35 && parts[1] >= 190) return 'Google Cloud';
+    if (parts[0] === 35 && parts[1]! >= 190) return 'Google Cloud';
 
     return undefined;
   }
@@ -278,9 +278,9 @@ export class VPNDetector {
     parts: number[],
     range: { start: number[]; end: number[] }
   ): boolean {
-    if (parts[0] < range.start[0] || parts[0] > range.end[0]) return false;
-    if (parts[0] === range.start[0] && parts[1] < range.start[1]) return false;
-    if (parts[0] === range.end[0] && parts[1] > range.end[1]) return false;
+    if (parts[0]! < range.start[0]! || parts[0]! > range.end[0]!) return false;
+    if (parts[0] === range.start[0] && parts[1]! < range.start[1]!) return false;
+    if (parts[0] === range.end[0] && parts[1]! > range.end[1]!) return false;
     return true;
   }
 

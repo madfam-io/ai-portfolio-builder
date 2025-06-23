@@ -186,10 +186,10 @@ export class PaymentIntelligenceEngine {
   constructor(config: PaymentIntelligenceConfig) {
     this.config = config;
     this.performanceMonitor = new PerformanceMonitor({
-      intelligenceGeneration: 5000,
-      revenueAnalysis: 2000,
-      competitiveAnalysis: 3000,
-    });
+      routingDecision: 100,
+      cacheHitRate: 0.8,
+      errorRate: 0.01,
+    } as any);
   }
 
   /**

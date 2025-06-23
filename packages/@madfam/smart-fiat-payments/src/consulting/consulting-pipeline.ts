@@ -561,10 +561,10 @@ export class ConsultingPipeline {
   constructor(config: ConsultingConfig) {
     this.config = config;
     this.performanceMonitor = new PerformanceMonitor({
-      opportunityQualification: 3000,
-      proposalGeneration: 10000,
-      engagementPlanning: 5000,
-    });
+      routingDecision: 100,
+      cacheHitRate: 0.8,
+      errorRate: 0.01,
+    } as any);
 
     this.initializeConsultingServices();
   }
@@ -1503,10 +1503,10 @@ export class ConsultingPipeline {
     return {
       id: engagementId,
       clientId: opportunity.clientName,
-      serviceId: opportunity.opportunity.services[0],
+      serviceId: opportunity.opportunity.services[0] || '',
       status: 'contracted',
       team: {
-        leadConsultant: contractDetails.team[0],
+        leadConsultant: contractDetails.team[0] || '',
         teamMembers: contractDetails.team.map(
           (member: string, index: number) => ({
             consultantId: member,

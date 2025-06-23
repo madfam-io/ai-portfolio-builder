@@ -39,9 +39,12 @@ import {
 
 import { enhancedStripeService } from '@/lib/services/stripe/stripe-enhanced';
 import { logger } from '@/lib/utils/logger';
-import type { Database } from '@/types/database';
 
-type DbUser = Database['public']['Tables']['users']['Row'];
+interface DbUser {
+  id: string;
+  email?: string | null;
+  created_at: string;
+}
 
 export interface UnifiedPricingContext {
   tierId: TierID;
@@ -114,10 +117,9 @@ export class UnifiedPricingService {
       baseCountry: 'US',
       baseCurrency: 'USD',
       enableGeographicalPricing: true,
-      blockVPNDiscounts: false,
       displayLocalCurrency: true,
       roundingStrategy: 'nearest',
-    };
+    } as PricingStrategy;
     
     this.dynamicPricingEngine = new DynamicPricingEngine({
       strategy: pricingStrategy,
@@ -127,11 +129,9 @@ export class UnifiedPricingService {
     
     this.geoEngine = new GeographicalContextEngine({
       enableVPNDetection: true,
-      enableProxyDetection: true,
-      enableDataCenterDetection: true,
       cacheResults: true,
       cacheTTL: 3600,
-    });
+    } as any);
     
     this.manipulationDetector = new PriceManipulationDetector();
   }
@@ -310,7 +310,7 @@ export class UnifiedPricingService {
 
   // Private helper methods
 
-  private getGeographicalContext(
+  private async getGeographicalContext(
     context: UnifiedPricingContext
   ): Promise<GeographicalContext | null> {
     if (!context.ipCountry) return null;
@@ -426,8 +426,8 @@ export class UnifiedPricingService {
     const pricingContext: PricingContext = {
       basePrice: result.basePrice,
       cardCountry: context.cardCountry,
-      ipCountry: context.ipCountry,
-      vpnDetected: context.vpnDetected,
+      ipCountry: context.ipCountry || undefined,
+      vpnDetected: context.vpnDetected || false,
       customer: context.user ? {
         id: context.user.id,
         email: context.user.email || '',

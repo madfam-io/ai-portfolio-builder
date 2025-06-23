@@ -22,7 +22,9 @@
  */
 
 import { LRUCache } from 'lru-cache';
-import { IPinfoWrapper } from 'node-ipinfo';
+// @ts-ignore - node-ipinfo has module resolution issues
+import * as nodeIpinfo from 'node-ipinfo';
+const IPinfoWrapper = (nodeIpinfo as any).IPinfoWrapper || (nodeIpinfo as any).default;
 import {
   GeographicalContext,
   VPNCheckResult,
@@ -46,7 +48,7 @@ export interface ContextEngineConfig {
  * Main geographical context engine
  */
 export class GeographicalContextEngine {
-  private ipinfo: IPinfoWrapper | null = null;
+  private ipinfo: any | null = null;
   private vpnDetector: VPNDetector;
   private cache: LRUCache<string, GeographicalContext>;
   private suspiciousCountries: Set<string>;
@@ -108,14 +110,14 @@ export class GeographicalContextEngine {
 
       // Build context
       const context: GeographicalContext = {
-        ipCountry: ipData?.countryCode || null,
-        ipRegion: ipData?.region || undefined,
-        ipCity: ipData?.city || undefined,
-        ipCurrency: this.getCurrencyForCountry(ipData?.countryCode || 'US'),
+        ipCountry: (ipData as any)?.countryCode || null,
+        ipRegion: (ipData as any)?.region || undefined,
+        ipCity: (ipData as any)?.city || undefined,
+        ipCurrency: this.getCurrencyForCountry((ipData as any)?.countryCode || 'US'),
         vpnDetected: vpnCheck?.isVPN || false,
         vpnConfidence: vpnCheck?.confidence || 0,
         proxyDetected: vpnCheck?.isProxy || false,
-        timezone: timezone || ipData?.timezone || 'UTC',
+        timezone: timezone || (ipData as any)?.timezone || 'UTC',
         language: language || 'en',
         suspiciousActivity: false,
         riskScore: 0,
@@ -224,7 +226,7 @@ export class GeographicalContextEngine {
     return {
       risk,
       score: Math.min(100, totalScore),
-      reason: factors.length > 0 ? factors[0].description : null,
+      reason: factors.length > 0 ? factors[0]!.description : null,
       factors,
       recommendation,
       requiresManualReview: risk === 'high' || risk === 'critical',
@@ -325,8 +327,8 @@ export class GeographicalContextEngine {
     const parts = ip.split('.');
     if (parts.length !== 4) return false;
 
-    const first = parseInt(parts[0]);
-    const second = parseInt(parts[1]);
+    const first = parseInt(parts[0]!);
+    const second = parseInt(parts[1]!);
 
     // Check for private IP ranges
     return (
@@ -340,7 +342,7 @@ export class GeographicalContextEngine {
   private fallbackIPLookup(ipAddress: string): any {
     // Very basic fallback based on IP ranges
     // In production, would use a proper GeoIP database
-    const first = parseInt(ipAddress.split('.')[0]);
+    const first = parseInt(ipAddress.split('.')[0]!);
 
     if (first >= 1 && first <= 50)
       return { countryCode: 'US', timezone: 'America/New_York' };
@@ -385,7 +387,7 @@ export class GeographicalContextEngine {
 
     // Extract primary language
     const primary = acceptLang.split(',')[0];
-    return primary.split('-')[0].toLowerCase();
+    return primary!.split('-')[0]!.toLowerCase();
   }
 
   private getCurrencyForCountry(countryCode: string): string {
@@ -481,7 +483,7 @@ export class GeographicalContextEngine {
 
   private isTimezoneMatch(actual: string, expected: string): boolean {
     // Simplified check - in production would be more sophisticated
-    return actual === expected || actual.includes(expected.split('/')[0]);
+    return actual === expected || actual.includes(expected.split('/')[0]!);
   }
 
   private getCountryDiscount(country: string): number {

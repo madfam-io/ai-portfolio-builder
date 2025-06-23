@@ -26,7 +26,8 @@
   "scripts": {
     "dev": "next dev -p 3000",
     "dev:clean": "pkill -f 'next dev' || true && pnpm dev",
-    "build": "next build",
+    "build": "pnpm run build:packages && next build",
+    "build:packages": "pnpm --filter @madfam/smart-fiat-payments build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
