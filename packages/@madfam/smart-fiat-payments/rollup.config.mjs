@@ -19,6 +19,13 @@ const entries = [
   'src/routing/index.ts',
   'src/pricing/index.ts',
   'src/performance/index.ts',
+  'src/business-intelligence/index.ts',
+  'src/ai/index.ts',
+  'src/enterprise/index.ts',
+  'src/research/index.ts',
+  'src/white-label/index.ts',
+  'src/subscription/index.ts',
+  'src/consulting/index.ts',
 ];
 
 export default [
