@@ -45,11 +45,43 @@ export { DynamicPricingEngine } from './pricing/dynamic-pricing';
 export * from './performance';
 
 // Module exports - export everything from each module
-// TypeScript will use the first export for conflicts
 export * from './business-intelligence';
 export * from './ai';
 export * from './enterprise';
-export * from './research';
+
+// Export research module with renamed conflicting types
+export {
+  // Export everything except the renamed types
+  IndustryResearchEngine,
+  ResearchConfig,
+  ResearchSource,
+  IndustryReport,
+  ResearchCompetitorProfile,  // Renamed from CompetitorProfile
+  ResearchExecutiveSummary,    // Renamed from ExecutiveSummary
+  // Re-export all other types from research
+  KeyFinding,
+  Evidence,
+  MarketAnalysis,
+  MarketSegment,
+  GeographicAnalysis,
+  TrendAnalysis,
+  EmergingTrend,
+  DecliningTrend,
+  TechnologyTrend,
+  RegulatoryTrend,
+  ConsumerTrend,
+  TrendIntersection,
+  CompetitiveLandscape,
+  CompetitiveForce,
+  ConsolidationAnalysis,
+  MarketPrediction,
+  PredictionScenario,
+  ActionableInsight,
+  Implementation,
+  ThoughtLeadershipOpportunity,
+  MediaAsset,
+} from './research';
+
 export * from './white-label';
 export * from './subscription';
 export * from './consulting';

@@ -53,7 +53,7 @@ export interface IndustryReport {
   title: string;
   publishDate: Date;
   reportType: 'quarterly' | 'annual' | 'special' | 'whitepaper';
-  executiveSummary: ExecutiveSummary;
+  executiveSummary: ResearchExecutiveSummary;
   keyFindings: KeyFinding[];
   marketAnalysis: MarketAnalysis;
   trendAnalysis: TrendAnalysis;
@@ -64,7 +64,7 @@ export interface IndustryReport {
   mediaAssets: MediaAsset[];
 }
 
-export interface ExecutiveSummary {
+export interface ResearchExecutiveSummary {
   overview: string;
   marketSize: Money;
   growthRate: number; // percentage
@@ -208,15 +208,15 @@ export interface TrendIntersection {
 }
 
 export interface CompetitiveLandscape {
-  marketLeaders: CompetitorProfile[];
-  emergingPlayers: CompetitorProfile[];
-  disruptors: CompetitorProfile[];
+  marketLeaders: ResearchCompetitorProfile[];
+  emergingPlayers: ResearchCompetitorProfile[];
+  disruptors: ResearchCompetitorProfile[];
   competitiveForces: CompetitiveForce[];
   marketConsolidation: ConsolidationAnalysis;
   innovationHotspots: string[];
 }
 
-export interface CompetitorProfile {
+export interface ResearchCompetitorProfile {
   name: string;
   position: 'leader' | 'challenger' | 'follower' | 'niche';
   strengths: string[];
@@ -467,7 +467,7 @@ export class IndustryResearchEngine {
   /**
    * Private helper methods
    */
-  private async generateExecutiveSummary(): Promise<ExecutiveSummary> {
+  private async generateExecutiveSummary(): Promise<ResearchExecutiveSummary> {
     return {
       overview:
         'The global payment processing industry continues its rapid evolution, driven by AI innovation, regulatory changes, and shifting consumer preferences. Market consolidation accelerates while new entrants challenge incumbents with specialized solutions.',
