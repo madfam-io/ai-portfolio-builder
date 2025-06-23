@@ -116,7 +116,7 @@ export interface ServicePricing {
   basePrice: Money;
   hourlyRate?: Money;
   valueDrivers?: ValueDriver[];
-  discountStructure?: DiscountStructure[];
+  discountStructure?: ConsultingDiscountStructure[];
   expensePolicy: string;
 }
 
@@ -126,7 +126,7 @@ export interface ValueDriver {
   pricing: Money;
 }
 
-export interface DiscountStructure {
+export interface ConsultingDiscountStructure {
   condition: string;
   discount: number; // percentage
   maxDiscount: Money;
@@ -739,7 +739,7 @@ export class ConsultingPipeline {
   ): Promise<{
     engagementId: string;
     engagementPlan: EngagementPlan;
-    riskAssessment: RiskAssessment;
+    riskAssessment: ConsultingRiskAssessment;
     qualityPlan: QualityPlan;
   }> {
     return this.performanceMonitor.measure('engagementPlanning', async () => {
@@ -1443,7 +1443,7 @@ export class ConsultingPipeline {
   private async assessEngagementRisks(
     opportunity: ConsultingOpportunity,
     contractDetails: any
-  ): Promise<RiskAssessment> {
+  ): Promise<ConsultingRiskAssessment> {
     return {
       risks: [
         {
@@ -1707,7 +1707,7 @@ export interface PlanMilestone {
   criteria: string[];
 }
 
-export interface RiskAssessment {
+export interface ConsultingRiskAssessment {
   risks: ProjectRisk[];
   overallRiskLevel: 'low' | 'medium' | 'high';
   contingencyPlans: string[];

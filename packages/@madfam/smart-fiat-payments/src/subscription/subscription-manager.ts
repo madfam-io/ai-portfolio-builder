@@ -143,13 +143,13 @@ export interface DiscountProgram {
   id: string;
   name: string;
   type: 'volume' | 'loyalty' | 'promotional' | 'enterprise' | 'partner';
-  eligibility: DiscountEligibility;
-  discount: DiscountStructure;
+  eligibility: SubscriptionDiscountEligibility;
+  discount: SubscriptionDiscountStructure;
   duration: DiscountDuration;
   stackable: boolean;
 }
 
-export interface DiscountEligibility {
+export interface SubscriptionDiscountEligibility {
   criteria: string[];
   minimumCommitment?: number; // months
   minimumUsage?: UsageThreshold[];
@@ -162,7 +162,7 @@ export interface UsageThreshold {
   period: 'monthly' | 'quarterly' | 'annually';
 }
 
-export interface DiscountStructure {
+export interface SubscriptionDiscountStructure {
   type: 'percentage' | 'fixed' | 'tiered';
   value: number;
   maxDiscount?: Money;
@@ -205,7 +205,7 @@ export interface Subscription {
   usage: UsageTracking;
   discounts: AppliedDiscount[];
   addOns: AddOnSubscription[];
-  customizations: Customization[];
+  customizations: SubscriptionCustomization[];
   metadata: Record<string, unknown>;
 }
 
@@ -300,7 +300,7 @@ export interface AddOnSubscription {
   usage?: UsageData[];
 }
 
-export interface Customization {
+export interface SubscriptionCustomization {
   type: string;
   name: string;
   configuration: any;
@@ -452,7 +452,7 @@ export class SubscriptionManager {
     billingCycle: string;
     addOns?: string[];
     discountCodes?: string[];
-    customizations?: Customization[];
+    customizations?: SubscriptionCustomization[];
     trialDays?: number;
   }): Promise<{
     subscription: Subscription;
@@ -1007,7 +1007,7 @@ export class SubscriptionManager {
 
     // Add customizations cost
     const customizationCost = (request.customizations || []).reduce(
-      (sum: number, custom: Customization) =>
+      (sum: number, custom: SubscriptionCustomization) =>
         sum + (custom.additionalCost?.amount || 0),
       0
     );

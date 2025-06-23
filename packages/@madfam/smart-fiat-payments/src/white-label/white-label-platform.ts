@@ -33,7 +33,7 @@ export interface WhiteLabelConfig {
   partnerName: string;
   brandingConfig: BrandingConfig;
   featureSet: FeatureSet;
-  pricingModel: PricingModel;
+  pricingModel: WhiteLabelPricingModel;
   integrationSettings: IntegrationSettings;
   complianceRequirements: ComplianceRequirements;
   supportTier: SupportTier;
@@ -81,7 +81,7 @@ export interface FeatureSet {
   multiTenant: boolean;
 }
 
-export interface PricingModel {
+export interface WhiteLabelPricingModel {
   type: 'revenue_share' | 'flat_fee' | 'usage_based' | 'hybrid';
   revenueSharePercentage?: number;
   flatFeeMonthly?: Money;
