@@ -93,6 +93,46 @@ export {
   BaseStorageAdapter,
 } from './storage';
 
+// Analytics
+export {
+  AnalyticsService,
+  createAnalyticsService,
+  PostHogProvider,
+  MixpanelProvider,
+  AmplitudeProvider,
+} from './analytics';
+
+export type {
+  AnalyticsProvider,
+  AnalyticsResult,
+  TrackingOptions,
+  UserIdentity,
+  EventBatch,
+  AnalyticsMetrics,
+  PostHogConfig,
+  MixpanelConfig,
+  AmplitudeConfig,
+  CustomProviderConfig,
+} from './analytics';
+
+// Notifications
+export {
+  NotificationManager,
+  EmailService,
+} from './notifications';
+
+export type {
+  NotificationConfig,
+  EmailConfig,
+  EmailCredentials,
+  EmailTemplate,
+  EmailNotification,
+  WebhookConfig,
+  SlackConfig,
+  NotificationEvent,
+  NotificationPayload,
+} from './notifications';
+
 // Utilities
 export { Logger } from './utils/logger';
 export { EventEmitter } from './utils/event-emitter';
@@ -113,6 +153,18 @@ export function quickStart(config?: {
   storage?: 'memory' | 'supabase';
   supabaseUrl?: string;
   supabaseKey?: string;
+  analytics?: {
+    enabled: boolean;
+    provider?: 'posthog' | 'mixpanel' | 'amplitude';
+    apiKey?: string;
+  };
+  notifications?: {
+    email?: {
+      enabled: boolean;
+      provider?: 'sendgrid' | 'ses' | 'smtp' | 'resend';
+      apiKey?: string;
+    };
+  };
 }) {
   const storageConfig =
     config?.storage === 'supabase' && config.supabaseUrl && config.supabaseKey
@@ -125,7 +177,32 @@ export function quickStart(config?: {
         }
       : { type: 'memory' as const };
 
-  const feedbackSystem = createFeedbackSystem({ storage: storageConfig });
+  const analyticsConfig = config?.analytics?.enabled
+    ? {
+        enabled: true,
+        provider: config.analytics.provider || 'posthog',
+        apiKey: config.analytics.apiKey,
+      }
+    : { enabled: false };
+
+  const notificationsConfig = config?.notifications?.email?.enabled
+    ? {
+        email: {
+          enabled: true,
+          provider: config.notifications.email.provider || 'sendgrid',
+          credentials: {
+            apiKey: config.notifications.email.apiKey,
+          },
+        },
+      }
+    : undefined;
+
+  const feedbackSystem = createFeedbackSystem({
+    storage: storageConfig,
+    analytics: analyticsConfig,
+    notifications: notificationsConfig,
+  });
+  
   const analytics = createBetaAnalytics({ storage: storageConfig });
   const betaChecker = createBetaLaunchChecker(feedbackSystem, analytics);
 

@@ -31,7 +31,7 @@ export function parseTimeToMs(time: string | number): number {
     throw new Error(`Invalid time format: ${time}`);
   }
 
-  const value = parseInt(match[1], 10);
+  const value = parseInt(match[1] || '0', 10);
   const unit = match[2] || 'ms';
 
   switch (unit) {

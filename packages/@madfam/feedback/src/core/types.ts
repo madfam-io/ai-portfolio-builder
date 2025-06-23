@@ -173,10 +173,32 @@ export interface AnalyticsConfig {
   enabled: boolean;
   provider?: 'posthog' | 'mixpanel' | 'amplitude' | 'custom';
   apiKey?: string;
+  batchSize?: number;
+  flushInterval?: number;
   options?: Record<string, unknown>;
+  customProvider?: any;
 }
 
 export interface NotificationConfig {
+  // Email configuration
+  email?: {
+    enabled: boolean;
+    provider: 'sendgrid' | 'ses' | 'smtp' | 'resend';
+    credentials?: Record<string, any>;
+    criticalBugRecipients?: string[];
+    newFeedbackRecipients?: string[];
+    surveyRecipients?: string[];
+    teamRecipients?: string[];
+    userNotifications?: boolean;
+    rateLimit?: {
+      maxPerMinute: number;
+      maxPerHour: number;
+    };
+    trackDelivery?: boolean;
+    dashboardUrl?: string;
+  };
+  
+  // Legacy webhook support
   criticalBugWebhook?: string;
   emailOnCritical?: string;
   slackIntegration?: {

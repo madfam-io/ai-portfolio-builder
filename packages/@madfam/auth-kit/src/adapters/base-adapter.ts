@@ -36,6 +36,9 @@ export abstract class BaseAdapter implements AuthAdapter {
   abstract findUserById(id: string): Promise<User | null>;
   abstract findUserByEmail(email: string): Promise<User | null>;
 
+  // Optional method for complex queries (used for password reset token lookup)
+  findUsers?(filter: Record<string, any>): Promise<User[]>;
+
   // Session operations
   abstract createSession(data: Partial<Session>): Promise<Session>;
   abstract updateSession(id: string, data: Partial<Session>): Promise<Session>;

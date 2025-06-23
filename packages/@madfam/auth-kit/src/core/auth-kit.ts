@@ -30,8 +30,10 @@ import type {
   SignInData,
   AuthResult,
   AuthError,
+  AuthErrorCode,
   AuthProvider,
   MFASetupResult,
+  MFAMethod,
   // MFAChallenge,
   AuthEvent,
   AuthEventType,
@@ -485,15 +487,77 @@ export class AuthKit extends EventEmitter {
   /**
    * Reset password with token
    */
-  resetPassword(_token: string, _newPassword: string): Promise<void> {
+  async resetPassword(token: string, newPassword: string): Promise<void> {
     try {
       this.logger.debug('Password reset attempt');
 
-      // Find user with reset token
-      // const users = await this.config.adapter?.findUserByEmail(''); // This needs to be improved
-      // In a real implementation, we'd have a method to find user by reset token
+      // Validate password
+      const passwordValidation = await this.validatePassword(newPassword);
+      if (!passwordValidation.valid) {
+        throw this.createError(
+          'INVALID_CREDENTIALS',
+          passwordValidation.feedback?.join(', ') || 'Invalid password'
+        );
+      }
 
-      throw new Error('Reset password not fully implemented');
+      if (!this.config.adapter) {
+        throw new Error('Storage adapter not configured');
+      }
+
+      // Find user with reset token
+      // Note: This assumes the adapter has a method to find user by reset token
+      // In a real implementation, you'd add this method to the BaseStorageAdapter
+      const users = await this.config.adapter?.findUsers?.({
+        'metadata.passwordResetToken': token,
+      });
+
+      if (!users || users.length === 0) {
+        throw this.createError(
+          'INVALID_TOKEN',
+          'Invalid or expired reset token'
+        );
+      }
+
+      const user = users[0];
+      if (!user) {
+        throw this.createError(
+          'INVALID_TOKEN',
+          'Invalid or expired reset token'
+        );
+      }
+
+      // Check if token is expired
+      const resetExpiry = user.metadata?.passwordResetExpiry as Date;
+      if (!resetExpiry || new Date() > resetExpiry) {
+        throw this.createError('EXPIRED_TOKEN', 'Reset token has expired');
+      }
+
+      // Hash new password
+      const hashedPassword =
+        await this.providerManager.hashPassword(newPassword);
+
+      // Update user password and clear reset token
+      await this.config.adapter.updateUser(user.id, {
+        metadata: {
+          ...user.metadata,
+          passwordHash: hashedPassword,
+          passwordResetToken: undefined,
+          passwordResetExpiry: undefined,
+          passwordResetAt: new Date(),
+        },
+      });
+
+      // Emit event
+      await this.emit('password.reset_completed', user);
+
+      // Run after hook
+      if (this.config.hooks?.afterPasswordReset) {
+        await this.config.hooks.afterPasswordReset(user);
+      }
+
+      this.logger.info('Password reset completed successfully', {
+        userId: user.id,
+      });
     } catch (error) {
       this.logger.error('Password reset failed', error as Error);
       throw error;
@@ -634,7 +698,7 @@ export class AuthKit extends EventEmitter {
   /**
    * Emit auth event
    */
-  private emit(type: AuthEventType, data?: any): void {
+  public emit(type: AuthEventType, data?: any): void {
     const event: AuthEvent = {
       type,
       timestamp: new Date(),

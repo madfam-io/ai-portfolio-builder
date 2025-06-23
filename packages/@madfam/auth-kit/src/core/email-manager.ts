@@ -169,10 +169,11 @@ export class EmailManager {
   ): Promise<void> {
     // In a real implementation, this would use the SendGrid API
     this.logger.debug('SendGrid email would be sent', {
-      to,
-      subject,
-      templateId,
+      to: _to,
+      subject: _subject,
+      templateId: _templateId,
     });
+    return Promise.resolve();
   }
 
   /**
@@ -185,7 +186,12 @@ export class EmailManager {
     _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use the AWS SES API
-    this.logger.debug('SES email would be sent', { to, subject, templateId });
+    this.logger.debug('SES email would be sent', {
+      to: _to,
+      subject: _subject,
+      templateId: _templateId,
+    });
+    return Promise.resolve();
   }
 
   /**
@@ -198,7 +204,11 @@ export class EmailManager {
     _data?: Record<string, any>
   ): Promise<void> {
     // In a real implementation, this would use nodemailer with SMTP
-    this.logger.debug('SMTP email would be sent', { to, subject });
+    this.logger.debug('SMTP email would be sent', {
+      to: _to,
+      subject: _subject,
+    });
+    return Promise.resolve();
   }
 
   /**
@@ -212,10 +222,11 @@ export class EmailManager {
   ): Promise<void> {
     // In a real implementation, this would use the Resend API
     this.logger.debug('Resend email would be sent', {
-      to,
-      subject,
-      templateId,
+      to: _to,
+      subject: _subject,
+      templateId: _templateId,
     });
+    return Promise.resolve();
   }
 
   /**

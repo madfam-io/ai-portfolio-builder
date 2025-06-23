@@ -134,7 +134,9 @@ export type AuthErrorCode =
   | 'SESSION_EXPIRED'
   | 'RATE_LIMITED'
   | 'PROVIDER_ERROR'
-  | 'INTERNAL_ERROR';
+  | 'INTERNAL_ERROR'
+  | 'INVALID_TOKEN'
+  | 'EXPIRED_TOKEN';
 
 // Provider types
 export type AuthProvider =
@@ -315,6 +317,7 @@ export interface AuthHooks {
   onMFAEnabled?: (user: User, method: MFAMethod) => Promise<void> | void;
   onMFADisabled?: (user: User, method: MFAMethod) => Promise<void> | void;
   onPasswordChanged?: (user: User) => Promise<void> | void;
+  afterPasswordReset?: (user: User) => Promise<void> | void;
   onAccountLocked?: (user: User, reason: string) => Promise<void> | void;
   onSessionCreated?: (session: Session) => Promise<void> | void;
   onSessionRefreshed?: (session: Session) => Promise<void> | void;
@@ -360,6 +363,9 @@ export interface AuthAdapter {
   deleteUser(id: string): Promise<void>;
   findUserById(id: string): Promise<User | null>;
   findUserByEmail(email: string): Promise<User | null>;
+
+  // Optional method for complex queries (used for password reset token lookup)
+  findUsers?(filter: Record<string, any>): Promise<User[]>;
 
   // Session operations
   createSession(data: Partial<Session>): Promise<Session>;

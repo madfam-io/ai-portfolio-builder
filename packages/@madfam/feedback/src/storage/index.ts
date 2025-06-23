@@ -73,8 +73,6 @@ export function createStorageAdapter(config?: StorageConfig): StorageAdapter {
         ...config.options,
       });
 
-    case 'prisma':
-      throw new Error('Prisma adapter not yet implemented');
 
     case 'custom':
       if (!config.options?.adapter) {

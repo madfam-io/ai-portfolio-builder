@@ -31,6 +31,8 @@ import { createStorageAdapter } from '../storage';
 import { Logger } from '../utils/logger';
 import { validateFeedback, validateSurvey } from '../utils/validators';
 import { EventEmitter } from '../utils/event-emitter';
+import { NotificationManager } from '../notifications';
+import { AnalyticsService, createAnalyticsService } from '../analytics';
 
 /**
  * Core Feedback System
@@ -43,6 +45,8 @@ export class FeedbackSystem extends EventEmitter {
   private config: Required<FeedbackSystemConfig>;
   private logger: Logger;
   private cache: Map<string, unknown> = new Map();
+  private notificationManager?: NotificationManager;
+  private analyticsService?: AnalyticsService;
 
   constructor(config: FeedbackSystemConfig = {}) {
     super();
@@ -57,6 +61,16 @@ export class FeedbackSystem extends EventEmitter {
 
     // Initialize storage adapter
     this.storage = createStorageAdapter(this.config.storage);
+
+    // Initialize notification manager
+    if (this.config.notifications) {
+      this.notificationManager = new NotificationManager(this.config.notifications);
+    }
+
+    // Initialize analytics service
+    if (this.config.analytics?.enabled) {
+      this.analyticsService = createAnalyticsService(this.config.analytics);
+    }
 
     // Initialize system
     this.initialize();
@@ -116,6 +130,16 @@ export class FeedbackSystem extends EventEmitter {
       // Emit event for real-time updates
       this.emit('feedback:created', feedbackEntry);
 
+      // Send notifications
+      if (this.notificationManager) {
+        await this.notificationManager.onFeedbackCreated(feedbackEntry);
+      }
+
+      // Track analytics
+      if (this.analyticsService) {
+        await this.analyticsService.trackFeedbackSubmitted(feedbackEntry);
+      }
+
       // Handle critical feedback
       if (
         feedbackEntry.severity === 'critical' ||
@@ -171,6 +195,16 @@ export class FeedbackSystem extends EventEmitter {
 
       // Emit event
       this.emit('survey:created', surveyEntry);
+
+      // Send notifications
+      if (this.notificationManager) {
+        await this.notificationManager.onSurveyCompleted(surveyEntry);
+      }
+
+      // Track analytics
+      if (this.analyticsService) {
+        await this.analyticsService.trackSurveyCompleted(surveyEntry);
+      }
 
       // Clear relevant caches
       this.clearCache('metrics');
@@ -350,6 +384,29 @@ export class FeedbackSystem extends EventEmitter {
   }
 
   /**
+   * Identify user for analytics tracking
+   */
+  async identifyUser(userId: string, traits: Record<string, any> = {}): Promise<void> {
+    if (this.analyticsService) {
+      await this.analyticsService.identify(userId, traits);
+    }
+  }
+
+  /**
+   * Track custom analytics event
+   */
+  async trackEvent(userId: string, event: string, properties: Record<string, any> = {}): Promise<void> {
+    if (this.analyticsService) {
+      await this.analyticsService.track({
+        userId,
+        event,
+        properties,
+        timestamp: new Date(),
+      });
+    }
+  }
+
+  /**
    * Update feedback status
    */
   async updateFeedbackStatus(
@@ -358,6 +415,12 @@ export class FeedbackSystem extends EventEmitter {
     metadata?: Record<string, unknown>
   ): Promise<FeedbackEntry> {
     try {
+      // Get original feedback for comparison
+      const original = await this.storage.getFeedback(feedbackId);
+      if (!original) {
+        throw new Error(`Feedback not found: ${feedbackId}`);
+      }
+
       const updated = await this.storage.updateFeedback(feedbackId, {
         status,
         metadata,
@@ -365,8 +428,14 @@ export class FeedbackSystem extends EventEmitter {
 
       this.logger.info('Feedback status updated', {
         feedbackId,
+        previousStatus: original.status,
         newStatus: status,
       });
+
+      // Send notifications for status changes
+      if (this.notificationManager && original.status !== status) {
+        await this.notificationManager.onFeedbackUpdated(updated, { status: original.status });
+      }
 
       this.emit('feedback:updated', updated);
       this.clearCache('feedback');
@@ -546,6 +615,12 @@ export class FeedbackSystem extends EventEmitter {
    */
   async shutdown(): Promise<void> {
     this.logger.info('Shutting down feedback system');
+    
+    // Shutdown analytics service
+    if (this.analyticsService) {
+      await this.analyticsService.shutdown();
+    }
+    
     this.removeAllListeners();
     this.cache.clear();
   }

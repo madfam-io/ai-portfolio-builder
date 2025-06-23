@@ -14,7 +14,7 @@
 import {
   PerformanceMonitor,
   globalPerformanceMonitor,
-  // measurePerformance,
+  withPerformanceTracking,
 } from '../../performance/performance-monitor';
 
 describe('PerformanceMonitor', () => {
@@ -405,26 +405,27 @@ describe('PerformanceMonitor', () => {
   });
 });
 
-// Skip decorator tests due to Jest/SWC compatibility issues
-describe.skip('Performance decorator', () => {
+describe('Performance tracking with HOF', () => {
   class TestService {
-    // @measurePerformance()
-    async slowOperation(): Promise<string> {
-      await new Promise(resolve => setTimeout(resolve, 100));
-      return 'completed';
-    }
+    slowOperation = withPerformanceTracking(
+      async (): Promise<string> => {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        return 'completed';
+      },
+      'TestService.slowOperation'
+    );
 
-    // @measurePerformance('customName')
-    fastOperation(): number {
-      return 42;
-    }
+    fastOperation = withPerformanceTracking(
+      (): number => 42,
+      'customName'
+    );
   }
 
   beforeEach(() => {
     globalPerformanceMonitor.clear();
   });
 
-  it('should measure decorated methods', async () => {
+  it('should measure wrapped methods', async () => {
     const service = new TestService();
 
     const result = await service.slowOperation();

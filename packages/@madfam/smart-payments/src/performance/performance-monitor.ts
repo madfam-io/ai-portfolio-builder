@@ -367,6 +367,7 @@ export const globalPerformanceMonitor = new PerformanceMonitor();
 
 /**
  * Performance decorator for methods
+ * Note: Use withPerformanceTracking() for Next.js compatibility
  */
 export function measurePerformance(name?: string) {
   return function (
@@ -389,4 +390,19 @@ export function measurePerformance(name?: string) {
 
     return descriptor;
   };
+}
+
+/**
+ * Higher-order function to wrap methods with performance tracking
+ * Use this instead of @measurePerformance decorator for Next.js compatibility
+ */
+export function withPerformanceTracking<T extends (...args: any[]) => any>(
+  fn: T,
+  metricName?: string
+): T {
+  const name = metricName || fn.name || 'anonymous';
+  
+  return ((...args: any[]) => {
+    return globalPerformanceMonitor.measure(name, () => fn(...args));
+  }) as T;
 }
