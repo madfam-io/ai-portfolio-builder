@@ -18,6 +18,10 @@ import type {
   FeatureFlag,
   ExperimentEvent,
 } from '../../core/types';
+import type {
+  DatabaseExperimentRecord,
+  DatabaseEventRecord,
+} from '../../core/value-types';
 
 /**
  * Supabase storage adapter for experiments and feature flags
@@ -166,7 +170,7 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   /**
    * Map database record to Experiment type
    */
-  private mapToExperiment(data: any): Experiment {
+  private mapToExperiment(data: DatabaseExperimentRecord): Experiment {
     return {
       id: data.id,
       key: data.key,
@@ -195,25 +199,27 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   /**
    * Map Experiment type to database record
    */
-  private mapFromExperiment(experiment: Experiment): any {
+  private mapFromExperiment(
+    experiment: Experiment
+  ): Partial<DatabaseExperimentRecord> {
     return {
       id: experiment.id,
-      key: experiment.key,
+      key: experiment.key || experiment.id,
       name: experiment.name,
-      description: experiment.description,
-      type: experiment.type,
-      status: experiment.status,
-      variations: experiment.variations,
-      metrics: experiment.metrics,
-      targeting: experiment.targeting,
-      allocation: experiment.allocation,
+      description: experiment.description || null,
+      type: experiment.type as string,
+      status: experiment.status as string,
+      variations: experiment.variations as import('../value-types').JsonValue,
+      metrics: experiment.metrics as import('../value-types').JsonValue,
+      targeting: experiment.targeting as import('../value-types').JsonValue,
+      allocation: experiment.allocation as import('../value-types').JsonValue,
       schedule: experiment.schedule
         ? {
             start_date: experiment.schedule.startDate.toISOString(),
             end_date: experiment.schedule.endDate?.toISOString(),
           }
         : null,
-      metadata: experiment.metadata,
+      metadata: experiment.metadata as import('../value-types').JsonValue,
       created_at: experiment.createdAt.toISOString(),
       updated_at: experiment.updatedAt.toISOString(),
     };
@@ -222,8 +228,9 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   /**
    * Map database record to FeatureFlag type
    */
-  private mapToFeatureFlag(data: any): FeatureFlag {
+  private mapToFeatureFlag(data: DatabaseExperimentRecord): FeatureFlag {
     return {
+      id: data.id,
       key: data.key,
       name: data.name,
       description: data.description,
@@ -241,8 +248,11 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   /**
    * Map FeatureFlag type to database record
    */
-  private mapFromFeatureFlag(flag: FeatureFlag): any {
+  private mapFromFeatureFlag(
+    flag: FeatureFlag
+  ): Partial<import('../value-types').DatabaseExperimentRecord> {
     return {
+      id: flag.id,
       key: flag.key,
       name: flag.name,
       description: flag.description,
@@ -260,7 +270,7 @@ export class SupabaseStorageAdapter implements StorageAdapter {
   /**
    * Map database record to ExperimentEvent type
    */
-  private mapToEvent(data: any): ExperimentEvent {
+  private mapToEvent(data: DatabaseEventRecord): ExperimentEvent {
     return {
       id: data.id,
       experimentId: data.experiment_id,

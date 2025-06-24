@@ -27,7 +27,9 @@
  * Simple event emitter for internal use
  */
 
-type EventHandler = (...args: any[]) => void | Promise<void>;
+import type { EventHandlerArgs } from '../core/value-types';
+
+type EventHandler = (...args: EventHandlerArgs) => void | Promise<void>;
 
 export class EventEmitter {
   private events: Map<string, EventHandler[]> = new Map();
@@ -53,14 +55,14 @@ export class EventEmitter {
   }
 
   once(event: string, handler: EventHandler): void {
-    const wrappedHandler = async (...args: any[]) => {
+    const wrappedHandler = async (...args: EventHandlerArgs) => {
       await handler(...args);
       this.off(event, wrappedHandler);
     };
     this.on(event, wrappedHandler);
   }
 
-  async emit(event: string, ...args: any[]): Promise<void> {
+  async emit(event: string, ...args: EventHandlerArgs): Promise<void> {
     const handlers = this.events.get(event);
     if (!handlers) return;
 

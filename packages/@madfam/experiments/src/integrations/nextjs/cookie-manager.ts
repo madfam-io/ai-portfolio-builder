@@ -148,25 +148,27 @@ export class UniversalCookieManager {
 
   get(name: string): string | undefined {
     if (this.manager instanceof NextJsCookieManager) {
-      throw new Error('NextJsCookieManager is async and cannot be used with sync interface');
+      throw new Error(
+        'NextJsCookieManager is async and cannot be used with sync interface'
+      );
     }
     return this.manager.get(name);
   }
 
-  set(
-    name: string,
-    value: string,
-    options?: CookieOptions
-  ): void {
+  set(name: string, value: string, options?: CookieOptions): void {
     if (this.manager instanceof NextJsCookieManager) {
-      throw new Error('NextJsCookieManager is async and cannot be used with sync interface');
+      throw new Error(
+        'NextJsCookieManager is async and cannot be used with sync interface'
+      );
     }
     this.manager.set(name, value, options);
   }
 
   delete(name: string): void {
     if (this.manager instanceof NextJsCookieManager) {
-      throw new Error('NextJsCookieManager is async and cannot be used with sync interface');
+      throw new Error(
+        'NextJsCookieManager is async and cannot be used with sync interface'
+      );
     }
     this.manager.delete(name);
   }

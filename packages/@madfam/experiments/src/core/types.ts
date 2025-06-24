@@ -30,6 +30,7 @@
 // Experiment types
 export interface Experiment {
   id: string;
+  key?: string;
   name: string;
   description?: string;
   status: ExperimentStatus;
@@ -40,11 +41,15 @@ export interface Experiment {
   variations: Variation[];
   allocation: AllocationStrategy;
   metrics: Metric[];
+  schedule?: {
+    startDate: Date;
+    endDate?: Date;
+  };
   createdAt: Date;
   updatedAt: Date;
   createdBy?: string;
   tags?: string[];
-  metadata?: Record<string, unknown>;
+  metadata?: import('./value-types').ExperimentMetadata;
 }
 
 export type ExperimentStatus =
@@ -69,12 +74,8 @@ export interface Variation {
   description?: string;
   weight: number; // 0-100
   isControl?: boolean;
-  changes?: VariationChanges;
-  overrides?: Record<string, unknown>;
-}
-
-export interface VariationChanges {
-  [key: string]: unknown;
+  changes?: import('./value-types').VariationChanges;
+  overrides?: import('./value-types').JsonValue;
 }
 
 // Feature flag types
@@ -84,7 +85,7 @@ export interface FeatureFlag {
   name: string;
   description?: string;
   enabled: boolean;
-  defaultValue: unknown;
+  defaultValue: import('./value-types').FeatureFlagValue;
   type: FeatureFlagType;
   variations?: FeatureFlagVariation[];
   targeting?: TargetingRules;
@@ -104,7 +105,7 @@ export type FeatureFlagType =
 
 export interface FeatureFlagVariation {
   id: string;
-  value: unknown;
+  value: import('./value-types').FeatureFlagValue;
   weight: number;
   name?: string;
   description?: string;
@@ -131,13 +132,13 @@ export interface Segment {
   id: string;
   name: string;
   userIds?: string[];
-  attributes?: Record<string, unknown>;
+  attributes?: import('./value-types').SegmentAttributes;
 }
 
 export interface TargetingCondition {
   attribute: string;
   operator: ConditionOperator;
-  value: unknown;
+  value: import('./value-types').TargetingValue;
   negate?: boolean;
 }
 
@@ -225,12 +226,17 @@ export interface UserContext {
   userId: string;
   attributes?: UserAttributes;
   segments?: string[];
-  overrides?: Record<string, unknown>;
+  overrides?: Record<string, import('./value-types').JsonValue>;
   sticky?: boolean;
 }
 
 export interface UserAttributes {
   [key: string]: string | number | boolean | Date | string[] | undefined;
+  userAgent?: string;
+  ip?: string;
+  referer?: string;
+  country?: string;
+  userId?: string;
 }
 
 // Assignment types
@@ -242,14 +248,14 @@ export interface Assignment {
   eligible: boolean;
   reason?: string;
   forced?: boolean;
-  context?: Record<string, unknown>;
+  context?: import('./value-types').UserAttributes;
 }
 
 export interface FeatureFlagAssignment {
   flagKey: string;
   userId: string;
   enabled: boolean;
-  value: unknown;
+  value: import('./value-types').FeatureFlagValue;
   variation?: string;
   timestamp: Date;
   reason?: string;
@@ -264,7 +270,7 @@ export interface ExperimentEvent {
   userId: string;
   variationId?: string;
   timestamp: Date;
-  properties?: Record<string, unknown>;
+  properties?: import('./value-types').AnalyticsProperties;
   revenue?: number;
   value?: number;
 }
@@ -323,7 +329,7 @@ export type ProviderType =
   | 'custom';
 
 export interface ProviderConfig {
-  [key: string]: unknown;
+  [key: string]: import('./value-types').JsonValue;
 }
 
 // Configuration types
@@ -348,7 +354,11 @@ export interface CacheStrategy {
 export interface LoggerConfig {
   level?: 'debug' | 'info' | 'warn' | 'error';
   enabled?: boolean;
-  custom?: (level: string, message: string, data?: unknown) => void;
+  custom?: (
+    level: string,
+    message: string,
+    data?: import('./value-types').JsonValue
+  ) => void;
 }
 
 export interface ExperimentHooks {
@@ -366,7 +376,7 @@ export interface ExperimentHooks {
 export interface ExperimentError {
   code: ExperimentErrorCode;
   message: string;
-  details?: Record<string, unknown>;
+  details?: import('./value-types').ErrorContext;
 }
 
 export type ExperimentErrorCode =
@@ -380,6 +390,9 @@ export type ExperimentErrorCode =
   | 'NETWORK_ERROR'
   | 'TIMEOUT_ERROR'
   | 'UNKNOWN_ERROR';
+
+// Re-export commonly used types from value-types
+export type { VariationChanges } from './value-types';
 
 // Utility types
 export type DeepPartial<T> = {

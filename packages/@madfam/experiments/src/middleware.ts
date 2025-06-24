@@ -29,20 +29,24 @@
 
 import type { Experiments } from './core/experiments';
 import type { UserContext } from './core/types';
+import type {
+  RequestContext,
+  ResponseContext,
+  JsonValue,
+} from './core/value-types';
 
-interface Request {
-  headers?: Record<string, string>;
-  cookies?: Record<string, string>;
-  query?: Record<string, string>;
-  body?: any;
+interface Request extends RequestContext {
   userId?: string;
-  [key: string]: any;
+  [key: string]: JsonValue;
 }
 
-interface Response {
+interface Response extends ResponseContext {
   setHeader?: (name: string, value: string) => void;
-  cookie?: (name: string, value: string, options?: any) => void;
-  [key: string]: any;
+  cookie?: (
+    name: string,
+    value: string,
+    options?: Record<string, JsonValue>
+  ) => void;
 }
 
 type NextFunction = () => void | Promise<void>;
@@ -69,8 +73,12 @@ export function experimentsMiddleware(config: MiddlewareConfig) {
           };
 
       // Attach to request
-      (req as any).experiments = config.experiments;
-      (req as any).userContext = userContext;
+      (
+        req as Request & { experiments: Experiments; userContext: UserContext }
+      ).experiments = config.experiments;
+      (
+        req as Request & { experiments: Experiments; userContext: UserContext }
+      ).userContext = userContext;
 
       // Set user ID cookie if needed
       if (config.cookieName && res.cookie) {
@@ -79,7 +87,7 @@ export function experimentsMiddleware(config: MiddlewareConfig) {
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: 365 * 24 * 60 * 60 * 1000, // 1 year
-        });
+        } as Record<string, JsonValue>);
       }
 
       next();
@@ -93,7 +101,14 @@ export function experimentsMiddleware(config: MiddlewareConfig) {
  * Next.js middleware
  */
 export function withExperiments(config: MiddlewareConfig) {
-  return async (req: any, _res: any) => {
+  return async (
+    req: Request & {
+      cookies?: Record<string, string>;
+      experiments?: Experiments;
+      userContext?: UserContext;
+    },
+    _res: Response
+  ) => {
     const userContext = config.getUserContext
       ? await config.getUserContext(req)
       : {
@@ -113,7 +128,22 @@ export function withExperiments(config: MiddlewareConfig) {
  * Koa middleware
  */
 export function koaExperiments(config: MiddlewareConfig) {
-  return async (ctx: any, next: NextFunction) => {
+  return async (
+    ctx: {
+      request: Request;
+      experiments?: Experiments;
+      userContext?: UserContext;
+      cookies: {
+        get: (name: string) => string | undefined;
+        set: (
+          name: string,
+          value: string,
+          options?: Record<string, unknown>
+        ) => void;
+      };
+    },
+    next: NextFunction
+  ) => {
     try {
       const userContext = config.getUserContext
         ? await config.getUserContext(ctx.request)
@@ -145,35 +175,73 @@ export function koaExperiments(config: MiddlewareConfig) {
 /**
  * Fastify plugin
  */
-export function fastifyExperiments(fastify: any, options: MiddlewareConfig) {
+export function fastifyExperiments(
+  fastify: {
+    decorateRequest: (name: string, value: unknown) => void;
+    addHook: (
+      hook: string,
+      handler: (
+        request: Request & {
+          experiments?: Experiments;
+          userContext?: UserContext;
+          cookies?: Record<string, string>;
+        },
+        reply: {
+          setCookie: (
+            name: string,
+            value: string,
+            options?: Record<string, unknown>
+          ) => void;
+        }
+      ) => Promise<void>
+    ) => void;
+  },
+  options: MiddlewareConfig
+) {
   fastify.decorateRequest('experiments', null);
   fastify.decorateRequest('userContext', null);
 
-  fastify.addHook('onRequest', async (request: any, reply: any) => {
-    try {
-      const userContext = options.getUserContext
-        ? await options.getUserContext(request)
-        : {
-            userId: request.cookies?.userId || generateUserId(request),
-            attributes: extractAttributes(request),
-          };
-
-      request.experiments = options.experiments;
-      request.userContext = userContext;
-
-      // Set cookie
-      if (options.cookieName) {
-        reply.setCookie(options.cookieName, userContext.userId, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          maxAge: 365 * 24 * 60 * 60 * 1000,
-        });
+  fastify.addHook(
+    'onRequest',
+    async (
+      request: Request & {
+        experiments?: Experiments;
+        userContext?: UserContext;
+        cookies?: Record<string, string>;
+      },
+      reply: {
+        setCookie: (
+          name: string,
+          value: string,
+          options?: Record<string, unknown>
+        ) => void;
       }
-    } catch {
-      // Continue without experiments
+    ) => {
+      try {
+        const userContext = options.getUserContext
+          ? await options.getUserContext(request)
+          : {
+              userId: request.cookies?.userId || generateUserId(request),
+              attributes: extractAttributes(request),
+            };
+
+        request.experiments = options.experiments;
+        request.userContext = userContext;
+
+        // Set cookie
+        if (options.cookieName) {
+          reply.setCookie(options.cookieName, userContext.userId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            maxAge: 365 * 24 * 60 * 60 * 1000,
+          });
+        }
+      } catch {
+        // Continue without experiments
+      }
     }
-  });
+  );
 }
 
 /**
@@ -185,7 +253,9 @@ function generateUserId(req: Request): string {
     req.headers?.['x-user-id'],
     req.cookies?.userId,
     req.query?.userId,
-    req.body?.userId,
+    typeof req.body === 'object' && req.body !== null && 'userId' in req.body
+      ? req.body.userId
+      : undefined,
   ];
 
   for (const source of sources) {
@@ -201,7 +271,9 @@ function generateUserId(req: Request): string {
 /**
  * Helper to extract attributes from request
  */
-function extractAttributes(req: Request): Record<string, unknown> {
+function extractAttributes(
+  req: Request
+): import('./core/types').UserAttributes {
   return {
     userAgent: req.headers?.['user-agent'],
     ip: req.headers?.['x-forwarded-for'] || req.headers?.['x-real-ip'],

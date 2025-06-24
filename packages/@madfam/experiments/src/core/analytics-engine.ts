@@ -35,6 +35,7 @@ import type {
   MetricResults,
   ResultStatus,
 } from './types';
+import type { AnalyticsProperties } from './value-types';
 
 interface EventStore {
   exposures: Map<string, ExperimentEvent[]>;
@@ -86,84 +87,18 @@ export class AnalyticsEngine {
     const metrics = this.events.metrics.get(experiment.id) || [];
 
     // Group events by variation
-    const variationData = new Map<
-      string,
-      {
-        exposures: ExperimentEvent[];
-        conversions: ExperimentEvent[];
-        metrics: ExperimentEvent[];
-      }
-    >();
-
-    // Initialize variation data
-    for (const variation of experiment.variations) {
-      variationData.set(variation.id, {
-        exposures: [],
-        conversions: [],
-        metrics: [],
-      });
-    }
-
-    // Group exposures
-    for (const event of exposures) {
-      if (event.variationId && variationData.has(event.variationId)) {
-        const data = variationData.get(event.variationId);
-        if (data) {
-          data.exposures.push(event);
-        }
-      }
-    }
-
-    // Group conversions
-    for (const event of conversions) {
-      const userExposure = exposures.find(e => e.userId === event.userId);
-      if (userExposure && userExposure.variationId) {
-        const data = variationData.get(userExposure.variationId);
-        if (data) {
-          data.conversions.push(event);
-        }
-      }
-    }
-
-    // Group metrics
-    for (const event of metrics) {
-      const userExposure = exposures.find(e => e.userId === event.userId);
-      if (userExposure && userExposure.variationId) {
-        const data = variationData.get(userExposure.variationId);
-        if (data) {
-          data.metrics.push(event);
-        }
-      }
-    }
+    const variationData = this.groupEventsByVariation(
+      experiment,
+      exposures,
+      conversions,
+      metrics
+    );
 
     // Calculate results for each variation
-    const variationResults: VariationResults[] = [];
-    const controlVariation =
-      experiment.variations.find(v => v.isControl) || experiment.variations[0];
-
-    for (const variation of experiment.variations) {
-      const data = variationData.get(variation.id);
-      if (!data) continue;
-      const uniqueUsers = new Set(data.exposures.map(e => e.userId));
-      const convertedUsers = new Set(data.conversions.map(e => e.userId));
-
-      const result: VariationResults = {
-        variationId: variation.id,
-        sampleSize: uniqueUsers.size,
-        exposures: data.exposures.length,
-        conversions: convertedUsers.size,
-        metrics: this.calculateMetrics(
-          experiment,
-          variation.id,
-          data,
-          controlVariation.id === variation.id
-            ? null
-            : variationData.get(controlVariation.id)
-        ),
-      };
-
-      variationResults.push(result);
-    }
+    const variationResults = this.calculateVariationResults(
+      experiment,
+      variationData
+    );
 
     // Determine winner and status
     const { winner, confidence, status } = this.determineWinner(
@@ -189,8 +124,16 @@ export class AnalyticsEngine {
   private calculateMetrics(
     experiment: Experiment,
     variationId: string,
-    data: any,
-    controlData: any
+    data: {
+      exposures: ExperimentEvent[];
+      conversions: ExperimentEvent[];
+      metrics: ExperimentEvent[];
+    },
+    controlData: {
+      exposures: ExperimentEvent[];
+      conversions: ExperimentEvent[];
+      metrics: ExperimentEvent[];
+    } | null
   ): MetricResults[] {
     const results: MetricResults[] = [];
 
@@ -264,8 +207,12 @@ export class AnalyticsEngine {
    * Get control value for comparison
    */
   private getControlValue(
-    controlData: any,
-    _metric: any
+    controlData: {
+      exposures: ExperimentEvent[];
+      conversions: ExperimentEvent[];
+      metrics: ExperimentEvent[];
+    },
+    _metric: AnalyticsProperties
   ): { value: number; sampleSize: number } {
     // Simplified - in production would match the metric calculation logic
     const sampleSize = controlData.exposures.length;
@@ -404,6 +351,174 @@ export class AnalyticsEngine {
     }
 
     return { status: 'no_winner' };
+  }
+
+  /**
+   * Group events by variation
+   */
+  private groupEventsByVariation(
+    experiment: Experiment,
+    exposures: ExperimentEvent[],
+    conversions: ExperimentEvent[],
+    metrics: ExperimentEvent[]
+  ): Map<
+    string,
+    {
+      exposures: ExperimentEvent[];
+      conversions: ExperimentEvent[];
+      metrics: ExperimentEvent[];
+    }
+  > {
+    const variationData = new Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >();
+
+    // Initialize variation data
+    for (const variation of experiment.variations) {
+      variationData.set(variation.id, {
+        exposures: [],
+        conversions: [],
+        metrics: [],
+      });
+    }
+
+    // Group exposures
+    this.groupExposures(variationData, exposures);
+
+    // Group conversions
+    this.groupConversions(variationData, exposures, conversions);
+
+    // Group metrics
+    this.groupMetrics(variationData, exposures, metrics);
+
+    return variationData;
+  }
+
+  /**
+   * Group exposure events by variation
+   */
+  private groupExposures(
+    variationData: Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >,
+    exposures: ExperimentEvent[]
+  ): void {
+    for (const event of exposures) {
+      if (event.variationId && variationData.has(event.variationId)) {
+        const data = variationData.get(event.variationId);
+        if (data) {
+          data.exposures.push(event);
+        }
+      }
+    }
+  }
+
+  /**
+   * Group conversion events by variation
+   */
+  private groupConversions(
+    variationData: Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >,
+    exposures: ExperimentEvent[],
+    conversions: ExperimentEvent[]
+  ): void {
+    for (const event of conversions) {
+      const userExposure = exposures.find(e => e.userId === event.userId);
+      if (userExposure && userExposure.variationId) {
+        const data = variationData.get(userExposure.variationId);
+        if (data) {
+          data.conversions.push(event);
+        }
+      }
+    }
+  }
+
+  /**
+   * Group metric events by variation
+   */
+  private groupMetrics(
+    variationData: Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >,
+    exposures: ExperimentEvent[],
+    metrics: ExperimentEvent[]
+  ): void {
+    for (const event of metrics) {
+      const userExposure = exposures.find(e => e.userId === event.userId);
+      if (userExposure && userExposure.variationId) {
+        const data = variationData.get(userExposure.variationId);
+        if (data) {
+          data.metrics.push(event);
+        }
+      }
+    }
+  }
+
+  /**
+   * Calculate results for each variation
+   */
+  private calculateVariationResults(
+    experiment: Experiment,
+    variationData: Map<
+      string,
+      {
+        exposures: ExperimentEvent[];
+        conversions: ExperimentEvent[];
+        metrics: ExperimentEvent[];
+      }
+    >
+  ): VariationResults[] {
+    const variationResults: VariationResults[] = [];
+    const controlVariation =
+      experiment.variations.find(v => v.isControl) || experiment.variations[0];
+
+    for (const variation of experiment.variations) {
+      const data = variationData.get(variation.id);
+      if (!data) continue;
+
+      const uniqueUsers = new Set(data.exposures.map(e => e.userId));
+      const convertedUsers = new Set(data.conversions.map(e => e.userId));
+
+      const result: VariationResults = {
+        variationId: variation.id,
+        sampleSize: uniqueUsers.size,
+        exposures: data.exposures.length,
+        conversions: convertedUsers.size,
+        metrics: this.calculateMetrics(
+          experiment,
+          variation.id,
+          data,
+          controlVariation.id === variation.id
+            ? null
+            : variationData.get(controlVariation.id)
+        ),
+      };
+
+      variationResults.push(result);
+    }
+
+    return variationResults;
   }
 
   /**

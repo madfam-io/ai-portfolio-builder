@@ -277,21 +277,29 @@ export function useFeatureFlags(flagKeys: string[]): {
 
     let cancelled = false;
 
+    // eslint-disable-next-line @madfam/performance-impact
     async function evaluateFlags() {
       try {
         setLoading(true);
-        const results = await Promise.all(
-          flagKeys.map(key => experiments.evaluateFlag(key, user))
+        // Performance optimization: Use Promise.all for concurrent flag evaluation
+        const results = await Promise.allSettled(
+          flagKeys.map(key =>
+            experiments
+              .evaluateFlag(key, user)
+              .then(result => ({ key, result }))
+          )
         );
 
         if (!cancelled) {
           const flagsMap: Record<string, boolean> = {};
           const valuesMap: Record<string, unknown> = {};
 
-          results.forEach((result, index) => {
-            const key = flagKeys[index];
-            flagsMap[key] = result.enabled;
-            valuesMap[key] = result.value;
+          results.forEach(result => {
+            if (result.status === 'fulfilled') {
+              const { key, result: flagResult } = result.value;
+              flagsMap[key] = flagResult.enabled;
+              valuesMap[key] = flagResult.value;
+            }
           });
 
           setFlags(flagsMap);

@@ -54,10 +54,7 @@ export class CookiePersistenceAdapter implements PersistenceAdapter {
     };
   }
 
-  getAssignment(
-    experimentId: string,
-    userId: string
-  ): Assignment | null {
+  getAssignment(experimentId: string, userId: string): Assignment | null {
     const assignments = this.getAssignments();
     const key = `${experimentId}:${userId}`;
     return assignments[key] || null;

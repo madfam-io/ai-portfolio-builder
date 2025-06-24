@@ -25,8 +25,8 @@ interface GetActiveExperimentResponse {
   experimentId: string;
   variantId: string;
   variantName: string;
-  components: any[];
-  themeOverrides?: any;
+  components: Array<Record<string, unknown>>;
+  themeOverrides?: Record<string, unknown>;
 }
 
 /**
@@ -70,7 +70,10 @@ export class LegacyFeatureFlagService {
     try {
       await this.experiments.loadExperiments();
     } catch (error) {
-      console.error('Failed to load experiments:', error);
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Failed to load experiments:', error);
+      }
     }
   }
 
@@ -132,7 +135,10 @@ export class LegacyFeatureFlagService {
 
       return null;
     } catch (error) {
-      console.error('Failed to get active experiment:', error);
+      if (process.env.NODE_ENV === 'development') {
+        // eslint-disable-next-line no-console
+        console.error('Failed to get active experiment:', error);
+      }
       return null;
     }
   }
@@ -143,7 +149,7 @@ export class LegacyFeatureFlagService {
   static async recordConversion(
     experimentId: string,
     variantId: string,
-    conversionData?: Record<string, any>
+    conversionData?: import('../../core/value-types').AnalyticsProperties
   ): Promise<void> {
     const service = new LegacyFeatureFlagService();
     const visitorId = await service.experiments.getOrCreateVisitorId();
@@ -166,7 +172,7 @@ export class LegacyFeatureFlagService {
     experimentId: string,
     variantId: string,
     element: string,
-    additionalData?: Record<string, any>
+    additionalData?: import('../../core/value-types').AnalyticsProperties
   ): Promise<void> {
     const service = new LegacyFeatureFlagService();
     const visitorId = await service.experiments.getOrCreateVisitorId();

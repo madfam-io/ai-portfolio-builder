@@ -13,6 +13,7 @@
 
 import { CookiePersistenceAdapter } from '../../adapters/persistence/cookie';
 import { UniversalCookieManager } from './cookie-manager';
+import type { JsonValue } from '../../core/value-types';
 
 /**
  * Next.js persistence adapter that works in both server and client environments
@@ -39,7 +40,11 @@ export class NextJsPersistenceAdapter extends CookiePersistenceAdapter {
         // Server-side will need special handling
         return undefined;
       },
-      set: (name: string, value: string, opts?: any): void => {
+      set: (
+        name: string,
+        value: string,
+        opts?: Record<string, JsonValue>
+      ): void => {
         if (typeof window !== 'undefined') {
           new BrowserCookieManager().set(name, value, opts);
         }

@@ -142,7 +142,7 @@ export interface AnalyticsAdapter {
     experimentId: string,
     userId: string,
     value?: number,
-    metadata?: Record<string, any>
+    metadata?: import('../core/value-types').AnalyticsProperties
   ): Promise<void>;
 
   /**
@@ -150,11 +150,14 @@ export interface AnalyticsAdapter {
    */
   trackEvent(
     eventName: string,
-    properties?: Record<string, any>
+    properties?: import('../core/value-types').AnalyticsProperties
   ): Promise<void>;
 
   /**
    * Identify a user
    */
-  identify(userId: string, traits?: Record<string, any>): Promise<void>;
+  identify(
+    userId: string,
+    traits?: import('../core/value-types').AnalyticsTraits
+  ): Promise<void>;
 }

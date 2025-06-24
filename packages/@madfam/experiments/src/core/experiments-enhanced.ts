@@ -123,7 +123,7 @@ export class ExperimentsEnhanced extends Experiments {
   async evaluateFlag(
     flagKey: string,
     userContext: UserContext,
-    defaultValue?: unknown
+    defaultValue?: import('./value-types').FeatureFlagValue
   ): Promise<FeatureFlagAssignment> {
     // Check for persisted assignment first
     const persisted = await this.persistenceAdapter.getFlagAssignment(
@@ -192,7 +192,7 @@ export class ExperimentsEnhanced extends Experiments {
     experimentId: string,
     userId: string,
     value?: number,
-    metadata?: Record<string, any>
+    metadata?: import('./value-types').AnalyticsProperties
   ): Promise<void> {
     await super.trackConversion(experimentId, userId, value, metadata);
 
@@ -248,7 +248,20 @@ export class ExperimentsEnhanced extends Experiments {
     experimentId: string,
     startDate?: Date,
     endDate?: Date
-  ): Promise<any> {
+  ): Promise<{
+    experimentId: string;
+    totalAssignments: number;
+    totalConversions: number;
+    conversionRate: number;
+    variations: Map<
+      string,
+      {
+        assignments: number;
+        conversions: number;
+        conversionRate: number;
+      }
+    >;
+  }> {
     const events = await this.storageAdapter.getEvents(experimentId, {
       startDate,
       endDate,
@@ -263,7 +276,14 @@ export class ExperimentsEnhanced extends Experiments {
       conversionRate:
         events.filter(e => e.type === 'conversion').length /
         events.filter(e => e.type === 'assignment').length,
-      variations: new Map<string, any>(),
+      variations: new Map<
+        string,
+        {
+          assignments: number;
+          conversions: number;
+          conversionRate: number;
+        }
+      >(),
     };
 
     // Group by variation

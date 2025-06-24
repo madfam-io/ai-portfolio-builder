@@ -34,6 +34,7 @@ import type {
   Audience,
   ConditionOperator,
 } from './types';
+import type { TargetingValue, SegmentAttributes } from './value-types';
 
 export class TargetingEngine {
   /**
@@ -93,7 +94,13 @@ export class TargetingEngine {
   /**
    * Evaluate segment membership
    */
-  private evaluateSegments(segments: any[], userContext: UserContext): boolean {
+  private evaluateSegments(
+    segments: Array<{
+      id?: string;
+      userIds?: string[];
+    }>,
+    userContext: UserContext
+  ): boolean {
     if (!userContext.segments) return false;
 
     return segments.some(segment => {
@@ -182,10 +189,11 @@ export class TargetingEngine {
   private getAttributeValue(
     attribute: string,
     userContext: UserContext
-  ): unknown {
+  ): TargetingValue | undefined {
     // Handle nested attributes
     const parts = attribute.split('.');
-    let value: any = userContext;
+    let value: SegmentAttributes | TargetingValue | undefined =
+      userContext.attributes;
 
     for (const part of parts) {
       if (value && typeof value === 'object') {
@@ -202,70 +210,157 @@ export class TargetingEngine {
    * Compare values based on operator
    */
   private compareValues(
-    attributeValue: unknown,
-    targetValue: unknown,
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue,
     operator: ConditionOperator
   ): boolean {
     switch (operator) {
       case 'equals':
-        return attributeValue === targetValue;
-
       case 'not_equals':
-        return attributeValue !== targetValue;
+        return this.compareEquality(attributeValue, targetValue, operator);
 
       case 'contains':
-        return String(attributeValue).includes(String(targetValue));
-
       case 'not_contains':
-        return !String(attributeValue).includes(String(targetValue));
-
       case 'starts_with':
-        return String(attributeValue).startsWith(String(targetValue));
-
       case 'ends_with':
-        return String(attributeValue).endsWith(String(targetValue));
+        return this.compareStringOperations(
+          attributeValue,
+          targetValue,
+          operator
+        );
 
       case 'greater_than':
-        return Number(attributeValue) > Number(targetValue);
-
       case 'less_than':
-        return Number(attributeValue) < Number(targetValue);
-
       case 'greater_than_or_equal':
-        return Number(attributeValue) >= Number(targetValue);
-
       case 'less_than_or_equal':
-        return Number(attributeValue) <= Number(targetValue);
+        return this.compareNumeric(attributeValue, targetValue, operator);
 
       case 'in':
-        if (Array.isArray(targetValue)) {
-          return targetValue.includes(attributeValue);
-        }
-        return false;
-
       case 'not_in':
-        if (Array.isArray(targetValue)) {
-          return !targetValue.includes(attributeValue);
-        }
-        return true;
+        return this.compareArrayMembership(
+          attributeValue,
+          targetValue,
+          operator
+        );
 
       case 'regex':
-        try {
-          const regex = new RegExp(String(targetValue));
-          return regex.test(String(attributeValue));
-        } catch {
-          return false;
-        }
+        return this.compareRegex(attributeValue, targetValue);
 
       case 'exists':
-        return attributeValue !== undefined && attributeValue !== null;
-
       case 'not_exists':
-        return attributeValue === undefined || attributeValue === null;
+        return this.compareExistence(attributeValue, operator);
 
       default:
         return false;
     }
+  }
+
+  /**
+   * Compare equality operations
+   */
+  private compareEquality(
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue,
+    operator: 'equals' | 'not_equals'
+  ): boolean {
+    const isEqual = attributeValue === targetValue;
+    return operator === 'equals' ? isEqual : !isEqual;
+  }
+
+  /**
+   * Compare string operations
+   */
+  private compareStringOperations(
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue,
+    operator: 'contains' | 'not_contains' | 'starts_with' | 'ends_with'
+  ): boolean {
+    const attrStr = String(attributeValue);
+    const targetStr = String(targetValue);
+
+    switch (operator) {
+      case 'contains':
+        return attrStr.includes(targetStr);
+      case 'not_contains':
+        return !attrStr.includes(targetStr);
+      case 'starts_with':
+        return attrStr.startsWith(targetStr);
+      case 'ends_with':
+        return attrStr.endsWith(targetStr);
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Compare numeric operations
+   */
+  private compareNumeric(
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue,
+    operator:
+      | 'greater_than'
+      | 'less_than'
+      | 'greater_than_or_equal'
+      | 'less_than_or_equal'
+  ): boolean {
+    const attrNum = Number(attributeValue);
+    const targetNum = Number(targetValue);
+
+    switch (operator) {
+      case 'greater_than':
+        return attrNum > targetNum;
+      case 'less_than':
+        return attrNum < targetNum;
+      case 'greater_than_or_equal':
+        return attrNum >= targetNum;
+      case 'less_than_or_equal':
+        return attrNum <= targetNum;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Compare array membership operations
+   */
+  private compareArrayMembership(
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue,
+    operator: 'in' | 'not_in'
+  ): boolean {
+    if (!Array.isArray(targetValue)) {
+      return operator === 'not_in';
+    }
+
+    const isIncluded = targetValue.includes(attributeValue);
+    return operator === 'in' ? isIncluded : !isIncluded;
+  }
+
+  /**
+   * Compare regex operations
+   */
+  private compareRegex(
+    attributeValue: TargetingValue | undefined,
+    targetValue: TargetingValue
+  ): boolean {
+    try {
+      const regex = new RegExp(String(targetValue));
+      return regex.test(String(attributeValue));
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Compare existence operations
+   */
+  private compareExistence(
+    attributeValue: TargetingValue | undefined,
+    operator: 'exists' | 'not_exists'
+  ): boolean {
+    const exists = attributeValue !== undefined && attributeValue !== null;
+    return operator === 'exists' ? exists : !exists;
   }
 
   /**

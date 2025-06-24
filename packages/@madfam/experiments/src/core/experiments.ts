@@ -217,7 +217,7 @@ export class Experiments extends EventEmitter {
   async evaluateFlag(
     flagKey: string,
     userContext: UserContext,
-    defaultValue?: unknown
+    defaultValue?: import('./value-types').FeatureFlagValue
   ): Promise<FeatureFlagAssignment> {
     this.logger.debug('Evaluating flag', {
       flagKey,
@@ -320,7 +320,7 @@ export class Experiments extends EventEmitter {
     experimentId: string,
     userId: string,
     eventName: string,
-    properties?: Record<string, unknown>
+    properties?: import('./value-types').AnalyticsProperties
   ): Promise<void> {
     this.logger.debug('Tracking conversion', {
       experimentId,
@@ -358,7 +358,7 @@ export class Experiments extends EventEmitter {
     data: {
       metricName: string;
       value: number;
-      properties?: Record<string, unknown>;
+      properties?: import('./value-types').AnalyticsProperties;
     }
   ): Promise<void> {
     this.logger.debug('Tracking metric', {
@@ -605,7 +605,7 @@ export class Experiments extends EventEmitter {
   }
 
   private createError(code: string, message: string): Error {
-    const error = new Error(message) as any;
+    const error = new Error(message) as Error & { code: string };
     error.code = code;
     return error;
   }
