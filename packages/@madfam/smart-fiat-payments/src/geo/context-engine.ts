@@ -166,7 +166,7 @@ export class GeographicalContextEngine {
         description: 'VPN or proxy detected',
         evidence: { confidence: context.vpnConfidence },
       });
-      totalScore += 20;
+      totalScore += 30;
     }
 
     // Country mismatch
@@ -456,7 +456,7 @@ export class GeographicalContextEngine {
 
     // VPN/Proxy risk
     if (vpnCheck) {
-      if (vpnCheck.isVPN) score += 20 * vpnCheck.confidence;
+      if (vpnCheck.isVPN) score += 30 * vpnCheck.confidence;
       if (vpnCheck.isProxy) score += 15 * vpnCheck.confidence;
       if (vpnCheck.isTor) score += 30;
       if (vpnCheck.isHosting) score += 25;
