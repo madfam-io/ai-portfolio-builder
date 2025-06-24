@@ -30,7 +30,7 @@ import type {
   ReferralCampaign,
   FraudDetectionResult,
   ReferralAnalytics,
-} from '@madfam/referral';
+} from '../src/types';
 
 class EnterpriseReferralSystem {
   private engine: ReferralEngine;
@@ -54,7 +54,7 @@ class EnterpriseReferralSystem {
   /**
    * Create an enterprise B2B campaign
    */
-  async createB2BCampaign(): Promise<ReferralCampaign> {
+  createB2BCampaign(): ReferralCampaign {
     const campaign: Partial<ReferralCampaign> = {
       name: 'Enterprise Partner Program',
       description: 'Refer enterprise clients and earn substantial rewards',
@@ -132,16 +132,16 @@ class EnterpriseReferralSystem {
     additionalData: any
   ): Promise<FraudDetectionResult> {
     // Get basic fraud detection from engine
-    const basicResult = await this.engine.getUserReferralStats(referralId);
+    const _basicResult = await this.engine.getUserReferralStats(referralId);
 
     // Add enterprise-specific checks
     const enhancedChecks = {
       corporate_email_verified: this.verifyCorporateEmail(additionalData.email),
       company_domain_valid: this.validateCompanyDomain(additionalData.domain),
-      linkedin_profile_verified: await this.verifyLinkedInProfile(
+      linkedin_profile_verified: this.verifyLinkedInProfile(
         additionalData.linkedin
       ),
-      business_registration_valid: await this.checkBusinessRegistration(
+      business_registration_valid: this.checkBusinessRegistration(
         additionalData.company
       ),
     };
@@ -174,10 +174,10 @@ class EnterpriseReferralSystem {
   /**
    * Analytics dashboard data
    */
-  async getEnterpriseAnalytics(
+  getEnterpriseAnalytics(
     startDate: Date,
     endDate: Date
-  ): Promise<ReferralAnalytics> {
+  ): ReferralAnalytics {
     // Mock analytics data - in production, this would query your analytics DB
     return {
       period: {
@@ -257,7 +257,7 @@ class EnterpriseReferralSystem {
    */
   async processRewardApproval(rewardId: string): Promise<boolean> {
     // Get reward details
-    const reward = await this.getRewardDetails(rewardId);
+    const reward = this.getRewardDetails(rewardId) as any;
 
     // Check approval criteria
     const criteria = {
@@ -270,11 +270,11 @@ class EnterpriseReferralSystem {
     const autoApprove = Object.values(criteria).every(Boolean);
 
     if (autoApprove) {
-      await this.approveReward(rewardId);
+      this.approveReward(rewardId);
       await this.sendWebhook('reward.approved', { rewardId, criteria });
       return true;
     } else {
-      await this.flagForManualReview(rewardId, criteria);
+      this.flagForManualReview(rewardId, criteria);
       await this.sendWebhook('reward.review_required', { rewardId, criteria });
       return false;
     }
@@ -292,17 +292,17 @@ class EnterpriseReferralSystem {
     return domain.length > 0 && !domain.includes('temp');
   }
 
-  private async verifyLinkedInProfile(linkedinUrl: string): Promise<boolean> {
+  private verifyLinkedInProfile(linkedinUrl: string): boolean {
     // Mock verification - in production, use LinkedIn API
     return linkedinUrl.includes('linkedin.com/company/');
   }
 
-  private async checkBusinessRegistration(company: string): Promise<boolean> {
+  private checkBusinessRegistration(company: string): boolean {
     // Mock check - in production, use business verification API
     return company.length > 3;
   }
 
-  private async getRewardDetails(rewardId: string): Promise<unknown> {
+  private getRewardDetails(rewardId: string): unknown {
     // Mock data - in production, fetch from database
     return {
       id: rewardId,
@@ -313,14 +313,14 @@ class EnterpriseReferralSystem {
     };
   }
 
-  private async approveReward(rewardId: string): Promise<void> {
+  private approveReward(rewardId: string): void {
     console.log(`Reward ${rewardId} approved automatically`);
   }
 
-  private async flagForManualReview(
+  private flagForManualReview(
     rewardId: string,
     criteria: any
-  ): Promise<void> {
+  ): void {
     console.log(`Reward ${rewardId} flagged for review:`, criteria);
   }
 }
@@ -328,13 +328,13 @@ class EnterpriseReferralSystem {
 // Usage example
 async function runEnterpriseExample() {
   const enterprise = new EnterpriseReferralSystem(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_KEY!,
-    process.env.WEBHOOK_URL!
+    process.env.SUPABASE_URL ?? '',
+    process.env.SUPABASE_KEY ?? '',
+    process.env.WEBHOOK_URL ?? ''
   );
 
   // Create B2B campaign
-  const campaign = await enterprise.createB2BCampaign();
+  const campaign = enterprise.createB2BCampaign();
   console.log('Created campaign:', campaign.name);
 
   // Perform fraud check
@@ -350,7 +350,7 @@ async function runEnterpriseExample() {
   console.log('Fraud check result:', fraudResult);
 
   // Get analytics
-  const analytics = await enterprise.getEnterpriseAnalytics(
+  const analytics = enterprise.getEnterpriseAnalytics(
     new Date('2024-01-01'),
     new Date('2024-12-31')
   );

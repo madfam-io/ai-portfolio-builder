@@ -58,7 +58,7 @@ export class MemoryStore implements RateLimitStore {
     }
   }
 
-  async increment(key: string, windowMs: number): Promise<RateLimitInfo> {
+  increment(key: string, windowMs: number): RateLimitInfo {
     const now = Date.now();
     const resetTime = now + windowMs;
 
@@ -108,7 +108,7 @@ export class MemoryStore implements RateLimitStore {
     };
   }
 
-  async get(key: string): Promise<RateLimitInfo | null> {
+  get(key: string): RateLimitInfo | null {
     const entry = this.store.get(key);
 
     if (!entry) {
@@ -132,11 +132,11 @@ export class MemoryStore implements RateLimitStore {
     };
   }
 
-  async reset(key: string): Promise<void> {
+  reset(key: string): void {
     this.store.delete(key);
   }
 
-  async cleanup(): Promise<void> {
+  cleanup(): void {
     const now = Date.now();
     const keysToDelete: string[] = [];
 
@@ -151,7 +151,7 @@ export class MemoryStore implements RateLimitStore {
     }
   }
 
-  async close(): Promise<void> {
+  close(): void {
     if (this.cleanupInterval) {
       clearInterval(this.cleanupInterval);
       this.cleanupInterval = undefined;

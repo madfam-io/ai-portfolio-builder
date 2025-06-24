@@ -391,7 +391,7 @@ export function useReferral(
 
   // Copy share link to clipboard
   const copyShareLink = useCallback(
-    async (referral?: Referral): Promise<boolean> => {
+    (referral?: Referral): boolean => {
       const targetReferral = referral || state.activeReferral;
       if (!targetReferral) return false;
 

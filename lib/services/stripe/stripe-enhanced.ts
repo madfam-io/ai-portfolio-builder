@@ -208,6 +208,12 @@ class EnhancedStripeService {
   }
 
   private async initializeStripe() {
+    // Skip initialization during build process
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      logger.info('Skipping Stripe initialization during build');
+      return;
+    }
+
     if (!env.STRIPE_SECRET_KEY) {
       logger.warn('Stripe secret key not found, payments will be unavailable');
       return;

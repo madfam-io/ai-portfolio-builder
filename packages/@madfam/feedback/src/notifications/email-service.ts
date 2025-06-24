@@ -259,7 +259,7 @@ export class EmailService {
     try {
       // Rate limiting
       if (this.config.email?.rateLimit) {
-        await this.checkRateLimit();
+        this.checkRateLimit();
       }
 
       // Template processing
@@ -270,7 +270,7 @@ export class EmailService {
 
       // Track sending
       if (this.config.email?.trackDelivery) {
-        await this.trackEmailSent(notification);
+        this.trackEmailSent(notification);
       }
     } catch (error) {
       this.logger.error('Failed to send email', error as Error, {
@@ -304,10 +304,10 @@ export class EmailService {
   /**
    * Process email template
    */
-  private async processTemplate(
+  private processTemplate(
     notification: EmailNotification
-  ): Promise<EmailNotification> {
-    const template = await this.loadTemplate(notification.templateId);
+  ): EmailNotification {
+    const template = this.loadTemplate(notification.templateId);
 
     return {
       ...notification,
@@ -319,7 +319,7 @@ export class EmailService {
   /**
    * Load email template
    */
-  private async loadTemplate(templateId: string): Promise<EmailTemplate> {
+  private loadTemplate(templateId: string): EmailTemplate {
     // In a real implementation, this would load from a template store
     const templates: Record<string, EmailTemplate> = {
       'critical-bug': {
@@ -397,12 +397,12 @@ export class EmailService {
   /**
    * Check rate limiting
    */
-  private async checkRateLimit(): Promise<void> {
+  private checkRateLimit(): void {
     // Simple in-memory rate limiting
     // In production, use Redis or a proper rate limiting service
-    const now = Date.now();
-    const windowMs = 60000; // 1 minute
-    const maxEmails = this.config.email?.rateLimit?.maxPerMinute || 10;
+    const _now = Date.now();
+    const _windowMs = 60000; // 1 minute
+    const _maxEmails = this.config.email?.rateLimit?.maxPerMinute || 10;
 
     // Implementation would track email sending rates
   }
@@ -410,7 +410,7 @@ export class EmailService {
   /**
    * Track email sent
    */
-  private async trackEmailSent(notification: EmailNotification): Promise<void> {
+  private async trackEmailSent(_notification: EmailNotification): Promise<void> {
     // Track email delivery for analytics
     // Implementation would store delivery metrics
   }
@@ -739,7 +739,7 @@ interface EmailProvider {
 class SendGridProvider implements EmailProvider {
   constructor(private credentials: any) {}
 
-  async send(notification: EmailNotification): Promise<void> {
+  async send(_notification: EmailNotification): Promise<void> {
     // SendGrid implementation
   }
 }
@@ -747,7 +747,7 @@ class SendGridProvider implements EmailProvider {
 class SESProvider implements EmailProvider {
   constructor(private credentials: any) {}
 
-  async send(notification: EmailNotification): Promise<void> {
+  async send(_notification: EmailNotification): Promise<void> {
     // AWS SES implementation
   }
 }
@@ -755,7 +755,7 @@ class SESProvider implements EmailProvider {
 class SMTPProvider implements EmailProvider {
   constructor(private credentials: any) {}
 
-  async send(notification: EmailNotification): Promise<void> {
+  async send(_notification: EmailNotification): Promise<void> {
     // SMTP implementation
   }
 }
@@ -763,7 +763,7 @@ class SMTPProvider implements EmailProvider {
 class ResendProvider implements EmailProvider {
   constructor(private credentials: any) {}
 
-  async send(notification: EmailNotification): Promise<void> {
+  async send(_notification: EmailNotification): Promise<void> {
     // Resend implementation
   }
 }

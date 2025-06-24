@@ -30,8 +30,8 @@ import { createReferralEngine } from '@madfam/referral';
 async function basicExample() {
   // Initialize the referral engine
   const referralEngine = createReferralEngine(
-    process.env.SUPABASE_URL!,
-    process.env.SUPABASE_KEY!,
+    process.env.SUPABASE_URL ?? '',
+    process.env.SUPABASE_KEY ?? '',
     {
       fraud_detection_enabled: true,
       enable_analytics: true,

@@ -10,7 +10,17 @@ const packageJson = {
   types: 'dist/index.d.ts',
 };
 
-const external = ['react', 'react-dom', 'react/jsx-runtime'];
+const external = [
+  'react', 
+  'react-dom', 
+  'react/jsx-runtime',
+  'node-ipinfo',
+  'crypto',
+  'querystring',
+  'url',
+  'http',
+  'https'
+];
 
 const entries = [
   // Build module bundles first
@@ -51,6 +61,7 @@ export default [
       peerDepsExternal(),
       resolve({
         extensions: ['.js', '.jsx', '.ts', '.tsx'],
+        preferBuiltins: true,
       }),
       esbuild({
         target: 'es2020',
@@ -59,6 +70,13 @@ export default [
       }),
     ],
     external,
+    onwarn(warning, warn) {
+      // Suppress specific warnings
+      if (warning.code === 'THIS_IS_UNDEFINED') return;
+      if (warning.code === 'MISSING_EXPORT' && warning.message.includes('node-ipinfo')) return;
+      // Log other warnings
+      warn(warning);
+    },
   })),
 
   // TypeScript declarations

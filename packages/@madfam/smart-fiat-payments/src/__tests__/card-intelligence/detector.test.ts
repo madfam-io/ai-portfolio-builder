@@ -15,9 +15,7 @@
 
 import {
   CardDetector,
-  CardDetectorConfig,
 } from '../../card-intelligence/detector';
-import { CardInfo, ValidationResult, Gateway } from '../../types';
 
 describe('CardDetector', () => {
   let detector: CardDetector;

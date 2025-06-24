@@ -32,10 +32,10 @@ export class MockMemoryAdapter extends BaseAdapter {
     Array<{ provider: AuthProvider; providerId: string }>
   > = new Map();
 
-  async createUser(data: Partial<User>): Promise<User> {
+  createUser(data: Partial<User>): User {
     const user: User = {
       id: data.id || generateId(),
-      email: data.email!,
+      email: data.email as string,
       emailVerified: data.emailVerified || false,
       createdAt: data.createdAt || new Date(),
       updatedAt: data.updatedAt || new Date(),
@@ -51,7 +51,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return user;
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
+  updateUser(id: string, data: Partial<User>): User {
     const user = this.users.get(id);
     if (!user) {
       throw new Error('User not found');
@@ -68,7 +68,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return updatedUser;
   }
 
-  async deleteUser(id: string): Promise<void> {
+  deleteUser(id: string): void {
     const user = this.users.get(id);
     if (user) {
       this.users.delete(id);
@@ -76,15 +76,15 @@ export class MockMemoryAdapter extends BaseAdapter {
     }
   }
 
-  async findUserById(id: string): Promise<User | null> {
+  findUserById(id: string): User | null {
     return this.users.get(id) || null;
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
+  findUserByEmail(email: string): User | null {
     return this.usersByEmail.get(email) || null;
   }
 
-  async findUsers(filter: Record<string, unknown>): Promise<User[]> {
+  findUsers(filter: Record<string, unknown>): User[] {
     const users = Array.from(this.users.values());
     return users.filter(user => {
       return Object.entries(filter).every(([key, value]) => {
@@ -97,13 +97,13 @@ export class MockMemoryAdapter extends BaseAdapter {
     });
   }
 
-  async createSession(data: Partial<Session>): Promise<Session> {
+  createSession(data: Partial<Session>): Session {
     const session: Session = {
       id: data.id || generateId(),
-      userId: data.userId!,
-      token: data.token!,
+      userId: data.userId as string,
+      token: data.token as string,
       refreshToken: data.refreshToken,
-      expiresAt: data.expiresAt!,
+      expiresAt: data.expiresAt as Date,
       createdAt: data.createdAt || new Date(),
       lastAccessedAt: data.lastAccessedAt || new Date(),
       ipAddress: data.ipAddress,
@@ -116,7 +116,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return session;
   }
 
-  async updateSession(id: string, data: Partial<Session>): Promise<Session> {
+  updateSession(id: string, data: Partial<Session>): Session {
     const session = this.sessions.get(id);
     if (!session) {
       throw new Error('Session not found');
@@ -137,7 +137,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return updatedSession;
   }
 
-  async deleteSession(id: string): Promise<void> {
+  deleteSession(id: string): void {
     const session = this.sessions.get(id);
     if (session) {
       this.sessions.delete(id);
@@ -145,17 +145,17 @@ export class MockMemoryAdapter extends BaseAdapter {
     }
   }
 
-  async findSessionById(id: string): Promise<Session | null> {
+  findSessionById(id: string): Session | null {
     return this.sessions.get(id) || null;
   }
 
-  async findSessionByToken(token: string): Promise<Session | null> {
+  findSessionByToken(token: string): Session | null {
     return this.sessionsByToken.get(token) || null;
   }
 
-  async findSessionByRefreshToken(
+  findSessionByRefreshToken(
     refreshToken: string
-  ): Promise<Session | null> {
+  ): Session | null {
     return (
       Array.from(this.sessions.values()).find(
         s => s.refreshToken === refreshToken
@@ -163,22 +163,22 @@ export class MockMemoryAdapter extends BaseAdapter {
     );
   }
 
-  async findUserSessions(userId: string): Promise<Session[]> {
+  findUserSessions(userId: string): Session[] {
     return Array.from(this.sessions.values()).filter(s => s.userId === userId);
   }
 
-  async deleteUserSessions(userId: string): Promise<void> {
-    const userSessions = await this.findUserSessions(userId);
+  deleteUserSessions(userId: string): void {
+    const userSessions = this.findUserSessions(userId);
     for (const session of userSessions) {
-      await this.deleteSession(session.id);
+      this.deleteSession(session.id);
     }
   }
 
-  async saveMFASecret(
+  saveMFASecret(
     userId: string,
     method: MFAMethod,
     secret: string
-  ): Promise<void> {
+  ): void {
     const existing = this.mfaSecrets.get(userId) || {};
     if (secret) {
       existing[method] = secret;
@@ -188,20 +188,20 @@ export class MockMemoryAdapter extends BaseAdapter {
     this.mfaSecrets.set(userId, existing);
   }
 
-  async getMFASecret(
+  getMFASecret(
     userId: string,
     method: MFAMethod
-  ): Promise<string | null> {
+  ): string | null {
     const secrets = this.mfaSecrets.get(userId);
     const secret = secrets?.[method];
     return secret || null;
   }
 
-  async saveBackupCodes(userId: string, codes: string[]): Promise<void> {
+  saveBackupCodes(userId: string, codes: string[]): void {
     this.backupCodes.set(userId, codes);
   }
 
-  async verifyBackupCode(userId: string, code: string): Promise<boolean> {
+  verifyBackupCode(userId: string, code: string): boolean {
     const codes = this.backupCodes.get(userId) || [];
     const index = codes.indexOf(code);
     if (index > -1) {
@@ -212,26 +212,26 @@ export class MockMemoryAdapter extends BaseAdapter {
     return false;
   }
 
-  async createAccountLink(
+  createAccountLink(
     userId: string,
     provider: AuthProvider,
     providerId: string
-  ): Promise<void> {
+  ): void {
     const existing = this.accountLinks.get(userId) || [];
     existing.push({ provider, providerId });
     this.accountLinks.set(userId, existing);
   }
 
-  async findAccountLinks(
+  findAccountLinks(
     userId: string
-  ): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
+  ): Array<{ provider: AuthProvider; providerId: string }> {
     return this.accountLinks.get(userId) || [];
   }
 
-  async deleteAccountLink(
+  deleteAccountLink(
     userId: string,
     provider: AuthProvider
-  ): Promise<void> {
+  ): void {
     const existing = this.accountLinks.get(userId) || [];
     const filtered = existing.filter(link => link.provider !== provider);
     this.accountLinks.set(userId, filtered);

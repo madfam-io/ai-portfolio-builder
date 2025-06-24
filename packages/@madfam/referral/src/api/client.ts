@@ -84,28 +84,28 @@ export class ReferralAPIClient {
   }
 
   // Referral management
-  async createReferral(
+  createReferral(
     userId: string,
     request: CreateReferralRequest = {}
-  ): Promise<CreateReferralResponse> {
+  ): CreateReferralResponse {
     return this.request('/referral/create', {
       method: 'POST',
       body: JSON.stringify({ userId, ...request }),
     });
   }
 
-  async trackClick(
+  trackClick(
     request: TrackReferralClickRequest
-  ): Promise<TrackReferralClickResponse> {
+  ): TrackReferralClickResponse {
     return this.request('/referral/track', {
       method: 'POST',
       body: JSON.stringify(request),
     });
   }
 
-  async convertReferral(
+  convertReferral(
     request: ConvertReferralRequest
-  ): Promise<ConvertReferralResponse> {
+  ): ConvertReferralResponse {
     return this.request('/referral/convert', {
       method: 'POST',
       body: JSON.stringify(request),
@@ -113,45 +113,45 @@ export class ReferralAPIClient {
   }
 
   // User data
-  async getUserReferrals(userId: string): Promise<Referral[]> {
+  getUserReferrals(userId: string): Referral[] {
     return this.request(`/referral/user/${userId}/referrals`);
   }
 
-  async getUserRewards(userId: string): Promise<ReferralReward[]> {
+  getUserRewards(userId: string): ReferralReward[] {
     return this.request(`/referral/user/${userId}/rewards`);
   }
 
-  async getUserStats(userId: string): Promise<UserReferralStats> {
+  getUserStats(userId: string): UserReferralStats {
     return this.request(`/referral/user/${userId}/stats`);
   }
 
   // Campaigns
-  async getCampaigns(userId?: string): Promise<ReferralCampaign[]> {
+  getCampaigns(userId?: string): ReferralCampaign[] {
     const params = userId ? `?userId=${userId}` : '';
     return this.request(`/referral/campaigns${params}`);
   }
 
-  async getCampaign(campaignId: string): Promise<ReferralCampaign> {
+  getCampaign(campaignId: string): ReferralCampaign {
     return this.request(`/referral/campaigns/${campaignId}`);
   }
 
   // Analytics
-  async getAnalytics(params: {
+  getAnalytics(params: {
     startDate: string;
     endDate: string;
     campaignId?: string;
-  }): Promise<unknown> {
+  }): unknown {
     const queryParams = new URLSearchParams(params);
     return this.request(`/referral/analytics?${queryParams}`);
   }
 
   // Leaderboard
-  async getLeaderboard(
+  getLeaderboard(
     params: {
       period?: 'daily' | 'weekly' | 'monthly' | 'all-time';
       limit?: number;
     } = {}
-  ): Promise<any[]> {
+  ): any[] {
     const queryParams = new URLSearchParams(params as any);
     return this.request(`/referral/leaderboard?${queryParams}`);
   }

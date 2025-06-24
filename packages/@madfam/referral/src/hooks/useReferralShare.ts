@@ -200,7 +200,7 @@ export function useReferralShare(config: UseReferralShareConfig = {}) {
   );
 
   const copyLink = useCallback(
-    async (referral: Referral): Promise<boolean> => {
+    (referral: Referral): boolean => {
       return share('copy_link', referral);
     },
     [share]
@@ -238,7 +238,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-async function shareToSocialPlatform(url: string): Promise<boolean> {
+function shareToSocialPlatform(url: string): boolean {
   const width = 600;
   const height = 400;
   const left = (window.innerWidth - width) / 2;

@@ -15,7 +15,7 @@
 
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   LineChart,
   Line,
@@ -32,11 +32,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import {
-  TrendingUp,
   Users,
-  Eye,
-  MousePointer,
-  Clock,
   DollarSign,
   Activity,
   Zap,
@@ -92,6 +88,7 @@ export function AnalyticsDashboard() {
         const result = await response.json();
         setData(result);
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.error('Failed to fetch analytics:', error);
       } finally {
         setLoading(false);

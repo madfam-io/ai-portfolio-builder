@@ -321,7 +321,7 @@ export class FeedbackSystem extends EventEmitter {
    */
   async generateFeedbackReport(): Promise<FeedbackReport> {
     try {
-      const [feedback, surveys, metrics, nps] = await Promise.all([
+      const [feedback, surveys, _metrics, nps] = await Promise.all([
         this.getFeedback({ limit: 1000 }),
         this.storage.listSurveys({ limit: 100 }),
         this.getBetaMetrics(),

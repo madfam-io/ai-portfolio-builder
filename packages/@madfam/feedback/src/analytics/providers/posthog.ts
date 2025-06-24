@@ -270,8 +270,8 @@ export class PostHogProvider implements AnalyticsProvider {
    * Cohort analysis
    */
   async createCohort(
-    name: string,
-    query: Record<string, string | number | boolean | string[]>
+    _name: string,
+    _query: Record<string, string | number | boolean | string[]>
   ): Promise<string> {
     await this.ensureInitialized();
 
@@ -287,7 +287,7 @@ export class PostHogProvider implements AnalyticsProvider {
    * Custom insights and queries
    */
   async runQuery(
-    query: Record<string, string | number | boolean | string[]>
+    _query: Record<string, string | number | boolean | string[]>
   ): Promise<unknown> {
     await this.ensureInitialized();
 

@@ -480,7 +480,7 @@ export class SupabaseStorageAdapter extends BaseStorageAdapter {
     }
   }
 
-  async migrate(): Promise<void> {
+  migrate(): void {
     // Migrations are handled by Supabase migrations
     // This is a no-op for the adapter
     return;

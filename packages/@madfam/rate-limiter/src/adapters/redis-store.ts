@@ -72,7 +72,7 @@ export class RedisStore implements RateLimitStore {
         typeof config.redis === 'string'
           ? new Redis(config.redis)
           : new Redis(config.redis);
-    } catch (error) {
+    } catch (_error) {
       throw new Error(
         'ioredis is required for RedisStore. Install it with: npm install ioredis'
       );
@@ -335,7 +335,7 @@ export class RedisStore implements RateLimitStore {
       this.ttl
     );
 
-    const [allowed, used, resetTime, totalHits] = result;
+    const [_allowed, used, resetTime, totalHits] = result;
 
     return {
       limit: capacity,

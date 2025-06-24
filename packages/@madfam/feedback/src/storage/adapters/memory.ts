@@ -43,9 +43,9 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
   }
 
   // Feedback operations
-  async createFeedback(
+  createFeedback(
     feedback: Omit<FeedbackEntry, 'id' | 'timestamp'>
-  ): Promise<FeedbackEntry> {
+  ): FeedbackEntry {
     const entry: FeedbackEntry = {
       ...feedback,
       id: this.generateId('feedback'),
@@ -56,13 +56,13 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return entry;
   }
 
-  async getFeedback(id: string): Promise<FeedbackEntry | null> {
+  getFeedback(id: string): FeedbackEntry | null {
     return this.feedback.get(id) || null;
   }
 
-  async listFeedback(
+  listFeedback(
     filter?: FeedbackFilter
-  ): Promise<PaginatedResponse<FeedbackEntry>> {
+  ): PaginatedResponse<FeedbackEntry> {
     let items = Array.from(this.feedback.values());
 
     // Apply type filter
@@ -93,7 +93,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     // Apply tags filter
     if (filter?.tags && filter.tags.length > 0) {
       items = items.filter(item =>
-        filter.tags!.some(tag => item.tags.includes(tag))
+        filter.tags?.some(tag => item.tags.includes(tag)) ?? false
       );
     }
 
@@ -103,10 +103,10 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return this.paginate(items, filter);
   }
 
-  async updateFeedback(
+  updateFeedback(
     id: string,
     updates: Partial<FeedbackEntry>
-  ): Promise<FeedbackEntry> {
+  ): FeedbackEntry {
     const existing = this.feedback.get(id);
     if (!existing) {
       throw new Error(`Feedback ${id} not found`);
@@ -123,14 +123,14 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return updated;
   }
 
-  async deleteFeedback(id: string): Promise<boolean> {
+  deleteFeedback(id: string): boolean {
     return this.feedback.delete(id);
   }
 
   // Survey operations
-  async createSurvey(
+  createSurvey(
     survey: Omit<SatisfactionSurvey, 'id' | 'timestamp'>
-  ): Promise<SatisfactionSurvey> {
+  ): SatisfactionSurvey {
     const entry: SatisfactionSurvey = {
       ...survey,
       id: this.generateId('survey'),
@@ -141,13 +141,13 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return entry;
   }
 
-  async getSurvey(id: string): Promise<SatisfactionSurvey | null> {
+  getSurvey(id: string): SatisfactionSurvey | null {
     return this.surveys.get(id) || null;
   }
 
-  async listSurveys(
+  listSurveys(
     filter?: Partial<FeedbackFilter>
-  ): Promise<PaginatedResponse<SatisfactionSurvey>> {
+  ): PaginatedResponse<SatisfactionSurvey> {
     let items = Array.from(this.surveys.values());
 
     // Apply user filter
@@ -162,9 +162,9 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
   }
 
   // Event operations
-  async trackEvent(
+  trackEvent(
     event: Omit<FeedbackEvent, 'id' | 'timestamp'>
-  ): Promise<void> {
+  ): void {
     const entry: FeedbackEvent = {
       ...event,
       id: this.generateId('event'),
@@ -179,7 +179,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     }
   }
 
-  async getEvents(filter?: Partial<FeedbackFilter>): Promise<FeedbackEvent[]> {
+  getEvents(filter?: Partial<FeedbackFilter>): FeedbackEvent[] {
     let items = [...this.events];
 
     // Apply user filter
@@ -199,7 +199,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
   }
 
   // Metrics
-  async getMetrics(): Promise<BetaMetrics> {
+  getMetrics(): BetaMetrics {
     const feedbackArray = Array.from(this.feedback.values());
     const surveyArray = Array.from(this.surveys.values());
 
@@ -245,7 +245,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     };
   }
 
-  async getFeedbackTrends(days: number): Promise<FeedbackTrend[]> {
+  getFeedbackTrends(days: number): FeedbackTrend[] {
     const endDate = new Date();
     const startDate = new Date(endDate.getTime() - days * 24 * 60 * 60 * 1000);
 
@@ -282,11 +282,11 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
   }
 
   // Utility
-  async health(): Promise<boolean> {
+  health(): boolean {
     return this.isHealthy;
   }
 
-  async migrate(): Promise<void> {
+  migrate(): void {
     // No migration needed for in-memory storage
     return;
   }

@@ -144,7 +144,7 @@ export class MixpanelProvider implements AnalyticsProvider {
       },
     }));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.client.track_batch(events, (error: any) => {
         if (error) {
           const results = batch.events.map(() => ({
@@ -222,7 +222,7 @@ export class MixpanelProvider implements AnalyticsProvider {
     // Mixpanel automatically handles flushing
   }
 
-  async shutdown(): Promise<void> {
+  shutdown(): void {
     this.initialized = false;
   }
 
@@ -301,7 +301,7 @@ export class MixpanelProvider implements AnalyticsProvider {
   /**
    * Cohort analysis
    */
-  async addUserToCohort(userId: string, cohortId: string): Promise<void> {
+  async addUserToCohort(_userId: string, _cohortId: string): Promise<void> {
     await this.ensureInitialized();
 
     if (!this.config.apiSecret) {
@@ -343,7 +343,7 @@ export class MixpanelProvider implements AnalyticsProvider {
   /**
    * Custom queries (requires API secret)
    */
-  async runJQLQuery(query: string): Promise<unknown> {
+  async runJQLQuery(_query: string): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.apiSecret) {

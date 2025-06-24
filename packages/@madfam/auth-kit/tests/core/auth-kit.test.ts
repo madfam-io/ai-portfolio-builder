@@ -324,7 +324,10 @@ describe('AuthKit', () => {
       const resetToken = user?.metadata?.passwordResetToken as string;
 
       // Manually expire the token
-      await adapter.updateUser(user!.id, {
+      if (!user) {
+        throw new Error('User not found');
+      }
+      await adapter.updateUser(user.id, {
         metadata: {
           ...user?.metadata,
           passwordResetExpiry: new Date(Date.now() - 1000), // Expired 1 second ago
@@ -403,7 +406,7 @@ describe('AuthKit', () => {
 
       expect(result.valid).toBe(false);
       expect(result.feedback).toBeDefined();
-      expect(result.feedback!.length).toBeGreaterThan(0);
+      expect(result.feedback?.length ?? 0).toBeGreaterThan(0);
     });
   });
 

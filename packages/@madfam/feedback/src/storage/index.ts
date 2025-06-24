@@ -18,7 +18,6 @@
 import type {
   StorageAdapter,
   StorageConfig,
-  StorageError as StorageErrorType,
 } from '../core/types';
 import { MemoryStorageAdapter } from './adapters/memory';
 import { SupabaseStorageAdapter } from './adapters/supabase';

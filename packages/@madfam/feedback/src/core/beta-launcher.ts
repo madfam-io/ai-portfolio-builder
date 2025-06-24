@@ -81,9 +81,9 @@ export class BetaLaunchChecker {
     const checks = {
       performance: await this.checkPerformance(),
       stability: await this.checkStability(),
-      features: await this.checkFeatures(),
-      testing: await this.checkTesting(),
-      monitoring: await this.checkMonitoring(),
+      features: this.checkFeatures(),
+      testing: this.checkTesting(),
+      monitoring: this.checkMonitoring(),
     };
 
     const passedCount = Object.values(checks).filter(
@@ -117,7 +117,7 @@ export class BetaLaunchChecker {
    */
   private async checkPerformance(): Promise<ReadinessCheck> {
     try {
-      const metrics = await this.getPerformanceMetrics();
+      const metrics = this.getPerformanceMetrics();
       const targets = this.config.performanceTargets;
 
       const checks = [
@@ -247,7 +247,7 @@ export class BetaLaunchChecker {
   /**
    * Check feature completeness
    */
-  private async checkFeatures(): Promise<ReadinessCheck> {
+  private checkFeatures(): ReadinessCheck {
     try {
       const { coreFeatures, optionalFeatures } =
         this.config.featureCompleteness;
@@ -303,7 +303,7 @@ export class BetaLaunchChecker {
   /**
    * Check testing coverage and quality
    */
-  private async checkTesting(): Promise<ReadinessCheck> {
+  private checkTesting(): ReadinessCheck {
     try {
       const requirements = this.config.testingRequirements;
 
@@ -371,7 +371,7 @@ export class BetaLaunchChecker {
   /**
    * Check monitoring and observability
    */
-  private async checkMonitoring(): Promise<ReadinessCheck> {
+  private checkMonitoring(): ReadinessCheck {
     try {
       const requirements = this.config.monitoringRequirements;
 
@@ -421,11 +421,11 @@ export class BetaLaunchChecker {
   /**
    * Get performance metrics (mock implementation)
    */
-  private async getPerformanceMetrics(): Promise<{
+  private getPerformanceMetrics(): {
     avgResponseTime: number;
     errorRate: number;
     uptime: number;
-  }> {
+  } {
     // In a real implementation, this would fetch from monitoring systems
     return {
       avgResponseTime: 150, // milliseconds

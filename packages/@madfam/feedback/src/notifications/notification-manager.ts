@@ -29,7 +29,6 @@ import type {
   SatisfactionSurvey,
   FeedbackReport,
   NotificationConfig,
-  NotificationEvent,
   NotificationPayload,
 } from '../core/types';
 import type { NotificationQueue, NotificationMetrics } from './types';
@@ -120,7 +119,7 @@ export class NotificationManager extends EventEmitter {
   /**
    * Send weekly digest
    */
-  async sendWeeklyDigest(report: FeedbackReport): Promise<void> {
+  async sendWeeklyDigest(_report: FeedbackReport): Promise<void> {
     this.logger.info('Sending weekly digest');
 
     const payload: NotificationPayload = {
@@ -260,7 +259,7 @@ export class NotificationManager extends EventEmitter {
 
     // Team notifications for resolutions
     if (feedback.status === 'resolved') {
-      const payload: NotificationPayload = {
+      const _payload: NotificationPayload = {
         event: 'feedback.resolved',
         timestamp: new Date(),
         data: { feedback, previousStatus },
@@ -294,7 +293,7 @@ export class NotificationManager extends EventEmitter {
   /**
    * Queue notification for processing
    */
-  private async queueNotification(
+  private queueNotification(
     type: 'email' | 'webhook' | 'slack',
     payload: NotificationPayload,
     priority: 'low' | 'normal' | 'high'
@@ -444,9 +443,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process Slack notification
    */
-  private async processSlackNotification(
-    notification: NotificationQueue
-  ): Promise<void> {
+  private processSlackNotification(
+    _notification: NotificationQueue
+  ): void {
     if (!this.slackService) {
       throw new Error('Slack service not configured');
     }
@@ -504,7 +503,7 @@ export class NotificationManager extends EventEmitter {
 class WebhookService {
   constructor(private config: NotificationConfig) {}
 
-  async sendWebhook(payload: NotificationPayload): Promise<void> {
+  async sendWebhook(_payload: NotificationPayload): Promise<void> {
     // Webhook implementation
   }
 }
@@ -512,23 +511,23 @@ class WebhookService {
 class SlackService {
   constructor(private config: NotificationConfig) {}
 
-  async sendCriticalBugAlert(feedback: FeedbackEntry): Promise<void> {
+  async sendCriticalBugAlert(_feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
 
-  async sendNewFeedbackNotification(feedback: FeedbackEntry): Promise<void> {
+  async sendNewFeedbackNotification(_feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
 
-  async sendResolutionNotification(feedback: FeedbackEntry): Promise<void> {
+  async sendResolutionNotification(_feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
 
-  async sendLowSatisfactionAlert(survey: SatisfactionSurvey): Promise<void> {
+  async sendLowSatisfactionAlert(_survey: SatisfactionSurvey): Promise<void> {
     // Slack implementation
   }
 
-  async sendWeeklyDigest(report: FeedbackReport): Promise<void> {
+  async sendWeeklyDigest(_report: FeedbackReport): Promise<void> {
     // Slack implementation
   }
 

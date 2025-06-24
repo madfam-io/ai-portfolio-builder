@@ -353,8 +353,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     userId: string,
     productId: string,
     price: number,
-    quantity: number = 1,
-    properties: Record<string, string | number | boolean> = {}
+    quantity: number = 1
   ): Promise<void> {
     await this.ensureInitialized();
 
@@ -365,7 +364,6 @@ export class AmplitudeProvider implements AnalyticsProvider {
       productId,
       quantity,
       price,
-      ...properties,
     };
 
     this.client.logRevenue(revenueEvent);
@@ -374,7 +372,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
   /**
    * Cohort analysis
    */
-  async getCohortMembership(userId: string): Promise<string[]> {
+  async getCohortMembership(_userId: string): Promise<string[]> {
     await this.ensureInitialized();
 
     if (!this.config.secretKey) {
@@ -388,7 +386,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
   /**
    * User lookup
    */
-  async getUserProfile(userId: string): Promise<unknown> {
+  async getUserProfile(_userId: string): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.secretKey) {
@@ -403,7 +401,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
    * Custom queries
    */
   async runQuery(
-    query: Record<string, string | number | boolean | string[]>
+    _query: Record<string, string | number | boolean | string[]>
   ): Promise<unknown> {
     await this.ensureInitialized();
 

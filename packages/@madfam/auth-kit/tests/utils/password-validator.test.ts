@@ -267,7 +267,7 @@ describe('validatePassword', () => {
 
       expect(result.valid).toBe(false);
       expect(result.feedback).toBeDefined();
-      expect(result.feedback!.length).toBeGreaterThan(0);
+      expect(result.feedback?.length ?? 0).toBeGreaterThan(0);
     });
 
     it('should handle null/undefined requirements', async () => {
@@ -313,9 +313,9 @@ describe('validatePassword', () => {
       const result = await validatePassword('weak', defaultRequirements);
 
       expect(result.feedback).toBeDefined();
-      expect(result.feedback!.length).toBeGreaterThan(0);
+      expect(result.feedback?.length ?? 0).toBeGreaterThan(0);
       expect(
-        result.feedback!.some(
+        result.feedback?.some(
           msg => msg.includes('long') || msg.includes('short')
         )
       ).toBe(true);
@@ -330,7 +330,7 @@ describe('validatePassword', () => {
       });
 
       expect(result.feedback).toBeDefined();
-      expect(result.feedback!.length).toBeGreaterThan(1);
+      expect(result.feedback?.length ?? 0).toBeGreaterThan(1);
     });
 
     it('should provide warnings for borderline passwords', async () => {
@@ -360,7 +360,7 @@ describe('validatePassword', () => {
 
       expect(result.valid).toBe(false);
       expect(result.score).toBeLessThan(2);
-      expect(result.feedback!.length).toBeGreaterThan(2);
+      expect(result.feedback?.length ?? 0).toBeGreaterThan(2);
     });
   });
 });

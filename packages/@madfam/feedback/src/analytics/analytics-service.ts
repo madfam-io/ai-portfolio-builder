@@ -332,7 +332,12 @@ export class AnalyticsService extends EventEmitter {
     try {
       const results = this.provider.batchTrack
         ? await this.provider.batchTrack(batch)
-        : await Promise.all(events.map(event => this.provider!.track(event)));
+        : await Promise.all(events.map(event => {
+            if (!this.provider) {
+              throw new Error('Analytics provider not initialized');
+            }
+            return this.provider.track(event);
+          }));
 
       this.emit('batch.sent', { batch, results });
       return results;

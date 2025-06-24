@@ -107,8 +107,9 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
       filtered = filtered.filter(item => {
         const timestamp = new Date(item.timestamp);
         return (
-          timestamp >= filter.dateRange!.start &&
-          timestamp <= filter.dateRange!.end
+          filter.dateRange &&
+          timestamp >= filter.dateRange.start &&
+          timestamp <= filter.dateRange.end
         );
       });
     }
@@ -116,8 +117,9 @@ export abstract class BaseStorageAdapter implements StorageAdapter {
     // Sort
     if (filter.sortBy) {
       filtered.sort((a, b) => {
-        const aValue = this.getSortValue(a, filter.sortBy!);
-        const bValue = this.getSortValue(b, filter.sortBy!);
+        if (!filter.sortBy) return 0;
+        const aValue = this.getSortValue(a, filter.sortBy);
+        const bValue = this.getSortValue(b, filter.sortBy);
 
         const comparison = aValue > bValue ? 1 : aValue < bValue ? -1 : 0;
         return filter.sortOrder === 'desc' ? -comparison : comparison;

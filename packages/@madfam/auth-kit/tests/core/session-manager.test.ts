@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { jest, describe, it, expect, beforeEach } from '@jest/globals';
+import { describe, it, expect, beforeEach } from '@jest/globals';
 import { SessionManager } from '../../src/core/session-manager';
 import { MockMemoryAdapter } from '../mocks/memory-adapter';
 import type { SessionConfig } from '../../src/core/types';
@@ -148,8 +148,12 @@ describe('SessionManager', () => {
 
       expect(originalSession.refreshToken).toBeDefined();
 
+      if (!originalSession.refreshToken) {
+        throw new Error('Refresh token not found');
+      }
+
       const refreshedSession = await sessionManager.refreshSession(
-        originalSession.refreshToken!
+        originalSession.refreshToken
       );
 
       expect(refreshedSession).toBeDefined();
@@ -175,8 +179,12 @@ describe('SessionManager', () => {
         expiresAt: new Date(Date.now() - 1000),
       });
 
+      if (!originalSession.refreshToken) {
+        throw new Error('Refresh token not found');
+      }
+
       await expect(
-        sessionManager.refreshSession(originalSession.refreshToken!)
+        sessionManager.refreshSession(originalSession.refreshToken)
       ).rejects.toThrow('Invalid or expired refresh token');
     });
   });

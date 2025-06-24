@@ -18,7 +18,6 @@ import {
   APIBINDatabase,
   BINLookupError,
 } from '../../card-intelligence/bin-database';
-import { CardInfo } from '../../types';
 
 describe('BIN Database', () => {
   describe('InMemoryBINDatabase', () => {

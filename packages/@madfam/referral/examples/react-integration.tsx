@@ -29,7 +29,6 @@ import React, { useState } from 'react';
 import {
   useReferral,
   useReferralCampaigns,
-  useReferralStats,
   useReferralShare,
 } from '@madfam/referral/hooks';
 

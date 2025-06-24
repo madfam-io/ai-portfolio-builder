@@ -325,9 +325,9 @@ export class UnifiedPricingService {
 
   // Private helper methods
 
-  private async getGeographicalContext(
+  private getGeographicalContext(
     context: UnifiedPricingContext
-  ): Promise<GeographicalContext | null> {
+  ): GeographicalContext | null {
     if (!context.ipCountry) return null;
 
     // In production, this would use the real GeographicalContextEngine

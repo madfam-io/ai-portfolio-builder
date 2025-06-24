@@ -73,7 +73,7 @@ describe('MFAManager', () => {
       expect(result.qrCode).toBeUndefined();
     });
 
-    it('should throw error for disabled method', async () => {
+    it('should throw error for disabled method', () => {
       const configWithDisabledSMS: MFAConfig = {
         enabled: true,
         methods: {
@@ -91,7 +91,7 @@ describe('MFAManager', () => {
       ).toThrow('MFA method sms is not enabled');
     });
 
-    it('should throw error when MFA is disabled', async () => {
+    it('should throw error when MFA is disabled', () => {
       const disabledConfig: MFAConfig = {
         enabled: false,
         methods: {},
