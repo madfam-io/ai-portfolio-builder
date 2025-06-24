@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.3...v0.4.4) (2025-06-24)
+
+
+### Features
+
+* implement comprehensive adapter system for @madfam/experiments ([0824d8d](https://github.com/madfam-io/ai-portfolio-builder/commit/0824d8da420d35c0a296bf4beecf14bbc8b59864))
+
+
+### Bug Fixes
+
+* eliminate all ESLint warnings with proper TypeScript types ([10cc6bf](https://github.com/madfam-io/ai-portfolio-builder/commit/10cc6bf8f4f6508f60621284102ed91e5e2a2034))
+* update pnpm lockfile to sync with experiments package dependencies ([0d0e270](https://github.com/madfam-io/ai-portfolio-builder/commit/0d0e27005a7aba1077f5f2d3938a9b0df9357b56))
+
 ### [0.4.3](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.2...v0.4.3) (2025-06-24)
 
 
