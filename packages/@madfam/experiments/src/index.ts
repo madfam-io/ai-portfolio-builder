@@ -24,15 +24,25 @@
 /**
  * @madfam/experiments
  *
- * Enterprise-grade A/B testing and feature flags system
+ * Enterprise-grade A/B testing and feature flags system with adapter support
  */
 
 // Core exports
 export { Experiments } from './core/experiments';
+export { ExperimentsEnhanced } from './core/experiments-enhanced';
 export { AllocationEngine } from './core/allocation-engine';
 export { TargetingEngine } from './core/targeting-engine';
 export { AnalyticsEngine } from './core/analytics-engine';
 export { CacheManager } from './core/cache-manager';
+
+// Configuration exports
+export type { ExperimentsConfigWithAdapters } from './core/config';
+
+// Adapter exports
+export * from './adapters';
+
+// Next.js integration exports
+export * from './integrations/nextjs';
 
 // Type exports
 export type {
@@ -107,9 +117,15 @@ export type {
   AsyncResult,
 } from './core/types';
 
-// Factory function
+// Factory functions
 export function createExperiments(
   config?: import('./core/types').ExperimentsConfig
 ) {
   return new Experiments(config);
+}
+
+export function createExperimentsWithAdapters(
+  config?: import('./core/config').ExperimentsConfigWithAdapters
+) {
+  return new ExperimentsEnhanced(config);
 }

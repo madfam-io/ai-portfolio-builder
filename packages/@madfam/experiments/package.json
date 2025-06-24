@@ -1,9 +1,9 @@
 {
   "name": "@madfam/experiments",
   "version": "1.0.0",
-  "description": "Enterprise-grade A/B testing and feature flags system with real-time analytics",
+  "description": "Enterprise-grade A/B testing and feature flags system with real-time analytics and adapter support",
   "author": "MADFAM LLC <team@madfam.io>",
-  "license": "MIT",
+  "license": "MCAL-1.0",
   "main": "./dist/index.js",
   "module": "./dist/index.esm.js",
   "types": "./dist/index.d.ts",
@@ -72,13 +72,21 @@
   },
   "peerDependencies": {
     "react": ">=16.8.0",
-    "react-dom": ">=16.8.0"
+    "react-dom": ">=16.8.0",
+    "@supabase/supabase-js": ">=2.0.0",
+    "next": ">=13.0.0"
   },
   "peerDependenciesMeta": {
     "react": {
       "optional": true
     },
     "react-dom": {
+      "optional": true
+    },
+    "@supabase/supabase-js": {
+      "optional": true
+    },
+    "next": {
       "optional": true
     }
   },
