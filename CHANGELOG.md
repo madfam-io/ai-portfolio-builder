@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.5](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.4...v0.4.5) (2025-06-24)
+
+
+### Features
+
+* extract @madfam/analytics-hub and @madfam/ui-components packages ([7f3f0bc](https://github.com/madfam-io/ai-portfolio-builder/commit/7f3f0bc7ef2acbcdd4e6c1b4d8cd4aa17da3df18))
+
+
+### Bug Fixes
+
+* resolve smart-fiat-payments cache test failures ([e2a4288](https://github.com/madfam-io/ai-portfolio-builder/commit/e2a42889f24b6711eb1943818eedc56c7968d0ca))
+* update pnpm lockfile for new packages and fix radix-ui versions ([c233365](https://github.com/madfam-io/ai-portfolio-builder/commit/c2333657aef932a79f790ad1a90df2735c092ab7))
+
 ### [0.4.4](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.3...v0.4.4) (2025-06-24)
 
 
