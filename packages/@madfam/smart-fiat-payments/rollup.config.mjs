@@ -11,15 +11,15 @@ const packageJson = {
 };
 
 const external = [
-  'react', 
-  'react-dom', 
+  'react',
+  'react-dom',
   'react/jsx-runtime',
   'node-ipinfo',
   'crypto',
   'querystring',
   'url',
   'http',
-  'https'
+  'https',
 ];
 
 const entries = [
@@ -73,7 +73,11 @@ export default [
     onwarn(warning, warn) {
       // Suppress specific warnings
       if (warning.code === 'THIS_IS_UNDEFINED') return;
-      if (warning.code === 'MISSING_EXPORT' && warning.message.includes('node-ipinfo')) return;
+      if (
+        warning.code === 'MISSING_EXPORT' &&
+        warning.message.includes('node-ipinfo')
+      )
+        return;
       // Log other warnings
       warn(warning);
     },

@@ -31,12 +31,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import {
-  Users,
-  DollarSign,
-  Activity,
-  Zap,
-} from 'lucide-react';
+import { Users, DollarSign, Activity, Zap } from 'lucide-react';
 
 interface AnalyticsData {
   users: {

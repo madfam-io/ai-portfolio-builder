@@ -304,9 +304,7 @@ export class EmailService {
   /**
    * Process email template
    */
-  private processTemplate(
-    notification: EmailNotification
-  ): EmailNotification {
+  private processTemplate(notification: EmailNotification): EmailNotification {
     const template = this.loadTemplate(notification.templateId);
 
     return {
@@ -410,7 +408,9 @@ export class EmailService {
   /**
    * Track email sent
    */
-  private async trackEmailSent(_notification: EmailNotification): Promise<void> {
+  private async trackEmailSent(
+    _notification: EmailNotification
+  ): Promise<void> {
     // Track email delivery for analytics
     // Implementation would store delivery metrics
   }

@@ -60,9 +60,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return this.feedback.get(id) || null;
   }
 
-  listFeedback(
-    filter?: FeedbackFilter
-  ): PaginatedResponse<FeedbackEntry> {
+  listFeedback(filter?: FeedbackFilter): PaginatedResponse<FeedbackEntry> {
     let items = Array.from(this.feedback.values());
 
     // Apply type filter
@@ -92,8 +90,8 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
 
     // Apply tags filter
     if (filter?.tags && filter.tags.length > 0) {
-      items = items.filter(item =>
-        filter.tags?.some(tag => item.tags.includes(tag)) ?? false
+      items = items.filter(
+        item => filter.tags?.some(tag => item.tags.includes(tag)) ?? false
       );
     }
 
@@ -103,10 +101,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
     return this.paginate(items, filter);
   }
 
-  updateFeedback(
-    id: string,
-    updates: Partial<FeedbackEntry>
-  ): FeedbackEntry {
+  updateFeedback(id: string, updates: Partial<FeedbackEntry>): FeedbackEntry {
     const existing = this.feedback.get(id);
     if (!existing) {
       throw new Error(`Feedback ${id} not found`);
@@ -162,9 +157,7 @@ export class MemoryStorageAdapter extends BaseStorageAdapter {
   }
 
   // Event operations
-  trackEvent(
-    event: Omit<FeedbackEvent, 'id' | 'timestamp'>
-  ): void {
+  trackEvent(event: Omit<FeedbackEvent, 'id' | 'timestamp'>): void {
     const entry: FeedbackEvent = {
       ...event,
       id: this.generateId('event'),

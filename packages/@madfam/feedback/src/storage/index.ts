@@ -15,10 +15,7 @@
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
 
-import type {
-  StorageAdapter,
-  StorageConfig,
-} from '../core/types';
+import type { StorageAdapter, StorageConfig } from '../core/types';
 import { MemoryStorageAdapter } from './adapters/memory';
 import { SupabaseStorageAdapter } from './adapters/supabase';
 

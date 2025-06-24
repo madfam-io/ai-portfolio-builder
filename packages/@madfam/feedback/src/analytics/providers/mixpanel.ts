@@ -144,7 +144,7 @@ export class MixpanelProvider implements AnalyticsProvider {
       },
     }));
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       this.client.track_batch(events, (error: any) => {
         if (error) {
           const results = batch.events.map(() => ({

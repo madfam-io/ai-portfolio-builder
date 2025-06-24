@@ -153,9 +153,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return this.sessionsByToken.get(token) || null;
   }
 
-  findSessionByRefreshToken(
-    refreshToken: string
-  ): Session | null {
+  findSessionByRefreshToken(refreshToken: string): Session | null {
     return (
       Array.from(this.sessions.values()).find(
         s => s.refreshToken === refreshToken
@@ -174,11 +172,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     }
   }
 
-  saveMFASecret(
-    userId: string,
-    method: MFAMethod,
-    secret: string
-  ): void {
+  saveMFASecret(userId: string, method: MFAMethod, secret: string): void {
     const existing = this.mfaSecrets.get(userId) || {};
     if (secret) {
       existing[method] = secret;
@@ -188,10 +182,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     this.mfaSecrets.set(userId, existing);
   }
 
-  getMFASecret(
-    userId: string,
-    method: MFAMethod
-  ): string | null {
+  getMFASecret(userId: string, method: MFAMethod): string | null {
     const secrets = this.mfaSecrets.get(userId);
     const secret = secrets?.[method];
     return secret || null;
@@ -228,10 +219,7 @@ export class MockMemoryAdapter extends BaseAdapter {
     return this.accountLinks.get(userId) || [];
   }
 
-  deleteAccountLink(
-    userId: string,
-    provider: AuthProvider
-  ): void {
+  deleteAccountLink(userId: string, provider: AuthProvider): void {
     const existing = this.accountLinks.get(userId) || [];
     const filtered = existing.filter(link => link.provider !== provider);
     this.accountLinks.set(userId, filtered);

@@ -443,9 +443,7 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process Slack notification
    */
-  private processSlackNotification(
-    _notification: NotificationQueue
-  ): void {
+  private processSlackNotification(_notification: NotificationQueue): void {
     if (!this.slackService) {
       throw new Error('Slack service not configured');
     }

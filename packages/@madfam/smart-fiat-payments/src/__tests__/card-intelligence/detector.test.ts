@@ -13,9 +13,7 @@
  * Tests for card detection and intelligence
  */
 
-import {
-  CardDetector,
-} from '../../card-intelligence/detector';
+import { CardDetector } from '../../card-intelligence/detector';
 
 describe('CardDetector', () => {
   let detector: CardDetector;

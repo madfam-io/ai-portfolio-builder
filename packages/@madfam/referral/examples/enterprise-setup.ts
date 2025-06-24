@@ -174,10 +174,7 @@ class EnterpriseReferralSystem {
   /**
    * Analytics dashboard data
    */
-  getEnterpriseAnalytics(
-    startDate: Date,
-    endDate: Date
-  ): ReferralAnalytics {
+  getEnterpriseAnalytics(startDate: Date, endDate: Date): ReferralAnalytics {
     // Mock analytics data - in production, this would query your analytics DB
     return {
       period: {
@@ -317,10 +314,7 @@ class EnterpriseReferralSystem {
     console.log(`Reward ${rewardId} approved automatically`);
   }
 
-  private flagForManualReview(
-    rewardId: string,
-    criteria: any
-  ): void {
+  private flagForManualReview(rewardId: string, criteria: any): void {
     console.log(`Reward ${rewardId} flagged for review:`, criteria);
   }
 }

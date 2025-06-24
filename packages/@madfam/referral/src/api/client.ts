@@ -94,18 +94,14 @@ export class ReferralAPIClient {
     });
   }
 
-  trackClick(
-    request: TrackReferralClickRequest
-  ): TrackReferralClickResponse {
+  trackClick(request: TrackReferralClickRequest): TrackReferralClickResponse {
     return this.request('/referral/track', {
       method: 'POST',
       body: JSON.stringify(request),
     });
   }
 
-  convertReferral(
-    request: ConvertReferralRequest
-  ): ConvertReferralResponse {
+  convertReferral(request: ConvertReferralRequest): ConvertReferralResponse {
     return this.request('/referral/convert', {
       method: 'POST',
       body: JSON.stringify(request),
