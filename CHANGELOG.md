@@ -2,6 +2,69 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.2](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.1...v0.4.2) (2025-06-24)
+
+
+### Features
+
+* achieve MADFAM gold standard - zero errors, all tests pass ([f0b7bfe](https://github.com/madfam-io/ai-portfolio-builder/commit/f0b7bfe61651feef977ea12c159c63c63f0f1949))
+* add MCAL headers and complete analytics integration ([80b450c](https://github.com/madfam-io/ai-portfolio-builder/commit/80b450c289a10bf1f2b6ffa4865396e05d89597a))
+* complete comprehensive test and lint fixes ([c41c031](https://github.com/madfam-io/ai-portfolio-builder/commit/c41c031f63e5afd37168d53bd9759b7e34f52722))
+* create @madfam/auth-kit and @madfam/logger packages ([0a9c062](https://github.com/madfam-io/ai-portfolio-builder/commit/0a9c06259f40f3746a431a3297615e1f42cdf437))
+* create @madfam/experiments package for A/B testing and feature flags ([1715feb](https://github.com/madfam-io/ai-portfolio-builder/commit/1715feb9c3b5984dcac9f3c6dc5381e18a02e23e))
+* extract feedback system into @madfam/feedback package ([9f277ac](https://github.com/madfam-io/ai-portfolio-builder/commit/9f277ac1b8676bce6d7823cbac7f9edc5035eb99))
+* implement complete MADFAM Smart Payments platform to gold standard ([6653e0d](https://github.com/madfam-io/ai-portfolio-builder/commit/6653e0dfd6a1fd6e0f4f5fcdd6becfe81e1453e0))
+* implement comprehensive analytics dashboard with PostHog integration ([495e633](https://github.com/madfam-io/ai-portfolio-builder/commit/495e6331b37ca29967432c3ad17ac437f1f21cff))
+* implement comprehensive v0.4.0-beta package system ([2c2ebfb](https://github.com/madfam-io/ai-portfolio-builder/commit/2c2ebfb29f0f14464b4929284b4a0eae9b7ae5d6))
+* implement world-class referral system as publishable @madfam/referral package ([54b0aee](https://github.com/madfam-io/ai-portfolio-builder/commit/54b0aee11325e13dbd91b317466a04ef9d50c424))
+* optimize pricing architecture with unified configuration ([5acadba](https://github.com/madfam-io/ai-portfolio-builder/commit/5acadbad6889e0a4a5ad1885b0f2ed126fe351b7))
+
+
+### Bug Fixes
+
+* [auth-kit] resolve all test failures and improve mock implementations ([fd2d698](https://github.com/madfam-io/ai-portfolio-builder/commit/fd2d698b07c69a4005fe25d7016b7b71a448218d))
+* achieve MADFAM gold standard - zero warnings, zero errors ([712ef34](https://github.com/madfam-io/ai-portfolio-builder/commit/712ef347fa385fafcb4f7eeca95333b38d2cee47))
+* add all modules to rollup build configuration ([f275d57](https://github.com/madfam-io/ai-portfolio-builder/commit/f275d571d95c5b629356b8298ed962706bbf91e7))
+* add license headers to all package files and update license check script ([36d14ae](https://github.com/madfam-io/ai-portfolio-builder/commit/36d14ae2ef1553f63bf24b47797b9ac67c92abab))
+* add non-null assertions to fix TypeScript strictness error ([8ac2d92](https://github.com/madfam-io/ai-portfolio-builder/commit/8ac2d92fde983f607d5620fdb440f1a767eb6c61))
+* handle directories with file extensions in license check script ([bb76d18](https://github.com/madfam-io/ai-portfolio-builder/commit/bb76d18daae6ea2a8f691862d8ae12687afe77c5))
+* partial test fixes for auth-kit and smart-payments ([440231a](https://github.com/madfam-io/ai-portfolio-builder/commit/440231a2b6c9c3f0496ffc6398db29e93f0fdcdc))
+* rename conflicting types across modules to resolve export conflicts ([48b734a](https://github.com/madfam-io/ai-portfolio-builder/commit/48b734ade849ac5f06cdc5bc1d61b4a12659ee88))
+* resolve 12 more test failures (49 remaining) ([7dd9e13](https://github.com/madfam-io/ai-portfolio-builder/commit/7dd9e139dae7157bcd0332f94c98e5f282e2348e))
+* resolve 21 test failures and reorganize mock structure ([c19dd4b](https://github.com/madfam-io/ai-portfolio-builder/commit/c19dd4b4eaa59be04693a1d266de4000cc39fed8))
+* resolve all ESLint errors in [@madfam](https://github.com/madfam) packages ([c3204db](https://github.com/madfam-io/ai-portfolio-builder/commit/c3204db5b7d56c5649042090a6d38400ddf4fde0))
+* resolve all ESLint errors in auth-kit and logger packages ([3266308](https://github.com/madfam-io/ai-portfolio-builder/commit/3266308130e9d0c1ccd594ddfab17dc1ec595327))
+* resolve all TypeScript and ESLint errors for clean CI/CD ([c270cf0](https://github.com/madfam-io/ai-portfolio-builder/commit/c270cf0b08f095f16d3fa7a3122a345a6624b588))
+* resolve all TypeScript build errors in smart-fiat-payments ([70db6b6](https://github.com/madfam-io/ai-portfolio-builder/commit/70db6b68fc54f67f1cc8270386e13318c2dafe02))
+* resolve all TypeScript errors and ESLint warnings ([a96cd95](https://github.com/madfam-io/ai-portfolio-builder/commit/a96cd95adc2739611e33e228c895ecf1a4d75aac))
+* resolve ESLint errors and partial test fixes ([5a984aa](https://github.com/madfam-io/ai-portfolio-builder/commit/5a984aab3c856574ba68a24b39b3c4deba8c85ab))
+* resolve TypeScript export conflicts in smart-fiat-payments ([69ff66d](https://github.com/madfam-io/ai-portfolio-builder/commit/69ff66dd2bbc755b291c614c20d668e87b13876f))
+* resolve TypeScript export conflicts in smart-fiat-payments ([a2abf52](https://github.com/madfam-io/ai-portfolio-builder/commit/a2abf5274e5a87fe9ac373c814b52c3e6d46134c))
+* resolve TypeScript strict mode errors for Vercel build ([773dcc6](https://github.com/madfam-io/ai-portfolio-builder/commit/773dcc607b968dbe863df40b9fe1ec4f6a04211e))
+* simplify exports to use wildcard exports ([2174a86](https://github.com/madfam-io/ai-portfolio-builder/commit/2174a861be4bbcd2e0a8990bc52419d3cec1c045))
+* simplify research module exports to resolve build error ([97d5508](https://github.com/madfam-io/ai-portfolio-builder/commit/97d5508212c73bb951e5ffa59be8074abdc5fabf))
+* update all package headers to @madfam/smart-fiat-payments ([d84630b](https://github.com/madfam-io/ai-portfolio-builder/commit/d84630bd8a6334c16e65996b5b588919c76fc8a4))
+* update index.ts to only export existing types ([da9ea58](https://github.com/madfam-io/ai-portfolio-builder/commit/da9ea5843a68c83f64e93b64d0d92c2d1a64654d))
+* update pnpm lockfile and add missing license header ([467ef0b](https://github.com/madfam-io/ai-portfolio-builder/commit/467ef0b66ab391b212e36f82aba1ef38eac48545))
+* update pnpm lockfile to match auth-kit package.json ([abc77c9](https://github.com/madfam-io/ai-portfolio-builder/commit/abc77c9bd47b38accc69e78921814abd225a4d57))
+
+
+### Build System
+
+* add dist files for @madfam/referral package ([4ceb64e](https://github.com/madfam-io/ai-portfolio-builder/commit/4ceb64e45eb352386f35ce82a3f85c9e15c69de0))
+
+
+### Styles
+
+* fix formatting issues across packages ([1ced05c](https://github.com/madfam-io/ai-portfolio-builder/commit/1ced05ca9e17deb8e92b5b249d85561ab533e0f3))
+
+
+### Chores
+
+* format script files with Prettier ([17b3aaf](https://github.com/madfam-io/ai-portfolio-builder/commit/17b3aafe3fc11e17c104f3d722b2eec6bf7d54fa))
+* update pnpm lockfile for new packages ([a13d565](https://github.com/madfam-io/ai-portfolio-builder/commit/a13d5656c1de32a28b4218fe140cb40132824a54))
+* update pnpm lockfile for smart-payments package ([4be7e42](https://github.com/madfam-io/ai-portfolio-builder/commit/4be7e4272c5ef41e1a51a6a69e91cf84430ea292))
+
 ### [0.4.1](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.3.1...v0.4.1) (2025-06-22)
 
 
