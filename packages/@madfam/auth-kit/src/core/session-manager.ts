@@ -39,7 +39,12 @@ export class SessionManager {
    */
   async createSession(
     userId: string,
-    options?: { rememberMe?: boolean; deviceId?: string; ipAddress?: string; userAgent?: string }
+    options?: {
+      rememberMe?: boolean;
+      deviceId?: string;
+      ipAddress?: string;
+      userAgent?: string;
+    }
   ): Promise<Session> {
     const sessionId = generateId();
     const now = new Date();
@@ -112,33 +117,25 @@ export class SessionManager {
         if (!payload) return null;
 
         // Check if session exists in database
-        if (this.adapter) {
-          const session = await this.adapter.findSessionById(payload.sessionId);
-          if (!session) return null;
-
-          // Check expiry
-          if (new Date() > session.expiresAt) {
-            await this.adapter.deleteSession(session.id);
-            return null;
-          }
-
-          // Update last accessed
-          const updatedSession = await this.adapter.updateSession(session.id, {
-            lastAccessedAt: new Date(),
-          });
-
-          return updatedSession;
+        if (!this.adapter) {
+          return null;
         }
 
-        // For JWT without database, reconstruct session
-        return {
-          id: payload.sessionId,
-          userId: payload.userId,
-          token,
-          expiresAt: new Date(payload.exp * 1000),
-          createdAt: new Date(payload.iat * 1000),
+        const session = await this.adapter.findSessionById(payload.sessionId);
+        if (!session) return null;
+
+        // Check expiry
+        if (new Date() > session.expiresAt) {
+          await this.adapter.deleteSession(session.id);
+          return null;
+        }
+
+        // Update last accessed
+        const updatedSession = await this.adapter.updateSession(session.id, {
           lastAccessedAt: new Date(),
-        };
+        });
+
+        return updatedSession;
       } else {
         // Database session
         if (!this.adapter) {
@@ -195,9 +192,13 @@ export class SessionManager {
       // We need to search through all sessions since we don't have the user ID
       const allSessions = await (this.adapter as any).getAllSessions?.();
       if (allSessions) {
-        session = allSessions.find((s: Session) => s.refreshToken === refreshToken) || null;
+        session =
+          allSessions.find((s: Session) => s.refreshToken === refreshToken) ||
+          null;
       } else if ((this.adapter as any).findSessionByRefreshToken) {
-        session = await (this.adapter as any).findSessionByRefreshToken(refreshToken);
+        session = await (this.adapter as any).findSessionByRefreshToken(
+          refreshToken
+        );
       } else {
         throw new Error('Adapter does not support refresh token lookup');
       }
@@ -251,7 +252,7 @@ export class SessionManager {
         expiresAt: newExpiresAt,
         lastAccessedAt: new Date(),
       });
-      
+
       this.logger.debug('Session refreshed', { sessionId: session.id });
       return refreshedSession;
     }
@@ -285,7 +286,7 @@ export class SessionManager {
   /**
    * Revoke all sessions for a user (alias for revokeAllUserSessions)
    */
-  async revokeUserSessions(userId: string): Promise<void> {
+  revokeUserSessions(userId: string): Promise<void> {
     return this.revokeAllUserSessions(userId);
   }
 
@@ -306,13 +307,15 @@ export class SessionManager {
     }
 
     const sessions = await this.adapter.findUserSessions(userId);
-    
+
     // Filter out expired sessions
     const now = new Date();
     const validSessions = sessions.filter(session => session.expiresAt > now);
-    
+
     // Clean up expired sessions
-    const expiredSessions = sessions.filter(session => session.expiresAt <= now);
+    const expiredSessions = sessions.filter(
+      session => session.expiresAt <= now
+    );
     for (const session of expiredSessions) {
       await this.adapter.deleteSession(session.id);
     }

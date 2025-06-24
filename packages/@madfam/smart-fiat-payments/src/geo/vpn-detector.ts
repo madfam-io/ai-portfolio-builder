@@ -279,7 +279,8 @@ export class VPNDetector {
     range: { start: number[]; end: number[] }
   ): boolean {
     if (parts[0]! < range.start[0]! || parts[0]! > range.end[0]!) return false;
-    if (parts[0] === range.start[0] && parts[1]! < range.start[1]!) return false;
+    if (parts[0] === range.start[0] && parts[1]! < range.start[1]!)
+      return false;
     if (parts[0] === range.end[0] && parts[1]! > range.end[1]!) return false;
     return true;
   }

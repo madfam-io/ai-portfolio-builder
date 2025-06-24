@@ -332,13 +332,13 @@ export class MFAManager {
           backupCodesGenerated: false,
         },
       });
-      
+
       // Clear all MFA secrets
       const mfaMethods: MFAMethod[] = ['totp', 'sms', 'backup'];
       for (const m of mfaMethods) {
         await this.adapter.saveMFASecret(userId, m, '');
       }
-      
+
       // Clear backup codes
       await this.adapter.saveBackupCodes(userId, []);
     }

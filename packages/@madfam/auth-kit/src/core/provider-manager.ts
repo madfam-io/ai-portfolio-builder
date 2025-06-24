@@ -48,16 +48,16 @@ export class ProviderManager {
   /**
    * Hash password using bcrypt
    */
-  async hashPassword(password: string): Promise<string> {
+  hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
+    return bcrypt.hash(password, saltRounds);
   }
 
   /**
    * Verify password against hash
    */
-  async verifyPassword(password: string, hash: string): Promise<boolean> {
-    return await bcrypt.compare(password, hash);
+  verifyPassword(password: string, hash: string): Promise<boolean> {
+    return bcrypt.compare(password, hash);
   }
 
   /**
@@ -224,7 +224,7 @@ export class ProviderManager {
   /**
    * Exchange authorization code for tokens
    */
-  private async exchangeCodeForTokens(
+  private exchangeCodeForTokens(
     provider: AuthProvider,
     code: string
   ): Promise<{ access_token: string; refresh_token?: string }> {
@@ -232,11 +232,11 @@ export class ProviderManager {
 
     switch (provider) {
       case 'google':
-        return await this.exchangeGoogleCode(config, code);
+        return this.exchangeGoogleCode(config, code);
       case 'github':
-        return await this.exchangeGithubCode(config, code);
+        return this.exchangeGithubCode(config, code);
       case 'linkedin':
-        return await this.exchangeLinkedInCode(config, code);
+        return this.exchangeLinkedInCode(config, code);
       default:
         throw new Error(`Unsupported OAuth provider: ${provider}`);
     }
@@ -349,17 +349,17 @@ export class ProviderManager {
   /**
    * Get user info from OAuth provider
    */
-  private async getUserInfo(
+  private getUserInfo(
     provider: AuthProvider,
     accessToken: string
   ): Promise<OAuthUser> {
     switch (provider) {
       case 'google':
-        return await this.getGoogleUserInfo(accessToken);
+        return this.getGoogleUserInfo(accessToken);
       case 'github':
-        return await this.getGithubUserInfo(accessToken);
+        return this.getGithubUserInfo(accessToken);
       case 'linkedin':
-        return await this.getLinkedInUserInfo(accessToken);
+        return this.getLinkedInUserInfo(accessToken);
       default:
         throw new Error(`Unsupported OAuth provider: ${provider}`);
     }

@@ -86,9 +86,9 @@ describe('MFAManager', () => {
         adapter
       );
 
-      await expect(
+      expect(() =>
         mfaManagerWithDisabledSMS.setupMFA('user-123', 'sms')
-      ).rejects.toThrow('MFA method sms is not enabled');
+      ).toThrow('MFA method sms is not enabled');
     });
 
     it('should throw error when MFA is disabled', async () => {

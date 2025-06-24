@@ -324,8 +324,9 @@ export class PaymentOptimizationEngine {
         );
 
         // Select best variant
-        const bestVariant = variantPredictions.reduce((best: any, current: any) =>
-          current.expectedImpact > best.expectedImpact ? current : best
+        const bestVariant = variantPredictions.reduce(
+          (best: any, current: any) =>
+            current.expectedImpact > best.expectedImpact ? current : best
         );
 
         // Calculate test parameters
@@ -513,7 +514,9 @@ export class PaymentOptimizationEngine {
     };
   }
 
-  private async extractFraudFeatures(context: PaymentContext): Promise<unknown> {
+  private async extractFraudFeatures(
+    context: PaymentContext
+  ): Promise<unknown> {
     return {
       velocity: this.calculateVelocity(context),
       geolocation: this.analyzeGeolocation(context),

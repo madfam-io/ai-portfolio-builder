@@ -354,8 +354,12 @@ describe('DynamicPricingEngine', () => {
 
       // The implementation doesn't block discounts for VPN usage
       // It uses card country for pricing when manipulation is detected
-      expect(result.reasoning.factors).toContain('Card issuing country detected');
-      expect(result.reasoning.factors).toContain('50% regional discount applied');
+      expect(result.reasoning.factors).toContain(
+        'Card issuing country detected'
+      );
+      expect(result.reasoning.factors).toContain(
+        '50% regional discount applied'
+      );
       expect(result.discountApplied).toBe(true);
     });
 

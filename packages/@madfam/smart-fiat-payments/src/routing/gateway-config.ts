@@ -392,7 +392,14 @@ export class GatewayFeeCalculator {
     isInternational: boolean = false
   ): Array<{
     gateway: Gateway;
-    fees: ReturnType<typeof this.calculateFees>;
+    fees: {
+      processingFee: Money;
+      percentageFee: Money;
+      fixedFee: Money;
+      internationalFee?: Money;
+      installmentFee?: Money;
+      totalFee: Money;
+    };
     effectiveRate: number;
     savings?: Money;
   }> {
@@ -414,11 +421,11 @@ export class GatewayFeeCalculator {
         result !== mostExpensive
           ? {
               amount:
-                mostExpensive.fees.totalFee.amount -
+                mostExpensive!.fees.totalFee.amount -
                 result.fees.totalFee.amount,
               currency: amount.currency,
               display: this.formatMoney(
-                mostExpensive.fees.totalFee.amount -
+                mostExpensive!.fees.totalFee.amount -
                   result.fees.totalFee.amount,
                 amount.currency
               ),

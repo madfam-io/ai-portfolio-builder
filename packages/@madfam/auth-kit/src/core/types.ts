@@ -278,7 +278,11 @@ export interface RateLimitConfig {
   maxAttempts: number;
   blockDuration?: number;
   skipSuccessfulRequests?: boolean;
-  keyGenerator?: (req: { ip?: string; userId?: string; path?: string }) => string;
+  keyGenerator?: (req: {
+    ip?: string;
+    userId?: string;
+    path?: string;
+  }) => string;
 }
 
 export interface AccountLockoutConfig {
@@ -365,7 +369,9 @@ export interface AuthAdapter {
   findUserByEmail(email: string): Promise<User | null>;
 
   // Optional method for complex queries (used for password reset token lookup)
-  findUsers?(filter: Record<string, string | number | boolean | Date>): Promise<User[]>;
+  findUsers?(
+    filter: Record<string, string | number | boolean | Date>
+  ): Promise<User[]>;
 
   // Session operations
   createSession(data: Partial<Session>): Promise<Session>;

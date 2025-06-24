@@ -332,7 +332,7 @@ export class IndustryResearchEngine {
       industryAnalysis: 10000,
       trendAnalysis: 5000,
       reportGeneration: 15000,
-    });
+    } as any);
   }
 
   /**
@@ -1152,7 +1152,9 @@ export class IndustryResearchEngine {
       whitepaper: 'Maximizing ROI Through Intelligent Payment Routing',
     };
 
-    return titles[reportType] || `Industry Report - ${year}`;
+    return (
+      titles[reportType as keyof typeof titles] || `Industry Report - ${year}`
+    );
   }
 
   private async identifyEmergingTrends(): Promise<EmergingTrend[]> {

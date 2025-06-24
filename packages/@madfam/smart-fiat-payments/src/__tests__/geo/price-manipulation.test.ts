@@ -301,7 +301,9 @@ describe('PriceManipulationDetector', () => {
       const result = detector.detectManipulation(highRiskContext, null, null);
 
       // Location spoofing detected
-      expect(result.recommendation).toBe('Apply base pricing without geographical discounts');
+      expect(result.recommendation).toBe(
+        'Apply base pricing without geographical discounts'
+      );
     });
 
     it('should recognize common travel pairs', () => {

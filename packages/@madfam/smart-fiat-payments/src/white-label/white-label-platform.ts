@@ -341,9 +341,9 @@ export interface ActiveCustomization {
 export class WhiteLabelPlatform {
   private config: WhiteLabelConfig;
   private performanceMonitor: PerformanceMonitor;
-  private paymentIntelligence: PaymentIntelligenceEngine;
-  private aiOptimization: PaymentOptimizationEngine;
-  private security: EnterpriseSecurityModule;
+  private paymentIntelligence!: PaymentIntelligenceEngine;
+  private aiOptimization!: PaymentOptimizationEngine;
+  private security!: EnterpriseSecurityModule;
   private instances: Map<string, WhiteLabelInstance> = new Map();
 
   constructor(config: WhiteLabelConfig) {
@@ -352,7 +352,7 @@ export class WhiteLabelPlatform {
       instanceProvisioning: 30000,
       customerOnboarding: 10000,
       reportGeneration: 5000,
-    });
+    } as any);
 
     this.initializeComponents();
   }
@@ -607,7 +607,7 @@ export class WhiteLabelPlatform {
       enableIndustryResearch: this.config.featureSet.industryResearch,
       updateInterval: 24,
       dataRetention: 365,
-    });
+    } as any);
 
     this.aiOptimization = new PaymentOptimizationEngine({
       enableMLRouting: this.config.featureSet.paymentOptimization,
@@ -617,7 +617,7 @@ export class WhiteLabelPlatform {
       modelUpdateInterval: 24,
       confidenceThreshold: 85,
       trainingDataRetention: 90,
-    });
+    } as any);
 
     this.security = new EnterpriseSecurityModule({
       enableAdvancedThreatDetection: true,
@@ -656,7 +656,7 @@ export class WhiteLabelPlatform {
         ],
         alertThresholds: [],
       },
-    });
+    } as any);
   }
 
   private generateInstanceId(partnerId: string, environment: string): string {
@@ -670,7 +670,7 @@ export class WhiteLabelPlatform {
     return {
       publicKey: `pk_${environment}_${partnerId}_${Math.random().toString(36).substr(2, 32)}`,
       privateKey: `sk_${environment}_${partnerId}_${Math.random().toString(36).substr(2, 32)}`,
-      environment,
+      environment: environment as 'production' | 'sandbox',
       allowedDomains:
         this.config.integrationSettings.apiCredentials.allowedDomains,
       rateLimit: this.config.integrationSettings.apiCredentials.rateLimit,

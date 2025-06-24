@@ -48,7 +48,10 @@ export class ConnectionPool {
   /**
    * Get or create connection
    */
-  async getConnection(key: string, factory: () => Promise<unknown>): Promise<unknown> {
+  async getConnection(
+    key: string,
+    factory: () => Promise<unknown>
+  ): Promise<unknown> {
     const existing = this.connections.get(key);
 
     if (existing && existing.isValid()) {
@@ -60,10 +63,11 @@ export class ConnectionPool {
     }
 
     const connection = await factory();
+    const created = Date.now();
     this.connections.set(key, {
       connection,
-      created: Date.now(),
-      isValid: () => Date.now() - connection.created < this.connectionTimeout,
+      created,
+      isValid: () => Date.now() - created < this.connectionTimeout,
     });
 
     return connection;
@@ -324,7 +328,7 @@ export class QueryOptimizer {
     // Limit cache size
     if (this.queryCache.size > 1000) {
       const firstKey = this.queryCache.keys().next().value;
-      this.queryCache.delete(firstKey);
+      this.queryCache.delete(firstKey!);
     }
 
     return result;

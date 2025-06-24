@@ -167,7 +167,10 @@ describe('SmartPayments', () => {
 
       expect(response.geoContext?.vpnDetected).toBe(true);
       expect(response.riskAssessment).toBeDefined();
-      if (response.riskAssessment?.risk === 'high' || response.riskAssessment?.risk === 'critical') {
+      if (
+        response.riskAssessment?.risk === 'high' ||
+        response.riskAssessment?.risk === 'critical'
+      ) {
         expect(response.warnings).toBeDefined();
       }
     });
@@ -187,7 +190,7 @@ describe('SmartPayments', () => {
       expect(response.pricing.eligibleDiscounts).toEqual(
         expect.arrayContaining([
           expect.objectContaining({ id: 'geo_latam', type: 'geographical' }),
-          expect.objectContaining({ id: 'student_global', type: 'student' })
+          expect.objectContaining({ id: 'student_global', type: 'student' }),
         ])
       );
     });
@@ -271,12 +274,19 @@ describe('SmartPayments', () => {
 
       // Should have valid payment options and apply business rules appropriately
       expect(response.paymentOptions.recommendedGateway).toBeDefined();
-      expect(response.paymentOptions.recommendedGateway.supportedFeatures).toBeDefined();
+      expect(
+        response.paymentOptions.recommendedGateway.supportedFeatures
+      ).toBeDefined();
       expect(response.paymentOptions.alternativeGateways).toBeDefined();
-      
+
       // The system should consider security features when processing high-risk transactions
-      if (response.riskAssessment?.risk === 'high' || response.riskAssessment?.risk === 'critical') {
-        expect(response.warnings).toContain(response.riskAssessment.recommendation);
+      if (
+        response.riskAssessment?.risk === 'high' ||
+        response.riskAssessment?.risk === 'critical'
+      ) {
+        expect(response.warnings).toContain(
+          response.riskAssessment.recommendation
+        );
       }
     });
 

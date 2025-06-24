@@ -1,16 +1,16 @@
 /**
  * @madfam/auth-kit
- * 
+ *
  * Enterprise-grade authentication system for the MADFAM platform
- * 
+ *
  * @version 1.0.0
  * @license MCAL-1.0
  * @copyright 2025 MADFAM LLC
- * 
+ *
  * This software is licensed under the MADFAM Code Available License (MCAL) v1.0.
  * You may use this software for personal, educational, and internal business purposes.
  * Commercial use, redistribution, and modification require explicit permission.
- * 
+ *
  * For commercial licensing inquiries: licensing@madfam.io
  * For the full license text: https://madfam.com/licenses/mcal-1.0
  */
@@ -73,7 +73,9 @@ export interface AuthContextValue extends AuthState {
   clearError: () => void;
 }
 
-export const AuthContext = createContext<AuthContextValue | undefined>(undefined);
+export const AuthContext = createContext<AuthContextValue | undefined>(
+  undefined
+);
 
 export interface AuthProviderProps {
   children: ReactNode;
@@ -99,7 +101,7 @@ export function AuthProvider({
   });
 
   const updateState = useCallback((updates: Partial<AuthState>) => {
-    setState((prev) => ({ ...prev, ...updates }));
+    setState(prev => ({ ...prev, ...updates }));
   }, []);
 
   const clearError = useCallback(() => {
@@ -108,23 +110,23 @@ export function AuthProvider({
 
   // Initialize session on mount
   useEffect(() => {
-    const loadPersistedSession = async () => {
+    const loadPersistedSession = () => {
       if (!persistSession) {
         return null;
       }
-      
+
       const token = localStorage.getItem(sessionKey);
       if (!token) {
         return null;
       }
-      
+
       return authKit.getSession(token);
     };
 
     const initializeAuth = async () => {
       try {
         const session = await loadPersistedSession();
-        
+
         if (session) {
           updateState({
             session,

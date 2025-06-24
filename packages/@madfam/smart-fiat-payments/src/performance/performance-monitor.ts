@@ -181,8 +181,8 @@ export class PerformanceMonitor {
         count,
         total,
         average,
-        min: sorted[0],
-        max: sorted[count - 1],
+        min: sorted[0]!,
+        max: sorted[count - 1]!,
         p50: this.percentile(sorted, 50),
         p95: this.percentile(sorted, 95),
         p99: this.percentile(sorted, 99),
@@ -274,7 +274,7 @@ export class PerformanceMonitor {
       if (!grouped[metric.name]) {
         grouped[metric.name] = [];
       }
-      grouped[metric.name].push(metric.value);
+      grouped[metric.name]!.push(metric.value);
     }
 
     return grouped;
@@ -285,7 +285,7 @@ export class PerformanceMonitor {
    */
   private percentile(sorted: number[], p: number): number {
     const index = Math.ceil((p / 100) * sorted.length) - 1;
-    return sorted[Math.max(0, index)];
+    return sorted[Math.max(0, index)]!;
   }
 
   /**
@@ -298,21 +298,21 @@ export class PerformanceMonitor {
     const recommendations: string[] = [];
 
     // Check for slow BIN lookups
-    if (metrics.binLookup?.p95 > 100) {
+    if (metrics.binLookup?.p95 && metrics.binLookup.p95 > 100) {
       recommendations.push(
         'Consider implementing BIN lookup caching or using a faster BIN database'
       );
     }
 
     // Check for slow geo lookups
-    if (metrics.geoLookup?.p95 > 200) {
+    if (metrics.geoLookup?.p95 && metrics.geoLookup.p95 > 200) {
       recommendations.push(
         'Geo lookups are slow. Consider using a local IP database or caching results'
       );
     }
 
     // Check for overall slow performance
-    if (metrics.processPayment?.p95 > 300) {
+    if (metrics.processPayment?.p95 && metrics.processPayment.p95 > 300) {
       recommendations.push(
         'Overall payment processing is slow. Review all components for optimization opportunities'
       );
@@ -354,7 +354,7 @@ export class PerformanceMonitor {
       lines.push(`# TYPE ${metricName} histogram`);
 
       values.forEach((value, index) => {
-        lines.push(`${metricName} ${value} ${this.metrics[index].timestamp}`);
+        lines.push(`${metricName} ${value} ${this.metrics[index]!.timestamp}`);
       });
     }
 
@@ -403,7 +403,7 @@ export function withPerformanceTracking<T extends (...args: any[]) => any>(
   metricName?: string
 ): T {
   const name = metricName || fn.name || 'anonymous';
-  
+
   return ((...args: any[]) => {
     return globalPerformanceMonitor.measure(name, () => fn(...args));
   }) as T;

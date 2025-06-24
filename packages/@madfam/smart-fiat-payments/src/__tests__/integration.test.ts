@@ -232,7 +232,7 @@ describe('SmartPayments Integration', () => {
       // Results should be identical (from cache)
       expect(result1.success).toBe(result2.success);
       expect(result1.cardInfo?.brand).toBe(result2.cardInfo?.brand);
-      
+
       // Cached call should generally be faster, but allow for timing variance
       // If it's not faster, at least verify caching is working by checking the cached flag
       if (duration2 > duration1) {

@@ -33,10 +33,12 @@ describe('ConnectionPool', () => {
   });
 
   it('should create and reuse connections', async () => {
-    const factory = jest.fn(() => Promise.resolve({
-      id: 'connection-1',
-      created: Date.now(),
-    }));
+    const factory = jest.fn(() =>
+      Promise.resolve({
+        id: 'connection-1',
+        created: Date.now(),
+      })
+    );
 
     const conn1 = await pool.getConnection('api1', factory);
     // Second call should reuse if valid

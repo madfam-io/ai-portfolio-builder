@@ -137,7 +137,7 @@ export class SmartPayments {
       const pricing = await this.pricingEngine.calculatePrice({
         basePrice: request.amount,
         cardCountry: cardInfo?.issuerCountry,
-        ipCountry: geoContext?.ipCountry,
+        ipCountry: geoContext?.ipCountry || undefined,
         vpnDetected: geoContext?.vpnDetected || false,
         customer: request.customer,
       });
@@ -168,7 +168,6 @@ export class SmartPayments {
         geoContext,
         customer: request.customer,
         metadata: request.metadata,
-        pricingContext: pricing,
       };
 
       const paymentOptions = await this.router.route(paymentContext);
@@ -254,7 +253,7 @@ export class SmartPayments {
 
   private applyBusinessRules(
     paymentOptions: PaymentOptions,
-    riskAssessment?: RiskAssessment,
+    riskAssessment: RiskAssessment | undefined,
     warnings: string[]
   ): void {
     // High risk transactions
@@ -280,7 +279,7 @@ export class SmartPayments {
             g => g !== secure3DGateways[0]
           ),
         ];
-        paymentOptions.recommendedGateway = secure3DGateways[0];
+        paymentOptions.recommendedGateway = secure3DGateways[0]!;
         warnings.push('Gateway changed due to security requirements');
       }
     }

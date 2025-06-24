@@ -117,11 +117,11 @@ describe('CacheManager', () => {
 
       sizeCache.set('key1', 'short'); // 10 bytes
       sizeCache.set('key2', 'medium'); // 12 bytes
-      
+
       // Both should fit within the 50 byte limit
       expect(sizeCache.get('key1')).toBe('short');
       expect(sizeCache.get('key2')).toBe('medium');
-      
+
       const stats = sizeCache.getStats();
       expect(stats.size).toBeLessThanOrEqual(50);
     });

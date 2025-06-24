@@ -24,7 +24,8 @@
 import { LRUCache } from 'lru-cache';
 // @ts-ignore - node-ipinfo has module resolution issues
 import * as nodeIpinfo from 'node-ipinfo';
-const IPinfoWrapper = (nodeIpinfo as any).IPinfoWrapper || (nodeIpinfo as any).default;
+const IPinfoWrapper =
+  (nodeIpinfo as any).IPinfoWrapper || (nodeIpinfo as any).default;
 import {
   GeographicalContext,
   VPNCheckResult,
@@ -113,7 +114,9 @@ export class GeographicalContextEngine {
         ipCountry: (ipData as any)?.countryCode || null,
         ipRegion: (ipData as any)?.region || undefined,
         ipCity: (ipData as any)?.city || undefined,
-        ipCurrency: this.getCurrencyForCountry((ipData as any)?.countryCode || 'US'),
+        ipCurrency: this.getCurrencyForCountry(
+          (ipData as any)?.countryCode || 'US'
+        ),
         vpnDetected: vpnCheck?.isVPN || false,
         vpnConfidence: vpnCheck?.confidence || 0,
         proxyDetected: vpnCheck?.isProxy || false,

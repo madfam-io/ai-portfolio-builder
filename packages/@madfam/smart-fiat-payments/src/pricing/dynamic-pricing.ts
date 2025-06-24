@@ -163,7 +163,7 @@ export class DynamicPricingEngine {
       (cardCountry || ipCountry)
     ) {
       const geoContext: GeographicalContext = {
-        ipCountry,
+        ipCountry: ipCountry || null,
         ipCurrency: this.getCurrencyForCountry(ipCountry || 'US'),
         vpnDetected,
         vpnConfidence: vpnDetected ? 0.8 : 0,
@@ -356,7 +356,10 @@ export class DynamicPricingEngine {
     customer?: Customer,
     manipulationDetected?: boolean
   ): Discount[] {
-    if (manipulationDetected && this.config.strategy.blockVPNDiscounts) {
+    if (
+      manipulationDetected &&
+      (this.config.strategy as any).blockVPNDiscounts
+    ) {
       return []; // No discounts for suspected manipulation
     }
 

@@ -165,7 +165,10 @@ export function validateExpiry(month: string, year: string): ValidationResult {
   // Check if expired
   if (errors.length === 0) {
     const currentMonth = new Date().getMonth() + 1;
-    if (fullYear < currentYear || (fullYear === currentYear && monthNum < currentMonth)) {
+    if (
+      fullYear < currentYear ||
+      (fullYear === currentYear && monthNum < currentMonth)
+    ) {
       errors.push({
         field: 'expiry',
         code: 'EXPIRED',

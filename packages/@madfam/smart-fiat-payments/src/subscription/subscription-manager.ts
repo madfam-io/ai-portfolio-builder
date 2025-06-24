@@ -438,7 +438,7 @@ export class SubscriptionManager {
       subscriptionCreate: 2000,
       usageTracking: 500,
       billingCalculation: 1000,
-    });
+    } as any);
 
     this.initializeDefaultPlans();
   }
@@ -1285,7 +1285,9 @@ export class SubscriptionManager {
     return 87.3;
   }
 
-  private async analyzeCustomerUsage(subscription: Subscription): Promise<unknown> {
+  private async analyzeCustomerUsage(
+    subscription: Subscription
+  ): Promise<unknown> {
     return {
       averageUsage:
         subscription.usage.currentPeriod.reduce(

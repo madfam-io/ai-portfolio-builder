@@ -104,17 +104,17 @@ export class IntelligentRouter {
 
     // Generate reasoning
     const reasoning = this.generateReasoning(
-      scoredGateways[0],
+      scoredGateways[0]!,
       context,
       shouldOfferChoice
     );
 
     return {
-      recommendedGateway: gatewayOptions[0],
+      recommendedGateway: gatewayOptions[0]!,
       alternativeGateways: gatewayOptions.slice(1),
       userChoice: shouldOfferChoice,
       reasoning,
-      pricingContext: context.pricingContext || {
+      pricingContext: {
         displayPrice: amount,
         displayCurrency: amount.currency,
         basePrice: amount,
@@ -125,6 +125,9 @@ export class IntelligentRouter {
         },
         discountApplied: false,
         eligibleDiscounts: [],
+        adjustment: undefined,
+        cardCountryPrice: undefined,
+        savingsAmount: undefined,
       },
     };
   }
@@ -331,8 +334,8 @@ export class IntelligentRouter {
 
     // Check if top gateways are close in score
     const threshold = this.config.userChoiceThreshold || 10;
-    const topScore = scoredGateways[0].score;
-    const secondScore = scoredGateways[1].score;
+    const topScore = scoredGateways[0]!.score;
+    const secondScore = scoredGateways[1]!.score;
 
     return topScore - secondScore <= threshold;
   }
@@ -409,7 +412,7 @@ export class IntelligentRouter {
         // Get trust signals
         const trustSignals = this.getTrustSignals(
           gateway,
-          geoContext?.ipCountry
+          geoContext?.ipCountry || undefined
         );
 
         return {
@@ -706,7 +709,7 @@ export class IntelligentRouter {
     context: PaymentContext
   ): string {
     const factors = topGateway.factors
-      .map(f => `${f.factor} (${f.impact}, weight: ${f.weight})`)
+      .map((f: any) => `${f.factor} (${f.impact}, weight: ${f.weight})`)
       .join(', ');
 
     return `Gateway: ${topGateway.gateway}, Score: ${topGateway.score}/100, Factors: ${factors}`;

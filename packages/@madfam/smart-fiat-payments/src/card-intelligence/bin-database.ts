@@ -37,7 +37,7 @@ interface BINRange {
 // Hardcoded BIN ranges for common cards (fallback data)
 const FALLBACK_BIN_RANGES: BINRange[] = [
   // Specific bank BINs first (more specific matches should come before generic ones)
-  
+
   // Mexican banks (common BINs)
   {
     start: '421394',
@@ -126,7 +126,7 @@ const FALLBACK_BIN_RANGES: BINRange[] = [
   },
 
   // Generic ranges (must come after specific BINs)
-  
+
   // Visa
   {
     start: '400000',

@@ -698,7 +698,15 @@ export class AuthKit extends EventEmitter {
   /**
    * Emit auth event
    */
-  public emit(type: AuthEventType, data?: User | Session | AuthError | { userId: string; provider: string } | null): void {
+  public emit(
+    type: AuthEventType,
+    data?:
+      | User
+      | Session
+      | AuthError
+      | { userId: string; provider: string }
+      | null
+  ): void {
     const event: AuthEvent = {
       type,
       timestamp: new Date(),

@@ -17,7 +17,7 @@
  * Security management module
  */
 
-import type { SecurityConfig, RateLimitConfig } from './types';
+import type { SecurityConfig } from './types';
 import { Logger } from '../utils/logger';
 
 interface RateLimitEntry {
@@ -47,7 +47,7 @@ export class SecurityManager {
   /**
    * Check rate limit
    */
-  async checkRateLimit(action: string, identifier: string): Promise<void> {
+  checkRateLimit(action: string, identifier: string): void {
     if (!this.config?.rateLimit?.enabled) {
       return;
     }
@@ -92,7 +92,7 @@ export class SecurityManager {
   /**
    * Check if account is locked
    */
-  async isAccountLocked(userId: string): Promise<boolean> {
+  isAccountLocked(userId: string): boolean {
     if (!this.config?.accountLockout?.enabled) {
       return false;
     }
@@ -115,7 +115,7 @@ export class SecurityManager {
   /**
    * Record failed authentication attempt
    */
-  async recordFailedAttempt(identifier: string): Promise<void> {
+  recordFailedAttempt(identifier: string): void {
     if (!this.config?.accountLockout?.enabled) {
       return;
     }
@@ -141,7 +141,7 @@ export class SecurityManager {
   /**
    * Reset failed attempts
    */
-  async resetFailedAttempts(identifier: string): Promise<void> {
+  resetFailedAttempts(identifier: string): void {
     if (this.config?.accountLockout?.resetOnSuccess) {
       this.accountLockStore.delete(identifier);
     }
@@ -191,7 +191,7 @@ export class SecurityManager {
   /**
    * Verify CSRF token
    */
-  verifyCSRFToken(token: string, sessionToken: string): boolean {
+  verifyCSRFToken(token: string, _sessionToken: string): boolean {
     if (!this.config?.csrfProtection) {
       return true;
     }

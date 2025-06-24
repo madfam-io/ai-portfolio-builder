@@ -36,12 +36,30 @@ interface SupabaseQueryBuilder {
 }
 
 interface SupabaseAuthClient {
-  signUp(credentials: { email: string; password: string }): Promise<{ data?: { user?: SupabaseUserRecord }; error?: Error }>;
-  signInWithPassword(credentials: { email: string; password: string }): Promise<{ data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord }; error?: Error }>;
+  signUp(credentials: {
+    email: string;
+    password: string;
+  }): Promise<{ data?: { user?: SupabaseUserRecord }; error?: Error }>;
+  signInWithPassword(credentials: {
+    email: string;
+    password: string;
+  }): Promise<{
+    data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord };
+    error?: Error;
+  }>;
   signOut(): Promise<{ error?: Error }>;
-  resetPasswordForEmail(email: string, options?: { redirectTo?: string }): Promise<{ error?: Error }>;
+  resetPasswordForEmail(
+    email: string,
+    options?: { redirectTo?: string }
+  ): Promise<{ error?: Error }>;
   updateUser(attributes: { password?: string }): Promise<{ error?: Error }>;
-  verifyOtp(params: { token: string; type: string }): Promise<{ data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord }; error?: Error }>;
+  verifyOtp(params: {
+    token: string;
+    type: string;
+  }): Promise<{
+    data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord };
+    error?: Error;
+  }>;
 }
 
 interface SupabaseUserRecord {
@@ -217,7 +235,9 @@ export class SupabaseAdapter extends BaseAdapter {
     return user ? this.mapSupabaseUser(user) : null;
   }
 
-  async findUsers(filter: Record<string, string | number | boolean | Date>): Promise<User[]> {
+  async findUsers(
+    filter: Record<string, string | number | boolean | Date>
+  ): Promise<User[]> {
     const client = this.getClient();
     let query = client.from('auth_users').select('*');
 
@@ -238,7 +258,9 @@ export class SupabaseAdapter extends BaseAdapter {
       throw new Error(`Failed to find users: ${error.message}`);
     }
 
-    return users ? users.map((user: SupabaseUserRecord) => this.mapSupabaseUser(user)) : [];
+    return users
+      ? users.map((user: SupabaseUserRecord) => this.mapSupabaseUser(user))
+      : [];
   }
 
   // Session operations
@@ -355,7 +377,9 @@ export class SupabaseAdapter extends BaseAdapter {
     }
 
     return sessions
-      ? sessions.map((session: SupabaseSessionRecord) => this.mapSupabaseSession(session))
+      ? sessions.map((session: SupabaseSessionRecord) =>
+          this.mapSupabaseSession(session)
+        )
       : [];
   }
 
