@@ -70,7 +70,7 @@ export class AnalyticsService extends EventEmitter {
     if (!this.isEnabled || !this.provider) return;
 
     this.userId = userId;
-    
+
     try {
       await this.provider.identify(userId, traits);
       this.logger.debug('User identified', { userId, traits });
@@ -163,7 +163,10 @@ export class AnalyticsService extends EventEmitter {
   /**
    * Track custom event
    */
-  async track(event: AnalyticsEvent, options: TrackingOptions = {}): Promise<void> {
+  async track(
+    event: AnalyticsEvent,
+    options: TrackingOptions = {}
+  ): Promise<void> {
     if (!this.isEnabled) return;
 
     // Add session context
@@ -182,7 +185,7 @@ export class AnalyticsService extends EventEmitter {
       await this.sendEvent(enrichedEvent);
     } else {
       this.eventQueue.push(enrichedEvent);
-      
+
       if (this.eventQueue.length >= (this.config.batchSize || 10)) {
         await this.flushQueue();
       }
@@ -200,7 +203,10 @@ export class AnalyticsService extends EventEmitter {
   /**
    * Set user properties
    */
-  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserProperties(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     if (!this.isEnabled || !this.provider) return;
 
     try {
@@ -258,7 +264,10 @@ export class AnalyticsService extends EventEmitter {
       byUser: {},
     };
 
-    if (this.provider && typeof (this.provider as any).getMetrics === 'function') {
+    if (
+      this.provider &&
+      typeof (this.provider as any).getMetrics === 'function'
+    ) {
       const providerMetrics = await (this.provider as any).getMetrics();
       Object.assign(baseMetrics, providerMetrics);
     }
@@ -307,7 +316,9 @@ export class AnalyticsService extends EventEmitter {
   /**
    * Send event batch
    */
-  private async sendEventBatch(events: AnalyticsEvent[]): Promise<AnalyticsResult[]> {
+  private async sendEventBatch(
+    events: AnalyticsEvent[]
+  ): Promise<AnalyticsResult[]> {
     if (!this.provider) {
       throw new Error('Analytics provider not configured');
     }
@@ -357,14 +368,19 @@ export class AnalyticsService extends EventEmitter {
           }
           break;
         default:
-          throw new Error(`Unknown analytics provider: ${this.config.provider}`);
+          throw new Error(
+            `Unknown analytics provider: ${this.config.provider}`
+          );
       }
 
       this.logger.info('Analytics provider initialized', {
         provider: this.config.provider,
       });
     } catch (error) {
-      this.logger.error('Failed to initialize analytics provider', error as Error);
+      this.logger.error(
+        'Failed to initialize analytics provider',
+        error as Error
+      );
       this.isEnabled = false;
     }
   }
@@ -412,7 +428,10 @@ export class AnalyticsService extends EventEmitter {
     await this.flushQueue();
 
     // Cleanup provider
-    if (this.provider && typeof (this.provider as any).shutdown === 'function') {
+    if (
+      this.provider &&
+      typeof (this.provider as any).shutdown === 'function'
+    ) {
       await (this.provider as any).shutdown();
     }
 
@@ -423,6 +442,8 @@ export class AnalyticsService extends EventEmitter {
 /**
  * Factory function to create analytics service
  */
-export function createAnalyticsService(config: AnalyticsConfig): AnalyticsService {
+export function createAnalyticsService(
+  config: AnalyticsConfig
+): AnalyticsService {
   return new AnalyticsService(config);
 }

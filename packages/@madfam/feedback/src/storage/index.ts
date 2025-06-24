@@ -73,7 +73,6 @@ export function createStorageAdapter(config?: StorageConfig): StorageAdapter {
         ...config.options,
       });
 
-
     case 'custom':
       if (!config.options?.adapter) {
         throw new Error('Custom adapter must be provided in options.adapter');

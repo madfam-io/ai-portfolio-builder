@@ -47,7 +47,10 @@ export class EmailService {
    * Send critical bug notification
    */
   async sendCriticalBugNotification(feedback: FeedbackEntry): Promise<void> {
-    if (!this.config.email?.enabled || !this.config.email.criticalBugRecipients?.length) {
+    if (
+      !this.config.email?.enabled ||
+      !this.config.email.criticalBugRecipients?.length
+    ) {
       return;
     }
 
@@ -65,14 +68,19 @@ export class EmailService {
     };
 
     await this.sendEmail(emailData);
-    this.logger.info('Critical bug notification sent', { feedbackId: feedback.id });
+    this.logger.info('Critical bug notification sent', {
+      feedbackId: feedback.id,
+    });
   }
 
   /**
    * Send new feedback notification
    */
   async sendNewFeedbackNotification(feedback: FeedbackEntry): Promise<void> {
-    if (!this.config.email?.enabled || !this.config.email.newFeedbackRecipients?.length) {
+    if (
+      !this.config.email?.enabled ||
+      !this.config.email.newFeedbackRecipients?.length
+    ) {
       return;
     }
 
@@ -94,14 +102,19 @@ export class EmailService {
     };
 
     await this.sendEmail(emailData);
-    this.logger.info('New feedback notification sent', { feedbackId: feedback.id });
+    this.logger.info('New feedback notification sent', {
+      feedbackId: feedback.id,
+    });
   }
 
   /**
    * Send NPS survey response notification
    */
   async sendNPSSurveyNotification(survey: SatisfactionSurvey): Promise<void> {
-    if (!this.config.email?.enabled || !this.config.email.surveyRecipients?.length) {
+    if (
+      !this.config.email?.enabled ||
+      !this.config.email.surveyRecipients?.length
+    ) {
       return;
     }
 
@@ -127,7 +140,10 @@ export class EmailService {
   /**
    * Send weekly feedback digest
    */
-  async sendWeeklyDigest(report: FeedbackReport, recipients: string[]): Promise<void> {
+  async sendWeeklyDigest(
+    report: FeedbackReport,
+    recipients: string[]
+  ): Promise<void> {
     if (!this.config.email?.enabled || !recipients.length) {
       return;
     }
@@ -147,7 +163,9 @@ export class EmailService {
     };
 
     await this.sendEmail(emailData);
-    this.logger.info('Weekly digest sent', { recipientCount: recipients.length });
+    this.logger.info('Weekly digest sent', {
+      recipientCount: recipients.length,
+    });
   }
 
   /**
@@ -178,10 +196,10 @@ export class EmailService {
     };
 
     await this.sendEmail(emailData);
-    this.logger.info('Status update sent to user', { 
+    this.logger.info('Status update sent to user', {
       feedbackId: feedback.id,
       userEmail,
-      status: feedback.status 
+      status: feedback.status,
     });
   }
 
@@ -194,7 +212,10 @@ export class EmailService {
     templateData: Record<string, unknown>,
     priority: 'low' | 'normal' | 'high' = 'normal'
   ): Promise<void> {
-    if (!this.config.email?.enabled || !this.config.email.teamRecipients?.length) {
+    if (
+      !this.config.email?.enabled ||
+      !this.config.email.teamRecipients?.length
+    ) {
       return;
     }
 
@@ -283,9 +304,11 @@ export class EmailService {
   /**
    * Process email template
    */
-  private async processTemplate(notification: EmailNotification): Promise<EmailNotification> {
+  private async processTemplate(
+    notification: EmailNotification
+  ): Promise<EmailNotification> {
     const template = await this.loadTemplate(notification.templateId);
-    
+
     return {
       ...notification,
       html: this.renderTemplate(template.html, notification.templateData),
@@ -312,7 +335,8 @@ export class EmailService {
       'nps-survey': {
         html: this.getNPSSurveyTemplate(),
         text: this.getNPSSurveyTextTemplate(),
-        subject: 'Survey response received (NPS: {{survey.likelihoodToRecommend}})',
+        subject:
+          'Survey response received (NPS: {{survey.likelihoodToRecommend}})',
       },
       'weekly-digest': {
         html: this.getWeeklyDigestTemplate(),
@@ -342,15 +366,22 @@ export class EmailService {
   /**
    * Render template with data
    */
-  private renderTemplate(template: string, data: Record<string, unknown>): string {
+  private renderTemplate(
+    template: string,
+    data: Record<string, unknown>
+  ): string {
     let rendered = template;
-    
+
     // Simple template rendering (in production, use a proper template engine)
-    const replacePlaceholders = (str: string, obj: any, prefix = ''): string => {
+    const replacePlaceholders = (
+      str: string,
+      obj: any,
+      prefix = ''
+    ): string => {
       for (const [key, value] of Object.entries(obj)) {
         const placeholder = prefix ? `${prefix}.${key}` : key;
         const regex = new RegExp(`{{${placeholder}}}`, 'g');
-        
+
         if (typeof value === 'object' && value !== null) {
           str = replacePlaceholders(str, value, placeholder);
         } else {
@@ -389,7 +420,7 @@ export class EmailService {
    */
   private getDashboardUrl(feedbackId?: string): string {
     const baseUrl = this.config.email?.dashboardUrl || 'https://app.madfam.io';
-    return feedbackId 
+    return feedbackId
       ? `${baseUrl}/feedback/${feedbackId}`
       : `${baseUrl}/feedback`;
   }
@@ -707,7 +738,7 @@ interface EmailProvider {
 
 class SendGridProvider implements EmailProvider {
   constructor(private credentials: any) {}
-  
+
   async send(notification: EmailNotification): Promise<void> {
     // SendGrid implementation
   }
@@ -715,7 +746,7 @@ class SendGridProvider implements EmailProvider {
 
 class SESProvider implements EmailProvider {
   constructor(private credentials: any) {}
-  
+
   async send(notification: EmailNotification): Promise<void> {
     // AWS SES implementation
   }
@@ -723,7 +754,7 @@ class SESProvider implements EmailProvider {
 
 class SMTPProvider implements EmailProvider {
   constructor(private credentials: any) {}
-  
+
   async send(notification: EmailNotification): Promise<void> {
     // SMTP implementation
   }
@@ -731,7 +762,7 @@ class SMTPProvider implements EmailProvider {
 
 class ResendProvider implements EmailProvider {
   constructor(private credentials: any) {}
-  
+
   async send(notification: EmailNotification): Promise<void> {
     // Resend implementation
   }

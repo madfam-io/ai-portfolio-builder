@@ -64,7 +64,9 @@ export class FeedbackSystem extends EventEmitter {
 
     // Initialize notification manager
     if (this.config.notifications) {
-      this.notificationManager = new NotificationManager(this.config.notifications);
+      this.notificationManager = new NotificationManager(
+        this.config.notifications
+      );
     }
 
     // Initialize analytics service
@@ -386,7 +388,10 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Identify user for analytics tracking
    */
-  async identifyUser(userId: string, traits: Record<string, string | number | boolean | Date | null> = {}): Promise<void> {
+  async identifyUser(
+    userId: string,
+    traits: Record<string, string | number | boolean | Date | null> = {}
+  ): Promise<void> {
     if (this.analyticsService) {
       await this.analyticsService.identify(userId, traits);
     }
@@ -395,7 +400,11 @@ export class FeedbackSystem extends EventEmitter {
   /**
    * Track custom analytics event
    */
-  async trackEvent(userId: string, event: string, properties: Record<string, string | number | boolean | Date> = {}): Promise<void> {
+  async trackEvent(
+    userId: string,
+    event: string,
+    properties: Record<string, string | number | boolean | Date> = {}
+  ): Promise<void> {
     if (this.analyticsService) {
       await this.analyticsService.track({
         userId,
@@ -434,7 +443,9 @@ export class FeedbackSystem extends EventEmitter {
 
       // Send notifications for status changes
       if (this.notificationManager && original.status !== status) {
-        await this.notificationManager.onFeedbackUpdated(updated, { status: original.status });
+        await this.notificationManager.onFeedbackUpdated(updated, {
+          status: original.status,
+        });
       }
 
       this.emit('feedback:updated', updated);
@@ -615,12 +626,12 @@ export class FeedbackSystem extends EventEmitter {
    */
   async shutdown(): Promise<void> {
     this.logger.info('Shutting down feedback system');
-    
+
     // Shutdown analytics service
     if (this.analyticsService) {
       await this.analyticsService.shutdown();
     }
-    
+
     this.removeAllListeners();
     this.cache.clear();
   }

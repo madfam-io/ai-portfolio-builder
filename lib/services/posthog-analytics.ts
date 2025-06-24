@@ -11,11 +11,16 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { captureEvent, EVENTS, USER_PROPERTIES, setUserProperties } from '@/lib/analytics/posthog/client';
+import {
+  captureEvent,
+  EVENTS,
+  USER_PROPERTIES,
+  setUserProperties,
+} from '@/lib/analytics/posthog/client';
 
 /**
  * PostHog Analytics Service
- * 
+ *
  * Centralized service for tracking key business metrics and user behavior
  */
 export class PostHogAnalyticsService {
@@ -43,7 +48,11 @@ export class PostHogAnalyticsService {
   /**
    * Track portfolio creation with AI usage
    */
-  static trackPortfolioCreated(portfolioId: string, useAI: boolean, template?: string) {
+  static trackPortfolioCreated(
+    portfolioId: string,
+    useAI: boolean,
+    template?: string
+  ) {
     captureEvent(EVENTS.PORTFOLIO_CREATED, {
       portfolioId,
       useAI,
@@ -106,7 +115,11 @@ export class PostHogAnalyticsService {
     });
   }
 
-  static trackReferralConverted(referrerId: string, referredUserId: string, reward?: number) {
+  static trackReferralConverted(
+    referrerId: string,
+    referredUserId: string,
+    reward?: number
+  ) {
     captureEvent('referral_converted', {
       referrerId,
       referredUserId,
@@ -136,7 +149,11 @@ export class PostHogAnalyticsService {
   /**
    * Track engagement metrics
    */
-  static trackEngagement(action: string, target: string, metadata?: Record<string, any>) {
+  static trackEngagement(
+    action: string,
+    target: string,
+    metadata?: Record<string, any>
+  ) {
     captureEvent(`engagement_${action}`, {
       action,
       target,
@@ -160,7 +177,11 @@ export class PostHogAnalyticsService {
   /**
    * Track conversion funnel events
    */
-  static trackFunnelStep(funnel: string, step: string, metadata?: Record<string, any>) {
+  static trackFunnelStep(
+    funnel: string,
+    step: string,
+    metadata?: Record<string, any>
+  ) {
     captureEvent(`funnel_${funnel}_${step}`, {
       funnel,
       step,
@@ -172,7 +193,11 @@ export class PostHogAnalyticsService {
   /**
    * Track error events for monitoring
    */
-  static trackError(error: string, context: string, severity: 'low' | 'medium' | 'high') {
+  static trackError(
+    error: string,
+    context: string,
+    severity: 'low' | 'medium' | 'high'
+  ) {
     captureEvent('error_occurred', {
       error,
       context,

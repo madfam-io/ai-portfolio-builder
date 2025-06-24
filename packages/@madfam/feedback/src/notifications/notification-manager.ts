@@ -32,10 +32,7 @@ import type {
   NotificationEvent,
   NotificationPayload,
 } from '../core/types';
-import type {
-  NotificationQueue,
-  NotificationMetrics,
-} from './types';
+import type { NotificationQueue, NotificationMetrics } from './types';
 import { Logger } from '../utils/logger';
 import { EventEmitter } from '../utils/event-emitter';
 
@@ -61,7 +58,9 @@ export class NotificationManager extends EventEmitter {
    * Handle feedback created event
    */
   async onFeedbackCreated(feedback: FeedbackEntry): Promise<void> {
-    this.logger.info('Processing feedback created event', { feedbackId: feedback.id });
+    this.logger.info('Processing feedback created event', {
+      feedbackId: feedback.id,
+    });
 
     // Critical bug notifications
     if (feedback.severity === 'critical') {
@@ -82,7 +81,9 @@ export class NotificationManager extends EventEmitter {
     feedback: FeedbackEntry,
     previousState: Partial<FeedbackEntry>
   ): Promise<void> {
-    this.logger.info('Processing feedback updated event', { feedbackId: feedback.id });
+    this.logger.info('Processing feedback updated event', {
+      feedbackId: feedback.id,
+    });
 
     // Status change notifications
     if (previousState.status && previousState.status !== feedback.status) {
@@ -90,7 +91,10 @@ export class NotificationManager extends EventEmitter {
     }
 
     // Severity escalation
-    if (previousState.severity !== 'critical' && feedback.severity === 'critical') {
+    if (
+      previousState.severity !== 'critical' &&
+      feedback.severity === 'critical'
+    ) {
       await this.handleCriticalBug(feedback);
     }
 
@@ -101,7 +105,9 @@ export class NotificationManager extends EventEmitter {
    * Handle survey completed event
    */
   async onSurveyCompleted(survey: SatisfactionSurvey): Promise<void> {
-    this.logger.info('Processing survey completed event', { surveyId: survey.id });
+    this.logger.info('Processing survey completed event', {
+      surveyId: survey.id,
+    });
 
     // NPS detractor notifications
     if (survey.npsCategory === 'detractor' || survey.overallSatisfaction <= 5) {
@@ -176,7 +182,10 @@ export class NotificationManager extends EventEmitter {
     };
 
     // Aggregate metrics from services
-    if (this.emailService && typeof (this.emailService as any).getMetrics === 'function') {
+    if (
+      this.emailService &&
+      typeof (this.emailService as any).getMetrics === 'function'
+    ) {
       const emailMetrics = await (this.emailService as any).getMetrics();
       // Merge email metrics
       Object.assign(baseMetrics, emailMetrics);
@@ -266,7 +275,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Handle low satisfaction surveys
    */
-  private async handleLowSatisfaction(survey: SatisfactionSurvey): Promise<void> {
+  private async handleLowSatisfaction(
+    survey: SatisfactionSurvey
+  ): Promise<void> {
     const payload: NotificationPayload = {
       event: 'survey.nps_detractor',
       timestamp: new Date(),
@@ -300,7 +311,10 @@ export class NotificationManager extends EventEmitter {
     };
 
     this.queue.push(notification);
-    this.queue.sort((a, b) => this.getPriorityWeight(b.priority) - this.getPriorityWeight(a.priority));
+    this.queue.sort(
+      (a, b) =>
+        this.getPriorityWeight(b.priority) - this.getPriorityWeight(a.priority)
+    );
 
     this.logger.debug('Notification queued', {
       id: notification.id,
@@ -332,15 +346,19 @@ export class NotificationManager extends EventEmitter {
       try {
         await this.processNotification(notification);
         notification.status = 'completed';
-        this.logger.debug('Notification processed successfully', { id: notification.id });
+        this.logger.debug('Notification processed successfully', {
+          id: notification.id,
+        });
       } catch (error) {
         notification.status = 'failed';
         notification.lastError = (error as Error).message;
-        
+
         // Retry if not exceeded max attempts
         if (notification.attempts < notification.maxAttempts) {
           notification.status = 'pending';
-          notification.scheduledAt = new Date(Date.now() + this.getRetryDelay(notification.attempts));
+          notification.scheduledAt = new Date(
+            Date.now() + this.getRetryDelay(notification.attempts)
+          );
           this.queue.push(notification);
         }
 
@@ -357,7 +375,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process individual notification
    */
-  private async processNotification(notification: NotificationQueue): Promise<void> {
+  private async processNotification(
+    notification: NotificationQueue
+  ): Promise<void> {
     switch (notification.type) {
       case 'email':
         await this.processEmailNotification(notification);
@@ -376,7 +396,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process email notification
    */
-  private async processEmailNotification(notification: NotificationQueue): Promise<void> {
+  private async processEmailNotification(
+    notification: NotificationQueue
+  ): Promise<void> {
     if (!this.emailService) {
       throw new Error('Email service not configured');
     }
@@ -409,7 +431,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process webhook notification
    */
-  private async processWebhookNotification(notification: NotificationQueue): Promise<void> {
+  private async processWebhookNotification(
+    notification: NotificationQueue
+  ): Promise<void> {
     if (!this.webhookService) {
       throw new Error('Webhook service not configured');
     }
@@ -420,7 +444,9 @@ export class NotificationManager extends EventEmitter {
   /**
    * Process Slack notification
    */
-  private async processSlackNotification(notification: NotificationQueue): Promise<void> {
+  private async processSlackNotification(
+    notification: NotificationQueue
+  ): Promise<void> {
     if (!this.slackService) {
       throw new Error('Slack service not configured');
     }
@@ -477,7 +503,7 @@ export class NotificationManager extends EventEmitter {
 // Placeholder services (would be implemented in separate files)
 class WebhookService {
   constructor(private config: NotificationConfig) {}
-  
+
   async sendWebhook(payload: NotificationPayload): Promise<void> {
     // Webhook implementation
   }
@@ -485,27 +511,27 @@ class WebhookService {
 
 class SlackService {
   constructor(private config: NotificationConfig) {}
-  
+
   async sendCriticalBugAlert(feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
-  
+
   async sendNewFeedbackNotification(feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
-  
+
   async sendResolutionNotification(feedback: FeedbackEntry): Promise<void> {
     // Slack implementation
   }
-  
+
   async sendLowSatisfactionAlert(survey: SatisfactionSurvey): Promise<void> {
     // Slack implementation
   }
-  
+
   async sendWeeklyDigest(report: FeedbackReport): Promise<void> {
     // Slack implementation
   }
-  
+
   async sendTestMessage(): Promise<void> {
     // Slack implementation
   }

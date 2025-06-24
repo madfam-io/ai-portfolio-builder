@@ -27,8 +27,12 @@
       "@/app/*": ["./app/*"],
       "@/styles/*": ["./styles/*"],
       "@/public/*": ["./public/*"],
-      "@madfam/smart-fiat-payments": ["./packages/@madfam/smart-fiat-payments/src/index.ts"],
-      "@madfam/smart-fiat-payments/*": ["./packages/@madfam/smart-fiat-payments/src/*"]
+      "@madfam/smart-fiat-payments": [
+        "./packages/@madfam/smart-fiat-payments/src/index.ts"
+      ],
+      "@madfam/smart-fiat-payments/*": [
+        "./packages/@madfam/smart-fiat-payments/src/*"
+      ]
     },
     "target": "es2017",
     "forceConsistentCasingInFileNames": true,

@@ -116,10 +116,7 @@ export type {
 } from './analytics';
 
 // Notifications
-export {
-  NotificationManager,
-  EmailService,
-} from './notifications';
+export { NotificationManager, EmailService } from './notifications';
 
 export type {
   NotificationConfig,
@@ -202,7 +199,7 @@ export function quickStart(config?: {
     analytics: analyticsConfig,
     notifications: notificationsConfig,
   });
-  
+
   const analytics = createBetaAnalytics({ storage: storageConfig });
   const betaChecker = createBetaLaunchChecker(feedbackSystem, analytics);
 

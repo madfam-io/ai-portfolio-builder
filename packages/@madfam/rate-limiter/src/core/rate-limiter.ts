@@ -115,7 +115,7 @@ export class RateLimiter {
   async getStatus(identifier: string): Promise<RateLimitInfo | null> {
     const key = this.config.keyGenerator(identifier);
     const info = await this.store.get(key);
-    
+
     if (!info) {
       return null;
     }
@@ -169,8 +169,18 @@ export class RateLimiter {
             ? this.config.message
             : this.config.message(result.limit)
         );
-        (error as Error & { rateLimitInfo?: RateLimitInfo; retryAfter?: number }).rateLimitInfo = result.limit;
-        (error as Error & { rateLimitInfo?: RateLimitInfo; retryAfter?: number }).retryAfter = result.retryAfter;
+        (
+          error as Error & {
+            rateLimitInfo?: RateLimitInfo;
+            retryAfter?: number;
+          }
+        ).rateLimitInfo = result.limit;
+        (
+          error as Error & {
+            rateLimitInfo?: RateLimitInfo;
+            retryAfter?: number;
+          }
+        ).retryAfter = result.retryAfter;
         throw error;
       }
 
@@ -204,7 +214,11 @@ export class RateLimiter {
   /**
    * Add rate limit headers to response
    */
-  private addHeaders(res: Response, limit: RateLimitInfo, retryAfter?: number): void {
+  private addHeaders(
+    res: Response,
+    limit: RateLimitInfo,
+    retryAfter?: number
+  ): void {
     if (this.config.standardHeaders) {
       res.setHeader('RateLimit-Limit', limit.limit.toString());
       res.setHeader('RateLimit-Remaining', limit.remaining.toString());
@@ -214,7 +228,10 @@ export class RateLimiter {
     if (this.config.legacyHeaders) {
       res.setHeader('X-RateLimit-Limit', limit.limit.toString());
       res.setHeader('X-RateLimit-Remaining', limit.remaining.toString());
-      res.setHeader('X-RateLimit-Reset', Math.ceil(limit.resetTime / 1000).toString());
+      res.setHeader(
+        'X-RateLimit-Reset',
+        Math.ceil(limit.resetTime / 1000).toString()
+      );
       res.setHeader('X-RateLimit-Used', limit.used.toString());
     }
 
@@ -226,10 +243,15 @@ export class RateLimiter {
   /**
    * Default handler for rate limit exceeded
    */
-  private defaultHandler = (req: Request, res: Response, limit: RateLimitInfo): void => {
-    const message = typeof this.config.message === 'string'
-      ? this.config.message
-      : this.config.message(limit);
+  private defaultHandler = (
+    req: Request,
+    res: Response,
+    limit: RateLimitInfo
+  ): void => {
+    const message =
+      typeof this.config.message === 'string'
+        ? this.config.message
+        : this.config.message(limit);
 
     if (res.status) {
       // Express-like response
@@ -243,10 +265,12 @@ export class RateLimiter {
     } else {
       // Generic response
       res.statusCode = 429;
-      res.end(JSON.stringify({
-        error: 'Too Many Requests',
-        message,
-      }));
+      res.end(
+        JSON.stringify({
+          error: 'Too Many Requests',
+          message,
+        })
+      );
     }
   };
 }
@@ -256,14 +280,20 @@ export function createRateLimiter(config: RateLimitConfig): RateLimiter {
   return new RateLimiter(config);
 }
 
-export function slidingWindow(config: Omit<RateLimitConfig, 'algorithm'>): RateLimiter {
+export function slidingWindow(
+  config: Omit<RateLimitConfig, 'algorithm'>
+): RateLimiter {
   return new RateLimiter({ ...config, algorithm: 'sliding-window' });
 }
 
-export function tokenBucket(config: Omit<RateLimitConfig, 'algorithm'>): RateLimiter {
+export function tokenBucket(
+  config: Omit<RateLimitConfig, 'algorithm'>
+): RateLimiter {
   return new RateLimiter({ ...config, algorithm: 'token-bucket' });
 }
 
-export function fixedWindow(config: Omit<RateLimitConfig, 'algorithm'>): RateLimiter {
+export function fixedWindow(
+  config: Omit<RateLimitConfig, 'algorithm'>
+): RateLimiter {
   return new RateLimiter({ ...config, algorithm: 'fixed-window' });
 }

@@ -24,22 +24,22 @@ class TOTP {
     this.period = config?.period || 30;
     this.issuer = config?.issuer || 'Test';
     this.label = config?.label || 'user@example.com';
-    
+
     // Bind methods
     this.generate = this.generate.bind(this);
     this.validate = this.validate.bind(this);
     this.toString = this.toString.bind(this);
   }
-  
+
   generate() {
     return '123456';
   }
-  
+
   validate({ token }) {
     // Return null for invalid tokens, non-null for valid
     return token === '123456' ? 0 : null;
   }
-  
+
   toString() {
     return `otpauth://totp/${this.issuer}:${this.label}?secret=${this.secret?.base32 || 'TESTSECRET'}&issuer=${this.issuer}`;
   }
@@ -59,7 +59,8 @@ class Secret {
   static generate() {
     const secret = new Secret();
     // Generate random base32 string for testing
-    secret.base32 = 'TEST' + Math.random().toString(36).substring(2, 15).toUpperCase();
+    secret.base32 =
+      'TEST' + Math.random().toString(36).substring(2, 15).toUpperCase();
     return secret;
   }
 

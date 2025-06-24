@@ -191,9 +191,12 @@ describe('MFAManager', () => {
 
       // Mock the TOTP validate method to return true for our test token
       const mockValidate = jest.fn().mockReturnValue(0);
-      jest.spyOn(OTPAuth, 'TOTP').mockImplementation(() => ({
-        validate: mockValidate,
-      } as any));
+      jest.spyOn(OTPAuth, 'TOTP').mockImplementation(
+        () =>
+          ({
+            validate: mockValidate,
+          }) as any
+      );
 
       const isValid = await mfaManager.verifyTOTP(userId, validToken);
 
@@ -303,9 +306,12 @@ describe('MFAManager', () => {
 
       // Mock the TOTP validate method to return true for our test token
       const mockValidate = jest.fn().mockReturnValue(0);
-      jest.spyOn(OTPAuth, 'TOTP').mockImplementation(() => ({
-        validate: mockValidate,
-      } as any));
+      jest.spyOn(OTPAuth, 'TOTP').mockImplementation(
+        () =>
+          ({
+            validate: mockValidate,
+          }) as any
+      );
 
       const isValid = await mfaManager.verifyToken(challenge.id, validToken);
 

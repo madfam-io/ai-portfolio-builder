@@ -203,8 +203,10 @@ describe('SupabaseAdapter', () => {
       it('should delete user successfully', async () => {
         // Mock for deleteUserSessions
         const deleteSessionsMock = createChainableMock();
-        mockSupabaseClient.from.mockImplementationOnce(() => deleteSessionsMock);
-        
+        mockSupabaseClient.from.mockImplementationOnce(
+          () => deleteSessionsMock
+        );
+
         // Mock for deleteUser
         const deleteUserMock = createChainableMock();
         mockSupabaseClient.from.mockImplementationOnce(() => deleteUserMock);
@@ -212,7 +214,10 @@ describe('SupabaseAdapter', () => {
         await adapter.deleteUser('user-123');
 
         expect(deleteSessionsMock.delete).toHaveBeenCalled();
-        expect(deleteSessionsMock.eq).toHaveBeenCalledWith('user_id', 'user-123');
+        expect(deleteSessionsMock.eq).toHaveBeenCalledWith(
+          'user_id',
+          'user-123'
+        );
         expect(deleteUserMock.delete).toHaveBeenCalled();
         expect(deleteUserMock.eq).toHaveBeenCalledWith('id', 'user-123');
       });
@@ -220,14 +225,16 @@ describe('SupabaseAdapter', () => {
       it('should handle deletion error', async () => {
         // Mock for deleteUserSessions
         const deleteSessionsMock = createChainableMock();
-        mockSupabaseClient.from.mockImplementationOnce(() => deleteSessionsMock);
-        
+        mockSupabaseClient.from.mockImplementationOnce(
+          () => deleteSessionsMock
+        );
+
         // Mock for deleteUser with error
         const deleteUserMock = createChainableMock();
         deleteUserMock.delete.mockReturnValue(deleteUserMock);
         deleteUserMock.eq.mockReturnValue({
           data: null,
-          error: { message: 'User not found' }
+          error: { message: 'User not found' },
         });
         mockSupabaseClient.from.mockImplementationOnce(() => deleteUserMock);
 
@@ -417,7 +424,7 @@ describe('SupabaseAdapter', () => {
           error: null,
         });
         mockSupabaseClient.from.mockImplementationOnce(() => selectMock);
-        
+
         // Second mock for update
         const updateMock = createChainableMock();
         mockSupabaseClient.from.mockImplementationOnce(() => updateMock);
@@ -427,7 +434,7 @@ describe('SupabaseAdapter', () => {
         expect(isValid).toBe(true);
         expect(updateMock.update).toHaveBeenCalledWith({
           codes: ['CODE2'],
-          updated_at: expect.any(Date)
+          updated_at: expect.any(Date),
         });
       });
 
@@ -471,7 +478,7 @@ describe('SupabaseAdapter', () => {
               { provider: 'github', provider_id: 'github-789' },
             ],
             error: null,
-          })
+          }),
         });
 
         const links = await adapter.findAccountLinks('user-123');

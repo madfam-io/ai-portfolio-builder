@@ -28,17 +28,30 @@
  * Redis-based rate limit store
  */
 
-import type { RateLimitStore, RateLimitInfo, RedisStoreConfig } from '../core/types';
+import type {
+  RateLimitStore,
+  RateLimitInfo,
+  RedisStoreConfig,
+} from '../core/types';
 
 interface RedisClient {
   get(key: string): Promise<string | null>;
-  set(key: string, value: string, mode?: string, duration?: number): Promise<string | null>;
+  set(
+    key: string,
+    value: string,
+    mode?: string,
+    duration?: number
+  ): Promise<string | null>;
   incr(key: string): Promise<number>;
   expire(key: string, seconds: number): Promise<number>;
   del(key: string): Promise<number>;
   pipeline(): RedisClient;
   zadd(key: string, ...args: (string | number)[]): Promise<number>;
-  zremrangebyscore(key: string, min: string | number, max: string | number): Promise<number>;
+  zremrangebyscore(
+    key: string,
+    min: string | number,
+    max: string | number
+  ): Promise<number>;
   zcard(key: string): Promise<number>;
   exec(): Promise<unknown[]>;
 }
@@ -55,9 +68,10 @@ export class RedisStore implements RateLimitStore {
     // Import Redis dynamically to make it optional
     try {
       const Redis = require('ioredis');
-      this.redis = typeof config.redis === 'string' 
-        ? new Redis(config.redis)
-        : new Redis(config.redis);
+      this.redis =
+        typeof config.redis === 'string'
+          ? new Redis(config.redis)
+          : new Redis(config.redis);
     } catch (error) {
       throw new Error(
         'ioredis is required for RedisStore. Install it with: npm install ioredis'
@@ -122,7 +136,7 @@ export class RedisStore implements RateLimitStore {
 
   async get(key: string): Promise<RateLimitInfo | null> {
     const redisKey = this.prefix + key;
-    
+
     const [count, totalHits] = await Promise.all([
       this.redis.zcard(redisKey),
       this.redis.get(redisKey + ':total'),
@@ -133,10 +147,16 @@ export class RedisStore implements RateLimitStore {
     }
 
     // Get the oldest timestamp to calculate reset time
-    const oldestTimestamp = await this.redis.zrange(redisKey, 0, 0, 'WITHSCORES');
-    const resetTime = oldestTimestamp.length > 0 
-      ? parseInt(oldestTimestamp[1], 10) + this.ttl * 1000
-      : Date.now() + this.ttl * 1000;
+    const oldestTimestamp = await this.redis.zrange(
+      redisKey,
+      0,
+      0,
+      'WITHSCORES'
+    );
+    const resetTime =
+      oldestTimestamp.length > 0
+        ? parseInt(oldestTimestamp[1], 10) + this.ttl * 1000
+        : Date.now() + this.ttl * 1000;
 
     return {
       limit: 0, // Will be set by RateLimiter
@@ -158,7 +178,7 @@ export class RedisStore implements RateLimitStore {
   async cleanup(): Promise<void> {
     // Redis automatically handles expiration, but we can clean up manually if needed
     const keys = await this.redis.keys(this.prefix + '*');
-    
+
     if (keys.length === 0) {
       return;
     }
@@ -166,17 +186,17 @@ export class RedisStore implements RateLimitStore {
     // Check each key and remove if expired
     const now = Date.now();
     const pipeline = this.redis.pipeline();
-    
+
     for (const key of keys) {
       if (key.endsWith(':total')) {
         continue;
       }
-      
+
       // Remove entries older than TTL
-      const windowStart = now - (this.ttl * 1000);
+      const windowStart = now - this.ttl * 1000;
       pipeline.zremrangebyscore(key, 0, windowStart);
     }
-    
+
     await pipeline.exec();
   }
 
@@ -199,7 +219,7 @@ export class RedisStore implements RateLimitStore {
   async getStats() {
     const keys = await this.redis.keys(this.prefix + '*');
     const totalKeys = keys.filter(key => !key.endsWith(':total')).length;
-    
+
     return {
       keys: totalKeys,
       totalKeys: keys.length,

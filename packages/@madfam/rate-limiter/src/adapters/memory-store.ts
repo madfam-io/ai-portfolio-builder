@@ -28,7 +28,11 @@
  * In-memory rate limit store
  */
 
-import type { RateLimitStore, RateLimitInfo, MemoryStoreConfig } from '../core/types';
+import type {
+  RateLimitStore,
+  RateLimitInfo,
+  MemoryStoreConfig,
+} from '../core/types';
 
 interface MemoryEntry {
   count: number;
@@ -57,9 +61,9 @@ export class MemoryStore implements RateLimitStore {
   async increment(key: string, windowMs: number): Promise<RateLimitInfo> {
     const now = Date.now();
     const resetTime = now + windowMs;
-    
+
     let entry = this.store.get(key);
-    
+
     if (!entry) {
       // Create new entry
       entry = {
@@ -86,7 +90,7 @@ export class MemoryStore implements RateLimitStore {
         entry.timestamps = entry.timestamps.filter(ts => ts > windowStart);
         entry.count = entry.timestamps.length;
       }
-      
+
       entry.totalHits++;
     }
 
@@ -106,13 +110,13 @@ export class MemoryStore implements RateLimitStore {
 
   async get(key: string): Promise<RateLimitInfo | null> {
     const entry = this.store.get(key);
-    
+
     if (!entry) {
       return null;
     }
 
     const now = Date.now();
-    
+
     // Check if entry has expired
     if (now >= entry.resetTime) {
       this.store.delete(key);
@@ -160,10 +164,10 @@ export class MemoryStore implements RateLimitStore {
    */
   private evictOldestEntries(): void {
     const entries = Array.from(this.store.entries());
-    
+
     // Sort by reset time (oldest first)
     entries.sort(([, a], [, b]) => a.resetTime - b.resetTime);
-    
+
     // Remove oldest 10% of entries
     const removeCount = Math.floor(entries.length * 0.1);
     for (let i = 0; i < removeCount; i++) {

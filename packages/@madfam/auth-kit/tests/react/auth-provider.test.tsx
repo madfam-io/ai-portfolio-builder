@@ -49,7 +49,7 @@ describe('AuthProvider', () => {
       ...defaultConfig,
       adapter,
     });
-    
+
     // Clear localStorage mocks
     jest.clearAllMocks();
   });
@@ -59,7 +59,9 @@ describe('AuthProvider', () => {
     return (
       <div>
         <div data-testid="loading">{auth.isLoading ? 'loading' : 'loaded'}</div>
-        <div data-testid="authenticated">{auth.isAuthenticated ? 'true' : 'false'}</div>
+        <div data-testid="authenticated">
+          {auth.isAuthenticated ? 'true' : 'false'}
+        </div>
         <div data-testid="user-email">{auth.user?.email || 'no-user'}</div>
         <button onClick={() => auth.signUp('test@example.com', 'Password123!')}>
           Sign Up
@@ -102,7 +104,9 @@ describe('AuthProvider', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      );
     });
   });
 
@@ -127,7 +131,9 @@ describe('AuthProvider', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('authenticated')).toHaveTextContent('true');
-      expect(screen.getByTestId('user-email')).toHaveTextContent('test@example.com');
+      expect(screen.getByTestId('user-email')).toHaveTextContent(
+        'test@example.com'
+      );
     });
   });
 
@@ -165,7 +171,7 @@ describe('AuthProvider', () => {
   it('should persist session in localStorage', async () => {
     const mockSetItem = jest.fn();
     const mockGetItem = jest.fn().mockReturnValue(null);
-    
+
     Object.defineProperty(global, 'localStorage', {
       value: {
         setItem: mockSetItem,
@@ -187,7 +193,10 @@ describe('AuthProvider', () => {
     fireEvent.click(screen.getByText('Sign Up'));
 
     await waitFor(() => {
-      expect(mockSetItem).toHaveBeenCalledWith('authkit_session', expect.any(String));
+      expect(mockSetItem).toHaveBeenCalledWith(
+        'authkit_session',
+        expect.any(String)
+      );
     });
   });
 });
@@ -224,7 +233,7 @@ describe('SignInForm (LoginForm)', () => {
     });
 
     const onSuccess = jest.fn();
-    
+
     render(
       <AuthProvider authKit={authKit}>
         <LoginForm onSuccess={onSuccess} />
@@ -309,7 +318,7 @@ describe('SignUpForm', () => {
 
   it('should render with metadata options', () => {
     const metadata = { source: 'test' };
-    
+
     render(
       <AuthProvider authKit={authKit}>
         <SignUpForm metadata={metadata} />
@@ -346,7 +355,7 @@ describe('ProtectedRoute', () => {
 
     const TestWrapper = () => {
       const auth = useAuth();
-      
+
       React.useEffect(() => {
         auth.signIn('test@example.com', 'Password123!');
       }, []);
@@ -397,7 +406,7 @@ describe('ProtectedRoute', () => {
 
     const TestWrapper = () => {
       const auth = useAuth();
-      
+
       React.useEffect(() => {
         auth.signIn('test@example.com', 'Password123!');
       }, []);

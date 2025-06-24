@@ -34,7 +34,12 @@ import type { KeyGenerator, Request } from '../core/types';
  * Generate key based on IP address
  */
 export const ipKeyGenerator: KeyGenerator = (req: Request): string => {
-  return req.ip || req.connection?.remoteAddress || req.socket?.remoteAddress || 'unknown';
+  return (
+    req.ip ||
+    req.connection?.remoteAddress ||
+    req.socket?.remoteAddress ||
+    'unknown'
+  );
 };
 
 /**
@@ -57,10 +62,10 @@ export const apiKeyGenerator: KeyGenerator = (req: Request): string => {
 export const authKeyGenerator: KeyGenerator = (req: Request): string => {
   const auth = req.headers?.authorization;
   if (!auth) return 'no-auth';
-  
+
   // Extract token from Bearer header
   const token = auth.replace(/^Bearer\s+/, '');
-  
+
   // Hash the token for privacy
   return hashString(token);
 };
@@ -75,7 +80,9 @@ export const sessionKeyGenerator: KeyGenerator = (req: Request): string => {
 /**
  * Generate composite key with multiple factors
  */
-export const compositeKeyGenerator = (generators: KeyGenerator[]): KeyGenerator => {
+export const compositeKeyGenerator = (
+  generators: KeyGenerator[]
+): KeyGenerator => {
   return (req: Request): string => {
     const parts = generators.map(gen => gen(req));
     return parts.join(':');
@@ -136,7 +143,10 @@ export const queryKeyGenerator = (paramName: string): KeyGenerator => {
 /**
  * Generate key with prefix
  */
-export const prefixedKeyGenerator = (prefix: string, generator: KeyGenerator): KeyGenerator => {
+export const prefixedKeyGenerator = (
+  prefix: string,
+  generator: KeyGenerator
+): KeyGenerator => {
   return (req: Request): string => {
     return `${prefix}:${generator(req)}`;
   };
@@ -145,7 +155,10 @@ export const prefixedKeyGenerator = (prefix: string, generator: KeyGenerator): K
 /**
  * Generate key with suffix
  */
-export const suffixedKeyGenerator = (generator: KeyGenerator, suffix: string): KeyGenerator => {
+export const suffixedKeyGenerator = (
+  generator: KeyGenerator,
+  suffix: string
+): KeyGenerator => {
   return (req: Request): string => {
     return `${generator(req)}:${suffix}`;
   };
@@ -161,7 +174,7 @@ export const fingerprintKeyGenerator: KeyGenerator = (req: Request): string => {
     req.headers?.['accept-language'] || 'no-lang',
     req.headers?.['accept-encoding'] || 'no-encoding',
   ];
-  
+
   return hashString(components.join('|'));
 };
 
@@ -172,7 +185,7 @@ function hashString(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash; // Convert to 32bit integer
   }
   return Math.abs(hash).toString(36);

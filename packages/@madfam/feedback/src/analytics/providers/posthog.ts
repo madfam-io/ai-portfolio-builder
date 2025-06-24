@@ -58,7 +58,7 @@ export class PostHogProvider implements AnalyticsProvider {
     try {
       // Dynamic import to avoid bundling PostHog in environments where it's not needed
       const { PostHog } = await import('posthog-node');
-      
+
       this.client = new PostHog(this.config.apiKey, {
         host: this.config.host,
         flushAt: this.config.flushAt,
@@ -72,7 +72,9 @@ export class PostHogProvider implements AnalyticsProvider {
 
       this.initialized = true;
     } catch (error) {
-      throw new Error(`Failed to initialize PostHog: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to initialize PostHog: ${(error as Error).message}`
+      );
     }
   }
 
@@ -149,7 +151,10 @@ export class PostHogProvider implements AnalyticsProvider {
     return results;
   }
 
-  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserProperties(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.identify({
@@ -158,7 +163,11 @@ export class PostHogProvider implements AnalyticsProvider {
     });
   }
 
-  async group(userId: string, groupId: string, traits: Record<string, string | number | boolean> = {}): Promise<void> {
+  async group(
+    userId: string,
+    groupId: string,
+    traits: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.groupIdentify({
@@ -169,7 +178,11 @@ export class PostHogProvider implements AnalyticsProvider {
     });
   }
 
-  async page(userId: string, name: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async page(
+    userId: string,
+    name: string,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.capture({
@@ -204,7 +217,10 @@ export class PostHogProvider implements AnalyticsProvider {
    * PostHog-specific methods
    */
 
-  async getFeatureFlag(userId: string, flagKey: string): Promise<boolean | string | undefined> {
+  async getFeatureFlag(
+    userId: string,
+    flagKey: string
+  ): Promise<boolean | string | undefined> {
     await this.ensureInitialized();
 
     if (!this.config.featureFlags) {
@@ -214,11 +230,15 @@ export class PostHogProvider implements AnalyticsProvider {
     try {
       return await this.client.getFeatureFlag(flagKey, userId);
     } catch (error) {
-      throw new Error(`Failed to get feature flag: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to get feature flag: ${(error as Error).message}`
+      );
     }
   }
 
-  async getAllFeatureFlags(userId: string): Promise<Record<string, boolean | string>> {
+  async getAllFeatureFlags(
+    userId: string
+  ): Promise<Record<string, boolean | string>> {
     await this.ensureInitialized();
 
     if (!this.config.featureFlags) {
@@ -228,7 +248,9 @@ export class PostHogProvider implements AnalyticsProvider {
     try {
       return await this.client.getAllFlags(userId);
     } catch (error) {
-      throw new Error(`Failed to get feature flags: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to get feature flags: ${(error as Error).message}`
+      );
     }
   }
 
@@ -238,14 +260,19 @@ export class PostHogProvider implements AnalyticsProvider {
     try {
       return await this.client.isFeatureEnabled(flagKey, userId);
     } catch (error) {
-      throw new Error(`Failed to check feature flag: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to check feature flag: ${(error as Error).message}`
+      );
     }
   }
 
   /**
    * Cohort analysis
    */
-  async createCohort(name: string, query: Record<string, string | number | boolean | string[]>): Promise<string> {
+  async createCohort(
+    name: string,
+    query: Record<string, string | number | boolean | string[]>
+  ): Promise<string> {
     await this.ensureInitialized();
 
     if (!this.config.personalApiKey) {
@@ -259,7 +286,9 @@ export class PostHogProvider implements AnalyticsProvider {
   /**
    * Custom insights and queries
    */
-  async runQuery(query: Record<string, string | number | boolean | string[]>): Promise<unknown> {
+  async runQuery(
+    query: Record<string, string | number | boolean | string[]>
+  ): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.personalApiKey) {

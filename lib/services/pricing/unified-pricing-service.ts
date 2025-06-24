@@ -13,13 +13,13 @@
 
 /**
  * Unified Pricing Service
- * 
+ *
  * Combines static tier pricing with dynamic geographical adjustments
  * and promotional campaigns. Integrates with @madfam/smart-fiat-payments
  * for intelligent, location-aware pricing.
  */
 
-import { 
+import {
   DynamicPricingEngine,
   GeographicalContextEngine,
   PriceManipulationDetector,
@@ -30,8 +30,8 @@ import {
   type PricingStrategy,
 } from '@madfam/smart-fiat-payments';
 
-import { 
-  UNIFIED_PRICING_CONFIG, 
+import {
+  UNIFIED_PRICING_CONFIG,
   PricingHelpers,
   type TierID,
   type SubscriptionTier,
@@ -63,7 +63,7 @@ export interface UnifiedPriceResult {
   tier: SubscriptionTier;
   basePrice: Money;
   displayPrice: Money;
-  
+
   // Adjustments
   geographicalAdjustment?: {
     percentage: number;
@@ -76,12 +76,12 @@ export interface UnifiedPriceResult {
     code: string;
     validUntil: Date;
   };
-  
+
   // Final calculations
   finalPrice: Money;
   savingsAmount?: Money;
   savingsPercentage?: number;
-  
+
   // Metadata
   currency: string;
   displayCurrency: string;
@@ -110,7 +110,7 @@ export class UnifiedPricingService {
   private dynamicPricingEngine: DynamicPricingEngine;
   private geoEngine: GeographicalContextEngine;
   private manipulationDetector: PriceManipulationDetector;
-  
+
   constructor() {
     // Initialize smart-fiat-payments engines
     const pricingStrategy: PricingStrategy = {
@@ -120,26 +120,28 @@ export class UnifiedPricingService {
       displayLocalCurrency: true,
       roundingStrategy: 'nearest',
     } as PricingStrategy;
-    
+
     this.dynamicPricingEngine = new DynamicPricingEngine({
       strategy: pricingStrategy,
       enableManipulationDetection: true,
       minimumPrice: { amount: 100, currency: 'USD', display: '$1.00' },
     });
-    
+
     this.geoEngine = new GeographicalContextEngine({
       enableVPNDetection: true,
       cacheResults: true,
       cacheTTL: 3600,
     } as any);
-    
+
     this.manipulationDetector = new PriceManipulationDetector();
   }
 
   /**
    * Calculate unified pricing with all adjustments
    */
-  async calculatePrice(context: UnifiedPricingContext): Promise<UnifiedPriceResult> {
+  async calculatePrice(
+    context: UnifiedPricingContext
+  ): Promise<UnifiedPriceResult> {
     try {
       // Get tier configuration
       const tier = PricingHelpers.getTierById(context.tierId);
@@ -148,9 +150,10 @@ export class UnifiedPricingService {
       }
 
       // Get base price
-      const basePrice = context.interval === 'monthly' 
-        ? tier.pricing.monthly 
-        : tier.pricing.yearly;
+      const basePrice =
+        context.interval === 'monthly'
+          ? tier.pricing.monthly
+          : tier.pricing.yearly;
 
       // Create Money object for base price
       const baseMoney: Money = {
@@ -161,7 +164,7 @@ export class UnifiedPricingService {
 
       // Get geographical context
       const geoContext = await this.getGeographicalContext(context);
-      
+
       // Detect price manipulation
       const fraudDetected = this.detectManipulation(geoContext, context);
 
@@ -193,8 +196,15 @@ export class UnifiedPricingService {
       }
 
       // Apply geographical pricing if no fraud detected
-      if (!fraudDetected && UNIFIED_PRICING_CONFIG.tiers[context.tierId].id !== 'free') {
-        result = await this.applyGeographicalPricing(result, context, pricingCountry);
+      if (
+        !fraudDetected &&
+        UNIFIED_PRICING_CONFIG.tiers[context.tierId].id !== 'free'
+      ) {
+        result = await this.applyGeographicalPricing(
+          result,
+          context,
+          pricingCountry
+        );
       }
 
       // Calculate final price and savings
@@ -244,7 +254,9 @@ export class UnifiedPricingService {
       );
 
       if (!stripePriceId) {
-        throw new Error(`No Stripe price ID configured for ${options.tierId} ${options.interval}`);
+        throw new Error(
+          `No Stripe price ID configured for ${options.tierId} ${options.interval}`
+        );
       }
 
       // Create checkout session
@@ -254,7 +266,8 @@ export class UnifiedPricingService {
         userEmail: options.userEmail,
         successUrl: options.successUrl,
         cancelUrl: options.cancelUrl,
-        applyPromotion: pricing.eligibleForPromotion && options.applyPromotion !== false,
+        applyPromotion:
+          pricing.eligibleForPromotion && options.applyPromotion !== false,
         metadata: {
           ...options.metadata,
           pricingCountry: pricing.pricingCountry,
@@ -295,13 +308,15 @@ export class UnifiedPricingService {
   ): Promise<Record<TierID, UnifiedPriceResult>> {
     const results: Partial<Record<TierID, UnifiedPriceResult>> = {};
 
-    for (const tierId of Object.keys(UNIFIED_PRICING_CONFIG.tiers) as TierID[]) {
+    for (const tierId of Object.keys(
+      UNIFIED_PRICING_CONFIG.tiers
+    ) as TierID[]) {
       const monthlyPrice = await this.calculatePrice({
         tierId,
         interval: 'monthly',
         ipCountry,
       });
-      
+
       results[tierId] = monthlyPrice;
     }
 
@@ -374,14 +389,14 @@ export class UnifiedPricingService {
   ): boolean {
     if (fraudDetected) return false;
     if (context.tierId === 'free') return false;
-    
+
     const { promotion } = UNIFIED_PRICING_CONFIG;
     if (!promotion.enabled) return false;
     if (new Date() > promotion.validUntil) return false;
-    
+
     // Check if user has already used promotion
     // This would check database in production
-    
+
     return context.forcePromotion || true; // For now, everyone is eligible
   }
 
@@ -391,12 +406,13 @@ export class UnifiedPricingService {
   ): UnifiedPriceResult {
     const tier = result.tier;
     const { promotion } = UNIFIED_PRICING_CONFIG;
-    
+
     if (!tier.pricing.promotional) return result;
 
-    const promotionalPrice = context.interval === 'monthly'
-      ? tier.pricing.promotional.monthly
-      : tier.pricing.promotional.yearly;
+    const promotionalPrice =
+      context.interval === 'monthly'
+        ? tier.pricing.promotional.monthly
+        : tier.pricing.promotional.yearly;
 
     const discountAmount = result.basePrice.amount - promotionalPrice;
 
@@ -428,14 +444,17 @@ export class UnifiedPricingService {
       cardCountry: context.cardCountry,
       ipCountry: context.ipCountry || undefined,
       vpnDetected: context.vpnDetected || false,
-      customer: context.user ? {
-        id: context.user.id,
-        email: context.user.email || '',
-        accountCreatedAt: new Date(context.user.created_at),
-      } as Customer : undefined,
+      customer: context.user
+        ? ({
+            id: context.user.id,
+            email: context.user.email || '',
+            accountCreatedAt: new Date(context.user.created_at),
+          } as Customer)
+        : undefined,
     };
 
-    const geoPrice = await this.dynamicPricingEngine.calculatePrice(pricingContext);
+    const geoPrice =
+      await this.dynamicPricingEngine.calculatePrice(pricingContext);
 
     if (geoPrice.adjustment && geoPrice.adjustment.type === 'discount') {
       return {
@@ -445,7 +464,9 @@ export class UnifiedPricingService {
           amount: geoPrice.adjustment.amount,
           reason: geoPrice.adjustment.reason,
         },
-        pricingStrategy: result.promotionalDiscount ? 'combined' : 'geographical',
+        pricingStrategy: result.promotionalDiscount
+          ? 'combined'
+          : 'geographical',
       };
     }
 
@@ -464,7 +485,9 @@ export class UnifiedPricingService {
 
     // Then apply geographical adjustment (if any)
     if (result.geographicalAdjustment) {
-      const geoDiscount = result.basePrice.amount * (result.geographicalAdjustment.percentage / 100);
+      const geoDiscount =
+        result.basePrice.amount *
+        (result.geographicalAdjustment.percentage / 100);
       finalAmount -= geoDiscount;
       totalSavings += geoDiscount;
     }
@@ -478,15 +501,19 @@ export class UnifiedPricingService {
       display: PricingHelpers.formatPrice(finalAmount),
     };
 
-    const savingsAmount = totalSavings > 0 ? {
-      amount: Math.round(totalSavings),
-      currency: result.currency,
-      display: PricingHelpers.formatPrice(totalSavings),
-    } : undefined;
+    const savingsAmount =
+      totalSavings > 0
+        ? {
+            amount: Math.round(totalSavings),
+            currency: result.currency,
+            display: PricingHelpers.formatPrice(totalSavings),
+          }
+        : undefined;
 
-    const savingsPercentage = totalSavings > 0 
-      ? Math.round((totalSavings / result.basePrice.amount) * 100)
-      : undefined;
+    const savingsPercentage =
+      totalSavings > 0
+        ? Math.round((totalSavings / result.basePrice.amount) * 100)
+        : undefined;
 
     return {
       ...result,
@@ -502,13 +529,13 @@ export class UnifiedPricingService {
     usePromotional: boolean
   ): string | undefined {
     if (usePromotional) {
-      return interval === 'monthly' 
-        ? tier.stripePriceIds.monthlyPromo 
+      return interval === 'monthly'
+        ? tier.stripePriceIds.monthlyPromo
         : tier.stripePriceIds.yearlyPromo;
     }
 
-    return interval === 'monthly' 
-      ? tier.stripePriceIds.monthly 
+    return interval === 'monthly'
+      ? tier.stripePriceIds.monthly
       : tier.stripePriceIds.yearly;
   }
 
@@ -535,12 +562,17 @@ export class UnifiedPricingService {
 
   private getDisplayCurrency(country: string): string {
     const currency = this.getCurrencyForCountry(country);
-    return Object.keys(UNIFIED_PRICING_CONFIG.displayCurrencies).includes(currency)
+    return Object.keys(UNIFIED_PRICING_CONFIG.displayCurrencies).includes(
+      currency
+    )
       ? currency
       : 'USD';
   }
 
-  private convertToDisplayCurrency(price: Money, targetCurrency: string): Money {
+  private convertToDisplayCurrency(
+    price: Money,
+    targetCurrency: string
+  ): Money {
     const convertedAmount = PricingHelpers.convertToDisplayCurrency(
       price.amount,
       price.currency,
@@ -559,11 +591,13 @@ export class UnifiedPricingService {
 export const unifiedPricingService = new UnifiedPricingService();
 
 // Convenience exports
-export const calculatePrice = (context: UnifiedPricingContext) => 
+export const calculatePrice = (context: UnifiedPricingContext) =>
   unifiedPricingService.calculatePrice(context);
 
 export const createCheckoutSession = (options: CheckoutSessionOptions) =>
   unifiedPricingService.createCheckoutSession(options);
 
-export const getPricingForDisplay = (ipCountry?: string | null, currency?: string) =>
-  unifiedPricingService.getPricingForDisplay(ipCountry, currency);
+export const getPricingForDisplay = (
+  ipCountry?: string | null,
+  currency?: string
+) => unifiedPricingService.getPricingForDisplay(ipCountry, currency);

@@ -53,10 +53,7 @@ interface SupabaseAuthClient {
     options?: { redirectTo?: string }
   ): Promise<{ error?: Error }>;
   updateUser(attributes: { password?: string }): Promise<{ error?: Error }>;
-  verifyOtp(params: {
-    token: string;
-    type: string;
-  }): Promise<{
+  verifyOtp(params: { token: string; type: string }): Promise<{
     data?: { user?: SupabaseUserRecord; session?: SupabaseSessionRecord };
     error?: Error;
   }>;

@@ -201,7 +201,8 @@ export interface TokenBucketConfig extends Omit<RateLimitConfig, 'algorithm'> {
   initialTokens?: number;
 }
 
-export interface SlidingWindowConfig extends Omit<RateLimitConfig, 'algorithm'> {
+export interface SlidingWindowConfig
+  extends Omit<RateLimitConfig, 'algorithm'> {
   /**
    * Number of sub-windows to track
    */
@@ -262,11 +263,19 @@ export interface DatabaseStoreConfig {
 }
 
 // Utility types
-export type RateLimitMiddleware = (req: Request, res: Response, next: () => void) => Promise<void> | void;
+export type RateLimitMiddleware = (
+  req: Request,
+  res: Response,
+  next: () => void
+) => Promise<void> | void;
 
 export type KeyGenerator = (req: Request) => string;
 
-export type RateLimitHandler = (req: Request, res: Response, limit: RateLimitInfo) => void;
+export type RateLimitHandler = (
+  req: Request,
+  res: Response,
+  limit: RateLimitInfo
+) => void;
 
 export interface RateLimitHeaders {
   'X-RateLimit-Limit'?: string;

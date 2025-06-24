@@ -47,17 +47,28 @@ export interface AnalyticsProvider {
   /**
    * Set user properties
    */
-  setUserProperties?(userId: string, properties: Record<string, unknown>): Promise<void>;
+  setUserProperties?(
+    userId: string,
+    properties: Record<string, unknown>
+  ): Promise<void>;
 
   /**
    * Group tracking (for team/organization analytics)
    */
-  group?(userId: string, groupId: string, traits?: Record<string, unknown>): Promise<void>;
+  group?(
+    userId: string,
+    groupId: string,
+    traits?: Record<string, unknown>
+  ): Promise<void>;
 
   /**
    * Page/screen tracking
    */
-  page?(userId: string, name: string, properties?: Record<string, unknown>): Promise<void>;
+  page?(
+    userId: string,
+    name: string,
+    properties?: Record<string, unknown>
+  ): Promise<void>;
 
   /**
    * Reset user data (for privacy compliance)
@@ -119,20 +130,26 @@ export interface AnalyticsMetrics {
   avgBatchSize: number;
   queueSize: number;
   lastEventTime: Date | null;
-  
+
   // Breakdown by event type
-  byEvent: Record<string, {
-    count: number;
-    lastSeen: Date;
-    avgPropertiesCount: number;
-  }>;
-  
+  byEvent: Record<
+    string,
+    {
+      count: number;
+      lastSeen: Date;
+      avgPropertiesCount: number;
+    }
+  >;
+
   // Breakdown by user
-  byUser: Record<string, {
-    eventsCount: number;
-    lastSeen: Date;
-    firstSeen: Date;
-  }>;
+  byUser: Record<
+    string,
+    {
+      eventsCount: number;
+      lastSeen: Date;
+      firstSeen: Date;
+    }
+  >;
 }
 
 // Provider-specific configuration types

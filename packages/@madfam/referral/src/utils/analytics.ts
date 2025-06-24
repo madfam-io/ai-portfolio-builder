@@ -39,7 +39,11 @@ export class Analytics {
     this.endpoint = endpoint;
   }
 
-  async track(userId: string, event: string, properties?: Record<string, unknown>) {
+  async track(
+    userId: string,
+    event: string,
+    properties?: Record<string, unknown>
+  ) {
     const analyticsEvent: AnalyticsEvent = {
       userId,
       event,

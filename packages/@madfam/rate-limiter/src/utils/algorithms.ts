@@ -39,23 +39,23 @@ export class SlidingWindowAlgorithm {
   calculate(key: string, maxRequests: number, windowMs: number): RateLimitInfo {
     const now = Date.now();
     const windowStart = now - windowMs;
-    
+
     // Get or create window for key
     let timestamps = this.windows.get(key) || [];
-    
+
     // Remove old timestamps
     timestamps = timestamps.filter(timestamp => timestamp > windowStart);
-    
+
     // Add current timestamp
     timestamps.push(now);
-    
+
     // Update window
     this.windows.set(key, timestamps);
-    
+
     const used = timestamps.length;
     const remaining = Math.max(0, maxRequests - used);
     const resetTime = now + windowMs;
-    
+
     return {
       limit: maxRequests,
       used,
@@ -68,7 +68,11 @@ export class SlidingWindowAlgorithm {
   cleanup(): void {
     const now = Date.now();
     for (const [key, timestamps] of this.windows.entries()) {
-      if (timestamps.length === 0 || timestamps[timestamps.length - 1] < now - 300000) { // 5 minutes
+      if (
+        timestamps.length === 0 ||
+        timestamps[timestamps.length - 1] < now - 300000
+      ) {
+        // 5 minutes
         this.windows.delete(key);
       }
     }
@@ -79,11 +83,14 @@ export class SlidingWindowAlgorithm {
  * Token bucket algorithm implementation
  */
 export class TokenBucketAlgorithm {
-  private buckets = new Map<string, {
-    tokens: number;
-    lastRefill: number;
-    totalRequests: number;
-  }>();
+  private buckets = new Map<
+    string,
+    {
+      tokens: number;
+      lastRefill: number;
+      totalRequests: number;
+    }
+  >();
 
   calculate(
     key: string,
@@ -92,7 +99,7 @@ export class TokenBucketAlgorithm {
     tokensRequested = 1
   ): { allowed: boolean; info: RateLimitInfo } {
     const now = Date.now();
-    
+
     // Get or create bucket
     let bucket = this.buckets.get(key);
     if (!bucket) {
@@ -112,7 +119,7 @@ export class TokenBucketAlgorithm {
 
     // Check if request can be allowed
     const allowed = bucket.tokens >= tokensRequested;
-    
+
     if (allowed) {
       bucket.tokens -= tokensRequested;
       bucket.totalRequests++;
@@ -120,10 +127,10 @@ export class TokenBucketAlgorithm {
 
     const used = capacity - bucket.tokens;
     const remaining = Math.floor(bucket.tokens);
-    
+
     // Calculate reset time (when bucket will be full again)
     const tokensNeeded = capacity - bucket.tokens;
-    const timeToFull = tokensNeeded / refillRate * 1000; // Convert to ms
+    const timeToFull = (tokensNeeded / refillRate) * 1000; // Convert to ms
     const resetTime = now + timeToFull;
 
     return {
@@ -141,7 +148,7 @@ export class TokenBucketAlgorithm {
   cleanup(): void {
     const now = Date.now();
     const maxAge = 300000; // 5 minutes
-    
+
     for (const [key, bucket] of this.buckets.entries()) {
       if (now - bucket.lastRefill > maxAge) {
         this.buckets.delete(key);
@@ -154,21 +161,24 @@ export class TokenBucketAlgorithm {
  * Fixed window algorithm implementation
  */
 export class FixedWindowAlgorithm {
-  private windows = new Map<string, {
-    count: number;
-    windowStart: number;
-    totalRequests: number;
-  }>();
+  private windows = new Map<
+    string,
+    {
+      count: number;
+      windowStart: number;
+      totalRequests: number;
+    }
+  >();
 
   calculate(key: string, maxRequests: number, windowMs: number): RateLimitInfo {
     const now = Date.now();
     const windowId = Math.floor(now / windowMs);
     const windowStart = windowId * windowMs;
     const windowEnd = windowStart + windowMs;
-    
+
     // Get or create window
     let window = this.windows.get(key);
-    
+
     // Check if we need a new window
     if (!window || window.windowStart !== windowStart) {
       window = {
@@ -199,7 +209,7 @@ export class FixedWindowAlgorithm {
   cleanup(): void {
     const now = Date.now();
     const maxAge = 300000; // 5 minutes
-    
+
     for (const [key, window] of this.windows.entries()) {
       if (now - window.windowStart > maxAge) {
         this.windows.delete(key);
@@ -212,11 +222,14 @@ export class FixedWindowAlgorithm {
  * Leaky bucket algorithm implementation
  */
 export class LeakyBucketAlgorithm {
-  private buckets = new Map<string, {
-    size: number;
-    lastLeak: number;
-    totalRequests: number;
-  }>();
+  private buckets = new Map<
+    string,
+    {
+      size: number;
+      lastLeak: number;
+      totalRequests: number;
+    }
+  >();
 
   calculate(
     key: string,
@@ -225,7 +238,7 @@ export class LeakyBucketAlgorithm {
     requestSize = 1
   ): { allowed: boolean; info: RateLimitInfo } {
     const now = Date.now();
-    
+
     // Get or create bucket
     let bucket = this.buckets.get(key);
     if (!bucket) {
@@ -245,7 +258,7 @@ export class LeakyBucketAlgorithm {
 
     // Check if request can be added
     const allowed = bucket.size + requestSize <= capacity;
-    
+
     if (allowed) {
       bucket.size += requestSize;
       bucket.totalRequests++;
@@ -253,9 +266,9 @@ export class LeakyBucketAlgorithm {
 
     const used = Math.ceil(bucket.size);
     const remaining = Math.max(0, capacity - used);
-    
+
     // Calculate reset time (when bucket will be empty)
-    const timeToEmpty = bucket.size / leakRate * 1000; // Convert to ms
+    const timeToEmpty = (bucket.size / leakRate) * 1000; // Convert to ms
     const resetTime = now + timeToEmpty;
 
     return {
@@ -273,7 +286,7 @@ export class LeakyBucketAlgorithm {
   cleanup(): void {
     const now = Date.now();
     const maxAge = 300000; // 5 minutes
-    
+
     for (const [key, bucket] of this.buckets.entries()) {
       if (now - bucket.lastLeak > maxAge) {
         this.buckets.delete(key);
@@ -287,23 +300,36 @@ export class LeakyBucketAlgorithm {
  */
 export class HierarchicalRateLimiter {
   private tiers: Array<{
-    algorithm: SlidingWindowAlgorithm | TokenBucketAlgorithm | FixedWindowAlgorithm;
+    algorithm:
+      | SlidingWindowAlgorithm
+      | TokenBucketAlgorithm
+      | FixedWindowAlgorithm;
     config: RateLimitConfig;
   }> = [];
 
-  addTier(algorithm: SlidingWindowAlgorithm | TokenBucketAlgorithm | FixedWindowAlgorithm, config: RateLimitConfig): void {
+  addTier(
+    algorithm:
+      | SlidingWindowAlgorithm
+      | TokenBucketAlgorithm
+      | FixedWindowAlgorithm,
+    config: RateLimitConfig
+  ): void {
     this.tiers.push({ algorithm, config });
   }
 
-  calculate(key: string): { allowed: boolean; info: RateLimitInfo; tier?: number } {
+  calculate(key: string): {
+    allowed: boolean;
+    info: RateLimitInfo;
+    tier?: number;
+  } {
     let mostRestrictive: RateLimitInfo | null = null;
     let blockedAtTier: number | undefined;
 
     for (let i = 0; i < this.tiers.length; i++) {
       const { algorithm, config } = this.tiers[i];
-      
+
       let result: RateLimitInfo;
-      
+
       if (algorithm instanceof TokenBucketAlgorithm) {
         const bucketResult = algorithm.calculate(
           `${key}:tier${i}`,

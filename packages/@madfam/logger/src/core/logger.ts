@@ -51,8 +51,9 @@ const LOG_LEVELS: LogLevelValue = {
   fatal: 5,
 };
 
-export class Logger<TEvents extends Record<string, unknown> = Record<string, unknown>>
-  implements ILogger<TEvents>
+export class Logger<
+  TEvents extends Record<string, unknown> = Record<string, unknown>,
+> implements ILogger<TEvents>
 {
   private config: LoggerConfig;
   private transports: Transport[] = [];

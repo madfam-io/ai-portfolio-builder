@@ -14,7 +14,11 @@
 import { jest, describe, it, expect, beforeEach } from '@jest/globals';
 import { AuthKit } from '../../src/core/auth-kit';
 import { MockMemoryAdapter } from '../mocks/memory-adapter';
-import type { AuthKitConfig, SignUpData, SignInData } from '../../src/core/types';
+import type {
+  AuthKitConfig,
+  SignUpData,
+  SignInData,
+} from '../../src/core/types';
 
 describe('AuthKit', () => {
   let authKit: AuthKit;
@@ -115,7 +119,7 @@ describe('AuthKit', () => {
     });
 
     it('should handle sign up hooks', async () => {
-      const beforeHook = jest.fn().mockImplementation((data) => ({
+      const beforeHook = jest.fn().mockImplementation(data => ({
         ...data,
         metadata: { ...data.metadata, processed: true },
       }));
@@ -240,7 +244,9 @@ describe('AuthKit', () => {
       await authKit.signOut(signUpResult.session.token);
 
       // Session should be revoked
-      const session = await adapter.findSessionByToken(signUpResult.session.token);
+      const session = await adapter.findSessionByToken(
+        signUpResult.session.token
+      );
       expect(session).toBeNull();
     });
 
@@ -277,7 +283,7 @@ describe('AuthKit', () => {
 
     it('should reset password with valid token', async () => {
       await authKit.sendPasswordResetEmail('test@example.com');
-      
+
       const user = await adapter.findUserByEmail('test@example.com');
       const resetToken = user?.metadata?.passwordResetToken as string;
 
@@ -313,7 +319,7 @@ describe('AuthKit', () => {
 
     it('should reject expired reset token', async () => {
       await authKit.sendPasswordResetEmail('test@example.com');
-      
+
       const user = await adapter.findUserByEmail('test@example.com');
       const resetToken = user?.metadata?.passwordResetToken as string;
 
@@ -371,7 +377,9 @@ describe('AuthKit', () => {
       };
 
       // Mock the provider manager's handleOAuthCallback method
-      jest.spyOn(authKit['providerManager'], 'handleOAuthCallback').mockResolvedValue(mockProviderUser);
+      jest
+        .spyOn(authKit['providerManager'], 'handleOAuthCallback')
+        .mockResolvedValue(mockProviderUser);
 
       const result = await authKit.handleOAuthCallback('google', 'auth-code');
 

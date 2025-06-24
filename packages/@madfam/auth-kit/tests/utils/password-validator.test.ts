@@ -43,7 +43,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must be at least 8 characters long');
+      expect(result.feedback).toContain(
+        'Password must be at least 8 characters long'
+      );
     });
 
     it('should reject password above maximum length', async () => {
@@ -53,7 +55,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must be no more than 128 characters long');
+      expect(result.feedback).toContain(
+        'Password must be no more than 128 characters long'
+      );
     });
   });
 
@@ -64,7 +68,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must contain at least one uppercase letter');
+      expect(result.feedback).toContain(
+        'Password must contain at least one uppercase letter'
+      );
     });
 
     it('should require lowercase letters', async () => {
@@ -73,7 +79,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must contain at least one lowercase letter');
+      expect(result.feedback).toContain(
+        'Password must contain at least one lowercase letter'
+      );
     });
 
     it('should require numbers', async () => {
@@ -82,7 +90,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must contain at least one number');
+      expect(result.feedback).toContain(
+        'Password must contain at least one number'
+      );
     });
 
     it('should require symbols', async () => {
@@ -91,7 +101,9 @@ describe('validatePassword', () => {
       });
 
       expect(result.valid).toBe(false);
-      expect(result.feedback).toContain('Password must contain at least one special character');
+      expect(result.feedback).toContain(
+        'Password must contain at least one special character'
+      );
     });
 
     it('should accept password meeting all character requirements', async () => {
@@ -127,7 +139,9 @@ describe('validatePassword', () => {
         });
 
         expect(result.valid).toBe(false);
-        expect(result.feedback).toContain('This password is too common. Please choose a more unique password');
+        expect(result.feedback).toContain(
+          'This password is too common. Please choose a more unique password'
+        );
       });
     });
 
@@ -143,14 +157,20 @@ describe('validatePassword', () => {
   describe('password scoring', () => {
     it('should give higher scores to stronger passwords', async () => {
       const weakResult = await validatePassword('password', {});
-      const strongResult = await validatePassword('MyVeryStrong&ComplexPassword123!', {});
+      const strongResult = await validatePassword(
+        'MyVeryStrong&ComplexPassword123!',
+        {}
+      );
 
       expect(strongResult.score).toBeGreaterThan(weakResult.score);
     });
 
     it('should score based on length', async () => {
       const shortResult = await validatePassword('Pass1!', {});
-      const longResult = await validatePassword('MyVeryLongPasswordWith123!', {});
+      const longResult = await validatePassword(
+        'MyVeryLongPasswordWith123!',
+        {}
+      );
 
       expect(longResult.score).toBeGreaterThan(shortResult.score);
     });
@@ -189,7 +209,9 @@ describe('validatePassword', () => {
 
       expect(validResult.valid).toBe(true);
       expect(invalidResult.valid).toBe(false);
-      expect(invalidResult.feedback).toContain('Password cannot contain the word "forbidden"');
+      expect(invalidResult.feedback).toContain(
+        'Password cannot contain the word "forbidden"'
+      );
     });
 
     it('should handle custom validator returning boolean', async () => {
@@ -207,7 +229,9 @@ describe('validatePassword', () => {
 
       expect(validResult.valid).toBe(true);
       expect(invalidResult.valid).toBe(false);
-      expect(invalidResult.feedback).toContain('Password does not meet custom requirements');
+      expect(invalidResult.feedback).toContain(
+        'Password does not meet custom requirements'
+      );
     });
   });
 
@@ -290,7 +314,11 @@ describe('validatePassword', () => {
 
       expect(result.feedback).toBeDefined();
       expect(result.feedback!.length).toBeGreaterThan(0);
-      expect(result.feedback!.some(msg => msg.includes('long') || msg.includes('short'))).toBe(true);
+      expect(
+        result.feedback!.some(
+          msg => msg.includes('long') || msg.includes('short')
+        )
+      ).toBe(true);
     });
 
     it('should provide multiple feedback messages for multiple issues', async () => {
@@ -317,7 +345,10 @@ describe('validatePassword', () => {
 
   describe('comprehensive validation', () => {
     it('should validate complex password against all requirements', async () => {
-      const result = await validatePassword('MySecurePassword123!@#', defaultRequirements);
+      const result = await validatePassword(
+        'MySecurePassword123!@#',
+        defaultRequirements
+      );
 
       expect(result.valid).toBe(true);
       expect(result.score).toBeGreaterThan(3);

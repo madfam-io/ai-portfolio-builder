@@ -21,18 +21,22 @@
  * Type definitions for email notifications and messaging
  */
 
-import type { FeedbackEntry, SatisfactionSurvey, FeedbackReport } from '../core/types';
+import type {
+  FeedbackEntry,
+  SatisfactionSurvey,
+  FeedbackReport,
+} from '../core/types';
 
 export interface NotificationConfig {
   // Email configuration
   email?: EmailConfig;
-  
+
   // Webhook configuration
   webhooks?: WebhookConfig[];
-  
+
   // Slack integration
   slack?: SlackConfig;
-  
+
   // General notification settings
   enabled?: boolean;
   environment?: 'development' | 'staging' | 'production';
@@ -42,29 +46,29 @@ export interface EmailConfig {
   enabled: boolean;
   provider: 'sendgrid' | 'ses' | 'smtp' | 'resend';
   credentials?: EmailCredentials;
-  
+
   // Recipients
   criticalBugRecipients?: string[];
   newFeedbackRecipients?: string[];
   surveyRecipients?: string[];
   teamRecipients?: string[];
-  
+
   // User notifications
   userNotifications?: boolean;
-  
+
   // Rate limiting
   rateLimit?: {
     maxPerMinute: number;
     maxPerHour: number;
   };
-  
+
   // Delivery tracking
   trackDelivery?: boolean;
-  
+
   // URLs
   dashboardUrl?: string;
   unsubscribeUrl?: string;
-  
+
   // Templates
   customTemplates?: Record<string, EmailTemplate>;
 }
@@ -72,19 +76,19 @@ export interface EmailConfig {
 export interface EmailCredentials {
   // SendGrid
   apiKey?: string;
-  
+
   // AWS SES
   accessKeyId?: string;
   secretAccessKey?: string;
   region?: string;
-  
+
   // SMTP
   host?: string;
   port?: number;
   secure?: boolean;
   user?: string;
   password?: string;
-  
+
   // Resend
   resendApiKey?: string;
 }
@@ -134,7 +138,7 @@ export interface SlackConfig {
   channel?: string;
   username?: string;
   iconEmoji?: string;
-  
+
   // Event-specific channels
   criticalBugChannel?: string;
   feedbackChannel?: string;
@@ -155,7 +159,12 @@ export type NotificationEvent =
 export interface NotificationPayload {
   event: NotificationEvent;
   timestamp: Date;
-  data: FeedbackEntry | SatisfactionSurvey | FeedbackReport | { feedback: FeedbackEntry; previousStatus?: string } | { recipient: string; message: string };
+  data:
+    | FeedbackEntry
+    | SatisfactionSurvey
+    | FeedbackReport
+    | { feedback: FeedbackEntry; previousStatus?: string }
+    | { recipient: string; message: string };
   metadata?: Record<string, string | number | boolean>;
 }
 
@@ -188,14 +197,17 @@ export interface NotificationMetrics {
   bounceRate: number;
   complaintRate: number;
   avgDeliveryTime: number;
-  
+
   // By type
-  byType: Record<string, {
-    sent: number;
-    delivered: number;
-    failed: number;
-  }>;
-  
+  byType: Record<
+    string,
+    {
+      sent: number;
+      delivered: number;
+      failed: number;
+    }
+  >;
+
   // By period
   byPeriod: Record<string, number>;
 }

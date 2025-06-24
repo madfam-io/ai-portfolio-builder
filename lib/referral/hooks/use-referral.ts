@@ -307,7 +307,10 @@ export function useReferral(): UseReferralState & UseReferralActions {
   );
 
   // Generate share content for platform (defined before shareToSocial to avoid dependency issues)
-  const generateShareContent = (platform: SharePlatform, referral?: Referral): ShareContent => {
+  const generateShareContent = (
+    platform: SharePlatform,
+    referral?: Referral
+  ): ShareContent => {
     const targetReferral = referral || state.activeReferral;
     if (!targetReferral) {
       return { text: '', url: '' };
@@ -464,8 +467,7 @@ export function useReferral(): UseReferralState & UseReferralActions {
       return shareToSocial('copy_link', targetReferral);
     },
     [state.activeReferral, shareToSocial]
-  )
-
+  );
 
   // Select campaign
   const selectCampaign = useCallback((campaign: ReferralCampaign) => {

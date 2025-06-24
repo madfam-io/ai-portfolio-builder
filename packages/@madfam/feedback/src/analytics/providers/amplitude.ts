@@ -43,11 +43,14 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.config = {
       apiKey: analyticsConfig.apiKey,
       secretKey: analyticsConfig.options?.secretKey,
-      serverUrl: analyticsConfig.options?.serverUrl || 'https://api2.amplitude.com/2/httpapi',
+      serverUrl:
+        analyticsConfig.options?.serverUrl ||
+        'https://api2.amplitude.com/2/httpapi',
       batchMode: analyticsConfig.options?.batchMode !== false,
       eventUploadThreshold: analyticsConfig.batchSize || 30,
       eventUploadPeriodMillis: analyticsConfig.flushInterval || 30000,
-      identifyBatchIntervalMillis: analyticsConfig.options?.identifyBatchIntervalMillis || 30000,
+      identifyBatchIntervalMillis:
+        analyticsConfig.options?.identifyBatchIntervalMillis || 30000,
       flushQueueSize: analyticsConfig.options?.flushQueueSize || 200,
     };
   }
@@ -58,7 +61,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
     try {
       // Dynamic import to avoid bundling Amplitude in environments where it's not needed
       const amplitude = await import('@amplitude/node');
-      
+
       this.client = amplitude.init(this.config.apiKey, {
         serverUrl: this.config.serverUrl,
         batchMode: this.config.batchMode,
@@ -71,7 +74,9 @@ export class AmplitudeProvider implements AnalyticsProvider {
 
       this.initialized = true;
     } catch (error) {
-      throw new Error(`Failed to initialize Amplitude: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to initialize Amplitude: ${(error as Error).message}`
+      );
     }
   }
 
@@ -113,7 +118,9 @@ export class AmplitudeProvider implements AnalyticsProvider {
         platform: this.getPlatform(event.context?.userAgent),
         os_name: this.getOSName(event.context?.userAgent),
         device_type: this.getDeviceType(event.context?.userAgent),
-        session_id: event.context?.sessionId ? parseInt(event.context.sessionId, 10) : undefined,
+        session_id: event.context?.sessionId
+          ? parseInt(event.context.sessionId, 10)
+          : undefined,
         insert_id: this.generateInsertId(),
       };
 
@@ -147,7 +154,9 @@ export class AmplitudeProvider implements AnalyticsProvider {
       platform: this.getPlatform(event.context?.userAgent),
       os_name: this.getOSName(event.context?.userAgent),
       device_type: this.getDeviceType(event.context?.userAgent),
-      session_id: event.context?.sessionId ? parseInt(event.context.sessionId, 10) : undefined,
+      session_id: event.context?.sessionId
+        ? parseInt(event.context.sessionId, 10)
+        : undefined,
       insert_id: this.generateInsertId(),
     }));
 
@@ -171,7 +180,10 @@ export class AmplitudeProvider implements AnalyticsProvider {
     }
   }
 
-  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserProperties(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -182,7 +194,11 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async group(userId: string, groupId: string, traits: Record<string, string | number | boolean> = {}): Promise<void> {
+  async group(
+    userId: string,
+    groupId: string,
+    traits: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const groupIdentifyEvent = {
@@ -203,7 +219,11 @@ export class AmplitudeProvider implements AnalyticsProvider {
     });
   }
 
-  async page(userId: string, name: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async page(
+    userId: string,
+    name: string,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     await this.track({
@@ -240,7 +260,11 @@ export class AmplitudeProvider implements AnalyticsProvider {
    * Amplitude-specific methods
    */
 
-  async setUserProperty(userId: string, property: string, value: any): Promise<void> {
+  async setUserProperty(
+    userId: string,
+    property: string,
+    value: any
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -253,7 +277,11 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async incrementUserProperty(userId: string, property: string, value: number = 1): Promise<void> {
+  async incrementUserProperty(
+    userId: string,
+    property: string,
+    value: number = 1
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -268,7 +296,11 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async appendToUserProperty(userId: string, property: string, value: any): Promise<void> {
+  async appendToUserProperty(
+    userId: string,
+    property: string,
+    value: any
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -283,7 +315,10 @@ export class AmplitudeProvider implements AnalyticsProvider {
     this.client.identify(identifyEvent);
   }
 
-  async setUserPropertyOnce(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserPropertyOnce(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     await this.ensureInitialized();
 
     const identifyEvent = {
@@ -367,7 +402,9 @@ export class AmplitudeProvider implements AnalyticsProvider {
   /**
    * Custom queries
    */
-  async runQuery(query: Record<string, string | number | boolean | string[]>): Promise<unknown> {
+  async runQuery(
+    query: Record<string, string | number | boolean | string[]>
+  ): Promise<unknown> {
     await this.ensureInitialized();
 
     if (!this.config.secretKey) {
@@ -394,7 +431,7 @@ export class AmplitudeProvider implements AnalyticsProvider {
 
   private getPlatform(userAgent?: string): string {
     if (!userAgent) return 'Unknown';
-    
+
     if (userAgent.includes('Mobile')) return 'Mobile';
     if (userAgent.includes('Tablet')) return 'Tablet';
     return 'Web';
@@ -402,19 +439,19 @@ export class AmplitudeProvider implements AnalyticsProvider {
 
   private getOSName(userAgent?: string): string {
     if (!userAgent) return 'Unknown';
-    
+
     if (userAgent.includes('Windows')) return 'Windows';
     if (userAgent.includes('Macintosh')) return 'macOS';
     if (userAgent.includes('Linux')) return 'Linux';
     if (userAgent.includes('Android')) return 'Android';
     if (userAgent.includes('iOS')) return 'iOS';
-    
+
     return 'Unknown';
   }
 
   private getDeviceType(userAgent?: string): string {
     if (!userAgent) return 'Unknown';
-    
+
     if (userAgent.includes('Mobile')) return 'Mobile';
     if (userAgent.includes('Tablet')) return 'Tablet';
     return 'Desktop';

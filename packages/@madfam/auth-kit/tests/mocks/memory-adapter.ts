@@ -27,7 +27,10 @@ export class MockMemoryAdapter extends BaseAdapter {
   private sessionsByToken: Map<string, Session> = new Map();
   private mfaSecrets: Map<string, Record<MFAMethod, string>> = new Map();
   private backupCodes: Map<string, string[]> = new Map();
-  private accountLinks: Map<string, Array<{ provider: AuthProvider; providerId: string }>> = new Map();
+  private accountLinks: Map<
+    string,
+    Array<{ provider: AuthProvider; providerId: string }>
+  > = new Map();
 
   async createUser(data: Partial<User>): Promise<User> {
     const user: User = {
@@ -150,8 +153,14 @@ export class MockMemoryAdapter extends BaseAdapter {
     return this.sessionsByToken.get(token) || null;
   }
 
-  async findSessionByRefreshToken(refreshToken: string): Promise<Session | null> {
-    return Array.from(this.sessions.values()).find(s => s.refreshToken === refreshToken) || null;
+  async findSessionByRefreshToken(
+    refreshToken: string
+  ): Promise<Session | null> {
+    return (
+      Array.from(this.sessions.values()).find(
+        s => s.refreshToken === refreshToken
+      ) || null
+    );
   }
 
   async findUserSessions(userId: string): Promise<Session[]> {
@@ -165,7 +174,11 @@ export class MockMemoryAdapter extends BaseAdapter {
     }
   }
 
-  async saveMFASecret(userId: string, method: MFAMethod, secret: string): Promise<void> {
+  async saveMFASecret(
+    userId: string,
+    method: MFAMethod,
+    secret: string
+  ): Promise<void> {
     const existing = this.mfaSecrets.get(userId) || {};
     if (secret) {
       existing[method] = secret;
@@ -175,7 +188,10 @@ export class MockMemoryAdapter extends BaseAdapter {
     this.mfaSecrets.set(userId, existing);
   }
 
-  async getMFASecret(userId: string, method: MFAMethod): Promise<string | null> {
+  async getMFASecret(
+    userId: string,
+    method: MFAMethod
+  ): Promise<string | null> {
     const secrets = this.mfaSecrets.get(userId);
     const secret = secrets?.[method];
     return secret || null;
@@ -196,17 +212,26 @@ export class MockMemoryAdapter extends BaseAdapter {
     return false;
   }
 
-  async createAccountLink(userId: string, provider: AuthProvider, providerId: string): Promise<void> {
+  async createAccountLink(
+    userId: string,
+    provider: AuthProvider,
+    providerId: string
+  ): Promise<void> {
     const existing = this.accountLinks.get(userId) || [];
     existing.push({ provider, providerId });
     this.accountLinks.set(userId, existing);
   }
 
-  async findAccountLinks(userId: string): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
+  async findAccountLinks(
+    userId: string
+  ): Promise<Array<{ provider: AuthProvider; providerId: string }>> {
     return this.accountLinks.get(userId) || [];
   }
 
-  async deleteAccountLink(userId: string, provider: AuthProvider): Promise<void> {
+  async deleteAccountLink(
+    userId: string,
+    provider: AuthProvider
+  ): Promise<void> {
     const existing = this.accountLinks.get(userId) || [];
     const filtered = existing.filter(link => link.provider !== provider);
     this.accountLinks.set(userId, filtered);

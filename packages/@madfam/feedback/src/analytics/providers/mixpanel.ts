@@ -44,7 +44,8 @@ export class MixpanelProvider implements AnalyticsProvider {
       token: analyticsConfig.apiKey,
       apiSecret: analyticsConfig.options?.apiSecret,
       debug: analyticsConfig.options?.debug || false,
-      trackAutomaticEvents: analyticsConfig.options?.trackAutomaticEvents !== false,
+      trackAutomaticEvents:
+        analyticsConfig.options?.trackAutomaticEvents !== false,
       batchRequests: analyticsConfig.options?.batchRequests !== false,
       flushBatchSize: analyticsConfig.batchSize || 50,
       flushInterval: analyticsConfig.flushInterval || 10000,
@@ -57,7 +58,7 @@ export class MixpanelProvider implements AnalyticsProvider {
     try {
       // Dynamic import to avoid bundling Mixpanel in environments where it's not needed
       const Mixpanel = await import('mixpanel');
-      
+
       this.client = Mixpanel.init(this.config.token, {
         debug: this.config.debug,
         host: 'api.mixpanel.com',
@@ -67,7 +68,9 @@ export class MixpanelProvider implements AnalyticsProvider {
 
       this.initialized = true;
     } catch (error) {
-      throw new Error(`Failed to initialize Mixpanel: ${(error as Error).message}`);
+      throw new Error(
+        `Failed to initialize Mixpanel: ${(error as Error).message}`
+      );
     }
   }
 
@@ -163,11 +166,17 @@ export class MixpanelProvider implements AnalyticsProvider {
     });
   }
 
-  async setUserProperties(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserProperties(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     await this.ensureInitialized();
 
     // Convert properties to Mixpanel format
-    const mixpanelProperties: Record<string, string | number | boolean | Date | null> = {};
+    const mixpanelProperties: Record<
+      string,
+      string | number | boolean | Date | null
+    > = {};
     for (const [key, value] of Object.entries(properties)) {
       if (key === 'email') {
         mixpanelProperties.$email = value;
@@ -189,7 +198,11 @@ export class MixpanelProvider implements AnalyticsProvider {
     this.client.people.set(userId, mixpanelProperties);
   }
 
-  async page(userId: string, name: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async page(
+    userId: string,
+    name: string,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.track('Page View', {
@@ -217,19 +230,30 @@ export class MixpanelProvider implements AnalyticsProvider {
    * Mixpanel-specific methods
    */
 
-  async incrementUserProperty(userId: string, property: string, value: number = 1): Promise<void> {
+  async incrementUserProperty(
+    userId: string,
+    property: string,
+    value: number = 1
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.people.increment(userId, property, value);
   }
 
-  async appendToUserProperty(userId: string, property: string, value: any): Promise<void> {
+  async appendToUserProperty(
+    userId: string,
+    property: string,
+    value: any
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.people.append(userId, property, value);
   }
 
-  async setUserPropertyOnce(userId: string, properties: Record<string, string | number | boolean | Date | null>): Promise<void> {
+  async setUserPropertyOnce(
+    userId: string,
+    properties: Record<string, string | number | boolean | Date | null>
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.people.set_once(userId, properties);
@@ -241,7 +265,11 @@ export class MixpanelProvider implements AnalyticsProvider {
     this.client.people.delete_user(userId);
   }
 
-  async trackRevenue(userId: string, amount: number, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async trackRevenue(
+    userId: string,
+    amount: number,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     this.client.people.track_charge(userId, amount, properties);
@@ -250,7 +278,12 @@ export class MixpanelProvider implements AnalyticsProvider {
   /**
    * Funnel analysis
    */
-  async trackFunnelStep(userId: string, funnelName: string, step: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async trackFunnelStep(
+    userId: string,
+    funnelName: string,
+    step: string,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     await this.track({
@@ -282,7 +315,12 @@ export class MixpanelProvider implements AnalyticsProvider {
   /**
    * A/B testing support
    */
-  async trackExperiment(userId: string, experimentName: string, variant: string, properties: Record<string, string | number | boolean> = {}): Promise<void> {
+  async trackExperiment(
+    userId: string,
+    experimentName: string,
+    variant: string,
+    properties: Record<string, string | number | boolean> = {}
+  ): Promise<void> {
     await this.ensureInitialized();
 
     await this.track({

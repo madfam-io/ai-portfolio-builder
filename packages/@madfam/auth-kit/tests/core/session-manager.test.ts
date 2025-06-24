@@ -81,7 +81,9 @@ describe('SessionManager', () => {
       const userId = 'user-123';
       const createdSession = await sessionManager.createSession(userId);
 
-      const retrievedSession = await sessionManager.getSession(createdSession.token);
+      const retrievedSession = await sessionManager.getSession(
+        createdSession.token
+      );
 
       expect(retrievedSession).toBeDefined();
       expect(retrievedSession?.id).toBe(createdSession.id);
@@ -116,9 +118,13 @@ describe('SessionManager', () => {
       // Wait a bit to ensure timestamp difference
       await new Promise(resolve => setTimeout(resolve, 10));
 
-      const retrievedSession = await sessionManager.getSession(createdSession.token);
+      const retrievedSession = await sessionManager.getSession(
+        createdSession.token
+      );
 
-      expect(retrievedSession?.lastAccessedAt).not.toEqual(originalLastAccessed);
+      expect(retrievedSession?.lastAccessedAt).not.toEqual(
+        originalLastAccessed
+      );
       expect(retrievedSession?.lastAccessedAt.getTime()).toBeGreaterThan(
         originalLastAccessed.getTime()
       );
@@ -127,10 +133,13 @@ describe('SessionManager', () => {
 
   describe('refreshSession', () => {
     beforeEach(() => {
-      sessionManager = new SessionManager({
-        ...defaultConfig,
-        refreshThreshold: '15m',
-      }, adapter);
+      sessionManager = new SessionManager(
+        {
+          ...defaultConfig,
+          refreshThreshold: '15m',
+        },
+        adapter
+      );
     });
 
     it('should refresh session with valid refresh token', async () => {
@@ -219,7 +228,7 @@ describe('SessionManager', () => {
     it('should only revoke sessions for specific user', async () => {
       const user1Id = 'user-123';
       const user2Id = 'user-456';
-      
+
       const user1Session = await sessionManager.createSession(user1Id);
       const user2Session = await sessionManager.createSession(user2Id);
 
@@ -227,7 +236,7 @@ describe('SessionManager', () => {
 
       // User 1 sessions should be revoked
       expect(await adapter.findSessionById(user1Session.id)).toBeNull();
-      
+
       // User 2 sessions should remain
       expect(await adapter.findSessionById(user2Session.id)).toBeDefined();
     });
@@ -305,10 +314,13 @@ describe('SessionManager', () => {
 
   describe('database session type', () => {
     beforeEach(() => {
-      sessionManager = new SessionManager({
-        ...defaultConfig,
-        type: 'database',
-      }, adapter);
+      sessionManager = new SessionManager(
+        {
+          ...defaultConfig,
+          type: 'database',
+        },
+        adapter
+      );
     });
 
     it('should work with database session type', async () => {
@@ -317,7 +329,7 @@ describe('SessionManager', () => {
 
       expect(session).toBeDefined();
       expect(session.token).toBeDefined();
-      
+
       const retrievedSession = await sessionManager.getSession(session.token);
       expect(retrievedSession).toBeDefined();
       expect(retrievedSession?.userId).toBe(userId);

@@ -199,7 +199,7 @@ export interface NotificationConfig {
     trackDelivery?: boolean;
     dashboardUrl?: string;
   };
-  
+
   // Legacy webhook support
   criticalBugWebhook?: string;
   emailOnCritical?: string;

@@ -86,7 +86,9 @@ export function AnalyticsDashboard() {
     // Fetch analytics data
     const fetchAnalytics = async () => {
       try {
-        const response = await fetch(`/api/v1/analytics/dashboard?range=${timeRange}`);
+        const response = await fetch(
+          `/api/v1/analytics/dashboard?range=${timeRange}`
+        );
         const result = await response.json();
         setData(result);
       } catch (error) {
@@ -147,9 +149,21 @@ export function AnalyticsDashboard() {
 
   const conversionFunnel = [
     { name: 'Visitors', value: 10000, percentage: 100 },
-    { name: 'Signups', value: data.conversion.signupRate * 100, percentage: data.conversion.signupRate * 100 },
-    { name: 'Trial Users', value: data.conversion.signupRate * 80, percentage: data.conversion.signupRate * 80 },
-    { name: 'Paid Users', value: data.conversion.trialToPayRate * 100, percentage: data.conversion.trialToPayRate * 100 },
+    {
+      name: 'Signups',
+      value: data.conversion.signupRate * 100,
+      percentage: data.conversion.signupRate * 100,
+    },
+    {
+      name: 'Trial Users',
+      value: data.conversion.signupRate * 80,
+      percentage: data.conversion.signupRate * 80,
+    },
+    {
+      name: 'Paid Users',
+      value: data.conversion.trialToPayRate * 100,
+      percentage: data.conversion.trialToPayRate * 100,
+    },
   ];
 
   return (
@@ -169,10 +183,12 @@ export function AnalyticsDashboard() {
 
       {/* KPI Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {metrics.map((metric) => (
+        {metrics.map(metric => (
           <Card key={metric.title}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{metric.title}</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                {metric.title}
+              </CardTitle>
               <metric.icon className={`h-4 w-4 ${metric.color}`} />
             </CardHeader>
             <CardContent>
@@ -264,8 +280,14 @@ export function AnalyticsDashboard() {
                 <Pie
                   data={[
                     { name: 'New Users', value: data.users.new },
-                    { name: 'Active Users', value: data.users.active - data.users.new },
-                    { name: 'Inactive', value: data.users.total - data.users.active },
+                    {
+                      name: 'Active Users',
+                      value: data.users.active - data.users.new,
+                    },
+                    {
+                      name: 'Inactive',
+                      value: data.users.total - data.users.active,
+                    },
                   ]}
                   cx="50%"
                   cy="50%"
@@ -295,15 +317,21 @@ export function AnalyticsDashboard() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm">Portfolios Created</span>
-              <span className="font-medium">{data.engagement.portfoliosCreated}</span>
+              <span className="font-medium">
+                {data.engagement.portfoliosCreated}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Portfolios Published</span>
-              <span className="font-medium">{data.engagement.portfoliosPublished}</span>
+              <span className="font-medium">
+                {data.engagement.portfoliosPublished}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Avg. Time on Site</span>
-              <span className="font-medium">{data.engagement.avgTimeOnSite}min</span>
+              <span className="font-medium">
+                {data.engagement.avgTimeOnSite}min
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Bounce Rate</span>
@@ -319,19 +347,27 @@ export function AnalyticsDashboard() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm">MRR</span>
-              <span className="font-medium">${(data.revenue.mrr / 100).toLocaleString()}</span>
+              <span className="font-medium">
+                ${(data.revenue.mrr / 100).toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">ARR</span>
-              <span className="font-medium">${(data.revenue.arr / 100).toLocaleString()}</span>
+              <span className="font-medium">
+                ${(data.revenue.arr / 100).toLocaleString()}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Growth Rate</span>
-              <span className="font-medium text-green-600">+{data.revenue.growth}%</span>
+              <span className="font-medium text-green-600">
+                +{data.revenue.growth}%
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Churn Rate</span>
-              <span className="font-medium text-red-600">{data.revenue.churn}%</span>
+              <span className="font-medium text-red-600">
+                {data.revenue.churn}%
+              </span>
             </div>
           </CardContent>
         </Card>
@@ -343,19 +379,27 @@ export function AnalyticsDashboard() {
           <CardContent className="space-y-2">
             <div className="flex justify-between">
               <span className="text-sm">Signup Rate</span>
-              <span className="font-medium">{(data.conversion.signupRate * 100).toFixed(1)}%</span>
+              <span className="font-medium">
+                {(data.conversion.signupRate * 100).toFixed(1)}%
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Trial to Paid</span>
-              <span className="font-medium">{(data.conversion.trialToPayRate * 100).toFixed(1)}%</span>
+              <span className="font-medium">
+                {(data.conversion.trialToPayRate * 100).toFixed(1)}%
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Referral Rate</span>
-              <span className="font-medium">{(data.conversion.referralRate * 100).toFixed(1)}%</span>
+              <span className="font-medium">
+                {(data.conversion.referralRate * 100).toFixed(1)}%
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-sm">Viral Coefficient</span>
-              <span className="font-medium text-purple-600">{data.conversion.viralCoefficient.toFixed(2)}</span>
+              <span className="font-medium text-purple-600">
+                {data.conversion.viralCoefficient.toFixed(2)}
+              </span>
             </div>
           </CardContent>
         </Card>

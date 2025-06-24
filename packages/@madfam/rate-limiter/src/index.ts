@@ -29,7 +29,13 @@
  */
 
 // Core exports
-export { RateLimiter, createRateLimiter, slidingWindow, tokenBucket, fixedWindow } from './core/rate-limiter';
+export {
+  RateLimiter,
+  createRateLimiter,
+  slidingWindow,
+  tokenBucket,
+  fixedWindow,
+} from './core/rate-limiter';
 
 // Type exports
 export type {

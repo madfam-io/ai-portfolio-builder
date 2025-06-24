@@ -16,20 +16,20 @@ import * as OTPAuth from 'otpauth';
 describe('Mock Test', () => {
   it('should load OTPAuth mock', () => {
     const secret = new OTPAuth.Secret({ size: 32 });
-    
+
     expect(secret).toBeDefined();
     expect(secret.base32).toBeDefined();
     expect(secret.base32).toMatch(/^TESTSECRETBASE32/);
   });
-  
+
   it('should generate secret with static method', () => {
     const secret = OTPAuth.Secret.generate();
-    
+
     expect(secret).toBeDefined();
     expect(secret.base32).toBeDefined();
     expect(secret.base32).toMatch(/^TEST/);
   });
-  
+
   it('should create TOTP instance', () => {
     const secret = new OTPAuth.Secret({ size: 32 });
     const totp = new OTPAuth.TOTP({
@@ -37,7 +37,7 @@ describe('Mock Test', () => {
       label: 'test@example.com',
       issuer: 'TestApp',
     });
-    
+
     expect(totp).toBeDefined();
     expect(totp.generate()).toBe('123456');
     expect(totp.validate({ token: '123456' })).toBe(0);
