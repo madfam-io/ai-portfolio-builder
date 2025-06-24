@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.3](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.2...v0.4.3) (2025-06-24)
+
+
+### Bug Fixes
+
+* apply Prettier formatting to maintain code consistency ([a899552](https://github.com/madfam-io/ai-portfolio-builder/commit/a899552ef417a5ab76dbd09498faf11adc26fdce))
+* increase VPN risk scoring to trigger high risk assessment ([8ade7d0](https://github.com/madfam-io/ai-portfolio-builder/commit/8ade7d0b6f444c87ff6ad6dcb4fb469e459a27b6))
+
 ### [0.4.2](https://github.com/madfam-io/ai-portfolio-builder/compare/v0.4.1...v0.4.2) (2025-06-24)
 
 
