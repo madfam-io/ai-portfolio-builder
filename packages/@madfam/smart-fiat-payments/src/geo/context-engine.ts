@@ -56,7 +56,8 @@ export class GeographicalContextEngine {
       try {
         // Dynamic import to avoid Rollup warnings
         const nodeIpinfo = require('node-ipinfo');
-        const IPinfoWrapper = nodeIpinfo.IPinfoWrapper || nodeIpinfo.default || nodeIpinfo;
+        const IPinfoWrapper =
+          nodeIpinfo.IPinfoWrapper || nodeIpinfo.default || nodeIpinfo;
         this.ipinfo = new IPinfoWrapper(config.ipinfoToken);
       } catch (_err) {
         // Module not available, geo features will be limited
@@ -233,7 +234,7 @@ export class GeographicalContextEngine {
     return {
       risk,
       score: Math.min(100, totalScore),
-      reason: factors.length > 0 ? factors[0].description : null,
+      reason: factors.length > 0 && factors[0] ? factors[0].description : null,
       factors,
       recommendation,
       requiresManualReview: risk === 'high' || risk === 'critical',
@@ -334,8 +335,8 @@ export class GeographicalContextEngine {
     const parts = ip.split('.');
     if (parts.length !== 4) return false;
 
-    const first = parseInt(parts[0]);
-    const second = parseInt(parts[1]);
+    const first = parseInt(parts[0] || '0');
+    const second = parseInt(parts[1] || '0');
 
     // Check for private IP ranges
     return (
@@ -349,7 +350,7 @@ export class GeographicalContextEngine {
   private fallbackIPLookup(ipAddress: string): any {
     // Very basic fallback based on IP ranges
     // In production, would use a proper GeoIP database
-    const first = parseInt(ipAddress.split('.')[0]);
+    const first = parseInt(ipAddress.split('.')[0] || '0');
 
     if (first >= 1 && first <= 50)
       return { countryCode: 'US', timezone: 'America/New_York' };
@@ -393,7 +394,7 @@ export class GeographicalContextEngine {
     if (!acceptLang) return 'en';
 
     // Extract primary language
-    const primary = acceptLang.split(',')[0];
+    const primary = acceptLang.split(',')[0] || 'en';
     const parts = primary.split('-');
     return (parts[0] || 'en').toLowerCase();
   }
@@ -492,7 +493,10 @@ export class GeographicalContextEngine {
   private isTimezoneMatch(actual: string, expected: string): boolean {
     // Simplified check - in production would be more sophisticated
     const expectedParts = expected.split('/');
-    return actual === expected || (expectedParts[0] && actual.includes(expectedParts[0]));
+    return (
+      actual === expected ||
+      (!!expectedParts[0] && actual.includes(expectedParts[0]))
+    );
   }
 
   private getCountryDiscount(country: string): number {
