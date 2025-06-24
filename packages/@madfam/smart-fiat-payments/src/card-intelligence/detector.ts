@@ -225,7 +225,7 @@ export class CardDetector {
   /**
    * Suggest optimal gateway based on card info
    */
-  async suggestOptimalGateway(cardInfo: CardInfo): Promise<Gateway> {
+  suggestOptimalGateway(cardInfo: CardInfo): Gateway {
     const { issuerCountry, supportedGateways } = cardInfo;
 
     // Priority order based on country and features
@@ -276,11 +276,13 @@ export class CardDetector {
    */
   async lookupBIN(bin: string): Promise<BINLookupResponse> {
     try {
-      const cardInfo = await this.detectCardCountry(bin.padEnd(16, '0'));
+      const paddedBin = bin.padEnd(16, '0');
+      const cacheKey = paddedBin.substring(0, 8);
+      const cardInfo = await this.detectCardCountry(paddedBin);
       return {
         success: true,
         cardInfo,
-        cached: this.cache.has(bin.substring(0, 8)),
+        cached: this.cache.has(cacheKey),
       };
     } catch (error) {
       return {
@@ -303,7 +305,9 @@ export class CardDetector {
 
     // Loop through values starting from the rightmost
     for (let i = cardNumber.length - 1; i >= 0; i--) {
-      let digit = parseInt(cardNumber[i]!, 10);
+      const digitStr = cardNumber[i];
+      if (!digitStr) continue;
+      let digit = parseInt(digitStr, 10);
 
       if (isEven) {
         digit *= 2;
@@ -379,11 +383,11 @@ export class CardDetector {
     return gateways;
   }
 
-  private async determinePreferredGateway(
+  private determinePreferredGateway(
     country: string,
     supportedGateways: Gateway[],
-    features?: CardFeatures
-  ): Promise<Gateway> {
+    _features?: CardFeatures
+  ): Gateway {
     // Country-specific preferences
     const preferences: Record<string, Gateway> = {
       MX: 'stripe', // Better margins than MercadoPago
