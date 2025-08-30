@@ -48,17 +48,7 @@ export async function POST(): Promise<Response> {
       );
     }
 
-    // Delete associated repositories
-    try {
-      await prisma.repository.deleteMany({
-        where: {
-          userId: user.id,
-        },
-      });
-    } catch (repoDeleteError) {
-      logger.error('Failed to delete repositories', { error: repoDeleteError });
-      // Non-critical error, continue
-    }
+    // Note: Repository deletion would go here if we had a Repository model
 
     // Clean up any OAuth sessions (not needed since we use regular sessions)
 

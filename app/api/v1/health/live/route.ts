@@ -24,6 +24,7 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  * GET /api/v1/health/live - Liveness probe
  */
 export const GET = withAPMTracking(
+  'liveness-check',
   withErrorTracking(async () => {
     return handleLivenessCheck();
   }, 'health-api')

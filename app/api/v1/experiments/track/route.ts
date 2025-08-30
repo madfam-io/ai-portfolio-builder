@@ -63,12 +63,14 @@ export async function POST(request: Request): Promise<Response> {
     await prisma.analyticsEvent.create({
       data: {
         eventType: `experiment_${validatedData.eventType}`,
-        eventData: {
+        eventName: `Experiment ${validatedData.eventType}`,
+        properties: {
           sessionId: visitorId,
           experimentId: validatedData.experimentId,
           variantId: validatedData.variantId,
           ...(validatedData.eventData || {}),
         },
+        sessionId: visitorId,
       },
     });
 
@@ -88,10 +90,7 @@ export async function POST(request: Request): Promise<Response> {
       const existingVisitor = await prisma.analyticsEvent.findFirst({
         where: {
           eventType: 'experiment_pageview',
-          eventData: {
-            path: ['sessionId'],
-            equals: visitorId,
-          },
+          sessionId: visitorId,
         },
       });
 

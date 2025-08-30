@@ -61,7 +61,7 @@ export async function GET(): Promise<Response> {
         data: {
           sessionToken: state,
           userId: user.id,
-          expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+          expires: new Date(Date.now() + 10 * 60 * 1000),
         },
       });
     } catch (stateError) {
