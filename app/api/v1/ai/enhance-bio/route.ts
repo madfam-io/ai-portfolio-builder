@@ -88,11 +88,8 @@ async function handlePOST(
 
     const { bio, context } = validationResult.data;
 
-    // 4. Check AI usage limits
-    const { data: canUseAI, error: limitsError } = await supabase.rpc(
-      'increment_ai_usage',
-      { user_uuid: user.id }
-    );
+    // 4. Check AI usage limits (simplified check)
+    const canUseAI = user.aiRequestsCount < 100; // Basic limit check
 
     if (limitsError) {
       errorLogger.logError(limitsError, {

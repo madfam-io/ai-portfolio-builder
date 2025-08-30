@@ -12,7 +12,7 @@
  */
 
 import { GitHubAnalyticsClient } from '@/lib/analytics/github/client';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 import type { Repository, RepositoryAnalytics } from '@/types/analytics';

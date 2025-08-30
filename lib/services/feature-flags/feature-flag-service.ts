@@ -15,7 +15,7 @@ import crypto from 'crypto';
 
 import { cookies } from 'next/headers';
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 import type {
