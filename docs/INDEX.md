@@ -1,19 +1,22 @@
-# 📚 Documentation Index
+# 📑 Documentation Index
 
-This index provides a comprehensive guide to all documentation in the PRISMA AI Portfolio Builder project.
+> Complete alphabetical index of all documentation in the Portfolio Builder project (v0.4.5)
 
-## 🏠 Main Documentation
+## 🎯 Quick Links
+
+- [Getting Started](./guides/GETTING_STARTED.md) - Set up in 5 minutes
+- [API Documentation](./api/README.md) - Complete API reference
+- [Architecture](./architecture/README.md) - System design
+- [Contributing](../CONTRIBUTING.md) - Contribution guidelines
+
+## 📚 Main Documentation
 
 ### Project Overview
 
 - **[README.md](../README.md)** - Main project overview, quick start, and feature highlights
-- **[CLAUDE.md](../CLAUDE.md)** - AI assistant context and development guidelines
-- **[CODEBASE_HEALTH.md](../CODEBASE_HEALTH.md)** - Consolidated health metrics and status report
-
-### Development Progress
-
-- **[TODO.md](../TODO.md)** - Current development tasks and progress tracking
-- **[docs/ROADMAP.md](./ROADMAP.md)** - Complete development roadmap and phases
+- **[ROADMAP.md](./ROADMAP.md)** - Product roadmap and development phases
+- **[CHANGELOG.md](../CHANGELOG.md)** - Version history and release notes
+- **[SECURITY.md](./SECURITY.md)** - Security policies and best practices
 
 ## 📖 Technical Documentation
 

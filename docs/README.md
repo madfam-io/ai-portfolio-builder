@@ -1,157 +1,158 @@
-# 📚 Portfolio Builder Documentation Hub
+# 📚 Portfolio Builder Documentation
 
-[↑ Back to Main README](../README.md)
+> **Version 0.4.5** | Well-organized, comprehensive documentation for the AI-powered Portfolio Builder
 
----
+## 📁 Documentation Structure
 
-Welcome to the complete documentation for **Portfolio Builder by MADFAM** - the AI-powered portfolio builder that transforms CVs into stunning websites in under 3 minutes.
+Our documentation is organized into clear, numbered sections for easy navigation:
 
-**Current Version**: v0.4.0-beta | **Status**: Market-Ready with Enterprise Architecture
+### [01. Getting Started](./01-getting-started/)
+Quick setup guides to get you running in minutes.
+- [Quick Start Guide](./01-getting-started/GETTING_STARTED.md)
+- [Supabase Setup](./01-getting-started/SUPABASE_SETUP.md)
+- [Storage Setup](./01-getting-started/STORAGE_SETUP.md)
+- [Docker Reference](./01-getting-started/DOCKER_QUICK_REFERENCE.md)
 
-## 🗺️ Documentation Navigation
+### [02. Development](./02-development/)
+Everything you need for development.
+- [Development Guide](./02-development/DEVELOPMENT.md)
+- [Implementation Guide](./02-development/IMPLEMENTATION_GUIDE.md)
+- [AI Development](./02-development/AI_DEVELOPMENT_GUIDE.md)
+- [Engineering Excellence](./02-development/ENGINEERING_EXCELLENCE.md)
+- [Codebase Health](./02-development/CODEBASE_HEALTH.md)
 
-### 🚀 Getting Started
+### [03. API](./03-api/)
+Complete API documentation and references.
+- [API Reference](./03-api/API_REFERENCE.md)
+- [API Documentation](./03-api/API_DOCUMENTATION.md)
+- [API Versioning](./03-api/API_VERSIONING.md)
+- [API Validation](./03-api/API_VALIDATION_GUIDE.md)
 
-| Guide | Description | For |
-|-------|-------------|-----|
-| [**Quick Start**](../README.md#-quick-start) | Get up and running in minutes | Everyone |
-| [**Development Setup**](./DEVELOPMENT.md) | Complete development environment setup | Developers |
-| [**Docker Quick Start**](./guides/docker-quickstart.md) | Docker-based development | DevOps |
-| [**Supabase Setup**](./SUPABASE_SETUP.md) | Database and authentication setup | Backend Devs |
-| [**Storage Setup**](./STORAGE_SETUP.md) | File storage configuration | Backend Devs |
+### [04. Features](./04-features/)
+Detailed feature documentation.
+- [All Features](./04-features/COMPREHENSIVE_FEATURE_DOCUMENTATION.md)
+- [AI Features](./04-features/AI_FEATURES.md)
+- [AI Context](./04-features/AI_CONTEXT.md)
+- [Experiments](./04-features/EXPERIMENTS.md)
+- [Portfolio Variants](./04-features/PORTFOLIO_VARIANTS.md)
+- [Referral System](./04-features/REFERRAL_SYSTEM.md)
+- [PostHog Integration](./04-features/POSTHOG_INTEGRATION.md)
+- [Onboarding Guide](./04-features/ONBOARDING_GUIDE.md)
+- [Data Persistence](./04-features/portfolio-data-persistence.md)
 
-### 📖 Core Documentation
+### [05. Deployment](./05-deployment/)
+Production deployment guides.
+- [Deployment Guide](./05-deployment/DEPLOYMENT_GUIDE.md)
+- [Deployment Details](./05-deployment/DEPLOYMENT.md)
+- [Migration Guide](./05-deployment/MIGRATION_GUIDE_V1.md)
 
-| Document | Purpose | Status |
-|----------|---------|---------|
-| [**Architecture Overview**](./architecture/) | System design and technical decisions | ✅ Complete |
-| [**API Reference**](./API_REFERENCE.md) | Complete API v1 documentation | ✅ Complete |
-| [**Development Guide**](./DEVELOPMENT.md) | Development workflow and standards | ✅ Complete |
-| [**Deployment Guide**](./DEPLOYMENT.md) | Production deployment instructions | ✅ Complete |
-| [**Feature Documentation**](./COMPREHENSIVE_FEATURE_DOCUMENTATION.md) | All features documented | ✅ Complete |
+### [06. Architecture](./06-architecture/)
+System design and architecture.
+- [Architecture Overview](./06-architecture/README.md)
+- [System Overview](./06-architecture/system-overview.md)
+- [Technical Decisions](./06-architecture/TECHNICAL_DECISIONS.md)
+- [Business Excellence](./06-architecture/business-excellence-architecture.md)
+- [ADRs](./06-architecture/adr/)
 
-### 🔧 Implementation Guides
+### [07. Testing](./07-testing/)
+Testing strategies and coverage.
+- [Test Coverage Plan](./07-testing/TEST_COVERAGE_PLAN.md)
+- [Test Plan](./07-testing/TEST_PLAN.md)
 
-| Guide | Purpose | Status |
-|-------|---------|---------|
-| [**AI Development**](./AI_DEVELOPMENT_GUIDE.md) | AI integration and enhancement | ✅ Complete |
-| [**API Validation**](./API_VALIDATION_GUIDE.md) | Request/response validation | ✅ Complete |
-| [**PostHog Integration**](./POSTHOG_INTEGRATION.md) | Analytics setup | ✅ Complete |
-| [**i18n Conventions**](./i18n/naming-conventions.md) | Translation guidelines | ✅ Complete |
-| [**Performance Guide**](./guides/performance-optimization.md) | Optimization techniques | ✅ Complete |
+### [08. Security](./08-security/)
+Security documentation and guidelines.
+- [Security Guide](./08-security/SECURITY.md)
 
-### 🏗️ Architecture Documentation
+### [09. Business](./09-business/)
+Business strategy and planning.
+- [Roadmap](./09-business/ROADMAP.md)
+- [Competitive Analysis](./09-business/COMPETITIVE_ANALYSIS_2025.md)
+- [Platform Capabilities](./09-business/PLATFORM_CAPABILITIES.md)
 
-| Document | Description | Status |
-|----------|-------------|---------|
-| [**System Overview**](./architecture/system-overview.md) | Complete architecture overview | ✅ |
-| [**Data Flow**](./architecture/data-flow.md) | Request/response patterns | ✅ |
-| [**Security Model**](./architecture/security.md) | Authentication & authorization | ✅ |
-| [**ADR-001: API Versioning**](./architecture/adr-001-api-versioning.md) | API v1 strategy | ✅ |
-| [**ADR-002: State Management**](./architecture/adr-002-state-management.md) | Zustand implementation | ✅ |
-| [**ADR-003: Caching**](./architecture/adr-003-caching-strategy.md) | Multi-layer caching | ✅ |
+### [10. Reference](./10-reference/)
+Quick references and troubleshooting.
+- [Troubleshooting](./10-reference/TROUBLESHOOTING.md)
+- [Performance Optimization](./10-reference/PERFORMANCE_OPTIMIZATION.md)
+- [Performance Guide](./10-reference/PERFORMANCE_GUIDE.md)
+- [Observability Guide](./10-reference/OBSERVABILITY_GUIDE.md)
+- [SigNoz Setup](./10-reference/SIGNOZ_SETUP.md)
 
-### 🎯 Strategic Documentation
+### [Archive](./archive/)
+Historical documentation and reports.
+- [2024 Reports](./archive/2024/)
+- [Health Reports](./archive/health-reports/)
+- [Phase Reports](./archive/phase-reports/)
 
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| [**Platform Capabilities**](./PLATFORM_CAPABILITIES.md) | Feature overview | Product |
-| [**Roadmap**](./ROADMAP.md) | Development timeline | Everyone |
-| [**Competitive Analysis**](./COMPETITIVE_ANALYSIS_2025.md) | Market positioning | Business |
-| [**Engineering Excellence**](./ENGINEERING_EXCELLENCE.md) | Standards & practices | Engineering |
-
-### 🧪 Quality & Testing
-
-| Document | Purpose | Status |
-|----------|---------|---------|
-| [**Test Coverage Plan**](./TEST_COVERAGE_PLAN.md) | Testing strategy | ✅ Complete |
-| [**Test Results**](./TEST_RESULTS.md) | Current test status | ✅ 730+ tests |
-| [**Performance Results**](./metrics/performance-results.md) | Performance metrics | ✅ Complete |
-| [**Troubleshooting**](./TROUBLESHOOTING.md) | Common issues & fixes | ✅ Complete |
-
-### 📊 Monitoring & Operations
-
-| Document | Purpose | Status |
-|----------|---------|---------|
-| [**Monitoring Overview**](./monitoring/) | Observability setup | ✅ Complete |
-| [**SigNoz Setup**](./monitoring/signoz-setup.md) | APM configuration | ✅ Complete |
-| [**Deployment Guide**](./DEPLOYMENT_GUIDE.md) | Deployment instructions | ✅ Complete |
-
-## 🎯 Quick Links by Role
+## 🚀 Quick Navigation
 
 ### For New Developers
-1. Start with [Development Setup](./DEVELOPMENT.md)
-2. Review [Architecture Overview](./architecture/)
-3. Check [API Reference](./API_REFERENCE.md)
-4. Read [Contribution Guidelines](../CONTRIBUTING.md)
+1. Start with [Getting Started Guide](./01-getting-started/GETTING_STARTED.md)
+2. Read the [Development Guide](./02-development/DEVELOPMENT.md)
+3. Review [Architecture Overview](./06-architecture/README.md)
 
-### For Frontend Developers
-1. [Component Library](./components/shared-components.md)
-2. [State Management](./architecture/adr-002-state-management.md)
-3. [i18n Guidelines](./i18n/naming-conventions.md)
-4. [Performance Guide](./guides/performance-optimization.md)
+### For API Integration
+1. Check [API Documentation](./03-api/API_DOCUMENTATION.md)
+2. Review [API Reference](./03-api/API_REFERENCE.md)
+3. Understand [API Versioning](./03-api/API_VERSIONING.md)
 
-### For Backend Developers
-1. [API Reference](./API_REFERENCE.md)
-2. [Supabase Setup](./SUPABASE_SETUP.md)
-3. [AI Development](./AI_DEVELOPMENT_GUIDE.md)
-4. [Caching Strategy](./architecture/adr-003-caching-strategy.md)
+### For DevOps
+1. Read [Deployment Guide](./05-deployment/DEPLOYMENT_GUIDE.md)
+2. Check [Docker Reference](./01-getting-started/DOCKER_QUICK_REFERENCE.md)
+3. Review [Security Guide](./08-security/SECURITY.md)
 
-### For DevOps Engineers
-1. [Deployment Guide](./DEPLOYMENT.md)
-2. [Docker Setup](./guides/docker-quickstart.md)
-3. [Monitoring Setup](./monitoring/)
-4. [Performance Optimization](./guides/performance-optimization.md)
+### For Product Managers
+1. Review [Roadmap](./09-business/ROADMAP.md)
+2. Check [Platform Capabilities](./09-business/PLATFORM_CAPABILITIES.md)
+3. Read [Feature Documentation](./04-features/COMPREHENSIVE_FEATURE_DOCUMENTATION.md)
 
-## 📊 Project Status
+## 📊 Documentation Health
 
-### Current Achievement (v0.4.0-beta)
+| Metric | Value |
+|--------|-------|
+| **Total Documents** | 67 |
+| **Organization** | 10 categories |
+| **Coverage** | 95% |
+| **Last Updated** | August 30, 2025 |
 
-✅ **Technical Excellence**
-- 730+ tests passing (100% success rate)
-- Zero TypeScript/ESLint errors
-- Sub-3-minute portfolio generation
-- 95/100 code quality score
+## 🔍 Finding Information
 
-✅ **Architecture**
-- Enterprise-grade API v1
-- Global state management (Zustand)
-- Multi-layer caching system
-- Atomic design system
+### By Topic
+Use the numbered folders to navigate by topic area.
 
-✅ **Features**
-- Complete multilingual support
-- AI content enhancement
-- GitHub Analytics integration
-- Admin system with RBAC
+### By Search
+Use your IDE's search function to find specific terms across all documentation.
 
-### Next Phase (v0.5.0-beta)
+### By Index
+Check [INDEX.md](./INDEX.md) for an alphabetical listing of all documents.
 
-🚧 **In Development**
-- Authentication integration
-- Portfolio builder interface
-- User dashboard
-- Publishing pipeline
+## 📝 Documentation Standards
 
-## 🔄 Documentation Maintenance
+### File Naming
+- Use UPPERCASE for main documents (e.g., `README.md`, `SECURITY.md`)
+- Use kebab-case for sub-documents (e.g., `getting-started.md`)
+- Prefix with numbers for ordering (e.g., `01-getting-started/`)
 
-This documentation is actively maintained and updated with each release.
+### Content Structure
+- Start with a clear title and description
+- Include a table of contents for long documents
+- Use examples and code snippets
+- Keep sections focused and concise
 
-### Version History
-- **v0.4.0-beta**: Enterprise architecture, 730+ tests, zero errors
-- **v0.3.0-beta**: PostHog analytics, experiments framework
-- **v0.1.1-beta**: Modular architecture, improved DX
-- **v0.1.0-beta**: Foundation complete with AI and admin
+### Maintenance
+- Update version numbers when making changes
+- Archive outdated documents instead of deleting
+- Keep cross-references up to date
+- Review quarterly for accuracy
 
-### Contributing to Docs
-See [Contributing Guidelines](../CONTRIBUTING.md) for documentation standards.
+## 🆘 Need Help?
+
+- **Can't find something?** Check the [INDEX.md](./INDEX.md)
+- **Found an error?** Submit a PR or issue
+- **Need clarification?** Ask in discussions
 
 ---
 
 <div align="center">
-
-**Portfolio Builder by MADFAM** - Building Business Empires Through Code Excellence
-
-[GitHub](https://github.com/aldoruizluna/ai-portfolio-builder) | [Issues](https://github.com/aldoruizluna/ai-portfolio-builder/issues) | [Discussions](https://github.com/aldoruizluna/ai-portfolio-builder/discussions)
-
+  <strong>Portfolio Builder Documentation</strong><br>
+  Clean • Organized • Comprehensive
 </div>

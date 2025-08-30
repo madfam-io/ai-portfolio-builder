@@ -43,12 +43,14 @@ export function getCSPDirectives(): CSPDirectives {
     'default-src': ["'self'"],
     'script-src': [
       "'self'",
-      "'unsafe-eval'", // Required for Next.js in development
-      isDevelopment ? "'unsafe-inline'" : '', // Only in development
+      "'unsafe-eval'", // Required for Next.js
+      "'unsafe-inline'", // Required for Next.js hydration and inline scripts
       'https://www.googletagmanager.com',
       'https://www.google-analytics.com',
       'https://app.posthog.com',
       'https://cdn.jsdelivr.net',
+      'https://js.stripe.com', // Added Stripe
+      'https://*.vercel.app', // Added Vercel
     ].filter(Boolean),
     'style-src': [
       "'self'",
@@ -74,6 +76,9 @@ export function getCSPDirectives(): CSPDirectives {
       'https://www.google-analytics.com',
       'https://app.posthog.com',
       'https://api-inference.huggingface.co',
+      'https://huggingface.co',
+      'https://api.stripe.com',
+      'https://ipapi.co',
       'wss://*.supabase.co',
       'wss://*.supabase.in',
       isDevelopment ? 'ws://localhost:*' : '',
@@ -85,6 +90,7 @@ export function getCSPDirectives(): CSPDirectives {
       "'self'",
       'https://www.youtube.com',
       'https://player.vimeo.com',
+      'https://js.stripe.com', // Added Stripe iframe support
     ],
     'frame-ancestors': ["'self'"],
     'base-uri': ["'self'"],
