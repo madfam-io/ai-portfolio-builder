@@ -19,7 +19,8 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { createClient as createServerClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 async function getUserReferralsHandler(
@@ -41,66 +42,50 @@ async function getUserReferralsHandler(
       );
     }
 
-    const supabase = await createServerClient();
-    if (!supabase) {
+    // Verify authentication
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.id !== userId) {
       return NextResponse.json(
-        { error: 'Failed to create database client' },
-        { status: 500 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       );
     }
 
-    // Build query
-    let query = supabase
-      .from('referrals')
-      .select(
-        `
-        *,
-        referral_campaigns (
-          id,
-          name,
-          type,
-          referrer_reward,
-          referee_reward
-        )
-      `
-      )
-      .eq('referrer_id', userId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+    // Build query with Prisma
+    const whereClause: any = {
+      referrerId: userId,
+    };
 
     // Apply status filter if provided
     if (status) {
-      query = query.eq('status', status);
+      whereClause.status = status;
     }
 
-    const { data: referrals, error } = await query;
+    const referrals = await prisma.referral.findMany({
+      where: whereClause,
+      include: {
+        campaign: {
+          select: {
+            id: true,
+            name: true,
+            type: true,
+            referrerReward: true,
+            refereeReward: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take: limit,
+    });
 
-    if (error) {
-      logger.error('Failed to fetch user referrals', { error, userId });
-      return NextResponse.json(
-        { error: 'Failed to fetch referrals' },
-        { status: 500 }
-      );
-    }
 
     // Get total count for pagination
-    let countQuery = supabase
-      .from('referrals')
-      .select('id', { count: 'exact', head: true })
-      .eq('referrer_id', userId);
-
-    if (status) {
-      countQuery = countQuery.eq('status', status);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) {
-      logger.warn('Failed to get referrals count', {
-        error: countError,
-        userId,
-      });
-    }
+    const count = await prisma.referral.count({
+      where: whereClause,
+    });
 
     logger.info('User referrals fetched via API', {
       userId,
@@ -110,7 +95,7 @@ async function getUserReferralsHandler(
     });
 
     return NextResponse.json({
-      referrals: referrals || [],
+      referrals,
       pagination: {
         total: count || 0,
         limit,

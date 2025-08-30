@@ -29,7 +29,8 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import {
   aiCodeQualityEngine,
   type CodeQualityReport,
@@ -229,26 +230,22 @@ export async function POST(request: NextRequest) {
     // Apply rate limiting - using default API limits for now
     // TODO: Implement tier-based rate limiting with user subscription data
 
-    const supabase = await createClient();
+    const user = await getCurrentUser();
 
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database service unavailable' },
-        { status: 503 }
-      );
-    }
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
       );
     }
+
+    // Get user profile for tier information
+    const userProfile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: {
+        subscriptionTier: true,
+      },
+    });
 
     const requestBody: AnalyticsRequest = await request.json();
     const {
@@ -262,7 +259,7 @@ export async function POST(request: NextRequest) {
     } = requestBody;
 
     // Check user tier and feature access
-    const userTier = user.user_metadata?.plan || 'free';
+    const userTier = userProfile?.subscriptionTier?.toLowerCase() || 'free';
     const featureAccess = validateFeatureAccess(userTier, analysisType);
 
     if (!featureAccess.allowed) {
@@ -401,21 +398,9 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(_request: NextRequest) {
   try {
-    const supabase = await createClient();
+    const user = await getCurrentUser();
 
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database service unavailable' },
-        { status: 503 }
-      );
-    }
-
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

@@ -19,7 +19,8 @@
 
 import { type NextRequest, NextResponse } from 'next/server';
 import { withObservability } from '@/lib/api/middleware/observability';
-import { createClient as createServerClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 async function getUserRewardsHandler(
@@ -42,74 +43,59 @@ async function getUserRewardsHandler(
       );
     }
 
-    const supabase = await createServerClient();
-    if (!supabase) {
+    // Verify authentication
+    const currentUser = await getCurrentUser();
+    if (!currentUser || currentUser.id !== userId) {
       return NextResponse.json(
-        { error: 'Failed to create database client' },
-        { status: 500 }
+        { error: 'Unauthorized' },
+        { status: 401 }
       );
     }
 
-    // Build query
-    let query = supabase
-      .from('referral_rewards')
-      .select(
-        `
-        *,
-        referrals (
-          id,
-          code,
-          referee_id,
-          referral_campaigns (
-            id,
-            name,
-            type
-          )
-        )
-      `
-      )
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .range(offset, offset + limit - 1);
+    // Build query with Prisma
+    const whereClause: any = {
+      userId: userId,
+    };
 
     // Apply filters if provided
     if (status) {
-      query = query.eq('status', status);
+      whereClause.status = status;
     }
 
     if (type) {
-      query = query.eq('type', type);
+      whereClause.type = type;
     }
 
-    const { data: rewards, error } = await query;
+    const rewards = await prisma.referralReward.findMany({
+      where: whereClause,
+      include: {
+        referral: {
+          select: {
+            id: true,
+            code: true,
+            refereeId: true,
+            campaign: {
+              select: {
+                id: true,
+                name: true,
+                type: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip: offset,
+      take: limit,
+    });
 
-    if (error) {
-      logger.error('Failed to fetch user rewards', { error, userId });
-      return NextResponse.json(
-        { error: 'Failed to fetch rewards' },
-        { status: 500 }
-      );
-    }
 
     // Get total count for pagination
-    let countQuery = supabase
-      .from('referral_rewards')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId);
-
-    if (status) {
-      countQuery = countQuery.eq('status', status);
-    }
-
-    if (type) {
-      countQuery = countQuery.eq('type', type);
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) {
-      logger.warn('Failed to get rewards count', { error: countError, userId });
-    }
+    const count = await prisma.referralReward.count({
+      where: whereClause,
+    });
 
     // Calculate summary statistics
     const summary = {
@@ -120,7 +106,7 @@ async function getUserRewardsHandler(
       by_status: {} as Record<string, number>,
     };
 
-    rewards?.forEach(reward => {
+    rewards.forEach(reward => {
       summary.by_type[reward.type] =
         (summary.by_type[reward.type] || 0) + reward.amount;
       summary.by_status[reward.status] =
@@ -141,13 +127,13 @@ async function getUserRewardsHandler(
 
     logger.info('User rewards fetched via API', {
       userId,
-      count: rewards?.length || 0,
+      count: rewards.length,
       total: count,
       totalEarned: summary.total_earned,
     });
 
     return NextResponse.json({
-      rewards: rewards || [],
+      rewards,
       summary,
       pagination: {
         total: count || 0,

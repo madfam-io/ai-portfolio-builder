@@ -12,7 +12,8 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
 import { z } from 'zod';
 import { handleApiError } from '@/lib/api/error-handler';
@@ -26,31 +27,19 @@ const querySchema = z.object({
 export async function GET(req: NextRequest) {
   try {
     // Admin authentication
-    const supabase = await createClient();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not configured' },
-        { status: 503 }
-      );
-    }
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
     if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Check if user has admin role
-    const { data: profile } = await supabase
-      .from('users')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    const profile = await prisma.user.findUnique({
+      where: { id: user.id },
+      select: { role: true },
+    });
 
-    if (!profile || profile.role !== 'admin') {
+    if (!profile || (profile.role !== 'admin' && profile.role !== 'super_admin')) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
@@ -63,7 +52,7 @@ export async function GET(req: NextRequest) {
     // Validate query parameters
     const validatedParams = querySchema.parse(params);
 
-    const revenueService = new RevenueMetricsService(supabase);
+    const revenueService = new RevenueMetricsService(prisma);
 
     // Parse date if provided
     const date = validatedParams.date

@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 export async function POST(request: Request) {
@@ -26,14 +26,7 @@ export async function POST(request: Request) {
 
     logger.info('Starting daily cleanup cron job');
 
-    const supabase = await createClient();
-    if (!supabase) {
-      logger.error('Supabase client not available');
-      return NextResponse.json(
-        { error: 'Database unavailable' },
-        { status: 503 }
-      );
-    }
+    // Database is available through Prisma
 
     const cleanupTasks = [];
 
@@ -42,14 +35,16 @@ export async function POST(request: Request) {
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     cleanupTasks.push(
-      supabase
-        .from('sessions')
-        .delete()
-        .lt('updated_at', thirtyDaysAgo.toISOString())
+      prisma.session.deleteMany({
+        where: {
+          updatedAt: {
+            lt: thirtyDaysAgo,
+          },
+        },
+      })
         .then(result => ({
           task: 'expired_sessions',
-          deleted: result.count || 0,
-          error: result.error,
+          deleted: result.count,
         }))
         .catch((error: any) => ({
           task: 'expired_sessions',
@@ -63,15 +58,17 @@ export async function POST(request: Request) {
     ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
     cleanupTasks.push(
-      supabase
-        .from('portfolios')
-        .delete()
-        .eq('status', 'draft')
-        .lt('updated_at', ninetyDaysAgo.toISOString())
+      prisma.portfolio.deleteMany({
+        where: {
+          status: 'DRAFT',
+          updatedAt: {
+            lt: ninetyDaysAgo,
+          },
+        },
+      })
         .then(result => ({
           task: 'orphaned_drafts',
-          deleted: result.count || 0,
-          error: result.error,
+          deleted: result.count,
         }))
         .catch((error: any) => ({
           task: 'orphaned_drafts',
@@ -85,14 +82,16 @@ export async function POST(request: Request) {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     cleanupTasks.push(
-      supabase
-        .from('analytics_events')
-        .delete()
-        .lt('created_at', sixMonthsAgo.toISOString())
+      prisma.analyticsEvent.deleteMany({
+        where: {
+          createdAt: {
+            lt: sixMonthsAgo,
+          },
+        },
+      })
         .then(result => ({
           task: 'old_analytics',
-          deleted: result.count || 0,
-          error: result.error,
+          deleted: result.count,
         }))
         .catch((error: any) => ({
           task: 'old_analytics',
@@ -106,15 +105,17 @@ export async function POST(request: Request) {
     sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
 
     cleanupTasks.push(
-      supabase
-        .from('payment_attempts')
-        .delete()
-        .eq('status', 'failed')
-        .lt('created_at', sixtyDaysAgo.toISOString())
+      prisma.payment.deleteMany({
+        where: {
+          status: 'FAILED',
+          createdAt: {
+            lt: sixtyDaysAgo,
+          },
+        },
+      })
         .then(result => ({
           task: 'failed_payments',
-          deleted: result.count || 0,
-          error: result.error,
+          deleted: result.count,
         }))
         .catch((error: any) => ({
           task: 'failed_payments',
