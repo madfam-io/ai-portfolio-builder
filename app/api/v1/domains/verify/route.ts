@@ -12,7 +12,8 @@
  */
 
 import { type NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import dns from 'dns/promises';
 import { logger } from '@/lib/utils/logger';
 
@@ -27,31 +28,21 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database not available' },
-        { status: 500 }
-      );
-    }
-
     // Get user session
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
-    if (!session) {
+    const user = await getCurrentUser();
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Get domain details
-    const { data: domain, error: domainError } = await supabase
-      .from('custom_domains')
-      .select('*')
-      .eq('id', domainId)
-      .eq('user_id', session.user.id)
-      .single();
+    const domain = await prisma.customDomain.findFirst({
+      where: {
+        id: domainId,
+        userId: user.id,
+      },
+    });
 
-    if (domainError || !domain) {
+    if (!domain) {
       return NextResponse.json({ error: 'Domain not found' }, { status: 404 });
     }
 
@@ -75,16 +66,18 @@ export async function POST(request: NextRequest) {
       logger.error('DNS lookup error', dnsError as Error);
 
       // Log verification attempt
-      await supabase.from('domain_verification_logs').insert({
-        domain_id: domainId,
-        verification_type: 'dns_txt',
-        status: 'failed',
-        error_code:
-          dnsError instanceof Error && 'code' in dnsError
-            ? (dnsError as NodeJS.ErrnoException).code || 'UNKNOWN'
-            : 'UNKNOWN',
-        error_message:
-          dnsError instanceof Error ? dnsError.message : 'Unknown DNS error',
+      await prisma.domainVerificationLog.create({
+        data: {
+          domainId,
+          verificationType: 'dns_txt',
+          status: 'failed',
+          errorCode:
+            dnsError instanceof Error && 'code' in dnsError
+              ? (dnsError as NodeJS.ErrnoException).code || 'UNKNOWN'
+              : 'UNKNOWN',
+          errorMessage:
+            dnsError instanceof Error ? dnsError.message : 'Unknown DNS error',
+        },
       });
 
       return NextResponse.json({
@@ -98,7 +91,7 @@ export async function POST(request: NextRequest) {
     // Check if verification token is present
     const flatTxtRecords = txtRecords.flat();
     const hasVerificationToken = flatTxtRecords.some(record =>
-      record.includes(`prisma-verify=${domain.verification_token}`)
+      record.includes(`prisma-verify=${domain.verificationToken}`)
     );
 
     const hasCnameRecord =
@@ -108,32 +101,37 @@ export async function POST(request: NextRequest) {
     const verified = hasVerificationToken && hasCnameRecord;
 
     // Update domain status
-    const updateData: Record<string, unknown> = {
-      dns_last_checked_at: new Date().toISOString(),
-      verification_attempts: domain.verification_attempts + 1,
-      last_verification_at: new Date().toISOString(),
+    const updateData: any = {
+      dnsLastCheckedAt: new Date(),
+      verificationAttempts: domain.verificationAttempts + 1,
+      lastVerificationAt: new Date(),
     };
 
     if (verified) {
-      updateData.verification_status = 'verified';
-      updateData.dns_configured = true;
-      updateData.verified_at = new Date().toISOString();
+      updateData.verificationStatus = 'verified';
+      updateData.dnsConfigured = true;
+      updateData.verifiedAt = new Date();
     }
 
-    await supabase.from('custom_domains').update(updateData).eq('id', domainId);
+    await prisma.customDomain.update({
+      where: { id: domainId },
+      data: updateData,
+    });
 
     // Log verification attempt
-    await supabase.from('domain_verification_logs').insert({
-      domain_id: domainId,
-      verification_type: 'dns_txt',
-      status: verified ? 'success' : 'failed',
-      dns_records: {
-        txt: flatTxtRecords,
-        cname: cnameRecord,
+    await prisma.domainVerificationLog.create({
+      data: {
+        domainId,
+        verificationType: 'dns_txt',
+        status: verified ? 'success' : 'failed',
+        dnsRecords: {
+          txt: flatTxtRecords,
+          cname: cnameRecord,
+        },
+        expectedValue: `prisma-verify=${domain.verificationToken}`,
+        actualValue:
+          flatTxtRecords.find(r => r.includes('prisma-verify')) || null,
       },
-      expected_value: `prisma-verify=${domain.verification_token}`,
-      actual_value:
-        flatTxtRecords.find(r => r.includes('prisma-verify')) || null,
     });
 
     return NextResponse.json({

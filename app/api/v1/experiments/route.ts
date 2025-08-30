@@ -21,7 +21,8 @@ import {
   forbiddenResponse,
 } from '@/lib/api/middleware/auth';
 
-import { createClient } from '@/lib/supabase/server';
+import { prisma } from '@/lib/db/prisma';
+import { getCurrentUser } from '@/lib/auth/session';
 import { logger } from '@/lib/utils/logger';
 
 import type { CreateExperimentRequest } from '@/types/experiments';
