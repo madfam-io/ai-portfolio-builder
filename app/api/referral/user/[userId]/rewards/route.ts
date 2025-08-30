@@ -86,24 +86,26 @@ async function getUserRewardsHandler(
       by_status: {} as Record<string, number>,
     };
 
-    rewards.forEach(reward => {
-      summary.by_type[reward.type] =
-        (summary.by_type[reward.type] || 0) + reward.amount;
-      summary.by_status[reward.status] =
-        (summary.by_status[reward.status] || 0) + reward.amount;
+    rewards.forEach(
+      (reward: { type: string; amount: number; status: string }) => {
+        summary.by_type[reward.type] =
+          (summary.by_type[reward.type] || 0) + reward.amount;
+        summary.by_status[reward.status] =
+          (summary.by_status[reward.status] || 0) + reward.amount;
 
-      if (reward.status === 'paid') {
-        summary.total_paid += reward.amount;
-      }
+        if (reward.status === 'paid') {
+          summary.total_paid += reward.amount;
+        }
 
-      if (['pending', 'approved'].includes(reward.status)) {
-        summary.pending_amount += reward.amount;
-      }
+        if (['pending', 'approved'].includes(reward.status)) {
+          summary.pending_amount += reward.amount;
+        }
 
-      if (['paid', 'approved'].includes(reward.status)) {
-        summary.total_earned += reward.amount;
+        if (['paid', 'approved'].includes(reward.status)) {
+          summary.total_earned += reward.amount;
+        }
       }
-    });
+    );
 
     logger.info('User rewards fetched via API', {
       userId,
