@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { createClient } from '@supabase/supabase-js';
 import { withErrorHandling } from '@/lib/api/middleware/error-handler';
@@ -40,7 +40,7 @@ export const POST = withErrorHandling(async (request: NextRequest) => {
   }
 
   const stripe = new Stripe(stripeSecretKey, {
-    apiVersion: '2025-05-28.basil',
+    apiVersion: '2025-08-27.basil',
   });
 
   // Initialize Supabase inside the handler

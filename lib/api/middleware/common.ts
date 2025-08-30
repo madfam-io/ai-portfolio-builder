@@ -11,8 +11,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { ZodError, ZodSchema } from 'zod';
+import { type NextRequest, NextResponse } from 'next/server';
+import { ZodError, type ZodSchema } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
 import { logger } from '@/lib/utils/logger';
@@ -93,7 +93,7 @@ export function withErrorHandling<T extends unknown[], R>(
       if (error instanceof ZodError) {
         return apiError('Invalid request data', {
           status: 400,
-          details: error.errors,
+          details: error.issues,
         });
       }
 

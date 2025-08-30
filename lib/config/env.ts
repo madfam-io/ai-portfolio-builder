@@ -44,12 +44,12 @@ const BaseEnvSchema = z.object({
   // Feature flags
   NEXT_PUBLIC_ENABLE_AI: z
     .string()
-    .transform(val => val === 'true')
-    .default('true'),
+    .default('true')
+    .transform(val => val === 'true'),
   NEXT_PUBLIC_ENABLE_ANALYTICS: z
     .string()
-    .transform(val => val === 'true')
-    .default('true'),
+    .default('true')
+    .transform(val => val === 'true'),
 });
 
 /**
@@ -62,7 +62,7 @@ const DevelopmentEnvSchema = BaseEnvSchema.extend({
   SUPABASE_SERVICE_ROLE_KEY: z.string().optional(),
   HUGGINGFACE_API_KEY: z.string().optional(),
   REDIS_URL: z.union([z.string().url(), z.literal('')]).optional(),
-  
+
   // Security (optional in development)
   JWT_SECRET: z.string().min(32).optional(),
   ENCRYPTION_KEY: z.string().min(32).optional(),
@@ -154,11 +154,11 @@ function parseEnv() {
     return parsed;
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const missingVars = error.errors
+      const missingVars = error.issues
         .filter(err => err.message === 'Required')
         .map(err => err.path.join('.'));
 
-      const invalidVars = error.errors
+      const invalidVars = error.issues
         .filter(err => err.message !== 'Required')
         .map(err => `${err.path.join('.')}: ${err.message}`);
 

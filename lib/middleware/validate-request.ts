@@ -11,8 +11,8 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
-import { z, ZodError, ZodSchema } from 'zod';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z, ZodError, type ZodSchema } from 'zod';
 import { logger } from '@/lib/utils/logger';
 import { AppError } from '@/types/errors';
 
@@ -161,7 +161,7 @@ function extractRouteParams(_request: NextRequest): Record<string, string> {
  * Default error formatter
  */
 function defaultErrorFormatter(errors: ZodError): unknown {
-  const formattedErrors = errors.errors.map(err => ({
+  const formattedErrors = errors.issues.map(err => ({
     field: err.path.join('.'),
     message: err.message,
     code: err.code,
@@ -263,7 +263,7 @@ export async function validateRequest<
 
     // Handle validation errors
     if (errors.length > 0) {
-      const combinedError = new ZodError(errors.flatMap(e => e.errors));
+      const combinedError = new ZodError(errors.flatMap(e => e.issues));
 
       const formatter = opts.errorFormatter || defaultErrorFormatter;
       const errorResponse = formatter(combinedError);

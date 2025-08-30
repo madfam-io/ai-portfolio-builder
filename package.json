@@ -150,7 +150,6 @@
     "server-only": "^0.0.1",
     "stripe": "^18.5.0",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "zod": "^4.1.5",
     "zustand": "^5.0.8"
@@ -193,7 +192,8 @@
     "prettier-plugin-tailwindcss": "^0.6.14",
     "standard-version": "^9.5.0",
     "supabase": "^2.39.2",
-    "tailwindcss": "^4.1.12",
+    "tailwindcss": "^3.4.17",
+    "tailwindcss-animate": "^1.0.7",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "undici": "^7.15.0"

@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextResponse, NextRequest } from 'next/server';
+import { NextResponse, type NextRequest } from 'next/server';
 import { z } from 'zod';
 
 import {
@@ -40,7 +40,7 @@ const createExperimentSchema = z.object({
   description: z.string().optional(),
   hypothesis: z.string().optional(),
   trafficPercentage: z.number().min(1).max(100).default(100),
-  targetAudience: z.record(z.array(z.string())).default({}),
+  targetAudience: z.record(z.string(), z.array(z.string())).default({}),
   primaryMetric: z.string(),
   secondaryMetrics: z.array(z.string()).optional(),
   variants: z
@@ -56,10 +56,10 @@ const createExperimentSchema = z.object({
             order: z.number(),
             visible: z.boolean(),
             variant: z.string(),
-            props: z.record(z.unknown()),
+            props: z.record(z.string(), z.unknown()),
           })
         ),
-        themeOverrides: z.record(z.unknown()).default({}),
+        themeOverrides: z.record(z.string(), z.unknown()).default({}),
       })
     )
     .min(2), // At least 2 variants required
@@ -300,7 +300,7 @@ export async function POST(request: Request): Promise<Response> {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: 'Invalid request data', details: error.issues },
         { status: 400 }
       );
     }

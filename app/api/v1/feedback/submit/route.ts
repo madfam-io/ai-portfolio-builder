@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { redisRateLimitMiddleware } from '@/lib/api/middleware/redis-rate-limiter';
 import { logger } from '@/lib/utils/logger';
@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid feedback data', details: error.errors },
+        { error: 'Invalid feedback data', details: error.issues },
         { status: 400 }
       );
     }

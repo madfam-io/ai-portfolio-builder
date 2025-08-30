@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { createClient } from '@/lib/supabase/server';
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         {
           available: false,
           error: 'Invalid subdomain format',
-          details: validation.error.errors,
+          details: validation.error.issues,
         },
         { status: 400 }
       );

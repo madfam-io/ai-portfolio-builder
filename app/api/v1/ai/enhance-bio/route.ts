@@ -17,7 +17,7 @@ import { z } from 'zod';
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
 import { createClient } from '@/lib/supabase/server';
 import { parseJsonBody, errorLogger } from '@/lib/services/error';
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 
 /**
  * Bio Enhancement API Route
@@ -83,7 +83,7 @@ async function handlePOST(
           success: false,
           error: 'Invalid request data',
           code: 'VALIDATION_ERROR',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );

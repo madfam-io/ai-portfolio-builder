@@ -201,7 +201,7 @@ const fileUploadSchemas = {
 const webhookSchemas = {
   body: z.object({
     event: z.enum(['payment.success', 'payment.failed', 'subscription.updated']),
-    data: z.record(z.unknown()),
+    data: z.record(z.string(), z.unknown()),
     timestamp: z.number(),
   }),
   headers: z.object({

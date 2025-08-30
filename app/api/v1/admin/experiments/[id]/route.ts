@@ -24,12 +24,12 @@
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import {
   universalExperimentEngine,
-  UniversalExperimentConfig,
+  type UniversalExperimentConfig,
 } from '@/lib/experimentation/universal-experiments';
 import { experimentManager } from '@/lib/admin/experiment-manager';
 import { logger } from '@/lib/utils/logger';
@@ -282,7 +282,7 @@ export async function PUT(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: error.errors },
+        { success: false, error: 'Validation failed', details: error.issues },
         { status: 400 }
       );
     }
@@ -371,7 +371,7 @@ export async function POST(
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: error.errors },
+        { success: false, error: 'Validation failed', details: error.issues },
         { status: 400 }
       );
     }

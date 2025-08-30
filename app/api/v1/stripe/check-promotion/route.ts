@@ -15,7 +15,7 @@
  * API endpoint for checking promotional eligibility
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import {
   enhancedStripeService,
   PROMOTIONAL_CONFIG,
@@ -72,7 +72,7 @@ async function handler(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: 'Invalid request data', details: error.issues },
         { status: 400 }
       );
     }

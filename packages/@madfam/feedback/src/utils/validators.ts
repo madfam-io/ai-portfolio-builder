@@ -58,10 +58,10 @@ export const feedbackSchema = z.object({
       accountAge: z.number(),
       portfoliosCreated: z.number(),
       lastActivity: z.date().or(z.string().transform(val => new Date(val))),
-      customFields: z.record(z.unknown()).optional(),
+      customFields: z.record(z.string(), z.unknown()).optional(),
     })
     .optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Survey validation schema
@@ -79,7 +79,7 @@ export const surveySchema = z.object({
   additionalComments: z.string(),
   completionContext: z.string().min(1, 'Completion context is required'),
   completedIn: z.number().positive('Completion time must be positive'),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 // Validation result type
@@ -99,7 +99,7 @@ export function validateFeedback(
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { valid: false, errors: error.errors };
+      return { valid: false, errors: error.issues };
     }
     return {
       valid: false,
@@ -121,7 +121,7 @@ export function validateSurvey(
     return { valid: true };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return { valid: false, errors: error.errors };
+      return { valid: false, errors: error.issues };
     }
     return {
       valid: false,

@@ -23,14 +23,14 @@
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import {
   experimentManager,
   ExperimentManager,
 } from '@/lib/admin/experiment-manager';
-import { UniversalExperimentConfig } from '@/lib/experimentation/universal-experiments';
+import { type UniversalExperimentConfig } from '@/lib/experimentation/universal-experiments';
 import { logger } from '@/lib/utils/logger';
 
 const CreateFromTemplateSchema = z.object({
@@ -146,7 +146,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: error.errors },
+        { success: false, error: 'Validation failed', details: error.issues },
         { status: 400 }
       );
     }

@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextResponse } from 'next/server';
+import { type NextResponse } from 'next/server';
 import { ZodError } from 'zod';
 
 import { apiError } from '@/lib/api/versioning';
@@ -85,7 +85,7 @@ export function handleApiError(
       status: 400,
       data: {
         code: 'VALIDATION_ERROR',
-        errors: error.errors.map(err => ({
+        errors: error.issues.map(err => ({
           field: err.path.join('.'),
           message: err.message,
         })),

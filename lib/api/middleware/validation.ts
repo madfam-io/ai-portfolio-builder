@@ -12,8 +12,8 @@
  */
 
 import DOMPurify from 'isomorphic-dompurify';
-import { NextRequest, NextResponse } from 'next/server';
-import { z, ZodError, ZodSchema } from 'zod';
+import { type NextRequest, NextResponse } from 'next/server';
+import { z, ZodError, type ZodSchema } from 'zod';
 
 import { logger } from '@/lib/utils/logger';
 
@@ -186,7 +186,7 @@ export function validateRequest(options: ValidationOptions) {
     } catch (error) {
       if (error instanceof ZodError) {
         logger.warn('Validation error', {
-          errors: error.errors,
+          errors: error.issues,
           url: request.url,
           method: request.method,
         });
@@ -194,7 +194,7 @@ export function validateRequest(options: ValidationOptions) {
         return NextResponse.json(
           {
             error: 'Validation failed',
-            details: error.errors.map(err => ({
+            details: error.issues.map(err => ({
               path: err.path.join('.'),
               message: err.message,
             })),

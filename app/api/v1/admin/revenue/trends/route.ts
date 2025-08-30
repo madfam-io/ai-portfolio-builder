@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { RevenueMetricsService } from '@/lib/services/analytics/RevenueMetricsService';
 import { z } from 'zod';
@@ -21,8 +21,8 @@ import { handleApiError } from '@/lib/api/error-handler';
 const querySchema = z.object({
   months: z
     .string()
-    .transform(val => parseInt(val))
-    .default('12'),
+    .default('12')
+    .transform(val => parseInt(val)),
   interval: z.enum(['daily', 'weekly', 'monthly']).default('monthly'),
 });
 

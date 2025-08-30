@@ -21,8 +21,11 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { stripeService, SubscriptionPlan } from '@/lib/services/stripe/stripe';
-import { withAuth, AuthenticatedRequest } from '@/lib/api/middleware/auth';
+import {
+  stripeService,
+  type SubscriptionPlan,
+} from '@/lib/services/stripe/stripe';
+import { withAuth, type AuthenticatedRequest } from '@/lib/api/middleware/auth';
 import { AppError } from '@/types/errors';
 import { logger } from '@/lib/utils/logger';
 import { getAppUrl } from '@/lib/config/env';
@@ -103,7 +106,7 @@ async function handler(request: AuthenticatedRequest): Promise<NextResponse> {
         {
           error: 'Invalid request data',
           code: 'VALIDATION_ERROR',
-          details: error.errors,
+          details: error.issues,
         },
         { status: 400 }
       );

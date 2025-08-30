@@ -66,7 +66,7 @@ export default function ConversionChart({
   const customTooltip = (props: {
     active?: boolean;
     payload?: unknown;
-    label?: string;
+    label?: string | number;
   }): React.JSX.Element | null => {
     const { active, payload, label } = props;
     if (

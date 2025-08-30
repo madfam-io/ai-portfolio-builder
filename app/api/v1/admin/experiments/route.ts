@@ -24,14 +24,14 @@
  * @version 0.4.0-beta - Universal Experimentation Platform
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import {
   universalExperimentEngine,
-  UniversalExperimentConfig,
-  ExperimentContext,
-  ExperimentType,
+  type UniversalExperimentConfig,
+  type ExperimentContext,
+  type ExperimentType,
 } from '@/lib/experimentation/universal-experiments';
 import { experimentManager } from '@/lib/admin/experiment-manager';
 import { logger } from '@/lib/utils/logger';
@@ -73,7 +73,7 @@ const CreateExperimentSchema = z.object({
         description: z.string(),
         isControl: z.boolean(),
         allocation: z.number().min(0).max(1),
-        config: z.record(z.unknown()),
+        config: z.record(z.string(), z.unknown()),
       })
     )
     .min(2),
@@ -122,7 +122,7 @@ const CreateExperimentSchema = z.object({
 const BulkOperationSchema = z.object({
   experimentIds: z.array(z.string()).min(1),
   operation: z.enum(['start', 'pause', 'stop', 'archive', 'clone']),
-  options: z.record(z.unknown()).optional(),
+  options: z.record(z.string(), z.unknown()).optional(),
 });
 
 /**
@@ -445,7 +445,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: error.errors },
+        { success: false, error: 'Validation failed', details: error.issues },
         { status: 400 }
       );
     }
@@ -476,7 +476,7 @@ export async function PUT(request: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { success: false, error: 'Validation failed', details: error.errors },
+        { success: false, error: 'Validation failed', details: error.issues },
         { status: 400 }
       );
     }

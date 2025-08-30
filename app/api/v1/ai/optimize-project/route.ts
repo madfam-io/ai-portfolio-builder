@@ -11,7 +11,7 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
  */
 
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
 import { HuggingFaceService } from '@/lib/ai/huggingface-service';
@@ -53,7 +53,7 @@ const optimizeProjectSchema = z.object({
         .default('technical'),
     })
     .optional()
-    .default({}),
+    .default({ targetAudience: 'employers', emphasize: 'technical' }),
 });
 
 export async function POST(request: NextRequest): Promise<Response> {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest): Promise<Response> {
       return NextResponse.json(
         {
           error: 'Invalid request data',
-          details: validationResult.error.errors,
+          details: validationResult.error.issues,
         },
         { status: 400 }
       );
@@ -263,7 +263,7 @@ export async function PUT(request: NextRequest): Promise<Response> {
           error: 'Invalid project data',
           details: validationResults
             .filter(result => !result.success)
-            .map(result => result.error?.errors),
+            .map(result => result.error?.issues),
         },
         { status: 400 }
       );

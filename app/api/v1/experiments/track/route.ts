@@ -31,7 +31,10 @@ const trackEventSchema = z.object({
   variantId: z.string().uuid(),
   eventType: z.enum(['click', 'conversion', 'engagement', 'pageview']),
   eventData: z
-    .record(z.union([z.string(), z.number(), z.boolean(), z.null()]))
+    .record(
+      z.string(),
+      z.union([z.string(), z.number(), z.boolean(), z.null()])
+    )
     .optional(),
 });
 
@@ -103,7 +106,7 @@ export async function POST(request: Request): Promise<Response> {
 
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: 'Invalid request data', details: error.issues },
         { status: 400 }
       );
     }
