@@ -33,17 +33,18 @@ export async function POST(request: Request) {
 
     // 1. Aggregate portfolio views
     aggregationTasks.push(
-      prisma.portfolioView.findMany({
-        where: {
-          createdAt: {
-            gte: sixHoursAgo,
+      prisma.portfolioView
+        .findMany({
+          where: {
+            createdAt: {
+              gte: sixHoursAgo,
+            },
           },
-        },
-        select: {
-          portfolioId: true,
-        },
-      })
-        .then(async result => {
+          select: {
+            portfolioId: true,
+          },
+        })
+        .then(async (result: Array<{ portfolioId: string }>) => {
           const viewCounts: Record<string, number> = {};
           result.forEach(view => {
             viewCounts[view.portfolioId] =
@@ -87,45 +88,50 @@ export async function POST(request: Request) {
 
     // 2. Calculate user engagement metrics
     aggregationTasks.push(
-      prisma.userActivity.findMany({
-        where: {
-          createdAt: {
-            gte: sixHoursAgo,
+      prisma.userActivity
+        .findMany({
+          where: {
+            createdAt: {
+              gte: sixHoursAgo,
+            },
           },
-        },
-        select: {
-          userId: true,
-          action: true,
-          createdAt: true,
-        },
-      })
-        .then(async result => {
-          const userMetrics: Record<string, any> = {};
-          result.forEach(activity => {
-            if (!userMetrics[activity.userId]) {
-              userMetrics[activity.userId] = {
-                actions: [],
-                lastActive: activity.createdAt,
-              };
-            }
-            userMetrics[activity.userId].actions.push(activity.action);
-          });
-
-          // Cache metrics in Redis/KV
-          if (kv) {
-            const cachePromises = Object.entries(userMetrics).map(
-              ([userId, metrics]) =>
-                kv.set(`user:metrics:${userId}`, metrics, { ex: 21600 }) // 6 hours TTL
-            );
-            await Promise.all(cachePromises);
-          }
-
-          return {
-            task: 'user_engagement',
-            processed: Object.keys(userMetrics).length,
-            totalActions: result.length,
-          };
+          select: {
+            userId: true,
+            action: true,
+            createdAt: true,
+          },
         })
+        .then(
+          async (
+            result: Array<{ userId: string; action: string; createdAt: Date }>
+          ) => {
+            const userMetrics: Record<string, any> = {};
+            result.forEach(activity => {
+              if (!userMetrics[activity.userId]) {
+                userMetrics[activity.userId] = {
+                  actions: [],
+                  lastActive: activity.createdAt,
+                };
+              }
+              userMetrics[activity.userId].actions.push(activity.action);
+            });
+
+            // Cache metrics in Redis/KV
+            if (kv) {
+              const cachePromises = Object.entries(userMetrics).map(
+                ([userId, metrics]) =>
+                  kv.set(`user:metrics:${userId}`, metrics, { ex: 21600 }) // 6 hours TTL
+              );
+              await Promise.all(cachePromises);
+            }
+
+            return {
+              task: 'user_engagement',
+              processed: Object.keys(userMetrics).length,
+              totalActions: result.length,
+            };
+          }
+        )
         .catch((error: any) => ({
           task: 'user_engagement',
           processed: 0,
@@ -135,58 +141,69 @@ export async function POST(request: Request) {
 
     // 3. Generate revenue analytics
     aggregationTasks.push(
-      prisma.payment.findMany({
-        where: {
-          createdAt: {
-            gte: sixHoursAgo,
-          },
-          status: 'SUCCEEDED',
-        },
-        select: {
-          amount: true,
-          currency: true,
-          status: true,
-          createdAt: true,
-        },
-      })
-        .then(async result => {
-          const revenue = {
-            total: 0,
-            byHour: {} as Record<string, number>,
-            byCurrency: {} as Record<string, number>,
-            count: result.length,
-          };
-
-          result.forEach(payment => {
-            revenue.total += payment.amount;
-            const hour = new Date(payment.createdAt).getHours();
-            revenue.byHour[hour] = (revenue.byHour[hour] || 0) + payment.amount;
-            revenue.byCurrency[payment.currency] =
-              (revenue.byCurrency[payment.currency] || 0) + payment.amount;
-          });
-
-          // Store in analytics table
-          await prisma.revenueAnalytics.create({
-            data: {
-              periodStart: sixHoursAgo,
-              periodEnd: now,
-              totalRevenue: revenue.total,
-              transactionCount: revenue.count,
-              metrics: revenue,
+      prisma.payment
+        .findMany({
+          where: {
+            createdAt: {
+              gte: sixHoursAgo,
             },
-          });
-
-          // Cache current revenue metrics
-          if (kv) {
-            await kv.set('analytics:revenue:current', revenue, { ex: 21600 });
-          }
-
-          return {
-            task: 'revenue_analytics',
-            processed: revenue.count,
-            totalRevenue: revenue.total,
-          };
+            status: 'SUCCEEDED',
+          },
+          select: {
+            amount: true,
+            currency: true,
+            status: true,
+            createdAt: true,
+          },
         })
+        .then(
+          async (
+            result: Array<{
+              amount: number;
+              currency: string;
+              status: string;
+              createdAt: Date;
+            }>
+          ) => {
+            const revenue = {
+              total: 0,
+              byHour: {} as Record<string, number>,
+              byCurrency: {} as Record<string, number>,
+              count: result.length,
+            };
+
+            result.forEach(payment => {
+              revenue.total += payment.amount;
+              const hour = new Date(payment.createdAt).getHours();
+              revenue.byHour[hour] =
+                (revenue.byHour[hour] || 0) + payment.amount;
+              revenue.byCurrency[payment.currency] =
+                (revenue.byCurrency[payment.currency] || 0) + payment.amount;
+            });
+
+            // Store in analytics table
+            await prisma.revenueAnalytics.create({
+              data: {
+                periodStart: sixHoursAgo,
+                periodEnd: now,
+                totalRevenue: revenue.total,
+                transactionCount: revenue.count,
+                metrics: revenue,
+              },
+            });
+
+            // Cache current revenue metrics
+            if (kv) {
+              await kv.set('analytics:revenue:current', revenue, { ex: 21600 });
+            }
+
+            return {
+              task: 'revenue_analytics',
+              processed: revenue.count,
+              totalRevenue: revenue.total,
+            };
+          }
+        )
         .catch((error: any) => ({
           task: 'revenue_analytics',
           processed: 0,
@@ -196,70 +213,79 @@ export async function POST(request: Request) {
 
     // 4. Calculate conversion funnel metrics
     aggregationTasks.push(
-      prisma.funnelEvent.findMany({
-        where: {
-          createdAt: {
-            gte: sixHoursAgo,
+      prisma.funnelEvent
+        .findMany({
+          where: {
+            createdAt: {
+              gte: sixHoursAgo,
+            },
           },
-        },
-        select: {
-          eventType: true,
-          userId: true,
-          createdAt: true,
-        },
-      })
-        .then(async result => {
-          const funnel = {
-            visitors: new Set(),
-            signups: new Set(),
-            created_portfolio: new Set(),
-            published: new Set(),
-            paid: new Set(),
-          };
-
-          result.forEach(event => {
-            switch (event.eventType) {
-              case 'PAGE_VIEW':
-                funnel.visitors.add(event.userId);
-                break;
-              case 'SIGNUP':
-                funnel.signups.add(event.userId);
-                break;
-              case 'PORTFOLIO_CREATED':
-                funnel.created_portfolio.add(event.userId);
-                break;
-              case 'PORTFOLIO_PUBLISHED':
-                funnel.published.add(event.userId);
-                break;
-              case 'PAYMENT_COMPLETED':
-                funnel.paid.add(event.userId);
-                break;
-            }
-          });
-
-          const metrics = {
-            visitors: funnel.visitors.size,
-            signups: funnel.signups.size,
-            portfolios_created: funnel.created_portfolio.size,
-            portfolios_published: funnel.published.size,
-            conversions: funnel.paid.size,
-            conversion_rate:
-              funnel.visitors.size > 0
-                ? ((funnel.paid.size / funnel.visitors.size) * 100).toFixed(2)
-                : 0,
-          };
-
-          // Cache funnel metrics
-          if (kv) {
-            await kv.set('analytics:funnel:current', metrics, { ex: 21600 });
-          }
-
-          return {
-            task: 'conversion_funnel',
-            processed: result.length,
-            metrics,
-          };
+          select: {
+            eventType: true,
+            userId: true,
+            createdAt: true,
+          },
         })
+        .then(
+          async (
+            result: Array<{
+              eventType: string;
+              userId: string | null;
+              createdAt: Date;
+            }>
+          ) => {
+            const funnel = {
+              visitors: new Set(),
+              signups: new Set(),
+              created_portfolio: new Set(),
+              published: new Set(),
+              paid: new Set(),
+            };
+
+            result.forEach(event => {
+              switch (event.eventType) {
+                case 'PAGE_VIEW':
+                  funnel.visitors.add(event.userId);
+                  break;
+                case 'SIGNUP':
+                  funnel.signups.add(event.userId);
+                  break;
+                case 'PORTFOLIO_CREATED':
+                  funnel.created_portfolio.add(event.userId);
+                  break;
+                case 'PORTFOLIO_PUBLISHED':
+                  funnel.published.add(event.userId);
+                  break;
+                case 'PAYMENT_COMPLETED':
+                  funnel.paid.add(event.userId);
+                  break;
+              }
+            });
+
+            const metrics = {
+              visitors: funnel.visitors.size,
+              signups: funnel.signups.size,
+              portfolios_created: funnel.created_portfolio.size,
+              portfolios_published: funnel.published.size,
+              conversions: funnel.paid.size,
+              conversion_rate:
+                funnel.visitors.size > 0
+                  ? ((funnel.paid.size / funnel.visitors.size) * 100).toFixed(2)
+                  : 0,
+            };
+
+            // Cache funnel metrics
+            if (kv) {
+              await kv.set('analytics:funnel:current', metrics, { ex: 21600 });
+            }
+
+            return {
+              task: 'conversion_funnel',
+              processed: result.length,
+              metrics,
+            };
+          }
+        )
         .catch((error: any) => ({
           task: 'conversion_funnel',
           processed: 0,
