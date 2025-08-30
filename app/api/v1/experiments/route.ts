@@ -104,17 +104,17 @@ export async function GET(request: Request): Promise<Response> {
             trafficPercentage: true,
             conversionRate: true,
             visitorCount: true,
-            conversionCount: true
-          }
-        }
+            conversionCount: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
       skip: offset,
-      take: limit
+      take: limit,
     });
 
     // Calculate additional metrics
-    const experimentsWithMetrics = experiments.map(experiment => {
+    const experimentsWithMetrics = experiments.map((experiment: any) => {
       const totalVisitors = experiment.variants.reduce(
         (sum: number, v) => sum + (v.visitorCount ?? 0),
         0
@@ -205,7 +205,7 @@ export async function POST(request: Request): Promise<Response> {
         start_date: validatedData.startDate,
         end_date: validatedData.endDate,
         created_by: user.id,
-      }
+      },
     });
 
     // Create variants
@@ -219,12 +219,12 @@ export async function POST(request: Request): Promise<Response> {
           trafficPercentage: variant.trafficPercentage,
           components: variant.components,
           themeOverrides: variant.themeOverrides,
-        }))
+        })),
       });
     } catch (variantsError) {
       // Rollback experiment creation
       await prisma.landingPageExperiment.delete({
-        where: { id: experiment.id }
+        where: { id: experiment.id },
       });
 
       logger.error('Failed to create variants', variantsError as Error);
@@ -238,8 +238,8 @@ export async function POST(request: Request): Promise<Response> {
     const completeExperiment = await prisma.landingPageExperiment.findUnique({
       where: { id: experiment.id },
       include: {
-        variants: true
-      }
+        variants: true,
+      },
     });
 
     if (!completeExperiment) {
