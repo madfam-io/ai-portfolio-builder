@@ -182,13 +182,13 @@ async function logModelSelection(
   modelId: string
 ): Promise<void> {
   try {
-    await prisma.aiUsageLog.create({
+    await prisma.aIUsageLog.create({
       data: {
         userId,
         operationType: 'model_selection_change',
-        taskType,
-        modelId,
         metadata: {
+          taskType,
+          modelId,
           timestamp: new Date().toISOString(),
         },
       },

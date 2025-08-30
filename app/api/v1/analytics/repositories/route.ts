@@ -99,9 +99,9 @@ export async function POST(request: Request): Promise<Response> {
     const { force = false } = body;
 
     // Check if we should force sync or if enough time has passed
-    const integration = await prisma.githubIntegration.findFirst({
+    const integration = await prisma.gitHubIntegration.findFirst({
       where: { userId: user.id },
-      select: { lastSyncedAt: true }
+      select: { lastSyncedAt: true },
     });
 
     const lastSynced =

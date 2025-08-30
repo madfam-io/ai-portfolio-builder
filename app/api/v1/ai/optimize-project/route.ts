@@ -325,7 +325,7 @@ async function logAIUsage(
       data: {
         userId,
         operationType,
-        metadata,
+        metadata: metadata as any,
       },
     });
   } catch (error) {

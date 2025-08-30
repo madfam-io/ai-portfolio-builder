@@ -199,11 +199,15 @@ export async function POST(request: Request): Promise<Response> {
         hypothesis: validatedData.hypothesis,
         status: 'draft',
         traffic_percentage: validatedData.trafficPercentage,
-        target_audience: validatedData.targetAudience,
+        target_audience: validatedData.targetAudience as any,
         primary_metric: validatedData.primaryMetric,
         secondary_metrics: validatedData.secondaryMetrics || [],
-        start_date: validatedData.startDate,
-        end_date: validatedData.endDate,
+        start_date: validatedData.startDate
+          ? new Date(validatedData.startDate).toISOString()
+          : null,
+        end_date: validatedData.endDate
+          ? new Date(validatedData.endDate).toISOString()
+          : null,
         created_by: user.id,
       },
     });
@@ -217,8 +221,8 @@ export async function POST(request: Request): Promise<Response> {
           description: variant.description,
           isControl: variant.isControl,
           trafficPercentage: variant.trafficPercentage,
-          components: variant.components,
-          themeOverrides: variant.themeOverrides,
+          components: variant.components as any,
+          themeOverrides: variant.themeOverrides as any,
         })),
       });
     } catch (variantsError) {
