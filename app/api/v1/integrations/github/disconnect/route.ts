@@ -14,6 +14,7 @@
 import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { logger } from '@/lib/utils/logger';
 
 /**
@@ -23,32 +24,21 @@ import { logger } from '@/lib/utils/logger';
 
 export async function POST(): Promise<Response> {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     // Delete GitHub integration
-    const { error: deleteError } = await supabase
-      .from('github_integrations')
-      .delete()
-      .eq('user_id', user.id);
-
-    if (deleteError) {
+    try {
+      await prisma.gitHubIntegration.delete({
+        where: {
+          userId: user.id,
+        },
+      });
+    } catch (deleteError) {
       logger.error('Failed to delete GitHub integration', {
         error: deleteError,
       });
@@ -59,22 +49,24 @@ export async function POST(): Promise<Response> {
     }
 
     // Delete associated repositories
-    const { error: repoDeleteError } = await supabase
-      .from('repositories')
-      .delete()
-      .eq('user_id', user.id);
-
-    if (repoDeleteError) {
+    try {
+      await prisma.repository.deleteMany({
+        where: {
+          userId: user.id,
+        },
+      });
+    } catch (repoDeleteError) {
       logger.error('Failed to delete repositories', { error: repoDeleteError });
       // Non-critical error, continue
     }
 
     // Clean up any OAuth states
-    await supabase
-      .from('oauth_states')
-      .delete()
-      .eq('user_id', user.id)
-      .eq('provider', 'github');
+    await prisma.oAuthState.deleteMany({
+      where: {
+        userId: user.id,
+        provider: 'github',
+      },
+    });
 
     // Log analytics event
     try {

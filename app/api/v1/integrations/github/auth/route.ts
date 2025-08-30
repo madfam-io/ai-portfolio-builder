@@ -16,6 +16,7 @@ import crypto from 'crypto';
 import { NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { encrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
@@ -29,22 +30,10 @@ import { logger } from '@/lib/utils/logger';
  */
 export async function GET(): Promise<Response> {
   try {
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Check if user is authenticated
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -67,14 +56,16 @@ export async function GET(): Promise<Response> {
     );
 
     // Store state in database for validation on callback
-    const { error: stateError } = await supabase.from('oauth_states').insert({
-      state,
-      user_id: user.id,
-      provider: 'github',
-      expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(), // 10 minutes
-    });
-
-    if (stateError) {
+    try {
+      await prisma.oAuthState.create({
+        data: {
+          state,
+          userId: user.id,
+          provider: 'github',
+          expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+        },
+      });
+    } catch (stateError) {
       logger.error('Failed to store OAuth state', { error: stateError });
       return NextResponse.json(
         { error: 'Failed to initiate OAuth flow' },

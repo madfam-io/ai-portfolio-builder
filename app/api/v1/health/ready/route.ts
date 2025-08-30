@@ -24,8 +24,8 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  * GET /api/v1/health/ready - Readiness probe
  */
 export const GET = withErrorTracking(
-  withAPMTracking(() => {
+  withAPMTracking(async () => {
     return handleReadinessCheck();
-  }, 'readiness-check'),
+  }),
   'health-api'
 );

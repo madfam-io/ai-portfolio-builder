@@ -14,6 +14,7 @@
 import { type NextRequest, NextResponse } from 'next/server';
 
 import { getCurrentUser } from '@/lib/auth/session';
+import { prisma } from '@/lib/db/prisma';
 import { encrypt, decrypt } from '@/lib/utils/crypto';
 import { logger } from '@/lib/utils/logger';
 
@@ -28,31 +29,23 @@ interface StateData {
 }
 
 // Helper function to validate OAuth state
-async function validateOAuthState(
-  state: string,
-  userId: string,
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T> ? T : never
-) {
-  if (!supabase) {
-    return null;
-  }
+async function validateOAuthState(state: string, userId: string) {
+  const oauthState = await prisma.oAuthState.findFirst({
+    where: {
+      state,
+      userId,
+      provider: 'github',
+      usedAt: null,
+    },
+  });
 
-  const { data: oauthState, error: stateError } = await supabase
-    .from('oauth_states')
-    .select('*')
-    .eq('state', state)
-    .eq('user_id', userId)
-    .eq('provider', 'github')
-    .is('used_at', null)
-    .single();
-
-  if (stateError !== null || oauthState === null || oauthState === undefined) {
-    logger.error('Invalid OAuth state', { stateError, state });
+  if (!oauthState) {
+    logger.error('Invalid OAuth state', { state });
     return null;
   }
 
   // Check if state has expired
-  if (new Date(oauthState.expires_at) < new Date()) {
+  if (new Date(oauthState.expiresAt) < new Date()) {
     logger.error('OAuth state expired', { state });
     return null;
   }
@@ -130,9 +123,6 @@ async function fetchGitHubUser(accessToken: string) {
 
 // Helper function to store GitHub integration
 async function storeGitHubIntegration(
-  supabase: ReturnType<typeof getCurrentUser> extends Promise<infer T>
-    ? T
-    : never,
   user: { id: string },
   githubUser: {
     id: number;
@@ -154,34 +144,54 @@ async function storeGitHubIntegration(
       : null;
 
   // Store GitHub integration with encrypted tokens
-  if (!supabase) {
-    return new Error('Database connection not available');
-  }
-
-  const { error: integrationError } = await supabase
-    .from('github_integrations')
-    .upsert({
-      user_id: user.id,
-      github_user_id: githubUser.id,
-      github_username: githubUser.login,
-      github_email: githubUser.email || null,
-      avatar_url: githubUser.avatar_url || null,
-      encrypted_access_token: encryptedToken.encrypted,
-      access_token_iv: encryptedToken.iv,
-      access_token_tag: encryptedToken.tag,
-      encrypted_refresh_token: encryptedRefreshToken?.encrypted || null,
-      refresh_token_iv: encryptedRefreshToken?.iv || null,
-      refresh_token_tag: encryptedRefreshToken?.tag || null,
-      status: 'active',
-      permissions: {},
-      scope: tokenData.scope,
-      rate_limit_remaining: 5000,
-      rate_limit_reset_at: new Date(Date.now() + 60 * 60 * 1000).toISOString(), // 1 hour from now
-      last_synced_at: new Date().toISOString(),
-      encryption_version: 1, // Track encryption version for future rotation
+  try {
+    await prisma.gitHubIntegration.upsert({
+      where: {
+        userId: user.id,
+      },
+      update: {
+        githubUserId: githubUser.id.toString(),
+        githubUsername: githubUser.login,
+        githubEmail: githubUser.email || null,
+        avatarUrl: githubUser.avatar_url || null,
+        encryptedAccessToken: encryptedToken.encrypted,
+        accessTokenIv: encryptedToken.iv,
+        accessTokenTag: encryptedToken.tag,
+        encryptedRefreshToken: encryptedRefreshToken?.encrypted || null,
+        refreshTokenIv: encryptedRefreshToken?.iv || null,
+        refreshTokenTag: encryptedRefreshToken?.tag || null,
+        status: 'active',
+        permissions: {},
+        scope: tokenData.scope,
+        rateLimitRemaining: 5000,
+        rateLimitResetAt: new Date(Date.now() + 60 * 60 * 1000),
+        lastSyncedAt: new Date(),
+        encryptionVersion: 1,
+      },
+      create: {
+        userId: user.id,
+        githubUserId: githubUser.id.toString(),
+        githubUsername: githubUser.login,
+        githubEmail: githubUser.email || null,
+        avatarUrl: githubUser.avatar_url || null,
+        encryptedAccessToken: encryptedToken.encrypted,
+        accessTokenIv: encryptedToken.iv,
+        accessTokenTag: encryptedToken.tag,
+        encryptedRefreshToken: encryptedRefreshToken?.encrypted || null,
+        refreshTokenIv: encryptedRefreshToken?.iv || null,
+        refreshTokenTag: encryptedRefreshToken?.tag || null,
+        status: 'active',
+        permissions: {},
+        scope: tokenData.scope,
+        rateLimitRemaining: 5000,
+        rateLimitResetAt: new Date(Date.now() + 60 * 60 * 1000),
+        lastSyncedAt: new Date(),
+        encryptionVersion: 1,
+      },
     });
-
-  return integrationError;
+  } catch (integrationError) {
+    return integrationError;
+  }
 }
 
 /**
@@ -208,29 +218,17 @@ export async function GET(request: NextRequest): Promise<Response> {
       );
     }
 
-    const supabase = await getCurrentUser();
-
-    if (!supabase) {
-      return NextResponse.json(
-        { error: 'Database connection not available' },
-        { status: 503 }
-      );
-    }
-
     // Verify state parameter for CSRF protection
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=unauthorized`
       );
     }
 
     // Retrieve and validate OAuth state from database
-    const oauthState = await validateOAuthState(state, user.id, supabase);
+    const oauthState = await validateOAuthState(state, user.id);
     if (!oauthState) {
       return NextResponse.redirect(
         `${process.env.NEXT_PUBLIC_APP_URL}/analytics?error=invalid_state`
@@ -238,10 +236,10 @@ export async function GET(request: NextRequest): Promise<Response> {
     }
 
     // Mark state as used to prevent reuse
-    await supabase
-      .from('oauth_states')
-      .update({ used_at: new Date().toISOString() })
-      .eq('id', oauthState.id);
+    await prisma.oAuthState.update({
+      where: { id: oauthState.id },
+      data: { usedAt: new Date() },
+    });
 
     // Exchange code for access token
     const tokenData = await exchangeCodeForToken(code);
@@ -261,7 +259,6 @@ export async function GET(request: NextRequest): Promise<Response> {
 
     // Store GitHub integration
     const integrationError = await storeGitHubIntegration(
-      supabase,
       user,
       githubUser,
       tokenData

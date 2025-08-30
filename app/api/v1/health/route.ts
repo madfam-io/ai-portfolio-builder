@@ -25,9 +25,9 @@ import { withAPMTracking } from '@/lib/monitoring/apm';
  * GET /api/v1/health - Comprehensive health check
  */
 export const GET = withErrorTracking(
-  withAPMTracking(() => {
+  withAPMTracking(async () => {
     return handleHealthCheck();
-  }, 'health-check'),
+  }),
   'health-api'
 );
 
@@ -38,6 +38,6 @@ export const HEAD = withErrorTracking(
   withAPMTracking(() => {
     // Quick check without detailed response
     return new NextResponse(null, { status: 200 });
-  }, 'health-check-head'),
+  }),
   'health-api'
 );
